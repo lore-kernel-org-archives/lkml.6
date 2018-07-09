@@ -2,113 +2,232 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E951C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87046C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00634208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:27:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DKUdbT6S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00634208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 404ED208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:28:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404ED208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933096AbeGIW1w (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 18:27:52 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:36169 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932949AbeGIW1u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 18:27:50 -0400
-Received: by mail-io0-f196.google.com with SMTP id k3-v6so18527096iog.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 15:27:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=tmGwaax75hEXlAIj+SruvPyzbEnv0/uJBmnxetNMwDY=;
-        b=DKUdbT6SlxMKGeuQZrZqAiSBSBSvyQZmTu/BBdCOvB8KmQK63TqLLi9EJPvn+zoIDK
-         StIgUqc9uS/Aq9IGgo5/ixt6CbI0JBuhwL+E2BhwINOFl5UEO5jmRUHIlVUbUbBcONDA
-         ie6O4/Kd2ld+FcDF18CWX6pww3ZJarKRN6tYM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=tmGwaax75hEXlAIj+SruvPyzbEnv0/uJBmnxetNMwDY=;
-        b=KlJN7wFPtZEtnlTobi3H5M65IwZVS7gGkTAeTKdpBkGT9fqLLQHAZuhYYSmyAtubXI
-         lnengyWhWvJc5VlRJU6vJ5kI7z0MvHJoUIVVz59SFlzyTLtJgb5xpo6IrqiytgowwhZC
-         EcBZZe8TfrEsR5/gfX9CJg+sTowNTub25m1vY2fJdebQn88syjFeNg70wZfxuXh7EDU7
-         ice/nA+s+siKHajl655Ve6bd2uGb/heHdSbd+cVApvdu7ghrYsEUPQHsD21J5tC4IR2A
-         AMzsmaYGKXxfilc4T9mjmGEIQyWlBt+oyd8+qVJV1155s7AgSJIZcU/k0TC/51nn8hSS
-         4CBQ==
-X-Gm-Message-State: APt69E0WOJ4EYOJtr+O+mK2wCvMQkxhyRnOxSKBTVzC5WIDzENVaqj8I
-        IPo7gjTKLVgtdl55j9TRX2IAURDqMKIWyC/V+c7hVw==
-X-Google-Smtp-Source: AAOMgpccGdzI9knWNwEbdygzaGpAeh8QlSJl2TtODJLfeDWKJToEGSa40Ucjm80xhkjJ5EPzlWeFml5ckByPSJlQBOI=
-X-Received: by 2002:a6b:e403:: with SMTP id u3-v6mr18061792iog.131.1531175269985;
- Mon, 09 Jul 2018 15:27:49 -0700 (PDT)
+        id S1754553AbeGIW2R (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 18:28:17 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:47944 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754018AbeGIW2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 18:28:14 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1fcedJ-0001FE-A3; Mon, 09 Jul 2018 16:27:50 -0600
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>
+References: <20180627174650.27433-1-logang@deltatee.com>
+ <20180627174650.27433-4-logang@deltatee.com>
+ <20180706165655.62306b6f@t450s.home>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <01dfc5ba-43cb-fbea-93e6-4963c411c750@deltatee.com>
+Date:   Mon, 9 Jul 2018 16:27:40 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 15:27:49 -0700 (PDT)
-In-Reply-To: <ab0c7997bdb0caf6fe7e842315bb9565c2cb059d.1530895248.git.leonard.crestez@nxp.com>
-References: <ab0c7997bdb0caf6fe7e842315bb9565c2cb059d.1530895248.git.leonard.crestez@nxp.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 10 Jul 2018 00:27:49 +0200
-Message-ID: <CAPDyKFqb6eZ2SYG612yqiNisv7UV1q3UHYfZfemmvv9Q4w=Png@mail.gmail.com>
-Subject: Re: [PATCH v3] soc: imx: gpc: Turn PU domain on/off in sleep on 6qp
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Robin Gong <yibin.gong@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180706165655.62306b6f@t450s.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: willy@infradead.org, christian.koenig@amd.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, alex.williamson@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v5 3/3] PCI: Introduce the disable_acs_redir parameter
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 6 July 2018 at 18:46, Leonard Crestez <leonard.crestez@nxp.com> wrote:
-> On imx6qp power gating on the PU domain is disabled because of errata
-> ERR009619. However power gating during suspend/resume can still be
-> performed.
+Hey Alex,
 
-Sounds a bit hand wavy. Exactly why can it be done during system suspend/resume?
+On 06/07/18 04:56 PM, Alex Williamson wrote:
+> Maybe we track if we enabled ACS via a device specific quirk and
+> minimally print an incompatibility error if it's also specified for
+> disable_acs_redir?  Thanks,
 
->
-> Enable this by implementing SLEEP_PM_OPS in imx_pgc_power_domain_driver.
->
-> In order to ensure correct ordering add device links from devices inside
-> the PU domain to the pgc platform_device.
+Ok, I dug into this a bit and I think tracking if we enabled via a
+device specific quirk does not work. If 'pci_acs_enable' is not set, we
+wouldn't know if we used a device specific quirk and still try to
+disable a quirked device the standard way.
 
-In genpd, the PM domain gets powered off after all device's
-corresponding ->suspend_noirq() callback has been invoked - and it
-also considers if there are some wakeup settings enabled, possibly
-avoiding to do the power off.
+Instead, I've looked at adding a device specific disable_acs_redir
+function next to enable_acs. In this way, the device specific quirks can
+override the operation. See the diff below.
 
-It sound like the imx's power domain driver ->power_off|on() callback
-should deal with this, to make get a consistent behavior. I understand
-that you currently can't tell under what circumstances the
-->power_off|on() callbacks are being invoked, that may need some
-changes in genpd.
+Implementing the Intel SPT PCH version is pretty trivial, so I've done
+that. The Intel PCH variant I've just left as unsupported and printed a
+warning.
 
-Currently we have a flag, GENPD_FLAG_ALWAYS_ON which makes genpd to
-always prevent power off. Perhaps we should add a new flag
-"GENPD_FLAG_RUNTIME_ON", which makes genpd to call the
-->power_on|off() callbacks, but only during system wide PM.
+If this sounds good to you, I'll fold it into my patchset and resubmit a v6.
 
-Thoughts?
+Thanks,
 
-[...]
+Logan
 
-Kind regards
-Uffe
+--
+
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 079f7c911e09..54001b307496 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -3028,6 +3028,9 @@ static void pci_disable_acs_redir(struct pci_dev *dev)
+ 	if (!pos)
+ 		return;
+
++	if (!pci_dev_specific_disable_acs_redir(dev))
++		return;
++
+ 	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
+
+ 	/* P2P Request & Completion Redirect */
+diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+index f439de848658..c976a025ae92 100644
+--- a/drivers/pci/quirks.c
++++ b/drivers/pci/quirks.c
+@@ -4526,6 +4526,16 @@ static int pci_quirk_enable_intel_pch_acs(struct
+pci_dev *dev)
+ 	return 0;
+ }
+
++static int pci_quirk_disable_intel_pch_acs_redir(struct pci_dev *dev)
++{
++	if (!pci_quirk_intel_pch_acs_match(dev))
++		return -ENOTTY;
++
++	pci_warn(dev, "Disabling ACS redirect on the Intel PCH root port is
+not supported\n");
++
++	return 0;
++}
++
+ static int pci_quirk_enable_intel_spt_pch_acs(struct pci_dev *dev)
+ {
+ 	int pos;
+@@ -4553,22 +4563,53 @@ static int
+pci_quirk_enable_intel_spt_pch_acs(struct pci_dev *dev)
+ 	return 0;
+ }
+
+-static const struct pci_dev_enable_acs {
++static int pci_quirk_disable_intel_spt_pch_acs_redir(struct pci_dev *dev)
++{
++	int pos;
++	u32 cap, ctrl;
++
++	if (!pci_quirk_intel_spt_pch_acs_match(dev))
++		return -ENOTTY;
++
++	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ACS);
++	if (!pos)
++		return -ENOTTY;
++
++	pci_read_config_dword(dev, pos + PCI_ACS_CAP, &cap);
++	pci_read_config_dword(dev, pos + INTEL_SPT_ACS_CTRL, &ctrl);
++
++	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
++
++	pci_write_config_dword(dev, pos + INTEL_SPT_ACS_CTRL, ctrl);
++
++	pci_info(dev, "Intel SPT PCH root port workaround: disabled ACS
+redirect\n");
++
++	return 0;
++}
++
++static const struct pci_dev_acs_ops {
+ 	u16 vendor;
+ 	u16 device;
+ 	int (*enable_acs)(struct pci_dev *dev);
+-} pci_dev_enable_acs[] = {
+-	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_enable_intel_pch_acs },
+-	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_enable_intel_spt_pch_acs },
++	int (*disable_acs_redir)(struct pci_dev *dev);
++} pci_dev_acs_ops[] = {
++	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
++	  .enable_acs = pci_quirk_enable_intel_pch_acs,
++	  .disable_acs_redir = pci_quirk_disable_intel_pch_acs_redir,
++	},
++	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
++	  .enable_acs = pci_quirk_enable_intel_spt_pch_acs,
++	  .disable_acs_redir = pci_quirk_disable_intel_spt_pch_acs_redir
++	},
+ 	{ 0 }
+ };
+
+ int pci_dev_specific_enable_acs(struct pci_dev *dev)
+ {
+-	const struct pci_dev_enable_acs *i;
++	const struct pci_dev_acs_ops *i;
+ 	int ret;
+
+-	for (i = pci_dev_enable_acs; i->enable_acs; i++) {
++	for (i = pci_dev_acs_ops; i->enable_acs; i++) {
+ 		if ((i->vendor == dev->vendor ||
+ 		     i->vendor == (u16)PCI_ANY_ID) &&
+ 		    (i->device == dev->device ||
+@@ -4582,6 +4623,25 @@ int pci_dev_specific_enable_acs(struct pci_dev *dev)
+ 	return -ENOTTY;
+ }
+
++int pci_dev_specific_disable_acs_redir(struct pci_dev *dev)
++{
++	const struct pci_dev_acs_ops *i;
++	int ret;
++
++	for (i = pci_dev_acs_ops; i->enable_acs; i++) {
++		if ((i->vendor == dev->vendor ||
++		     i->vendor == (u16)PCI_ANY_ID) &&
++		    (i->device == dev->device ||
++		     i->device == (u16)PCI_ANY_ID)) {
++			ret = i->disable_acs_redir(dev);
++			if (ret >= 0)
++				return ret;
++		}
++	}
++
++	return -ENOTTY;
++}
++
+ /*
+  * The PCI capabilities list for Intel DH895xCC VFs (device ID 0x0443) with
+  * QuickAssist Technology (QAT) is prematurely terminated in hardware.  The
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 340029b2fb38..7ee208aa1a31 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -1878,6 +1878,7 @@ enum pci_fixup_pass {
+ void pci_fixup_device(enum pci_fixup_pass pass, struct pci_dev *dev);
+ int pci_dev_specific_acs_enabled(struct pci_dev *dev, u16 acs_flags);
+ int pci_dev_specific_enable_acs(struct pci_dev *dev);
++int pci_dev_specific_disable_acs_redir(struct pci_dev *dev);
+ #else
+ static inline void pci_fixup_device(enum pci_fixup_pass pass,
+ 				    struct pci_dev *dev) { }
