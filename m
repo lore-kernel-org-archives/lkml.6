@@ -2,63 +2,124 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30946C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90371C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E037220881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:33:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E037220881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4569220857
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:34:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kk8vrNvZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="i4PLtvuX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4569220857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932764AbeGIJc5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 05:32:57 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49262 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932466AbeGIJc4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 05:32:56 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S932632AbeGIJeS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 05:34:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39046 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932366AbeGIJeP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 05:34:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3A499602AE; Mon,  9 Jul 2018 09:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531128855;
+        bh=LVZcKDVZRURUYXmo7D59nFQS+yOIj566mfjlEW2WF4g=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kk8vrNvZPTjD2t8YzwZPfMACOTv9u7JlYZYgQIhv5QgVlqELrotYnKnTHHc4zoFW1
+         iMdNb4kjRyGMJjCj8fUyMpT4HdkC1ZmPpmJMIak1ZR7tjyUoylpo8MAieYMs0kQp0i
+         2+wBesyhT7z3hS6zFYYe7buJ6qL8P+o6n4BEt8r4=
+Received: from [10.79.165.52] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 85269DFE1;
-        Mon,  9 Jul 2018 09:32:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AFB732156889;
-        Mon,  9 Jul 2018 09:32:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180708210154.10423-4-ebiggers3@gmail.com>
-References: <20180708210154.10423-4-ebiggers3@gmail.com> <20180708210154.10423-1-ebiggers3@gmail.com>
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH 03/18] fs_context: fix detecting full log buffer
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B13E660591;
+        Mon,  9 Jul 2018 09:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531128854;
+        bh=LVZcKDVZRURUYXmo7D59nFQS+yOIj566mfjlEW2WF4g=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=i4PLtvuXn2O88i0jcLIfR7/tarqDJ0hMaOkn1C91vgJxu+tVGUucvhihgsAIpONs9
+         k8DHXObd0n7nWsMxJVCrI6OpWH/1t7vRWBwK0k75JxueGM/+9635YhaXEFsOqlhm9n
+         b1f7g9lFmdmKylaSn4q7Qy3GXK2bFr91VYNFTRMY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B13E660591
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add display clock controller driver for
+ SDM845
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1529763567-13131-1-git-send-email-tdas@codeaurora.org>
+ <1529763567-13131-4-git-send-email-tdas@codeaurora.org>
+ <153109408562.143105.15954380130353645468@swboyd.mtv.corp.google.com>
+ <10f87216-caa2-d523-e134-6cf3acd268a7@codeaurora.org>
+ <153111701079.143105.13387458941681113476@swboyd.mtv.corp.google.com>
+ <436cc6a3-7406-c695-7879-3b9d042262cc@codeaurora.org>
+ <153112184177.143105.15452587215679149679@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <288770be-a763-b287-f62a-72ab7616efdb@codeaurora.org>
+Date:   Mon, 9 Jul 2018 15:04:07 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <10669.1531128774.1@warthog.procyon.org.uk>
-Date:   Mon, 09 Jul 2018 10:32:54 +0100
-Message-ID: <10670.1531128774@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 09 Jul 2018 09:32:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 09 Jul 2018 09:32:55 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+In-Reply-To: <153112184177.143105.15452587215679149679@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Biggers <ebiggers3@gmail.com> wrote:
 
-> When 'head' and 'tail' wrap around, 'log->head - log->tail' will be
-> something like '4 - 252 = -248', and comparing that directly to the
-> array size is wrong.  Fix by casting to 'u8'.
 
-I think a better fix is to use CIRC_CNT() or CIRC_SPACE().
+On 7/9/2018 1:07 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2018-07-09 00:07:21)
+>>
+>>
+>> On 7/9/2018 11:46 AM, Stephen Boyd wrote:
+>>>>
+>>>>    > Why is the nocache flag needed? Applies to all clks in this file.
+>>>>    >
+>>>>
+>>>> This flag is required for all RCGs whose PLLs are controlled outside the
+>>>> clock controller. The display code would require the recalculated rate
+>>>> always.
+>>>
+>>> Right. Why is the PLL controlled outside of the clock controller? The
+>>> rate should propagate upward to the PLL from here, so who's going
+>>> outside of that?
+>>>
+>> The DSI0/1 PLL are not part of the display clock controller, but in the
+>> display subsystem which are managed by the DRM drivers. When DRM drivers
+>> query for the rate clock driver should always return the non cached rates.
+> 
+> Why? Is the DSI PLL changing rate all the time, randomly, without going
+> through the clk APIs to do so?
+>
 
-David
+Hmm, I am afraid I do not have an answer for this, but this was the 
+requirement to always return the non cached rates from the clock driver.
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
