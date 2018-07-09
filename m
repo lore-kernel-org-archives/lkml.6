@@ -2,222 +2,213 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B800C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA450C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24AF220896
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:23:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24AF220896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 97AAE20896
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:23:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97AAE20896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932856AbeGILXX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 07:23:23 -0400
-Received: from mx.socionext.com ([202.248.49.38]:49719 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932743AbeGILXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 07:23:22 -0400
-Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
-  by mx.socionext.com with ESMTP; 09 Jul 2018 20:23:20 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id B59AA180B66;
-        Mon,  9 Jul 2018 20:23:20 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Mon, 9 Jul 2018 20:23:20 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 72694403E2;
-        Mon,  9 Jul 2018 20:23:20 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 3B3F012014D;
-        Mon,  9 Jul 2018 20:23:20 +0900 (JST)
-Date:   Mon, 09 Jul 2018 20:23:19 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 2/4] phy: socionext: add USB3 PHY driver for UniPhier SoC
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <4b436a46-9046-25ad-ee6d-ad2cdb16e2ca@ti.com>
-References: <1530261541-23104-3-git-send-email-hayashi.kunihiko@socionext.com> <4b436a46-9046-25ad-ee6d-ad2cdb16e2ca@ti.com>
-Message-Id: <20180709202319.1091.4A936039@socionext.com>
+        id S932967AbeGILXd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 07:23:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57302 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932866AbeGILXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 07:23:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FFAB7A9;
+        Mon,  9 Jul 2018 04:23:31 -0700 (PDT)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2BA03F318;
+        Mon,  9 Jul 2018 04:23:28 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 12:23:26 +0100
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Will Deacon <will.deacon@arm.com>, cdall@kernel.org,
+        kvm@vger.kernel.org, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, linux-kernel@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 15/20] kvm: arm/arm64: Allow tuning the physical
+ address size for VM
+Message-ID: <20180709112326.GD9486@e103592.cambridge.arm.com>
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
+ <20180704155104.GN4828@arm.com>
+ <12d1832a-1a13-7dd4-662b-addf58400789@arm.com>
+ <fe9f5aa5-b283-07e0-5f0e-e97d96b780e7@arm.com>
+ <9f1af26e-2913-2b0b-1352-63160096f78f@arm.com>
+ <f3463d0a-c6a3-c34d-acb3-13c99fc61c5a@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f3463d0a-c6a3-c34d-acb3-13c99fc61c5a@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
-Thank you for your comments.
-
-On Mon, 9 Jul 2018 10:49:50 +0530 <kishon@ti.com> wrote:
-
-> Hi,
+On Fri, Jul 06, 2018 at 05:39:00PM +0100, Suzuki K Poulose wrote:
+> On 07/06/2018 04:09 PM, Marc Zyngier wrote:
+> >On 06/07/18 14:49, Suzuki K Poulose wrote:
+> >>On 04/07/18 23:03, Suzuki K Poulose wrote:
+> >>>On 07/04/2018 04:51 PM, Will Deacon wrote:
+> >>>>Hi Suzuki,
+> >>>>
+> >>>>On Fri, Jun 29, 2018 at 12:15:35PM +0100, Suzuki K Poulose wrote:
+> >>>>>Allow specifying the physical address size for a new VM via
+> >>>>>the kvm_type argument for KVM_CREATE_VM ioctl. This allows
+> >>>>>us to finalise the stage2 page table format as early as possible
+> >>>>>and hence perform the right checks on the memory slots without
+> >>>>>complication. The size is encoded as Log2(PA_Size) in the bits[7:0]
+> >>>>>of the type field and can encode more information in the future if
+> >>>>>required. The IPA size is still capped at 40bits.
+> >>>>>
+> >>>>>Cc: Marc Zyngier <marc.zyngier@arm.com>
+> >>>>>Cc: Christoffer Dall <cdall@kernel.org>
+> >>>>>Cc: Peter Maydel <peter.maydell@linaro.org>
+> >>>>>Cc: Paolo Bonzini <pbonzini@redhat.com>
+> >>>>>Cc: Radim Krčmář <rkrcmar@redhat.com>
+> >>>>>Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> >>>>>---
+> >>>>>   arch/arm/include/asm/kvm_mmu.h   |  2 ++
+> >>>>>   arch/arm64/include/asm/kvm_arm.h | 10 +++-------
+> >>>>>   arch/arm64/include/asm/kvm_mmu.h |  2 ++
+> >>>>>   include/uapi/linux/kvm.h         | 10 ++++++++++
+> >>>>>   virt/kvm/arm/arm.c               | 24 ++++++++++++++++++++++--
+> >>>>>   5 files changed, 39 insertions(+), 9 deletions(-)
+> >>>>
+> >>>>[...]
+> >>>>
+> >>>>>diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> >>>>>index 4df9bb6..fa4cab0 100644
+> >>>>>--- a/include/uapi/linux/kvm.h
+> >>>>>+++ b/include/uapi/linux/kvm.h
+> >>>>>@@ -751,6 +751,16 @@ struct kvm_ppc_resize_hpt {
+> >>>>>   #define KVM_S390_SIE_PAGE_OFFSET 1
+> >>>>>   /*
+> >>>>>+ * On arm/arm64, machine type can be used to request the physical
+> >>>>>+ * address size for the VM. Bits [7-0] have been reserved for the
+> >>>>>+ * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
+> >>>>>+ * value 0 implies the default IPA size, which is 40bits.
+> >>>>>+ */
+> >>>>>+#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK    0xff
+> >>>>>+#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)        \
+> >>>>>+    ((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
+> >>>>
+> >>>>This seems like you're allocating quite a lot of bits in a non-extensible
+> >>>>interface to a fairly esoteric parameter. Would it be better to add another
+> >>>>ioctl, or condense the number of sizes you support instead?
+> >>>
+> >>>As I explained in the other thread, we need the size as soon as the VM
+> >>>is created. The major challenge is keeping the backward compatibility by
+> >>>mapping 0 to 40bits. I will give it a thought.
+> >>
+> >>Here is one option. We could re-use the {V}TCR_ELx.{I}PS field format, which
+> >>occupies 3 bits and has the following definitions. (ID_AA64MMFR0_EL1:PARange
+> >>also has the field definitions, except that the field is 4bits wide, but
+> >>only 3bits are used)
+> >>
+> >>000 32 bits, 4GB.
+> >>001 36 bits, 64GB.
+> >>010 40 bits, 1TB.
+> >>011 42 bits, 4TB.
+> >>100 44 bits, 16TB.
+> >>101 48 bits, 256TB.
+> >>110 52 bits, 4PB
+> >>
+> >>But we need to map 0 => 40bits IPA to make our ABI backward compatible. So
+> >>we could use the additional one bit to indicate that IPA size is requested
+> >>in the 3 bits.
+> >>
+> >>i.e,
+> >>
+> >>machine_type:
+> >>
+> >>Bit [2:0]	- Requested IPA size. Values follow VTCR_EL2.PS format.
+> >>
+> >>Bit [3]		- 1 => IPA Size bits (Bits[2:0]) requested.
+> >>		0 => Not requested
+> >>
+> >>The only minor down side is restricting to the predefined values above,
+> >>which is not a real issue for a VM.
+> >>
+> >>Thoughts ?
+> >
+> >I'd be very wary of using that 4th bit to do something that is not in
+> >the architecture. We have only a single value left to be used (0b111),
+> >and then your scheme clashes with the architecture definition.
 > 
-> On Friday 29 June 2018 02:08 PM, Kunihiko Hayashi wrote:
-> > Add a driver for PHY interface built into USB3 controller
-> > implemented in UniPhier SoCs.
-> > This driver supports High-Speed PHY and Super-Speed PHY.
-> > 
-> > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > Signed-off-by: Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> > Signed-off-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> > ---
-> >  drivers/phy/Kconfig                         |   1 +
-> >  drivers/phy/Makefile                        |   1 +
-> >  drivers/phy/socionext/Kconfig               |  12 +
-> >  drivers/phy/socionext/Makefile              |   6 +
-> >  drivers/phy/socionext/phy-uniphier-usb3hs.c | 422 ++++++++++++++++++++++++++++
-> >  drivers/phy/socionext/phy-uniphier-usb3ss.c | 369 ++++++++++++++++++++++++
-> >  6 files changed, 811 insertions(+)
-> >  create mode 100644 drivers/phy/socionext/Kconfig
-> >  create mode 100644 drivers/phy/socionext/Makefile
-> >  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
-> >  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
-
-(snip...)
-
-> > --- /dev/null
-> > +++ b/drivers/phy/socionext/phy-uniphier-usb3hs.c
-> > @@ -0,0 +1,422 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * phy-uniphier-usb3hs.c - HS-PHY driver for Socionext UniPhier USB3 controller
-> > + * Copyright 2015-2018 Socionext Inc.
-> > + * Author:
-> > + *	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > + * Contributors:
-> > + *      Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> > + *      Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> > + */
-> > +
-> > +#include <linux/bitfield.h>
-> > +#include <linux/bitops.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/io.h>
-> > +#include <linux/mfd/syscon.h>
-> > +#include <linux/module.h>
-> > +#include <linux/nvmem-consumer.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/phy/phy.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/reset.h>
-> > +#include <linux/slab.h>
-> > +
-> > +#define HSPHY_CFG0		0x0
-> > +#define HSPHY_CFG0_HS_I_MASK	GENMASK(31, 28)
-> > +#define HSPHY_CFG0_HSDISC_MASK	GENMASK(27, 26)
-> > +#define HSPHY_CFG0_SWING_MASK	GENMASK(17, 16)
-> > +#define HSPHY_CFG0_SEL_T_MASK	GENMASK(15, 12)
-> > +#define HSPHY_CFG0_RTERM_MASK	GENMASK(7, 6)
-> > +#define HSPHY_CFG0_TRIMMASK	(HSPHY_CFG0_HS_I_MASK \
-> > +				 | HSPHY_CFG0_SEL_T_MASK \
-> > +				 | HSPHY_CFG0_RTERM_MASK)
-> > +
-> > +#define HSPHY_CFG1		0x4
-> > +#define HSPHY_CFG1_DAT_EN	BIT(29)
-> > +#define HSPHY_CFG1_ADR_EN	BIT(28)
-> > +#define HSPHY_CFG1_ADR_MASK	GENMASK(27, 16)
-> > +#define HSPHY_CFG1_DAT_MASK	GENMASK(23, 16)
-> > +
-> > +#define MAX_CLKS	3
-> > +#define MAX_RSTS	2
-> > +#define MAX_PHY_PARAMS	1
-> > +
-> > +struct uniphier_u3hsphy_param {
-> > +	u32 addr;
-> > +	u32 mask;
-> > +	u32 val;
-> > +};
+> I agree. However, if we ever go beyond the 3bits in PARange, we have an
+> issue with {V}TCR counter part. But lets not take that chance.
 > 
-> I'd like to avoid configure the PHY this way, since it's impossible to know
-> which register is being configured.
-
-I see. 
-In order to know which register is set, I'll add definitions for address
-and mask.
-And I think the driver might have functions for each SoC to configure
-the registers instead of uniphier_u3hsphy_param.
-
-Furthermore, I'll omit the register values that are already set
-at power on if the configurations are not affected.
-
-
-> > +
-> > +struct uniphier_u3hsphy_trim_param {
-> > +	unsigned int rterm;
-> > +	unsigned int sel_t;
-> > +	unsigned int hs_i;
-> > +};
-> > +
-> > +#define trim_param_is_valid(p)	((p)->rterm || (p)->sel_t || (p)->hs_i)
-
-(snip...)
-
-> > +static int uniphier_u3hsphy_probe(struct platform_device *pdev)
-> > +{
-> > +	struct device *dev = &pdev->dev;
-> > +	struct uniphier_u3hsphy_priv *priv;
-> > +	struct phy_provider *phy_provider;
-> > +	struct resource *res;
-> > +	struct phy *phy;
-> > +	struct clk *clk;
-> > +	struct reset_control *rst;
-> > +	const char *name;
-> > +	int i, ret, nc, nr;
-> > +
-> > +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +	if (!priv)
-> > +		return -ENOMEM;
-> > +
-> > +	priv->dev = dev;
-> > +	priv->data = of_device_get_match_data(dev);
-> > +	if (WARN_ON(!priv->data ||
-> > +		    priv->data->nparams > MAX_PHY_PARAMS))
-> > +		return -EINVAL;
-> > +
-> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	priv->base = devm_ioremap_resource(dev, res);
-> > +	if (IS_ERR(priv->base))
-> > +		return PTR_ERR(priv->base);
-> > +
-> > +	for (i = 0; i < MAX_CLKS; i++) {
-> > +		name = priv->data->clock_names[i];
-> > +		if (!name)
-> > +			break;
-> > +		clk = devm_clk_get(dev, name);
-> > +		/* "phy-ext" is optional */
-> > +		if (!strcmp(name, "phy-ext")) {
-> > +			if (PTR_ERR(clk) == -ENOENT)
-> > +				clk = NULL;
-> > +			priv->clk_phy_ext = clk;
-> > +		} else if (!strcmp(name, "phy")) {
-> > +			priv->clk_phy = clk;
-> > +		} else {
-> > +			priv->clk[priv->nclks++] = clk;
+> >
+> >I'd rather encode things in a way that is independent from the
+> >architecture, and be done with it. You can map 0 to 40bits, and we have
+> >the ability to express all values the architecture has (just in a
+> >different order).
 > 
-> Only "link" clock will be here? Do we need an array for this?
+> The other option I can think of is encoding a signed number which is the
+> difference of the IPA from 40. But that would need 5 bits if we were to
+> encode it as it is. And if we want to squeeze it in 4bit, we could store
+> half the difference (limiting the IPA limit to even numbers).
 > 
-> I think the above can be replaced with 3 separate clk_get calls instead of
-> storing clock names in uniphier_u3hsphy_soc_data.
+> i.e IPA = 40 + 2 * sign_extend(bits[3:0);
 
-Indeed, in case of HS, we don't need such an array.
-I'll rewrite it.
+I came across similar issues when trying to work out how to enable
+SVE for KVM.  In the end I reduced this to a per-vcpu feature, but
+it means that there is no global opt-in for the SVE-specific KVM
+API extensions:
 
-Thank you,
+That's a bit gross, because SVE may require a change to the way
+vcpus are initialised.  The set of supported SVE vector lengths needs
+to be set somehow before the vcpu is set running, but it's tricky do
+do that without a new ioctl -- which would mean that if SVE is enabled
+for a vcpu then the vcpu is not considered runnable until the new
+magic ioctl is called.
 
----
-Best Regards,
-Kunihiko Hayashi
+Opting into that semantic change globally at VM creation time might
+be preferable.  On the SVE side, this is still very much subject to
+review/change.
 
 
+Here:
+
+The KVM_CREATE_VM init argument seems undefined by the KVM core code and
+is available for arches to abuse in creative ways.  x86 and arm have
+nothing here and reject non-zero values with -EINVAL; s390 treats it as
+a bitmask, and defines a sincle feature-like bit here; powerpc treats it
+as an enumeration of VM types.
+
+If we want to be extensible, we could
+
+ a) Pass a pointer in type, and come up with some extensible VM parameter
+    struct for it to point to (which then wouldn't need a cryptic
+    compressed encoding), or
+
+ b) Introduce a new "KVM_CREATE_VM2" variant that either takes such
+    an argument, or mandates a parameter negotiation phase involving
+    additional ioctls before marking the VM as ready for vcpu and
+    device creation.
+
+(a) feels like an easy backwards-compatible approach, but cannot be
+readily adopted by other arches (maybe not an issue).
+
+(b) might be considered overengineered, so it would need a bit of
+thought.
+
+Wedging arguments into a few bits in the type argument feels awkward,
+and may be regretted later if we run out of bits, or something can't be
+represented in the chosen encoding.
+
+Cheers
+---Dave
