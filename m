@@ -2,109 +2,124 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F226C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E8FC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFF88208DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:30:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFF88208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id E340D208DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:30:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X6PTDR1B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E340D208DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933249AbeGIUaZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 16:30:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42654 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932923AbeGIUaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 16:30:13 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6677D208DB;
-        Mon,  9 Jul 2018 20:30:12 +0000 (UTC)
-Date:   Mon, 9 Jul 2018 16:30:10 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     tglx@linutronix.de, Clark Williams <williams@redhat.com>,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: cgroup trace events acquire sleeping locks
-Message-ID: <20180709163010.257a08a0@gandalf.local.home>
-In-Reply-To: <20180709202214.h2t5t3ndx6xqtrtg@linutronix.de>
-References: <20180703140750.1dab75ef@tagon>
-        <20180706174745.hwvnwojzfbmp7ma5@linutronix.de>
-        <20180708203600.2edf24e2@tagon>
-        <20180709163805.ai4ljzaj3i73ypx4@linutronix.de>
-        <20180709150154.66843cba@gandalf.local.home>
-        <20180709202214.h2t5t3ndx6xqtrtg@linutronix.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S933314AbeGIUab (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 16:30:31 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:57228 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932923AbeGIUa1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 16:30:27 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w69KT6xm083969;
+        Mon, 9 Jul 2018 20:30:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=zPNWT6WF60sJudH/ZoNy+hy3gWFjFsyZKjwRao1QdW0=;
+ b=X6PTDR1BetVxC+w51UQjoWP7ZcpqHxdGTzG2aKnDXP8Fk2StFsYMzGhd+TqTNaozuFQt
+ QK0rPi2+J+chD7hkZhN9S72sLby8mi/OoZrHeS6/7qhdRZc1TmnpuxQdrJ7AidMf7BH4
+ DNqg4Ag+Wn5wmSgvIwT009Yx4DAPSL/xte9Mr5PttKJmROoSBgkAc4Qiu3gjqEMO7rwk
+ s26OhzKkdZrqKaq8Itlpp6HePqkhQGDWmRIz23xmX4fjshw2b+FWBXRX29cEr/LfQ6sM
+ 5TfYGpLNminK+4gR5blp34ModvH67Fq4SVWIWXhZsEVRmKAMaleCCQW4LPsUCtghAk14 LA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2k2p7v71sx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Jul 2018 20:30:00 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w69KTxBn012459
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 9 Jul 2018 20:30:00 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w69KTvp9024686;
+        Mon, 9 Jul 2018 20:29:57 GMT
+Received: from char.us.oracle.com (/10.137.176.158)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Jul 2018 13:29:57 -0700
+Received: by char.us.oracle.com (Postfix, from userid 1000)
+        id 55C216A00C3; Mon,  9 Jul 2018 16:29:43 -0400 (EDT)
+Date:   Mon, 9 Jul 2018 16:29:43 -0400
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv4 18/18] x86: Introduce CONFIG_X86_INTEL_MKTME
+Message-ID: <20180709202943.GK17368@char.us.oracle.com>
+References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
+ <20180626142245.82850-19-kirill.shutemov@linux.intel.com>
+ <20180709183656.GK6873@char.US.ORACLE.com>
+ <d9edff3d-64bd-be81-c9fd-52699d7da81e@intel.com>
+ <20180709185246.GC17368@char.us.oracle.com>
+ <7491deb5-c89e-cbd0-6c17-404d26c30aeb@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7491deb5-c89e-cbd0-6c17-404d26c30aeb@intel.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8949 signatures=668705
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=919
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807090232
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018 22:22:15 +0200
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-
-> On 2018-07-09 15:01:54 [-0400], Steven Rostedt wrote:
-> > > which is the trace_cgroup_rmdir() trace event in cgroup_rmdir(). The
-> > > trace event invokes cgroup_path() which acquires a spin_lock_t and this
-> > > is invoked within a preempt_disable()ed section.   
+On Mon, Jul 09, 2018 at 11:59:33AM -0700, Dave Hansen wrote:
+> On 07/09/2018 11:52 AM, Konrad Rzeszutek Wilk wrote:
+> > On Mon, Jul 09, 2018 at 11:44:33AM -0700, Dave Hansen wrote:
+> >> On 07/09/2018 11:36 AM, Konrad Rzeszutek Wilk wrote:
+> >>> On Tue, Jun 26, 2018 at 05:22:45PM +0300, Kirill A. Shutemov wrote:
+> >>> Rip out the X86?
+> >>>> +	bool "Intel Multi-Key Total Memory Encryption"
+> >>>> +	select DYNAMIC_PHYSICAL_MASK
+> >>>> +	select PAGE_EXTENSION
+> >>>
+> >>> And maybe select 5-page?
+> >>
+> >> Why?  It's not a strict dependency.  You *can* build a 4-level kernel
+> >> and run it on smaller systems.
 > > 
-> > Correct. And I wish no trace event took spin locks.  
+> > Sure, but in one of his commits he mentions that we may run in overlapping
+> > physical memory if we use 4-level paging. Hence why not just move to 5-level
+> > paging and simplify this.
 > 
-> is there an easy way to detect this? I mean instead hitting the trace
-> event with debug enabled and doing a review of each of them.
+> I'm not sure it _actually_ simplifies anything.  We still need code to
+> handle the cases where we bump into the limits because even 5-level
+> paging systems can hit the *architectural* limits.  We just don't think
+> we'll bump into those limits any time soon in practice since they're
+> 512x larger on 5-level systems.
+> 
+> But, a future system that needs physical address space or has a bunch
+> more KeyID bits might bump into the limits.
 
-Hmm, good question. I could possibly make all the tracepoint code into
-its own section. And then look to see if any spin locks exist in them.
-That wouldn't be too trivial to implement though.
+Yikes. So when will we expand to 128-bit page fields?
 
 > 
-> > > It says "Preemption disabled at" migrate_enable() but this is not true.
-> > > A printk() just before the lock reports preempt_count() of two and
-> > > sometimes one. I *think*
-> > > - one is from rcu_read_lock_sched_notrace() in __DO_TRACE()
-> > > - the second is from preempt_disable_notrace() in ring_buffer_lock_reserve()
-> > > 
-> > > I would prefer not to turn kernfs_rename_lock into raw_spin_lock_t. We
-> > > had a similar problem with a i915 trace event which eventually vanished
-> > > (and before I just disabled it).
-> > > 
-> > > So how likely are chances that we can use rcu_read_lock() in __DO_TRACE()?  
-> > 
-> > Not very.  
-> 
-> Is there a reason for this? I don't think this is documented. I changed
-> it to the "normal" RCU read section and it appeared to work :)
-> 
-
-Well, there's trace points in RCU code. Not sure how they will react.
-
-> > > And how likely are chances that the preempt_disable() in
-> > > ring_buffer_lock_reserve() could be avoided while the trace event is
-> > > invoked?  
-> > 
-> > Even less likely. The design of the ring buffer is based on not being
-> > able to be preempted.  
-> 
-> I was expecting this.
-> 
-> > > I guess nothing of this is easy peasy. Any suggestions?
-> > >   
-> > 
-> > One solution, albeit not so pretty, is to move the grabbing of the
-> > path, outside the trace event. But this should work.  
-> 
-> okay, wasn't aware of the trace_cgroup_##type##_enabled() magic. Yes,
-> this should work. Do you mind posting this upstream?
-
-Sure.
-
--- Steve
+> It's also _possible_ that a processor could come out that supports MKTME
+> but not 5-level paging, or a hypervisor would expose such a
+> configuration to a guest.  We've asked our colleagues very nicely that
+> Intel not make a processor that does this, but it's still possible one
+> shows up.
