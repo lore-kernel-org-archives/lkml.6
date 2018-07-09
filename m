@@ -2,137 +2,94 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3DBC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA75DC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B68B20873
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:44:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B68B20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4871420873
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:47:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W6ccEgs/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4871420873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754525AbeGIMoE (ORCPT
+        id S1754527AbeGIMrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 08:44:04 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:52262 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754459AbeGIMoC (ORCPT
+        Mon, 9 Jul 2018 08:47:11 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37805 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754490AbeGIMrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 08:44:02 -0400
-Received: by mail-it0-f72.google.com with SMTP id b132-v6so15542569iti.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 05:44:02 -0700 (PDT)
+        Mon, 9 Jul 2018 08:47:09 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n17-v6so20635103wmh.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 05:47:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=m7MjXCDGUstU0fOkEUd4AQp+r+46FYONXGYFA8I3V8g=;
+        b=W6ccEgs/bQok7BUy9Li6w4koHv9FpY1xObxadQRety4nm8XoBcKfVsMkmqKeqAjvrm
+         ZXEAZahhUZfdV7Y2SJnYEIehpehGGFhCtPFCJRiyZqImXx3+eGDet5M17vFrMvRNwEPz
+         HPeehsK/HO1GzvXhbs4y0Pw6gWEPs7O/x2ow8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=2rrFWXZlt29cfeJJGnBBTslYJEc+TuGdIpD+BQs+kiY=;
-        b=RhmhbbX93P4wgxzIjCgRQ7l5JijOVwDfeJNmYS4CPYStgoJYG3A9eUVzwhUlLjXUYY
-         jrm8whH6wjURz5MUS0iF/6PSQNj35S73D01eTlI9ngkKPLLm1Y6B2ahTr/P9RriyyScJ
-         Yk8H7B6KZvWdr57khutnfUYlv3USEruCVf/L0xCkbf8kuFbQbeqqxvbTM88tfPmfIphx
-         j+0LcoMKWd1z5AyVlhq24Q6DW+saY71A3+sHBDbXsrkkTlsBKqO8TtfuRBgdA7QK2jUT
-         apJH/3yfJLwBaYusC4cyKeEntXvWBsKxQRHky0R0Tmtyw7HoUcciFfue6IU650vS/AVh
-         o0JA==
-X-Gm-Message-State: APt69E0cMFfTx5AfLH5sn3KqH9FFaY4Ny/yG+u8R9L6qGvLiSZqXXwuB
-        wOTa+vOhGGSWXEEtv1nXqLq/QfcVMiogltpx+Iu14sY7Ddki
-X-Google-Smtp-Source: AAOMgpdWpFQFb4gd3OaOoBiKbPDEcn9XqnZieuBeGdYF6pNNKkG3yJaj01EiVcuPYhPtAA4cvmIks0HyaJzdRmONqldQ2yIee32q
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=m7MjXCDGUstU0fOkEUd4AQp+r+46FYONXGYFA8I3V8g=;
+        b=E/9updkzY7eAgEv4Lm3NhnXPs6hL7qu3bbMHQbyaWGRAwzw6/4f/CG4deYK0DrBT7x
+         oVGefMlZfwGK0xJmXs2fqYO0St8Hra+pSNiQvVnG5yoZ2I5jqdYpw28ZMmgUb1rID/8W
+         XO9m8huaqg3lD5IdfNGFKgsnVtGCIuA7P6+Oz5c5cQhIzgyLm72F5KVH7Wb7Td8BoVh3
+         vsZ8DolR5y+3AwGvT8kgfzNBKTGD8uywNm3chTbMmJtXR0UNZZa8X20fc+ezg6iY/2k8
+         uzMjtEQu56t7cFxIXGMLOiTVa8PCwB5EgCWKvxW+q6sfaPDAiGryIqvSqJFo9zNoR/2L
+         WbNw==
+X-Gm-Message-State: APt69E3Vxh+ghpW5fh1hsDlNBOhIBgnzX8wxBLrRnSPB65lLEM5aLX3X
+        /Ha1GN4wWZBJCfHDcyfPPkXImB2lU1E=
+X-Google-Smtp-Source: AAOMgpfzYbhMsd8DPtGouGVbyWm7CeJvtG8EqwcdmjityIxQvRUB3oWJgLC7mvEpt1lqIbtEZho6FQ==
+X-Received: by 2002:a1c:ea9c:: with SMTP id g28-v6mr12039874wmi.65.1531140427830;
+        Mon, 09 Jul 2018 05:47:07 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id y191-v6sm20389269wme.21.2018.07.09.05.47.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 05:47:07 -0700 (PDT)
+Subject: Re: [PATCH v3 3/5] ASoC: qcom: add sdm845 sound card support
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Rohit kumar <rohitkr@codeaurora.org>, lgirdwood@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, plai@codeaurora.org,
+        bgoswami@codeaurora.org, perex@perex.cz, tiwai@suse.com,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1530870195-13576-1-git-send-email-rohitkr@codeaurora.org>
+ <1530870195-13576-4-git-send-email-rohitkr@codeaurora.org>
+ <20180709111437.GB16082@sirena.org.uk>
+ <b5a3f0e2-d420-603d-f9a0-f93bdbd2619f@linaro.org>
+ <20180709124117.GG16082@sirena.org.uk>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <2c1539d7-d1de-f6d2-f30c-f79819ba7f2b@linaro.org>
+Date:   Mon, 9 Jul 2018 13:47:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-X-Received: by 2002:a02:98eb:: with SMTP id c40-v6mr9251818jak.32.1531140242370;
- Mon, 09 Jul 2018 05:44:02 -0700 (PDT)
-Date:   Mon, 09 Jul 2018 05:44:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003f78f30570905ed6@google.com>
-Subject: KASAN: out-of-bounds Read in bpf_test_finish
-From:   syzbot <syzbot+54f39d6ab58f39720a55@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180709124117.GG16082@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    d90c936fb318 Merge branch 'bpf-nfp-mul-div-support'
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b88a78400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a501a01deaf0fe9
-dashboard link: https://syzkaller.appspot.com/bug?extid=54f39d6ab58f39720a55
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+54f39d6ab58f39720a55@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: out-of-bounds in _copy_to_user+0xe9/0x110 lib/usercopy.c:27
-Read of size 924 at addr ffff880192bffff2 by task syz-executor1/6688
-
-CPU: 1 PID: 6688 Comm: syz-executor1 Not tainted 4.18.0-rc3+ #48
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
-  _copy_to_user+0xe9/0x110 lib/usercopy.c:27
-  copy_to_user include/linux/uaccess.h:155 [inline]
-  bpf_test_finish.isra.7+0xee/0x1f0 net/bpf/test_run.c:59
-  bpf_prog_test_run_skb+0x7d7/0xa30 net/bpf/test_run.c:144
-  bpf_prog_test_run+0x130/0x1a0 kernel/bpf/syscall.c:1686
-  __do_sys_bpf kernel/bpf/syscall.c:2323 [inline]
-  __se_sys_bpf kernel/bpf/syscall.c:2267 [inline]
-  __x64_sys_bpf+0x3d8/0x510 kernel/bpf/syscall.c:2267
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455e29
-Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f95802f1c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007f95802f26d4 RCX: 0000000000455e29
-RDX: 0000000000000028 RSI: 0000000020000380 RDI: 000000000000000a
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004bbaee R14: 00000000004c8d20 R15: 0000000000000000
-
-The buggy address belongs to the page:
-page:ffffea00064a8000 count:1 mapcount:1 mapping:ffff8801ceeda041  
-index:0x20200 compound_mapcount: 1
-flags: 0x2fffc0000048068(uptodate|lru|active|head|swapbacked)
-raw: 02fffc0000048068 ffffea0006d642c8 ffffea0006e14288 ffff8801ceeda041
-raw: 0000000000020200 0000000000000000 00000001ffffffff ffff8801d285e900
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff8801d285e900
-
-Memory state around the buggy address:
-  ffff880192c00280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff880192c00300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff880192c00380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-                          ^
-  ffff880192c00400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff880192c00480: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 09/07/18 13:41, Mark Brown wrote:
+> This is not the case, the card will be unbound at the ASoC level when
+> any of the components are removed and then probed again when they
+> reappear.
+> 
+I will give that a try now!
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+--srini
