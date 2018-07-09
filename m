@@ -6,59 +6,61 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34AFEC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961BFC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D647A208DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4412B208DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:13:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkKFtn2L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D647A208DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JlqlTMhA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4412B208DB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933286AbeGIAJo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 20:09:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60836 "EHLO mail.kernel.org"
+        id S933317AbeGIANU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 20:13:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932942AbeGIAJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 20:09:43 -0400
+        id S933079AbeGIANS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 20:13:18 -0400
 Received: from localhost (unknown [104.132.1.75])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66E91208DB;
-        Mon,  9 Jul 2018 00:09:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87941208DB;
+        Mon,  9 Jul 2018 00:13:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531094982;
-        bh=H3EVnLssQKyUiHy0VQ0i+LqwaPA40qxN8CPaQbXNme0=;
+        s=default; t=1531095197;
+        bh=hfwxmQgDtb/r0mzl5gg2f0WngbyBkMIitAnRd2ZxiF8=;
         h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=RkKFtn2L8uGI8heuIYxIpKoX/eGC4GSRiRPTnyx9/Qnl83BzRcL6xIqp7SA70Hv25
-         QXA0SvYZuCZjvgfqIAB580Abo+vGYHFPH57omC8Y5TfXjnmxQtjer6dFzP68qnEu3s
-         Ww5xSVQwFheriuCo0O87pF78ReUalGFLDCMUv2mk=
+        b=JlqlTMhAuqI7FSoSnIhDud5sTd0wtMjiJvE/4duFQQjb8VIUStKyc8GqR1Egi9B66
+         NYSS9GTQ79lsRGILO2Cmtsl6fO9t2vXhH+1OTjup37EhgpzK7ytPcaVdeLPlBUfEb+
+         W2HZ84L/K5wTHiHK0JTxat083/Qcq4FWeCChs3nU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     Dmitry Osipenko <digetx@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Mikko Perttunen <cyndis@kapsi.fi>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20180603224805.495-1-digetx@gmail.com>
+In-Reply-To: <20180605121232.7121-1-digetx@gmail.com>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20180603224805.495-1-digetx@gmail.com>
-Message-ID: <153109498169.143105.9808940703939118816@swboyd.mtv.corp.google.com>
+References: <20180605121232.7121-1-digetx@gmail.com>
+Message-ID: <153109519683.143105.5234021316802477195@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.7
-Subject: Re: [PATCH v1] clk: tegra: Mark Memory Controller clock as critical
-Date:   Sun, 08 Jul 2018 17:09:41 -0700
+Subject: Re: [PATCH v1] clk: tegra: emc: Avoid out-of-bounds bug
+Date:   Sun, 08 Jul 2018 17:13:16 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Dmitry Osipenko (2018-06-03 15:48:05)
-> Memory Controller should be always-on. Currently the sibling EMC clock is
-> marked as critical, let's mark MC clock too for consistency.
+Quoting Dmitry Osipenko (2018-06-05 05:12:32)
+> Apparently there was an attempt to avoid out-of-bounds accesses when there
+> is only one memory timing available, but there is a typo in the code that
+> neglects that attempt.
 > =
 
 > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
