@@ -2,133 +2,86 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B97C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3C3C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:28:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC48208DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:22:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HVQocukH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC48208DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 207FC20883
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:28:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207FC20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933543AbeGIDWY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 23:22:24 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46164 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932996AbeGIDWW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 23:22:22 -0400
-Received: by mail-pg1-f194.google.com with SMTP id p23-v6so810701pgv.13
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 20:22:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iMrql5pChvk0l0OVuaoPU9zdtIybInbwoq7vsafDp1A=;
-        b=HVQocukHUClXSNSLDRggehh7ZXaV5tKZvDVso0NG2+//TwzyQ25zBJtb9G1pZ6noaW
-         CcsriR4t4VIsbF8tN0z1S7EznEF1KN82eI1wcUhXgm9evKggdK+mrYRqeP6m3W581eRS
-         HJzOs6N0YIh/Ujz3PPfVDKKM3G7U/iIF2wQAE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iMrql5pChvk0l0OVuaoPU9zdtIybInbwoq7vsafDp1A=;
-        b=gK3Nxn0/x1KCE4EiIDXTTblZUd2cRvZHPbyGBpP+Ez+lI/HUlz8bn7zrBWGlovhUPZ
-         Uaa7Ypwv2L085mjAwSCz/EFlPCf34O2W96mDBTvkwenpm5r3Lo6irgaHQJYXb6LVEFaX
-         KPtEURufPiUiKuzl2T2FLbq1IEl9uykayhkyaxhJIy85Jmk4lSkLjcTh0vxiTUdcdphx
-         2nWm/T96+sXXcQbtzlzabH3B7FJZdoAk8y+EX46Y8AvzzGfn+/5EAT2m7KEJs3yjPYGl
-         rcKkzjbAtX54ujGEGsUGnDw0uhyIDCwVV79so/xKJk5myYfp9iXMARz5GOv/4O+gWqNp
-         RuDg==
-X-Gm-Message-State: APt69E3p+ifZcaB1aMA6YYgaHxl0GOO1vQMcIa/bF5IK9+GMckIhT9tD
-        4icWZAoM3eW27TuB+z/w7eFevQ==
-X-Google-Smtp-Source: AAOMgpdBKo3AJI9fieipaoqhpt7v+52Wl6nh2la/LE0PwaXvs/sStzEz5Lvi+f0RjUP5dmaT1wbuvg==
-X-Received: by 2002:a63:6004:: with SMTP id u4-v6mr17248394pgb.441.1531106541708;
-        Sun, 08 Jul 2018 20:22:21 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id e82-v6sm41458950pfk.87.2018.07.08.20.22.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 08 Jul 2018 20:22:20 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
-Subject: [PATCH V3 7/7] dt-bindings: sdhci-sprd: Add bindings for the sdhci-sprd controller
-Date:   Mon,  9 Jul 2018 11:19:58 +0800
-Message-Id: <1531106398-14062-8-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531106398-14062-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1531106398-14062-1-git-send-email-zhang.chunyan@linaro.org>
+        id S933085AbeGID2T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 23:28:19 -0400
+Received: from ozlabs.org ([203.11.71.1]:54589 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932656AbeGID2S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 23:28:18 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41P9lJ2Hq9z9rxs;
+        Mon,  9 Jul 2018 13:28:12 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Ingo Molnar <mingo@kernel.org>, Vlastimil Babka <vbabka@suse.cz>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        akpm@linux-foundation.org, dave.hansen@intel.com,
+        linux-mm@kvack.org, linuxram@us.ibm.com, shakeelb@google.com,
+        shuah@kernel.org, Sasha Levin <alexander.levin@microsoft.com>
+Subject: Re: [PATCH 4.16 234/279] x86/pkeys/selftests: Adjust the self-test to fresh distros that export the pkeys ABI
+In-Reply-To: <20180708132519.GA29528@kroah.com>
+References: <20180618080608.851973560@linuxfoundation.org> <20180618080618.495174114@linuxfoundation.org> <fa4b973b-6037-eaef-3a63-09e8ca638527@suse.cz> <20180703114241.GA19730@kroah.com> <877emakynf.fsf@concordia.ellerman.id.au> <20180705071937.GA2636@gmail.com> <87va9qj9tq.fsf@concordia.ellerman.id.au> <20180708132519.GA29528@kroah.com>
+Date:   Mon, 09 Jul 2018 13:28:09 +1000
+Message-ID: <87a7r19jg6.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> On Sun, Jul 08, 2018 at 08:33:37PM +1000, Michael Ellerman wrote:
+...
+>> 
+>> My comment was less about this actual patch and more about the new
+>> reality of patches being backported to stable based on Sasha's tooling,
+>> which seems to be much more liberal than anything we've done previously.
+>> 
+>> I don't generally have any objection to that process, though it possibly
+>> could have been more widely announced. But, it would be good if
+>> stable-kernel-rules.txt was updated to mention it.
+>> 
+>> I've had several people ask me "hey my patch got backported to stable
+>> but I didn't ask for it - is that OK, what's going on?" etc.
+>
+> Why didn't those people just ask us?  To not do so is very strange, it's
+> not like we are hard to find :)
 
-This patch adds the device-tree binding documentation for Spreadtrum
-SDHCI driver.
+It's not very strange, it's completely normal behaviour. People are
+afraid of asking dumb questions in public, so they ask someone
+privately.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- .../devicetree/bindings/mmc/sdhci-sprd.txt         | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
+And the general sentiment has been "I didn't think that patch met the
+stable rules, but I'm happy for it to be backported".
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt b/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
-new file mode 100644
-index 0000000..45c9978
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
-@@ -0,0 +1,41 @@
-+* Spreadtrum SDHCI controller (sdhci-sprd)
-+
-+The Secure Digital (SD) Host controller on Spreadtrum SoCs provides an interface
-+for MMC, SD and SDIO types of cards.
-+
-+This file documents differences between the core properties in mmc.txt
-+and the properties used by the sdhci-sprd driver.
-+
-+Required properties:
-+- compatible: Should contain "sprd,sdhci-r11".
-+- reg: physical base address of the controller and length.
-+- interrupts: Interrupts used by the SDHCI controller.
-+- clocks: Should contain phandle for the clock feeding the SDHCI controller
-+- clock-names: Should contain the following:
-+	"sdio" - SDIO source clock (required)
-+	"enable" - gate clock which used for enabling/disabling the device (required)
-+
-+Optional properties:
-+- assigned-clocks: the same with "sdio" clock
-+- assigned-clock-parents: the default parent of "sdio" clock
-+
-+Examples:
-+
-+sdio0: sdio@20600000 {
-+	compatible  = "sprd,sdhci-r11";
-+	reg = <0 0x20600000 0 0x1000>;
-+	interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-+
-+	clock-names = "sdio", "enable";
-+	clocks = <&ap_clk CLK_EMMC_2X>,
-+		 <&apahb_gate CLK_EMMC_EB>;
-+	assigned-clocks = <&ap_clk CLK_EMMC_2X>;
-+	assigned-clock-parents = <&rpll CLK_RPLL_390M>;
-+
-+	bus-width = <8>;
-+	non-removable;
-+	no-sdio;
-+	no-sd;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
--- 
-2.7.4
+>> I guess I should just send a patch to update it, but I don't really know
+>> what it should say.
+>
+> I don't think it really needs any changes, as the selftests is just a
+> corner case that is easily explained if anyone cares enough to actually
+> ask :)
 
+Yeah again I'm not really concerned about selftests, I should have
+replied to a different patch to start this discussion. My bad.
+
+cheers
