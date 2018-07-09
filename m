@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F6FC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C958CC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FF9020881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF9020881
+	by mail.kernel.org (Postfix) with ESMTP id 8F1F920881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F1F920881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933049AbeGIOmH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:42:07 -0400
-Received: from foss.arm.com ([217.140.101.70]:60392 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932824AbeGIOmF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:42:05 -0400
+        id S933112AbeGIOmL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:42:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60418 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932824AbeGIOmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:42:09 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 38D1C1684;
-        Mon,  9 Jul 2018 07:42:05 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE30C1682;
+        Mon,  9 Jul 2018 07:42:08 -0700 (PDT)
 Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AEB9E3F589;
-        Mon,  9 Jul 2018 07:42:04 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 737ED3F589;
+        Mon,  9 Jul 2018 07:42:08 -0700 (PDT)
 From:   Punit Agrawal <punit.agrawal@arm.com>
 To:     kvmarm@lists.cs.columbia.edu
 Cc:     Punit Agrawal <punit.agrawal@arm.com>,
@@ -35,9 +35,9 @@ Cc:     Punit Agrawal <punit.agrawal@arm.com>,
         suzuki.poulose@arm.com, will.deacon@arm.com,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH v5 5/7] KVM: arm64: Support handling access faults for PUD hugepages
-Date:   Mon,  9 Jul 2018 15:41:22 +0100
-Message-Id: <20180709144124.29164-5-punit.agrawal@arm.com>
+Subject: [PATCH v5 6/7] KVM: arm64: Update age handlers to support PUD hugepages
+Date:   Mon,  9 Jul 2018 15:41:23 +0100
+Message-Id: <20180709144124.29164-6-punit.agrawal@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180709144124.29164-1-punit.agrawal@arm.com>
 References: <20180709143835.28971-1-punit.agrawal@arm.com>
@@ -48,11 +48,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for creating larger hugepages at Stage 2, extend the
-access fault handling at Stage 2 to support PUD hugepages when
-encountered.
+In preparation for creating larger hugepages at Stage 2, add support
+to the age handling notifiers for PUD hugepages when encountered.
 
-Provide trivial helpers for arm32 to allow sharing of code.
+Provide trivial helpers for arm32 to allow sharing code.
 
 Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
 Cc: Christoffer Dall <christoffer.dall@arm.com>
@@ -61,141 +60,139 @@ Cc: Russell King <linux@armlinux.org.uk>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm/include/asm/kvm_mmu.h   |  8 ++++++++
- arch/arm64/include/asm/kvm_mmu.h |  7 +++++++
- arch/arm64/include/asm/pgtable.h |  6 ++++++
- virt/kvm/arm/mmu.c               | 29 ++++++++++++++++-------------
- 4 files changed, 37 insertions(+), 13 deletions(-)
+ arch/arm/include/asm/kvm_mmu.h   |  6 ++++
+ arch/arm64/include/asm/kvm_mmu.h |  5 ++++
+ arch/arm64/include/asm/pgtable.h |  1 +
+ virt/kvm/arm/mmu.c               | 51 ++++++++++++++++++--------------
+ 4 files changed, 40 insertions(+), 23 deletions(-)
 
 diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
-index d05c8986e495..a4298d429efc 100644
+index a4298d429efc..8e1e8aee229e 100644
 --- a/arch/arm/include/asm/kvm_mmu.h
 +++ b/arch/arm/include/asm/kvm_mmu.h
-@@ -78,6 +78,8 @@ void kvm_clear_hyp_idmap(void);
- #define kvm_pfn_pte(pfn, prot)	pfn_pte(pfn, prot)
- #define kvm_pfn_pmd(pfn, prot)	pfn_pmd(pfn, prot)
- 
-+#define kvm_pud_pfn(pud)	(((pud_val(pud) & PUD_MASK) & PHYS_MASK) >> PAGE_SHIFT)
-+
- #define kvm_pmd_mkhuge(pmd)	pmd_mkhuge(pmd)
- 
- /*
-@@ -102,6 +104,12 @@ static inline bool kvm_s2pud_exec(pud_t *pud)
- 	return false;
+@@ -110,6 +110,12 @@ static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
+ 	return pud;
  }
  
-+static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
++static inline bool kvm_s2pud_young(pud_t pud)
 +{
 +	BUG();
-+	return pud;
++	return false;
 +}
 +
  static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
  {
  	*pmd = new_pmd;
 diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
-index 15bc1be8f82f..4d2780c588b0 100644
+index 4d2780c588b0..c542052fb199 100644
 --- a/arch/arm64/include/asm/kvm_mmu.h
 +++ b/arch/arm64/include/asm/kvm_mmu.h
-@@ -175,6 +175,8 @@ void kvm_clear_hyp_idmap(void);
- #define kvm_pfn_pte(pfn, prot)		pfn_pte(pfn, prot)
- #define kvm_pfn_pmd(pfn, prot)		pfn_pmd(pfn, prot)
- 
-+#define kvm_pud_pfn(pud)		pud_pfn(pud)
-+
- #define kvm_pmd_mkhuge(pmd)		pmd_mkhuge(pmd)
- 
- static inline pte_t kvm_s2pte_mkwrite(pte_t pte)
-@@ -254,6 +256,11 @@ static inline bool kvm_s2pud_exec(pud_t *pudp)
- 	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
+@@ -261,6 +261,11 @@ static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
+ 	return pud_mkyoung(pud);
  }
  
-+static inline pud_t kvm_s2pud_mkyoung(pud_t pud)
++static inline bool kvm_s2pud_young(pud_t pud)
 +{
-+	return pud_mkyoung(pud);
++	return pud_young(pud);
 +}
 +
  static inline bool kvm_page_empty(void *ptr)
  {
  	struct page *ptr_page = virt_to_page(ptr);
 diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 1bdeca8918a6..a64a5c35beb1 100644
+index a64a5c35beb1..4d9476e420d9 100644
 --- a/arch/arm64/include/asm/pgtable.h
 +++ b/arch/arm64/include/asm/pgtable.h
-@@ -314,6 +314,11 @@ static inline pte_t pud_pte(pud_t pud)
- 	return __pte(pud_val(pud));
- }
- 
-+static inline pud_t pte_pud(pte_t pte)
-+{
-+	return __pud(pte_val(pte));
-+}
-+
- static inline pmd_t pud_pmd(pud_t pud)
- {
- 	return __pmd(pud_val(pud));
-@@ -380,6 +385,7 @@ static inline int pmd_protnone(pmd_t pmd)
+@@ -385,6 +385,7 @@ static inline int pmd_protnone(pmd_t pmd)
  #define pfn_pmd(pfn,prot)	__pmd(__phys_to_pmd_val((phys_addr_t)(pfn) << PAGE_SHIFT) | pgprot_val(prot))
  #define mk_pmd(page,prot)	pfn_pmd(page_to_pfn(page),prot)
  
-+#define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
++#define pud_young(pud)		pte_young(pud_pte(pud))
+ #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
  #define pud_write(pud)		pte_write(pud_pte(pud))
  
- #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
 diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index e73909a31e02..d2c705e31584 100644
+index d2c705e31584..a6d3ac9d7c7a 100644
 --- a/virt/kvm/arm/mmu.c
 +++ b/virt/kvm/arm/mmu.c
-@@ -1637,33 +1637,36 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
-  */
- static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
+@@ -1172,6 +1172,11 @@ static int stage2_pmdp_test_and_clear_young(pmd_t *pmd)
+ 	return stage2_ptep_test_and_clear_young((pte_t *)pmd);
+ }
+ 
++static int stage2_pudp_test_and_clear_young(pud_t *pud)
++{
++	return stage2_ptep_test_and_clear_young((pte_t *)pud);
++}
++
+ /**
+  * kvm_phys_addr_ioremap - map a device range to guest IPA
+  *
+@@ -1879,42 +1884,42 @@ void kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte)
+ 
+ static int kvm_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *data)
  {
 -	pmd_t *pmd;
 -	pte_t *pte;
 +	pud_t *pud = NULL;
 +	pmd_t *pmd = NULL;
 +	pte_t *pte = NULL;
- 	kvm_pfn_t pfn;
--	bool pfn_valid = false;
-+	bool found, pfn_valid = false;
++	bool found;
  
- 	trace_kvm_access_fault(fault_ipa);
- 
- 	spin_lock(&vcpu->kvm->mmu_lock);
- 
--	pmd = stage2_get_pmd(vcpu->kvm, NULL, fault_ipa);
+-	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
+-	pmd = stage2_get_pmd(kvm, NULL, gpa);
 -	if (!pmd || pmd_none(*pmd))	/* Nothing there */
-+	found = stage2_get_leaf_entry(vcpu->kvm, fault_ipa, &pud, &pmd, &pte);
++	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE && size != PUD_SIZE);
++	found = stage2_get_leaf_entry(kvm, gpa, &pud, &pmd, &pte);
 +	if (!found)
- 		goto out;
+ 		return 0;
  
--	if (pmd_thp_or_huge(*pmd)) {	/* THP, HugeTLB */
-+	if (pud) {		/* HugeTLB */
-+		*pud = kvm_s2pud_mkyoung(*pud);
-+		pfn = kvm_pud_pfn(*pud);
-+		pfn_valid = true;
-+		goto out;
-+	} else 	if (pmd) {	/* THP, HugeTLB */
- 		*pmd = pmd_mkyoung(*pmd);
- 		pfn = pmd_pfn(*pmd);
- 		pfn_valid = true;
- 		goto out;
-+	} else {
-+		*pte = pte_mkyoung(*pte);	/* Just a page... */
-+		pfn = pte_pfn(*pte);
-+		pfn_valid = true;
- 	}
- 
--	pte = pte_offset_kernel(pmd, fault_ipa);
--	if (pte_none(*pte))		/* Nothing there either */
--		goto out;
+-	if (pmd_thp_or_huge(*pmd))	/* THP, HugeTLB */
++	if (pud)
++		return stage2_pudp_test_and_clear_young(pud);
++	else if (pmd)
+ 		return stage2_pmdp_test_and_clear_young(pmd);
 -
--	*pte = pte_mkyoung(*pte);	/* Just a page... */
--	pfn = pte_pfn(*pte);
--	pfn_valid = true;
- out:
- 	spin_unlock(&vcpu->kvm->mmu_lock);
- 	if (pfn_valid)
+-	pte = pte_offset_kernel(pmd, gpa);
+-	if (pte_none(*pte))
+-		return 0;
+-
+-	return stage2_ptep_test_and_clear_young(pte);
++	else
++		return stage2_ptep_test_and_clear_young(pte);
+ }
+ 
+ static int kvm_test_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *data)
+ {
+-	pmd_t *pmd;
+-	pte_t *pte;
++	pud_t *pud = NULL;
++	pmd_t *pmd = NULL;
++	pte_t *pte = NULL;
++	bool found;
+ 
+-	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE);
+-	pmd = stage2_get_pmd(kvm, NULL, gpa);
+-	if (!pmd || pmd_none(*pmd))	/* Nothing there */
++	WARN_ON(size != PAGE_SIZE && size != PMD_SIZE && size != PUD_SIZE);
++	found = stage2_get_leaf_entry(kvm, gpa, &pud, &pmd, &pte);
++	if (!found)
+ 		return 0;
+ 
+-	if (pmd_thp_or_huge(*pmd))		/* THP, HugeTLB */
++	if (pud)
++		return kvm_s2pud_young(*pud);
++	else if (pmd)
+ 		return pmd_young(*pmd);
+-
+-	pte = pte_offset_kernel(pmd, gpa);
+-	if (!pte_none(*pte))		/* Just a page... */
++	else
+ 		return pte_young(*pte);
+-
+-	return 0;
+ }
+ 
+ int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end)
 -- 
 2.17.1
 
