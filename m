@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0D8C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C5FAC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D25672084A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CD372084A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:25:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="TWb8opw4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D25672084A
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="o2oDj1Ml"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CD372084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754547AbeGIIYe (ORCPT
+        id S1754559AbeGIIZS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:24:34 -0400
-Received: from mail-eopbgr690080.outbound.protection.outlook.com ([40.107.69.80]:26752
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        Mon, 9 Jul 2018 04:25:18 -0400
+Received: from mail-eopbgr680061.outbound.protection.outlook.com ([40.107.68.61]:7573
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754515AbeGIIYb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:24:31 -0400
+        id S1751321AbeGIIZO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 04:25:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GkvLDubnQoXKOsaraEE5tysys5NXbGMIcBYWCj1zUZw=;
- b=TWb8opw4dDCJ97rCUT+kT29yY6IYX1uU7qfaPP7ZcfL4SaTCJjR65ZpC4U+HQcoNRU/AuKLPnHTLKCV2JgygL6eQPf9X4HUkOpovF6s6e07j9SjbZW1v9+i5Smy9LbDYC3xN+NB+9lX0r48+HX8oo/7UO+fOYWLHe0IR8iPUZlA=
+ bh=v6lzufrgKpSWwls8YvcvBETwmqRFtlqVC6eFjR/rF0Q=;
+ b=o2oDj1MlXKWTvyUwiP+9fYBDYybC1jEGXsK+faSZ3MrArryiYBdOhashk3/Rs0goVnzF5McTKQ8+TalwPGSDa67jD159LMYsEcwFGTm9LacbcakDQXtmMYy5WaQqyKSt96h7CtRF5xWRbi2FkXZ3cH0EbaaVvyxHMxMY1qJ+ZPI=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
 Received: from xhacker.debian (124.74.246.114) by
- CY4PR03MB2629.namprd03.prod.outlook.com (2603:10b6:903:75::8) with Microsoft
+ MWHPR03MB2637.namprd03.prod.outlook.com (2603:10b6:300:46::7) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.18; Mon, 9 Jul 2018 08:24:26 +0000
-Date:   Mon, 9 Jul 2018 16:22:30 +0800
+ 15.20.930.21; Mon, 9 Jul 2018 08:25:09 +0000
+Date:   Mon, 9 Jul 2018 16:23:15 +0800
 From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>
 Cc:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>
-Subject: [PATCH v3 2/3] serial: 8250: export serial8250_do_set_divisor()
-Message-ID: <20180709162230.066bcf66@xhacker.debian>
+Subject: [PATCH v3 3/3] serial: 8250_dw: add fractional divisor support
+Message-ID: <20180709162315.7f53eb9a@xhacker.debian>
 In-Reply-To: <20180709160942.11a74f7a@xhacker.debian>
 References: <20180709160942.11a74f7a@xhacker.debian>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
@@ -52,108 +52,151 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TY2PR06CA0022.apcprd06.prod.outlook.com
- (2603:1096:404:42::34) To CY4PR03MB2629.namprd03.prod.outlook.com
- (2603:10b6:903:75::8)
+X-ClientProxiedBy: TY2PR06CA0001.apcprd06.prod.outlook.com
+ (2603:1096:404:42::13) To MWHPR03MB2637.namprd03.prod.outlook.com
+ (2603:10b6:300:46::7)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4de5fef3-a7f9-402a-409d-08d5e5756386
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:CY4PR03MB2629;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2629;3:7+4XeFvoYBCA3F0ts7Fiwq5RWmZyLTX92RoyD9s28/Dm5SlwLkL2iI0XWIv4S3PNPQK1vj/VC1F8uo7oObd9p5A0XT0Kmgip+x/MyZj56oIgYpa97bRzt0jDZUXyBZSHtWeznB7cKqAr9IF3nEsVDQdT8FrTT4tp+3gZPfe6wqBN+0UVSrLzf6mKZpsdW9v3O0qPpylUNN5XP9GGHz+5BBMcSJYfzRIsxLt9+3lTHsoqKyoPc8mHI3iESY2zmJvG;25:V0/l2Py8sXl2EHkxvZivV9JblPy1fnnoPvKDPXA1AQ66w4KrY9Sc6FpgXMXbQUMy/R/DybRgLFyiPq4PT2lGLwa8Qk/H29CI3A+1LW43vA6AlslQIbx8yT7OklGB1FIVS3M4WqiyG0zV6MlNAa2TKN5adnvt+m2KmERNhFGcZxlNYxTyAEbXYh/nan8czOQuzIsZkJPW+/nugc9fPJKM0ZaxTjHjSBYp0a6jimSW8rkGnLoRu15eHvWHrhe2ZmTT8jDM+BIb2vPoOJAt9X/g+6k1QLHWf5/hXLpv4kn/tcxk4euhtT1eiIS1xyquEpmESL0sUZTjs3+/QokUypOt8Q==;31:zJ2P9pOi25cblS16rj1T6kMlHUjWnJXkGb36i8xDhu9jfNgjmuNDs4aGSyDHRi7ddFtZeykph4wUDJoijp/MWjb/Cyz1G7kpwz1o8FlN/eGjIE2EzStTddaofhB9VxbHnbGu3MzGuQdIXo2kUghLiBNqrjprpMPUBLAikeD/CZA/K10aHnKBet8+eSFnfpeThXkOml6MXxGGmvSRf8dC1xr/ZIQ8J8M7RtsRIqjp7CQ=
-X-MS-TrafficTypeDiagnostic: CY4PR03MB2629:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2629;20:lhl1IrsMySNGSxGG9xfCdUTPvGUUqFCC5eUf4R6+WF4QXqAGfnO3oWWGgju5ZOcz3XYnNM8/dwtyqIEqfrA5awUPB8aV2YiIaIJQnXmOUTLLp+YYCIFvPzDUozTXpBCnkToMxKLBsgOcExTGVIWZ/KHJCKkUYt94y1uCUDJPPcIbtEWhntQpYZJT43poqwtDnQNnJ+h0wWjG09y+y0cVm+NDc0XNSeudfV8B2n8cRHbPXaF5LzFEr/iv1WBVELAPGzxEIhKPUH5gJVEn8oYIYoVchPb/o5iBTb5jzApdl9l3TrPcO1g77b3qZGBM81Pl7SV1oJRc352LPRn3fMxM5lUmcRqJ+wtOqlVpjogPfYX/Xw10tx1L6v6bBLxpLF+ZJcK5VogalBhUwnqp7qfsZy+KjvrFAu3fJ6epuXUeykxOornvzkFLNxAYltSK95YEqrKHp10u1ECxbE3gAGIhblpkeOIHE3/HaWnZcpcIRk3EsluXTDG7bOFvqmb0QD1W;4:CMwweWw9SFrnAqTTNyH/hXHemMvxR0wUS8Ue8BMB75Wi+UdAskVogpuRcIbIPtjO2NkXC3TqIPYJxyeLZ6SxRNYbL2yphaoLyHQTYc3lpdZ+vFcmdoqwzKpKJbfvS08AGO1HYdss4/2Ijr3ffzC2VI9sTwzbYydcj0HW9+bmuubbRq34i2ErJWe2dJN7Pu2XJL1SKDu3MAxI8PqczJlugAIL5vWa7BmnQRZ+OllHY0OBeSKSKJ1IAKPRnhwbA+LuCrRTfGwTLUVomVVSCInU/g==
-X-Microsoft-Antispam-PRVS: <CY4PR03MB262913383E9C0C60B3FEC63FED440@CY4PR03MB2629.namprd03.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 7b7fb0c1-2e7a-4027-1e75-08d5e5757ca4
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(2017052603328)(7153060)(7193020);SRVR:MWHPR03MB2637;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2637;3:VTu7onflysdTGmuaNYbIKZdge93m/xX91tqkvuoEiqaW4nJ9TnvqDsHtBZ/uiwGoPhrC6SrGBuXEPH34iS/6tBmIu9Ldk7QKBlGdpVWMfML/5ksLL2BEN9cN6GY/PPzYfXcUokuC2oVxNqBT0kQbtfSnQIvXb9KfcbIYHweum8xh3g3XD3EWGjxnE1eQy0Jc9BVFKhjn6LQdRm3W95vKvI6LqZ61RXjUyK5IkmENC1/dkOWCvZxeVH7e1KPuHhQt;25:huAWHSarEXkbggZxhaOo3NtqeWsllNivlAxHGx2DVeR7ruu1olyb60P67fhMItWU2baCS21tkXoZEDC9oF2PtACr4jlGwP0bB4LlUcS7LWmXZbClBVw+Uv7jNkOifSHmMIrSvmNfC/aZ/pf7lj2zK+LkL5QHqmHAwOlFn+xt5+j7A+9/5dtPSOwq4CLsRyjelBHCdzhcrTmBWLBKX5B8SJvOiB9NBPVL7RCW7lYRJ0Vc3RByqK2z1jO8SN/QdJlE+p6HpAbPLz2+YEAj00T+cVf03VxrMRl1VVe3U9oi16maAXOcz6njh4KJcIoEoBtctvFYWwKoUvDU1NCDXW8w9g==;31:WUStQ/rF6z7j/TTzrDRclxuLhkLCbjJPlX1cfmfL3nVVQTJp6AJOHIxmdLQr9GHXQrpLvLu5qLTBwJuakPHpGOBssnbUms1QMKEC4yspRWS7p7O+2OxeydKfhTJWRNeFDAxjGgcD550RYpDa079Ifsk+wqyIYbvbWfZQMckNIlvpunc5AwOjecN3NXNUwsu4tmgnKVrJ4IdvBrXthJPhdet8py28S2DTr7vKlTy4r+Y=
+X-MS-TrafficTypeDiagnostic: MWHPR03MB2637:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2637;20:wvPoX/NUrsMv2KLwdDFY2H34CzxHsQVaD60kFTBm/Z2NaIo0n64I9ZCHdC/q/oQeYVjcFdZ1PtZs09a9hz7JyQLYeifdyMTwmDa6coYWJ5zf1cUYirjaP1Nr0YAnPkFaz4PCfVAVSZRnd8DSr61Q+KRJH45VoK174boA4xb56BBut4KJ2B5uQA82pbAWCDoqOtVkb6mfMaoJymOcfZndc4zaxe0zc09/tqDQb794d7YaAPJ0wiqt0F0NNtHV3Al556nhMicUim7aIWHmjPj9Qe7YjLG/Irf0OZRvTssOeiL44P/f/9mLe4U6eYyUc1MmM5DN0IWW3oN4rA4Y/wovcbCpEfR6RhJbVD9Q/Zl8ORsiO2Q4BLvtkbZ+e/mIMRPlG3KQNrlyU4PrhE3XuTqK+Y2pWRhPwbSZr9lYkWMOfJ9OoN1scfhCDZc8yRZ0eT9c9+saCD1UhGp5awOV9ccFITQ2U5WQDTV6ri4zuXUmN8WzvrC8UBnffLBMsLxG+OfM;4:44MhRNWSNoUfYr1/C7K8ONBxgGFMQ+iyd2inGVBJkc7leXA2hU5xuzC1aJC1hzEoVe6Oh8nYZweq0XvTLKa09Zc9Di4iCDbJkudD6Y+dz1jWrAjdE1wD4bDl+Iu2IW2ggtIah8DbhJF7lqMe9XIUpgPmc8xBo8T/TzOOJGa77YcqHkOfBbCx+aVD1TmHxuO8Q+Dn6ImS/51MWM7JDgXg3tbWiCmaG6b0W0D6yIQ9tGjc+D6jSOzq9q+bGBI2WybJ+Qt4p4uo7X1x8gvuOLfXlg==
+X-Microsoft-Antispam-PRVS: <MWHPR03MB2637A726B2792D01185A1561ED440@MWHPR03MB2637.namprd03.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:CY4PR03MB2629;BCL:0;PCL:0;RULEID:;SRVR:CY4PR03MB2629;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MWHPR03MB2637;BCL:0;PCL:0;RULEID:;SRVR:MWHPR03MB2637;
 X-Forefront-PRVS: 07283408BE
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(346002)(376002)(136003)(366004)(189003)(199004)(956004)(50226002)(8936002)(5660300001)(6666003)(68736007)(50466002)(81166006)(81156014)(8676002)(66066001)(386003)(6506007)(11346002)(9686003)(76176011)(52116002)(7696005)(33896004)(4326008)(16526019)(186003)(1076002)(25786009)(446003)(2906002)(53936002)(47776003)(6116002)(3846002)(55016002)(230700001)(476003)(23726003)(15760500003)(105586002)(26005)(486006)(86362001)(110136005)(305945005)(478600001)(97736004)(575784001)(316002)(7736002)(106356001)(72206003)(54906003)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB2629;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(39850400004)(346002)(376002)(199004)(189003)(33896004)(5660300001)(2906002)(26005)(386003)(4326008)(25786009)(97736004)(52116002)(6506007)(76176011)(9686003)(305945005)(6666003)(50466002)(7736002)(55016002)(7696005)(53936002)(6116002)(3846002)(86362001)(66066001)(8936002)(11346002)(230700001)(23726003)(8676002)(16526019)(110136005)(68736007)(486006)(47776003)(81156014)(316002)(54906003)(476003)(956004)(446003)(81166006)(478600001)(72206003)(186003)(50226002)(1076002)(106356001)(105586002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB2637;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: synaptics.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR03MB2629;23:UzVlgrLV+/h9FA+Ia0DSIHRXrR15sMCeSy2RMT9Ep?=
- =?us-ascii?Q?2XhyJkmqBOYnOGWle8fOEz+zmtChQlGcjShYq8SPW0KoY4Mpjq+Vxq6WnG7e?=
- =?us-ascii?Q?FdMmxOV03iEnRpOC2q4wAohwU0HbvNfc5vKGE8L42EPLnIQGIZG/mbFkUmJW?=
- =?us-ascii?Q?QF1Pp72vfgK7358DUKs0KgmTi7lOf2hWpNWft0PeRNkmvs0fDi+0pPnZArsI?=
- =?us-ascii?Q?crA1aUkWC47J0fV6ttS9jrkm1HpbE1Q/H7b9NNvhmE6sI/D1QwxL+pt/viHZ?=
- =?us-ascii?Q?648KML4/xRm92j59ONstbTV+59vSA4q3GUkFcPKbDC6/fW2tZJEaVjm6elCj?=
- =?us-ascii?Q?ltJRZ01D+ikd8FYlRB2YQ5D5Y79HTky3Pg64YMvPbkpbXPqZWtPGqSVraeei?=
- =?us-ascii?Q?gOJ5ling2pbbFypGRZx8ZaivpPSSjFeYNxnUgMxSDzy9TIOKH7YNt4DxGFF6?=
- =?us-ascii?Q?6SNDEkQ8O4/FY6IfCLq7EXbVqlYzl1rMAN91Ta5+V3JkJbxQE2yVu/q7B6wx?=
- =?us-ascii?Q?PD1afu5bSbLdPSARD2crdLgJMBJaKa+i5CtZISQOfe3yb2ivD+a5Y0HUvWsn?=
- =?us-ascii?Q?FkcSWcEqpgs5SZ4oU5AaDVVF/xaOnSDuCChgAWnt2OhkE5O3KM4eOnbcDvFJ?=
- =?us-ascii?Q?vGAoTeB724YUHuARcBRJzxJNovJQchO6NQrTDzWlhd5KzLaLN5TfMD+YmDQu?=
- =?us-ascii?Q?3P34fi2sO/XzIkL7vrWS3PIoXe0ygJbixTfceSXgy4ZtjcYSvmoQOpsL0LD/?=
- =?us-ascii?Q?V6askArs4o6sKYLSAK+av3jKjjiX7jU7jaT0skTescclq/wWm8g6eTLvcwrQ?=
- =?us-ascii?Q?XtlcuGmWfcvQ7Oft2lQ4M5EemclrjbNhwTgBDvk0eVWl+8ShwucfrehVye06?=
- =?us-ascii?Q?k0vJw3b12lPxFaxbNFCizcLr0k1TQCASpYdaNVwNAM+JXCar8gVZODjc2la/?=
- =?us-ascii?Q?Vpgl83Op9Rh6pJ7Ct7wIQbQf4mCiys4gFyNXXrduJhD/Z0mk2ZLrcvaSxPWE?=
- =?us-ascii?Q?Tw+yubjbCOmgmv/hPWWm28E2TRdGZfrCx/JX6QxoRN0McnGeeXkBOkXD67SN?=
- =?us-ascii?Q?o6qsIxJBX8mXnVqJ0WO4B06tFtQWAS8w+vI5a4BeKcKaX4DeCs0e5YdUcled?=
- =?us-ascii?Q?GrVVreDu3/zFLErNwA0qQkQmnQ8EK0xQT+Zg0vjcWauyYKyVd/m2QzwAtb7h?=
- =?us-ascii?Q?M2n2yHU+e2V7YkK3EL/9rLvlX7ZFjgMaTrnbVJODE6NqtIDpihR0UCm25r7/?=
- =?us-ascii?Q?xWcQ6XTVCf+wR2Fn6rFnkk9jqkYn33fPqlgPRSjBIQEGwtIknlqfzPYlvEtB?=
- =?us-ascii?B?UT09?=
-X-Microsoft-Antispam-Message-Info: 840IgnxPsIkJSJbsEEIXaPwMVDiMtQL5MSOaMtNuDzeJAAt5zuAgOzX+XVjaUMiiANA9SStSQs35xOi+uEAFK2l588DdT0iLgk2Wutp+MHLjWl8Ir2RIVZ0+yQhrumo/2TkQc93li8ZWfyDTSMNFt7PV7HG/mvTYB8ZiSp8Uy/hw0bE6gLQW8mrmCsNXgqngNX63YLo1kQh8uBeiogArTyw8cdxf/yQaW0eTVh/Op/BeTWg4K13B658iIJE3VXpYEYKrGwp7rH4V+WM+05iNNHMivKQuzPYahwR5II4iiwmLf95F7POdAH1VNswZRzya+SHtSNSulJ/o7UJqYErsc1opolaIVGIv7GlcKE1fT0s=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2629;6:ZvXbDCRWRRTIxzOmopziUqDcnFC8CC9seA+D7lxkoMYQxj/N8CsFbSMMvZ5GHDhLPr9XJP0mQHHjRP6MvienaYzXFXs/PadVUIW9po/swlB7iP0YcNt1chyu0qkfVY3Q2Wcxp3NfvMyT/n5iZICkm/iLwdT4AcYSd//ZOaLApiJ5sIvoqqCx4yLu8k7DISI2rwywf24pFJJXRbtBRUeb4ZAceYgC6q6gXsPXnkwTykdpDBWzZ+VQWchVnv4Oy6UMYam0erVX4M4+KYHDMwX5LHG67XfNfwD3bLVSmqdDg1P+AebYp8MkURp5GFMZWTc+69dsu/a3KAMd0QQ5zE/EFsQhdZ+C5fDVNdSdO2AKbSHyPwgUSGdO/YgVn1eWfkvjnbThq21uem0Oye55Wn5YGFsOUVtDHcq4a27AjoiCFDjmKjok6jPkDx2qELJ8Bnhjclvp75uuqeYfMiY6ztoeog==;5:QDYHu+CGV6qZi9f2b7f1bHnPGQdTUD4nhFT6a1y8XCZGFTXdygPfmdWhXStRniJm1aYvGZ4J5ORl1B8ik5hnbTTkQzb8WZ8KMY/giCIi6q3z3UG2qplw8bMooMwSFbSIchq5wekLeLC9yktr1HBLjRp/Ti78GI5aiZQj37AjGpw=;24:vGP2SR+/9eoYgaDhkqBIZJ/MaLqozD9uwp8GQSWSuOhyPfkua3Nj1j4Wljvee7TETcGNBQY9SCEbmN3Wz97suPGXXm1UDfJaLRd24FvenVg=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB2637;23:nSfnXRbFrYzJ0o2rlk+oMd/41oA7T+V4LxmY7Yl1J?=
+ =?us-ascii?Q?zak0+28L56T6p/Rpg/oaZ27I6SRYWLzEvb8c0jg2KWm8MUYBLptmuIMsxj8S?=
+ =?us-ascii?Q?Wv/5+0lsBaT1Dsl/GOIAbLWpkYv9Ki+6CRo9OQnI/QBKYSNjYDJARaapBVsV?=
+ =?us-ascii?Q?a536lGitKD22ZQ2Q+c4tIQitk0ZRRJsZUsU9rL6+BrbbedDs0OONzMP+16eL?=
+ =?us-ascii?Q?Y89K/nqP3r4mfEfZ++N5pEDpyp4tqCcKyS+9vi/tspzoBWjl9G65iL4bXPMv?=
+ =?us-ascii?Q?R+0OoP6TeebmnCK+BZer8TKVbuLQ/9U4JU82XIknWiusQ0LpLXI1arG9sy1v?=
+ =?us-ascii?Q?l/FTVIo+v4oBmQ/0j8IDn7Mavx0iF1oU0xT4VpCo9Mp7YHw7o5QNUwJ8QpD+?=
+ =?us-ascii?Q?IeUreukXbtvvlxzsA1A4mRezlTgmuS7I6dtj9z35em4DxzF5HCCjlTvk3JzF?=
+ =?us-ascii?Q?M1TDS5Wt3sqmyUBk6ZTRc3H4GG1Dew0MmeYragxgpHRxZYbJWUm0YdtXGHdj?=
+ =?us-ascii?Q?+NkGpPfO2av0A8SMhhEObfHohx0clUJ3xks2Qn5MCv/8Qz8VGQSyz2OBnqPc?=
+ =?us-ascii?Q?JAjTxmjH970bS1yqc7oA/qfyoscGgkmj6PnH9tzchsLcuJji6fsVkDfSirWC?=
+ =?us-ascii?Q?suM2ZhGQs0THVEg2jks3QGmrKtLTVE97R7CB6sAIkRzU+bK9jdzeKQutJsrC?=
+ =?us-ascii?Q?NbPmSMWPx8kp63/dowyLP4Uej9glYKITgmBxH5VntKvZZ56wzuj0D7E28YRt?=
+ =?us-ascii?Q?AmMvnfvOL4HbOYiRqSciC6mRACbHl1hRI1FVcvWmZEvqdjzi4mC3/NE44yFC?=
+ =?us-ascii?Q?iPI4gd3pJoF2SkM121KwogSoOeTcDIsPZE7c5+7Ldc/ML+OC2OeiWFDPvQHA?=
+ =?us-ascii?Q?u6fKVH1ZUVMT4iMRDfYThYxR0Lzt6ug6PtdpX6he2NHmba7cL7wOe5TGAkXl?=
+ =?us-ascii?Q?VRyud8h4XmeRB/PwjbK738U2uVcsLkEG6rtRD9mnOvUbOD5Oo9ZiUcoeRHyH?=
+ =?us-ascii?Q?D6l+AzU/ANufdqKhAAH+y235pLWdrJ4QZ9Qhzxu7N8mefpaLXDzlhuywo3uD?=
+ =?us-ascii?Q?dDOh9rP8aCofSz1RVrzJPu1zF97ocf8aszVyo4vrgKOT9J68RAo8muDldTG2?=
+ =?us-ascii?Q?yCjzCCm7fKvJWNKDdZM32kMYe3UD+xE1esOSCsIO0LeWZLJXkeNPvsOugGqv?=
+ =?us-ascii?Q?hXkF0IxooLmutmzxyIAk9B2gZPkqJ0ztWYscaJxWRZFYnon/AA50nxEOoUnY?=
+ =?us-ascii?Q?BpkBEI3yTy8iwwVJqM=3D?=
+X-Microsoft-Antispam-Message-Info: IECj8vdF6gKd9pv//bXVzjtZxFCsd1kOmtcL9MGR8CklH1vAN0WKI0qvYgnziKiBEyoPJMugi8L1SWOLNHHIfVaRQO1UyubNb2A3m1Jczg1uoJWAsSoYkC7KSsUOefp6HDIZ+HHy/Izz3mEIiP63Bc74Oyfo9782gf/cLqsPiTikFnHUBOEOAdaZB4xQkmyDJHykaZbVOKZFM0cjH5aaH/oL/CGBjZ3qY+r4Hyz+Oo9kutOqlDE9oarUlDGGDSmVRZyIMkt+9rZUuU97j4pS5ZXtU9+U7k9rap0SjVYfGiaE5f0TH89M1ybkrDA5OtlHrDhbI97hrbncJt1uNxc6gJjIGKHhHAfJJf4ZCjufje8=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2637;6:xHEFdylW5FnWrRpZ6OXoR2skq7q9C2RZyo1pa4044DYBX0qDvmMmeBkuN3hCcYS0tAYJ/id0AXN7FARN8qZn5d8+8cAIKexule/I3mcTvcf2NVZfsrszRohXHMGlMH1j8W96tE2N2iteCJtjPKBWhpgZviTkZnS/gWvLWpormOMTwoMtFPZqZ798l3kcv83/x3EkaU5OReNtZx1Q7A814K3DHZZigTdyS6Cp+PfOrLUlP30I9MbAnv4I2HY3zyq149tutxmxTciHVa+WHEtmFqQHjQx8+6tGY2XV97HlVuGSfiuDLzBEiTI6LOINs2b2pkgMNS+13ULHnyQ5iwL8w7zd9G/PjN27ndCKyGP8YHonmIwTKm2dXEoWKq/RCZkzteJNTupg44oPkYnq+cD2vBARaGmgLDZ+6nO49WP40s2x4C9lRUWVkN8FQVqgiSkl2NjS3j+WEe/4embgFbNNog==;5:msd1FIKm45CDVKGN3pUwoZBNohIgeRDGJrCABrGq3A/ux2MytpkylwtIQKDSpooR2YuOC7laDbku7i2CFqeHixRjMzh+nJT7RR1gZw54yrDaS4NuL2/gWVivpt9OxT7IQr/Ksx2wV/iYbloxgtsNV5oJz1rf6ScT0od8HiZ++1Y=;24:GlQek4X0IU9AwWjV4EkgYHIXM8nb85rjIvC5f+bzQBcd5EhBv71SaPJlLObgFJ1lqvyzDqHKWPvNBdpRMpaaqFl43SREdcrjDj+dilTXn3U=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2629;7:cvgSn+kqDoS0P8+Yagk3VJs73Mwu8/Iw/bTx3zKmAcWERBSg6c8lq2HFq4lCJ24rJAwtswrA5M9won7Y1ckF8FWmzifIO1on2xlHONdUrn9bxx5qqQbX5uJXAg3qLkdwzKfikUKWrDuRLVThuhvQPEJXKGHooWZU38BljMac7AMN1QznEJr103iHCGvzYo5TzZHTy3yuN9OL4Pfi7yvESDfKoPzeZwqPIe7yb5qiV8jgoX4HCPdD8w2V3p5Z6RBA
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2637;7:ZxysR+BPzNLqUfZpq7kP0QqXQoaoDYjiKpNoG9AHj4CJDtZrjmI7tDOSVKzZHkhZ2RPUKmSGSdMWTDYuyt4x/ERgEN3UzX78a7kwM22g5UkPsYTUW5oymNkaRSsdnlMqRKphCYRsj5eJiXVFMUDJ0q4DBaJgYZ23RzvVQhY7h/jRtVTizGUWOEtvAQoHxpz50/lG7UXCKWF3IuiTRvK+C5lmlzzpZvnQVYoS5XFb1vu3ivFhSB0rSnCKchcC2phu
 X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2018 08:24:26.9936 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4de5fef3-a7f9-402a-409d-08d5e5756386
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2018 08:25:09.3165 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b7fb0c1-2e7a-4027-1e75-08d5e5757ca4
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB2629
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB2637
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some drivers could call serial8250_do_set_divisor() to complete its
-own set_divisor routine. Export this symbol for code reusing.
+For Synopsys DesignWare 8250 uart which version >= 4.00a, there's a
+valid divisor latch fraction register. The fractional divisor width is
+4bits ~ 6bits.
+
+Now the preparation is done, it's easy to add the feature support.
+This patch firstly tries to get the fractional divisor width during
+probe, then setups dw specific get_divisor() and set_divisor() hook.
 
 Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
 ---
- drivers/tty/serial/8250/8250_port.c | 5 +++--
- include/linux/serial_8250.h         | 3 +++
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_dw.c | 45 +++++++++++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index ce0dc17f18ee..945f8dc2d50f 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -2580,8 +2580,8 @@ static unsigned char serial8250_compute_lcr(struct uart_8250_port *up,
- 	return cval;
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index fa8a00e8c9c6..e90c3d229f00 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -31,6 +31,7 @@
+ 
+ /* Offsets for the DesignWare specific registers */
+ #define DW_UART_USR	0x1f /* UART Status Register */
++#define DW_UART_DLF	0xc0 /* Divisor Latch Fraction Register */
+ #define DW_UART_CPR	0xf4 /* Component Parameter Register */
+ #define DW_UART_UCV	0xf8 /* UART Component Version */
+ 
+@@ -55,6 +56,7 @@
+ 
+ struct dw8250_data {
+ 	u8			usr_reg;
++	u8			dlf_size;
+ 	int			line;
+ 	int			msr_mask_on;
+ 	int			msr_mask_off;
+@@ -366,6 +368,37 @@ static bool dw8250_idma_filter(struct dma_chan *chan, void *param)
+ 	return param == chan->device->dev->parent;
  }
  
--static void serial8250_do_set_divisor(struct uart_port *port, unsigned int baud,
--			    unsigned int quot, unsigned int quot_frac)
-+void serial8250_do_set_divisor(struct uart_port *port, unsigned int baud,
++/*
++ * divisor = clk / (16 * baud) = div(I) + div(F)
++ * "I" means integer, "F" means fractional
++ *
++ * 2^dlf_size * clk / (16 * baud) = 2^dlf_size * (div(I) + div(F))
++ * so, (clk << (dlf_siz - 4)) / baud = (div(I) + div(F)) << dlf_size
++ *
++ * let quot = DIV_ROUND_CLOSEST(clk << (dlf_size - 4), baud), we get
++ * div(I) = quot >> dlf_size
++ * div(F) = quot & dlf_mask, where dlf_mask = GENMASK(dlf_size - 1, 0)
++ */
++static unsigned int dw8250_get_divisor(struct uart_port *p,
++				       unsigned int baud,
++				       unsigned int *frac)
++{
++	unsigned int quot;
++	struct dw8250_data *d = p->private_data;
++
++	quot = DIV_ROUND_CLOSEST(p->uartclk << (d->dlf_size - 4), baud);
++	*frac = quot & GENMASK(d->dlf_size - 1, 0);
++
++	return quot >> d->dlf_size;
++}
++
++static void dw8250_set_divisor(struct uart_port *p, unsigned int baud,
 +			       unsigned int quot, unsigned int quot_frac)
++{
++	dw8250_writel_ext(p, DW_UART_DLF, quot_frac);
++	serial8250_do_set_divisor(p, baud, quot, quot_frac);
++}
++
+ static void dw8250_quirks(struct uart_port *p, struct dw8250_data *data)
  {
- 	struct uart_8250_port *up = up_to_u8250p(port);
+ 	if (p->dev->of_node) {
+@@ -426,6 +459,18 @@ static void dw8250_setup_port(struct uart_port *p)
+ 	dev_dbg(p->dev, "Designware UART version %c.%c%c\n",
+ 		(reg >> 24) & 0xff, (reg >> 16) & 0xff, (reg >> 8) & 0xff);
  
-@@ -2612,6 +2612,7 @@ static void serial8250_do_set_divisor(struct uart_port *port, unsigned int baud,
- 		serial_port_out(port, 0x2, quot_frac);
- 	}
- }
-+EXPORT_SYMBOL_GPL(serial8250_do_set_divisor);
- 
- static void serial8250_set_divisor(struct uart_port *port, unsigned int baud,
- 				   unsigned int quot, unsigned int quot_frac)
-diff --git a/include/linux/serial_8250.h b/include/linux/serial_8250.h
-index 76b9db71e489..18e21427bce4 100644
---- a/include/linux/serial_8250.h
-+++ b/include/linux/serial_8250.h
-@@ -160,6 +160,9 @@ extern void serial8250_do_shutdown(struct uart_port *port);
- extern void serial8250_do_pm(struct uart_port *port, unsigned int state,
- 			     unsigned int oldstate);
- extern void serial8250_do_set_mctrl(struct uart_port *port, unsigned int mctrl);
-+extern void serial8250_do_set_divisor(struct uart_port *port, unsigned int baud,
-+				      unsigned int quot,
-+				      unsigned int quot_frac);
- extern int fsl8250_handle_irq(struct uart_port *port);
- int serial8250_handle_irq(struct uart_port *port, unsigned int iir);
- unsigned char serial8250_rx_chars(struct uart_8250_port *up, unsigned char lsr);
++	dw8250_writel_ext(p, DW_UART_DLF, ~0U);
++	reg = dw8250_readl_ext(p, DW_UART_DLF);
++	dw8250_writel_ext(p, DW_UART_DLF, 0);
++
++	if (reg) {
++		struct dw8250_data *d = p->private_data;
++
++		d->dlf_size = fls(reg);
++		p->get_divisor = dw8250_get_divisor;
++		p->set_divisor = dw8250_set_divisor;
++	}
++
+ 	reg = dw8250_readl_ext(p, DW_UART_CPR);
+ 	if (!reg)
+ 		return;
 -- 
 2.18.0
 
