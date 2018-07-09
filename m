@@ -2,72 +2,83 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF980C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123A7C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B7420878
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:45:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79B7420878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
+	by mail.kernel.org (Postfix) with ESMTP id C35602087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:47:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C35602087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932501AbeGIIpz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:45:55 -0400
-Received: from www.osadl.org ([62.245.132.105]:51984 "EHLO www.osadl.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932231AbeGIIpx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:45:53 -0400
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w698hQVG027720;
-        Mon, 9 Jul 2018 10:43:26 +0200
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Michal Simek <monstr@monstr.eu>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] microblaze: warn if of_iomap() failed
-Date:   Mon,  9 Jul 2018 10:42:44 +0200
-Message-Id: <1531125764-25816-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        id S1754438AbeGIIrP convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 04:47:15 -0400
+Received: from prv1-mh.provo.novell.com ([137.65.248.33]:43887 "EHLO
+        prv1-mh.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751147AbeGIIrO (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:9:1>);
+        Mon, 9 Jul 2018 04:47:14 -0400
+Received: from INET-PRV1-MTA by prv1-mh.provo.novell.com
+        with Novell_GroupWise; Mon, 09 Jul 2018 02:47:13 -0600
+Message-Id: <5B43210E02000078001D232B@prv1-mh.provo.novell.com>
+X-Mailer: Novell GroupWise Internet Agent 18.0.0 
+Date:   Mon, 09 Jul 2018 02:47:10 -0600
+From:   "Jan Beulich" <JBeulich@suse.com>
+To:     <pavel@ucw.cz>
+Cc:     <davem@davemloft.net>, <mingo@elte.hu>,
+        <herbert@gondor.apana.org.au>, "Ingo Molnar" <mingo@kernel.org>,
+        <tglx@linutronix.de>, <rjw@rjwysocki.net>,
+        "Juergen Gross" <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
+        "Alok Kataria" <akataria@vmware.com>, <hpa@zytor.com>
+Subject: Re: [PATCH v2] x86-64: use 32-bit XOR to zero registers
+References: <5B39FF1A02000078001CFB54@prv1-mh.provo.novell.com>
+ <20180704202934.GB15246@amd> <20180705071215.GA29659@gmail.com>
+ <20180709083359.GB7312@amd>
+In-Reply-To: <20180709083359.GB7312@amd>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_iomap() can return NULL. The function is void thus error propagation
-is not possible but at least a WARN_ON() seems warranted here as a silent
-failure might lead to a hard to understand system state.
+>>> On 09.07.18 at 10:33, <pavel@ucw.cz> wrote:
+> Anyway, normally assembler is the one who chooses instruction
+> encoding.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
----
+There are different possible views here, and I personally think that
+while it is a compiler's job to chose optimal encodings, assemblers
+shouldn't by default alter what the programmer (or compiler) has
+specified, unless there are multiple encodings that are _entirely_
+identical in effect, but which are _truly_ different encodings (and
+presence/absence of instruction prefixes to me doesn't count as
+"truly different"). This view is particularly on the basis that
+assembly programmers often imply a certain encoding to be chosen,
+be it just to imply size, or to go as far as meaning to run-time patch
+code.
 
-Problem located with experimental coccinelle script
+> xor %rax, %rax is equivalent to xor %eax, %eax; first variant is
+> slower on some CPUs, second variant will take one extra byte due to
+> operand size prefix IIRC...
 
-Probably this should be a BUG_ON() as this is such a low level fault that
-continuing operations probably makes little sense.
+The second variant is actually shorter by one byte.
 
-Patch was compiletested with: mmu_defconfig (implies CONFIG_PCI_XILINX=y)
+> Should the assembler generate right
+> variant according to the CPU type?
 
-Patch is against 4.18-rc3 (localversion-next is next-20180709)
+An "optimization" mode has recently been added to gas, but in general
+as well as for the sake of older gas I don't think we should rely on this
+new behavior (which is also off by default) except in cases where the
+impact on the source code would be undesirable (as can e.g. be the
+case when macro-izing things).
 
- arch/microblaze/pci/xilinx_pci.c | 1 +
- 1 file changed, 1 insertion(+)
+Jan
 
-diff --git a/arch/microblaze/pci/xilinx_pci.c b/arch/microblaze/pci/xilinx_pci.c
-index 14c7da5f..7fa72ff 100644
---- a/arch/microblaze/pci/xilinx_pci.c
-+++ b/arch/microblaze/pci/xilinx_pci.c
-@@ -157,6 +157,7 @@ void __init xilinx_pci_init(void)
- 
- 	/* Set the max bus number to 255, and bus/subbus no's to 0 */
- 	pci_reg = of_iomap(pci_node, 0);
-+	WARN_ON(!pci_reg);
- 	out_be32(pci_reg + XPLB_PCI_BUS, 0x000000ff);
- 	iounmap(pci_reg);
- 
--- 
-2.1.4
 
