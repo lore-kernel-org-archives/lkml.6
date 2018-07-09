@@ -2,132 +2,106 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URG_BIZ,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA24CC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2245AC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:32:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81F612086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE75920896
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:32:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eodbefVf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81F612086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qbiWpxfl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE75920896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932795AbeGILb7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 07:31:59 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36498 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932482AbeGILb4 (ORCPT
+        id S932867AbeGILcD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 07:32:03 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:51508 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932482AbeGILb7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 07:31:56 -0400
-Received: by mail-it0-f67.google.com with SMTP id j185-v6so25611704ite.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 04:31:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=G6c9a47YExbDBhVY3P4bZgpa8L9U1okymtiLcOu2tV0=;
-        b=eodbefVfnBWoLEQVQmHVpWCo2TWNvawrWQA8s2l5F3b6TukJ/B/96mdeDHRc0a7mLK
-         R+UgGlw9hLbPbYhHrLpzstwD4Soqb0LS8IBQ1vK8FnrRrkisX+Jx80G5bWthgfIz6PST
-         a1rEc9MPmYGYhOHj+3ND4hjUaQlRgoLC1b6/Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=G6c9a47YExbDBhVY3P4bZgpa8L9U1okymtiLcOu2tV0=;
-        b=TtcDid437Mu9F4c2J2GkhanhE+WUr0EQ2qu5f0LgxZGhFPXMpRyTDELM//T1d6WPOq
-         Xg3CKGRI5xspH/YFeW7EnlQyuBErMP0jnNuwq+AQ9i6cGoqJjc/rba+rxTEa6OQJE+j+
-         NxOSS8jb6AXk21Kmgk5e+7XGtQEUutY+AbwfPCq+PDMq1OsrTvVde5aSYBR4nSpuW5Bj
-         WrTwlZPwcUJ8MZCgsiYFyrBJk7AIbi7LhCU3J+ur1CiDHG8B5y26dq7/zTq/bXavckvY
-         km80ZcfV9YCDJPEBTdRV3y9Q/rR0blwSLRqq7v4Iw392J26IZhffQC8Hw8KSQ+AlG0SQ
-         Vulw==
-X-Gm-Message-State: APt69E33IeCakf/+WwcOIEDQCok7duMy8pavxlWw5N+goFpH2cefNN84
-        mSbw2QGWoBp454om2tShwEN2kQCWCJ3WeEEX9Mc6cw==
-X-Google-Smtp-Source: AAOMgpfW9Tz0DtHyMIj4SQhl6BAHE1PM/3Cx1vfm0ascU69suwVyIpW0DV98DSUHzXgDYWq0GGsX5FqFoR31cN4oYDI=
-X-Received: by 2002:a24:d00b:: with SMTP id m11-v6mr16051257itg.97.1531135916322;
- Mon, 09 Jul 2018 04:31:56 -0700 (PDT)
+        Mon, 9 Jul 2018 07:31:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=O8efGWUQRjSlici3C8/Ci9M5fWEFfYjJoKyJmtr3UPg=; b=qbiWpxflm2ZVt2xqt1j83Z2p0y
+        JYbn7mkmui+m6Tp8XX1t/eR82kjx0+xdwebadlLyE0ii5yZwmkw6bFtxxCNF3jE0GZ2qApSSfAvAS
+        hxYGLNbUR6aO44Y4oUvnPlGu68uSoG5L2EK3Ey8Kfl+tW2Tu0lTakcNRc3heTP7ENTGHNb2nftbC0
+        i2KS0edy6SMUUDsJDTHNoCSokTxDoYFLioX/0dmbOhok1b6dKq+3ZhmuF+lLxbbkwQE7sBsA/VPGt
+        4V1WURWmDE8WaM5WLoJ/V54CCgRDNOtvgmM+VYcC+liwGsNCsXygq98Asn+66W+gYZ0gpyCzIggXK
+        2927D8XA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fcUOa-0007qn-Le; Mon, 09 Jul 2018 11:31:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EE06D2028932C; Mon,  9 Jul 2018 13:31:54 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 13:31:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        mhillenb@amazon.de, linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Message-ID: <20180709113154.GM2476@hirez.programming.kicks-ass.net>
+References: <bb77e730a5ada3689650b636e1dd03ac5cc87256.camel@infradead.org>
+ <20180706162905.GZ2476@hirez.programming.kicks-ass.net>
+ <20180706171150.GI3593@linux.vnet.ibm.com>
+ <20180709085351.GC2476@hirez.programming.kicks-ass.net>
+ <1531127935.18697.57.camel@infradead.org>
+ <20180709104429.GI2476@hirez.programming.kicks-ass.net>
+ <1531133801.18697.73.camel@infradead.org>
+ <20180709110657.GL2476@hirez.programming.kicks-ass.net>
+ <1531134735.18697.77.camel@infradead.org>
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 04:31:55 -0700 (PDT)
-In-Reply-To: <3d4064a559e741e05105b11c9e7a831d@agner.ch>
-References: <20180704150745.21003-1-stefan@agner.ch> <CAPDyKFou773HgPzE29Ynr2MVFcaOhb=+uXBrjL+1H8iWx4jdQw@mail.gmail.com>
- <3d4064a559e741e05105b11c9e7a831d@agner.ch>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 9 Jul 2018 13:31:55 +0200
-Message-ID: <CAPDyKFqoZ=od-sJVO9Aj9Ha6QjGqjvrNuyWE2HS_Rtkap_bbKw@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: sdhci-esdhc-imx: allow 1.8V modes without
- 100/200MHz pinctrl states
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1531134735.18697.77.camel@infradead.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 5 July 2018 at 16:22, Stefan Agner <stefan@agner.ch> wrote:
-> On 05.07.2018 15:10, Ulf Hansson wrote:
->> On 4 July 2018 at 17:07, Stefan Agner <stefan@agner.ch> wrote:
->>> If pinctrl nodes for 100/200MHz are missing, the controller should
->>> not select any mode which need signal frequencies 100MHz or higher.
->>> To prevent such speed modes the driver currently uses the quirk flag
->>> SDHCI_QUIRK2_NO_1_8_V. This works nicely for SD cards since 1.8V
->>> signaling is required for all faster modes and slower modes use 3.3V
->>> signaling only.
->>>
->>> However, there are eMMC modes which use 1.8V signaling and run below
->>> 100MHz, e.g. DDR52 at 1.8V. With using SDHCI_QUIRK2_NO_1_8_V this
->>> mode is prevented. When using a fixed 1.8V regulator as vqmmc-supply
->>> the stack has no valid mode to use. In this tenuous situation the
->>> kernel continuously prints voltage switching errors:
->>>   mmc1: Switching to 3.3V signalling voltage failed
->>>
->>> Avoid using SDHCI_QUIRK2_NO_1_8_V and prevent faster modes by
->>> altering the SDHCI capability register. With that the stack is able
->>> to select 1.8V modes even if no faster pinctrl states are available:
->>>   # cat /sys/kernel/debug/mmc1/ios
->>>   ...
->>>   timing spec:    8 (mmc DDR52)
->>>   signal voltage: 1 (1.80 V)
->>>   ...
->>>
->>> Link: http://lkml.kernel.org/r/20180628081331.13051-1-stefan@agner.ch
->>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->>
->> Thanks, applied for next! Let's see if this turns out okay, then let's
->> make it a fix and add a stable tag.
->>
->> BTW, would you mind looking up the commit it fixes? Or if there is a
->> certain stable release we should target.
->>
->
-> The quirk SDHCI_QUIRK2_NO_1_8_V has been used if pinctrl were missing
-> since support has been added for additional pinctrl states (back around
-> 3.13).
->
-> Fixes: ad93220de7da ("mmc: sdhci-esdhc-imx: change pinctrl state
-> according to uhs mode")
->
-> I guess it won't apply on older kernels since the code which applies the
-> quirk has been moved around.
+On Mon, Jul 09, 2018 at 12:12:15PM +0100, David Woodhouse wrote:
+> On Mon, 2018-07-09 at 13:06 +0200, Peter Zijlstra wrote:
+> > On Mon, Jul 09, 2018 at 11:56:41AM +0100, David Woodhouse wrote:
 
-Thanks!
+> > > > But either proposal is exactly the same in this respect. The whole
+> > > > rcu_urgent_qs thing won't be set any earlier either.
 
-I have moved the patch to fixes and added a stable tag, # v4.13+. It
-applied cleanly on top of that kernel version, if you or anyone else
-needs it for an older kernel, please post a backported patch.
+> > > Er.... Marius, our latencies in expand_fdtable() definitely went from
+> > > ~10s to well below one second when we just added the rcu_all_qs() into
+> > > the loop, didn't they? And that does nothing if !rcu_urgent_qs.
 
-[...]
+> > Argh I never found that, because obfuscation:
+> >=20
+> > 	ruqp =3D per_cpu_ptr(&rcu_dynticks.rcu_urgent_qs, rdp->cpu);
+> > 	...
+> > 		smp_store_release(ruqp, true);
+> >=20
+> > I, using git grep "rcu_urgent_qs.*true" only found
+> > rcu_request_urgent_qs_task() and sync_sched_exp_handler().
+> >=20
+> > But how come KVM even triggers that case; rcu_implicit_dynticks_qs() is
+> > for NOHZ and offline CPUs.
+>=20
+> I don't know that it is; I'm merely going by the empirical observation
+> that with a check for rcu_urgent_qs in the vcpu_run() loop, KVM is no
+> longer screwing over synchronize_sched() for 10 seconds at a time. Or
+> even 1 second at a time.
 
-Kind regards
-Uffe
+It would be good to know what exactly sets that variable in your case.
+
+> I'm all for considering a CPU in guest mode to be quiescent, and not
+> waiting for it at all. But we don't do that without full NOHZ even for
+> CPUs in userspace.
+
+Doing it for guests should be easier than for userspace, since
+vmenter/vmexit are (afaik) _much_ more expensive than sysenter/sysexit.
