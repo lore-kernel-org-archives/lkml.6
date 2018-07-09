@@ -2,192 +2,128 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 791CDC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590A6C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 308EA20673
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1588520673
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:01:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZULQGnAs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 308EA20673
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FvRPjkeK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1588520673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932622AbeGIJAS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 05:00:18 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:47023 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752914AbeGIJAQ (ORCPT
+        id S932504AbeGIJBO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 05:01:14 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:36334 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754077AbeGIJBN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 05:00:16 -0400
-Received: by mail-pf0-f193.google.com with SMTP id l123-v6so13205813pfl.13
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 02:00:16 -0700 (PDT)
+        Mon, 9 Jul 2018 05:01:13 -0400
+Received: by mail-pf0-f194.google.com with SMTP id u16-v6so13215291pfh.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 02:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KYxQu7doFu6e+nrLh0HttSrZJ4AdYWYNOJVxsuVli+o=;
-        b=ZULQGnAsf6K0Jb+oLCdL75nmIY4Zw27XzCNAHrt0fcxK67rQT7LgC/QQ2VErMLJuh6
-         Ftz7PpDoIudfQYLepBX4H69xcZAyjXEDXcYpmNZuwuWuNVkyZx4v61TRR5dYLObPasbS
-         4QkGJ7PNL0UW8O/pLbMSV/vfWQRhtkJFtogB4=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=RvigYRG3J3iEcUNgk32LwqwVII13LMfAQxIwp8kGsTQ=;
+        b=FvRPjkeKN9JeD2RmsOfoelmJYRmdfqJ+QVSoK7/NTW/ScXnHrplv9TKIHsNLT5IUqU
+         xaRUN6QIj6A7LrrDp+ws+2NqYFct6YTLIrOaLEolB1bIwx26IIeGYDKtuTlIvvcgE7Y6
+         /Y6V93zry0zJtKGWMNIKr3wmosOyKinUF/WZckoz/t0Pnud/7Z9jYft2Ke/JuCVp3t5j
+         3RgFkojhUbdF32AqoMQHhCYHLeYeqYfU/CdlN27ttbn+USaTKm6chV9kW84+pwcXvNzv
+         tXbNFm2qyJnMMgCCgqY6CQbG+R0ZNMnZZHKl9WOHS6GI3sqriYAKWwTD0QD5DBKzDVW/
+         4cpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=KYxQu7doFu6e+nrLh0HttSrZJ4AdYWYNOJVxsuVli+o=;
-        b=mpAAbNnZEMjbVHdrXIWf3i+trkIs2yKi0hOWsnZnK3GGgGkBTdx5hJu/+ABkJz8Xmo
-         H4gaZkFMyuv1+873DnXaZEwt4welRRL4CdDs9VYFfshrRFY1cL4GWKsWNq5vhfywhgjw
-         WBX0guwSjNEkxtF4aJPIfad3OXSDx3Xd8KQc5jB82WvnpJkBozpcYgaSUz+y4I3rPA9f
-         YO7DyVvd82jXyvihXYo4UTZA6ZazLyKg2HLk5qPB4l7omCK8JTtpPpTOJmDpnvufWJS+
-         f+7q3CAPsos3CBKWA3LqSZjVFMKGuoDeh1y6FtXWInZMo7447SAwCwNuQHASunOk+YNS
-         9wTQ==
-X-Gm-Message-State: APt69E2y4tGJ+MRYOeT5QkCKKZURgG8mkv33z4BNoMcSb45mj+H6OtPG
-        gwD7p9Ny825uLaxGl8TE+cIXog==
-X-Google-Smtp-Source: AAOMgpcxL94oUgcrIkLmNTG6Aa7nSBLCXJmW3dsOnu93QCeCJtOAXiAEom4M1iA1KcVc4DwYE4DDxw==
-X-Received: by 2002:a62:1c16:: with SMTP id c22-v6mr7019872pfc.148.1531126816453;
-        Mon, 09 Jul 2018 02:00:16 -0700 (PDT)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id m15-v6sm12814438pgc.43.2018.07.09.02.00.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 02:00:15 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 18:01:34 +0900
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     James Morse <james.morse@arm.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
-        vgoyal@redhat.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
-        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
-        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 13/14] arm64: kexec_file: add kernel signature
- verification support
-Message-ID: <20180709090133.GU28220@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
-        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
-        bhsharma@redhat.com, kexec@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20180623022058.10935-1-takahiro.akashi@linaro.org>
- <20180623022058.10935-14-takahiro.akashi@linaro.org>
- <ff77f2d9-82c6-8fbb-3696-e1fcfd61c333@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ff77f2d9-82c6-8fbb-3696-e1fcfd61c333@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RvigYRG3J3iEcUNgk32LwqwVII13LMfAQxIwp8kGsTQ=;
+        b=ZvDBsWRdZo7LcAR7CCop6BofdCc89Y6UkTWUxwMJI2d7OyLoBlX7zkCvLhIYaLILSd
+         MrJlg0lf6NsKc0yQnQzWZkFeSM5ZpoMWTlLc3SgFtF0SkPjOHNhgxGV0XwDPBeE6+/iX
+         ilUfikEhhD3Il8WOnQejYRHqIiT4cPWlo3DfXPxwWMztk43rzJaXA10XgmmRAdOae49H
+         tvJ8SH0dJY5pOF2ZXfeV3m0OVo4N5o2knoMWLz1wkFwx+2i5qFiMlTFg9wlqJgVMlWJI
+         NL+v1Fqlh/C/V8juSJ2PzFv/5Z4eFFtSEIiSzzAXxwqyBJGGgwQ9AmP+sQmHX3NQP08z
+         BU+Q==
+X-Gm-Message-State: APt69E0Pk8lkyQXDlmZM5RDcdlr7SK8wAAMbVs1aS/ZfYjv2p6XUVLZ6
+        k75r7M1D7rYG7bgJfD+XEms=
+X-Google-Smtp-Source: AAOMgpdOJNRQ6qkg7BYG1rxQtkEhfVFjfwG3C+zUeJi3O3cH55m7MdqDHaYKqC5XPyB3CdYLT2YQxQ==
+X-Received: by 2002:a62:b14:: with SMTP id t20-v6mr12401589pfi.36.1531126873097;
+        Mon, 09 Jul 2018 02:01:13 -0700 (PDT)
+Received: from localhost ([14.139.180.40])
+        by smtp.gmail.com with ESMTPSA id r16-v6sm27557154pfe.173.2018.07.09.02.01.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 02:01:12 -0700 (PDT)
+From:   Jaya Durga <rjdurga@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     quytelda@tamalin.org, jonathankim@gctsemi.com, deanahn@gctsemi.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        root <root@boss.chennai.cdac.in>, Jaya Durga <rjdurga@gmail.com>
+Subject: [PATCH] Staging: gdm724x: gdm_tty.c:Fixed Macro argument reuse
+Date:   Mon,  9 Jul 2018 14:14:06 +0530
+Message-Id: <20180709084406.6129-1-rjdurga@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 03, 2018 at 06:47:38PM +0100, James Morse wrote:
-> Hi Akashi,
-> 
-> On 23/06/18 03:20, AKASHI Takahiro wrote:
-> > With this patch, kernel verification can be done without IMA security
-> > subsystem enabled. Turn on CONFIG_KEXEC_VERIFY_SIG instead.
-> > 
-> > On x86, a signature is embedded into a PE file (Microsoft's format) header
-> > of binary. Since arm64's "Image" can also be seen as a PE file as far as
-> > CONFIG_EFI is enabled, we adopt this format for kernel signing.
-> > 
-> > You can create a signed kernel image with:
-> >     $ sbsign --key ${KEY} --cert ${CERT} Image
-> 
-> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > index f68318f61c85..5133c22a01ab 100644
-> > --- a/arch/arm64/Kconfig
-> > +++ b/arch/arm64/Kconfig
-> > @@ -845,6 +845,30 @@ config KEXEC_FILE
-> >  	  for kernel and initramfs as opposed to list of segments as
-> >  	  accepted by previous system call.
-> >  
-> > +config KEXEC_VERIFY_SIG
-> > +	bool "Verify kernel signature during kexec_file_load() syscall"
-> > +	depends on KEXEC_FILE
-> > +	help
-> > +	  Select this option to verify a signature with loaded kernel
-> > +	  image. If configured, any attempt of loading a image without
-> > +	  valid signature will fail.
-> > +
-> > +	  In addition to that option, you need to enable signature
-> > +	  verification for the corresponding kernel image type being
-> > +	  loaded in order for this to work.
-> > +
-> > +config KEXEC_IMAGE_VERIFY_SIG
-> > +	bool "Enable Image signature verification support"
-> > +	default y
-> > +	depends on KEXEC_VERIFY_SIG
-> > +	depends on EFI && SIGNED_PE_FILE_VERIFICATION
-> > +	help
-> > +	  Enable Image signature verification support.
-> > +
-> > +comment "Image signature verification is missing yet"
-> > +	depends on KEXEC_VERIFY_SIG
-> > +	depends on !EFI || !SIGNED_PE_FILE_VERIFICATION
-> 
-> 
-> This comment thing is a good idea, but its also a bit confusing... it took me
-> quite a while to work out what was missing. Could we phrase it something like:
-> "Support for PE file signature verification disabled!"
+From: root <root@boss.chennai.cdac.in>
 
-OK.
+CHECK: Macro argument reuse 'gdm' - possible side-effects?
 
-> This tells us its about PE files, and its probably a missing config option
-> somewhere, not some code that hasn't been written yet. (which was my first
-> assumption!).
-> 
-> KEXEC_VERIFY_SIG presumably turns on just the IMA verification, which verifies
-> the Image, but not in the same way as KEXEC_IMAGE_VERIFY_SIG.... (if I've
-> understood it properly)
+convert GDM_TTY_READY to gdm_tty_ready static function
+to fix checkpath check
 
-I'm afraid that I'm not clear at the cover letter.
-Those two mechanisms, IMA verification and kexec-specific verification,
-are totally different. The former is relatively new as well as generic,
-and doesn't even require KEXEC_VERIFY_SIG at all as all the stuff is done
-under IMA framework (via security hooks) with extended file attributes.
+Signed-off-by: Jaya Durga <rjdurga@gmail.com>
+---
+ drivers/staging/gdm724x/gdm_tty.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-On the other hand, KEXEC_VERIFY_SIG is just an option that turns on
-verification check in a kexec-specific (and more importantly arch-specific
-and file-format-specific) manner through 'kexec_file_ops->verify interface.'
+diff --git a/drivers/staging/gdm724x/gdm_tty.c b/drivers/staging/gdm724x/gdm_tty.c
+index bf554f7c56ca..5de1940c1f79 100644
+--- a/drivers/staging/gdm724x/gdm_tty.c
++++ b/drivers/staging/gdm724x/gdm_tty.c
+@@ -27,7 +27,11 @@
+#define MUX_TX_MAX_SIZE 2048
+-#define GDM_TTY_READY(gdm) (gdm && gdm->tty_dev && gdm->port.count)
++static unsigned int gdm_tty_ready(struct gdm *gdm)
++{
++return (gdm && gdm->tty_dev && gdm->port.count);
++}
++
+static struct tty_driver *gdm_driver[TTY_MAX_COUNT];
+static struct gdm *gdm_table[TTY_MAX_COUNT][GDM_TTY_MINOR];
+@@ -127,7 +131,7 @@ static int gdm_tty_recv_complete(void *data,
+{
+ 	struct gdm *gdm = tty_dev->gdm[index];
+-	if (!GDM_TTY_READY(gdm)) {
++	if (!gdm_tty_ready(gdm)) {
+ 		if (complete == RECV_PACKET_PROCESS_COMPLETE)
+ 			gdm->tty_dev->recv_func(gdm->tty_dev->priv_dev,
+ 						gdm_tty_recv_complete);
+@@ -154,7 +158,7 @@ static void gdm_tty_send_complete(void *arg)
+ {
+ 	struct gdm *gdm = arg;
+-	if (!GDM_TTY_READY(gdm))
++	if (!gdm_tty_ready(gdm))
+ 		return;
+ 	tty_port_tty_wakeup(&gdm->port);
+@@ -168,7 +172,7 @@ static int gdm_tty_write(struct tty_struct *tty, const unsigned char *buf,
+ 	int sent_len = 0;
+ 	int sending_len = 0;
+-	if (!GDM_TTY_READY(gdm))
++	if (!gdm_tty_ready(gdm))
+ 		return -ENODEV;
+ 	if (!len)
+@@ -195,7 +199,7 @@ static int gdm_tty_write_room(struct tty_struct *tty)
+{
+ 	struct gdm *gdm = tty->driver_data;
+-	if (!GDM_TTY_READY(gdm))
++	if (!gdm_tty_ready(gdm))
+ 		return -ENODEV;
+ 	return WRITE_SIZE;
 
-> Is there any reason to have these as separate enables?
 
-If you are talking about KEXEC_VERIFY_SIG and KEXEC_IMAGE_VERIFY_SIG,
-it is a leftover when "vmlinux" image was also supported in my
-old versions of kexec_file patch set.
-But please note that x86 also retains two separate configuration options,
-KEXEC_VERIFY_SIG and KEXEC_BZIMAGE_VERIFY_SIG.
-I simply followed that.
-
-> Couldn't we 'select SIGNED_PE_FILE_VERIFICATION if EFI' in KEXEC_VERIFY_SIG?
-
-I didn't "select" SIGNED_PE_FILE_VERIFICATION here following
-"kbuild/kconfig-language.txt" which suggests, "use select only for
-non-visible symbols (no prompts anywhere)."
-
-> This would mean there is one option to verify signatures, instead of two...
-> (does it really depend on EFI?)
-
-Strictly speaking, SIGNED_PE_FILE_VERIFICATION depends on the fact
-that a binary file is in PE format, which means that EFI is enabled
-on arm64.
-It is possible to support KEXEC_VERIFY_SIG for non-PE binaries, but
-in that case, we will have to invent a new (arm64-specific) way of
-verification.
-(For instance, we might want to add a kexec-specific ELF segment to vmlinux.)
-
-Thanks,
--Takahiro AKASHI
-
-> 
-> Thanks,
-> 
-> James
