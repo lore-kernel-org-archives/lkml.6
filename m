@@ -6,99 +6,132 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D063C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8CEC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C2642087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:04:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E87A02087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:04:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fl+2CkLR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C2642087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="qMuWcw4+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E87A02087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934006AbeGISEm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 14:04:42 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:45216 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933775AbeGISEk (ORCPT
+        id S934107AbeGISEt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 14:04:49 -0400
+Received: from mail.efficios.com ([167.114.142.138]:53192 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933775AbeGISEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 14:04:40 -0400
-Received: by mail-io0-f194.google.com with SMTP id l25-v6so17862626ioh.12;
-        Mon, 09 Jul 2018 11:04:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wa1xusVboXCkqCacRrAsaOCtihfIK5/GT3tCUm4CBtk=;
-        b=fl+2CkLR+MuSH3bnmIWWHygAuODBNKPx5rCOa7MX+eoKms9AuCeoRGNwY7sjcNxD3D
-         093IoMUlFHQCTCKp3NK1BpXtkzTRyXSIL3pJEpkfu7gIzgwcasV+Qh46bhoAK1F4aiEx
-         oVaTZhMuOWU2WMrQ7k0YAMGCxEoFnhyRHvBMI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wa1xusVboXCkqCacRrAsaOCtihfIK5/GT3tCUm4CBtk=;
-        b=AnEXmQyMSZlECo3bCbWtWgZTMb0FjOSgo/c1ZKJsU0W5oE0tMRNfzT8JWu5wafwysn
-         ooKGPK4MReDqjdYq+C9aVe7Cb5Dsn7rqo4YiXYmEzMMLx+OL9JpJChmtLv2l3LyqTG9J
-         ti3oP4UQv0ASDRpN8HAmfEMOELkkI4IoXt+cHr2k/Tv8kJQmHwpi56jbOF2okL5lx34G
-         weihbUmEQChhvHqXGc94+2qwFQIBQirF9asDKYEzxTS8ioWeNJmO+A34huTD3IOjk2od
-         pquIzC+iHLs9c11ED6i5MHoCjBhp2fiAf7QFn+b7r8vmU0+ErvTXUrXQF73Wkmyt6fS7
-         /ElA==
-X-Gm-Message-State: APt69E32V9rSel6RZ6kCovuPtWlfZP5XPUS7Eh19z28lIDGsCBdz25eg
-        +sdueV+HC0JzlrkQBZjC3lQTD1Ml/C7MOZiozBM=
-X-Google-Smtp-Source: AAOMgpeaN5JmUqqlH4zQuLTrEci9bK8NoSW/ZDmNOsJ/AU0cRIS1ECGu3XSgHdFsVAD/zxnjj8jTgK6CKbRYg5unfAA=
-X-Received: by 2002:a6b:7a05:: with SMTP id h5-v6mr2743478iom.238.1531159479667;
- Mon, 09 Jul 2018 11:04:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180708210330.27324-1-mathieu.desnoyers@efficios.com>
- <20180708210330.27324-3-mathieu.desnoyers@efficios.com> <854203778.2272.1531157327328.JavaMail.zimbra@efficios.com>
-In-Reply-To: <854203778.2272.1531157327328.JavaMail.zimbra@efficios.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 9 Jul 2018 11:04:28 -0700
-Message-ID: <CA+55aFzpjA3r9HdfCU5LrEhSt6S=+RfKuJ2GVc8Wv5Hz-_Me8Q@mail.gmail.com>
-Subject: Re: [PATCH for 4.18 2/6] rseq: use get_user/put_user rather than __get_user/__put_user
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
+        Mon, 9 Jul 2018 14:04:46 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id AD34D22DA76;
+        Mon,  9 Jul 2018 14:04:45 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 6SARYiNSrXys; Mon,  9 Jul 2018 14:04:45 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 2780522DA6E;
+        Mon,  9 Jul 2018 14:04:45 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 2780522DA6E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1531159485;
+        bh=En9yzMm74smKiIRrfWZQ1MZL3eW/Y3CEZfII3uUb3H4=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=qMuWcw4+p2wMbq73pLl5S/Hz1dXmSdfZQA4tmaS5JnicLC5Jh+oKCY4jvcmcBL1ss
+         hzwl0XF29DIYh2XJU9LbPRiHJybK0k3mHx6iHyHCTBOZx5EUWJdnI/ZOxBAeBtyUzB
+         K0tDqydHxMdofbDh96vnnrF+SznlVXk0YJKtp1sh8+dKVB3E1Pu9ZI4scKH8V/2k/0
+         Pz3QgEM7oMlgPZU/U3O/TBonqvmWXVC0FH7Hdp2zkToUz86lg6Ir7m9KxHoNcnmr6M
+         S4wLu5hbyizc5xZD+Thdr1tj7IGw0pYGsTgIa5AFxuwQ8IQrmKWLsDc5guBm+PFnK/
+         nPtOz6zexdkwA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id Ti85rH09fPxr; Mon,  9 Jul 2018 14:04:45 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 0CDC022DA67;
+        Mon,  9 Jul 2018 14:04:45 -0400 (EDT)
+Date:   Mon, 9 Jul 2018 14:04:44 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Boqun Feng <boqun.feng@gmail.com>,
         Andy Lutomirski <luto@amacapital.net>,
         Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Russell King - ARM Linux <linux@arm.linux.org.uk>,
-        Ingo Molnar <mingo@redhat.com>, Peter Anvin <hpa@zytor.com>,
-        Andi Kleen <andi@firstfloor.org>,
-        Christoph Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        Russell King <linux@arm.linux.org.uk>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <andi@firstfloor.org>,
+        Chris Lameter <cl@linux.com>, Ben Maurer <bmaurer@fb.com>,
+        rostedt <rostedt@goodmis.org>,
         Josh Triplett <josh@joshtriplett.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Michael Kerrisk <mtk.manpages@gmail.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Andrew Hunter <ahh@google.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Joel Fernandes <joelaf@google.com>
+Message-ID: <2129841179.2387.1531159484965.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180708210330.27324-1-mathieu.desnoyers@efficios.com>
+References: <20180708210330.27324-1-mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH for 4.18 0/6] Restartable Sequences updates
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: Restartable Sequences updates
+Thread-Index: HPGZEsQru3lrMJ5FszLwYei2lRelkg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 10:28 AM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> So, another twist to this story: ppc32 does not implement u64 get_user().
+----- On Jul 8, 2018, at 5:03 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
 
-I was going to say that "that's not possible", since we actually have
-64-bit arguments at least in the form of "loff_t __user *".
+> Following the recent discussion thread [1] about rseq uapi, here is
+> a set of updates submitted for integration into 4.18. Those change all
+> rseq __get_user/__put_user for get_user/put_user as discussed.
 
-But when I started looking, it turns out that yeah, we do
-"copy_from_user()" on them, and instead made the x86 copy_from_user()
-have special cases for constant sizes.
+Considering that ppc32 does not implement 64-bit get_user(), I will re-spin
+the whole series using __copy_from_user/__copy_to_user() to replace
+__get_user()/__put_user() to load/store the 64-bit rseq_cs field.
 
-So a 8-byte copy_from_user() is fine. It ends up being a "get_user()"
-on x86 anyway.
+I'm aiming for a minimal change at this stage of the rc cycle.
 
-                Linus
+Thanks,
+
+Mathieu
+
+> 
+> Thanks,
+> 
+> Mathieu
+> 
+> [1]
+> https://lkml.kernel.org/r/20180702223143.4663-1-mathieu.desnoyers@efficios.com
+> 
+> Mathieu Desnoyers (6):
+>  rseq: use __u64 for rseq_cs fields, validate user inputs
+>  rseq: use get_user/put_user rather than __get_user/__put_user
+>  rseq: uapi: update uapi comments
+>  rseq: uapi: declare rseq_cs field as union, update includes
+>  rseq: remove unused types_32_64.h uapi header
+>  rseq/selftests: cleanup: update comment above rseq_prepare_unload
+> 
+> include/uapi/linux/rseq.h           | 102 ++++++++++++++++++++----------------
+> include/uapi/linux/types_32_64.h    |  50 ------------------
+> kernel/rseq.c                       |  36 ++++++++-----
+> tools/testing/selftests/rseq/rseq.h |  24 ++++++---
+> 4 files changed, 97 insertions(+), 115 deletions(-)
+> delete mode 100644 include/uapi/linux/types_32_64.h
+> 
+> --
+> 2.11.0
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
