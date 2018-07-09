@@ -2,121 +2,192 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4796FC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D67C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05155208E1
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:38:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05155208E1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E9A9720881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:39:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9A9720881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754594AbeGIOiv (ORCPT
+        id S1754619AbeGIOjK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:38:51 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60258 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754517AbeGIOit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:38:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9B7F1682;
-        Mon,  9 Jul 2018 07:38:49 -0700 (PDT)
-Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A6F13F589;
-        Mon,  9 Jul 2018 07:38:49 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     kvmarm@lists.cs.columbia.edu
-Cc:     Punit Agrawal <punit.agrawal@arm.com>,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        suzuki.poulose@arm.com, will.deacon@arm.com
-Subject: [PATCH v5 0/7] KVM: Support PUD hugepages at stage 2
-Date:   Mon,  9 Jul 2018 15:38:28 +0100
-Message-Id: <20180709143835.28971-2-punit.agrawal@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180709143835.28971-1-punit.agrawal@arm.com>
-References: <20180709143835.28971-1-punit.agrawal@arm.com>
-X-ARM-No-Footer: FoSSMail
+        Mon, 9 Jul 2018 10:39:10 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49712 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754597AbeGIOjI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:39:08 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69EaD9i058748
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 10:39:07 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k48386j57-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 10:39:07 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Mon, 9 Jul 2018 15:39:05 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 9 Jul 2018 15:39:01 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69Ecxf846202914
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 9 Jul 2018 14:38:59 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 976134203F;
+        Mon,  9 Jul 2018 17:39:22 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C2CE342047;
+        Mon,  9 Jul 2018 17:39:21 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Jul 2018 17:39:21 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v6 13/21] s390: vfio-ap: sysfs interface to view matrix
+ mdev matrix
+From:   Pierre Morel <pmorel@linux.ibm.com>
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <ef3d480b-29b3-d184-4fb2-14f88961d97d@linux.ibm.com>
+Date:   Mon, 9 Jul 2018 16:38:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <ef3d480b-29b3-d184-4fb2-14f88961d97d@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18070914-0016-0000-0000-000001E4E42E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070914-0017-0000-0000-000032396465
+Message-Id: <d105f5a6-b555-bc8d-6a1f-cc3cf57b9f35@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807090167
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series is an update to the PUD hugepage support previously posted
-at [0]. This patchset adds support for PUD hugepages at stage
-2. This feature is useful on cores that have support for large sized
-TLB mappings (e.g., 1GB for 4K granule).
+On 09/07/2018 14:20, Pierre Morel wrote:
+> On 29/06/2018 23:11, Tony Krowiak wrote:
+>> Provides a sysfs interface to view the AP matrix configured for the
+>> mediated matrix device.
+>>
+>> The relevant sysfs structures are:
+>>
+>> /sys/devices/vfio_ap
+>> ... [matrix]
+>> ...... [mdev_supported_types]
+>> ......... [vfio_ap-passthrough]
+>> ............ [devices]
+>> ...............[$uuid]
+>> .................. matrix
+>>
+>> To view the matrix configured for the mediated matrix device,
+>> print the matrix file:
+>>
+>>     cat matrix
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> ---
+>>   drivers/s390/crypto/vfio_ap_ops.c |   31 
+>> +++++++++++++++++++++++++++++++
+>>   1 files changed, 31 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
+>> b/drivers/s390/crypto/vfio_ap_ops.c
+>> index c8f31f3..bc7398d 100644
+>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -697,6 +697,36 @@ static ssize_t control_domains_show(struct 
+>> device *dev,
+>>   }
+>>   DEVICE_ATTR_RO(control_domains);
+>>
+>> +static ssize_t matrix_show(struct device *dev, struct 
+>> device_attribute *attr,
+>> +               char *buf)
+>> +{
+>> +    struct mdev_device *mdev = mdev_from_dev(dev);
+>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>> +    char *bufpos = buf;
+>> +    unsigned long apid;
+>> +    unsigned long apqi;
+>> +    unsigned long napm = matrix_mdev->matrix.apm_max + 1;
+>> +    unsigned long naqm = matrix_mdev->matrix.aqm_max + 1;
+>> +    int nchars = 0;
+>> +    int n;
+>> +
+>> +    for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, napm) {
+>> +        n = sprintf(bufpos, "%02lx\n", apid);
+>> +        bufpos += n;
+>> +        nchars += n;
+>> +
+>> +        for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, naqm) {
+>> +            n = sprintf(bufpos, "%02lx.%04lx\n", apid, apqi);
+>> +            bufpos += n;
+>> +            nchars += n;
+>> +        }
+>> +    }
+>> +
+>> +    return nchars;
+>> +}
+>> +DEVICE_ATTR_RO(matrix);
+>> +
+>> +
+>>   static struct attribute *vfio_ap_mdev_attrs[] = {
+>>       &dev_attr_assign_adapter.attr,
+>>       &dev_attr_unassign_adapter.attr,
+>> @@ -705,6 +735,7 @@ static ssize_t control_domains_show(struct device 
+>> *dev,
+>>       &dev_attr_assign_control_domain.attr,
+>>       &dev_attr_unassign_control_domain.attr,
+>>       &dev_attr_control_domains.attr,
+>> +    &dev_attr_matrix.attr,
+>>       NULL,
+>>   };
+>>
+>
+> I have still the same remark: what you show here is not what is currently
+> used by the SIE.
+> It is not irrelevant but what the guest really use may be more 
+> interesting
+> for the admin.
+>
+>
+OK, you implement the right view it in patch 16/21.
 
-The biggest change in this version is to replace repeated instances of
-walking the page tables to get to a leaf-entry with a function to
-return the appropriate entry. This was suggested by Suzuki and should
-help reduce the amount of churn resulting from future changes. It also
-address other feedback on the previous version.
+Still, what is the purpose of showing this view?
 
-Support is added to code that is shared between arm and arm64. Dummy
-helpers for arm are provided as the port does not support PUD hugepage
-sizes.
-
-The patches have been tested on an A57 based system. The patchset is
-based on v4.18-rc4. The are a few conflicts with the support for 52
-bit IPA[1] due to change in number of parameters for
-stage2_pmd_offset().
-
-Thanks,
-Punit
-
-v4 -> v5:
-
-* Patch 1 - Drop helper stage2_should_exec() and refactor the
-  condition to decide if a page table entry should be marked
-  executable
-* Patch 4-6 - Introduce stage2_get_leaf_entry() and use it in this and
-  latter patches
-* Patch 7 - Use stage 2 accessors instead of using the page table
-  helpers directly
-* Patch 7 - Add a note to update the PUD hugepage support when number
-  of levels of stage 2 tables differs from stage 1
-
-
-v3 -> v4:
-* Patch 1 and 7 - Don't put down hugepages pte if logging is enabled
-* Patch 4-5 - Add PUD hugepage support for exec and access faults
-* Patch 6 - PUD hugepage support for aging page table entries
-
-v2 -> v3:
-* Update vma_pagesize directly if THP [1/4]. Previsouly this was done
-  indirectly via hugetlb
-* Added review tag [4/4]
-
-v1 -> v2:
-* Create helper to check if the page should have exec permission [1/4]
-* Fix broken condition to detect THP hugepage [1/4]
-* Fix in-correct hunk resulting from a rebase [4/4]
-
-[0] https://www.spinics.net/lists/arm-kernel/msg663562.html
-[1] https://www.spinics.net/lists/kvm/msg171065.html
-
-
-Punit Agrawal (7):
-  KVM: arm/arm64: Share common code in user_mem_abort()
-  KVM: arm/arm64: Introduce helpers to manupulate page table entries
-  KVM: arm64: Support dirty page tracking for PUD hugepages
-  KVM: arm64: Support PUD hugepage in stage2_is_exec()
-  KVM: arm64: Support handling access faults for PUD hugepages
-  KVM: arm64: Update age handlers to support PUD hugepages
-  KVM: arm64: Add support for creating PUD hugepages at stage 2
-
- arch/arm/include/asm/kvm_mmu.h         |  60 +++++
- arch/arm64/include/asm/kvm_mmu.h       |  47 ++++
- arch/arm64/include/asm/pgtable-hwdef.h |   4 +
- arch/arm64/include/asm/pgtable.h       |   9 +
- virt/kvm/arm/mmu.c                     | 289 ++++++++++++++++++-------
- 5 files changed, 330 insertions(+), 79 deletions(-)
 
 -- 
-2.17.1
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
