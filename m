@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D22C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CC2EC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 863D920878
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:20:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 863D920878
+	by mail.kernel.org (Postfix) with ESMTP id 470E6208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:20:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 470E6208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933256AbeGIOUG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:20:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59798 "EHLO
+        id S933209AbeGIOUF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:20:05 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59850 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754516AbeGIOTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1754517AbeGIOTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Jul 2018 10:19:05 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DBEDB1684;
-        Mon,  9 Jul 2018 07:19:04 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 209AA16A3;
+        Mon,  9 Jul 2018 07:19:05 -0700 (PDT)
 Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AD42F3F73D;
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BA5B43F909;
         Mon,  9 Jul 2018 07:19:04 -0700 (PDT)
 Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 21C3B1AE369F; Mon,  9 Jul 2018 15:19:46 +0100 (BST)
+        id 326141AE36AF; Mon,  9 Jul 2018 15:19:46 +0100 (BST)
 From:   Will Deacon <will.deacon@arm.com>
 To:     linux-arm-kernel@lists.infradead.org,
         mathieu.desnoyers@efficios.com
 Cc:     arnd@arndb.de, peterz@infradead.org, paulmck@linux.vnet.ibm.com,
         boqun.feng@gmail.com, peter.maydell@linaro.org,
         linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>
-Subject: [PATCH v2 2/3] asm-generic: unistd.h: Wire up sys_rseq
-Date:   Mon,  9 Jul 2018 15:19:44 +0100
-Message-Id: <1531145985-3747-3-git-send-email-will.deacon@arm.com>
+Subject: [PATCH v2 3/3] rseq/selftests: Add support for arm64
+Date:   Mon,  9 Jul 2018 15:19:45 +0100
+Message-Id: <1531145985-3747-4-git-send-email-will.deacon@arm.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1531145985-3747-1-git-send-email-will.deacon@arm.com>
 References: <1531145985-3747-1-git-send-email-will.deacon@arm.com>
@@ -46,32 +46,660 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new rseq call arrived in 4.18-rc1, so provide it in the asm-generic
-unistd.h for architectures such as arm64.
+Hook up arm64 support to the rseq selftests.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 ---
- include/uapi/asm-generic/unistd.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/testing/selftests/rseq/param_test.c |  20 +
+ tools/testing/selftests/rseq/rseq-arm64.h | 594 ++++++++++++++++++++++++++++++
+ tools/testing/selftests/rseq/rseq.h       |   2 +
+ 3 files changed, 616 insertions(+)
+ create mode 100644 tools/testing/selftests/rseq/rseq-arm64.h
 
-diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-index 42990676a55e..df4bedb9b01c 100644
---- a/include/uapi/asm-generic/unistd.h
-+++ b/include/uapi/asm-generic/unistd.h
-@@ -734,9 +734,11 @@ __SYSCALL(__NR_pkey_free,     sys_pkey_free)
- __SYSCALL(__NR_statx,     sys_statx)
- #define __NR_io_pgetevents 292
- __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
-+#define __NR_rseq 293
-+__SYSCALL(__NR_rseq, sys_rseq)
+diff --git a/tools/testing/selftests/rseq/param_test.c b/tools/testing/selftests/rseq/param_test.c
+index 615252331813..fa144c556371 100644
+--- a/tools/testing/selftests/rseq/param_test.c
++++ b/tools/testing/selftests/rseq/param_test.c
+@@ -114,6 +114,26 @@ unsigned int yield_mod_cnt, nr_abort;
+ 	"bne 222b\n\t" \
+ 	"333:\n\t"
  
- #undef __NR_syscalls
--#define __NR_syscalls 293
-+#define __NR_syscalls 294
++#elif defined(__AARCH64EL__)
++
++#define RSEQ_INJECT_INPUT \
++	, [loop_cnt_1] "Qo" (loop_cnt[1]) \
++	, [loop_cnt_2] "Qo" (loop_cnt[2]) \
++	, [loop_cnt_3] "Qo" (loop_cnt[3]) \
++	, [loop_cnt_4] "Qo" (loop_cnt[4]) \
++	, [loop_cnt_5] "Qo" (loop_cnt[5]) \
++	, [loop_cnt_6] "Qo" (loop_cnt[6])
++
++#define INJECT_ASM_REG	RSEQ_ASM_TMP_REG32
++
++#define RSEQ_INJECT_ASM(n) \
++	"	ldr	" INJECT_ASM_REG ", %[loop_cnt_" #n "]\n"	\
++	"	cbz	" INJECT_ASM_REG ", 333f\n"			\
++	"222:\n"							\
++	"	sub	" INJECT_ASM_REG ", " INJECT_ASM_REG ", #1\n"	\
++	"	cbnz	" INJECT_ASM_REG ", 222b\n"			\
++	"333:\n"
++
+ #elif __PPC__
  
- /*
-  * 32 bit systems traditionally used different
+ #define RSEQ_INJECT_INPUT \
+diff --git a/tools/testing/selftests/rseq/rseq-arm64.h b/tools/testing/selftests/rseq/rseq-arm64.h
+new file mode 100644
+index 000000000000..954f34671ca6
+--- /dev/null
++++ b/tools/testing/selftests/rseq/rseq-arm64.h
+@@ -0,0 +1,594 @@
++/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
++/*
++ * rseq-arm64.h
++ *
++ * (C) Copyright 2016-2018 - Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
++ * (C) Copyright 2018 - Will Deacon <will.deacon@arm.com>
++ */
++
++#define RSEQ_SIG	0xd428bc00	/* BRK #0x45E0 */
++
++#define rseq_smp_mb()	__asm__ __volatile__ ("dmb ish" ::: "memory")
++#define rseq_smp_rmb()	__asm__ __volatile__ ("dmb ishld" ::: "memory")
++#define rseq_smp_wmb()	__asm__ __volatile__ ("dmb ishst" ::: "memory")
++
++#define rseq_smp_load_acquire(p)						\
++__extension__ ({								\
++	__typeof(*p) ____p1;							\
++	switch (sizeof(*p)) {							\
++	case 1:									\
++		asm volatile ("ldarb %w0, %1"					\
++			: "=r" (*(__u8 *)p)					\
++			: "Q" (*p) : "memory");					\
++		break;								\
++	case 2:									\
++		asm volatile ("ldarh %w0, %1"					\
++			: "=r" (*(__u16 *)p)					\
++			: "Q" (*p) : "memory");					\
++		break;								\
++	case 4:									\
++		asm volatile ("ldar %w0, %1"					\
++			: "=r" (*(__u32 *)p)					\
++			: "Q" (*p) : "memory");					\
++		break;								\
++	case 8:									\
++		asm volatile ("ldar %0, %1"					\
++			: "=r" (*(__u64 *)p)					\
++			: "Q" (*p) : "memory");					\
++		break;								\
++	}									\
++	____p1;									\
++})
++
++#define rseq_smp_acquire__after_ctrl_dep()	rseq_smp_rmb()
++
++#define rseq_smp_store_release(p, v)						\
++do {										\
++	switch (sizeof(*p)) {							\
++	case 1:									\
++		asm volatile ("stlrb %w1, %0"					\
++				: "=Q" (*p)					\
++				: "r" ((__u8)v)					\
++				: "memory");					\
++		break;								\
++	case 2:									\
++		asm volatile ("stlrh %w1, %0"					\
++				: "=Q" (*p)					\
++				: "r" ((__u16)v)				\
++				: "memory");					\
++		break;								\
++	case 4:									\
++		asm volatile ("stlr %w1, %0"					\
++				: "=Q" (*p)					\
++				: "r" ((__u32)v)				\
++				: "memory");					\
++		break;								\
++	case 8:									\
++		asm volatile ("stlr %1, %0"					\
++				: "=Q" (*p)					\
++				: "r" ((__u64)v)				\
++				: "memory");					\
++		break;								\
++	}									\
++} while (0)
++
++#ifdef RSEQ_SKIP_FASTPATH
++#include "rseq-skip.h"
++#else /* !RSEQ_SKIP_FASTPATH */
++
++#define RSEQ_ASM_TMP_REG32	"w15"
++#define RSEQ_ASM_TMP_REG	"x15"
++#define RSEQ_ASM_TMP_REG_2	"x14"
++
++#define __RSEQ_ASM_DEFINE_TABLE(label, version, flags, start_ip,		\
++				post_commit_offset, abort_ip)			\
++	"	.pushsection	__rseq_table, \"aw\"\n"				\
++	"	.balign	32\n"							\
++	__rseq_str(label) ":\n"							\
++	"	.long	" __rseq_str(version) ", " __rseq_str(flags) "\n"	\
++	"	.quad	" __rseq_str(start_ip) ", "				\
++			  __rseq_str(post_commit_offset) ", "			\
++			  __rseq_str(abort_ip) "\n"				\
++	"	.popsection\n"
++
++#define RSEQ_ASM_DEFINE_TABLE(label, start_ip, post_commit_ip, abort_ip)	\
++	__RSEQ_ASM_DEFINE_TABLE(label, 0x0, 0x0, start_ip,			\
++				(post_commit_ip - start_ip), abort_ip)
++
++#define RSEQ_ASM_STORE_RSEQ_CS(label, cs_label, rseq_cs)			\
++	RSEQ_INJECT_ASM(1)							\
++	"	adrp	" RSEQ_ASM_TMP_REG ", " __rseq_str(cs_label) "\n"	\
++	"	add	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
++			", :lo12:" __rseq_str(cs_label) "\n"			\
++	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(rseq_cs) "]\n"	\
++	__rseq_str(label) ":\n"
++
++#define RSEQ_ASM_DEFINE_ABORT(label, abort_label)				\
++	"	b	222f\n"							\
++	"	.inst 	"	__rseq_str(RSEQ_SIG) "\n"			\
++	__rseq_str(label) ":\n"							\
++	"	b	%l[" __rseq_str(abort_label) "]\n"			\
++	"222:\n"
++
++#define RSEQ_ASM_OP_STORE(value, var)						\
++	"	str	%[" __rseq_str(value) "], %[" __rseq_str(var) "]\n"
++
++#define RSEQ_ASM_OP_STORE_RELEASE(value, var)					\
++	"	stlr	%[" __rseq_str(value) "], %[" __rseq_str(var) "]\n"
++
++#define RSEQ_ASM_OP_FINAL_STORE(value, var, post_commit_label)			\
++	RSEQ_ASM_OP_STORE(value, var)						\
++	__rseq_str(post_commit_label) ":\n"
++
++#define RSEQ_ASM_OP_FINAL_STORE_RELEASE(value, var, post_commit_label)		\
++	RSEQ_ASM_OP_STORE_RELEASE(value, var)					\
++	__rseq_str(post_commit_label) ":\n"
++
++#define RSEQ_ASM_OP_CMPEQ(var, expect, label)					\
++	"	ldr	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"		\
++	"	sub	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
++			", %[" __rseq_str(expect) "]\n"				\
++	"	cbnz	" RSEQ_ASM_TMP_REG ", " __rseq_str(label) "\n"
++
++#define RSEQ_ASM_OP_CMPEQ32(var, expect, label)					\
++	"	ldr	" RSEQ_ASM_TMP_REG32 ", %[" __rseq_str(var) "]\n"	\
++	"	sub	" RSEQ_ASM_TMP_REG32 ", " RSEQ_ASM_TMP_REG32		\
++			", %w[" __rseq_str(expect) "]\n"			\
++	"	cbnz	" RSEQ_ASM_TMP_REG32 ", " __rseq_str(label) "\n"
++
++#define RSEQ_ASM_OP_CMPNE(var, expect, label)					\
++	"	ldr	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"		\
++	"	sub	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
++			", %[" __rseq_str(expect) "]\n"				\
++	"	cbz	" RSEQ_ASM_TMP_REG ", " __rseq_str(label) "\n"
++
++#define RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, label)			\
++	RSEQ_INJECT_ASM(2)							\
++	RSEQ_ASM_OP_CMPEQ32(current_cpu_id, cpu_id, label)
++
++#define RSEQ_ASM_OP_R_LOAD(var)							\
++	"	ldr	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"
++
++#define RSEQ_ASM_OP_R_STORE(var)						\
++	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"
++
++#define RSEQ_ASM_OP_R_LOAD_OFF(offset)						\
++	"	ldr	" RSEQ_ASM_TMP_REG ", [" RSEQ_ASM_TMP_REG		\
++			", %[" __rseq_str(offset) "]]\n"
++
++#define RSEQ_ASM_OP_R_ADD(count)						\
++	"	add	" RSEQ_ASM_TMP_REG ", " RSEQ_ASM_TMP_REG		\
++			", %[" __rseq_str(count) "]\n"
++
++#define RSEQ_ASM_OP_R_FINAL_STORE(var, post_commit_label)			\
++	"	str	" RSEQ_ASM_TMP_REG ", %[" __rseq_str(var) "]\n"		\
++	__rseq_str(post_commit_label) ":\n"
++
++#define RSEQ_ASM_OP_R_BAD_MEMCPY(dst, src, len)					\
++	"	cbz	%[" __rseq_str(len) "], 333f\n"				\
++	"	mov	" RSEQ_ASM_TMP_REG_2 ", %[" __rseq_str(len) "]\n"	\
++	"222:	sub	" RSEQ_ASM_TMP_REG_2 ", " RSEQ_ASM_TMP_REG_2 ", #1\n"	\
++	"	ldrb	" RSEQ_ASM_TMP_REG32 ", [%[" __rseq_str(src) "]"	\
++			", " RSEQ_ASM_TMP_REG_2 "]\n"				\
++	"	strb	" RSEQ_ASM_TMP_REG32 ", [%[" __rseq_str(dst) "]"	\
++			", " RSEQ_ASM_TMP_REG_2 "]\n"				\
++	"	cbnz	" RSEQ_ASM_TMP_REG_2 ", 222b\n"				\
++	"333:\n"
++
++static inline __attribute__((always_inline))
++int rseq_cmpeqv_storev(intptr_t *v, intptr_t expect, intptr_t newv, int cpu)
++{
++	RSEQ_INJECT_C(9)
++
++	__asm__ __volatile__ goto (
++		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
++		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
++		RSEQ_INJECT_ASM(3)
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
++		RSEQ_INJECT_ASM(4)
++#ifdef RSEQ_COMPARE_TWICE
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
++#endif
++		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
++		RSEQ_INJECT_ASM(5)
++		RSEQ_ASM_DEFINE_ABORT(4, abort)
++		: /* gcc asm goto does not allow outputs */
++		: [cpu_id]		"r" (cpu),
++		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
++		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
++		  [v]			"Qo" (*v),
++		  [expect]		"r" (expect),
++		  [newv]		"r" (newv)
++		  RSEQ_INJECT_INPUT
++		: "memory", RSEQ_ASM_TMP_REG
++		: abort, cmpfail
++#ifdef RSEQ_COMPARE_TWICE
++		  , error1, error2
++#endif
++	);
++
++	return 0;
++abort:
++	RSEQ_INJECT_FAILED
++	return -1;
++cmpfail:
++	return 1;
++#ifdef RSEQ_COMPARE_TWICE
++error1:
++	rseq_bug("cpu_id comparison failed");
++error2:
++	rseq_bug("expected value comparison failed");
++#endif
++}
++
++static inline __attribute__((always_inline))
++int rseq_cmpnev_storeoffp_load(intptr_t *v, intptr_t expectnot,
++			       off_t voffp, intptr_t *load, int cpu)
++{
++	RSEQ_INJECT_C(9)
++
++	__asm__ __volatile__ goto (
++		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
++		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
++		RSEQ_INJECT_ASM(3)
++		RSEQ_ASM_OP_CMPNE(v, expectnot, %l[cmpfail])
++		RSEQ_INJECT_ASM(4)
++#ifdef RSEQ_COMPARE_TWICE
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
++		RSEQ_ASM_OP_CMPNE(v, expectnot, %l[error2])
++#endif
++		RSEQ_ASM_OP_R_LOAD(v)
++		RSEQ_ASM_OP_R_STORE(load)
++		RSEQ_ASM_OP_R_LOAD_OFF(voffp)
++		RSEQ_ASM_OP_R_FINAL_STORE(v, 3)
++		RSEQ_INJECT_ASM(5)
++		RSEQ_ASM_DEFINE_ABORT(4, abort)
++		: /* gcc asm goto does not allow outputs */
++		: [cpu_id]		"r" (cpu),
++		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
++		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
++		  [v]			"Qo" (*v),
++		  [expectnot]		"r" (expectnot),
++		  [load]		"Qo" (*load),
++		  [voffp]		"r" (voffp)
++		  RSEQ_INJECT_INPUT
++		: "memory", RSEQ_ASM_TMP_REG
++		: abort, cmpfail
++#ifdef RSEQ_COMPARE_TWICE
++		  , error1, error2
++#endif
++	);
++	return 0;
++abort:
++	RSEQ_INJECT_FAILED
++	return -1;
++cmpfail:
++	return 1;
++#ifdef RSEQ_COMPARE_TWICE
++error1:
++	rseq_bug("cpu_id comparison failed");
++error2:
++	rseq_bug("expected value comparison failed");
++#endif
++}
++
++static inline __attribute__((always_inline))
++int rseq_addv(intptr_t *v, intptr_t count, int cpu)
++{
++	RSEQ_INJECT_C(9)
++
++	__asm__ __volatile__ goto (
++		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
++		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
++		RSEQ_INJECT_ASM(3)
++#ifdef RSEQ_COMPARE_TWICE
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
++#endif
++		RSEQ_ASM_OP_R_LOAD(v)
++		RSEQ_ASM_OP_R_ADD(count)
++		RSEQ_ASM_OP_R_FINAL_STORE(v, 3)
++		RSEQ_INJECT_ASM(4)
++		RSEQ_ASM_DEFINE_ABORT(4, abort)
++		: /* gcc asm goto does not allow outputs */
++		: [cpu_id]		"r" (cpu),
++		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
++		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
++		  [v]			"Qo" (*v),
++		  [count]		"r" (count)
++		  RSEQ_INJECT_INPUT
++		: "memory", RSEQ_ASM_TMP_REG
++		: abort
++#ifdef RSEQ_COMPARE_TWICE
++		  , error1
++#endif
++	);
++	return 0;
++abort:
++	RSEQ_INJECT_FAILED
++	return -1;
++#ifdef RSEQ_COMPARE_TWICE
++error1:
++	rseq_bug("cpu_id comparison failed");
++#endif
++}
++
++static inline __attribute__((always_inline))
++int rseq_cmpeqv_trystorev_storev(intptr_t *v, intptr_t expect,
++				 intptr_t *v2, intptr_t newv2,
++				 intptr_t newv, int cpu)
++{
++	RSEQ_INJECT_C(9)
++
++	__asm__ __volatile__ goto (
++		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
++		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
++		RSEQ_INJECT_ASM(3)
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
++		RSEQ_INJECT_ASM(4)
++#ifdef RSEQ_COMPARE_TWICE
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
++#endif
++		RSEQ_ASM_OP_STORE(newv2, v2)
++		RSEQ_INJECT_ASM(5)
++		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
++		RSEQ_INJECT_ASM(6)
++		RSEQ_ASM_DEFINE_ABORT(4, abort)
++		: /* gcc asm goto does not allow outputs */
++		: [cpu_id]		"r" (cpu),
++		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
++		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
++		  [expect]		"r" (expect),
++		  [v]			"Qo" (*v),
++		  [newv]		"r" (newv),
++		  [v2]			"Qo" (*v2),
++		  [newv2]		"r" (newv2)
++		  RSEQ_INJECT_INPUT
++		: "memory", RSEQ_ASM_TMP_REG
++		: abort, cmpfail
++#ifdef RSEQ_COMPARE_TWICE
++		  , error1, error2
++#endif
++	);
++
++	return 0;
++abort:
++	RSEQ_INJECT_FAILED
++	return -1;
++cmpfail:
++	return 1;
++#ifdef RSEQ_COMPARE_TWICE
++error1:
++	rseq_bug("cpu_id comparison failed");
++error2:
++	rseq_bug("expected value comparison failed");
++#endif
++}
++
++static inline __attribute__((always_inline))
++int rseq_cmpeqv_trystorev_storev_release(intptr_t *v, intptr_t expect,
++					 intptr_t *v2, intptr_t newv2,
++					 intptr_t newv, int cpu)
++{
++	RSEQ_INJECT_C(9)
++
++	__asm__ __volatile__ goto (
++		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
++		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
++		RSEQ_INJECT_ASM(3)
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
++		RSEQ_INJECT_ASM(4)
++#ifdef RSEQ_COMPARE_TWICE
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
++#endif
++		RSEQ_ASM_OP_STORE(newv2, v2)
++		RSEQ_INJECT_ASM(5)
++		RSEQ_ASM_OP_FINAL_STORE_RELEASE(newv, v, 3)
++		RSEQ_INJECT_ASM(6)
++		RSEQ_ASM_DEFINE_ABORT(4, abort)
++		: /* gcc asm goto does not allow outputs */
++		: [cpu_id]		"r" (cpu),
++		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
++		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
++		  [expect]		"r" (expect),
++		  [v]			"Qo" (*v),
++		  [newv]		"r" (newv),
++		  [v2]			"Qo" (*v2),
++		  [newv2]		"r" (newv2)
++		  RSEQ_INJECT_INPUT
++		: "memory", RSEQ_ASM_TMP_REG
++		: abort, cmpfail
++#ifdef RSEQ_COMPARE_TWICE
++		  , error1, error2
++#endif
++	);
++
++	return 0;
++abort:
++	RSEQ_INJECT_FAILED
++	return -1;
++cmpfail:
++	return 1;
++#ifdef RSEQ_COMPARE_TWICE
++error1:
++	rseq_bug("cpu_id comparison failed");
++error2:
++	rseq_bug("expected value comparison failed");
++#endif
++}
++
++static inline __attribute__((always_inline))
++int rseq_cmpeqv_cmpeqv_storev(intptr_t *v, intptr_t expect,
++			      intptr_t *v2, intptr_t expect2,
++			      intptr_t newv, int cpu)
++{
++	RSEQ_INJECT_C(9)
++
++	__asm__ __volatile__ goto (
++		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
++		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
++		RSEQ_INJECT_ASM(3)
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
++		RSEQ_INJECT_ASM(4)
++		RSEQ_ASM_OP_CMPEQ(v2, expect2, %l[cmpfail])
++		RSEQ_INJECT_ASM(5)
++#ifdef RSEQ_COMPARE_TWICE
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
++		RSEQ_ASM_OP_CMPEQ(v2, expect2, %l[error3])
++#endif
++		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
++		RSEQ_INJECT_ASM(6)
++		RSEQ_ASM_DEFINE_ABORT(4, abort)
++		: /* gcc asm goto does not allow outputs */
++		: [cpu_id]		"r" (cpu),
++		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
++		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
++		  [v]			"Qo" (*v),
++		  [expect]		"r" (expect),
++		  [v2]			"Qo" (*v2),
++		  [expect2]		"r" (expect2),
++		  [newv]		"r" (newv)
++		  RSEQ_INJECT_INPUT
++		: "memory", RSEQ_ASM_TMP_REG
++		: abort, cmpfail
++#ifdef RSEQ_COMPARE_TWICE
++		  , error1, error2, error3
++#endif
++	);
++
++	return 0;
++abort:
++	RSEQ_INJECT_FAILED
++	return -1;
++cmpfail:
++	return 1;
++#ifdef RSEQ_COMPARE_TWICE
++error1:
++	rseq_bug("cpu_id comparison failed");
++error2:
++	rseq_bug("expected value comparison failed");
++error3:
++	rseq_bug("2nd expected value comparison failed");
++#endif
++}
++
++static inline __attribute__((always_inline))
++int rseq_cmpeqv_trymemcpy_storev(intptr_t *v, intptr_t expect,
++				 void *dst, void *src, size_t len,
++				 intptr_t newv, int cpu)
++{
++	RSEQ_INJECT_C(9)
++
++	__asm__ __volatile__ goto (
++		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
++		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
++		RSEQ_INJECT_ASM(3)
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
++		RSEQ_INJECT_ASM(4)
++#ifdef RSEQ_COMPARE_TWICE
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
++#endif
++		RSEQ_ASM_OP_R_BAD_MEMCPY(dst, src, len)
++		RSEQ_INJECT_ASM(5)
++		RSEQ_ASM_OP_FINAL_STORE(newv, v, 3)
++		RSEQ_INJECT_ASM(6)
++		RSEQ_ASM_DEFINE_ABORT(4, abort)
++		: /* gcc asm goto does not allow outputs */
++		: [cpu_id]		"r" (cpu),
++		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
++		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
++		  [expect]		"r" (expect),
++		  [v]			"Qo" (*v),
++		  [newv]		"r" (newv),
++		  [dst]			"r" (dst),
++		  [src]			"r" (src),
++		  [len]			"r" (len)
++		  RSEQ_INJECT_INPUT
++		: "memory", RSEQ_ASM_TMP_REG, RSEQ_ASM_TMP_REG_2
++		: abort, cmpfail
++#ifdef RSEQ_COMPARE_TWICE
++		  , error1, error2
++#endif
++	);
++
++	return 0;
++abort:
++	RSEQ_INJECT_FAILED
++	return -1;
++cmpfail:
++	return 1;
++#ifdef RSEQ_COMPARE_TWICE
++error1:
++	rseq_bug("cpu_id comparison failed");
++error2:
++	rseq_bug("expected value comparison failed");
++#endif
++}
++
++static inline __attribute__((always_inline))
++int rseq_cmpeqv_trymemcpy_storev_release(intptr_t *v, intptr_t expect,
++					 void *dst, void *src, size_t len,
++					 intptr_t newv, int cpu)
++{
++	RSEQ_INJECT_C(9)
++
++	__asm__ __volatile__ goto (
++		RSEQ_ASM_DEFINE_TABLE(1, 2f, 3f, 4f)
++		RSEQ_ASM_STORE_RSEQ_CS(2, 1b, rseq_cs)
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, 4f)
++		RSEQ_INJECT_ASM(3)
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[cmpfail])
++		RSEQ_INJECT_ASM(4)
++#ifdef RSEQ_COMPARE_TWICE
++		RSEQ_ASM_CMP_CPU_ID(cpu_id, current_cpu_id, %l[error1])
++		RSEQ_ASM_OP_CMPEQ(v, expect, %l[error2])
++#endif
++		RSEQ_ASM_OP_R_BAD_MEMCPY(dst, src, len)
++		RSEQ_INJECT_ASM(5)
++		RSEQ_ASM_OP_FINAL_STORE_RELEASE(newv, v, 3)
++		RSEQ_INJECT_ASM(6)
++		RSEQ_ASM_DEFINE_ABORT(4, abort)
++		: /* gcc asm goto does not allow outputs */
++		: [cpu_id]		"r" (cpu),
++		  [current_cpu_id]	"Qo" (__rseq_abi.cpu_id),
++		  [rseq_cs]		"m" (__rseq_abi.rseq_cs),
++		  [expect]		"r" (expect),
++		  [v]			"Qo" (*v),
++		  [newv]		"r" (newv),
++		  [dst]			"r" (dst),
++		  [src]			"r" (src),
++		  [len]			"r" (len)
++		  RSEQ_INJECT_INPUT
++		: "memory", RSEQ_ASM_TMP_REG, RSEQ_ASM_TMP_REG_2
++		: abort, cmpfail
++#ifdef RSEQ_COMPARE_TWICE
++		  , error1, error2
++#endif
++	);
++
++	return 0;
++abort:
++	RSEQ_INJECT_FAILED
++	return -1;
++cmpfail:
++	return 1;
++#ifdef RSEQ_COMPARE_TWICE
++error1:
++	rseq_bug("cpu_id comparison failed");
++error2:
++	rseq_bug("expected value comparison failed");
++#endif
++}
++
++#endif /* !RSEQ_SKIP_FASTPATH */
+diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
+index 86ce22417e0d..bbdf472776b3 100644
+--- a/tools/testing/selftests/rseq/rseq.h
++++ b/tools/testing/selftests/rseq/rseq.h
+@@ -71,6 +71,8 @@ extern __thread volatile struct rseq __rseq_abi;
+ #include <rseq-x86.h>
+ #elif defined(__ARMEL__)
+ #include <rseq-arm.h>
++#elif defined (__AARCH64EL__)
++#include <rseq-arm64.h>
+ #elif defined(__PPC__)
+ #include <rseq-ppc.h>
+ #elif defined(__mips__)
 -- 
 2.1.4
 
