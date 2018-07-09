@@ -2,110 +2,124 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URG_BIZ,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 014A6C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA69C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:27:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE70A2089B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 664102089B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:27:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PsS1XyYC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE70A2089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TWP+CqQ3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 664102089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933546AbeGIP0i (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:26:38 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60132 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933268AbeGIP0g (ORCPT
+        id S933594AbeGIP1J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:27:09 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34438 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933268AbeGIP1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:26:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=YftlQ5IiNeav9nDJzXvcbQWQNiSBjaszK4Ku56CAfII=; b=PsS1XyYCnpS0GhsyjuySlG+0T
-        bMCqDPjWpw6mSPmepUdHNvGY6xFXWAH0D5AWt8G9W2dAmysL9iDW+Ma/Rfx8ZOogRSExRCOmIHFAd
-        Bdzas4bXi+H+fShlKtI3th6K5N35l0qzqy26a+do5sEOX4omwaHol2cwl5+Yq+0ewQbTj5OPgJrgo
-        pRabegJbXZ2EZ95vU6WlPWVVsoD+FztftPRZgQ22wZ8eFeZF4nDxBvDuGbY+5sdWxDtNpNEjdh2nu
-        dJeUeDYsMSbaHYSlTSV8JtEQz4qMrnJYAOa8KzvzL4cxKHXqTS3ZlExITS1O/WnSxNgAGuKEUQelw
-        70eZ/R6Pg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcY3e-0001PH-GS; Mon, 09 Jul 2018 15:26:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E62B42029764D; Mon,  9 Jul 2018 17:26:32 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 17:26:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>, mhillenb@amazon.de,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-Message-ID: <20180709152632.GX2476@hirez.programming.kicks-ass.net>
-References: <20180706171150.GI3593@linux.vnet.ibm.com>
- <20180709085351.GC2476@hirez.programming.kicks-ass.net>
- <1531127935.18697.57.camel@infradead.org>
- <20180709104429.GI2476@hirez.programming.kicks-ass.net>
- <1531133801.18697.73.camel@infradead.org>
- <20180709110657.GL2476@hirez.programming.kicks-ass.net>
- <20180709123457.GM3593@linux.vnet.ibm.com>
- <20180709125516.GO2476@hirez.programming.kicks-ass.net>
- <20180709130227.GQ2512@hirez.programming.kicks-ass.net>
- <20180709142932.GO3593@linux.vnet.ibm.com>
+        Mon, 9 Jul 2018 11:27:07 -0400
+Received: by mail-lf0-f66.google.com with SMTP id n96-v6so15590450lfi.1;
+        Mon, 09 Jul 2018 08:27:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=0q/cnfr+j97y0Ki/m+3sBtk+JestrZEY05fYBkTIS64=;
+        b=TWP+CqQ3gp6bq4WVAn+k5NpfE2jUwNMMLF+9AHxmtMM0mm67EXn735TLQH3ycQjnOY
+         5qQpCW9rdmMeXhzDpgWc+O39Sfb8iACXp5XEcUfqX4QECeX1HaFf5at6DxCW3ElNSMO3
+         PKlvHyztryTpBVBCM4gXPSBRgYKf4QCXV9WMITE2Oc2KJjI2yWjWk10XYvWfvAw+R+9o
+         E942ys6q/kboUMLCykMP/M7c9L8Q/lKv0+lPjf0Y3J3ti4bP5Ei0xiedUEv7ZCOcupvF
+         ZU0sEM7szZx2Tf1aPzP/YvpkH0M1y7+J48s0mz65fOYV7o9YzT2ZmgB/Z0NRu8wvYZxp
+         6eHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=0q/cnfr+j97y0Ki/m+3sBtk+JestrZEY05fYBkTIS64=;
+        b=JH/DRgE7wobOOcrCYfZMrMqQM6mSgJmyDp5PYgqp4hnW3I6v88k6eLzfyiJ2/UVZiv
+         hm0e73fRtVRGf9oIp53ZHYQE/Vi88KCFnbz3upBBzx2ejIqBvIgZmJIq43ozAxcAKy/A
+         cNDUltfauTFNqeXl5yHQ0WF44F9OqFCxkXPb2/OoKRtVMI6cWr9TEr0vJkzH23dQ043Y
+         fmNLVYYGyBMeiOUF5wSJnaX953MWy8GU7btKgPxNgfmG+aqMrTesHNZn5QJ6DxYzRfJ5
+         zwHM1wnybvhEtex4t+/0OEaCGoywC+/YHKDJ5mVgl5jhQMH1jGMbOuvBi3Hej1JHvR5F
+         +LRQ==
+X-Gm-Message-State: APt69E1cCiIUWNKTPtIuAousIiaGZ4yj09vGoLSRQnuARI06oZ/bfy2x
+        pIPiVSrNo8ofY0Zm9yEDOoxZC0wLah4xHa2XxsM=
+X-Google-Smtp-Source: AAOMgpft/tmnAq86Y45do3vZLC2eF3763C56buu8zkmZtc9i7ZAIZYODRd9b7SO8bC9juYV7HUCAloxbML368xp2m6k=
+X-Received: by 2002:a19:b24e:: with SMTP id b75-v6mr49226lff.11.1531150025432;
+ Mon, 09 Jul 2018 08:27:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709142932.GO3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 08:27:04 -0700 (PDT)
+In-Reply-To: <20180706155401.7jwc5laxqvnfpiur@salvia>
+References: <20180706123805.2852900-1-arnd@arndb.de> <20180706124542.jybscbmzixyt4rx2@salvia>
+ <20180706124827.xwho2rgu3jkk3hp5@salvia> <CAK8P3a23rdqk-5i_6jLtCH6Z+_SSJ-0=5r=KfPuL-Xaas=6VyA@mail.gmail.com>
+ <20180706155401.7jwc5laxqvnfpiur@salvia>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 9 Jul 2018 17:27:04 +0200
+X-Google-Sender-Auth: q5pj3AGOrwJJvLnRIH4Ntiecj3A
+Message-ID: <CAK8P3a10sLvYb1=ZS9K_-Nf+vzY_ZkFsTRmZ3Bz7KMZL8g8MSw@mail.gmail.com>
+Subject: Re: [PATCH net-next] netfilter: fix NETFILTER_XT_TARGET_TEE dependencies
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?B?TcOhdMOpIEVja2w=?= <ecklm94@gmail.com>,
+        Fernando Fernandez Mancera <ffmancera@riseup.net>,
+        "Pablo M. Bermudo Garay" <pablombg@gmail.com>,
+        Felix Fietkau <nbd@nbd.name>, netfilter-devel@vger.kernel.org,
+        coreteam@netfilter.org, Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 07:29:32AM -0700, Paul E. McKenney wrote:
-> OK, so here are our options:
-> 
-> 1.	Add the RCU conditional to need_resched(), as David suggests.
-> 	Peter has concerns about overhead.
-> 
-> 2.	Create a new need_resched_rcu_qs() that is to be used when
-> 	deciding whether or not to do cond_resched().  This would
-> 	exact the overhead only where it is needed, but is one more
-> 	thing for people to get wrong.
+On Fri, Jul 6, 2018 at 5:54 PM, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+> On Fri, Jul 06, 2018 at 03:05:13PM +0200, Arnd Bergmann wrote:
+>> On Fri, Jul 6, 2018 at 2:48 PM, Pablo Neira Ayuso <pablo@netfilter.org> wrote:
+>> > On Fri, Jul 06, 2018 at 02:45:42PM +0200, Pablo Neira Ayuso wrote:
+>> >> On Fri, Jul 06, 2018 at 02:37:58PM +0200, Arnd Bergmann wrote:
+>> >> > With NETFILTER_XT_TARGET_TEE=y and IP6_NF_IPTABLES=m, we get a link
+>> >> > error when referencing the NF_DUP_IPV6 module:
+>> >> >
+>> >> > net/netfilter/xt_TEE.o: In function `tee_tg6':
+>> >> > xt_TEE.c:(.text+0x14): undefined reference to `nf_dup_ipv6'
+>> >> >
+>> >> > The problem here is the 'select NF_DUP_IPV6 if IP6_NF_IPTABLES'
+>> >> > that forces NF_DUP_IPV6 to be =m as well rather than setting it
+>> >> > to =y as was intended here. Adding a soft dependency on
+>> >> > IP6_NF_IPTABLES avoids that broken configuration.
+>> >>
+>> >> Applied to nf.git, thanks Arnd.
+>> >
+>> > Sorry, let me reconsider.
+>> >
+>> > We many need similar patches to other spots in 35bf1ccecaaa ?
+>> >
+>> > If so, it would be good to fix in the one go.
+>>
+>> I'm fairly sure that  NETFILTER_XT_TARGET_LOG is safe, since
+>> NF_LOG_IPV6 already depends on IP6_NF_IPTABLES.
+>>
+>> NF_SOCKET_IPV6 like NF_DUP_IPV6 does not depend on
+>> IP6_NF_IPTABLES, so we may have a similar problem there, though
+>> I have not come across that. I have done only a few hundred randconfig
+>> builds since I started yesterday, so I may have missed something,
+>> but I think this is safe because CONFIG_NF_SOCKET_IPV6 is
+>> used like a 'bool' symbol these days, we don't actually control building
+>> a module with it, only a small portion in the nft_socket file.
+>
+> Thanks for explaining.
 
-Also, with the crypto guys checking need_resched() in asm that won't
-really work either.
+Unfortunately I came across a related build error that my patch failed
+to address. I've sent another patch for that one. Feel free to fold it
+into my first patch in case you rebased before you forward the patches
+to net-next.
 
-> 3.	Revert my changes to de-emphasize cond_resched_rcu_qs(),
-> 	and go back to sprinkling cond_resched_rcu_qs() throughout
-> 	the code.  This also is one more thing for people to get wrong,
-> 	and might well eventually convert all cond_resched() calls to
-> 	cond_resched_rcu_qs(), which sure seems like a failure mode to me.
-
- 4a.	use resched_cpu() more agressive
- 4b.	use the tick to set TIF_NEED_RESCHED when it finds rcu_urgent_qs
-	(avoids the IPI at the 'cost' of a slight delay in processing)
-
- 5.	make guest mode a quiescent state (like supposedly already done
-	for NOHZ_FULL) (but this would not help the crypto guys).
-
- 6.	....
-
-ok I ran out of ideas here I think.
-
-
-So for PREEMPT the tick can check preempt_count() == 0 and if so, know
-it _could_ have rescheduled and advance the qs, right? But since we
-don't have a preempt count for !PREEMPT_COUNT kernels this doesn't work.
-
-And thus we need to invoke actual scheduling events and then through the
-schedule() callback RCU knows things happened.
-
-4b seems like something worth trying for !PREEMPT kernels I suppose
+      Arnd
