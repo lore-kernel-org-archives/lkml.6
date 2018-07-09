@@ -2,158 +2,126 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24271C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FAD2C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEAF8208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:12:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEAF8208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F3A2208DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:20:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ex1D9utX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F3A2208DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933048AbeGIDMZ convert rfc822-to-8bit (ORCPT
+        id S1754430AbeGIDUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 23:12:25 -0400
-Received: from mga06.intel.com ([134.134.136.31]:38696 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754394AbeGIDMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 23:12:23 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2018 20:12:22 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,328,1526367600"; 
-   d="scan'208";a="54977577"
-Received: from pgsmsx112.gar.corp.intel.com ([10.108.55.201])
-  by orsmga007.jf.intel.com with ESMTP; 08 Jul 2018 20:12:19 -0700
-Received: from pgsmsx101.gar.corp.intel.com ([169.254.1.62]) by
- PGSMSX112.gar.corp.intel.com ([169.254.3.172]) with mapi id 14.03.0319.002;
- Mon, 9 Jul 2018 11:12:18 +0800
-From:   "Chiang, AlanX" <alanx.chiang@intel.com>
-To:     "Robert P. J. Day" <rpjday@crashcourse.ca>,
-        Rob Herring <robh@kernel.org>
-CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-        "Yeh, Andy" <andy.yeh@intel.com>,
-        "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-        "andriy.shevchenko@linux.intel.com" 
-        <andriy.shevchenko@linux.intel.com>,
-        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
-        "Mani, Rajmohan" <rajmohan.mani@intel.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "tfiga@chromium.org" <tfiga@chromium.org>,
-        "jcliang@chromium.org" <jcliang@chromium.org>,
-        "brgl@bgdev.pl" <brgl@bgdev.pl>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Subject: RE: [RESEND PATCH v4 1/2] dt-bindings: at24: Add address-width
- property
-Thread-Topic: [RESEND PATCH v4 1/2] dt-bindings: at24: Add address-width
- property
-Thread-Index: AQHUEeT4VFqceYAHhEmICxBvoofczKSAoooA///v2QCABZxPkA==
-Date:   Mon, 9 Jul 2018 03:12:18 +0000
-Message-ID: <0772C36F3434E145A062D024A4869A09010B1E4D@PGSMSX101.gar.corp.intel.com>
-References: <1530522740-2798-1-git-send-email-alanx.chiang@intel.com>
- <1530522740-2798-2-git-send-email-alanx.chiang@intel.com>
- <20180705212204.GA10449@rob-hp-laptop>
- <alpine.LFD.2.21.1807051623400.12206@localhost.localdomain>
-In-Reply-To: <alpine.LFD.2.21.1807051623400.12206@localhost.localdomain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzQxZmZhNWYtMzk1My00YmEyLTliNWItZDk5MTFlYWUwMDgyIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiXC9VdDhycEIzTmtDZ0Ezb1Z5NkNNSlJ1eFFnZE95a1lGRjRlbzQyYlMyMm5MZ2dRaGJOTkxGVnltbUwzRzVlZXoifQ==
-x-ctpclassification: CTP_NT
-x-originating-ip: [172.30.20.206]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
+        Sun, 8 Jul 2018 23:20:32 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:37103 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754375AbeGIDUb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 23:20:31 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n15-v6so960931pgv.4
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 20:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=e9htUHOXH6pRtdx80yK6/PzAujm/Es8HEwNeNuNluZo=;
+        b=Ex1D9utXes1uPrRx2VxEUPT2pZEFzTvfMeN5G/H3Ogj/XoedmHmvC51B6zT9EbdOVe
+         tq+2xAznj99hEEGEHZ+El0FXcANuo0Pr9xPWxtJhKoBz9jAl7oJIIwmyzEx48YX7FkI2
+         aY5LG4iForuPKFcTILYarHBBPQUCaCDgah688=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=e9htUHOXH6pRtdx80yK6/PzAujm/Es8HEwNeNuNluZo=;
+        b=GZ9AQQO2BLTjgoWvqRBgbG8SuXz72phA/UK50Acpy6SgHoQ+k3/0CMXJH5DSwO6C7n
+         4oGZSxAgwTOBi1RhDmb38v4lREbSeUqb13xFGLb1e+UqZztUdmxjO5Mnjaa7+wsPmt3p
+         r2pogEdYonIYkvXheLvo7Pan9vKUG6h/cl1cD3nwyXhyZ82oTnUQQ6PzplODlDxVQAcF
+         IlYQPMiy8HIPNYQblGIjGbcIAYXjx/KFf4ugFnB6UCeMQC6U1fmTgyCD0VL7AUyxaOmy
+         wuJ7maDF1npAlH5RSmMP7H0jTy/yjyBktxu9iCq4m7FKv2wIEk119KHt547V5GnURbz/
+         TMcA==
+X-Gm-Message-State: APt69E1WTt2XpFpX88r3lFuhaVlqJ08GM4SRNkykbSEqR+MIdED+RjZ6
+        u3aslK+NmHzrovfD02rNKYwvpw==
+X-Google-Smtp-Source: AAOMgpe+wGYdchvseCgGPcbWyW1B5raqx0dPFd4U/iFSSvbfPZoUfzXJdV3PDQ/IjDEMGokD5P624A==
+X-Received: by 2002:a63:d15:: with SMTP id c21-v6mr17636555pgl.322.1531106430664;
+        Sun, 08 Jul 2018 20:20:30 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id e82-v6sm41458950pfk.87.2018.07.08.20.20.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 08 Jul 2018 20:20:29 -0700 (PDT)
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
+Subject: [PATCH V3 0/7] mmc: add support for sdhci 4.0
+Date:   Mon,  9 Jul 2018 11:19:51 +0800
+Message-Id: <1531106398-14062-1-git-send-email-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Robert,
+From the SD host controller version 4.0 on, SDHCI implementation either
+is version 3 compatible or version 4 mode. This patch-set covers those
+changes which are common for SDHCI 4.0 version, regardless of whether
+they are used with SD or eMMC storage devices.
 
-> -----Original Message-----
-> From: Robert P. J. Day [mailto:rpjday@crashcourse.ca]
-> Sent: Friday, July 6, 2018 4:24 AM
-> To: Rob Herring <robh@kernel.org>
-> Cc: Chiang, AlanX <alanx.chiang@intel.com>; linux-i2c@vger.kernel.org; Yeh,
-> Andy <andy.yeh@intel.com>; sakari.ailus@linux.intel.com;
-> andriy.shevchenko@linux.intel.com; Shevchenko, Andriy
-> <andriy.shevchenko@intel.com>; Mani, Rajmohan
-> <rajmohan.mani@intel.com>; andy.shevchenko@gmail.com;
-> tfiga@chromium.org; jcliang@chromium.org; brgl@bgdev.pl;
-> mark.rutland@arm.com; arnd@arndb.de; gregkh@linuxfoundation.org;
-> linux-kernel@vger.kernel.org; devicetree@vger.kernel.org
-> Subject: Re: [RESEND PATCH v4 1/2] dt-bindings: at24: Add address-width
-> property
-> 
-> On Thu, 5 Jul 2018, Rob Herring wrote:
-> 
-> > On Mon, Jul 02, 2018 at 05:12:19PM +0800, alanx.chiang@intel.com wrote:
-> > > From: Alan Chiang <alanx.chiang@intel.com>
-> > >
-> > > The AT24 series chips use 8-bit address by default. If some chips
-> > > would like to support more than 8 bits, the at24 driver should be
-> > > added the compatible field for specfic chips.
-> > >
-> > > Provide a flexible way to determine the addressing bits through
-> > > address-width in this patch.
-> > >
-> > > Signed-off-by: Alan Chiang <alanx.chiang@intel.com>
-> > > Signed-off-by: Andy Yeh <andy.yeh@intel.com>
-> > > Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> > >
-> > > ---
-> > > since v1:
-> > > -- Remove the address-width field in the example.
-> > > since v2:
-> > > -- Remove redundant space.
-> > > since v3:
-> > > -- Add Acked-by.
-> > >
-> > > ---
-> > >  Documentation/devicetree/bindings/eeprom/at24.txt | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> 
->   "... should be added the compatible field ..."??
-> 
-> rday
+This patchset also added a new sdhci driver for Spreadtrum's controller
+which supports v4.0 mode.
 
-Maybe I should modify the sentence as below that makes it clear.
-"The compatible field should be added in the at24.c for specific chips.".
+This patchset has been tested on Spreadtrum's mobile phone, emmc can be
+initialized, mounted, read and written, with these changes for common
+sdhci framework and sdhci-sprd driver.
 
-I quote Andy's words in patch v2:
-"The current at24 driver has no address width support, thus, reusing same
-(allocated) IDs (non-DT case) is hard."
+Changes from V2:
+* Addressed comments from Adrian:
+- Added sdhci_enable_v4_mode() for enabling v4 mode instead of determining by reading from registers;
+- Added support for 64-bit SDMA address in v4 mode;
+- Dropped the changes of ADMA2 data aglinment;
+- Added support for "Auto Cmd Auto Select".
+* Rebased on v4.18-rc2.
+* Dealt with a few issues in sdhci-sprd:
+- Save return value of mmc_of_parse();
+- Add checking for clk_prepare_enable();
+- Use BIT() macro instead.
 
-This is the reason that I submitted the patch.
+Changes from v1:
+* Addressed comments from Ulf:
+ - Add dt-bindings for Spreadtrum sdhci;
+ - Use assigned-clocks* DT bindings to set default source of sdio clock;
+ - Removed unuseful print;
+ - Removed two functions which are not used;
+ - Add back the missing pm_runtime_put_autosuspend() after adding sdhci host.
 
-Thanks
+* Changed Spreadtrum sdhci driver name to sdhci-sprd.
 
-> 
-> --
-> 
-> ==========================================================
-> ==============
-> Robert P. J. Day                                 Ottawa, Ontario, CANADA
->                   http://crashcourse.ca/dokuwiki
-> 
-> Twitter:                                       http://twitter.com/rpjday
-> LinkedIn:                               http://ca.linkedin.com/in/rpjday
-> ==========================================================
-> ==============
+Chunyan Zhang (7):
+  mmc: sdhci: add sd host v4 mode
+  mmc: sdhci: made changes for System Address register of SDMA
+  mmc: sdhci: add ADMA2 64-bit addressing support for V4 mode
+  mmc: sdhci: add 32-bit block count support for v4 mode
+  mmc: sdhci: add Auto CMD Auto Select support
+  mmc: sdhci-sprd: added Spreadtrum's initial host controller
+  dt-bindings: sdhci-sprd: Add bindings for the sdhci-sprd controller
+
+ .../devicetree/bindings/mmc/sdhci-sprd.txt         |  41 ++
+ drivers/mmc/host/Kconfig                           |  13 +
+ drivers/mmc/host/Makefile                          |   1 +
+ drivers/mmc/host/sdhci-sprd.c                      | 437 +++++++++++++++++++++
+ drivers/mmc/host/sdhci.c                           | 107 +++--
+ drivers/mmc/host/sdhci.h                           |  22 +-
+ 6 files changed, 596 insertions(+), 25 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
+ create mode 100644 drivers/mmc/host/sdhci-sprd.c
+
+-- 
+2.7.4
+
