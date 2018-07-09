@@ -1,169 +1,132 @@
 Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A4EC3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DF7C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC6D208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC6D208A3
+	by mail.kernel.org (Postfix) with ESMTP id D0410208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0410208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933092AbeGIDJa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 23:09:30 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:41296 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932720AbeGIDJF (ORCPT
+        id S933306AbeGIDJy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 23:09:54 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:42971 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932685AbeGIDJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 23:09:05 -0400
-Received: by mail-io0-f200.google.com with SMTP id p12-v6so1166647iog.8
+        Sun, 8 Jul 2018 23:09:04 -0400
+Received: by mail-it0-f72.google.com with SMTP id p21-v6so14171676itc.7
         for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 20:09:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=TeKoTv30eXAcqYxvdt7BD7ozUa5m56P+dm4EUklDZK8=;
-        b=GA0AVudmn8mf4HmrpgctHZwqVydTnUbNlLEUFPNqhICEsLZkMW2Zr8tjLnnKnWq//Z
-         4s676w4vsh1gdp6JfsqXOkByUCFkKNVu4KjM3iJqZRHD/7VaMXfLRulPrLTNcUwMMGB2
-         IU0d8lzK8+cx8MvYY7mMTviY79vQ15jSjAOCjGC2I+KuyA5S60mfBvsDY8jSYy2xuhWa
-         C8Vcdq7PPqmvAJ3Dvwd/iLnauHQbngn5uTGi2P+EJJKSfBNV54HS53F30auvr5dxAUwZ
-         Sd415d1u80rG6+I8dMgO2GSIM/ohE4q8C2XsNjYRfYUw4d9MwfRcygCGq8c12D1cJfmX
-         s4PA==
-X-Gm-Message-State: APt69E0Ir57sCvfh8BJZ8qaOG+YH0X/BzENX1/FPJNEaoFqg9Sq1XOlm
-        SOnRnS16cylKIaCWYCIkxfjazTPTyqikBpFxFN6m2KWtc+lU
-X-Google-Smtp-Source: AAOMgpcCAbCQB3sR/nqjuBPd6kCv6VKJ3MZopnPIiQIRIAPI+eaSCVOpU575y1nbf+4ysJ4NuKDYQ8r8Dge/cFK725bwoeYJrwru
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
+         :content-transfer-encoding;
+        bh=aFZxZpT63aHhEAfZ0O0CJzgUUXHh8hvsTpOx49rM33Q=;
+        b=c23gTJUQ7Opy/7zxUEyiY1tEd/ENgTC8x8BEOLruR5RBMSIwB2Kj01Fm+pioyLJsGz
+         98qQMdtZMJ914Uik+HEd3xNTUyisSa0pt6pqr7UNho5ULEXhSuaaR0AypTANndX/dBuh
+         omDZ8fMVYEIXpmfK4F13j69q6lGNJjEATca+KccnMeDxuDm38IknwlR0benj36t6Y16c
+         FxChPsbJFjc7oBXKvXWt6rpERihSt2X4oAvmK5MFi7bJVN9WMgHQCXtIeoqeRF0S3vLy
+         LpzxS8gCZt1GnbL8kjffcJbGd2FEsyCk8K8OJR+kugrwHcPPjGMFeOfs31q3F2SDljwJ
+         QNww==
+X-Gm-Message-State: AOUpUlHg62DRBhvY0ujuq8cK7vV0JICjvvDiOtjfReRblh1dLRXLl59O
+        Dq5HjPM19DDgEm3dYdKoz3ZOZXbQeJpXOcyQvM977eNV5BVF
+X-Google-Smtp-Source: AAOMgpdJ0MoQMcAh4Oo+bzJXsZhGPiI2O+VGADwkEH2NH22PSq9i5qpXxXTSJIhxLSkOl805zbUHS+W7cCizuVbq3UVSmnUhyVuf
 MIME-Version: 1.0
-X-Received: by 2002:a24:ee4d:: with SMTP id b74-v6mr8128821iti.9.1531105744454;
+X-Received: by 2002:a24:54c9:: with SMTP id t192-v6mr1283913ita.40.1531105744042;
  Sun, 08 Jul 2018 20:09:04 -0700 (PDT)
 Date:   Sun, 08 Jul 2018 20:09:04 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000311c905708856bf@google.com>
-Subject: KASAN: stack-out-of-bounds Read in add_wait_queue
-From:   syzbot <syzbot+b1b8812f7c2ce78da0e5@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, ebiederm@xmission.com,
-        keescook@chromium.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, mingo@kernel.org, paulmck@linux.vnet.ibm.com,
-        sudipm.mukherjee@gmail.com, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk, zhongjiang@huawei.com
+Message-ID: <000000000000fcc4db05708855b0@google.com>
+Subject: general protection fault in scheduler_tick
+From:   syzbot <syzbot+c840410f5e0567496967@syzkaller.appspotmail.com>
+To:     fweisbec@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    ca04b3cca11a Merge tag 'armsoc-fixes' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=123180c8400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2ca6c7a31d407f86
-dashboard link: https://syzkaller.appspot.com/bug?extid=b1b8812f7c2ce78da0e5
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16dc56d0400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=170f4f48400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b1b8812f7c2ce78da0e5@syzkaller.appspotmail.com
-
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-IPVS: ftp: loaded support on port[0] = 21
-==================================================================
-BUG: KASAN: stack-out-of-bounds in __lock_acquire+0x3829/0x5020  
-kernel/locking/lockdep.c:3314
-Read of size 8 at addr ffff8801a91dc738 by task syz-executor471/4532
-
-CPU: 0 PID: 4532 Comm: syz-executor471 Not tainted 4.18.0-rc3+ #137
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __lock_acquire+0x3829/0x5020 kernel/locking/lockdep.c:3314
-  lock_acquire+0x1e4/0x540 kernel/locking/lockdep.c:3924
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x96/0xc0 kernel/locking/spinlock.c:152
-  add_wait_queue+0x92/0x2b0 kernel/sched/wait.c:22
-  do_wait+0x1bf/0xb80 kernel/exit.c:1505
-  kernel_wait4+0x247/0x3f0 kernel/exit.c:1665
-  __do_sys_wait4+0x137/0x150 kernel/exit.c:1677
-  __se_sys_wait4 kernel/exit.c:1673 [inline]
-  __x64_sys_wait4+0x97/0xf0 kernel/exit.c:1673
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x405faa
-Code: c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 8b 05 0e cc 2d 00 85  
-c0 75 36 45 31 d2 48 63 d2 48 63 ff b8 3d 00 00 00 0f 05 <48> 3d 00 f0 ff  
-ff 77 06 c3 0f 1f 44 00 00 48 c7 c2 d0 ff ff ff f7
-RSP: 002b:00007fff2e852408 EFLAGS: 00000246 ORIG_RAX: 000000000000003d
-RAX: ffffffffffffffda RBX: 00000000000007b5 RCX: 0000000000405faa
-RDX: 0000000040000001 RSI: 00007fff2e85241c RDI: ffffffffffffffff
-RBP: 00000000000007b5 R08: 0000000000000001 R09: 00000000023e4880
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000291
-R13: 000000000001b4c3 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 4531:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  kmem_cache_zalloc include/linux/slab.h:697 [inline]
-  copy_signal+0x175/0xc10 kernel/fork.c:1443
-  copy_process.part.39+0x2137/0x7220 kernel/fork.c:1800
-  copy_process kernel/fork.c:1616 [inline]
-  _do_fork+0x291/0x12a0 kernel/fork.c:2099
-  __do_sys_clone kernel/fork.c:2206 [inline]
-  __se_sys_clone kernel/fork.c:2200 [inline]
-  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2200
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 0:
-(stack is not available)
-
-The buggy address belongs to the object at ffff8801a91dc700
-  which belongs to the cache signal_cache of size 1296
-The buggy address is located 56 bytes inside of
-  1296-byte region [ffff8801a91dc700, ffff8801a91dcc10)
-The buggy address belongs to the page:
-page:ffffea0006a47700 count:1 mapcount:0 mapping:ffff8801da97be40 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea0006b3ca88 ffffea0006b2f888 ffff8801da97be40
-raw: 0000000000000000 ffff8801a91dc140 0000000100000005 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801a91dc600: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8801a91dc680: 00 00 00 00 f1 f1 f1 f1 00 f2 f2 f2 f2 f2 f2 f2
-> ffff8801a91dc700: 00 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 f2 f2 f2 f2
-                                         ^
-  ffff8801a91dc780: f8 f2 f2 f2 f2 f2 f2 f2 00 f2 f2 f2 00 00 00 00
-  ffff8801a91dc800: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
+bW1pdDogICAgNTI2Njc0NTM2MzYwIEFkZCBsaW51eC1uZXh0IHNwZWNpZmljIGZpbGVzIGZvciAy
+MDE4MDcwNg0KZ2l0IHRyZWU6ICAgICAgIGxpbnV4LW5leHQNCmNvbnNvbGUgb3V0cHV0OiBodHRw
+czovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xN2Y2Mzk2ODQwMDAwMA0Ka2Vy
+bmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94PWM4
+ZDFjZmMwY2I3OThlNDgNCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBzcG90
+LmNvbS9idWc/ZXh0aWQ9Yzg0MDQxMGY1ZTA1Njc0OTY5NjcNCmNvbXBpbGVyOiAgICAgICBnY2Mg
+KEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCnN5emthbGxlciByZXBybzpodHRw
+czovL3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLnN5ej94PTE2ZTUwNTk0NDAwMDAwDQpD
+IHJlcHJvZHVjZXI6ICAgaHR0cHM6Ly9zeXprYWxsZXIuYXBwc3BvdC5jb20veC9yZXByby5jP3g9
+MTI5MTgwYzg0MDAwMDANCg0KSU1QT1JUQU5UOiBpZiB5b3UgZml4IHRoZSBidWcsIHBsZWFzZSBh
+ZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8gdGhlIGNvbW1pdDoNClJlcG9ydGVkLWJ5OiBzeXpib3Qr
+Yzg0MDQxMGY1ZTA1Njc0OTY5NjdAc3l6a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQ0KDQprYXNhbjog
+Q09ORklHX0tBU0FOX0lOTElORSBlbmFibGVkDQprYXNhbjogR1BGIGNvdWxkIGJlIGNhdXNlZCBi
+eSBOVUxMLXB0ciBkZXJlZiBvciB1c2VyIG1lbW9yeSBhY2Nlc3MNCmdlbmVyYWwgcHJvdGVjdGlv
+biBmYXVsdDogMDAwMCBbIzFdIFNNUCBLQVNBTg0KQ1BVOiAwIFBJRDogLTE5OTY5MzY5MjggQ29t
+bTog77+977+916kB77+977+977+9dXRvciBOb3QgdGFpbnRlZCAgDQo0LjE4LjAtcmMzLW5leHQt
+MjAxODA3MDYrICMxDQpIYXJkd2FyZSBuYW1lOiBHb29nbGUgR29vZ2xlIENvbXB1dGUgRW5naW5l
+L0dvb2dsZSBDb21wdXRlIEVuZ2luZSwgQklPUyAgDQpHb29nbGUgMDEvMDEvMjAxMQ0KUklQOiAw
+MDEwOnNjaGVkdWxlcl90aWNrKzB4MTcwLzB4NDMwIGtlcm5lbC9zY2hlZC9jb3JlLmM6MzA3OA0K
+Q29kZTogNDggODkgZmEgNDggYzEgZWEgMDMgODAgM2MgMDIgMDAgMGYgODUgOWEgMDIgMDAgMDAg
+NDggYmEgMDAgMDAgMDAgMDAgIA0KMDAgZmMgZmYgZGYgNDkgOGIgNDcgNzggNDggOGQgNzggNzgg
+NDggODkgZjkgNDggYzEgZTkgMDMgPDgwPiAzYyAxMSAwMCAwZiAgDQo4NSA1ZiAwMiAwMCAwMCA0
+OCA4YiA0MCA3OCAzMSBkMiA0YyA4OSBmZSA0OCA4OSBkZg0KUlNQOiAwMDE4OmZmZmY4ODAxZGFl
+MDdhMDAgRUZMQUdTOiAwMDAxMDAwNg0KUkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogZmZmZjg4
+MDFkYWUyYzk4MCBSQ1g6IDAwMDAwMDAwMDAwMDAwMGYNClJEWDogZGZmZmZjMDAwMDAwMDAwMCBS
+U0k6IDAwMDAwMDAwMDAwMDAwMDggUkRJOiAwMDAwMDAwMDAwMDAwMDc4DQpSQlA6IGZmZmY4ODAx
+ZGFlMDdhZTAgUjA4OiBmZmZmODgwMjFmZmY4MDE4IFIwOTogZmZmZjg4MDIxZmZmODAxYg0KUjEw
+OiBmZmZmZWQwMDQzZmZmMDAxIFIxMTogMDAwMDAwMDAwMDAwMDAwMCBSMTI6IDAwMDAwMDAwMDAw
+MDAwMDANClIxMzogZmZmZjg4MDFkYWUwN2EzOCBSMTQ6IGZmZmY4ODAxZGFlMDdhYjggUjE1OiBm
+ZmZmODgwMWE5ZDdlMDgwDQpGUzogIDAwMDA3ZmY3ZjI3MDQ3MDAoMDAwMCkgR1M6ZmZmZjg4MDFk
+YWUwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwDQpDUzogIDAwMTAgRFM6IDAwMDAg
+RVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzDQpDUjI6IDAwMDAwMDAwMDAwMDAxMzAgQ1Iz
+OiAwMDAwMDAwMDA4ZTZhMDAwIENSNDogMDAwMDAwMDAwMDE0MDZmMA0KRFIwOiAwMDAwMDAwMDAw
+MDAwMDAwIERSMTogMDAwMDAwMDAwMDAwMDAwMCBEUjI6IDAwMDAwMDAwMDAwMDAwMDANCkRSMzog
+MDAwMDAwMDAwMDAwMDAwMCBEUjY6IDAwMDAwMDAwZmZmZTBmZjAgRFI3OiAwMDAwMDAwMDAwMDAw
+NDAwDQpDYWxsIFRyYWNlOg0KICA8SVJRPg0KICB1cGRhdGVfcHJvY2Vzc190aW1lcysweDUxLzB4
+NzAga2VybmVsL3RpbWUvdGltZXIuYzoxNjQxDQogIHRpY2tfc2NoZWRfaGFuZGxlKzB4OWYvMHgx
+ODAga2VybmVsL3RpbWUvdGljay1zY2hlZC5jOjE2NA0KICB0aWNrX3NjaGVkX3RpbWVyKzB4NDUv
+MHgxMzAga2VybmVsL3RpbWUvdGljay1zY2hlZC5jOjEyNzQNCiAgX19ydW5faHJ0aW1lciBrZXJu
+ZWwvdGltZS9ocnRpbWVyLmM6MTM5OCBbaW5saW5lXQ0KICBfX2hydGltZXJfcnVuX3F1ZXVlcysw
+eDNlYi8weDEwYzAga2VybmVsL3RpbWUvaHJ0aW1lci5jOjE0NjANCiAgaHJ0aW1lcl9pbnRlcnJ1
+cHQrMHgyZjMvMHg3NTAga2VybmVsL3RpbWUvaHJ0aW1lci5jOjE1MTgNCiAgbG9jYWxfYXBpY190
+aW1lcl9pbnRlcnJ1cHQgYXJjaC94ODYva2VybmVsL2FwaWMvYXBpYy5jOjEwMjUgW2lubGluZV0N
+CiAgc21wX2FwaWNfdGltZXJfaW50ZXJydXB0KzB4MTY1LzB4NzMwIGFyY2gveDg2L2tlcm5lbC9h
+cGljL2FwaWMuYzoxMDUwDQogIGFwaWNfdGltZXJfaW50ZXJydXB0KzB4Zi8weDIwIGFyY2gveDg2
+L2VudHJ5L2VudHJ5XzY0LlM6ODY3DQogIDwvSVJRPg0KTW9kdWxlcyBsaW5rZWQgaW46DQpEdW1w
+aW5nIGZ0cmFjZSBidWZmZXI6DQogICAgKGZ0cmFjZSBidWZmZXIgZW1wdHkpDQotLS1bIGVuZCB0
+cmFjZSA0MDkxMzU3NTAwOGZiZGEwIF0tLS0NClJJUDogMDAxMDpzY2hlZHVsZXJfdGljaysweDE3
+MC8weDQzMCBrZXJuZWwvc2NoZWQvY29yZS5jOjMwNzgNCkNvZGU6IDQ4IDg5IGZhIDQ4IGMxIGVh
+IDAzIDgwIDNjIDAyIDAwIDBmIDg1IDlhIDAyIDAwIDAwIDQ4IGJhIDAwIDAwIDAwIDAwICANCjAw
+IGZjIGZmIGRmIDQ5IDhiIDQ3IDc4IDQ4IDhkIDc4IDc4IDQ4IDg5IGY5IDQ4IGMxIGU5IDAzIDw4
+MD4gM2MgMTEgMDAgMGYgIA0KODUgNWYgMDIgMDAgMDAgNDggOGIgNDAgNzggMzEgZDIgNGMgODkg
+ZmUgNDggODkgZGYNClJTUDogMDAxODpmZmZmODgwMWRhZTA3YTAwIEVGTEFHUzogMDAwMTAwMDYN
+ClJBWDogMDAwMDAwMDAwMDAwMDAwMCBSQlg6IGZmZmY4ODAxZGFlMmM5ODAgUkNYOiAwMDAwMDAw
+MDAwMDAwMDBmDQpSRFg6IGRmZmZmYzAwMDAwMDAwMDAgUlNJOiAwMDAwMDAwMDAwMDAwMDA4IFJE
+STogMDAwMDAwMDAwMDAwMDA3OA0KUkJQOiBmZmZmODgwMWRhZTA3YWUwIFIwODogZmZmZjg4MDIx
+ZmZmODAxOCBSMDk6IGZmZmY4ODAyMWZmZjgwMWINClIxMDogZmZmZmVkMDA0M2ZmZjAwMSBSMTE6
+IDAwMDAwMDAwMDAwMDAwMDAgUjEyOiAwMDAwMDAwMDAwMDAwMDAwDQpSMTM6IGZmZmY4ODAxZGFl
+MDdhMzggUjE0OiBmZmZmODgwMWRhZTA3YWI4IFIxNTogZmZmZjg4MDFhOWQ3ZTA4MA0KRlM6ICAw
+MDAwN2ZmN2YyNzA0NzAwKDAwMDApIEdTOmZmZmY4ODAxZGFlMDAwMDAoMDAwMCkga25sR1M6MDAw
+MDAwMDAwMDAwMDAwMA0KQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4
+MDA1MDAzMw0KQ1IyOiAwMDAwMDAwMDAwMDAwMTMwIENSMzogMDAwMDAwMDAwOGU2YTAwMCBDUjQ6
+IDAwMDAwMDAwMDAxNDA2ZjANCkRSMDogMDAwMDAwMDAwMDAwMDAwMCBEUjE6IDAwMDAwMDAwMDAw
+MDAwMDAgRFIyOiAwMDAwMDAwMDAwMDAwMDAwDQpEUjM6IDAwMDAwMDAwMDAwMDAwMDAgRFI2OiAw
+MDAwMDAwMGZmZmUwZmYwIERSNzogMDAwMDAwMDAwMDAwMDQwMA0KDQoNCi0tLQ0KVGhpcyBidWcg
+aXMgZ2VuZXJhdGVkIGJ5IGEgYm90LiBJdCBtYXkgY29udGFpbiBlcnJvcnMuDQpTZWUgaHR0cHM6
+Ly9nb28uZ2wvdHBzbUVKIGZvciBtb3JlIGluZm9ybWF0aW9uIGFib3V0IHN5emJvdC4NCnN5emJv
+dCBlbmdpbmVlcnMgY2FuIGJlIHJlYWNoZWQgYXQgc3l6a2FsbGVyQGdvb2dsZWdyb3Vwcy5jb20u
+DQoNCnN5emJvdCB3aWxsIGtlZXAgdHJhY2sgb2YgdGhpcyBidWcgcmVwb3J0LiBTZWU6DQpodHRw
+czovL2dvby5nbC90cHNtRUojYnVnLXN0YXR1cy10cmFja2luZyBmb3IgaG93IHRvIGNvbW11bmlj
+YXRlIHdpdGggIA0Kc3l6Ym90Lg0Kc3l6Ym90IGNhbiB0ZXN0IHBhdGNoZXMgZm9yIHRoaXMgYnVn
+LCBmb3IgZGV0YWlscyBzZWU6DQpodHRwczovL2dvby5nbC90cHNtRUojdGVzdGluZy1wYXRjaGVz
+DQo=
