@@ -2,223 +2,129 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2C8C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96229C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:06:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E73320890
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:00:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E73320890
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 4644620890
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:06:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwIJgKrE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4644620890
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754447AbeGIIAS (ORCPT
+        id S1754438AbeGIIGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:00:18 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3785 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750996AbeGIIAQ (ORCPT
+        Mon, 9 Jul 2018 04:06:38 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:35335 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751048AbeGIIGe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:00:16 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b43160e0000>; Mon, 09 Jul 2018 01:00:14 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 09 Jul 2018 01:00:16 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 09 Jul 2018 01:00:16 -0700
-Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
- HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
- 15.0.1347.2; Mon, 9 Jul 2018 08:00:15 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1002)
-        id 4AA14F8012A; Mon,  9 Jul 2018 11:00:12 +0300 (EEST)
-Date:   Mon, 9 Jul 2018 11:00:12 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-CC:     Aapo Vienamo <avienamo@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] clk: tegra: Add sdmmc mux divider clock
-Message-ID: <20180709080012.GE27696@tbergstrom-lnx.Nvidia.com>
-References: <1530699455-27654-1-git-send-email-avienamo@nvidia.com>
- <1530699455-27654-2-git-send-email-avienamo@nvidia.com>
- <153090111049.143105.9486166124584607061@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <153090111049.143105.9486166124584607061@swboyd.mtv.corp.google.com>
+        Mon, 9 Jul 2018 04:06:34 -0400
+Received: by mail-yb0-f196.google.com with SMTP id x15-v6so6855541ybm.2;
+        Mon, 09 Jul 2018 01:06:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7S1uPsIr5ADBgcsgfQb4AMK/6T1OOwRBEXslU8sjZiY=;
+        b=kwIJgKrE0YOzuOXJvBG9U+xP5LxBts9K2k1ZRAtY7CcW2slMAlN9pAHZNx3DVtl2DO
+         JHc3YYglBOk4Ykw59UIzu6vxs/x0yut94bXwKpr9aIXZ4eAS+lsMtg59+59rc2j0gOAZ
+         yVsxwMKVZfqcv3lIy/SNOugOgFo1xBEZiiWCpAfhAq6fWaDioArMnRwZ3630405WV0M6
+         v4DxPqMAe/Zn+JX14cCtubT0ecuciRTlUTJrrN5Pet++Glk+OdZyDDU9IM1jBRoajjQE
+         uGx+aqgKYTQJ8EsbQO0WcxtZHMPDoJ4X5uMZgOkW+syh//s3DAvCPgAOBAINP99ZvsaJ
+         bvNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7S1uPsIr5ADBgcsgfQb4AMK/6T1OOwRBEXslU8sjZiY=;
+        b=QV7tgkdxo6AQWYpKggzJR5ywV9LdxfVd4yGP4uyysQPUxEOab4tLPes0f+HExRFW1x
+         zvuZDSSk/PxfPQq2PgSkxrIM81lZ8NzcNTq2DuMTlJLrctEkX35/iHu/4DaqBCRM5uKi
+         Zi9PKGTye4Flv2pv70yVTRLuivMf2hGDwdmsmnv9zcahJP61J6NxbUFob/oSvsb6uMK0
+         oPQ1ji96yLJU4KKe0wQGhBfN5KIcgYQIFxl5aUW5SXvwo95dxYEzT85pQQUNvjF5aTFk
+         ZO/uQU2YJ8F9A4laVjIQiknb6/r4UexcHHrLhyXQKK5AFGh/lOiHrAfiHvQ1SyugTAgH
+         cnoA==
+X-Gm-Message-State: APt69E3SXVUn/dPgRSZ9empf2zOoJMxfK/YyjJHUEFr4Qxgo7u7WBKtR
+        XZN7CxGlaqzXOZSuACO6WObwlg==
+X-Google-Smtp-Source: AAOMgpcPEHeVirfQm8JXNox+KWiLSEVztBX+fVQf/b7dx2Q+QbR9+nSiNbcyUsQ/BCM2ZmrAGPXz2A==
+X-Received: by 2002:a25:403:: with SMTP id 3-v6mr10679430ybe.396.1531123594044;
+        Mon, 09 Jul 2018 01:06:34 -0700 (PDT)
+Received: from sandstorm.nvidia.com ([2600:1700:43b0:3120:feaa:14ff:fe9e:34cb])
+        by smtp.gmail.com with ESMTPSA id w64-v6sm6339514ywe.46.2018.07.09.01.06.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 01:06:33 -0700 (PDT)
+From:   john.hubbard@gmail.com
+X-Google-Original-From: jhubbard@nvidia.com
+To:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 1/2] mm: introduce put_user_page(), placeholder version
+Date:   Mon,  9 Jul 2018 01:05:53 -0700
+Message-Id: <20180709080554.21931-2-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180709080554.21931-1-jhubbard@nvidia.com>
+References: <20180709080554.21931-1-jhubbard@nvidia.com>
 X-NVConfidentiality: public
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 11:18:30AM -0700, Stephen Boyd wrote:
-> Quoting Aapo Vienamo (2018-07-04 03:17:34)
-> > diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
-> > new file mode 100644
-> > index 0000000..8e19cb3
-> > --- /dev/null
-> > +++ b/drivers/clk/tegra/clk-sdmmc-mux.c
-> > @@ -0,0 +1,254 @@
-> > +/*
-> > + * Copyright (c) 2018 NVIDIA CORPORATION.  All rights reserved.
-> > + *
-> > + * based on clk-mux.c
-> > +
-> > + * Copyright (C) 2011 Sascha Hauer, Pengutronix <s.hauer@pengutronix.de>
-> > + * Copyright (C) 2011 Richard Zhao, Linaro <richard.zhao@linaro.org>
-> > + * Copyright (C) 2011-2012 Mike Turquette, Linaro Ltd <mturquette@linaro.org>
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify it
-> > + * under the terms and conditions of the GNU General Public License,
-> > + * version 2, as published by the Free Software Foundation.
-> > + *
-> > + * This program is distributed in the hope it will be useful, but WITHOUT
-> > + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> > + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> > + * more details.
-> > + *
-> > + * You should have received a copy of the GNU General Public License
-> > + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-> 
-> Any chance we can get SPDX tags here instead of all the boiler plate?
-> 
-> > + */
-> > +
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/err.h>
-> > +#include <linux/types.h>
-> > +
-> > +#include "clk.h"
-> > +
-> > +#define DIV_MASK GENMASK(7, 0)
-> > +#define MUX_SHIFT 29
-> > +#define MUX_MASK GENMASK(MUX_SHIFT + 2, MUX_SHIFT)
-> > +
-> > +#define get_max_div(d) DIV_MASK
-> > +#define get_div_field(val) ((val) & DIV_MASK)
-> > +#define get_mux_field(val) (((val) & MUX_MASK) >> MUX_SHIFT)
-> > +
-> > +static const char * const mux_sdmmc_parents[] = { "pll_p", "pll_c4_out2",
-> > +                                                 "pll_c4_out0", "pll_c4_out1",
-> > +                                                  "clk_m" };
-> > +static u8 mux_lj_idx[] = { [0] = 0, [1] = 1, [2] = 2, [3] = 5, [4] = 6 };
-> > +static u8 mux_non_lj_idx[] = { [0] = 0, [1] = 3, [2] = 7, [3] = 4, [4] = 6 };
-> 
-> These can be const?
-> 
-> > +
-> > +static u8 clk_sdmmc_mux_get_parent(struct clk_hw *hw)
-> > +{
-> [...]
-> > +static int clk_sdmmc_mux_set_rate(struct clk_hw *hw, unsigned long rate,
-> > +                                 unsigned long parent_rate)
-> > +{
-> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> > +       int div;
-> > +       unsigned long flags = 0;
-> > +       u32 val;
-> > +       u8 src;
-> > +
-> > +       div = div71_get(rate, parent_rate, 8, 1, sdmmc_mux->div_flags);
-> > +       if (div < 0)
-> > +               return div;
-> > +
-> > +       if (sdmmc_mux->lock)
-> > +               spin_lock_irqsave(sdmmc_mux->lock, flags);
-> > +
-> > +       src = clk_sdmmc_mux_get_parent(hw);
-> > +       if (div)
-> > +               src = mux_non_lj_idx[src];
-> > +       else
-> > +               src = mux_lj_idx[src];
-> > +
-> > +       val = src << MUX_SHIFT;
-> > +       val |= div;
-> > +       writel(val, sdmmc_mux->reg);
-> > +       fence_udelay(2, sdmmc_mux->reg);
-> > +
-> > +       if (sdmmc_mux->lock)
-> > +               spin_unlock_irqrestore(sdmmc_mux->lock, flags);
-> 
-> This conditional locking will give sparse a headache. O well.
-> 
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static int clk_sdmmc_mux_is_enabled(struct clk_hw *hw)
-> > +{
-> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> > +       const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-> > +       struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-> > +
-> > +       __clk_hw_set_clk(gate_hw, hw);
-> > +
-> > +       return gate_ops->is_enabled(gate_hw);
-> > +}
-> > +
-> > +static int clk_sdmmc_mux_enable(struct clk_hw *hw)
-> > +{
-> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> > +       const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-> > +       struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-> > +
-> > +       __clk_hw_set_clk(gate_hw, hw);
-> > +
-> > +       return  gate_ops->enable(gate_hw);
-> > +}
-> > +
-> > +static void clk_sdmmc_mux_disable(struct clk_hw *hw)
-> > +{
-> > +       struct tegra_sdmmc_mux *sdmmc_mux = to_clk_sdmmc_mux(hw);
-> > +       const struct clk_ops *gate_ops = sdmmc_mux->gate_ops;
-> > +       struct clk_hw *gate_hw = &sdmmc_mux->gate.hw;
-> > +
-> > +       gate_ops->disable(gate_hw);
-> > +}
-> > +
-> > +const struct clk_ops tegra_clk_sdmmc_mux_ops = {
-> 
-> static?
-> 
-> > +       .get_parent = clk_sdmmc_mux_get_parent,
-> > +       .set_parent = clk_sdmmc_mux_set_parent,
-> > +       .determine_rate = clk_sdmmc_mux_determine_rate,
-> > +       .recalc_rate = clk_sdmmc_mux_recalc_rate,
-> > +       .set_rate = clk_sdmmc_mux_set_rate,
-> > +       .is_enabled = clk_sdmmc_mux_is_enabled,
-> > +       .enable = clk_sdmmc_mux_enable,
-> > +       .disable = clk_sdmmc_mux_disable,
-> > +};
-> > +
-> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> > index f14e136..4c3d0f5 100644
-> > --- a/drivers/clk/tegra/clk.h
-> > +++ b/drivers/clk/tegra/clk.h
-> > @@ -19,6 +19,7 @@
-> >  
-> >  #include <linux/clk-provider.h>
-> >  #include <linux/clkdev.h>
-> > +#include <linux/delay.h>
-> 
-> Why? Include this in the C file that cares please.
-> 
+From: John Hubbard <jhubbard@nvidia.com>
 
-The fence_udelay macro uses udelay and is used in clk-sdmmc-mux.c. However it
-seems more appropriate to include delay.h here rather than in every single
-user of the macro.
+Introduces put_user_page(), which simply calls put_page().
+This provides a safe way to update all get_user_pages*() callers,
+so that they call put_user_page(), instead of put_page().
 
-Peter.
+Also adds release_user_pages(), a drop-in replacement for
+release_pages(). This is intended to be easily grep-able,
+for later performance improvements, since release_user_pages
+is not batched like release_pages is, and is significantly
+slower.
+
+Subsequent patches will add functionality to put_user_page().
+
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+---
+ include/linux/mm.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a0fbb9ffe380..db4a211aad79 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -923,6 +923,20 @@ static inline void put_page(struct page *page)
+ 		__put_page(page);
+ }
+ 
++/* Placeholder version, until all get_user_pages*() callers are updated. */
++static inline void put_user_page(struct page *page)
++{
++	put_page(page);
++}
++
++/* A drop-in replacement for release_pages(): */
++static inline void release_user_pages(struct page **pages,
++				      unsigned long npages)
++{
++	while (npages)
++		put_user_page(pages[--npages]);
++}
++
+ #if defined(CONFIG_SPARSEMEM) && !defined(CONFIG_SPARSEMEM_VMEMMAP)
+ #define SECTION_IN_PAGE_FLAGS
+ #endif
+-- 
+2.18.0
+
