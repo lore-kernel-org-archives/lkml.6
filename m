@@ -2,191 +2,172 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A83AC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B4BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C32C520844
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:42:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C32C520844
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id EEB2920844
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:42:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NpwDDoXD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NpwDDoXD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEB2920844
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933418AbeGIQmH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:42:07 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33918 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932755AbeGIQmG (ORCPT
+        id S933496AbeGIQmg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:42:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55788 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932755AbeGIQme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:42:06 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69GdRVk143992
-        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 12:42:06 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k499grssy-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 12:42:05 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 9 Jul 2018 12:42:04 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 9 Jul 2018 12:42:03 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69Gg2lI2752888
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Jul 2018 16:42:02 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5503EB2067;
-        Mon,  9 Jul 2018 12:41:37 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 25B67B2064;
-        Mon,  9 Jul 2018 12:41:37 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  9 Jul 2018 12:41:37 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8275316C2E35; Mon,  9 Jul 2018 09:44:20 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 09:44:20 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     David Woodhouse <dwmw2@infradead.org>, mhillenb@amazon.de,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1531127935.18697.57.camel@infradead.org>
- <20180709104429.GI2476@hirez.programming.kicks-ass.net>
- <1531133801.18697.73.camel@infradead.org>
- <20180709110657.GL2476@hirez.programming.kicks-ass.net>
- <20180709123457.GM3593@linux.vnet.ibm.com>
- <20180709125516.GO2476@hirez.programming.kicks-ass.net>
- <20180709130227.GQ2512@hirez.programming.kicks-ass.net>
- <20180709142932.GO3593@linux.vnet.ibm.com>
- <20180709152632.GX2476@hirez.programming.kicks-ass.net>
- <20180709163432.GV3593@linux.vnet.ibm.com>
+        Mon, 9 Jul 2018 12:42:34 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A3035607DC; Mon,  9 Jul 2018 16:42:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531154553;
+        bh=jFrJY5haILeeWIxDEUhOnxFavgZKxIkfkQlMs3n34Mg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NpwDDoXDA16e+jpsc7axsy6bqS7tfpWbsbTW2SUUqfQ8RrNcsCnp+8w7Oyb6FvKBs
+         tkJUdJnbnj/fVRZKbzdU6KxZfThYRW2iKotEs6B1ImwHznPx/ne52rgYNlfS2fUMZp
+         hYCORXsO+SkG46adqIEDV29yPVSSjSR7G4W0bBZU=
+Received: from [10.226.58.143] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pprakash@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D5B35602AE;
+        Mon,  9 Jul 2018 16:42:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531154553;
+        bh=jFrJY5haILeeWIxDEUhOnxFavgZKxIkfkQlMs3n34Mg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NpwDDoXDA16e+jpsc7axsy6bqS7tfpWbsbTW2SUUqfQ8RrNcsCnp+8w7Oyb6FvKBs
+         tkJUdJnbnj/fVRZKbzdU6KxZfThYRW2iKotEs6B1ImwHznPx/ne52rgYNlfS2fUMZp
+         hYCORXsO+SkG46adqIEDV29yPVSSjSR7G4W0bBZU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D5B35602AE
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pprakash@codeaurora.org
+Subject: Re: [PATCH v3] cpufreq / CPPC: Add cpuinfo_cur_freq support for CPPC
+To:     George Cherian <george.cherian@cavium.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net
+References: <1531131048-60762-1-git-send-email-george.cherian@cavium.com>
+From:   "Prakash, Prashanth" <pprakash@codeaurora.org>
+Message-ID: <802dd310-a26c-3baa-696e-15393d6e1516@codeaurora.org>
+Date:   Mon, 9 Jul 2018 10:42:32 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709163432.GV3593@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18070916-2213-0000-0000-000002C827BA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009339; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01058899; UDB=6.00543407; IPR=6.00836820;
- MB=3.00022074; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-09 16:42:04
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070916-2214-0000-0000-00005AC5D4A5
-Message-Id: <20180709164420.GA8249@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807090190
+In-Reply-To: <1531131048-60762-1-git-send-email-george.cherian@cavium.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 09:34:32AM -0700, Paul E. McKenney wrote:
-> On Mon, Jul 09, 2018 at 05:26:32PM +0200, Peter Zijlstra wrote:
-> > On Mon, Jul 09, 2018 at 07:29:32AM -0700, Paul E. McKenney wrote:
-> > > OK, so here are our options:
-> > > 
-> > > 1.	Add the RCU conditional to need_resched(), as David suggests.
-> > > 	Peter has concerns about overhead.
-> > > 
-> > > 2.	Create a new need_resched_rcu_qs() that is to be used when
-> > > 	deciding whether or not to do cond_resched().  This would
-> > > 	exact the overhead only where it is needed, but is one more
-> > > 	thing for people to get wrong.
-> > 
-> > Also, with the crypto guys checking need_resched() in asm that won't
-> > really work either.
-> 
-> Fair point!  Ease of use is a good thing, even within the Linux kernel.
-> Or maybe especially within the Linux kernel...
-> 
-> > > 3.	Revert my changes to de-emphasize cond_resched_rcu_qs(),
-> > > 	and go back to sprinkling cond_resched_rcu_qs() throughout
-> > > 	the code.  This also is one more thing for people to get wrong,
-> > > 	and might well eventually convert all cond_resched() calls to
-> > > 	cond_resched_rcu_qs(), which sure seems like a failure mode to me.
-> > 
-> >  4a.	use resched_cpu() more agressive
-> >  4b.	use the tick to set TIF_NEED_RESCHED when it finds rcu_urgent_qs
-> > 	(avoids the IPI at the 'cost' of a slight delay in processing)
-> 
-> 4b sounds eminently reasonable to me!  Something like the (untested,
-> probably doesn't even build) patch below?
-> 
-> David, any reason why this wouldn't work?  Seems to me that this would
-> make need_resched() respond to RCU's need for quiescent states in a
-> timely manner without need_resched() having to become heavier weight,
-> but figured I should ask.
-> 
-> >  5.	make guest mode a quiescent state (like supposedly already done
-> > 	for NOHZ_FULL) (but this would not help the crypto guys).
-> > 
-> >  6.	....
-> > 
-> > ok I ran out of ideas here I think.
-> > 
-> > 
-> > So for PREEMPT the tick can check preempt_count() == 0 and if so, know
-> > it _could_ have rescheduled and advance the qs, right? But since we
-> > don't have a preempt count for !PREEMPT_COUNT kernels this doesn't work.
-> > 
-> > And thus we need to invoke actual scheduling events and then through the
-> > schedule() callback RCU knows things happened.
-> > 
-> > 4b seems like something worth trying for !PREEMPT kernels I suppose
-> 
-> David is running a !PREEMPT kernel.
-> 
-> For PREEMPT kernels, the patch below results in a quiescent state for
-> the CPU, and the forced schedule queues the task.  This queuing enables
-> later RCU priority boosting (if enabled) once all other CPUs sharing
-> the same leaf rcu_node structure have passed through quiescent states.
-> 
-> And yes, for PREEMPT kernels the scheduling-clock interrupt handler
-> already checks for a quiescent state using a combination of
-> preempt_count() (as you say, but ignoring the hardirq bits because
-> we are in an interrupt handler) and current->rcu_read_lock_nesting.
-> 
-> So I believe that this will cover it.
-> 
-> Thoughts?
+Hi George,
 
-Updated per Peter's feedback on IRC.
 
-							Thanx, Paul
+On 7/9/2018 4:10 AM, George Cherian wrote:
+> Per Section 8.4.7.1.3 of ACPI 6.2, The platform provides performance
+> feedback via set of performance counters. To determine the actual
+> performance level delivered over time, OSPM may read a set of
+> performance counters from the Reference Performance Counter Register
+> and the Delivered Performance Counter Register.
+>
+> OSPM calculates the delivered performance over a given time period by
+> taking a beginning and ending snapshot of both the reference and
+> delivered performance counters, and calculating:
+>
+> delivered_perf = reference_perf X (delta of delivered_perf counter / delta of reference_perf counter).
+>
+> Implement the above and hook this to the cpufreq->get method.
+>
+> Signed-off-by: George Cherian <george.cherian@cavium.com>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  drivers/cpufreq/cppc_cpufreq.c | 44 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+>
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index a9d3eec..61132e8 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -296,10 +296,54 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>  	return ret;
+>  }
+>  
+> +static int cppc_get_rate_from_fbctrs(struct cppc_cpudata *cpu,
+> +				     struct cppc_perf_fb_ctrs fb_ctrs_t0,
+> +				     struct cppc_perf_fb_ctrs fb_ctrs_t1)
+> +{
+> +	u64 delta_reference, delta_delivered;
+> +	u64 reference_perf, delivered_perf;
+> +
+> +	reference_perf = fb_ctrs_t0.reference_perf;
+> +
+> +	delta_reference = (u32)fb_ctrs_t1.reference -
+> +				(u32)fb_ctrs_t0.reference;
+> +	delta_delivered = (u32)fb_ctrs_t1.delivered -
+> +				(u32)fb_ctrs_t0.delivered;
+Why (u32)? These registers can be 64bits and that's why cppc_perf_fb_ctrs
+have 64b fields for reference and delivered counters.
 
-------------------------------------------------------------------------
+Moreover, the integer math is incorrect. You can run into a scenario where
+t1.ref/del < t0.ref/del,  thus setting a negative number to u64! The likelihood
+of this is very high especially when you throw away the higher 32bits.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 51919985f6cf..ccde5f8aff61 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2496,6 +2496,12 @@ void rcu_check_callbacks(int user)
- {
- 	trace_rcu_utilization(TPS("Start scheduler-tick"));
- 	raw_cpu_inc(rcu_data.ticks_this_gp);
-+	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs)) &&
-+	   !is_idle_task(current)) {
-+		set_tsk_need_resched(current);
-+		set_preempt_need_resched();
-+	}
-+	__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
- 	rcu_flavor_check_callbacks(user);
- 	if (rcu_pending())
- 		invoke_rcu_core();
+To keep things simple, do something like below:
+
+if (t1.reference <= t0.reference || t1.delivered <= t0.delivered) {
+     /* Atleast one of them should have overflowed */
+     return desired_perf;
+}
+else {
+     compute the delivered perf using the counters.
+}
+
+> +
+> +	/* Check to avoid divide-by zero */
+> +	if (delta_reference || delta_delivered)
+> +		delivered_perf = (reference_perf * delta_delivered) /
+> +					delta_reference;
+> +	else
+> +		delivered_perf = cpu->perf_ctrls.desired_perf;
+> +
+> +	return cppc_cpufreq_perf_to_khz(cpu, delivered_perf);
+> +}
+> +
+> +static unsigned int cppc_cpufreq_get_rate(unsigned int cpunum)
+> +{
+> +	struct cppc_perf_fb_ctrs fb_ctrs_t0 = {0}, fb_ctrs_t1 = {0};
+> +	struct cppc_cpudata *cpu = all_cpu_data[cpunum];
+> +	int ret;
+> +
+> +	ret = cppc_get_perf_ctrs(cpunum, &fb_ctrs_t0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	udelay(2); /* 2usec delay between sampling */
+> +
+> +	ret = cppc_get_perf_ctrs(cpunum, &fb_ctrs_t1);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return cppc_get_rate_from_fbctrs(cpu, fb_ctrs_t0, fb_ctrs_t1);
+> +}
+> +
+>  static struct cpufreq_driver cppc_cpufreq_driver = {
+>  	.flags = CPUFREQ_CONST_LOOPS,
+>  	.verify = cppc_verify_policy,
+>  	.target = cppc_cpufreq_set_target,
+> +	.get = cppc_cpufreq_get_rate,
+>  	.init = cppc_cpufreq_cpu_init,
+>  	.stop_cpu = cppc_cpufreq_stop_cpu,
+>  	.name = "cppc_cpufreq",
 
