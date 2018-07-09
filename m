@@ -4,70 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A55AC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:28:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01A26C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 349062086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:28:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A61EB2086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 11:28:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A/g0mtb0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 349062086B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fesnksgh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A61EB2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932923AbeGIL2d (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 07:28:33 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35069 "EHLO
+        id S932956AbeGIL2n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 07:28:43 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33199 "EHLO
         mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932862AbeGIL23 (ORCPT
+        with ESMTP id S932743AbeGIL2k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 07:28:29 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a3-v6so1360906wrt.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 04:28:28 -0700 (PDT)
+        Mon, 9 Jul 2018 07:28:40 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g6-v6so1687424wrp.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 04:28:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=LboO0m9tdUv5OClL5JGmFqiWh7zVC6d1MgWg2XNw1k8=;
-        b=A/g0mtb0jokK/Zde6XuLfjxTTtg6h3hQJZF9JIcvbRbwAzfhJtYj+sep0ubtKo4GQ7
-         7aUUny3kxn21N3RXBmnegF8lGiPq/5p13zCpKzNMu5lP8O+HQVWixGmos+Adpu10EdqX
-         nbc1R2O4KhpdeFNYWqnrKUmBwJgp+yrfDK39w=
+        bh=2kQdfwaob3qy9LVH8RWOXrQk/39YsJ9FerONY2LPNaY=;
+        b=fesnksgh9Wby/1TIewrpFCuj4BsrRm3XPYMKQLrDJNpgDBYJxhTN9pFcQufX9yQ2Jf
+         d/bldwSdJQTypHgF4BhDW/e2CO2Xw+RYCSNagUSS696/PNqLqKUEL3ORZZIiiogwN6o+
+         jHOAqq+0zNYlL+Z2jwfuNYccvmOfJ5iRdAuG4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=LboO0m9tdUv5OClL5JGmFqiWh7zVC6d1MgWg2XNw1k8=;
-        b=CwQGJqnbqwfoUrBHwFxTB/GQcVAd7VILIke74MwbDxNBfTcaCePFxm9ndNGKPz8xKY
-         KU1EZ1OZrC5Ib2sgySbvqpvsCTyFBQhXCmx2gStJmDH3lrn8+nQ8foFLQv0LBdAKP6JZ
-         NJb5h1Y2HNt/K4eO8tr+T/e3LTG+wmuNWtf2OfyPDEg5RW9tbzpevLlYDj280Lgg6+/5
-         MpDaBvGO0TNDchHTpBMrqqM1vH7Dxz76bCPYj0KcmucN606EJtchATkIOwwKofcRJ+zR
-         HeEtzRRfJACwzR8AhtMu+k4Xwpb8E4lvt3J6Rr+yoQil9IAEtyBdqw/SaqUxhx1K8hts
-         QRAA==
-X-Gm-Message-State: APt69E1lKnTXA1o9GngewcmxTFGYyJeMBTUsNgwBnmtV5EPu61Pj1k/B
-        wTqV7Gq3XrWk12NHO7zjfKOGZEqUNW8=
-X-Google-Smtp-Source: AAOMgpftEvf9iFQ1qh0Y3FXeocMoEEB0DlL21BzgMxMrMYXUHkP5IdSTeS0Cd0oRQWT9i3uir78VvA==
-X-Received: by 2002:a5d:4c4c:: with SMTP id n12-v6mr13824589wrt.71.1531135708058;
-        Mon, 09 Jul 2018 04:28:28 -0700 (PDT)
+        bh=2kQdfwaob3qy9LVH8RWOXrQk/39YsJ9FerONY2LPNaY=;
+        b=gRurexUAq7jwF7KqQkJMEJwX7f1ixjqaHch8RrmY9qd3rUdYVm4j8lr+LgWpWzB1Sq
+         mbgYz+E7ktKRtlbJ20YcQJMTIU4JAzz71WfJpKrW3cQ0fSY2TlN/q6LXKcCxNOW+GO+I
+         qgz9fmUyF8tzfkcXbHS7qhjGiV1U2TekTq3FWcnOAFYe3b5Vgi0qu5JUb+JOwGuSLoPn
+         6nUinO6g50HqBclWCE18aGII8f+ZMFG3oznuFV026iZVDbdKC2DRn0dotyGBSCuXXRtt
+         yucnsz/VKclvdJWfWgp67Ptf+4q11AwUcnheRczEVI4Stdw4IH/SjBFlMzHVIEkfO8iT
+         8kag==
+X-Gm-Message-State: APt69E3ZxXflThsNf2ELFEG3URsMIU+jckEP+bUe3aGCjldJDvORgiyr
+        3H+FcxAoPE3ZTp+AaiBZzMTVo0TYzsU=
+X-Google-Smtp-Source: AAOMgpeBPpFGPrMvjzfSld/xRKlUX+sVuKahzKA3pVb8BGLri0oil9mASE+yRDdBG2YTP1ixglvSLw==
+X-Received: by 2002:adf:adae:: with SMTP id w43-v6mr15368407wrc.251.1531135719301;
+        Mon, 09 Jul 2018 04:28:39 -0700 (PDT)
 Received: from localhost ([49.248.189.240])
-        by smtp.gmail.com with ESMTPSA id h5-v6sm1095318wrr.19.2018.07.09.04.28.26
+        by smtp.gmail.com with ESMTPSA id y203-v6sm14585462wme.42.2018.07.09.04.28.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 04:28:27 -0700 (PDT)
+        Mon, 09 Jul 2018 04:28:38 -0700 (PDT)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
         bjorn.andersson@linaro.org, edubezval@gmail.com,
         smohanad@codeaurora.org, vivek.gautam@codeaurora.org,
-        andy.gross@linaro.org, David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 3/7] dt: qcom: 8996: thermal: Move to DT initialisation
-Date:   Mon,  9 Jul 2018 16:57:36 +0530
-Message-Id: <ee06e59ae84a9b9013480c58bd4678e44d201a42.1531133612.git.amit.kucheria@linaro.org>
+        andy.gross@linaro.org, Zhang Rui <rui.zhang@intel.com>,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v5 4/7] thermal: tsens: Rename tsens-8996 to tsens-v2 for reuse
+Date:   Mon,  9 Jul 2018 16:57:37 +0530
+Message-Id: <910ed3e440a5612f4113318c66ae2395f53abaae.1531133612.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1531133611.git.amit.kucheria@linaro.org>
 References: <cover.1531133611.git.amit.kucheria@linaro.org>
@@ -78,43 +74,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We also split up the regmap address space into two, one for the TM
-registers, the other for the SROT registers. This was required to deal with
-different address offsets for the TM and SROT registers across different
-SoC families.
+The TSENS block inside the 8996 is internally classified as version 2 of
+the IP. Several other SoC families use this block and can share this code.
 
-Since tsens-common.c/init_common() currently only registers one address
-space, the order is important (TM before SROT). This is OK since the code
-doesn't really use the SROT functionality yet.
+We rename get_temp() to reflect that it can be used across the v2 family.
 
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ drivers/thermal/qcom/Makefile                     |  2 +-
+ drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c} | 26 ++++++++---------------
+ 2 files changed, 10 insertions(+), 18 deletions(-)
+ rename drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c} (66%)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 8c7f9ca..6c8a857 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -461,7 +461,17 @@
+diff --git a/drivers/thermal/qcom/Makefile b/drivers/thermal/qcom/Makefile
+index 2cc2193..a821929 100644
+--- a/drivers/thermal/qcom/Makefile
++++ b/drivers/thermal/qcom/Makefile
+@@ -1,2 +1,2 @@
+ obj-$(CONFIG_QCOM_TSENS)	+= qcom_tsens.o
+-qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-8996.o
++qcom_tsens-y			+= tsens.o tsens-common.o tsens-8916.o tsens-8974.o tsens-8960.o tsens-v2.o
+diff --git a/drivers/thermal/qcom/tsens-8996.c b/drivers/thermal/qcom/tsens-v2.c
+similarity index 66%
+rename from drivers/thermal/qcom/tsens-8996.c
+rename to drivers/thermal/qcom/tsens-v2.c
+index 60765b1..34ba6c7 100644
+--- a/drivers/thermal/qcom/tsens-8996.c
++++ b/drivers/thermal/qcom/tsens-v2.c
+@@ -1,27 +1,18 @@
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * Copyright (c) 2015, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
++ * Copyright (c) 2018, Linaro Limited
+  */
  
- 		tsens0: thermal-sensor@4a8000 {
- 			compatible = "qcom,msm8996-tsens";
--			reg = <0x4a8000 0x2000>;
-+			reg = <0x4a9000 0x1000>, /* TM */
-+			      <0x4a8000 0x1000>; /* SROT */
-+			#qcom,sensors = <13>;
-+			#thermal-sensor-cells = <1>;
-+		};
+-#include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include "tsens.h"
+ 
+-#define STATUS_OFFSET	0x10a0
+-#define LAST_TEMP_MASK	0xfff
++#define STATUS_OFFSET		0xa0
++#define LAST_TEMP_MASK		0xfff
+ #define STATUS_VALID_BIT	BIT(21)
+ #define CODE_SIGN_BIT		BIT(11)
+ 
+-static int get_temp_8996(struct tsens_device *tmdev, int id, int *temp)
++static int get_temp_tsens_v2(struct tsens_device *tmdev, int id, int *temp)
+ {
+ 	struct tsens_sensor *s = &tmdev->sensor[id];
+ 	u32 code;
+@@ -73,12 +64,13 @@ static int get_temp_8996(struct tsens_device *tmdev, int id, int *temp)
+ 	return 0;
+ }
+ 
+-static const struct tsens_ops ops_8996 = {
++static const struct tsens_ops ops_generic_v2 = {
+ 	.init		= init_common,
+-	.get_temp	= get_temp_8996,
++	.get_temp	= get_temp_tsens_v2,
+ };
+ 
+ const struct tsens_data data_8996 = {
+ 	.num_sensors	= 13,
+-	.ops		= &ops_8996,
++	.ops		= &ops_generic_v2,
+ };
 +
-+		tsens1: thermal-sensor@4ac000 {
-+			compatible = "qcom,msm8996-tsens";
-+			reg = <0x4ad000 0x1000>, /* TM */
-+			      <0x4ac000 0x1000>; /* SROT */
-+			#qcom,sensors = <8>;
- 			#thermal-sensor-cells = <1>;
- 		};
- 
 -- 
 2.7.4
 
