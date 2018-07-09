@@ -1,188 +1,165 @@
 Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DDD2C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDCDC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0421D208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:49:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Uig6MXwM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0421D208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C07B6208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:51:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07B6208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754526AbeGIFtL (ORCPT
+        id S1754528AbeGIFvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 01:49:11 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:43494 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754371AbeGIFtK (ORCPT
+        Mon, 9 Jul 2018 01:51:07 -0400
+Received: from mail-io0-f197.google.com ([209.85.223.197]:52980 "EHLO
+        mail-io0-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750996AbeGIFvD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 01:49:10 -0400
-Received: by mail-pf0-f196.google.com with SMTP id y8-v6so12831292pfm.10
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 22:49:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Pitt8N3e/Xjs7HXGaALBoeUX3MEAt6s4BiLThZDIZW0=;
-        b=Uig6MXwMhuIfLIYmQGXd9OAICNVxH8lL1pkvVuIURYdJg0Smsl+KZqEe5e3G6T/OKt
-         W289oQx4/V8vX7dRk8Z9B/XeTzlO83P2eXS8Op9DWO9XVMCT60fDq5yv0zLtJvRjt51V
-         86RzaZzKlR+11I3S9XuynfXYcgquF+EpiHLN8eW4uB8FWbq0g4lXf/NYXg1fDPEvXi0t
-         yPtPR+QjVunPNGLGNDdo9TPAoAHJPKQkez1F/dJUBbHrfKvkGxKMxUajg5H/oWVdAR61
-         Kuj5tpzft/fSBaRnlR8mTsi6UBkpr8a4qhe0sm6LOq4q2VKNo8X0/Cvd5eAH5QHXA/n9
-         SMGA==
+        Mon, 9 Jul 2018 01:51:03 -0400
+Received: by mail-io0-f197.google.com with SMTP id y26-v6so14562902iob.19
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 22:51:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Pitt8N3e/Xjs7HXGaALBoeUX3MEAt6s4BiLThZDIZW0=;
-        b=KD56O1fha+neAAxuCI8rZpmrOxNJQGsLoZUd926Fqw8BxqySwg15Fu3kWatR4b+hk2
-         8SbrUtTOJ6Vy7zhXj90vh1GloC7/QnwByVvRg0aBOxQYW199icv3br+VFOt4N8cbmYIS
-         vzh1bhYpL2enopLc3LpdO1eyLlQrnR9eScazzbmhAPcRHf/eqEp0Ms/QMqv77b0Jxvp1
-         hm4jubnF3LXvLhH4vfPnpmILEfbe/LKIU7SOmVLOq534JXsmEOcIyoAlMhPxoXbSF5K9
-         nz/TAk9vawEOFpCjsd0eJ5f89nuwKXfHnIURE+p1IiQ/11wbsff2QMqdY96k7mAfuQPA
-         aVyw==
-X-Gm-Message-State: APt69E1EO+5THXuwc1XQWhWlRCsZnXRuTRHKsOZ1wdFFrAz6wLRsVawn
-        O6hfyr2PRuegaH6QZR9C+JWHHX54A5UBo5hLkLuFLB5J60A=
-X-Google-Smtp-Source: AAOMgped6iLzr5LvwH6GcWXBBqWK7ioT16xifdFcWj44cZ/hmpWa2H9whEkyHsFdGZcfg8xPaEWsIcal5U8mUTtfVng=
-X-Received: by 2002:a65:40cd:: with SMTP id u13-v6mr18019872pgp.334.1531115349197;
- Sun, 08 Jul 2018 22:49:09 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=tOwGeCJoNqogBN1imuEhHsTiCBVWm65FWEFGrfjK3OI=;
+        b=k5tmNXFZeWf5GpVZwcPVmD84R58HbH1OBW/LH3XIE+Asj0+X2oFBazgfxTHg6lmsJG
+         4/amEhRWB/ASVr3rnLELkAq821UyFzS5fo+Lnf+PEmeTTxVw6t6Y4IfjAFhiGwJjt7BB
+         P8IL1TR7Ry1TxuqbMOPLKO3S5aMl3DmzcmJE8tmjTUIQIc91wX3hZi6lHufPHmSOR7CE
+         iJjPFmqyzGe92vwgvRXjbnTylV8hVoT4E60J6X1XUHZlWsizu44x73eS5L2hWedzpG20
+         Spdt34kqhOb25cr5YJVgIio5mzOu7DPKOwoN/39m0ctQGrgDZddzsXfnaEVEXaeU/rui
+         3DQA==
+X-Gm-Message-State: AOUpUlGAXrNGuSIUKxKPfsxt8togYNH7tbibkfy1BmLwk2af94ocyjuo
+        qlC8vSeWq2NWlgDsaKlryOt4HB8APcH7pl/OElRq6BZA2cKw
+X-Google-Smtp-Source: AAOMgpcgY73aXmtgY+iWI5l6myfbeuED9Z4D6iHqGk5O/8rmqJaaq6E4H2l5vndIvbnVcHBVg2QIJAYfgN4KXk8CUZGpEWIi+75M
 MIME-Version: 1.0
-Received: by 2002:a17:90a:950a:0:0:0:0 with HTTP; Sun, 8 Jul 2018 22:48:48
- -0700 (PDT)
-In-Reply-To: <000000000000fcc4db05708855b0@google.com>
-References: <000000000000fcc4db05708855b0@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 9 Jul 2018 07:48:48 +0200
-Message-ID: <CACT4Y+bdewgY9mhWwgi+yMXhqvQCf5xcVhrtBh8oSOVe3sFrKA@mail.gmail.com>
-Subject: Re: general protection fault in scheduler_tick
-To:     syzbot <syzbot+c840410f5e0567496967@syzkaller.appspotmail.com>
-Cc:     =?UTF-8?B?RnLDqWTDqXJpYyBXZWlzYmVja2Vy?= <fweisbec@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a6b:4501:: with SMTP id s1-v6mr8749527ioa.42.1531115463143;
+ Sun, 08 Jul 2018 22:51:03 -0700 (PDT)
+Date:   Sun, 08 Jul 2018 22:51:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004a7da505708a9915@google.com>
+Subject: kernel BUG at mm/memory.c:LINE!
+From:   syzbot <syzbot+3f84280d52be9b7083cc@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, dan.j.williams@intel.com,
+        jglisse@redhat.com, kirill.shutemov@linux.intel.com,
+        ldufour@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, mhocko@suse.com, minchan@kernel.org,
+        ross.zwisler@linux.intel.com, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org, ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 5:09 AM, syzbot
-<syzbot+c840410f5e0567496967@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    526674536360 Add linux-next specific files for 20180706
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D17f6396840000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dc8d1cfc0cb798=
-e48
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dc840410f5e05674=
-96967
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=3D16e50594400=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D129180c840000=
-0
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit=
-:
-> Reported-by: syzbot+c840410f5e0567496967@syzkaller.appspotmail.com
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    b2d44d145d2a Merge tag '4.18-rc3-smb3fixes' of git://git.s..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11d07748400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2ca6c7a31d407f86
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f84280d52be9b7083cc
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+3f84280d52be9b7083cc@syzkaller.appspotmail.com
+
+next ffff8801ce5e7040 prev ffff8801d20eca50 mm ffff88019c1e13c0
+prot 27 anon_vma ffff88019680cdd8 vm_ops 0000000000000000
+pgoff 0 file ffff8801b2ec2d00 private_data 0000000000000000
+flags: 0xff(read|write|exec|shared|mayread|maywrite|mayexec|mayshare)
+------------[ cut here ]------------
+kernel BUG at mm/memory.c:1422!
+invalid opcode: 0000 [#1] SMP KASAN
+CPU: 0 PID: 18486 Comm: syz-executor3 Not tainted 4.18.0-rc3+ #136
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:zap_pmd_range mm/memory.c:1421 [inline]
+RIP: 0010:zap_pud_range mm/memory.c:1466 [inline]
+RIP: 0010:zap_p4d_range mm/memory.c:1487 [inline]
+RIP: 0010:unmap_page_range+0x1c18/0x2220 mm/memory.c:1508
+Code: ff 31 ff 4c 89 e6 42 c6 04 33 f8 e8 92 dd d0 ff 4d 85 e4 0f 85 4a eb  
+ff ff e8 54 dc d0 ff 48 8b bd 10 fc ff ff e8 82 95 fe ff <0f> 0b e8 41 dc  
+d0 ff 0f 0b 4c 89 ad 18 fc ff ff c7 85 7c fb ff ff
+RSP: 0018:ffff8801b0587330 EFLAGS: 00010286
+RAX: 000000000000013c RBX: 1ffff100360b0e9c RCX: ffffc90002620000
+RDX: 0000000000000000 RSI: ffffffff81631851 RDI: 0000000000000001
+RBP: ffff8801b05877c8 R08: ffff880199d40300 R09: ffffed003b5c4fc0
+R10: ffffed003b5c4fc0 R11: ffff8801dae27e07 R12: 0000000000000000
+R13: ffff88019c1e13c0 R14: dffffc0000000000 R15: 0000000020e01000
+FS:  00007fca32251700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f04c540d000 CR3: 00000001ac1f0000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  unmap_single_vma+0x1a0/0x310 mm/memory.c:1553
+  zap_page_range_single+0x3cc/0x580 mm/memory.c:1644
+  unmap_mapping_range_vma mm/memory.c:2792 [inline]
+  unmap_mapping_range_tree mm/memory.c:2813 [inline]
+  unmap_mapping_pages+0x3a7/0x5b0 mm/memory.c:2845
+  unmap_mapping_range+0x48/0x60 mm/memory.c:2880
+  truncate_pagecache+0x54/0x90 mm/truncate.c:800
+  truncate_setsize+0x70/0xb0 mm/truncate.c:826
+  simple_setattr+0xe9/0x110 fs/libfs.c:409
+  notify_change+0xf13/0x10f0 fs/attr.c:335
+  do_truncate+0x1ac/0x2b0 fs/open.c:63
+  do_sys_ftruncate+0x492/0x560 fs/open.c:205
+  __do_sys_ftruncate fs/open.c:215 [inline]
+  __se_sys_ftruncate fs/open.c:213 [inline]
+  __x64_sys_ftruncate+0x59/0x80 fs/open.c:213
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455ba9
+Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fca32250c68 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
+RAX: ffffffffffffffda RBX: 00007fca322516d4 RCX: 0000000000455ba9
+RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000010
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004bbd22 R14: 00000000004c90e8 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace a92a1c818e9b1620 ]---
+RIP: 0010:zap_pmd_range mm/memory.c:1421 [inline]
+RIP: 0010:zap_pud_range mm/memory.c:1466 [inline]
+RIP: 0010:zap_p4d_range mm/memory.c:1487 [inline]
+RIP: 0010:unmap_page_range+0x1c18/0x2220 mm/memory.c:1508
+Code: ff 31 ff 4c 89 e6 42 c6 04 33 f8 e8 92 dd d0 ff 4d 85 e4 0f 85 4a eb  
+ff ff e8 54 dc d0 ff 48 8b bd 10 fc ff ff e8 82 95 fe ff <0f> 0b e8 41 dc  
+d0 ff 0f 0b 4c 89 ad 18 fc ff ff c7 85 7c fb ff ff
+RSP: 0018:ffff8801b0587330 EFLAGS: 00010286
+RAX: 000000000000013c RBX: 1ffff100360b0e9c RCX: ffffc90002620000
+RDX: 0000000000000000 RSI: ffffffff81631851 RDI: 0000000000000001
+RBP: ffff8801b05877c8 R08: ffff880199d40300 R09: ffffed003b5c4fc0
+R10: ffffed003b5c4fc0 R11: ffff8801dae27e07 R12: 0000000000000000
+R13: ffff88019c1e13c0 R14: dffffc0000000000 R15: 0000000020e01000
+FS:  00007fca32251700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f04c540d000 CR3: 00000001ac1f0000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-#syz fix: bpf: sockhash, disallow bpf_tcp_close and update in parallel
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-> kasan: CONFIG_KASAN_INLINE enabled
-> kasan: GPF could be caused by NULL-ptr deref or user memory access
-> general protection fault: 0000 [#1] SMP KASAN
-> CPU: 0 PID: -1996936928 Comm: =EF=BF=BD=EF=BF=BD=D7=A9 =EF=BF=BD=EF=BF=BD=
-=EF=BF=BDutor Not tainted
-> 4.18.0-rc3-next-20180706+ #1
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> RIP: 0010:scheduler_tick+0x170/0x430 kernel/sched/core.c:3078
-> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 9a 02 00 00 48 ba 00 00 00 0=
-0
-> 00 fc ff df 49 8b 47 78 48 8d 78 78 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f=
- 85
-> 5f 02 00 00 48 8b 40 78 31 d2 4c 89 fe 48 89 df
-> RSP: 0018:ffff8801dae07a00 EFLAGS: 00010006
-> RAX: 0000000000000000 RBX: ffff8801dae2c980 RCX: 000000000000000f
-> RDX: dffffc0000000000 RSI: 0000000000000008 RDI: 0000000000000078
-> RBP: ffff8801dae07ae0 R08: ffff88021fff8018 R09: ffff88021fff801b
-> R10: ffffed0043fff001 R11: 0000000000000000 R12: 0000000000000000
-> R13: ffff8801dae07a38 R14: ffff8801dae07ab8 R15: ffff8801a9d7e080
-> FS:  00007ff7f2704700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000130 CR3: 0000000008e6a000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <IRQ>
->  update_process_times+0x51/0x70 kernel/time/timer.c:1641
->  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
->  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
->  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
->  __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
->  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
->  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
->  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
->  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:867
->  </IRQ>
-> Modules linked in:
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> ---[ end trace 40913575008fbda0 ]---
-> RIP: 0010:scheduler_tick+0x170/0x430 kernel/sched/core.c:3078
-> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 9a 02 00 00 48 ba 00 00 00 0=
-0
-> 00 fc ff df 49 8b 47 78 48 8d 78 78 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f=
- 85
-> 5f 02 00 00 48 8b 40 78 31 d2 4c 89 fe 48 89 df
-> RSP: 0018:ffff8801dae07a00 EFLAGS: 00010006
-> RAX: 0000000000000000 RBX: ffff8801dae2c980 RCX: 000000000000000f
-> RDX: dffffc0000000000 RSI: 0000000000000008 RDI: 0000000000000078
-> RBP: ffff8801dae07ae0 R08: ffff88021fff8018 R09: ffff88021fff801b
-> R10: ffffed0043fff001 R11: 0000000000000000 R12: 0000000000000000
-> R13: ffff8801dae07a38 R14: ffff8801dae07ab8 R15: ffff8801a9d7e080
-> FS:  00007ff7f2704700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000130 CR3: 0000000008e6a000 CR4: 00000000001406f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
->
-> --
-> You received this message because you are subscribed to the Google Groups
-> "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an
-> email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000fcc4db057088=
-55b0%40google.com.
-> For more options, visit https://groups.google.com/d/optout.
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
