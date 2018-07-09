@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E76C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5921C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:44:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57DAC208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EB74208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:44:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="kZNJ77X8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57DAC208A2
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Pd119mJB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EB74208A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934066AbeGIRnw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:43:52 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:56715 "EHLO
+        id S933970AbeGIRow (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:44:52 -0400
+Received: from smtprelay.synopsys.com ([198.182.60.111]:56707 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933881AbeGIRm6 (ORCPT
+        with ESMTP id S933800AbeGIRm6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 9 Jul 2018 13:42:58 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id C3D2910C1B12;
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id C31A310C1B11;
         Mon,  9 Jul 2018 10:42:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531158177; bh=adpKsON1tUx3wRLdN0pgJT9NJarcjZams7nTigxj8IA=;
+        t=1531158177; bh=W20p2o9rztSoy4c/asUzVmF0OpbORizZSgTD8uF3fYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=kZNJ77X890vtgthNULad1vZsR1kkcKczRNJpSKgJ+qEl9/ChqbFx3V2HI7msKUN4O
-         sqY8OtH6BIzLAWzcv9SOFE2qC0Oxk+5BuY2SMvuhUucYhYQz6on+e7ys7tyAbIyz/M
-         DCYL4Y/wJSELnh0VgR5VGmzaFizLLcn7SYIEBRidjOkn7UPsyb9iKSV0XeE6cr0vKd
-         Sx7F3TUymHRsVUE6mBoCcofaBkaqMP6yury7AFqgKarOPe8GlPkPyOiN+nM7zUA9oG
-         WNMBU/msOJGVjwDXsv2hPDNXRzt/Gig6jc/r0coneNiUuIRBBrZuT7GoafP9KvxDv+
-         7mPQIMuIsGZXw==
-Received: from pt02.synopsys.com (pt02.internal.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 2F8F65CF4;
+        b=Pd119mJB6UcywPR7LNlOOa7Qu/hOvbZRQkN906JpEhvjvRx71T/PaorRSVXbsZ7Tp
+         leJVnsZDVyU1WuKrSKP+Tz2pHloLQimY30cPJOAYVQmdv37QD6WuktZTPbwr7cWFdY
+         nbKyRC6+BLMW3sfd/CO+FkgvXO0V84hNKFvSi1rnmZrdhI+Yh5enxQL5gHBZIOEfFc
+         gLNOYbSoQ8CmfiE4Tn3WMBg2rUJymhy/JLAWhkEQSIglgF+wJXrgrwERl0X7Gl/4Uu
+         PcuFBFvlfNwHEH+J50QVTri46AORg9DJuUTIPHwuNM4yo60wFieBUJF21MHJBaSiiT
+         LTKJmO6uuTjrw==
+Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 76CF83727;
         Mon,  9 Jul 2018 10:42:57 -0700 (PDT)
 Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id AD6B43ED9C;
-        Mon,  9 Jul 2018 18:42:55 +0100 (WEST)
+        by pt02.synopsys.com (Postfix) with ESMTP id 12F3F3EDAF;
+        Mon,  9 Jul 2018 18:42:56 +0100 (WEST)
 From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
@@ -51,9 +51,9 @@ To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
 Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v9 06/12] PCI: dwc: Add legacy interrupt callback handler
-Date:   Mon,  9 Jul 2018 18:42:44 +0100
-Message-Id: <143f34045d262b638e9908e09e329850200db5d9.1531155252.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v9 12/12] PCI: endpoint: Add MSI set maximum restriction
+Date:   Mon,  9 Jul 2018 18:42:50 +0100
+Message-Id: <62cd7313fad048e1f20f7e3c7cc0380c88dd3c4e.1531155252.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
 References: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
@@ -64,91 +64,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a legacy interrupt callback handler. Currently DesignWare IP don't
-allow trigger legacy interrupts.
+Add pci_epc_set_msi() maximum 32 interrupts validation.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
-Change v1->v2:
- - Nothing changed, just to follow the patch set version.
-Change v2->v3:
- - Nothing changed, just to follow the patch set version.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
-Change v4->v5:
- - Nothing changed, just to follow the patch set version.
-Change v5->v6:
- - Nothing changed, just to follow the patch set version.
-Change v6->v7:
- - Nothing changed, just to follow the patch set version.
-Change v7->v8:
- - Re-sending the patch series.
+ drivers/pci/endpoint/pci-epc-core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/pci/controller/dwc/pcie-designware-ep.c   | 10 ++++++++++
- drivers/pci/controller/dwc/pcie-designware-plat.c |  3 +--
- drivers/pci/controller/dwc/pcie-designware.h      |  6 ++++++
- 3 files changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
-index afb48b5..9eec21f 100644
---- a/drivers/pci/controller/dwc/pcie-designware-ep.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
-@@ -370,6 +370,16 @@ static const struct pci_epc_ops epc_ops = {
- 	.stop			= dw_pcie_ep_stop,
- };
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index c72e656..094dcc3 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -201,7 +201,8 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+ 	u8 encode_int;
+ 	unsigned long flags;
  
-+int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
-+	struct device *dev = pci->dev;
-+
-+	dev_err(dev, "EP cannot trigger legacy IRQs\n");
-+
-+	return -EINVAL;
-+}
-+
- int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 			     u8 interrupt_num)
- {
-diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
-index 8bb2ecb..160714d 100644
---- a/drivers/pci/controller/dwc/pcie-designware-plat.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
-@@ -87,8 +87,7 @@ static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+-	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
++	    interrupts > 32)
+ 		return -EINVAL;
  
- 	switch (type) {
- 	case PCI_EPC_IRQ_LEGACY:
--		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
--		return -EINVAL;
-+		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
- 	case PCI_EPC_IRQ_MSI:
- 		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
- 	case PCI_EPC_IRQ_MSIX:
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-index a0ab12f..69e6e17 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -350,6 +350,7 @@ static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
- void dw_pcie_ep_linkup(struct dw_pcie_ep *ep);
- int dw_pcie_ep_init(struct dw_pcie_ep *ep);
- void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
-+int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no);
- int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 			     u8 interrupt_num);
- int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
-@@ -369,6 +370,11 @@ static inline void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
- {
- }
- 
-+static inline int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
-+{
-+	return 0;
-+}
-+
- static inline int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
- 					   u8 interrupt_num)
- {
+ 	if (!epc->ops->set_msi)
 -- 
 2.7.4
 
