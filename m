@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD86C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4796FC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5338420877
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:38:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5338420877
+	by mail.kernel.org (Postfix) with ESMTP id 05155208E1
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:38:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05155208E1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754572AbeGIOim (ORCPT
+        id S1754594AbeGIOiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:38:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:60242 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754517AbeGIOil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:38:41 -0400
+        Mon, 9 Jul 2018 10:38:51 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60258 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754517AbeGIOit (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:38:49 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29CF9ED1;
-        Mon,  9 Jul 2018 07:38:41 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9B7F1682;
+        Mon,  9 Jul 2018 07:38:49 -0700 (PDT)
 Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B8FA63F589;
-        Mon,  9 Jul 2018 07:38:40 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A6F13F589;
+        Mon,  9 Jul 2018 07:38:49 -0700 (PDT)
 From:   Punit Agrawal <punit.agrawal@arm.com>
 To:     kvmarm@lists.cs.columbia.edu
 Cc:     Punit Agrawal <punit.agrawal@arm.com>,
@@ -35,9 +35,11 @@ Cc:     Punit Agrawal <punit.agrawal@arm.com>,
         christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
         suzuki.poulose@arm.com, will.deacon@arm.com
 Subject: [PATCH v5 0/7] KVM: Support PUD hugepages at stage 2
-Date:   Mon,  9 Jul 2018 15:38:27 +0100
-Message-Id: <20180709143835.28971-1-punit.agrawal@arm.com>
+Date:   Mon,  9 Jul 2018 15:38:28 +0100
+Message-Id: <20180709143835.28971-2-punit.agrawal@arm.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180709143835.28971-1-punit.agrawal@arm.com>
+References: <20180709143835.28971-1-punit.agrawal@arm.com>
 X-ARM-No-Footer: FoSSMail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -68,6 +70,7 @@ Thanks,
 Punit
 
 v4 -> v5:
+
 * Patch 1 - Drop helper stage2_should_exec() and refactor the
   condition to decide if a page table entry should be marked
   executable
@@ -77,6 +80,7 @@ v4 -> v5:
   helpers directly
 * Patch 7 - Add a note to update the PUD hugepage support when number
   of levels of stage 2 tables differs from stage 1
+
 
 v3 -> v4:
 * Patch 1 and 7 - Don't put down hugepages pte if logging is enabled
@@ -95,6 +99,7 @@ v1 -> v2:
 
 [0] https://www.spinics.net/lists/arm-kernel/msg663562.html
 [1] https://www.spinics.net/lists/kvm/msg171065.html
+
 
 Punit Agrawal (7):
   KVM: arm/arm64: Share common code in user_mem_abort()
