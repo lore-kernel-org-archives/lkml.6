@@ -2,105 +2,96 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B70BC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 483ABC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EB8520652
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:48:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EB8520652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D5E212075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:49:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5E212075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933359AbeGIPsv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:48:51 -0400
-Received: from foss.arm.com ([217.140.101.70]:33520 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932686AbeGIPsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:48:50 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A3340ED1;
-        Mon,  9 Jul 2018 08:48:49 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 91D8B3F589;
-        Mon,  9 Jul 2018 08:48:47 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 16:48:45 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "greg@kroah.com" <greg@kroah.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "David.Laight@ACULAB.COM" <David.Laight@ACULAB.COM>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>
-Subject: Re: [PATCH v3] devres: Explicitly align datai[] to 64-bit
-Message-ID: <20180709154844.5p5yk34ezw2gbt3y@lakrids.cambridge.arm.com>
-References: <20180709134550.29541-1-abrodkin@synopsys.com>
- <20180709140717.GR2476@hirez.programming.kicks-ass.net>
- <20180709141056.GR2512@hirez.programming.kicks-ass.net>
- <44727d3cebda7bee5b68fb388bd2fecfc6dc7b89.camel@synopsys.com>
- <20180709144925.GU2476@hirez.programming.kicks-ass.net>
- <20180709152958.565weccfaktqauef@lakrids.cambridge.arm.com>
- <20180709153427.GY2476@hirez.programming.kicks-ass.net>
- <20180709154521.GS2512@hirez.programming.kicks-ass.net>
+        id S933431AbeGIPtF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:49:05 -0400
+Received: from 7.mo177.mail-out.ovh.net ([46.105.61.149]:39972 "EHLO
+        7.mo177.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932686AbeGIPtD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:49:03 -0400
+X-Greylist: delayed 4200 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Jul 2018 11:49:03 EDT
+Received: from player715.ha.ovh.net (unknown [10.109.122.33])
+        by mo177.mail-out.ovh.net (Postfix) with ESMTP id 82814B757B
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 16:29:31 +0200 (CEST)
+Received: from bahia.lan (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
+        (Authenticated sender: groug@kaod.org)
+        by player715.ha.ovh.net (Postfix) with ESMTPSA id AA9581C00E8;
+        Mon,  9 Jul 2018 16:29:21 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 16:29:20 +0200
+From:   Greg Kurz <groug@kaod.org>
+To:     piaojun <piaojun@huawei.com>
+Cc:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        <ericvh@gmail.com>, <rminnich@sandia.gov>, <lucho@ionkov.net>,
+        v9fs-developer@lists.sourceforge.net,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [V9fs-developer] [PATCH] net/9p/client.c: put refcount of
+ trans_mod in error case in parse_opts()
+Message-ID: <20180709162920.2b94916f@bahia.lan>
+In-Reply-To: <5B3F39A0.2030509@huawei.com>
+References: <5B3F39A0.2030509@huawei.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709154521.GS2512@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Ovh-Tracer-Id: 8163618751270197734
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtiedrgedvgdejkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 05:45:21PM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 09, 2018 at 05:34:27PM +0200, Peter Zijlstra wrote:
-> > On Mon, Jul 09, 2018 at 04:29:58PM +0100, Mark Rutland wrote:
-> > > Shouldn't that be 8? AFAICT, __alignof__(unsigned long long) is 8 on
-> > > x86_32:
-> > 
-> > Curious, I wonder why we put that align in atomic64_32 then.
+On Fri, 6 Jul 2018 17:42:56 +0800
+piaojun <piaojun@huawei.com> wrote:
+
+> From my test, the second mount will fail after umounting successfully.
+> The reason is that we put refcount of trans_mod in the correct case rather
+> than the error case in parse_opts() at last. That will cause the refcount
+> decrease to -1, and when we try to get trans_mod again in
+> try_module_get(), we could only increase refcount to 0 which will cause
+> failure as follows:
+> parse_opts
+>   v9fs_get_trans_by_name
+>     try_module_get : return NULL to caller which cause error
 > 
-> Shiny, look at this: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=54188
+> So we should put refcount of trans_mod in error case.
 > 
+> Fixes: 9421c3e64137ec ("net/9p/client.c: fix potential refcnt problem of trans module")
+> 
+> Signed-off-by: Jun Piao <piaojun@huawei.com>
+> ---
 
-Ouch.
+Reviewed-by: Greg Kurz <groug@kaod.org>
 
-[mark@lakrids:~]% cat test.c
-#include <stdio.h>
+>  net/9p/client.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 18c5271..5c13431 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -225,7 +225,8 @@ static int parse_opts(char *opts, struct p9_client *clnt)
+>  	}
+> 
+>  free_and_return:
+> -	v9fs_put_trans(clnt->trans_mod);
+> +	if (ret)
+> +		v9fs_put_trans(clnt->trans_mod);
+>  	kfree(tmp_options);
+>  	return ret;
+>  }
 
-#define PRINT_TYPE_INFO(t) \
-        printf("%10s %5d %5d\n", #t, sizeof(t), __alignof__(t))
-
-struct ull {
-        unsigned long long v;
-};
-
-int main(int argc, char *argv[])
-{
-        printf("%10s %5s %5s\n", "TYPE", "SIZE", "ALIGN");
-        PRINT_TYPE_INFO(int);
-        PRINT_TYPE_INFO(long);
-        PRINT_TYPE_INFO(long long);
-        PRINT_TYPE_INFO(struct ull);
-
-        return 0;
-}
-[mark@lakrids:~]% gcc -m32 test.c -o test
-[mark@lakrids:~]% ./test 
-      TYPE  SIZE ALIGN
-       int     4     4
-      long     4     4
- long long     8     8
-struct ull     8     4
-
-Mark.
