@@ -2,121 +2,128 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A73AC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:56:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB8EBC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAF8B20842
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:56:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E15B20844
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:57:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="cUpSLOi+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF8B20842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="er8DB/eo";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YHK8mx8N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E15B20844
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933804AbeGIP4s (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:56:48 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:49802 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933330AbeGIPtT (ORCPT
+        id S933872AbeGIP45 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:56:57 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:38028 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933795AbeGIP4w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:49:19 -0400
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 480675C1CD9;
-        Mon,  9 Jul 2018 17:49:18 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1531151358;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=rvkvahLhNtrrk2g4J/clfxa+O9xSJGETF3bwqa//Btk=;
-        b=cUpSLOi+77NXpw4XX0dP9G7G7C7c3C6zKSvUTRK+LF5lKCH8JdekJOnimcP6+QPMd/j2wn
-        isBHDX6IyRznrvxpfaZ3vCcZEV9GO9fjUZV4H55qQS9eabCaAH9LtLhSxu5CI9YRdugsjP
-        1d6Fyp84WZ5BYKWPjsjL708j0SaVd/E=
-From:   Stefan Agner <stefan@agner.ch>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc:     kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
-        maitysanchayan@gmail.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 5/8] ARM: dts: imx6qdl-apalis/-colibri: remove 1.8V regulator
-Date:   Mon,  9 Jul 2018 17:48:45 +0200
-Message-Id: <20180709154848.5401-5-stefan@agner.ch>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180709154848.5401-1-stefan@agner.ch>
-References: <20180709154848.5401-1-stefan@agner.ch>
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[14];
-         BAYES_HAM(-3.00)[100.00%];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:6830, ipnet:46.140.0.0/17, country:AT];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+        Mon, 9 Jul 2018 11:56:52 -0400
+Received: by mail-yw0-f194.google.com with SMTP id r3-v6so6711859ywc.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=PS8BtBPfGUDCIP/Z18WZjD36gkEa562cx00sbrL6f28=;
+        b=er8DB/eo/cttzSzBz76wsogvEXVMRpgq4iyL0ZR5xchOIHtHPsHPjFYKll19W27qK9
+         +pc3pYWf/WYJYYgWU/ua827iLDGqssCqgNMz1t27K0srIrR8W7iKSYB2tLem0r229lum
+         sztJT8DTHwRP3SIGmEEFNpf8SdHGzTsSvSaGavZPcyCkh7NUj49Ql1oKrBRKg02DObDc
+         CuXBRMIBbuSfUXmJ2pd1p4bnXFBHkNlRAO6E9DvK0ZhqZE+/G1GzQPU0fnlKvGBjQwkc
+         ZI4FhhbeCnoWHZPuZQqGyVI22ic1cPvpGiByHmBEYLHpkEwpwgQOvNQWa8JMWRqBKb9s
+         4bcA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=PS8BtBPfGUDCIP/Z18WZjD36gkEa562cx00sbrL6f28=;
+        b=YHK8mx8N71L8nzdoumCaxy2X3yjqCve/ZqNKuVMwAgshLAdal/3MjECIPItfEyhbx4
+         tE1BxtoJis1fXy3mFjMhuO/7Amyqz1KEVLkbkQ2tASze/ZrwqyZTfseNpJT56gvoRElE
+         StdZ5crrX2zsWmPi35P1DNoERyo1Y/AMjF55M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=PS8BtBPfGUDCIP/Z18WZjD36gkEa562cx00sbrL6f28=;
+        b=T9/DnZitGrdZ/AluT45Wp3IzC4RdWWYZvk2pYhhkDN1BDVVeAU0ujHx+h51Jm7bMZZ
+         y7FZDg0vYkLSDQS930uZ+4osZFsEHrEfp8hn+bW9+70u8Dj8a/n/89UlwDTmTOt2ikOO
+         cCYLmuvUKhuANiOKqqc7ATZFypTJskG9bEJddiyfCQK70L8OKNtX9rszVv6qitmhIVvE
+         +TQ0VnGGb3ZjwV9CmZXGb75DlHzzWlEs6cYpAIJP5EJy7C1rSopUZmESG3s/oh89jryt
+         /v4vc/DbFY9/kX4GUFSSWTcwA35Ev1rUf1dFCU4lRLC0RRBX/fneIq63rzjEx7Rqaml1
+         4SgQ==
+X-Gm-Message-State: APt69E0vRsZIbodg/d7B1xP6fI0xEmswuGiTGnqgxFbYdcWRIc5b/Xi0
+        AZ+3b+OIiMggzeiNWOKAMnvbcqDM9Pm6Lo9Zt3iG9w==
+X-Google-Smtp-Source: AAOMgpcbjOHOih83uPmG4iLCDfknFjQQrcfwklesYxWp3/E2KRT+TLvNc4QTFUUt3c5r8zdnnsI0CCDGzpDAQ1nVh44=
+X-Received: by 2002:a81:3b04:: with SMTP id i4-v6mr10096357ywa.38.1531151811608;
+ Mon, 09 Jul 2018 08:56:51 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 08:56:50 -0700 (PDT)
+In-Reply-To: <20180708202315.GA2239@infradead.org>
+References: <CAGXu5j+mgGZkTDS6EDRspJKKbU=vMT4ehv9T-SekPba=ESoGDg@mail.gmail.com>
+ <9A0BC289-4203-4C77-A012-AAB07F42061F@kernel.dk> <CAGXu5jJsGWDsZNDJvUUqncSaAcvond_B_J7=BbvVW0X3r6Sxww@mail.gmail.com>
+ <aa150272-ffeb-fb8f-7303-0d9502cf9a71@kernel.dk> <20180523142545.GA16248@infradead.org>
+ <24d36869-e037-042d-cb16-20a81b34eb76@kernel.dk> <CAGXu5jJn=1Rz=D8VUwv_VoaGoLtaD=+tcPZxQxntweZoZwFa5Q@mail.gmail.com>
+ <f4eb4cd5-8976-3990-69b0-26cca054aa45@kernel.dk> <20180524080015.GA2866@infradead.org>
+ <CAGXu5j+pRUWgny+h5ToVQXBP8nANjreVhnXjk5TVgy84ufNsRg@mail.gmail.com> <20180708202315.GA2239@infradead.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 9 Jul 2018 08:56:50 -0700
+X-Google-Sender-Auth: yKZBeBG8M8HswZOjsC-pI7Ic_yY
+Message-ID: <CAGXu5jKvUydp6nc3EUCyoGWbUUoiiASMFcBfVVOph1uc_oCNSg@mail.gmail.com>
+Subject: Re: [PATCH 3/6] block: Create scsi_sense.h for SCSI and ATAPI
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Tejun Heo <tj@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Manoj N. Kumar" <manoj@linux.vnet.ibm.com>,
+        "Matthew R. Ochs" <mrochs@linux.vnet.ibm.com>,
+        Uma Krishnan <ukrishn@linux.vnet.ibm.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The fixed 1.8V regulator is not used, and there is in fact no
-fixed 1.8V regulator on the module. Remove it.
+Hi Christoph,
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 8 --------
- arch/arm/boot/dts/imx6qdl-colibri.dtsi | 8 --------
- 2 files changed, 16 deletions(-)
+On Sun, Jul 8, 2018 at 1:23 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> On Thu, May 24, 2018 at 10:06:59AM -0700, Kees Cook wrote:
+>> On Thu, May 24, 2018 at 1:00 AM, Christoph Hellwig <hch@infradead.org> wrote:
+>> > On Wed, May 23, 2018 at 03:14:19PM -0600, Jens Axboe wrote:
+>> >> Ugh, so that would necessitate a change there too. As I said before,
+>> >> I don't really care where it lives. I know the SCSI folks seem bothered
+>> >> by moving it, but in reality, it's not like this stuff will likely ever
+>> >> really change. Of the two choices (select entire SCSI stack, or just move
+>> >> this little bit), I know what I would consider the saner option...
+>> >
+>> > Oh well.  How about something like this respin of Kees' series?
+>> >
+>> > http://git.infradead.org/users/hch/block.git/shortlog/refs/heads/sense-cleanup
+>>
+>> Does the CONFIG_PCMCIA in drivers/scsi/Makefile now get exposed in
+>> weird config cases?
+>>
+>> Otherwise, yeah, looks good to me. Thanks!
+>
+> Btw, did you plan to resend the series with this and your changes
+> applied?
 
-diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-index f9bacc9ff2b6..2f711fffa06e 100644
---- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-@@ -61,14 +61,6 @@
- 		status = "disabled";
- 	};
- 
--	reg_1p8v: regulator-1p8v {
--		compatible = "regulator-fixed";
--		regulator-name = "1P8V";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-always-on;
--	};
--
- 	reg_2p5v: regulator-2p5v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "2P5V";
-diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-index 8ae17fdf6cf6..1a147cb0bed0 100644
---- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-@@ -56,14 +56,6 @@
- 		status = "disabled";
- 	};
- 
--	reg_1p8v: regulator-1p8v {
--		compatible = "regulator-fixed";
--		regulator-name = "1P8V";
--		regulator-min-microvolt = <1800000>;
--		regulator-max-microvolt = <1800000>;
--		regulator-always-on;
--	};
--
- 	reg_2p5v: regulator-2p5v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "2P5V";
+Yeah, I've gotten distracted. I'll try to get to it in the next few days.
+
+Thanks for the reminder!
+
+-Kees
+
 -- 
-2.18.0
-
+Kees Cook
+Pixel Security
