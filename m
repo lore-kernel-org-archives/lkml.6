@@ -7,69 +7,76 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06334C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:42:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEBCC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B34592086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72C1B2086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:42:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+i4YibT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B34592086B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLOv2agF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72C1B2086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933600AbeGIWmg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 18:42:36 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:40325 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932798AbeGIWjy (ORCPT
+        id S933406AbeGIWjv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 18:39:51 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:42770 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932798AbeGIWjq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 18:39:54 -0400
-Received: by mail-pl0-f65.google.com with SMTP id t6-v6so6674979plo.7;
-        Mon, 09 Jul 2018 15:39:54 -0700 (PDT)
+        Mon, 9 Jul 2018 18:39:46 -0400
+Received: by mail-pl0-f66.google.com with SMTP id f4-v6so2480871plb.9;
+        Mon, 09 Jul 2018 15:39:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4V8ddSLke/gsEPETJSHH2JZLxPsQODdtBbtSduvOQmk=;
-        b=m+i4YibTd8yfnk0VyENvf7awiADKHUOLXtHmC01JFMLRrWRBevbn5NiNepzTMi9YLO
-         6g4CK9M7bZBP+C51xDPB5dEKXoF0cMSNgbKQzuky/8b/5x1Q1WsR6AVaZHBjtdYsLFvP
-         3n33fBPvUGL8r1wx+ZcHc3yrY79ZJgXTYY0p3C+G7Eaamd4mIHBQk9FYKWM5RhQeeh8e
-         W3VrVqshOLoKEaeUgmGxb5g5FM/eaFCH8iTED5W3nnhGkeH1EIYhPyfutZxAIROIP6HP
-         /LAmHR2L3piUYB87QeVKXM8dwJQJBcJwssHgups28sFlf1GM+tLdvjVdo7bAgx4nQj9V
-         4c4Q==
+        bh=Uu23RkSgHULCCWTpsrG50fPqu7JSLujCWx7VczFYWXY=;
+        b=WLOv2agFJa66sCAmqhnjWLyDGplPFIwuytjXyjS0WKzxBDf+JO8yu37RlwSvVzyHUg
+         +00A/Heb753T+5ypeMxXcWWGoXmb0OwEE1iQLdjEfqODvwx3lmrKw0CDyBYnfnzjuPag
+         s4dmyWvlGlh6cgL65vY7wRMKR29ryayMEbJ8iYhDrHdp0rILd8YhVKw5rkJS6HyJxDjG
+         CUHZczzf/JPBP+lb6xvl90n+0M2yaHLNl0Ul4I6oe/mKHjM9i0Mv/YB6WKyf0wQbZNZM
+         RqnfFWSnG8w1qw3Tbi5dpm+0OzXpPYKGkeoR/hZhNF96SZnHhLWx7u9uWYqR0j4L/BBK
+         OTBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=4V8ddSLke/gsEPETJSHH2JZLxPsQODdtBbtSduvOQmk=;
-        b=YYmpd2IrIfFk1satc1u5BRrVz9ZXB993Yy/LPos9oLtiU864g+8vSDJ28cXXluVB2l
-         8bPpEIKtX1yru4HvjhlupCKaS2q2JmabvsbcgGmIu/XrTpn1RApcuW5cBclMyweAKQPZ
-         DO+KWcXsS4qVLUNqWclp20NYvFwFQZqT3OmyTrATZh5JWXRug4Qz7haxogMAF4r3ujEM
-         kCnvUsZlZu/Y7xcVYitp4ZQKkisNcZrOCIJn8k/R4569Qk20BNMU/szBoix5j4h/3cFF
-         U46iGPlseeI3tVLUSI/MkQACKn7MkWbzb82mooMNHWb8GjGRkB37G50rYdOcpeasF2iD
-         +YVw==
-X-Gm-Message-State: APt69E1xI4lvUcgeVDcv/jWZPKbLrU9cwfY9kl31A4LxIVCCXPdywMng
-        aJRvZxky/+v5ykGn9w02kfetuw==
-X-Google-Smtp-Source: AAOMgpeSmXccjW5gAuiA5Rhyiige2OwJWBeZbzt6687nMHEdu5Cvewtt1LvPVyzPj+RICusEAgS+VQ==
-X-Received: by 2002:a17:902:8486:: with SMTP id c6-v6mr21923533plo.283.1531175993798;
-        Mon, 09 Jul 2018 15:39:53 -0700 (PDT)
+        bh=Uu23RkSgHULCCWTpsrG50fPqu7JSLujCWx7VczFYWXY=;
+        b=HWZEmQiN4KjeEV47kZGv0BkAVYGdyrdL6F1s+YVy2qxIa40EFwHFyIY4mc4uH1FIsF
+         oIHDsC2hmqbddj74aheT8qp10hS4VbMjQP89f6MtHPaMRaO3+1uoX5kQd75RqrAkfSDB
+         RjBn5e4itx+o+4HpMGl32LsMaFrxAkIYFTtuaOqSRFO+n8w7BUM7ZJMvMG1HEPXB2BD5
+         qJpd+Xn7OC3tOybk0bZrllMJd2QWsOV6LssnluQLjOiug81FKalYriA+qjKkOw4jX7iQ
+         VkgFO6uBfsGBb5l4/OAWDbZYKUAp+aX+GWmdOBHHG3d6PCvFJwpWgDp9h1d1FGO1JMEs
+         bypQ==
+X-Gm-Message-State: APt69E3XTqut1TcfwMe0LjMWW6PRFw4XaoKPxGMGTW3023xu1icDwlF1
+        /RaNGEy61Ai0jnMjwu0+JYAxZQ==
+X-Google-Smtp-Source: AAOMgpfU462X6aPgx1gy/xI5UUbf0aEzRcznKu8jCB7wta6ekrE833PvUI74vgXQDzz3ZBVeVZQvQg==
+X-Received: by 2002:a17:902:528a:: with SMTP id a10-v6mr22088634pli.73.1531175985188;
+        Mon, 09 Jul 2018 15:39:45 -0700 (PDT)
 Received: from majic.sklembedded.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.googlemail.com with ESMTPSA id r16-v6sm30143804pfe.173.2018.07.09.15.39.52
+        by smtp.googlemail.com with ESMTPSA id r16-v6sm30143804pfe.173.2018.07.09.15.39.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Jul 2018 15:39:53 -0700 (PDT)
+        Mon, 09 Jul 2018 15:39:44 -0700 (PDT)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+        Yong Zhi <yong.zhi@intel.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Bingbu Cao <bingbu.cao@intel.com>,
+        Tian Shu Qiu <tian.shu.qiu@intel.com>,
+        Jian Xu Zheng <jian.xu.zheng@intel.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v6 09/17] media: imx: mipi csi-2: Register a subdev notifier
-Date:   Mon,  9 Jul 2018 15:39:09 -0700
-Message-Id: <1531175957-1973-10-git-send-email-steve_longerbeam@mentor.com>
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-renesas-soc@vger.kernel.org (open list:MEDIA DRIVERS FOR RENESAS
+        - VIN)
+Subject: [PATCH v6 05/17] media: v4l2-fwnode: Switch to v4l2_async_notifier_add_subdev
+Date:   Mon,  9 Jul 2018 15:39:05 -0700
+Message-Id: <1531175957-1973-6-git-send-email-steve_longerbeam@mentor.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
 References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
@@ -78,90 +85,417 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Parse neighbor remote devices on the MIPI CSI-2 input port, add
-them to a subdev notifier, and register the subdev notifier for the
-MIPI CSI-2 receiver, by calling v4l2_async_register_fwnode_subdev().
+The fwnode endpoint and reference parsing functions in v4l2-fwnode.c
+are modified to make use of v4l2_async_notifier_add_subdev().
+As a result the notifier->subdevs array is no longer allocated or
+re-allocated, and by extension the max_subdevs value is also no
+longer needed.
 
-csi2_parse_endpoints() is modified to be the parse_endpoint callback.
+Callers of the fwnode endpoint and reference parsing functions must now
+first initialize the notifier with a call to v4l2_async_notifier_init().
+This includes the function v4l2_async_register_subdev_sensor_common(),
+and the intel-ipu3, omap3isp, and rcar-vin drivers.
+
+Since the notifier->subdevs array is no longer allocated in the
+fwnode endpoint and reference parsing functions, the callers of
+those functions must never reference that array, since it is now
+NULL. Of the drivers that make use of the fwnode/ref parsing,
+only the intel-ipu3 driver references the ->subdevs[] array,
+(in the notifier completion callback), so that driver has been
+modified to iterate through the notifier->asd_list instead.
 
 Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 ---
- drivers/staging/media/imx/imx6-mipi-csi2.c | 31 ++++++++++++++----------------
- 1 file changed, 14 insertions(+), 17 deletions(-)
+Changes since v5:
+- drivers must now initialize the notifier. Suggested by Sakari Ailus.
+---
+ drivers/media/pci/intel/ipu3/ipu3-cio2.c    |  12 +--
+ drivers/media/platform/omap3isp/isp.c       |   1 +
+ drivers/media/platform/rcar-vin/rcar-core.c |   4 +
+ drivers/media/v4l2-core/v4l2-async.c        |   4 -
+ drivers/media/v4l2-core/v4l2-fwnode.c       | 132 ++++++----------------------
+ include/media/v4l2-async.h                  |   2 -
+ include/media/v4l2-fwnode.h                 |  22 ++---
+ 7 files changed, 52 insertions(+), 125 deletions(-)
 
-diff --git a/drivers/staging/media/imx/imx6-mipi-csi2.c b/drivers/staging/media/imx/imx6-mipi-csi2.c
-index ceeeb30..94eb9a1 100644
---- a/drivers/staging/media/imx/imx6-mipi-csi2.c
-+++ b/drivers/staging/media/imx/imx6-mipi-csi2.c
-@@ -551,35 +551,34 @@ static const struct v4l2_subdev_internal_ops csi2_internal_ops = {
- 	.registered = csi2_registered,
- };
- 
--static int csi2_parse_endpoints(struct csi2_dev *csi2)
-+static int csi2_parse_endpoint(struct device *dev,
-+			       struct v4l2_fwnode_endpoint *vep,
-+			       struct v4l2_async_subdev *asd)
- {
--	struct device_node *node = csi2->dev->of_node;
--	struct device_node *epnode;
--	struct v4l2_fwnode_endpoint ep;
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct csi2_dev *csi2 = sd_to_dev(sd);
- 
--	epnode = of_graph_get_endpoint_by_regs(node, 0, -1);
--	if (!epnode) {
--		v4l2_err(&csi2->sd, "failed to get sink endpoint node\n");
-+	if (!fwnode_device_is_available(asd->match.fwnode)) {
-+		v4l2_err(&csi2->sd, "remote is not available\n");
- 		return -EINVAL;
- 	}
- 
--	v4l2_fwnode_endpoint_parse(of_fwnode_handle(epnode), &ep);
--	of_node_put(epnode);
--
--	if (ep.bus_type != V4L2_MBUS_CSI2) {
-+	if (vep->bus_type != V4L2_MBUS_CSI2) {
- 		v4l2_err(&csi2->sd, "invalid bus type, must be MIPI CSI2\n");
- 		return -EINVAL;
- 	}
- 
--	csi2->bus = ep.bus.mipi_csi2;
-+	csi2->bus = vep->bus.mipi_csi2;
- 
- 	dev_dbg(csi2->dev, "data lanes: %d\n", csi2->bus.num_data_lanes);
- 	dev_dbg(csi2->dev, "flags: 0x%08x\n", csi2->bus.flags);
-+
- 	return 0;
- }
- 
- static int csi2_probe(struct platform_device *pdev)
- {
-+	unsigned int sink_port = 0;
- 	struct csi2_dev *csi2;
- 	struct resource *res;
+diff --git a/drivers/media/pci/intel/ipu3/ipu3-cio2.c b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
+index 2902715..4a5f7c3 100644
+--- a/drivers/media/pci/intel/ipu3/ipu3-cio2.c
++++ b/drivers/media/pci/intel/ipu3/ipu3-cio2.c
+@@ -1435,13 +1435,13 @@ static int cio2_notifier_complete(struct v4l2_async_notifier *notifier)
+ 	struct cio2_device *cio2 = container_of(notifier, struct cio2_device,
+ 						notifier);
+ 	struct sensor_async_subdev *s_asd;
++	struct v4l2_async_subdev *asd;
+ 	struct cio2_queue *q;
+-	unsigned int i, pad;
++	unsigned int pad;
  	int ret;
-@@ -601,10 +600,6 @@ static int csi2_probe(struct platform_device *pdev)
- 	csi2->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
- 	csi2->sd.grp_id = IMX_MEDIA_GRP_ID_CSI2;
  
--	ret = csi2_parse_endpoints(csi2);
+-	for (i = 0; i < notifier->num_subdevs; i++) {
+-		s_asd = container_of(cio2->notifier.subdevs[i],
+-				     struct sensor_async_subdev, asd);
++	list_for_each_entry(asd, &cio2->notifier.asd_list, asd_list) {
++		s_asd = container_of(asd, struct sensor_async_subdev, asd);
+ 		q = &cio2->queue[s_asd->csi2.port];
+ 
+ 		for (pad = 0; pad < q->sensor->entity.num_pads; pad++)
+@@ -1463,7 +1463,7 @@ static int cio2_notifier_complete(struct v4l2_async_notifier *notifier)
+ 		if (ret) {
+ 			dev_err(&cio2->pci_dev->dev,
+ 				"failed to create link for %s\n",
+-				cio2->queue[i].sensor->name);
++				q->sensor->name);
+ 			return ret;
+ 		}
+ 	}
+@@ -1499,6 +1499,8 @@ static int cio2_notifier_init(struct cio2_device *cio2)
+ {
+ 	int ret;
+ 
++	v4l2_async_notifier_init(&cio2->notifier);
++
+ 	ret = v4l2_async_notifier_parse_fwnode_endpoints(
+ 		&cio2->pci_dev->dev, &cio2->notifier,
+ 		sizeof(struct sensor_async_subdev),
+diff --git a/drivers/media/platform/omap3isp/isp.c b/drivers/media/platform/omap3isp/isp.c
+index 03354d51..1211bfe 100644
+--- a/drivers/media/platform/omap3isp/isp.c
++++ b/drivers/media/platform/omap3isp/isp.c
+@@ -2220,6 +2220,7 @@ static int isp_probe(struct platform_device *pdev)
+ 
+ 	mutex_init(&isp->isp_mutex);
+ 	spin_lock_init(&isp->stat_lock);
++	v4l2_async_notifier_init(&isp->notifier);
+ 
+ 	ret = v4l2_async_notifier_parse_fwnode_endpoints(
+ 		&pdev->dev, &isp->notifier, sizeof(struct isp_async_subdev),
+diff --git a/drivers/media/platform/rcar-vin/rcar-core.c b/drivers/media/platform/rcar-vin/rcar-core.c
+index 8843367..10ee1859 100644
+--- a/drivers/media/platform/rcar-vin/rcar-core.c
++++ b/drivers/media/platform/rcar-vin/rcar-core.c
+@@ -615,6 +615,8 @@ static int rvin_parallel_init(struct rvin_dev *vin)
+ {
+ 	int ret;
+ 
++	v4l2_async_notifier_init(&vin->notifier);
++
+ 	ret = v4l2_async_notifier_parse_fwnode_endpoints_by_port(
+ 		vin->dev, &vin->notifier, sizeof(struct rvin_parallel_entity),
+ 		0, rvin_parallel_parse_v4l2);
+@@ -807,6 +809,8 @@ static int rvin_mc_parse_of_graph(struct rvin_dev *vin)
+ 		return 0;
+ 	}
+ 
++	v4l2_async_notifier_init(&vin->group->notifier);
++
+ 	/*
+ 	 * Have all VIN's look for CSI-2 subdevices. Some subdevices will
+ 	 * overlap but the parser function can handle it, so each subdevice
+diff --git a/drivers/media/v4l2-core/v4l2-async.c b/drivers/media/v4l2-core/v4l2-async.c
+index e60a82a..78cf1a9 100644
+--- a/drivers/media/v4l2-core/v4l2-async.c
++++ b/drivers/media/v4l2-core/v4l2-async.c
+@@ -562,9 +562,6 @@ static void __v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
+ 		return;
+ 
+ 	if (notifier->subdevs) {
+-		if (!notifier->max_subdevs)
+-			return;
+-
+ 		for (i = 0; i < notifier->num_subdevs; i++) {
+ 			asd = notifier->subdevs[i];
+ 
+@@ -579,7 +576,6 @@ static void __v4l2_async_notifier_cleanup(struct v4l2_async_notifier *notifier)
+ 			kfree(asd);
+ 		}
+ 
+-		notifier->max_subdevs = 0;
+ 		kvfree(notifier->subdevs);
+ 		notifier->subdevs = NULL;
+ 	} else {
+diff --git a/drivers/media/v4l2-core/v4l2-fwnode.c b/drivers/media/v4l2-core/v4l2-fwnode.c
+index 3240c2a..67ad333 100644
+--- a/drivers/media/v4l2-core/v4l2-fwnode.c
++++ b/drivers/media/v4l2-core/v4l2-fwnode.c
+@@ -316,33 +316,6 @@ void v4l2_fwnode_put_link(struct v4l2_fwnode_link *link)
+ }
+ EXPORT_SYMBOL_GPL(v4l2_fwnode_put_link);
+ 
+-static int v4l2_async_notifier_realloc(struct v4l2_async_notifier *notifier,
+-				       unsigned int max_subdevs)
+-{
+-	struct v4l2_async_subdev **subdevs;
+-
+-	if (max_subdevs <= notifier->max_subdevs)
+-		return 0;
+-
+-	subdevs = kvmalloc_array(
+-		max_subdevs, sizeof(*notifier->subdevs),
+-		GFP_KERNEL | __GFP_ZERO);
+-	if (!subdevs)
+-		return -ENOMEM;
+-
+-	if (notifier->subdevs) {
+-		memcpy(subdevs, notifier->subdevs,
+-		       sizeof(*subdevs) * notifier->num_subdevs);
+-
+-		kvfree(notifier->subdevs);
+-	}
+-
+-	notifier->subdevs = subdevs;
+-	notifier->max_subdevs = max_subdevs;
+-
+-	return 0;
+-}
+-
+ static int v4l2_async_notifier_fwnode_parse_endpoint(
+ 	struct device *dev, struct v4l2_async_notifier *notifier,
+ 	struct fwnode_handle *endpoint, unsigned int asd_struct_size,
+@@ -387,8 +360,13 @@ static int v4l2_async_notifier_fwnode_parse_endpoint(
+ 	if (ret < 0)
+ 		goto out_err;
+ 
+-	notifier->subdevs[notifier->num_subdevs] = asd;
+-	notifier->num_subdevs++;
++	ret = v4l2_async_notifier_add_subdev(notifier, asd);
++	if (ret < 0) {
++		/* not an error if asd already exists */
++		if (ret == -EEXIST)
++			ret = 0;
++		goto out_err;
++	}
+ 
+ 	return 0;
+ 
+@@ -407,8 +385,7 @@ static int __v4l2_async_notifier_parse_fwnode_endpoints(
+ 			    struct v4l2_async_subdev *asd))
+ {
+ 	struct fwnode_handle *fwnode;
+-	unsigned int max_subdevs = notifier->max_subdevs;
+-	int ret;
++	int ret = 0;
+ 
+ 	if (WARN_ON(asd_struct_size < sizeof(struct v4l2_async_subdev)))
+ 		return -EINVAL;
+@@ -428,40 +405,6 @@ static int __v4l2_async_notifier_parse_fwnode_endpoints(
+ 			struct fwnode_endpoint ep;
+ 
+ 			ret = fwnode_graph_parse_endpoint(fwnode, &ep);
+-			if (ret) {
+-				fwnode_handle_put(fwnode);
+-				return ret;
+-			}
+-
+-			if (ep.port != port)
+-				continue;
+-		}
+-		max_subdevs++;
+-	}
+-
+-	/* No subdevs to add? Return here. */
+-	if (max_subdevs == notifier->max_subdevs)
+-		return 0;
+-
+-	ret = v4l2_async_notifier_realloc(notifier, max_subdevs);
 -	if (ret)
 -		return ret;
 -
- 	csi2->pllref_clk = devm_clk_get(&pdev->dev, "ref");
- 	if (IS_ERR(csi2->pllref_clk)) {
- 		v4l2_err(&csi2->sd, "failed to get pll reference clock\n");
-@@ -654,7 +649,9 @@ static int csi2_probe(struct platform_device *pdev)
+-	for (fwnode = NULL; (fwnode = fwnode_graph_get_next_endpoint(
+-				     dev_fwnode(dev), fwnode)); ) {
+-		struct fwnode_handle *dev_fwnode;
+-		bool is_available;
+-
+-		dev_fwnode = fwnode_graph_get_port_parent(fwnode);
+-		is_available = fwnode_device_is_available(dev_fwnode);
+-		fwnode_handle_put(dev_fwnode);
+-		if (!is_available)
+-			continue;
+-
+-		if (has_port) {
+-			struct fwnode_endpoint ep;
+-
+-			ret = fwnode_graph_parse_endpoint(fwnode, &ep);
+ 			if (ret)
+ 				break;
  
- 	platform_set_drvdata(pdev, &csi2->sd);
+@@ -469,11 +412,6 @@ static int __v4l2_async_notifier_parse_fwnode_endpoints(
+ 				continue;
+ 		}
  
--	ret = v4l2_async_register_subdev(&csi2->sd);
-+	ret = v4l2_async_register_fwnode_subdev(
-+		&csi2->sd, sizeof(struct v4l2_async_subdev),
-+		&sink_port, 1, csi2_parse_endpoint);
- 	if (ret)
- 		goto dphy_off;
+-		if (WARN_ON(notifier->num_subdevs >= notifier->max_subdevs)) {
+-			ret = -EINVAL;
+-			break;
+-		}
+-
+ 		ret = v4l2_async_notifier_fwnode_parse_endpoint(
+ 			dev, notifier, fwnode, asd_struct_size, parse_endpoint);
+ 		if (ret < 0)
+@@ -544,31 +482,23 @@ static int v4l2_fwnode_reference_parse(
+ 	if (ret != -ENOENT && ret != -ENODATA)
+ 		return ret;
  
+-	ret = v4l2_async_notifier_realloc(notifier,
+-					  notifier->num_subdevs + index);
+-	if (ret)
+-		return ret;
+-
+ 	for (index = 0; !fwnode_property_get_reference_args(
+ 		     dev_fwnode(dev), prop, NULL, 0, index, &args);
+ 	     index++) {
+ 		struct v4l2_async_subdev *asd;
+ 
+-		if (WARN_ON(notifier->num_subdevs >= notifier->max_subdevs)) {
+-			ret = -EINVAL;
+-			goto error;
+-		}
++		asd = v4l2_async_notifier_add_fwnode_subdev(
++			notifier, args.fwnode, sizeof(*asd));
++		if (IS_ERR(asd)) {
++			ret = PTR_ERR(asd);
++			/* not an error if asd already exists */
++			if (ret == -EEXIST) {
++				fwnode_handle_put(args.fwnode);
++				continue;
++			}
+ 
+-		asd = kzalloc(sizeof(*asd), GFP_KERNEL);
+-		if (!asd) {
+-			ret = -ENOMEM;
+ 			goto error;
+ 		}
+-
+-		notifier->subdevs[notifier->num_subdevs] = asd;
+-		asd->match.fwnode = args.fwnode;
+-		asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
+-		notifier->num_subdevs++;
+ 	}
+ 
+ 	return 0;
+@@ -839,31 +769,23 @@ static int v4l2_fwnode_reference_parse_int_props(
+ 		index++;
+ 	} while (1);
+ 
+-	ret = v4l2_async_notifier_realloc(notifier,
+-					  notifier->num_subdevs + index);
+-	if (ret)
+-		return -ENOMEM;
+-
+ 	for (index = 0; !IS_ERR((fwnode = v4l2_fwnode_reference_get_int_prop(
+ 					 dev_fwnode(dev), prop, index, props,
+ 					 nprops))); index++) {
+ 		struct v4l2_async_subdev *asd;
+ 
+-		if (WARN_ON(notifier->num_subdevs >= notifier->max_subdevs)) {
+-			ret = -EINVAL;
+-			goto error;
+-		}
++		asd = v4l2_async_notifier_add_fwnode_subdev(notifier, fwnode,
++							    sizeof(*asd));
++		if (IS_ERR(asd)) {
++			ret = PTR_ERR(asd);
++			/* not an error if asd already exists */
++			if (ret == -EEXIST) {
++				fwnode_handle_put(fwnode);
++				continue;
++			}
+ 
+-		asd = kzalloc(sizeof(struct v4l2_async_subdev), GFP_KERNEL);
+-		if (!asd) {
+-			ret = -ENOMEM;
+ 			goto error;
+ 		}
+-
+-		notifier->subdevs[notifier->num_subdevs] = asd;
+-		asd->match.fwnode = fwnode;
+-		asd->match_type = V4L2_ASYNC_MATCH_FWNODE;
+-		notifier->num_subdevs++;
+ 	}
+ 
+ 	return PTR_ERR(fwnode) == -ENOENT ? 0 : PTR_ERR(fwnode);
+@@ -920,6 +842,8 @@ int v4l2_async_register_subdev_sensor_common(struct v4l2_subdev *sd)
+ 	if (!notifier)
+ 		return -ENOMEM;
+ 
++	v4l2_async_notifier_init(notifier);
++
+ 	ret = v4l2_async_notifier_parse_fwnode_sensor_common(sd->dev,
+ 							     notifier);
+ 	if (ret < 0)
+diff --git a/include/media/v4l2-async.h b/include/media/v4l2-async.h
+index 3489e4c..16b1e2b 100644
+--- a/include/media/v4l2-async.h
++++ b/include/media/v4l2-async.h
+@@ -125,7 +125,6 @@ struct v4l2_async_notifier_operations {
+  *
+  * @ops:	notifier operations
+  * @num_subdevs: number of subdevices used in the subdevs array
+- * @max_subdevs: number of subdevices allocated in the subdevs array
+  * @subdevs:	array of pointers to subdevice descriptors
+  * @v4l2_dev:	v4l2_device of the root notifier, NULL otherwise
+  * @sd:		sub-device that registered the notifier, NULL otherwise
+@@ -138,7 +137,6 @@ struct v4l2_async_notifier_operations {
+ struct v4l2_async_notifier {
+ 	const struct v4l2_async_notifier_operations *ops;
+ 	unsigned int num_subdevs;
+-	unsigned int max_subdevs;
+ 	struct v4l2_async_subdev **subdevs;
+ 	struct v4l2_device *v4l2_dev;
+ 	struct v4l2_subdev *sd;
+diff --git a/include/media/v4l2-fwnode.h b/include/media/v4l2-fwnode.h
+index 9cccab6..ea7a8b2 100644
+--- a/include/media/v4l2-fwnode.h
++++ b/include/media/v4l2-fwnode.h
+@@ -247,7 +247,7 @@ typedef int (*parse_endpoint_func)(struct device *dev,
+  *		    endpoint. Optional.
+  *
+  * Parse the fwnode endpoints of the @dev device and populate the async sub-
+- * devices array of the notifier. The @parse_endpoint callback function is
++ * devices list in the notifier. The @parse_endpoint callback function is
+  * called for each endpoint with the corresponding async sub-device pointer to
+  * let the caller initialize the driver-specific part of the async sub-device
+  * structure.
+@@ -258,10 +258,11 @@ typedef int (*parse_endpoint_func)(struct device *dev,
+  * This function may not be called on a registered notifier and may be called on
+  * a notifier only once.
+  *
+- * Do not change the notifier's subdevs array, take references to the subdevs
+- * array itself or change the notifier's num_subdevs field. This is because this
+- * function allocates and reallocates the subdevs array based on parsing
+- * endpoints.
++ * Do not allocate the notifier's subdevs array, or change the notifier's
++ * num_subdevs field. This is because this function uses
++ * @v4l2_async_notifier_add_subdev to populate the notifier's asd_list,
++ * which is in-place-of the subdevs array which must remain unallocated
++ * and unused.
+  *
+  * The &struct v4l2_fwnode_endpoint passed to the callback function
+  * @parse_endpoint is released once the function is finished. If there is a need
+@@ -303,7 +304,7 @@ int v4l2_async_notifier_parse_fwnode_endpoints(
+  * devices). In this case the driver must know which ports to parse.
+  *
+  * Parse the fwnode endpoints of the @dev device on a given @port and populate
+- * the async sub-devices array of the notifier. The @parse_endpoint callback
++ * the async sub-devices list of the notifier. The @parse_endpoint callback
+  * function is called for each endpoint with the corresponding async sub-device
+  * pointer to let the caller initialize the driver-specific part of the async
+  * sub-device structure.
+@@ -314,10 +315,11 @@ int v4l2_async_notifier_parse_fwnode_endpoints(
+  * This function may not be called on a registered notifier and may be called on
+  * a notifier only once per port.
+  *
+- * Do not change the notifier's subdevs array, take references to the subdevs
+- * array itself or change the notifier's num_subdevs field. This is because this
+- * function allocates and reallocates the subdevs array based on parsing
+- * endpoints.
++ * Do not allocate the notifier's subdevs array, or change the notifier's
++ * num_subdevs field. This is because this function uses
++ * @v4l2_async_notifier_add_subdev to populate the notifier's asd_list,
++ * which is in-place-of the subdevs array which must remain unallocated
++ * and unused.
+  *
+  * The &struct v4l2_fwnode_endpoint passed to the callback function
+  * @parse_endpoint is released once the function is finished. If there is a need
 -- 
 2.7.4
 
