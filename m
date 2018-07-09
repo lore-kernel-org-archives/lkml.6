@@ -2,154 +2,182 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8FDC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99883C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD34208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:03:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD34208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 02A0E208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:03:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02A0E208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933070AbeGIVDC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 17:03:02 -0400
-Received: from gateway24.websitewelcome.com ([192.185.51.253]:38313 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932956AbeGIVDB (ORCPT
+        id S933178AbeGIVDV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 17:03:21 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53944 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932956AbeGIVDT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 17:03:01 -0400
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id EED202DE9FC
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 16:03:00 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id cdJEf1rW2kBj6cdJEfPApm; Mon, 09 Jul 2018 16:03:00 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=50580 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fcdJE-003KU4-Fi; Mon, 09 Jul 2018 16:03:00 -0500
-Date:   Mon, 9 Jul 2018 16:02:59 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH v2] xfs_bmap_util: use swap macro
-Message-ID: <20180709210259.GA18992@embeddedor.com>
+        Mon, 9 Jul 2018 17:03:19 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69Kwg72117738
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 17:03:19 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k4e76uyjw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 17:03:18 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 9 Jul 2018 17:03:18 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 9 Jul 2018 17:03:15 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69L3EGF14418272
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 9 Jul 2018 21:03:14 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D3536B2065;
+        Mon,  9 Jul 2018 17:02:48 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AD863B2064;
+        Mon,  9 Jul 2018 17:02:48 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Jul 2018 17:02:48 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 8D94116C2E19; Mon,  9 Jul 2018 14:05:32 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 14:05:32 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180709125516.GO2476@hirez.programming.kicks-ass.net>
+ <20180709130227.GQ2512@hirez.programming.kicks-ass.net>
+ <20180709142932.GO3593@linux.vnet.ibm.com>
+ <20180709152632.GX2476@hirez.programming.kicks-ass.net>
+ <20180709163432.GV3593@linux.vnet.ibm.com>
+ <1531162254.26547.3.camel@infradead.org>
+ <20180709203441.GE3593@linux.vnet.ibm.com>
+ <1531168538.26547.5.camel@infradead.org>
+ <20180709204248.GF3593@linux.vnet.ibm.com>
+ <1531169145.26547.8.camel@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fcdJE-003KU4-Fi
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:50580
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531169145.26547.8.camel@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070921-0068-0000-0000-0000031587AA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009341; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01058987; UDB=6.00543460; IPR=6.00836907;
+ MB=3.00022076; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-09 21:03:16
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070921-0069-0000-0000-000044F8EA18
+Message-Id: <20180709210532.GH3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807090237
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make use of the swap macro and remove some unnecessary variables.
-This makes the code easier to read and maintain. Also, reduces the
-stack usage.
+On Mon, Jul 09, 2018 at 09:45:45PM +0100, David Woodhouse wrote:
+> On Mon, 2018-07-09 at 13:42 -0700, Paul E. McKenney wrote:
+> > On Mon, Jul 09, 2018 at 09:35:38PM +0100, David Woodhouse wrote:
+> > > 
+> > > 
+> > > On Mon, 2018-07-09 at 13:34 -0700, Paul E. McKenney wrote:
+> > > > 
+> > > > So here are the possible code paths when .rcu_urgent_qs is set to true:
+> > > > 
+> > > > 1.      A context switch will record the quiescent state and clear
+> > > >         .rcu_urgent_qs.  (The failure to do the clearing in current -rcu
+> > > >         for PREEMPT builds is a performance bug that I need to fix.)
+> > > 
+> > > What if there's nothing else runnable and there is no actual context
+> > > switch?
+> > 
+> > The scheduler invokes rcu_note_context_switch() before looking to see
+> > if there really will or won't be a context switch.
+> > 
+> > I am sure that Peter will correct me if I am confused on this point.  ;-)
+> 
+> Ah, OK. Yes, that looks correct. Thanks.
 
-This code was detected with the help of Coccinelle.
+Here is hoping!
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
-Changes in v2
- - Use swap in a couple more of places.
+> I'll give your patch a spin tomorrow, unless Marius beats me to it.
 
- fs/xfs/xfs_bmap_util.c | 28 +++++-----------------------
- 1 file changed, 5 insertions(+), 23 deletions(-)
+Please see below for the version that I eventually queued.  Should Marius
+have a Reported-by?  If so, please tell me his full name so I can add that.
 
-diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-index 83b1e8c..a657d0a 100644
---- a/fs/xfs/xfs_bmap_util.c
-+++ b/fs/xfs/xfs_bmap_util.c
-@@ -1691,7 +1691,6 @@ xfs_swap_extent_forks(
- 	int			*src_log_flags,
- 	int			*target_log_flags)
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+commit e1e91fd0796dc544a77ddfaa5afbfc1f5fb42ecd
+Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Date:   Mon Jul 9 13:47:30 2018 -0700
+
+    rcu: Make need_resched() respond to urgent RCU-QS needs
+    
+    The per-CPU rcu_dynticks.rcu_urgent_qs variable communicates an urgent
+    need for an RCU quiescent state from the force-quiescent-state processing
+    within the grace-period kthread to context switches and to cond_resched().
+    Unfortunately, such urgent needs are not communicated to need_resched(),
+    which is sometimes used to decide when to invoke cond_resched(), for
+    but one example, within the KVM vcpu_run() function.  As of v4.15, this
+    can result in synchronize_sched() being delayed by up to ten seconds,
+    which can be problematic, to say nothing of annoying.
+    
+    This commit therefore checks rcu_dynticks.rcu_urgent_qs from within
+    rcu_check_callbacks(), which is invoked from the scheduling-clock
+    interrupt handler.  If the current task is not an idle task and is
+    not executing in usermode, a context switch is forced, and either way,
+    the rcu_dynticks.rcu_urgent_qs variable is set to false.  If the current
+    task is an idle task, then RCU's dyntick-idle code will detect the
+    quiescent state, so no further action is required.  Similarly, if the
+    task is executing in usermode, other code in rcu_check_callbacks() and
+    its called functions will report the corresponding quiescent state.
+    
+    Reported-by: David Woodhouse <dwmw2@infradead.org>
+    Suggested-by: Peter Zijlstra <peterz@infradead.org>
+    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 51919985f6cf..ea756bb64eb3 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2496,6 +2496,15 @@ void rcu_check_callbacks(int user)
  {
--	struct xfs_ifork	tempifp, *ifp, *tifp;
- 	xfs_filblks_t		aforkblks = 0;
- 	xfs_filblks_t		taforkblks = 0;
- 	xfs_extnum_t		junk;
-@@ -1733,11 +1732,7 @@ xfs_swap_extent_forks(
- 	/*
- 	 * Swap the data forks of the inodes
- 	 */
--	ifp = &ip->i_df;
--	tifp = &tip->i_df;
--	tempifp = *ifp;		/* struct copy */
--	*ifp = *tifp;		/* struct copy */
--	*tifp = tempifp;	/* struct copy */
-+	swap(ip->i_df, tip->i_df);
- 
- 	/*
- 	 * Fix the on-disk inode values
-@@ -1746,13 +1741,8 @@ xfs_swap_extent_forks(
- 	ip->i_d.di_nblocks = tip->i_d.di_nblocks - taforkblks + aforkblks;
- 	tip->i_d.di_nblocks = tmp + taforkblks - aforkblks;
- 
--	tmp = (uint64_t) ip->i_d.di_nextents;
--	ip->i_d.di_nextents = tip->i_d.di_nextents;
--	tip->i_d.di_nextents = tmp;
--
--	tmp = (uint64_t) ip->i_d.di_format;
--	ip->i_d.di_format = tip->i_d.di_format;
--	tip->i_d.di_format = tmp;
-+	swap(ip->i_d.di_nextents, tip->i_d.di_nextents);
-+	swap(ip->i_d.di_format, tip->i_d.di_format);
- 
- 	/*
- 	 * The extents in the source inode could still contain speculative
-@@ -1846,7 +1836,6 @@ xfs_swap_extents(
- 	int			src_log_flags, target_log_flags;
- 	int			error = 0;
- 	int			lock_flags;
--	struct xfs_ifork	*cowfp;
- 	uint64_t		f;
- 	int			resblks = 0;
- 
-@@ -1987,18 +1976,11 @@ xfs_swap_extents(
- 
- 	/* Swap the cow forks. */
- 	if (xfs_sb_version_hasreflink(&mp->m_sb)) {
--		xfs_extnum_t	extnum;
--
- 		ASSERT(ip->i_cformat == XFS_DINODE_FMT_EXTENTS);
- 		ASSERT(tip->i_cformat == XFS_DINODE_FMT_EXTENTS);
- 
--		extnum = ip->i_cnextents;
--		ip->i_cnextents = tip->i_cnextents;
--		tip->i_cnextents = extnum;
--
--		cowfp = ip->i_cowfp;
--		ip->i_cowfp = tip->i_cowfp;
--		tip->i_cowfp = cowfp;
-+		swap(ip->i_cnextents, tip->i_cnextents);
-+		swap(ip->i_cowfp, tip->i_cowfp);
- 
- 		if (ip->i_cowfp && ip->i_cowfp->if_bytes)
- 			xfs_inode_set_cowblocks_tag(ip);
--- 
-2.7.4
+ 	trace_rcu_utilization(TPS("Start scheduler-tick"));
+ 	raw_cpu_inc(rcu_data.ticks_this_gp);
++	/* The load-acquire pairs with the store-release setting to true. */
++	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
++		/* Idle and userspace execution already are quiescent states. */
++		if (!is_idle_task(current) && !user) {
++			set_tsk_need_resched(current);
++			set_preempt_need_resched();
++		}
++		__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
++	}
+ 	rcu_flavor_check_callbacks(user);
+ 	if (rcu_pending())
+ 		invoke_rcu_core();
 
