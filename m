@@ -2,117 +2,186 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F6DC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CEFC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B866620875
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:31:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B866620875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EA2120875
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:32:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA2120875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754565AbeGIQb1 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:31:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:34586 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754459AbeGIQb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:31:26 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 72DA920876; Mon,  9 Jul 2018 18:31:25 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2C2A920741;
-        Mon,  9 Jul 2018 18:31:25 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 18:31:24 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     "Bean Huo (beanhuo)" <beanhuo@micron.com>
-Cc:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>
-Subject: Re: [PATCH v6 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
-Message-ID: <20180709183124.22f39f1b@bbrezillon>
-In-Reply-To: <c27f10f9efc14fed817c1a343d8b67d4@SIWEX5A.sing.micron.com>
-References: <c27f10f9efc14fed817c1a343d8b67d4@SIWEX5A.sing.micron.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S933369AbeGIQcV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:32:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57286 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932806AbeGIQcU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 12:32:20 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69GT7Sn104893
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 12:32:19 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k49nyxn6n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 12:32:19 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 9 Jul 2018 12:32:17 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 9 Jul 2018 12:32:15 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69GWEgn9437814
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 9 Jul 2018 16:32:14 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CCF66B2066;
+        Mon,  9 Jul 2018 12:31:49 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A5B3BB2065;
+        Mon,  9 Jul 2018 12:31:49 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Jul 2018 12:31:49 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 06A1B16C2E2A; Mon,  9 Jul 2018 09:34:33 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 09:34:33 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     David Woodhouse <dwmw2@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180709085351.GC2476@hirez.programming.kicks-ass.net>
+ <1531127935.18697.57.camel@infradead.org>
+ <20180709104429.GI2476@hirez.programming.kicks-ass.net>
+ <1531133801.18697.73.camel@infradead.org>
+ <20180709110657.GL2476@hirez.programming.kicks-ass.net>
+ <20180709123457.GM3593@linux.vnet.ibm.com>
+ <20180709125516.GO2476@hirez.programming.kicks-ass.net>
+ <20180709130227.GQ2512@hirez.programming.kicks-ass.net>
+ <20180709142932.GO3593@linux.vnet.ibm.com>
+ <20180709152632.GX2476@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709152632.GX2476@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070916-0064-0000-0000-000003275D0F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009339; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01058896; UDB=6.00543405; IPR=6.00836816;
+ MB=3.00022074; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-09 16:32:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070916-0065-0000-0000-000039E0582E
+Message-Id: <20180709163432.GV3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807090188
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bean,
-
-On Mon, 9 Jul 2018 15:54:11 +0000
-"Bean Huo (beanhuo)" <beanhuo@micron.com> wrote:
-
-> Hi, Boris and Chris
+On Mon, Jul 09, 2018 at 05:26:32PM +0200, Peter Zijlstra wrote:
+> On Mon, Jul 09, 2018 at 07:29:32AM -0700, Paul E. McKenney wrote:
+> > OK, so here are our options:
+> > 
+> > 1.	Add the RCU conditional to need_resched(), as David suggests.
+> > 	Peter has concerns about overhead.
+> > 
+> > 2.	Create a new need_resched_rcu_qs() that is to be used when
+> > 	deciding whether or not to do cond_resched().  This would
+> > 	exact the overhead only where it is needed, but is one more
+> > 	thing for people to get wrong.
 > 
-> >>
-> >> I see 2 solutions to this problem:
-> >> 1/ Bean provides us a solution to reliably detect when ECC can be
-> >>    de-actived and when it can't
-> >> 2/ We only ever expose 64 bytes of OOB to the user and consider that
-> >>    ECC can be disabled, even if it can't in reality
-> >>  
-> >
-> >After reading the doc again, I forgot one thing you can try before deciding to
-> >go for option #2.
-> >
-> >8th bit in byte 5 of READID's result encodes whether the on-die ECC state
-> >(enabled or not). I remember we had a discussion with Bean where he told us
-> >this was a runtime status reflecting the on-die ECC state, which is crazy, since
-> >READID might return different values depending on the NAND state, and most
-> >of the code in the core assumes READID provides a fixed ID that encodes the
-> >chip characteristics/capabilities, not its state.
-> >
-> >Anyway, if this bit is actually reflecting the on-die ECC state and on-die
-> >cannot be disabled on your chip, it should stay at 1 even after you have sent
-> >the SET_FEATURES(DISABLE_ECC) command. Let's hope this works as I expect,
-> >otherwise we're back to option #2 until Bean suggest something else.  
+> Also, with the crypto guys checking need_resched() in asm that won't
+> really work either.
+
+Fair point!  Ease of use is a good thing, even within the Linux kernel.
+Or maybe especially within the Linux kernel...
+
+> > 3.	Revert my changes to de-emphasize cond_resched_rcu_qs(),
+> > 	and go back to sprinkling cond_resched_rcu_qs() throughout
+> > 	the code.  This also is one more thing for people to get wrong,
+> > 	and might well eventually convert all cond_resched() calls to
+> > 	cond_resched_rcu_qs(), which sure seems like a failure mode to me.
 > 
-> MT29F1G08ABAFAWP-ITE:F is Micron 70s SLC NAND with on-die ECC.
-> If the bit7 in the byte 5 of READID default is 1(ECC Enabled), it is true on-die ECC
-> Cannot be disabled by SET Feature command.
-> In case sending Set Feature command, you can check previous command is success or not by
-> Get Feature
+>  4a.	use resched_cpu() more agressive
+>  4b.	use the tick to set TIF_NEED_RESCHED when it finds rcu_urgent_qs
+> 	(avoids the IPI at the 'cost' of a slight delay in processing)
 
-Chris tried that already and it didn't work. GET_FEATURES(ECC) returns a
-value with the bit cleared (meaning that ECC is supposedly disabled)
-after SET_FEATURES(ECC, DISABLE) has been sent. Are you sure that
-GET_FEATURES(ECC) is supposed to return the actual state of the ECC
-engine and not the last value you wrote in the internal reg (would be
-the case if this reg is just a dummy reg when on-die ECC is forcibly
-enabled).
+4b sounds eminently reasonable to me!  Something like the (untested,
+probably doesn't even build) patch below?
 
-> or check this bit7 in byte 5 of READID later.
+David, any reason why this wouldn't work?  Seems to me that this would
+make need_resched() respond to RCU's need for quiescent states in a
+timely manner without need_resched() having to become heavier weight,
+but figured I should ask.
 
-This, we'll have to test.
-
+>  5.	make guest mode a quiescent state (like supposedly already done
+> 	for NOHZ_FULL) (but this would not help the crypto guys).
 > 
-> To check if this device supports on-die ECC or not, you can use inter ECC level (bit 0 and bit1 in byte 5 of READID)  
-> http://lists.infradead.org/pipermail/linux-mtd/2017-April/073370.html
+>  6.	....
+> 
+> ok I ran out of ideas here I think.
+> 
+> 
+> So for PREEMPT the tick can check preempt_count() == 0 and if so, know
+> it _could_ have rescheduled and advance the qs, right? But since we
+> don't have a preempt count for !PREEMPT_COUNT kernels this doesn't work.
+> 
+> And thus we need to invoke actual scheduling events and then through the
+> schedule() callback RCU knows things happened.
+> 
+> 4b seems like something worth trying for !PREEMPT kernels I suppose
 
-Okay, I think we already had this discussion, but I'm asking it again.
-What are the possible values for that field and what do they mean?
-Also, is it even used to encode the fact that the NAND has on-die ECC
-on all your NANDs? We already had the problem of incompatible ID
-schemes, so I wouldn't be surprised if that was the case here, hence my
-initial suggestion to base the detection on the model name.
+David is running a !PREEMPT kernel.
 
-Bean, can you check that on a few different NAND parts before giving a
-definitive answer, because, at least for the SET_FEATURES(ECC), we
-don't see what you describe, and that's not the first time you suggest
-things that do not work in real life.
+For PREEMPT kernels, the patch below results in a quiescent state for
+the CPU, and the forced schedule queues the task.  This queuing enables
+later RCU priority boosting (if enabled) once all other CPUs sharing
+the same leaf rcu_node structure have passed through quiescent states.
 
-Regards,
+And yes, for PREEMPT kernels the scheduling-clock interrupt handler
+already checks for a quiescent state using a combination of
+preempt_count() (as you say, but ignoring the hardirq bits because
+we are in an interrupt handler) and current->rcu_read_lock_nesting.
 
-Boris
+So I believe that this will cover it.
+
+Thoughts?
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 51919985f6cf..33b0a1ec0536 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2496,6 +2496,10 @@ void rcu_check_callbacks(int user)
+ {
+ 	trace_rcu_utilization(TPS("Start scheduler-tick"));
+ 	raw_cpu_inc(rcu_data.ticks_this_gp);
++	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs)) &&
++	   !is_idle_task(current))
++		set_tsk_need_resched(current);
++	__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
+ 	rcu_flavor_check_callbacks(user);
+ 	if (rcu_pending())
+ 		invoke_rcu_core();
+
