@@ -2,100 +2,311 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA073C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC4FC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EE9A208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:47:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="IcADuw+7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE9A208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 58C12208DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:49:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58C12208DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933457AbeGIVrf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 17:47:35 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:38665 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933118AbeGIVrd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 17:47:33 -0400
-Received: by mail-pl0-f66.google.com with SMTP id b1-v6so6627010pls.5
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 14:47:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:organization:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=Rofgg6LyOlxz1yL9uitpAah5tKtuLU66A3CJlqSriT0=;
-        b=IcADuw+7lXK4HXGnNrYUU7tOE6HaxJXVmZrGnfw5Snec92j61L4GUfD1iimb+ZyfzN
-         0gyfzpxEPIF5KGBbJaYwQPvK4hkCXb/XueA3VarrhXAOGRppwskMb9RzRoZkus+LL3G6
-         jcEumO+M0d5W6Fy4BDTpbE+RmbCPhMLguBGZCPJRn+GehgszDcdNBAzpUTPWahXn/p5I
-         gsHBDY3tRM1egBvH6d4wQSQjj7phWzVamORmLsbJE1ETucMs7qeLpypxpgbOXKoSSi2/
-         RWE3j6Ec9wAb/lSpqiwWrCzaU828O7QfHdF9O4DD8TggH7mm3ddHropA1ixtGH/9aBt2
-         q1Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:organization:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=Rofgg6LyOlxz1yL9uitpAah5tKtuLU66A3CJlqSriT0=;
-        b=kHdyK9+2vpZXPQljK0n7cmuUF/3/o6s4iLiV2bmvQ1ZAAFa/4zfs7wCXO+0ZrzbsvL
-         BCR83VDGmoDB/PX1pXc+WRMdFPw/JDn6DU93aOzcESn1pmMN0zM0uqAMfhXb//I/xBjs
-         1p4jCZCq3huF5gZxZClvtauUey4SJ6dlYSpFU1bGJskyGklOCGBeMUwhdlwn9ww7bg3Z
-         i/hbFY0Mjsvoy4W7t/YuXEmFqew4Tsrn1Ffms/oilms2HsG0DKY+i+lIIHq0yIcM8GZC
-         6SDMcYzGKSSbtKMts6VsjSPJjWAtXAXxYibx2uQ2ZeQcrTweaFg0ZEdN8xMc4hT5qSdg
-         ZeWw==
-X-Gm-Message-State: APt69E3ajrhux9n/KraTpQVV8AqK+Ge6dV3+XupXET3P6BaLhNMrbdn2
-        BgqFwGfKJU+5UrnCEX3AqyKblw==
-X-Google-Smtp-Source: AAOMgpez4f2YRTn+UJcMDhUUKcshkCROx5PxgvkaPanxJh/3xZtXfaKCRf1u7wijZ6zM0q7pg8Nf6w==
-X-Received: by 2002:a17:902:8c84:: with SMTP id t4-v6mr22550583plo.100.1531172852447;
-        Mon, 09 Jul 2018 14:47:32 -0700 (PDT)
-Received: from localhost ([98.237.141.101])
-        by smtp.googlemail.com with ESMTPSA id k13-v6sm45191605pfg.130.2018.07.09.14.47.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 14:47:31 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Yixun Lan <yixun.lan@amlogic.com>
-Cc:     Xingyu Chen <xingyu.chen@amlogic.com>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2] ARM64: dts: meson-axg: add saradc support
-Organization: BayLibre
-References: <20180702222515.13924-1-yixun.lan@amlogic.com>
-Date:   Mon, 09 Jul 2018 14:47:31 -0700
-In-Reply-To: <20180702222515.13924-1-yixun.lan@amlogic.com> (Yixun Lan's
-        message of "Mon, 2 Jul 2018 22:25:15 +0000")
-Message-ID: <7hmuv0nkss.fsf@baylibre.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S933366AbeGIVs7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 17:48:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50134 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933118AbeGIVs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 17:48:57 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA1FB208A2;
+        Mon,  9 Jul 2018 21:48:55 +0000 (UTC)
+Date:   Mon, 9 Jul 2018 17:48:54 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     cgroups@vger.kernel.org, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH] cgroup/tracing: Move taking of spin lock out of trace event
+ handlers
+Message-ID: <20180709174854.74a30b57@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yixun Lan <yixun.lan@amlogic.com> writes:
+From: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-> From: Xingyu Chen <xingyu.chen@amlogic.com>
->
-> Add the DT info for SAR ADC of the Amlogic's Meson-AXG SoC.
->
-> Signed-off-by: Xingyu Chen <xingyu.chen@amlogic.com>
-> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> ---
-> Hi kevin
->   I just re-send this patch which rebased to your khilman/v4.18/integ branch
->   Thanks
-> Yixun
->
-> nothing changed since patch v1 [1]:
+It is unwise to take spin locks from the handlers of trace events.
+Mainly, because they can introduce lockups, because it introduces locks
+in places that are normally not tested. Worse yet, because trace events
+are tucked away in the include/trace/events/ directory, locks that are
+taken there are forgotten about.
 
-Applied to v4.19/dt64,
+As a general rule, I tell people never to take any locks in a trace
+event handler.
 
-Thanks,
+Several cgroup trace event handlers call cgroup_path() which eventually
+takes the kernfs_rename_lock spinlock. This injects the spinlock in the
+code without people realizing it. It also can cause issues for the
+PREEMPT_RT patch, as the spinlock becomes a mutex, and the trace event
+handlers are called with preemption disabled.
 
-Kevin
+By moving the calculation of the cgroup_path() out of the trace event
+handlers and into a macro (surrounded by a
+trace_cgroup_##type##_enabled()), then we could place the cgroup_path
+into a string, and pass that to the trace event. Not only does this
+remove the taking of the spinlock out of the trace event handler, but
+it also means that the cgroup_path() only needs to be called once (it
+is currently called twice, once to get the length to reserver the
+buffer for, and once again to get the path itself. Now it only needs to
+be done once.
+
+Reported-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+---
+Index: linux-trace.git/include/trace/events/cgroup.h
+===================================================================
+--- linux-trace.git.orig/include/trace/events/cgroup.h
++++ linux-trace.git/include/trace/events/cgroup.h
+@@ -53,24 +53,22 @@ DEFINE_EVENT(cgroup_root, cgroup_remount
+ 
+ DECLARE_EVENT_CLASS(cgroup,
+ 
+-	TP_PROTO(struct cgroup *cgrp),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgrp),
++	TP_ARGS(cgrp, path),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	int,		root			)
+ 		__field(	int,		id			)
+ 		__field(	int,		level			)
+-		__dynamic_array(char,		path,
+-				cgroup_path(cgrp, NULL, 0) + 1)
++		__string(	path,		path			)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->root = cgrp->root->hierarchy_id;
+ 		__entry->id = cgrp->id;
+ 		__entry->level = cgrp->level;
+-		cgroup_path(cgrp, __get_dynamic_array(path),
+-				  __get_dynamic_array_len(path));
++		__assign_str(path, path);
+ 	),
+ 
+ 	TP_printk("root=%d id=%d level=%d path=%s",
+@@ -79,45 +77,45 @@ DECLARE_EVENT_CLASS(cgroup,
+ 
+ DEFINE_EVENT(cgroup, cgroup_mkdir,
+ 
+-	TP_PROTO(struct cgroup *cgroup),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgroup)
++	TP_ARGS(cgrp, path)
+ );
+ 
+ DEFINE_EVENT(cgroup, cgroup_rmdir,
+ 
+-	TP_PROTO(struct cgroup *cgroup),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgroup)
++	TP_ARGS(cgrp, path)
+ );
+ 
+ DEFINE_EVENT(cgroup, cgroup_release,
+ 
+-	TP_PROTO(struct cgroup *cgroup),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgroup)
++	TP_ARGS(cgrp, path)
+ );
+ 
+ DEFINE_EVENT(cgroup, cgroup_rename,
+ 
+-	TP_PROTO(struct cgroup *cgroup),
++	TP_PROTO(struct cgroup *cgrp, const char *path),
+ 
+-	TP_ARGS(cgroup)
++	TP_ARGS(cgrp, path)
+ );
+ 
+ DECLARE_EVENT_CLASS(cgroup_migrate,
+ 
+-	TP_PROTO(struct cgroup *dst_cgrp, struct task_struct *task, bool threadgroup),
++	TP_PROTO(struct cgroup *dst_cgrp, const char *path,
++		 struct task_struct *task, bool threadgroup),
+ 
+-	TP_ARGS(dst_cgrp, task, threadgroup),
++	TP_ARGS(dst_cgrp, path, task, threadgroup),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(	int,		dst_root		)
+ 		__field(	int,		dst_id			)
+ 		__field(	int,		dst_level		)
+-		__dynamic_array(char,		dst_path,
+-				cgroup_path(dst_cgrp, NULL, 0) + 1)
+ 		__field(	int,		pid			)
++		__string(	dst_path,	path			)
+ 		__string(	comm,		task->comm		)
+ 	),
+ 
+@@ -125,8 +123,7 @@ DECLARE_EVENT_CLASS(cgroup_migrate,
+ 		__entry->dst_root = dst_cgrp->root->hierarchy_id;
+ 		__entry->dst_id = dst_cgrp->id;
+ 		__entry->dst_level = dst_cgrp->level;
+-		cgroup_path(dst_cgrp, __get_dynamic_array(dst_path),
+-				      __get_dynamic_array_len(dst_path));
++		__assign_str(dst_path, path);
+ 		__entry->pid = task->pid;
+ 		__assign_str(comm, task->comm);
+ 	),
+@@ -138,16 +135,18 @@ DECLARE_EVENT_CLASS(cgroup_migrate,
+ 
+ DEFINE_EVENT(cgroup_migrate, cgroup_attach_task,
+ 
+-	TP_PROTO(struct cgroup *dst_cgrp, struct task_struct *task, bool threadgroup),
++	TP_PROTO(struct cgroup *dst_cgrp, const char *path,
++		 struct task_struct *task, bool threadgroup),
+ 
+-	TP_ARGS(dst_cgrp, task, threadgroup)
++	TP_ARGS(dst_cgrp, path, task, threadgroup)
+ );
+ 
+ DEFINE_EVENT(cgroup_migrate, cgroup_transfer_tasks,
+ 
+-	TP_PROTO(struct cgroup *dst_cgrp, struct task_struct *task, bool threadgroup),
++	TP_PROTO(struct cgroup *dst_cgrp, const char *path,
++		 struct task_struct *task, bool threadgroup),
+ 
+-	TP_ARGS(dst_cgrp, task, threadgroup)
++	TP_ARGS(dst_cgrp, path, task, threadgroup)
+ );
+ 
+ #endif /* _TRACE_CGROUP_H */
+Index: linux-trace.git/kernel/cgroup/cgroup-internal.h
+===================================================================
+--- linux-trace.git.orig/kernel/cgroup/cgroup-internal.h
++++ linux-trace.git/kernel/cgroup/cgroup-internal.h
+@@ -8,6 +8,32 @@
+ #include <linux/list.h>
+ #include <linux/refcount.h>
+ 
++#define TRACE_CGROUP_PATH_LEN 1024
++extern spinlock_t trace_cgroup_path_lock;
++extern char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
++
++/*
++ * cgroup_path() takes a spin lock. It is good practice not to take
++ * spin locks within trace point handlers, as they are mostly hidden
++ * from normal view. As cgroup_path() can take the kernfs_rename_lock
++ * spin lock, it is best to not call that function from the trace event
++ * handler.
++ *
++ * Note: trace_cgroup_##type##_enabled() is a static branch that will only
++ *       be set when the trace event is enabled.
++ */
++#define TRACE_CGROUP_PATH(type, cgrp, ...)				\
++	do {								\
++		if (trace_cgroup_##type##_enabled()) {			\
++			spin_lock(&trace_cgroup_path_lock);		\
++			cgroup_path(cgrp, trace_cgroup_path,		\
++				    TRACE_CGROUP_PATH_LEN);		\
++			trace_cgroup_##type(cgrp, trace_cgroup_path,	\
++					    ##__VA_ARGS__);		\
++			spin_unlock(&trace_cgroup_path_lock);		\
++		}							\
++	} while (0)
++
+ /*
+  * A cgroup can be associated with multiple css_sets as different tasks may
+  * belong to different cgroups on different hierarchies.  In the other
+Index: linux-trace.git/kernel/cgroup/cgroup-v1.c
+===================================================================
+--- linux-trace.git.orig/kernel/cgroup/cgroup-v1.c
++++ linux-trace.git/kernel/cgroup/cgroup-v1.c
+@@ -135,7 +135,7 @@ int cgroup_transfer_tasks(struct cgroup
+ 		if (task) {
+ 			ret = cgroup_migrate(task, false, &mgctx);
+ 			if (!ret)
+-				trace_cgroup_transfer_tasks(to, task, false);
++				TRACE_CGROUP_PATH(transfer_tasks, to, task, false);
+ 			put_task_struct(task);
+ 		}
+ 	} while (task && !ret);
+@@ -865,7 +865,7 @@ static int cgroup1_rename(struct kernfs_
+ 
+ 	ret = kernfs_rename(kn, new_parent, new_name_str);
+ 	if (!ret)
+-		trace_cgroup_rename(cgrp);
++		TRACE_CGROUP_PATH(rename, cgrp);
+ 
+ 	mutex_unlock(&cgroup_mutex);
+ 
+Index: linux-trace.git/kernel/cgroup/cgroup.c
+===================================================================
+--- linux-trace.git.orig/kernel/cgroup/cgroup.c
++++ linux-trace.git/kernel/cgroup/cgroup.c
+@@ -83,6 +83,9 @@ EXPORT_SYMBOL_GPL(cgroup_mutex);
+ EXPORT_SYMBOL_GPL(css_set_lock);
+ #endif
+ 
++DEFINE_SPINLOCK(trace_cgroup_path_lock);
++char trace_cgroup_path[TRACE_CGROUP_PATH_LEN];
++
+ /*
+  * Protects cgroup_idr and css_idr so that IDs can be released without
+  * grabbing cgroup_mutex.
+@@ -2638,7 +2641,7 @@ int cgroup_attach_task(struct cgroup *ds
+ 	cgroup_migrate_finish(&mgctx);
+ 
+ 	if (!ret)
+-		trace_cgroup_attach_task(dst_cgrp, leader, threadgroup);
++		TRACE_CGROUP_PATH(attach_task, dst_cgrp, leader, threadgroup);
+ 
+ 	return ret;
+ }
+@@ -4634,7 +4637,7 @@ static void css_release_work_fn(struct w
+ 		struct cgroup *tcgrp;
+ 
+ 		/* cgroup release path */
+-		trace_cgroup_release(cgrp);
++		TRACE_CGROUP_PATH(release, cgrp);
+ 
+ 		if (cgroup_on_dfl(cgrp))
+ 			cgroup_rstat_flush(cgrp);
+@@ -4977,7 +4980,7 @@ int cgroup_mkdir(struct kernfs_node *par
+ 	if (ret)
+ 		goto out_destroy;
+ 
+-	trace_cgroup_mkdir(cgrp);
++	TRACE_CGROUP_PATH(mkdir, cgrp);
+ 
+ 	/* let's create and online css's */
+ 	kernfs_activate(kn);
+@@ -5165,9 +5168,8 @@ int cgroup_rmdir(struct kernfs_node *kn)
+ 		return 0;
+ 
+ 	ret = cgroup_destroy_locked(cgrp);
+-
+ 	if (!ret)
+-		trace_cgroup_rmdir(cgrp);
++		TRACE_CGROUP_PATH(rmdir, cgrp);
+ 
+ 	cgroup_kn_unlock(kn);
+ 	return ret;
