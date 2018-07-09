@@ -6,82 +6,95 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F559C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D711C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE9D42084C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B688F2084C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:40:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="au1iS4Ce"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE9D42084C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bnwhA+i4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B688F2084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754613AbeGINi4 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:38:56 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:55312 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754437AbeGINix (ORCPT
+        id S932792AbeGINkm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:40:42 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50581 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932666AbeGINkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:38:53 -0400
-Received: by mail-it0-f67.google.com with SMTP id 16-v6so25364206itl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 06:38:53 -0700 (PDT)
+        Mon, 9 Jul 2018 09:40:39 -0400
+Received: by mail-it0-f65.google.com with SMTP id w16-v6so4044945ita.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 06:40:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=n+ldMrCF9lYm6TEPVJcGCBuIAXyPzRv1+euDsS8qDuE=;
-        b=au1iS4Ce6KWI1fwZWHwRrOQyXcfyt6w9mHnYAZLyTy+mwBj6ItaBsV68ycb3Qi5jfB
-         eA89ILftP7AzGI2WoL6eApyC08sFYuqxIx5B7sEGXEIvIJJNPsV1Licpt1WNFdV5zRdO
-         VCAgWPXMdeA1M8rJine1J4GuZVJsXvE7mE73Y=
+        bh=ZVuAl+U66S/GzNBJOitYhN3ioEoha61GuSSF/k6dR0E=;
+        b=bnwhA+i4beb7zMW9aYgbwLFXlGrGWGvlXn48AHH0R5LblyKoMfs/NK/+Io0gFk5aaU
+         rdZaQTAS/SUZE0TivCIwKjY9A1MzRG0umDRrfpdLTXHAg1uFo+I1Pwu1SJ57nQEH6Nzb
+         AqFWbvlrrW31uVAVrSetYMx5rWD+nFNmyIguo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=n+ldMrCF9lYm6TEPVJcGCBuIAXyPzRv1+euDsS8qDuE=;
-        b=OrWtDRtBB2sAsnc6TdL4zScH51eQuDrqr5pIvO4Y2NeAN8cMtoF0mZgOHcgH/HMgsM
-         ESSVLr+1lwIhF7nHRuArSPnpxKk+HojfLmlBDYKvZJ040zx1cDbluSOe36dtSa2TD6M4
-         4+rSr5AN7Mp9qgmQ55E3lJHmIeXmiIIXZJQ/u5p1xe+hskza5VuSGi+7LaaIulA3reu+
-         czcNCDYHBFlKor2zAFPkuV7E9C5AE69veCUmAfBv1PosBb0z4rwBeEmcrWCoBxVKn27X
-         nqPbBTBOQOZYlM83gsZjBAvGfX2kIDktbB6UcdCwGP/Q6Kp3rlbBtYPzUwxYDi+tDv8U
-         jjEg==
-X-Gm-Message-State: AOUpUlGjAPWL4cOk3o21286H7+QNu/NiBgYym8cWqWRai7V+bGhPVfZr
-        cOEQQ6R+87BC+h91Jh4lWa39H3CaPR+gD8gyDrY8pQ==
-X-Google-Smtp-Source: AAOMgpdRav9gV4wB9xwt8xjZ2ibNB4iOQZQp/26ldJDDCyx9tcBKzAszueN9dR7CcX8NIhxE+Eyje3hZcqJwaPMPec0=
-X-Received: by 2002:a24:2c49:: with SMTP id i70-v6mr716529iti.135.1531143532821;
- Mon, 09 Jul 2018 06:38:52 -0700 (PDT)
+        bh=ZVuAl+U66S/GzNBJOitYhN3ioEoha61GuSSF/k6dR0E=;
+        b=AWajjChMIOZm+YO+X/PhlACF2FWRR8q/AwWWhX2HaBQk1vqYd1ZCnPfQuchZLTCwJG
+         YP8mjQPWOwuZ+aHYF+L/Ko0y91XqiGo9zcK8zeCtW0gxtyL8is8OsQK//qF4EByeS1Vy
+         Ybls5TIB7fuFFJ7ab9OEIyCwIcItD8BSXqRjG12OO7FsRBC/Av2GPTIRr+3YUyuqRZrF
+         AyNPWp4EIgvmy4/RU8Wx5ig2YyJ9dyd2u4iX96z43N8iTifwZkjQZB4XF4czPR4ZOCHC
+         Apk9+Bfe6N7R27D/wqmGzPs4is3yVHZ4iCdASM0nmjxpDmigvhJ1YesBsdufEeQM4/vh
+         D/ew==
+X-Gm-Message-State: APt69E1m0vNFBXM2dBjeRW6nYY2XjslIWc+cUtuHGHDwnb0sS51z7LP2
+        2Pjcwdb8w4qLb8tsNWrQeX/JH4z3k3JKnVsevPlldw==
+X-Google-Smtp-Source: AAOMgpcXTmgmmcB4HNmgoYr5dKDx2cxDF1sRICwgXPjSra9DNhYhw02OhcAJfAtZQw7SeurfKV42GXLqiJIBclu67K0=
+X-Received: by 2002:a24:ad01:: with SMTP id c1-v6mr15833313itf.70.1531143638644;
+ Mon, 09 Jul 2018 06:40:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180705154452.GA32564@embeddedor.com>
-In-Reply-To: <20180705154452.GA32564@embeddedor.com>
+References: <20180629081533.31885-1-ludovic.desroches@microchip.com>
+In-Reply-To: <20180629081533.31885-1-ludovic.desroches@microchip.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Jul 2018 15:38:41 +0200
-Message-ID: <CACRpkdZmv+_4B--J-RXfEu44bvQbq2yS0zei9uPYrtr+cBTxwg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: mt7622: mark expected switch fall-through
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Sean Wang <sean.wang@mediatek.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Mon, 9 Jul 2018 15:40:26 +0200
+Message-ID: <CACRpkdYyeFTsPe+pR26DCO5uOkLZu-+Nz8vDdEg47NWn4f-4Rw@mail.gmail.com>
+Subject: Re: [PATCH v2] pinctrl: at91-pio4: add support for drive strength
+To:     Ludovic Desroches <ludovic.desroches@microchip.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 5, 2018 at 5:45 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
+On Fri, Jun 29, 2018 at 10:19 AM Ludovic Desroches
+<ludovic.desroches@microchip.com> wrote:
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> where we are expecting to fall through.
+> Add support for the drive strength configuration. Usually, this value is
+> expressed in mA. Since the numeric value depends on VDDIOP voltage, a
+> value we can't retrieve at runtime, the controller uses low, medium and
+> high to define the drive strength.
 >
-> Warning level 2 was used: -Wimplicit-fallthrough=2
+> The PIO controller accepts two values for the low drive configuration: 0
+> and 1. Most of the time, we don't care about the drive strength. So we
+> keep the default value which is 0. The drive strength is advertised
+> through the sysfs only when it has been explicitly set in the device
+> tree i.e. if its value is different from 0.
 >
-> Addresses-Coverity-ID: 1463284 ("Missing break in switch")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> ---
+>
+> Changes:
+> - v2: use atmel,drive-strength property instead of drive-strengh one
+> since it is not expressend in mA and there is no way to retrieve this
+> value at runtime.
 
-Patch applied.
+Patch applied with Rob's ACK!
 
 Yours,
 Linus Walleij
