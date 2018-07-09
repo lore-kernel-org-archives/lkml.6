@@ -2,105 +2,126 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80083C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF024C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37C4A20871
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:17:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 790D720871
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:18:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cb+PKYnA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37C4A20871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="WRQP9JCP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 790D720871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933692AbeGIRRB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:17:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52416 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933360AbeGIRQ7 (ORCPT
+        id S933726AbeGIRR5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:17:57 -0400
+Received: from mail.efficios.com ([167.114.142.138]:51124 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933425AbeGIRR4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:16:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Vtl3Y9imDZmQ7+6XdYG00VazHoTvtH5RQr2hn6d4imY=; b=Cb+PKYnAgMYYwZo8dDaMNOpqb
-        tIm5lwTQEYAu/nz7O/FFVIDN08vHZmLfzV5/Qm4OmN7p/itbkWC7Ytfd3MyBGxprk0twIgzjHbDB0
-        jtSiqhnJeIgW6WYnJ29EQS4WJe5RlNIQSDNdX41hyQqFSsmqs1titXJm4giB60bKiyT/mTPITgURB
-        o+bsIGefgYP+fIjrq+vE6CuWmnpxsR3hTWMoxjWJA4mXVBE1H/9iAQOSyxgtBTQgmpOPeHzCNWTQI
-        BA583gSswYh5y1+QEmLNiJWErMYGp4WE5J4H4A1PtZhXCqmAzoWiM5397SuOpuDj/kQbkL00mv3Xu
-        BaabcpjxQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcZmP-0000aa-2m; Mon, 09 Jul 2018 17:16:53 +0000
-Date:   Mon, 9 Jul 2018 10:16:51 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Nicholas Piggin <npiggin@gmail.com>, john.hubbard@gmail.com,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/2] mm/fs: put_user_page() proposal
-Message-ID: <20180709171651.GE2662@bombadil.infradead.org>
-References: <20180709080554.21931-1-jhubbard@nvidia.com>
- <20180709184937.7a70c3aa@roar.ozlabs.ibm.com>
- <20180709160806.xjt2l2pbmyiutbyi@quack2.suse.cz>
+        Mon, 9 Jul 2018 13:17:56 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 08549231AEB;
+        Mon,  9 Jul 2018 13:17:55 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id OpEo6Jsi5_JM; Mon,  9 Jul 2018 13:17:54 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 7BDC6231AE1;
+        Mon,  9 Jul 2018 13:17:54 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 7BDC6231AE1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1531156674;
+        bh=+s0mmtfzrXKCtC09XTqck3IzJStdW+du+ajJhpRQHEM=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=WRQP9JCPAx+RSjb4YE8v0W4Zpqu9jSD1LkyuoxrtRai/r6V5xtvx5XNbaLlUtP3i6
+         jgxoiWH0HKA/AnaB2FLG2GKwIjt4bq0vCnKU7OTrT22dyMfU9b9QcYjHC2pC3gM4Ks
+         k59kWT97vM8tptNwhHuB0MbefU/MiyP3bXl6pTfoVSN0BMFaPwwsoQGQKPdsFsloTk
+         4bUwKmT8pxcKawogNU7HnkYnAXrCWsrhlEof82Rw8QTx0815JJkq8T11R5QUACs8k/
+         Gq7WJeTFE4WcV4aQ62/RI/Nm6z+YTsn4KBaUZriYEgSMrZXsSvNmPiJtRA8vhF6u/s
+         OHZUwEuSz1nlw==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 7rWf8BFKBNqo; Mon,  9 Jul 2018 13:17:54 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 66156231AD8;
+        Mon,  9 Jul 2018 13:17:54 -0400 (EDT)
+Date:   Mon, 9 Jul 2018 13:17:54 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        peter maydell <peter.maydell@linaro.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <1187011512.2158.1531156674389.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180709165307.GB4689@arm.com>
+References: <1531145985-3747-1-git-send-email-will.deacon@arm.com> <1957291037.1983.1531152382750.JavaMail.zimbra@efficios.com> <20180709165307.GB4689@arm.com>
+Subject: Re: [PATCH v2 0/3] Support rseq on arm64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709160806.xjt2l2pbmyiutbyi@quack2.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: Support rseq on arm64
+Thread-Index: qV/BqwAkP0lRf3NeEjDROZExUO8U/A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 06:08:06PM +0200, Jan Kara wrote:
-> On Mon 09-07-18 18:49:37, Nicholas Piggin wrote:
-> > The problem with blocking in clear_page_dirty_for_io is that the fs is
-> > holding the page lock (or locks) and possibly others too. If you
-> > expect to have a bunch of long term references hanging around on the
-> > page, then there will be hangs and deadlocks everywhere. And if you do
-> > not have such log term references, then page lock (or some similar lock
-> > bit) for the duration of the DMA should be about enough?
+----- On Jul 9, 2018, at 12:53 PM, Will Deacon will.deacon@arm.com wrote:
+
+> On Mon, Jul 09, 2018 at 12:06:22PM -0400, Mathieu Desnoyers wrote:
+>> ----- On Jul 9, 2018, at 10:19 AM, Will Deacon will.deacon@arm.com wrote:
+>> 
+>> > Hello,
+>> > 
+>> > This is version two of the patches previously posted here:
+>> > 
+>> > http://lkml.kernel.org/r/1529949285-11013-1-git-send-email-will.deacon@arm.com
+>> > 
+>> > Changes since v1 include:
+>> > 
+>> >  * Move abort handler in-line to avoid possibility of it being
+>> >    out-of-range for conditional branch instructions
+>> > 
+>> > I've tested both native and compat (little-endian only) with the selftests
+>> > and they pass successfully on my Seattle box.
+>> 
+>> For the whole series:
+>> 
+>> Acked-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 > 
-> There are two separate questions:
+> Thanks, Mathieu! Are you ok with me taking this via the arm64 tree for
+> 4.19 once I have an Ack for the asm-generic change, or would you rather
+> this went via somewhere else?
+
+Adding Thomas Gleixner in CC. He has been picking up the rseq bits for
+4.18. I've noticed it was rather easier to gather rseq stuff through a
+single tree (less chances of confusion).
+
+Also, support for additional architectures (e.g. MIPS) was added to rseq
+after rc1. Is it too late to merge arm64 support targeting 4.18 ?
+
+Thanks,
+
+Mathieu
+
 > 
-> 1) How to identify pages pinned for DMA? We have no bit in struct page to
-> use and we cannot reuse page lock as that immediately creates lock
-> inversions e.g. in direct IO code (which could be fixed but then good luck
-> with auditing all the other GUP users). Matthew had an idea and John
-> implemented it based on removing page from LRU and using that space in
-> struct page. So we at least have a way to identify pages that are pinned
-> and can track their pin count.
+> Cheers,
 > 
-> 2) What to do when some page is pinned but we need to do e.g.
-> clear_page_dirty_for_io(). After some more thinking I agree with you that
-> just blocking waiting for page to unpin will create deadlocks like:
+> Will
 
-Why are we trying to writeback a page that is pinned?  It's presumed to
-be continuously redirtied by its pinner.  We can't evict it.
-
-> ext4_writepages()				ext4_direct_IO_write()
-> 						  __blockdev_direct_IO()
-> 						    iov_iter_get_pages()
-> 						      - pins page
->   handle = ext4_journal_start_with_reserve(inode, ...)
->     - starts transaction
->   ...
->     lock_page(page)
->     mpage_submit_page()
->       clear_page_dirty_for_io(page) -> blocks on pin
-
-I don't think it should block.  It should fail.
-
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
