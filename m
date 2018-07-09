@@ -2,227 +2,192 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F623C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 791CDC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B859E20673
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:59:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B859E20673
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 308EA20673
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:00:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZULQGnAs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 308EA20673
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932850AbeGII7o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:59:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:44815 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754142AbeGII7m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:59:42 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C49E120914; Mon,  9 Jul 2018 10:59:40 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9448420893;
-        Mon,  9 Jul 2018 10:59:30 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 10:59:30 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej =?utf-8?Q?=C5=A0krabec?= <jernej.skrabec@siol.net>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] Re: [PATCH v3 09/24] drm/sun4i: Don't skip TCONs
- if they don't have channel 0
-Message-ID: <20180709085930.dgcxrs3jqcrhu5gm@flea>
-References: <20180625120304.7543-1-jernej.skrabec@siol.net>
- <CAGb2v66_6RoYk6MRtTJeqg0Z09A7y+pvSxs7qeeND+iKPE_+BA@mail.gmail.com>
- <20180705070358.7ng4shuo3pxp62q6@flea>
- <1699738.FoQmAThxyL@jernej-laptop>
+        id S932622AbeGIJAS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 05:00:18 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:47023 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752914AbeGIJAQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 05:00:16 -0400
+Received: by mail-pf0-f193.google.com with SMTP id l123-v6so13205813pfl.13
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 02:00:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KYxQu7doFu6e+nrLh0HttSrZJ4AdYWYNOJVxsuVli+o=;
+        b=ZULQGnAsf6K0Jb+oLCdL75nmIY4Zw27XzCNAHrt0fcxK67rQT7LgC/QQ2VErMLJuh6
+         Ftz7PpDoIudfQYLepBX4H69xcZAyjXEDXcYpmNZuwuWuNVkyZx4v61TRR5dYLObPasbS
+         4QkGJ7PNL0UW8O/pLbMSV/vfWQRhtkJFtogB4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=KYxQu7doFu6e+nrLh0HttSrZJ4AdYWYNOJVxsuVli+o=;
+        b=mpAAbNnZEMjbVHdrXIWf3i+trkIs2yKi0hOWsnZnK3GGgGkBTdx5hJu/+ABkJz8Xmo
+         H4gaZkFMyuv1+873DnXaZEwt4welRRL4CdDs9VYFfshrRFY1cL4GWKsWNq5vhfywhgjw
+         WBX0guwSjNEkxtF4aJPIfad3OXSDx3Xd8KQc5jB82WvnpJkBozpcYgaSUz+y4I3rPA9f
+         YO7DyVvd82jXyvihXYo4UTZA6ZazLyKg2HLk5qPB4l7omCK8JTtpPpTOJmDpnvufWJS+
+         f+7q3CAPsos3CBKWA3LqSZjVFMKGuoDeh1y6FtXWInZMo7447SAwCwNuQHASunOk+YNS
+         9wTQ==
+X-Gm-Message-State: APt69E2y4tGJ+MRYOeT5QkCKKZURgG8mkv33z4BNoMcSb45mj+H6OtPG
+        gwD7p9Ny825uLaxGl8TE+cIXog==
+X-Google-Smtp-Source: AAOMgpcxL94oUgcrIkLmNTG6Aa7nSBLCXJmW3dsOnu93QCeCJtOAXiAEom4M1iA1KcVc4DwYE4DDxw==
+X-Received: by 2002:a62:1c16:: with SMTP id c22-v6mr7019872pfc.148.1531126816453;
+        Mon, 09 Jul 2018 02:00:16 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id m15-v6sm12814438pgc.43.2018.07.09.02.00.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 02:00:15 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 18:01:34 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 13/14] arm64: kexec_file: add kernel signature
+ verification support
+Message-ID: <20180709090133.GU28220@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180623022058.10935-1-takahiro.akashi@linaro.org>
+ <20180623022058.10935-14-takahiro.akashi@linaro.org>
+ <ff77f2d9-82c6-8fbb-3696-e1fcfd61c333@arm.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="iad3qlutlabjodpq"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1699738.FoQmAThxyL@jernej-laptop>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <ff77f2d9-82c6-8fbb-3696-e1fcfd61c333@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 03, 2018 at 06:47:38PM +0100, James Morse wrote:
+> Hi Akashi,
+> 
+> On 23/06/18 03:20, AKASHI Takahiro wrote:
+> > With this patch, kernel verification can be done without IMA security
+> > subsystem enabled. Turn on CONFIG_KEXEC_VERIFY_SIG instead.
+> > 
+> > On x86, a signature is embedded into a PE file (Microsoft's format) header
+> > of binary. Since arm64's "Image" can also be seen as a PE file as far as
+> > CONFIG_EFI is enabled, we adopt this format for kernel signing.
+> > 
+> > You can create a signed kernel image with:
+> >     $ sbsign --key ${KEY} --cert ${CERT} Image
+> 
+> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > index f68318f61c85..5133c22a01ab 100644
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -845,6 +845,30 @@ config KEXEC_FILE
+> >  	  for kernel and initramfs as opposed to list of segments as
+> >  	  accepted by previous system call.
+> >  
+> > +config KEXEC_VERIFY_SIG
+> > +	bool "Verify kernel signature during kexec_file_load() syscall"
+> > +	depends on KEXEC_FILE
+> > +	help
+> > +	  Select this option to verify a signature with loaded kernel
+> > +	  image. If configured, any attempt of loading a image without
+> > +	  valid signature will fail.
+> > +
+> > +	  In addition to that option, you need to enable signature
+> > +	  verification for the corresponding kernel image type being
+> > +	  loaded in order for this to work.
+> > +
+> > +config KEXEC_IMAGE_VERIFY_SIG
+> > +	bool "Enable Image signature verification support"
+> > +	default y
+> > +	depends on KEXEC_VERIFY_SIG
+> > +	depends on EFI && SIGNED_PE_FILE_VERIFICATION
+> > +	help
+> > +	  Enable Image signature verification support.
+> > +
+> > +comment "Image signature verification is missing yet"
+> > +	depends on KEXEC_VERIFY_SIG
+> > +	depends on !EFI || !SIGNED_PE_FILE_VERIFICATION
+> 
+> 
+> This comment thing is a good idea, but its also a bit confusing... it took me
+> quite a while to work out what was missing. Could we phrase it something like:
+> "Support for PE file signature verification disabled!"
 
---iad3qlutlabjodpq
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK.
 
-On Thu, Jul 05, 2018 at 10:03:35PM +0200, Jernej =C5=A0krabec wrote:
-> Dne =C4=8Detrtek, 05. julij 2018 ob 09:03:58 CEST je Maxime Ripard napisa=
-l(a):
-> > On Sun, Jul 01, 2018 at 11:11:06PM +0800, Chen-Yu Tsai wrote:
-> > > On Sun, Jul 1, 2018 at 4:27 PM, Jernej =C5=A0krabec <jernej.skrabec@s=
-iol.net>=20
-> wrote:
-> > > > Dne =C4=8Detrtek, 28. junij 2018 ob 08:24:34 CEST je Chen-Yu Tsai n=
-apisal(a):
-> > > >> On Thu, Jun 28, 2018 at 12:45 PM, Jernej =C5=A0krabec
-> > > >>=20
-> > > >> <jernej.skrabec@siol.net> wrote:
-> > > >> > Dne =C4=8Detrtek, 28. junij 2018 ob 03:51:31 CEST je Chen-Yu Tsa=
-i=20
-> napisal(a):
-> > > >> >> On Mon, Jun 25, 2018 at 8:02 PM, Jernej Skrabec
-> > > >> >> <jernej.skrabec@siol.net>
-> > > >> >=20
-> > > >> > wrote:
-> > > >> >> > TV TCONs (channel 1 only) are always connected to TV or HDMI
-> > > >> >> > encoder.
-> > > >> >> > Because of that, all output endpoints on such TCON node will =
-point
-> > > >> >> > to a
-> > > >> >> > encoder which is part of component framework.
-> > > >> >> >=20
-> > > >> >> > Correct current graph traversing algorithm in such way that it
-> > > >> >> > doesn't
-> > > >> >> > skip output enpoints with id 0 on TV TCONs.
-> > > >> >>=20
-> > > >> >> No. Our bindings say that endpoint 0 _is_ channel 0. For TCONs =
-that
-> > > >> >> don't
-> > > >> >> have channel 0, it must be skipped.
-> > > >> >=20
-> > > >> > I'm not sure where this is stated. I read TCON binding again. Ca=
-n you
-> > > >> > please point me to it?
-> > > >>=20
-> > > >> https://elixir.bootlin.com/linux/latest/source/Documentation/devic=
-etree
-> > > >> /bind ings/display/sunxi/sun4i-drm.txt#L169
-> > > >>=20
-> > > >> Our TCON driver still expects RGB or LVDS panel / bridges on endpo=
-int
-> > > >> 0.
-> > > >=20
-> > > > Yes, but that can only happen on TCON which has channel 0. TV TCONs
-> > > > (those
-> > > > with channel 1 only) can't have panels or bridges connected to them,
-> > > > because they are internally always connected to either HDMI or TV
-> > > > encoder or both. Actually, R40 is the only SoC, where same TV TCON =
-can
-> > > > be connected to TV encoder or HDMI. Others have specialized TV TCON=
-s,
-> > > > which are connect to only one encoder.
-> > > >=20
-> > > > IMO TV TCONs are really just stripped down LCD TCONs to support one=
- (or
-> > > > max
-> > > > two) specific encoder.
-> > >=20
-> > > I agree. We've seen these first in the H3, and the reverse, TCONs only
-> > > with
-> > > LCD, on the A23/A33.
-> > >=20
-> > > >> So I guess this was sort of implied historically. It's no longer t=
-rue.
-> > > >> This is something we should probably fix.
-> > > >=20
-> > > > Fixed in what way? You mean update bindings to mention that TCON ou=
-tput
-> > > > endpoint 0 is reserved for panels or bridges?
-> > >=20
-> > > Either that, or have the drm driver look at other endpoints. I guess =
-we
-> > > should ask Maxime if this is already done or not, since the DSI driver
-> > > isn't endpoint 0 in the A33 dtsi.
-> >=20
-> > The DSI driver isn't really a good example for this, since the panel
-> > isn't described as part of the OF graph, but DSI binding require that
-> > it's a child of the DSI controller node.
->=20
-> So should be new behaviour reverted? I mean ignoring endpoint 0 on TV TCO=
-Ns.
->=20
-> For me, it doesn't make sense to check for panel or bridges on TV TCONs,=
-=20
-> because they are never exposed on physical pins. They are always connecte=
-d to=20
-> TVE or HDMI encoder internally.
+> This tells us its about PE files, and its probably a missing config option
+> somewhere, not some code that hasn't been written yet. (which was my first
+> assumption!).
+> 
+> KEXEC_VERIFY_SIG presumably turns on just the IMA verification, which verifies
+> the Image, but not in the same way as KEXEC_IMAGE_VERIFY_SIG.... (if I've
+> understood it properly)
 
-It doesn't make sense to check for panels, yes, but it also makes sens
-to have a child node at the endpoint 0 for TV TCONs.
+I'm afraid that I'm not clear at the cover letter.
+Those two mechanisms, IMA verification and kexec-specific verification,
+are totally different. The former is relatively new as well as generic,
+and doesn't even require KEXEC_VERIFY_SIG at all as all the stuff is done
+under IMA framework (via security hooks) with extended file attributes.
 
-> > > >> In practice our drivers don't look at it (yet), but rely on the
-> > > >> downstream
-> > > >> encoder type to determine which channel to use.
-> > > >>=20
-> > > >> But please add the "allwinner,tcon-channel" property as specified =
-in
-> > > >> the binding.
-> > > >=20
-> > > > It's my understanding of TCON binding documentation that property
-> > > > "allwinner,tcon-channel" is needed only if TCON supports both chann=
-els.
-> > > > TV
-> > > > TCON clearly supports only channel 1. In that case, there is no dou=
-bt to
-> > > > which channel output endpoint belongs.
-> > > >=20
-> > > > If that's not true, dt bindings documentation should be reworded to
-> > > > contain
-> > > > word "needed" or something similar. Currently, no DT for newer SoC
-> > > > contains
-> > > > that property (for example, A83T, H3, H5 or even A33).
-> >=20
-> > Yeah, but that's mainly because we have a single output enabled for
-> > each channel on those newer SoCs. When / if we enable the RGB and LVDS
-> > output for example, we will have to set this.
->=20
-> So just to be clear, before I send follow up series, I have to add=20
-> "allwinner,tcon-channel" property to DT, because both TV TCONs can be=20
-> connected to either TVE or HDMI (trough TCON TOP)?
->=20
-> BTW, since this property is not used at all in the code, why not just sim=
-ply=20
-> deprecate it and remove it from existing DTs? I noticed this is standard=
-=20
-> practice for obsolete properties.
+On the other hand, KEXEC_VERIFY_SIG is just an option that turns on
+verification check in a kexec-specific (and more importantly arch-specific
+and file-format-specific) manner through 'kexec_file_ops->verify interface.'
 
-It's not deprecated or obsolete, it's future-proofing.
+> Is there any reason to have these as separate enables?
 
-Maxime
+If you are talking about KEXEC_VERIFY_SIG and KEXEC_IMAGE_VERIFY_SIG,
+it is a leftover when "vmlinux" image was also supported in my
+old versions of kexec_file patch set.
+But please note that x86 also retains two separate configuration options,
+KEXEC_VERIFY_SIG and KEXEC_BZIMAGE_VERIFY_SIG.
+I simply followed that.
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Couldn't we 'select SIGNED_PE_FILE_VERIFICATION if EFI' in KEXEC_VERIFY_SIG?
 
---iad3qlutlabjodpq
-Content-Type: application/pgp-signature; name="signature.asc"
+I didn't "select" SIGNED_PE_FILE_VERIFICATION here following
+"kbuild/kconfig-language.txt" which suggests, "use select only for
+non-visible symbols (no prompts anywhere)."
 
------BEGIN PGP SIGNATURE-----
+> This would mean there is one option to verify signatures, instead of two...
+> (does it really depend on EFI?)
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltDI/EACgkQ0rTAlCFN
-r3T6+Q//Xrijr00TxUiNtp3VuKBQVfj/+jKCM/XlSi8EBRVS7B7g1ba2GLZgA6aJ
-n1kfmxYJRrRQNzi77PZEBigLVKXzCuCURNp0iW9lMtvk6bxshkwQ1XbTQOTZqvu4
-qAnp9ikrf2SbG1qKoiHE1uwZyNsJL1Kv5GxyvxF4/drPoLLUHeKv7jWnSdfDc6ak
-LbKvx2y6Mo2b8XyBoqO1dRLaabzT9qdPUy1pAEH5u80fL9mBlnlV6wrZueEl8C0R
-U1l4d1UXwFtOxNVdpf3NyP2ZZrkQC/0/o6lR2g98J0lw6Z6yw4Q5zW2y7YJS8oKc
-RMZ/O4iG8FukaKbpBD4t2Z8Sf1zhYXyIKzM9GR/YxZ5mzAH992d69KaD2ybbwXsp
-H8u/evIpLyINtfQZ8iz+AxuYxLU8y88q9YoWfXoohqa+seovEbNF8Jg38m9QCt+7
-e03aNeQrG+yf8mc06r+F0pCSTgOVLZ72RLi3ZNxhO6lCAKSgU38X9luVgpBmGMIG
-VB53BRjdCdHPLebNQIpy3RBUnuYgKPkA0F9bH2D2gtJImTBZ4PVY/OXalG9iqF4a
-t3mVuZFz/CwiLL+v6TaZmUufnLjny9jhjM5aZFOxufyun9zKZb4CnGqBgdfGBruB
-oDra7uWm8g9/dyJZ9i21JgijuXiybR/3EzZHjVe8LJj5xvuI03o=
-=kknL
------END PGP SIGNATURE-----
+Strictly speaking, SIGNED_PE_FILE_VERIFICATION depends on the fact
+that a binary file is in PE format, which means that EFI is enabled
+on arm64.
+It is possible to support KEXEC_VERIFY_SIG for non-PE binaries, but
+in that case, we will have to invent a new (arm64-specific) way of
+verification.
+(For instance, we might want to add a kexec-specific ELF segment to vmlinux.)
 
---iad3qlutlabjodpq--
+Thanks,
+-Takahiro AKASHI
+
+> 
+> Thanks,
+> 
+> James
