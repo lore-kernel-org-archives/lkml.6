@@ -2,110 +2,69 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3117C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:00:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C38C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:01:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F712089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:00:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F712089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id E9F0520875
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:01:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F0520875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933313AbeGIPAj convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:00:39 -0400
-Received: from smtp-out6.electric.net ([192.162.217.187]:64530 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933297AbeGIPAg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:00:36 -0400
-Received: from 1fcXeP-0000hF-UY by out6a.electric.net with emc1-ok (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fcXeR-0000to-Vs; Mon, 09 Jul 2018 08:00:31 -0700
-Received: by emcmailer; Mon, 09 Jul 2018 08:00:31 -0700
-Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
-        by out6a.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fcXeP-0000hF-UY; Mon, 09 Jul 2018 08:00:29 -0700
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 9 Jul 2018 16:02:08 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 9 Jul 2018 16:02:08 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Peter Zijlstra' <peterz@infradead.org>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "greg@kroah.com" <greg@kroah.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>
-Subject: RE: [PATCH v3] devres: Explicitly align datai[] to 64-bit
-Thread-Topic: [PATCH v3] devres: Explicitly align datai[] to 64-bit
-Thread-Index: AQHUF5RQYtcNwcQOfUmtgpsbxmBbOaSG+rxw
-Date:   Mon, 9 Jul 2018 15:02:08 +0000
-Message-ID: <dd7f96e4b08644769865adb302eb7d53@AcuMS.aculab.com>
-References: <20180709134550.29541-1-abrodkin@synopsys.com>
- <20180709140717.GR2476@hirez.programming.kicks-ass.net>
- <20180709141056.GR2512@hirez.programming.kicks-ass.net>
- <44727d3cebda7bee5b68fb388bd2fecfc6dc7b89.camel@synopsys.com>
- <20180709144925.GU2476@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180709144925.GU2476@hirez.programming.kicks-ass.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
-X-Virus-Status: Scanned by VirusSMART (c)
-X-Virus-Status: Scanned by VirusSMART (s)
+        id S933339AbeGIPBB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:01:01 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57269 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932879AbeGIPA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:00:58 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4B42B208C5; Mon,  9 Jul 2018 17:00:57 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 21EA920876;
+        Mon,  9 Jul 2018 17:00:47 +0200 (CEST)
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     davem@davemloft.net
+Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
+        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
+        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
+        mw@semihalf.com
+Subject: [PATCH net-next] net: mvpp2: explicitly include linux/interrupt.h
+Date:   Mon,  9 Jul 2018 17:00:43 +0200
+Message-Id: <20180709150043.13737-1-antoine.tenart@bootlin.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra
-> Sent: 09 July 2018 15:49
-> On Mon, Jul 09, 2018 at 02:33:26PM +0000, Alexey Brodkin wrote:
-> > > In fact, since alloc_dr() uses kmalloc() to allocate the entire thing,
-> > > it is impossible to guarantee a larger alignment than kmalloc does.
-> >
-> > Well but 4-bytes [which is critical for atomic64_t] should be much less
-> > than a sane cache line length so above should work.
-> 
-> AFAICT ARCH_KMALLOC_MINALIGN ends up being 4 on x86_32 (it doesn't
-> define ARCH_DMA_MINALIGN and doesn't seem to otherwise override the
-> thing).
+The Marvell PPv2 driver uses interrupts and tasklet but does not
+explicitly include linux/interrupt.h, relying on implicit includes. This
+one particularly is included by chance after a long unlogical chain of
+inclusions. Fix this so we do not get future build breaks.
 
-That seems broken.
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-I wonder what the minimal alignment really is?
-I suspect some code expects (and gets) 8-byte alignment.
-The min alignment might even be 16 or 32 bytes.
-There aren't many x86 instructions that fault on mis-aligned addresses,
-but there are a few.
-Mostly related to the fpu - probably including the fpu save area.
-
-	David
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+index 81a66cce7fa8..18834619bb3a 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+@@ -12,6 +12,7 @@
+ #ifndef _MVPP2_H_
+ #define _MVPP2_H_
+ 
++#include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/netdevice.h>
+ #include <linux/phy.h>
+-- 
+2.17.1
 
