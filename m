@@ -2,195 +2,192 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URG_BIZ autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09931C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1765C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 960132089B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:56:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D36620882
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:58:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gCYKx7qI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960132089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mafjHiga"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D36620882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754516AbeGIK4u (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 06:56:50 -0400
-Received: from twosheds.infradead.org ([90.155.92.209]:58722 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932415AbeGIK4q (ORCPT
+        id S932547AbeGIK6L (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 06:58:11 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:52529 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932415AbeGIK6K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 06:56:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
-        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zfsYzzjOxH6W3Tkn6h8wSHOvDq8o/gya3WQYz2iH0J8=; b=gCYKx7qIlp3uGU9WycKhCVCfR
-        tPBOPp7xIko3XZbEC1PXeezObfeS/RY7icO3cqBiH4TBmUROYSDkKeYtjWoLBfuIwXxVysXx3/v6y
-        WqYAPgPFN5WOJmGWTYWuOEocL26ayzFEMXfp4PTl5VJYRMRSjH8GRn9CZHPTv6vUIifD//AzxhF9b
-        RmWgapSkB22f0waHO6cAnQ6rREO6ivieQQw89P0mv5GIoVNTeEIXXUU8zJVfV+n+6knQZEsuIn0kV
-        tNd+ujwJzDMYiGok4ecmTwiuA/G5+3GTBKZTrpZ6yun4VwanZFg6dmeoqeuHHO3ZnrY0eOXQgH9qk
-        kkpqBNyeg==;
-Received: from [2001:8b0:10b:1::2fb]
-        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcTqT-0001kv-CP; Mon, 09 Jul 2018 10:56:41 +0000
-Message-ID: <1531133801.18697.73.camel@infradead.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        mhillenb@amazon.de, linux-kernel <linux-kernel@vger.kernel.org>
-In-Reply-To: <20180709104429.GI2476@hirez.programming.kicks-ass.net>
-References: <bb77e730a5ada3689650b636e1dd03ac5cc87256.camel@infradead.org>
-         <20180706162905.GZ2476@hirez.programming.kicks-ass.net>
-         <20180706171150.GI3593@linux.vnet.ibm.com>
-         <20180709085351.GC2476@hirez.programming.kicks-ass.net>
-         <1531127935.18697.57.camel@infradead.org>
-         <20180709104429.GI2476@hirez.programming.kicks-ass.net>
-Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-LziFgLroxSMx46fE6CGh"
-Date:   Mon, 09 Jul 2018 11:56:41 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Mon, 9 Jul 2018 06:58:10 -0400
+Received: by mail-wm0-f67.google.com with SMTP id w16-v6so20609344wmc.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 03:58:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9xsxGqg3LvQXHsYSiF2c/zM/wRK3y4nq7pp8pqKt2Z0=;
+        b=mafjHigagqSnQWijUVe5voNTPwZaXXNgiuOueC0mb4qrIs0ag2J4CaMVu/oW4MwbLk
+         VpOOTiQjoxecOQ8Na92LdlDn6RG1GTpSIB8a443CDTP+6PupjsGicI1j4h5JQeuyMlzb
+         824Gs4oF/psHPBKUUb6xQNd2f1d/t667GOdqWyu5OPotukR0i6NDQasecPXtsTIUTQkY
+         UqjG1b2oMeMU1EPQcf1jRT/1d8VyND0+EFGKmU5yTeVbliWQo9XFTuDJk72VwsiwKRkG
+         CUIOSythJguE/k+gJLFt8140zFSGXNz+nsZFbv9uqI8OXMD1BlFOnJt5//aRjmR8eHBk
+         gg0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9xsxGqg3LvQXHsYSiF2c/zM/wRK3y4nq7pp8pqKt2Z0=;
+        b=pPfHKPFcA+iZMrFmY6hbVVcVLho+aZ2US5WDpRT3cP86i2uOVokWklPEYMecFiE5bn
+         JbRSf168giZXxG4iP4ptyBKj0VLjTg5JCBWZo5JioXH/SlbSOia9WODQv5g1ACbFm8Ii
+         vu4MT5m4P+weUILPZXr8Dj+PoDVzcCs6hdR6uziAx3sfkUA0T7L3xNtIO0wjkRiY1cmz
+         jvoPOs/XEVS9GMw6DA84pMt9ocgsHpXBbtxhBzhVbXqr3fjidJeJvLF5V5Hwzg+O0HvM
+         LJ0J0R7Vt3OEDcjcJzQ4Mtsen6Pht1T6Xw33EofKE9Z74smVWT6eH7n+RiGcQ4ihwdui
+         RaSw==
+X-Gm-Message-State: AOUpUlGiqQX7xWHLsmTr914wb+5mPKOtjqKokZG4c9cwDGE9O3LeeAUP
+        VSaOlvxH1RUTMdQQmj6vv2poCl1a
+X-Google-Smtp-Source: AAOMgpdNAGWE7cYKBzgqdz3jSVLVKPA/HOyAO5DCeoqmsC71yXI6tQfMFq1B+PBZRxnML5RCdpSgRw==
+X-Received: by 2002:a1c:f415:: with SMTP id z21-v6mr138011wma.80.1531133888661;
+        Mon, 09 Jul 2018 03:58:08 -0700 (PDT)
+Received: from msi-8775.fritz.box (p200300EC43C483007ADD4582C6297BE1.dip0.t-ipconnect.de. [2003:ec:43c4:8300:7add:4582:c629:7be1])
+        by smtp.gmail.com with ESMTPSA id e13-v6sm32708420wrd.9.2018.07.09.03.58.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 03:58:08 -0700 (PDT)
+From:   Tobias Tefke <tobias.tefke@gmail.com>
+X-Google-Original-From: Tobias Tefke <tobias.tefke@tutanota.com>
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, tobias.tefke@tutanota.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] perf/core, uprobes: use correct articles in comments
+Date:   Mon,  9 Jul 2018 12:57:15 +0200
+Message-Id: <20180709105715.22938-1-tobias.tefke@tutanota.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some of the comments in the kernel events code use articles incorrectly,
+using 'a' for words beginning with a vowel sound, where 'an' should be
+used.
 
---=-LziFgLroxSMx46fE6CGh
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Tobias Tefke <tobias.tefke@tutanota.com>
+---
+ kernel/events/core.c    | 16 ++++++++--------
+ kernel/events/uprobes.c |  6 +++---
+ 2 files changed, 11 insertions(+), 11 deletions(-)
 
-On Mon, 2018-07-09 at 12:44 +0200, Peter Zijlstra wrote:
-> On Mon, Jul 09, 2018 at 10:18:55AM +0100, David Woodhouse wrote:
-> >=20
-> > >=20
-> > > Which seems like an entirely reasonable amount of time to kick a task=
-.
-> > > Not scheduling for a second is like an eternity.
-> >
-> > If that is our only "fix" for KVM, then wouldn't that mean that things
-> > like expand_fdtable() would be *expected* to take "an eternity" when
-> > another CPU happens to be in the guest? Because vcpu_run() would still
-> > loop until the task gets kicked after a second?
->
-> But either proposal is exactly the same in this respect. The whole
-> rcu_urgent_qs thing won't be set any earlier either.
-
-Er.... Marius, our latencies in expand_fdtable() definitely went from
-~10s to well below one second when we just added the rcu_all_qs() into
-the loop, didn't they? And that does nothing if !rcu_urgent_qs.
-
-Doesn't rcu_implicit_dynticks_qs() set it after jiffies_till_sched_qs
-(default HZ/10) has expired?
-
---=-LziFgLroxSMx46fE6CGh
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MDkxMDU2NDFaMC8GCSqG
-SIb3DQEJBDEiBCD51yGe5Zu8JOWHdx209CXybZRN4epqBx//gd+S6h3vxjCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAEatGc0qCg5d
-rzyi8WWzfPAd8WPBAKwH2jkdBqATOjfAkYJfDPPCP/75lHpb95hqhTBQvH67QlU3DFybjcEQvU+F
-A1T7/ADuyW+oxTGcXaUtRHarl0pnSxXcWa0Wn2kmbkv157CD4A2seFLVN2sJiFg5oqC/i+1V0FDp
-HFNQnOiHt0w/hLbhSAoRhNSymytoQ+WLVGKY4V7xfsD/hy2OvvXhgfz0pVBagsRXRjYa4VJ+9ThH
-WcxZVWQdmbYxTvcHK+WDBHGLeixTThxx8YzbQTDHBGZBm6xQzxzGGlSqZw199jVCj2xRbnXEVv5R
-ZjdLTZRpb2KIBCMRFJ+n4TOfY5cAAAAAAAA=
-
-
---=-LziFgLroxSMx46fE6CGh--
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 323fab1e512d..95dc7278d8c7 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -1656,7 +1656,7 @@ perf_event_groups_next(struct perf_event *event)
+ 				typeof(*event), group_node))
+ 
+ /*
+- * Add a event from the lists for its context.
++ * Add an event from the lists for its context.
+  * Must be called with ctx->mutex and ctx->lock held.
+  */
+ static void
+@@ -1844,7 +1844,7 @@ static void perf_group_attach(struct perf_event *event)
+ }
+ 
+ /*
+- * Remove a event from the lists for its context.
++ * Remove an event from the lists for its context.
+  * Must be called with ctx->mutex and ctx->lock held.
+  */
+ static void
+@@ -2148,7 +2148,7 @@ static void __perf_event_disable(struct perf_event *event,
+ }
+ 
+ /*
+- * Disable a event.
++ * Disable an event.
+  *
+  * If event->ctx is a cloned context, callers must make sure that
+  * every task struct that event->ctx->task could possibly point to
+@@ -2677,7 +2677,7 @@ static void __perf_event_enable(struct perf_event *event,
+ }
+ 
+ /*
+- * Enable a event.
++ * Enable an event.
+  *
+  * If event->ctx is a cloned context, callers must make sure that
+  * every task struct that event->ctx->task could possibly point to
+@@ -2755,7 +2755,7 @@ static int __perf_event_stop(void *info)
+ 	 * events will refuse to restart because of rb::aux_mmap_count==0,
+ 	 * see comments in perf_aux_output_begin().
+ 	 *
+-	 * Since this is happening on a event-local CPU, no trace is lost
++	 * Since this is happening on an event-local CPU, no trace is lost
+ 	 * while restarting.
+ 	 */
+ 	if (sd->restart)
+@@ -4827,7 +4827,7 @@ __perf_read(struct perf_event *event, char __user *buf, size_t count)
+ 	int ret;
+ 
+ 	/*
+-	 * Return end-of-file for a read on a event that is in
++	 * Return end-of-file for a read on an event that is in
+ 	 * error state (i.e. because it was pinned but it couldn't be
+ 	 * scheduled on to the CPU at some point).
+ 	 */
+@@ -9898,7 +9898,7 @@ static void account_event(struct perf_event *event)
+ }
+ 
+ /*
+- * Allocate and initialize a event structure
++ * Allocate and initialize an event structure
+  */
+ static struct perf_event *
+ perf_event_alloc(struct perf_event_attr *attr, int cpu,
+@@ -11229,7 +11229,7 @@ const struct perf_event_attr *perf_event_attrs(struct perf_event *event)
+ }
+ 
+ /*
+- * Inherit a event from parent task to child task.
++ * Inherit an event from parent task to child task.
+  *
+  * Returns:
+  *  - valid pointer on success
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index ccc579a7d32e..aed1ba569954 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -918,7 +918,7 @@ int uprobe_register(struct inode *inode, loff_t offset, struct uprobe_consumer *
+ EXPORT_SYMBOL_GPL(uprobe_register);
+ 
+ /*
+- * uprobe_apply - unregister a already registered probe.
++ * uprobe_apply - unregister an already registered probe.
+  * @inode: the file in which the probe has to be removed.
+  * @offset: offset from the start of the file.
+  * @uc: consumer which wants to add more or remove some breakpoints
+@@ -947,7 +947,7 @@ int uprobe_apply(struct inode *inode, loff_t offset,
+ }
+ 
+ /*
+- * uprobe_unregister - unregister a already registered probe.
++ * uprobe_unregister - unregister an already registered probe.
+  * @inode: the file in which the probe has to be removed.
+  * @offset: offset from the start of the file.
+  * @uc: identify which probe if multiple probes are colocated.
+@@ -1403,7 +1403,7 @@ static struct return_instance *free_ret_instance(struct return_instance *ri)
+ 
+ /*
+  * Called with no locks held.
+- * Called in context of a exiting or a exec-ing thread.
++ * Called in context of an exiting or an exec-ing thread.
+  */
+ void uprobe_free_utask(struct task_struct *t)
+ {
+-- 
+2.18.0
 
