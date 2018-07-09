@@ -2,98 +2,91 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 045A2C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:54:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478D2C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:54:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5B0E2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:54:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE4222087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:54:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Te3N14h6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B0E2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vLUVtiSz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE4222087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932813AbeGINyR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:54:17 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:37008 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754521AbeGINyO (ORCPT
+        id S932863AbeGINym (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:54:42 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:54350 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754437AbeGINyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:54:14 -0400
-Received: by mail-io0-f196.google.com with SMTP id z19-v6so17123481ioh.4
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 06:54:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gu6VzRNgiB8gboDBEcXx6PYJWjfzIJJmIKCn8ugKlWM=;
-        b=Te3N14h6ClnJ9aw6fyCYkEwY/uLkXYl7NbbQ+CeEqwgirhmDfdg2AogGjEv0ic/5YC
-         HtjP0hh4DxDAmOVA7uVDLvLyS/4HRsuJ59aGZGd5moFNUhniMO2+vkrDLIqF/uR82Xgx
-         0Y3fsr+NPg7UNnpJvCmkRNUXF94zuygdYlgAE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gu6VzRNgiB8gboDBEcXx6PYJWjfzIJJmIKCn8ugKlWM=;
-        b=gyY9RCT90aojKtucLGjj6UtIJu0Gnb1eFGQpgh2ce67YzSzPSyod8Us9B4Lq0M1cMq
-         b8PzF9EnPv2C/3QJgpgofuoiZ2BW4+4SMT6Fh63XdcfEEDA2amruwMp8XaNy/uAyW6E5
-         pV4VEFwGQEpinZAncMYToqYry4SuT92gQcad6/2AHTndep76nfRvoOsp+6gjfhXL40ZC
-         VLaGxI3A7W4V/xqD1pxr8VWqAJ3I8mLAnrDHfHORQCbsesvH2oVwWM13UqAWNKAWNxRa
-         qDRGzK8veu0K1Y5TwXu5pVYwJZjhuwwmhdSwtqsV0zd2udgp43FQrvEs45M6NxbRpL3k
-         pHdQ==
-X-Gm-Message-State: AOUpUlGwYFccxFRyBeo2TUZqYDqcWTAOo2hhhhS6MmRfpPnb+k6IZCun
-        rfiFqQwsOMadDZth2It/wwj6C4wRR/Y9YyGgSLP0IQ==
-X-Google-Smtp-Source: AAOMgpe5BUnLIl9/siRpm4Q9a0ici7bJYinBfB1nC+zi6bGlDo1yMn8ZschtfJT/nynq0c8raCvIRSDlq5wv2pVxRRg=
-X-Received: by 2002:a6b:c3c4:: with SMTP id t187-v6mr16651423iof.304.1531144453621;
- Mon, 09 Jul 2018 06:54:13 -0700 (PDT)
+        Mon, 9 Jul 2018 09:54:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=bLvUsFAxTgM2bSGjpsYqXrpnnt2jvGtCNP4l0nS5its=; b=vLUVtiSzknfbbC8vahqv5r4sb
+        +mu0JLNa4nIuY7pFB3vjrhzCQUoJSRGBU8zufNPGMJWkyxVwvKI8xI+PU6YHgXyxA+6YKwirZ+lar
+        7k1b8/2Fjld72FhFMu5n1kn/poDhb1Gc+PJmHh2s+SfCE7WeVZ2QEIgLEk2Hbkpw2fqcqppys144u
+        MMKsq0tYYso5db52YtGYzqYQI7uWdya9FNF+Rgq/0joybPA9SuLW4JCBWsD+sGUbadJkycvw0Kvnm
+        XGY0sZ9lYGDpBCkrFGWZoxJ8gLkGg1cFfaXBVPLz1pGcoAtUDliMpdudwiN+YnnpsEZoFSbiV6W94
+        uxOxpO22g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fcWcG-00017x-53; Mon, 09 Jul 2018 13:54:12 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 794D620297EAB; Mon,  9 Jul 2018 15:54:09 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 15:54:09 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arch@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH v3] devres: Explicitly align datai[] to 64-bit
+Message-ID: <20180709135409.GQ2476@hirez.programming.kicks-ass.net>
+References: <20180709134550.29541-1-abrodkin@synopsys.com>
 MIME-Version: 1.0
-References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-3-swboyd@chromium.org>
- <20180622175836.GC3402@tuxbook-pro> <20180622183129.GD3402@tuxbook-pro>
- <CACRpkdZr5tKCjyO6Eq2vPPE8Lg+m+Ky_f24wYBSiLjdZuQ4WwA@mail.gmail.com>
- <153020606866.143105.1849265284764230975@swboyd.mtv.corp.google.com>
- <CAD=FV=Xmo4p7DbOReO02JVKnykoAOz7PtnkbdwryxvpsgZCgWw@mail.gmail.com> <153055420964.143105.3738779882090053054@swboyd.mtv.corp.google.com>
-In-Reply-To: <153055420964.143105.3738779882090053054@swboyd.mtv.corp.google.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Jul 2018 15:54:01 +0200
-Message-ID: <CACRpkdbNSNzT8tiYDXk1dc447xGqf1bV+O93hgEQdT+GcQtddA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: msm: Mux out gpio function with gpio_request()
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709134550.29541-1-abrodkin@synopsys.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 7:56 PM Stephen Boyd <swboyd@chromium.org> wrote:
+On Mon, Jul 09, 2018 at 04:45:50PM +0300, Alexey Brodkin wrote:
+> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> index f98a097e73f2..d65327cb83c9 100644
+> --- a/drivers/base/devres.c
+> +++ b/drivers/base/devres.c
+> @@ -24,8 +24,12 @@ struct devres_node {
+>  
+>  struct devres {
+>  	struct devres_node		node;
+> -	/* -- 3 pointers */
+> -	unsigned long long		data[];	/* guarantee ull alignment */
+> +	/*
+> +	 * data[] must be 64 bit aligned even on 32 bit architectures
+> +	 * because it might be accessed by instructions that require
+> +	 * aligned memory arguments such as atomic64_t.
+> +	 */
+> +	u8 __aligned(8)			data[];
+>  };
 
-> I could do with some more clarity from Linus in the "Drivers needing
-> both pin control and GPIOs" section of
-> Documentation/driver-api/pinctl.rst but I read that section as stating
-> that the GPIO driver needs to mux the pin as a GPIO by requesting the
-> pinctrl backend to do so, unless the hardware overrides the muxed
-> function selection when the GPIO is used, without involving pinctrl
-> software.
+From a quick reading in Documentation/driver-model/devres.txt this
+devres muck is supposed to be device memory, right?
 
-Yeah that text is especially terse :/
+atomics (as in atomic*_t) are not defined for use on mmio.
 
-What it says (or what I meant to say) is that there is a choice
-between letting the pin control and GPIO functionality on the
-same pin be handled orthogonally or implementing these
-gpio_*() callbacks into the pin control backend, but in either case
-the two APIs must be used in sequence:
-pin control setting comes first, second the GPIO subsystem can
-request the GPIO line.
-
-I'll see if I can clarify.
-
-Yours,
-Linus Walleij
+wth kind of code is relying on this?
