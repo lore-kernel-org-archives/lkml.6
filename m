@@ -6,145 +6,240 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B7B0C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E481CC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B02120878
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:51:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 861DB20852
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:51:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="gr42lUPd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B02120878
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="FTgCEecn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 861DB20852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754577AbeGINvU (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:51:20 -0400
-Received: from mail-eopbgr130092.outbound.protection.outlook.com ([40.107.13.92]:35086
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S932887AbeGINv3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:51:29 -0400
+Received: from mail-eopbgr60096.outbound.protection.outlook.com ([40.107.6.96]:52352
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750996AbeGINvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:51:16 -0400
+        id S1750996AbeGINvW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 09:51:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8uIRmqRceoaCZQ/2wgpVJCyR9h0ZamkwEmp48tvgNt8=;
- b=gr42lUPdfO92KIK75CHU0HEBF8x8ihNhNT3r9VKf42KO4xP+vn7r8qaXKEnvptp/MZ6LZ6q4Pn0BCZRqo0zIiAf8/4AobrJJWbe2e2YrbBGdWFE7maBENtIziynpgnuuNM277fWRMn16WcMfQqRPiz0w2VE8SBncaK8hLl3RWFE=
+ bh=OkJ3iKzzRQ6MMatsEs7wM8ojedMNygzOc8t6Z60IiCg=;
+ b=FTgCEecnPt3seUjjQ3KnzafHMjmdOE7xVqw1y9GUK7dPsgevIL8J1ocDJVeNAVbNMNfjboGAZbsF5jpzOq0XVRK4frYsXW08YcJFHk5ctGsAnGNKCNg+XAU3ubjh5aPkoJXOj7t68NNNiaI2DmpXY5qJHUpAbDu56WRjJEfuWr8=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=jan.dakinevich@virtuozzo.com; 
 Received: from work.sw.ru (185.231.240.5) by
- VI1PR08MB2781.eurprd08.prod.outlook.com (2603:10a6:802:19::14) with Microsoft
+ HE1PR08MB2778.eurprd08.prod.outlook.com (2603:10a6:7:34::30) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.19; Mon, 9 Jul 2018 13:51:12 +0000
+ 15.20.930.21; Mon, 9 Jul 2018 13:51:17 +0000
 From:   Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Yishai Hadas <yishaih@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
 Cc:     Denis Lunev <den@virtuozzo.com>,
         Konstantin Khorenko <khorenko@virtuozzo.com>,
         Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-Subject: [PATCH] ib_srpt: use kvmalloc to allocate ring pointers
-Date:   Mon,  9 Jul 2018 16:51:08 +0300
-Message-Id: <1531144268-25361-1-git-send-email-jan.dakinevich@virtuozzo.com>
+Subject: [PATCH] ib/mlx4: adjust gfp flags for DMA allocations
+Date:   Mon,  9 Jul 2018 16:51:13 +0300
+Message-Id: <1531144273-25959-1-git-send-email-jan.dakinevich@virtuozzo.com>
 X-Mailer: git-send-email 2.1.4
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: AM0PR01CA0011.eurprd01.prod.exchangelabs.com
- (2603:10a6:208:69::24) To VI1PR08MB2781.eurprd08.prod.outlook.com
- (2603:10a6:802:19::14)
+X-ClientProxiedBy: VI1PR08CA0129.eurprd08.prod.outlook.com
+ (2603:10a6:800:d4::31) To HE1PR08MB2778.eurprd08.prod.outlook.com
+ (2603:10a6:7:34::30)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 16622bf3-e7d8-4b3b-5b37-08d5e5a30898
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB2781;
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2781;3:dgrgUNpB/QRwm+/5M/7IFhqQGwg4F8CK6VgNDDTrQXBVvEXzmq5Ny7zJtFhkKx4V0C4DbtnPwmUbgcXnwZU+cr4KjIA6ltv0ikxFIDLs6wTv64DPbgGRXO6xTNXxv0rohJNI1OBzbDHUmKFzZUU51/2wQlwD4LAx6eFyIweLa9ASpK2him7x8isvUq7RVTOOpCUAZ6xaH6RoeTpccPHR9+He2jeopGX4S6FWz3fhPZhVC4M09vyUPMyQl6Tk7vyw;25:OwsM7xIxOfeWhvRqhwEDRj6FR3wrj86H0CTmIpc9A4kj1jNBcBp3dEWMVP/okhiHuxBMWvTfVQZPmwsUIuCsR8O9Bd5VvYnueL6uvQxN214GT3hwoo8iyIZ9NFP37Pfa+6E0GMRMEIP5+FB28MEd4jzekEpg+8lLf0D83aO+zPZgrloKKfKr5YsWGugcGQVkTN9oOVXoR0E2EmWPvAwe/Fu/UF86hGGWXiSRdw59gF7AvPhZ++LYrWUa8qDY3RSvwgIlLrWzp4O7lMFuDBOsfLhGVsPXQLI63bgucJMAXYQ4bPwIWO4A4OJQfHRJlgwdG7UhxjAINCKV30zK1S4xFA==;31:JoUNQMHTpE07N8eyhv0FWR72H8YK59TZYINrlXJ2/SzaANff+xL1lfnN7sOqwX2VemeNhOikIVlYo48UafgEXCKZZF17ye+swtwo8ywntoRuXqKIakegNhbAB3VAcNHoSChe+oUFnKN0CktMTAf1pzY29joEbV+zGb2atVLzov6H//xv2keIV014AtV3nXhvXu1XJievmZvKMfToEMehFIKX3xTbxcQoLOk6rqgNSsk=
-X-MS-TrafficTypeDiagnostic: VI1PR08MB2781:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2781;20:uHbcmgmSQce3hhmfezyT7t7isWY/j2xvjXhFcxCmxB95t1RlExbStccK1ndkNYyz+bhcptRtgYMJeqCwDMOB1dm3pu6/glr0orhPlWBvIO/Owi5cFzacuVjxQKoplZ0XUfUuWLrZLfJPZhgRvzoCKBnNOFUy1B76I0LWH8vjOpkw1X3TbmOv23RUXwjYRDLyO+2skt1pdLsM8FyMcCkgA0UdlbxZwDCxoRfwxlJ5SAAD+BEiXxB6+jyTV0J3uSM3FQvNI+EZFZTvD8cEQOrGdGMV9kIgf4F1A2D5mE4l1aY16p6HCASipC3bZG7iLKha9DnrrvnLaIftcNM5WRUUZBw5AlNF13NPShYovtjTw6Ey1Sp9QVfFZRt3RjRArndG3X4U1NqLdB+mMcTojPZQwUNIdnFH9+bAo9CMnRDsl3/YlLclXtUgb+3KGXsST76At4TvUGBOzcOmcmia27w4WTmeVf84Vn9BYflknmWcACaBzV57euaNJC7kf2I3qiFc;4:74juHyZqh+WqbXwFty9mCU9Mypherw0lQTJlfKKEpe2oI6kQ7RsFSku8iIDcn7F1H1eIu6YvBF79HqYQKHWnpbp7j5Y6/hmyNkte8U575MbS0gIq+s4NDAqJXhUQseVSAflfIii7ftIJhXLJbRMXnrQRpSjjHdRZ7fI451vYcCdZSULriBRLseb8y+VhGemICnK1TAx6E1St5jyxYV9YqlIHB4jWCS2wyk8lPsXOe6pE46CtV8mpa9t3ud9CNzgieeHgYRDvPXxDCdYmGdb+Kw==
-X-Microsoft-Antispam-PRVS: <VI1PR08MB2781744C3AE9CD31F2A648348A440@VI1PR08MB2781.eurprd08.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: d63219c2-e05b-48d4-0196-08d5e5a30c21
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1PR08MB2778;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR08MB2778;3:N3J7xKYIypHC1pyXcigbeo7L4OsFTup0a3wA3Azc49Vt0XuShrFpbVje6ILqTPB8MkLOwDh2ijOJk7FbeknlT+CGsM88gxTQKwb4AwChQzzmvLxhMp4SZPuWW7gKzbGQs9n8g2yNpvM7dFxQXOPDGkLW+J8ymWM2EC2Yov+Xgfvc/SYMvcmtyrqnVkNSCZoqRO4XeV4h3tGLCiYy/5eO0XbZCyGoPF7hBIkV5KWlA46vY9h0uLLzx52GG5u4rv0D;25:UwlvghNwx8GudPIOUVoRgj5g4uql+KxRJCoXhBTF0yy9oUzWj7zuZlu3ynOtggltlrrmSpskYg+zrM/mfu5qOfJgwZEBSVeo8F6JeeKqL46Xy9TxxNUDyNuC0Pciv3kesGyd4tvq8Qpl3OSSeUh0vvv/aCIt/RaTG+UmahdKW+Qx40278WLc9wJB9jk/sXijnprUeJY9xZFzH6QbLmA64+jXL/N+W+9tJPuu4SAXMjClGZO4P96OXpfcmrulyHL25lv26XGcJ7Tm11VKQW3y2pzn67p3HL7lN9vysQLiRBADiiRm3zXNRShfLGFhf4RgCk2biIv+5NtDYnKZzCHGkw==;31:43LBWR5yzWyoEdWJjnH6R595zPV0cYqRlwvzmyqNiko3V8QJiNxixVEyqoRkWe0ZUN/IhmyVR6q8Lkkq5SQBo+0Zxbfl20apXK0fsUovqNuGeIfgB3JfA5z24WNYygK1nkLVOK2OR7pVQBviuoerVMwn8BdaU+1crKihjNmnvImfFO46hBottyWLsmeJRvQzWymUBFcWnAgC6mqIbyjBqGr627RFpfrVrsE9m1zwUyQ=
+X-MS-TrafficTypeDiagnostic: HE1PR08MB2778:
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR08MB2778;20:zyROIpBmb02cTkjUIXuY+z1/5QKpPXKabd+PR/3GA5zSD/QDCVsj+OXzjrdQ/hcZzWfYdDGFTRBUPLJz4/Chd6uekahwGjpAtMVl34KRCozYGRKA2OZiJPWy3tXh7DI5kk6StRSNg5pt2pMPMZKkOlrZ2FpMPa4wJ3Vuwp0nRXVnKnzRnCXgvp2zCViDbUPJWcow1j1jAf3AH85PcARELgIO/k4C3cMAnk+xrXD1bumxt24qPFJf13CWm4ZJxht7NVI0A/KgM22pKhsHwylIZ7x2WLQRs7uDQ04C+llWn+bUxkwyGbqmwvXj7J1CuCf1YZ569Rs39bYj8fiO49hnKRSy8dgx5klKCzCjDDO3uefRaO7oOXYadbNkGZ8Q0dcIklBGnJSIcbf72HKFet7mTYRjlrJqqCXXZr2BkQncCmJlxon7u4rNt/qEu/a2mf8hX1fZSLYRSOkL9i1+2tx2T3SY0pxGbnGzwX+rGr9+mp8Df0VqglQEWu7tNxnut6m0;4:Kw8zNs1x0zTPqbeGlzR3+utL3vTpf4JecdjUJNtXcSLB0XG8nt7yy8qHjnRgTvMyuECHokg3RlCeFHjHYljd59fhHVZR4A1HfUN2qLXm6sM4j1E9yrwOLrhbJMcQp73bmx8lKOf7cXh6miyIuHmngHGyqvrzx29TFx6buvwrxjiq7CtFBA732/7o78RzsUsb5nqIquZ7AJrbLug0tScUnHNTotVQr3faI7SZjqw7o9a9idy/TK+w0rQTXEXrTjqVIso2pnEJ/0IeCBOtjbLwvA==
+X-Microsoft-Antispam-PRVS: <HE1PR08MB2778AD8A8118BE96AC66A9C38A440@HE1PR08MB2778.eurprd08.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:VI1PR08MB2781;BCL:0;PCL:0;RULEID:;SRVR:VI1PR08MB2781;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:HE1PR08MB2778;BCL:0;PCL:0;RULEID:;SRVR:HE1PR08MB2778;
 X-Forefront-PRVS: 07283408BE
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39850400004)(396003)(366004)(346002)(376002)(136003)(199004)(189003)(6666003)(8936002)(26005)(8676002)(81166006)(81156014)(16526019)(86362001)(476003)(25786009)(7736002)(186003)(44832011)(6486002)(486006)(69596002)(50466002)(6116002)(3846002)(305945005)(1857600001)(2616005)(4326008)(48376002)(5660300001)(2906002)(6506007)(53416004)(105586002)(106356001)(478600001)(956004)(68736007)(50226002)(110136005)(54906003)(66066001)(51416003)(16586007)(52116002)(316002)(53936002)(6512007)(107886003)(386003)(97736004)(36756003)(47776003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB2781;H:work.sw.ru;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(136003)(366004)(39850400004)(376002)(396003)(346002)(189003)(199004)(97736004)(25786009)(956004)(2616005)(476003)(4326008)(316002)(16586007)(2906002)(54906003)(110136005)(6512007)(106356001)(6486002)(478600001)(53416004)(107886003)(44832011)(486006)(5660300001)(105586002)(305945005)(53936002)(68736007)(3846002)(6666003)(575784001)(47776003)(8936002)(69596002)(66066001)(86362001)(26005)(16526019)(14444005)(186003)(50466002)(1857600001)(48376002)(50226002)(36756003)(51416003)(6506007)(386003)(52116002)(81166006)(81156014)(8676002)(7736002)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR08MB2778;H:work.sw.ru;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR08MB2781;23:5XBauBIlUrG0wvWmhRqW2VJzzcyd/b2+GKhCdsFxe?=
- =?us-ascii?Q?Z66Az5E/8NYT5ujJ/KiNwgVUdx8AY4AFzpoySVafUpq4FPXKYab4bJzTpCJZ?=
- =?us-ascii?Q?CKNDxqS7AvqmkuyM7DrY1hEcl0oJNtX8/1qC/+ji20bN7B9VJLZBruyfFugQ?=
- =?us-ascii?Q?L7nHFkZbU/cwsxaPWZH9y0HiKwXQFyOk34PXaf+tloc+mKUM+kVmOFPi2q+K?=
- =?us-ascii?Q?sOpIspooYIXeESYeBZKPT5gsRKoJTaYzWQiwFcmXAc+4k9AWUoVtoBQrrx/g?=
- =?us-ascii?Q?MEARrkMuIk63qgSlM+55sCZ+G7YArnwSkIF996OkrN+nG8uvkj5b1go2aB5w?=
- =?us-ascii?Q?ceaQFSJ4l/tQEtl/mX0U2IoRuZpBGQgLaBev6c1/sZVZXFmkG7rxZWhmGnVw?=
- =?us-ascii?Q?7+mcgBb+ZPfX2nTIYrtP6j57UmD5uA+D482zrdh417gHC4j/gBRX+923asyb?=
- =?us-ascii?Q?acpY9RqCAXZRo87cczL84WMNf4gR3Bi/OydmjC7Qb6rKcX0wJnp0mhBPbeSC?=
- =?us-ascii?Q?fdSoudUtdWQ309WGfpBOgZnsi63ftHeJyQNBrc1uzKaFZllr2D3e0kK7e7UE?=
- =?us-ascii?Q?PlB2M4ogNAJDq/GVzVeQiiDXEUP4sclSJI9qvnm0Hkj8VEBFXOALfeBfWAzC?=
- =?us-ascii?Q?jP6YQUUeplKcDNrnGs0OIuuz9GsPyr1DwaEmObUi58DgvBANG7DoyVs8shoL?=
- =?us-ascii?Q?679AosH9pw8EhANuLclIJgf3VUXZ+JXhvLiTxNxAGqstAWBj0JnMBayjhOd+?=
- =?us-ascii?Q?mW4ttCiTSiEaODEmlAyUGe0MZIZyFvhHhz8gm20YDYvbkKAQe/J3ZWDurQts?=
- =?us-ascii?Q?JGnC1Zk/i66BSQDXAIIvKQllSyppXUD6qY4JurueBeJB7K8miHiMonHXD0Pt?=
- =?us-ascii?Q?WT7UYLkXZNcji07krRgPCfmS15Eajj6gZ07sS1CLwUmiS5UV7flqnbtQVc8H?=
- =?us-ascii?Q?+imDxf1OuaevzbD130mkfU1JGfBsdGdSZc5RytuCiTQbnRdewFqSZNrqDAMB?=
- =?us-ascii?Q?USnEacFVzJ0FDyUiOJCp7yQLsSVlnhlj61V0UPB0aya+aXNdoQbONCiOAsfB?=
- =?us-ascii?Q?O1pi6jv/HVGe0LX0NUCrGHa8uBNZq2gd36bQ57WdsAFI7HuzybeXqQnCxg/M?=
- =?us-ascii?Q?sPoeYkMdPuf+zs/USj+hkkyDMrDDs2+ubr1+lwWYOOMvo9yyDzuR5bD6fbHH?=
- =?us-ascii?Q?YuJJRQ2sz4KdnVhw9PDaCRaNMlU0besdyhDrkiUS4o4h/Vd+3ESGX0mvIBvG?=
- =?us-ascii?Q?ZqgOZ9B3JRiTt5O9Ys=3D?=
-X-Microsoft-Antispam-Message-Info: arPUMiERAaEq97NiN2Yba7zE9EEf2eyEb40X+zrfbS5Ru8RIP3ed0PV48+rYlqUJzN1jLWiWeGT5sM1KvKWJFlizHvJUpuOThWfQIUrOu/ZVEEuZ9qNAW2UtKBR2+YievzriWEx5Ea1gUjfX/Tymm2Hrma8GDZa/uZCo5QENKh72EaRcec6WP0Th06cHPIwSE3TtE8pkRGxi2Y9dBJ8WgP4YmiY2kWaM5GGYHvCNxftT+p+TitKdNlvyrJMIEWrLrOgLNKP+MkPJA2YsHyXypAt2rottwwXAZgBCNnzvin3MilQF9MljpvB9HBLBVuAUL8G/z8YJefOHpfchzm4OOhMozPcbKVmRJfZjX1zFeaw=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2781;6:zYicPpEmLHj1c4mB/xNPKBJfZM22FoanxJZZbeoWDXWhgPIBlnt/tcvBZqQGF719vEW0jCzJ8Xs3Cc1dCWNXlP29uq6/AadHY5w0feUWUia//O+eLw/VYAL+zOQYm66duBLsXej90xQjEtOc/WwNhY9aEpI0ai5tv/uiAeifZD+Q99uH7j9IlFumGyxXl+tDqUAi1ES5ZsibB93jLGaTB3aQwKfwIOODWkNJtOJtfFlwhcv1aBmniEFfSCOlukzoF7A1qSTC5noi5Mz3bxMLgD8YSBSURMymY42hR0zIj72hLV7GNe6+Woq02vuu7wfmH95TVzey0A34l3z1X4XGrvkwsp7hlf2mPnuTj5t5y4lfacKeHscD9jmy8UDPVfOMwISN+641/wJUpbX3mTOZ1BStHy41J47uGHLx4IJdLFZTPhZ639lvX0ItodGN36AJsYao0nxa7/O7TUqeWCPpUw==;5:C8WKcqcUDOExoXzm6b1Z/kSJkXduFAaNqkr8WTcpf/wUB0DBE5c8aM5agvGKJRQRtT9cv1OEeFbSPjP5AGXUIk2kNdhySnW+1MS3T2U63nu/oni2qBuVdiTc0jOqLhpZoASCvED52Id+G6aWPH+I23b4YiWJVIWFaSzJyFJzE1M=;24:OtOfCfPVB/LcWDcZAIXLq80DYsEXCXW+/BZaWZSuIseTwca3m6sK/8/D/cCVKG8szQAtJcpgNcRvPUxVjN+ryovNyvrGa2yrReT0SE39Tos=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR08MB2778;23:0LFwJfeHdOr1DvWcm4FVldtkOdnBQeeWFpVYjufPM?=
+ =?us-ascii?Q?B/t/uonKrjAtN18yKOyfiaRZP+yWGmAOyA14SFkTwv5rTvWV6TthCf3/Ad5D?=
+ =?us-ascii?Q?+arn10mMwyGmE9MkGnu23IEUf2iorZhjmoy3/FDMGyb9Gl6xLB55vX4m+8rs?=
+ =?us-ascii?Q?DyyZz36OU92cIMsNldv73+wJnRIT9YpOMfozrV+JrjQmtJ/9gdvGc9i+/3BQ?=
+ =?us-ascii?Q?BNN2yUYOvhw+4cucRTawoJHP21TP5jMI1V5u9XpE+y7pSMTIO/fagMO/lJb6?=
+ =?us-ascii?Q?p8BqLaCVoTW1dO8XoZkyizK6wLnmLtPuLHDHBhpKOdMVnxkomy1YGBlWYY/0?=
+ =?us-ascii?Q?1gcH8HOxUIdNR7KuDC3PfrWBU85KtGazPhWTMaT13ZtP48e/HJAcudP+TOpb?=
+ =?us-ascii?Q?SM5U7LpwBFTtZOHc76J1OySG7hRh8ChZXFfWDlG829BdYiUZD/HyI1rueRl3?=
+ =?us-ascii?Q?4O718HEhEaBZOgF4HRhvcfG6oIk3yWvtpNnarIDfZWbDrsYRp21NtZL+gBho?=
+ =?us-ascii?Q?eVAx9+I5/PdNzRfeOHWLt1Y/lMHwQjy0DzHzq/LwSEsNQWMbLHhgTYA0sXfz?=
+ =?us-ascii?Q?fToW8+NnG4olnNto3BSYzQlfChckGxdzLUIJsE+LFkCg9InBtcPZ8G7idUzA?=
+ =?us-ascii?Q?ipzFXpa2QzSWCwZsYVQOBgChUC2k4zNvf4Pa+w8YiMKdP7piicUv7hggEpPm?=
+ =?us-ascii?Q?jWxFpaMTrLTS5NxaUmCIh1oEuG0PzgiJk/KRijMDrEl2/dFZHih4HwcnZcUL?=
+ =?us-ascii?Q?gmH+6XAKlYu1mmNPCnQQb7BS8c1MWkPHiduZUq8xBSGtuFvYDXOHwFVvvEvV?=
+ =?us-ascii?Q?B79ch8L63yIM0rKtJQnCpFngUU1m5s/+AslX7FRAK5MTKZ/4lreHGI5Csyec?=
+ =?us-ascii?Q?yQLCEeJfacYu+k+IoEnN6ufFMS6n0v6xofP9HVblYk6YsFLNZCNlBfGSKldP?=
+ =?us-ascii?Q?+ROE3sHE6c47Q7WRcQEJXFMw6p8hNhJXEFKIsI3g4Hdwr6SD65uJY3tptkne?=
+ =?us-ascii?Q?97bioyLAPQlcSp7jaXhjSKkywAULNjZ35ucPOtyrbrU+lfbbMBkdkKcCV6Dz?=
+ =?us-ascii?Q?fuqG7cV/hMGvIfYAK15bgr99jZ9S7WfoQYplRfL+0W7OErjO11tzo6g0lMYS?=
+ =?us-ascii?Q?BN40RaeBzI6koCXpB0FnbRgHK/2mcUNM35qatkYDSb/bNwkaLC2XPeNgzvWd?=
+ =?us-ascii?Q?zexA22QxmTmZSexYJYpvlDtomfDKd7wuEudfBYX3RyewRBq3ocEOozqfr1ys?=
+ =?us-ascii?Q?Bzr3+5EeeQTuav7UpzAJ5HHlLk0RnEnNFayAxizB0wMbW7OQOt8DqZU1fcpO?=
+ =?us-ascii?B?UT09?=
+X-Microsoft-Antispam-Message-Info: t1hQe8ND45nFuInxMIAHvc93LJvGDSW7gO8mDzhW5jlQYsXayGCjKwA6jHNOoBYRprPy+I/jre8avWZhHlEu0UBoriQsy1tZoS6lCZblFAg4o/T80NrpNfCAw+EO9RKkKc23wl6c1Q4R8reUUUhWR9iujN77RfAOdYIsBqVcRhHQopHyVZMpzngHvQ7H20GDdKk9FHYvdhZJdJ6CLFg0jU+yXHeIB1JeJKuJrFs2hq8ijasUC7HwAZVm6lXfhMtVHp0gCf4lAoufxo02uHJjX+g+Y/+uivlxOZ9/Js5YSNcoe9yQ9aTaqktkWj1XBHSfM69mas1mimXOOFExEhh/K8HeA41yBeHtuI5lViJi8cc=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR08MB2778;6:z0DnOXu2P9rxztq9p/VZynJqAzY+2516rpUJzq4yKyzwcMlMd1SSv4BJjWKgtwWgz8QEUj1zBaOinrd2JHLvaXweAP6dmdRpqmTYYcX1B3IVpmbSJUcx4VWDJIk2Lf0EklDsw8cbwToC2+Adkap7eXokdbikyUsW87nGRwZtKs5tkR5GCn6gnTn5Peuhz6r5WFEGlkvkdeCSE//rmZaLFMvuxBiIB7Cmg8hNxWi/rJCBvnwMHcMjKi2ETdZDAlXGhflc/2+sZj5WTHIaag6mFfBrqYgKsVE3Cs9+U7ho+xC9jt9Hx1SEDm5VJPzoV4+POkG+cdbQ+iRbO4FH/zzCHRAupfOHYViVJzu7y+e0DuRT25tfSJA1sPo1z3E2jKnKpM5B8AqiTfrr3FKuUnMYAg2uc9kmAP+pTaIyfTcaJ8VmPZPCP7i5NUY6kY8Em+yubbwYFk2hq9GZuaYI80gAJQ==;5:e84eFvvBrTt9FSy0v+sjbsOkBNCr89c6itqwAcwG1jbrJz/kYqL+wjA6Id5I2S7WXX6Z2Kn9GlSQ2oC5ynXtkFxhvZtUcjOgsLqkiX/nsdDVryn1EjGmFvnpDaY8be063yfYYb9z2rOwjOd5TpIDwxpsLkVW/MN4KIXqNbAMWyw=;24:Rua1UHLKdL+MksR2T/WbLJhSE4kLJ5u1uadQsGgDzS+kz/Z3d9s6hPz+u2qIUoFJICEMEX8/nZWYDJBeaTEaye9rOf8soPrSqIyyk/uhR9o=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR08MB2781;7:cia6HE0wciTk70TNRfLNQXas3ciUyIuPq9WtEl+Dark8iKHIfgWFDoDVVmlJ4mjFApKDQEKPbIbV8jy2QNGfHv1T9LBoxKzywSQfLnkVCaZHANNb6/AGBLUMpa5kIi6/NDPDm6i4CnR3Y5LIbWSd3EYW478QgdTDenvglMP5WU7sEmOweZgAdB1h+De8xmYK2dle47efEN2xPmNyDsWqXXRrCvXolipG9tZRdMQIpvbBk62/+ssVuHcVmw0jEQ+X;20:xsHcMyHQaEvxcLgu4Szti4LAk7eZkzO9jkJnEVXiGpPa/09EjeBQEL0Z0p4Rc+DNap2BYPWDf9Px2WR+QYHobV3FFb3osqewW+Lg2/ixD3o6lWw/2VAo2ZrREewwc7tuX5oZNJb9w4kHt2/Ij/Jlje5urtvb15StUujUQvINxgg=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR08MB2778;7:p3y0m2c7xDJoHJLrPW5EeqNPiw+U7k9V1uSJl7gwOOsfORWBVuHpo6HZlqin8Bow8Hm3wrQHh88b9edTV2Gp6ZQOw18586/R4Bp0RE1+jDY7FEzdb07q1647JSaIdas/rfzj/jzf3V2lWd9vz/N5R/qGb1sCL4lqL1m/dS9oWvLO/F2UhnsjnHGxbbT8jhY0yyJIAaaWEJu0rjhAvVscTQixfQlvLrvOI0856jcU+Mt1iTCwctLRJmjJxoMFKthg;20:PrTN0gsvujz9483ETqZbO7bqOSaf+9DtqYmd8yspnEiWklYGLH+4RkTN8mMMcUHKoEoCRgSULMuQebdb5x7vAKFQ7PiPAfZh03Sinagn1tiTfeTFrTLWjhvrEO8Eex95A5FTb6hJPsrQBMEz1LiJvZrr8ZGmAMtw2meUfZmRr7U=
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2018 13:51:12.2140 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16622bf3-e7d8-4b3b-5b37-08d5e5a30898
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2018 13:51:17.5563 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d63219c2-e05b-48d4-0196-08d5e5a30c21
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB2781
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR08MB2778
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An array of pointers to SRPT contexts in ib_device is over 30KiB even
-in default case, in which an amount of contexts is 4095. The patch
-is intended to weed out large contigous allocation for non-DMA memory.
+For most cases it is enough to use common GFP_KERNEL flag. However,
+there is one place with defined fallback path on unsuccessful allocation.
+In this case it would be preferred to append on first allocation attempt
+__GFP_NOWARN and __GFP_NORETRY flags to suppress possible warnings and
+to shorten the path to the fallback in a case of memory pressure.
 
 Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
 ---
- drivers/infiniband/ulp/srpt/ib_srpt.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/hw/mlx4/cq.c            |  2 +-
+ drivers/infiniband/hw/mlx4/qp.c            |  6 ++++--
+ drivers/infiniband/hw/mlx4/srq.c           |  2 +-
+ drivers/net/ethernet/mellanox/mlx4/alloc.c | 12 ++++++------
+ include/linux/mlx4/device.h                |  2 +-
+ 5 files changed, 13 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
-index 3081c62..de167af 100644
---- a/drivers/infiniband/ulp/srpt/ib_srpt.c
-+++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
-@@ -720,7 +720,7 @@ static struct srpt_ioctx **srpt_alloc_ioctx_ring(struct srpt_device *sdev,
- 	WARN_ON(ioctx_size != sizeof(struct srpt_recv_ioctx)
- 		&& ioctx_size != sizeof(struct srpt_send_ioctx));
+diff --git a/drivers/infiniband/hw/mlx4/cq.c b/drivers/infiniband/hw/mlx4/cq.c
+index 82adc0d..609f126 100644
+--- a/drivers/infiniband/hw/mlx4/cq.c
++++ b/drivers/infiniband/hw/mlx4/cq.c
+@@ -102,7 +102,7 @@ static int mlx4_ib_alloc_cq_buf(struct mlx4_ib_dev *dev, struct mlx4_ib_cq_buf *
+ 	int err;
  
--	ring = kmalloc_array(ring_size, sizeof(ring[0]), GFP_KERNEL);
-+	ring = kvmalloc_array(ring_size, sizeof(ring[0]), GFP_KERNEL);
- 	if (!ring)
+ 	err = mlx4_buf_alloc(dev->dev, nent * dev->dev->caps.cqe_size,
+-			     PAGE_SIZE * 2, &buf->buf);
++			     PAGE_SIZE * 2, &buf->buf, GFP_KERNEL);
+ 
+ 	if (err)
  		goto out;
- 	for (i = 0; i < ring_size; ++i) {
-@@ -734,7 +734,7 @@ static struct srpt_ioctx **srpt_alloc_ioctx_ring(struct srpt_device *sdev,
- err:
- 	while (--i >= 0)
- 		srpt_free_ioctx(sdev, ring[i], dma_size, dir);
--	kfree(ring);
-+	kvfree(ring);
- 	ring = NULL;
- out:
- 	return ring;
-@@ -759,7 +759,7 @@ static void srpt_free_ioctx_ring(struct srpt_ioctx **ioctx_ring,
+diff --git a/drivers/infiniband/hw/mlx4/qp.c b/drivers/infiniband/hw/mlx4/qp.c
+index 3b8045f..1893753 100644
+--- a/drivers/infiniband/hw/mlx4/qp.c
++++ b/drivers/infiniband/hw/mlx4/qp.c
+@@ -1193,7 +1193,8 @@ static int create_qp_common(struct mlx4_ib_dev *dev, struct ib_pd *pd,
+ 		}
  
- 	for (i = 0; i < ring_size; ++i)
- 		srpt_free_ioctx(sdev, ioctx_ring[i], dma_size, dir);
--	kfree(ioctx_ring);
-+	kvfree(ioctx_ring);
+ 		if (mlx4_buf_alloc(dev->dev, qp->buf_size, qp->buf_size,
+-				   &qp->buf)) {
++				   &qp->buf, __GFP_NOWARN | __GFP_NORETRY |
++				   GFP_KERNEL)) {
+ 			memcpy(&init_attr->cap, &backup_cap,
+ 			       sizeof(backup_cap));
+ 			err = set_kernel_sq_size(dev, &init_attr->cap, qp_type,
+@@ -1202,7 +1203,8 @@ static int create_qp_common(struct mlx4_ib_dev *dev, struct ib_pd *pd,
+ 				goto err_db;
+ 
+ 			if (mlx4_buf_alloc(dev->dev, qp->buf_size,
+-					   PAGE_SIZE * 2, &qp->buf)) {
++					   PAGE_SIZE * 2, &qp->buf,
++					   GFP_KERNEL)) {
+ 				err = -ENOMEM;
+ 				goto err_db;
+ 			}
+diff --git a/drivers/infiniband/hw/mlx4/srq.c b/drivers/infiniband/hw/mlx4/srq.c
+index ebee56c..4c7c9c5 100644
+--- a/drivers/infiniband/hw/mlx4/srq.c
++++ b/drivers/infiniband/hw/mlx4/srq.c
+@@ -141,7 +141,7 @@ struct ib_srq *mlx4_ib_create_srq(struct ib_pd *pd,
+ 		*srq->db.db = 0;
+ 
+ 		if (mlx4_buf_alloc(dev->dev, buf_size, PAGE_SIZE * 2,
+-				   &srq->buf)) {
++				   &srq->buf, GFP_KERNEL)) {
+ 			err = -ENOMEM;
+ 			goto err_db;
+ 		}
+diff --git a/drivers/net/ethernet/mellanox/mlx4/alloc.c b/drivers/net/ethernet/mellanox/mlx4/alloc.c
+index 4bdf250..94bd27e 100644
+--- a/drivers/net/ethernet/mellanox/mlx4/alloc.c
++++ b/drivers/net/ethernet/mellanox/mlx4/alloc.c
+@@ -576,7 +576,7 @@ u32 mlx4_zone_free_entries_unique(struct mlx4_zone_allocator *zones, u32 obj, u3
  }
  
- /**
+ static int mlx4_buf_direct_alloc(struct mlx4_dev *dev, int size,
+-				 struct mlx4_buf *buf)
++				 struct mlx4_buf *buf, gfp_t gfp)
+ {
+ 	dma_addr_t t;
+ 
+@@ -585,7 +585,7 @@ static int mlx4_buf_direct_alloc(struct mlx4_dev *dev, int size,
+ 	buf->page_shift   = get_order(size) + PAGE_SHIFT;
+ 	buf->direct.buf   =
+ 		dma_zalloc_coherent(&dev->persist->pdev->dev,
+-				    size, &t, GFP_KERNEL);
++				    size, &t, gfp);
+ 	if (!buf->direct.buf)
+ 		return -ENOMEM;
+ 
+@@ -605,10 +605,10 @@ static int mlx4_buf_direct_alloc(struct mlx4_dev *dev, int size,
+  *  multiple pages, so we don't require too much contiguous memory.
+  */
+ int mlx4_buf_alloc(struct mlx4_dev *dev, int size, int max_direct,
+-		   struct mlx4_buf *buf)
++		   struct mlx4_buf *buf, gfp_t gfp)
+ {
+ 	if (size <= max_direct) {
+-		return mlx4_buf_direct_alloc(dev, size, buf);
++		return mlx4_buf_direct_alloc(dev, size, buf, gfp);
+ 	} else {
+ 		dma_addr_t t;
+ 		int i;
+@@ -625,7 +625,7 @@ int mlx4_buf_alloc(struct mlx4_dev *dev, int size, int max_direct,
+ 		for (i = 0; i < buf->nbufs; ++i) {
+ 			buf->page_list[i].buf =
+ 				dma_zalloc_coherent(&dev->persist->pdev->dev,
+-						    PAGE_SIZE, &t, GFP_KERNEL);
++						    PAGE_SIZE, &t, gfp);
+ 			if (!buf->page_list[i].buf)
+ 				goto err_free;
+ 
+@@ -783,7 +783,7 @@ int mlx4_alloc_hwq_res(struct mlx4_dev *dev, struct mlx4_hwq_resources *wqres,
+ 
+ 	*wqres->db.db = 0;
+ 
+-	err = mlx4_buf_direct_alloc(dev, size, &wqres->buf);
++	err = mlx4_buf_direct_alloc(dev, size, &wqres->buf, GFP_KERNEL);
+ 	if (err)
+ 		goto err_db;
+ 
+diff --git a/include/linux/mlx4/device.h b/include/linux/mlx4/device.h
+index 122e7e9..a146b95 100644
+--- a/include/linux/mlx4/device.h
++++ b/include/linux/mlx4/device.h
+@@ -1079,7 +1079,7 @@ static inline int mlx4_is_eth(struct mlx4_dev *dev, int port)
+ }
+ 
+ int mlx4_buf_alloc(struct mlx4_dev *dev, int size, int max_direct,
+-		   struct mlx4_buf *buf);
++		   struct mlx4_buf *buf, gfp_t gfp);
+ void mlx4_buf_free(struct mlx4_dev *dev, int size, struct mlx4_buf *buf);
+ static inline void *mlx4_buf_offset(struct mlx4_buf *buf, int offset)
+ {
 -- 
 2.1.4
 
