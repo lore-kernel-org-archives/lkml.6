@@ -3,68 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFFBC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:00:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3117C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:00:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4FD220875
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:00:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4FD220875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 77F712089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:00:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F712089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933278AbeGIPAR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:00:17 -0400
-Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:44970 "EHLO
-        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932903AbeGIPAP (ORCPT
+        id S933313AbeGIPAj convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:00:39 -0400
+Received: from smtp-out6.electric.net ([192.162.217.187]:64530 "EHLO
+        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933297AbeGIPAg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:00:15 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R921e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0T4ILWfP_1531148410;
-Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T4ILWfP_1531148410)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 09 Jul 2018 23:00:10 +0800
-Reply-To: xlpang@linux.alibaba.com
-Subject: Re: [PATCH] sched/cputime: Ensure correct utime and stime proportion
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
-References: <20180622071542.61569-1-xlpang@linux.alibaba.com>
- <b9363fa9-826f-611f-3ab3-27e50c03422a@linux.alibaba.com>
- <20180626154908.GE2458@hirez.programming.kicks-ass.net>
- <e1b69cf9-a3a7-ea67-7c0e-d67ac81f29f1@linux.alibaba.com>
- <20180705104632.GE2494@hirez.programming.kicks-ass.net>
- <bd275aff-61dd-557f-5b91-da4ce82f9501@linux.alibaba.com>
- <5a3354c1-d3fe-33dc-53cf-6eb621177052@linux.alibaba.com>
- <20180709104857.GK2476@hirez.programming.kicks-ass.net>
-From:   Xunlei Pang <xlpang@linux.alibaba.com>
-Message-ID: <566b7d56-9139-a524-3108-54ba231f295c@linux.alibaba.com>
-Date:   Mon, 9 Jul 2018 23:00:10 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.0
+        Mon, 9 Jul 2018 11:00:36 -0400
+Received: from 1fcXeP-0000hF-UY by out6a.electric.net with emc1-ok (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1fcXeR-0000to-Vs; Mon, 09 Jul 2018 08:00:31 -0700
+Received: by emcmailer; Mon, 09 Jul 2018 08:00:31 -0700
+Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
+        by out6a.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1fcXeP-0000hF-UY; Mon, 09 Jul 2018 08:00:29 -0700
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Mon, 9 Jul 2018 16:02:08 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Mon, 9 Jul 2018 16:02:08 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Peter Zijlstra' <peterz@infradead.org>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "greg@kroah.com" <greg@kroah.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "geert@linux-m68k.org" <geert@linux-m68k.org>
+Subject: RE: [PATCH v3] devres: Explicitly align datai[] to 64-bit
+Thread-Topic: [PATCH v3] devres: Explicitly align datai[] to 64-bit
+Thread-Index: AQHUF5RQYtcNwcQOfUmtgpsbxmBbOaSG+rxw
+Date:   Mon, 9 Jul 2018 15:02:08 +0000
+Message-ID: <dd7f96e4b08644769865adb302eb7d53@AcuMS.aculab.com>
+References: <20180709134550.29541-1-abrodkin@synopsys.com>
+ <20180709140717.GR2476@hirez.programming.kicks-ass.net>
+ <20180709141056.GR2512@hirez.programming.kicks-ass.net>
+ <44727d3cebda7bee5b68fb388bd2fecfc6dc7b89.camel@synopsys.com>
+ <20180709144925.GU2476@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180709144925.GU2476@hirez.programming.kicks-ass.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-In-Reply-To: <20180709104857.GK2476@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 7bit
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
+X-Virus-Status: Scanned by VirusSMART (c)
+X-Virus-Status: Scanned by VirusSMART (s)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
-
-On 7/9/18 6:48 PM, Peter Zijlstra wrote:
-> On Mon, Jul 09, 2018 at 01:52:38PM +0800, Xunlei Pang wrote:
->> Please see the enclosure for the reproducer cputime_adjust.tgz
+From: Peter Zijlstra
+> Sent: 09 July 2018 15:49
+> On Mon, Jul 09, 2018 at 02:33:26PM +0000, Alexey Brodkin wrote:
+> > > In fact, since alloc_dr() uses kmalloc() to allocate the entire thing,
+> > > it is impossible to guarantee a larger alignment than kmalloc does.
+> >
+> > Well but 4-bytes [which is critical for atomic64_t] should be much less
+> > than a sane cache line length so above should work.
 > 
-> No, I'm not going to reverse engineer something if you cannot even
-> explain what the problem is.
-> 
+> AFAICT ARCH_KMALLOC_MINALIGN ends up being 4 on x86_32 (it doesn't
+> define ARCH_DMA_MINALIGN and doesn't seem to otherwise override the
+> thing).
 
-I rewrote the whole changelog and sent v2, please have a look.
+That seems broken.
 
-Thanks,
-Xunlei
+I wonder what the minimal alignment really is?
+I suspect some code expects (and gets) 8-byte alignment.
+The min alignment might even be 16 or 32 bytes.
+There aren't many x86 instructions that fault on mis-aligned addresses,
+but there are a few.
+Mostly related to the fpu - probably including the fpu save area.
+
+	David
+
