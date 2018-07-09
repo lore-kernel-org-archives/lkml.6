@@ -3,253 +3,233 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 735E7C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:29:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1626C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3083D2087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:29:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3083D2087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 797E62087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:31:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797E62087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932998AbeGIM3t (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 08:29:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:58436 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932595AbeGIM3s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 08:29:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F3F27A9;
-        Mon,  9 Jul 2018 05:29:47 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 42D013F5AD;
-        Mon,  9 Jul 2018 05:29:44 -0700 (PDT)
-Subject: Re: [PATCH v3 15/20] kvm: arm/arm64: Allow tuning the physical
- address size for VM
-To:     Dave Martin <Dave.Martin@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc:     Will Deacon <will.deacon@arm.com>, cdall@kernel.org,
-        kvm@vger.kernel.org, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, linux-kernel@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
- <20180704155104.GN4828@arm.com>
- <12d1832a-1a13-7dd4-662b-addf58400789@arm.com>
- <fe9f5aa5-b283-07e0-5f0e-e97d96b780e7@arm.com>
- <9f1af26e-2913-2b0b-1352-63160096f78f@arm.com>
- <f3463d0a-c6a3-c34d-acb3-13c99fc61c5a@arm.com>
- <20180709112326.GD9486@e103592.cambridge.arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <17f8d585-3489-ab6f-6ee1-4d8d337dcf9c@arm.com>
-Date:   Mon, 9 Jul 2018 13:29:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932869AbeGIMbM convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 08:31:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57746 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932568AbeGIMbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 08:31:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 92E1A83207;
+        Mon,  9 Jul 2018 12:31:10 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BC5E351E4;
+        Mon,  9 Jul 2018 12:31:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180708210154.10423-8-ebiggers3@gmail.com>
+References: <20180708210154.10423-8-ebiggers3@gmail.com> <20180708210154.10423-1-ebiggers3@gmail.com>
+To:     Eric Biggers <ebiggers3@gmail.com>
+Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH 07/18] fs_context: fix double free of legacy_fs_context data
 MIME-Version: 1.0
-In-Reply-To: <20180709112326.GD9486@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3013.1531139469.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Mon, 09 Jul 2018 13:31:09 +0100
+Message-ID: <3014.1531139469@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 09 Jul 2018 12:31:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 09 Jul 2018 12:31:10 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/18 12:23, Dave Martin wrote:
-> On Fri, Jul 06, 2018 at 05:39:00PM +0100, Suzuki K Poulose wrote:
->> On 07/06/2018 04:09 PM, Marc Zyngier wrote:
->>> On 06/07/18 14:49, Suzuki K Poulose wrote:
->>>> On 04/07/18 23:03, Suzuki K Poulose wrote:
->>>>> On 07/04/2018 04:51 PM, Will Deacon wrote:
->>>>>> Hi Suzuki,
->>>>>>
->>>>>> On Fri, Jun 29, 2018 at 12:15:35PM +0100, Suzuki K Poulose wrote:
->>>>>>> Allow specifying the physical address size for a new VM via
->>>>>>> the kvm_type argument for KVM_CREATE_VM ioctl. This allows
->>>>>>> us to finalise the stage2 page table format as early as possible
->>>>>>> and hence perform the right checks on the memory slots without
->>>>>>> complication. The size is encoded as Log2(PA_Size) in the bits[7:0]
->>>>>>> of the type field and can encode more information in the future if
->>>>>>> required. The IPA size is still capped at 40bits.
->>>>>>>
->>>>>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>>>>>> Cc: Christoffer Dall <cdall@kernel.org>
->>>>>>> Cc: Peter Maydel <peter.maydell@linaro.org>
->>>>>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
->>>>>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
->>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>>>> ---
->>>>>>>   arch/arm/include/asm/kvm_mmu.h   |  2 ++
->>>>>>>   arch/arm64/include/asm/kvm_arm.h | 10 +++-------
->>>>>>>   arch/arm64/include/asm/kvm_mmu.h |  2 ++
->>>>>>>   include/uapi/linux/kvm.h         | 10 ++++++++++
->>>>>>>   virt/kvm/arm/arm.c               | 24 ++++++++++++++++++++++--
->>>>>>>   5 files changed, 39 insertions(+), 9 deletions(-)
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->>>>>>> index 4df9bb6..fa4cab0 100644
->>>>>>> --- a/include/uapi/linux/kvm.h
->>>>>>> +++ b/include/uapi/linux/kvm.h
->>>>>>> @@ -751,6 +751,16 @@ struct kvm_ppc_resize_hpt {
->>>>>>>   #define KVM_S390_SIE_PAGE_OFFSET 1
->>>>>>>   /*
->>>>>>> + * On arm/arm64, machine type can be used to request the physical
->>>>>>> + * address size for the VM. Bits [7-0] have been reserved for the
->>>>>>> + * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
->>>>>>> + * value 0 implies the default IPA size, which is 40bits.
->>>>>>> + */
->>>>>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK    0xff
->>>>>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)        \
->>>>>>> +    ((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
->>>>>>
->>>>>> This seems like you're allocating quite a lot of bits in a non-extensible
->>>>>> interface to a fairly esoteric parameter. Would it be better to add another
->>>>>> ioctl, or condense the number of sizes you support instead?
->>>>>
->>>>> As I explained in the other thread, we need the size as soon as the VM
->>>>> is created. The major challenge is keeping the backward compatibility by
->>>>> mapping 0 to 40bits. I will give it a thought.
->>>>
->>>> Here is one option. We could re-use the {V}TCR_ELx.{I}PS field format, which
->>>> occupies 3 bits and has the following definitions. (ID_AA64MMFR0_EL1:PARange
->>>> also has the field definitions, except that the field is 4bits wide, but
->>>> only 3bits are used)
->>>>
->>>> 000 32 bits, 4GB.
->>>> 001 36 bits, 64GB.
->>>> 010 40 bits, 1TB.
->>>> 011 42 bits, 4TB.
->>>> 100 44 bits, 16TB.
->>>> 101 48 bits, 256TB.
->>>> 110 52 bits, 4PB
->>>>
->>>> But we need to map 0 => 40bits IPA to make our ABI backward compatible. So
->>>> we could use the additional one bit to indicate that IPA size is requested
->>>> in the 3 bits.
->>>>
->>>> i.e,
->>>>
->>>> machine_type:
->>>>
->>>> Bit [2:0]	- Requested IPA size. Values follow VTCR_EL2.PS format.
->>>>
->>>> Bit [3]		- 1 => IPA Size bits (Bits[2:0]) requested.
->>>> 		0 => Not requested
->>>>
->>>> The only minor down side is restricting to the predefined values above,
->>>> which is not a real issue for a VM.
->>>>
->>>> Thoughts ?
->>>
->>> I'd be very wary of using that 4th bit to do something that is not in
->>> the architecture. We have only a single value left to be used (0b111),
->>> and then your scheme clashes with the architecture definition.
->>
->> I agree. However, if we ever go beyond the 3bits in PARange, we have an
->> issue with {V}TCR counter part. But lets not take that chance.
->>
->>>
->>> I'd rather encode things in a way that is independent from the
->>> architecture, and be done with it. You can map 0 to 40bits, and we have
->>> the ability to express all values the architecture has (just in a
->>> different order).
->>
->> The other option I can think of is encoding a signed number which is the
->> difference of the IPA from 40. But that would need 5 bits if we were to
->> encode it as it is. And if we want to squeeze it in 4bit, we could store
->> half the difference (limiting the IPA limit to even numbers).
->>
->> i.e IPA = 40 + 2 * sign_extend(bits[3:0);
-> 
-> I came across similar issues when trying to work out how to enable
-> SVE for KVM.  In the end I reduced this to a per-vcpu feature, but
-> it means that there is no global opt-in for the SVE-specific KVM
-> API extensions:
-> 
-> That's a bit gross, because SVE may require a change to the way
-> vcpus are initialised.  The set of supported SVE vector lengths needs
-> to be set somehow before the vcpu is set running, but it's tricky do
-> do that without a new ioctl -- which would mean that if SVE is enabled
-> for a vcpu then the vcpu is not considered runnable until the new
-> magic ioctl is called.
-> 
-> Opting into that semantic change globally at VM creation time might
-> be preferable.  On the SVE side, this is still very much subject to
-> review/change.
-> 
-> 
-> Here:
-> 
-> The KVM_CREATE_VM init argument seems undefined by the KVM core code and
-> is available for arches to abuse in creative ways.  x86 and arm have
-> nothing here and reject non-zero values with -EINVAL; s390 treats it as
-> a bitmask, and defines a sincle feature-like bit here; powerpc treats it
-> as an enumeration of VM types.
-> 
-> If we want to be extensible, we could
-> 
->  a) Pass a pointer in type, and come up with some extensible VM parameter
->     struct for it to point to (which then wouldn't need a cryptic
->     compressed encoding), or
-> 
->  b) Introduce a new "KVM_CREATE_VM2" variant that either takes such
->     an argument, or mandates a parameter negotiation phase involving
->     additional ioctls before marking the VM as ready for vcpu and
->     device creation.
-> 
-> (a) feels like an easy backwards-compatible approach, but cannot be
-> readily adopted by other arches (maybe not an issue).
-> 
-> (b) might be considered overengineered, so it would need a bit of
-> thought.
-> 
-> Wedging arguments into a few bits in the type argument feels awkward,
-> and may be regretted later if we run out of bits, or something can't be
-> represented in the chosen encoding.
+Eric Biggers <ebiggers3@gmail.com> wrote:
 
-I think that's a pretty convincing argument for a "better" CREATE_VM,
-one that would have a clearly defined, structured (and potentially
-extensible) argument.
+> sys_fsmount() calls fc->ops->free() to free the data, zeroes
+> ->fs_private, then proceeds to reuse the context.  But legacy_fs_context
+> doesn't use ->fs_private, so we need to handle zeroing it too; otherwise
+> there's a double free of legacy_fs_context::{legacy_data,secdata}.
 
-I've quickly hacked the following:
+I think the attached is better.  I stopped embedding the fs_context in the
+xxx_fs_context to make certain things simpler, but I missed the legacy
+wrapper.
 
-diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index b6270a3b38e9..3e76214034c2 100644
---- a/include/uapi/linux/kvm.h
-+++ b/include/uapi/linux/kvm.h
-@@ -735,6 +735,20 @@ struct kvm_ppc_resize_hpt {
- 	__u32 pad;
+David
+---
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index f91facc769f7..ab93a0b73dc6 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -34,7 +34,6 @@ enum legacy_fs_param {
  };
-
-+struct kvm_create_vm2 {
-+	__u64	version;	/* Or maybe not */
-+	union {
-+		struct {
-+#define KVM_ARM_SVE_CAPABLE	(1 << 0)
-+#define KVM_ARM_SELECT_IPA	{1 << 1)
-+			__u64	capabilities;
-+			__u16	sve_vlen;
-+			__u8	ipa_size;
-+		} arm64;
-+		__u64	dummy[15];
-+	};
-+};
+ 
+ struct legacy_fs_context {
+-	struct fs_context	fc;
+ 	char			*legacy_data;	/* Data page for legacy filesystems */
+ 	char			*secdata;
+ 	size_t			data_size;
+@@ -239,12 +238,21 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+ 				      enum fs_context_purpose purpose)
+ {
+ 	struct fs_context *fc;
+-	int ret;
++	int ret = -ENOMEM;
+ 
+-	fc = kzalloc(sizeof(struct legacy_fs_context), GFP_KERNEL);
++	fc = kzalloc(sizeof(struct fs_context), GFP_KERNEL);
+ 	if (!fc)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	if (!fs_type->init_fs_context) {
++		fc->fs_private = kzalloc(sizeof(struct legacy_fs_context),
++					 GFP_KERNEL);
++		if (!fc->fs_private)
++			goto err_fc;
 +
- #define KVMIO 0xAE
-
- /* machine type bits, to be used as argument to KVM_CREATE_VM */
-
-Other architectures could fill in their own bits if they need to.
-
-Thoughts?
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
++		fc->ops = &legacy_fs_context_ops;
++	}
++
+ 	fc->purpose	= purpose;
+ 	fc->sb_flags	= sb_flags;
+ 	fc->fs_type	= get_filesystem(fs_type);
+@@ -277,8 +285,6 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+ 		ret = fc->fs_type->init_fs_context(fc, reference);
+ 		if (ret < 0)
+ 			goto err_fc;
+-	} else {
+-		fc->ops = &legacy_fs_context_ops;
+ 	}
+ 
+ 	/* Do the security check last because ->init_fs_context may change the
+@@ -395,7 +401,7 @@ EXPORT_SYMBOL(put_fs_context);
+  */
+ static void legacy_fs_context_free(struct fs_context *fc)
+ {
+-	struct legacy_fs_context *ctx = container_of(fc, struct legacy_fs_context, fc);
++	struct legacy_fs_context *ctx = fc->fs_private;
+ 
+ 	free_secdata(ctx->secdata);
+ 	switch (ctx->param_type) {
+@@ -408,6 +414,8 @@ static void legacy_fs_context_free(struct fs_context *fc)
+ 		kfree(ctx->legacy_data);
+ 		break;
+ 	}
++
++	kfree(ctx);
+ }
+ 
+ /*
+@@ -415,20 +423,28 @@ static void legacy_fs_context_free(struct fs_context *fc)
+  */
+ static int legacy_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc)
+ {
+-	struct legacy_fs_context *ctx = container_of(fc, struct legacy_fs_context, fc);
+-	struct legacy_fs_context *src_ctx = container_of(src_fc, struct legacy_fs_context, fc);
++	struct legacy_fs_context *ctx;
++	struct legacy_fs_context *src_ctx = src_fc->fs_private;
++
++	ctx = kmemdup(src_ctx, sizeof(*src_ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
+ 
+ 	switch (ctx->param_type) {
+ 	case LEGACY_FS_MONOLITHIC_PARAMS:
+ 	case LEGACY_FS_INDIVIDUAL_PARAMS:
+ 		ctx->legacy_data = kmemdup(src_ctx->legacy_data,
+ 					   src_ctx->data_size, GFP_KERNEL);
+-		if (!ctx->legacy_data)
++		if (!ctx->legacy_data) {
++			kfree(ctx);
+ 			return -ENOMEM;
++		}
+ 		/* Fall through */
+ 	default:
+ 		break;
+ 	}
++
++	fc->fs_private = ctx;
+ 	return 0;
+ }
+ 
+@@ -438,7 +454,7 @@ static int legacy_fs_context_dup(struct fs_context *fc, struct fs_context *src_f
+  */
+ static int legacy_parse_option(struct fs_context *fc, char *opt, size_t len)
+ {
+-	struct legacy_fs_context *ctx = container_of(fc, struct legacy_fs_context, fc);
++	struct legacy_fs_context *ctx = fc->fs_private;
+ 	unsigned int size = ctx->data_size;
+ 
+ 	if (ctx->param_type != LEGACY_FS_UNSET_PARAMS &&
+@@ -471,7 +487,7 @@ static int legacy_parse_option(struct fs_context *fc, char *opt, size_t len)
+  */
+ static int legacy_parse_monolithic(struct fs_context *fc, void *data, size_t data_size)
+ {
+-	struct legacy_fs_context *ctx = container_of(fc, struct legacy_fs_context, fc);
++	struct legacy_fs_context *ctx = fc->fs_private;
+ 
+ 	if (ctx->param_type != LEGACY_FS_UNSET_PARAMS) {
+ 		pr_warn("VFS: Can't mix monolithic and individual options\n");
+@@ -507,7 +523,7 @@ static int legacy_parse_monolithic(struct fs_context *fc, void *data, size_t dat
+  */
+ static int legacy_validate(struct fs_context *fc)
+ {
+-	struct legacy_fs_context *ctx = container_of(fc, struct legacy_fs_context, fc);
++	struct legacy_fs_context *ctx = fc->fs_private;
+ 
+ 	switch (ctx->param_type) {
+ 	case LEGACY_FS_UNSET_PARAMS:
+@@ -520,7 +536,7 @@ static int legacy_validate(struct fs_context *fc)
+ 		break;
+ 	}
+ 
+-	if (ctx->fc.fs_type->fs_flags & FS_BINARY_MOUNTDATA)
++	if (fc->fs_type->fs_flags & FS_BINARY_MOUNTDATA)
+ 		return 0;
+ 
+ 	ctx->secdata = alloc_secdata();
+@@ -557,13 +573,13 @@ static int legacy_set_subtype(struct fs_context *fc)
+  */
+ static int legacy_get_tree(struct fs_context *fc)
+ {
+-	struct legacy_fs_context *ctx = container_of(fc, struct legacy_fs_context, fc);
++	struct legacy_fs_context *ctx = fc->fs_private;
+ 	struct super_block *sb;
+ 	struct dentry *root;
+ 	int ret;
+ 
+-	root = ctx->fc.fs_type->mount(ctx->fc.fs_type, ctx->fc.sb_flags,
+-				      ctx->fc.source, ctx->legacy_data,
++	root = fc->fs_type->mount(fc->fs_type, fc->sb_flags,
++				      fc->source, ctx->legacy_data,
+ 				      ctx->data_size);
+ 	if (IS_ERR(root))
+ 		return PTR_ERR(root);
+@@ -571,14 +587,14 @@ static int legacy_get_tree(struct fs_context *fc)
+ 	sb = root->d_sb;
+ 	BUG_ON(!sb);
+ 
+-	if ((ctx->fc.fs_type->fs_flags & FS_HAS_SUBTYPE) &&
++	if ((fc->fs_type->fs_flags & FS_HAS_SUBTYPE) &&
+ 	    !fc->subtype) {
+ 		ret = legacy_set_subtype(fc);
+ 		if (ret < 0)
+ 			goto err_sb;
+ 	}
+ 
+-	ctx->fc.root = root;
++	fc->root = root;
+ 	return 0;
+ 
+ err_sb:
