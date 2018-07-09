@@ -6,52 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69634C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6ECC3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14A81208DE
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:07:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C88C208DE
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 00:07:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVcH4sJv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14A81208DE
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kd2ptLTQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C88C208DE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933207AbeGIAHC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 20:07:02 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34705 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932942AbeGIAHB (ORCPT
+        id S933419AbeGIAHP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 20:07:15 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:40925 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932942AbeGIAHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 20:07:01 -0400
-Received: by mail-pf0-f195.google.com with SMTP id e10-v6so12321476pfn.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 17:07:00 -0700 (PDT)
+        Sun, 8 Jul 2018 20:07:14 -0400
+Received: by mail-pf0-f194.google.com with SMTP id z24-v6so12320326pfe.7
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 17:07:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=TBYYWNIunOPOXXp1h6GYsMejT/InhEEpQzf9z0Ky6F4=;
-        b=jVcH4sJv17jSOUoiyCvAvovrFxd2HkSeGyFTTvOo6isZJ1jVCo8ql86ZaMmZ/zRjLC
-         9x4em3OQ2ass6ZXCSQpTpIAKY9poVWRCG3dTyZxzuC5IKlv5N6NJ4teeY2Ontv1xY2eN
-         y+CXLtqcK9eOh+U6RemiOVmrklbxA2Eab9/Hs=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=F9qL97WIJTDKar0RATFRGa32DomSlp6yFEb0hpSLUU4=;
+        b=kd2ptLTQ8wg2U2tCQ4/hsptK683fIZEYs8VbdMmThKMJGU/7s2YCOjFId5Ewr0cgFG
+         na5HyqSagqJ14Nb8X02wK9JwQGxkD5nCDp6rwhp9dN8V9QP4Br3yDCbEyUJ0/RcDsGm7
+         gBTe/UI6U84Ig8xNsh/WW1TGjLKQaNxovn0xw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=TBYYWNIunOPOXXp1h6GYsMejT/InhEEpQzf9z0Ky6F4=;
-        b=B0mHWuGPkAODhbZ0Q+f1m9PXzDAFkbi2MjzfNZDzJFPoLiWk9XfSPZAXZidOSBDg4Y
-         6cy2tZ+m/hC/g1Sp8nfGxdv68rQUvhxnrcqwFQvaab6l4gnSYe2RXZ0jDhFWAEG0Aj+k
-         HoAExfEmP0DvWcTjVwD5aQnl8UfUDDN4XHBB/3ujUZkWINx56nZ0ZRB4pTSEFq1mtcV7
-         EniFnG2KJqXefWBhSLDS9mdq8wWIgBjj5nsCAPfeqP8nTMf3uT7Uj92/WHY0og1CKfW6
-         H1XxkF0bwnzt24vVl5ny094foY6foi3/EaYP5cCzxrrg8vllY3bWftsS+3wzBNhAhxXq
-         64Cg==
-X-Gm-Message-State: APt69E30ed4M89npUd54VaHtC4ThNEkvtAnNlj3yskeUkEQJIArN4hs8
-        jMKO5RYx1Id7rwMZAuomGtc7wXoisgo=
-X-Google-Smtp-Source: AAOMgpdbjjMrnJH5L0FvzXXpHlCd6tPqm4kyXd1+2aupy2NK3YutDDMMXlK5pUTwHqEp3/ejSDZmjQ==
-X-Received: by 2002:a63:5c10:: with SMTP id q16-v6mr16830370pgb.452.1531094820511;
-        Sun, 08 Jul 2018 17:07:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=F9qL97WIJTDKar0RATFRGa32DomSlp6yFEb0hpSLUU4=;
+        b=CqJB7B4gkqs+a53NkpHJcIOLPUjZ3ecIa+g/KYn6faFhN+kbZfK9HN266TBFDrrDyN
+         9zfpAvT7VmAXRblLw7CoaUSSjh51GfHtweXUskSllGJz8hidbEDlbXij/ErWGEAAp1Ns
+         FtrqQjqc3vhV8haGDPXV7vYh/x3cjPzaI81/e5KVytFu4kKvypAawTUCKpmwTY0ucaA+
+         8tgYBYliB1/jjLyZAcKgaIDEjxT+3VUFaRrwq14E+b30Y/4/eefbNEg+hEiVWMQIHbsP
+         Z+LIqHLKSaFXfUWak1ZHHiYy1Hd3/khZWScRgFvi8UJPVAkOh32MlYPiCzbDOfI65ucw
+         nIsA==
+X-Gm-Message-State: APt69E03R//4CjxG7zkS59ZooK+UoEhQYpgvO/iPcF64gEJDZGtMYa8I
+        BiLZlHdo+l/Ugw26QrO01ynu/g==
+X-Google-Smtp-Source: AAOMgpcrG1irlTbZFj0LnRjTzNYrHGLfMuPQXENZyPCdi+zpXzl4C6uTe8hsZO+M7pJ+87jyG1v1sg==
+X-Received: by 2002:a62:5486:: with SMTP id i128-v6mr18832326pfb.166.1531094833749;
+        Sun, 08 Jul 2018 17:07:13 -0700 (PDT)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id e82-v6sm31423474pfd.40.2018.07.08.17.06.59
+        by smtp.googlemail.com with ESMTPSA id f69-v6sm17703443pfc.23.2018.07.08.17.07.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 08 Jul 2018 17:06:59 -0700 (PDT)
+        Sun, 08 Jul 2018 17:07:13 -0700 (PDT)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com,
         ard.biesheuvel@linaro.org
@@ -60,94 +61,113 @@ Cc:     tbaicar@codeaurora.org, bhsharma@redhat.com, dyoung@redhat.com,
         graeme.gregory@linaro.org, hanjun.guo@linaro.org,
         lorenzo.pieralisi@arm.com, sudeep.holla@arm.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v3 0/3] arm64: kexec,kdump: fix boot failures on acpi-only system
-Date:   Mon,  9 Jul 2018 09:07:47 +0900
-Message-Id: <20180709000750.22172-1-takahiro.akashi@linaro.org>
+        kexec@lists.infradead.org
+Subject: [PATCH v3 1/3] arm64: export memblock_reserve()d regions via /proc/iomem
+Date:   Mon,  9 Jul 2018 09:07:48 +0900
+Message-Id: <20180709000750.22172-2-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180709000750.22172-1-takahiro.akashi@linaro.org>
+References: <20180709000750.22172-1-takahiro.akashi@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series is a set of bug fixes to address kexec/kdump
-failures which are sometimes observed on ACPI-only system and reported
-in LAK-ML before.
+From: James Morse <james.morse@arm.com>
 
-In short, the phenomena are:
-1. kexec'ed kernel can fail to boot because some ACPI table is corrupted
-   by a new kernel (or other data) being loaded into System RAM. Currently
-   kexec may possibly allocate space ignoring such "reserved" regions.
-   We will see no messages after "Bye!"
+There has been some confusion around what is necessary to prevent kexec
+overwriting important memory regions. memblock: reserve, or nomap?
+Only memblock nomap regions are reported via /proc/iomem, kexec's
+user-space doesn't know about memblock_reserve()d regions.
 
-2. crash dump (kdump) kernel can fail to boot and get into panic due to
-   an alignment fault when accessing ACPI tables. This can happen because
-   those tables are not always properly aligned while they are mapped
-   non-cacheable (ioremap'ed) as they are not recognized as part of System
-   RAM under the current implementation.
+Until commit f56ab9a5b73ca ("efi/arm: Don't mark ACPI reclaim memory
+as MEMBLOCK_NOMAP") the ACPI tables were nomap, now they are reserved
+and thus possible for kexec to overwrite with the new kernel or initrd.
+But this was always broken, as the UEFI memory map is also reserved
+and not marked as nomap.
 
-After discussing several possibilities to address those issues,
-the agreed approach, in my understanding, is
-* to add resource entries for every "reserved", i.e. memblock_reserve(),
-  regions to /proc/iomem.
-  (NOMAP regions, also marked as "reserved," remains at top-level for
-  backward compatibility. User-space can tell the difference between
-  reserved-system-ram and reserved-address-space.)
-* For case (1), user space (kexec-tools) should rule out such regions
-  in searching for free space for loaded data.
-* For case (2), the kernel should access ACPI tables by mapping
-  them with appropriate memory attributes described in UEFI memory map.
-  (This means that it doesn't require any changes in /proc/iomem, and
-  hence user space.)
+Exporting both nomap and reserved memblock types is a nuisance as
+they live in different memblock structures which we can't walk at
+the same time.
 
-Please find past discussions about /proc/iomem in [1].
---- more words from James ---
-Our attempts to fix this just in the kernel reached a dead end, because Kdump
-needs to include reserved-system-ram, whereas kexec has to avoid it. User-space
-needs to be able to tell reserved-system-ram and reserved-address-space apart.
-Hence we need to expose that information, and pick it up in user-space.
+Take a second walk over memblock.reserved and add new 'reserved'
+subnodes for the memblock_reserved() regions that aren't already
+described by the existing code. (e.g. Kernel Code)
 
-Patched-kernel and unpatch-user-space will work the same way it does today, as
-the additional reserved regions are ignored by user-space.
+We use reserve_region_with_split() to find the gaps in existing named
+regions. This handles the gap between 'kernel code' and 'kernel data'
+which is memblock_reserve()d, but already partially described by
+request_standard_resources(). e.g.:
+| 80000000-dfffffff : System RAM
+|   80080000-80ffffff : Kernel code
+|   81000000-8158ffff : reserved
+|   81590000-8237efff : Kernel data
+|   a0000000-dfffffff : Crash kernel
+| e00f0000-f949ffff : System RAM
 
-Unpatched-kernel and patched-user-space will also work the same way it does
-today as the additional reserved regions are missing.
---->8---
+reserve_region_with_split needs kzalloc() which isn't available when
+request_standard_resources() is called, use an initcall.
 
-Patch#1 addresses kexec case, for which you are also required to update
-user space. See necessary patches in [2]. If you want to review Patch#1,
-please also take a look at and review [2].
+Reported-by: Bhupesh Sharma <bhsharma@redhat.com>
+Reported-by: Tyler Baicar <tbaicar@codeaurora.org>
+Suggested-by: Akashi Takahiro <takahiro.akashi@linaro.org>
+Signed-off-by: James Morse <james.morse@arm.com>
+Fixes: d28f6df1305a ("arm64/kexec: Add core kexec support")
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC: Mark Rutland <mark.rutland@arm.com>
+---
+ arch/arm64/kernel/setup.c | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-Patch#2 and #3 addresses kdump case. Ard's patch [4] needs to be applied
-preliminarily.
-
-
-Changes in v3 (2018, July 9, 2018)
-* drop the v2's patch#3, preferring [4]
-
-Changes in v2 (2018, June 19, 2018)
-* re-organise v1's patch#2 and #3 into v2's #2, #3 and #4
-  not to break bisect
-
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-March/565980.html
-[2] https://git.linaro.org/people/takahiro.akashi/kexec-tools.git arm64/resv_mem
-[3] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-April/573655.html
-[4] https://marc.info/?l=linux-efi&m=152930773507524&w=2
-
-AKASHI Takahiro (2):
-  efi/arm: map UEFI memory map even w/o runtime services enabled
-  arm64: acpi: fix alignment fault in accessing ACPI
-
-James Morse (1):
-  arm64: export memblock_reserve()d regions via /proc/iomem
-
- arch/arm64/include/asm/acpi.h      | 23 ++++++++++++------
- arch/arm64/kernel/acpi.c           | 11 +++------
- arch/arm64/kernel/setup.c          | 38 ++++++++++++++++++++++++++++++
- drivers/firmware/efi/arm-runtime.c | 14 +++++------
- 4 files changed, 64 insertions(+), 22 deletions(-)
-
+diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+index 30ad2f085d1f..5b4fac434c84 100644
+--- a/arch/arm64/kernel/setup.c
++++ b/arch/arm64/kernel/setup.c
+@@ -241,6 +241,44 @@ static void __init request_standard_resources(void)
+ 	}
+ }
+ 
++static int __init reserve_memblock_reserved_regions(void)
++{
++	phys_addr_t start, end, roundup_end = 0;
++	struct resource *mem, *res;
++	u64 i;
++
++	for_each_reserved_mem_region(i, &start, &end) {
++		if (end <= roundup_end)
++			continue; /* done already */
++
++		start = __pfn_to_phys(PFN_DOWN(start));
++		end = __pfn_to_phys(PFN_UP(end)) - 1;
++		roundup_end = end;
++
++		res = kzalloc(sizeof(*res), GFP_ATOMIC);
++		if (WARN_ON(!res))
++			return -ENOMEM;
++		res->start = start;
++		res->end = end;
++		res->name  = "reserved";
++		res->flags = IORESOURCE_MEM;
++
++		mem = request_resource_conflict(&iomem_resource, res);
++		/*
++		 * We expected memblock_reserve() regions to conflict with
++		 * memory created by request_standard_resources().
++		 */
++		if (WARN_ON_ONCE(!mem))
++			continue;
++		kfree(res);
++
++		reserve_region_with_split(mem, start, end, "reserved");
++	}
++
++	return 0;
++}
++arch_initcall(reserve_memblock_reserved_regions);
++
+ u64 __cpu_logical_map[NR_CPUS] = { [0 ... NR_CPUS-1] = INVALID_HWID };
+ 
+ void __init setup_arch(char **cmdline_p)
 -- 
 2.17.0
 
