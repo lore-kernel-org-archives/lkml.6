@@ -2,112 +2,127 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A4E1C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2BEC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:15:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6A9D20882
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F2F22089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:15:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JCEa5qWB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6A9D20882
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="gUhTFT/o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F2F22089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=networkplumber.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934059AbeGISLV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 14:11:21 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:55580 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933703AbeGISLU (ORCPT
+        id S934046AbeGISPc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 14:15:32 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40950 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933703AbeGISPa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 14:11:20 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w69HwhcH105495;
-        Mon, 9 Jul 2018 18:09:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=z+o+uOf7s8paatB0R72lV3uZamsTWRB26/K6KviTcWw=;
- b=JCEa5qWBqGRix734VrXU33uTJICWlE6mhEPJs35cUlWTSQTGesaqhaHlRnOMVq0P7GzP
- ELY+gDMFOoLSYbYEn9HR5rJGrqVFKCASZTrTVsDf69wTWfVqCLWnl0eb2wKJdoWU8aZ4
- mzDpG7QpC5SjsLGVXuQNQZf3g6LnHGOM40rqYLC8vm/wJmO/bTjySwHyJd5TX6PYEMjj
- 5+QVJCKAIU5m68zOWzaybk22c/MQwED7xm/3obtXhqrqPqlPKW6uV20c/ARkWE2IbkFT
- HxzaJLeVFAaz/iyYzmcFuwfw+55UWhuIlqQkf1R9c4RZzfXKshnF1cNzthSd4eY9X7Ue xg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2k2p75nccj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 09 Jul 2018 18:09:53 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w69I9p08025859
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 9 Jul 2018 18:09:52 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w69I9oe5025774;
-        Mon, 9 Jul 2018 18:09:51 GMT
-Received: from char.us.oracle.com (/10.137.176.158)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Jul 2018 11:09:50 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 7F2006A00C3; Mon,  9 Jul 2018 14:09:49 -0400 (EDT)
-Date:   Mon, 9 Jul 2018 14:09:49 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv4 07/18] x86/mm: Introduce variables to store number,
- shift and mask of KeyIDs
-Message-ID: <20180709180949.GH6873@char.US.ORACLE.com>
-References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
- <20180626142245.82850-8-kirill.shutemov@linux.intel.com>
+        Mon, 9 Jul 2018 14:15:30 -0400
+Received: by mail-pf0-f193.google.com with SMTP id e13-v6so848854pff.7
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 11:15:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=JNIRMT9TMh0WA967cYsvPLKbs+nwa6iWjzUhuPhdTy4=;
+        b=gUhTFT/oElETDmHtUixE0bjLmjkMXpAS4TQBlHuIua51wUH4q+Ovz9+XiDJj3eDyzy
+         LGUSScd2Lp5tFEEW8a1aIuH3XixloqULw8rhYhH4CTJHemtFfrFQNqIZIus6oPzkPKWu
+         0oI/CoQyAw17a37ZNYpFK96UI0nbQ5UajgbS9h/CrZZFX4qZrls0kv3BhGsx+ezeDLK6
+         plhqeilQR4kRysLsOtLSnr2eoVldpLG4YMpOyoqHbk1vHbhNpLnup+Cf11zTtnYCfdKM
+         l4clqx4HuDtL89DnTuXKpRDGU9F+tX8c7Qr01llmjaW5+17uT8J92ae/2yeIoen2ACvl
+         GwFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=JNIRMT9TMh0WA967cYsvPLKbs+nwa6iWjzUhuPhdTy4=;
+        b=UGbcuIxa55TBudMFdmLIZw6x2eJi5fU3srNB2fSRilrJlZr456JvMXpvS0fdT2YfdD
+         UsO+OW7fdcwAfaGnb6qjhLsQuq1Y1OsR5VFYSY71/15hUEgw/j+jnJBqWOZuX/z0KGgZ
+         oBmRZ8E00WxT7UXlzbAZAj+7d9g82LMwNRWXVfnUNlePUHqpZ3yDXHtth7dfGfk1JJlQ
+         9JvNy4+ixdrvSugA7K51oERuHMFNE3noU7DZbJA6K+9xTEyBTgcACRccxmzc/KjShLPP
+         EHCAX4wte+x4dEt/wEqCcakV/iQVJrpLU3hSWMzqCZTA3C9DekJXp/yVovah8nPpMb9z
+         yU1w==
+X-Gm-Message-State: APt69E2+yo/cVVh0JczBH5bmJrGWS5axIll3ORKZdtLjp47RZf2UuUUJ
+        cAzqyFx5opbPy5UnQIpRxgNwNQ==
+X-Google-Smtp-Source: AAOMgpcxwYfMtfnZ1kM9wCN3DUpjSLjHjvBYHH97Ppa7Qz56PisewgJ360o1gNltM+NTAjr6niRA2A==
+X-Received: by 2002:a62:3001:: with SMTP id w1-v6mr6205380pfw.19.1531160129839;
+        Mon, 09 Jul 2018 11:15:29 -0700 (PDT)
+Received: from xeon-e3 (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id h9-v6sm8550648pgn.67.2018.07.09.11.15.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 11:15:29 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 11:15:27 -0700
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Haiyang Zhang <haiyangz@linuxonhyperv.com>
+Cc:     haiyangz@microsoft.com, davem@davemloft.net,
+        netdev@vger.kernel.org, olaf@aepfle.de, sthemmin@microsoft.com,
+        linux-kernel@vger.kernel.org, devel@linuxdriverproject.org,
+        vkuznets@redhat.com
+Subject: Re: [PATCH net] hv_netvsc: Fix napi reschedule while receive
+ completion is busy
+Message-ID: <20180709111527.70ab354c@xeon-e3>
+In-Reply-To: <20180709164319.5058-1-haiyangz@linuxonhyperv.com>
+References: <20180709164319.5058-1-haiyangz@linuxonhyperv.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180626142245.82850-8-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8949 signatures=668705
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=774
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807090204
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
-> index 4b101dd6e52f..4ebee899c363 100644
-> --- a/arch/x86/mm/Makefile
-> +++ b/arch/x86/mm/Makefile
-> @@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
->  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
->  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
->  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
-> +
-> +obj-$(CONFIG_X86_INTEL_MKTME)	+= mktme.o
+On Mon,  9 Jul 2018 16:43:19 +0000
+Haiyang Zhang <haiyangz@linuxonhyperv.com> wrote:
 
-Any particular reason to have x86 in the CONFIG?
-
-> diff --git a/arch/x86/mm/mktme.c b/arch/x86/mm/mktme.c
-> new file mode 100644
-> index 000000000000..467f1b26c737
-> --- /dev/null
-> +++ b/arch/x86/mm/mktme.c
-> @@ -0,0 +1,5 @@
-> +#include <asm/mktme.h>
-> +
-> +phys_addr_t mktme_keyid_mask;
-> +int mktme_nr_keyids;
-> +int mktme_keyid_shift;
-> -- 
-> 2.18.0
+> From: Haiyang Zhang <haiyangz@microsoft.com>
 > 
+> If out ring is full temporarily and receive completion cannot go out,
+> we may still need to reschedule napi if other conditions are met.
+> Otherwise the napi poll might be stopped forever, and cause network
+> disconnect.
+> 
+> Fixes: 7426b1a51803 ("netvsc: optimize receive completions")
+> Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+> ---
+>  drivers/net/hyperv/netvsc.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
+> index 8e9d0ee1572b..caaf5054f446 100644
+> --- a/drivers/net/hyperv/netvsc.c
+> +++ b/drivers/net/hyperv/netvsc.c
+> @@ -1285,14 +1285,14 @@ int netvsc_poll(struct napi_struct *napi, int budget)
+>  		nvchan->desc = hv_pkt_iter_next(channel, nvchan->desc);
+>  	}
+>  
+> -	/* If send of pending receive completions suceeded
+> -	 *   and did not exhaust NAPI budget this time
+> +	send_recv_completions(ndev, net_device, nvchan);
+> +
+> +	/* If it did not exhaust NAPI budget this time
+>  	 *   and not doing busy poll
+>  	 * then re-enable host interrupts
+>  	 *     and reschedule if ring is not empty.
+>  	 */
+> -	if (send_recv_completions(ndev, net_device, nvchan) == 0 &&
+> -	    work_done < budget &&
+> +	if (work_done < budget &&
+>  	    napi_complete_done(napi, work_done) &&
+>  	    hv_end_read(&channel->inbound) &&
+>  	    napi_schedule_prep(napi)) {
+
+This patch doesn't look right. I think the existing code works
+as written.
+
+If send_receive_completions is unable to send because ring is full
+then vmbus_sendpacket will return -EBUSY which gets returns
+from send_receive_completions.  Because the return is non-zero,
+the driver will not call napi_complete_done.
+Since napi_complete_done was not called, NAPI will reschedule
+the napi poll routine.
