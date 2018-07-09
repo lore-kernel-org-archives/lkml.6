@@ -2,92 +2,122 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E90C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E52C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A06120881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:05:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ExTizZ8P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A06120881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7CF3A20881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:06:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF3A20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933007AbeGIOF4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:05:56 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:52111 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932508AbeGIOFy (ORCPT
+        id S933027AbeGIOGP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:06:15 -0400
+Received: from gateway34.websitewelcome.com ([192.185.148.140]:21987 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932508AbeGIOGO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:05:54 -0400
-Received: by mail-it0-f65.google.com with SMTP id g4-v6so9500706iti.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 07:05:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eSFdWu7M7D3//TYQfvaAf69Tbw4ZKWJ93y0M4Vcdbd4=;
-        b=ExTizZ8PIn6pADHfKx0gnfpulBGWQ2zk5knLvi+nOVaFA9xIJkNbvm3TcOzmd5eTdL
-         MRRm+dCjXI3SX/j22oKM5RA2TStBXr60h+sj5ktX/NQ2y7a0O6CXq0lHvZ1RYI/ZogKc
-         O1c3pYfoN1oP8uwgiXWmrO1vYTzCuVvNJ2bBE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eSFdWu7M7D3//TYQfvaAf69Tbw4ZKWJ93y0M4Vcdbd4=;
-        b=X/VuTWIJUunV7bCmIxTjH+SfZl4lQH5DkcTeFnPuw0DBKeaN1ZIy1fKzJlv/BmLu/I
-         S4tptCZjiYXX/yTEVMyL1b/g1h8u9JnRLr/bCJEtdVOIhwElqUyv89MFqekGXo0ks+tm
-         E678qlr8dnzdOyIURPeMBskdshJ0Q4woL50v/+xHL+YseSYKAjSYEu2li3pTOag7LC33
-         foAQ/01JExddaTs0dFR++ooFK7AbILQTQVe2FwLmMtFJgw67AgbhsOh2qdmgvMrp93Jw
-         maiLgWuUe6zgwgbCs8tIUgegf/OAE0xkk5swtCitzZeq9N8F8elUEpKIevEn9Bl1FPxv
-         tRfQ==
-X-Gm-Message-State: APt69E3BRql4e3XEtu5BCIgfXDohahQstP78naD79wECYHuT917XfiAR
-        R/RbbQ/uYGxSMx2ptRQQdDnLKHWLGtECYWhfNGU4Pw==
-X-Google-Smtp-Source: AAOMgpeFqUqa60WcEfuU8e/izHvQpYPFzLPnLd/9TiRfKpZdCgaRZDyiW5pVpnDj7FW400P4AiL3QaYvhBchJaYkvTQ=
-X-Received: by 2002:a02:9d03:: with SMTP id n3-v6mr13156905jak.113.1531145153510;
- Mon, 09 Jul 2018 07:05:53 -0700 (PDT)
+        Mon, 9 Jul 2018 10:06:14 -0400
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id 502563722D3
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 09:06:11 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id cWnOf1XA8RPojcWngfbBsD; Mon, 09 Jul 2018 09:06:10 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=42994 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fcWnN-0008MN-UJ; Mon, 09 Jul 2018 09:05:42 -0500
+Date:   Mon, 9 Jul 2018 09:05:39 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] xfs_bmap_util: use swap macro
+Message-ID: <20180709140539.GA17517@embeddedor.com>
 MIME-Version: 1.0
-References: <1530532746-619-1-git-send-email-abel.vesa@nxp.com> <1530532746-619-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1530532746-619-3-git-send-email-abel.vesa@nxp.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 9 Jul 2018 16:05:42 +0200
-Message-ID: <CACRpkdZKrv3Et=T7gdr3pTAt4yam2kbF7WqMh+8bq=RF2DOsZA@mail.gmail.com>
-Subject: Re: [PATCH v6 2/2] pinctrl: imx: add driver for i.MX8MQ
-To:     abel.vesa@nxp.com
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        abelvesa@linux.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fcWnN-0008MN-UJ
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:42994
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 3
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 1:59 PM Abel Vesa <abel.vesa@nxp.com> wrote:
+Make use of the swap macro and remove some unnecessary variables.
+This makes the code easier to read and maintain. Also, reduces the
+stack usage.
 
-> From: Lucas Stach <l.stach@pengutronix.de>
->
-> The i.MX8MQ pincontrol works in a similar way to the earlier i.MX SoCs.
-> This driver builds on top of the imx specific pinconf handling.
->
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Acked-by: Dong Aisheng <aisheng.dong@nxp.com>
+This code was detected with the help of Coccinelle.
 
-Patch applied.
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/xfs/xfs_bmap_util.c | 13 ++-----------
+ 1 file changed, 2 insertions(+), 11 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+index 83b1e8c..4b0b16f 100644
+--- a/fs/xfs/xfs_bmap_util.c
++++ b/fs/xfs/xfs_bmap_util.c
+@@ -1691,7 +1691,6 @@ xfs_swap_extent_forks(
+ 	int			*src_log_flags,
+ 	int			*target_log_flags)
+ {
+-	struct xfs_ifork	tempifp, *ifp, *tifp;
+ 	xfs_filblks_t		aforkblks = 0;
+ 	xfs_filblks_t		taforkblks = 0;
+ 	xfs_extnum_t		junk;
+@@ -1733,11 +1732,7 @@ xfs_swap_extent_forks(
+ 	/*
+ 	 * Swap the data forks of the inodes
+ 	 */
+-	ifp = &ip->i_df;
+-	tifp = &tip->i_df;
+-	tempifp = *ifp;		/* struct copy */
+-	*ifp = *tifp;		/* struct copy */
+-	*tifp = tempifp;	/* struct copy */
++	swap(ip->i_df, tip->i_df);
+ 
+ 	/*
+ 	 * Fix the on-disk inode values
+@@ -1987,14 +1982,10 @@ xfs_swap_extents(
+ 
+ 	/* Swap the cow forks. */
+ 	if (xfs_sb_version_hasreflink(&mp->m_sb)) {
+-		xfs_extnum_t	extnum;
+-
+ 		ASSERT(ip->i_cformat == XFS_DINODE_FMT_EXTENTS);
+ 		ASSERT(tip->i_cformat == XFS_DINODE_FMT_EXTENTS);
+ 
+-		extnum = ip->i_cnextents;
+-		ip->i_cnextents = tip->i_cnextents;
+-		tip->i_cnextents = extnum;
++		swap(ip->i_cnextents, tip->i_cnextents);
+ 
+ 		cowfp = ip->i_cowfp;
+ 		ip->i_cowfp = tip->i_cowfp;
+-- 
+2.7.4
+
