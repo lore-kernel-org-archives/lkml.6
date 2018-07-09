@@ -2,115 +2,104 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00306C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:50:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852F1C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7B592089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:50:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s8MYiiEh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7B592089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 32F1920883
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:53:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32F1920883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933178AbeGIWt5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 18:49:57 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:33850 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932685AbeGIWtz (ORCPT
+        id S932858AbeGIWxg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 18:53:36 -0400
+Received: from gateway32.websitewelcome.com ([192.185.145.184]:44383 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753008AbeGIWxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 18:49:55 -0400
-Received: by mail-pl0-f68.google.com with SMTP id z9-v6so6678835plo.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 15:49:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=PNtm2kG90euFft8QWr7crmO0ot8N2x6U5jLBbpaYZWU=;
-        b=s8MYiiEhtAzrHbGH0xejdr7SwhUJ38XWVCSIBQr70tVIiGStPNJvyk9MlIs+FQjztN
-         0qN6CSSkjR4BxlHcxkjpOUvvBrwwHCOO6uzuUdkYYVuG/Gl/Xg1evMsZ8W2aXsmnuj9z
-         7/9iajbqA9RwXU2Z1E/1IIj50CMO6Z8KRsZjGDtgpAnuyAUqoidypTO17w34o7hpPUOu
-         d4S9NDi3BxW2SXr2nrACjV5mnSb9guq7tqN+niwfukWxc7ndhaM5VGKIhu3uyL35xlpT
-         923iTBFKNOkgPjP1vI9KMzg8yQxCEnF1fmK3WfV+L6tuxB8+aG5WvIa7VeZ2VjMFLArs
-         wpeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=PNtm2kG90euFft8QWr7crmO0ot8N2x6U5jLBbpaYZWU=;
-        b=m42WSFbbCyuflCPGQDbeuqn+Ds9B1ZIIuM32efo9eXwtTiEgdhkJL+qySC7Vm57SOa
-         EG9hR4l2jdoA2cLEJ6Yd/rWdYH4nwEb9MiT1yws7uQHX/vVYkkoRdLgF/DaW8j1k+1wu
-         1lR3fjTXaWn6fIWiGLo5iaf9qBA6laUo+0LY0QmuYSWWsHlVt2A87zAb/b1hO7l1cPy9
-         wf9f/+DsjT2tY4Ri8m47SIcuS2nEObr/UrbC/Xj9asH4acawwQkMBI0wwL+mGsKaf5qj
-         uhmc5bkKQzuVtPQXUIClbffw2q8R7sLn/9dtW5aXvUgnkG3DaMVwOfQ5JJZo2F6STFKY
-         cxRg==
-X-Gm-Message-State: APt69E31xqB6f1w7pVP8cl1WMLvDgdZ7dHFY2li9VTip6Z77sWG8OVyz
-        0ARxQnchg3G2puoQCuwIULddKRSwRcc=
-X-Google-Smtp-Source: AAOMgpedluUlv81Cuc62r9ANrwt2WVz4znvL+Tht5olXo93v5MOqZPkly1xO0i9+8lNYBhhyw1zjyA==
-X-Received: by 2002:a17:902:c85:: with SMTP id 5-v6mr22371901plt.126.1531176595218;
-        Mon, 09 Jul 2018 15:49:55 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm22117666pgq.35.2018.07.09.15.49.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 15:49:54 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 15:49:53 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH] mm, oom: remove sleep from under oom_lock
-In-Reply-To: <20180709074706.30635-1-mhocko@kernel.org>
-Message-ID: <alpine.DEB.2.21.1807091548280.125566@chino.kir.corp.google.com>
-References: <20180709074706.30635-1-mhocko@kernel.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 9 Jul 2018 18:53:36 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 6433C2F5E08
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 17:53:35 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id cf1qfcms5aSeycf24fGCfG; Mon, 09 Jul 2018 17:53:34 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=52166 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fcf1q-0042nF-3V; Mon, 09 Jul 2018 17:53:10 -0500
+Date:   Mon, 9 Jul 2018 17:53:09 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] vfio: Mark expected switch fall-throughs
+Message-ID: <20180709225309.GA20477@embeddedor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fcf1q-0042nF-3V
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:52166
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 13
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018, Michal Hocko wrote:
+In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+where we are expecting to fall through.
 
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> Tetsuo has pointed out that since 27ae357fa82b ("mm, oom: fix concurrent
-> munlock and oom reaper unmap, v3") we have a strong synchronization
-> between the oom_killer and victim's exiting because both have to take
-> the oom_lock. Therefore the original heuristic to sleep for a short time
-> in out_of_memory doesn't serve the original purpose.
-> 
-> Moreover Tetsuo has noticed that the short sleep can be more harmful
-> than actually useful. Hammering the system with many processes can lead
-> to a starvation when the task holding the oom_lock can block for a
-> long time (minutes) and block any further progress because the
-> oom_reaper depends on the oom_lock as well.
-> 
-> Drop the short sleep from out_of_memory when we hold the lock. Keep the
-> sleep when the trylock fails to throttle the concurrent OOM paths a bit.
-> This should be solved in a more reasonable way (e.g. sleep proportional
-> to the time spent in the active reclaiming etc.) but this is much more
-> complex thing to achieve. This is a quick fixup to remove a stale code.
-> 
-> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/vfio/pci/vfio_pci.c     | 2 +-
+ drivers/vfio/vfio_iommu_type1.c | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-This reminds me:
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index b423a30..5afc7f7 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -785,7 +785,7 @@ static long vfio_pci_ioctl(void *device_data,
+ 		case VFIO_PCI_ERR_IRQ_INDEX:
+ 			if (pci_is_pcie(vdev->pdev))
+ 				break;
+-		/* pass thru to return error */
++		/* fall through */
+ 		default:
+ 			return -EINVAL;
+ 		}
+diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
+index 3e5b177..d9fd318 100644
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -1601,6 +1601,7 @@ static void *vfio_iommu_type1_open(unsigned long arg)
+ 		break;
+ 	case VFIO_TYPE1_NESTING_IOMMU:
+ 		iommu->nesting = true;
++		/* fall through */
+ 	case VFIO_TYPE1v2_IOMMU:
+ 		iommu->v2 = true;
+ 		break;
+-- 
+2.7.4
 
-mm/oom_kill.c
-
- 54) int sysctl_oom_dump_tasks = 1;
- 55) 
- 56) DEFINE_MUTEX(oom_lock);
- 57) 
- 58) #ifdef CONFIG_NUMA
-
-Would you mind documenting oom_lock to specify what it's protecting?
