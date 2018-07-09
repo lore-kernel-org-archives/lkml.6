@@ -2,135 +2,80 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF60C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77DFAC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6E720881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:18:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B6E720881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id E0B0320881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:19:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B0320881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754662AbeGITSw (ORCPT
+        id S1754682AbeGITTe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 15:18:52 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:54898 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1754516AbeGITSv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 15:18:51 -0400
-Received: (qmail 9862 invoked by uid 2102); 9 Jul 2018 15:18:50 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 9 Jul 2018 15:18:50 -0400
-Date:   Mon, 9 Jul 2018 15:18:50 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Daniel Lustig <dlustig@nvidia.com>
-cc:     Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] tools/memory-model: Add write ordering by release-acquire
- and by locks
-In-Reply-To: <01c35480-e207-c916-078b-de53df0e2645@nvidia.com>
-Message-ID: <Pine.LNX.4.44L0.1807091421380.2462-100000@iolanthe.rowland.org>
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+        Mon, 9 Jul 2018 15:19:34 -0400
+Received: from www.osadl.org ([62.245.132.105]:39344 "EHLO www.osadl.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754516AbeGITTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 15:19:32 -0400
+Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w69JHK2a009403;
+        Mon, 9 Jul 2018 21:17:20 +0200
+From:   Nicholas Mc Guire <hofrat@osadl.org>
+To:     Wolfram Sang <w.sang@pengutronix.de>
+Cc:     Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>, linux-can@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH] can: mpc5xxx_can: check of_iomap return before use
+Date:   Mon,  9 Jul 2018 21:16:40 +0200
+Message-Id: <1531163800-12111-1-git-send-email-hofrat@osadl.org>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018, Daniel Lustig wrote:
+ of_iompa() can return NULL so that return needs to be checked and NULL
+treated as failure. While at it also take care of the missing
+of_node_put() in the error path.
 
-> On 7/9/2018 9:52 AM, Will Deacon wrote:
-> > On Fri, Jul 06, 2018 at 02:10:55PM -0700, Paul E. McKenney wrote:
-> >> On Fri, Jul 06, 2018 at 04:37:21PM -0400, Alan Stern wrote:
-> >>> On Thu, 5 Jul 2018, Andrea Parri wrote:
-> >>>
-> >>>>> At any rate, it looks like instead of strengthening the relation, I
-> >>>>> should write a patch that removes it entirely.  I also will add new,
-> >>>>> stronger relations for use with locking, essentially making spin_lock
-> >>>>> and spin_unlock be RCsc.
-> >>>>
-> >>>> Thank you.
-> >>>>
-> >>>> Ah let me put this forward: please keep an eye on the (generic)
-> >>>>
-> >>>>   queued_spin_lock()
-> >>>>   queued_spin_unlock()
-> >>>>
-> >>>> (just to point out an example). Their implementation (in part.,
-> >>>> the fast-path) suggests that if we will stick to RCsc lock then
-> >>>> we should also stick to RCsc acq. load from RMW and rel. store.
-> 
-> Just to be clear, this is "RCsc with W->R exception" again, right?
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: commit afa17a500a36 ("net/can: add driver for mscan family & mpc52xx_mscan")
+---
 
-Yes.
+Problem was found by an experimental coccinelle script
 
-I don't think any of these suggested names are really appropriate.  
-(For instance, if I understood the original paper correctly, the "sc"  
-in "RCsc" refers to the ordering properties of the acquire and release
-accesses themselves, not the accesses they protect.)  I'm going to
-avoid using them.
+Patch was compiletested with: mpc5200_defconfig + CONFIG_CAN=y,
+CONFIG_CAN_MSCAN=y, CONFIG_CAN_MPC5XXX=y
+(with a number of sparse warnings not related to the proposed change)
 
-> >>> A very good point.  The implementation of those routines uses
-> >>> atomic_cmpxchg_acquire() to acquire the lock.  Unless this is
-> >>> implemented with an operation or fence that provides write-write
-> >>> ordering (in conjunction with a suitable release), qspinlocks won't
-> >>> have the ordering properties that we want.
-> >>>
-> >>> I'm going to assume that the release operations used for unlocking
-> >>> don't need to have any extra properties; only the lock-acquire
-> >>> operations need to be special (i.e., stronger than a normal
-> >>> smp_load_acquire). This suggests that atomic RMW functions with acquire
-> >>> semantics should also use this stronger form of acquire.
-> 
-> It's not clear to me that the burden of enforcing "RCsc with W->R
-> ordering" should always be placed only on the acquire half.
-> RISC-V currently places some of the burden on the release half, as
-> we discussed last week.  Specifically, there are a few cases where
-> fence.tso is used instead of fence rw,w on the release side.
-> 
-> If we always use fence.tso here, following the current recommendation,
-> we'll still be fine.  If LKMM introduces an RCpc vs. RCsc distinction
-> of some kind, though, I think we would want to distinguish the two
-> types of release accordingly as well.
+Patch is against 4.18-rc3 (localversion-next is next-20180706)
 
-I wasn't talking about the burden in the implementation, just the
-modification to the memory model.  In practice it shouldn't matter
-because real code should never intermix the two kinds of fences.  That
-is, nobody will call smp_store_release() or cmpxchg_acquire()  
-with an argument of type spinlock_t *, and nobody will call
-spin_unlock() with an argument that isn't of type spinlock_t *.
+ drivers/net/can/mscan/mpc5xxx_can.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> >>> Does anybody have a different suggestion?
-> >>
-> >> The approach you suggest makes sense to me.  Will, Peter, Daniel, any
-> >> reasons why this approach would be a problem for you guys?
-> > 
-> > qspinlock is very much opt-in per arch, so we can simply require that
-> > an architecture must have RCsc RmW atomics if they want to use qspinlock.
-> > Should an architecture arise where that isn't the case, then we could
-> > consider an arch hook in the qspinlock code, but I don't think we have
-> > to solve that yet.
-> > 
-> > Will
-> 
-> This sounds reasonable to me.
-
-Okay, I'll arrange the patch so that the new requirements apply only to
-lock and unlock accesses, not to RMW accesses in general.
-
-Alan
+diff --git a/drivers/net/can/mscan/mpc5xxx_can.c b/drivers/net/can/mscan/mpc5xxx_can.c
+index c7427bd..2949a38 100644
+--- a/drivers/net/can/mscan/mpc5xxx_can.c
++++ b/drivers/net/can/mscan/mpc5xxx_can.c
+@@ -86,6 +86,11 @@ static u32 mpc52xx_can_get_clock(struct platform_device *ofdev,
+ 		return 0;
+ 	}
+ 	cdm = of_iomap(np_cdm, 0);
++	if (!cdm) {
++		of_node_put(np_cdm);
++		dev_err(&ofdev->dev, "can't map clock node!\n");
++		return 0;
++	}
+ 
+ 	if (in_8(&cdm->ipb_clk_sel) & 0x1)
+ 		freq *= 2;
+-- 
+2.1.4
 
