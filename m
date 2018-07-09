@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AFAC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76416C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDA34208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:42:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FDBB208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:42:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BlhWdrQd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDA34208A2
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FeTciVgR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FDBB208A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933379AbeGIXmN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 19:42:13 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:41477 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933313AbeGIXmI (ORCPT
+        id S933412AbeGIXmU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 19:42:20 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38244 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933313AbeGIXmR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 19:42:08 -0400
-Received: by mail-pl0-f65.google.com with SMTP id w8-v6so6732605ply.8
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 16:42:08 -0700 (PDT)
+        Mon, 9 Jul 2018 19:42:17 -0400
+Received: by mail-pf0-f193.google.com with SMTP id x13-v6so4806297pfh.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 16:42:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=G2uAeoq4DfhThX9UGnhckbXMfikniIsoGM7JqtwAgeE=;
-        b=BlhWdrQdQObN6Qd3dd/qLgvGSfL8WL8Iu/kO0R0s1i1ORgRCkiSEnJ2b0H15tEicAu
-         +uxrPb9/wSnO2Xu2sQOgyoBb5GVibE8T26/BlDC9hEnBzvkW7zJ5ir0+Q8JPyl3W2wnB
-         9+yM5BgN++j3Cdz6f0+3JtJcDyAdatG5/QgHg=
+        bh=6svwEjRZKw/fRIHWE4svwtkCI66G0b2U5AUFtaL5oWI=;
+        b=FeTciVgRbk0YToviRxoz9bYqVWMSEQiEJeqNWbSeMvGwcrZJZo/UZyIrS27iadOssY
+         JmTSWtU8+ugcFaFxk3q1QaRfTD+cKR/cEXRm8xLT0//nSgU91OvC496vj1eWzI429RGd
+         aU37D3xacRIkpZEAoqbQ9u1z7MdC8h39cwdfU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=G2uAeoq4DfhThX9UGnhckbXMfikniIsoGM7JqtwAgeE=;
-        b=MjxJLDrM3tHuBVkPI/yFOfLIbHcGR0m5cQuWLySU1yHuB67PIGinCDoddFjpll3Q6o
-         p+r7dFf8/fGUAOhzncQ5pDTvSbfKk5UA+SHA8JP3hvjiLFz5gUZueamUJIoQDfoThvX5
-         JBS0ze0dOonOncPV4BqHYBFenxDVu9wRBu9WCNmZoCMY9WaLPmq+tJFG9f/WoTJh7eY6
-         VczuW/tpWBBb6eBgwRvvHL+597h0JIZoncDKEAj5mRYArgDGcNniSHRoMsrvr8OSO1Nr
-         bdBYH0FHLNhIPRL7RJeEbfYCoFvH3Qgpp/mXjnJjjffCwzFeksoWAV5v1+6rFgv4kSAg
-         RqNg==
-X-Gm-Message-State: APt69E0Wk3fnp9ehrMHJTn3Deu+v7pWdiBeiFYOJQIeTNO2r95zxmZek
-        NNpnTqDRXmB+nC8cBZAoBIi+AQ==
-X-Google-Smtp-Source: AAOMgpeK5XTxIBPZbKlC787F1h7QZ/CVmLQLtaTugHCMv3y2BrWimRZYgCGCiGH8CGTFiC43g/fHIA==
-X-Received: by 2002:a17:902:70c6:: with SMTP id l6-v6mr22415286plt.286.1531179728447;
-        Mon, 09 Jul 2018 16:42:08 -0700 (PDT)
+        bh=6svwEjRZKw/fRIHWE4svwtkCI66G0b2U5AUFtaL5oWI=;
+        b=eDmjterxGIMaCoVI5crtZxDNbrC50y3vRCc7CU7eUSPFQBIkHMpOnpRSg/w3/iMSK+
+         iSJzD8cpVqdFVSUjbV5Pb85JsV/Pl9k/+vVwlnbunNbKFoY9WwZuN5I7a7XYcHoMRTIr
+         SQyifI1YlVZrQ1Ifgwao+6pJXa6fZ+IA30H0+mvDT/HJZhDe+UOSmKhTht5g6Mhb8vSX
+         bB20mAwyVDW15gOAheUH5c57eMXt+onL8YCfINR0Wnj7YkgCrovQgk4oYu5rXe9ouGlj
+         yWF76FW9xjgnL9HPKcMGDDJNrG/4eHPOluQsIZn6TmaaIMJQCl5WpO4iPICluHoHw/54
+         YAtw==
+X-Gm-Message-State: APt69E3rnhy2fuobBg1yIWL++Tz4Wxl3tyM0lu6/Rme5uj5LGCKLGjSv
+        /JWEyTkWkMz6tq4Z46W0IrvScw==
+X-Google-Smtp-Source: AAOMgpczgUeSnu5TlYsHMBObQ11TnIv5AyBgBx71eoDGls/uL90/hIQwdIfkx+rzF084axxrlH1t/w==
+X-Received: by 2002:a62:d34a:: with SMTP id q71-v6mr23092699pfg.17.1531179737032;
+        Mon, 09 Jul 2018 16:42:17 -0700 (PDT)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id h190-v6sm12823541pge.85.2018.07.09.16.42.07
+        by smtp.googlemail.com with ESMTPSA id b62-v6sm71862898pfm.97.2018.07.09.16.42.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 16:42:07 -0700 (PDT)
+        Mon, 09 Jul 2018 16:42:16 -0700 (PDT)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com,
         ard.biesheuvel@linaro.org
@@ -61,10 +61,11 @@ Cc:     tbaicar@codeaurora.org, bhsharma@redhat.com, dyoung@redhat.com,
         graeme.gregory@linaro.org, hanjun.guo@linaro.org,
         lorenzo.pieralisi@arm.com, sudeep.holla@arm.com,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org
-Subject: [PATCH v3.1 2/4] efi/arm: preserve early mapping of UEFI memory map longer for BGRT
-Date:   Tue, 10 Jul 2018 08:42:27 +0900
-Message-Id: <20180709234229.20181-3-takahiro.akashi@linaro.org>
+        kexec@lists.infradead.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v3.1 3/4] efi/arm: map UEFI memory map even w/o runtime services enabled
+Date:   Tue, 10 Jul 2018 08:42:28 +0900
+Message-Id: <20180709234229.20181-4-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180709234229.20181-1-takahiro.akashi@linaro.org>
 References: <20180709234229.20181-1-takahiro.akashi@linaro.org>
@@ -73,51 +74,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Under the current implementation, UEFI memory map will be mapped and made
+available in virtual mappings only if runtime services are enabled.
+But in a later patch, we want to use UEFI memory map in acpi_os_ioremap()
+to create mappings of ACPI tables using memory attributes described in
+UEFI memory map.
+See the following commit:
+    arm64: acpi: fix alignment fault in accessing ACPI tables
 
-The BGRT code validates the contents of the table against the UEFI
-memory map, and so it expects it to be mapped when the code runs.
+So, as a first step, arm_enter_runtime_services() is modified, alongside
+Ard's patch[1], so that UEFI memory map will not be freed even if
+efi=noruntime.
 
-On ARM, this is currently not the case, since we tear down the early
-mapping after efi_init() completes, and only create the permanent
-mapping in arm_enable_runtime_services(), which executes as an early
-initcall, but still leaves a window where the UEFI memory map is not
-mapped.
+[1] https://marc.info/?l=linux-efi&m=152930773507524&w=2
 
-So move the call to efi_memmap_unmap() from efi_init() to
-arm_enable_runtime_services().
-
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/arm-init.c    | 1 -
- drivers/firmware/efi/arm-runtime.c | 2 ++
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/firmware/efi/arm-runtime.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
-index b5214c143fee..388a929baf95 100644
---- a/drivers/firmware/efi/arm-init.c
-+++ b/drivers/firmware/efi/arm-init.c
-@@ -259,7 +259,6 @@ void __init efi_init(void)
- 
- 	reserve_regions();
- 	efi_esrt_init();
--	efi_memmap_unmap();
- 
- 	memblock_reserve(params.mmap & PAGE_MASK,
- 			 PAGE_ALIGN(params.mmap_size +
 diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-index 5889cbea60b8..59a8c0ec94d5 100644
+index 59a8c0ec94d5..a00934d263c5 100644
 --- a/drivers/firmware/efi/arm-runtime.c
 +++ b/drivers/firmware/efi/arm-runtime.c
-@@ -115,6 +115,8 @@ static int __init arm_enable_runtime_services(void)
- 		return 0;
- 	}
+@@ -117,6 +117,13 @@ static int __init arm_enable_runtime_services(void)
  
-+	efi_memmap_unmap();
+ 	efi_memmap_unmap();
+ 
++	mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
++
++	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
++		pr_err("Failed to remap EFI memory map\n");
++		return 0;
++	}
 +
  	if (efi_runtime_disabled()) {
  		pr_info("EFI runtime services will be disabled.\n");
  		return 0;
+@@ -129,13 +136,6 @@ static int __init arm_enable_runtime_services(void)
+ 
+ 	pr_info("Remapping and enabling EFI services.\n");
+ 
+-	mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
+-
+-	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
+-		pr_err("Failed to remap EFI memory map\n");
+-		return -ENOMEM;
+-	}
+-
+ 	if (!efi_virtmap_init()) {
+ 		pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
+ 		return -ENOMEM;
 -- 
 2.17.0
 
