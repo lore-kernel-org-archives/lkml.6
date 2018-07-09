@@ -2,124 +2,194 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33E8FC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86ADDC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E340D208DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:30:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="X6PTDR1B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E340D208DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 322F9208DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 20:32:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 322F9208DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933314AbeGIUab (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 16:30:31 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:57228 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932923AbeGIUa1 (ORCPT
+        id S933135AbeGIUca (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 16:32:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54928 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932856AbeGIUc2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 16:30:27 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w69KT6xm083969;
-        Mon, 9 Jul 2018 20:30:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=zPNWT6WF60sJudH/ZoNy+hy3gWFjFsyZKjwRao1QdW0=;
- b=X6PTDR1BetVxC+w51UQjoWP7ZcpqHxdGTzG2aKnDXP8Fk2StFsYMzGhd+TqTNaozuFQt
- QK0rPi2+J+chD7hkZhN9S72sLby8mi/OoZrHeS6/7qhdRZc1TmnpuxQdrJ7AidMf7BH4
- DNqg4Ag+Wn5wmSgvIwT009Yx4DAPSL/xte9Mr5PttKJmROoSBgkAc4Qiu3gjqEMO7rwk
- s26OhzKkdZrqKaq8Itlpp6HePqkhQGDWmRIz23xmX4fjshw2b+FWBXRX29cEr/LfQ6sM
- 5TfYGpLNminK+4gR5blp34ModvH67Fq4SVWIWXhZsEVRmKAMaleCCQW4LPsUCtghAk14 LA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2k2p7v71sx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 09 Jul 2018 20:30:00 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w69KTxBn012459
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 9 Jul 2018 20:30:00 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w69KTvp9024686;
-        Mon, 9 Jul 2018 20:29:57 GMT
-Received: from char.us.oracle.com (/10.137.176.158)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 09 Jul 2018 13:29:57 -0700
-Received: by char.us.oracle.com (Postfix, from userid 1000)
-        id 55C216A00C3; Mon,  9 Jul 2018 16:29:43 -0400 (EDT)
-Date:   Mon, 9 Jul 2018 16:29:43 -0400
-From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv4 18/18] x86: Introduce CONFIG_X86_INTEL_MKTME
-Message-ID: <20180709202943.GK17368@char.us.oracle.com>
-References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
- <20180626142245.82850-19-kirill.shutemov@linux.intel.com>
- <20180709183656.GK6873@char.US.ORACLE.com>
- <d9edff3d-64bd-be81-c9fd-52699d7da81e@intel.com>
- <20180709185246.GC17368@char.us.oracle.com>
- <7491deb5-c89e-cbd0-6c17-404d26c30aeb@intel.com>
+        Mon, 9 Jul 2018 16:32:28 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69KSmGJ125204
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 16:32:28 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k4dp9c9d1-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 16:32:28 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 9 Jul 2018 16:32:27 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 9 Jul 2018 16:32:24 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69KWN009699830
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 9 Jul 2018 20:32:23 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E0C3B2066;
+        Mon,  9 Jul 2018 16:31:58 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2E62DB205F;
+        Mon,  9 Jul 2018 16:31:58 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Jul 2018 16:31:58 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id F3B0616C1972; Mon,  9 Jul 2018 13:34:41 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 13:34:41 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     David Woodhouse <dwmw2@infradead.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180709104429.GI2476@hirez.programming.kicks-ass.net>
+ <1531133801.18697.73.camel@infradead.org>
+ <20180709110657.GL2476@hirez.programming.kicks-ass.net>
+ <20180709123457.GM3593@linux.vnet.ibm.com>
+ <20180709125516.GO2476@hirez.programming.kicks-ass.net>
+ <20180709130227.GQ2512@hirez.programming.kicks-ass.net>
+ <20180709142932.GO3593@linux.vnet.ibm.com>
+ <20180709152632.GX2476@hirez.programming.kicks-ass.net>
+ <20180709163432.GV3593@linux.vnet.ibm.com>
+ <1531162254.26547.3.camel@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <7491deb5-c89e-cbd0-6c17-404d26c30aeb@intel.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8949 signatures=668705
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=919
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807090232
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531162254.26547.3.camel@infradead.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18070920-0052-0000-0000-0000030B6535
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009340; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01058976; UDB=6.00543453; IPR=6.00836896;
+ MB=3.00022076; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-09 20:32:25
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070920-0053-0000-0000-00005D4D90D7
+Message-Id: <20180709203441.GE3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807090232
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 11:59:33AM -0700, Dave Hansen wrote:
-> On 07/09/2018 11:52 AM, Konrad Rzeszutek Wilk wrote:
-> > On Mon, Jul 09, 2018 at 11:44:33AM -0700, Dave Hansen wrote:
-> >> On 07/09/2018 11:36 AM, Konrad Rzeszutek Wilk wrote:
-> >>> On Tue, Jun 26, 2018 at 05:22:45PM +0300, Kirill A. Shutemov wrote:
-> >>> Rip out the X86?
-> >>>> +	bool "Intel Multi-Key Total Memory Encryption"
-> >>>> +	select DYNAMIC_PHYSICAL_MASK
-> >>>> +	select PAGE_EXTENSION
-> >>>
-> >>> And maybe select 5-page?
-> >>
-> >> Why?  It's not a strict dependency.  You *can* build a 4-level kernel
-> >> and run it on smaller systems.
-> > 
-> > Sure, but in one of his commits he mentions that we may run in overlapping
-> > physical memory if we use 4-level paging. Hence why not just move to 5-level
-> > paging and simplify this.
+On Mon, Jul 09, 2018 at 07:50:54PM +0100, David Woodhouse wrote:
 > 
-> I'm not sure it _actually_ simplifies anything.  We still need code to
-> handle the cases where we bump into the limits because even 5-level
-> paging systems can hit the *architectural* limits.  We just don't think
-> we'll bump into those limits any time soon in practice since they're
-> 512x larger on 5-level systems.
 > 
-> But, a future system that needs physical address space or has a bunch
-> more KeyID bits might bump into the limits.
+> On Mon, 2018-07-09 at 09:34 -0700, Paul E. McKenney wrote:
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index 51919985f6cf..33b0a1ec0536 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -2496,6 +2496,10 @@ void rcu_check_callbacks(int user)
+> >  {
+> >  	trace_rcu_utilization(TPS("Start scheduler-tick"));
+> >  	raw_cpu_inc(rcu_data.ticks_this_gp);
+> > +	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs)) &&
+> > +	   !is_idle_task(current))
+> > +		set_tsk_need_resched(current);
+> 
+> OK, so this will make KVM (and various other code) see that
+> need_resched() is true, and they'll call cond_resched() or something
+> else that might not actually schedule another task, but will at least
+> end up in rcu_all_qs()...
+> 
+> > +	__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
+> 
+> ... which bails out immediately and does nothing, because that's set to
+> false?
+> 
+> Am I missing something?
 
-Yikes. So when will we expand to 128-bit page fields?
+If this is the idle task, RCU will detect that as a quiescent state via
+its dyntick-idle mechanism.  In which case, there is no point in leaving
+.rcu_urgent_qs being true.
 
-> 
-> It's also _possible_ that a processor could come out that supports MKTME
-> but not 5-level paging, or a hypervisor would expose such a
-> configuration to a guest.  We've asked our colleagues very nicely that
-> Intel not make a processor that does this, but it's still possible one
-> shows up.
+If this is not the idle task, the scheduler will invoke
+rcu_note_context_switch(), which will in turn invoke rcu_sched_qs(),
+rcu_preempt_qs(), or rcu_qs(), depending on kernel version and
+configuration.  This will happen independently of .rcu_urgent_qs, so it
+is OK to set .rcu_urgent_qs to false.  And doing so reduces the overhead
+of the next cond_resched().
+
+I may end up using rcu_is_cpu_rrupt_from_idle() instead of is_idle_task()
+at some point, but the former eases backporting.  And the only difference
+is if someone has a long loop within an _rcuidle tracepoint used in the
+idle loop, and where that loop check need_resched().  Which currently
+seems to be the empty set.
+
+And I should treat interruption of a usermode task the same as that of an
+idle task.  In the PREEMPT case, ->rcu_read_lock_nesting better be zero
+(lockdep would have complained), so the quiescent state will be reported.
+In the !PREEMPT case, user=1 directly causes reporting of a quiescent
+state.
+
+So here are the possible code paths when .rcu_urgent_qs is set to true:
+
+1.	A context switch will record the quiescent state and clear
+	.rcu_urgent_qs.  (The failure to do the clearing in current -rcu
+	for PREEMPT builds is a performance bug that I need to fix.)
+
+2.	A cond_resched() will cause rcu_all_qs() to be invoked, which
+	will record a quiescent state and clear .rcu_urgent_qs.
+
+3.	With the patch below, a scheduling-clock interrupt of a
+	non-idle non-userspace task will force a reschedule, which
+	will result in #1 above happening.
+
+However, I should avoid setting .rcu_urgent_qs to false when it is
+already false, shouldn't I?
+
+So how about the following instead?
+
+I am doing some light testing and will let you know how that goes.
+
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 51919985f6cf..c3b688c7127a 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -2496,6 +2496,15 @@ void rcu_check_callbacks(int user)
+ {
+ 	trace_rcu_utilization(TPS("Start scheduler-tick"));
+ 	raw_cpu_inc(rcu_data.ticks_this_gp);
++	/* The load-acquire pairs with the store-release setting to true. */
++	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
++		/* Idle already is a quiescent state. */
++		if (!is_idle_task(current) && !user) {
++			set_tsk_need_resched(current);
++			set_preempt_need_resched();
++		}
++		__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
++	}
+ 	rcu_flavor_check_callbacks(user);
+ 	if (rcu_pending())
+ 		invoke_rcu_core();
+
