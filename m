@@ -2,113 +2,85 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F37A4C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FAA6C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB12720877
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:07:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="fmoYoXk3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB12720877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 33B7C20877
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:08:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33B7C20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933048AbeGIQGw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:06:52 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:52357 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754618AbeGIQGq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:06:46 -0400
-Received: by mail-it0-f67.google.com with SMTP id p4-v6so26131383itf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 09:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=YfwKSvpHjElU5FYvYOHeJzzHdkdEokJPgsu2WhHVVPQ=;
-        b=fmoYoXk3Izn8IgCRv82EtvBrSQYFFfCtuo5s+xzE+uvJPImiV5QJ4ryA2Y10oQgC/I
-         +iCdUyc3u95gNip/DD0/WlC2UFjPQvtnX435DWXUp02ApQuNlqlXnjaPmnDgeL/Derl6
-         w6hKN1/zPiogrGMfq4JBeIDcHRMvWuQXb1/6E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=YfwKSvpHjElU5FYvYOHeJzzHdkdEokJPgsu2WhHVVPQ=;
-        b=mxGPBXKt6sw4t2CG3RRkwMgRroGLKLgtR91G4s82EVOQITawYCCT00A0o2RgeEFqTB
-         G8leFLZtj5L0CqHTOVJI7OfXHP+M5HrG8o06QHrfdF2GTOpcTcOUTuePY+tYuoylu53p
-         fBzR4iGXLNksqYotozRT9QQzkY0ePR8Qetl4pqSJF0fAPJLmXlKgEz2HZUy1v49RFODg
-         9mz0RPyw2zfjCSh93uukevqnDIRFjrzsAItiKswNLqvY6KObeUCWmETGxKJaYMq3NVm8
-         JpblK4MbDpC6Kl+E+/YtTbBholXcBDKIz0MnuUr0S9KIWnYrMyP5unrYd+BCMCc63XG0
-         paAQ==
-X-Gm-Message-State: APt69E0W5ua7e2rIMMnKRWpHf++y4ix/nJ524Ag1xzG797StC6p2nzOV
-        /LuJngfQxuPOQpwxMLeEPB4orWT8bzYk3+eDNqMNew==
-X-Google-Smtp-Source: AAOMgpd7oBiFySEcCbumydxH7ftfk9SiJAxoLel+rMUs6YIQgPFnWgvWZwAnFRtbRQ4uQ0+FghHt9b4GjmxLGoAGewk=
-X-Received: by 2002:a24:edce:: with SMTP id r197-v6mr9069298ith.23.1531152405849;
- Mon, 09 Jul 2018 09:06:45 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:e492:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 09:06:45 -0700 (PDT)
-X-Originating-IP: [2a02:168:5628:0:496f:7dc5:66d7:a057]
-In-Reply-To: <20180709160342.GA2476@hirez.programming.kicks-ass.net>
-References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
- <20180709083650.23549-11-daniel.vetter@ffwll.ch> <20180709103656.GH2476@hirez.programming.kicks-ass.net>
- <CAKMK7uEr9PJ0mex5CWdws55OwaLuHCbLJ5vP8KA4ZQXdAVOTYQ@mail.gmail.com>
- <20180709151258.GV2476@hirez.programming.kicks-ass.net> <20180709155204.GD3008@phenom.ffwll.local>
- <20180709160342.GA2476@hirez.programming.kicks-ass.net>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Mon, 9 Jul 2018 18:06:45 +0200
-X-Google-Sender-Auth: kXk86gJMENR2-F_xzG9zMQj4ZFU
-Message-ID: <CAKMK7uH2zUXCQw3DupDHHYJDL4WW_c_8bFDTA7TJs86CZsNNUw@mail.gmail.com>
-Subject: Re: [PATCH 11/12] sched: use for_each_if in topology.h
+        id S1754642AbeGIQIA (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:08:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34256 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754525AbeGIQH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 12:07:58 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 370DEED1;
+        Mon,  9 Jul 2018 09:07:58 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3CE9E3F589;
+        Mon,  9 Jul 2018 09:07:54 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 17:07:52 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        mingo@redhat.com, dietmar.eggemann@arm.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v4 09/12] sched/fair: Introduce an energy estimation
+ helper function
+Message-ID: <20180709160752.GB17598@e108498-lin.cambridge.arm.com>
+References: <20180628114043.24724-1-quentin.perret@arm.com>
+ <20180628114043.24724-10-quentin.perret@arm.com>
+ <20180706131243.GV2458@hirez.programming.kicks-ass.net>
+ <20180706151212.GD17577@e108498-lin.cambridge.arm.com>
+ <20180706154949.GO2494@hirez.programming.kicks-ass.net>
+ <20180706170443.GE17577@e108498-lin.cambridge.arm.com>
+ <20180709120138.GQ2494@hirez.programming.kicks-ass.net>
+ <20180709152825.GA17598@e108498-lin.cambridge.arm.com>
+ <20180709154226.GZ2476@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709154226.GZ2476@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 6:03 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> On Mon, Jul 09, 2018 at 05:52:04PM +0200, Daniel Vetter wrote:
->> for_each_something(foo)
->>       if (foo->bla)
->>               call_bla(foo);
->>       else
->>               call_default(foo);
->>
->> Totally contrived, but this complains. Liberally sprinkling {} also shuts
->> up the compiler, but it's a bit confusing given that a plain for {;;} is
->> totally fine. And it's confusing since at first glance the compiler
->> complaining about nested if and ambigous else doesn't make sense since
->> clearly there's only 1 if there.
->
-> Ah, so the pattern the compiler tries to warn about is:
->
->         if (foo)
->                 if (bar)
->                         /* stmts1 */
->                 else
->                         /* stmts2 *
->
-> Because it might not be immediately obvious with which if the else goes.
-> Which is fair enough I suppose.
+On Monday 09 Jul 2018 at 17:42:26 (+0200), Peter Zijlstra wrote:
+> On Mon, Jul 09, 2018 at 04:28:26PM +0100, Quentin Perret wrote:
+> > What about moving schedutil_freq_util() to sched.h and give it a more
+> > generic name (total_cpu_util() ?) with no dependencies on
+> > CONFIG_CPU_FREQ_GOV_SCHEDUTIL ? Also, 'energy_util' would have to be
+> > renamed I guess (busy_time_util ?).
+> 
+> Bit big for an inline,
 
-Yup. I'll augment the commit message of patch 1 to include this as
-example, and why it's confusing in context of a for_each_foo macro
-containing an if().
+True, but that will be used in the wake-up path ...
 
-> OK, ACK.
+> and I don't think there's much point using all
+> this without schedutil.
 
-Thanks, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+For that total_cpu_util() function I was suggesting, the main point
+would be to avoid code duplication with scale_rt_capacity(). Not sure
+if that matters ?
+
+Thanks,
+Quentin
