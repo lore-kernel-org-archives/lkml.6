@@ -2,66 +2,82 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URG_BIZ,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6603CC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F92C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2393B20878
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EFDB20849
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:43:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUuliEjq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2393B20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KVD1XSYI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EFDB20849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933190AbeGIOmW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:42:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48356 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932909AbeGIOmT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:42:19 -0400
-Received: from [192.168.0.101] (unknown [49.77.238.31])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76ECF20878;
-        Mon,  9 Jul 2018 14:42:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531147339;
-        bh=q+Sfoy5iBj7ePLjVC+PPsHTjYxTTccQ/0zfStWz2MaU=;
-        h=Subject:To:References:From:Date:In-Reply-To:From;
-        b=oUuliEjqsLL30R+9QHCMY23N5GQQ1U7dGDg+GQNPN62U79sGzg7YtKxys3BK91bV7
-         EP04jUQnEjRJm1j/0rZxI+fdSvHflovqI6ZoJHxENJ/2kPZ+zl3E1bLFbAe2ZJAy7l
-         jgHffPX0NrAUH4r7U3ty+iLTFqXm+iYWx8FgYEic=
-Subject: Re: [f2fs-dev] [PATCH 3/4] f2fs: indicate shutdown f2fs to allow
- unmount successfully
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-References: <20180706210903.77887-1-jaegeuk@kernel.org>
- <20180706210903.77887-3-jaegeuk@kernel.org>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <2bdae76c-abce-b9b5-512e-d1354589b369@kernel.org>
-Date:   Mon, 9 Jul 2018 22:42:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        id S933045AbeGIOnz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:43:55 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45088 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932508AbeGIOny (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:43:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aTrt4W8JyGAAEcenTVkjc3cnT5TtknK/DlTOtOV03PM=; b=KVD1XSYIHlLVpM70nfRf7Ix+1
+        fP9n4t/ISgv73c6iIV/AE1uxkapaey5lJJ8LFINQ1dyvTBs57ylvktHrHGtUmQoy/3+N+Pr09lytA
+        rY1P5a69oOkQddvI+LIAdI7246dDLY7Z0H2aCFIuLrYyGmpeClXFpUg9DdhLhwL7/AnKO6xijyaYT
+        YwnU49qXGGcpGXijqSqdxQz2CiC54mKYuIZM0F7/4rxgQ3fKBmHmUa7LJOe5GxhT3Y/ghRVwCBfaf
+        /ePATGWfFDVMuU9qGgLHISB4k46O8rpNkbBlh8+5pxKSphEtO6XkZybGlhJIJMLQwcBIG95yB9o55
+        KagJQG/Bw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fcXO8-0003l9-Dm; Mon, 09 Jul 2018 14:43:40 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6DDA220297EAB; Mon,  9 Jul 2018 16:43:38 +0200 (CEST)
+Date:   Mon, 9 Jul 2018 16:43:38 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Message-ID: <20180709144338.GS2476@hirez.programming.kicks-ass.net>
+References: <20180706171150.GI3593@linux.vnet.ibm.com>
+ <20180709085351.GC2476@hirez.programming.kicks-ass.net>
+ <1531127935.18697.57.camel@infradead.org>
+ <20180709104429.GI2476@hirez.programming.kicks-ass.net>
+ <1531133801.18697.73.camel@infradead.org>
+ <20180709110657.GL2476@hirez.programming.kicks-ass.net>
+ <20180709123457.GM3593@linux.vnet.ibm.com>
+ <20180709125516.GO2476@hirez.programming.kicks-ass.net>
+ <20180709130227.GQ2512@hirez.programming.kicks-ass.net>
+ <20180709142932.GO3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180706210903.77887-3-jaegeuk@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709142932.GO3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/7 5:09, Jaegeuk Kim wrote:
-> Once we shutdown f2fs, we have to flush stale pages in order to unmount
-> the system. In order to make stable, we need to stop fault injection as well.
+On Mon, Jul 09, 2018 at 07:29:32AM -0700, Paul E. McKenney wrote:
+
+> OK, so here are our options:
 > 
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> 1.	Add the RCU conditional to need_resched(), as David suggests.
+> 	Peter has concerns about overhead.
 
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Not only overhead, its plain broken, because:
 
-Thanks,
+ 1) we keep preemption state in other places too
+ 2) we check need_resched() in asm
+
