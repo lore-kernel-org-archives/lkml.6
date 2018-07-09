@@ -2,75 +2,116 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4528EC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:36:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD86C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E26372086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:36:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FDLxTc3F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E26372086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5338420877
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:38:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5338420877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933077AbeGIOgM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:36:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58538 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932633AbeGIOgL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:36:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=do65+p/1fwKe/HUlk44JmPxnFidFLJM3iwwMNZoCfDc=; b=FDLxTc3FRzszE3tHxEjpVzdJV
-        2eKLlUgx/tLtsbR0tCKDEkHI31oBNVKY0hd8zuB+W3bUz4h0NmdmIaIWP++Or82xdKYGED8FB/+YT
-        bOmx4xXXQZPkcjmMJPrTA7t4GP45Ij8QLkWmUgfaftui4+nqk9lwE7ASPWmDfnKSxjK3sPfwVXqrC
-        UzIZWeyFu/b12Gv0tqGYoVMj4nEL7yp1FIFnT85pudSSaFtSLEW8F/uQeINaWyzWxdrc/M7Eh3JEJ
-        vq7g1MKU9VN/kQXHuLK9SY4U464BWUt/e7Y90BSA1YCk4xWxZ7ld0ttiZC6lqmKryizwsMWNWAOc7
-        Ay2weGF/Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcXGs-00057E-7I; Mon, 09 Jul 2018 14:36:10 +0000
-Date:   Mon, 9 Jul 2018 07:36:10 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     syzbot <syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com>
-Cc:     hughd@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: kernel BUG at mm/shmem.c:LINE!
-Message-ID: <20180709143610.GD2662@bombadil.infradead.org>
-References: <000000000000d624c605705e9010@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000d624c605705e9010@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1754572AbeGIOim (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:38:42 -0400
+Received: from foss.arm.com ([217.140.101.70]:60242 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754517AbeGIOil (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 10:38:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29CF9ED1;
+        Mon,  9 Jul 2018 07:38:41 -0700 (PDT)
+Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B8FA63F589;
+        Mon,  9 Jul 2018 07:38:40 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     kvmarm@lists.cs.columbia.edu
+Cc:     Punit Agrawal <punit.agrawal@arm.com>,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
+        suzuki.poulose@arm.com, will.deacon@arm.com
+Subject: [PATCH v5 0/7] KVM: Support PUD hugepages at stage 2
+Date:   Mon,  9 Jul 2018 15:38:27 +0100
+Message-Id: <20180709143835.28971-1-punit.agrawal@arm.com>
+X-Mailer: git-send-email 2.17.1
+X-ARM-No-Footer: FoSSMail
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 06:19:02PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    526674536360 Add linux-next specific files for 20180706
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=116d16fc400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c8d1cfc0cb798e48
-> dashboard link: https://syzkaller.appspot.com/bug?extid=b8e0dfee3fd8c9012771
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=170e462c400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15f1ba2c400000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+b8e0dfee3fd8c9012771@syzkaller.appspotmail.com
+This series is an update to the PUD hugepage support previously posted
+at [0]. This patchset adds support for PUD hugepages at stage
+2. This feature is useful on cores that have support for large sized
+TLB mappings (e.g., 1GB for 4K granule).
 
-#syz fix: shmem: Convert shmem_add_to_page_cache to XArray
+The biggest change in this version is to replace repeated instances of
+walking the page tables to get to a leaf-entry with a function to
+return the appropriate entry. This was suggested by Suzuki and should
+help reduce the amount of churn resulting from future changes. It also
+address other feedback on the previous version.
+
+Support is added to code that is shared between arm and arm64. Dummy
+helpers for arm are provided as the port does not support PUD hugepage
+sizes.
+
+The patches have been tested on an A57 based system. The patchset is
+based on v4.18-rc4. The are a few conflicts with the support for 52
+bit IPA[1] due to change in number of parameters for
+stage2_pmd_offset().
+
+Thanks,
+Punit
+
+v4 -> v5:
+* Patch 1 - Drop helper stage2_should_exec() and refactor the
+  condition to decide if a page table entry should be marked
+  executable
+* Patch 4-6 - Introduce stage2_get_leaf_entry() and use it in this and
+  latter patches
+* Patch 7 - Use stage 2 accessors instead of using the page table
+  helpers directly
+* Patch 7 - Add a note to update the PUD hugepage support when number
+  of levels of stage 2 tables differs from stage 1
+
+v3 -> v4:
+* Patch 1 and 7 - Don't put down hugepages pte if logging is enabled
+* Patch 4-5 - Add PUD hugepage support for exec and access faults
+* Patch 6 - PUD hugepage support for aging page table entries
+
+v2 -> v3:
+* Update vma_pagesize directly if THP [1/4]. Previsouly this was done
+  indirectly via hugetlb
+* Added review tag [4/4]
+
+v1 -> v2:
+* Create helper to check if the page should have exec permission [1/4]
+* Fix broken condition to detect THP hugepage [1/4]
+* Fix in-correct hunk resulting from a rebase [4/4]
+
+[0] https://www.spinics.net/lists/arm-kernel/msg663562.html
+[1] https://www.spinics.net/lists/kvm/msg171065.html
+
+Punit Agrawal (7):
+  KVM: arm/arm64: Share common code in user_mem_abort()
+  KVM: arm/arm64: Introduce helpers to manupulate page table entries
+  KVM: arm64: Support dirty page tracking for PUD hugepages
+  KVM: arm64: Support PUD hugepage in stage2_is_exec()
+  KVM: arm64: Support handling access faults for PUD hugepages
+  KVM: arm64: Update age handlers to support PUD hugepages
+  KVM: arm64: Add support for creating PUD hugepages at stage 2
+
+ arch/arm/include/asm/kvm_mmu.h         |  60 +++++
+ arch/arm64/include/asm/kvm_mmu.h       |  47 ++++
+ arch/arm64/include/asm/pgtable-hwdef.h |   4 +
+ arch/arm64/include/asm/pgtable.h       |   9 +
+ virt/kvm/arm/mmu.c                     | 289 ++++++++++++++++++-------
+ 5 files changed, 330 insertions(+), 79 deletions(-)
+
+-- 
+2.17.1
+
