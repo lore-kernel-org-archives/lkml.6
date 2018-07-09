@@ -2,178 +2,138 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 146E1C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C14C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C52FB20881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:15:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C52FB20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4C54220881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:17:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C54220881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932633AbeGINPt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:15:49 -0400
-Received: from mga11.intel.com ([192.55.52.93]:57949 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754183AbeGINPs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:15:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 06:15:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,330,1526367600"; 
-   d="scan'208";a="55467868"
-Received: from aperigno-mobl1.ger.corp.intel.com (HELO [10.252.52.195]) ([10.252.52.195])
-  by orsmga008.jf.intel.com with ESMTP; 09 Jul 2018 06:15:45 -0700
-Subject: Re: [PATCH 1/4] drm/arm/malidp: Add modifier definitions for
- describing Arm Framebuffer Compression (AFBC).
-To:     Ayan Kumar Halder <ayan.halder@arm.com>, gustavo@padovan.org,
-        seanpaul@chromium.org, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc:     nd@arm.com, Rosen Zhelev <rosen.zhelev@arm.com>
-References: <1530807905-18248-1-git-send-email-ayan.halder@arm.com>
- <1530868585-11068-1-git-send-email-ayan.halder@arm.com>
- <1530868585-11068-2-git-send-email-ayan.halder@arm.com>
-From:   Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Message-ID: <36fdd04b-5717-2cb9-d70c-d24e7113117b@linux.intel.com>
-Date:   Mon, 9 Jul 2018 15:15:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S932764AbeGINR0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:17:26 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36682 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754437AbeGINRY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 09:17:24 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fcW2b-0001jy-6s; Mon, 09 Jul 2018 13:17:21 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Kalle Valo <kvalo@codeaurora.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ath6kl: remove redundant variables netlen, orig_buf, orig_len, dropped and stats
+Date:   Mon,  9 Jul 2018 14:17:20 +0100
+Message-Id: <20180709131720.6668-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <1530868585-11068-2-git-send-email-ayan.halder@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Op 06-07-18 om 11:16 schreef Ayan Kumar Halder:
-> AFBC is a proprietary lossless image compression protocol and format.
-> It provides fine-grained random access and minimizes the amount of data
-> transferred between IP blocks.
-> AFBC has several features which may be supported and/or used, which are
-> represented using bits in the modifier. Not all combinations are valid,
-> and different devices or use-cases may support different combinations.
->
-> Signed-off-by: Rosen Zhelev <rosen.zhelev@arm.com>
-> Signed-off-by: Ayan Kumar halder <ayan.halder@arm.com>
-> Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-> Reviewed-by: James (Qian) Wang <james.qian.wang@arm.com>
-> ---
->  include/uapi/drm/drm_fourcc.h | 83 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 83 insertions(+)
->
-> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index e04613d..af7e9ab 100644
-> --- a/include/uapi/drm/drm_fourcc.h
-> +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -183,6 +183,7 @@ extern "C" {
->  #define DRM_FORMAT_MOD_VENDOR_QCOM    0x05
->  #define DRM_FORMAT_MOD_VENDOR_VIVANTE 0x06
->  #define DRM_FORMAT_MOD_VENDOR_BROADCOM 0x07
-> +#define DRM_FORMAT_MOD_VENDOR_ARM     0x08
->  /* add more to the end as needed */
->  
->  #define DRM_FORMAT_RESERVED	      ((1ULL << 56) - 1)
-> @@ -405,6 +406,88 @@ extern "C" {
->   */
->  #define DRM_FORMAT_MOD_BROADCOM_VC4_T_TILED fourcc_mod_code(BROADCOM, 1)
-Seems drm-misc-next now has a DRM_FORMAT_MOD_BROADCOM_UIF format extra, but that's just noise when applying. :)
-> +/*
-> + * Arm Framebuffer Compression (AFBC) modifiers
-> + *
-> + * AFBC is a proprietary lossless image compression protocol and format.
-> + * It provides fine-grained random access and minimizes the amount of data
-> + * transferred between IP blocks.
-> + *
-> + * AFBC has several features which may be supported and/or used, which are
-> + * represented using bits in the modifier. Not all combinations are valid,
-> + * and different devices or use-cases may support different combinations.
-> + */
-> +#define DRM_FORMAT_MOD_ARM_AFBC(__afbc_mode)	fourcc_mod_code(ARM, __afbc_mode)
-> +
-> +/*
-> + * AFBC superblock size
-> + *
-> + * Indicates the superblock size(s) used for the AFBC buffer. The buffer
-> + * size (in pixels) must be aligned to a multiple of the superblock size.
-> + * Four lowest significant bits(LSBs) are reserved for block size.
-> + */
-> +#define AFBC_FORMAT_MOD_BLOCK_SIZE_MASK      0xf
-> +#define AFBC_FORMAT_MOD_BLOCK_SIZE_16x16     (1ULL)
-> +#define AFBC_FORMAT_MOD_BLOCK_SIZE_32x8      (2ULL)
-> +
-> +/*
-> + * AFBC lossless colorspace transform
-> + *
-> + * Indicates that the buffer makes use of the AFBC lossless colorspace
-> + * transform.
-> + */
-> +#define AFBC_FORMAT_MOD_YTR     (1ULL <<  4)
-> +
-> +/*
-> + * AFBC block-split
-> + *
-> + * Indicates that the payload of each superblock is split. The second
-> + * half of the payload is positioned at a predefined offset from the start
-> + * of the superblock payload.
-> + */
-> +#define AFBC_FORMAT_MOD_SPLIT   (1ULL <<  5)
-> +
-> +/*
-> + * AFBC sparse layout
-> + *
-> + * This flag indicates that the payload of each superblock must be stored at a
-> + * predefined position relative to the other superblocks in the same AFBC
-> + * buffer. This order is the same order used by the header buffer. In this mode
-> + * each superblock is given the same amount of space as an uncompressed
-> + * superblock of the particular format would require, rounding up to the next
-> + * multiple of 128 bytes in size.
-> + */
-> +#define AFBC_FORMAT_MOD_SPARSE  (1ULL <<  6)
-> +
-> +/*
-> + * AFBC copy-block restrict
-> + *
-> + * Buffers with this flag must obey the copy-block restriction. The restriction
-> + * is such that there are no copy-blocks referring across the border of 8x8
-> + * blocks. For the subsampled data the 8x8 limitation is also subsampled.
-> + */
-> +#define AFBC_FORMAT_MOD_CBR     (1ULL <<  7)
-> +
-> +/*
-> + * AFBC tiled layout
-> + *
-> + * The tiled layout groups superblocks in 8x8 or 4x4 tiles, where all
-> + * superblocks inside a tile are stored together in memory. 8x8 tiles are used
-> + * for pixel formats up to and including 32 bpp while 4x4 tiles are used for
-> + * larger bpp formats. The order between the tiles is scan line.
-> + * When the tiled layout is used, the buffer size (in pixels) must be aligned
-> + * to the tile size.
-> + */
-> +#define AFBC_FORMAT_MOD_TILED   (1ULL <<  8)
-> +
-> +/*
-> + * AFBC solid color blocks
-> + *
-> + * Indicates that the buffer makes use of solid-color blocks, whereby bandwidth
-> + * can be reduced if a whole superblock is a single color.
-> + */
-> +#define AFBC_FORMAT_MOD_SC      (1ULL <<  9)
-> +
->  #if defined(__cplusplus)
->  }
->  #endif
+From: Colin Ian King <colin.king@canonical.com>
 
-Acked-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Variables netlen, orig_buf, orig_len, dropped and stats are assigned values
+but are never used hence they are redundant and can be removed.
 
-But I would put patch 2 last, since that enables the feature without hw support otherwise.
+Cleans up clang warnings:
+warning: variable 'netlen' set but not used [-Wunused-but-set-variable]
+warning: variable 'orig_buf' set but not used [-Wunused-but-set-variable]
+warning: variable 'orig_len' set but not used [-Wunused-but-set-variable]
+warning: variable 'dropped' set but not used [-Wunused-but-set-variable]
+warning: variable 'stats' set but not used [-Wunused-but-set-variable]
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/wireless/ath/ath6kl/htc_pipe.c | 10 ++--------
+ drivers/net/wireless/ath/ath6kl/main.c     |  3 +--
+ drivers/net/wireless/ath/ath6kl/txrx.c     |  2 --
+ 3 files changed, 3 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath6kl/htc_pipe.c b/drivers/net/wireless/ath/ath6kl/htc_pipe.c
+index 546243e11737..434b66829646 100644
+--- a/drivers/net/wireless/ath/ath6kl/htc_pipe.c
++++ b/drivers/net/wireless/ath/ath6kl/htc_pipe.c
+@@ -746,10 +746,8 @@ static int ath6kl_htc_pipe_tx_complete(struct ath6kl *ar, struct sk_buff *skb)
+ 	struct htc_endpoint *ep;
+ 	struct htc_packet *packet;
+ 	u8 ep_id, *netdata;
+-	u32 netlen;
+ 
+ 	netdata = skb->data;
+-	netlen = skb->len;
+ 
+ 	htc_hdr = (struct htc_frame_hdr *) netdata;
+ 
+@@ -855,12 +853,8 @@ static int htc_process_trailer(struct htc_target *target, u8 *buffer,
+ {
+ 	struct htc_credit_report *report;
+ 	struct htc_record_hdr *record;
+-	u8 *record_buf, *orig_buf;
+-	int orig_len, status;
+-
+-	orig_buf = buffer;
+-	orig_len = len;
+-	status = 0;
++	u8 *record_buf;
++	int status = 0;
+ 
+ 	while (len > 0) {
+ 		if (len < sizeof(struct htc_record_hdr)) {
+diff --git a/drivers/net/wireless/ath/ath6kl/main.c b/drivers/net/wireless/ath/ath6kl/main.c
+index 808fb30be9ad..0c61dbaa62a4 100644
+--- a/drivers/net/wireless/ath/ath6kl/main.c
++++ b/drivers/net/wireless/ath/ath6kl/main.c
+@@ -272,7 +272,7 @@ int ath6kl_read_fwlogs(struct ath6kl *ar)
+ {
+ 	struct ath6kl_dbglog_hdr debug_hdr;
+ 	struct ath6kl_dbglog_buf debug_buf;
+-	u32 address, length, dropped, firstbuf, debug_hdr_addr;
++	u32 address, length, firstbuf, debug_hdr_addr;
+ 	int ret, loop;
+ 	u8 *buf;
+ 
+@@ -303,7 +303,6 @@ int ath6kl_read_fwlogs(struct ath6kl *ar)
+ 	address = TARG_VTOP(ar->target_type,
+ 			    le32_to_cpu(debug_hdr.dbuf_addr));
+ 	firstbuf = address;
+-	dropped = le32_to_cpu(debug_hdr.dropped);
+ 	ret = ath6kl_diag_read(ar, address, &debug_buf, sizeof(debug_buf));
+ 	if (ret)
+ 		goto out;
+diff --git a/drivers/net/wireless/ath/ath6kl/txrx.c b/drivers/net/wireless/ath/ath6kl/txrx.c
+index 618d12ed4b40..b22ed499f7ba 100644
+--- a/drivers/net/wireless/ath/ath6kl/txrx.c
++++ b/drivers/net/wireless/ath/ath6kl/txrx.c
+@@ -1701,7 +1701,6 @@ void aggr_recv_addba_req_evt(struct ath6kl_vif *vif, u8 tid_mux, u16 seq_no,
+ 	struct ath6kl_sta *sta;
+ 	struct aggr_info_conn *aggr_conn = NULL;
+ 	struct rxtid *rxtid;
+-	struct rxtid_stats *stats;
+ 	u16 hold_q_size;
+ 	u8 tid, aid;
+ 
+@@ -1722,7 +1721,6 @@ void aggr_recv_addba_req_evt(struct ath6kl_vif *vif, u8 tid_mux, u16 seq_no,
+ 		return;
+ 
+ 	rxtid = &aggr_conn->rx_tid[tid];
+-	stats = &aggr_conn->stat[tid];
+ 
+ 	if (win_sz < AGGR_WIN_SZ_MIN || win_sz > AGGR_WIN_SZ_MAX)
+ 		ath6kl_dbg(ATH6KL_DBG_WLAN_RX, "%s: win_sz %d, tid %d\n",
+-- 
+2.17.1
 
