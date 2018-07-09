@@ -3,217 +3,521 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C20C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B71C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6576220882
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E29B52084A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:24:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="Af3/C+JF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6576220882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FwXGDf6E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E29B52084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754496AbeGIIXk (ORCPT
+        id S1754455AbeGIIYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:23:40 -0400
-Received: from mail-dm3nam03on0062.outbound.protection.outlook.com ([104.47.41.62]:24544
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751321AbeGIIXh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:23:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+95Y1lLhZ6qJPcQGkBq3dcYguacv2UBAEL3/m5zUGr8=;
- b=Af3/C+JFgrvFbKgsqmclxdGUr2FPntFsmIxTXADaoW7Ykvf4zMlu8ibmuMLHIlz5QEjTOmlW3FlTUCNQUGn3QKivivZ+Zxg+q+yGdKGj9QJdZSKqn5iZSGtlBoWNom3PBd6c+Yz3A1maCK134WO2x2nKEgNo7Cmu4M4hQyR5nUU=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-Received: from xhacker.debian (124.74.246.114) by
- CY4PR03MB2632.namprd03.prod.outlook.com (2603:10b6:903:75::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.18; Mon, 9 Jul 2018 08:23:32 +0000
-Date:   Mon, 9 Jul 2018 16:21:38 +0800
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>
-Subject: Re: serial: 8250: introduce get_divisor() and set_divisor() hook
-Message-ID: <20180709162138.005c54ec@xhacker.debian>
-In-Reply-To: <20180709161922.3c43f599@xhacker.debian>
-References: <20180709160942.11a74f7a@xhacker.debian>
-        <20180709161922.3c43f599@xhacker.debian>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 9 Jul 2018 04:24:23 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:38798 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751211AbeGIIYW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 04:24:22 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w698N9dX002303;
+        Mon, 9 Jul 2018 03:23:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531124589;
+        bh=r5bZNenPo9Qomdo5mSuyAVvMI08cFwgUhw4gvMyDEfQ=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=FwXGDf6ERKG1ROR/ZrXluPivZ4qmBCqpM1zO+qn4V+hvZYEmijZU4L8gsAKH2k5cF
+         7fbYHME5XEFPwoBUN26XGp+zoZiD8NQVfr0odL1IrPImTBf7Rm2D1O52eC/kEPtuoy
+         fPGY1qa1ke65GthT/MCzS1rau5pKE1mq0VLqM61A=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w698N9JQ030436;
+        Mon, 9 Jul 2018 03:23:09 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Mon, 9 Jul
+ 2018 03:23:09 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Mon, 9 Jul 2018 03:23:09 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w698N6Gw028093;
+        Mon, 9 Jul 2018 03:23:07 -0500
+Subject: Re: [PATCH v2] rtc: OMAP: Add support for rtc-only mode
+To:     Johan Hovold <johan@kernel.org>
+CC:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
+        <t-kristo@ti.com>, <linux-rtc@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1531116709-20135-1-git-send-email-j-keerthy@ti.com>
+ <20180709075553.GA3633@localhost>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <83bc3b31-36d5-0f53-e8e2-2d0d0d82f548@ti.com>
+Date:   Mon, 9 Jul 2018 13:53:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180709075553.GA3633@localhost>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [124.74.246.114]
-X-ClientProxiedBy: TY1PR01CA0172.jpnprd01.prod.outlook.com (2603:1096:402::24)
- To CY4PR03MB2632.namprd03.prod.outlook.com (2603:10b6:903:75::11)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f5c12a50-a169-4167-bac0-08d5e5754348
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(2017052603328)(7153060)(7193020);SRVR:CY4PR03MB2632;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2632;3:GjFh35qhtEm4FS4zGfQQbfgiU19IY+S1LokihGcybN9952JB01ort5TdsAdhptLqBbQmvwBX82ontfDt2rdTSmGd/0bhffHNx4pxQk/A3EY//gnHVqNE/d/AD61Y+91M1dAFjT5Xtc93uq/1QLfqF7bHY0zAj/oIeyiutqEDlDtVGH5hbgRVnMPYf7GX14jqN5sos8OFyvlMfxqMaxDqC5htMAY+6YTuauEr06/lyKbBZ6aGiXID/VLRlLrM894e;25:tgyANK04hKAelW92E+vHD1Lk2vohkXmoO/BGkPz5ESXsHoU6JpBoYRptIKP7yhPpWwSGMxyUTSAryG33YdZW7pMrRua0RRiDoBSMdb7c2tAMmqx7nYw6hehv9I0iDrnk1y3XwXam1vcUXQXnRgTcJ+8vZ6zl7DnqUPbbFddLAc0oJ5OKtcIEp3dw36TG7kxUpfEItqAAoZiKkTzFeE9EoQiY8L/fsuE8C4+eALrTHY5HWkegxQBi8iaugFqFoamXE9COfEU7TbNWgZRZ09+n2J2xKP8szJv1Ki/7cQZDdXXO+AVUC6UTIY6zXxd2v6nNgvLgz1mSFUdMVCFgA4urlw==;31:2xbb0KBnM/+9/6w9wjYxGPnDCRm78CgHuw9NjfT12hufqeNLeccbQrANpmyIK38GHAWuN7x5esfVpTWMjknQlBHX0o9qBA/9RhPRKu2xOzaZA9VLCykDJ13cXIje3xThaneNrHJdIOc4CjZjlO5X4cpsbJpkBCVd8pTa/914Q2scl0erIZ7eByFbnlayvO1ySusrazkBi8uKAva0Cku7+tmxeLxPCb8L0op9grG70Sg=
-X-MS-TrafficTypeDiagnostic: CY4PR03MB2632:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2632;20:QtkJpWoSmybtALRsWeSAlfMyAUqeWjDNG74m8+velOgw2tXsMP072DeJQznHUIC9xw03GYatmwkdrnXrPHyDk0zElymkir4xuR3SArl0kU3rfRqYNcYQoapsXenqGwABY9VCoLoImLPBALrGCsJtmwZb9By3cjfxqhBQyGYXPyjXxXeNsJWraGgUu81N3F4wQU5fRaqgCiM9ezqJ/lMeW5qK4Wv1rWLFWd6aEmMH/XKg3/D33jLCwbzjNd1cwnhRZ+p6WAtjpghEKynWrqoyoG2f7T2v/oFlc/jwU3tni4DqcouDy82qZGAnwd0uYsh1dtz4LeN2yfNhADifGPUViESpw4bSaqN4JUK87cwYTR14nDIhPxNdQ5ZKYVq24rFl0fmkMRtXUhSjk12JDgsR7rAY83R8+lTAxUkRRrCbbuGb8kNgjfO6HPcZUwl8mnktR6RzwTO6c6jqY3nlJ9u0hQVpQ4JnReEBag7c9hn+a7rtRaHRAqVeiVHDGmtnZwSQ;4:FQOMPQIXAOmE/D404c3gT1tEPRmoZ6Ro5qgLBZzFyihSKNSGT+DGGS9Hnj5y7j+VqWX2lAuBwE4bHI3C3AdCCADcfuN8EdmeagrxphxHZU4Qbq6fmo1uo0MeWMvCLwpxzLJy9bYkhGrNcu10e2xdVtrMKrMT62HV1vSZXVF1ER5V0bq1/oKcQP/aLOol4ULDXNC1t3sphd3S1cQHxLdrQK/mrdTBaLVTMNOe6+3AYu9QE0nwrpHg+IsqjVe63eDkqZ0OUvuB8BAU88+YUMh4KvEWLY5w2kWMRke/d9wwItKSwcfChaG3Iu6rdJM+nELr
-X-Microsoft-Antispam-PRVS: <CY4PR03MB26327BDAF8977C6DF178F9FCED440@CY4PR03MB2632.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(228905959029699);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:CY4PR03MB2632;BCL:0;PCL:0;RULEID:;SRVR:CY4PR03MB2632;
-X-Forefront-PRVS: 07283408BE
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(366004)(346002)(39860400002)(199004)(189003)(486006)(11346002)(55016002)(446003)(956004)(476003)(25786009)(2906002)(9686003)(66066001)(7736002)(305945005)(47776003)(8676002)(81156014)(50226002)(5660300001)(575784001)(72206003)(478600001)(86362001)(68736007)(8936002)(106356001)(105586002)(4326008)(81166006)(76176011)(53936002)(316002)(33896004)(7696005)(52116002)(1076002)(6246003)(97736004)(6506007)(386003)(229853002)(54906003)(110136005)(23726003)(230700001)(186003)(26005)(16526019)(3846002)(6116002)(50466002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR03MB2632;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR03MB2632;23:SZppgbpeQ5C6FxHW9QtguoG3QBuunfeZM5ZavLMga?=
- =?us-ascii?Q?rwXvqGVPJywr617FegbDkpUlzC99JGbK9owU6j+0Sd30QlSoVG78xH6tc1aC?=
- =?us-ascii?Q?uFXIHtNj0Tz+/BVEtNZ0w/pUIF+JG/e6yd4wmu7iLb7mD7XpryPRl0TYwuNE?=
- =?us-ascii?Q?Y+Yr85om1zIoJqtmBj1YJ77nb3LJponJcYSBMnEsa6+neOaQi8UJ1bTlDWHL?=
- =?us-ascii?Q?IoL+p5UsgNZP6njI8jkc0G6BjZ6GhZXSP/pNWgHuJzjto30WqsBc+DHWwDer?=
- =?us-ascii?Q?vs8O9LIQCr8Jzkb/3skJ+1WqzWJBRCWDJsEqa0IFxc/NrKXF6wieyvETnb0h?=
- =?us-ascii?Q?NESmdTcZbOcVWh0kgH8xK0Fm6MQA4ZAGhS4tuCSY4No2SHDLax5uGN+uSvFP?=
- =?us-ascii?Q?LlwD3Yz+k5T22f3lLvOQqRCCAqdda8NZt5Qdh+UboejOLR2EsmgwaTmAnRzV?=
- =?us-ascii?Q?y61kZ3X5/lwXphyKyGmoYFtB92Yv6GJ04UG6Q0FjNvz9kI/mUGW5gWa9hrQJ?=
- =?us-ascii?Q?6/oBGP0gxlX6N0N+Qv+1UEgJoayRTQcxD8PCPQZBGeo8FKxpX/s9mnYssts4?=
- =?us-ascii?Q?1smZ70tDGgK7200QPPla0rRu6iR3LskJfNiz39VEs9N76Trdi/J0ORCkd51c?=
- =?us-ascii?Q?K20tKsu/JrINGu96xI5SEqJu5kpqjYHS3Lieukr0OLqEn19Vk1ZVH338qS+t?=
- =?us-ascii?Q?Yr/0avjZGY6zG1mbM3teHERinYOmeHKDwnVzRNSEteErN4L/A0UStTgqXd0G?=
- =?us-ascii?Q?58VuGdGISIrReHShqkI0X5G+xDRtGKh8gEuU4yy9lryvkC+W1YxrAeYgNu3g?=
- =?us-ascii?Q?QG3OwsPk1QO251i1qH228Zjg9rRzxsIJU/zHrUwhDq+CsgIU1AhxC0dtIqNk?=
- =?us-ascii?Q?gg2WfPZCc14mCrU6th+plyJqBf6Ia4sSz3DRirZl4eBiAJqkVeNv16CF1Gz3?=
- =?us-ascii?Q?FX//rtIDI1IlnLrUsZWEtwhryoy2WXW4iw/LR6RzZtMbqARLuEpzn8PMEY+6?=
- =?us-ascii?Q?ANxQpjYQ/kslS5i1Orb+8FZRDc7vY6+FNTJsi+dEpFGBLB8WBSSoYgnOHjjk?=
- =?us-ascii?Q?x63dIpfMHcyW6WwiAwqibJqkJMtTs+EEjpI4NgBv02xLP7opjC6fo+GBoB8W?=
- =?us-ascii?Q?V7iSF9t730p4T7BGkARpDT0gjQCYpnMi11CndepWIWRcsNIXy7R1YedePWvq?=
- =?us-ascii?Q?EOAHVgmSNK4PgT/5mwtI9myXYKGANZoJNLgpfz1jRLSkHxNnagDVzptjDzXV?=
- =?us-ascii?Q?x0RExbKeGDYnYnaMwQ+DPGNxigfoCJOdLn06RquiSvb6ksWHlztBZBC+fnK3?=
- =?us-ascii?B?dz09?=
-X-Microsoft-Antispam-Message-Info: b/8v7o9lyBPYYP1WyIC8xb0Wm5wtWh3STykGav43BGINJgRkQl20XIKjKVdXZ5lCcl0P4rJrst8FfxwuRPR/R+Z9JN3hqaD4jmiP7FevccmsDqLz1+BErDbUdCY07euuaZwKJ7w65yT0tpD7Gi9kdQ3eKmoQKRBavBVPjH/y5492npbAXF2KaFLx+r04IhpeWmKBpK/JEsS+gjis9uNO3nQKWSKNCqDqwq+h1Bh4cJ6S4qwhQAxRLkZEbdhs30tpoLiXqSIp+8Bm8qMnStIXzrvOaM7hJBK0jrAP71bbpCL6SLeogmKDKw01vjAWbNts6WXoLuu3nNR4peLBeYkAA0AmEA2AX1I8eBrLvJDn7Eg=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2632;6:cwUC4jxTPnd76Qx8kWy0EIFjJlpU6CyLjJHq9LhJhTsyHbk3gD0mV7YQj5JHF97DU78j1sWW2z14v2okoBwd9MZbHjn0QvnodJm/tgZzJ5LssM30XgbtoydbzWKBJWYVdSH2jYrxAQUgepoRRzgGbcIrUFUOOIclV32YHAnBFO/GE8KElimXnlHRtgy4UAO+BlSXoNNVPFxlwjx7liwKM+yPLm+oRGmtAbY02ruHgyb/nuz4+S3orVLFT9vqJ+wHkmn5Af2i97sjPwHB7L0h/PN8XOkOstGf6aKgNOd4wQ5taxIB1T/CVBqrqb2EUlJaSl3G3sIx638CrTFedsXC6mPgreQuIv/PuUHh0MKH9ssSfDJOoLs6atwu00ePCqLJpLev5q4ahr4t+7HSwl5aITUtyOlK2M1GMdJLt/M/JEpU97pNNxql8apC7rni9tYXqo7MZtbSozlgjb2z8km+Kg==;5:ZTKZ+rP3o3y66gvziOFxpZmtd3zuaFLL9sTni8XEE29EW31FpOHoPOEfaxx+CiK5KoXvJPxoYfKLJ6rjlyNi+Fil7B/aYji/WzK+t3R5XRPV+I5WcwDAzSAfxHWYGbkFioXd3RDPSaR0dgVRSN5yD+euqQ4jNLqHnOBp6V6lh5Y=;24:bEVEMr23j8qsv968rJJiihX1QIlvI3x/5eF6e1XRpACZbgd18x0gLNkNUVVhe2oXkH3YilFWTKSJc5qYPc2OWFjCmHHXbVJeVtQ5SqdgxMs=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR03MB2632;7:sFIi0a9QbtFd9cbr9nh1whPgXnBD38CkbGSW4LcD2PpCptyLVg/2b32/II644ZAqnFGPxheGoaAM/NW3743gzUzKvdqjCkc7++yiSTJ1ocuth4UwZYYuMNzkz03DY57+eetN8FT+PlZPSx1TOGAQv7yijxRbsUKukoM0/N/W7tcXiw8g8o/bTo2BJMUm0aP6bdZoDdFR6DZGEkK/14ZiY+dQF3MMMYmy3ggFxZCIEsGGYyhNbj4Ul2EQ/CJORlL/
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Jul 2018 08:23:32.9243 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5c12a50-a169-4167-bac0-08d5e5754348
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR03MB2632
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-oops, sorry, please ignore this patch.
 
-On Mon, 9 Jul 2018 16:19:22 +0800
-Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
 
-> Add these two hooks so that they can be overridden with driver specific
-> implementations.
+On Monday 09 July 2018 01:25 PM, Johan Hovold wrote:
+> On Mon, Jul 09, 2018 at 11:41:49AM +0530, Keerthy wrote:
+>> Prepare rtc driver for rtc-only with DDR in self-refresh mode.
+>> omap_rtc_power_off now should cater to two features:
+>>
+>> 1) RTC plus DDR in self-refresh is power a saving mode where in the
+>> entire system including the different voltage rails from PMIC are
+>> shutdown except the ones feeding on to RTC and DDR. DDR is kept in
+>> self-refresh hence the contents are preserved. RTC ALARM2 is connected
+>> to PMIC_EN line once we the ALARM2 is triggered we enter the mode with
+>> DDR in self-refresh and RTC Ticking. After a predetermined time an RTC
+>> ALARM1 triggers waking up the system[1]. The control goes to bootloader.
+>> The bootloader then checks RTC scratchpad registers to confirm it was an
+>> rtc_only wakeup and follows a different path, configure bare minimal
+>> clocks for ddr and then jumps to the resume address in another RTC
+>> scratchpad registers and transfers the control to Kernel. Kernel then
+>> restores the saved context. omap_rtc_power_off_program does the ALARM2
+>> programming part.
+>>
+>>      [1] http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf Page 2884
+>>
+>> 2) Power-off: This is usual poweroff mode. omap_rtc_power_off calls the
+>> above omap_rtc_power_off_program function and in addition to that
+>> programs the OMAP_RTC_PMIC_REG for any external wake ups for PMIC like
+>> the pushbutton and shuts off the PMIC.
+>>
+>> Hence the split in omap_rtc_power_off.
+>>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>
+>> Changes in v2:
+>>
+>>   * Add details in the commit log.
+>>   * Use of_device_is_system_power_controller to check if rtc node is
+>>     indeed the system power control instead of manually reading property.
+>>
+>>  drivers/rtc/interface.c |  12 ++++
+>>  drivers/rtc/rtc-omap.c  | 167 +++++++++++++++++++++++++++++++++---------------
+>>  include/linux/rtc.h     |   2 +
+>>  3 files changed, 131 insertions(+), 50 deletions(-)
+>>
+>> diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+>> index 6d4012d..d8b70f0 100644
+>> --- a/drivers/rtc/interface.c
+>> +++ b/drivers/rtc/interface.c
+>> @@ -1139,3 +1139,15 @@ int rtc_set_offset(struct rtc_device *rtc, long offset)
+>>  	trace_rtc_set_offset(offset, ret);
+>>  	return ret;
+>>  }
+>> +
+>> +/**
+>> + * rtc_power_off_program - Some of the rtc are hooked on to PMIC_EN
+>> + * line and can be used to power off the SoC.
+>> + *
+>> + * Kernel interface to program rtc to power off
+>> + */
+>> +void rtc_power_off_program(struct rtc_device *rtc)
+>> +{
+>> +	rtc->ops->power_off_program(rtc->dev.parent);
+>> +}
+>> +EXPORT_SYMBOL_GPL(rtc_power_off_program);
 > 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/tty/serial/8250/8250_core.c |  4 ++++
->  drivers/tty/serial/8250/8250_port.c | 27 +++++++++++++++++++++++----
->  include/linux/serial_core.h         |  7 +++++++
->  3 files changed, 34 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_core.c b/drivers/tty/serial/8250/8250_core.c
-> index 9342fc2ee7df..a0bb77290747 100644
-> --- a/drivers/tty/serial/8250/8250_core.c
-> +++ b/drivers/tty/serial/8250/8250_core.c
-> @@ -1023,6 +1023,10 @@ int serial8250_register_8250_port(struct uart_8250_port *up)
->  			uart->port.get_mctrl = up->port.get_mctrl;
->  		if (up->port.set_mctrl)
->  			uart->port.set_mctrl = up->port.set_mctrl;
-> +		if (up->port.get_divisor)
-> +			uart->port.get_divisor = up->port.get_divisor;
-> +		if (up->port.set_divisor)
-> +			uart->port.set_divisor = up->port.set_divisor;
->  		if (up->port.startup)
->  			uart->port.startup = up->port.startup;
->  		if (up->port.shutdown)
-> diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-> index 709fe6b4265c..ce0dc17f18ee 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -2498,9 +2498,9 @@ static unsigned int npcm_get_divisor(struct uart_8250_port *up,
->  	return DIV_ROUND_CLOSEST(port->uartclk, 16 * baud + 2) - 2;
->  }
->  
-> -static unsigned int serial8250_get_divisor(struct uart_port *port,
-> -					   unsigned int baud,
-> -					   unsigned int *frac)
-> +static unsigned int serial8250_do_get_divisor(struct uart_port *port,
-> +					      unsigned int baud,
-> +					      unsigned int *frac)
->  {
->  	struct uart_8250_port *up = up_to_u8250p(port);
->  	unsigned int quot;
-> @@ -2532,6 +2532,16 @@ static unsigned int serial8250_get_divisor(struct uart_port *port,
->  	return quot;
->  }
->  
-> +static unsigned int serial8250_get_divisor(struct uart_port *port,
-> +					   unsigned int baud,
-> +					   unsigned int *frac)
-> +{
-> +	if (port->get_divisor)
-> +		return port->get_divisor(port, baud, frac);
-> +
-> +	return serial8250_do_get_divisor(port, baud, frac);
-> +}
-> +
->  static unsigned char serial8250_compute_lcr(struct uart_8250_port *up,
->  					    tcflag_t c_cflag)
->  {
-> @@ -2570,7 +2580,7 @@ static unsigned char serial8250_compute_lcr(struct uart_8250_port *up,
->  	return cval;
->  }
->  
-> -static void serial8250_set_divisor(struct uart_port *port, unsigned int baud,
-> +static void serial8250_do_set_divisor(struct uart_port *port, unsigned int baud,
->  			    unsigned int quot, unsigned int quot_frac)
->  {
->  	struct uart_8250_port *up = up_to_u8250p(port);
-> @@ -2603,6 +2613,15 @@ static void serial8250_set_divisor(struct uart_port *port, unsigned int baud,
->  	}
->  }
->  
-> +static void serial8250_set_divisor(struct uart_port *port, unsigned int baud,
-> +				   unsigned int quot, unsigned int quot_frac)
-> +{
-> +	if (port->set_divisor)
-> +		port->set_divisor(port, baud, quot, quot_frac);
-> +	else
-> +		serial8250_do_set_divisor(port, baud, quot, quot_frac);
-> +}
-> +
->  static unsigned int serial8250_get_baud_rate(struct uart_port *port,
->  					     struct ktermios *termios,
->  					     struct ktermios *old)
-> diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
-> index 06ea4eeb09ab..406edae44ca3 100644
-> --- a/include/linux/serial_core.h
-> +++ b/include/linux/serial_core.h
-> @@ -127,6 +127,13 @@ struct uart_port {
->  					     struct ktermios *);
->  	unsigned int		(*get_mctrl)(struct uart_port *);
->  	void			(*set_mctrl)(struct uart_port *, unsigned int);
-> +	unsigned int		(*get_divisor)(struct uart_port *,
-> +					       unsigned int baud,
-> +					       unsigned int *frac);
-> +	void			(*set_divisor)(struct uart_port *,
-> +					       unsigned int baud,
-> +					       unsigned int quot,
-> +					       unsigned int quot_frac);
->  	int			(*startup)(struct uart_port *port);
->  	void			(*shutdown)(struct uart_port *port);
->  	void			(*throttle)(struct uart_port *port);
+> We typically do not add new interfaces without any users, so this will
+> probably have to go in along with the corresponding omap changes for
+> rtc-only mode.
 
+Yea okay.
+
+> 
+> Also, would you not like to be able to detect suspend failures by
+> having the function return a status integer?
+
+sure. Will make it integer returning function.
+
+> 
+>> diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
+>> index 3908639..7f45e02 100644
+>> --- a/drivers/rtc/rtc-omap.c
+>> +++ b/drivers/rtc/rtc-omap.c
+>> @@ -29,6 +29,7 @@
+>>  #include <linux/pinctrl/pinconf-generic.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pm_runtime.h>
+>> +#include <linux/regulator/machine.h>
+>>  #include <linux/rtc.h>
+>>  
+>>  /*
+>> @@ -131,6 +132,8 @@
+>>  #define	KICK0_VALUE			0x83e70b13
+>>  #define	KICK1_VALUE			0x95a4f1e0
+>>  
+>> +#define SHUTDOWN_TIME_SEC		1
+> 
+> IIRC setting the alarm two seconds into the future was essential to
+> avoid missing an alarm and failing to power off the SoC. You're now
+> changing this, not only for your future rtc-only use, but for the
+> current power-off feature without even commenting on it.
+> 
+>> +
+>>  struct omap_rtc;
+>>  
+>>  struct omap_rtc_device_type {
+>> @@ -415,6 +418,77 @@ static int omap_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+>>  
+>>  static struct omap_rtc *omap_rtc_power_off_rtc;
+>>  
+>> +/**
+>> + * omap_rtc_power_off_program: Set the pmic power off sequence. The RTC
+>> + * generates pmic_pwr_enable control, which can be used to control an external
+>> + * PMIC.
+>> + */
+>> +void omap_rtc_power_off_program(struct device *dev)
+>> +{
+>> +	u32 val;
+>> +	struct rtc_time tm;
+>> +	unsigned long time;
+>> +	int seconds;
+>> +
+>> +	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
+>> +
+>> +	/* Clear any existing ALARM2 event */
+>> +	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_STATUS_REG,
+>> +		   OMAP_RTC_STATUS_ALARM2);
+>> +
+>> +	pr_info("System will go to power_off state in approx. %d second\n",
+>> +		SHUTDOWN_TIME_SEC);
+> 
+> This should be a dev_dbg if anything.
+
+Okay
+
+> 
+>> +
+>> +again:
+>> +	/* Read rtc time */
+>> +	tm.tm_sec = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG);
+>> +	seconds = tm.tm_sec;
+>> +	tm.tm_min = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_MINUTES_REG);
+>> +	tm.tm_hour = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_HOURS_REG);
+>> +	tm.tm_mday = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_DAYS_REG);
+>> +	tm.tm_mon = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_MONTHS_REG);
+>> +	tm.tm_year = rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_YEARS_REG);
+> 
+> Why are you open-coding omap_rtc_read_time_raw()? It looks like you did
+> not even try to factor out the current implementation, but rather
+> scrapped it and reimplemented it from scratch. I suggest you reuse the
+> current, tested code, as far as possible.
+
+okay will do that.
+
+> 
+>> +	bcd2tm(&tm);
+>> +
+>> +	/* Convert Gregorian date to seconds since 01-01-1970 00:00:00 */
+>> +	rtc_tm_to_time(&tm, &time);
+>> +
+>> +	/* Convert seconds since 01-01-1970 00:00:00 to Gregorian date */
+>> +	rtc_time_to_tm(time + SHUTDOWN_TIME_SEC, &tm);
+>> +
+>> +	if (tm2bcd(&tm) < 0)
+>> +		return;
+>> +
+>> +	/* After wait_not_busy, we have at least 15us until the next second. */
+>> +	rtc_wait_not_busy(omap_rtc_power_off_rtc);
+>> +
+>> +	/* Our calculations started right before the rollover, try again */
+>> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
+>> +		goto again;
+> 
+> Ok, so you're retrying instead of using a two-second alarm offset. I
+> suggest you split this change out from the rest of the patch and amend
+> the current implementation first.
+
+Okay
+
+> 
+>> +
+>> +	/*
+>> +	 * pmic_pwr_enable is controlled by means of ALARM2 event. So here
+>> +	 * programming alarm2 expiry time and enabling alarm2 interrupt
+>> +	 */
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_SECONDS_REG,
+>> +		  tm.tm_sec);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_MINUTES_REG,
+>> +		  tm.tm_min);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_HOURS_REG,
+>> +		  tm.tm_hour);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_DAYS_REG,
+>> +		  tm.tm_mday);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_MONTHS_REG,
+>> +		  tm.tm_mon);
+>> +	rtc_write(omap_rtc_power_off_rtc, OMAP_RTC_ALARM2_YEARS_REG,
+>> +		  tm.tm_year);
+>> +
+>> +	/* Enable alarm2 interrupt */
+>> +	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_INTERRUPTS_REG);
+>> +	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_INTERRUPTS_REG, val |
+>> +		   OMAP_RTC_INTERRUPTS_IT_ALARM2);
+>> +}
+>> +
+>>  /*
+>>   * omap_rtc_poweroff: RTC-controlled power off
+>>   *
+>> @@ -431,45 +505,19 @@ static int omap_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
+>>   */
+>>  static void omap_rtc_power_off(void)
+>>  {
+>> -	struct omap_rtc *rtc = omap_rtc_power_off_rtc;
+>> -	struct rtc_time tm;
+>> -	unsigned long now;
+>> +	struct rtc_device *rtc = omap_rtc_power_off_rtc->rtc;
+>>  	u32 val;
+>>  
+>> -	rtc->type->unlock(rtc);
+>> -	/* enable pmic_power_en control */
+>> -	val = rtc_readl(rtc, OMAP_RTC_PMIC_REG);
+>> -	rtc_writel(rtc, OMAP_RTC_PMIC_REG, val | OMAP_RTC_PMIC_POWER_EN_EN);
+>> -
+>> -	/* set alarm two seconds from now */
+>> -	omap_rtc_read_time_raw(rtc, &tm);
+>> -	bcd2tm(&tm);
+>> -	rtc_tm_to_time(&tm, &now);
+>> -	rtc_time_to_tm(now + 2, &tm);
+>> -
+>> -	if (tm2bcd(&tm) < 0) {
+>> -		dev_err(&rtc->rtc->dev, "power off failed\n");
+>> -		return;
+>> -	}
+>> -
+>> -	rtc_wait_not_busy(rtc);
+>> +	regulator_suspend_prepare(PM_SUSPEND_MAX);
+> 
+> This function has been deprecated, converted to an empty dummy function
+> for the time being, and should not be used.
+
+Okay
+
+> 
+>> +	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
+> 
+> Why the double unlock?
+> 
+>> +	omap_rtc_power_off_program(rtc->dev.parent);
+>>  
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_SECONDS_REG, tm.tm_sec);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_MINUTES_REG, tm.tm_min);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_HOURS_REG, tm.tm_hour);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_DAYS_REG, tm.tm_mday);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_MONTHS_REG, tm.tm_mon);
+>> -	rtc_write(rtc, OMAP_RTC_ALARM2_YEARS_REG, tm.tm_year);
+>> -
+>> -	/*
+>> -	 * enable ALARM2 interrupt
+>> -	 *
+>> -	 * NOTE: this fails on AM3352 if rtc_write (writeb) is used
+>> -	 */
+>> -	val = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+>> -	rtc_writel(rtc, OMAP_RTC_INTERRUPTS_REG,
+>> -			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
+>> -	rtc->type->lock(rtc);
+>> +	/* Set PMIC power enable and EXT_WAKEUP in case PB power on is used */
+>> +	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
+>> +	val |= OMAP_RTC_PMIC_POWER_EN_EN | OMAP_RTC_PMIC_EXT_WKUP_POL(0) |
+>> +	       OMAP_RTC_PMIC_EXT_WKUP_EN(0);
+>> +	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG, val);
+>> +	omap_rtc_power_off_rtc->type->lock(omap_rtc_power_off_rtc);
+>>  
+>>  	/*
+>>  	 * Wait for alarm to trigger (within two seconds) and external PMIC to
+>> @@ -477,6 +525,17 @@ static void omap_rtc_power_off(void)
+>>  	 * (e.g. debounce circuits).
+>>  	 */
+>>  	mdelay(2500);
+>> +
+>> +	pr_err("rtc_power_off failed, bailing out.\n");
+> 
+> Don't think this is needed either. An unrelated change in any case. And
+> you should be using dev_err and friends when you have a struct device.
+
+sure will do that.
+
+> 
+>> +}
+>> +
+>> +static void omap_rtc_cleanup_pm_power_off(struct omap_rtc *rtc)
+>> +{
+>> +	if (pm_power_off == omap_rtc_power_off &&
+>> +	    omap_rtc_power_off_rtc == rtc) {
+>> +		pm_power_off = NULL;
+>> +		omap_rtc_power_off_rtc = NULL;
+>> +	}
+> 
+> Another unrelated change.
+
+Okay this will go as a separate patch.
+
+> 
+>>  }
+>>  
+>>  static const struct rtc_class_ops omap_rtc_ops = {
+>> @@ -485,6 +544,7 @@ static void omap_rtc_power_off(void)
+>>  	.read_alarm	= omap_rtc_read_alarm,
+>>  	.set_alarm	= omap_rtc_set_alarm,
+>>  	.alarm_irq_enable = omap_rtc_alarm_irq_enable,
+>> +	.power_off_program = omap_rtc_power_off_program,
+>>  };
+>>  
+>>  static const struct omap_rtc_device_type omap_rtc_default_type = {
+>> @@ -724,8 +784,7 @@ static int omap_rtc_probe(struct platform_device *pdev)
+>>  	if (of_id) {
+>>  		rtc->type = of_id->data;
+>>  		rtc->is_pmic_controller = rtc->type->has_pmic_mode &&
+>> -				of_property_read_bool(pdev->dev.of_node,
+>> -						"system-power-controller");
+>> +			of_device_is_system_power_controller(pdev->dev.of_node);
+> 
+> Ditto.
+
+okay
+
+> 
+>>  	} else {
+>>  		id_entry = platform_get_device_id(pdev);
+>>  		rtc->type = (void *)id_entry->driver_data;
+>> @@ -838,6 +897,11 @@ static int omap_rtc_probe(struct platform_device *pdev)
+>>  	rtc->type->lock(rtc);
+>>  
+>>  	device_init_wakeup(&pdev->dev, true);
+>> +	omap_rtc_power_off_rtc = rtc;
+>> +
+>> +	if (rtc->is_pmic_controller)
+>> +		if (!pm_power_off)
+>> +			pm_power_off = omap_rtc_power_off;
+> 
+> Why are you initialising the power-off callback even earlier? And
+> without removing the later initialisation? 
+> 
+> This really should be done last, as originally intended.
+> 
+> As I was the one who implemented the current power-off support, I
+> browsed the driver when I saw your patch and discovered a couple of bugs
+> that have since crept it. Those are fixed up here:
+> 
+> 	https://lkml.kernel.org/r/20180704090558.16647-1-johan@kernel.org
+> 
+> I think you should rebase your work on top of those.
+
+Okay. will rebase on them
+
+>  
+>>  	rtc->rtc = devm_rtc_allocate_device(&pdev->dev);
+>>  	if (IS_ERR(rtc->rtc)) {
+>> @@ -887,6 +951,7 @@ static int omap_rtc_probe(struct platform_device *pdev)
+>>  	return 0;
+>>  
+>>  err:
+>> +	omap_rtc_cleanup_pm_power_off(rtc);
+> 
+> Ok, so this actually fixes a bug in the current implementation, and
+> should have been handled separately. But as mentioned above, this is not
+> the right fix as we should not set the power-off callback before the
+> device has been fully initialised.
+
+okay
+
+> 
+>>  	clk_disable_unprepare(rtc->clk);
+>>  	device_init_wakeup(&pdev->dev, false);
+>>  	rtc->type->lock(rtc);
+>> @@ -901,11 +966,7 @@ static int omap_rtc_remove(struct platform_device *pdev)
+>>  	struct omap_rtc *rtc = platform_get_drvdata(pdev);
+>>  	u8 reg;
+>>  
+>> -	if (pm_power_off == omap_rtc_power_off &&
+>> -			omap_rtc_power_off_rtc == rtc) {
+>> -		pm_power_off = NULL;
+>> -		omap_rtc_power_off_rtc = NULL;
+>> -	}
+>> +	omap_rtc_cleanup_pm_power_off(rtc);
+>>  
+>>  	device_init_wakeup(&pdev->dev, 0);
+>>  
+>> @@ -993,14 +1054,20 @@ static void omap_rtc_shutdown(struct platform_device *pdev)
+>>  	struct omap_rtc *rtc = platform_get_drvdata(pdev);
+>>  	u8 mask;
+>>  
+>> -	/*
+>> -	 * Keep the ALARM interrupt enabled to allow the system to power up on
+>> -	 * alarm events.
+>> -	 */
+>>  	rtc->type->unlock(rtc);
+>> -	mask = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+>> -	mask &= OMAP_RTC_INTERRUPTS_IT_ALARM;
+>> -	rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, mask);
+>> +	/* If rtc does not control PMIC then no need to enable ALARM */
+>> +	if (!rtc->is_pmic_controller) {
+>> +		rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, 0);
+>> +	} else {
+>> +		/*
+>> +		 * Keep the ALARM interrupt enabled to allow the system to
+>> +		 * power up on alarm events.
+>> +		 */
+>> +		mask = rtc_read(rtc, OMAP_RTC_INTERRUPTS_REG);
+>> +		mask &= OMAP_RTC_INTERRUPTS_IT_ALARM;
+>> +		rtc_write(rtc, OMAP_RTC_INTERRUPTS_REG, mask);
+>> +	}
+> 
+> This also looks like an unrelated change, which needs to go in its own
+> patch.
+
+Okay.
+
+Will fix the comments and send a v3. Thanks for a comprehensive review.
+
+> 
+>> +
+>>  	rtc->type->lock(rtc);
+>>  }
+>>  
+>> diff --git a/include/linux/rtc.h b/include/linux/rtc.h
+>> index 6268208..f17bc6a 100644
+>> --- a/include/linux/rtc.h
+>> +++ b/include/linux/rtc.h
+>> @@ -85,6 +85,7 @@ struct rtc_class_ops {
+>>  	int (*alarm_irq_enable)(struct device *, unsigned int enabled);
+>>  	int (*read_offset)(struct device *, long *offset);
+>>  	int (*set_offset)(struct device *, long offset);
+>> +	void (*power_off_program)(struct device *dev);
+>>  };
+>>  
+>>  typedef struct rtc_task {
+>> @@ -229,6 +230,7 @@ int rtc_timer_start(struct rtc_device *rtc, struct rtc_timer *timer,
+>>  int rtc_read_offset(struct rtc_device *rtc, long *offset);
+>>  int rtc_set_offset(struct rtc_device *rtc, long offset);
+>>  void rtc_timer_do_work(struct work_struct *work);
+>> +void rtc_power_off_program(struct rtc_device *rtc);
+>>  
+>>  static inline bool is_leap_year(unsigned int year)
+>>  {
+> 
+> Johan
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-omap" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
