@@ -2,85 +2,111 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4085C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B405C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94BC020881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12D9D20881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 14:08:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RUJyyk6i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94BC020881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="kUiaWiri"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D9D20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932967AbeGIOHo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 10:07:44 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:54476 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932508AbeGIOHl (ORCPT
+        id S933070AbeGIOH6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 10:07:58 -0400
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:50988 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932899AbeGIOHy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 10:07:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aE9WJpS5O1x/cSk9XTY786CLi5Y5ap/CZIHO+NmgzKs=; b=RUJyyk6iZhGwODp1mbCJZmGWp
-        2hEi2w7Kw+xj6SGedira9qPWX8a6EiE7Mz3nkuHahdDGI+soP6ZrhH/c2Wc3+ugV72SLjdPNgGj9o
-        9sZqZGMzSpW8YLtA2k9KWwhp3Opyh97+G/0p5f9GvIc2mcB24rs2s47oM9aOK3BIjtEjooCMoyNrW
-        l1HoXxcVZPHfD2LT1pdYhJUn9Uh4Xreu+JLHhbNUR8CXuH8MHp04kYlXHtlrPGRPoQyY4NwncE8FJ
-        J0QUecCdqDE1w0wK3NSPrFdt0gxaRBl4/YvKsrQ3NSNzUmu4m85Hr/BdLvBuOxOyLcHT3sD/w5b42
-        7hIsVuOiw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcWox-0001Gh-Ko; Mon, 09 Jul 2018 14:07:19 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 08C6120289CE4; Mon,  9 Jul 2018 16:07:18 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 16:07:17 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-        linux-arch@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        David Laight <David.Laight@ACULAB.COM>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
-        stable@vger.kernel.org
+        Mon, 9 Jul 2018 10:07:54 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 7253610C1ADE;
+        Mon,  9 Jul 2018 07:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1531145274; bh=VabfOu5BgYnlQnoLYLQL304be75aeXRl9LccArXSz8A=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=kUiaWiris+/pDAP/SdV2sh64x69zDSEakq/AAtlZ3p0uWJsmHjx8PUSMEv/MNrdGJ
+         T2E34j6ZqrOBYBIu8gsVMcF/+7nyFV5WSBab4xjxdljQ6Qze+du9IiwHYs30A2RpUl
+         l3gXKGvT6U3U4f2P9QElv4d3fQg1I9fb3lX2+0Ubran//maI1A63/I+s/3TAV9QvvQ
+         8Md+sY1LeOtQsFoTXso4f9n/Locjsh5DBRGDdU0D17aE9Ox/SYerhHGGxJUczaH3/y
+         5wuoLwGhNim4BGejCLu+IjWen+SseS6xN6veRZmZ1jvp1mmXaqoanZrkMqVuvLmg8Q
+         iNzW0dJbCO75g==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        by mailhost.synopsys.com (Postfix) with ESMTP id BF01C5534;
+        Mon,  9 Jul 2018 07:07:52 -0700 (PDT)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Mon, 9 Jul 2018 07:07:52 -0700
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
+ 9 Jul 2018 16:07:50 +0200
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     "peterz@infradead.org" <peterz@infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "daniel.vetter@intel.com" <daniel.vetter@intel.com>,
+        "airlied@redhat.com" <airlied@redhat.com>,
+        "greg@kroah.com" <greg@kroah.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "David.Laight@ACULAB.COM" <David.Laight@ACULAB.COM>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "geert@linux-m68k.org" <geert@linux-m68k.org>
 Subject: Re: [PATCH v3] devres: Explicitly align datai[] to 64-bit
-Message-ID: <20180709140717.GR2476@hirez.programming.kicks-ass.net>
+Thread-Topic: [PATCH v3] devres: Explicitly align datai[] to 64-bit
+Thread-Index: AQHUF4swC8s+UKwhqUSMtDZM6j3qZaSGyACAgAAD0QA=
+Date:   Mon, 9 Jul 2018 14:07:50 +0000
+Message-ID: <6da84ff10e7b34f1b08ac26136aaa325fb91a440.camel@synopsys.com>
 References: <20180709134550.29541-1-abrodkin@synopsys.com>
+         <20180709135409.GQ2476@hirez.programming.kicks-ass.net>
+In-Reply-To: <20180709135409.GQ2476@hirez.programming.kicks-ass.net>
+Accept-Language: en-US, ru-RU
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.121.8.87]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <01B5E02333E9D04C9B8D9EBE036739E8@internal.synopsys.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709134550.29541-1-abrodkin@synopsys.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 04:45:50PM +0300, Alexey Brodkin wrote:
-> --- a/drivers/base/devres.c
-> +++ b/drivers/base/devres.c
-> @@ -24,8 +24,12 @@ struct devres_node {
->  
->  struct devres {
->  	struct devres_node		node;
-> -	/* -- 3 pointers */
-> -	unsigned long long		data[];	/* guarantee ull alignment */
-> +	/*
-> +	 * data[] must be 64 bit aligned even on 32 bit architectures
-> +	 * because it might be accessed by instructions that require
-> +	 * aligned memory arguments such as atomic64_t.
-> +	 */
-> +	u8 __aligned(8)			data[];
->  };
-
-Seeing that this ends up in a semi generic allocation thing, I don't
-feel this should be different from ARCH_KMALLOC_MINALIGN.
+SGkgUGV0ZXIsDQoNCk9uIE1vbiwgMjAxOC0wNy0wOSBhdCAxNTo1NCArMDIwMCwgUGV0ZXIgWmlq
+bHN0cmEgd3JvdGU6DQo+IE9uIE1vbiwgSnVsIDA5LCAyMDE4IGF0IDA0OjQ1OjUwUE0gKzAzMDAs
+IEFsZXhleSBCcm9ka2luIHdyb3RlOg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Jhc2UvZGV2
+cmVzLmMgYi9kcml2ZXJzL2Jhc2UvZGV2cmVzLmMNCj4gPiBpbmRleCBmOThhMDk3ZTczZjIuLmQ2
+NTMyN2NiODNjOSAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2Jhc2UvZGV2cmVzLmMNCj4gPiAr
+KysgYi9kcml2ZXJzL2Jhc2UvZGV2cmVzLmMNCj4gPiBAQCAtMjQsOCArMjQsMTIgQEAgc3RydWN0
+IGRldnJlc19ub2RlIHsNCj4gPiAgDQo+ID4gIHN0cnVjdCBkZXZyZXMgew0KPiA+ICAJc3RydWN0
+IGRldnJlc19ub2RlCQlub2RlOw0KPiA+IC0JLyogLS0gMyBwb2ludGVycyAqLw0KPiA+IC0JdW5z
+aWduZWQgbG9uZyBsb25nCQlkYXRhW107CS8qIGd1YXJhbnRlZSB1bGwgYWxpZ25tZW50ICovDQo+
+ID4gKwkvKg0KPiA+ICsJICogZGF0YVtdIG11c3QgYmUgNjQgYml0IGFsaWduZWQgZXZlbiBvbiAz
+MiBiaXQgYXJjaGl0ZWN0dXJlcw0KPiA+ICsJICogYmVjYXVzZSBpdCBtaWdodCBiZSBhY2Nlc3Nl
+ZCBieSBpbnN0cnVjdGlvbnMgdGhhdCByZXF1aXJlDQo+ID4gKwkgKiBhbGlnbmVkIG1lbW9yeSBh
+cmd1bWVudHMgc3VjaCBhcyBhdG9taWM2NF90Lg0KPiA+ICsJICovDQo+ID4gKwl1OCBfX2FsaWdu
+ZWQoOCkJCQlkYXRhW107DQo+ID4gIH07DQo+IA0KPiBGcm9tIGEgcXVpY2sgcmVhZGluZyBpbiBE
+b2N1bWVudGF0aW9uL2RyaXZlci1tb2RlbC9kZXZyZXMudHh0IHRoaXMNCj4gZGV2cmVzIG11Y2sg
+aXMgc3VwcG9zZWQgdG8gYmUgZGV2aWNlIG1lbW9yeSwgcmlnaHQ/DQo+IA0KPiBhdG9taWNzIChh
+cyBpbiBhdG9taWMqX3QpIGFyZSBub3QgZGVmaW5lZCBmb3IgdXNlIG9uIG1taW8uDQo+IA0KPiB3
+dGgga2luZCBvZiBjb2RlIGlzIHJlbHlpbmcgb24gdGhpcz8NCg0KSXQncyBFdG5hdml2IChHUFUv
+RFJNKSBkcml2ZXIgaW4gZXRuYXZpdl9ncHVfcGxhdGZvcm1fcHJvYmUoKSwNCnNlZSBodHRwczov
+L2VsaXhpci5ib290bGluLmNvbS9saW51eC9sYXRlc3Qvc291cmNlL2RyaXZlcnMvZ3B1L2RybS9l
+dG5hdml2L2V0bmF2aXZfZ3B1LmMjTDE3NDA6DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0t
+LS0tLS0tLS0tLS0tLS0tLS0NCglzdHJ1Y3QgZHJtX2dwdV9zY2hlZHVsZXIgew0KCQkuLi4NCgkJ
+YXRvbWljNjRfdAkJCWpvYl9pZF9jb3VudDsNCgkJLi4uDQoJfTsNCg0KCXN0cnVjdCBldG5hdml2
+X2dwdSB7DQoJCS4uLg0KCQlzdHJ1Y3QgZHJtX2dwdV9zY2hlZHVsZXIJc2NoZWQ7DQoJfTsNCg0K
+CXN0cnVjdCBldG5hdml2X2dwdSAqZ3B1Ow0KDQoJZ3B1ID0gZGV2bV9remFsbG9jKGRldiwgc2l6
+ZW9mKCpncHUpLCBHRlBfS0VSTkVMKTsNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0t
+LS0tLS0tLS0tLS0tLQ0KDQotQWxleGV5
