@@ -2,162 +2,114 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BFDC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3931C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A8D2089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:16:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A8D2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A7DC2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:16:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="YNRjzrPJ";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="juQUm9B0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A7DC2089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754562AbeGISQN (ORCPT
+        id S1754583AbeGISQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 14:16:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52244 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754517AbeGISQL (ORCPT
+        Mon, 9 Jul 2018 14:16:22 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:44893 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754574AbeGISQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 14:16:11 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69IEVsv116119
-        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 14:16:11 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k48jg8ggj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 14:16:10 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Mon, 9 Jul 2018 19:16:08 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 9 Jul 2018 19:16:06 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69IG5P639780454
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Jul 2018 18:16:05 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3C1F311C05B;
-        Mon,  9 Jul 2018 21:16:28 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DD0D811C04C;
-        Mon,  9 Jul 2018 21:16:27 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.145.5.230])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  9 Jul 2018 21:16:27 +0100 (BST)
-Subject: Re: Build/qemu test results for v4.18-rc4
-To:     Kees Cook <keescook@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>
-References: <20180709175550.GA7469@roeck-us.net>
- <CAGXu5j+rn+69QiLR=Rbd6ys7atL8Z8THyazW_T3Z=CAw0n8xzg@mail.gmail.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- xsFNBE6cPPgBEAC2VpALY0UJjGmgAmavkL/iAdqul2/F9ONz42K6NrwmT+SI9CylKHIX+fdf
- J34pLNJDmDVEdeb+brtpwC9JEZOLVE0nb+SR83CsAINJYKG3V1b3Kfs0hydseYKsBYqJTN2j
- CmUXDYq9J7uOyQQ7TNVoQejmpp5ifR4EzwIFfmYDekxRVZDJygD0wL/EzUr8Je3/j548NLyL
- 4Uhv6CIPf3TY3/aLVKXdxz/ntbLgMcfZsDoHgDk3lY3r1iwbWwEM2+eYRdSZaR4VD+JRD7p8
- 0FBadNwWnBce1fmQp3EklodGi5y7TNZ/CKdJ+jRPAAnw7SINhSd7PhJMruDAJaUlbYaIm23A
- +82g+IGe4z9tRGQ9TAflezVMhT5J3ccu6cpIjjvwDlbxucSmtVi5VtPAMTLmfjYp7VY2Tgr+
- T92v7+V96jAfE3Zy2nq52e8RDdUo/F6faxcumdl+aLhhKLXgrozpoe2nL0Nyc2uqFjkjwXXI
- OBQiaqGeWtxeKJP+O8MIpjyGuHUGzvjNx5S/592TQO3phpT5IFWfMgbu4OreZ9yekDhf7Cvn
- /fkYsiLDz9W6Clihd/xlpm79+jlhm4E3xBPiQOPCZowmHjx57mXVAypOP2Eu+i2nyQrkapaY
- IdisDQfWPdNeHNOiPnPS3+GhVlPcqSJAIWnuO7Ofw1ZVOyg/jwARAQABzTRDaHJpc3RpYW4g
- Qm9ybnRyYWVnZXIgKElCTSkgPGJvcm50cmFlZ2VyQGRlLmlibS5jb20+wsF4BBMBAgAiBQJO
- nDz4AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRARe7yAtaYcfOYVD/9sqc6ZdYKD
- bmDIvc2/1LL0g7OgiA8pHJlYN2WHvIhUoZUIqy8Sw2EFny/nlpPVWfG290JizNS2LZ0mCeGZ
- 80yt0EpQNR8tLVzLSSr0GgoY0lwsKhAnx3p3AOrA8WXsPL6prLAu3yJI5D0ym4MJ6KlYVIjU
- ppi4NLWz7ncA2nDwiIqk8PBGxsjdc/W767zOOv7117rwhaGHgrJ2tLxoGWj0uoH3ZVhITP1z
- gqHXYaehPEELDV36WrSKidTarfThCWW0T3y4bH/mjvqi4ji9emp1/pOWs5/fmd4HpKW+44tD
- Yt4rSJRSa8lsXnZaEPaeY3nkbWPcy3vX6qafIey5d8dc8Uyaan39WslnJFNEx8cCqJrC77kI
- vcnl65HaW3y48DezrMDH34t3FsNrSVv5fRQ0mbEed8hbn4jguFAjPt4az1xawSp0YvhzwATJ
- YmZWRMa3LPx/fAxoolq9cNa0UB3D3jmikWktm+Jnp6aPeQ2Db3C0cDyxcOQY/GASYHY3KNra
- z8iwS7vULyq1lVhOXg1EeSm+lXQ1Ciz3ub3AhzE4c0ASqRrIHloVHBmh4favY4DEFN19Xw1p
- 76vBu6QjlsJGjvROW3GRKpLGogQTLslbjCdIYyp3AJq2KkoKxqdeQYm0LZXjtAwtRDbDo71C
- FxS7i/qfvWJv8ie7bE9A6Wsjn87BTQROnDz4ARAAmPI1e8xB0k23TsEg8O1sBCTXkV8HSEq7
- JlWz7SWyM8oFkJqYAB7E1GTXV5UZcr9iurCMKGSTrSu3ermLja4+k0w71pLxws859V+3z1jr
- nhB3dGzVZEUhCr3EuN0t8eHSLSMyrlPL5qJ11JelnuhToT6535cLOzeTlECc51bp5Xf6/XSx
- SMQaIU1nDM31R13o98oRPQnvSqOeljc25aflKnVkSfqWSrZmb4b0bcWUFFUKVPfQ5Z6JEcJg
- Hp7qPXHW7+tJTgmI1iM/BIkDwQ8qe3Wz8R6rfupde+T70NiId1M9w5rdo0JJsjKAPePKOSDo
- RX1kseJsTZH88wyJ30WuqEqH9zBxif0WtPQUTjz/YgFbmZ8OkB1i+lrBCVHPdcmvathknAxS
- bXL7j37VmYNyVoXez11zPYm+7LA2rvzP9WxR8bPhJvHLhKGk2kZESiNFzP/E4r4Wo24GT4eh
- YrDo7GBHN82V4O9JxWZtjpxBBl8bH9PvGWBmOXky7/bP6h96jFu9ZYzVgIkBP3UYW+Pb1a+b
- w4A83/5ImPwtBrN324bNUxPPqUWNW0ftiR5b81ms/rOcDC/k/VoN1B+IHkXrcBf742VOLID4
- YP+CB9GXrwuF5KyQ5zEPCAjlOqZoq1fX/xGSsumfM7d6/OR8lvUPmqHfAzW3s9n4lZOW5Jfx
- bbkAEQEAAcLBXwQYAQIACQUCTpw8+AIbDAAKCRARe7yAtaYcfPzbD/9WNGVf60oXezNzSVCL
- hfS36l/zy4iy9H9rUZFmmmlBufWOATjiGAXnn0rr/Jh6Zy9NHuvpe3tyNYZLjB9pHT6mRZX7
- Z1vDxeLgMjTv983TQ2hUSlhRSc6e6kGDJyG1WnGQaqymUllCmeC/p9q5m3IRxQrd0skfdN1V
- AMttRwvipmnMduy5SdNayY2YbhWLQ2wS3XHJ39a7D7SQz+gUQfXgE3pf3FlwbwZhRtVR3z5u
- aKjxqjybS3Ojimx4NkWjidwOaUVZTqEecBV+QCzi2oDr9+XtEs0m5YGI4v+Y/kHocNBP0myd
- pF3OoXvcWdTb5atk+OKcc8t4TviKy1WCNujC+yBSq3OM8gbmk6NwCwqhHQzXCibMlVF9hq5a
- FiJb8p4QKSVyLhM8EM3HtiFqFJSV7F+h+2W0kDyzBGyE0D8z3T+L3MOj3JJJkfCwbEbTpk4f
- n8zMboekuNruDw1OADRMPlhoWb+g6exBWx/YN4AY9LbE2KuaScONqph5/HvJDsUldcRN3a5V
- RGIN40QWFVlZvkKIEkzlzqpAyGaRLhXJPv/6tpoQaCQQoSAc5Z9kM/wEd9e2zMeojcWjUXgg
- oWj8A/wY4UXExGBu+UCzzP/6sQRpBiPFgmqPTytrDo/gsUGqjOudLiHQcMU+uunULYQxVghC
- syiRa+UVlsKmx1hsEg==
-Date:   Mon, 9 Jul 2018 20:16:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 9 Jul 2018 14:16:19 -0400
+Received: by mail-yw0-f193.google.com with SMTP id k18-v6so6867317ywm.11
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 11:16:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=tjPTdSDiN5DpCGVwUC7Qw0PEH0Tq1xlKH6CyHYvXmsA=;
+        b=YNRjzrPJt4Z4KlIG3u+fr1KTNmUfktwJ7gdo5Ex98mbmeweiZEp8gWkLQNUSx20nZN
+         za7r2YZsyyOe6tA/G6XdUuaykq8ti8w2TxOI6JmbDMxzrxlL8aNFihMDjwVInca+Tb7Z
+         m6+M9UEfV1FDtHrm3oPQROJ1GIEU3T0ZPCwyefWypGK4qOV0tDiYqD2osFNt7yM6A/YU
+         kQd0A5rZTJCduHCwBAEkW7gPHx9AIEmHrjfgZX/BMzk5DnAnMKPpmm1CrUvfvsggV/jc
+         eQ/zT5eGptS7ADRi/t/RLerDISZzHCQ8gIEocLc0NQ0qXWMVB4qfF8dJp/GJtIIjpd0/
+         J7fA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=tjPTdSDiN5DpCGVwUC7Qw0PEH0Tq1xlKH6CyHYvXmsA=;
+        b=juQUm9B0sR1jfZqnfcyMNg4W+a1kSfseGMSgkuuQ7V+Tou1tniLHyhlRYcAEP3bfdH
+         x7xzABMgSXQV0BMTt50nKVnstZLTQznaPxWzoUEmmsT/vlcTobGXy0UX4IgMh8AZne3l
+         ElLdHMPNxjFgc/o0XuOOwT/8EfUFw4y9tho+E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=tjPTdSDiN5DpCGVwUC7Qw0PEH0Tq1xlKH6CyHYvXmsA=;
+        b=UcFo8PN/sWenHJlUr0hEdfmKMZt5g6Zcqjz3nh3nMlNTvQ7SIAqQFOZgIonKka4SY2
+         HQsK2m0uW+BCVMdDvsQry7FKpJJ8r5kSOpugVpFmDbWCzZHKfTbQC9YFmZZbPcc+MBHe
+         sFJu8pm0NiWBcF+QxawGKocre6z5gLagxbBD8y6NmplTh7lOe8uUiky/sTg/Msroyosj
+         n+B4FUQlM9laADbA2gZghkXZYJRuunmZ9oT+bFfMHzf3W1hVkW0Rjd0SoRJxb3zmG4Ns
+         ku0xrkV73u8IFY5FClvVKHlVk10XczcU3myiBf34Osi6EvckZMjB0qUH+n53wotoQlq9
+         w8oA==
+X-Gm-Message-State: APt69E2L6ABHxUOBzHgLJsYDMb1x1am/qMJwJ5W3IaeHTcctCfbLQ+vs
+        NTZa+JZw+PcgfMZF+WErgKtdGwIkuFkSiYH1LD8AIw==
+X-Google-Smtp-Source: AAOMgpdrwm3z0PgxpsKb5euo3wzS1iCX/3TKlUpjCJ4si0o+kMiO1EmZjUvuSxzdktiPKIgDxhu7J9V7Jn6HC13jdbI=
+X-Received: by 2002:a81:2706:: with SMTP id n6-v6mr10149544ywn.88.1531160178263;
+ Mon, 09 Jul 2018 11:16:18 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+rn+69QiLR=Rbd6ys7atL8Z8THyazW_T3Z=CAw0n8xzg@mail.gmail.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18070918-0028-0000-0000-000002D9C561
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070918-0029-0000-0000-0000239162BF
-Message-Id: <3207f3de-0a10-f575-f24f-210a2a926c4c@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=954 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807090206
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 11:16:17 -0700 (PDT)
+In-Reply-To: <87601ryb8a.fsf@notabene.neil.brown.name>
+References: <87vacsrt0r.fsf@notabene.neil.brown.name> <87fu3dihtf.fsf@notabene.neil.brown.name>
+ <874lintqa6.fsf@notabene.neil.brown.name> <87y3fcegnn.fsf@notabene.neil.brown.name>
+ <CAG48ez2yTZMye0W3_5R04bV-Qyaz-=zSiVonw_zvRQNH6dcfeg@mail.gmail.com>
+ <878t6nybj7.fsf@notabene.neil.brown.name> <87601ryb8a.fsf@notabene.neil.brown.name>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 9 Jul 2018 11:16:17 -0700
+X-Google-Sender-Auth: j0f2Z5NR6r4A7IXxLHk0vtkRFZs
+Message-ID: <CAGXu5j+F3zUZ6+8cKuurq2fV8L5Piy5dvYrYXeFVG0kVmpZMRw@mail.gmail.com>
+Subject: Re: [PATCH mm] VFS: seq_file: ensure ->from is valid.
+To:     NeilBrown <neilb@suse.com>
+Cc:     Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-doc@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 6, 2018 at 8:29 PM, NeilBrown <neilb@suse.com> wrote:
+>
+> Previous patch ("VFS: simplify seq_file iteration code and interface")
+> removed code to set ->from to zero when ->count is zero, as ->from is
+> dead at that time.  However it didn't ensure ->from was set properly
+> whenever ->count becomes non-zero.
+> This can only happen when ->show() is called.  Of the three places it
+> is called one already has ->from set to zero.  The other two are
+> fixed by setting from to zero after fully flushing the buffer (at which
+> point ->count will also be zero).
+>
+> Reported-by: Jann Horn <jannh@google.com>
+> Signed-off-by: NeilBrown <neilb@suse.com>
 
+I *think* this solves this report, which looks very much like Jann's reproducer:
 
-On 07/09/2018 08:06 PM, Kees Cook wrote:
-> On Mon, Jul 9, 2018 at 10:55 AM, Guenter Roeck <linux@roeck-us.net> wrote:
->> s390:allmodconfig:
->>
->> arch/s390/kernel/als.o: In function `verify_facilities':
->> als.c:(.init.text+0x24): undefined reference to `latent_entropy'
->> als.c:(.init.text+0xae): undefined reference to `latent_entropy'
->> make[3]: *** [arch/s390/boot/compressed/vmlinux] Error 1
->> make[2]: *** [arch/s390/boot/compressed/vmlinux] Error 2
->> make[1]: *** [bzImage] Error 2
->>
->> This problem is only seen when using a compiler which has the relevant
->> plugins enabled. Bisect points to commit 1658dcee3d43ed ("gcc-plugins:
->> allow to enable GCC_PLUGINS for COMPILE_TEST") as the culprit. I don't
->> know if a fix for v4.18 has been submitted. The s390 boot code in -next
->> has been rearranged and the problem is no longer seen there.
-> 
-> Hm, that would imply that mm/page_alloc.o wasn't visible during the
-> als.o linking? But ... if the problem is gone, I guess... good?
+https://syzkaller.appspot.com/bug?extid=4b712dce5cbce6700f27
 
-als.o is used to detect if the kernel was compiled for a newer generation
-than the hardware that we are running on (very early). So it is compiled
-without gcov, kcov,ubsan and with a different march -in other words special.
-In linux-next we moved the als part to the decompressor which avoids all
-these kind of special handling. As this is part of a bigger patch set it 
-would be  non-trivial to backport that for 4.18.
-So unless we want to have it fixed for 4.18 I think we are fine.
+-Kees
 
+-- 
+Kees Cook
+Pixel Security
