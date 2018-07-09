@@ -2,142 +2,229 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07390C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1765DC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0EDB208A5
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:27:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1WEv09Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0EDB208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C7813208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:27:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7813208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933703AbeGIR12 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:27:28 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:43154 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933425AbeGIR1Z (ORCPT
+        id S933832AbeGIR1l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:27:41 -0400
+Received: from mail-qk0-f195.google.com ([209.85.220.195]:36212 "EHLO
+        mail-qk0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933425AbeGIR1h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:27:25 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b15-v6so11817985wrv.10;
-        Mon, 09 Jul 2018 10:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hXjNvM4xi5fyMgmDaQPlXMMrE7sO+kgWrhkdZyARxrY=;
-        b=d1WEv09Z7qr0PnnaP+TqEOT7L61VZA5Som3b2+NgF0tFeCTQzMzvG2e5svuH1QpalV
-         X7oJQPsMjloZHMRUJsnPIPCDpF4ddRS1Gp+c5atLyKr4OlGTYxR6eYtWZ8ez4gocZv6m
-         oXgh+J0s9XihURkUI3u4PzsQh3MhVH4fD/hx2o2uSK5VaTiHBIz0S6sXZC8eBwJdh6BI
-         zl3jLqmzu29eX/wqHV+yyLn8FnVVdMwJnyPMmslr0vrFMBqLWISc5kodktPrckVJ6BQ6
-         9ewAu1rh/A1dwbqCRU2Yr6qulGQwCMR+ksXF5hExyfP5SxSyoEs6K6ZQQi2omxrjNsin
-         BYeg==
+        Mon, 9 Jul 2018 13:27:37 -0400
+Received: by mail-qk0-f195.google.com with SMTP id a132-v6so10099810qkg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 10:27:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hXjNvM4xi5fyMgmDaQPlXMMrE7sO+kgWrhkdZyARxrY=;
-        b=OSpXycXOP32EAhPl0yG5bCVeqwoegIa67QCkLHoNsctmUcebrrXQktNTTPR0B7Ix3R
-         TLqulEn40BaWr7oyniYTr9v+SYtpOzBBiDF+UqWznKsoTMRIak+Y/ZMzaxly8hbPuSUM
-         h+oSwoHyqc7OCE9WLSKbeGxM3z2O6eWdPXyw0GyTQe+KnaiOMbfU4xhQEHseyPDr7jr7
-         sZnSQZMsTjeit9DGBsgtKY/3kOpdW4pWwuIkV+ma470VVWbgGBFEOhgFkVJhn7l/Hv1c
-         biwjHGlNCXqJ89r9Y+cIZS/RrSQtwRwNgHXui9nV7Si0jWhSJejT5dLoGoSuiUoQa9ji
-         bmRg==
-X-Gm-Message-State: APt69E2QfTCJKItr61h88oew92hFn2QK4+Zn9aMvMlXTxkoFlKN3Edqg
-        GQ6mSvA8aEaYiEOKV7k3quvrWQ==
-X-Google-Smtp-Source: AAOMgpe0+TEeEl4ppecxGi136HPtj6mjtvRFlbecWVs9x38cFBbRYtdlfReTjWDUQUIJssrL/t/B2g==
-X-Received: by 2002:adf:adc9:: with SMTP id w67-v6mr14780553wrc.135.1531157244547;
-        Mon, 09 Jul 2018 10:27:24 -0700 (PDT)
-Received: from localhost (pD9E51B8F.dip0.t-ipconnect.de. [217.229.27.143])
-        by smtp.gmail.com with ESMTPSA id t184-v6sm11201154wmf.18.2018.07.09.10.27.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 10:27:23 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 19:27:22 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     jan.tuerk@emtrion.com
-Cc:     David Airlie <airlied@linux.ie>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: display: Document the EDT et* displays
- in one file.
-Message-ID: <20180709172722.GH26651@ulmo>
-References: <20180427132445.3458-2-jan.tuerk@emtrion.com>
- <20180619095546.24445-1-jan.tuerk@emtrion.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CFPombnDPKNNOrSEaj9ePYzRyZuAT3RQCpkUBM/WiYY=;
+        b=uRfOItn4geJ7dEAJvR8GsT+GHpdQluhp71hGmJrmxAWxNjKR1PbBiTVyN06NloRKKT
+         3SnUuO4DaXKIXsGCnbD7knG+ZRckDBMTRXGCQbWOUSu5jliH1Jnt+OdiW3/0dXN7KjGM
+         6pLmpPwl6zRR69q+lNlG1fkH2vuCpEt+Vfp1WW5s8KACq/3+/mJk0P28MIvUyEHWK7aT
+         mIAWMepVmcfLgHdqw0Ms1ppsuv/C8ZbUiy0IJP5Shdk5i13yeg/twuHGF76xIciA5eSF
+         Cnb3ZOQo+jgOuLnLcydxYGfAEsNEf+wjQvRtB/TZZhewjsAsdwouO6lFhRlNr2UnmW/Z
+         Rm4w==
+X-Gm-Message-State: APt69E0LA1dL4Qz0AEOAooDwp9gd34csMI3aCX5hV9zgr7pSDRmQ0w2l
+        uNqIi2QHLGovwsQgY1EoV/7Djg==
+X-Google-Smtp-Source: AAOMgpee8O9tKSQPOH+m6iFt1FiDOFoqZCQtMm5i9Ak2Y22L3dmGEbI4w1Mmp8dj4yVWidrjbjrxEg==
+X-Received: by 2002:a37:1f87:: with SMTP id n7-v6mr17783624qkh.308.1531157256628;
+        Mon, 09 Jul 2018 10:27:36 -0700 (PDT)
+Received: from ?IPv6:2601:602:9802:a8dc::1941? ([2601:602:9802:a8dc::1941])
+        by smtp.gmail.com with ESMTPSA id l84-v6sm12211180qki.69.2018.07.09.10.27.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 10:27:35 -0700 (PDT)
+Subject: Re: [PATCH 1/2] mm/cma: remove unsupported gfp_mask parameter from
+ cma_alloc()
+To:     Marek Szyprowski <m.szyprowski@samsung.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Chris Zankel <chris@zankel.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        linaro-mm-sig@lists.linaro.org
+References: <20180709121956.20200-1-m.szyprowski@samsung.com>
+ <CGME20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29@eucas1p2.samsung.com>
+ <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <32c180a0-271a-3d8f-0402-87b76484cea6@redhat.com>
+Date:   Mon, 9 Jul 2018 10:27:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="e5bfZ/T2xnjpUIbw"
-Content-Disposition: inline
-In-Reply-To: <20180619095546.24445-1-jan.tuerk@emtrion.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/09/2018 05:19 AM, Marek Szyprowski wrote:
+> cma_alloc() function doesn't really support gfp flags other than
+> __GFP_NOWARN, so convert gfp_mask parameter to boolean no_warn parameter.
+> 
+> This will help to avoid giving false feeling that this function supports
+> standard gfp flags and callers can pass __GFP_ZERO to get zeroed buffer,
+> what has already been an issue: see commit dd65a941f6ba ("arm64:
+> dma-mapping: clear buffers allocated with FORCE_CONTIGUOUS flag").
+> 
 
---e5bfZ/T2xnjpUIbw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For Ion,
 
-On Tue, Jun 19, 2018 at 11:55:43AM +0200, jan.tuerk@emtrion.com wrote:
-> From: Jan Tuerk <jan.tuerk@emtrion.com>
->=20
-> Document the Emerging Display Technology Corp. (EDT) using the
-> simple-panel binding in one single file.
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Jan Tuerk <jan.tuerk@emtrion.com>
+Acked-by: Laura Abbott <labbott@redhat.com>
+
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  .../bindings/display/panel/edt,et-series.txt  | 39 +++++++++++++++++++
->  .../display/panel/edt,et057090dhu.txt         |  7 ----
->  .../display/panel/edt,et070080dh6.txt         | 10 -----
->  .../display/panel/edt,etm0700g0dh6.txt        | 10 -----
->  4 files changed, 39 insertions(+), 27 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/panel/edt,e=
-t-series.txt
->  delete mode 100644 Documentation/devicetree/bindings/display/panel/edt,e=
-t057090dhu.txt
->  delete mode 100644 Documentation/devicetree/bindings/display/panel/edt,e=
-t070080dh6.txt
->  delete mode 100644 Documentation/devicetree/bindings/display/panel/edt,e=
-tm0700g0dh6.txt
->=20
-> [Changes from v4 of emCON patch-series]=20
->  - rebased to mainline/master
->  - split as requested by Shawn Guo
->=20
-> As requested by Sha
+>   arch/powerpc/kvm/book3s_hv_builtin.c       | 2 +-
+>   drivers/s390/char/vmcp.c                   | 2 +-
+>   drivers/staging/android/ion/ion_cma_heap.c | 2 +-
+>   include/linux/cma.h                        | 2 +-
+>   kernel/dma/contiguous.c                    | 3 ++-
+>   mm/cma.c                                   | 8 ++++----
+>   mm/cma_debug.c                             | 2 +-
+>   7 files changed, 11 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/powerpc/kvm/book3s_hv_builtin.c b/arch/powerpc/kvm/book3s_hv_builtin.c
+> index d4a3f4da409b..fc6bb9630a9c 100644
+> --- a/arch/powerpc/kvm/book3s_hv_builtin.c
+> +++ b/arch/powerpc/kvm/book3s_hv_builtin.c
+> @@ -77,7 +77,7 @@ struct page *kvm_alloc_hpt_cma(unsigned long nr_pages)
+>   	VM_BUG_ON(order_base_2(nr_pages) < KVM_CMA_CHUNK_ORDER - PAGE_SHIFT);
+>   
+>   	return cma_alloc(kvm_cma, nr_pages, order_base_2(HPT_ALIGN_PAGES),
+> -			 GFP_KERNEL);
+> +			 false);
+>   }
+>   EXPORT_SYMBOL_GPL(kvm_alloc_hpt_cma);
+>   
+> diff --git a/drivers/s390/char/vmcp.c b/drivers/s390/char/vmcp.c
+> index 948ce82a7725..0fa1b6b1491a 100644
+> --- a/drivers/s390/char/vmcp.c
+> +++ b/drivers/s390/char/vmcp.c
+> @@ -68,7 +68,7 @@ static void vmcp_response_alloc(struct vmcp_session *session)
+>   	 * anymore the system won't work anyway.
+>   	 */
+>   	if (order > 2)
+> -		page = cma_alloc(vmcp_cma, nr_pages, 0, GFP_KERNEL);
+> +		page = cma_alloc(vmcp_cma, nr_pages, 0, false);
+>   	if (page) {
+>   		session->response = (char *)page_to_phys(page);
+>   		session->cma_alloc = 1;
+> diff --git a/drivers/staging/android/ion/ion_cma_heap.c b/drivers/staging/android/ion/ion_cma_heap.c
+> index 49718c96bf9e..3fafd013d80a 100644
+> --- a/drivers/staging/android/ion/ion_cma_heap.c
+> +++ b/drivers/staging/android/ion/ion_cma_heap.c
+> @@ -39,7 +39,7 @@ static int ion_cma_allocate(struct ion_heap *heap, struct ion_buffer *buffer,
+>   	if (align > CONFIG_CMA_ALIGNMENT)
+>   		align = CONFIG_CMA_ALIGNMENT;
+>   
+> -	pages = cma_alloc(cma_heap->cma, nr_pages, align, GFP_KERNEL);
+> +	pages = cma_alloc(cma_heap->cma, nr_pages, align, false);
+>   	if (!pages)
+>   		return -ENOMEM;
+>   
+> diff --git a/include/linux/cma.h b/include/linux/cma.h
+> index bf90f0bb42bd..190184b5ff32 100644
+> --- a/include/linux/cma.h
+> +++ b/include/linux/cma.h
+> @@ -33,7 +33,7 @@ extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+>   					const char *name,
+>   					struct cma **res_cma);
+>   extern struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
+> -			      gfp_t gfp_mask);
+> +			      bool no_warn);
+>   extern bool cma_release(struct cma *cma, const struct page *pages, unsigned int count);
+>   
+>   extern int cma_for_each_area(int (*it)(struct cma *cma, void *data), void *data);
+> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
+> index d987dcd1bd56..19ea5d70150c 100644
+> --- a/kernel/dma/contiguous.c
+> +++ b/kernel/dma/contiguous.c
+> @@ -191,7 +191,8 @@ struct page *dma_alloc_from_contiguous(struct device *dev, size_t count,
+>   	if (align > CONFIG_CMA_ALIGNMENT)
+>   		align = CONFIG_CMA_ALIGNMENT;
+>   
+> -	return cma_alloc(dev_get_cma_area(dev), count, align, gfp_mask);
+> +	return cma_alloc(dev_get_cma_area(dev), count, align,
+> +			 gfp_mask & __GFP_NOWARN);
+>   }
+>   
+>   /**
+> diff --git a/mm/cma.c b/mm/cma.c
+> index 5809bbe360d7..4cb76121a3ab 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -395,13 +395,13 @@ static inline void cma_debug_show_areas(struct cma *cma) { }
+>    * @cma:   Contiguous memory region for which the allocation is performed.
+>    * @count: Requested number of pages.
+>    * @align: Requested alignment of pages (in PAGE_SIZE order).
+> - * @gfp_mask:  GFP mask to use during compaction
+> + * @no_warn: Avoid printing message about failed allocation
+>    *
+>    * This function allocates part of contiguous memory on specific
+>    * contiguous memory area.
+>    */
+>   struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
+> -		       gfp_t gfp_mask)
+> +		       bool no_warn)
+>   {
+>   	unsigned long mask, offset;
+>   	unsigned long pfn = -1;
+> @@ -447,7 +447,7 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
+>   		pfn = cma->base_pfn + (bitmap_no << cma->order_per_bit);
+>   		mutex_lock(&cma_mutex);
+>   		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA,
+> -					 gfp_mask);
+> +				     GFP_KERNEL | (no_warn ? __GFP_NOWARN : 0));
+>   		mutex_unlock(&cma_mutex);
+>   		if (ret == 0) {
+>   			page = pfn_to_page(pfn);
+> @@ -466,7 +466,7 @@ struct page *cma_alloc(struct cma *cma, size_t count, unsigned int align,
+>   
+>   	trace_cma_alloc(pfn, page, count, align);
+>   
+> -	if (ret && !(gfp_mask & __GFP_NOWARN)) {
+> +	if (ret && !no_warn) {
+>   		pr_err("%s: alloc failed, req-size: %zu pages, ret: %d\n",
+>   			__func__, count, ret);
+>   		cma_debug_show_areas(cma);
+> diff --git a/mm/cma_debug.c b/mm/cma_debug.c
+> index f23467291cfb..ad6723e9d110 100644
+> --- a/mm/cma_debug.c
+> +++ b/mm/cma_debug.c
+> @@ -139,7 +139,7 @@ static int cma_alloc_mem(struct cma *cma, int count)
+>   	if (!mem)
+>   		return -ENOMEM;
+>   
+> -	p = cma_alloc(cma, count, 0, GFP_KERNEL);
+> +	p = cma_alloc(cma, count, 0, false);
+>   	if (!p) {
+>   		kfree(mem);
+>   		return -ENOMEM;
+> 
 
-All three patches applied, thanks.
-
-Thierry
-
---e5bfZ/T2xnjpUIbw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltDmvgACgkQ3SOs138+
-s6GotBAArv++juALZcgUolPimsi98L6/1vFrIO3DWnUFL+TPr8eRUdjFJkxMjN0A
-8APTSjoBja5w2baNx7ehDYkVYwJ7S8zod7FtouU1kU0QfRWqCIm0raCiJyIiF/ni
-ks/rRyUxMUFXuBbMPEZVegonVMxcQu6Id5xjXTpM800C5PemcgadEfmV3QZZKYqt
-ioosmqhzMjaKBJW0HilGqw+to3HiDm2AlcR8zLaZzkwAvHYI+LYsJ4aTqZc5U6ve
-Ug07oNVjCVDCntwSsryeB6UG63bmDaCFTn4XSU6Qqs9wSpcyx74msWtnvju3SMqb
-zjVoKk79VpUFFo1uFxffUZbH3dhyT8QKs+niQYIaDwUvziwBmH9u3mhzTUCDArnj
-gigHtoK62zWCj6m7ytN43jHPClQuv6kXG3n7rqR1G1S9bquUF1k2tBHYHaaJ9NAK
-3i1u0PPTxMUZ56xxOrr3J7BQ7pWYMuyaB3wJr2Fejhfd0U9AlwzHi8a9rRq+ymHz
-l6JpPPJHtefCe6jW/oUDeUZDs1ovVH5W+Tvhu3c3qhHpbqzXZDysh25FtKDgwRL+
-NXDj9bAA4eH7T1zYrc67woS9hgWQX9le13W4/ixguoXiXymWdsYjb+kVjs5cMqaJ
-LKWE7eBz3xUsSoTEJqukq1qa29mEIx769wgKnRqhH72tuoRmd/Y=
-=ZAa+
------END PGP SIGNATURE-----
-
---e5bfZ/T2xnjpUIbw--
