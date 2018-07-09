@@ -4,139 +4,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38664C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93255C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:33:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E144420864
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:32:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AD0D20864
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:33:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gw3upmrz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E144420864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="oEINCkmM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD0D20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933883AbeGIRct (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:32:49 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:35313 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933617AbeGIRcr (ORCPT
+        id S933981AbeGIRdR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:33:17 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:49104 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933558AbeGIRdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:32:47 -0400
-Received: by mail-yb0-f193.google.com with SMTP id x15-v6so7503299ybm.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 10:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=q3/Dfl26JmFTMhRSLOf8HmACWIUALpACFyoE5/iMMSs=;
-        b=gw3upmrzXxvv8fOBmKHyxk38P/fcWfVNoCMsbayUHWGHd9ZK/YxCU6tdEMizPWB/BV
-         2C/CbMiSR9Me5NX9GX1BhqkaE9uQbS63U2++0MNG5quTzZTfCXqK3k8OQvZWJpbtWVXO
-         N0lNbStByMnLQK053D6wqGdPQieriuJxe8vaY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=q3/Dfl26JmFTMhRSLOf8HmACWIUALpACFyoE5/iMMSs=;
-        b=Q9pyVaFebyzY6DwBxuyNgSriRoZWxKl9eZFuRNTdaRVfU1pezX53+t1C70lkKGGtn/
-         Muub0rU0FMBcSn+bluealkYLj7m1gUhQSt3Xhar3dqIfcFkKADEOMZTZpkSILeHfwnXN
-         TwJNt07f09lztfh0qqvE2JVZtl2XEd3lUmtcqrDNEVYwiLJxGH7IIA23ikhatWUeeWJ9
-         wyWhGrvtOZj5GHc2OpbYSirVCO0/6FsRAfac+w8K6AC3kN8iOLATvCI/EFqtVxBpn5hH
-         DneFDBH1VvhXBiWERES8CDPRGWPoyhFJX6iYDkQSMQx3jyzS6F+Gp9/JhNOOu4+rwokf
-         Dm1A==
-X-Gm-Message-State: APt69E3hjKzB76OXLW1lA7OZiiePnGUbzx+GKqK8VGPXuACIpje5dl0j
-        p7s/YcGwTZPFE/o8ouJq0gSOBg==
-X-Google-Smtp-Source: AAOMgpciWIP+cABmyIFcVNbcnTDtgRpV4uO+AXlIBzj0hkg/WctYrhLgVFwv1gnOfc12RZSg+h75uw==
-X-Received: by 2002:a25:a08a:: with SMTP id y10-v6mr11075599ybh.219.1531157566525;
-        Mon, 09 Jul 2018 10:32:46 -0700 (PDT)
-Received: from rosewood.cam.corp.google.com ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id s206-v6sm5885495ywc.55.2018.07.09.10.32.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 10:32:45 -0700 (PDT)
-From:   Sean Paul <seanpaul@chromium.org>
-To:     abhinavk@codeaurora.org, architt@codeaurora.org,
-        chandanu@codeaurora.org, jsanka@codeaurora.org,
-        jcrouse@codeaurora.org, ryadav@codeaurora.org,
-        seanpaul@chromium.org, skolluku@codeaurora.org,
-        dri-devel@lists.freedesktop.org, robdclark@gmail.com,
-        airlied@linux.ie, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, nganji@codeaurora.org,
-        hoegsberg@chromium.org, dovizu@chromium.org, robh+dt@kernel.org
-Cc:     vkorjani <vikas.korjani@intel.com>,
-        Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 03/21] drm: Add support for pps and compression mode command packet
-Date:   Mon,  9 Jul 2018 13:31:39 -0400
-Message-Id: <20180709173200.238457-4-seanpaul@chromium.org>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
-In-Reply-To: <20180709173200.238457-1-seanpaul@chromium.org>
-References: <20180709173200.238457-1-seanpaul@chromium.org>
+        Mon, 9 Jul 2018 13:33:15 -0400
+Received: from pps.filterd (m0109333.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69HOQ0P016422;
+        Mon, 9 Jul 2018 10:32:52 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=facebook; bh=Gg36oTZk5jjDt3cbblzSf5lCp+umxOdDn+olRmstLgY=;
+ b=oEINCkmMiC+LudNlT6ew0iX055gaYSq02fNUERBT7jLs6pVtPXGYyli2rf1KPeqkrWe0
+ 40oUiEY1TuUuSMX/FdSvscgYreVKYtAkOlQKYJJnk/gCSDGzjhGi9zZcLWxRv8KEVwIo
+ B+ZXfmoyhg/p3oaT25jJ1cLySoy6rpWemNw= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2k4c1t816m-2
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Mon, 09 Jul 2018 10:32:52 -0700
+Received: from kafai-mbp.dhcp.thefacebook.com (192.168.52.123) by
+ mail.thefacebook.com (192.168.16.13) with Microsoft SMTP Server (TLS) id
+ 14.3.361.1; Mon, 9 Jul 2018 10:32:41 -0700
+Date:   Mon, 9 Jul 2018 10:32:37 -0700
+From:   Martin KaFai Lau <kafai@fb.com>
+To:     Okash Khawaja <osk@fb.com>
+CC:     Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <kernel-team@fb.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf 1/1] bpf: btf: Fix bitfield extraction for big endian
+Message-ID: <20180709173237.hpjvoxcbf3xufwcf@kafai-mbp.dhcp.thefacebook.com>
+References: <20180709002202.019053555@fb.com>
+ <20180709004002.440153594@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180709004002.440153594@fb.com>
+User-Agent: NeoMutt/20180512
+X-Originating-IP: [192.168.52.123]
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: vkorjani <vikas.korjani@intel.com>
+On Sun, Jul 08, 2018 at 05:22:03PM -0700, Okash Khawaja wrote:
+> When extracting bitfield from a number, btf_int_bits_seq_show() builds
+> a mask and accesses least significant byte of the number in a way
+> specific to little-endian. This patch fixes that by checking endianness
+> of the machine and then shifting left and right the unneeded bits.
+> 
+> Thanks to Martin Lau for the help in navigating potential pitfalls when
+> dealing with endianess and for the final solution.
+> 
+> Fixes: b00b8daec828 ("bpf: btf: Add pretty print capability for data with BTF type info")
+> Signed-off-by: Okash Khawaja <osk@fb.com>
+> 
+> ---
+>  kernel/bpf/btf.c |   32 +++++++++++++++-----------------
+>  1 file changed, 15 insertions(+), 17 deletions(-)
+> 
+> --- a/kernel/bpf/btf.c
+> +++ b/kernel/bpf/btf.c
+> @@ -162,6 +162,8 @@
+>  #define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
+>  #define BITS_ROUNDUP_BYTES(bits) \
+>  	(BITS_ROUNDDOWN_BYTES(bits) + !!BITS_PER_BYTE_MASKED(bits))
+> +const int one = 1;
+> +#define is_big_endian() ((*(char *)&one) == 0)
+Can the __BIG_ENDIAN be reused here?
 
-After enabling DSC we need to send compression mode command packet
-and pps data packet, for which 2 new data types are added
-07h  Compression Mode Data Type Write , short write, 2 parameters
-0Ah  PPS Long Write (word count determines number of bytes)
-This patch adds support to send these packets.
-
-Cc: David Airlie <airlied@linux.ie>
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fbdev@vger.kernel.org
-
-Signed-off-by: vkorjani <vikas.korjani@intel.com>
-[seanpaul removed pps_write_buffer fn, added types to packet_format helpers]
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
----
- drivers/gpu/drm/drm_mipi_dsi.c | 2 ++
- include/video/mipi_display.h   | 3 +++
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
-index bc73b7f5b9fc..80b75501f5c6 100644
---- a/drivers/gpu/drm/drm_mipi_dsi.c
-+++ b/drivers/gpu/drm/drm_mipi_dsi.c
-@@ -392,6 +392,7 @@ bool mipi_dsi_packet_format_is_short(u8 type)
- 	case MIPI_DSI_DCS_SHORT_WRITE:
- 	case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
- 	case MIPI_DSI_DCS_READ:
-+	case MIPI_DSI_DCS_COMPRESSION_MODE:
- 	case MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE:
- 		return true;
- 	}
-@@ -410,6 +411,7 @@ EXPORT_SYMBOL(mipi_dsi_packet_format_is_short);
- bool mipi_dsi_packet_format_is_long(u8 type)
- {
- 	switch (type) {
-+	case MIPI_DSI_PPS_LONG_WRITE:
- 	case MIPI_DSI_NULL_PACKET:
- 	case MIPI_DSI_BLANKING_PACKET:
- 	case MIPI_DSI_GENERIC_LONG_WRITE:
-diff --git a/include/video/mipi_display.h b/include/video/mipi_display.h
-index 19aa65a35546..49a53ef8da96 100644
---- a/include/video/mipi_display.h
-+++ b/include/video/mipi_display.h
-@@ -38,6 +38,9 @@ enum {
- 
- 	MIPI_DSI_DCS_READ				= 0x06,
- 
-+	MIPI_DSI_DCS_COMPRESSION_MODE                   = 0x07,
-+	MIPI_DSI_PPS_LONG_WRITE                         = 0x0A,
-+
- 	MIPI_DSI_SET_MAXIMUM_RETURN_PACKET_SIZE		= 0x37,
- 
- 	MIPI_DSI_END_OF_TRANSMISSION			= 0x08,
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
-
+>  
+>  #define BTF_INFO_MASK 0x0f00ffff
+>  #define BTF_INT_MASK 0x0fffffff
+> @@ -991,16 +993,13 @@ static void btf_int_bits_seq_show(const
+>  				  void *data, u8 bits_offset,
+>  				  struct seq_file *m)
+>  {
+> +	u8 left_shift_bits, right_shift_bits;
+>  	u32 int_data = btf_type_int(t);
+>  	u16 nr_bits = BTF_INT_BITS(int_data);
+>  	u16 total_bits_offset;
+>  	u16 nr_copy_bytes;
+>  	u16 nr_copy_bits;
+> -	u8 nr_upper_bits;
+> -	union {
+> -		u64 u64_num;
+> -		u8  u8_nums[8];
+> -	} print_num;
+> +	u64 print_num;
+>  
+>  	total_bits_offset = bits_offset + BTF_INT_OFFSET(int_data);
+>  	data += BITS_ROUNDDOWN_BYTES(total_bits_offset);
+> @@ -1008,21 +1007,20 @@ static void btf_int_bits_seq_show(const
+>  	nr_copy_bits = nr_bits + bits_offset;
+>  	nr_copy_bytes = BITS_ROUNDUP_BYTES(nr_copy_bits);
+>  
+> -	print_num.u64_num = 0;
+> -	memcpy(&print_num.u64_num, data, nr_copy_bytes);
+> -
+> -	/* Ditch the higher order bits */
+> -	nr_upper_bits = BITS_PER_BYTE_MASKED(nr_copy_bits);
+> -	if (nr_upper_bits) {
+> -		/* We need to mask out some bits of the upper byte. */
+> -		u8 mask = (1 << nr_upper_bits) - 1;
+> -
+> -		print_num.u8_nums[nr_copy_bytes - 1] &= mask;
+> +	print_num = 0;
+> +	memcpy(&print_num, data, nr_copy_bytes);
+> +	if (is_big_endian()) {
+> +		left_shift_bits = bits_offset;
+> +		right_shift_bits = BITS_PER_U64 - nr_bits;
+> +	} else {
+> +		left_shift_bits = BITS_PER_U64 - nr_copy_bits;
+> +		right_shift_bits = BITS_PER_U64 - nr_bits;
+>  	}
+>  
+> -	print_num.u64_num >>= bits_offset;
+> +	print_num <<= left_shift_bits;
+> +	print_num >>= right_shift_bits;
+>  
+> -	seq_printf(m, "0x%llx", print_num.u64_num);
+> +	seq_printf(m, "0x%llx", print_num);
+>  }
+>  
+>  static void btf_int_seq_show(const struct btf *btf, const struct btf_type *t,
+> 
