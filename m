@@ -1,53 +1,54 @@
 Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3E3C67790
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE785C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ABB4208DF
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ABB4208DF
+	by mail.kernel.org (Postfix) with ESMTP id 7B82D208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:10:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B82D208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933352AbeGIDJ4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 23:09:56 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:40464 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754407AbeGIDJE (ORCPT
+        id S933181AbeGIDJx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 23:09:53 -0400
+Received: from mail-it0-f69.google.com ([209.85.214.69]:50176 "EHLO
+        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932688AbeGIDJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 8 Jul 2018 23:09:04 -0400
-Received: by mail-io0-f200.google.com with SMTP id r10-v6so15147428ioh.7
+Received: by mail-it0-f69.google.com with SMTP id g125-v6so14668941ita.0
         for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 20:09:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=C5XOke2kXL8IixldaoCXa6uJcWfnENplScgshJg3ZRk=;
-        b=b+BwODPQ6m+siuny8XMijj+ncqyKMdJk2f513Z86feEC38yGdFwCP839Zr3HRLeVM8
-         cVUIA+A8J6KUWdtNn1tczdIoDxirfik76Sh8kLFc5tV0QBKVwjRIXbulLFTGwD6BiHJm
-         JWha+XuG0ch00oPIM2bUYkCoS8EU7+KBfQUUZswhPZAmIkfZ64t6EBGtaSvKgtNKqE8t
-         phc3rZYQ3D55OulXVh3iSfGSrn52/gCpKDrYpR+5XKhoMRoZLbYbBbcVfhPdcozyWirj
-         zf7w0WY7mmR8zcDvZumOexdy7mguxJCt7Dv8suQ92rDp6XMT0thorbaTD3IJp/lq03Dq
-         k8gw==
-X-Gm-Message-State: APt69E0H2dQ4L8KFDKcFT3dFvcuTNk2kN9UdbDGmkeOo7YawvgrEwyyW
-        Va1bAR4PEaws1+8gneqQsZQeNv7JdkVUVGOnIeRAxnMpFj8Q
-X-Google-Smtp-Source: AAOMgpeOzy0wos+cS8Z8RuJIriWXEGyUC+W2Kotmck/8amTBCJStdwN7p1H1ylevpzAkEnf5o9wXLbKVV0MGRge1xYZsMUdSqctW
+        bh=nl6L5+p9//Y1h8Fvs3ZSEo0wrgihdS82RPxl0fUPsnY=;
+        b=kuDgN2vV6aqagJEwBDpfBuJvMw4d2/8/2J0czd62WU/PL9dTPOHNpTyKN5chyB823C
+         r20wPpzpDt6ftUckxruUias+HAXpdPPZQ4IrkSQe9eAGh/HkjOeMH8HzYOfZo4w8Td4J
+         Tu78fgZ+Uzs3eUv2OsrSl+DF8U18vuWV/EnLXxPGyyKZWFptpIn1kJ3ZXeasF8npf+c2
+         7hC+uyN9pi4Dvd3/fWiaNyj/FGv8MD/LJOKUMTpVg89WOJNu231f1fOKi4zC55daEasT
+         qmFtF+KNqyTEyZJA8CuvupbUVcyW0NNt9117FBX5MLE0SPBmLAAno0NN3S6PZi51RwSf
+         WgdQ==
+X-Gm-Message-State: APt69E0K1KMIVAeCwKrCjub3vmJPzYvBK/Ze7k1d8nX5NN3hOg2nq957
+        9c3KWRHXGZB589vamxbqx3rquJWBlqOJtwiSPPFUwFOAiDvE
+X-Google-Smtp-Source: AAOMgpcxqL18Sh0YZIBeIhIPtFXH9NdIXjxDKNHieYtkBDazTT21exE3w8KPER5WYsjwsfSg+QBlOyZgtX03iZ0gAtAVzg6otqTv
 MIME-Version: 1.0
-X-Received: by 2002:a24:d205:: with SMTP id z5-v6mr8102332itf.35.1531105743830;
- Sun, 08 Jul 2018 20:09:03 -0700 (PDT)
-Date:   Sun, 08 Jul 2018 20:09:03 -0700
+X-Received: by 2002:a24:4ac8:: with SMTP id k191-v6mr8055508itb.7.1531105744291;
+ Sun, 08 Jul 2018 20:09:04 -0700 (PDT)
+Date:   Sun, 08 Jul 2018 20:09:04 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f98bc70570885526@google.com>
-Subject: KASAN: slab-out-of-bounds Read in fscache_alloc_cookie
-From:   syzbot <syzbot+a95b989b2dde8e806af8@syzkaller.appspotmail.com>
-To:     dhowells@redhat.com, linux-cachefs@redhat.com,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000000978e05708856cb@google.com>
+Subject: KASAN: stack-out-of-bounds Read in account_system_index_time
+From:   syzbot <syzbot+df1a417b3485bed2c190@syzkaller.appspotmail.com>
+To:     fweisbec@gmail.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,142 +61,121 @@ syzbot found the following crash on:
 
 HEAD commit:    ca04b3cca11a Merge tag 'armsoc-fixes' of git://git.kernel...
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11e382e0400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11f1e968400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=2ca6c7a31d407f86
-dashboard link: https://syzkaller.appspot.com/bug?extid=a95b989b2dde8e806af8
+dashboard link: https://syzkaller.appspot.com/bug?extid=df1a417b3485bed2c190
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1097c6fc400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152d29b2400000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17f8f6d0400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15e88a78400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a95b989b2dde8e806af8@syzkaller.appspotmail.com
+Reported-by: syzbot+df1a417b3485bed2c190@syzkaller.appspotmail.com
 
-sshd (4453) used greatest stack depth: 17048 bytes left
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
 ==================================================================
-BUG: KASAN: slab-out-of-bounds in fscache_set_key fs/fscache/cookie.c:120  
-[inline]
-BUG: KASAN: slab-out-of-bounds in fscache_alloc_cookie+0x7a9/0x880  
-fs/fscache/cookie.c:171
-Read of size 4 at addr ffff8801d3cc8bb4 by task syz-executor907/4466
+BUG: KASAN: stack-out-of-bounds in __read_once_size  
+include/linux/compiler.h:188 [inline]
+BUG: KASAN: stack-out-of-bounds in get_running_cputimer  
+include/linux/sched/cputime.h:85 [inline]
+BUG: KASAN: stack-out-of-bounds in account_group_system_time  
+include/linux/sched/cputime.h:149 [inline]
+BUG: KASAN: stack-out-of-bounds in account_system_index_time+0x512/0x5c0  
+kernel/sched/cputime.c:168
+Read of size 1 at addr ffff8801afffc278 by task syz-executor708/17155
 
-CPU: 1 PID: 4466 Comm: syz-executor907 Not tainted 4.18.0-rc3+ #40
+CPU: 1 PID: 17155 Comm: syz-executor708 Not tainted 4.18.0-rc3+ #137
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
+  <IRQ>
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
   print_address_description+0x6c/0x20b mm/kasan/report.c:256
   kasan_report_error mm/kasan/report.c:354 [inline]
   kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  fscache_set_key fs/fscache/cookie.c:120 [inline]
-  fscache_alloc_cookie+0x7a9/0x880 fs/fscache/cookie.c:171
-  __fscache_acquire_cookie+0x230/0xb00 fs/fscache/cookie.c:303
-  fscache_acquire_cookie include/linux/fscache.h:338 [inline]
-  v9fs_cache_session_get_cookie+0xc4/0x270 fs/9p/cache.c:73
-  v9fs_session_init+0x1013/0x1a80 fs/9p/v9fs.c:464
-  v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
-  mount_fs+0xae/0x328 fs/super.c:1277
-  vfs_kern_mount.part.34+0xdc/0x4e0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:1027 [inline]
-  do_new_mount fs/namespace.c:2518 [inline]
-  do_mount+0x581/0x30e0 fs/namespace.c:2848
-  __do_compat_sys_mount fs/compat.c:125 [inline]
-  __se_compat_sys_mount fs/compat.c:92 [inline]
-  __ia32_compat_sys_mount+0x5d5/0x860 fs/compat.c:92
-  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
-  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7f17cb9
-Code: 55 08 8b 88 64 cd ff ff 8b 98 68 cd ff ff 89 c8 85 d2 74 02 89 0a 5b  
-5d c3 8b 04 24 c3 8b 1c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000ffafd7dc EFLAGS: 00000286 ORIG_RAX: 0000000000000015
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000020000280
-RDX: 00000000200002c0 RSI: 0000000000800000 RDI: 0000000020000340
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+  __read_once_size include/linux/compiler.h:188 [inline]
+  get_running_cputimer include/linux/sched/cputime.h:85 [inline]
+  account_group_system_time include/linux/sched/cputime.h:149 [inline]
+  account_system_index_time+0x512/0x5c0 kernel/sched/cputime.c:168
+  account_system_time+0x7f/0xb0 kernel/sched/cputime.c:199
+  account_process_tick+0x76/0x240 kernel/sched/cputime.c:498
+  update_process_times+0x21/0x70 kernel/time/timer.c:1634
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
 
-Allocated by task 4466:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  fscache_set_key fs/fscache/cookie.c:101 [inline]
-  fscache_alloc_cookie+0x701/0x880 fs/fscache/cookie.c:171
-  __fscache_acquire_cookie+0x230/0xb00 fs/fscache/cookie.c:303
-  fscache_acquire_cookie include/linux/fscache.h:338 [inline]
-  v9fs_cache_session_get_cookie+0xc4/0x270 fs/9p/cache.c:73
-  v9fs_session_init+0x1013/0x1a80 fs/9p/v9fs.c:464
-  v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
-  mount_fs+0xae/0x328 fs/super.c:1277
-  vfs_kern_mount.part.34+0xdc/0x4e0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:1027 [inline]
-  do_new_mount fs/namespace.c:2518 [inline]
-  do_mount+0x581/0x30e0 fs/namespace.c:2848
-  __do_compat_sys_mount fs/compat.c:125 [inline]
-  __se_compat_sys_mount fs/compat.c:92 [inline]
-  __ia32_compat_sys_mount+0x5d5/0x860 fs/compat.c:92
-  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
-  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-
-Freed by task 1:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  __kthread_create_on_node+0x34a/0x4c0 kernel/kthread.c:337
-  kthread_create_on_node+0xb1/0xe0 kernel/kthread.c:373
-  cryptomgr_schedule_test crypto/algboss.c:255 [inline]
-  cryptomgr_notify+0x5ac/0xb90 crypto/algboss.c:276
-  notifier_call_chain+0x180/0x390 kernel/notifier.c:93
-  __blocking_notifier_call_chain kernel/notifier.c:317 [inline]
-  blocking_notifier_call_chain+0x147/0x190 kernel/notifier.c:328
-  crypto_probing_notify+0x26/0x80 crypto/api.c:254
-  crypto_wait_for_test+0x42/0xe0 crypto/algapi.c:361
-  crypto_register_alg+0xc0/0xe0 crypto/algapi.c:392
-  crypto_register_shash+0x35/0x50 crypto/shash.c:494
-  crypto_register_shashes+0x5d/0xe0 crypto/shash.c:509
-  register_sha512_ssse3 arch/x86/crypto/sha512_ssse3_glue.c:136 [inline]
-  sha512_ssse3_mod_init+0xc4/0x282 arch/x86/crypto/sha512_ssse3_glue.c:316
-  do_one_initcall+0x127/0x913 init/main.c:884
-  do_initcall_level init/main.c:952 [inline]
-  do_initcalls init/main.c:960 [inline]
-  do_basic_setup init/main.c:978 [inline]
-  kernel_init_freeable+0x49b/0x58e init/main.c:1135
-  kernel_init+0x11/0x1b3 init/main.c:1061
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-
-The buggy address belongs to the object at ffff8801d3cc8b80
-  which belongs to the cache kmalloc-64 of size 64
-The buggy address is located 52 bytes inside of
-  64-byte region [ffff8801d3cc8b80, ffff8801d3cc8bc0)
-The buggy address belongs to the page:
-page:ffffea00074f3200 count:1 mapcount:0 mapping:ffff8801da800340 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea000750d208 ffffea00074b1f08 ffff8801da800340
-raw: 0000000000000000 ffff8801d3cc8000 0000000100000020 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801d3cc8a80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-  ffff8801d3cc8b00: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> ffff8801d3cc8b80: 00 00 00 00 00 00 07 fc fc fc fc fc fc fc fc fc
-                                      ^
-  ffff8801d3cc8c00: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc
-  ffff8801d3cc8c80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-==================================================================
+Allocated by task 905967825:
+BUG: unable to handle kernel paging request at ffffffff8c42a180
+PGD 8e6d067 P4D 8e6d067 PUD 8e6e063 PMD 0
+Thread overran stack, or stack corrupted
+Oops: 0000 [#1] SMP KASAN
+CPU: 1 PID: 17155 Comm: syz-executor708 Not tainted 4.18.0-rc3+ #137
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:201
+Code: e8 65 1b 47 fe e9 b3 fd ff ff e8 5b 1b 47 fe e9 55 fd ff ff 90 90 90  
+90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 80  
+19 43 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
+RSP: 0018:ffff8801daf078b8 EFLAGS: 00010006
+RAX: 00000000001ff100 RBX: ffff8801afffc654 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff8801daf078c0 RDI: 0000000000000ff0
+RBP: ffff8801daf078e8 R08: ffff8801adacc6c0 R09: ffffed003b5e3ec2
+R10: ffffed003b5e3ec2 R11: ffff8801daf1f617 R12: ffff8801afffc140
+R13: ffff8801afffc278 R14: ffff8801da97be40 R15: ffff8801afffc650
+FS:  0000000000c14940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffff8c42a180 CR3: 00000001ae362000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  <IRQ>
+  describe_object mm/kasan/report.c:243 [inline]
+  print_address_description+0xfb/0x20b mm/kasan/report.c:263
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
+  __read_once_size include/linux/compiler.h:188 [inline]
+  get_running_cputimer include/linux/sched/cputime.h:85 [inline]
+  account_group_system_time include/linux/sched/cputime.h:149 [inline]
+  account_system_index_time+0x512/0x5c0 kernel/sched/cputime.c:168
+  account_system_time+0x7f/0xb0 kernel/sched/cputime.c:199
+  account_process_tick+0x76/0x240 kernel/sched/cputime.c:498
+  update_process_times+0x21/0x70 kernel/time/timer.c:1634
+  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
+  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
+  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
+  __hrtimer_run_queues+0x3eb/0x10c0 kernel/time/hrtimer.c:1460
+  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
+  smp_apic_timer_interrupt+0x165/0x730 arch/x86/kernel/apic/apic.c:1050
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
+  </IRQ>
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+CR2: ffffffff8c42a180
+---[ end trace 9194b6f505fa64d0 ]---
+RIP: 0010:depot_fetch_stack+0x10/0x30 lib/stackdepot.c:201
+Code: e8 65 1b 47 fe e9 b3 fd ff ff e8 5b 1b 47 fe e9 55 fd ff ff 90 90 90  
+90 90 90 89 f8 c1 ef 11 25 ff ff 1f 00 81 e7 f0 3f 00 00 <48> 03 3c c5 80  
+19 43 8b 8b 47 0c 48 83 c7 18 c7 46 10 00 00 00 00
+RSP: 0018:ffff8801daf078b8 EFLAGS: 00010006
+RAX: 00000000001ff100 RBX: ffff8801afffc654 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffff8801daf078c0 RDI: 0000000000000ff0
+RBP: ffff8801daf078e8 R08: ffff8801adacc6c0 R09: ffffed003b5e3ec2
+R10: ffffed003b5e3ec2 R11: ffff8801daf1f617 R12: ffff8801afffc140
+R13: ffff8801afffc278 R14: ffff8801da97be40 R15: ffff8801afffc650
+FS:  0000000000c14940(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffff8c42a180 CR3: 00000001ae362000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
