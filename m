@@ -2,136 +2,124 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A74AC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CEB4C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 616B62089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:59:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 616B62089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A40982089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 19:00:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="aRDbUQPo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40982089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933445AbeGIS7q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 14:59:46 -0400
-Received: from mga03.intel.com ([134.134.136.65]:10882 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932798AbeGIS7p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 14:59:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 11:59:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,330,1526367600"; 
-   d="scan'208";a="69896394"
-Received: from precciox-mobl.amr.corp.intel.com (HELO [10.254.107.89]) ([10.254.107.89])
-  by fmsmga004.fm.intel.com with ESMTP; 09 Jul 2018 11:59:35 -0700
-Subject: Re: [PATCHv4 18/18] x86: Introduce CONFIG_X86_INTEL_MKTME
-To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
- <20180626142245.82850-19-kirill.shutemov@linux.intel.com>
- <20180709183656.GK6873@char.US.ORACLE.com>
- <d9edff3d-64bd-be81-c9fd-52699d7da81e@intel.com>
- <20180709185246.GC17368@char.us.oracle.com>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <7491deb5-c89e-cbd0-6c17-404d26c30aeb@intel.com>
-Date:   Mon, 9 Jul 2018 11:59:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180709185246.GC17368@char.us.oracle.com>
-Content-Type: text/plain; charset=utf-8
+        id S933649AbeGITAl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 15:00:41 -0400
+Received: from mail-ve1eur01on0051.outbound.protection.outlook.com ([104.47.1.51]:4992
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933626AbeGITAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 15:00:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bfy9LAoGlTp3WC8x5a7n8fPbVlk8KgWZAx8Ku7ErP9I=;
+ b=aRDbUQPo3JkzkyEKQI6nF9ZuREIDhIaQvBdv+0yE7GflOhFuHva9KQSL0aiUovc205VrLvuR4n9/hI0lATJ8pGWLEy/6B7PrM6BMwZJnSbzSeA/1/nAV5/+6sb77EEgsU6dbGh2Lwzj+gXB5aZUdvdmkjsd6fOGVtC0S8RiDULY=
+Received: from HE1PR04MB3289.eurprd04.prod.outlook.com (10.170.255.157) by
+ HE1PR04MB1212.eurprd04.prod.outlook.com (10.162.249.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.930.19; Mon, 9 Jul 2018 19:00:35 +0000
+Received: from HE1PR04MB3289.eurprd04.prod.outlook.com
+ ([fe80::882f:418e:1cfa:786e]) by HE1PR04MB3289.eurprd04.prod.outlook.com
+ ([fe80::882f:418e:1cfa:786e%4]) with mapi id 15.20.0930.016; Mon, 9 Jul 2018
+ 19:00:35 +0000
+From:   Shenwei Wang <shenwei.wang@nxp.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 1/4] pwm: fsl-ftm: Added a dedicated IP interface clock
+Thread-Topic: [PATCH v2 1/4] pwm: fsl-ftm: Added a dedicated IP interface
+ clock
+Thread-Index: AQHT/14eon3OMNqy9UmcYn13+b0vSKSHUHEAgAAdtnA=
+Date:   Mon, 9 Jul 2018 19:00:34 +0000
+Message-ID: <HE1PR04MB32897C3E284B8E4B1A5530CB89440@HE1PR04MB3289.eurprd04.prod.outlook.com>
+References: <20180608192237.11063-1-shenwei.wang@nxp.com>
+ <20180709170926.GF26651@ulmo>
+In-Reply-To: <20180709170926.GF26651@ulmo>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=shenwei.wang@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;HE1PR04MB1212;7:a4e5W8Hl8356RKFiF5OXqp6DvfQ2/0kcml0ZqT4Dgra2ZWzoDsjC0msfy+THbzXhqQRUFTLv3m+flXmpH1yZkY0ZzCjN6opVxHtYTOcHtpQZRSE6dmLDFEQ4DEveE+xZpMQE3qPJgoODUHcWOkZwKz4HCbJySU6MHpWPdTkjtbfK/t7HGmIyy7JhjODpDiFEVdjrUZg1uNZMXocfqbVECfVGdWM29LjpOA3JG30GfzFIyfVfEdCM4fHQn5eySLNE
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 98542807-818c-4000-4271-08d5e5ce408f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1212;
+x-ms-traffictypediagnostic: HE1PR04MB1212:
+x-microsoft-antispam-prvs: <HE1PR04MB1212446D05DB65D6FAABDA0989440@HE1PR04MB1212.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231311)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:HE1PR04MB1212;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1212;
+x-forefront-prvs: 07283408BE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(346002)(366004)(136003)(396003)(199004)(189003)(13464003)(76176011)(6506007)(5660300001)(53546011)(2900100001)(316002)(5250100002)(54906003)(186003)(26005)(68736007)(9686003)(8936002)(229853002)(256004)(106356001)(86362001)(102836004)(7696005)(99286004)(6916009)(55016002)(2906002)(6436002)(478600001)(446003)(8676002)(105586002)(97736004)(81156014)(44832011)(39060400002)(66066001)(33656002)(4326008)(25786009)(486006)(6246003)(53936002)(6116002)(3846002)(14454004)(476003)(11346002)(305945005)(74316002)(81166006)(7736002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1212;H:HE1PR04MB3289.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: R3qTWbeMTSQmDaliwYMUZ/im+tEkRyBWuTUAZnFKcz4ppLMWlrQOeFZ7u/g8oZk7DevV4tmjpjf54EkMriDiwQTSgL/gNNx2aqVV1piMqe5p5JeUF11dv69BRHJp+gfJwfS0VWO146b42e1340INqKri+wtvX7inJeFuoTBQ3shsS/V5luUf52FzAITyjYorEafS2e6QgF01pOIRq9gC9DkpM2p/LHr4C6TrilJBfnUDXqJgROZGlfzPlaAxBek7tn94uhhEmQORD++bo7XF4heY4maaC02r5qd4yim+i+WtA08RA0F6YmzGVqb28wGInE10nILcsQFO28zfLZU9InuXpIVxY3Xz/lKWE1fbgPg=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 98542807-818c-4000-4271-08d5e5ce408f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jul 2018 19:00:34.9835
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1212
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/2018 11:52 AM, Konrad Rzeszutek Wilk wrote:
-> On Mon, Jul 09, 2018 at 11:44:33AM -0700, Dave Hansen wrote:
->> On 07/09/2018 11:36 AM, Konrad Rzeszutek Wilk wrote:
->>> On Tue, Jun 26, 2018 at 05:22:45PM +0300, Kirill A. Shutemov wrote:
->>> Rip out the X86?
->>>> +	bool "Intel Multi-Key Total Memory Encryption"
->>>> +	select DYNAMIC_PHYSICAL_MASK
->>>> +	select PAGE_EXTENSION
->>>
->>> And maybe select 5-page?
->>
->> Why?  It's not a strict dependency.  You *can* build a 4-level kernel
->> and run it on smaller systems.
-> 
-> Sure, but in one of his commits he mentions that we may run in overlapping
-> physical memory if we use 4-level paging. Hence why not just move to 5-level
-> paging and simplify this.
+Thank you, Thierry.=20
+Have you also reviewed and accepted the other 3 patches in this serial?
 
-I'm not sure it _actually_ simplifies anything.  We still need code to
-handle the cases where we bump into the limits because even 5-level
-paging systems can hit the *architectural* limits.  We just don't think
-we'll bump into those limits any time soon in practice since they're
-512x larger on 5-level systems.
+Regards,
+Shenwei
 
-But, a future system that needs physical address space or has a bunch
-more KeyID bits might bump into the limits.
+-----Original Message-----
+From: Thierry Reding [mailto:thierry.reding@gmail.com]=20
+Sent: Monday, July 9, 2018 12:09 PM
+To: Shenwei Wang <shenwei.wang@nxp.com>
+Cc: linux-pwm@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>; linux-kern=
+el@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] pwm: fsl-ftm: Added a dedicated IP interface cl=
+ock
 
-It's also _possible_ that a processor could come out that supports MKTME
-but not 5-level paging, or a hypervisor would expose such a
-configuration to a guest.  We've asked our colleagues very nicely that
-Intel not make a processor that does this, but it's still possible one
-shows up.
+On Fri, Jun 08, 2018 at 02:22:34PM -0500, shenwei.wang@nxp.com wrote:
+> The current driver assumes that the ftm_sys clock works as one of the=20
+> clock sources for the IP block as well as the IP interface clock. This=20
+> assumption does not apply any more on the latest i.MX8x SoC family. On=20
+> i.MX8x SoCs, a dedicated IP interface clock is introduced and it must=20
+> be enabled before accessing any FTM registers. Moreover, the clock can=20
+> not be used as the source clock for the FTM IP block. This patch=20
+> introduces the ipg_clk as the dedicated IP interface clock and by=20
+> default it is the same as the ftm_sys clock if not specified.
+>=20
+> Signed-off-by: Shenwei Wang <shenwei.wang@nxp.com>
+> ---
+>  drivers/pwm/pwm-fsl-ftm.c | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
+
+Applied, thanks.
+
+Thierry
