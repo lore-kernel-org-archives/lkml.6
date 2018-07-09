@@ -2,140 +2,143 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF8CC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B355C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:18:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A29920849
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:17:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92661208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:18:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GOuoJNKM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A29920849
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="qSu8MQoW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92661208A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754605AbeGIXRP (ORCPT
+        id S1754619AbeGIXR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 19:17:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46386 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754502AbeGIXRM (ORCPT
+        Mon, 9 Jul 2018 19:17:59 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:17208 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753008AbeGIXRy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 19:17:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=U36xIEmqEskdaGqich4i8esi/GwOTI5jrjetBNxdjy4=; b=GOuoJNKMFrR1wfpj/oIlrICbX
-        ZGal3ipXlJjuTkr8NDqjswIvTAlIUSRdG20uybN+kNxrEemjEkgDxpEHxUOUUkYdKq2T4KyHrfi36
-        wSsHgRWRRhYKD/1FtrOZGNoChhwqBwmMg0hnNP0W0AZEMVz29sCKxEMKRNjqLySbYKFaTLxerzFEK
-        5RSc1QclMh1Chx4CrHYNVOOLr7o5tuD7k8e/u9tMYyJVgcMiInknN5+i0j6+7wxFxXtF6Rh4Y1Aq5
-        BlWKDM6HdGoAcWVw9mJSxqxssF7fXesVa3jEmTynO/sHZ1VF+TkN8nZiz7qHpU+cDKfPdFdQTigId
-        jwHHuiTEg==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcfP4-0004Ja-7N; Mon, 09 Jul 2018 23:17:10 +0000
-Date:   Mon, 9 Jul 2018 16:17:09 -0700
-From:   Darren Hart <dvhart@infradead.org>
-To:     Mario.Limonciello@dell.com
-Cc:     srinivas.pandruvada@linux.intel.com, andy.shevchenko@gmail.com,
-        alex.hung@canonical.com, andy@infradead.org,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rjw@rjwysocki.net
-Subject: Re: [PATCH v2] platform/x86: intel-hid: Add support for Device
- Specific Methods
-Message-ID: <20180709231709.GA25221@fury>
-References: <74ac9bf130074e0a8f86a7904783d091@ausx13mpc120.AMER.DELL.COM>
- <95b3748fcb911c7305bd2bbcfd4e368f044f8b14.camel@linux.intel.com>
- <CAHp75VdX+i_N_GttiL3QZrpivpUeJa0ofGfeJR1FkfuiBWocqA@mail.gmail.com>
- <cc4bc804434a40d9bdd2fa03bbb875aa@ausx13mpc120.AMER.DELL.COM>
- <CAHp75VerxQrPwHTU9PF_q_8xkRm7=cBTPf2tb_5xPEoBQKcL8A@mail.gmail.com>
- <20180706235907.GE3041@fury>
- <ccb18d853b254f680895c45862274ec8bdd70ab0.camel@linux.intel.com>
- <1dfb07bd3461414e8db492e643d7de88@ausx13mpc120.AMER.DELL.COM>
- <20180709210646.GA30247@fury>
- <b79253ee160b4d08a48ac0a805939296@ausx13mpc120.AMER.DELL.COM>
+        Mon, 9 Jul 2018 19:17:54 -0400
+Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com [209.85.213.52]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w69NHlkM022291;
+        Tue, 10 Jul 2018 08:17:48 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w69NHlkM022291
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1531178268;
+        bh=z1T7hxuqWmYjykMaESK1bV3W1a0udgdwW+sUNK+07YA=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=qSu8MQoWQlGtadO8WOeuxq9RRMbtwYkibt0X46OBfdjpQeYxEeTdptT2zXZkKPAuR
+         oiW1wz9DThBtOf4oUbTWm86nuJ6kxF/gwGiGDN+d00UqOOsmSJPgCNsatxJIke7Ymo
+         YiR/ciytzWwinPf4LvQ2vU2iya1dM5BO04uYo4GQUpDeS/SPY1Sn1ZcBhbM8HDYpjp
+         PwbRyLH/HZglsyr+bGt0mkNpcqhKCYdGULAhaWikEf5OoLqujQL7EOY1n9V/qxcIc9
+         4X+NTvaS07nQ3Vv6l92i0a6Ts7ukYoM6K+uNk0ivCeXkUP1RxXntRS+XcEDVOUS/U1
+         QalsV+JqfXzLQ==
+X-Nifty-SrcIP: [209.85.213.52]
+Received: by mail-vk0-f52.google.com with SMTP id l143-v6so4062530vke.1;
+        Mon, 09 Jul 2018 16:17:48 -0700 (PDT)
+X-Gm-Message-State: APt69E0X96LfwRM3dg1yoENGiBkG4DyR6/3hjzYy6Cx7XVbQ7Z8RZo1a
+        FXxn4QylOhi7ftAJ9e32bw+g4RDNcfGTtusujJ0=
+X-Google-Smtp-Source: AAOMgpc4E/N821QJ5yi1Va/1cH5UrvECQGEdLdAeE+2dxckHFriY+OqyA88+IXHfjylH+V9cbbHadoj7F6IfQ1PsgSQ=
+X-Received: by 2002:a1f:c102:: with SMTP id r2-v6mr12993923vkf.34.1531178267306;
+ Mon, 09 Jul 2018 16:17:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b79253ee160b4d08a48ac0a805939296@ausx13mpc120.AMER.DELL.COM>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 16:17:06 -0700 (PDT)
+In-Reply-To: <20180709192134.vhd4lh443fymthfs@treble>
+References: <1531043982-13325-1-git-send-email-yamada.masahiro@socionext.com> <20180709192134.vhd4lh443fymthfs@treble>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 10 Jul 2018 08:17:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR25_zLXmiyEs4N44Pi0qsyPGiuqSUUw-BbtQXyNmh-Og@mail.gmail.com>
+Message-ID: <CAK7LNAR25_zLXmiyEs4N44Pi0qsyPGiuqSUUw-BbtQXyNmh-Og@mail.gmail.com>
+Subject: Re: [PATCH] objtool: move libelf detection to Kconfig from Makefile
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     X86 ML <x86@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 09:08:56PM +0000, Mario.Limonciello@dell.com wrote:
-> > -----Original Message-----
-> > From: Darren Hart [mailto:dvhart@infradead.org]
-> > Sent: Monday, July 9, 2018 4:07 PM
-> > To: Limonciello, Mario
-> > Cc: srinivas.pandruvada@linux.intel.com; andy.shevchenko@gmail.com;
-> > alex.hung@canonical.com; andy@infradead.org; platform-driver-
-> > x86@vger.kernel.org; linux-kernel@vger.kernel.org; rjw@rjwysocki.net
-> > Subject: Re: [PATCH v2] platform/x86: intel-hid: Add support for Device Specific
-> > Methods
-> > 
-> > On Mon, Jul 09, 2018 at 04:38:16AM +0000, Mario.Limonciello@dell.com wrote:
-> > > > -----Original Message-----
-> > > > From: Srinivas Pandruvada [mailto:srinivas.pandruvada@linux.intel.com]
-> > > > Sent: Saturday, July 7, 2018 8:44 AM
-> > > > To: Darren Hart; Andy Shevchenko
-> > > > Cc: Limonciello, Mario; Alex Hung; Andy Shevchenko; Platform Driver; Linux
-> > Kernel
-> > > > Mailing List; Rafael J. Wysocki
-> > > > Subject: Re: [PATCH v2] platform/x86: intel-hid: Add support for Device Specific
-> > > > Methods
-> > > >
-> > > > On Fri, 2018-07-06 at 16:59 -0700, Darren Hart wrote:
-> > > > > On Mon, Jul 02, 2018 at 05:06:14PM +0300, Andy Shevchenko wrote:
-> > > > > > On Mon, Jul 2, 2018 at 4:51 PM,  <Mario.Limonciello@dell.com>
-> > > > > > wrote:
-> > ...
-> > > > Mario can add more.
-> > > > But I think Dell has released a BIOS fix, so that power button can
-> > > > still work using non _DSM way. So I think we can wait for normal
-> > > > release cycle.
-> > >
-> > > Yeah, I added some comments on a separate reply already indicating this.
-> > >
-> > > The affected system we know about has reverted the new interface.
-> > >
-> > > This all stems from an expectation that the _DSM has been there for "many"
-> > > releases on the Windows side.  Long enough that even all the corporate
-> > downgrade
-> > > scenarios to older Windows versions and the drivers with them all worked
-> > properly.
-> > >
-> > > If this doesn't end up being a candidate for backporting to stable we'll probably
-> > > end up asking our various OS partners to backport it as a SAUCE type patch in
-> > distro
-> > > kernels to eventually be able to turn this back on.
-> > 
-> > Thanks Mario. We'll skip the RC. We can discuss -stable as a separate
-> > issue.  This patch fixes a demonstrable bug, the biggest obstacle here
-> > is the size. At 240 lines with context, it more than doubles the maximum
-> > patch size for stable.
-> > 
-> > My recommendation is that we treat the stable backport of this as a
-> > special case, e.g. Andy and I don't tag it, but you or Srinivas propose
-> > it and specifically make the case for why an exception should be made to
-> > Greg.
-> > 
-> > How self contained and isolated this change is will be an important part
-> > of the argument. On the one hand, it's all one file, on the other hand,
-> > this is a fairly generic driver in use in more and more platforms, with
-> > the potential for widespread impact if this introduces a new bug.
-> > 
-> 
-> In that case, how about we let it bake for a while and maybe by the time
-> 4.19 comes out is when we do the proposal of a stable backport?
+2018-07-10 4:21 GMT+09:00 Josh Poimboeuf <jpoimboe@redhat.com>:
+> On Sun, Jul 08, 2018 at 06:59:42PM +0900, Masahiro Yamada wrote:
+>> Currently, users are allowed to enable STACK_VALIDATION regardless
+>> of the compiler capability.  The top-level Makefile warns or breaks
+>> the build if it turns out that the host compiler cannot link libelf.
+>>
+>> Move the libelf test to Kconfig so that users can enable the feature
+>> only when the host compiler can build the objtool.  The ugly check
+>> in the Makefile will go away.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>
+> Thanks for cleaning this up!
+>
+>> I am sure about this patch only from the build system point of view.
+>>
+>> Please review this from x86 and objtool point of view.
+>>
+>> In my understanding:
+>>
+>>  - UNWINDER_ORC _requires_ objtool,
+>>    so I added 'depends on STACK_VALIDATION'.
+>>    ('select' would end up with unmet depenency)
+>
+> Correct.
+>
+>>  - RETPOLINE _wants_ objtool, so I added 'imply'
+>
+> Yeah, I think this is fine.
+>
+> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
 
-Works for me.
+
+Thanks for your review!
+
+
+I have one question.
+
+
+The package information is contained in the warning/error message.
+Is it better to keep this?
+
+If so, I will send v2
+to move the information to the help, like this:
+
+
+
+ config STACK_VALIDATION
+         bool "Compile-time stack metadata validation"
+         depends on HAVE_STACK_VALIDATION
+         depends on $(success,echo "int main() {}" | $(HOSTCC) -xc -o
+/dev/null -lelf -)
+         help
+          Add compile-time checks to validate stack metadata, including frame
+          pointers (if CONFIG_FRAME_POINTER is enabled).  This helps ensure
+          that runtime stack traces are more reliable.
+
+          This is also a prerequisite for generation of ORC unwind data, which
+          is needed for CONFIG_UNWINDER_ORC.
+
++         To enable this, the host compiler needs to be able to link libelf.
++         If it is missing, please install libelf-dev, libelf-devel or
++         elfutils-libelf-devel.
+
+          For more information, see
+          tools/objtool/Documentation/stack-validation.txt.
+
+
 -- 
-Darren Hart
-VMware Open Source Technology Center
+Best Regards
+Masahiro Yamada
