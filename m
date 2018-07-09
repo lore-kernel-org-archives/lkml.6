@@ -2,94 +2,92 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E67FDC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72EB8C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A260620873
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:16:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25FA520873
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:17:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jpDh73yV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A260620873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hj1HJfbJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZqErE8H/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25FA520873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933464AbeGIQQ0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:16:26 -0400
-Received: from mail-pl0-f49.google.com ([209.85.160.49]:45639 "EHLO
-        mail-pl0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932806AbeGIQQY (ORCPT
+        id S933475AbeGIQRL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:17:11 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37106 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932806AbeGIQRJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:16:24 -0400
-Received: by mail-pl0-f49.google.com with SMTP id a17-v6so417935plm.12
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 09:16:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ervOhoo+C09P5nxNlJ2VW6XOKnApBp31QEZqEUOw8zE=;
-        b=jpDh73yVUNNDaCM+q22fbh49I4zJVUDVA3wiDlayNu11ld174w9gzz8QjWamoK0obS
-         DGQDIkXYG0E1TK2KqOu45M1TbdvoccRaCbI8ufULY+cRm+GB8TQn1iavIbpmkplf8Jwe
-         kk/mJuTRJHIHSij24RAOEXIGK8tv17qCJGl4mhH/yzltJdqf7VKh37qNUZBXmQzEE4Nl
-         ILPoBbBUGUMs73GzLupf4vYD1lNke8yhg9CoeVWgez2sanjgOkUOEuRj10F3yGmfRwf6
-         kmzBnlXI/cRNi96uQ6KOdnYzQxI5h9WFpf0b925Nevul7+L94hLXkARskh8HFNBpxD5O
-         oSLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ervOhoo+C09P5nxNlJ2VW6XOKnApBp31QEZqEUOw8zE=;
-        b=nzXINmoaC2fwOOcuA60J4sAAJcwq4BvkksWXP3Mr4ev1abFKFsTJI2fiz7Q6wx3XZB
-         ZEJUUpG9DG8tDfI5Vi1rVbxi2SURacRXg/6gqpP9G18E7JPzRpIGKc2w3pcHJy9bJ/f8
-         bLGAG73Ps9TysQkGH0KYIsIgp64s+xYx69x1eR4XOHpMT2zSr5TjvZcs/XYAs2zmedJm
-         NAZSo+WVPl3rbtQyq9mSeiVBCjDHxh1mc5qRbzcq6igHUdxGfelWnNGsM1KfYyh49SLQ
-         yASDXuizvUpJonnbL9iLqL6BYnxCxKNRiPlcRMiJ/Qr8QM/WK1asgx9Ko3zcq2c1S1eY
-         WN9A==
-X-Gm-Message-State: APt69E0kA3Hb0XwAKVdG6LubjY4RPDUE30dDyYl6Pv5ibLSdhXQFhF8N
-        UUmn54HnkfhOqfWB12n1AHCqWryDyvHdS+lZTuVZpg==
-X-Google-Smtp-Source: AAOMgpe4AicIH0BBoVnDwrQ9rFGJerZGGb71t8GeWi827T30Oez9OZHhq8QuErjGdAovu3YzJA7t7FGIlBSaKUDozok=
-X-Received: by 2002:a17:902:8c88:: with SMTP id t8-v6mr21142988plo.117.1531152983385;
- Mon, 09 Jul 2018 09:16:23 -0700 (PDT)
+        Mon, 9 Jul 2018 12:17:09 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F36EC6078C; Mon,  9 Jul 2018 16:17:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531153029;
+        bh=3wGCmHy3TUz0gFAJy7iexXw0SZ3N0BdxDLaBjIvPVc4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hj1HJfbJ4dV71Klylzij3tTBbSL20q9lTIBzJZQee/WLJEcxWET4zgz3zbl2RRV1u
+         GFaBA/0V8mrqV1+aeOOj4JuqfLjbGs9pT4joGE8hl51Wxpxw2v3i4+WZ/grR+xFOjp
+         mLZznzL0XVpkv4ZVjmA7o3uojhzhDhcd2ovXlidk=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D55F0600C1;
+        Mon,  9 Jul 2018 16:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531153028;
+        bh=3wGCmHy3TUz0gFAJy7iexXw0SZ3N0BdxDLaBjIvPVc4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZqErE8H/aHFE1d54zVQvhwoNMeJdlNwz5BkygL+eB9eGyDWuho06ITOyI5Mqd9UYt
+         EE3JFbR9FxMQ2WuceJVZ9FQ9FNHslZXJLJOmVmKCcNG/wbyn9OeY7ApjrzR1lzcnGq
+         Z4Wb1max0t1MShbwyjJ7X7fSFg9uGqJLK00f/v10=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D55F0600C1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org
+Cc:     linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        c-hbandi@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [PATCH v1 0/1] Enable subsystem restart for Qualcomm bluetooth chip wcn3990.
+Date:   Mon,  9 Jul 2018 21:46:56 +0530
+Message-Id: <20180709161657.26609-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Received: by 2002:a17:90a:950a:0:0:0:0 with HTTP; Mon, 9 Jul 2018 09:16:02
- -0700 (PDT)
-In-Reply-To: <010001647fcab0b9-1154d4da-94f8-404e-8898-b8acdf366592-000000@email.amazonses.com>
-References: <000000000000afa87d05708af289@google.com> <010001647fcab0b9-1154d4da-94f8-404e-8898-b8acdf366592-000000@email.amazonses.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 9 Jul 2018 18:16:02 +0200
-Message-ID: <CACT4Y+ZiVLw4pEt_GXV0DDo95eER5LuwXRo_fjFLwP8fUXzcrQ@mail.gmail.com>
-Subject: Re: kernel BUG at mm/slab.c:LINE! (2)
-To:     Christopher Lameter <cl@linux.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        netdev <netdev@vger.kernel.org>
-Cc:     syzbot <syzbot+885bda95271928dc24eb@syzkaller.appspotmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 6:05 PM, Christopher Lameter <cl@linux.com> wrote:
-> On Sun, 8 Jul 2018, syzbot wrote:
->
->> kernel BUG at mm/slab.c:4421!
->
-> Classic location that indicates memory corruption. Can we rerun this with
-> CONFIG_SLAB_DEBUG? Alternatively use SLUB debugging for better debugging
-> without rebuilding.
+In many platforms Bluetooth chip wcn3990 is a discrete chip connected 
+via UART lines to app processor. if the chip goes into bad state 
+i.e. into hard fault exception routine, which will not further respond 
+to any commands from HOST via UART. In that case wcn3390 will intimate 
+HOST by generating hardware error. Host stack will initiate a close 
+and reopen of the hci driver. Prior to sending hard ware error, wcn3990 
+has a capability of sending the RAM dump i.e. memory dump of the BT chip. 
+this will help us to fix stability issues of the SoC. We at QCA driver 
+read the dump packets and store via devcoredump(). 
+We perform restart after collecting the ram dump of the SoC.
 
-This runs with KASAN which is way more powerful than slab/slub debug.
 
-There two other recent crashes in bpf_test_finish which has more info:
+Harish Bandi (1):
+  Bluetooth: hci_qca: Sub system restart support for WCN3990
 
-https://syzkaller.appspot.com/bug?id=f831c88feddf5f4de09b846bbe53e5b8c06e5c02
-https://syzkaller.appspot.com/bug?id=059cee5623ce519359e7440ba6d0d6af8b82694e
+ drivers/bluetooth/btqca.h   |   8 ++
+ drivers/bluetooth/hci_qca.c | 261 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 269 insertions(+)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
