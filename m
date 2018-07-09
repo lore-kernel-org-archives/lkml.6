@@ -2,182 +2,148 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99883C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:03:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E57C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02A0E208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:03:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02A0E208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 91796208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:05:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sX9qks+D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91796208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933178AbeGIVDV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 17:03:21 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53944 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S932956AbeGIVDT (ORCPT
+        id S933308AbeGIVFN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 17:05:13 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45478 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932956AbeGIVFK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 17:03:19 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69Kwg72117738
-        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 17:03:19 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k4e76uyjw-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 17:03:18 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 9 Jul 2018 17:03:18 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 9 Jul 2018 17:03:15 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69L3EGF14418272
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 9 Jul 2018 21:03:14 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D3536B2065;
-        Mon,  9 Jul 2018 17:02:48 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AD863B2064;
-        Mon,  9 Jul 2018 17:02:48 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon,  9 Jul 2018 17:02:48 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8D94116C2E19; Mon,  9 Jul 2018 14:05:32 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 14:05:32 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     David Woodhouse <dwmw2@infradead.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180709125516.GO2476@hirez.programming.kicks-ass.net>
- <20180709130227.GQ2512@hirez.programming.kicks-ass.net>
- <20180709142932.GO3593@linux.vnet.ibm.com>
- <20180709152632.GX2476@hirez.programming.kicks-ass.net>
- <20180709163432.GV3593@linux.vnet.ibm.com>
- <1531162254.26547.3.camel@infradead.org>
- <20180709203441.GE3593@linux.vnet.ibm.com>
- <1531168538.26547.5.camel@infradead.org>
- <20180709204248.GF3593@linux.vnet.ibm.com>
- <1531169145.26547.8.camel@infradead.org>
+        Mon, 9 Jul 2018 17:05:10 -0400
+Received: by mail-pl0-f66.google.com with SMTP id a17-v6so740867plm.12;
+        Mon, 09 Jul 2018 14:05:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vogJWLkZ8uTQdxWCnFB526P8k/3T5qBRpwxjQW/KKMA=;
+        b=sX9qks+D2JDty+50cGz1JoK3Qggv1rEts3GW/25IZooy3NSe/MMNEk8Z5mItaHmXEX
+         ZtWMzvrDsPz+7mRYJcgCoymK1YiuSAgebVSSyn1lQxlNRP8dR8LQGUuSzg9d0R7s69qa
+         akT3VtTGO6la2jV7+EzWY2ixySKgtyYHslqg5IogmnUMmnADQ7XUdznp8YQr3/cYttXB
+         3ToQdl0MOw8Q590zCx91SAbfyWogMC0R08KS/JNzN4NVffC5KeTwvn+U1uLsMvaXrrCT
+         740o12mNcVMwimRwbLDSj7Qx9uRBvxD8JeHwkG7vZewz92J3r+zsvpZIs3dTfzTf3px/
+         rqfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vogJWLkZ8uTQdxWCnFB526P8k/3T5qBRpwxjQW/KKMA=;
+        b=iokZ4CfOHVS6xIxNoCBV6eft7GkYeqEH92TGsIHY7PryFkxQ1Nhvw8k+dMyBt+ASbn
+         Br2hQgLJvjUtBnbOOs72VTg/5Nkb1xuu2SnJxgvdz6dI3YFHsyYtus3EQO8O301Q3QpA
+         TNsqIDfN0KJDQbPkV4bkO/cNz04WrZ/BmUW4UoYYxT8KVRdtkpVc8ozwrpUuJ/uxsZ4f
+         JR4HQ/8k5rNEe8ja9WRSzDl7tvZvnLTZNIvMlNCaep2EPjU84mXggOH7+kyn09zcmi6W
+         jBdY1QzV6ziDTnauORStWspeS/0Ml1oAqoR6tgE4KXxCzruSwd7I2iypik6KXXxTY0Zh
+         PkPg==
+X-Gm-Message-State: APt69E0ITiAuL4w2NTDaRBGCdSLxB65aZrqhu+TlGW7lXZSF4xnXx/XP
+        HCnQLMv8z5AXQTGt74A9HuE=
+X-Google-Smtp-Source: AAOMgpeqiG2y9nmeC+TlX+uZyPq9b0y9SI0FdD+3TNfyZoXish/ac7FEijD6nybie8KGSlvCoJoyzw==
+X-Received: by 2002:a17:902:7043:: with SMTP id h3-v6mr22057652plt.269.1531170310435;
+        Mon, 09 Jul 2018 14:05:10 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id v30-v6sm40565432pgn.80.2018.07.09.14.05.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 14:05:09 -0700 (PDT)
+Subject: Re: INFO: rcu detected stall in llcp_sock_sendmsg
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+e9f364d3b15ce41d8451@syzkaller.appspotmail.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        David Miller <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev <netdev@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <0000000000000cc1f0057096efe6@google.com>
+ <CACT4Y+Zc+UKpGwEEMfKOsZ1s+AAFYFrVmjO0-u7NNjODRiJ7tg@mail.gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <6e2e4cfa-2cde-ec28-933d-1ee17c8b1da9@gmail.com>
+Date:   Mon, 9 Jul 2018 14:05:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1531169145.26547.8.camel@infradead.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18070921-0068-0000-0000-0000031587AA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009341; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01058987; UDB=6.00543460; IPR=6.00836907;
- MB=3.00022076; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-09 21:03:16
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18070921-0069-0000-0000-000044F8EA18
-Message-Id: <20180709210532.GH3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807090237
+In-Reply-To: <CACT4Y+Zc+UKpGwEEMfKOsZ1s+AAFYFrVmjO0-u7NNjODRiJ7tg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 09:45:45PM +0100, David Woodhouse wrote:
-> On Mon, 2018-07-09 at 13:42 -0700, Paul E. McKenney wrote:
-> > On Mon, Jul 09, 2018 at 09:35:38PM +0100, David Woodhouse wrote:
-> > > 
-> > > 
-> > > On Mon, 2018-07-09 at 13:34 -0700, Paul E. McKenney wrote:
-> > > > 
-> > > > So here are the possible code paths when .rcu_urgent_qs is set to true:
-> > > > 
-> > > > 1.      A context switch will record the quiescent state and clear
-> > > >         .rcu_urgent_qs.  (The failure to do the clearing in current -rcu
-> > > >         for PREEMPT builds is a performance bug that I need to fix.)
-> > > 
-> > > What if there's nothing else runnable and there is no actual context
-> > > switch?
-> > 
-> > The scheduler invokes rcu_note_context_switch() before looking to see
-> > if there really will or won't be a context switch.
-> > 
-> > I am sure that Peter will correct me if I am confused on this point.  ;-)
+
+
+On 07/09/2018 01:50 PM, Dmitry Vyukov wrote:
+> On Mon, Jul 9, 2018 at 10:34 PM, syzbot
+> <syzbot+e9f364d3b15ce41d8451@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    1e4b044d2251 Linux 4.18-rc4
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1414c2c2400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=e9f364d3b15ce41d8451
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+e9f364d3b15ce41d8451@syzkaller.appspotmail.com
 > 
-> Ah, OK. Yes, that looks correct. Thanks.
+> Looks like the problem is actually in nfc, so +nfc maintainers.
 
-Here is hoping!
+Note this issue was discussed before, maybe we should patch NFC without waiting for nfc maintainer.
 
-> I'll give your patch a spin tomorrow, unless Marius beats me to it.
+----------------------------------------------------
 
-Please see below for the version that I eventually queued.  Should Marius
-have a Reported-by?  If so, please tell me his full name so I can add that.
+On 06/25/2018 10:12 PM, Sergey Senozhatsky wrote:
+> On (06/26/18 07:07), Dmitry Vyukov wrote:
+> [..]
+>>>  #include <net/nfc/nfc.h>
+>>> @@ -755,7 +756,8 @@ int nfc_llcp_send_ui_frame(struct nfc_llcp_sock *sock, u8 ssap, u8 dsap,
+>>>                 pdu = nfc_alloc_send_skb(sock->dev, &sock->sk, MSG_DONTWAIT,
+>>>                                          frag_len + LLCP_HEADER_SIZE, &err);
+>>>                 if (pdu == NULL) {
+>>> -                       pr_err("Could not allocate PDU\n");
+>>> +                       pr_err_ratelimited("Could not allocate PDU\n");
+>>> +                       cond_resched();
+>>>                         continue;
+>>>                 }
+>>
+>>
+>> But this thread is still in an infinite (unkillable?) loop? If yes, we
+>> are waiting for the next syzbot report 
+>
+> The loop is still infinite, correct, but we have a preemption point now.
+> Sure, net people can come with a much better solution, I'll be happy to
+> scratch my patch.
+>
 
-							Thanx, Paul
+This can not be the right solution, think about current thread being real time,
+cond_resched() might be a nop.
 
-------------------------------------------------------------------------
+We should probably not loop at all, or not use MSG_DONTWAIT.
 
-commit e1e91fd0796dc544a77ddfaa5afbfc1f5fb42ecd
-Author: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Date:   Mon Jul 9 13:47:30 2018 -0700
+(And remove this useless "Could not allocate PDU" message)
 
-    rcu: Make need_resched() respond to urgent RCU-QS needs
-    
-    The per-CPU rcu_dynticks.rcu_urgent_qs variable communicates an urgent
-    need for an RCU quiescent state from the force-quiescent-state processing
-    within the grace-period kthread to context switches and to cond_resched().
-    Unfortunately, such urgent needs are not communicated to need_resched(),
-    which is sometimes used to decide when to invoke cond_resched(), for
-    but one example, within the KVM vcpu_run() function.  As of v4.15, this
-    can result in synchronize_sched() being delayed by up to ten seconds,
-    which can be problematic, to say nothing of annoying.
-    
-    This commit therefore checks rcu_dynticks.rcu_urgent_qs from within
-    rcu_check_callbacks(), which is invoked from the scheduling-clock
-    interrupt handler.  If the current task is not an idle task and is
-    not executing in usermode, a context switch is forced, and either way,
-    the rcu_dynticks.rcu_urgent_qs variable is set to false.  If the current
-    task is an idle task, then RCU's dyntick-idle code will detect the
-    quiescent state, so no further action is required.  Similarly, if the
-    task is executing in usermode, other code in rcu_check_callbacks() and
-    its called functions will report the corresponding quiescent state.
-    
-    Reported-by: David Woodhouse <dwmw2@infradead.org>
-    Suggested-by: Peter Zijlstra <peterz@infradead.org>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+NFC maintainers should really take a look at this.
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 51919985f6cf..ea756bb64eb3 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -2496,6 +2496,15 @@ void rcu_check_callbacks(int user)
- {
- 	trace_rcu_utilization(TPS("Start scheduler-tick"));
- 	raw_cpu_inc(rcu_data.ticks_this_gp);
-+	/* The load-acquire pairs with the store-release setting to true. */
-+	if (smp_load_acquire(this_cpu_ptr(&rcu_dynticks.rcu_urgent_qs))) {
-+		/* Idle and userspace execution already are quiescent states. */
-+		if (!is_idle_task(current) && !user) {
-+			set_tsk_need_resched(current);
-+			set_preempt_need_resched();
-+		}
-+		__this_cpu_write(rcu_dynticks.rcu_urgent_qs, false);
-+	}
- 	rcu_flavor_check_callbacks(user);
- 	if (rcu_pending())
- 		invoke_rcu_core();
 
