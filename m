@@ -2,106 +2,127 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B85C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4402AC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B949B208A5
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 015FF2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A6eDBPc/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B949B208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="MZmi7cIo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 015FF2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933652AbeGIPNL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:13:11 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57638 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933249AbeGIPNH (ORCPT
+        id S933558AbeGIPMZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:12:25 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37358 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933406AbeGIPKk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:13:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=zNxHIEHCCYCOA4AVWDOAFuUAPwthrL8tieeHGwFWXF8=; b=A6eDBPc/kyzZxpgH7NfTivGBk
-        xOTBBkbEpcZ5Q5URtYWYObWXsch5GjB0osLtbcRZheZMuDZ2tDM5o4r17a4orhx/u2c37F0fiZKTC
-        1a4hAiPbhCk8fGhPsgsM/moUdv1qHp1sycYTLmVC7Bp8Ih8IwbNl0z9ZFiTSLvs9A7NNDBdppgG52
-        04PVCVZUXBoJS49Tmt/LzarL5tbxKp0qqkyrLUfPDwIotJBQ1jrHS8aRdyoJvZqKmrgAXgSyJ/yor
-        Ge/kjrxhcCD9JdZ0vuDmSEcgnc68eATOus99yzN0tYDV7xKZHgd/cLaN+A7QvMT452OQAT1QRBvth
-        7ZBR86CIA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcXqX-0002ZM-0G; Mon, 09 Jul 2018 15:13:01 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 712FA20289CE4; Mon,  9 Jul 2018 17:12:58 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 17:12:58 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH 11/12] sched: use for_each_if in topology.h
-Message-ID: <20180709151258.GV2476@hirez.programming.kicks-ass.net>
-References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
- <20180709083650.23549-11-daniel.vetter@ffwll.ch>
- <20180709103656.GH2476@hirez.programming.kicks-ass.net>
- <CAKMK7uEr9PJ0mex5CWdws55OwaLuHCbLJ5vP8KA4ZQXdAVOTYQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uEr9PJ0mex5CWdws55OwaLuHCbLJ5vP8KA4ZQXdAVOTYQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Mon, 9 Jul 2018 11:10:40 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q10-v6so11375154wrd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:10:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=oFHl/qb6kt+BdQRH7snwxI9/D15UmrVQxZQdfewdXGc=;
+        b=MZmi7cIoiodab3iisrWELPT8EII5FUalU7OXEvUVrWwHRufAJiQOxak5xZ07jv77OZ
+         b/ogxpuQr+m7HrRhBVeMvqnUgPThl+Kyl/U5muK+otbbW1gmujVvJtigkKp6oI8Xr8cl
+         Ge5f3BsTCyTamyjxqA5X9+1yWkPmmRjPWoZkvspANyzrR68e1lHDw/nJZW4TGCkE/AhG
+         /WRm0isdYrDqdCeYXNGT8OVNRGRKdewrA7UBrGPg2CBCU2bnKc1RAu55HKJ8+NKFDrce
+         Zdh6j65akWZq/ly0luTF582U8qTy+vJF854psYz06tap1GQT/nM5fhhJIyD3Ng5sXw5O
+         JIuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=oFHl/qb6kt+BdQRH7snwxI9/D15UmrVQxZQdfewdXGc=;
+        b=eywOHrSRHrzZrMkzqGk1zBwmPDF41aKw73fbUPvrDwfaQGlLBx+iP6VlAoRih1w8ph
+         b6ElBXKlRp6PqZZIUqPKBBui1mF7K3mRoqoJATv8TvY57gfrDvUgtGcbdH6idFLSfUSZ
+         urL1OLdC2p3bxeU6ZWkO6tVWnOGt0+h74aQYnfJHey8ciUM5fC3rUd6VQZmQoXoT6bWW
+         pejE//4vRgw8PGlliZU2onIBQKUz/b14BOrHKalCvod6j/52kemB6BLioCCd6J/7iWah
+         sS9WwzylWH6ulA/fqNflsycc/y0cpHqVI02BSfsbcsWocOtf/pbFwMlgaftWSoZuYyEI
+         ZxMA==
+X-Gm-Message-State: AOUpUlE9GFn0EMW3rVVCZuaHbQq+XJxYvHaW4kKDpt7N/zj9xadxqQ8D
+        WUz816+xDRKQSaLXFm4n533/YA==
+X-Google-Smtp-Source: AAOMgpcts4dmipIvHXOCERh8A7yQYeoT0y+iOwzRkc9B2Z1V+2WT35nxe4NCCZtfpJbnWmIcl92Utw==
+X-Received: by 2002:adf:80c9:: with SMTP id 67-v6mr6210531wrl.95.1531149038792;
+        Mon, 09 Jul 2018 08:10:38 -0700 (PDT)
+Received: from localhost.localdomain (p200300D993C227000209466FFA2F090C.dip0.t-ipconnect.de. [2003:d9:93c2:2700:209:466f:fa2f:90c])
+        by smtp.googlemail.com with ESMTPSA id u124-v6sm7817330wme.26.2018.07.09.08.10.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 08:10:38 -0700 (PDT)
+From:   Manfred Spraul <manfred@colorfullife.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
+        Kees Cook <keescook@chromium.org>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Manfred Spraul <manfred@colorfullife.com>
+Subject: [PATCH 08/12] lib/rhashtable: simplify bucket_table_alloc()
+Date:   Mon,  9 Jul 2018 17:10:15 +0200
+Message-Id: <20180709151019.1336-9-manfred@colorfullife.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180709151019.1336-1-manfred@colorfullife.com>
+References: <20180709151019.1336-1-manfred@colorfullife.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 05:00:07PM +0200, Daniel Vetter wrote:
-> On Mon, Jul 9, 2018 at 12:36 PM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > On Mon, Jul 09, 2018 at 10:36:49AM +0200, Daniel Vetter wrote:
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-> >>  #define for_each_node_with_cpus(node)                        \
-> >>       for_each_online_node(node)                      \
-> >> -             if (nr_cpus_node(node))
-> >> +             for_each_if (nr_cpus_node(node))
-> >
-> > Not having gotten any of the other patches, I'm not really sure what
-> > this does and such, but improve readability it does not :/
-> 
-> Patch 1 in this series, which I dumped onto lkml as a whole:
-> 
-> https://lkml.org/lkml/2018/7/9/179
+As of commit ce91f6ee5b3b ("mm: kvmalloc does not fallback to vmalloc for
+incompatible gfp flags") we can simplify the caller and trust kvzalloc() to
+just do the right thing. For the case of the GFP_ATOMIC context, we can
+drop the __GFP_NORETRY flag for obvious reasons, and for the __GFP_NOWARN
+case, however, it is changed such that the caller passes the flag instead
+of making bucket_table_alloc() handle it.
 
-Right, so while I don't object to being Cc'ed to the whole series, I do
-mind not being Cc'ed to at least the generic bits required to understand
-the patch I do have to look at.
+This slightly changes the gfp flags passed on to nested_table_alloc() as
+it will now also use GFP_ATOMIC | __GFP_NOWARN. However, I consider this a
+positive consequence as for the same reasons we want nowarn semantics in
+bucket_table_alloc().
 
-> Imo it does improve readability for the if (!cond) {} else pattern.
-> And (assuming my grep fu isn't too badly wrong) most places in the
-> kernel do use this pattern in for_each macros, so I guess its a real
-> thing. We've definitely hit it plenty in drm iterators (but we seem to
-> like if() checks in iterator macros maybe a bit too much).
-> 
-> I'm happy to drop this patch tough if you deem it offensive.
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-I'd just like to understand it better; what compiler complains about
-this and is the warning otherwise useful? These things don't seem
-mentioned in that initial patch either.
+(commit id extended to 12 digits, line wraps updated)
+Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+---
+ lib/rhashtable.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-IOW I suppose I'm asking for the justification of this churn. If it's
-really needed and useful so be it, but so far I'm not seeing any.
+diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+index 9427b5766134..083f871491a1 100644
+--- a/lib/rhashtable.c
++++ b/lib/rhashtable.c
+@@ -175,10 +175,7 @@ static struct bucket_table *bucket_table_alloc(struct rhashtable *ht,
+ 	int i;
+ 
+ 	size = sizeof(*tbl) + nbuckets * sizeof(tbl->buckets[0]);
+-	if (gfp != GFP_KERNEL)
+-		tbl = kzalloc(size, gfp | __GFP_NOWARN | __GFP_NORETRY);
+-	else
+-		tbl = kvzalloc(size, gfp);
++	tbl = kvzalloc(size, gfp);
+ 
+ 	size = nbuckets;
+ 
+@@ -459,7 +456,7 @@ static int rhashtable_insert_rehash(struct rhashtable *ht,
+ 
+ 	err = -ENOMEM;
+ 
+-	new_tbl = bucket_table_alloc(ht, size, GFP_ATOMIC);
++	new_tbl = bucket_table_alloc(ht, size, GFP_ATOMIC | __GFP_NOWARN);
+ 	if (new_tbl == NULL)
+ 		goto fail;
+ 
+-- 
+2.17.1
 
-At a while guess I'd say this is something new in gcc-8 (and while I
-have that installed on some machines, it doesn't seem to be the default,
-and so I've not actually seen its output). But is the warning actually
-useful, should we not just kill the warning like we tend to do some
-really silly ones.
