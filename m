@@ -2,120 +2,304 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A5BC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:38:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D05C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E05562089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:38:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E05562089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 07DDC208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 21:40:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KH6skn1r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07DDC208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933347AbeGIViq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 17:38:46 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:44002 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933066AbeGIVip (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 17:38:45 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fcdrh-0002vY-Rh; Mon, 09 Jul 2018 17:38:37 -0400
-Message-ID: <1531172317.5350.33.camel@surriel.com>
-Subject: Re: [PATCH 1/7] mm: allocate mm_cpumask dynamically based on
- nr_cpu_ids
-From:   Rik van Riel <riel@surriel.com>
-To:     Mike Galbraith <efault@gmx.de>, linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, kernel-team@fb.com, tglx@linutronix.de,
-        songliubraving@fb.com, hpa@zytor.com
-Date:   Mon, 09 Jul 2018 17:38:37 -0400
-In-Reply-To: <1531059232.4665.38.camel@gmx.de>
-References: <20180706215658.18018-1-riel@surriel.com>
-         <20180706215658.18018-2-riel@surriel.com>
-         <1530951813.22672.10.camel@gmx.de> <1530998709.5350.32.camel@surriel.com>
-         <1531059232.4665.38.camel@gmx.de>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-G3vpz9Of2Yh/RdfONeoK"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        id S933364AbeGIVj6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 17:39:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34058 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933066AbeGIVj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 17:39:57 -0400
+Received: from localhost.localdomain (user-0ccsrjt.cable.mindspring.com [24.206.110.125])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F072F208A2;
+        Mon,  9 Jul 2018 21:39:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531172396;
+        bh=br2C6GoFN06kj012V/gthUlCEGBN3y4uNyFLKPnLA1M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KH6skn1rojD2fXZYr0fBl/9mHDE59LzpiWck6JuhWOhUJDjA05pIFMeiLPnK4kw+9
+         gghoy7JDsw+wBn69RHyI+4wNrhg6+gYQbq7cJgJBOgZIBVKGB/n9TKmOHqi7PtBMkO
+         /dkr0NyKWtYCeYjJJB9AKzfpPWsQjUXY1q2neml0=
+From:   Alan Tull <atull@kernel.org>
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     Alan Tull <atull@kernel.org>,
+        Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>,
+        linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
+Subject: [PATCH] fpga: mgr: rework fpga_mgr_get API for multiple managers
+Date:   Mon,  9 Jul 2018 16:39:49 -0500
+Message-Id: <1531172389-7312-1-git-send-email-atull@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Change fpga_mgr_get() function to take manager as the parameter
+instead of dev.  Caller probably has a pointer to manager already
+anyway, so remove code that searched for manager based on dev.  The
+rationale for this change is that cards that have more than one FPGA
+may have more than one manager.
 
---=-G3vpz9Of2Yh/RdfONeoK
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Add new __fpga_mgr_create() API which adds an 'owner' parameter.  This
+API will save owner in struct fpga_manager.
 
-On Sun, 2018-07-08 at 16:13 +0200, Mike Galbraith wrote:
-> On Sat, 2018-07-07 at 17:25 -0400, Rik van Riel wrote:
-> >=20
-> > > ./include/linux/bitmap.h:208:3: warning: =E2=80=98memset=E2=80=99 wri=
-ting 64
-> > > bytes
-> > > into a region of size 0 overflows the destination [-Wstringop-
-> > > overflow=3D]
-> > >    memset(dst, 0, len);
-> > >    ^~~~~~~~~~~~~~~~~~~
-> >=20
-> > I don't understand this one.
-> >=20
-> > Inside init_mm we have this line:
-> >         .cpu_bitmap     =3D { [BITS_TO_LONGS(NR_CPUS)] =3D 0},
-> >=20
-> > which is the way the documentation suggests statically
-> > allocated variable size arrays should be allocated=20
-> > and initialized.
-> >=20
-> > How does that result in a memset of the same size,
-> > on the same array, to throw an error like above?
->=20
-> Compiler knows that ->cpu_bitmap is 64 bits of storage, and with
-> !CPUMASK_OFFSTACK, nr_cpumask_bits =3D NR_CPUS.  With NR_CPUS > 64,
-> compiler gripes, with NR_CPUS <=3D 64 it's a happy camper.
->=20
-> > What am I doing wrong?
->=20
-> Below is what I did to get box to both STHU, and to boot with the
-> openSUSE master branch config I sent.  Without the efi_mm hunk, boot
-> hangs early with or without the other hunk.
->=20
-> I build and boot tested the openSUSE config, a NOPREEMPT+MAXSMP
-> config,
-> my local config w. NR_CPUS=3D8, and master-rt w. NR_CPUS=3D256, which is
-> the only one that got any real exercise (building the others).
->=20
+Existing fpga_mgr_create() API becomes a macro that calls
+__fpga_mgr_create(), setting owner to THIS_MODULE of caller.
 
-Thank you for tracking that down.
+fpga_mgr_get() will do try_module_get(mgr->owner).  For drivers that
+have one manager, this has the same effect as the code it replaces
+that did try_module_get(dev->parent->driver->owner) since the parent
+is the low level FPGA manager driver.
 
-I added your code, and Signed-off-By in patch
-1 for version 5 of the series.
+Fixes: 9dce0287a60d ("fpga: add method to get fpga manager from device")
+Reported-by: Appana Durga Kedareswara rao <appana.durga.rao@xilinx.com>
+Signed-off-by: Alan Tull <atull@kernel.org>
+---
+ drivers/fpga/fpga-mgr.c       | 77 +++++++++++++++++++------------------------
+ include/linux/fpga/fpga-mgr.h | 15 +++++----
+ 2 files changed, 43 insertions(+), 49 deletions(-)
 
---=20
-All Rights Reversed.
---=-G3vpz9Of2Yh/RdfONeoK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAltD1d0ACgkQznnekoTE
-3oPPswf/dExlEf7IrkgQzZhRGsT9nRIExvsX6DcFxIbTAS3GcyxnwRFei/NA0QlM
-eXCysp4sNEs/goKmHPM2s0w8hQCSxhcIOuZi2afQJB0gE8yUjmszV63l3Co0X4i+
-tiu0BlTL2GDyKd4ESficLjq8CgxuYJm+/HZY5ycqaOTDEZY80WAE3FnluaYNvqlJ
-UiraH34mJmtiNSYZt9GSGlbWvrloNIzH7709YBEgdSwG3ppoQHcxFvoS23OzTmQX
-eHemCRHFHRZ/vCS82ZHXMMHKjiimISaz15RKUO87OeDjUEBUXTiboeU3G2vI51mk
-uE3ZXv4hBz2QbgAQDCj0MKWg/V/rSQ==
-=qkuT
------END PGP SIGNATURE-----
-
---=-G3vpz9Of2Yh/RdfONeoK--
+diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+index c1564cf..8d0ac96 100644
+--- a/drivers/fpga/fpga-mgr.c
++++ b/drivers/fpga/fpga-mgr.c
+@@ -162,9 +162,7 @@ static int fpga_mgr_write_complete(struct fpga_manager *mgr,
+  *
+  * Step the low level fpga manager through the device-specific steps of getting
+  * an FPGA ready to be configured, writing the image to it, then doing whatever
+- * post-configuration steps necessary.  This code assumes the caller got the
+- * mgr pointer from of_fpga_mgr_get() or fpga_mgr_get() and checked that it is
+- * not an error code.
++ * post-configuration steps necessary.
+  *
+  * This is the preferred entry point for FPGA programming, it does not require
+  * any contiguous kernel memory.
+@@ -239,8 +237,7 @@ static int fpga_mgr_buf_load_mapped(struct fpga_manager *mgr,
+  *
+  * Step the low level fpga manager through the device-specific steps of getting
+  * an FPGA ready to be configured, writing the image to it, then doing whatever
+- * post-configuration steps necessary.  This code assumes the caller got the
+- * mgr pointer from of_fpga_mgr_get() and checked that it is not an error code.
++ * post-configuration steps necessary.
+  *
+  * Return: 0 on success, negative error code otherwise.
+  */
+@@ -310,9 +307,7 @@ static int fpga_mgr_buf_load(struct fpga_manager *mgr,
+  *
+  * Request an FPGA image using the firmware class, then write out to the FPGA.
+  * Update the state before each step to provide info on what step failed if
+- * there is a failure.  This code assumes the caller got the mgr pointer
+- * from of_fpga_mgr_get() or fpga_mgr_get() and checked that it is not an error
+- * code.
++ * there is a failure.
+  *
+  * Return: 0 on success, negative error code otherwise.
+  */
+@@ -347,8 +342,11 @@ static int fpga_mgr_firmware_load(struct fpga_manager *mgr,
+  * @mgr:	fpga manager
+  * @info:	fpga image information.
+  *
+- * Load the FPGA from an image which is indicated in @info.  If successful, the
+- * FPGA ends up in operating mode.
++ * Load the FPGA from an image which is indicated in @info.  @mgr is a
++ * valid pointer to an FPGA manager whose refcount has been
++ * incremented by of_fpga_mgr_get() or fpga_mgr_get() and has been
++ * locked by fpga_mgr_lock().  If successful, the FPGA ends up in
++ * operating mode.
+  *
+  * Return: 0 on success, negative error code otherwise.
+  */
+@@ -416,41 +414,28 @@ static struct attribute *fpga_mgr_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(fpga_mgr);
+ 
+-static struct fpga_manager *__fpga_mgr_get(struct device *dev)
++/* Assumes mgr->dev has refcount incremented already. */
++static struct fpga_manager *__fpga_mgr_get(struct fpga_manager *mgr)
+ {
+-	struct fpga_manager *mgr;
+-
+-	mgr = to_fpga_manager(dev);
+-
+-	if (!try_module_get(dev->parent->driver->owner))
+-		goto err_dev;
++	if (try_module_get(mgr->owner))
++		return mgr;
+ 
+-	return mgr;
++	put_device(&mgr->dev);
+ 
+-err_dev:
+-	put_device(dev);
+ 	return ERR_PTR(-ENODEV);
+ }
+ 
+-static int fpga_mgr_dev_match(struct device *dev, const void *data)
+-{
+-	return dev->parent == data;
+-}
+-
+ /**
+- * fpga_mgr_get - Given a device, get a reference to a fpga mgr.
+- * @dev:	parent device that fpga mgr was registered with
++ * fpga_mgr_get - Increment refcount for a fpga mgr.
++ * @mgr:	fpga manager
+  *
+  * Return: fpga manager struct or IS_ERR() condition containing error code.
+  */
+-struct fpga_manager *fpga_mgr_get(struct device *dev)
++struct fpga_manager *fpga_mgr_get(struct fpga_manager *mgr)
+ {
+-	struct device *mgr_dev = class_find_device(fpga_mgr_class, NULL, dev,
+-						   fpga_mgr_dev_match);
+-	if (!mgr_dev)
+-		return ERR_PTR(-ENODEV);
++	get_device(&mgr->dev);
+ 
+-	return __fpga_mgr_get(mgr_dev);
++	return __fpga_mgr_get(mgr);
+ }
+ EXPORT_SYMBOL_GPL(fpga_mgr_get);
+ 
+@@ -468,6 +453,7 @@ static int fpga_mgr_of_node_match(struct device *dev, const void *data)
+  */
+ struct fpga_manager *of_fpga_mgr_get(struct device_node *node)
+ {
++	struct fpga_manager *mgr;
+ 	struct device *dev;
+ 
+ 	dev = class_find_device(fpga_mgr_class, NULL, node,
+@@ -475,7 +461,9 @@ struct fpga_manager *of_fpga_mgr_get(struct device_node *node)
+ 	if (!dev)
+ 		return ERR_PTR(-ENODEV);
+ 
+-	return __fpga_mgr_get(dev);
++	mgr = to_fpga_manager(dev);
++
++	return __fpga_mgr_get(mgr);
+ }
+ EXPORT_SYMBOL_GPL(of_fpga_mgr_get);
+ 
+@@ -485,7 +473,7 @@ EXPORT_SYMBOL_GPL(of_fpga_mgr_get);
+  */
+ void fpga_mgr_put(struct fpga_manager *mgr)
+ {
+-	module_put(mgr->dev.parent->driver->owner);
++	module_put(mgr->owner);
+ 	put_device(&mgr->dev);
+ }
+ EXPORT_SYMBOL_GPL(fpga_mgr_put);
+@@ -494,9 +482,8 @@ EXPORT_SYMBOL_GPL(fpga_mgr_put);
+  * fpga_mgr_lock - Lock FPGA manager for exclusive use
+  * @mgr:	fpga manager
+  *
+- * Given a pointer to FPGA Manager (from fpga_mgr_get() or
+- * of_fpga_mgr_put()) attempt to get the mutex. The user should call
+- * fpga_mgr_lock() and verify that it returns 0 before attempting to
++ * Given a pointer to FPGA Manager, attempt to get the mutex. The user should
++ * call fpga_mgr_lock() and verify that it returns 0 before attempting to
+  * program the FPGA.  Likewise, the user should call fpga_mgr_unlock
+  * when done programming the FPGA.
+  *
+@@ -524,17 +511,20 @@ void fpga_mgr_unlock(struct fpga_manager *mgr)
+ EXPORT_SYMBOL_GPL(fpga_mgr_unlock);
+ 
+ /**
+- * fpga_mgr_create - create and initialize a FPGA manager struct
++ * __fpga_mgr_create - create and initialize a FPGA manager struct
+  * @dev:	fpga manager device from pdev
++ * @owner:	owner of manager, i.e. THIS_MODULE of manager driver
+  * @name:	fpga manager name
+  * @mops:	pointer to structure of fpga manager ops
+  * @priv:	fpga manager private data
+  *
+  * Return: pointer to struct fpga_manager or NULL
+  */
+-struct fpga_manager *fpga_mgr_create(struct device *dev, const char *name,
+-				     const struct fpga_manager_ops *mops,
+-				     void *priv)
++struct fpga_manager *__fpga_mgr_create(struct device *dev,
++				       struct module *owner,
++				       const char *name,
++				       const struct fpga_manager_ops *mops,
++				       void *priv)
+ {
+ 	struct fpga_manager *mgr;
+ 	int id, ret;
+@@ -563,6 +553,7 @@ struct fpga_manager *fpga_mgr_create(struct device *dev, const char *name,
+ 
+ 	mutex_init(&mgr->ref_mutex);
+ 
++	mgr->owner = owner;
+ 	mgr->name = name;
+ 	mgr->mops = mops;
+ 	mgr->priv = priv;
+@@ -587,7 +578,7 @@ struct fpga_manager *fpga_mgr_create(struct device *dev, const char *name,
+ 
+ 	return NULL;
+ }
+-EXPORT_SYMBOL_GPL(fpga_mgr_create);
++EXPORT_SYMBOL_GPL(__fpga_mgr_create);
+ 
+ /**
+  * fpga_mgr_free - deallocate a FPGA manager
+diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
+index eec7c24..f948202 100644
+--- a/include/linux/fpga/fpga-mgr.h
++++ b/include/linux/fpga/fpga-mgr.h
+@@ -127,6 +127,7 @@ struct fpga_manager_ops {
+ /**
+  * struct fpga_manager - fpga manager structure
+  * @name: name of low level fpga manager
++ * @owner: module that owns this manager
+  * @dev: fpga manager device
+  * @ref_mutex: only allows one reference to fpga manager
+  * @state: state of fpga manager
+@@ -135,6 +136,7 @@ struct fpga_manager_ops {
+  */
+ struct fpga_manager {
+ 	const char *name;
++	struct module *owner;
+ 	struct device dev;
+ 	struct mutex ref_mutex;
+ 	enum fpga_mgr_states state;
+@@ -154,14 +156,15 @@ int fpga_mgr_lock(struct fpga_manager *mgr);
+ void fpga_mgr_unlock(struct fpga_manager *mgr);
+ 
+ struct fpga_manager *of_fpga_mgr_get(struct device_node *node);
+-
+-struct fpga_manager *fpga_mgr_get(struct device *dev);
+-
++struct fpga_manager *fpga_mgr_get(struct fpga_manager *mgr);
+ void fpga_mgr_put(struct fpga_manager *mgr);
+ 
+-struct fpga_manager *fpga_mgr_create(struct device *dev, const char *name,
+-				     const struct fpga_manager_ops *mops,
+-				     void *priv);
++struct fpga_manager *__fpga_mgr_create(struct device *dev,
++				       struct module *owner, const char *name,
++				       const struct fpga_manager_ops *mops,
++				       void *priv);
++#define fpga_mgr_create(dev, name, mops, priv)	\
++	__fpga_mgr_create((dev), THIS_MODULE, (name), (mops), (priv))
+ void fpga_mgr_free(struct fpga_manager *mgr);
+ int fpga_mgr_register(struct fpga_manager *mgr);
+ void fpga_mgr_unregister(struct fpga_manager *mgr);
+-- 
+2.7.4
 
