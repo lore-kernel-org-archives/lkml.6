@@ -3,73 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDB8C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:06:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B43C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:06:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5F420840
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:06:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5F420840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 142CF20840
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:06:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 142CF20840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933649AbeGIRGO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:06:14 -0400
-Received: from smtprelay0139.hostedemail.com ([216.40.44.139]:46646 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S933287AbeGIRGN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:06:13 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 84894180A812C;
-        Mon,  9 Jul 2018 17:06:12 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: legs49_8d66dc93f4f0f
-X-Filterd-Recvd-Size: 1528
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Mon,  9 Jul 2018 17:06:11 +0000 (UTC)
-Message-ID: <58278ce28b15bf747d6945748a3ad93f997d3214.camel@perches.com>
-Subject: Re: [PATCH] spdxcheck: Work with current HEAD LICENSES/ directory
-From:   Joe Perches <joe@perches.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Date:   Mon, 09 Jul 2018 10:06:10 -0700
-In-Reply-To: <alpine.DEB.2.21.1806052122120.1584@nanos.tec.linutronix.de>
-References: <7eeefc862194930c773e662cb2152e178441d3b8.camel@perches.com>
-         <alpine.DEB.2.21.1806052122120.1584@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        id S933679AbeGIRGf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:06:35 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58586 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933287AbeGIRGe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 13:06:34 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 10B41406DE36;
+        Mon,  9 Jul 2018 17:06:34 +0000 (UTC)
+Received: from [10.10.122.164] (ovpn-122-164.rdu2.redhat.com [10.10.122.164])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8CB162156891;
+        Mon,  9 Jul 2018 17:06:32 +0000 (UTC)
+Subject: Re: [PATCH v3 3/3] uio: fix crash after the device is unregistered
+To:     Xiubo Li <xiubli@redhat.com>, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+References: <1530845836-49101-1-git-send-email-xiubli@redhat.com>
+ <1530845836-49101-4-git-send-email-xiubli@redhat.com>
+ <5B3FB3B0.7010105@redhat.com>
+ <1d3a72f6-2d48-1e36-82e4-c764c5359765@redhat.com>
+Cc:     hamish.martin@alliedtelesis.co.nz, jannh@google.com,
+        pkalever@redhat.com, pkarampu@redhat.com, atumball@redhat.com,
+        sabose@redhat.com
+From:   Mike Christie <mchristi@redhat.com>
+Message-ID: <5B439618.5060800@redhat.com>
+Date:   Mon, 9 Jul 2018 12:06:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
+MIME-Version: 1.0
+In-Reply-To: <1d3a72f6-2d48-1e36-82e4-c764c5359765@redhat.com>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 09 Jul 2018 17:06:34 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 09 Jul 2018 17:06:34 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mchristi@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-05 at 21:22 +0200, Thomas Gleixner wrote:
-> On Tue, 5 Jun 2018, Joe Perches wrote:
+On 07/06/2018 08:28 PM, Xiubo Li wrote:
+> On 2018/7/7 2:23, Mike Christie wrote:
+>> On 07/05/2018 09:57 PM, xiubli@redhat.com wrote:
+>>>   static irqreturn_t uio_interrupt(int irq, void *dev_id)
+>>>   {
+>>>       struct uio_device *idev = (struct uio_device *)dev_id;
+>>> -    irqreturn_t ret = idev->info->handler(irq, idev->info);
+>>> +    irqreturn_t ret;
+>>> +
+>>> +    mutex_lock(&idev->info_lock);
+>>> +    if (!idev->info) {
+>>> +        ret = IRQ_NONE;
+>>> +        goto out;
+>>> +    }
+>>>   +    ret = idev->info->handler(irq, idev->info);
+>>>       if (ret == IRQ_HANDLED)
+>>>           uio_event_notify(idev->info);
+>>>   +out:
+>>> +    mutex_unlock(&idev->info_lock);
+>>>       return ret;
+>>>   }
+>>
+>> Do you need the interrupt related changes in this patch and the first
+>> one?
+> Actually, the NULL checking is not a must, we can remove this. But the
+> lock/unlock is needed.
+>>   When we do uio_unregister_device -> free_irq does free_irq return
+>> when there are no longer running interrupt handlers that we requested?
+>>
+>> If that is not the case then I think we can hit a similar bug. We do:
+>>
+>> __uio_register_device -> device_register -> device's refcount goes to
+>> zero so we do -> uio_device_release -> kfree(idev)
+>>
+>> and if it is possible the interrupt handler could still run after
+>> free_irq then we would end up doing:
+>>
+>> uio_interrupt -> mutex_lock(&idev->info_lock) -> idev access freed
+>> memory.
 > 
-> > Depending on how old your -next tree is, it may
-> > not have a master that has the LICENSES directory.
-> > 
-> > Change the lookup to HEAD and find whatever
-> > LICENSE directory files are used in that branch.
-> > 
-> > Miscellanea:
-> > 
-> > o Remove the checkpatch test as it will have its own
-> >   SPDX license identifier.
-> > 
-> > Signed-off-by: Joe Perches <joe@perches.com>
+> I think this shouldn't happen. Because the free_irq function does not
+> return until any executing interrupts for this IRQ have completed.
 > 
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 
-Can either of you apply this?
-
-https://patchwork.kernel.org/patch/10448573/
+If free_irq returns after executing interrupts and does not allow new
+executions what is the lock protecting in uio_interrupt?
 
