@@ -2,124 +2,125 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9E6C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CBBC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F922208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:08:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F922208A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A2542086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:08:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2542086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933267AbeGIPIu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:08:50 -0400
-Received: from foss.arm.com ([217.140.101.70]:60864 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932949AbeGIPIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:08:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D6A09ED1;
-        Mon,  9 Jul 2018 08:08:48 -0700 (PDT)
-Received: from e105550-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 81D463F589;
-        Mon,  9 Jul 2018 08:08:47 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 16:08:39 +0100
-From:   Morten Rasmussen <morten.rasmussen@arm.com>
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        gaku.inami.xh@renesas.com,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv4 00/12] sched/fair: Migrate 'misfit' tasks on asymmetric
- capacity systems
-Message-ID: <20180709150839.GA19287@e105550-lin.cambridge.arm.com>
-References: <1530699470-29808-1-git-send-email-morten.rasmussen@arm.com>
- <CAKfTPtB9tRb6vWAHf-CyMpZjMaRtOzUnB7PCuWwAmfsJf_Y6pA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKfTPtB9tRb6vWAHf-CyMpZjMaRtOzUnB7PCuWwAmfsJf_Y6pA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S933331AbeGIPI4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:08:56 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:38608 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932949AbeGIPIw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:08:52 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 213ED275682
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     briannorris@chromium.org, kernel@collabora.com, heiko@sntech.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>
+Subject: [PATCH] usb: dwc3: of-simple: reset host controller at suspend/resume
+Date:   Mon,  9 Jul 2018 17:08:44 +0200
+Message-Id: <20180709150844.32505-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 12:18:27PM +0200, Vincent Guittot wrote:
-> Hi Morten,
-> 
-> On Wed, 4 Jul 2018 at 12:18, Morten Rasmussen <morten.rasmussen@arm.com> wrote:
-> >
-> > On asymmetric cpu capacity systems (e.g. Arm big.LITTLE) it is crucial
-> > for performance that cpu intensive tasks are aggressively migrated to
-> > high capacity cpus as soon as those become available. The capacity
-> > awareness tweaks already in the wake-up path can't handle this as such
-> > tasks might run or be runnable forever. If they happen to be placed on a
-> > low capacity cpu from the beginning they are stuck there forever while
-> > high capacity cpus may have become available in the meantime.
-> >
-> > To address this issue this patch set introduces a new "misfit"
-> > load-balancing scenario in periodic/nohz/newly idle balance which tweaks
-> > the load-balance conditions to ignore load per capacity in certain
-> > cases. Since misfit tasks are commonly running alone on a cpu, more
-> > aggressive active load-balancing is needed too.
-> >
-> > The fundamental idea of this patch set has been in Android kernels for a
-> > long time and is absolutely essential for consistent performance on
-> > asymmetric cpu capacity systems.
-> >
-> 
-> As already said , I'm not convinced by the proposal which seems quite
-> complex and also adds some kind of arbitrary and fixed power
-> management policy by deciding which tasks can or not go on big cores
-> whereas there are other frameworks to take such decision like EAS or
-> cgroups.
+If we power off the SoC logic rail in S3, we can find that the Type-C
+PHY can't initialize correctly after system resume. We need to toggle
+the USB3-OTG reset before trying to initialize the PHY, or else it
+times out.
 
-The misfit patches are a crucial part of the EAS solution but they also
-make sense for some users on their own without an energy model. This is
-why they are posted separately.
+    phy phy-ff800000.phy.9: phy poweron failed --> -110
+    dwc3 fe900000.dwc3: failed to initialize core
+    dwc3: probe of fe900000.dwc3 failed with error -110
 
-We have already discussed at length why the patches are needed and why
-the look like they do here in this thread:
+Note that the RK3399 TRM suggests that we should keep the whole usb3
+controller in reset for the duration of the Type-C PHY initialization.
+However, it's hard to assert the reset in the current framework of
+reset. We're still skeptical about that, and we haven't yet found a
+case where this seems to have mattered. This approach is much easier, it
+simply holds the USB3-OTG reset while device is supended.
 
-https://lore.kernel.org/lkml/CAKfTPtD4skW_3SAk--vBEC5-m1Ua48bjOQYS0pDqW3nPSpsENg@mail.gmail.com/
+The dwc3 core is going to reinitialize the controller at suspend/resume
+anyway (including a "soft reset"), so it should be safe to do this.
 
-> Furthermore, there is already something similar in the kernel
-> with SD_ASYM_PACKING and IMO, it would be better to improve this
-> feature (if needed) instead of adding a new one which often do similar
-> things.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
+Dear all,
 
-As said in the previous thread, while it might look similar it isn't.
-SD_ASYM_PACKING isn't utilization-based which is the key metric used for
-EAS, schedutil, util_est, and util_clamp. SD_ASYM_PACKING serves a
-different purpose (see previous thread for details).
+Now that the usb3-phy otg port support for rk3399 has been merged [1] we
+found that suspend/resume is broken. The problem is well known for
+ChromeOS kernels, they solved it in a similar way adding a reset pulse on
+resume in the specific usb glue layer (dwc3-rockchip). In mainline,
+though, we use the dwc3-of-simple glue layer instead of a specific layer
+for rockchip. The patch is based on the Brian Norris work but slightly
+different, it holds the reset while device is suspended. It was tested
+on a Samsung Chromebook Plus with usbc docking station attached by doing
+different suspend/resume cycles and checking no usb devices has been
+lost.
 
-> I have rerun your tests and got same results than misfit task patchset
-> on my hikey960 with SD_ASYM_PACKING feature for legacy b.L topology
-> and fake dynamiQ topology. And it give better performance when the
-> pinned tasks are short and scheduler has to wait for the task to
-> increase their utilization before getting a chance to migrate on big
-> core.
+I am not sure this is the better way to solve this but I did not find
+any other way, and, as I am not sure this can be generic, the reset is only
+done on rockchip platforms.
 
-Right, the test cases are quite simple and could be served better by
-SD_ASYM_PACKING. As we already discussed in that thread, that is due to
-the PELT lag but this the cost we have to pay if we don't have
-additional information about the requirements of the task and we don't
-want to default to big-first with all its implications.
+Best regards,
+ Enric
 
-We have covered all this in the thread in early April.
+[1] bfdca1736ea76345071bbc5607d18928e54909ac ('arm64: dts: rockchip: add
+    usb3-phy otg-port support for rk3399')
 
-> Then, I have tested SD_ASYM_PACKING with EAS patchset and they work
-> together for b/L and dynamiQ topology
+ drivers/usb/dwc3/dwc3-of-simple.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Could you provide some more details about your evaluation? It probably
-works well for some use-cases but it isn't really designed for what we
-need for EAS.
+diff --git a/drivers/usb/dwc3/dwc3-of-simple.c b/drivers/usb/dwc3/dwc3-of-simple.c
+index dbeff5e6ad14..1d1ece99ed94 100644
+--- a/drivers/usb/dwc3/dwc3-of-simple.c
++++ b/drivers/usb/dwc3/dwc3-of-simple.c
+@@ -201,9 +201,30 @@ static int dwc3_of_simple_runtime_resume(struct device *dev)
+ 
+ 	return 0;
+ }
++
++static int dwc3_of_simple_suspend(struct device *dev)
++{
++	struct dwc3_of_simple *simple = dev_get_drvdata(dev);
++
++	if (of_device_is_compatible(dev->of_node, "rockchip,rk3399-dwc3"))
++		reset_control_assert(simple->resets);
++
++	return 0;
++}
++
++static int dwc3_of_simple_resume(struct device *dev)
++{
++	struct dwc3_of_simple *simple = dev_get_drvdata(dev);
++
++	if (of_device_is_compatible(dev->of_node, "rockchip,rk3399-dwc3"))
++		reset_control_deassert(simple->resets);
++
++	return 0;
++}
+ #endif
+ 
+ static const struct dev_pm_ops dwc3_of_simple_dev_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(dwc3_of_simple_suspend, dwc3_of_simple_resume)
+ 	SET_RUNTIME_PM_OPS(dwc3_of_simple_runtime_suspend,
+ 			dwc3_of_simple_runtime_resume, NULL)
+ };
+-- 
+2.18.0
 
-Morten
