@@ -2,114 +2,217 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URG_BIZ autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69592C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 345A6C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6042087F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:18:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6042087F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id CB05C2087F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:19:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tOwPYfvN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB05C2087F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932564AbeGIJR6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 05:17:58 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41430 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeGIJR5 (ORCPT
+        id S1754412AbeGIJTA (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 05:19:00 -0400
+Received: from twosheds.infradead.org ([90.155.92.209]:52742 "EHLO
+        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754077AbeGIJS7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 05:17:57 -0400
-Received: by mail-ed1-f66.google.com with SMTP id b12-v6so13354980edt.8
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 02:17:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Bo2uOA8TDUCn1UmhmHC7lzyxX1D4yEXQO4LKlJ1TCCA=;
-        b=Kc+vImDHEX/nwTJcz4sLym+lxFpy+hbcR7viJ+Omd0aD6SACrI6kUGG3rqpsgrFb2K
-         3vT1MIdnWm0i/lqOJdXpXcihLc7YImdsjIrxsiQbRnmPOofNwf1xjjGs/ls2hMDCAC0B
-         miszYTWjsF3xYBdaW5AbrReHOZBn8gOongsxWuKCwkZ/KOErnoS9HehpHq8s3YM3q8l6
-         LE8Yert0viKbQpeAMYBq7CkXmRySmyaZ7ue3VdNODuLxq7bbPCl0iRrlwnfLXJ5CP0Ld
-         z6jBnORnFVr2va5S2mW1elqFHxmCPXPtUGTAJnKfXeAWM3A+2DoBhrS5ODdZWZWMQoMy
-         YJvA==
-X-Gm-Message-State: APt69E2+C71QUhze9W4AS5Jhtaz7morEx1aj7cINfSWA+ID+yZFaTpPu
-        JXs/sPL3Q/LR0PwTNMCLaTykFUmq
-X-Google-Smtp-Source: AAOMgpfeOuFv+W7pqs8F5+oFXsqcTvsIcNdScDzdW4ER/K81viYLTrff7jHC+N6y1Dg1MSAUl8dX6Q==
-X-Received: by 2002:a50:a305:: with SMTP id 5-v6mr21955413edn.57.1531127876390;
-        Mon, 09 Jul 2018 02:17:56 -0700 (PDT)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
-        by smtp.gmail.com with ESMTPSA id k32-v6sm2113489edc.85.2018.07.09.02.17.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 02:17:55 -0700 (PDT)
-Received: by mail-wr1-f54.google.com with SMTP id u7-v6so10159767wrn.12
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 02:17:55 -0700 (PDT)
-X-Received: by 2002:adf:a541:: with SMTP id j1-v6mr15839347wrb.155.1531127875551;
- Mon, 09 Jul 2018 02:17:55 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 02:17:35 -0700 (PDT)
-In-Reply-To: <20180709091524.sfamfdmbmwclmegj@flea>
-References: <20180706124628.3192421-1-arnd@arndb.de> <20180709080724.3ekqb45fsjubvhcm@flea>
- <CAGb2v64HmXRK19-ahv624F8mpNCt21ri3AaVEiB+Gw9GsVeb=Q@mail.gmail.com> <20180709091524.sfamfdmbmwclmegj@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 9 Jul 2018 17:17:35 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66HX9YBzPsUjyUmf3XBufnipZRmfkZKnGJCh4Mh89WvqQ@mail.gmail.com>
-Message-ID: <CAGb2v66HX9YBzPsUjyUmf3XBufnipZRmfkZKnGJCh4Mh89WvqQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/sun4i: fix build failure with CONFIG_DRM_SUN8I_MIXER=m
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonathan Liu <net147@gmail.com>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 9 Jul 2018 05:18:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
+        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2VTXO+Xdj0+3IlBsCt12xdIBBugfcODA4Fi6pgxg7B0=; b=tOwPYfvN6hCqiNrZo/sNfbrNp
+        NO6WBgOKk7gHrNHCIKhZ3FI7j5gXqEjKt+pTox7YMhcXHq/H+rBIgbmNWRUuesg+P7nXUVLdaWHmR
+        a2xen07+wndtUpBeEKiRyxTubF6MzRj/UQvgdxL8dWj0EfaeVtupFndHB9NuUhwB+unMq3/uUwiNB
+        QRdsE7DZVxH4YbAQjqgw7iDgEaYgzWmRe8E320mkIfbfmi4ngwBOjJiXqOYudUZ9irTTSboQih5sE
+        V7lwjZ2Lam3Tg/aoxnnDwbzSMoQdxtYAENEdcz3/PTyGiGmsy/swwKOVG1dEbGQ/+cKLVpl4TcuHV
+        RuWnLW5DA==;
+Received: from [2001:8b0:10b:1::2fb]
+        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fcSJr-0008Cs-Ls; Mon, 09 Jul 2018 09:18:55 +0000
+Message-ID: <1531127935.18697.57.camel@infradead.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     mhillenb@amazon.de, linux-kernel <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180709085351.GC2476@hirez.programming.kicks-ass.net>
+References: <bb77e730a5ada3689650b636e1dd03ac5cc87256.camel@infradead.org>
+         <20180706162905.GZ2476@hirez.programming.kicks-ass.net>
+         <20180706171150.GI3593@linux.vnet.ibm.com>
+         <20180709085351.GC2476@hirez.programming.kicks-ass.net>
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-P9cw0Zx5VKR7KZtcZH9Y"
+Date:   Mon, 09 Jul 2018 10:18:55 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 5:15 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> On Mon, Jul 09, 2018 at 04:58:48PM +0800, Chen-Yu Tsai wrote:
->> On Mon, Jul 9, 2018 at 4:07 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->> > On Fri, Jul 06, 2018 at 02:45:53PM +0200, Arnd Bergmann wrote:
->> >> Having DRM_SUN4I built-in but DRM_SUN8I_MIXER as a loadable module results in
->> >> a link error, as we try to access a symbol from the sun8i_tcon_top.ko module:
->> >>
->> >> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun8i-drm-hdmi.ko] undefined!
->> >> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-drm.ko] undefined!
->> >>
->> >> This solves the problem by making DRM_SUN8I_MIXER a 'bool' symbol, building
->> >> the sun8i_tcon_top module the same way as the core sun4i-drm module whenever
->> >> DRM_SUN8I_MIXER is enabled, or not building it at all otherwise.
->> >>
->> >> Alternatively, we could always build sun8i_tcon_top.ko along with sun4-drm.ko
->> >> and detach it from the mixer module, I could not tell which way is more
->> >> appropriate here.
->> >
->> > If that's easily doable, then yeah, that would be the preferred option
->> > I guess. Jernej? Chen-Yu? Any opinion on this?
->>
->> Yeah, that definitely works for me. Having TCON TOP being part of the core
->> sun4i-drm makes more sense. The TCON code will likely call into it later on
->> when Jernej adds the encoder muxing code.
->>
->> I wonder if we shouldn't just build the whole display engine code, excluding
->> downstream encoders (HDMI, DSI, TV) into one module. That would also fix the
->> issue that DRM_SUN4I_BACKEND has to be built-in if DRM_SUN4I is built-in.
->> That might be overkill though, given that one day we should be able to get
->> rid of the frontend check.
+
+--=-P9cw0Zx5VKR7KZtcZH9Y
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+
+
+On Mon, 2018-07-09 at 10:53 +0200, Peter Zijlstra wrote:
+> On Fri, Jul 06, 2018 at 10:11:50AM -0700, Paul E. McKenney wrote:
+> > On Fri, Jul 06, 2018 at 06:29:05PM +0200, Peter Zijlstra wrote:
+> > > On Fri, Jul 06, 2018 at 03:53:30PM +0100, David Woodhouse wrote:
+> > > >=20
+> > > > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > > > index e4d4e60..89f5814 100644
+> > > > --- a/include/linux/sched.h
+> > > > +++ b/include/linux/sched.h
+> > > > @@ -1616,7 +1616,8 @@ static inline int spin_needbreak(spinlock_t *=
+lock)
+> > > > =C2=A0
+> > > > =C2=A0static __always_inline bool need_resched(void)
+> > > > =C2=A0{
+> > > > -	return unlikely(tif_need_resched());
+> > > > +	return unlikely(tif_need_resched()) ||
+> > > > +		rcu_urgent_qs_requested();
+> > > > =C2=A0}
+> > > Instead of making need_resched() touch two cachelines, I think I woul=
+d
+> > > prefer adding resched_cpu() to rcu_request_urgent_qs_task().
 >
-> We can't really do that (or at least without rewriting a significant
-> part of the driver), since we can have only one
-> module_init/module_exit function per module, and we have one
-> per-hardware block.
+> > I used to do something like this, but decided that whacking each holdou=
+t
+> > CPU over the head ten times a second was a bit much.
+>
+> This is only called from the !list_empty(rcu_tasks_holdout) loop in
+> rcu_tasks_kthread afaict, and that has a
+> schedule_timeout_interruptible(HZ) in it, which I read as once a second.
+>=20
+> Which seems like an entirely reasonable amount of time to kick a task.
+> Not scheduling for a second is like an eternity.
 
-Right. That would require some serious plumbing to register all the drivers.
+If that is our only "fix" for KVM, then wouldn't that mean that things
+like expand_fdtable() would be *expected* to take "an eternity" when
+another CPU happens to be in the guest? Because vcpu_run() would still
+loop until the task gets kicked after a second?
 
-ChenYu
+Of course, we can explicitly put a check into the KVM loop, but that
+brings me back to my original concern =E2=80=94 why is it OK to do it there=
+ as
+a special case and not for the general case construct of
+if (need_resched) { drop_local_locks(); cond_resched(); get_local_locks(); =
+}
+
+--=-P9cw0Zx5VKR7KZtcZH9Y
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MDkwOTE4NTVaMC8GCSqG
+SIb3DQEJBDEiBCC2an9F166DMzVeopDzy0HRPc2w6BVi/k+eLQ5HijI7xDCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAI6efB8rC14I
+DvfTYwKq0ffLifiHPF6fg1wnLttuFidrPS1HTrRIPQbnQcO5rHtIe675EG5huodu/+dVZql+5422
++HsQsPEAORacgw0Qh7wduYKdPDInZQ94cLFxmrZ8k3e774bob0cIS9rTkcoGap7fc7EdYnCoCe3v
+9orBavJ9IxWVsC8Lc75CAAxg3d1zdBISph98j4NHgSy+GtvRfPWzM9a8cDr+7+gpwwUhcO1ywYp6
+AAM+01XyjS3nMTpbbfBPZLL+OQ2Q3XCliPjCro9alYXXgYVnctimd5Bybp2nqkaWxnaxX4Wbm3Gr
+Mz0JGVtXqp4mtF9sdAdBYLH+C8gAAAAAAAA=
+
+
+--=-P9cw0Zx5VKR7KZtcZH9Y--
+
