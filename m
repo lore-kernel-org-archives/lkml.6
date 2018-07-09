@@ -2,126 +2,177 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63177C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08171C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22577208A5
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:12:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22577208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B1555208A5
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:13:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="bwhLWR0R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1555208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933641AbeGIPMu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:12:50 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60926 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933412AbeGIPMd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:12:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4AB5FED1;
-        Mon,  9 Jul 2018 08:12:33 -0700 (PDT)
-Received: from [10.1.211.34] (e107155-lin.cambridge.arm.com [10.1.211.34])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 020C63F589;
-        Mon,  9 Jul 2018 08:12:31 -0700 (PDT)
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, khilman@baylibre.com,
-        linux-kernel@vger.kernel.org, fweisbec@gmail.com, arnd@arndb.de
-Subject: Re: [PATCH] tick: prefer a lower rating device only if it's CPU local
- device
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        tglx@linutronix.de
-References: <1525881728-4858-1-git-send-email-sudeep.holla@arm.com>
- <CAOi56cUiPX9JYZzZD5isPF3wZwVDenYY-5J39Ch9CFp-eXXtQQ@mail.gmail.com>
- <20180703105357.GC1715@e107155-lin>
- <CAOi56cW-QsL9gmyF-R9iscZ1M-zM-gJPxcvG=dvB=zrDioZJgA@mail.gmail.com>
- <20180703154459.GA15335@e107155-lin>
- <alpine.DEB.2.21.1807031805560.1601@nanos.tec.linutronix.de>
- <20180703164823.GB15335@e107155-lin>
- <CAFBinCBhBBK1TZnhH1bGrQP5SokaMNrk7C8OcMXaaTcR6_WOTg@mail.gmail.com>
-From:   Sudeep Holla <sudeep.holla@arm.com>
-Organization: ARM
-Message-ID: <299fd143-fc79-60de-40c7-fced7e9b3fb0@arm.com>
-Date:   Mon, 9 Jul 2018 16:12:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAFBinCBhBBK1TZnhH1bGrQP5SokaMNrk7C8OcMXaaTcR6_WOTg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S933578AbeGIPM0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:12:26 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36467 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933317AbeGIPKj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:10:39 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s14-v6so21151361wmc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:10:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=ojcRlyLPr40Tt6/Zpx8CMXf3WpaRXSbLQlx9xyp8hmY=;
+        b=bwhLWR0RxhdKa+nYECbe4u+DOLdtm9TfYoOT0TqL5htnqRHW1wjhoIJknaTjgL+M20
+         3gKz53nhfgb/+DCo9ATe8S6krZ+lQiiASlWpGvbuUIpBE0GmjHIPuet8GZy2rE19hGR9
+         EYNSPeBVW3M+OcP/CLUOErUACYuYxG8FEyyLzJryvLShR3rhPSJVjlZOi9rlSTo/55kX
+         FUNqDbmXL9ft2ZQzA4wKeLyDds6+Sqtl5R+vnCw4pH0r83jpHrdriTvQGXbn11YZtv3A
+         E4Sgq0Wz7rP8STitCcywlNS4Pbrzkdkm1bH97Hv4Xz8T5a04N94O3BsgVU5yBmp1QB8z
+         Vb4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=ojcRlyLPr40Tt6/Zpx8CMXf3WpaRXSbLQlx9xyp8hmY=;
+        b=OLGIeVL4GhXI++G5Ez2Bywjxl+CtVYnnA6xNHsPcB+4G3az/NorNprUunMc+K3f3IO
+         LSUw31x4Su8XZHv9YK9bQBtuAHS9HXLWxeRCbVw1bk34VtTJ4div2B3x9D9sFc5GDP/Z
+         2q0P8dtkGxyauoLtdA34wDLtlKTdCTAnQhL9MS2kmRH0nAWax7nmKw6aZNAQ1OGT0ifU
+         nn59mRbRLGW2jyj26jvHfL9IgRs07mHG2r1P0UqukeyUh3yFvswCyglzov1TwGKeNBm7
+         8fi2Q9QXxPkBHRMrXrAjYPtnEVp9APloGa/+4boYVQV5oNX1SMWf2JaREVQn/g8t2VwZ
+         UcMQ==
+X-Gm-Message-State: APt69E3V1egL+1/K0nQC9i7L9MP8IquHsL5ZMqPUBs49sLTJsn9mUylR
+        zWCKsj+0TqJKIfuaL+2cEk+Xmg==
+X-Google-Smtp-Source: AAOMgpfelzD+tCSUhwYXVt4EqnEVg45qSrubxMIK77B1qhKh/euGk6VKJp+EpmJQkZJ3Lve0i04p/Q==
+X-Received: by 2002:a1c:8312:: with SMTP id f18-v6mr13123896wmd.127.1531149037739;
+        Mon, 09 Jul 2018 08:10:37 -0700 (PDT)
+Received: from localhost.localdomain (p200300D993C227000209466FFA2F090C.dip0.t-ipconnect.de. [2003:d9:93c2:2700:209:466f:fa2f:90c])
+        by smtp.googlemail.com with ESMTPSA id u124-v6sm7817330wme.26.2018.07.09.08.10.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 08:10:37 -0700 (PDT)
+From:   Manfred Spraul <manfred@colorfullife.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
+        Kees Cook <keescook@chromium.org>,
+        Manfred Spraul <manfred@colorfullife.com>
+Subject: [PATCH 07/12] ipc_idr_alloc refactoring
+Date:   Mon,  9 Jul 2018 17:10:14 +0200
+Message-Id: <20180709151019.1336-8-manfred@colorfullife.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180709151019.1336-1-manfred@colorfullife.com>
+References: <20180709151019.1336-1-manfred@colorfullife.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Dmitry Vyukov <dvyukov@google.com>
 
+ipc_idr_alloc refactoring
 
-On 08/07/18 21:59, Martin Blumenstingl wrote:
-> Hi Thomas,
-> 
-> On Tue, Jul 3, 2018 at 6:48 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
->>
->> Hi Thomas,
->>
->> On Tue, Jul 03, 2018 at 06:08:19PM +0200, Thomas Gleixner wrote:
->>
->> [...]
->>
->>>>> / # cat /sys/devices/system/clockevents/broadcast/current_device
->>>>> meson6_tick
->>>>
->>>> OK, it can support broadcast
->>>>
->>>>> / # cat /sys/devices/system/clockevents/clockevent0/current_device
->>>>> dummy_timer
->>>>> / # cat /sys/devices/system/clockevents/clockevent1/current_device
->>>>> dummy_timer
->>>>> / # cat /sys/devices/system/clockevents/clockevent2/current_device
->>>>> dummy_timer
->>>>
->>>> But I can't understand why is dummy_timer the active event source and
->>>> not meson6_tick. And you say this is working case ? Looks suspicious.
->>>
->>> Because if it switches to broadcast mode then the meson timer cannot longer
->>> be used as per cpu timer. It's broadcasting to all CPUs via the dummy timer.
->>
->> Thanks for the explanation. I completely misread the sysfs entry and
->> assume clockevent_register failed for meson6 and hence regarded as
->> suspicious which is complete non-sense, my bad. Sorry for that.
->> I think I now understand the issue.
->>
->> 1. Juno usecase for which $subject was added as fix:
->>
->> Two system wide timers(cpumask=possible cpus) with rating 300 and 400.
->> When second one with 400 is added, timer with rating 300 is added to
->> released list and again added back to main one. In this case both were
->> chosen as preferred and that resulted in deadlock.
->>
->> 2. Meson6 usecase:
->>
->> When meson6_tick is added, it's set as preferred and dummy_timer is released.
->> When it's being added back from the released list, it will be chosen as
->> preferred as it's per_cpu resulting in deadlock.
->>
->> I am not sure how to fix this. Should the fix to my original problem have
->> checks for both old and new for per-cpu  to prevent the issue reported on
->> Meson6
-> could you please answer Sudeep's question?
-> 
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+---
+ ipc/util.c | 51 +++++++++++++--------------------------------------
+ 1 file changed, 13 insertions(+), 38 deletions(-)
 
-OK, I think I have misunderstood my original problem because of the
-cpumask_equal for nr_bits <= BITS_PER_LONG. It uses nr_cpumask_bits
-which is NR_CPUS when CPUMASK_OFFSTACK is not enabled.
-
-Enabling it fixes my original problem(reverting $subject patch). So it
-should be reverted. And also pointed out the issue with ARM mem timer.
-
-I am sorry for the mess, I will post the revert and along with the fix
-to my issue. Once again sorry for not understanding the root cause
-correctly.
+diff --git a/ipc/util.c b/ipc/util.c
+index 8bc166bb4981..a41b8a69de13 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -193,52 +193,32 @@ static struct kern_ipc_perm *ipc_findkey(struct ipc_ids *ids, key_t key)
+ 	return NULL;
+ }
+ 
+-#ifdef CONFIG_CHECKPOINT_RESTORE
+ /*
+  * Specify desired id for next allocated IPC object.
+  */
+-static inline int ipc_idr_alloc(struct ipc_ids *ids,
+-				struct kern_ipc_perm *new)
++static inline int ipc_idr_alloc(struct ipc_ids *ids, struct kern_ipc_perm *new)
+ {
+-	int key;
++	int key, next_id = -1;
+ 
+-	if (ids->next_id < 0) {
+-		key = idr_alloc(&ids->ipcs_idr, new, 0, 0, GFP_NOWAIT);
+-	} else {
+-		key = idr_alloc(&ids->ipcs_idr, new,
+-				ipcid_to_idx(ids->next_id),
+-				0, GFP_NOWAIT);
+-		ids->next_id = -1;
+-	}
+-	return key;
+-}
++#ifdef CONFIG_CHECKPOINT_RESTORE
++	next_id = ids->next_id;
++	ids->next_id = -1;
++#endif
+ 
+-static inline void ipc_set_seq(struct ipc_ids *ids,
+-				struct kern_ipc_perm *new)
+-{
+-	if (ids->next_id < 0) { /* default, behave as !CHECKPOINT_RESTORE */
++	if (next_id < 0) { /* !CHECKPOINT_RESTORE or next_id is unset */
+ 		new->seq = ids->seq++;
+ 		if (ids->seq > IPCID_SEQ_MAX)
+ 			ids->seq = 0;
++		key = idr_alloc(&ids->ipcs_idr, new, 0, 0, GFP_NOWAIT);
+ 	} else {
+-		new->seq = ipcid_to_seqx(ids->next_id);
++		new->seq = ipcid_to_seqx(next_id);
++		key = idr_alloc(&ids->ipcs_idr, new, ipcid_to_idx(next_id),
++				0, GFP_NOWAIT);
+ 	}
++	new->id = SEQ_MULTIPLIER * new->seq + key;
++	return key;
+ }
+ 
+-#else
+-#define ipc_idr_alloc(ids, new)					\
+-	idr_alloc(&(ids)->ipcs_idr, (new), 0, 0, GFP_NOWAIT)
+-
+-static inline void ipc_set_seq(struct ipc_ids *ids,
+-			      struct kern_ipc_perm *new)
+-{
+-	new->seq = ids->seq++;
+-	if (ids->seq > IPCID_SEQ_MAX)
+-		ids->seq = 0;
+-}
+-
+-#endif /* CONFIG_CHECKPOINT_RESTORE */
+-
+ /**
+  * ipc_addid - add an ipc identifier
+  * @ids: ipc identifier set
+@@ -278,8 +258,6 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	current_euid_egid(&euid, &egid);
+ 	new->cuid = new->uid = euid;
+ 	new->gid = new->cgid = egid;
+-
+-	ipc_set_seq(ids, new);
+ 	new->deleted = false;
+ 
+ 	/*
+@@ -317,9 +295,6 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	ids->in_use++;
+ 	if (id > ids->max_id)
+ 		ids->max_id = id;
+-
+-	new->id = SEQ_MULTIPLIER * new->seq + id;
+-
+ 	return id;
+ }
+ 
 -- 
-Regards,
-Sudeep
+2.17.1
+
