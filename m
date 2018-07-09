@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63EDEC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC05C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AC0020877
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C00E20877
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:24:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A8SH/sf6";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZH1WSVk/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AC0020877
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CxrxS7Yq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VNlHrKof"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C00E20877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932899AbeGIKYD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 06:24:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33260 "EHLO
+        id S932956AbeGIKYJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 06:24:09 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:33402 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932601AbeGIKX6 (ORCPT
+        with ESMTP id S932601AbeGIKYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 06:23:58 -0400
+        Mon, 9 Jul 2018 06:24:04 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E96D560B28; Mon,  9 Jul 2018 10:23:57 +0000 (UTC)
+        id 179F4602AE; Mon,  9 Jul 2018 10:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531131837;
-        bh=NVEKEt9elBcb6+KCN/pGHeD6JuGwY5wqz3ddHF12e6o=;
+        s=default; t=1531131844;
+        bh=X6xn3oIq44/dLDtF3w/W4oOJ0iae8cUAcQ3HlcxaHa8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A8SH/sf6IEVhPaIZXP1hbh0y0YeIhx/fx10mq1poN4D6/dYVbADkbqz8mJtlq0qv9
-         noeUgKl2SnkktgIlwSROuTqdml13T+prhmt/+InJSGOpDkHpYYmbaYKq3smUgEFIEE
-         qsp9ojzYFIlEnubTewSV0FU6knYtdLhgGxvmZNGU=
+        b=CxrxS7Yq9c6rDDyob2RAJslNRQU/LXg8Xf7ZL5QCHw65x5edVMDTaNxpSnJrIrXpw
+         gIlc8rgAyHPUjwaa++J5zv/8V/N5TokIh+gmmZqCyOnwEhpp17L3KhcaFSm9K7TWNx
+         YgOWZZ39YhxR62PmEqKniFDslRC4Wi3PhH8MCtfA=
 Received: from kgunda-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: kgunda@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E363B60B28;
-        Mon,  9 Jul 2018 10:23:50 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C451E607EB;
+        Mon,  9 Jul 2018 10:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531131835;
-        bh=NVEKEt9elBcb6+KCN/pGHeD6JuGwY5wqz3ddHF12e6o=;
+        s=default; t=1531131842;
+        bh=X6xn3oIq44/dLDtF3w/W4oOJ0iae8cUAcQ3HlcxaHa8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZH1WSVk/4CrvYzJe0tEtycCbmW+cashywjWM2gHGfFIV2DYBWxiT9y+nlXtlJo/9m
-         /WHNIvc7o2ETpbhPmiaXkeOFCdjS/QcnfiTmhNQ9w34DdKmqAaP7CgdsGHTWym6fA5
-         4dT9f0LtXC2BG7Ps+6kHSAdfOoE7oBztK9lmQxOk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E363B60B28
+        b=VNlHrKof+Ncyp7Hjhbrmb9aka3bQYXVUkaVqQmlX2drUHiua7mQmfUZX0OOtC4Dgh
+         BYYA6PYySEd8s5dokT6Hqu8Rnv27Er7GG21KBsPdGY4TMfJqgs7bbx1QXFluRDlA7f
+         BGDWYEBONmhyWwSdneue4T/V3uhiheBAIB+Z11ig=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C451E607EB
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kgunda@codeaurora.org
 From:   Kiran Gunda <kgunda@codeaurora.org>
@@ -59,9 +59,9 @@ To:     bjorn.andersson@linaro.org, jingoohan1@gmail.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fbdev@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, Kiran Gunda <kgunda@codeaurora.org>
-Subject: [PATCH V4 6/8] backlight: qcom-wled: Add support for WLED4 peripheral
-Date:   Mon,  9 Jul 2018 15:52:19 +0530
-Message-Id: <1531131741-19971-7-git-send-email-kgunda@codeaurora.org>
+Subject: [PATCH V4 7/8] backlight: qcom-wled: add support for short circuit handling
+Date:   Mon,  9 Jul 2018 15:52:20 +0530
+Message-Id: <1531131741-19971-8-git-send-email-kgunda@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
 References: <1531131741-19971-1-git-send-email-kgunda@codeaurora.org>
@@ -70,411 +70,284 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WLED4 peripheral is present on some PMICs like pmi8998 and
-pm660l. It has a different register map and configurations
-are also different. Add support for it.
+Handle the short circuit interrupt and check if the short circuit
+interrupt is valid. Re-enable the module to check if it goes
+away. Disable the module altogether if the short circuit event
+persists.
 
 Signed-off-by: Kiran Gunda <kgunda@codeaurora.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
 Changes from V3:
-	- The WLED3 specific changes are splitted out
-	- Merged the wled3_sync_toggle and wled4_syn_toggle functions
-	- Modified the compatible .data
-	- Moved from if/else to switch/case to select the version specific data
-	- Addressed few more minor comments from Bjorn
+	- Added Reviewed by tag.
+	- Addressed minor comments from Vinod
 
- drivers/video/backlight/qcom-wled.c | 264 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 258 insertions(+), 6 deletions(-)
+ drivers/video/backlight/qcom-wled.c | 132 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 128 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/video/backlight/qcom-wled.c b/drivers/video/backlight/qcom-wled.c
-index 87fc1d0..362d254 100644
+index 362d254..a14f1a6 100644
 --- a/drivers/video/backlight/qcom-wled.c
 +++ b/drivers/video/backlight/qcom-wled.c
-@@ -64,6 +64,28 @@
+@@ -10,6 +10,9 @@
+  * GNU General Public License for more details.
+  */
+ 
++#include <linux/delay.h>
++#include <linux/interrupt.h>
++#include <linux/ktime.h>
+ #include <linux/kernel.h>
+ #include <linux/backlight.h>
+ #include <linux/module.h>
+@@ -64,6 +67,16 @@
  #define WLED3_SINK_REG_STR_CABC(n)			(0x66 + (n * 0x10))
  #define  WLED3_SINK_REG_STR_CABC_MASK			BIT(7)
  
-+/* WLED4 specific sink registers */
-+#define WLED4_SINK_REG_CURR_SINK			0x46
-+#define  WLED4_SINK_REG_CURR_SINK_MASK			GENMASK(7, 4)
-+#define  WLED4_SINK_REG_CURR_SINK_SHFT			4
++/* WLED4 specific control registers */
++#define WLED4_CTRL_REG_SHORT_PROTECT			0x5e
++#define  WLED4_CTRL_REG_SHORT_EN_MASK			BIT(7)
 +
-+/* WLED4 specific per-'string' registers below */
-+#define WLED4_SINK_REG_STR_MOD_EN(n)			(0x50 + (n * 0x10))
-+#define  WLED4_SINK_REG_STR_MOD_MASK			BIT(7)
++#define WLED4_CTRL_REG_SEC_ACCESS			0xd0
++#define  WLED4_CTRL_REG_SEC_UNLOCK			0xa5
 +
-+#define WLED4_SINK_REG_STR_FULL_SCALE_CURR(n)		(0x52 + (n * 0x10))
-+#define  WLED4_SINK_REG_STR_FULL_SCALE_CURR_MASK	GENMASK(3, 0)
++#define WLED4_CTRL_REG_TEST1				0xe2
++#define  WLED4_CTRL_REG_TEST1_EXT_FET_DTEST2		0x09
 +
-+#define WLED4_SINK_REG_STR_MOD_SRC(n)			(0x53 + (n * 0x10))
-+#define  WLED4_SINK_REG_STR_MOD_SRC_MASK		BIT(0)
-+#define  WLED4_SINK_REG_STR_MOD_SRC_INT			0x00
-+#define  WLED4_SINK_REG_STR_MOD_SRC_EXT			0x01
-+
-+#define WLED4_SINK_REG_STR_CABC(n)			(0x56 + (n * 0x10))
-+#define  WLED4_SINK_REG_STR_CABC_MASK			BIT(7)
-+
-+#define WLED4_SINK_REG_BRIGHT(n)			(0x57 + (n * 0x10))
-+
- struct wled_var_cfg {
- 	const u32 *values;
- 	u32 (*fn)(u32);
-@@ -98,6 +120,7 @@ struct wled {
+ /* WLED4 specific sink registers */
+ #define WLED4_SINK_REG_CURR_SINK			0x46
+ #define  WLED4_SINK_REG_CURR_SINK_MASK			GENMASK(7, 4)
+@@ -113,17 +126,23 @@ struct wled_config {
+ 	bool cs_out_en;
+ 	bool ext_gen;
+ 	bool cabc;
++	bool external_pfet;
+ };
+ 
+ struct wled {
+ 	const char *name;
  	struct device *dev;
  	struct regmap *regmap;
++	struct mutex lock;	/* Lock to avoid race from thread irq handler */
++	ktime_t last_short_event;
  	u16 ctrl_addr;
-+	u16 sink_addr;
+ 	u16 sink_addr;
  	u16 max_string_count;
  	u32 brightness;
  	u32 max_brightness;
-@@ -124,6 +147,29 @@ static int wled3_set_brightness(struct wled *wled, u16 brightness)
- 	return 0;
- }
++	u32 short_count;
++	bool disabled_by_short;
++	bool has_short_detect;
  
-+static int wled4_set_brightness(struct wled *wled, u16 brightness)
-+{
-+	int rc, i;
-+	u16 low_limit = wled->max_brightness * 4 / 1000;
-+	u8 v[2];
-+
-+	/* WLED4's lower limit of operation is 0.4% */
-+	if (brightness > 0 && brightness < low_limit)
-+		brightness = low_limit;
-+
-+	v[0] = brightness & 0xff;
-+	v[1] = (brightness >> 8) & 0xf;
-+
-+	for (i = 0;  i < wled->cfg.num_strings; ++i) {
-+		rc = regmap_bulk_write(wled->regmap, wled->sink_addr +
-+				       WLED4_SINK_REG_BRIGHT(i), v, 2);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
-+	return 0;
-+}
-+
- static int wled_module_enable(struct wled *wled, int val)
+ 	struct wled_config cfg;
+ 	int (*wled_set_brightness)(struct wled *wled, u16 brightness);
+@@ -174,6 +193,9 @@ static int wled_module_enable(struct wled *wled, int val)
  {
  	int rc;
-@@ -141,13 +187,13 @@ static int wled_sync_toggle(struct wled *wled)
- 	unsigned int mask = GENMASK(wled->max_string_count - 1, 0);
+ 
++	if (wled->disabled_by_short)
++		return -EFAULT;
++
+ 	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
+ 				WLED_CTRL_REG_MOD_EN,
+ 				WLED_CTRL_REG_MOD_EN_MASK,
+@@ -210,18 +232,19 @@ static int wled_update_status(struct backlight_device *bl)
+ 	    bl->props.state & BL_CORE_FBBLANK)
+ 		brightness = 0;
+ 
++	mutex_lock(&wled->lock);
+ 	if (brightness) {
+ 		rc = wled->wled_set_brightness(wled, brightness);
+ 		if (rc < 0) {
+ 			dev_err(wled->dev, "wled failed to set brightness rc:%d\n",
+ 				rc);
+-			return rc;
++			goto unlock_mutex;
+ 		}
+ 
+ 		rc = wled_sync_toggle(wled);
+ 		if (rc < 0) {
+ 			dev_err(wled->dev, "wled sync failed rc:%d\n", rc);
+-			return rc;
++			goto unlock_mutex;
+ 		}
+ 	}
+ 
+@@ -229,15 +252,61 @@ static int wled_update_status(struct backlight_device *bl)
+ 		rc = wled_module_enable(wled, !!brightness);
+ 		if (rc < 0) {
+ 			dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
+-			return rc;
++			goto unlock_mutex;
+ 		}
+ 	}
+ 
+ 	wled->brightness = brightness;
+ 
++unlock_mutex:
++	mutex_unlock(&wled->lock);
++
+ 	return rc;
+ }
+ 
++#define WLED_SHORT_DLY_MS			20
++#define WLED_SHORT_CNT_MAX			5
++#define WLED_SHORT_RESET_CNT_DLY_US		USEC_PER_SEC
++
++static irqreturn_t wled_short_irq_handler(int irq, void *_wled)
++{
++	struct wled *wled = _wled;
++	int rc;
++	s64 elapsed_time;
++
++	wled->short_count++;
++	mutex_lock(&wled->lock);
++	rc = wled_module_enable(wled, false);
++	if (rc < 0) {
++		dev_err(wled->dev, "wled disable failed rc:%d\n", rc);
++		goto unlock_mutex;
++	}
++
++	elapsed_time = ktime_us_delta(ktime_get(),
++				      wled->last_short_event);
++	if (elapsed_time > WLED_SHORT_RESET_CNT_DLY_US)
++		wled->short_count = 0;
++
++	if (wled->short_count > WLED_SHORT_CNT_MAX) {
++		dev_err(wled->dev, "Short trigged %d times, disabling WLED forever!\n",
++			wled->short_count);
++		wled->disabled_by_short = true;
++		goto unlock_mutex;
++	}
++
++	wled->last_short_event = ktime_get();
++
++	msleep(WLED_SHORT_DLY_MS);
++	rc = wled_module_enable(wled, true);
++	if (rc < 0)
++		dev_err(wled->dev, "wled enable failed rc:%d\n", rc);
++
++unlock_mutex:
++	mutex_unlock(&wled->lock);
++
++	return IRQ_HANDLED;
++}
++
+ static int wled3_setup(struct wled *wled)
+ {
+ 	u16 addr;
+@@ -325,7 +394,7 @@ static int wled4_setup(struct wled *wled)
+ 	int rc, temp, i, j;
+ 	u16 addr;
+ 	u8 sink_en = 0;
+-	u32 sink_cfg = 0;
++	u32 sink_cfg;
  
  	rc = regmap_update_bits(wled->regmap,
--				wled->ctrl_addr + WLED_SINK_REG_SYNC,
-+				wled->sink_addr + WLED_SINK_REG_SYNC,
- 				mask, mask);
+ 				wled->ctrl_addr + WLED_CTRL_REG_OVP,
+@@ -347,6 +416,21 @@ static int wled4_setup(struct wled *wled)
  	if (rc < 0)
  		return rc;
  
- 	rc = regmap_update_bits(wled->regmap,
--				wled->ctrl_addr + WLED_SINK_REG_SYNC,
-+				wled->sink_addr + WLED_SINK_REG_SYNC,
- 				mask, WLED_SINK_REG_SYNC_CLEAR);
- 
- 	return rc;
-@@ -274,6 +320,120 @@ static int wled3_setup(struct wled *wled)
++	if (wled->cfg.external_pfet) {
++		/* Unlock the secure register access */
++		rc = regmap_write(wled->regmap, wled->ctrl_addr +
++				  WLED4_CTRL_REG_SEC_ACCESS,
++				  WLED4_CTRL_REG_SEC_UNLOCK);
++		if (rc < 0)
++			return rc;
++
++		rc = regmap_write(wled->regmap,
++				  wled->ctrl_addr + WLED4_CTRL_REG_TEST1,
++				  WLED4_CTRL_REG_TEST1_EXT_FET_DTEST2);
++		if (rc < 0)
++			return rc;
++	}
++
+ 	rc = regmap_read(wled->regmap, wled->sink_addr +
+ 			 WLED4_SINK_REG_CURR_SINK, &sink_cfg);
+ 	if (rc < 0)
+@@ -432,6 +516,7 @@ static int wled4_setup(struct wled *wled)
+ 	.num_strings = 4,
+ 	.switch_freq = 11,
  	.cabc = false,
++	.external_pfet = false,
  };
  
-+static int wled4_setup(struct wled *wled)
-+{
-+	int rc, temp, i, j;
-+	u16 addr;
-+	u8 sink_en = 0;
-+	u32 sink_cfg = 0;
-+
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED_CTRL_REG_OVP,
-+				WLED_CTRL_REG_OVP_MASK, wled->cfg.ovp);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED_CTRL_REG_ILIMIT,
-+				WLED_CTRL_REG_ILIMIT_MASK,
-+				wled->cfg.boost_i_limit);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->ctrl_addr + WLED_CTRL_REG_FREQ,
-+				WLED_CTRL_REG_FREQ_MASK,
-+				wled->cfg.switch_freq);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = regmap_read(wled->regmap, wled->sink_addr +
-+			 WLED4_SINK_REG_CURR_SINK, &sink_cfg);
-+	if (rc < 0)
-+		return rc;
-+
-+	for (i = 0; i < wled->cfg.num_strings; i++) {
-+		j = wled->cfg.enabled_strings[i];
-+		temp = j + WLED4_SINK_REG_CURR_SINK_SHFT;
-+		sink_en |= 1 << temp;
-+	}
-+
-+	if (sink_cfg == sink_en)
-+		return 0;
-+
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
-+				WLED4_SINK_REG_CURR_SINK_MASK, 0);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
-+				WLED_CTRL_REG_MOD_EN,
-+				WLED_CTRL_REG_MOD_EN_MASK, 0);
-+	if (rc < 0)
-+		return rc;
-+
-+	/* Per sink/string configuration */
-+	for (i = 0; i < wled->cfg.num_strings; i++) {
-+		j = wled->cfg.enabled_strings[i];
-+
-+		addr = wled->sink_addr +
-+				WLED4_SINK_REG_STR_MOD_EN(j);
-+		rc = regmap_update_bits(wled->regmap, addr,
-+					WLED4_SINK_REG_STR_MOD_MASK,
-+					WLED4_SINK_REG_STR_MOD_MASK);
-+		if (rc < 0)
-+			return rc;
-+
-+		addr = wled->sink_addr +
-+				WLED4_SINK_REG_STR_FULL_SCALE_CURR(j);
-+		rc = regmap_update_bits(wled->regmap, addr,
-+					WLED4_SINK_REG_STR_FULL_SCALE_CURR_MASK,
-+					wled->cfg.string_i_limit);
-+		if (rc < 0)
-+			return rc;
-+
-+		addr = wled->sink_addr +
-+				WLED4_SINK_REG_STR_CABC(j);
-+		rc = regmap_update_bits(wled->regmap, addr,
-+					WLED4_SINK_REG_STR_CABC_MASK,
-+					wled->cfg.cabc ?
-+					WLED4_SINK_REG_STR_CABC_MASK : 0);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
-+	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
-+				WLED_CTRL_REG_MOD_EN,
-+				WLED_CTRL_REG_MOD_EN_MASK,
-+				WLED_CTRL_REG_MOD_EN_MASK);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = regmap_update_bits(wled->regmap,
-+				wled->sink_addr + WLED4_SINK_REG_CURR_SINK,
-+				WLED4_SINK_REG_CURR_SINK_MASK, sink_en);
-+	if (rc < 0)
-+		return rc;
-+
-+	rc = wled_sync_toggle(wled);
-+	if (rc < 0) {
-+		dev_err(wled->dev, "Failed to toggle sync reg rc:%d\n", rc);
-+		return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct wled_config wled4_config_defaults = {
-+	.boost_i_limit = 4,
-+	.string_i_limit = 10,
-+	.ovp = 1,
-+	.num_strings = 4,
-+	.switch_freq = 11,
-+	.cabc = false,
-+};
-+
  static const u32 wled3_boost_i_limit_values[] = {
- 	105, 385, 525, 805, 980, 1260, 1400, 1680,
- };
-@@ -283,6 +443,15 @@ static int wled3_setup(struct wled *wled)
- 	.size = ARRAY_SIZE(wled3_boost_i_limit_values),
- };
- 
-+static const u32 wled4_boost_i_limit_values[] = {
-+	105, 280, 450, 620, 970, 1150, 1300, 1500,
-+};
-+
-+static const struct wled_var_cfg wled4_boost_i_limit_cfg = {
-+	.values = wled4_boost_i_limit_values,
-+	.size = ARRAY_SIZE(wled4_boost_i_limit_values),
-+};
-+
- static const u32 wled3_ovp_values[] = {
- 	35, 32, 29, 27,
- };
-@@ -292,6 +461,15 @@ static int wled3_setup(struct wled *wled)
- 	.size = ARRAY_SIZE(wled3_ovp_values),
- };
- 
-+static const u32 wled4_ovp_values[] = {
-+	31100, 29600, 19600, 18100,
-+};
-+
-+static const struct wled_var_cfg wled4_ovp_cfg = {
-+	.values = wled4_ovp_values,
-+	.size = ARRAY_SIZE(wled4_ovp_values),
-+};
-+
- static u32 wled3_num_strings_values_fn(u32 idx)
- {
- 	return idx + 1;
-@@ -302,6 +480,11 @@ static u32 wled3_num_strings_values_fn(u32 idx)
- 	.size = 3,
- };
- 
-+static const struct wled_var_cfg wled4_num_strings_cfg = {
-+	.fn = wled3_num_strings_values_fn,
-+	.size = 4,
-+};
-+
- static u32 wled3_switch_freq_values_fn(u32 idx)
- {
- 	return 19200 / (2 * (1 + idx));
-@@ -316,10 +499,24 @@ static u32 wled3_switch_freq_values_fn(u32 idx)
- 	.size = 26,
- };
- 
-+static const u32 wled4_string_i_limit_values[] = {
-+	0, 2500, 5000, 7500, 10000, 12500, 15000, 17500, 20000,
-+	22500, 25000, 27500, 30000,
-+};
-+
-+static const struct wled_var_cfg wled4_string_i_limit_cfg = {
-+	.values = wled4_string_i_limit_values,
-+	.size = ARRAY_SIZE(wled4_string_i_limit_values),
-+};
-+
- static const struct wled_var_cfg wled3_string_cfg = {
- 	.size = 8,
- };
- 
-+static const struct wled_var_cfg wled4_string_cfg = {
-+	.size = 16,
-+};
-+
- static u32 wled_values(const struct wled_var_cfg *cfg, u32 idx)
- {
- 	if (idx >= cfg->size)
-@@ -332,6 +529,7 @@ static u32 wled_values(const struct wled_var_cfg *cfg, u32 idx)
- }
- 
- #define	WLED3	3
-+#define	WLED4	4
- 
- static int wled_configure(struct wled *wled, int version)
- {
-@@ -370,6 +568,34 @@ static int wled_configure(struct wled *wled, int version)
- 		},
- 	};
- 
-+	const struct wled_u32_opts wled4_opts[] = {
-+		{
-+			.name = "qcom,current-boost-limit",
-+			.val_ptr = &cfg->boost_i_limit,
-+			.cfg = &wled4_boost_i_limit_cfg,
-+		},
-+		{
-+			.name = "qcom,current-limit-microamp",
-+			.val_ptr = &cfg->string_i_limit,
-+			.cfg = &wled4_string_i_limit_cfg,
-+		},
-+		{
-+			.name = "qcom,ovp-millivolt",
-+			.val_ptr = &cfg->ovp,
-+			.cfg = &wled4_ovp_cfg,
-+		},
-+		{
-+			.name = "qcom,switching-freq",
-+			.val_ptr = &cfg->switch_freq,
-+			.cfg = &wled3_switch_freq_cfg,
-+		},
-+		{
-+			.name = "qcom,num-strings",
-+			.val_ptr = &cfg->num_strings,
-+			.cfg = &wled4_num_strings_cfg,
-+		},
-+	};
-+
- 	const struct wled_bool_opts bool_opts[] = {
+@@ -600,6 +685,7 @@ static int wled_configure(struct wled *wled, int version)
  		{ "qcom,cs-out", &cfg->cs_out_en, },
  		{ "qcom,ext-gen", &cfg->ext_gen, },
-@@ -383,10 +609,6 @@ static int wled_configure(struct wled *wled, int version)
- 	}
- 	wled->ctrl_addr = be32_to_cpu(*prop_addr);
+ 		{ "qcom,cabc", &cfg->cabc, },
++		{ "qcom,external-pfet", &cfg->external_pfet, },
+ 	};
  
--	rc = of_property_read_string(dev->of_node, "label", &wled->name);
--	if (rc)
--		wled->name = dev->of_node->name;
--
- 	switch (version) {
- 	case WLED3:
- 		u32_opts = wled3_opts;
-@@ -394,6 +616,22 @@ static int wled_configure(struct wled *wled, int version)
- 		*cfg = wled3_config_defaults;
- 		wled->wled_set_brightness = wled3_set_brightness;
- 		wled->max_string_count = 3;
-+		wled->sink_addr = wled->ctrl_addr;
-+		break;
+ 	prop_addr = of_get_address(dev->of_node, 0, NULL, NULL);
+@@ -688,6 +774,38 @@ static int wled_configure(struct wled *wled, int version)
+ 	return 0;
+ }
+ 
++static int wled_configure_short_irq(struct wled *wled,
++				    struct platform_device *pdev)
++{
++	int rc, short_irq;
 +
-+	case WLED4:
-+		u32_opts = wled4_opts;
-+		size = ARRAY_SIZE(wled4_opts);
-+		*cfg = wled4_config_defaults;
-+		wled->wled_set_brightness = wled4_set_brightness;
-+		wled->max_string_count = 4;
++	if (!wled->has_short_detect)
++		return 0;
 +
-+		prop_addr = of_get_address(dev->of_node, 1, NULL, NULL);
-+		if (!prop_addr) {
-+			dev_err(wled->dev, "invalid IO resources\n");
-+			return -EINVAL;
-+		}
-+		wled->sink_addr = be32_to_cpu(*prop_addr);
- 		break;
- 
- 	default:
-@@ -401,6 +639,10 @@ static int wled_configure(struct wled *wled, int version)
- 		break;
- 	}
- 
-+	rc = of_property_read_string(dev->of_node, "label", &wled->name);
-+	if (rc)
-+		wled->name = dev->of_node->name;
++	rc = regmap_update_bits(wled->regmap, wled->ctrl_addr +
++				WLED4_CTRL_REG_SHORT_PROTECT,
++				WLED4_CTRL_REG_SHORT_EN_MASK,
++				WLED4_CTRL_REG_SHORT_EN_MASK);
++	if (rc < 0)
++		return rc;
 +
- 	for (i = 0; i < size; ++i) {
- 		rc = of_property_read_u32(dev->of_node, u32_opts[i].name, &val);
- 		if (rc == -EINVAL) {
-@@ -492,6 +734,14 @@ static int wled_probe(struct platform_device *pdev)
- 		}
- 		break;
- 
-+	case WLED4:
-+		rc = wled4_setup(wled);
-+		if (rc) {
-+			dev_err(&pdev->dev, "wled4_setup failed\n");
-+			return rc;
-+		}
-+		break;
++	short_irq = platform_get_irq_byname(pdev, "short");
++	if (short_irq < 0) {
++		dev_dbg(&pdev->dev, "short irq is not used\n");
++		return 0;
++	}
 +
- 	default:
- 		dev_err(wled->dev, "Invalid WLED version\n");
- 		break;
-@@ -512,6 +762,8 @@ static int wled_probe(struct platform_device *pdev)
- 
- static const struct of_device_id wled_match_table[] = {
- 	{ .compatible = "qcom,pm8941-wled", .data = (void *)3 },
-+	{ .compatible = "qcom,pmi8998-wled", .data = (void *)4 },
-+	{ .compatible = "qcom,pm660l-wled", .data = (void *)4 },
- 	{}
++	rc = devm_request_threaded_irq(wled->dev, short_irq,
++				       NULL, wled_short_irq_handler,
++				       IRQF_ONESHOT,
++				       "wled_short_irq", wled);
++	if (rc < 0)
++		dev_err(wled->dev, "Unable to request short_irq (err:%d)\n",
++			rc);
++
++	return rc;
++}
++
+ static const struct backlight_ops wled_ops = {
+ 	.update_status = wled_update_status,
  };
- MODULE_DEVICE_TABLE(of, wled_match_table);
+@@ -721,6 +839,7 @@ static int wled_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
++	mutex_init(&wled->lock);
+ 	rc = wled_configure(wled, version);
+ 	if (rc)
+ 		return rc;
+@@ -735,6 +854,7 @@ static int wled_probe(struct platform_device *pdev)
+ 		break;
+ 
+ 	case WLED4:
++		wled->has_short_detect = true;
+ 		rc = wled4_setup(wled);
+ 		if (rc) {
+ 			dev_err(&pdev->dev, "wled4_setup failed\n");
+@@ -747,6 +867,10 @@ static int wled_probe(struct platform_device *pdev)
+ 		break;
+ 	}
+ 
++	rc = wled_configure_short_irq(wled, pdev);
++	if (rc < 0)
++		return rc;
++
+ 	val = WLED_DEFAULT_BRIGHTNESS;
+ 	of_property_read_u32(pdev->dev.of_node, "default-brightness", &val);
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
  a Linux Foundation Collaborative Project
