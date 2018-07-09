@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E2FC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE42C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19F0820854
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB08620854
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:43:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abi80z4z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19F0820854
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dIXNFI/z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB08620854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932824AbeGIJnW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 05:43:22 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43943 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754405AbeGIJnP (ORCPT
+        id S1754446AbeGIJne (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 05:43:34 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38140 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932699AbeGIJnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 05:43:15 -0400
-Received: by mail-lj1-f195.google.com with SMTP id r13-v6so13587398ljg.10;
-        Mon, 09 Jul 2018 02:43:14 -0700 (PDT)
+        Mon, 9 Jul 2018 05:43:21 -0400
+Received: by mail-lf0-f66.google.com with SMTP id a4-v6so14686497lff.5;
+        Mon, 09 Jul 2018 02:43:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KoC99XQjYMvYaeFlk1wVGqBun0Bm6WwvjfwbDmoYkF8=;
-        b=abi80z4zuLEZR1FqD25bFzz3m29Z5cWuqrq12SSooGE/+l7sGFR6wuDV4q/l+2/uiI
-         EIOwcu/Su7eOUVSDgpaN9KMJwccelmvx5Os43KG69viR4Fq+V3olFOnV/gwOk3cMfE9B
-         Rc4B2JQYHZvALYRE9wn6wjOvJjWKV3/4DGe02TvSyWygHUggKTfaaQ30NZV7RfSp0EDq
-         WAlXOzYjcCQgv3woJj18s4nSRdjfrV+37n/s/U3q7n1eu7AqexmoyZJ+VGitrehPb6Vb
-         ruuvessCfXpJKjCt3tpyb4hWO3AnqWzKErtLOlHzfHajBjQPXFGtQhA7j2fcRY8J/gq4
-         4mfQ==
+        bh=1koQvgLpOHKSo2UbGrEiF0QLYvVVtdV9mxihlxpb/Nw=;
+        b=dIXNFI/z+xlQuMy7LKtYylJ4lEM7z2Iy7LOAKH9+KgV3iFAmWPVSaD1wC+cWW9F4qK
+         TfPmBLRngm+CULDO/pwAva1Uh3C/86/q4Q1sNGRvLQfxyzSIFJPK/vBcQTnGxC2uirxv
+         cgipnJEfZYynpUQxfV1yqgDJXDf/KOXThZj07ndoB9TUVqHcDHJS7Oj0vaSgNutmXWQv
+         qayxOO3cKQHxLPoLzEqMcSIkv1rbVoYIoRHU3yz661TGl+hTCxQWGD+CQLGr5vULmJN3
+         NgT2eGRzxCf62pjQri8MrXJxm9g+kLi0Wk9wGSF4lZjOQj5JHGcGc7Crikia93nayA6S
+         gaRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=KoC99XQjYMvYaeFlk1wVGqBun0Bm6WwvjfwbDmoYkF8=;
-        b=AxXEYKyC2KPXlzrtwfTU1MZVB+wDufCgS+3eAQGpXWVzLfCv9Lw98+N8Q3HaBONaap
-         g5UsEdIFSrEp3fjD5b+a5FqUNL/tw6oAGrN+m6Lxzg0XpaE5giPQLRC09m+CBrhbXieF
-         btsRiTNLPO2IurUpwetyaLinkLB4DG19wDdCQ8IWKrtVszxVZagCNnh8tVf9peOav3f6
-         abvhwMC7PBiOgK/X4/yVmhi45gbfverNE1asszYlSLPGFTFoD5G+vUUsdW0RRBclyRpq
-         6n6sUAcN8JN99N4B22vCsjDbAqyReIiAb3iLyV2jqJvPtL0olfPxsil+4zvJZebzHQZD
-         CqHw==
-X-Gm-Message-State: APt69E1dQzBH34fFePqx0GageaHvlKVvNV54s3s9Hwj8I2WJbuKky3jV
-        JuZFjIxDG79ZJcAW2xVooGcqwoSfYJk=
-X-Google-Smtp-Source: AAOMgpfga20h+6xcX96OmzEnrWhQ9fCozSdTWMMXwnbaRvjyVysgUJbKCaYIuj90sq9/fVFODhBxlQ==
-X-Received: by 2002:a2e:40c6:: with SMTP id r67-v6mr12632960lje.41.1531129393815;
-        Mon, 09 Jul 2018 02:43:13 -0700 (PDT)
+        bh=1koQvgLpOHKSo2UbGrEiF0QLYvVVtdV9mxihlxpb/Nw=;
+        b=C+CrZcyYjrOLsTudI5CGS11CayjaR5JZubaiKxSH0JtozwQC6N7tR87oaWZHdHNGKl
+         m23qCYK3Pt2FpfIJ0ScNmDvDjYDmgSsygg9gH9B/Dq/Nin257VApId4FWRBHT36zd9+X
+         grQCYv88jGmWS/QMZAFZKhaG8YaoZlsLuxdc2m+jQWgkiILTVpZhFIQC+p55PZkrx/8m
+         CoNx4CX6RE2UbB40B/dXCU7y39YrnZYLL4442F4pzZW9LYgioBOVnMYUgpOTs1tM9C8e
+         C8wAUvcsAsBV9ChyLyU9nYLy5bVdo31XBGXCIz9rhTTlMOJEqlbJHk/naGgzWZHb0EcI
+         O5Xw==
+X-Gm-Message-State: APt69E0qvUuOw0HE3sZq2E8ZRivwfYOGVg9duay308NTalVUWLx5ulnt
+        Tak9JUSpmdqyvdbyRcHTZRQ4fukTTvE=
+X-Google-Smtp-Source: AAOMgpcfJgib2kY0uvp14/OTB54wyBGroPzAACsvRISUpRshtNAyqsMW7STi5yxvKaKHdPr5BZ9Fdg==
+X-Received: by 2002:a19:ef13:: with SMTP id n19-v6mr14571206lfh.48.1531129399648;
+        Mon, 09 Jul 2018 02:43:19 -0700 (PDT)
 Received: from localhost (87-57-30-174-static.dk.customer.tdc.net. [87.57.30.174])
-        by smtp.gmail.com with ESMTPSA id v20-v6sm1496115ljc.94.2018.07.09.02.43.12
+        by smtp.gmail.com with ESMTPSA id q6-v6sm3396357lfk.31.2018.07.09.02.43.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 02:43:13 -0700 (PDT)
+        Mon, 09 Jul 2018 02:43:19 -0700 (PDT)
 From:   Esben Haabendal <esben.haabendal@gmail.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
@@ -64,15 +65,11 @@ Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
         <u.kleine-koenig@pengutronix.de>, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Yuan Yao <yao.yuan@freescale.com>,
-        Esben Haabendal <eha@deif.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Phil Reid <preid@electromag.com.au>,
-        Clemens Gruber <clemens.gruber@pqgruber.com>,
-        Peter Rosin <peda@axentia.se>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/4] i2c: imx: Fix race condition in dma read
-Date:   Mon,  9 Jul 2018 11:43:02 +0200
-Message-Id: <20180709094304.8814-3-esben.haabendal@gmail.com>
+        Esben Haabendal <eha@deif.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 4/4] arm: dts: ls1021a: Enable I2C DMA support
+Date:   Mon,  9 Jul 2018 11:43:04 +0200
+Message-Id: <20180709094304.8814-5-esben.haabendal@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180709094304.8814-1-esben.haabendal@gmail.com>
 References: <20180709094304.8814-1-esben.haabendal@gmail.com>
@@ -83,44 +80,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Esben Haabendal <eha@deif.com>
 
-This fixes a race condition, where the DMAEN bit ends up being set after
-I2C slave has transmitted a byte following the dummy read.  When that
-happens, an interrupt is generated instead, and no DMA request is generated
-to kickstart the DMA read, and a timeout happens after DMA_TIMEOUT (1 sec).
-
-Fixed by setting the DMAEN bit before the dummy read.
+Gives substantial performance improvement for transfers larger than 16
+bytes (DMA_THRESHOLD).  Smaller transfers are unaffected.
 
 Signed-off-by: Esben Haabendal <eha@deif.com>
 ---
- drivers/i2c/busses/i2c-imx.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ arch/arm/boot/dts/ls1021a.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-index 39cfd98c7b23..d86f152176a4 100644
---- a/drivers/i2c/busses/i2c-imx.c
-+++ b/drivers/i2c/busses/i2c-imx.c
-@@ -668,9 +668,6 @@ static int i2c_imx_dma_read(struct imx_i2c_struct *i2c_imx,
- 	struct imx_i2c_dma *dma = i2c_imx->dma;
- 	struct device *dev = &i2c_imx->adapter.dev;
+diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
+index c55d479971cc..1e5640701c65 100644
+--- a/arch/arm/boot/dts/ls1021a.dtsi
++++ b/arch/arm/boot/dts/ls1021a.dtsi
+@@ -363,6 +363,8 @@
+ 			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "i2c";
+ 			clocks = <&clockgen 4 1>;
++			dma-names = "tx", "rx";
++			dmas = <&edma0 1 39>, <&edma0 1 38>;
+ 			status = "disabled";
+ 		};
  
--	temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
--	temp |= I2CR_DMAEN;
--	imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
+@@ -374,6 +376,8 @@
+ 			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "i2c";
+ 			clocks = <&clockgen 4 1>;
++			dma-names = "tx", "rx";
++			dmas = <&edma0 1 37>, <&edma0 1 36>;
+ 			status = "disabled";
+ 		};
  
- 	dma->chan_using = dma->chan_rx;
- 	dma->dma_transfer_dir = DMA_DEV_TO_MEM;
-@@ -810,6 +807,11 @@ static int i2c_imx_read(struct imx_i2c_struct *i2c_imx, struct i2c_msg *msgs, bo
- 	if ((msgs->len - 1) || block_data)
- 		temp &= ~I2CR_TXAK;
- 	imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
-+	if (i2c_imx->dma && msgs->len >= DMA_THRESHOLD && !block_data) {
-+		temp = imx_i2c_read_reg(i2c_imx, IMX_I2C_I2CR);
-+		temp |= I2CR_DMAEN;
-+		imx_i2c_write_reg(temp, i2c_imx, IMX_I2C_I2CR);
-+	}
- 	imx_i2c_read_reg(i2c_imx, IMX_I2C_I2DR); /* dummy read */
+@@ -385,6 +389,8 @@
+ 			interrupts = <GIC_SPI 90 IRQ_TYPE_LEVEL_HIGH>;
+ 			clock-names = "i2c";
+ 			clocks = <&clockgen 4 1>;
++			dma-names = "tx", "rx";
++			dmas = <&edma0 1 35>, <&edma0 1 34>;
+ 			status = "disabled";
+ 		};
  
- 	dev_dbg(&i2c_imx->adapter.dev, "<%s> read data\n", __func__);
 -- 
 2.18.0
 
