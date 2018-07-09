@@ -2,649 +2,164 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E23C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E37C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0DB520835
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAEE620779
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:53:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c5cIulCX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0DB520835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="oLL4BJ0y";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WsZgHZq2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAEE620779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933790AbeGIPx1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:53:27 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35369 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933601AbeGIPvT (ORCPT
+        id S933954AbeGIPxq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:53:46 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:39521 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933601AbeGIPxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:51:19 -0400
-Received: by mail-wm0-f66.google.com with SMTP id v3-v6so17681956wmh.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:51:19 -0700 (PDT)
+        Mon, 9 Jul 2018 11:53:41 -0400
+Received: by mail-yb0-f194.google.com with SMTP id k127-v6so7369088ybk.6
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:53:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DGp+BGNtVeNa4cTAdTGiu/jJ6PP73+ywuSESOKv1IQY=;
-        b=c5cIulCXfGhIQPpbckrHl991SXTQZPT7789iuCeOj9EvdVkHQAzYD3w4gVWdzLUGq1
-         vCZGkZk3+8FZpd9HAKO/dUizkLh3F6+GALw1Rl4yf5XizH4OSox9LsXMkTFGUTEWKrc2
-         BxJd+bYg0EtxEBIY62210fl9xNF5OlYQy68as=
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=UnZLvQsS2ayy6ApCghtsKLVRpIzE6yTE1jYH1gtLZ2U=;
+        b=oLL4BJ0y/5noIVMEFnYtSjh7DQhNX7jtUXSi+cZ2b/lMMWFzbyUqfmVhDwY87tWh5N
+         fyvPsNKB5KhRjyKYd3CNauPLVzSTiAm4X6vd0aZ5ldsVs2E1EThYf/cByid3qCDcd+F2
+         Ha9eFnWg7u97EgPvzmhrqD2l3xYoQMccM0zQYrZhA/UiDadcXFvnQB7h8Aey+fbV8jJV
+         VHD+IBuB22QA6ucjdUBnDkNyZenMrKSbCTe9bO9ttYdti2smoU4tdfXTIJW8lSfqIfnY
+         iEb5pkGb0SOkbUacldwdG5/wylcTUjjKNkzCWZPUDQTznYiv/FuxcOFZcfjpFRXEpfID
+         rhpw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=UnZLvQsS2ayy6ApCghtsKLVRpIzE6yTE1jYH1gtLZ2U=;
+        b=WsZgHZq2gAb28nHKV18+Qv0sVSMoksgNtJwLYso6/HXVk1CN3vn8W4exfjcqdK3St8
+         DtiEKotkgvo3dy3MIllFtgooXJKEQYS8slW9KfTR5gWLpTFVTZpK2A9lkO/haDm6X3Dv
+         V5QUj5doTcOEpquwwmcXRrVBRDwPA/4o/bz98=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=DGp+BGNtVeNa4cTAdTGiu/jJ6PP73+ywuSESOKv1IQY=;
-        b=OS0VeXvzey6gdqHSSmGRkD8qpoTNtZvP4EXmrFAQZd+lBMXJlwIfNZlaeY0mFwgpTm
-         26srL3JDMshm7O090lLbsdmHHn9RHBP0W4hX06Kl8ui9+Ar8do+AY7WvHsXdKLp+V0VS
-         6AguTIrSW/e1Vz69Z114xpalMYf37PB4NrZoxH8tjIdba1n4cqbJt8CmSgTNJOIAj+ym
-         vpEnRH6atEQ/klUrYldT++7surCh3tyh/vu9Bn7fAEgB/d8YUDfF5LFhXIh/oCYC4zgZ
-         j1SDzlNJ2ZJmA/X1lLmimA7v+9U1FwZwl3Kj78mr5Lt4x4v4o9pyQO1pABwN/vy3ESHG
-         7Ogw==
-X-Gm-Message-State: AOUpUlEbJkd6eJl6PUQwyoFTGNhjpHW6qZEnw6ubWYPaax0LzO62315H
-        8snH61J3D/KiFDCtmrTCyDkYTw==
-X-Google-Smtp-Source: AAOMgpc9XtnySJK9qLOLUrF7e2uTrs++s9H2uczycJF1YKWO9QJT3wUMDnk/x9A1SzcM2RjvSsrjGg==
-X-Received: by 2002:a1c:3f08:: with SMTP id m8-v6mr3495244wma.88.1531151478032;
-        Mon, 09 Jul 2018 08:51:18 -0700 (PDT)
-Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id o21-v6sm16229202wmg.28.2018.07.09.08.51.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Jul 2018 08:51:17 -0700 (PDT)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, abailon@baylibre.com,
-        vincent.guittot@linaro.org, skannan@codeaurora.org,
-        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        evgreen@chromium.org, mka@chromium.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
-Subject: [PATCH v6 6/8] interconnect: qcom: Add msm8916 interconnect provider driver
-Date:   Mon,  9 Jul 2018 18:51:02 +0300
-Message-Id: <20180709155104.25528-7-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180709155104.25528-1-georgi.djakov@linaro.org>
-References: <20180709155104.25528-1-georgi.djakov@linaro.org>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=UnZLvQsS2ayy6ApCghtsKLVRpIzE6yTE1jYH1gtLZ2U=;
+        b=D8/HotBxklWBfAnQMVMJlvQgvbIW+ZbLkwb2DJRCQzAeSvWm2VTfXh6K30cfoJp2Xf
+         XcQ9DIWNiJ3O3BC9ZjdBcxPODxfpwU6FearWu5irDKJo+fvk/OoVU1dGZC17PUEIUdkL
+         4mJ2i6okO0LzePUz0s/Twwa45zax1geduoIwgvbHxCqrLlhRkfY5YbIeVXkcMM0fvrt2
+         31HsPELwVENEC5tKI6g25U6CgeS3836AK2F3Z5hRN/PtFq/H5APzJ/l68dvfweuC0AvR
+         Vd5e9KBG49l8v8DQdWrn8GX5uhl2kuwHbYXuO/qV5JYShksEvtPOb2s35mS6L4saQUs3
+         pGOg==
+X-Gm-Message-State: APt69E06SmSZNXphjsAA5N8eyz7rcOZYuOpQKxJJWU5fpKKcT0rXxIOX
+        eoEe3eFIDCbGPzBcJUfYciNKgNbWhGLJH7/r5F1K7Q==
+X-Google-Smtp-Source: AAOMgpfK2HUvhdm2uZI80LoynPpekFjIfNQ1A0m6JlF9kWpuyiA7T6I1YIh+IiKT3QPyb/qH4XQQ9pPhrlMa4kIQCFw=
+X-Received: by 2002:a25:b219:: with SMTP id i25-v6mr11736859ybj.112.1531151620923;
+ Mon, 09 Jul 2018 08:53:40 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 08:53:40 -0700 (PDT)
+In-Reply-To: <f213e03a-66a6-0c07-7bb8-2061b9c24731@arm.com>
+References: <20180629184618.GA37364@beast> <19f9ddb1-6009-850c-1949-3a8cdacdd2fc@redhat.com>
+ <CAGXu5jJcqMX7HjvgqcR37jnuN48PtyHd+VVmfcQH6YfXXSpO_g@mail.gmail.com> <f213e03a-66a6-0c07-7bb8-2061b9c24731@arm.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 9 Jul 2018 08:53:40 -0700
+X-Google-Sender-Auth: stCGq1NWrJsks7HaFUG4GlIUX7k
+Message-ID: <CAGXu5jLXQ2ZQ8mCfcKC6F7DMzbvP7MvArcacouVaX=WS9=7LPQ@mail.gmail.com>
+Subject: Re: [PATCH] KVM: arm64: vgic-its: Remove VLA usage
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Auger Eric <eric.auger@redhat.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add driver for the Qualcomm interconnect buses found in msm8916 based
-platforms.
+On Mon, Jul 9, 2018 at 3:47 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
+> Hi kees,
+>
+> On 02/07/18 18:15, Kees Cook wrote:
+>> On Mon, Jul 2, 2018 at 12:36 AM, Auger Eric <eric.auger@redhat.com> wrote:
+>>> Hi Kees,
+>>>
+>>> On 06/29/2018 08:46 PM, Kees Cook wrote:
+>>>> In the quest to remove all stack VLA usage from the kernel[1], this
+>>>> switches to using a maximum size and adds sanity checks. Additionally
+>>>> cleans up some of the int-vs-u32 usage and adds additional bounds checking.
+>>>> As it currently stands, this will always be 8 bytes until the ABI changes.
+>>>>
+>>>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>>>
+>>>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>>>> Cc: Eric Auger <eric.auger@redhat.com>
+>>>> Cc: Andre Przywara <andre.przywara@arm.com>
+>>>> Cc: linux-arm-kernel@lists.infradead.org
+>>>> Cc: kvmarm@lists.cs.columbia.edu
+>>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>>> ---
+>>>>  virt/kvm/arm/vgic/vgic-its.c | 19 +++++++++++++++----
+>>>>  1 file changed, 15 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
+>>>> index 4ed79c939fb4..3143fc047fcf 100644
+>>>> --- a/virt/kvm/arm/vgic/vgic-its.c
+>>>> +++ b/virt/kvm/arm/vgic/vgic-its.c
+>>>> @@ -168,8 +168,14 @@ struct vgic_its_abi {
+>>>>       int (*commit)(struct vgic_its *its);
+>>>>  };
+>>>>
+>>>> +#define ABI_0_ESZ    8
+>>>> +#define ESZ_MAX              ABI_0_ESZ
+>>>> +
+>>>>  static const struct vgic_its_abi its_table_abi_versions[] = {
+>>>> -     [0] = {.cte_esz = 8, .dte_esz = 8, .ite_esz = 8,
+>>>> +     [0] = {
+>>>> +      .cte_esz = ABI_0_ESZ,
+>>>> +      .dte_esz = ABI_0_ESZ,
+>>>> +      .ite_esz = ABI_0_ESZ,
+>>>>        .save_tables = vgic_its_save_tables_v0,
+>>>>        .restore_tables = vgic_its_restore_tables_v0,
+>>>>        .commit = vgic_its_commit_v0,
+>>>> @@ -180,10 +186,12 @@ static const struct vgic_its_abi its_table_abi_versions[] = {
+>>>>
+>>>>  inline const struct vgic_its_abi *vgic_its_get_abi(struct vgic_its *its)
+>>>>  {
+>>>> +     if (WARN_ON(its->abi_rev >= NR_ITS_ABIS))
+>>>> +             return NULL;
+>>>>       return &its_table_abi_versions[its->abi_rev];
+>>>>  }
+>>>>
+>>>> -int vgic_its_set_abi(struct vgic_its *its, int rev)
+>>>> +static int vgic_its_set_abi(struct vgic_its *its, u32 rev)
+>>>>  {
+>>> if vgic_its_get_abi is likely to return NULL, don't we need to check abi
+>>> != NULL in all call sites.
+>>
+>> My thinking was that since it should never happen, a WARN_ON would be
+>> sufficient. But I can drop all these changes if you want. I just
+>> wanted to see the VLA removed. :)
+>
+> Are you going to respin this patch limiting it to just the VLA changes?
+> I'm actively queuing stuff for the next merge window, and it'd be good
+> to get that one in.
+>
+> Alternatively, I can drop the WARN_ONs myself. Just let me know.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
----
- drivers/interconnect/Kconfig        |   5 +
- drivers/interconnect/Makefile       |   1 +
- drivers/interconnect/qcom/Kconfig   |  10 +
- drivers/interconnect/qcom/Makefile  |   2 +
- drivers/interconnect/qcom/msm8916.c | 499 ++++++++++++++++++++++++++++
- 5 files changed, 517 insertions(+)
- create mode 100644 drivers/interconnect/qcom/msm8916.c
+If you can just drop them that would be best, thanks!
 
-diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
-index a261c7d41deb..07a8276fa35a 100644
---- a/drivers/interconnect/Kconfig
-+++ b/drivers/interconnect/Kconfig
-@@ -8,3 +8,8 @@ menuconfig INTERCONNECT
- 
- 	  If unsure, say no.
- 
-+if INTERCONNECT
-+
-+source "drivers/interconnect/qcom/Kconfig"
-+
-+endif
-diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
-index 97fca2e09d24..7944cbca0527 100644
---- a/drivers/interconnect/Makefile
-+++ b/drivers/interconnect/Makefile
-@@ -1,2 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_INTERCONNECT)		+= core.o
-+obj-$(CONFIG_INTERCONNECT_QCOM)		+= qcom/
-diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
-index b0c2ff928d88..a87afdef1bf7 100644
---- a/drivers/interconnect/qcom/Kconfig
-+++ b/drivers/interconnect/qcom/Kconfig
-@@ -2,6 +2,8 @@ config INTERCONNECT_QCOM
- 	bool "Qualcomm Network-on-Chip interconnect drivers"
- 	depends on INTERCONNECT
- 	depends on ARCH_QCOM || COMPILE_TEST
-+	help
-+	  Support for Qualcomm's Network-on-Chip interconnect hardware.
- 
- config INTERCONNECT_QCOM_SMD_RPM
- 	tristate "Qualcomm SMD RPM interconnect driver"
-@@ -9,3 +11,11 @@ config INTERCONNECT_QCOM_SMD_RPM
- 	help
- 	  This is a driver for communicating interconnect related configuration
- 	  details with a remote processor (RPM) on Qualcomm platforms.
-+
-+config INTERCONNECT_QCOM_MSM8916
-+	tristate "Qualcomm MSM8916 interconnect driver"
-+	depends on INTERCONNECT_QCOM
-+	select INTERCONNECT_QCOM_SMD_RPM
-+	help
-+	  This is a driver for the Qualcomm Network-on-Chip on msm8916-based
-+	  platforms.
-diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
-index 5b65e4011b59..53f3380277f6 100644
---- a/drivers/interconnect/qcom/Makefile
-+++ b/drivers/interconnect/qcom/Makefile
-@@ -1,2 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_INTERCONNECT_QCOM_SMD_RPM) += smd-rpm.o
-+
-+obj-$(CONFIG_INTERCONNECT_QCOM_MSM8916) += msm8916.o
-diff --git a/drivers/interconnect/qcom/msm8916.c b/drivers/interconnect/qcom/msm8916.c
-new file mode 100644
-index 000000000000..f1d96f43e634
---- /dev/null
-+++ b/drivers/interconnect/qcom/msm8916.c
-@@ -0,0 +1,499 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Linaro Ltd
-+ * Author: Georgi Djakov <georgi.djakov@linaro.org>
-+ */
-+
-+#include <dt-bindings/interconnect/qcom.h>
-+#include <linux/clk.h>
-+#include <linux/device.h>
-+#include <linux/interconnect-provider.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include "smd-rpm.h"
-+
-+#define RPM_BUS_MASTER_REQ      0x73616d62
-+#define RPM_BUS_SLAVE_REQ       0x766c7362
-+
-+#define to_qcom_provider(_provider) \
-+	container_of(_provider, struct qcom_icc_provider, provider)
-+
-+enum qcom_qos_mode {
-+	QCOM_QOS_MODE_BYPASS = 0,
-+	QCOM_QOS_MODE_FIXED,
-+	QCOM_QOS_MODE_MAX,
-+};
-+
-+struct qcom_icc_provider {
-+	struct icc_provider	provider;
-+	void __iomem		*base;
-+	struct clk		*bus_clk;
-+	struct clk		*bus_a_clk;
-+};
-+
-+#define MSM8916_MAX_LINKS	8
-+
-+/**
-+ * struct qcom_icc_node - Qualcomm specific interconnect nodes
-+ * @name: the node name used in debugfs
-+ * @links: an array of nodes where we can go next while traversing
-+ * @id: a unique node identifier
-+ * @num_links: the total number of @links
-+ * @port: the offset index into the masters QoS register space
-+ * @buswidth: width of the interconnect between a node and the bus (bytes)
-+ * @ap_owned: the AP CPU does the writing to QoS registers
-+ * @qos_mode: QoS mode for ap_owned resources
-+ * @mas_rpm_id:	RPM id for devices that are bus masters
-+ * @slv_rpm_id:	RPM id for devices that are bus slaves
-+ * @rate: current bus clock rate in Hz
-+ */
-+struct qcom_icc_node {
-+	unsigned char *name;
-+	u16 links[MSM8916_MAX_LINKS];
-+	u16 id;
-+	u16 num_links;
-+	u16 port;
-+	u16 buswidth;
-+	bool ap_owned;
-+	enum qcom_qos_mode qos_mode;
-+	int mas_rpm_id;
-+	int slv_rpm_id;
-+	u64 rate;
-+};
-+
-+struct qcom_icc_desc {
-+	struct qcom_icc_node **nodes;
-+	size_t num_nodes;
-+};
-+
-+#define DEFINE_QNODE(_name, _id, _port, _buswidth, _ap_owned,		\
-+			_mas_rpm_id, _slv_rpm_id, _qos_mode,		\
-+			_numlinks, ...)					\
-+		static struct qcom_icc_node _name = {			\
-+		.id = _id,						\
-+		.name = #_name,						\
-+		.port = _port,						\
-+		.buswidth = _buswidth,					\
-+		.qos_mode = _qos_mode,					\
-+		.ap_owned = _ap_owned,					\
-+		.mas_rpm_id = _mas_rpm_id,				\
-+		.slv_rpm_id = _slv_rpm_id,				\
-+		.num_links = _numlinks,					\
-+		.links = { __VA_ARGS__ },				\
-+	}
-+
-+DEFINE_QNODE(mas_video, MASTER_VIDEO_P0, 8, 16, 1, -1, -1, QCOM_QOS_MODE_BYPASS, 2, SNOC_MM_INT_0, SNOC_MM_INT_2);
-+DEFINE_QNODE(mas_jpeg, MASTER_JPEG, 6, 16, 1, -1, -1, QCOM_QOS_MODE_BYPASS, 2, SNOC_MM_INT_0, SNOC_MM_INT_2);
-+DEFINE_QNODE(mas_vfe, MASTER_VFE, 9, 16, 1, -1, -1, QCOM_QOS_MODE_BYPASS, 2, SNOC_MM_INT_1, SNOC_MM_INT_2);
-+DEFINE_QNODE(mas_mdp, MASTER_MDP_PORT0, 7, 16, 1, -1, -1, QCOM_QOS_MODE_BYPASS, 2, SNOC_MM_INT_0, SNOC_MM_INT_2);
-+DEFINE_QNODE(mas_qdss_bam, MASTER_QDSS_BAM, 11, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_QDSS_INT);
-+DEFINE_QNODE(mas_snoc_cfg, MASTER_SNOC_CFG, 0, 16, 0, 20, -1, QCOM_QOS_MODE_BYPASS, 1, SNOC_QDSS_INT);
-+DEFINE_QNODE(mas_qdss_etr, MASTER_QDSS_ETR, 10, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_QDSS_INT);
-+DEFINE_QNODE(mm_int_0, SNOC_MM_INT_0, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_MM_INT_BIMC);
-+DEFINE_QNODE(mm_int_1, SNOC_MM_INT_1, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_MM_INT_BIMC);
-+DEFINE_QNODE(mm_int_2, SNOC_MM_INT_2, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_INT_0);
-+DEFINE_QNODE(mm_int_bimc, SNOC_MM_INT_BIMC, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_BIMC_1_MAS);
-+DEFINE_QNODE(snoc_int_0, SNOC_INT_0, 0, 8, 0, 99, 130, QCOM_QOS_MODE_FIXED, 3, SLAVE_QDSS_STM, SLAVE_SYSTEM_IMEM, MNOC_BIMC_MAS);
-+DEFINE_QNODE(snoc_int_1, SNOC_INT_1, 0, 8, 0, 100, 131, QCOM_QOS_MODE_FIXED, 3, SYSTEM_SLAVE_FAB_APPS, SLAVE_CATS_128, SLAVE_OCMEM_64);
-+DEFINE_QNODE(snoc_int_bimc, SNOC_INT_BIMC, 0, 8, 0, 101, 132, QCOM_QOS_MODE_FIXED, 1, SNOC_BIMC_0_MAS);
-+DEFINE_QNODE(snoc_bimc_0_mas, SNOC_BIMC_0_MAS, 0, 8, 0, 3, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_BIMC_0_SLV);
-+DEFINE_QNODE(snoc_bimc_1_mas, SNOC_BIMC_1_MAS, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_BIMC_1_SLV);
-+DEFINE_QNODE(qdss_int, SNOC_QDSS_INT, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 2, SNOC_INT_0, SNOC_INT_BIMC);
-+DEFINE_QNODE(bimc_snoc_slv, BIMC_SNOC_SLV, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 2, SNOC_INT_0, SNOC_INT_1);
-+DEFINE_QNODE(snoc_pnoc_mas, MNOC_BIMC_MAS, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, MNOC_BIMC_SLV);
-+DEFINE_QNODE(pnoc_snoc_slv, PNOC_SNOC_SLV, 0, 8, 0, -1, 45, QCOM_QOS_MODE_FIXED, 3, SNOC_INT_0, SNOC_INT_BIMC, SNOC_INT_1);
-+DEFINE_QNODE(slv_srvc_snoc, SLAVE_SERVICE_SNOC, 0, 8, 0, -1, 29, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_qdss_stm, SLAVE_QDSS_STM, 0, 4, 0, -1, 30, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_imem, SLAVE_SYSTEM_IMEM, 0, 8, 0, -1, 26, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_apss, SYSTEM_SLAVE_FAB_APPS, 0, 4, 0, -1, 20, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_cats_0, SLAVE_CATS_128, 0, 16, 0, -1, 106, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_cats_1, SLAVE_OCMEM_64, 0, 8, 0, -1, 107, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(mas_apss, MASTER_AMPSS_M0, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_EBI_CH0, BIMC_SNOC_MAS, SLAVE_AMPSS_L2);
-+DEFINE_QNODE(mas_tcu0, MASTER_TCU_0, 5, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_EBI_CH0, BIMC_SNOC_MAS, SLAVE_AMPSS_L2);
-+DEFINE_QNODE(mas_tcu1, MASTER_TCU_1, 6, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_EBI_CH0, BIMC_SNOC_MAS, SLAVE_AMPSS_L2);
-+DEFINE_QNODE(mas_gfx, MASTER_GRAPHICS_3D, 2, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_EBI_CH0, BIMC_SNOC_MAS, SLAVE_AMPSS_L2);
-+DEFINE_QNODE(bimc_snoc_mas, BIMC_SNOC_MAS, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, BIMC_SNOC_SLV);
-+DEFINE_QNODE(snoc_bimc_0_slv, SNOC_BIMC_0_SLV, 0, 8, 0, -1, 24, QCOM_QOS_MODE_FIXED, 1, SLAVE_EBI_CH0);
-+DEFINE_QNODE(snoc_bimc_1_slv, SNOC_BIMC_1_SLV, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SLAVE_EBI_CH0);
-+DEFINE_QNODE(slv_ebi_ch0, SLAVE_EBI_CH0, 0, 8, 0, -1, 0, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_apps_l2, SLAVE_AMPSS_L2, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(snoc_pnoc_slv, MNOC_BIMC_SLV, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_0);
-+DEFINE_QNODE(pnoc_int_0, PNOC_INT_0, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 8, PNOC_SNOC_MAS, PNOC_SLV_0, PNOC_SLV_1, PNOC_SLV_2, PNOC_SLV_3, PNOC_SLV_4, PNOC_SLV_8, PNOC_SLV_9);
-+DEFINE_QNODE(pnoc_int_1, PNOC_INT_1, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_SNOC_MAS);
-+DEFINE_QNODE(pnoc_m_0, PNOC_M_0, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_0);
-+DEFINE_QNODE(pnoc_m_1, PNOC_M_1, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_SNOC_MAS);
-+DEFINE_QNODE(pnoc_s_0, PNOC_SLV_0, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 5, SLAVE_CLK_CTL, SLAVE_TLMM, SLAVE_MSM_TCSR, SLAVE_SECURITY, SLAVE_MSS);
-+DEFINE_QNODE(pnoc_s_1, PNOC_SLV_1, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 5, SLAVE_IMEM_CFG, SLAVE_CRYPTO_0_CFG, SLAVE_RPM_MSG_RAM, SLAVE_MSM_PDM, SLAVE_PRNG);
-+DEFINE_QNODE(pnoc_s_2, PNOC_SLV_2, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 5, SLAVE_SPDM, SLAVE_BOOT_ROM, SLAVE_BIMC_CFG, SLAVE_PNOC_CFG, SLAVE_PMIC_ARB);
-+DEFINE_QNODE(pnoc_s_3, PNOC_SLV_3, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 5, SLAVE_MPM, SLAVE_IPS_CFG, SLAVE_RBCPR_CFG, SLAVE_QDSS_CFG, SLAVE_DEHR_CFG);
-+DEFINE_QNODE(pnoc_s_4, PNOC_SLV_4, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_VENUS_CFG, SLAVE_CAMERA_CFG, SLAVE_DISPLAY_CFG);
-+DEFINE_QNODE(pnoc_s_8, PNOC_SLV_8, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_USB_HS, SLAVE_SDCC_1, SLAVE_BLSP_1);
-+DEFINE_QNODE(pnoc_s_9, PNOC_SLV_9, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_SDCC_4, SLAVE_LPASS, SLAVE_GRAPHICS_3D_CFG);
-+DEFINE_QNODE(slv_imem_cfg, SLAVE_IMEM_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_crypto_0_cfg, SLAVE_CRYPTO_0_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_msg_ram, SLAVE_RPM_MSG_RAM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_pdm, SLAVE_MSM_PDM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_prng, SLAVE_PRNG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_clk_ctl, SLAVE_CLK_CTL, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_mss, SLAVE_MSS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_tlmm, SLAVE_TLMM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_tcsr, SLAVE_MSM_TCSR, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_security, SLAVE_SECURITY, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_spdm, SLAVE_SPDM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_pnoc_cfg, SLAVE_PNOC_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_pmic_arb, SLAVE_PMIC_ARB, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_bimc_cfg, SLAVE_BIMC_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_boot_rom, SLAVE_BOOT_ROM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_mpm, SLAVE_MPM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_qdss_cfg, SLAVE_QDSS_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_rbcpr_cfg, SLAVE_RBCPR_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_snoc_cfg, SLAVE_IPS_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_dehr_cfg, SLAVE_DEHR_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_venus_cfg, SLAVE_VENUS_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_display_cfg, SLAVE_DISPLAY_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_camera_cfg, SLAVE_CAMERA_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_usb_hs, SLAVE_USB_HS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_sdcc_1, SLAVE_SDCC_1, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_blsp_1, SLAVE_BLSP_1, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_sdcc_2, SLAVE_SDCC_4, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_gfx_cfg, SLAVE_GRAPHICS_3D_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(slv_audio, SLAVE_LPASS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-+DEFINE_QNODE(mas_blsp_1, MASTER_BLSP_1, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_1);
-+DEFINE_QNODE(mas_spdm, MASTER_SPDM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_0);
-+DEFINE_QNODE(mas_dehr, MASTER_DEHR, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_0);
-+DEFINE_QNODE(mas_audio, MASTER_LPASS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_0);
-+DEFINE_QNODE(mas_usb_hs, MASTER_USB_HS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_1);
-+DEFINE_QNODE(mas_pnoc_crypto_0, MASTER_CRYPTO_CORE0, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_1);
-+DEFINE_QNODE(mas_pnoc_sdcc_1, MASTER_SDCC_1, 7, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_1);
-+DEFINE_QNODE(mas_pnoc_sdcc_2, MASTER_SDCC_2, 8, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_1);
-+DEFINE_QNODE(pnoc_snoc_mas, PNOC_SNOC_MAS, 0, 8, 0, 29, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_SNOC_SLV);
-+
-+static struct qcom_icc_node *msm8916_snoc_nodes[] = {
-+	&mas_video,
-+	&mas_jpeg,
-+	&mas_vfe,
-+	&mas_mdp,
-+	&mas_qdss_bam,
-+	&mas_snoc_cfg,
-+	&mas_qdss_etr,
-+	&mm_int_0,
-+	&mm_int_1,
-+	&mm_int_2,
-+	&mm_int_bimc,
-+	&snoc_int_0,
-+	&snoc_int_1,
-+	&snoc_int_bimc,
-+	&snoc_bimc_0_mas,
-+	&snoc_bimc_1_mas,
-+	&qdss_int,
-+	&bimc_snoc_slv,
-+	&snoc_pnoc_mas,
-+	&pnoc_snoc_slv,
-+	&slv_srvc_snoc,
-+	&slv_qdss_stm,
-+	&slv_imem,
-+	&slv_apss,
-+	&slv_cats_0,
-+	&slv_cats_1,
-+};
-+
-+static struct qcom_icc_desc msm8916_snoc = {
-+	.nodes = msm8916_snoc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8916_snoc_nodes),
-+};
-+
-+static struct qcom_icc_node *msm8916_bimc_nodes[] = {
-+	&mas_apss,
-+	&mas_tcu0,
-+	&mas_tcu1,
-+	&mas_gfx,
-+	&bimc_snoc_mas,
-+	&snoc_bimc_0_slv,
-+	&snoc_bimc_1_slv,
-+	&slv_ebi_ch0,
-+	&slv_apps_l2,
-+};
-+
-+static struct qcom_icc_desc msm8916_bimc = {
-+	.nodes = msm8916_bimc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8916_bimc_nodes),
-+};
-+
-+static struct qcom_icc_node *msm8916_pnoc_nodes[] = {
-+	&snoc_pnoc_slv,
-+	&pnoc_int_0,
-+	&pnoc_int_1,
-+	&pnoc_m_0,
-+	&pnoc_m_1,
-+	&pnoc_s_0,
-+	&pnoc_s_1,
-+	&pnoc_s_2,
-+	&pnoc_s_3,
-+	&pnoc_s_4,
-+	&pnoc_s_8,
-+	&pnoc_s_9,
-+	&slv_imem_cfg,
-+	&slv_crypto_0_cfg,
-+	&slv_msg_ram,
-+	&slv_pdm,
-+	&slv_prng,
-+	&slv_clk_ctl,
-+	&slv_mss,
-+	&slv_tlmm,
-+	&slv_tcsr,
-+	&slv_security,
-+	&slv_spdm,
-+	&slv_pnoc_cfg,
-+	&slv_pmic_arb,
-+	&slv_bimc_cfg,
-+	&slv_boot_rom,
-+	&slv_mpm,
-+	&slv_qdss_cfg,
-+	&slv_rbcpr_cfg,
-+	&slv_snoc_cfg,
-+	&slv_dehr_cfg,
-+	&slv_venus_cfg,
-+	&slv_display_cfg,
-+	&slv_camera_cfg,
-+	&slv_usb_hs,
-+	&slv_sdcc_1,
-+	&slv_blsp_1,
-+	&slv_sdcc_2,
-+	&slv_gfx_cfg,
-+	&slv_audio,
-+	&mas_blsp_1,
-+	&mas_spdm,
-+	&mas_dehr,
-+	&mas_audio,
-+	&mas_usb_hs,
-+	&mas_pnoc_crypto_0,
-+	&mas_pnoc_sdcc_1,
-+	&mas_pnoc_sdcc_2,
-+	&pnoc_snoc_mas,
-+};
-+
-+static struct qcom_icc_desc msm8916_pnoc = {
-+	.nodes = msm8916_pnoc_nodes,
-+	.num_nodes = ARRAY_SIZE(msm8916_pnoc_nodes),
-+};
-+
-+static int qcom_icc_aggregate(struct icc_node *node, u32 avg_bw, u32 peak_bw,
-+			      u32 *agg_avg, u32 *agg_peak)
-+{
-+	*agg_avg += avg_bw;
-+	*agg_peak = max(*agg_peak, peak_bw);
-+
-+	return 0;
-+}
-+
-+static int qcom_icc_set(struct icc_node *src, struct icc_node *dst,
-+			u32 avg, u32 peak)
-+{
-+	struct qcom_icc_provider *qp;
-+	struct qcom_icc_node *qn;
-+	struct icc_node *node;
-+	struct icc_provider *provider;
-+	u64 avg_bw = icc_units_to_bps(avg);
-+	u64 peak_bw = icc_units_to_bps(peak);
-+	u64 rate = 0;
-+	int ret = 0;
-+
-+	if (!src)
-+		node = dst;
-+	else
-+		node = src;
-+
-+	qn = node->data;
-+	provider = node->provider;
-+	qp = to_qcom_provider(node->provider);
-+
-+	/* set bandwidth */
-+	if (qn->ap_owned) {
-+		/* TODO: set QoS */
-+	} else {
-+		/* send message to the RPM processor */
-+		if (qn->mas_rpm_id != -1) {
-+			ret = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE,
-+						    RPM_BUS_MASTER_REQ,
-+						    qn->mas_rpm_id,
-+						    avg_bw);
-+			if (ret) {
-+				pr_err("qcom_icc_rpm_smd_send mas error %d\n",
-+				       ret);
-+				return ret;
-+			}
-+		}
-+
-+		if (qn->slv_rpm_id != -1) {
-+			ret = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE,
-+						    RPM_BUS_SLAVE_REQ,
-+						    qn->slv_rpm_id,
-+						    avg_bw);
-+			if (ret) {
-+				pr_err("qcom_icc_rpm_smd_send slv error %d\n",
-+				       ret);
-+				return ret;
-+			}
-+		}
-+	}
-+
-+	rate = max(avg_bw, peak_bw);
-+
-+	do_div(rate, qn->buswidth);
-+
-+	if (qn->rate != rate) {
-+		ret = clk_set_rate(qp->bus_clk, rate);
-+		if (ret) {
-+			pr_err("set clk rate %lld error %d\n", rate, ret);
-+			return ret;
-+		}
-+
-+		ret = clk_set_rate(qp->bus_a_clk, rate);
-+		if (ret) {
-+			pr_err("set clk rate %lld error %d\n", rate, ret);
-+			return ret;
-+		}
-+
-+		qn->rate = rate;
-+	}
-+
-+	return ret;
-+}
-+
-+static int qnoc_probe(struct platform_device *pdev)
-+{
-+	const struct qcom_icc_desc *desc;
-+	struct qcom_icc_node **qnodes;
-+	struct icc_node *node;
-+	struct qcom_icc_provider *qp;
-+	struct resource *res;
-+	struct icc_provider *provider;
-+	size_t num_nodes, i;
-+	int ret;
-+
-+	/* wait for RPM */
-+	if (!qcom_icc_rpm_smd_available())
-+		return -EPROBE_DEFER;
-+
-+	desc = of_device_get_match_data(&pdev->dev);
-+	if (!desc)
-+		return -EINVAL;
-+
-+	qnodes = desc->nodes;
-+	num_nodes = desc->num_nodes;
-+
-+	qp = devm_kzalloc(&pdev->dev, sizeof(*qp), GFP_KERNEL);
-+	if (!qp)
-+		return -ENOMEM;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	qp->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(qp->base))
-+		return PTR_ERR(qp->base);
-+
-+	qp->bus_clk = devm_clk_get(&pdev->dev, "bus_clk");
-+	if (IS_ERR(qp->bus_clk))
-+		return PTR_ERR(qp->bus_clk);
-+
-+	ret = clk_prepare_enable(qp->bus_clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "error enabling bus_clk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	qp->bus_a_clk = devm_clk_get(&pdev->dev, "bus_a_clk");
-+	if (IS_ERR(qp->bus_a_clk))
-+		return PTR_ERR(qp->bus_a_clk);
-+
-+	ret = clk_prepare_enable(qp->bus_a_clk);
-+	if (ret) {
-+		dev_err(&pdev->dev, "error enabling bus_a_clk: %d\n", ret);
-+		return ret;
-+	}
-+
-+	provider = &qp->provider;
-+	provider->dev = &pdev->dev;
-+	provider->set = &qcom_icc_set;
-+	provider->aggregate = &qcom_icc_aggregate;
-+	INIT_LIST_HEAD(&provider->nodes);
-+	provider->data = qp;
-+
-+	ret = icc_provider_add(provider);
-+	if (ret) {
-+		dev_err(&pdev->dev, "error adding interconnect provider\n");
-+		return ret;
-+	}
-+
-+	for (i = 0; i < num_nodes; i++) {
-+		int ret;
-+		size_t j;
-+
-+		node = icc_node_create(qnodes[i]->id);
-+		if (IS_ERR(node)) {
-+			ret = PTR_ERR(node);
-+			goto err;
-+		}
-+
-+		node->name = qnodes[i]->name;
-+		node->data = qnodes[i];
-+		icc_node_add(node, provider);
-+
-+		dev_dbg(&pdev->dev, "registered node %s\n", node->name);
-+
-+		/* populate links */
-+		for (j = 0; j < qnodes[i]->num_links; j++)
-+			if (qnodes[i]->links[j])
-+				icc_link_create(node, qnodes[i]->links[j]);
-+	}
-+
-+	platform_set_drvdata(pdev, provider);
-+
-+	return ret;
-+err:
-+	list_for_each_entry(node, &provider->nodes, node_list) {
-+		icc_node_del(node);
-+		icc_node_destroy(node->id);
-+	}
-+	icc_provider_del(provider);
-+
-+	return ret;
-+}
-+
-+static int qnoc_remove(struct platform_device *pdev)
-+{
-+	struct icc_provider *provider = platform_get_drvdata(pdev);
-+	struct icc_node *n;
-+
-+	list_for_each_entry(n, &provider->nodes, node_list) {
-+		icc_node_del(n);
-+		icc_node_destroy(n->id);
-+	}
-+
-+	return icc_provider_del(provider);
-+}
-+
-+static const struct of_device_id qnoc_of_match[] = {
-+	{ .compatible = "qcom,msm8916-pnoc", .data = &msm8916_pnoc },
-+	{ .compatible = "qcom,msm8916-snoc", .data = &msm8916_snoc },
-+	{ .compatible = "qcom,msm8916-bimc", .data = &msm8916_bimc },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, qnoc_of_match);
-+
-+static struct platform_driver qnoc_driver = {
-+	.probe = qnoc_probe,
-+	.remove = qnoc_remove,
-+	.driver = {
-+		.name = "qnoc-msm8916",
-+		.of_match_table = qnoc_of_match,
-+	},
-+};
-+module_platform_driver(qnoc_driver);
-+MODULE_AUTHOR("Georgi Djakov <georgi.djakov@linaro.org>");
-+MODULE_DESCRIPTION("Qualcomm msm8916 NoC driver");
-+MODULE_LICENSE("GPL v2");
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
