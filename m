@@ -2,171 +2,161 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4BCCC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D356C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ACDF20877
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:51:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59B9420835
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:51:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="U4Drm4/P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ACDF20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ORw4XhWH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59B9420835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933635AbeGIPtz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:49:55 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:49838 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933460AbeGIPtU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:49:20 -0400
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 0A0B85C1E51;
-        Mon,  9 Jul 2018 17:49:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1531151359;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=3e3VROFueMbjSB10IdkTi1mIjjMAgaVr0wWUHEX1RU0=;
-        b=U4Drm4/Paz9I8/qAw6dH471Kj5VQAOD8qYikrzrPiXO9etlZihhWpWd8/vIOSPVbFwCJXr
-        Jj0EYrqdhDxUG/taRIFE2ulCeKWP1vQrNo9vJUyhaYR7TjDVZEvldoe5UCxnRB6Y1LGNPM
-        afobO4FL5NJGF5oygisNFhUxTHCBPV4=
-From:   Stefan Agner <stefan@agner.ch>
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc:     kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
-        maitysanchayan@gmail.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 8/8] ARM: dts: imx6qdl-apalis/-colibri: remove unused pinctrl groups
-Date:   Mon,  9 Jul 2018 17:48:48 +0200
-Message-Id: <20180709154848.5401-8-stefan@agner.ch>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180709154848.5401-1-stefan@agner.ch>
-References: <20180709154848.5401-1-stefan@agner.ch>
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[14];
-         BAYES_HAM(-3.00)[100.00%];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:6830, ipnet:46.140.0.0/17, country:AT];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+        id S933759AbeGIPvD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:51:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932862AbeGIPvA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 11:51:00 -0400
+Received: from mail-it0-f54.google.com (mail-it0-f54.google.com [209.85.214.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C15120877
+        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 15:50:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531151459;
+        bh=aRE1eWGa76jjsIJZL7ZutPrznwbKusEr7fR6eyVrgUQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ORw4XhWHQD2Fzd5XcRSHdRz9ZHIFPdMfLRQfB/rcUCIUG0E7eA/LaIrOLeu+ObFOX
+         yF36Qf4CRGUb9q8zqySheLzVNGshZEzdE83D2E/s4bwsmRIJKgzWIJDiWIfCq6HQqH
+         niqqNTp+pS5OSXdOwuahERkLYzex+PEAFnI9zVog=
+Received: by mail-it0-f54.google.com with SMTP id d191-v6so12172527ite.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:50:59 -0700 (PDT)
+X-Gm-Message-State: APt69E2i8ZCKbeSUC4xCmMR5VP8yKobaO3YaVqf26scFrBedT/xPQTRO
+        4o7Ox4Ir9LNxvFbPVeIH0d1+MWRkaR2YT1+WSA==
+X-Google-Smtp-Source: AAOMgpe4enhSfvVC2c3K5TsxsrjoP5FN4qkSCmah0w0l+L3gklyhu9KNGVNB5NreuHJI0G4mlOGHkX3aDUoxHSP+yCM=
+X-Received: by 2002:a24:3ac3:: with SMTP id m186-v6mr16431860itm.106.1531151459079;
+ Mon, 09 Jul 2018 08:50:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180619214020.18608-1-robh@kernel.org>
+In-Reply-To: <20180619214020.18608-1-robh@kernel.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Mon, 9 Jul 2018 09:50:47 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLfnSOgOMdaJU3Q4h5_PGnNgd4rx+vKXdFVZnNEo6+JZA@mail.gmail.com>
+Message-ID: <CAL_JsqLfnSOgOMdaJU3Q4h5_PGnNgd4rx+vKXdFVZnNEo6+JZA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: at91: remove unnecessary of_platform_default_populate
+ calls
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-100/200MHz states for USDHC3 are not required since the SoC
-does not support modes faster than DDR52 for the on board eMMC.
+On Tue, Jun 19, 2018 at 3:40 PM Rob Herring <robh@kernel.org> wrote:
+>
+> The DT core will call of_platform_default_populate, so it is not
+> necessary for machine specific code to call it unless there are custom
+> match entries, auxdata or parent device. Neither of those apply here, so
+> remove the call.
+>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  arch/arm/mach-at91/at91rm9200.c | 5 -----
+>  arch/arm/mach-at91/at91sam9.c   | 5 -----
+>  arch/arm/mach-at91/sama5.c      | 5 -----
+>  3 files changed, 15 deletions(-)
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 34 --------------------------
- arch/arm/boot/dts/imx6qdl-colibri.dtsi | 34 --------------------------
- 2 files changed, 68 deletions(-)
+Ping?
 
-diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-index 8c04f42fdb71..05f07ea3e8c8 100644
---- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
-@@ -947,38 +947,4 @@
- 			MX6QDL_PAD_SD3_RST__SD3_RESET  0x17059
- 		>;
- 	};
--
--	pinctrl_usdhc3_100mhz: usdhc3100mhzgrp {
--		fsl,pins = <
--			MX6QDL_PAD_SD3_CMD__SD3_CMD    0x170b9
--			MX6QDL_PAD_SD3_CLK__SD3_CLK    0x100b9
--			MX6QDL_PAD_SD3_DAT0__SD3_DATA0 0x170b9
--			MX6QDL_PAD_SD3_DAT1__SD3_DATA1 0x170b9
--			MX6QDL_PAD_SD3_DAT2__SD3_DATA2 0x170b9
--			MX6QDL_PAD_SD3_DAT3__SD3_DATA3 0x170b9
--			MX6QDL_PAD_SD3_DAT4__SD3_DATA4 0x170b9
--			MX6QDL_PAD_SD3_DAT5__SD3_DATA5 0x170b9
--			MX6QDL_PAD_SD3_DAT6__SD3_DATA6 0x170b9
--			MX6QDL_PAD_SD3_DAT7__SD3_DATA7 0x170b9
--			/* eMMC reset */
--			MX6QDL_PAD_SD3_RST__SD3_RESET  0x170b9
--		>;
--	};
--
--	pinctrl_usdhc3_200mhz: usdhc3200mhzgrp {
--		fsl,pins = <
--			MX6QDL_PAD_SD3_CMD__SD3_CMD    0x170f9
--			MX6QDL_PAD_SD3_CLK__SD3_CLK    0x100f9
--			MX6QDL_PAD_SD3_DAT0__SD3_DATA0 0x170f9
--			MX6QDL_PAD_SD3_DAT1__SD3_DATA1 0x170f9
--			MX6QDL_PAD_SD3_DAT2__SD3_DATA2 0x170f9
--			MX6QDL_PAD_SD3_DAT3__SD3_DATA3 0x170f9
--			MX6QDL_PAD_SD3_DAT4__SD3_DATA4 0x170f9
--			MX6QDL_PAD_SD3_DAT5__SD3_DATA5 0x170f9
--			MX6QDL_PAD_SD3_DAT6__SD3_DATA6 0x170f9
--			MX6QDL_PAD_SD3_DAT7__SD3_DATA7 0x170f9
--			/* eMMC reset */
--			MX6QDL_PAD_SD3_RST__SD3_RESET  0x170f9
--		>;
--	};
- };
-diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-index 6821ea511051..87e15e7cb32b 100644
---- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-+++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
-@@ -692,40 +692,6 @@
- 		>;
- 	};
- 
--	pinctrl_usdhc3_100mhz: usdhc3100mhzgrp {
--		fsl,pins = <
--			MX6QDL_PAD_SD3_CMD__SD3_CMD	0x170b9
--			MX6QDL_PAD_SD3_CLK__SD3_CLK	0x100b9
--			MX6QDL_PAD_SD3_DAT0__SD3_DATA0	0x170b9
--			MX6QDL_PAD_SD3_DAT1__SD3_DATA1	0x170b9
--			MX6QDL_PAD_SD3_DAT2__SD3_DATA2	0x170b9
--			MX6QDL_PAD_SD3_DAT3__SD3_DATA3	0x170b9
--			MX6QDL_PAD_SD3_DAT4__SD3_DATA4	0x170b9
--			MX6QDL_PAD_SD3_DAT5__SD3_DATA5	0x170b9
--			MX6QDL_PAD_SD3_DAT6__SD3_DATA6	0x170b9
--			MX6QDL_PAD_SD3_DAT7__SD3_DATA7	0x170b9
--			/* eMMC reset */
--			MX6QDL_PAD_SD3_RST__SD3_RESET	0x170b9
--		>;
--	};
--
--	pinctrl_usdhc3_200mhz: usdhc3200mhzgrp {
--		fsl,pins = <
--			MX6QDL_PAD_SD3_CMD__SD3_CMD	0x170f9
--			MX6QDL_PAD_SD3_CLK__SD3_CLK	0x100f9
--			MX6QDL_PAD_SD3_DAT0__SD3_DATA0	0x170f9
--			MX6QDL_PAD_SD3_DAT1__SD3_DATA1	0x170f9
--			MX6QDL_PAD_SD3_DAT2__SD3_DATA2	0x170f9
--			MX6QDL_PAD_SD3_DAT3__SD3_DATA3	0x170f9
--			MX6QDL_PAD_SD3_DAT4__SD3_DATA4	0x170f9
--			MX6QDL_PAD_SD3_DAT5__SD3_DATA5	0x170f9
--			MX6QDL_PAD_SD3_DAT6__SD3_DATA6	0x170f9
--			MX6QDL_PAD_SD3_DAT7__SD3_DATA7	0x170f9
--			/* eMMC reset */
--			MX6QDL_PAD_SD3_RST__SD3_RESET	0x170f9
--		>;
--	};
--
- 	pinctrl_weim_cs0: weimcs0grp {
- 		fsl,pins = <
- 			/* nEXT_CS0 */
--- 
-2.18.0
-
+>
+> diff --git a/arch/arm/mach-at91/at91rm9200.c b/arch/arm/mach-at91/at91rm9200.c
+> index 656ad409a253..42583261951e 100644
+> --- a/arch/arm/mach-at91/at91rm9200.c
+> +++ b/arch/arm/mach-at91/at91rm9200.c
+> @@ -8,17 +8,12 @@
+>   * Licensed under GPLv2 or later.
+>   */
+>
+> -#include <linux/of.h>
+> -#include <linux/of_platform.h>
+> -
+>  #include <asm/mach/arch.h>
+>
+>  #include "generic.h"
+>
+>  static void __init at91rm9200_dt_device_init(void)
+>  {
+> -       of_platform_default_populate(NULL, NULL, NULL);
+> -
+>         at91rm9200_pm_init();
+>  }
+>
+> diff --git a/arch/arm/mach-at91/at91sam9.c b/arch/arm/mach-at91/at91sam9.c
+> index 3dbdef4d3cbf..863a0e7ba00f 100644
+> --- a/arch/arm/mach-at91/at91sam9.c
+> +++ b/arch/arm/mach-at91/at91sam9.c
+> @@ -7,9 +7,6 @@
+>   * Licensed under GPLv2 or later.
+>   */
+>
+> -#include <linux/of.h>
+> -#include <linux/of_platform.h>
+> -
+>  #include <asm/mach/arch.h>
+>  #include <asm/system_misc.h>
+>
+> @@ -17,8 +14,6 @@
+>
+>  static void __init at91sam9_init(void)
+>  {
+> -       of_platform_default_populate(NULL, NULL, NULL);
+> -
+>         at91sam9_pm_init();
+>  }
+>
+> diff --git a/arch/arm/mach-at91/sama5.c b/arch/arm/mach-at91/sama5.c
+> index 3d0bf95a56ae..e3a84a59db76 100644
+> --- a/arch/arm/mach-at91/sama5.c
+> +++ b/arch/arm/mach-at91/sama5.c
+> @@ -7,9 +7,6 @@
+>   * Licensed under GPLv2 or later.
+>   */
+>
+> -#include <linux/of.h>
+> -#include <linux/of_platform.h>
+> -
+>  #include <asm/mach/arch.h>
+>  #include <asm/mach/map.h>
+>  #include <asm/system_misc.h>
+> @@ -18,7 +15,6 @@
+>
+>  static void __init sama5_dt_device_init(void)
+>  {
+> -       of_platform_default_populate(NULL, NULL, NULL);
+>         sama5_pm_init();
+>  }
+>
+> @@ -47,7 +43,6 @@ MACHINE_END
+>
+>  static void __init sama5d2_init(void)
+>  {
+> -       of_platform_default_populate(NULL, NULL, NULL);
+>         sama5d2_pm_init();
+>  }
+>
+> --
+> 2.17.1
+>
