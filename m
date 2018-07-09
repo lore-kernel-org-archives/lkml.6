@@ -2,143 +2,119 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69159C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EADC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 191282087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 095B7208AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:26:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0dVXeee"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191282087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="TF1MGX3C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 095B7208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933199AbeGIMZr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 08:25:47 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:36448 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932688AbeGIMZn (ORCPT
+        id S933222AbeGIM0R (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 08:26:17 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51034 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932755AbeGIM0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 08:25:43 -0400
-Received: by mail-wm0-f66.google.com with SMTP id s14-v6so20561624wmc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 05:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2TwJuOcSBezeE5NaeO/yC8xEeq2J3tJ1HN5t+iuuvps=;
-        b=G0dVXeee8uCPV07+wz+jKJYjCfWLh0NObrUEQ3VsF1dUFYoBlxxbmDygYKrJ1WyV7i
-         e7IeKL/l8lCKojNIBZcnbXgCcwkpkp+6gawRhbJ5ix/DGCLKeuiWC9dVocbwnRu2//0e
-         Xtr/u3LRjZIfpVvrBR8/vGdy8xYOE51GaLQQnOZwnUb2mf6vUzavEXRfgUK+jvpydsWZ
-         Ta6AjwTiAsJpCL3sj9/+IIvMyMjuseTGZofg6gsMaN6UMKaDgWoNyGtjPk9epFXLSpyr
-         POrUpA8L3nr9a6R/8gGy5zhJGQNOoBDGEKz3vxcNcuyUZKfkFZ22/2KdZj8L/lJ+48+b
-         0kyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=2TwJuOcSBezeE5NaeO/yC8xEeq2J3tJ1HN5t+iuuvps=;
-        b=HyUVmknuV0AP8uRF+KETRiVW9dhyQp7Sg2ia4s9mJYqoGlpUSUm4cIz4PMM1yPHIEU
-         idMRtJcWPb1rDQCbfM6Ea6isIenVy1v1X8eSCnr2OeMSWRfQUp7UkatWjqGimIK16xuu
-         RXYY11QZsWA+zCmNu23L0Y6aHF4VpscOPKauQoBghP6ukHy/YibXWa5Vk/B8UhGkGkGG
-         GA5MP+BxDZ0F2Ut3iceEaz47xIlFzm5v7450aKs2ez6XEunAIe5zeAlcVjjsRMTC3zt0
-         RrE2KTdjB6n4a356k+JhQYlMyMLQEc3ER+s5adMS+p7oq43WlXb6iIGA4dM3vhDiL8OU
-         UVdA==
-X-Gm-Message-State: APt69E1srJoH2SXwH4H6m/T6WveYISSnTE7v9obXbUoO3gx1QDRp+6tF
-        aNNwqE0FAUYPxe4La2OSlHI=
-X-Google-Smtp-Source: AAOMgpckwp0OYrMTRio/R7wFnFmB68tBlY8L7yRLOhxCGVE+5Hv+NLBcMvYnQ1hjf2Hf4ux4KpPmoA==
-X-Received: by 2002:a1c:15ce:: with SMTP id 197-v6mr11276196wmv.99.1531139141925;
-        Mon, 09 Jul 2018 05:25:41 -0700 (PDT)
-Received: from [10.178.4.240] ([192.19.248.250])
-        by smtp.gmail.com with ESMTPSA id t53-v6sm20632219wrc.13.2018.07.09.05.25.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 05:25:40 -0700 (PDT)
-Subject: Re: [GIT PULL 4/4] bcm2835-defconfig-64-next-2018-07-03
-To:     Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        bcm-kernel-feedback-list@broadcom.com
-References: <20180703200511.2725-1-eric@anholt.net>
- <20180703200511.2725-4-eric@anholt.net>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <457fc136-42f8-c837-c943-bcfc8a7a514e@gmail.com>
-Date:   Mon, 9 Jul 2018 05:25:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 9 Jul 2018 08:26:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8e6hn58Wa/Nmzrdryc+6YUIQi8pEGWR5YKra7BqsYqk=; b=TF1MGX3CDV9rMQqBSLbhV8o3t
+        4qYElq+srLeL1A0yIYW8Fx6RgXJsGL2j/kTmNfKAjuPwW/PNI8OO2mNy63Hk6dLv4U1EBbxPFSTEv
+        n/liZ2t5ZZoenNGwL+3GHdm4X46jMPQSX3slZFq0PqDmYnTcepfrnU6CqMOwF24Th+Lx0=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fcVF3-0003kB-3h; Mon, 09 Jul 2018 12:26:09 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fcVF2-00005l-8R; Mon, 09 Jul 2018 13:26:08 +0100
+Date:   Mon, 9 Jul 2018 13:26:08 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        pascal paillet <p.paillet@st.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        rafael.j.wysocki@intel.co
+Subject: Re: Applied "regulator: core: Link consumer with regulator driver"
+ to the regulator tree
+Message-ID: <20180709122608.GE16082@sirena.org.uk>
+References: <CGME20180709111753eucas1p1f32e66fb2f7ea3216097cd72a132355d@eucas1p1.samsung.com>
+ <E1fb8Ti-00026e-NU@debutante>
+ <20180709111753eucas1p1f32e66fb2f7ea3216097cd72a132355d~-rzycA5Rg0378203782eucas1p1C@eucas1p1.samsung.com>
+ <CA+M3ks5ieu_6=rsfdp9QQuLJbbwJj2if26m_STF0QJJBD-6XKQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180703200511.2725-4-eric@anholt.net>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="wTWi5aaYRw9ix9vO"
+Content-Disposition: inline
+In-Reply-To: <CA+M3ks5ieu_6=rsfdp9QQuLJbbwJj2if26m_STF0QJJBD-6XKQ@mail.gmail.com>
+X-Cookie: Falling rock.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+--wTWi5aaYRw9ix9vO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 07/03/2018 01:05 PM, Eric Anholt wrote:
-> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
-> 
->   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
-> 
-> are available in the Git repository at:
-> 
->   git://github.com/anholt/linux tags/bcm2835-defconfig-64-next-2018-07-03
-> 
-> for you to fetch changes up to 79db60a8bb0b32fdda90a338f09fc83d7d576abe:
-> 
->   arm64: defconfig: Enable RPi voltage sensor (2018-06-21 17:31:19 -0700)
-> 
-> ----------------------------------------------------------------
-> This pull request enables the new RPi HWMON driver in the 64-bit
-> defconfig.
-> 
-> ----------------------------------------------------------------
+On Mon, Jul 09, 2018 at 02:13:35PM +0200, Benjamin Gaignard wrote:
+> 2018-07-09 13:17 GMT+02:00 Marek Szyprowski <m.szyprowski@samsung.com>:
 
-Merged, thanks Eric!
--- 
-Florian
+> > ------------[ cut here ]------------
+> > WARNING: CPU: 1 PID: 1 at drivers/base/core.c:108
+> > device_is_dependent+0xa4/0xb4
+> > Modules linked in:
+> > CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.18.0-rc3-next-20180706 #112
+
+> > It looks that some more checks have to be done before adding a link between
+> > regulator consumer and regulator driver, because it is not that uncommon
+> > that
+> > regulator consumer shares the parent device with regulator provider.
+
+> Each time device_is_dependent() will return 1 we have a warn_on.
+> It is strange since returning 1 is well documented on function description.
+> I don't know if we can safely remove the warn_on or if their is a good
+> reason to keep it.
+> Rafael what do you think about that ?
+
+It's trying to tell you that there's probably a higher level bug if
+you're adding a link from a device to itself.  That's not super
+unreasonable, though it is going to mean that every bit of generic code
+like this adding links is going to have to add checks (or we have to
+downgrade or make optional the WARN_ON).
+
+--wTWi5aaYRw9ix9vO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltDVF8ACgkQJNaLcl1U
+h9B4fAf/f2M9nozSlq4ot+kHdRSov7AokXfHzhx1FnMeXpq85njfR+4zhazTZ8Aj
+9ZGGKqopnmNY1GDaPTvSnSeK2PlXceWlBPDxtQ8Vqd0Ib2hDUWO6zcAmR5aJhJz6
+z6KxW/fZxzNO6NzvE/ZDxyEYtBEoMM6Ek3lyoMDqVoqwhrGCjIJfUyKYVkYnbi3C
+dUzHOslxY9xklS/RRPrGDcpoQL69d35K6CT2OY2EXzkkq/9ktDVcOBcm4GiPfdMZ
+T9JMFlFNi59ygkG/kdATR+SVdb+QEshdTP7u7IDTnlgnc9Pik3TcoLnTFXV8B5yj
+FkJl0hudWijqRhLYx+8x7aQ0vlkq5w==
+=OZHh
+-----END PGP SIGNATURE-----
+
+--wTWi5aaYRw9ix9vO--
