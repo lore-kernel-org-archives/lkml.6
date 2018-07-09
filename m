@@ -3,154 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBD6C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:51:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C892C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1C2C208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:51:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1C2C208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 2CF10208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:53:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CF10208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754334AbeGIGvm convert rfc822-to-8bit (ORCPT
+        id S1754367AbeGIGxB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 02:51:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41974 "EHLO mail.bootlin.com"
+        Mon, 9 Jul 2018 02:53:01 -0400
+Received: from mga11.intel.com ([192.55.52.93]:9480 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751150AbeGIGvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 02:51:40 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 67C0020876; Mon,  9 Jul 2018 08:51:39 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 3A7E9203EC;
-        Mon,  9 Jul 2018 08:51:39 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 08:51:38 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the nand tree
-Message-ID: <20180709085138.4b28e898@xps13>
-In-Reply-To: <20180709081632.0ed241d6@bbrezillon>
-References: <20180709115115.354d625f@canb.auug.org.au>
-        <20180709081632.0ed241d6@bbrezillon>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1751211AbeGIGw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 02:52:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2018 23:52:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,329,1526367600"; 
+   d="scan'208";a="71123373"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga001.jf.intel.com with ESMTP; 08 Jul 2018 23:52:57 -0700
+Message-ID: <f9c8cf81df29006bc9c79932f3bcd599b559b408.camel@linux.intel.com>
+Subject: Re: [PATCH] x86/mtrr: don't copy out-of-bounds data in mtrr_write
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jann Horn <jannh@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Mon, 09 Jul 2018 09:52:56 +0300
+In-Reply-To: <20180706215003.156702-1-jannh@google.com>
+References: <20180706215003.156702-1-jannh@google.com>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen, Boris,
-
-Boris Brezillon <boris.brezillon@bootlin.com> wrote on Mon, 9 Jul 2018
-08:16:32 +0200:
-
-> Hi Stephen,
+On Fri, 2018-07-06 at 23:50 +0200, Jann Horn wrote:
+> Don't access the provided buffer out of bounds - this can cause a
+> kernel
+> out-of-bounds read when invoked through sys_splice() or other things
+> that
+> use kernel_write()/__kernel_write().
 > 
-> On Mon, 9 Jul 2018 11:51:15 +1000
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi Boris,
-> > 
-> > After merging the nand tree, today's linux-next build (x86_64
-> > allmodconfig) produced this warning:
-> > 
-> > drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_hwcontrol':
-> > drivers/mtd/nand/raw/davinci_nand.c:115:21: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-> >    nand->IO_ADDR_W = (void __iomem __force *)addr;
-> >                      ^
-> > drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_select_chip':
-> > drivers/mtd/nand/raw/davinci_nand.c:132:25: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-> >   info->chip.IO_ADDR_W = (void __iomem __force *)addr;
-> >                          ^
-> > In file included from arch/x86/include/asm/bug.h:83:0,
-> >                  from include/linux/bug.h:5,
-> >                  from include/linux/thread_info.h:12,
-> >                  from arch/x86/include/asm/preempt.h:7,
-> >                  from include/linux/preempt.h:81,
-> >                  from include/linux/spinlock.h:51,
-> >                  from include/linux/seqlock.h:36,
-> >                  from include/linux/time.h:6,
-> >                  from include/linux/stat.h:19,
-> >                  from include/linux/module.h:10,
-> >                  from drivers/mtd/nand/raw/davinci_nand.c:27:
-> > drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_correct_4bit':
-> > drivers/mtd/nand/raw/davinci_nand.c:322:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> >   if (WARN_ON(0x01 & (unsigned) ecc_code))
-> >                      ^
-> > include/asm-generic/bug.h:112:25: note: in definition of macro 'WARN_ON'
-> >   int __ret_warn_on = !!(condition);    \
-> >                          ^~~~~~~~~
-> > drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_read_buf':
-> > drivers/mtd/nand/raw/davinci_nand.c:444:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> >   if ((0x03 & ((unsigned)buf)) == 0 && (0x03 & len) == 0)
-> >                ^
-> > drivers/mtd/nand/raw/davinci_nand.c:446:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> >   else if ((0x01 & ((unsigned)buf)) == 0 && (0x01 & len) == 0)
-> >                     ^
-> > drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_write_buf':
-> > drivers/mtd/nand/raw/davinci_nand.c:457:15: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> >   if ((0x03 & ((unsigned)buf)) == 0 && (0x03 & len) == 0)
-> >                ^
-> > drivers/mtd/nand/raw/davinci_nand.c:459:20: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> >   else if ((0x01 & ((unsigned)buf)) == 0 && (0x01 & len) == 0)
-> >                     ^
-> > drivers/mtd/nand/raw/davinci_nand.c: In function 'nand_davinci_probe':
-> > drivers/mtd/nand/raw/davinci_nand.c:683:18: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> >   info->ioaddr  = (uint32_t __force) vaddr;
-> >                   ^
-> > drivers/mtd/nand/raw/atmel/nand-controller.c: In function 'atmel_smc_nand_controller_init':
-> > drivers/mtd/nand/raw/atmel/nand-controller.c:2053:21: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-> >   nc->ebi_csa_offs = (unsigned int)match->data;
-> >                      ^
-> > drivers/mtd/nand/raw/sunxi_nand.c: In function 'sunxi_nfc_hw_ecc_read_chunks_dma':
-> > drivers/mtd/nand/raw/sunxi_nand.c:130:22: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-> >  #define NFC_PAGE_OP  (2 << 30)
-> >                       ^
-> > drivers/mtd/nand/raw/sunxi_nand.c:1040:9: note: in expansion of macro 'NFC_PAGE_OP'
-> >   writel(NFC_PAGE_OP | NFC_DATA_SWAP_METHOD | NFC_DATA_TRANS,
-> >          ^~~~~~~~~~~
-> > drivers/mtd/nand/raw/sunxi_nand.c: In function 'sunxi_nfc_hw_ecc_write_page_dma':
-> > drivers/mtd/nand/raw/sunxi_nand.c:130:22: warning: large integer implicitly truncated to unsigned type [-Woverflow]
-> >  #define NFC_PAGE_OP  (2 << 30)
-> >                       ^
-> > drivers/mtd/nand/raw/sunxi_nand.c:1406:9: note: in expansion of macro 'NFC_PAGE_OP'
-> >   writel(NFC_PAGE_OP | NFC_DATA_SWAP_METHOD |
-> >          ^~~~~~~~~~~
-> > 
-> > Presumably exposed by commits
-> > 
-> >   347af8918e8a ("mtd: rawnand: davinci: Allow selection of this driver when COMPILE_TEST=y")
-> >   b3d926a3d6e0 ("mtd: rawnand: sunxi: Allow selection of this driver when COMPILE_TEST=y")
-> >   
-> 
-> Stephen, thanks for this report.
-> 
-> Miquel, can you drop those 2 commits from the nand tree? I'll resubmit a
-> series fixing that.
 
-Both commits dropped from nand/next. The branch is clean, it should
-build correctly now.
+Can you elaborate a bit this change?
 
-Thanks,
-Miquèl
-
-> 
-> Thanks,
-> 
-> Boris
+Only few places in the kernel do this way and I would like to understand
+ why in most of the cases it's okay to supply maximum available length
+and here is not the one.
 
 
+> Fixes: 7f8ec5a4f01a ("x86/mtrr: Convert to use strncpy_from_user()
+> helper")
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  arch/x86/kernel/cpu/mtrr/if.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mtrr/if.c
+> b/arch/x86/kernel/cpu/mtrr/if.c
+> index 4021d3859499..40eee6cc4124 100644
+> --- a/arch/x86/kernel/cpu/mtrr/if.c
+> +++ b/arch/x86/kernel/cpu/mtrr/if.c
+> @@ -106,7 +106,8 @@ mtrr_write(struct file *file, const char __user
+> *buf, size_t len, loff_t * ppos)
+>  
+>  	memset(line, 0, LINE_SIZE);
+>  
+> -	length = strncpy_from_user(line, buf, LINE_SIZE - 1);
+> +	len = min_t(size_t, len, LINE_SIZE - 1);
+> +	length = strncpy_from_user(line, buf, len);
+>  	if (length < 0)
+>  		return length;
+>  
 
 -- 
-Miquel Raynal, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
