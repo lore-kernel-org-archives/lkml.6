@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA083C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A72C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830F42089D
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:54:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 830F42089D
+	by mail.kernel.org (Postfix) with ESMTP id 7DCCE2089D
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 04:55:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DCCE2089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754563AbeGIEyy (ORCPT
+        id S1754659AbeGIEzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 00:54:54 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:38150 "EHLO
+        Mon, 9 Jul 2018 00:55:20 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:38126 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754459AbeGIEyW (ORCPT
+        with ESMTP id S1754437AbeGIEyV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 00:54:22 -0400
+        Mon, 9 Jul 2018 00:54:21 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fcOBo-0003gw-Pv; Mon, 09 Jul 2018 04:54:20 +0000
+        id 1fcOBo-0003gD-2s; Mon, 09 Jul 2018 04:54:20 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC][PATCH 27/27] turn filp_clone_open() into inline wrapper for dentry_open()
-Date:   Mon,  9 Jul 2018 05:54:17 +0100
-Message-Id: <20180709045417.13988-27-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH 21/27] hugetlb_file_setup(): switch to alloc_file_pseudo()
+Date:   Mon,  9 Jul 2018 05:54:11 +0100
+Message-Id: <20180709045417.13988-21-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180709045417.13988-1-viro@ZenIV.linux.org.uk>
 References: <20180709045320.GF30522@ZenIV.linux.org.uk>
@@ -42,96 +42,109 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-it's exactly the same thing as
-	dentry_open(&file->f_path, file->f_flags, file->f_cred)
-
-... and rename it to file_clone_open(), while we are at it.
-'filp' naming convention is bogus; sure, it's "file pointer",
-but we generally don't do that kind of Hungarian notation.
-Some of the instances have too many callers to touch, but this
-one has only two, so let's sanitize it while we can...
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/gpu/drm/drm_lease.c |  2 +-
- fs/binfmt_misc.c            |  2 +-
- fs/open.c                   | 20 --------------------
- include/linux/fs.h          |  5 ++++-
- 4 files changed, 6 insertions(+), 23 deletions(-)
+ fs/hugetlbfs/inode.c | 55 ++++++++++++++++------------------------------------
+ 1 file changed, 17 insertions(+), 38 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
-index d638c0fb3418..b54fb78a283c 100644
---- a/drivers/gpu/drm/drm_lease.c
-+++ b/drivers/gpu/drm/drm_lease.c
-@@ -553,7 +553,7 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
- 
- 	/* Clone the lessor file to create a new file for us */
- 	DRM_DEBUG_LEASE("Allocating lease file\n");
--	lessee_file = filp_clone_open(lessor_file);
-+	lessee_file = file_clone_open(lessor_file);
- 	if (IS_ERR(lessee_file)) {
- 		ret = PTR_ERR(lessee_file);
- 		goto out_lessee;
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index 4b5fff31ef27..aa4a7a23ff99 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -205,7 +205,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 		goto error;
- 
- 	if (fmt->flags & MISC_FMT_OPEN_FILE) {
--		interp_file = filp_clone_open(fmt->interp_file);
-+		interp_file = file_clone_open(fmt->interp_file);
- 		if (!IS_ERR(interp_file))
- 			deny_write_access(interp_file);
- 	} else {
-diff --git a/fs/open.c b/fs/open.c
-index 0836c86fd0ce..39dcbf13031c 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1053,26 +1053,6 @@ struct file *file_open_root(struct dentry *dentry, struct vfsmount *mnt,
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index e0b8cc89169c..86ffe04f73d6 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1308,10 +1308,6 @@ static int get_hstate_idx(int page_size_log)
+ 	return h - hstates;
  }
- EXPORT_SYMBOL(file_open_root);
  
--struct file *filp_clone_open(struct file *oldfile)
--{
--	struct file *file;
--	int retval;
+-static const struct dentry_operations anon_ops = {
+-	.d_dname = simple_dname
+-};
 -
--	file = get_empty_filp();
+ /*
+  * Note that size should be aligned to proper hugepage size in caller side,
+  * otherwise hugetlb_reserve_pages reserves one less hugepages than intended.
+@@ -1320,19 +1316,18 @@ struct file *hugetlb_file_setup(const char *name, size_t size,
+ 				vm_flags_t acctflag, struct user_struct **user,
+ 				int creat_flags, int page_size_log)
+ {
+-	struct file *file = ERR_PTR(-ENOMEM);
+ 	struct inode *inode;
+-	struct path path;
+-	struct super_block *sb;
+-	struct qstr quick_string;
++	struct vfsmount *mnt;
+ 	int hstate_idx;
++	struct file *file;
+ 
+ 	hstate_idx = get_hstate_idx(page_size_log);
+ 	if (hstate_idx < 0)
+ 		return ERR_PTR(-ENODEV);
+ 
+ 	*user = NULL;
+-	if (!hugetlbfs_vfsmount[hstate_idx])
++	mnt = hugetlbfs_vfsmount[hstate_idx];
++	if (!mnt)
+ 		return ERR_PTR(-ENOENT);
+ 
+ 	if (creat_flags == HUGETLB_SHMFS_INODE && !can_do_hugetlb_shm()) {
+@@ -1348,45 +1343,29 @@ struct file *hugetlb_file_setup(const char *name, size_t size,
+ 		}
+ 	}
+ 
+-	sb = hugetlbfs_vfsmount[hstate_idx]->mnt_sb;
+-	quick_string.name = name;
+-	quick_string.len = strlen(quick_string.name);
+-	quick_string.hash = 0;
+-	path.dentry = d_alloc_pseudo(sb, &quick_string);
+-	if (!path.dentry)
+-		goto out_shm_unlock;
+-
+-	d_set_d_op(path.dentry, &anon_ops);
+-	path.mnt = mntget(hugetlbfs_vfsmount[hstate_idx]);
+ 	file = ERR_PTR(-ENOSPC);
+-	inode = hugetlbfs_get_inode(sb, NULL, S_IFREG | S_IRWXUGO, 0);
++	inode = hugetlbfs_get_inode(mnt->mnt_sb, NULL, S_IFREG | S_IRWXUGO, 0);
+ 	if (!inode)
+-		goto out_dentry;
++		goto out;
+ 	if (creat_flags == HUGETLB_SHMFS_INODE)
+ 		inode->i_flags |= S_PRIVATE;
+ 
+-	file = ERR_PTR(-ENOMEM);
+-	if (hugetlb_reserve_pages(inode, 0,
+-			size >> huge_page_shift(hstate_inode(inode)), NULL,
+-			acctflag))
+-		goto out_inode;
+-
+-	d_instantiate(path.dentry, inode);
+ 	inode->i_size = size;
+ 	clear_nlink(inode);
+ 
+-	file = alloc_file(&path, FMODE_WRITE | FMODE_READ | FMODE_OPENED,
+-			&hugetlbfs_file_operations);
 -	if (IS_ERR(file))
--		return file;
--
--	file->f_flags = oldfile->f_flags;
--	retval = vfs_open(&oldfile->f_path, file, oldfile->f_cred);
--	if (retval) {
--		put_filp(file);
--		return ERR_PTR(retval);
--	}
+-		goto out_dentry; /* inode is already attached */
 -
 -	return file;
--}
--EXPORT_SYMBOL(filp_clone_open);
--
- long do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
- {
- 	struct open_flags op;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b3240025ce1a..b3aeb2098fc6 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2426,7 +2426,10 @@ extern struct file *filp_open(const char *, int, umode_t);
- extern struct file *file_open_root(struct dentry *, struct vfsmount *,
- 				   const char *, int, umode_t);
- extern struct file * dentry_open(const struct path *, int, const struct cred *);
--extern struct file *filp_clone_open(struct file *);
-+static inline struct file *file_clone_open(struct file *file)
-+{
-+	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
-+}
- extern int filp_close(struct file *, fl_owner_t id);
++	if (hugetlb_reserve_pages(inode, 0,
++			size >> huge_page_shift(hstate_inode(inode)), NULL,
++			acctflag))
++		file = ERR_PTR(-ENOMEM);
++	else
++		file = alloc_file_pseudo(inode, mnt, name,
++					FMODE_WRITE | FMODE_READ,
++					&hugetlbfs_file_operations);
++	if (!IS_ERR(file))
++		return file;
  
- extern struct filename *getname_flags(const char __user *, int, int *);
+-out_inode:
+ 	iput(inode);
+-out_dentry:
+-	path_put(&path);
+-out_shm_unlock:
++out:
+ 	if (*user) {
+ 		user_shm_unlock(size, *user);
+ 		*user = NULL;
 -- 
 2.11.0
 
