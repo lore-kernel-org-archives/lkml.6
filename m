@@ -5,117 +5,162 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5109EC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0B4C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:10:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175C820864
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:07:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175C820864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E8DE020882
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 18:10:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DE020882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934052AbeGISHl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 14:07:41 -0400
-Received: from foss.arm.com ([217.140.101.70]:36064 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933824AbeGISHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 14:07:39 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 373967A9;
-        Mon,  9 Jul 2018 11:07:39 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.210.41])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9270E3F318;
-        Mon,  9 Jul 2018 11:07:33 -0700 (PDT)
-Subject: Re: [RFC PATCH v4 03/12] PM: Introduce an Energy Model management
- framework
-To:     Quentin Perret <quentin.perret@arm.com>, peterz@infradead.org,
-        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org, mingo@redhat.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-4-quentin.perret@arm.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <4341d199-8018-21e1-c2ce-9af8f7719297@arm.com>
-Date:   Mon, 9 Jul 2018 20:07:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180628114043.24724-4-quentin.perret@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S934034AbeGISK1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 14:10:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46916 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933703AbeGISKZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 14:10:25 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69I8Y5c129176
+        for <linux-kernel@vger.kernel.org>; Mon, 9 Jul 2018 14:10:24 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k4c3utetm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 14:10:24 -0400
+Received: from localhost
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <abdhalee@linux.vnet.ibm.com>;
+        Mon, 9 Jul 2018 12:10:23 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 9 Jul 2018 12:10:20 -0600
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w69IAJQQ14614926
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 9 Jul 2018 11:10:19 -0700
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 86BDC6E059;
+        Mon,  9 Jul 2018 12:10:19 -0600 (MDT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9DCC06E04C;
+        Mon,  9 Jul 2018 12:10:16 -0600 (MDT)
+Received: from [9.84.221.249] (unknown [9.84.221.249])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Mon,  9 Jul 2018 12:10:16 -0600 (MDT)
+Subject: Re: [next-20180709][bisected 9cf57731][ppc] build fail with ld: BFD
+ version 2.26.1-1.fc25 assertion fail elf64-ppc.c:14734
+From:   Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        stephen Rothwell <sfr@canb.auug.org.au>,
+        mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Mon, 09 Jul 2018 23:40:14 +0530
+In-Reply-To: <20180709114716.GN2476@hirez.programming.kicks-ass.net>
+References: <1531129883.6480.7.camel@abdul.in.ibm.com>
+         <20180709114716.GN2476@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18070918-0036-0000-0000-00000A0CDBE2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009340; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01058929; UDB=6.00543425; IPR=6.00836849;
+ MB=3.00022074; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-09 18:10:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18070918-0037-0000-0000-0000480A7972
+Message-Id: <1531159814.6480.11.camel@abdul.in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807090205
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/28/2018 01:40 PM, Quentin Perret wrote:
-
-[...]
-
-> +/**
-> + * em_rescale_cpu_capacity() - Re-scale capacity values of the Energy Model
-> + *
-> + * This re-scales the capacity values for all capacity states of all frequency
-> + * domains of the Energy Model. This should be used when the capacity values
-> + * of the CPUs are updated at run-time, after the EM was registered.
-> + */
-> +void em_rescale_cpu_capacity(void)
-> +{
-> +	struct em_cs_table *old_table, *new_table;
-> +	struct em_freq_domain *fd;
-> +	int nr_states, cpu;
+On Mon, 2018-07-09 at 13:47 +0200, Peter Zijlstra wrote:
+> On Mon, Jul 09, 2018 at 03:21:23PM +0530, Abdul Haleem wrote:
+> > Greeting's
+> > 
+> > Today's next fails to build on powerpc with below error
+> > 
+> > kernel/cpu.o:(.data.rel+0x18e0): undefined reference to
+> > `lockup_detector_online_cpu'
+> > ld: BFD version 2.26.1-1.fc25 assertion fail elf64-ppc.c:14734
+> > kernel/cpu.o:(.data.rel+0x18e8): undefined reference to
+> > `lockup_detector_offline_cpu'
+> > ld: BFD version 2.26.1-1.fc25 assertion fail elf64-ppc.c:14734
+> > Makefile:1005: recipe for target 'vmlinux' failed
+> > make: *** [vmlinux] Error 1
+> 
+> Urgh, sorry about that. I think the below should cure that.
+> 
+> I got confused by all the varioud CONFIG options here abour and
+> conflated CONFIG_LOCKUP_DETECTOR and CONFIG_SOFTLOCKUP_DETECTOR it
+> seems.
+> 
+> diff --git a/include/linux/nmi.h b/include/linux/nmi.h
+> index 80664bbeca43..08f9247e9827 100644
+> --- a/include/linux/nmi.h
+> +++ b/include/linux/nmi.h
+> @@ -33,15 +33,10 @@ extern int sysctl_hardlockup_all_cpu_backtrace;
+>  #define sysctl_hardlockup_all_cpu_backtrace 0
+>  #endif /* !CONFIG_SMP */
+> 
+> -extern int lockup_detector_online_cpu(unsigned int cpu);
+> -extern int lockup_detector_offline_cpu(unsigned int cpu);
+> -
+>  #else /* CONFIG_LOCKUP_DETECTOR */
+>  static inline void lockup_detector_init(void) { }
+>  static inline void lockup_detector_soft_poweroff(void) { }
+>  static inline void lockup_detector_cleanup(void) { }
+> -#define lockup_detector_online_cpu	NULL
+> -#define lockup_detector_offline_cpu	NULL
+>  #endif /* !CONFIG_LOCKUP_DETECTOR */
+> 
+>  #ifdef CONFIG_SOFTLOCKUP_DETECTOR
+> @@ -50,12 +45,18 @@ extern void touch_softlockup_watchdog(void);
+>  extern void touch_softlockup_watchdog_sync(void);
+>  extern void touch_all_softlockup_watchdogs(void);
+>  extern unsigned int  softlockup_panic;
+> -#else
 > +
-> +	mutex_lock(&em_fd_mutex);
-> +	rcu_read_lock();
-> +	for_each_possible_cpu(cpu) {
-> +		/* Re-scale only once per frequency domain. */
-> +		fd = READ_ONCE(per_cpu(em_data, cpu));
-> +		if (!fd || cpu != cpumask_first(to_cpumask(fd->cpus)))
-> +			continue;
+> +extern int lockup_detector_online_cpu(unsigned int cpu);
+> +extern int lockup_detector_offline_cpu(unsigned int cpu);
+> +#else /* CONFIG_SOFTLOCKUP_DETECTOR */
+>  static inline void touch_softlockup_watchdog_sched(void) { }
+>  static inline void touch_softlockup_watchdog(void) { }
+>  static inline void touch_softlockup_watchdog_sync(void) { }
+>  static inline void touch_all_softlockup_watchdogs(void) { }
+> -#endif
 > +
-> +		/* Copy the existing table. */
-> +		old_table = rcu_dereference(fd->cs_table);
-> +		nr_states = old_table->nr_cap_states;
-> +		new_table = alloc_cs_table(nr_states);
-> +		if (!new_table)
-> +			goto out;
-> +		memcpy(new_table->state, old_table->state,
-> +					nr_states * sizeof(*new_table->state));
-> +
-> +		/* Re-scale the capacity values of the copy. */
-> +		fd_update_cs_table(new_table,
-> +					cpumask_first(to_cpumask(fd->cpus)));
-> +
-> +		/* Replace the fd table with the re-scaled version. */
-> +		rcu_assign_pointer(fd->cs_table, new_table);
-> +		call_rcu(&old_table->rcu, rcu_free_cs_table);
-> +	}
-> +out:
-> +	rcu_read_unlock();
-> +	mutex_unlock(&em_fd_mutex);
-> +}
-> +EXPORT_SYMBOL_GPL(em_rescale_cpu_capacity);
+> +#define lockup_detector_online_cpu	NULL
+> +#define lockup_detector_offline_cpu	NULL
+> +#endif /* CONFIG_SOFTLOCKUP_DETECTOR */
+> 
+>  #ifdef CONFIG_DETECT_HUNG_TASK
+>  void reset_hung_task_detector(void);
+> 
 
-This em_rescale_cpu_capacity() function is still very much specific to 
-systems with asymmetric cpu capacity (Arm big.Little/DynamIQ). Only 
-after cpufreq is up we can determine the capacity of a CPU, hence we 
-need this one to set the CPU capacity values for the individual 
-performance states.
+Thanks Peter for the patch, build and boot is fine.
 
-Can you not calculate capacity 'on the fly' just using freq and max freq 
-as well as arch_scale_cpu_capacity() which gives you max capacity?
+Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
 
-capacity = arch_scale_cpu_capacity() * freq / max_freq
+-- 
+Regard's
 
-In this case we could get rid of the 'ugly' EM rescaling infrastructure.
+Abdul Haleem
+IBM Linux Technology Centre
 
-[...]
+
+
