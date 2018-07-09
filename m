@@ -2,183 +2,130 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35E4C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E93EC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835D820862
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:46:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="EDANtsQ0";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V9XWGRgh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835D820862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E677B20862
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:47:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E677B20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932621AbeGIKqy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 06:46:54 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49898 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932431AbeGIKqw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 06:46:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3C2236078C; Mon,  9 Jul 2018 10:46:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531133212;
-        bh=og8oMO6+oCwQ3krCxE1vHOmdqgiB8qyPGDCYXxo1bKI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EDANtsQ0amkOzccCOJhCv8MJexws/ySj4KHIgHAsTrTdsMygFt+wu2v1jgxdGBbF/
-         ctHNMStNXDYb+mSWmZbSivwz1RjAW1GhAoyCCIrbGsW5yTBg5To6IFzCMXEQyLsuRi
-         OkALjpmZKnPfCMLTmUOFOSHrFozXNsYJWbNQ8L+k=
-Received: from [10.204.110.156] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B69DD6063F;
-        Mon,  9 Jul 2018 10:46:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531133211;
-        bh=og8oMO6+oCwQ3krCxE1vHOmdqgiB8qyPGDCYXxo1bKI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=V9XWGRghHpdt1nj2pmVDMSvaipip+dEiT0Hj9hvhumJMxvOqeplUGblrqy9KNRYba
-         yrsO0riuLeTgb3Hh8N5RUpMyjsXSvs70z3UYUgD1JbKVA4egwj4/pd2lnm89JvbRfF
-         jbeAhCHZ9G2EXxOdbwNuUK83UOmTRNulDBqgTsb4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B69DD6063F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [alsa-devel] [PATCH v3 3/5] ASoC: qcom: add sdm845 sound card
- support
-To:     Vinod <vkoul@kernel.org>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, plai@codeaurora.org, bgoswami@codeaurora.org,
-        perex@perex.cz, srinivas.kandagatla@linaro.org, tiwai@suse.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1530870195-13576-1-git-send-email-rohitkr@codeaurora.org>
- <1530870195-13576-4-git-send-email-rohitkr@codeaurora.org>
- <20180709074835.GB22377@vkoul-mobl>
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-Message-ID: <c1766ce9-060f-32d8-46fa-b0a6ac42538b@codeaurora.org>
-Date:   Mon, 9 Jul 2018 16:16:45 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        id S932638AbeGIKrt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 06:47:49 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56656 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932278AbeGIKrs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 06:47:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2D217A9;
+        Mon,  9 Jul 2018 03:47:47 -0700 (PDT)
+Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B8543F318;
+        Mon,  9 Jul 2018 03:47:46 -0700 (PDT)
+Subject: Re: [PATCH] KVM: arm64: vgic-its: Remove VLA usage
+To:     Kees Cook <keescook@chromium.org>,
+        Auger Eric <eric.auger@redhat.com>
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Andre Przywara <andre.przywara@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+References: <20180629184618.GA37364@beast>
+ <19f9ddb1-6009-850c-1949-3a8cdacdd2fc@redhat.com>
+ <CAGXu5jJcqMX7HjvgqcR37jnuN48PtyHd+VVmfcQH6YfXXSpO_g@mail.gmail.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Organization: ARM Ltd
+Message-ID: <f213e03a-66a6-0c07-7bb8-2061b9c24731@arm.com>
+Date:   Mon, 9 Jul 2018 11:47:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180709074835.GB22377@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <CAGXu5jJcqMX7HjvgqcR37jnuN48PtyHd+VVmfcQH6YfXXSpO_g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Vinod for reviewing.
+Hi kees,
 
+On 02/07/18 18:15, Kees Cook wrote:
+> On Mon, Jul 2, 2018 at 12:36 AM, Auger Eric <eric.auger@redhat.com> wrote:
+>> Hi Kees,
+>>
+>> On 06/29/2018 08:46 PM, Kees Cook wrote:
+>>> In the quest to remove all stack VLA usage from the kernel[1], this
+>>> switches to using a maximum size and adds sanity checks. Additionally
+>>> cleans up some of the int-vs-u32 usage and adds additional bounds checking.
+>>> As it currently stands, this will always be 8 bytes until the ABI changes.
+>>>
+>>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>>
+>>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>>> Cc: Eric Auger <eric.auger@redhat.com>
+>>> Cc: Andre Przywara <andre.przywara@arm.com>
+>>> Cc: linux-arm-kernel@lists.infradead.org
+>>> Cc: kvmarm@lists.cs.columbia.edu
+>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>> ---
+>>>  virt/kvm/arm/vgic/vgic-its.c | 19 +++++++++++++++----
+>>>  1 file changed, 15 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
+>>> index 4ed79c939fb4..3143fc047fcf 100644
+>>> --- a/virt/kvm/arm/vgic/vgic-its.c
+>>> +++ b/virt/kvm/arm/vgic/vgic-its.c
+>>> @@ -168,8 +168,14 @@ struct vgic_its_abi {
+>>>       int (*commit)(struct vgic_its *its);
+>>>  };
+>>>
+>>> +#define ABI_0_ESZ    8
+>>> +#define ESZ_MAX              ABI_0_ESZ
+>>> +
+>>>  static const struct vgic_its_abi its_table_abi_versions[] = {
+>>> -     [0] = {.cte_esz = 8, .dte_esz = 8, .ite_esz = 8,
+>>> +     [0] = {
+>>> +      .cte_esz = ABI_0_ESZ,
+>>> +      .dte_esz = ABI_0_ESZ,
+>>> +      .ite_esz = ABI_0_ESZ,
+>>>        .save_tables = vgic_its_save_tables_v0,
+>>>        .restore_tables = vgic_its_restore_tables_v0,
+>>>        .commit = vgic_its_commit_v0,
+>>> @@ -180,10 +186,12 @@ static const struct vgic_its_abi its_table_abi_versions[] = {
+>>>
+>>>  inline const struct vgic_its_abi *vgic_its_get_abi(struct vgic_its *its)
+>>>  {
+>>> +     if (WARN_ON(its->abi_rev >= NR_ITS_ABIS))
+>>> +             return NULL;
+>>>       return &its_table_abi_versions[its->abi_rev];
+>>>  }
+>>>
+>>> -int vgic_its_set_abi(struct vgic_its *its, int rev)
+>>> +static int vgic_its_set_abi(struct vgic_its *its, u32 rev)
+>>>  {
+>> if vgic_its_get_abi is likely to return NULL, don't we need to check abi
+>> != NULL in all call sites.
+> 
+> My thinking was that since it should never happen, a WARN_ON would be
+> sufficient. But I can drop all these changes if you want. I just
+> wanted to see the VLA removed. :)
 
-On 7/9/2018 1:18 PM, Vinod wrote:
-> On 06-07-18, 15:13, Rohit kumar wrote:
->
->> +static void sdm845_init_supplies(struct device *dev)
->> +{
->> +	struct snd_soc_card *card = dev_get_drvdata(dev);
->> +	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
->> +
->> +	data->vdd_supply = regulator_get(dev, "cdc-vdd");
->> +	if (IS_ERR(data->vdd_supply)) {
->> +		dev_err(dev, "Unable to get regulator supplies\n");
->> +		data->vdd_supply = NULL;
->> +		return;
->> +	}
->> +
->> +	if (regulator_enable(data->vdd_supply))
->> +		dev_err(dev, "Unable to enable vdd supply\n");
->> +}
->> +
->> +static void sdm845_deinit_supplies(struct device *dev)
->> +{
->> +	struct snd_soc_card *card = dev_get_drvdata(dev);
->> +	struct sdm845_snd_data *data = snd_soc_card_get_drvdata(card);
->> +
->> +	if (!data->vdd_supply)
->> +		return;
->> +
->> +	regulator_disable(data->vdd_supply);
->> +	regulator_put(data->vdd_supply);
->> +}
-> these two can be made generic, cant we make these common when we have
-> supplies present?
+Are you going to respin this patch limiting it to just the VLA changes?
+I'm actively queuing stuff for the next merge window, and it'd be good
+to get that one in.
 
-Actually we  need to move it to codec driver as suggested by Rob in v2 
-patchset.
-I will remove this in next spin.
+Alternatively, I can drop the WARN_ONs myself. Just let me know.
 
->> +static int sdm845_bind(struct device *dev)
->> +{
->> +	struct snd_soc_card *card;
->> +	struct sdm845_snd_data *data;
->> +	int ret;
->> +
->> +	card = kzalloc(sizeof(*card), GFP_KERNEL);
->> +	if (!card)
->> +		return -ENOMEM;
->> +
->> +	/* Allocate the private data */
->> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	ret = component_bind_all(dev, card);
->> +	if (ret) {
->> +		dev_err(dev, "Audio components bind failed: %d\n", ret);
->> +		goto bind_fail;
->> +	}
->> +
->> +	dev_set_drvdata(dev, card);
->> +	card->dev = dev;
->> +	ret = qcom_snd_parse_of(card);
->> +	if (ret) {
->> +		dev_err(dev, "Error parsing OF data\n");
->> +		goto parse_dt_fail;
->> +	}
->> +
->> +	data->card = card;
->> +	snd_soc_card_set_drvdata(card, data);
->> +
->> +	sdm845_add_be_ops(card);
->> +
->> +	sdm845_init_supplies(dev);
->> +
->> +	ret = snd_soc_register_card(card);
->> +	if (ret) {
->> +		dev_err(dev, "Sound card registration failed\n");
->> +		goto register_card_fail;
->> +	}
->> +	return ret;
->> +
->> +register_card_fail:
->> +	sdm845_deinit_supplies(dev);
->> +	kfree(card->dai_link);
->> +parse_dt_fail:
->> +	component_unbind_all(dev, card);
->> +bind_fail:
->> +	kfree(data);
->> +	kfree(card);
->> +	return ret;
->> +}
-> I would make a case for this to be moved into common too :)
+Thanks,
 
-There are few platform specific APIs and structs here like struct 
-sdm845_snd_data,
-sdm845_add_be_ops() which needs to be initialized and assigned before 
-soundcard
-registration. Moving this complete API to common will restrict it. 
-Please suggest.
-
+	M.
 -- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+Jazz is not dead. It just smells funny...
