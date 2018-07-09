@@ -2,130 +2,117 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC9CC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C51C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBF8920875
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:28:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBF8920875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 3C2C020875
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:28:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C2C020875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=marvell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933213AbeGIQ2O (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:28:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:54088 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754459AbeGIQ2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:28:07 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 12ECEACA9;
-        Mon,  9 Jul 2018 16:28:06 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 32E8F1E0DD5; Mon,  9 Jul 2018 18:27:58 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 18:27:58 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     john.hubbard@gmail.com
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/2] mm/fs: put_user_page() proposal
-Message-ID: <20180709162758.slewonsgbly4uhhg@quack2.suse.cz>
-References: <20180709080554.21931-1-jhubbard@nvidia.com>
+        id S933443AbeGIQ2r convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:28:47 -0400
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:40922 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933369AbeGIQ2o (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 12:28:44 -0400
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w69GOiNI029674;
+        Mon, 9 Jul 2018 09:28:39 -0700
+Received: from il-exch02.marvell.com ([199.203.130.102])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2k2w1gnbhn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 09 Jul 2018 09:28:38 -0700
+Received: from IL-EXCH01.marvell.com (10.4.102.220) by IL-EXCH02.marvell.com
+ (10.4.102.221) with Microsoft SMTP Server (TLS) id 15.0.1210.3; Mon, 9 Jul
+ 2018 19:28:36 +0300
+Received: from IL-EXCH01.marvell.com ([fe80::5d63:81cd:31e2:fc36]) by
+ IL-EXCH01.marvell.com ([fe80::5d63:81cd:31e2:fc36%20]) with mapi id
+ 15.00.1210.000; Mon, 9 Jul 2018 19:28:36 +0300
+From:   Yan Markman <ymarkman@marvell.com>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
+        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        "mw@semihalf.com" <mw@semihalf.com>
+Subject: RE: [EXT] [PATCH net-next] net: mvpp2: explicitly include
+ linux/interrupt.h
+Thread-Topic: [EXT] [PATCH net-next] net: mvpp2: explicitly include
+ linux/interrupt.h
+Thread-Index: AQHUF5Wn35kWVpC3FUS5PldEhpg58aSHFJGw
+Date:   Mon, 9 Jul 2018 16:28:35 +0000
+Message-ID: <3c3c15cd3ad84a188df964ba3745e260@IL-EXCH01.marvell.com>
+References: <20180709150043.13737-1-antoine.tenart@bootlin.com>
+In-Reply-To: <20180709150043.13737-1-antoine.tenart@bootlin.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [199.203.130.14]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709080554.21931-1-jhubbard@nvidia.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-09_07:,,
+ signatures=0
+X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=625 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807090187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
++10
 
-On Mon 09-07-18 01:05:52, john.hubbard@gmail.com wrote:
-> From: John Hubbard <jhubbard@nvidia.com>
-> 
-> With respect to tracking get_user_pages*() pages with page->dma_pinned*
-> fields [1], I spent a few days retrofitting most of the get_user_pages*()
-> call sites, by adding calls to a new put_user_page() function, in place
-> of put_page(), where appropriate. This will work, but it's a large effort.
-> 
-> Design note: I didn't see anything that hinted at a way to fix this
-> problem, without actually changing all of the get_user_pages*() call sites,
-> so I think it's reasonable to start with that.
 
-Agreed.
+Yan Markman
+Tel. 05-44732819
 
-> Anyway, it's still incomplete, but because this is a large, tree-wide
-> change (that will take some time and testing), I'd like to propose a plan,
-> before spamming zillions of people with put_user_page() conversion patches.
-> So I picked out the first two patches to show where this is going.
-> 
-> Proposed steps:
-> 
-> Step 1:
-> 
-> Start with the patches here, then continue with...dozens more.
-> This will eventually convert all of the call sites to use put_user_page().
-> This is easy in some places, but complex in others, such as:
-> 
->     -- drivers/gpu/drm/amd
->     -- bio
->     -- fuse
->     -- cifs
->     -- anything from:
->            git grep  iov_iter_get_pages | cut -f1 -d ':' | sort | uniq
-> 
-> The easy ones can be grouped into a single patchset, perhaps, and the
-> complex ones probably each need a patchset, in order to get the in-depth
-> review they'll need.
+-----Original Message-----
+From: Antoine Tenart [mailto:antoine.tenart@bootlin.com] 
+Sent: Monday, July 09, 2018 6:01 PM
+To: davem@davemloft.net
+Cc: Antoine Tenart <antoine.tenart@bootlin.com>; netdev@vger.kernel.org; linux-kernel@vger.kernel.org; thomas.petazzoni@bootlin.com; maxime.chevallier@bootlin.com; gregory.clement@bootlin.com; miquel.raynal@bootlin.com; Nadav Haklai <nadavh@marvell.com>; Stefan Chulski <stefanc@marvell.com>; Yan Markman <ymarkman@marvell.com>; mw@semihalf.com
+Subject: [EXT] [PATCH net-next] net: mvpp2: explicitly include linux/interrupt.h
 
-Agreed.
+External Email
 
-> Furthermore, some of these areas I hope to attract some help on, once
-> this starts going.
-> 
-> Step 2:
-> 
-> In parallel, tidy up the core patchset that was discussed in [1], (version
-> 2 has already been reviewed, so I know what to do), and get it perfected
-> and reviewed. Don't apply it until step 1 is all done, though.
->
-> Step 3:
-> 
-> Activate refcounting of dma-pinned pages (essentially, patch #5, which is
-> [1]), but don't use it yet. Place a few WARN_ON_ONCE calls to start
-> mopping up any missed call sites.
-> 
-> Step 4:
-> 
-> After some soak time, actually connect it up (patch #6 of [1]) and start
-> taking action based on the new page->dma_pinned* fields.
-> 
-> [1] https://www.spinics.net/lists/linux-mm/msg156409.html
-> 
->   or, the same thread on LKML if it's working for you:
-> 
->     https://lkml.org/lkml/2018/7/4/368
+----------------------------------------------------------------------
+The Marvell PPv2 driver uses interrupts and tasklet but does not explicitly include linux/interrupt.h, relying on implicit includes. This one particularly is included by chance after a long unlogical chain of inclusions. Fix this so we do not get future build breaks.
 
-Yeah, but as Nick pointed out we have some more work to do in step 4 to
-avoid deadlocks. Still there's a lot of work to do on which the direction
-to progress is clear :).
+Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-								Honza
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+index 81a66cce7fa8..18834619bb3a 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+@@ -12,6 +12,7 @@
+ #ifndef _MVPP2_H_
+ #define _MVPP2_H_
+ 
++#include <linux/interrupt.h>
+ #include <linux/kernel.h>
+ #include <linux/netdevice.h>
+ #include <linux/phy.h>
+--
+2.17.1
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
