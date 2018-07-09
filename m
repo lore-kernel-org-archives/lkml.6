@@ -2,111 +2,147 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DFCC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A9FC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 333AF2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:55:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 333AF2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 606322087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:56:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g0m68q8a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 606322087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932874AbeGINzt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:55:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42624 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932278AbeGINzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:55:48 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E1D0340201A2;
-        Mon,  9 Jul 2018 13:55:47 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-43.pek2.redhat.com [10.72.12.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 305DC111E406;
-        Mon,  9 Jul 2018 13:55:38 +0000 (UTC)
-Subject: Re: [PATCH 1/5 V5] Add a function(ioremap_encrypted) for kdump when
- AMD sme enabled
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, ebiederm@xmission.com, joro@8bytes.org,
-        thomas.lendacky@amd.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, iommu@lists.linux-foundation.org,
-        bhe@redhat.com
-References: <20180702072639.10110-1-lijiang@redhat.com>
- <20180702072639.10110-2-lijiang@redhat.com> <20180702101451.GB28730@zn.tnic>
- <4ae1cfb5-0a4b-2aac-2575-024e2c74826f@redhat.com>
- <895db996-febd-d50c-91af-4f1ef3d27bd8@redhat.com>
- <20180703111428.GB5748@zn.tnic>
- <4fbb843b-9597-a48b-8b6f-00e354b91950@redhat.com>
- <e7357038-08bd-7ba8-5357-7c91d21d10fe@redhat.com>
- <20180709092901.GA22182@nazgul.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <fc6a47ca-1b16-eba5-d15e-ca294e01af93@redhat.com>
-Date:   Mon, 9 Jul 2018 21:55:35 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
-MIME-Version: 1.0
-In-Reply-To: <20180709092901.GA22182@nazgul.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 09 Jul 2018 13:55:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 09 Jul 2018 13:55:47 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
+        id S1754551AbeGIN4n (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:56:43 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40141 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754492AbeGIN4k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 09:56:40 -0400
+Received: by mail-lj1-f194.google.com with SMTP id a6-v6so14174848ljj.7;
+        Mon, 09 Jul 2018 06:56:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=HH5lNU/xQ4ewQdE7lfMKkvdCC1oLo1y6fg3RnXQ/fAA=;
+        b=g0m68q8aLdAOzq/D/l7+L0XagH5AmUrW40B6TxsU2YU9yWomfeClOnn4W5TBfH51ni
+         CN+P7Nlkwbp1zJT/cZHfv8LTEfQ/4aFjepceZhz24KSn4uHrvBB9lyijs94T4F4WDbpc
+         6q1rk3q56TVEVTwF1+ydCSV48JICzg+RsOT1i78dRlo0JSH0Vd+R2LGsHpAoTAF2h73r
+         /ED7ZdfNHjIemFmEy7ekCkCtM94eizypCa5RnDSqR25Xocz3ekzmR/YvnoSMUlG4KaYI
+         Aj/2EhnT3xG3uDqx3bNnFe6mpYyIJhRIwB9cD8dVUmO152pqggrZcwlYPsJnJZ3AL5tk
+         VLPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HH5lNU/xQ4ewQdE7lfMKkvdCC1oLo1y6fg3RnXQ/fAA=;
+        b=m39TBnCAaJpqaGYlFSc643//xpZy2HNByh590hFCCdYljmZeMDjbVC0WCpeKAJksrt
+         ch6hE6Ki+Rt6Jm7sad6naYbN1hNa/TNK7HFNxbhK4GhFlKf3VNgVzYCi2cRmH3sC8tL8
+         Ur4QdV0p4xDzQgsiX9vDM1cnRvY8i3nc+u6G9GzwSTLAUTd4A7+nEEfvDD7XANsMbXAH
+         wt3MhQvehtQfOqx+PKi5XmuHhvTGSCZtH9+9Lqb1AKJtm8H26nd8aEjyqA5aoJ8bUQdL
+         MuAiqZ5NSAs7Cr5krnPiYnq4lLUcLALsBxHLFi4rZjJf/LI2zIq8ahkR91Omc1swj1Kv
+         506A==
+X-Gm-Message-State: APt69E3V84Ev92N5WUmPuoR1aTY62cHEsYKUm0Ja/eoqWRRg4947eRN7
+        xTZkAWXNCVD8Pd5iJkAWFNs=
+X-Google-Smtp-Source: AAOMgpetad43bj3BJOe0lsfAKdcV14mdAiyE/0OdXR0mI3jeBdPqCFVyU2iybJVtnIxmJLescl2pjA==
+X-Received: by 2002:a2e:1b03:: with SMTP id b3-v6mr13470576ljb.24.1531144599357;
+        Mon, 09 Jul 2018 06:56:39 -0700 (PDT)
+Received: from linux.local ([5.166.218.73])
+        by smtp.gmail.com with ESMTPSA id g12-v6sm4076662lfe.1.2018.07.09.06.56.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 09 Jul 2018 06:56:38 -0700 (PDT)
+From:   Serge Semin <fancer.lancer@gmail.com>
+To:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org
+Cc:     okaya@codeaurora.org, chenhc@lemote.com,
+        Sergey.Semin@t-platforms.ru, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org,
+        Serge Semin <fancer.lancer@gmail.com>, stable@vger.kernel.org
+Subject: [PATCH 1/2] mips: mm: Create UCA-based ioremap_wc() method
+Date:   Mon,  9 Jul 2018 16:57:12 +0300
+Message-Id: <20180709135713.8083-1-fancer.lancer@gmail.com>
+X-Mailer: git-send-email 2.12.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年07月09日 17:29, Borislav Petkov 写道:
-> On Mon, Jul 09, 2018 at 02:28:11PM +0800, lijiang wrote:
->> Last week, I had tried many ways to do this work, but it looks
->> like that the ways of deducing address is not suitable to another
->> scenarios, such as mapping some devices mmio space, which are
->> unencrypted, and the device mmio space is outside kdump kernel like
->> the old memory, but the old memory is encrypted, we can't find the
->> general rules to decide when to encrypt or not.
-> 
-> If we can't find the "general rules" how is the caller supposed to know
-> how to access the memory?
-> 
-About this issue, i want to use an example to describe it.
-/* drivers/iommu/amd_iommu_init.c */
-static u8 __iomem * __init iommu_map_mmio_space(u64 address, u64 end)
-{
-        if (!request_mem_region(address, end, "amd_iommu")) {
-                pr_err("AMD-Vi: Can not reserve memory region %llx-%llx for mmio\n",
-                        address, end);
-                pr_err("AMD-Vi: This is a BIOS bug. Please contact your hardware vendor\n");
-                return NULL;
-        }
+Modern MIPS cores (like P5600/6600, M5150/6520, end so on) which
+got L2-cache on chip also can enable a special type Cache-Coherency
+attribute (CCA) named UnCached Accelerated attribute (UCA). In this
+way uncached accelerated accesses are treated the same way as
+non-accelerated uncached accesses, but uncached stores are gathered
+together for more efficient bus utilization. So to speak this CCA
+enables uncached transactions to better utilize bus bandwidth via
+burst transactions.
 
-        return (u8 __iomem *)ioremap_nocache(address, end);
-}
+This is exactly why ioremap_wc() method has been introduced in linux.
+Alas MIPS-platform code hasn't implemented it so far, instead default
+one has been used which was an alias to ioremap_nocache. In order to
+fix this we added MIPS-specific ioremap_wc() macro substituted by
+generic __ioremap_mode() method call with writecombine CPU-info
+field passed. It shall create real ioremap_wc() method if CPU-cache
+supports UCA feature and fall-back to _CACHE_UNCACHED attribute
+if one doesn't. Additionally platform-specific io.h shall declare
+ARCH_HAS_IOREMAP_WC macro as indication of architectural definition
+of ioremap_wc() (similar to x86/powerpc).
 
-[root@hp-dl385g10-03 linux]# cat /proc/iomem |grep -i crash
-  7fa000000-879ffffff : Crash kernel
-[root@hp-dl385g10-03 linux]# cat /proc/iomem |grep amd_iommu
-  9c800000-9c87ffff : amd_iommu
-  a9800000-a987ffff : amd_iommu
-  b6800000-b687ffff : amd_iommu
-  c3800000-c387ffff : amd_iommu
-  d0800000-d087ffff : amd_iommu
-  dd800000-dd87ffff : amd_iommu
-  ea800000-ea87ffff : amd_iommu
-  fd800000-fd87ffff : amd_iommu
+Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+Singed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
+Cc: stable@vger.kernel.org
+---
+ arch/mips/include/asm/io.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-Obviously, the iommu mmio space is not encrypted, and the device mmio space is outside kdump
-kernel. We know that the old memory is encrypted, and the old memory is also outside kdump
-kernel. For the current case, e820__get_entry_type() and walk_iomem_res_desc() can't get the
-desired result, so we can't also decide whether encryption or not according to this result(rules).
-If we want to know whether encryption or not by deducing the address, we will need to read
-the content of memory and have a reference value for comparison, then what's a reference value?
-Sometimes we don't know that.
+diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
+index 4d709b61d..d4f8cdc58 100644
+--- a/arch/mips/include/asm/io.h
++++ b/arch/mips/include/asm/io.h
+@@ -12,6 +12,8 @@
+ #ifndef _ASM_IO_H
+ #define _ASM_IO_H
+ 
++#define ARCH_HAS_IOREMAP_WC
++
+ #include <linux/compiler.h>
+ #include <linux/kernel.h>
+ #include <linux/types.h>
+@@ -278,6 +280,27 @@ static inline void __iomem * __ioremap_mode(phys_addr_t offset, unsigned long si
+ #define ioremap_cache ioremap_cachable
+ 
+ /*
++ * ioremap_wc     -   map bus memory into CPU space
++ * @offset:    bus address of the memory
++ * @size:      size of the resource to map
++ *
++ * ioremap_wc performs a platform specific sequence of operations to
++ * make bus memory CPU accessible via the readb/readw/readl/writeb/
++ * writew/writel functions and the other mmio helpers. The returned
++ * address is not guaranteed to be usable directly as a virtual
++ * address.
++ *
++ * This version of ioremap ensures that the memory is marked uncachable
++ * but accelerated by means of write-combining feature. It is specifically
++ * useful for PCIe prefetchable windows, which may vastly improve a
++ * communications performance. If it was determined on boot stage, what
++ * CPU CCA doesn't support UCA, the method shall fall-back to the
++ * _CACHE_UNCACHED option (see cpu_probe() method).
++ */
++#define ioremap_wc(offset, size)					\
++	__ioremap_mode((offset), (size), boot_cpu_data.writecombine)
++
++/*
+  * These two are MIPS specific ioremap variant.	 ioremap_cacheable_cow
+  * requests a cachable mapping, ioremap_uncached_accelerated requests a
+  * mapping using the uncached accelerated mode which isn't supported on
+-- 
+2.12.0
 
-Regards,
-Lianbo
