@@ -2,145 +2,110 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5F2C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D47C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:15:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5712F20873
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5712F20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E5F5F20873
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:15:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F5F20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micron.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933558AbeGIQPF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:15:05 -0400
-Received: from foss.arm.com ([217.140.101.70]:34416 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933351AbeGIQO0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:14:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17BDA16A3;
-        Mon,  9 Jul 2018 09:14:26 -0700 (PDT)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AEEA93F589;
-        Mon,  9 Jul 2018 09:14:24 -0700 (PDT)
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     ricardo.neri-calderon@linux.intel.com, tglx@linutronix.de,
-        marc.zyngier@arm.com, peterz@infradead.org, mingo@kernel.org,
-        Julien Thierry <julien.thierry@arm.com>
-Subject: [RFC PATCH 3/4] genirq: Provide NMI handlers
-Date:   Mon,  9 Jul 2018 17:14:05 +0100
-Message-Id: <1531152846-19374-4-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1531152846-19374-1-git-send-email-julien.thierry@arm.com>
-References: <1531152846-19374-1-git-send-email-julien.thierry@arm.com>
+        id S933601AbeGIQPc convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:15:32 -0400
+Received: from mailout.micron.com ([137.201.242.129]:47805 "EHLO
+        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932806AbeGIQPa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 12:15:30 -0400
+X-Greylist: delayed 1226 seconds by postgrey-1.27 at vger.kernel.org; Mon, 09 Jul 2018 12:15:29 EDT
+Received: from mail.micron.com (bowex36d.micron.com [137.201.85.223])
+        by mailout.micron.com (8.14.4/8.14.6) with ESMTP id w69FsJrV017377;
+        Mon, 9 Jul 2018 09:54:19 -0600
+Received: from SIWEX4G.sing.micron.com (10.160.29.139) by bowex36d.micron.com
+ (137.201.85.223) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 9 Jul
+ 2018 09:54:18 -0600
+Received: from SIWEX5A.sing.micron.com (10.160.29.59) by
+ SIWEX4G.sing.micron.com (10.160.29.139) with Microsoft SMTP Server (TLS) id
+ 15.0.1347.2; Mon, 9 Jul 2018 23:54:11 +0800
+Received: from SIWEX5A.sing.micron.com ([fe80::a9c5:8ccb:fd84:268d]) by
+ SIWEX5A.sing.micron.com ([fe80::a9c5:8ccb:fd84:268d%25]) with mapi id
+ 15.00.1347.000; Mon, 9 Jul 2018 23:54:11 +0800
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+Subject: Re: [PATCH v6 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Thread-Topic: [PATCH v6 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Thread-Index: AdQXnRLnAy8+kBX/RY20g+cq7ZFQJQ==
+Date:   Mon, 9 Jul 2018 15:54:11 +0000
+Message-ID: <c27f10f9efc14fed817c1a343d8b67d4@SIWEX5A.sing.micron.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.160.29.124]
+X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-23956.005
+X-TM-AS-Result: No--7.417400-0.000000-31
+X-TM-AS-MatchedID: 150567-139010-704096-703747-703788-700756-780012-711331-7
+        02016-705102-710970-703376-702807-701604-700624-700942-704980-702020-780011
+        -707451-707476-702067-702010-703267-702609-707663-704930-105250-708712-7023
+        58-700019-139702-700648-710556-148004-148050-148980-20043-42000-42003-29961
+        -63
+X-TM-AS-User-Approved-Sender: Yes
+X-TM-AS-User-Blocked-Sender: No
+x-mt-checkinternalsenderrule: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-Scanned-By: MIMEDefang 2.78 on 137.201.82.98
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide flow handlers that are NMI safe for interrupts and percpu_devid
-interrupts.
+Hi, Boris and Chris
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
----
- include/linux/irq.h |  3 +++
- kernel/irq/chip.c   | 54 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 57 insertions(+)
+>>
+>> I see 2 solutions to this problem:
+>> 1/ Bean provides us a solution to reliably detect when ECC can be
+>>    de-actived and when it can't
+>> 2/ We only ever expose 64 bytes of OOB to the user and consider that
+>>    ECC can be disabled, even if it can't in reality
+>>
+>
+>After reading the doc again, I forgot one thing you can try before deciding to
+>go for option #2.
+>
+>8th bit in byte 5 of READID's result encodes whether the on-die ECC state
+>(enabled or not). I remember we had a discussion with Bean where he told us
+>this was a runtime status reflecting the on-die ECC state, which is crazy, since
+>READID might return different values depending on the NAND state, and most
+>of the code in the core assumes READID provides a fixed ID that encodes the
+>chip characteristics/capabilities, not its state.
+>
+>Anyway, if this bit is actually reflecting the on-die ECC state and on-die
+>cannot be disabled on your chip, it should stay at 1 even after you have sent
+>the SET_FEATURES(DISABLE_ECC) command. Let's hope this works as I expect,
+>otherwise we're back to option #2 until Bean suggest something else.
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 0d71f63..88cbad3 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -600,6 +600,9 @@ static inline int irq_set_parent(int irq, int parent_irq)
- extern void handle_bad_irq(struct irq_desc *desc);
- extern void handle_nested_irq(unsigned int irq);
- 
-+extern void handle_fasteoi_nmi(struct irq_desc *desc);
-+extern void handle_percpu_devid_fasteoi_nmi(struct irq_desc *desc);
-+
- extern int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg);
- extern int irq_chip_pm_get(struct irq_data *data);
- extern int irq_chip_pm_put(struct irq_data *data);
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index a2b3d9d..c332c17 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -730,6 +730,37 @@ void handle_fasteoi_irq(struct irq_desc *desc)
- EXPORT_SYMBOL_GPL(handle_fasteoi_irq);
- 
- /**
-+ *	handle_fasteoi_nmi - irq handler for NMI interrupt lines
-+ *	@desc:	the interrupt description structure for this irq
-+ *
-+ *	A simple NMI-safe handler, considering the restrictions
-+ *	from request_nmi.
-+ *
-+ *	Only a single callback will be issued to the chip: an ->eoi()
-+ *	call when the interrupt has been serviced. This enables support
-+ *	for modern forms of interrupt handlers, which handle the flow
-+ *	details in hardware, transparently.
-+ */
-+void handle_fasteoi_nmi(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct irqaction *action = desc->action;
-+	unsigned int irq = irq_desc_get_irq(desc);
-+	irqreturn_t res;
-+
-+	trace_irq_handler_entry(irq, action);
-+	/*
-+	 * NMIs cannot be shared, there is only one action.
-+	 */
-+	res = action->handler(irq, action->dev_id);
-+	trace_irq_handler_exit(irq, action, res);
-+
-+	if (chip->irq_eoi)
-+		chip->irq_eoi(&desc->irq_data);
-+}
-+EXPORT_SYMBOL_GPL(handle_fasteoi_nmi);
-+
-+/**
-  *	handle_edge_irq - edge type IRQ handler
-  *	@desc:	the interrupt description structure for this irq
-  *
-@@ -908,6 +939,29 @@ void handle_percpu_devid_irq(struct irq_desc *desc)
- 		chip->irq_eoi(&desc->irq_data);
- }
- 
-+/**
-+ * handle_percpu_devid_fasteoi_nmi - Per CPU local NMI handler with per cpu
-+ *				     dev ids
-+ * @desc:	the interrupt description structure for this irq
-+ *
-+ * Similar to handle_fasteoi_nmi, but handling the dev_id cookie
-+ * as a percpu pointer.
-+ */
-+void handle_percpu_devid_fasteoi_nmi(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct irqaction *action = desc->action;
-+	unsigned int irq = irq_desc_get_irq(desc);
-+	irqreturn_t res;
-+
-+	trace_irq_handler_entry(irq, action);
-+	res = action->handler(irq, raw_cpu_ptr(action->percpu_dev_id));
-+	trace_irq_handler_exit(irq, action, res);
-+
-+	if (chip->irq_eoi)
-+		chip->irq_eoi(&desc->irq_data);
-+}
-+
- static void
- __irq_do_set_handler(struct irq_desc *desc, irq_flow_handler_t handle,
- 		     int is_chained, const char *name)
--- 
-1.9.1
+MT29F1G08ABAFAWP-ITE:F is Micron 70s SLC NAND with on-die ECC.
+If the bit7 in the byte 5 of READID default is 1(ECC Enabled), it is true on-die ECC
+Cannot be disabled by SET Feature command.
+In case sending Set Feature command, you can check previous command is success or not by
+Get Feature or check this bit7 in byte 5 of READID later.
+
+To check if this device supports on-die ECC or not, you can use inter ECC level (bit 0 and bit1 in byte 5 of READID)  
+http://lists.infradead.org/pipermail/linux-mtd/2017-April/073370.html
+
+//beanhuo
 
