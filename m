@@ -6,47 +6,46 @@ X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB329C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17F72C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EC8D208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EC8D208A3
+	by mail.kernel.org (Postfix) with ESMTP id BE595208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 03:09:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE595208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754437AbeGIDJH (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 23:09:07 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:35555 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754406AbeGIDJE (ORCPT
+        id S933007AbeGIDJG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 23:09:06 -0400
+Received: from mail-io0-f198.google.com ([209.85.223.198]:44834 "EHLO
+        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754395AbeGIDJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 8 Jul 2018 23:09:04 -0400
-Received: by mail-it0-f69.google.com with SMTP id r184-v6so9557822ith.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 20:09:04 -0700 (PDT)
+Received: by mail-io0-f198.google.com with SMTP id f12-v6so15126105iob.11
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 20:09:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=03K4xnuALhaIfQ2sXdfWbWP7qDIAevsN4AUZzihE/2I=;
-        b=H2ZLKGke2vklr2WL7JKNw4mAetnGr9Smydqa+EA3zkzr+hmzpeaqyHeLV2wRzfQi8N
-         xUm84IPYAzrCEHbTpdbyZaKXE2TEYNMBGb0Bt+/iuI5KBcrEX8T7UkbdXp9/pF3MYBY9
-         2MLEAeHfWiAD1avXIMKNYzJ4HhM53FCQQM2axiRDVQYFKvPQ3WwXUFh3lc6sdABn/hrW
-         NFs4XmDFPmwONUVLKVHNgasXrMarpfzLTq7Oo+rv4O7UIIn5D+x0EgankUYsTMtgP18L
-         llU5ekf/y5XCg9zFoD9Qp2Zu7TXO5AGklCL+eUKtDZ1Cjo22W8u8LVNgdz52vETEz7kC
-         ckyQ==
-X-Gm-Message-State: APt69E0rwlUd9k2/vetAQ421LnUr/86o4HsuTE5XwtM2VtWKXbs2dY9K
-        dpW2SiXKyZoIb6wJeLUQONWHUk5Unb+D4iWuFB83rZ2ZfbPh
-X-Google-Smtp-Source: AAOMgpee53MpbCPh75jvbNw9HiiST1401mtPea+tMTUOoCzUPG4TZ6YAP/icevk/2Mo69z5mXnjaVnEnfILUjI9SN5ZlGFNVj1On
+        bh=xxuiNAklasy4HdEaGAcriKr8cEdr1N5jrFBqu3sUqzk=;
+        b=McwrNhpr396DvyETwsezk5+1Wqrd1v1Rvluoiax1pQQPbQ+sG41PMAuuGzecHMPzn2
+         Xibg0TZGbw2UjI4SOE39Z6sj9dMUKfhczUHiRZpyxNOowlYZ7TdsBpbK07OIJZJ/Qp0N
+         R6wJhw8nwrGLCG4niFU1S+qdUYCRkAHix6zmH/Bxc1jGuipyHFggAwRfqSfBfiDzmMMl
+         OxQ18tualeUS5cehrj9BgcGifEY9aROT8AZc/Iqrz0HboilS0KmV2qBQpjAodVGan31i
+         w8FUn9tb0l//7SH2J74ccITGa/ZrQBD154INogpM3Pvth4sb2X5Vb6I8yA4E+aYRs10S
+         zO2A==
+X-Gm-Message-State: APt69E0gX0ss5J6i9Q+OPFAtBHJKfIdCpuLMjU2tDPeXOBIByGDXEdr3
+        kZVtMevvxlgAuzyYrHhSONx0hIHy9tqvx3JiZiLVXl56Gf9r
+X-Google-Smtp-Source: AAOMgpe9JRq1Bm9/grufVKbzateCuaRVX6VhPIHpcGrXhT3XaDu6O6cVkOLo/3XwygZDOZDvPBCmxTcY9V9s5cb4UpQ+hq3cB3Jt
 MIME-Version: 1.0
-X-Received: by 2002:a24:7d0b:: with SMTP id b11-v6mr4372632itc.30.1531105743625;
+X-Received: by 2002:a24:f716:: with SMTP id x22-v6mr8065209ith.24.1531105743440;
  Sun, 08 Jul 2018 20:09:03 -0700 (PDT)
 Date:   Sun, 08 Jul 2018 20:09:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f665a30570885589@google.com>
-Subject: KASAN: use-after-free Read in __queue_work (2)
-From:   syzbot <syzbot+1c9db6a163a4000d0765@syzkaller.appspotmail.com>
+Message-ID: <000000000000f396f9057088555b@google.com>
+Subject: KASAN: slab-out-of-bounds Read in pdu_read
+From:   syzbot <syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com>
 To:     davem@davemloft.net, ericvh@gmail.com,
         linux-kernel@vger.kernel.org, lucho@ionkov.net,
         netdev@vger.kernel.org, rminnich@sandia.gov,
@@ -64,59 +63,81 @@ syzbot found the following crash on:
 
 HEAD commit:    ca04b3cca11a Merge tag 'armsoc-fixes' of git://git.kernel...
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1066e6dc400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1609e968400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=2ca6c7a31d407f86
-dashboard link: https://syzkaller.appspot.com/bug?extid=1c9db6a163a4000d0765
+dashboard link: https://syzkaller.appspot.com/bug?extid=65c6b72f284a39d416b4
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1473a452400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14087748400000
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1704f6d0400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17188a78400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1c9db6a163a4000d0765@syzkaller.appspotmail.com
+Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
 
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
 ==================================================================
-BUG: KASAN: use-after-free in constant_test_bit  
-arch/x86/include/asm/bitops.h:328 [inline]
-BUG: KASAN: use-after-free in work_is_static_object+0x39/0x40  
-kernel/workqueue.c:442
-Read of size 8 at addr ffff8801d7a7fda0 by task kworker/0:2/27
+BUG: KASAN: slab-out-of-bounds in memcpy include/linux/string.h:345 [inline]
+BUG: KASAN: slab-out-of-bounds in pdu_read+0x90/0xd0 net/9p/protocol.c:59
+Read of size 62219 at addr ffff8801c9e904ed by task syz-executor251/4548
 
-CPU: 0 PID: 27 Comm: kworker/0:2 Not tainted 4.18.0-rc3+ #137
+CPU: 0 PID: 4548 Comm: syz-executor251 Not tainted 4.18.0-rc3+ #137
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: events p9_poll_workfn
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
   dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
   print_address_description+0x6c/0x20b mm/kasan/report.c:256
   kasan_report_error mm/kasan/report.c:354 [inline]
   kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  constant_test_bit arch/x86/include/asm/bitops.h:328 [inline]
-  work_is_static_object+0x39/0x40 kernel/workqueue.c:442
-  debug_object_activate+0x2fc/0x690 lib/debugobjects.c:508
-  debug_work_activate kernel/workqueue.c:491 [inline]
-  __queue_work+0x1ca/0x1410 kernel/workqueue.c:1380
-  queue_work_on+0x19a/0x1e0 kernel/workqueue.c:1486
-  queue_work include/linux/workqueue.h:512 [inline]
-  schedule_work include/linux/workqueue.h:570 [inline]
-  p9_poll_mux net/9p/trans_fd.c:628 [inline]
-  p9_poll_workfn+0x55e/0x6d0 net/9p/trans_fd.c:1107
-  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
-  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-  kthread+0x345/0x410 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  memcpy+0x23/0x50 mm/kasan/kasan.c:302
+  memcpy include/linux/string.h:345 [inline]
+  pdu_read+0x90/0xd0 net/9p/protocol.c:59
+  p9pdu_vreadf net/9p/protocol.c:162 [inline]
+  p9pdu_readf+0x579/0x2170 net/9p/protocol.c:536
+  p9_client_version net/9p/client.c:986 [inline]
+  p9_client_create+0xde0/0x16c9 net/9p/client.c:1069
+  v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
+  v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
+  mount_fs+0xae/0x328 fs/super.c:1277
+  vfs_kern_mount.part.34+0xdc/0x4e0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2518 [inline]
+  do_mount+0x581/0x30e0 fs/namespace.c:2848
+  ksys_mount+0x12d/0x140 fs/namespace.c:3064
+  __do_sys_mount fs/namespace.c:3078 [inline]
+  __se_sys_mount fs/namespace.c:3075 [inline]
+  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440319
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffdfd76d4e8 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 0000000000440319
+RDX: 0000000020000140 RSI: 0000000020000100 RDI: 0000000000000000
+RBP: 69736f7030707070 R08: 0000000020000280 R09: 0000000000000001
+R10: 0000000000010000 R11: 0000000000000206 R12: 4c50473070707028
+R13: 64663d736e617274 R14: 0000000000000000 R15: 0000000000000000
 
-Allocated by task 4537:
+Allocated by task 4548:
   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
   set_track mm/kasan/kasan.c:460 [inline]
   kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x780 mm/slab.c:3620
-  kmalloc include/linux/slab.h:513 [inline]
-  kzalloc include/linux/slab.h:707 [inline]
-  p9_fd_open net/9p/trans_fd.c:796 [inline]
-  p9_fd_create+0x1a7/0x3f0 net/9p/trans_fd.c:1036
-  p9_client_create+0x915/0x16c9 net/9p/client.c:1062
+  __do_kmalloc mm/slab.c:3718 [inline]
+  __kmalloc+0x14e/0x760 mm/slab.c:3727
+  kmalloc include/linux/slab.h:518 [inline]
+  p9_fcall_alloc+0x1e/0x90 net/9p/client.c:236
+  p9_tag_alloc net/9p/client.c:306 [inline]
+  p9_client_prepare_req.part.8+0x754/0xcd0 net/9p/client.c:722
+  p9_client_prepare_req net/9p/client.c:757 [inline]
+  p9_client_rpc+0x1bd/0x1400 net/9p/client.c:757
+  p9_client_version net/9p/client.c:976 [inline]
+  p9_client_create+0xd09/0x16c9 net/9p/client.c:1069
   v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
   v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
   mount_fs+0xae/0x328 fs/super.c:1277
@@ -131,47 +152,28 @@ Allocated by task 4537:
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Freed by task 4537:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  p9_fd_close+0x416/0x5b0 net/9p/trans_fd.c:893
-  p9_client_create+0xac2/0x16c9 net/9p/client.c:1076
-  v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
-  v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
-  mount_fs+0xae/0x328 fs/super.c:1277
-  vfs_kern_mount.part.34+0xdc/0x4e0 fs/namespace.c:1037
-  vfs_kern_mount fs/namespace.c:1027 [inline]
-  do_new_mount fs/namespace.c:2518 [inline]
-  do_mount+0x581/0x30e0 fs/namespace.c:2848
-  ksys_mount+0x12d/0x140 fs/namespace.c:3064
-  __do_sys_mount fs/namespace.c:3078 [inline]
-  __se_sys_mount fs/namespace.c:3075 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3075
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Freed by task 0:
+(stack is not available)
 
-The buggy address belongs to the object at ffff8801d7a7fc80
-  which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 288 bytes inside of
-  512-byte region [ffff8801d7a7fc80, ffff8801d7a7fe80)
+The buggy address belongs to the object at ffff8801c9e904c0
+  which belongs to the cache kmalloc-16384 of size 16384
+The buggy address is located 45 bytes inside of
+  16384-byte region [ffff8801c9e904c0, ffff8801c9e944c0)
 The buggy address belongs to the page:
-page:ffffea00075e9fc0 count:1 mapcount:0 mapping:ffff8801da800940 index:0x0
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea0007616688 ffffea00075d9a88 ffff8801da800940
-raw: 0000000000000000 ffff8801d7a7f000 0000000100000006 0000000000000000
+page:ffffea000727a400 count:1 mapcount:0 mapping:ffff8801da802200 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffffea0006d88408 ffff8801da801c48 ffff8801da802200
+raw: 0000000000000000 ffff8801c9e904c0 0000000100000001 0000000000000000
 page dumped because: kasan: bad access detected
 
 Memory state around the buggy address:
-  ffff8801d7a7fc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801d7a7fd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801d7a7fd80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                ^
-  ffff8801d7a7fe00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801d7a7fe80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801c9e92380: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801c9e92400: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8801c9e92480: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+                                                        ^
+  ffff8801c9e92500: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801c9e92580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
 ==================================================================
 
 
