@@ -2,150 +2,122 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCABC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDF9C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:52:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5B720835
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08D2320835
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:52:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UGbtMnBb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B5B720835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ev/znSSY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D2320835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933921AbeGIPw3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:52:29 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:35652 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933351AbeGIPw1 (ORCPT
+        id S933905AbeGIPwx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:52:53 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:37543 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933819AbeGIPvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:52:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N1x9p2d/UbVZA/plWILacPxGjpFcmRK4JRTODSxJfuc=; b=UGbtMnBbVL6tHRsi79U8G/q/r
-        XVnAt1DkXktHP20s23lCWGZE/VhGonCxy2piXi8gJU4OuBhxHs1IiGR/KdPX9oiw3NAftM5vy2HLi
-        G4LUqd+NoslguAyV8qZrRsX5k94Fc3VRBdYbdYEdTnsha4gpBq6zvMUXqe313Zl2QVmtc=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:58638)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1fcYSX-0006aM-18; Mon, 09 Jul 2018 16:52:17 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1fcYSM-00033T-OH; Mon, 09 Jul 2018 16:52:06 +0100
-Date:   Mon, 9 Jul 2018 16:52:01 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        boot-architecture@lists.linaro.org,
-        Kevin Hilman <khilman@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
+        Mon, 9 Jul 2018 11:51:20 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n17-v6so21296058wmh.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:51:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=IqhM5Ox8GZtLGas2YyRL1o8i1y7I7Q6nRSIg2WoLuIA=;
+        b=ev/znSSYUOCgY99iFogLuTh8Rbq7ljCV1Xl3qfyfll/JVS/DbKytOCPpRkYmFo9Lhv
+         PzT1Fwi5bUhYjBEgP5IsDGj0tKUfe5RTb7RzGZlU3MFrgSjvQkoHVYR65Q/5xXSiTstS
+         W9EIZTsd47YQJbPm5OaMiH3e3qDMLWT3Ubvz0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=IqhM5Ox8GZtLGas2YyRL1o8i1y7I7Q6nRSIg2WoLuIA=;
+        b=hXjGfc5n9I9su1KBY+NQV+D1ADzqQBLVd2SuRFsD/70GWmUuf0MsujrsXCoEgflhha
+         lDwrKUSLxcWVpkijvMmIOcOBgmU6Ti2HobqG14FtUlow9SZqc3oR6d7/hp3Gs205ii2Q
+         Z6Urz/MRPEzC1w9+UhJS5pWecPtUR15rATiDMngw3hQcXuEO9a66w4ewhCT1WcvqkqBs
+         J9cilzmHAVvBY24AddETL1ayvY/XJDzKo91JmXbLSv0TMdHb9eBAsAIfTjSqXmjP4gAY
+         /s/RdD7XwH1LGX9x8eZmHXi8yPSl8JOlLK1QzBYK2hN891yEL+k2ztfUWlr0YAgO9JdC
+         LE7A==
+X-Gm-Message-State: APt69E3g48XUURYbHJ9aph3Pey2EeHA6rhOnVqKHv/6+6zLo5wXAOnNF
+        0P/dkIeO5nZ4s+LU3dJ4QVEqkg==
+X-Google-Smtp-Source: AAOMgpdgV9JppOVDgWtm+KcJn5i7BG5YPOWi8vVGyWNHHiR2/u+snjdXpTVWAviSzaqkfdHzgP/7ng==
+X-Received: by 2002:a1c:a8f:: with SMTP id 137-v6mr11419231wmk.119.1531151479838;
+        Mon, 09 Jul 2018 08:51:19 -0700 (PDT)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id o21-v6sm16229202wmg.28.2018.07.09.08.51.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 09 Jul 2018 08:51:19 -0700 (PDT)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
+Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
+        khilman@baylibre.com, abailon@baylibre.com,
+        vincent.guittot@linaro.org, skannan@codeaurora.org,
+        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
+        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
+        evgreen@chromium.org, mka@chromium.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/6] driver core: allow stopping deferred probe after
- init
-Message-ID: <20180709155201.GG17271@n2100.armlinux.org.uk>
-References: <20180709154153.15742-1-robh@kernel.org>
- <20180709154153.15742-2-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709154153.15742-2-robh@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
+Subject: [PATCH v6 7/8] dt-bindings: Introduce interconnect consumers bindings
+Date:   Mon,  9 Jul 2018 18:51:03 +0300
+Message-Id: <20180709155104.25528-8-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180709155104.25528-1-georgi.djakov@linaro.org>
+References: <20180709155104.25528-1-georgi.djakov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 09:41:48AM -0600, Rob Herring wrote:
-> Deferred probe will currently wait forever on dependent devices to probe,
-> but sometimes a driver will never exist. It's also not always critical for
-> a driver to exist. Platforms can rely on default configuration from the
-> bootloader or reset defaults for things such as pinctrl and power domains.
-> This is often the case with initial platform support until various drivers
-> get enabled. There's at least 2 scenarios where deferred probe can render
-> a platform broken. Both involve using a DT which has more devices and
-> dependencies than the kernel supports. The 1st case is a driver may be
-> disabled in the kernel config. The 2nd case is the kernel version may
-> simply not have the dependent driver. This can happen if using a newer DT
-> (provided by firmware perhaps) with a stable kernel version. Deferred
-> probe issues can be difficult to debug especially if the console has
-> dependencies or userspace fails to boot to a shell.
-> 
-> There are also cases like IOMMUs where only built-in drivers are
-> supported, so deferring probe after initcalls is not needed. The IOMMU
-> subsystem implemented its own mechanism to handle this using OF_DECLARE
-> linker sections.
-> 
-> This commit adds makes ending deferred probe conditional on initcalls
-> being completed or a debug timeout. Subsystems or drivers may opt-in by
-> calling driver_deferred_probe_check_init_done() instead of
-> unconditionally returning -EPROBE_DEFER. They may use additional
-> information from DT or kernel's config to decide whether to continue to
-> defer probe or not.
-> 
-> The timeout mechanism is intended for debug purposes and WARNs loudly.
-> The remaining deferred probe pending list will also be dumped after the
-> timeout. Not that this timeout won't work for the console which needs
-> to be enabled before userspace starts. However, if the console's
-> dependencies are resolved, then the kernel log will be printed (as
-> opposed to no output).
+Add documentation for the interconnect consumer bindings, that will allow
+to link a device node (consumer) to its interconnect controller hardware.
 
-So what happens if we have a set of modules which use deferred probing
-in order to work?
+Tha aim is to enable drivers to request a framework API to configure an
+interconnect path by providing their struct device pointer and a name.
 
-For example, with sound stuff built as modules, and auto-loaded in
-parallel by udev, the modules get added in a random order.  The
-modules have non-udev obvious dependencies between them (resource
-dependencies) which result in deferred probing being necessary to
-bring the device up.
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ .../bindings/interconnect/interconnect.txt    | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Eg,
-
-snd_soc_kirkwood_spdif module declares the ASoC card.
-snd_soc_spdif_tx is a codec as a loadable module.
-snd_soc_kirkwood is the CPU digital audio interface module.
-
-What I commonly see is this module load order:
-
-snd_soc_kirkwood_spdif, then snd_soc_kirkwood and then snd_soc_spdif_tx.
-
-This results at boot in:
-
-kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
-kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
-kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
-kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
-kirkwood-spdif-audio audio-subsystem: ASoC: CPU DAI kirkwood-fe not registered
-kirkwood-spdif-audio audio-subsystem: ASoC: CODEC DAI dit-hifi not registered
-kirkwood-spdif-audio audio-subsystem: ASoC: CODEC DAI dit-hifi not registered
-kirkwood-spdif-audio audio-subsystem: snd-soc-dummy-dai <-> kirkwood-fe mapping ok
-kirkwood-spdif-audio audio-subsystem: multicodec <-> kirkwood-spdif mapping ok
-
-at boot, where most of these are deferred probe attempts.
-
-So, disabling deferred probing after all the kernel-internal initcalls
-are run is wrong.  You can have deferred probing required due to
-external modules, and this can kick in at any time (think about
-hot-pluggable hardware with a driver that's somehow componentised,
-like an audio device...)
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 13.8Mbps down 630kbps up
-According to speedtest.net: 13Mbps down 490kbps up
+diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+index 6e2b2971b094..0ad65dccbe8b 100644
+--- a/Documentation/devicetree/bindings/interconnect/interconnect.txt
++++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
+@@ -31,3 +31,30 @@ Example:
+ 			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
+ 				 <&rpmcc RPM_SMD_SNOC_A_CLK>;
+ 		};
++
++
++= interconnect consumers =
++
++The interconnect consumers are device nodes which consume the interconnect
++path(s) provided by the interconnect provider. There can be multiple
++interconnect providers on a SoC and the consumer may consume multiple paths
++from different providers depending on use case and the components it has to
++interact with.
++
++Required properties:
++interconnects : Pairs of phandles and interconnect provider specifier to denote
++	        the edge source and destination ports of the interconnect path.
++
++Optional properties:
++interconnect-names : List of interconnect path name strings sorted in the same
++		     order as the interconnects property. Consumers drivers will use
++		     interconnect-names to match interconnect paths with interconnect
++		     specifiers.
++
++Example:
++
++	sdhci@7864000 {
++		...
++		interconnects = <&pnoc MASTER_SDCC_1 &bimc SLAVE_EBI_CH0>;
++		interconnect-names = "ddr";
++	};
