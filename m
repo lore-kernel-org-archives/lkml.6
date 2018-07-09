@@ -2,125 +2,139 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3F42C3279B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 01:04:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7A4C3279B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 01:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E8C5208DB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 01:04:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="r1RunYAh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E8C5208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 10FFE208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 01:08:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10FFE208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933501AbeGIBED (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 8 Jul 2018 21:04:03 -0400
-Received: from ozlabs.org ([203.11.71.1]:39811 "EHLO ozlabs.org"
+        id S933488AbeGIBIw convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 8 Jul 2018 21:08:52 -0400
+Received: from mga02.intel.com ([134.134.136.20]:20067 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933286AbeGIBEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 8 Jul 2018 21:04:01 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41P6Xv3v1Rz9s01;
-        Mon,  9 Jul 2018 11:03:59 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531098239;
-        bh=cH8fyMABF98tCJkiB10vd2RUnIhT+AGcJMMjL8gbqM0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=r1RunYAhS/uQ+0kniBILIbN8VzlD8kN+TbwZT/m2PvVJ+lIfv0QHqBTBSBkYJPzCr
-         CY56jkcyuTE3thrCqkyFc/u7iZifrBN6OLQ/SEQ8jlps/qdA5sLVwiBwyCYsrrVUaG
-         OtzVfyqJtrD01BN5CFd3cwbdlxj/5oAWQYBEVGNyaYzbbRjVe6HKRAwxHuQ+1fB0Cx
-         izCDzCR62jQcWEZOwW44cz76I+Vd0eEQNi+4GhNaj9iBgwbrPki2bfXzfMA0/FKNLd
-         uASY/CJH1LzXIkq5/7B/T9l2cqE68VgH6Rw9yKr9cDbeaaF3g9sOkgo53whoajL9fA
-         Qgp22LVE4kSpQ==
-Date:   Mon, 9 Jul 2018 11:03:58 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Davide Caratti <dcaratti@redhat.com>,
-        Vlad Buslov <vladbu@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>
-Subject: linux-next: manual merge of the net-next tree with the net tree
-Message-ID: <20180709110358.338e5113@canb.auug.org.au>
+        id S933286AbeGIBIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 8 Jul 2018 21:08:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2018 18:08:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,327,1526367600"; 
+   d="scan'208";a="65354817"
+Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
+  by orsmga003.jf.intel.com with ESMTP; 08 Jul 2018 18:08:35 -0700
+Received: from FMSMSX109.amr.corp.intel.com (10.18.116.9) by
+ FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sun, 8 Jul 2018 18:08:34 -0700
+Received: from shsmsx103.ccr.corp.intel.com (10.239.4.69) by
+ fmsmsx109.amr.corp.intel.com (10.18.116.9) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Sun, 8 Jul 2018 18:08:34 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
+ SHSMSX103.ccr.corp.intel.com ([169.254.4.100]) with mapi id 14.03.0319.002;
+ Mon, 9 Jul 2018 09:08:33 +0800
+From:   "Tian, Baofeng" <baofeng.tian@intel.com>
+To:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Debug: Add cpu registers dump in case of kernel panic
+Thread-Topic: [PATCH] Debug: Add cpu registers dump in case of kernel panic
+Thread-Index: AdQXIQKxleh7hjWvQ2uyl6mQBZd4NwAACesw
+Date:   Mon, 9 Jul 2018 01:08:32 +0000
+Message-ID: <EEBA739CCF11FE49B73E1FB4690F5EE649E2A6D0@SHSMSX101.ccr.corp.intel.com>
+References: <0038B620BAC72941BCBF48AEB892976C02CBD787@SHSMSX101.ccr.corp.intel.com>
+In-Reply-To: <0038B620BAC72941BCBF48AEB892976C02CBD787@SHSMSX101.ccr.corp.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjFkYWQ3NTctY2RkOS00MGVjLWIyNTUtYzIwZmE4MDNmMzY1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoid21ScGh5U2czcGtSc3IrMEk4MnVPYnRrQis5WmtIMTJNbytmclBCNUMzMENKMFFxekpVdlZzS0pLYWtnaStCVyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9PpNYWlCsVIL+lh_In2gPfm"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9PpNYWlCsVIL+lh_In2gPfm
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: "Tian, Baofeng" <baofeng.tian@intel.com>
+Subject: [PATCH] Debug: Add cpu registers dump in case of kernel panic
 
-Hi all,
+When kernel panic, the value of cpu registers are needed for analyzing, through whole ramdump to restore the crash point.
 
-Today's linux-next merge of the net-next tree got a conflict in:
+We store CPU registers to RAM before cpu stopped, then get them with whole ram dump after warm reset.Those registers are used in analysis of dumped RAM image.
 
-  net/sched/act_tunnel_key.c
+Signed-off-by: Baofeng, Tian <baofeng.tian@intel.com>
+Signed-off-by: Emmanuel Berthier <emmanuel.berthier@intel.com>
+---
+ arch/x86/kernel/smp.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-between commit:
+diff --git a/arch/x86/kernel/smp.c b/arch/x86/kernel/smp.c index 5c574df..484831d 100644
+--- a/arch/x86/kernel/smp.c
++++ b/arch/x86/kernel/smp.c
+@@ -117,6 +117,20 @@
+ static atomic_t stopping_cpu = ATOMIC_INIT(-1);  static bool smp_no_nmi_ipi = false;
+ 
++static DEFINE_PER_CPU(struct pt_regs, cpu_regs);
++
++/* Store regs of this CPU for RAM dump decoding help */ static inline 
++void store_regs(struct pt_regs *regs) {
++	struct pt_regs *print_regs;
++
++	print_regs = &get_cpu_var(cpu_regs);
++	crash_setup_regs(print_regs, regs);
++
++	/* Flush CPU cache */
++	wbinvd();
++}
++
+ /*
+  * this function sends a 'reschedule' IPI to another CPU.
+  * it goes straight through and wastes no time serializing @@ -163,6 +177,7 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
+ 	if (raw_smp_processor_id() == atomic_read(&stopping_cpu))
+ 		return NMI_HANDLED;
+ 
++	store_regs(regs);
+ 	cpu_emergency_vmxoff();
+ 	stop_this_cpu(NULL);
+ 
+@@ -173,9 +188,10 @@ static int smp_stop_nmi_callback(unsigned int val, struct pt_regs *regs)
+  * this function calls the 'stop' function on all other CPUs in the system.
+  */
+ 
+-asmlinkage __visible void smp_reboot_interrupt(void)
++__visible void smp_reboot_interrupt(struct pt_regs *regs)
+ {
+ 	ipi_entering_ack_irq();
++	store_regs(regs);
+ 	cpu_emergency_vmxoff();
+ 	stop_this_cpu(NULL);
+ 	irq_exit();
+@@ -247,6 +263,7 @@ static void native_stop_other_cpus(int wait)
+ 	}
+ 
+ finish:
++	store_regs(NULL);
+ 	local_irq_save(flags);
+ 	disable_local_APIC();
+ 	mcheck_cpu_clear(this_cpu_ptr(&cpu_info));
+--
+2.7.4
 
-  38230a3e0e09 ("net/sched: act_tunnel_key: fix NULL dereference when 'goto=
- chain' is used")
 
-from the net tree and commit:
 
-  036bb44327f5 ("net: sched: change type of reference and bind counters")
-
-from the net-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc net/sched/act_tunnel_key.c
-index 9bc6c2ae98a5,3ec585d58762..000000000000
---- a/net/sched/act_tunnel_key.c
-+++ b/net/sched/act_tunnel_key.c
-@@@ -252,9 -477,8 +477,9 @@@ static int tunnel_key_dump(struct sk_bu
-  	struct tcf_tunnel_key_params *params;
-  	struct tc_tunnel_key opt =3D {
-  		.index    =3D t->tcf_index,
-- 		.refcnt   =3D t->tcf_refcnt - ref,
-- 		.bindcnt  =3D t->tcf_bindcnt - bind,
-+ 		.refcnt   =3D refcount_read(&t->tcf_refcnt) - ref,
-+ 		.bindcnt  =3D atomic_read(&t->tcf_bindcnt) - bind,
- +		.action   =3D t->tcf_action,
-  	};
-  	struct tcf_t tm;
- =20
-
---Sig_/9PpNYWlCsVIL+lh_In2gPfm
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltCtH4ACgkQAVBC80lX
-0Gx3BwgAi4vk3GYrxETkRJFC4YltgXQX5XuXZRioXt26KtfPe9XkMPydt8yFykp1
-B17hdMzT07CIyxXXh9yPrblVcOj9ASekjgd8UU2JVahH5w1JmybFGSOYWWmLtSs5
-BjORfp/ZWOcaI7d8FHnrItlXI9ud+HQwJhIBeUDmYPrInqXGEKPpIg+bSIXCvAAE
-mcd+in8o0DytVwbPdzbJXMQ+8bmS7AMGSf5U/8xEnoiFAc8x9NEsro+CgojElnqO
-gDkV/+i6x6qcy3MbYA2QYqcAo5a1OcsJnwHXyCmMtRzZzTIMIXaEI/nHFcrSKRti
-aIMAaHwTpJMgA2O7IL4ruT/dGUMeDQ==
-=1VZg
------END PGP SIGNATURE-----
-
---Sig_/9PpNYWlCsVIL+lh_In2gPfm--
