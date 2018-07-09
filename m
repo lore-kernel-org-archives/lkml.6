@@ -2,109 +2,140 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77342C6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC67C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 258C620020
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:28:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258C620020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F18920852
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:30:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f88Z9qF9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F18920852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754405AbeGIG22 (ORCPT
+        id S1754479AbeGIGak (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 02:28:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41224 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751321AbeGIG21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 02:28:27 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C04914001388;
-        Mon,  9 Jul 2018 06:28:26 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-43.pek2.redhat.com [10.72.12.43])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E2FA5111E3EB;
-        Mon,  9 Jul 2018 06:28:16 +0000 (UTC)
-Subject: Re: [PATCH 1/5 V5] Add a function(ioremap_encrypted) for kdump when
- AMD sme enabled
-From:   lijiang <lijiang@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-        hpa@zytor.com, ebiederm@xmission.com, joro@8bytes.org,
-        thomas.lendacky@amd.com, dyoung@redhat.com,
-        kexec@lists.infradead.org, iommu@lists.linux-foundation.org,
-        bhe@redhat.com
-References: <20180702072639.10110-1-lijiang@redhat.com>
- <20180702072639.10110-2-lijiang@redhat.com> <20180702101451.GB28730@zn.tnic>
- <4ae1cfb5-0a4b-2aac-2575-024e2c74826f@redhat.com>
- <895db996-febd-d50c-91af-4f1ef3d27bd8@redhat.com>
- <20180703111428.GB5748@zn.tnic>
- <4fbb843b-9597-a48b-8b6f-00e354b91950@redhat.com>
-Message-ID: <e7357038-08bd-7ba8-5357-7c91d21d10fe@redhat.com>
-Date:   Mon, 9 Jul 2018 14:28:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.4.0
+        Mon, 9 Jul 2018 02:30:40 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42955 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754065AbeGIGai (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 02:30:38 -0400
+Received: by mail-pf0-f193.google.com with SMTP id l9-v6so1285002pff.9
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 23:30:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Yi5vgkX1BLOl47glfTMfQXgNLHgAu+/MvTXWG5XQpwI=;
+        b=f88Z9qF9IxHQa9NAuKaj97iBDEDjc+hRHUJF0+WbfaP1JXLjaRWVvAYwQp8t0vxeBs
+         yhr3yq1do7riNLjyncqZwH663XrRZwr3uR+ELFFSTo5XaTCir1vyvbnchCCoPgqIUMxD
+         BqSsYk+ZcfykiBHtwhaQPQV2zfl+0jW79Acis=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Yi5vgkX1BLOl47glfTMfQXgNLHgAu+/MvTXWG5XQpwI=;
+        b=tL7kdknN3Xjv/R7/xUEKaM+hzRD/7VV3oakMKh26kjKkX3wiW0noFv9o9sn+rkHOOl
+         LTQa6X1+T2rN5SeqTcMvQkWUD60yFnbLeaeqXQU1jwAT5mcP5DJGU4AC9cKUJGdoAX8E
+         oRSc/kMO28ItQ8ssMOdVUNiQf0He7Ug8sEdgws3EiVrNBv6a1dKUvaTUmeA1XGUIjCfz
+         RsFXYJ48y/eAbJOw2eI61eK3YpWhbdxwO4C2tRTz4vSYjDs+/wAyIxfBhf6hzKiWvmde
+         C2J8uoegIAOGkSMRV85jFX8F/Tr3aAteytz51KEvLjD0vS+X+AceBO5w35+cgFfgVcXy
+         y+Ag==
+X-Gm-Message-State: APt69E275KakO5IPgU+C3Hbm9QTeMcMFxmbTa5yMTH0k1GcoG3pFChQY
+        9MPn/uKBj4W9BHrpbFCH2pyrnA==
+X-Google-Smtp-Source: AAOMgpdpDP26GBxVnfmOW4Mf5m70Rd/VY8jQwB8TKMcmTXkHGt41dXcFZpZ2DmZ7bntvJ/i3Kz9Gjw==
+X-Received: by 2002:a65:5106:: with SMTP id f6-v6mr17492259pgq.72.1531117838183;
+        Sun, 08 Jul 2018 23:30:38 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id q28-v6sm19912331pfg.144.2018.07.08.23.30.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 08 Jul 2018 23:30:37 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 15:31:56 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     James Morse <james.morse@arm.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, ard.biesheuvel@linaro.org, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 07/14] arm64: enable KEXEC_FILE config
+Message-ID: <20180709063136.GS28220@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
+        will.deacon@arm.com, dhowells@redhat.com, vgoyal@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net, dyoung@redhat.com,
+        bhe@redhat.com, arnd@arndb.de, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, kexec@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20180623022058.10935-1-takahiro.akashi@linaro.org>
+ <20180623022058.10935-8-takahiro.akashi@linaro.org>
+ <9545cb7f-9648-660a-f034-a94f186a8224@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <4fbb843b-9597-a48b-8b6f-00e354b91950@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 09 Jul 2018 06:28:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 09 Jul 2018 06:28:26 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9545cb7f-9648-660a-f034-a94f186a8224@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年07月03日 19:44, lijiang 写道:
-> 在 2018年07月03日 19:14, Borislav Petkov 写道:
->> On Tue, Jul 03, 2018 at 06:58:14PM +0800, lijiang wrote:
->>> For kdump, the elf header finally use the crash kernel reserved memory, it is not an old memory.
->>
->> Lamme repeat my suggestion:
->>
->> So beef up the logic in __ioremap_caller() to figure out based on the
->> address whether to access the memory encrypted or not. In general, you
->> can deduce, based on the region you're mapping, whether you need to map
->> in encrypted or decrypted.
->>
->> For example:
->>
->>         addr = elfcorehdr_addr;
->>
->>         /* Read Elf header */
->>         rc = elfcorehdr_read((char *)&ehdr, sizeof(Elf64_Ehdr), &addr);
->>         if (rc < 0)
->>                 return rc;
->>
->> elfcorehdr_addr has that elfcorehdr address. So you can check which address
->> you're mapping and do:
->>
->> __ioremap_caller:
->>
->> ...
->> 	prot = __ioremap_compute_prot(...);
->>
->> and that __ioremap_compute_prot() function which you will add will have
->> all that logic to determine encrypted or not by comparing addresses etc.
->>
->> Does that make more sense?
->>
-> Thank you, Boris. Good idea, I will rethink about this issue and post it again.
-> 
-Hi, Boris
-Last week, I had tried many ways to do this work, but it looks like that the ways of
-deducing address is not suitable to another scenarios, such as mapping some devices
-mmio space, which are unencrypted, and the device mmio space is outside kdump kernel
-like the old memory, but the old memory is encrypted, we can't find the general rules
-to decide when to encrypt or not. So it should be the best way that the caller care about
-encryption or not. What do you think?
+James,
 
-> Regards,
-> Lianbo
+On Tue, Jul 03, 2018 at 05:33:20PM +0100, James Morse wrote:
+> Hi Akashi,
 > 
+> On 23/06/18 03:20, AKASHI Takahiro wrote:
+> > Modify arm64/Kconfig to enable kexec_file_load support.
+> 
+> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > index 42c090cf0292..f68318f61c85 100644
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -835,6 +835,16 @@ config KEXEC
+> >  	  but it is independent of the system firmware.   And like a reboot
+> >  	  you can start any kernel with it, not just Linux.
+> >  
+> > +config KEXEC_FILE
+> > +	bool "kexec file based system call"
+> > +	select KEXEC_CORE
+> > +	select BUILD_BIN2C
+> 
+> Wasn't BIN2C only needed for purgatory?
+
+Right. Will remove it.
+
+> x86/powerpc/s390 all select CRYPTO_SHA256 here, presumably for arch-specific
+> verification mechanisms. I assume we're using SIGNED_PE_FILE_VERIFICATION instead.
+
+To be clear, hash check (sha256) will be done at reboot (in purgatory),
+while binary verification will be done at load.
+
+> 
+> > +	help
+> > +	  This is new version of kexec system call. This system call is
+> > +	  file based and takes file descriptors as system call argument
+> > +	  for kernel and initramfs as opposed to list of segments as
+> > +	  accepted by previous system call.
+> > +
+> >  config CRASH_DUMP
+> >  	bool "Build kdump crash kernel"
+> >  	help
+> 
+> 
+> Acked-by: James Morse <james.morse@arm.com>
+
+Thanks!
+-Takahiro AKASHI
+
+> 
+> Thanks,
+> 
+> James
