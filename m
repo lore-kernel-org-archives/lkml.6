@@ -2,382 +2,151 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43192C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC67FC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0CDD208A2
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:44:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA1D5208A2
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:44:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="gS8gJ/7+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0CDD208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t3jU1c8e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA1D5208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934215AbeGIRnz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:43:55 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:53211 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933804AbeGIRm6 (ORCPT
+        id S934240AbeGIRoO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:44:14 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33952 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933804AbeGIRoM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:42:58 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id C66E324E24EB;
-        Mon,  9 Jul 2018 10:42:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531158177; bh=DFNQt6ORgnMl2k1XEKf75xnlQTb1j3YN+p+nWZ7V1R8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=gS8gJ/7+VwHd5cScH0zi10OGDho+tHOVmpKwGC8ARAgxK9WNnFYy3ag2m5fvVJq6Y
-         JIGdO6EmQSEM5Eu6erifx13EofarxSnD18LanVWa/tIxHwskd0dRcXH67mX1xPZtVT
-         NfWo4+bEPdET+ab+qrMdJsjx4i6DWl6P97LqXjSyNV0GA+wtGKGn3Io+1yzx1cM5py
-         4ycTcTa2IwqsdGPj/XQmNNj2zB4wCpWvSeSfBcxeC8gWDmUfXQSMZbTy70p+mjocID
-         LMGjq53/TorI2e3UaCSPJKmyNoyH8sWg482NR8uTzuq/Zu++P6cTbZgZHs4kDt14II
-         ZKbArr8A02nTQ==
-Received: from pt02.synopsys.com (pt02.internal.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 583393A41;
-        Mon,  9 Jul 2018 10:42:57 -0700 (PDT)
-Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id E65E23EDA8;
-        Mon,  9 Jul 2018 18:42:55 +0100 (WEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com,
-        shawn.lin@rock-chips.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v9 10/12] pci_endpoint_test: Add 2 ioctl commands
-Date:   Mon,  9 Jul 2018 18:42:48 +0100
-Message-Id: <185f0395d22083c04364cb81b4c2e2448fa89fb2.1531155252.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
-References: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
+        Mon, 9 Jul 2018 13:44:12 -0400
+Received: by mail-pg1-f193.google.com with SMTP id y5-v6so1402420pgv.1;
+        Mon, 09 Jul 2018 10:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=L+Y/GFRzPYSt8CrIWdWa8PLNUTtrkN4+807ODuqdxTg=;
+        b=t3jU1c8eZfI5lTzwQjJVcm/K6SAtLplrcGlYoIo7E3UqV6Y121RoXc2sYJCOjWrZ3a
+         UOVuzvrSd3TumyVsOgw3kZr1Fvz6Ryl62WFc9KHp2qRzlXPqSY1FD3ps4JkJU4biv5fN
+         kJg0zAg4ma7zRwjpvKP1Q3PNO0qoANUHk/N7nPYWRPfDqdF94NK8cV6dqGyHMKb/Z2+U
+         rC92Gpgw1nfPh/pMzd63XlKDdz+T0MrThtX6OW/07MUMYRUU9KSqyPQ9eSi9nQfWrsEN
+         VIaOgBweIFogs5E4rWaMjCQx3RJR3JbF56ciIJ8S6JOIjzU2l/SXND745KsxEnCxVbdz
+         eLLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=L+Y/GFRzPYSt8CrIWdWa8PLNUTtrkN4+807ODuqdxTg=;
+        b=Kuw9hGH7AhwL8JlFszB6xPz7WyAKBzqPIT1/gJyVmrpiJwL0q9cI6YSuyrZGxXAtmg
+         vOxfTEMPsrCZWVZj01N3S4NBRvtK1WfpBhoi5GNrNB0oKsvi6XunE+exAUZiVrLOW9UG
+         99ZtH9reaRMLUobLoZXLQ5zT87AgSAXK+5NxMR3vkH3ZnDoqZg5pAV5KsgC0A2RBeBhw
+         jE0D+w3kf1V9KqXkXBqlCJX+FioT/DH5vvorh8enEQQkrMkH/35Rm/ONnv+NsM9RBs1f
+         8lF/rm0sSPwGaP3UDkm69PhmnbHQNTvjakE0L5OpqSGxGaH3T+/FX5BNuNHnrAWzOlJO
+         rj8w==
+X-Gm-Message-State: APt69E0mFpelFvxYCdMYMZddL7LvtQfn2vKWuAiCFJgIjKIIrZ7nLD3J
+        W9ZvXIKtTk3j1S9+yk+7oifaGIUR
+X-Google-Smtp-Source: AAOMgpdni0b0OSp0ISBI/+BS7/vjDocQC5YPYs0P9tcVjU2oBHzz3uZQb4e3um0WbpxlutNvKFc31Q==
+X-Received: by 2002:a63:4106:: with SMTP id o6-v6mr20087866pga.453.1531158251041;
+        Mon, 09 Jul 2018 10:44:11 -0700 (PDT)
+Received: from [192.168.0.77] ([211.196.191.92])
+        by smtp.gmail.com with ESMTPSA id m21-v6sm21100191pgv.27.2018.07.09.10.44.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 10:44:10 -0700 (PDT)
+Subject: Re: [PATCH] samples/bpf: Fix tc and ip path in xdp2skb_meta.sh
+To:     Jesper Dangaard Brouer <brouer@redhat.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180709150418.32034-1-treeze.taeung@gmail.com>
+ <20180709174029.3c05e750@redhat.com>
+From:   Taeung Song <treeze.taeung@gmail.com>
+Message-ID: <30be797e-e247-1b34-6607-0f0fd3b898fd@gmail.com>
+Date:   Tue, 10 Jul 2018 02:44:06 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180709174029.3c05e750@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MSI-X support and update driver documentation accordingly.
+Hi Jesper Dangaard Brouer,
 
-Add 2 new IOCTL commands:
- - Allow to reconfigure driver IRQ type in runtime.
- - Allow to retrieve current driver IRQ type configured.
+On 07/10/2018 12:40 AM, Jesper Dangaard Brouer wrote:
+> On Tue, 10 Jul 2018 00:04:18 +0900
+> Taeung Song <treeze.taeung@gmail.com> wrote:
+> 
+>> The below path error can occur:
+>>
+>>    # ./xdp2skb_meta.sh --dev eth0 --list
+>>    ./xdp2skb_meta.sh: line 61: /usr/sbin/tc: No such file or directory
+>>
+>>    # which tc
+>>    /sbin/tc
+>>
+>> So use 'which' command instead of absolute path of tc and ip
+>>
+>> Fixes: 36e04a2d78d9 ("samples/bpf: xdp2skb_meta shows transferring info from XDP to SKB")
+>> Cc: Jesper Dangaard Brouer <brouer@redhat.com>
+>> Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
+>> ---
+>>   samples/bpf/xdp2skb_meta.sh | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/samples/bpf/xdp2skb_meta.sh b/samples/bpf/xdp2skb_meta.sh
+>> index b9c9549c4c27..67cf7b5f336d 100755
+>> --- a/samples/bpf/xdp2skb_meta.sh
+>> +++ b/samples/bpf/xdp2skb_meta.sh
+>> @@ -16,8 +16,8 @@
+>>   BPF_FILE=xdp2skb_meta_kern.o
+>>   DIR=$(dirname $0)
+>>   
+>> -export TC=/usr/sbin/tc
+>> -export IP=/usr/sbin/ip
+>> +export TC=`which tc`
+>> +export IP=`which ip`
+> 
+> This is not a good solution, as 'which' can return something else.
+> E.g. on my system I've aliased 'tc' to 'sudo tc', and `which tc` returns:
+> 
+> $ which tc
+> alias tc='sudo tc'
+> 	/usr/bin/sudo
+> 
+> The easiest solution is to simply do:
+> 
+>   export TC=tc
+>   export IP=ip
+> 
+> The more fancy solution is to allow callers to redefine $IP and $TC:
+> 
+> [ -z "$TC" ] && TC=tc
+> [ -z "$IP" ] && IP=ip
+> 
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Change v2->v3:
- - New patch file created base on the previous patch
-"misc: pci_endpoint_test: Add MSI-X support" patch file following
-Kishon's suggestion.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
-Change v4->v5:
- - Nothing changed, just to follow the patch set version.
-Change v5->v6:
- - Moved PCITEST_SET_IRQTYPE and PCITEST_GET_IRQTYPE ioctl entries
-from patch #10 to here.
- - Increased ioctl parameters range associated to
-drivers/misc/pci_endpoint_test.c driver.
-Change v6->v7:
- - irq_type variable update just before returning the function.
-Change v7->v8:
- - Re-sending the patch series.
-Change v8->v9:
- - Added a extra parameter to pci_endpoint_test_alloc_irq_vectors,
-that specifies which irq type should be allocated.
+Yep, you are right, I'll change it.
 
- Documentation/ioctl/ioctl-number.txt             |   2 +-
- Documentation/misc-devices/pci-endpoint-test.txt |   3 +
- drivers/misc/pci_endpoint_test.c                 | 176 +++++++++++++++++------
- include/uapi/linux/pcitest.h                     |   2 +
- 4 files changed, 136 insertions(+), 47 deletions(-)
+> And then you should also fix the use of 'basename', see below patch...
+> 
 
-diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
-index 65259d4..c15c4f3 100644
---- a/Documentation/ioctl/ioctl-number.txt
-+++ b/Documentation/ioctl/ioctl-number.txt
-@@ -166,7 +166,7 @@ Code  Seq#(hex)	Include File		Comments
- 'P'	all	linux/soundcard.h	conflict!
- 'P'	60-6F	sound/sscape_ioctl.h	conflict!
- 'P'	00-0F	drivers/usb/class/usblp.c	conflict!
--'P'	01-07	drivers/misc/pci_endpoint_test.c	conflict!
-+'P'	01-09	drivers/misc/pci_endpoint_test.c	conflict!
- 'Q'	all	linux/soundcard.h
- 'R'	00-1F	linux/random.h		conflict!
- 'R'	01	linux/rfkill.h		conflict!
-diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
-index fdfa0f6..58ccca4 100644
---- a/Documentation/misc-devices/pci-endpoint-test.txt
-+++ b/Documentation/misc-devices/pci-endpoint-test.txt
-@@ -28,6 +28,9 @@ ioctl
- 	      to be tested should be passed as argument.
-  PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
- 	      to be tested should be passed as argument.
-+ PCITEST_SET_IRQTYPE: Changes driver IRQ type configuration. The IRQ type
-+	      should be passed as argument (0: Legacy, 1:MSI, 2:MSI-X).
-+ PCITEST_GET_IRQTYPE: Gets driver IRQ type configuration.
-  PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
- 		as argument.
-  PCITEST_READ: Perform read tests. The size of the buffer should be passed
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index f4fef10..ce4b79a 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -157,6 +157,88 @@ static irqreturn_t pci_endpoint_test_irqhandler(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+static void pci_endpoint_test_free_irq_vectors(struct pci_endpoint_test *test)
-+{
-+	int i;
-+	struct pci_dev *pdev = test->pdev;
-+	struct device *dev = &pdev->dev;
-+
-+	for (i = 0; i < test->num_irqs; i++)
-+		devm_free_irq(dev, pci_irq_vector(pdev, i), test);
-+
-+	test->num_irqs = 0;
-+}
-+
-+static bool pci_endpoint_test_alloc_irq_vectors(struct pci_endpoint_test *test,
-+						int type)
-+{
-+	int irq = -1;
-+	struct pci_dev *pdev = test->pdev;
-+	struct device *dev = &pdev->dev;
-+	bool res = true;
-+
-+	switch (type) {
-+	case IRQ_TYPE_LEGACY:
-+		irq = 0;
-+		break;
-+	case IRQ_TYPE_MSI:
-+		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
-+		if (irq < 0)
-+			dev_err(dev, "Failed to get MSI interrupts\n");
-+		break;
-+	case IRQ_TYPE_MSIX:
-+		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
-+		if (irq < 0)
-+			dev_err(dev, "Failed to get MSI-X interrupts\n");
-+		break;
-+	default:
-+		dev_err(dev, "Invalid IRQ type selected\n");
-+	}
-+
-+	if (irq < 0) {
-+		irq = 0;
-+		res = false;
-+	}
-+	test->num_irqs = irq;
-+
-+	return res;
-+}
-+
-+static void pci_endpoint_test_release_irq(struct pci_endpoint_test *test)
-+{
-+	struct pci_dev *pdev = test->pdev;
-+
-+	pci_disable_msi(pdev);
-+	pci_disable_msix(pdev);
-+}
-+
-+static bool pci_endpoint_test_request_irq(struct pci_endpoint_test *test)
-+{
-+	int i;
-+	int err;
-+	struct pci_dev *pdev = test->pdev;
-+	struct device *dev = &pdev->dev;
-+
-+	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
-+			       IRQF_SHARED, DRV_MODULE_NAME, test);
-+	if (err) {
-+		dev_err(dev, "Failed to request IRQ %d\n", pdev->irq);
-+		return false;
-+	}
-+
-+	for (i = 1; i < test->num_irqs; i++) {
-+		err = devm_request_irq(dev, pci_irq_vector(pdev, i),
-+				       pci_endpoint_test_irqhandler,
-+				       IRQF_SHARED, DRV_MODULE_NAME, test);
-+		if (err)
-+			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
-+				pci_irq_vector(pdev, i),
-+				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
-+	}
-+
-+	return true;
-+}
-+
- static bool pci_endpoint_test_bar(struct pci_endpoint_test *test,
- 				  enum pci_barno barno)
- {
-@@ -440,6 +522,38 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 	return ret;
- }
- 
-+static bool pci_endpoint_test_set_irq(struct pci_endpoint_test *test,
-+				      int req_irq_type)
-+{
-+	struct pci_dev *pdev = test->pdev;
-+	struct device *dev = &pdev->dev;
-+
-+	if (req_irq_type < IRQ_TYPE_LEGACY || req_irq_type > IRQ_TYPE_MSIX) {
-+		dev_err(dev, "Invalid IRQ type option\n");
-+		return false;
-+	}
-+
-+	if (irq_type == req_irq_type)
-+		return true;
-+
-+	pci_endpoint_test_free_irq_vectors(test);
-+	pci_endpoint_test_release_irq(test);
-+
-+	if (!pci_endpoint_test_alloc_irq_vectors(test, req_irq_type)) {
-+		pci_endpoint_test_release_irq(test);
-+		return false;
-+	}
-+
-+	if (!pci_endpoint_test_request_irq(test)) {
-+		pci_endpoint_test_release_irq(test);
-+		return false;
-+	}
-+
-+	irq_type = req_irq_type;
-+
-+	return true;
-+}
-+
- static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
- 				    unsigned long arg)
- {
-@@ -471,6 +585,12 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
- 	case PCITEST_COPY:
- 		ret = pci_endpoint_test_copy(test, arg);
- 		break;
-+	case PCITEST_SET_IRQTYPE:
-+		ret = pci_endpoint_test_set_irq(test, arg);
-+		break;
-+	case PCITEST_GET_IRQTYPE:
-+		ret = irq_type;
-+		break;
- 	}
- 
- ret:
-@@ -486,9 +606,7 @@ static const struct file_operations pci_endpoint_test_fops = {
- static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 				   const struct pci_device_id *ent)
- {
--	int i;
- 	int err;
--	int irq = 0;
- 	int id;
- 	char name[20];
- 	enum pci_barno bar;
-@@ -537,41 +655,11 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 
- 	pci_set_master(pdev);
- 
--	switch (irq_type) {
--	case IRQ_TYPE_LEGACY:
--		break;
--	case IRQ_TYPE_MSI:
--		irq = pci_alloc_irq_vectors(pdev, 1, 32, PCI_IRQ_MSI);
--		if (irq < 0)
--			dev_err(dev, "Failed to get MSI interrupts\n");
--		test->num_irqs = irq;
--		break;
--	case IRQ_TYPE_MSIX:
--		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
--		if (irq < 0)
--			dev_err(dev, "Failed to get MSI-X interrupts\n");
--		test->num_irqs = irq;
--		break;
--	default:
--		dev_err(dev, "Invalid IRQ type selected\n");
--	}
--
--	err = devm_request_irq(dev, pdev->irq, pci_endpoint_test_irqhandler,
--			       IRQF_SHARED, DRV_MODULE_NAME, test);
--	if (err) {
--		dev_err(dev, "Failed to request IRQ %d\n", pdev->irq);
--		goto err_disable_msi;
--	}
-+	if (!pci_endpoint_test_alloc_irq_vectors(test, irq_type))
-+		goto err_disable_irq;
- 
--	for (i = 1; i < irq; i++) {
--		err = devm_request_irq(dev, pci_irq_vector(pdev, i),
--				       pci_endpoint_test_irqhandler,
--				       IRQF_SHARED, DRV_MODULE_NAME, test);
--		if (err)
--			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
--				pci_irq_vector(pdev, i),
--				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
--	}
-+	if (!pci_endpoint_test_request_irq(test))
-+		goto err_disable_irq;
- 
- 	for (bar = BAR_0; bar <= BAR_5; bar++) {
- 		if (pci_resource_flags(pdev, bar) & IORESOURCE_MEM) {
-@@ -631,12 +719,10 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- 			pci_iounmap(pdev, test->bar[bar]);
- 	}
- 
--	for (i = 0; i < irq; i++)
--		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
-+	pci_endpoint_test_free_irq_vectors(test);
- 
--err_disable_msi:
--	pci_disable_msi(pdev);
--	pci_disable_msix(pdev);
-+err_disable_irq:
-+	pci_endpoint_test_release_irq(test);
- 	pci_release_regions(pdev);
- 
- err_disable_pdev:
-@@ -648,7 +734,6 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
- static void pci_endpoint_test_remove(struct pci_dev *pdev)
- {
- 	int id;
--	int i;
- 	enum pci_barno bar;
- 	struct pci_endpoint_test *test = pci_get_drvdata(pdev);
- 	struct miscdevice *misc_device = &test->miscdev;
-@@ -665,10 +750,9 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
- 		if (test->bar[bar])
- 			pci_iounmap(pdev, test->bar[bar]);
- 	}
--	for (i = 0; i < test->num_irqs; i++)
--		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
--	pci_disable_msi(pdev);
--	pci_disable_msix(pdev);
-+	pci_endpoint_test_free_irq_vectors(test);
-+
-+	pci_endpoint_test_release_irq(test);
- 	pci_release_regions(pdev);
- 	pci_disable_device(pdev);
- }
-diff --git a/include/uapi/linux/pcitest.h b/include/uapi/linux/pcitest.h
-index d746fb1..cbf422e 100644
---- a/include/uapi/linux/pcitest.h
-+++ b/include/uapi/linux/pcitest.h
-@@ -17,5 +17,7 @@
- #define PCITEST_READ		_IOW('P', 0x5, unsigned long)
- #define PCITEST_COPY		_IOW('P', 0x6, unsigned long)
- #define PCITEST_MSIX		_IOW('P', 0x7, int)
-+#define PCITEST_SET_IRQTYPE	_IOW('P', 0x8, int)
-+#define PCITEST_GET_IRQTYPE	_IO('P', 0x9)
- 
- #endif /* __UAPI_LINUX_PCITEST_H */
--- 
-2.7.4
+I thought it'd be fine to leave 'basename' as it is,
+because if callers redefine TC=/home/taeung/tc and give
+the options --verbose or --dry-run, 'basename' can more tidily show outputs.
 
+But it seems to be trivial, I'll resend this patch as v2 based on your 
+comment !
+
+Thanks,
+Taeung
 
