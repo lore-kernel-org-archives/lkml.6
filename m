@@ -2,122 +2,125 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB630C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BB3C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:55:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 912A120871
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:55:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8849C208AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:55:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="RpdGOBd1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 912A120871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JU0LU2Uy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8849C208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934134AbeGIRzW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:55:22 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:51605 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933757AbeGIRzV (ORCPT
+        id S934100AbeGIRzz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:55:55 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:43082 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933757AbeGIRzy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:55:21 -0400
-Received: by mail-it0-f66.google.com with SMTP id g4-v6so10576405iti.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 10:55:21 -0700 (PDT)
+        Mon, 9 Jul 2018 13:55:54 -0400
+Received: by mail-pf0-f196.google.com with SMTP id y8-v6so14178371pfm.10;
+        Mon, 09 Jul 2018 10:55:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=bbHfMuMrrmphloUUIwdXihmj0pjnBrVZZaFk/LtGvps=;
-        b=RpdGOBd1PlokXPQYMrHkeoCO73158fYQrborQpPt3IIm3JnjZldqYozQc145POZtlK
-         MHoNMaW2tsPdMgZWA/gHcwsufEr0bkR4Ek7PXy6b7vi2UZN/Wnf9zFUYTfKH1EF5FUo5
-         FOPB/R7L3yRosDcr0Uo8iDFm6GrG5hNhRdGEA=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=f8QO5WqfUQOgzzgfchj1hVcmA26Mq/ogTsNcKPmJQ1Q=;
+        b=JU0LU2Uy44qXDajKxYOv6nhtGsGU6Zs4IjZ9TycHTF/YYE+G4TekQLEbg6nVOiww1/
+         JwPOXfgx6trZ3rBOCJZwIaWEZrQyUppMZ/vmiN3A3uxBAC9S4KJ6nx2drtrmqAWRhY/N
+         L16YrDG+Z0Mw5U6jOoexJ0P7a4OORdF1P3f/7A1byB8Gv8jOUrjwOKIw9SvD4smYH/Tr
+         Y96F4OVPC66F7kx9bUrCimL2XO0invgyJhpQ1JR78mAnriarcFBPXoKFdMKHH2dG1lxr
+         Vzj3snG4Mj/mbjU7h9pG3QaTcArBfbwPb3tv2TnZs+4HWyV20YrjU7ApGup7qkyAoVzP
+         kfRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=bbHfMuMrrmphloUUIwdXihmj0pjnBrVZZaFk/LtGvps=;
-        b=FPruAB36qmX6BkPNNzLYge5GlDk7b2pjmODSv/syoboeyVeMaTIhbqkr0+9gxa2Bjr
-         6ag15cx+h8QeSpfeGSdSvsLWDnCSAVCc3uEr05EWyQIrkjEW/Zo5Hzs527870JF0+wJQ
-         6b36uYlgOwhp6FIvFTerqrEJczujPpk8DdD15kgPVmoYqpPEXLpLrESgWc1tcd6V+DDj
-         FL4v+nDf0C/YfvyEbK5Yb41nbpvdsrZ43YFYDiBFOaIJLlVLHt03Pbq++/cPP+xJFWH6
-         A0rAeixQAbeVyILsfQ0HA4P8/oX6OSSB7wXaKX1hFQqHKknZtEm41q4eICwW/tckZO2u
-         00Hw==
-X-Gm-Message-State: AOUpUlHvX5kbQBCIeXP54CRepo4H4oa3iNREtOGYQEJiO/xLvUfBmdAo
-        RY62kSxeOs/nJ2Xmt72OUpHfSpzuAJpWB9GZxa/Jrw==
-X-Google-Smtp-Source: AAOMgpfpdZ6vF7W6SDwCSxYxibtojVV7IJrr+doH5SkxtN2PuGmCo8M1kWJO5wijNHa34LG7o5mw6Ie8Pk+TFxnzjZ4=
-X-Received: by 2002:a24:558a:: with SMTP id e132-v6mr6153491itb.2.1531158920764;
- Mon, 09 Jul 2018 10:55:20 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=f8QO5WqfUQOgzzgfchj1hVcmA26Mq/ogTsNcKPmJQ1Q=;
+        b=GZhZg3GAnmau9oX7cpkDeUsWgrikwlFzBPtiwaOekvsBiYVYumieQYdK2x7Awj+gJM
+         vcw9UA8ZDD2NFjIimyGqfOsaC36UpHsSOcaiqBFTIjSJdjALSSUajSxjl0iomAy7P+Hc
+         1d+DDoImoCAl1fMue4ET8qZ5bQDIFTO13MjftHLZd6ZWRp9b1melqx7uRlpUTaBYVaSu
+         +d9w0y9ewET7Rvzm/eCUtWKoqo4NL6hZl4m1RroxBnBdxds1T8WIpgHs91R+IHSFfW3R
+         o8uf1UKWvfPKqYfLmH824NKT7fzwwYBb/V285H+J1H8vewypATRcFU88TSEDe1o581BG
+         BbWA==
+X-Gm-Message-State: APt69E2vTl7DKQUFjOch3StCJSWrZekNa99ypPyb9Nq8QFl9Yr+WU4Ep
+        iVuwNAgatzQRYWfzSLaPHBPPeA==
+X-Google-Smtp-Source: AAOMgpc6WGvip5ANtA6WgHA1vqgxH0c6mSjB4HTvF7/SrRWkg4lSuUJMDuCsVDXLwU3+rD8kDmLHyg==
+X-Received: by 2002:a65:5803:: with SMTP id g3-v6mr20036394pgr.117.1531158953255;
+        Mon, 09 Jul 2018 10:55:53 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id 16-v6sm625340pfp.6.2018.07.09.10.55.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 10:55:52 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 10:55:50 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     linux-kernel@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-s390@vger.kernel.org
+Subject: Build/qemu test results for v4.18-rc4
+Message-ID: <20180709175550.GA7469@roeck-us.net>
 MIME-Version: 1.0
-Received: by 2002:a4f:e492:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 10:55:20 -0700 (PDT)
-X-Originating-IP: [2a02:168:5628:0:496f:7dc5:66d7:a057]
-In-Reply-To: <20180709161232.up6vnuybvkxn76am@lakrids.cambridge.arm.com>
-References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
- <20180709083650.23549-11-daniel.vetter@ffwll.ch> <20180709103656.GH2476@hirez.programming.kicks-ass.net>
- <CAKMK7uEr9PJ0mex5CWdws55OwaLuHCbLJ5vP8KA4ZQXdAVOTYQ@mail.gmail.com>
- <20180709151258.GV2476@hirez.programming.kicks-ass.net> <20180709155204.GD3008@phenom.ffwll.local>
- <20180709160342.GA2476@hirez.programming.kicks-ass.net> <20180709161232.up6vnuybvkxn76am@lakrids.cambridge.arm.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Mon, 9 Jul 2018 19:55:20 +0200
-X-Google-Sender-Auth: EHYgHoKt2m29KRhUWAKW_pLCiok
-Message-ID: <CAKMK7uHQz6+=30nCU-8CerC9eRrwnA_O-cxRSoHHbGf0uNMYmA@mail.gmail.com>
-Subject: Re: [Intel-gfx] [PATCH 11/12] sched: use for_each_if in topology.h
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 6:12 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> On Mon, Jul 09, 2018 at 06:03:42PM +0200, Peter Zijlstra wrote:
->> On Mon, Jul 09, 2018 at 05:52:04PM +0200, Daniel Vetter wrote:
->> > for_each_something(foo)
->> >     if (foo->bla)
->> >             call_bla(foo);
->> >     else
->> >             call_default(foo);
->> >
->> > Totally contrived, but this complains. Liberally sprinkling {} also shuts
->> > up the compiler, but it's a bit confusing given that a plain for {;;} is
->> > totally fine. And it's confusing since at first glance the compiler
->> > complaining about nested if and ambigous else doesn't make sense since
->> > clearly there's only 1 if there.
->>
->> Ah, so the pattern the compiler tries to warn about is:
->>
->>       if (foo)
->>               if (bar)
->>                       /* stmts1 */
->>               else
->>                       /* stmts2 *
->>
->> Because it might not be immediately obvious with which if the else goes.
->> Which is fair enough I suppose.
->>
->> OK, ACK.
->
-> Just to bikeshed, there could be macros other than for_each_*() macros
-> that will want to use this internally, so perhaps it would be worth the
-> generic version being named something like if_noelse().
->
-> We could always add that as/when required, though.
+Build results:
+	total: 134 pass: 130 fail: 4
+Failed builds: 
+	nds32:defconfig 
+	nds32:allnoconfig 
+	s390:allmodconfig 
+	sparc32:allmodconfig
+Qemu test results:
+	total: 158 pass: 158 fail: 0
 
-I think a better name would be really good, but both when we added it
-for i915 and when we move it to drm headers we drew a blank.
-if_noelse() describes pretty good what it does, but kinda fails on the
-"where should I use it" departement. If there's some consensus I can
-sed the patches quickly.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+---
+nds32:defconfig:
+
+nds32le-linux-ld: kernel/time/timekeeping.o: in function `timekeeping_init':
+timekeeping.c:(.init.text+0x1a8): undefined reference to `__ashldi3'
+nds32le-linux-ld: timekeeping.c:(.init.text+0x1ac): undefined reference to `__ashldi3'
+nds32le-linux-ld: timekeeping.c:(.init.text+0x1ec): undefined reference to `__lshrdi3'
+nds32le-linux-ld: timekeeping.c:(.init.text+0x1f0): undefined reference to `__lshrdi3'
+
+Fix is available in -next with commit 78945c357f5 ("nds32: Fix build error
+caused by configuration flag rename").
+
+---
+s390:allmodconfig:
+
+arch/s390/kernel/als.o: In function `verify_facilities':
+als.c:(.init.text+0x24): undefined reference to `latent_entropy'
+als.c:(.init.text+0xae): undefined reference to `latent_entropy'
+make[3]: *** [arch/s390/boot/compressed/vmlinux] Error 1
+make[2]: *** [arch/s390/boot/compressed/vmlinux] Error 2
+make[1]: *** [bzImage] Error 2
+
+This problem is only seen when using a compiler which has the relevant
+plugins enabled. Bisect points to commit 1658dcee3d43ed ("gcc-plugins:
+allow to enable GCC_PLUGINS for COMPILE_TEST") as the culprit. I don't
+know if a fix for v4.18 has been submitted. The s390 boot code in -next
+has been rearranged and the problem is no longer seen there.
+
+---
+sparc32:allmodconfig:
+
+include/linux/highmem.h: In function 'clear_user_highpage':
+include/linux/highmem.h:137:31: error:
+	passing argument 1 of 'sparc_flush_page_to_ram' from incompatible pointer type
+
+A possible fix is available at https://patchwork.kernel.org/patch/10497941/.
+
+Guenter
