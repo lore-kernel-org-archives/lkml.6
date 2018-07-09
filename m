@@ -2,83 +2,81 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C02BBC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9098FC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:35:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C02D20852
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:34:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C02D20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FB0420852
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 06:35:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKhHUY4R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FB0420852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754599AbeGIGek (ORCPT
+        id S1754627AbeGIGfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 02:34:40 -0400
-Received: from mga06.intel.com ([134.134.136.31]:30644 "EHLO mga06.intel.com"
+        Mon, 9 Jul 2018 02:35:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750981AbeGIGej (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 02:34:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Jul 2018 23:34:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,329,1526367600"; 
-   d="scan'208";a="69722838"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
-  by fmsmga004.fm.intel.com with ESMTP; 08 Jul 2018 23:34:36 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Dan Williams <dan.j.williams@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        <n-horiguchi@ah.jp.nec.com>, <zi.yan@cs.rutgers.edu>,
-        <daniel.m.jordan@oracle.com>
-Subject: Re: [PATCH -mm -v4 02/21] mm, THP, swap: Make CONFIG_THP_SWAP depends on CONFIG_SWAP
-References: <20180622035151.6676-1-ying.huang@intel.com>
-        <20180622035151.6676-3-ying.huang@intel.com>
-        <CAA9_cmc2b97TCRAKz-r4Zhb9mq_hsr41Xwe1zQkyhsLUc5LWPg@mail.gmail.com>
-Date:   Mon, 09 Jul 2018 14:34:35 +0800
-In-Reply-To: <CAA9_cmc2b97TCRAKz-r4Zhb9mq_hsr41Xwe1zQkyhsLUc5LWPg@mail.gmail.com>
-        (Dan Williams's message of "Sat, 7 Jul 2018 14:12:48 -0700")
-Message-ID: <877em4lxxg.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1750980AbeGIGfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 02:35:10 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BC6720852;
+        Mon,  9 Jul 2018 06:35:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531118109;
+        bh=YDnaCwLSuT9PDsVBufSSgPeFwg24VsuJ1Cg0w5BC8UA=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=SKhHUY4RKOvA9UaLfixJezOXHPbanZHTOmw6b7O/hlh3tK7fHFg8IfYSpBUeTDyq7
+         9o7tx4YfDZiXNBxrps9q+htLElaXPhAUnF3+XurxSn0vCp+mBauxfGsqXJjuFiv+dk
+         GjftpRrUvf3q2slIh2NhsAnnegs36aIBmvYmZ8yk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1530186451-24648-3-git-send-email-tdas@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+References: <1530186451-24648-1-git-send-email-tdas@codeaurora.org>
+ <1530186451-24648-3-git-send-email-tdas@codeaurora.org>
+Message-ID: <153111810881.143105.16566097827979485161@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v2 2/2] clk: qcom: gcc: Register QUPv3 RCGs for DFS on SDM845
+Date:   Sun, 08 Jul 2018 23:35:08 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dan Williams <dan.j.williams@gmail.com> writes:
+Quoting Taniya Das (2018-06-28 04:47:31)
+> @@ -3437,7 +3457,12 @@ static int gcc_sdm845_probe(struct platform_device=
+ *pdev)
+>         regmap_update_bits(regmap, 0x48190, BIT(0), 0x1);
+>         regmap_update_bits(regmap, 0x52004, BIT(22), 0x1);
+> =
 
-> On Thu, Jun 21, 2018 at 8:55 PM Huang, Ying <ying.huang@intel.com> wrote:
->>
->> From: Huang Ying <ying.huang@intel.com>
->>
->> It's unreasonable to optimize swapping for THP without basic swapping
->> support.  And this will cause build errors when THP_SWAP functions are
->> defined in swapfile.c and called elsewhere.
->>
->> The comments are fixed too to reflect the latest progress.
->
-> Looks good to me:
->
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> -       return qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+> +       ret =3D qcom_cc_really_probe(pdev, &gcc_sdm845_desc, regmap);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return qcom_cc_register_rcg_dfs(pdev, gcc_dfs_clocks,
+> +                                       ARRAY_SIZE(gcc_dfs_clocks));
 
-Thanks!
+This looks backwards. We shouldn't expose the clks to drivers and then
+make their functionality work by registering dfs clks. The order should
+be swapped.
 
-Best Regards,
-Huang, Ying
