@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF046C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD3CC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89FA32086A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:10:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D8362086A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:11:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="slAPETms"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89FA32086A
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="hSFQqOpI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D8362086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933459AbeGIPKq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:10:46 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:40171 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933385AbeGIPKh (ORCPT
+        id S933437AbeGIPKo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:10:44 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40169 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932949AbeGIPKf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:10:37 -0400
-Received: by mail-wm0-f67.google.com with SMTP id z13-v6so21137876wma.5
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:10:36 -0700 (PDT)
+        Mon, 9 Jul 2018 11:10:35 -0400
+Received: by mail-wm0-f68.google.com with SMTP id z13-v6so21137777wma.5
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5hh9CLwAh3q9is7L4jGzz8ZSli3UwF4edqEnPO2wzag=;
-        b=slAPETms32PPWztG4gZM1vS5Hcbvohg6/MKpyahXvdRmHmDoatZivgpYs51NUGX5Sb
-         I7twtDuoVm5TMGf94jU7qn+MD23l17vg8/4C1uKPf8+Po966tiNaIKNLglqGTMcrqPEF
-         /aOaz8C4Iptow652RnHFgCGRoAERAI6yvACm0pfs7/I9rIZIA5LJVvjoBhuBpBhD3IYW
-         YsKue2eJMF41TGJlneB71vheofVg87omlWG6+pyPojuuDlFdtj9q8fwPpGmFclyhxIjs
-         wDmf10KAWpoHmGvsJ3lOP4rUuSBuiawPCkNQPPG2hC8utScZiDe+NdMktuEXygyV5YN1
-         AxSQ==
+        bh=5MVFn38qCec6lrkiQKmwFoZWAowYV/VmZ/hr9waL54M=;
+        b=hSFQqOpIpiVZZUKn/mGK4AdHYsSqBp8SQwaXcA9OGUos8gjNtywdl3wI6Co9yT9Imr
+         QjB4T1Do51GO4HFskCNerrdROYVPhjkwWdexzzQJ+bwC1l0pn0rqERI9AwWKqqLpKlfp
+         ptH7T8/2sbjOMtZ+QBCVsQgS/HLGmSTWNwIpM1+XyahtHXedHgoXoBxVoBbzf7JERas8
+         AJFXQSk8X/RqPnchFxQ9Y0VteNZ/cR+Cj7dexK1/86RwIXexY6zjRUT9hIA6tLs6LDWt
+         g/vJGGqsRgxznLWeKbKgkpiRQORJzHzFZKQadnr4mRQhYMn3Ea+VQs3cmWOndFPAIEZN
+         bmnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5hh9CLwAh3q9is7L4jGzz8ZSli3UwF4edqEnPO2wzag=;
-        b=jExpC60TvN+jzcXnHtEm2wCCVKMDEdMHq6hS3Qy1uB5n8QU8VR+UZmUlwn59SjusvD
-         kTWL/poc3gL1lEnsymVM+m8qLKCmzbNSdu5njsEAnGZ5DyeCg/BSZtIdItS/0kp7/X+C
-         7Fag2yPAXMybzF3gzDD/NHQ1osPg6RKCI2FlivEL5IdxH9+Zyy5ZZ7YW6CKfHKEV9LC5
-         Bv9fDZOSWrmC65t2/CSywL7+Lu4VAzXxVtFqAxfm42m979AnfXmCJPPUVx6NSbb8V14A
-         5eWxTJMkZ2FoqC2wwxqCi/QXIiS5xdFUwZyhWl7LdWnAmzXWN9Vs64fPB03U4v6wMy4v
-         5LTA==
-X-Gm-Message-State: APt69E0+apUvc29S7ofo8gJWOTGa+aEWedog8hiv3ZTKzOw5EVIgY1Or
-        kbp5sRwMQnHuzZrUAEtZadgcGqCY
-X-Google-Smtp-Source: AAOMgpfTDmObZAfFjxp48W8ZZJGNl1tRtZ2y9aLc/+1Ei8rDB4cKzeCu+YB/q/PbRS211n4OcBKUvw==
-X-Received: by 2002:a1c:2d54:: with SMTP id t81-v6mr13907358wmt.31.1531149035935;
-        Mon, 09 Jul 2018 08:10:35 -0700 (PDT)
+        bh=5MVFn38qCec6lrkiQKmwFoZWAowYV/VmZ/hr9waL54M=;
+        b=rqyRkH4puhae6nCXnxpZ8m3mfKiZesIawIxdJktp5wKHBl2jBG19QjraQ/UE3sf4Qa
+         zFl4GmOTx08OkJm9fDT4mRiv1Ktu2QYjAfU7/FNoimQwha+jo6Y+lMkp3QZHOSOc6aOT
+         jScgzb6pIT+zaOwhBDLp7uIgRr4RWs6Qx9d5JmCzB9HxxT7qLI2yfT1Nr1o4qhxrqv1m
+         sOlp/VHkwH9LEKAKwNSS7t12Y1ftsXDOodnnegdTwaAU6W5ctN1dV7KXHhWYKFvgXkTK
+         oCjoyO9mXxxpsCAP2KqiI5pcGIFWuH3JufMG09x3P5fKOsIeV/L/PQyYIi5izH3XtAf9
+         M46A==
+X-Gm-Message-State: APt69E30DSEesWYcsOYWXIm8b9aTD8JHhRG/7NExQiRdLarAMqQzsRm9
+        OPIkqvc2ZKCQEJTEl6ICeUv5Pg==
+X-Google-Smtp-Source: AAOMgpfyMgk+Err9RDnrrUjdaUeZjLGTU0emoLCuoRkJ4hSe+xaygYo0LLHccRvtdQZ8MppG+FLFIg==
+X-Received: by 2002:a1c:c60a:: with SMTP id w10-v6mr2183878wmf.26.1531149034143;
+        Mon, 09 Jul 2018 08:10:34 -0700 (PDT)
 Received: from localhost.localdomain (p200300D993C227000209466FFA2F090C.dip0.t-ipconnect.de. [2003:d9:93c2:2700:209:466f:fa2f:90c])
-        by smtp.googlemail.com with ESMTPSA id u124-v6sm7817330wme.26.2018.07.09.08.10.35
+        by smtp.googlemail.com with ESMTPSA id u124-v6sm7817330wme.26.2018.07.09.08.10.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 08:10:35 -0700 (PDT)
+        Mon, 09 Jul 2018 08:10:33 -0700 (PDT)
 From:   Manfred Spraul <manfred@colorfullife.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Davidlohr Bueso <dave@stgolabs.net>,
@@ -63,9 +63,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
 Cc:     LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
         Kees Cook <keescook@chromium.org>,
         Manfred Spraul <manfred@colorfullife.com>
-Subject: [PATCH 05/12] ipc/util.c: correct comment in ipc_obtain_object_check
-Date:   Mon,  9 Jul 2018 17:10:12 +0200
-Message-Id: <20180709151019.1336-6-manfred@colorfullife.com>
+Subject: [PATCH 03/12] ipc/util.c: Use ipc_rcu_putref() for failues in ipc_addid()
+Date:   Mon,  9 Jul 2018 17:10:10 +0200
+Message-Id: <20180709151019.1336-4-manfred@colorfullife.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180709151019.1336-1-manfred@colorfullife.com>
 References: <20180709151019.1336-1-manfred@colorfullife.com>
@@ -74,35 +74,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The comment that explains ipc_obtain_object_check is wrong:
-The function checks the sequence number, not the reference
-counter.
-Note that checking the reference counter would be meaningless:
-The reference counter is decreased without holding any locks,
-thus an object with kern_ipc_perm.deleted=true may disappear at
-the end of the next rcu grace period.
+ipc_addid() is impossible to use:
+- for certain failures, the caller must not use ipc_rcu_putref(),
+  because the reference counter is not yet initialized.
+- for other failures, the caller must use ipc_rcu_putref(),
+  because parallel operations could be ongoing already.
+
+The patch cleans that up, by initializing the refcount early,
+and by modifying all callers.
+
+The issues is related to the finding of
+syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com:
+syzbot found an issue with reading kern_ipc_perm.seq,
+here both read and write to already released memory could happen.
 
 Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Kees Cook <keescook@chromium.org>
 Cc: Davidlohr Bueso <dave@stgolabs.net>
 ---
- ipc/util.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ ipc/msg.c  |  2 +-
+ ipc/sem.c  |  2 +-
+ ipc/shm.c  |  2 ++
+ ipc/util.c | 12 ++++++++++--
+ 4 files changed, 14 insertions(+), 4 deletions(-)
 
+diff --git a/ipc/msg.c b/ipc/msg.c
+index 829c2062ded4..5bf5cb8017ea 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -162,7 +162,7 @@ static int newque(struct ipc_namespace *ns, struct ipc_params *params)
+ 	/* ipc_addid() locks msq upon success. */
+ 	retval = ipc_addid(&msg_ids(ns), &msq->q_perm, ns->msg_ctlmni);
+ 	if (retval < 0) {
+-		call_rcu(&msq->q_perm.rcu, msg_rcu_free);
++		ipc_rcu_putref(&msq->q_perm, msg_rcu_free);
+ 		return retval;
+ 	}
+ 
+diff --git a/ipc/sem.c b/ipc/sem.c
+index e8971fa1d847..9d49efeac2e5 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -556,7 +556,7 @@ static int newary(struct ipc_namespace *ns, struct ipc_params *params)
+ 	/* ipc_addid() locks sma upon success. */
+ 	retval = ipc_addid(&sem_ids(ns), &sma->sem_perm, ns->sc_semmni);
+ 	if (retval < 0) {
+-		call_rcu(&sma->sem_perm.rcu, sem_rcu_free);
++		ipc_rcu_putref(&sma->sem_perm, sem_rcu_free);
+ 		return retval;
+ 	}
+ 	ns->used_sems += nsems;
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 59fe8b3b3794..06b7bf11a011 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -671,6 +671,8 @@ static int newseg(struct ipc_namespace *ns, struct ipc_params *params)
+ 	if (is_file_hugepages(file) && shp->mlock_user)
+ 		user_shm_unlock(size, shp->mlock_user);
+ 	fput(file);
++	ipc_rcu_putref(&shp->shm_perm, shm_rcu_free);
++	return error;
+ no_file:
+ 	call_rcu(&shp->shm_perm.rcu, shm_rcu_free);
+ 	return error;
 diff --git a/ipc/util.c b/ipc/util.c
-index bbb1ce212a0d..8133f10832a9 100644
+index 662c28c6c9fa..8b09496ed720 100644
 --- a/ipc/util.c
 +++ b/ipc/util.c
-@@ -644,8 +644,8 @@ struct kern_ipc_perm *ipc_lock(struct ipc_ids *ids, int id)
-  * @ids: ipc identifier set
-  * @id: ipc id to look for
+@@ -248,7 +248,9 @@ static inline void ipc_set_seq(struct ipc_ids *ids,
+  * Add an entry 'new' to the ipc ids idr. The permissions object is
+  * initialised and the first free entry is set up and the id assigned
+  * is returned. The 'new' entry is returned in a locked state on success.
++ *
+  * On failure the entry is not locked and a negative err-code is returned.
++ * The caller must use ipc_rcu_putref() to free the identifier.
   *
-- * Similar to ipc_obtain_object_idr() but also checks
-- * the ipc object reference counter.
-+ * Similar to ipc_obtain_object_idr() but also checks the ipc object
-+ * sequence number.
-  *
-  * Call inside the RCU critical section.
-  * The ipc object is *not* locked on exit.
+  * Called with writer ipc_ids.rwsem held.
+  */
+@@ -258,6 +260,9 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	kgid_t egid;
+ 	int id, err;
+ 
++	/* 1) Initialize the refcount so that ipc_rcu_putref works */
++	refcount_set(&new->refcount, 1);
++
+ 	if (limit > IPCMNI)
+ 		limit = IPCMNI;
+ 
+@@ -266,9 +271,7 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 
+ 	idr_preload(GFP_KERNEL);
+ 
+-	refcount_set(&new->refcount, 1);
+ 	spin_lock_init(&new->lock);
+-	new->deleted = false;
+ 	rcu_read_lock();
+ 	spin_lock(&new->lock);
+ 
+@@ -277,6 +280,7 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	new->gid = new->cgid = egid;
+ 
+ 	ipc_set_seq(ids, new);
++	new->deleted = false;
+ 
+ 	/*
+ 	 * As soon as a new object is inserted into the idr,
+@@ -288,6 +292,9 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 	 * Thus the object must be fully initialized, and if something fails,
+ 	 * then the full tear-down sequence must be followed.
+ 	 * (i.e.: set new->deleted, reduce refcount, call_rcu())
++	 *
++	 * This function sets new->deleted, the caller must use ipc_rcu_putef()
++	 * for the remaining steps.
+ 	 */
+ 	id = ipc_idr_alloc(ids, new);
+ 	idr_preload_end();
+@@ -301,6 +308,7 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+ 		}
+ 	}
+ 	if (id < 0) {
++		new->deleted = true;
+ 		spin_unlock(&new->lock);
+ 		rcu_read_unlock();
+ 		return id;
 -- 
 2.17.1
 
