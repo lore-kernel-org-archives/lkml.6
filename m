@@ -2,102 +2,164 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E968C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:39:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8E20C6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF23A208AF
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73734208AF
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 07:41:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Yb6hs5T1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF23A208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TpSWWxw7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73734208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932738AbeGIHj3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 03:39:29 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44706 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932427AbeGIHj2 (ORCPT
+        id S1754405AbeGIHlk (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 03:41:40 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:44559 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752914AbeGIHlj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 03:39:28 -0400
-Received: by mail-ed1-f66.google.com with SMTP id d17-v6so1071688eds.11
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 00:39:27 -0700 (PDT)
+        Mon, 9 Jul 2018 03:41:39 -0400
+Received: by mail-oi0-f66.google.com with SMTP id s198-v6so34099911oih.11
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 00:41:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FXKRWFspG0VbG5SDSAlkeui09UV6gyzuR7XW3qh8rY8=;
-        b=Yb6hs5T15h80Ac8hntcChYG3qmvZi/ErsD00FxwFfJhazDvCoLy7sy4KHZaJaBloiB
-         DwpZqE6hARb52vN2xPe9lLlvyPsDGKL7QgvEwAwjN6ScwUHRfoMmXNrtBS5alx8ay0bg
-         eYD5Bn4jkDA/Nnyp/nDMX+jey6DjcL8IeqIk8=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NIL9G9WrC8IrWDe2Sf+Y8ngg9k4SI+ofklhinD4ODNU=;
+        b=TpSWWxw7TlUlttCa/5uvpJ4aMXzgpKj7a155EoYNWzDZmr5287UGIcN886Lc5FxUGB
+         xB4chWbP4LdNzRTozPe9dPtQSZbNawp9WfVZnm+d0xbgPT60Dr+yNBCauqNX4RczeNW1
+         7jjt0C8ghNfc0/vSgfIHtugdzfck3WanRlzFPHYeCcIWfJa2Mf01mf/BtwfnJptf+tuB
+         ghc0AJ9W30WYmc23g0SoGB1PbF+gFIQdZR2qqv8J0KsSjhamxrQtsF+01v1e2ij/dlkz
+         VJoRp7Qwb7aE5qzXyL06XrVi2ONnn395sxybwTv5H9Fp8h8yr/BIfJPJLTx5KskaJwWw
+         siIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=FXKRWFspG0VbG5SDSAlkeui09UV6gyzuR7XW3qh8rY8=;
-        b=Z4VJqSPxOMBf4h8z/k9UtgDE66+rulH2jbHN/4jSKIp1GnKSC+UN9tYgNpfcrbe+16
-         6g4Jxeqale+ltcq7zF4eWnCRVbDbcOHBiA8HzCxRpdixj/16nV9fUbBICM1LrXWoIFNX
-         CAwiu9zt4Hr2zkmqNYr6AKTyMU2fjBWv8pgG34XmG/qH1y9bYzi4Mcg998hpTvVv5PRo
-         6dkxXTG4buWEfvL74WbvruLCL+yJYA3FTJzu1VJPbpSXWGfn9m12FfJBibhTTJpqZqLB
-         weVN6H/i6WyMMDjgMbE8zGMClJAQ1Tkz1d3qy6k5PbtQsn3TBkTZ1ZujW9KZwynAMhdr
-         orLQ==
-X-Gm-Message-State: APt69E1DkAIxl/mV4HPBLdrQQKHb9wu294rBXwjL8pe/qPGRFhLPi41C
-        lAoVKZfstKbAKVRjZlAtng+76A==
-X-Google-Smtp-Source: AAOMgpd7x30aSDA6O4DfR57IOgM9fbGwtd1PZvXLHhduPkGHS8eWjze23gz4TojmB3oNHZtjdTGFQg==
-X-Received: by 2002:a50:aba3:: with SMTP id u32-v6mr21205752edc.69.1531121966971;
-        Mon, 09 Jul 2018 00:39:26 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
-        by smtp.gmail.com with ESMTPSA id d18-v6sm5938165eds.40.2018.07.09.00.39.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 00:39:26 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 09:39:24 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Adam Jackson <ajax@redhat.com>
-Cc:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        Dave Airlie <airlied@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QEMU'S CIRRUS DEVICE" 
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH] drm/cirrus: flip default to 32bpp
-Message-ID: <20180709073924.GB3008@phenom.ffwll.local>
-Mail-Followup-To: Adam Jackson <ajax@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>, Dave Airlie <airlied@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QEMU'S CIRRUS DEVICE" <virtualization@lists.linux-foundation.org>
-References: <20180706091249.25086-1-kraxel@redhat.com>
- <e127596f255261d78fdfe6f534a1000f60c3c605.camel@redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NIL9G9WrC8IrWDe2Sf+Y8ngg9k4SI+ofklhinD4ODNU=;
+        b=H5FinMBX2trpAL9oP5GGWjwfzWJNKmFcELDhKOHZ43KHMLnkZ1BAoLoOA15wZUbY0Z
+         HKjfnlH8Gw93kGZEKmgly+jdWvBw74UUiELogRNVNg+rwx0F36u441oz3FrOTUjrRODG
+         Zpb33G5fOjePa0KwFN/MieJThcaZffdyS73zh8vRZttc6bl9cj1Q0LlhJybIi5+OcAZh
+         eSeD+bPQEeSJh92nVA0rAFmGSzjCs64/3n1WUj/fa+Gz0JBwPTOz7vZBMxc4FwM3Cck8
+         oCPWteMxRGknspiOoFCw5IZ5ZtkY1Hmlox4qGktDdyYkPxe/dXzG6GXGRox3I6nnvN2M
+         IpOw==
+X-Gm-Message-State: APt69E1yP20PJqKyJPB8bhToBMX+TzXtxV0UCYqJRNp4wpdIm0T4hA2t
+        Yx4Cl83ERtrgv19N1Lr0mTmGs/vFcwIDrYyMzZvvYg==
+X-Google-Smtp-Source: AAOMgpe+GAGOPQfcr+MtfR6vzrzpIGMnRB8uTuzdjGvqO0ZCal649e6BEVKR2diCI7lg2ipxqTC8Ima328UQfFwWz00=
+X-Received: by 2002:aca:6044:: with SMTP id u65-v6mr21840831oib.323.1531122098328;
+ Mon, 09 Jul 2018 00:41:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e127596f255261d78fdfe6f534a1000f60c3c605.camel@redhat.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180706215003.156702-1-jannh@google.com> <f9c8cf81df29006bc9c79932f3bcd599b559b408.camel@linux.intel.com>
+In-Reply-To: <f9c8cf81df29006bc9c79932f3bcd599b559b408.camel@linux.intel.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 9 Jul 2018 09:41:11 +0200
+Message-ID: <CAG48ez105Jan3BDAKssThnbNcr3yBMFTbdQHEHwXdmZUvE5VQw@mail.gmail.com>
+Subject: Re: [PATCH] x86/mtrr: don't copy out-of-bounds data in mtrr_write
+To:     andriy.shevchenko@linux.intel.com
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 02:35:07PM -0400, Adam Jackson wrote:
-> On Fri, 2018-07-06 at 11:12 +0200, Gerd Hoffmann wrote:
-> > cirrus can handle 1024x768 (and slightly higher) with 24bpp depth.
-> > cirrus can handle up to 800x600 with 32bpp.
-> 
-> 16bpp is maybe a better choice? Nobody's using cirrus because they care
-> about color fidelity and it'll use less CPU to update. There's
-> precedent here, mgag200 defaults to 16bpp on sufficiently memory-
-> impaired devices.
+On Mon, Jul 9, 2018 at 8:53 AM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, 2018-07-06 at 23:50 +0200, Jann Horn wrote:
+> > Don't access the provided buffer out of bounds - this can cause a
+> > kernel
+> > out-of-bounds read when invoked through sys_splice() or other things
+> > that
+> > use kernel_write()/__kernel_write().
+> >
+>
+> Can you elaborate a bit this change?
+>
+> Only few places in the kernel do this way and I would like to understand
+>  why in most of the cases it's okay to supply maximum available length
+> and here is not the one.
 
-Yeah nouveau does the same fallback to 16bpp if there's not enough vram.
-So do a bunch of other drivers.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+In many contexts, it is fine to do something like strncpy_from_user()
+with a fixed length without further checks - for example, in normal
+syscall handlers, or in ioctl handlers, because invocation of these
+implies an intent by the calling code to trigger specifically this
+behavior. ->read() and ->write() handlers are special exceptions that
+have to adhere to stricter rules because, in essence, reads and writes
+on files can be performed by one security context on a file that was
+maliciously supplied by another security context. In other words,
+invocation of ->read() and ->write() doesn't imply caller intent
+beyond "I want to move this many bytes between that file and this
+buffer". Specifically, this can happen in two ways:
+
+ - A malicious user can pass an arbitrary file to a setuid binary as
+stdin/stdout/stderr. When the setuid binary (expecting stdin/stdout to
+be something normal, like a proper file or a pipe) then calls read(0,
+<buf>, <len>), if the kernel disregards the length argument and writes
+beyond the end of the buffer, it can corrupt adjacent userspace data,
+potentially allowing a user to escalate their privileges; a write
+handler is somewhat less interesting because it can probably (as in
+this case) only leak out-of-bounds data from the caller, not corrupt
+it, but it's still a concern in theory.
+ - Almost any ->read() and ->write() handler can be invoked by the
+kernel with a buffer argument that points at a *kernel* buffer; when
+this happens, *the address limit checks are disabled*, allowing the
+->read() or ->write() handler to read and write *kernel memory* using
+copy_from_user()/copy_to_user() and other "userspace" accessor
+functions. The easiest way to trigger this behavior from userspace is
+to use sys_splice().
+
+It's not a big deal in this case because if you can open the mtrr
+device, you're probably very highly privileged already, and it's just
+a read, not a write, and the data has to adhere to a rather specific
+format to be parsed to a point where an attacker could grab the parsed
+data - but it's still wrong.
+
+An older mitigation patch for a somewhat similar, but more severe,
+problem in another subsystem is the following commit:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/drivers/infiniband?id=e6bd18f57aad1a2d1ef40e646d03ed0f2515c9e3
+- Infiniband improperly read pointers to userspace memory in its
+->write() handler and then accesses those userspace pointers using
+userspace accessor functions. I wrote a PoC back then that could abuse
+this to write to an arbitrary kernel address from unprivileged
+userspace via sys_splice(), provided that the vulnerable kernel module
+was loaded.
+
+> > Fixes: 7f8ec5a4f01a ("x86/mtrr: Convert to use strncpy_from_user()
+> > helper")
+> > Signed-off-by: Jann Horn <jannh@google.com>
+> > ---
+> >  arch/x86/kernel/cpu/mtrr/if.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/kernel/cpu/mtrr/if.c
+> > b/arch/x86/kernel/cpu/mtrr/if.c
+> > index 4021d3859499..40eee6cc4124 100644
+> > --- a/arch/x86/kernel/cpu/mtrr/if.c
+> > +++ b/arch/x86/kernel/cpu/mtrr/if.c
+> > @@ -106,7 +106,8 @@ mtrr_write(struct file *file, const char __user
+> > *buf, size_t len, loff_t * ppos)
+> >
+> >       memset(line, 0, LINE_SIZE);
+> >
+> > -     length = strncpy_from_user(line, buf, LINE_SIZE - 1);
+> > +     len = min_t(size_t, len, LINE_SIZE - 1);
+> > +     length = strncpy_from_user(line, buf, len);
+> >       if (length < 0)
+> >               return length;
+> >
+>
+> --
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Intel Finland Oy
