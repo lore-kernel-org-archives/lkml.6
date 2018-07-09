@@ -2,145 +2,145 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04ABEC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D741C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B23ED20881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:19:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D921820881
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:20:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mrnk74D7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23ED20881
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TLyIREJz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D921820881
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933090AbeGIMTx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 08:19:53 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34497 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932633AbeGIMTv (ORCPT
+        id S932947AbeGIMUT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 08:20:19 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45650 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932568AbeGIMUQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 08:19:51 -0400
-Received: by mail-pf0-f193.google.com with SMTP id e10-v6so13574800pfn.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 05:19:51 -0700 (PDT)
+        Mon, 9 Jul 2018 08:20:16 -0400
+Received: by mail-wr1-f66.google.com with SMTP id u7-v6so10761737wrn.12
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 05:20:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=ithf93De8cGFAkg/NX65Cngg7QcfIJzGaVdHVtCJ3DM=;
-        b=Mrnk74D7Ev/fBQBRiI+Rp9NiFOqXbiC22ghc//Yszynsdr2agBREbGMJn+dvd8GiiN
-         ZDszWmhH563pFCC6nKZU1uV3OzFNTtdRRupkv38cBKfkOPppuar9/W78KH3YHK2OjFIp
-         az85D0FsnMG/d4bi06RoxQ0sStOnzBLnlWIY1aZyRLLtM7IBe/PEHD5y69bq5emrKyFw
-         1zA5GZ+pYt34UALvpaWRoZzZvGnWsZU4WVBgYIhBji5buuRUMGKmYYp7HP/hVjJ0dhsa
-         CtXEgZP+UTE1oMHBRP1GBpAlIYdVYu4UoUcayaZbnvLTEiNxHJzohUWthBueShPPYoW4
-         kYZQ==
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=o0TuAYLtwDooqdYayABOZNOZpty46YF5835biu1xMmA=;
+        b=TLyIREJzABGXRR43FK8h+XEL9uIrvG8atGwpwIBAL+0hAVic8Y690IIYg/FA+anIhC
+         LMUcc/U42r2pX+SziwbSmT3Iq2/MUwcir7is/t5laIuiX3wSJEG/X0OBZqDxve/6m24l
+         J04iB4g5cjQQAgdNnYTemhGckX1VaZIQbKr/Tm+J4P3rUy8Mtlo9NF9hi7ppoHiYG5l0
+         90lCwufEHQfm8Ay2yg9V+5tyoukF4EdJKC7buoiQieaFv9/tl/nh/utN7NP1WOflBpop
+         +nqEvqAz/dY1OVUg9vEN9Doz2/zvhIvKic7rnheT5LjhiRghJHX7wfOhMUBYHAF3Evnd
+         nSHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ithf93De8cGFAkg/NX65Cngg7QcfIJzGaVdHVtCJ3DM=;
-        b=knSLzTUFv9xVRFwAxjKVpH8K7o/ijvR818GCjYU3Ht/zyq7kw/cjCVLyoMzMLQ+6b/
-         23tKvNxV5rRkhc2EE3PQXjDeWHjXeZTj7IWc9v+P6bFfn81fQQVeRG908lnbUkPD2X14
-         H3IPJ/t6SDjfvjSZj4rs/Xjgktk6ZBoej+GGoS6VLtIUO2tFfYOxuJ0bsvbezMENnNYR
-         8HFcD5+0hJ9EX5TKQZ7DqZ9VI/cIdt2Z492augZjq3WaSmTyssf9s/4WDhJZMQZvRMCd
-         3fxe1TDGYZ8eWvRB0UDcMnr/y3jGM8vTiWQMWRndARY+gFOT3BrXf8mDR9Buodo9s9HA
-         t3Ew==
-X-Gm-Message-State: APt69E0hENb7IKaSwuqLcimUkL2q7/OWGNX4qDxgHUMdPUiMa/IQfWKY
-        +pf37Vb/zPdFROsHSHQfqjWjGwWr
-X-Google-Smtp-Source: AAOMgpe/r/FecE9ZUtUXuOkhy8IJmH7bQUS+s7Ube2xoZ4e+k3zXil2bn1pvL2CwGSBWO+zW81ZpqA==
-X-Received: by 2002:a63:3d41:: with SMTP id k62-v6mr6604493pga.254.1531138791509;
-        Mon, 09 Jul 2018 05:19:51 -0700 (PDT)
-Received: from bj03003pcul8.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id y3-v6sm32767850pgr.44.2018.07.09.05.19.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Jul 2018 05:19:50 -0700 (PDT)
-From:   "Yandong.Zhao" <yandong77520@gmail.com>
-To:     Dave.Martin@arm.com, linux-arm-kernel@lists.infradead.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        ard.biesheuvel@linaro.org, linux-kernel@vger.kernel.org
-Cc:     zhaoxb@thundersoft.com, fanlc0801@thundersoft.com,
-        Yandong Zhao <yandong77520@gmail.com>
-Subject: [PATCH] arm64: neon: Add preemption protection for kernel_neon_busy
-Date:   Mon,  9 Jul 2018 20:19:43 +0800
-Message-Id: <1531138783-21418-1-git-send-email-yandong77520@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=o0TuAYLtwDooqdYayABOZNOZpty46YF5835biu1xMmA=;
+        b=l3Mgt7Q0hzqiJQEYHu/tXVC0Jj274nH7C4LkegURA3b5dTk5hOxl3plys5MnoXt0IN
+         0xLX6ph1cMOZJnQR+d5eh6ZnhHOpTVyDQdF1YtZaIrK1NaJxCWetFhpTMgq5puL2eF8P
+         eVdvLw8ZmjcQOsO8lDr8JY1otVGhZ85RwQ52TgvK/SpD266Cozww4tb6vF/yU2iNd5AD
+         LZ/GoUgTsW+l8p7yVLVfxYStxgOhDjWXvhOc57uKufjXaZONAGFdLWB7gdkfeph+WrrV
+         l1X0BQh7zQgFfxVqHPsIwily1T/y369TlzduXTfy4sQtl+F1gn/lto8EWtv7mqlU2HN9
+         fkEQ==
+X-Gm-Message-State: APt69E0Zfkh3ca+OsmblkmPcXMDsJyOH2zvMhAVo/9Scw+O8wuumIBfu
+        DYwZkc0C5A4s84x+DiB9o2o=
+X-Google-Smtp-Source: AAOMgpf8Vo5c1wUulH/EL9NMcUb2wYP5Zm6sfoP9zTZ6Lgue4hDta1vzFL1I3lJ807LSbH4eXXQV3A==
+X-Received: by 2002:a5d:6550:: with SMTP id z16-v6mr13918906wrv.194.1531138815507;
+        Mon, 09 Jul 2018 05:20:15 -0700 (PDT)
+Received: from [10.178.4.240] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id g10-v6sm3981521wru.43.2018.07.09.05.20.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 05:20:14 -0700 (PDT)
+Subject: Re: [GIT PULL 1/4] bcm2835-dt-next-2018-07-03
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com
+References: <20180703200511.2725-1-eric@anholt.net>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <74756307-2c22-e7de-386f-fb819ba8e3ed@gmail.com>
+Date:   Mon, 9 Jul 2018 05:20:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180703200511.2725-1-eric@anholt.net>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yandong Zhao <yandong77520@gmail.com>
 
-Dear Dave,
 
-The scenario for this bug is:
-The A process is sched out when the CPU0 executes the function
-raw_cpu_read(kernel_neon_busy) and just gets the address of
-kernel_neon_busy without reading.
-The B process starts running kernel_neon_begin() on CPU0, and the variable
-kernel_neon_busy on CPU0 becomes true. At this time, the A process is
-executed on CPU1 and the kernel_neon_busy value is CPU0 (true),so BUG_ON()!
+On 07/03/2018 01:05 PM, Eric Anholt wrote:
+> Hi Florian,
+> 
+> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
+> 
+>   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+> 
+> are available in the Git repository at:
+> 
+>   git://github.com/anholt/linux tags/bcm2835-dt-next-2018-07-03
+> 
+> for you to fetch changes up to 7503668f7287a359f234cd000f4ca8572e40677b:
+> 
+>   ARM: dts: bcm283x: Add Transposer block (2018-07-02 12:46:20 -0700)
+> 
+> ----------------------------------------------------------------
+> This pull request brings in a board DT for the Raspberry Pi Compute
+> Module and its I/O board, the Pi3's PMU node, and the display's
+> transposer block.
+> 
+> ----------------------------------------------------------------
 
-crash64> kernel_neon_busy
-PER-CPU DATA TYPE:
-  bool kernel_neon_busy;
-PER-CPU ADDRESSES:
-  [0]: ffffffc07fee30a0
-  [1]: ffffffc07fef90a0
-  [2]: ffffffc07ff0f0a0
-  [3]: ffffffc07ff250a0
-
-          CPU0                                       CPU1
-           |                                          |
-A task have get addr ffffffc07fee30a0                 |
-      and sched out                                   |
-           |                                          |
-B task kernel_neon_begin()                            |
-	[ffffffc07fee30a0]=1                              |
-           |                                          |
-           |                               A task sched in and read
-		   |                            [ffffffc07fee30a0]==1,so BUG_ON.
-           |                                          |
-B task kernel_neon_end()                              |
- [ffffffc07fee30a0]=0                                 |
-           |                                          |
-
-Signed-off-by: Yandong Zhao <yandong77520@gmail.com>
----
- arch/arm64/include/asm/simd.h | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
-
-diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
-index fa8b3fe..6580dcd 100644
---- a/arch/arm64/include/asm/simd.h
-+++ b/arch/arm64/include/asm/simd.h
-@@ -29,20 +29,12 @@
- static __must_check inline bool may_use_simd(void)
- {
- 	/*
--	 * The raw_cpu_read() is racy if called with preemption enabled.
--	 * This is not a bug: kernel_neon_busy is only set when
--	 * preemption is disabled, so we cannot migrate to another CPU
--	 * while it is set, nor can we migrate to a CPU where it is set.
--	 * So, if we find it clear on some CPU then we're guaranteed to
--	 * find it clear on any CPU we could migrate to.
--	 *
--	 * If we are in between kernel_neon_begin()...kernel_neon_end(),
--	 * the flag will be set, but preemption is also disabled, so we
--	 * can't migrate to another CPU and spuriously see it become
--	 * false.
-+	 * Operations for contexts where we do not want to do any checks for
-+	 * preemptions.  Unless strictly necessary, always use this_cpu_*()
-+	 * instead.
- 	 */
- 	return !in_irq() && !irqs_disabled() && !in_nmi() &&
--		!raw_cpu_read(kernel_neon_busy);
-+		!this_cpu_read(kernel_neon_busy);
- }
- 
- #else /* ! CONFIG_KERNEL_MODE_NEON */
+Merged, thanks Eric!
 -- 
-1.9.1
-
+Florian
