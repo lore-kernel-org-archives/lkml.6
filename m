@@ -2,113 +2,113 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F112C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E0AC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:54:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01F9220871
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:51:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66BA820871
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 17:54:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bLi3bX8g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01F9220871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A9TrHeyt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66BA820871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933905AbeGIRvc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 13:51:32 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:36381 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933692AbeGIRvb (ORCPT
+        id S934110AbeGIRx6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 13:53:58 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:57078 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933744AbeGIRxw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 13:51:31 -0400
-Received: by mail-pf0-f194.google.com with SMTP id u16-v6so14177701pfh.3;
-        Mon, 09 Jul 2018 10:51:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=hW1IQUa9XOL1Qfkgap14X+CyFZl8YayNmPJPvKVxkdw=;
-        b=bLi3bX8gREDCrKQeWj/HfuFSvxg/1ELQO1XLcfPvk3JWKwPRbZki+UuUFvBKziWM80
-         H2Dl30hL6IlyFJN2EvYm4M6YeeBEQysoKWT3+BvgIS2/XaXwgfaJ7116QDtT1dtVqnk+
-         J6Rc3xWV4F7FPGAtRwesEPvo85Uw4Rpz1GrdyikCDJO9SjN4EA0hFlQlX2lShCuYAlut
-         aT9b4Ys9NZM7vJKxmCVb2Iyy8TjARpRJW075JjXMqUXbfSwRoEaapXqwnmvv2vwz+NHZ
-         S9b+g85/cw1zckBAKj3mwl4eGBRMMVo3RFf0w+AAiHCiiyVGls/W7cpri9MMpP7CGCm9
-         WvQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=hW1IQUa9XOL1Qfkgap14X+CyFZl8YayNmPJPvKVxkdw=;
-        b=jssuYrERzSA1ec2hTuc3eKpR8iBQZgKqLzojJN5k7FojMfL/XFkf6Tch0oELjZx/mR
-         i0JDHYFX1hhjQndIDCPYDBCSiVeW5RaV2loe2RYx2KjOiT7m2FfOmJHSfkDYUMd6STBn
-         G5Psrts4VluLH0hxVh5nevFMBX8wbXiRd9uvP9lxw3L6ixTZ8oScQn/jQKd7VV5JxWSp
-         KIn7eHQlBKXgQcuHnCcZm/oJza/SFgTfIRmSodMp1LQo2kcD8shy27WXLdW73niLmS6O
-         AbBLC55PjHxlW80th57jwtNHYOLT0YzN7VCrhG3HE5c6TzIxikqMzeEPn5mfWyMugvL1
-         s7Bw==
-X-Gm-Message-State: APt69E2PA2MQjmvGhAv/9Vk7zedqx93eeuglxo9j/CMpngb+RepUle/m
-        A7LcBT2kT9W3plEDpeRdkV0=
-X-Google-Smtp-Source: AAOMgpcC5hOfTKTRhEa7T1X4yGtp5nm4erPkWjd3DCpCGUFpE4TVPzYwVvLsPT7V/McQ48RAJdRXLw==
-X-Received: by 2002:a63:7f16:: with SMTP id a22-v6mr19720262pgd.255.1531158690393;
-        Mon, 09 Jul 2018 10:51:30 -0700 (PDT)
-Received: from localhost.localdomain ([211.196.191.92])
-        by smtp.gmail.com with ESMTPSA id y13-v6sm14926862pfi.131.2018.07.09.10.51.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jul 2018 10:51:29 -0700 (PDT)
-From:   Taeung Song <treeze.taeung@gmail.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Jesper Dangaard Brouer <brouer@redhat.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Taeung Song <treeze.taeung@gmail.com>
-Subject: [PATCH v2] samples/bpf: Fix tc and ip paths in xdp2skb_meta.sh
-Date:   Tue, 10 Jul 2018 02:51:21 +0900
-Message-Id: <20180709175121.3355-1-treeze.taeung@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 9 Jul 2018 13:53:52 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w69Hn1IM062605;
+        Mon, 9 Jul 2018 17:53:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id; s=corp-2018-07-02;
+ bh=rkF/W5l1f2hdV/PoCWSS0R+d/IojjDnfRdW+MLhPT/M=;
+ b=A9TrHeytp0fNX+UWGVJkTOn4+d7u0OhxSDDBfVL67T+0UrelgMfv1//j8O4Y8sKJuvTJ
+ NZLxJG1rHIuM1XxzTvktgMjbbn9dLFG64uxN537JOP5Z/9jIRlLERe5w0pslJhexsxEZ
+ 24sxO0cLQk+ZZDVctMWCkoZod1M+H+9kmkaThektwH1OTm7DqpH1gaToxcr2hcKir1pt
+ 2QQVRl8OMBAdDJAF1sYdWbNOkXyBsQo+dZLgxwuKwu8hwpEoaeZj7Ny0ONhZM2naPZPs
+ sFcmRVj3VZkNzCePa744wHfbTKL3WyIIYWb1WxwEM8FMa20TMaoKAz9peyV+oTKkfvvX ng== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2k2p75wa3y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 09 Jul 2018 17:53:23 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w69HrMG3006202
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 9 Jul 2018 17:53:22 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w69HrK5a001968;
+        Mon, 9 Jul 2018 17:53:20 GMT
+Received: from xakep.us.oracle.com (/10.154.140.248)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 09 Jul 2018 10:53:19 -0700
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
+        jglisse@redhat.com, jrdr.linux@gmail.com, bhe@redhat.com,
+        gregkh@linuxfoundation.org, vbabka@suse.cz,
+        richard.weiyang@gmail.com, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org,
+        osalvador@techadventures.net, pasha.tatashin@oracle.com
+Subject: [PATCH v4 0/3] sparse_init rewrite
+Date:   Mon,  9 Jul 2018 13:53:09 -0400
+Message-Id: <20180709175312.11155-1-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.18.0
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8949 signatures=668705
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=515
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807090202
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The below path error can occur:
+Changelog:
+v4 - v3
+	- Addressed comments from Dave Hansen
+v3 - v1
+	- Fixed two issues found by Baoquan He
+v1 - v2
+	- Addressed comments from Oscar Salvador
 
-  # ./xdp2skb_meta.sh --dev eth0 --list
-  ./xdp2skb_meta.sh: line 61: /usr/sbin/tc: No such file or directory
+In sparse_init() we allocate two large buffers to temporary hold usemap and
+memmap for the whole machine. However, we can avoid doing that if we
+changed sparse_init() to operated on per-node bases instead of doing it on
+the whole machine beforehand.
 
-So just use command names instead of absolute paths of tc and ip.
-In addition, it allow callers to redefine $TC and $IP paths
+As shown by Baoquan
+http://lkml.kernel.org/r/20180628062857.29658-1-bhe@redhat.com
 
-Fixes: 36e04a2d78d9 ("samples/bpf: xdp2skb_meta shows transferring info from XDP to SKB")
-Reviewed-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Taeung Song <treeze.taeung@gmail.com>
----
- samples/bpf/xdp2skb_meta.sh | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+The buffers are large enough to cause machine stop to boot on small memory
+systems.
 
-diff --git a/samples/bpf/xdp2skb_meta.sh b/samples/bpf/xdp2skb_meta.sh
-index b9c9549c4c27..4bde9d066c46 100755
---- a/samples/bpf/xdp2skb_meta.sh
-+++ b/samples/bpf/xdp2skb_meta.sh
-@@ -16,8 +16,8 @@
- BPF_FILE=xdp2skb_meta_kern.o
- DIR=$(dirname $0)
- 
--export TC=/usr/sbin/tc
--export IP=/usr/sbin/ip
-+[ -z "$TC" ] && TC=tc
-+[ -z "$IP" ] && IP=ip
- 
- function usage() {
-     echo ""
-@@ -53,7 +53,7 @@ function _call_cmd() {
-     local allow_fail="$2"
-     shift 2
-     if [[ -n "$VERBOSE" ]]; then
--	echo "$(basename $cmd) $@"
-+	echo "$cmd $@"
-     fi
-     if [[ -n "$DRYRUN" ]]; then
- 	return
+These patches should be applied on top of Baoquan's work, as
+CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER is removed in that work.
+
+For the ease of review, I split this work so the first patch only adds new
+interfaces, the second patch enables them, and removes the old ones.
+
+Pavel Tatashin (3):
+  mm/sparse: add sparse_init_nid()
+  mm/sparse: start using sparse_init_nid(), and remove old code
+  mm/sparse: refactor sparse vmemmap buffer allocations
+
+ include/linux/mm.h  |  13 +-
+ mm/sparse-vmemmap.c | 111 ++++++++++-------
+ mm/sparse.c         | 281 +++++++++++++++-----------------------------
+ 3 files changed, 170 insertions(+), 235 deletions(-)
+
 -- 
-2.17.1
+2.18.0
 
