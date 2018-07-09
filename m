@@ -7,65 +7,69 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E6CC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:40:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B18D1C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB64F2086B
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60E042086B
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 22:40:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltW9fV8A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB64F2086B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W6fdvp3X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60E042086B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933542AbeGIWkb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 18:40:31 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:37626 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932845AbeGIWkP (ORCPT
+        id S933557AbeGIWkt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 18:40:49 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37714 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933438AbeGIWkC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 18:40:15 -0400
-Received: by mail-pl0-f65.google.com with SMTP id 31-v6so6671301plc.4;
-        Mon, 09 Jul 2018 15:40:15 -0700 (PDT)
+        Mon, 9 Jul 2018 18:40:02 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n15-v6so1551413pgv.4;
+        Mon, 09 Jul 2018 15:40:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TDml3Z2bzO13EsIgZzeiivaEl9Hf3eyE+/8QqqzKI8s=;
-        b=ltW9fV8AXBL/mEOS/a8KJj5htlr6r3C1DK6wBJFlGQSnzEK4ua8h83/mrq5BwYSaMK
-         Q+U2ONplsnUHx6saE1TfZWrloQY8bA4ATGqxfarxrNo/DjvAz00Rlp7xOEtDxPdfe7v+
-         bfsdDjZt1HSQbjpNkK6NhlnKgjDdTTB+8aenF7OQVlPJ1Ygt0jqwIh2+gP4XUhc0NW5s
-         dzpO3eydOymUl2B+GJcFZ6nyTQi7z5Ni3hX498ejmiLrbJEnc6cE9JMGvvE9Lobj9JOD
-         3j3OsOjEoSeLFCf5YibutN1wLDmrJx1nGWdAZkdgxFcrSVPFy0VVw6xcFZXEmaT3cDH5
-         7rgg==
+        bh=uPKujOQMnvKU1077V5CGc8/sTd+S/PEORaQoe1sBY8c=;
+        b=W6fdvp3XWSjl9EWhAEfqQ/N7khhZNtoE/QR3ZCOu62TNhxvCSc+pAJ8Y9L0pZTsG9+
+         jyCQjX1LJgaycnomSUZGBVktbA2Bmk8/nOhMHhKD8ym9UBxRN1TG7KQNBCUj73Vl4iYZ
+         Ff9y8cKQA4HiQM4/xN93pnDv336GjbDlwbnuAlu0i6zI1JaigkZQbFivTDGAqpffTlC1
+         hfFFodoCxhk/ikDyd9jZ5JvU2Iiw8PqhXXgRm1fMOO4ihhS7mEcScaIlgLFhUo7du8sh
+         zE4i/39ceL/67fOlDt6IfhLFyBpzNpeMS2aTDUh+PuVU7IJAw6kcrWxGQ/EtbaRFHWD7
+         qpHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=TDml3Z2bzO13EsIgZzeiivaEl9Hf3eyE+/8QqqzKI8s=;
-        b=GIHgVVJOtva9EX5E0K0UXolVo45kpB544wWAxU4xL5HuCOITQkDTbaLSwocxvnZUp2
-         hWjk4LlQFzxK5G0XfXljKo3hpAXvQeH+jXJFY3JvDbznGMpxYDISGNMtvj8Cy8daLWZF
-         Ikd/enpyHsMIFewGKphcm3otvXcQ0OFao0atlgg5nQ1pKAzVDSaCgnyi37A+lDgtsjqp
-         e1E6a2HYN1kYJ2BTqa67Cdi3cCmFfA5br41Bg1R+3Ofxln9A0ymkAHuXiSS4qYpWvH26
-         NEJp0KiIKnVIRbd5KR+qRRxmSGC1Lsksz/2qvxGw2/2/viuc6Vo+DbpKjlM3GEZPZOsz
-         kx5g==
-X-Gm-Message-State: APt69E0G1qgwaIktgeshuwLmpS9g8gI3IXLfRmuhpp4lLl3HMdRXapfR
-        Ze+1BPyqzG/YbNDfHzaOIieOrw==
-X-Google-Smtp-Source: AAOMgpcLKGiD/vbna1AbT7RqgTwQFbWZSICL164g9UZ5SNjL3ZPUUZSlBk3tnTbqvmfElxWoXFZaBQ==
-X-Received: by 2002:a17:902:364:: with SMTP id 91-v6mr2556837pld.261.1531176014597;
-        Mon, 09 Jul 2018 15:40:14 -0700 (PDT)
+        bh=uPKujOQMnvKU1077V5CGc8/sTd+S/PEORaQoe1sBY8c=;
+        b=Hnt/px8Neju30BQGbK0TQwpdEVNmQMjKIe9xAUWKx9glizpr13/sPWMcc7u5qou42p
+         vCHc5JRTTK4zu9gGiEtq8uzC9NrFyCnXEruvUbthbSeRGXMUyxcRJs/IFcUdjCIdndCE
+         Zco1LvkwcXG+wQLqYUS7XfgD1y9sVit1CaB56M0WuQhDsGTFh72W+eaD+u3iQmiTDcwI
+         k6Xx2doCyHBnh+ca01QId5cBr+CZjnQgDmQ5GkqVTYof0+zMCZq3tju1N4OHmq1SfF0Y
+         w/l+WRQufb+ALbcyRzV9+wuuYFJnYOXYmI3iha+GXV+QjfKFlqdAXcpm+mGneFNXx6BZ
+         72gA==
+X-Gm-Message-State: APt69E3f8cUPVW3oLY3k9y8xqW3OmSxawP9GYuvwqa9O19v6WAObAy6o
+        yzIIyNBEo/uM4IefMGQXO93YvQ==
+X-Google-Smtp-Source: AAOMgpfLCxxYnRtAbdsoEb0HQjhBnXeYDTotza5zfH58+P1EGYObW8O7RyJ7Ae9RunIuQ07W6sekuQ==
+X-Received: by 2002:a62:3f44:: with SMTP id m65-v6mr22903705pfa.98.1531176001464;
+        Mon, 09 Jul 2018 15:40:01 -0700 (PDT)
 Received: from majic.sklembedded.com (c-98-210-181-167.hsd1.ca.comcast.net. [98.210.181.167])
-        by smtp.googlemail.com with ESMTPSA id r16-v6sm30143804pfe.173.2018.07.09.15.40.13
+        by smtp.googlemail.com with ESMTPSA id r16-v6sm30143804pfe.173.2018.07.09.15.40.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Jul 2018 15:40:13 -0700 (PDT)
+        Mon, 09 Jul 2018 15:40:00 -0700 (PDT)
 From:   Steve Longerbeam <slongerbeam@gmail.com>
 X-Google-Original-From: Steve Longerbeam <steve_longerbeam@mentor.com>
 To:     linux-media@vger.kernel.org
 Cc:     Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v6 17/17] [media] v4l2-subdev.rst: Update doc regarding subdev descriptors
-Date:   Mon,  9 Jul 2018 15:39:17 -0700
-Message-Id: <1531175957-1973-18-git-send-email-steve_longerbeam@mentor.com>
+Subject: [PATCH v6 14/17] media: staging/imx: TODO: Remove one assumption about OF graph parsing
+Date:   Mon,  9 Jul 2018 15:39:14 -0700
+Message-Id: <1531175957-1973-15-git-send-email-steve_longerbeam@mentor.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
 References: <1531175957-1973-1-git-send-email-steve_longerbeam@mentor.com>
@@ -74,61 +78,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the doc to describe the new method of adding subdevice
-descriptors to async notifiers.
+The move to subdev notifiers fixes one assumption of OF graph parsing.
+If a subdevice has non-video related ports, the subdev driver knows not
+to follow those ports when adding remote devices to its subdev notifier.
 
 Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
 ---
-Changes since v5:
-- add info about v4l2_async_notifier_init().
----
- Documentation/media/kapi/v4l2-subdev.rst | 30 +++++++++++++++++++-----------
- 1 file changed, 19 insertions(+), 11 deletions(-)
+ drivers/staging/media/imx/TODO | 29 +++++++----------------------
+ 1 file changed, 7 insertions(+), 22 deletions(-)
 
-diff --git a/Documentation/media/kapi/v4l2-subdev.rst b/Documentation/media/kapi/v4l2-subdev.rst
-index e1f0b72..1280e05 100644
---- a/Documentation/media/kapi/v4l2-subdev.rst
-+++ b/Documentation/media/kapi/v4l2-subdev.rst
-@@ -247,20 +247,28 @@ performed using the :c:func:`v4l2_async_unregister_subdev` call. Subdevices
- registered this way are stored in a global list of subdevices, ready to be
- picked up by bridge drivers.
+diff --git a/drivers/staging/media/imx/TODO b/drivers/staging/media/imx/TODO
+index 9eb7326..aeeb154 100644
+--- a/drivers/staging/media/imx/TODO
++++ b/drivers/staging/media/imx/TODO
+@@ -17,29 +17,15 @@
+   decided whether this feature is useful enough to make it generally
+   available by exporting to v4l2-core.
  
--Bridge drivers in turn have to register a notifier object with an array of
--subdevice descriptors that the bridge device needs for its operation. This is
-+Bridge drivers in turn have to register a notifier object. This is
- performed using the :c:func:`v4l2_async_notifier_register` call. To
- unregister the notifier the driver has to call
- :c:func:`v4l2_async_notifier_unregister`. The former of the two functions
--takes two arguments: a pointer to struct :c:type:`v4l2_device` and a pointer to
--struct :c:type:`v4l2_async_notifier`. The latter contains a pointer to an array
--of pointers to subdevice descriptors of type struct :c:type:`v4l2_async_subdev`
--type. The V4L2 core will then use these descriptors to match asynchronously
--registered
--subdevices to them. If a match is detected the ``.bound()`` notifier callback
--is called. After all subdevices have been located the .complete() callback is
--called. When a subdevice is removed from the system the .unbind() method is
--called. All three callbacks are optional.
-+takes two arguments: a pointer to struct :c:type:`v4l2_device` and a
-+pointer to struct :c:type:`v4l2_async_notifier`.
-+
-+Before registering the notifier, bridge drivers must do two things:
-+first, the notifier must be initialized using the
-+:c:func:`v4l2_async_notifier_init`. Second, bridge drivers can then
-+begin to form a list of subdevice descriptors that the bridge device
-+needs for its operation. Subdevice descriptors are added to the notifier
-+using the :c:func:`v4l2_async_notifier_add_subdev` call. This function
-+takes two arguments: a pointer to struct :c:type:`v4l2_async_notifier`,
-+and a pointer to the subdevice descripter, which is of type struct
-+:c:type:`v4l2_async_subdev`.
-+
-+The V4L2 core will then use these descriptors to match asynchronously
-+registered subdevices to them. If a match is detected the ``.bound()``
-+notifier callback is called. After all subdevices have been located the
-+.complete() callback is called. When a subdevice is removed from the
-+system the .unbind() method is called. All three callbacks are optional.
+-- The OF graph is walked at probe time to form the list of fwnodes to
+-  be passed to v4l2_async_notifier_register(), starting from the IPU
+-  CSI ports. And after all async subdevices have been bound,
+-  v4l2_fwnode_parse_link() is used to form the media links between
+-  the entities discovered by walking the OF graph.
++- After all async subdevices have been bound, v4l2_fwnode_parse_link()
++  is used to form the media links between the devices discovered in
++  the OF graph.
  
- V4L2 sub-device userspace API
- -----------------------------
+   While this approach allows support for arbitrary OF graphs, there
+   are some assumptions for this to work:
+ 
+-  1. All port parent nodes reachable in the graph from the IPU CSI
+-     ports bind to V4L2 async subdevice drivers.
+-
+-     If a device has mixed-use ports such as video plus audio, the
+-     endpoints from the audio ports are followed to devices that must
+-     bind to V4L2 subdevice drivers, and not for example, to an ALSA
+-     driver or a non-V4L2 media driver. If the device were bound to
+-     such a driver, imx-media would never get an async completion
+-     notification because the device fwnode was added to the async
+-     list, but the driver does not interface with the V4L2 async
+-     framework.
+-
+-  2. Every port reachable in the graph is treated as a media pad,
+-     owned by the V4L2 subdevice that is bound to the port's parent.
++  1. If a port owned by a device in the graph has endpoint nodes, the
++     port is treated as a media pad.
+ 
+      This presents problems for devices that don't make this port = pad
+      assumption. Examples are SMIAPP compatible cameras which define only
+@@ -54,9 +40,8 @@
+      possible long-term solution is to implement a subdev API that
+      maps a port id to a media pad index.
+ 
+-  3. Every endpoint of a port reachable in the graph is treated as
+-     a media link, between V4L2 subdevices that are bound to the
+-     port parents of the local and remote endpoints.
++  2. Every endpoint of a port owned by a device in the graph is treated
++     as a media link.
+ 
+      Which means a port must not contain mixed-use endpoints, they
+      must all refer to media links between V4L2 subdevices.
 -- 
 2.7.4
 
