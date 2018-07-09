@@ -2,91 +2,95 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E079CC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A5CC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73A5B20881
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:23:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HA8ketiF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73A5B20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 568AC20857
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 09:23:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 568AC20857
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932789AbeGIJXB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 05:23:01 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:39426 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932241AbeGIJW7 (ORCPT
+        id S932821AbeGIJXd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 05:23:33 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:35858 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932431AbeGIJXb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 05:22:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=KWOj7qFmFEURuu4N1y/wrecXj0PqeZ+USMPyxWQVuRI=; b=HA8ketiFmix1gHSLIxLdHAOUp
-        /t1N6aj78pVYgwOFjthqgb3r/2kmaaFLFWpPnBSK7R8a/gufAtmdLSdrJoFUCYfK1GJvyYS+UFGrA
-        1QZ3CRDXil9dnL0iCqUfU65r8DCH1t1bG3aeueclP4ZtHBxsgvDNTUxtfwdrTp8FGVO4EyeBn8tt2
-        nZ4GmNZVprDaJbVNYu83HpudQyiQr4yJBGAZJk00VkYsI4fZsp0JkbYcKFXXUymhh4Cq3gaxFREsJ
-        vneb1BOCXkQBxX0+qlyjIOKFUeNh0xg1i9ZsxUUFR4/+CegXGd6+7PrjRy1RxAsu49BnoyVzvuY82
-        aWS2XAviA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcSNZ-0004VE-Cd; Mon, 09 Jul 2018 09:22:45 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id B80E72028932D; Mon,  9 Jul 2018 11:22:43 +0200 (CEST)
-Date:   Mon, 9 Jul 2018 11:22:43 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        x86@kernel.org, kvm@vger.kernel.org
-Subject: [patch 8/7] x86/kvmclock: Avoid TSC recalibration
-Message-ID: <20180709092243.GG2476@hirez.programming.kicks-ass.net>
-References: <20180706161307.733337643@linutronix.de>
+        Mon, 9 Jul 2018 05:23:31 -0400
+Received: by mail-ua0-f196.google.com with SMTP id y8-v6so11278430uan.3;
+        Mon, 09 Jul 2018 02:23:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wtgZh7aWIm+e4IJUwxxS6DFphYJ6JhlG/9v1/DeW2C8=;
+        b=PloS3/DlHloQiDPOy2igNmaynAIAbq6WCjvCFeTPluB++9Q/YIzyaI89ys4H0QRBTk
+         Wy2MsWm99VNy4HR2M46Nzg2YQQbgzVVpJX+efbDYYDRmQ1VWxbihAiRvvZErYX3wsqST
+         AqjEYb1Ygdxy8aIhPOWTlT9WB439qafXskKAUl/8xOo5l7IzJ5TBoD0EXyaUlnRGeuhi
+         ZW5nDH2osanbgsTGw/74ioX0qzUnU46WXXF8TnxL5hRvjEw01yLCkQxd0j5qMYPDNj1N
+         3NX9T1p2L1z/IwDnnXqJLh9jgG19fWyDHN8dSI6H2NGm2VdSq3KvWpb7luKy79r3LLfW
+         yXyA==
+X-Gm-Message-State: APt69E0pVLYsgijAoDo8JN3mR4Swj89I9fEm3nDCldANheR5/OAtsVo0
+        F7ln0Rysw+6O+xVlvzGyQXg/OZ+JwJmPVSHdLhI=
+X-Google-Smtp-Source: AAOMgpf26WJzp3VLAqTw0cpymxst/5RoXcUIGICh42oe4jn5HjlZkEtzXidxt14QGuGrjHQ42U6PQLthwSdVUSNY4TU=
+X-Received: by 2002:ab0:221:: with SMTP id 30-v6mr2544654uas.26.1531128210652;
+ Mon, 09 Jul 2018 02:23:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180706161307.733337643@linutronix.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180709044444.6397-1-abrodkin@synopsys.com> <f7499a811ba54c00a11f7525ae216213@AcuMS.aculab.com>
+In-Reply-To: <f7499a811ba54c00a11f7525ae216213@AcuMS.aculab.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 9 Jul 2018 11:23:19 +0200
+Message-ID: <CAMuHMdUdTNpt6G1gzdd6tg9cTo4+kOQCP0Ekouhogug_1sJNPg@mail.gmail.com>
+Subject: Re: [RESEND PATCH v2] devres: Really align data field to unsigned
+ long long
+To:     David Laight <David.Laight@aculab.com>
+Cc:     Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Greg KH <greg@kroah.com>, Greg KH <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jul 9, 2018 at 11:15 AM David Laight <David.Laight@aculab.com> wrote:
+> From: Alexey Brodkin
+> > Sent: 09 July 2018 05:45
+> > Depending on ABI "long long" type of a particular 32-bit CPU
+> > might be aligned by either word (32-bits) or double word (64-bits).
+> > Make sure "data" is really 64-bit aligned for any 32-bit CPU.
+> >
+> > At least for 32-bit ARC cores ABI requires "long long" types
+> > to be aligned by normal 32-bit word. This makes "data" field aligned to
+> > 12 bytes. Which is still OK as long as we use 32-bit data only.
+> >
+> > But once we want to use native atomic64_t type (i.e. when we use special
+> > instructions LLOCKD/SCONDD for accessing 64-bit data) we easily hit
+> > misaligned access exception.
+>
+> Shouldn't there be a typedef for the actual type.
+> Perhaps it is even atomic64_t ?
+> And have the __aligned(8) applied to that typedef ??
 
-If the host gives us a TSC rate, assume it is good and don't try and
-recalibrate things against virtual timer hardware.
+That indeed sounds like the best thing to do, as it will fix this issue in other
+places, too.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -140,7 +140,16 @@ static inline void kvm_sched_clock_init(
-  */
- static unsigned long kvm_get_tsc_khz(void)
- {
--	return pvclock_tsc_khz(this_cpu_pvti());
-+	unsigned long tsc_khz = pvclock_tsc_khz(this_cpu_pvti());
-+
-+	/*
-+	 * TSC frequency is reported by the host; calibration against (virtual)
-+	 * HPET/PM-timer in a guest is dodgy and pointless since the host already
-+	 * did it for us where required.
-+	 */
-+	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
-+
-+	return tsc_khz;
- }
- 
- static void kvm_get_preset_lpj(void)
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
