@@ -1,188 +1,169 @@
 Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26322C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D1E3C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1131208A3
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:52:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1131208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B2308208A3
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 05:52:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2308208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754564AbeGIFwE (ORCPT
+        id S1754468AbeGIFws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 01:52:04 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:52750 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751132AbeGIFwC (ORCPT
+        Mon, 9 Jul 2018 01:52:48 -0400
+Received: from out30-133.freemail.mail.aliyun.com ([115.124.30.133]:39212 "EHLO
+        out30-133.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1750996AbeGIFwr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 01:52:02 -0400
-Received: by mail-it0-f71.google.com with SMTP id b132-v6so14869171iti.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Jul 2018 22:52:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=NK0eBQj0PzRReimKNUdZ1LmP7wU4iQJQ1gZ7JpB9DEU=;
-        b=e+NpAoE9ahKw0Vb5vyIP4FPLqWBZZRHlFcxrbOI8Ct0HY1HFRGUzcCUGd6y4Vhk4zH
-         eqDDQwS+LhHBAH/B3BXJCCQURHFueJWP7OFqg0Q4nJXneUo7WWxUc7wwEjmksEuto1Ij
-         Ce3PWn4Mh0fSItxwnMw8rn4TkbGCAUFDQs8lO9NW4JWZTmVZmNEhx3bkyk6/QWV6U4in
-         3LNM8xLjyptmc2OWB/Pi8L3SCLm/DCiT/aLQZrFsJUVD9yEVBYxuNikmXVgr4uWsSXrp
-         /PMw/kbKOBiFfXCxnqyIGdR9rtz3/ZnFAweMJGz5/SH2yrwFDg5+EsJZybC/ZDLwei+W
-         RXzg==
-X-Gm-Message-State: APt69E3tJaziMg5h+HsHFV9Ru6W88yUEc6buLVi0Tj5xDtqYYCSWM6TR
-        eMnZNmaGYGYTUjfZ7lYfgvqKexgK5OpFvX2GoyvTG4PKn9Kc
-X-Google-Smtp-Source: AAOMgpc1v+9gHzkcmBetYa+8YUdX1b8YsqkH8aQM0tNKDKwhmkKk3us1tW2WzKoTX5mlLYfN21dbvD9DXnb8lugKMUpvEO7g7mte
+        Mon, 9 Jul 2018 01:52:47 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01355;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0T4G08X3_1531115558;
+Received: from xunleideMacBook-Pro.local(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T4G08X3_1531115558)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Mon, 09 Jul 2018 13:52:38 +0800
+Reply-To: xlpang@linux.alibaba.com
+Subject: Re: [PATCH] sched/cputime: Ensure correct utime and stime proportion
+From:   Xunlei Pang <xlpang@linux.alibaba.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org
+References: <20180622071542.61569-1-xlpang@linux.alibaba.com>
+ <b9363fa9-826f-611f-3ab3-27e50c03422a@linux.alibaba.com>
+ <20180626154908.GE2458@hirez.programming.kicks-ass.net>
+ <e1b69cf9-a3a7-ea67-7c0e-d67ac81f29f1@linux.alibaba.com>
+ <20180705104632.GE2494@hirez.programming.kicks-ass.net>
+ <bd275aff-61dd-557f-5b91-da4ce82f9501@linux.alibaba.com>
+Message-ID: <5a3354c1-d3fe-33dc-53cf-6eb621177052@linux.alibaba.com>
+Date:   Mon, 9 Jul 2018 13:52:38 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.0
 MIME-Version: 1.0
-X-Received: by 2002:a02:e88:: with SMTP id 130-v6mr6847065jae.0.1531115522019;
- Sun, 08 Jul 2018 22:52:02 -0700 (PDT)
-Date:   Sun, 08 Jul 2018 22:52:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ccdf0605708a9ccc@google.com>
-Subject: KASAN: use-after-free Write in _free_event
-From:   syzbot <syzbot+a24c397a29ad22d86c98@syzkaller.appspotmail.com>
-To:     acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, linux-kernel@vger.kernel.org, mingo@redhat.com,
-        namhyung@kernel.org, peterz@infradead.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <bd275aff-61dd-557f-5b91-da4ce82f9501@linux.alibaba.com>
+Content-Type: multipart/mixed;
+ boundary="------------BE11F3B1CFC23A9FAB906983"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This is a multi-part message in MIME format.
+--------------BE11F3B1CFC23A9FAB906983
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 7bit
 
-syzbot found the following crash on:
+Hi Peter,
 
-HEAD commit:    b2d44d145d2a Merge tag '4.18-rc3-smb3fixes' of git://git.s..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=178cf50c400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2ca6c7a31d407f86
-dashboard link: https://syzkaller.appspot.com/bug?extid=a24c397a29ad22d86c98
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+On 7/5/18 9:21 PM, Xunlei Pang wrote:
+> On 7/5/18 6:46 PM, Peter Zijlstra wrote:
+>> On Wed, Jun 27, 2018 at 08:22:42PM +0800, Xunlei Pang wrote:
+>>> tick-based whole utime is utime_0, tick-based whole stime
+>>> is stime_0, scheduler time is rtime_0. 
+>>
+>>> For a long time, the process runs mainly in userspace with
+>>> run-sleep patterns, and because two different clocks, it
+>>> is possible to have the following condition:
+>>>   rtime_0 < utime_0 (as with little stime_0)
+>>
+>> I don't follow... what?
+>>
+>> Why are you, and why do you think it makes sense to, compare rtime_0
+>> against utime_0 ?
+>>
+>> The [us]time_0 are, per your earlier definition, ticks. They're not an
+>> actual measure of time. Do not compare the two, that makes no bloody
+>> sense.
+>>
+> 
+> [us]time_0 is task_struct:utime{stime}, I cited directly from
+> cputime_adjust(), both in nanoseconds. I assumed "rtime_0 < utime_0"
+> here to simple the following proof to help explain the problem we met.
+> 
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+a24c397a29ad22d86c98@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in atomic_dec_and_test  
-include/asm-generic/atomic-instrumented.h:222 [inline]
-BUG: KASAN: use-after-free in put_task_struct include/linux/sched/task.h:95  
-[inline]
-BUG: KASAN: use-after-free in _free_event+0x48d/0x1440  
-kernel/events/core.c:4451
-Write of size 4 at addr ffff8801999ee2a0 by task syz-executor2/19286
-
-CPU: 1 PID: 19286 Comm: syz-executor2 Not tainted 4.18.0-rc3+ #136
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-  kasan_check_write+0x14/0x20 mm/kasan/kasan.c:278
-  atomic_dec_and_test include/asm-generic/atomic-instrumented.h:222 [inline]
-  put_task_struct include/linux/sched/task.h:95 [inline]
-  _free_event+0x48d/0x1440 kernel/events/core.c:4451
-  free_event+0xb4/0x180 kernel/events/core.c:4472
-  perf_event_release_kernel+0x7d5/0x1050 kernel/events/core.c:4633
-  perf_release+0x37/0x50 kernel/events/core.c:4647
-  __fput+0x355/0x8b0 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1b08/0x2750 kernel/exit.c:865
-  do_group_exit+0x177/0x440 kernel/exit.c:968
-  get_signal+0x88e/0x1970 kernel/signal.c:2468
-  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x2e0/0x370 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode+0x342/0x3b0 arch/x86/entry/common.c:197
-  retint_user+0x8/0x18
-RIP: 0033:          (null)
-Code: Bad RIP value.
-RSP: 002b:0000000020000048 EFLAGS: 00010217
-RAX: 0000000000000000 RBX: 00007f62934726d4 RCX: 0000000000455e29
-RDX: 0000000020000100 RSI: 0000000020000040 RDI: 0000000000000000
-RBP: 000000000072bea0 R08: 0000000020000080 R09: 0000000000000000
-R10: 0000000020000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004bbc2c R14: 00000000004c8f48 R15: 0000000000000000
-
-Allocated by task 19280:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc_node+0x144/0x780 mm/slab.c:3644
-  alloc_task_struct_node kernel/fork.c:157 [inline]
-  dup_task_struct kernel/fork.c:779 [inline]
-  copy_process.part.39+0x16b5/0x7220 kernel/fork.c:1641
-  copy_process kernel/fork.c:1616 [inline]
-  _do_fork+0x291/0x12a0 kernel/fork.c:2099
-  __do_sys_clone kernel/fork.c:2206 [inline]
-  __se_sys_clone kernel/fork.c:2200 [inline]
-  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2200
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 19280:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
-  free_task_struct kernel/fork.c:162 [inline]
-  free_task+0x16e/0x1f0 kernel/fork.c:390
-  copy_process.part.39+0x15c9/0x7220 kernel/fork.c:2034
-  copy_process kernel/fork.c:1616 [inline]
-  _do_fork+0x291/0x12a0 kernel/fork.c:2099
-  __do_sys_clone kernel/fork.c:2206 [inline]
-  __se_sys_clone kernel/fork.c:2200 [inline]
-  __x64_sys_clone+0xbf/0x150 kernel/fork.c:2200
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801999ee280
-  which belongs to the cache task_struct(81:syz2) of size 5952
-The buggy address is located 32 bytes inside of
-  5952-byte region [ffff8801999ee280, ffff8801999ef9c0)
-The buggy address belongs to the page:
-page:ffffea0006667b80 count:1 mapcount:0 mapping:ffff8801b0bb6300 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea00071a0888 ffff8801ab65ce48 ffff8801b0bb6300
-raw: 0000000000000000 ffff8801999ee280 0000000100000001 ffff8801acaa4000
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff8801acaa4000
-
-Memory state around the buggy address:
-  ffff8801999ee180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8801999ee200: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff8801999ee280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                ^
-  ffff8801999ee300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801999ee380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+Please see the enclosure for the reproducer cputime_adjust.tgz
+(process_top.sh, usr_sys.c):
+gcc usr_sys.c -o usr_sys
+Firstly, the function consume_sys() in usr_sys.c yields 100% sys
+which can be verified as follows:
+$ taskset -c 0 ./usr_sys 1
+$ ./process_top.sh $(pidof usr_sys)
+0.0 usr,  100.0 sys
+0.0 usr,  100.0 sys
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Tested on my local box on 4.17.0 by executing "taskset -c 0 ./usr_sys",
+then executing "./process_top.sh $(pidof usr_sys)" to watch.
+1) Before this patch
+50.0 usr,  0.0 sys
+50.0 usr,  1.0 sys
+50.0 usr,  0.0 sys
+50.0 usr,  0.0 sys
+49.0 usr,  4.0 sys //switch to consume 100% sys, ignore this line
+12.0 usr,  88.0 sys
+11.0 usr,  89.0 sys
+10.0 usr,  90.0 sys
+10.0 usr,  90.0 sys
+9.0 usr,  91.0 sys
+8.0 usr,  91.0 sys
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Obviously there were around 10% sys wrongly goes to usr
+
+2) After this patch
+50.0 usr,  0.0 sys
+50.0 usr,  0.0 sys
+50.0 usr,  0.0 sys
+50.0 usr,  0.0 sys
+11.0 usr,  76.0 sys //switch to consume 100% sys, ignore this line
+1.0 usr,  100.0 sys
+0.0 usr,  100.0 sys
+1.0 usr,  100.0 sys
+0.0 usr,  100.0 sys
+0.0 usr,  100.0 sys
+
+So it displayed the correct result as we expected after this patch.
+
+Thanks,
+Xunlei
+
+--------------BE11F3B1CFC23A9FAB906983
+Content-Type: application/x-gzip;
+ name="cputime_adjust.tgz"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment;
+ filename="cputime_adjust.tgz"
+
+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
+--------------BE11F3B1CFC23A9FAB906983--
