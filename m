@@ -2,147 +2,135 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2ADC6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:57:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F6CAC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 208F92087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:57:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 208F92087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id CB2A42087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 13:57:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QklHNlPl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB2A42087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932808AbeGIN5l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 09:57:41 -0400
-Received: from gateway24.websitewelcome.com ([192.185.50.71]:31826 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932574AbeGIN5j (ORCPT
+        id S932866AbeGIN5v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 09:57:51 -0400
+Received: from mail-yb0-f194.google.com ([209.85.213.194]:43112 "EHLO
+        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932436AbeGIN5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 09:57:39 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id F22A22291EE
-        for <linux-kernel@vger.kernel.org>; Mon,  9 Jul 2018 08:57:38 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id cWfFf15b9RPojcWfRfakHj; Mon, 09 Jul 2018 08:57:38 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=47922 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fcWfF-00015I-7K; Mon, 09 Jul 2018 08:57:17 -0500
-Subject: Re: [PATCH] pinctrl: baytrail: Mark expected switch fall-throughs
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180705155127.GA1458@embeddedor.com>
- <CACRpkdYODi2oNxqCmHtfev=NZ7S_T62B91S58kt=T84FCnnceA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- xsFNBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
- 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
- tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
- DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
- 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
- YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
- m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
- NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
- qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
- LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABzSxHdXN0YXZvIEEu
- IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPsLBfQQTAQgAJwUCWywcDAIbIwUJ
- CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
- l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
- obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
- cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
- ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
- JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
- JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
- PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
- R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
- 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
- e5YnLxF8ctRAp7K4yVlvA87BTQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
- H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
- DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
- 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
- otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
- l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
- jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
- zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
- I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
- ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
- EQEAAcLBZQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
- UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
- XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
- WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
- imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
- fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
- 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
- ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
- YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
- GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <91af218e-6b59-7536-44c8-cf9b510eb691@embeddedor.com>
-Date:   Mon, 9 Jul 2018 08:57:07 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 9 Jul 2018 09:57:48 -0400
+Received: by mail-yb0-f194.google.com with SMTP id x10-v6so7205470ybl.10
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 06:57:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=e5IG2t5Mzhwos36ff7qsPwYHJMWObFoEvgBP/1DlqnM=;
+        b=QklHNlPl7VgGYZ+cZybld4uAQloIk1Dmw3W3/aDk52r/W/mKCTsQoi9ZuNsbHPvA9N
+         4MR/tPisQwaUW+i7l/md8y1z5QQUCvGsYzPTnMIGFSs/GnhVowRykhmVVMcyxYfnp47+
+         dDHUvKDg7M5QpR0Ezls5rvUpRYYQxwu5Xynxea9wDRX9YJS4ZnpWE0t/1yYHNpC6MMIm
+         OcWCq9sqiAkoM7Xqprv53VmKbunFdsfra+XfCjXbtpa8/yXHHc6ZRAVg50Mii4crr1YY
+         OnYf5scl4wf6RtvoPycqYaDgzWmSoE/bSczhHGQFHmKZhyUAy6NKKG3oFa1cUMpmMVaO
+         lf0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=e5IG2t5Mzhwos36ff7qsPwYHJMWObFoEvgBP/1DlqnM=;
+        b=g4dugX+GZsfswyOsYo7u9O1c5Mbsdc2W3j+9nuBc+b7R2Ak3Qb20qksf0enri3Ow0L
+         59aRRvfmoNtXT7VbM2UZibtxkr/YN5kssUYzyrUgi25fBTl1restxl9AGKmzHTsfYuTe
+         mKk2zUh94p+GHSrXupUpZJZ+xMsS+9GvFktij7Etu8HQpgfiuSs+gGRrGugEUYCKeQZa
+         DHs7+/i+msQGXCz3WJ2mad8txBZxXldjn6A+fefGS3QiAjDuXDb/DBk07pTUmrkENp0g
+         WF+OFoJ624f45ErlhPO/YuavKzkRGJ5Ci0iq2BQI6VD6yXa9xfBGHqWXIScW4tz+nGoP
+         9ozg==
+X-Gm-Message-State: APt69E2TbNiScz0DLBYRP5tY3s06bHK8D+HIPd/Tdvhyuc3ct+r+HWoi
+        HZXVMxZU+0Lf5MtwUzJsd0lyFePhPyQv78JCIE0N
+X-Google-Smtp-Source: AAOMgpeIajQJE7+Dl4E2j3KhIwObF2Rgbc+3JKhh+mxVWoFfWo4ADzYNDQXA5b4o47I+CAnUWahCz9iaFg6biIDpxus=
+X-Received: by 2002:a25:adcb:: with SMTP id d11-v6mr11392413ybe.73.1531144667595;
+ Mon, 09 Jul 2018 06:57:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYODi2oNxqCmHtfev=NZ7S_T62B91S58kt=T84FCnnceA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fcWfF-00015I-7K
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:47922
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 9
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
+ <2108146.dv4EAOf6IP@aspire.rjw.lan> <CAFgQCTsGC8NH+5kXYD7vykJeUsaAzCAjgxSP-R0EqA3YvgsY0w@mail.gmail.com>
+ <8816662.k3KXbdkA2e@aspire.rjw.lan>
+In-Reply-To: <8816662.k3KXbdkA2e@aspire.rjw.lan>
+From:   Bjorn Helgaas <bhelgaas@google.com>
+Date:   Mon, 9 Jul 2018 08:57:36 -0500
+Message-ID: <CAErSpo4eaaieQiZjAejXAoCv82wddPOcRQXpiqD6X=fFW5XAHQ@mail.gmail.com>
+Subject: Re: [PATCH] driver core: Drop devices_kset_move_last() call from really_probe()
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernelfans@gmail.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>, dyoung@redhat.com,
+        linux-pci@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Jul 6, 2018 at 5:01 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> The devices_kset_move_last() call in really_probe() is a mistake
+> as it may cause parents to follow children in the devices_kset list
+> which then causes system shutdown to fail.  Namely, if a device has
+> children before really_probe() is called for it (which is not
+> uncommon), that call will cause it to be reordered after the children
+> in the devices_kset list and the ordering of that list will not
+> reflect the correct device shutdown order.
+>
+> Also it causes the devices_kset list to be constantly reordered
+> until all drivers have been probed which is totally pointless
+> overhead in the majority of cases.
+>
+> For that reason, revert the really_probe() modifications made by
+> commit 52cdbdd49853.
 
-On 07/09/2018 08:42 AM, Linus Walleij wrote:
-> On Thu, Jul 5, 2018 at 5:51 PM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
-> 
->> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->> where we are expecting to fall through.
->>
->> Addresses-Coverity-ID: 1292308 ("Missing break in switch")
->> Addresses-Coverity-ID: 1292309 ("Missing break in switch")
-> 
-> I hope these special tags are accepted by the community at large.
-> Has there been discussion?
-> 
+I'm sure you've considered this, but I can't figure out whether this
+patch will reintroduce the problem that was solved by 52cdbdd49853.
+That patch updated two places: (1) really_probe(), the change you're
+reverting here, and (2) device_move().
 
-Yes. This is information we want to keep on the changelog:
+device_move() is only called from 4-5 places, none of which look
+related to the problem fixed by 52cdbdd49853, so it seems like that
+problem was probably resolved by the hunk you're reverting.
 
-http://lkml.iu.edu/hypermail/linux/kernel/1710.3/04013.html
-
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Patch applied with Mika's ACK.
-> 
-
-Thanks
---
-Gustavo
+> Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
+> Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
+> Reported-by: Pingfan Liu <kernelfans@gmail.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/base/dd.c |    8 --------
+>  1 file changed, 8 deletions(-)
+>
+> Index: linux-pm/drivers/base/dd.c
+> ===================================================================
+> --- linux-pm.orig/drivers/base/dd.c
+> +++ linux-pm/drivers/base/dd.c
+> @@ -434,14 +434,6 @@ re_probe:
+>                         goto probe_failed;
+>         }
+>
+> -       /*
+> -        * Ensure devices are listed in devices_kset in correct order
+> -        * It's important to move Dev to the end of devices_kset before
+> -        * calling .probe, because it could be recursive and parent Dev
+> -        * should always go first
+> -        */
+> -       devices_kset_move_last(dev);
+> -
+>         if (dev->bus->probe) {
+>                 ret = dev->bus->probe(dev);
+>                 if (ret)
+>
