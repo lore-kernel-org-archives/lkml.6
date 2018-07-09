@@ -6,121 +6,207 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E13C6C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:55:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBA9C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D4D5208E5
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:55:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCE1420842
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 15:56:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RpZIPx/b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4D5208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="pv3rGRpr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCE1420842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933701AbeGIPzk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 11:55:40 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41187 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933328AbeGIPvL (ORCPT
+        id S933744AbeGIP4N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 11:56:13 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:49810 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933357AbeGIPtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 11:51:11 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j5-v6so4991932wrr.8
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 08:51:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ciWHyLMikqH3wKENiDm/GxmXb1N461xZPfHB5KvcB1o=;
-        b=RpZIPx/beUHRYti0cQ744TwtbMvSNQQPb29N9xR6xlvLjFNzkXijkASH1thcPbhx4X
-         AteMQP0KOH3YQWSq/pwtEVJ6xxySNUrwSrwZkw3wWycGiuUScWXVfFuiieHZ4hY/jp1G
-         9fkUbuFQMqehVLNUclSBcO1q9gk7u+r+vRt6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ciWHyLMikqH3wKENiDm/GxmXb1N461xZPfHB5KvcB1o=;
-        b=FizC7UGzO+6aIHFYiI1wgeSXIFXNrwZH6VYZmUAzRUXr8W44VuopQleG2joRvJGuvJ
-         cbRu08Ras4dYPCkUjW/RPJi9/zJSeoQE9AZIPOD9vr6d8uf3plqBzhb8Xo0wI3U4VPb3
-         jpoBZyjeJmlPDCUmHYUzv7Na1v0jm6rB/Hj8gFg4vGHVBEMP7P4nG5aHtJIIz3NsHo04
-         Uy4vC5WSGoZIwJJ1ySOEl1AnsoL0V7pXRkzkqUnynrFpZVTEV1IY8xTaxTpru3mmBmpp
-         8s7i+xkZ0ejjOqvYlCrH4th5qT1Qw+hwD8XB/Z8/IIFOgr5XHnGyN4im5/ofw59Vk4pj
-         SYRw==
-X-Gm-Message-State: APt69E3tmS/diMPA0/6N+84ob4V/wxmVe5z4f0pnY9ua/wBkKUrmCmUo
-        kyGKJGwFFHLsJnZLdLMQEFZ47w==
-X-Google-Smtp-Source: AAOMgpfT1RGT+MYVWSClFtIOg+Vs4q3uzoZ01QO44jNsP6+UN4OchIdgkC/HoYXXAB2xvNwHu9khzA==
-X-Received: by 2002:a5d:4c4c:: with SMTP id n12-v6mr14513762wrt.71.1531151470880;
-        Mon, 09 Jul 2018 08:51:10 -0700 (PDT)
-Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id o21-v6sm16229202wmg.28.2018.07.09.08.51.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Jul 2018 08:51:10 -0700 (PDT)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-To:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org
-Cc:     rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, abailon@baylibre.com,
-        vincent.guittot@linaro.org, skannan@codeaurora.org,
-        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        evgreen@chromium.org, mka@chromium.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, georgi.djakov@linaro.org
-Subject: [PATCH v6 2/8] dt-bindings: Introduce interconnect provider bindings
-Date:   Mon,  9 Jul 2018 18:50:58 +0300
-Message-Id: <20180709155104.25528-3-georgi.djakov@linaro.org>
+        Mon, 9 Jul 2018 11:49:20 -0400
+Received: from trochilidae.toradex.int (unknown [46.140.72.82])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 8468E5C1CDA;
+        Mon,  9 Jul 2018 17:49:18 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1531151358;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=NYwNGWAv5dsSdHgoUeJvpX9eEUnLVDGyqfECVUfSsXQ=;
+        b=pv3rGRprur47L1msAwnnQ60QLYtIaJc0iVMvrXWJfx3PibHvgktGgf+tAaVxmxc1ZVWo1r
+        sVGuJmVGEioB5EkHgxVJZ2v/v4GnbPsEW3IdD8r6aLs1xlvJvju0pjpoSszCUc/pTB0KSK
+        aCZSAgLqOrwGsc/0brXX97neyl3tf6U=
+From:   Stefan Agner <stefan@agner.ch>
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        marcel.ziswiler@toradex.com, max.krummenacher@toradex.com,
+        maitysanchayan@gmail.com, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 6/8] ARM: dts: imx6qdl-apalis/-colibri: fix on-module regulators
+Date:   Mon,  9 Jul 2018 17:48:46 +0200
+Message-Id: <20180709154848.5401-6-stefan@agner.ch>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180709155104.25528-1-georgi.djakov@linaro.org>
-References: <20180709155104.25528-1-georgi.djakov@linaro.org>
+In-Reply-To: <20180709154848.5401-1-stefan@agner.ch>
+References: <20180709154848.5401-1-stefan@agner.ch>
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[14];
+         BAYES_HAM(-3.00)[100.00%];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:6830, ipnet:46.140.0.0/17, country:AT];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This binding is intended to represent the interconnect hardware present
-in some of the modern SoCs. Currently it consists only of a binding for
-the interconnect hardware devices (provider).
+Remove the 2.5V regulator, it does not exist. There is 3.3V and
+3.3V_AUDIO provided to the module through the edge connector,
+model those as fixed regulators like we use to do in other
+Colibri device trees. The SGTL5000 uses 3.3V_AUDIO as VDDA. Note
+that the driver derives the analog ground voltage (VAG) from this
+supply. The new value should allow higher output swings before
+clipping occurs. Refer to the SGTL5000 datasheet for details.
 
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- .../bindings/interconnect/interconnect.txt    | 33 +++++++++++++++++++
- 1 file changed, 33 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interconnect/interconnect.txt
+ arch/arm/boot/dts/imx6qdl-apalis.dtsi  | 22 +++++++++++-----------
+ arch/arm/boot/dts/imx6qdl-colibri.dtsi | 20 ++++++++++----------
+ 2 files changed, 21 insertions(+), 21 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/interconnect/interconnect.txt b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-new file mode 100644
-index 000000000000..6e2b2971b094
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interconnect/interconnect.txt
-@@ -0,0 +1,33 @@
-+Interconnect Provider Device Tree Bindings
-+=========================================
-+
-+The purpose of this document is to define a common set of generic interconnect
-+providers/consumers properties.
-+
-+
-+= interconnect providers =
-+
-+The interconnect provider binding is intended to represent the interconnect
-+controllers in the system. Each provider registers a set of interconnect
-+nodes, which expose the interconnect related capabilities of the interconnect
-+to consumer drivers. These capabilities can be throughput, latency, priority
-+etc. The consumer drivers set constraints on interconnect path (or endpoints)
-+depending on the use case. Interconnect providers can also be interconnect
-+consumers, such as in the case where two network-on-chip fabrics interface
-+directly
-+
-+Required properties:
-+- compatible : contains the interconnect provider compatible string
-+- #interconnect-cells : number of cells in a interconnect specifier needed to
-+			encode the interconnect node id
-+
-+Example:
-+
-+		snoc: snoc@580000 {
-+			compatible = "qcom,msm8916-snoc";
-+			#interconnect-cells = <1>;
-+			reg = <0x580000 0x14000>;
-+			clock-names = "bus_clk", "bus_a_clk";
-+			clocks = <&rpmcc RPM_SMD_SNOC_CLK>,
-+				 <&rpmcc RPM_SMD_SNOC_A_CLK>;
-+		};
+diff --git a/arch/arm/boot/dts/imx6qdl-apalis.dtsi b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+index 2f711fffa06e..6813f4326807 100644
+--- a/arch/arm/boot/dts/imx6qdl-apalis.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-apalis.dtsi
+@@ -61,17 +61,17 @@
+ 		status = "disabled";
+ 	};
+ 
+-	reg_2p5v: regulator-2p5v {
++	reg_module_3v3: regulator-module-3v3 {
+ 		compatible = "regulator-fixed";
+-		regulator-name = "2P5V";
+-		regulator-min-microvolt = <2500000>;
+-		regulator-max-microvolt = <2500000>;
++		regulator-name = "+V3.3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
+ 		regulator-always-on;
+ 	};
+ 
+-	reg_3p3v: regulator-3p3v {
++	reg_module_3v3_audio: regulator-module-3v3-audio {
+ 		compatible = "regulator-fixed";
+-		regulator-name = "3P3V";
++		regulator-name = "+V3.3_AUDIO";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+ 		regulator-always-on;
+@@ -314,8 +314,8 @@
+ 		compatible = "fsl,sgtl5000";
+ 		reg = <0x0a>;
+ 		clocks = <&clks IMX6QDL_CLK_CKO>;
+-		VDDA-supply = <&reg_2p5v>;
+-		VDDIO-supply = <&reg_3p3v>;
++		VDDA-supply = <&reg_module_3v3_audio>;
++		VDDIO-supply = <&reg_module_3v3>;
+ 	};
+ 
+ 	/* STMPE811 touch screen controller */
+@@ -447,7 +447,7 @@
+ &usdhc1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc1_4bit &pinctrl_usdhc1_8bit>;
+-	vqmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_module_3v3>;
+ 	bus-width = <8>;
+ 	disable-wp;
+ 	no-1-8-v;
+@@ -458,7 +458,7 @@
+ &usdhc2 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc2>;
+-	vqmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_module_3v3>;
+ 	bus-width = <4>;
+ 	disable-wp;
+ 	no-1-8-v;
+@@ -469,7 +469,7 @@
+ &usdhc3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc3>;
+-	vqmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_module_3v3>;
+ 	bus-width = <8>;
+ 	no-1-8-v;
+ 	non-removable;
+diff --git a/arch/arm/boot/dts/imx6qdl-colibri.dtsi b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+index 1a147cb0bed0..9a3bac5be5e2 100644
+--- a/arch/arm/boot/dts/imx6qdl-colibri.dtsi
++++ b/arch/arm/boot/dts/imx6qdl-colibri.dtsi
+@@ -56,17 +56,17 @@
+ 		status = "disabled";
+ 	};
+ 
+-	reg_2p5v: regulator-2p5v {
++	reg_module_3v3: regulator-module-3v3 {
+ 		compatible = "regulator-fixed";
+-		regulator-name = "2P5V";
+-		regulator-min-microvolt = <2500000>;
+-		regulator-max-microvolt = <2500000>;
++		regulator-name = "+V3.3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
+ 		regulator-always-on;
+ 	};
+ 
+-	reg_3p3v: regulator-3p3v {
++	reg_module_3v3_audio: regulator-module-3v3-audio {
+ 		compatible = "regulator-fixed";
+-		regulator-name = "3P3V";
++		regulator-name = "+V3.3_AUDIO";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+ 		regulator-always-on;
+@@ -244,8 +244,8 @@
+ 		compatible = "fsl,sgtl5000";
+ 		reg = <0x0a>;
+ 		clocks = <&clks IMX6QDL_CLK_CKO>;
+-		VDDA-supply = <&reg_2p5v>;
+-		VDDIO-supply = <&reg_3p3v>;
++		VDDA-supply = <&reg_module_3v3_audio>;
++		VDDIO-supply = <&reg_module_3v3>;
+ 		lrclk-strength = <3>;
+ 	};
+ 
+@@ -380,7 +380,7 @@
+ 	pinctrl-0 = <&pinctrl_usdhc1 &pinctrl_mmc_cd>;
+ 	cd-gpios = <&gpio2 5 GPIO_ACTIVE_LOW>; /* MMCD */
+ 	disable-wp;
+-	vqmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_module_3v3>;
+ 	bus-width = <4>;
+ 	no-1-8-v;
+ 	status = "disabled";
+@@ -390,7 +390,7 @@
+ &usdhc3 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_usdhc3>;
+-	vqmmc-supply = <&reg_3p3v>;
++	vqmmc-supply = <&reg_module_3v3>;
+ 	bus-width = <8>;
+ 	no-1-8-v;
+ 	non-removable;
+-- 
+2.18.0
+
