@@ -2,136 +2,143 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D396DC6778F
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69159C6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 930042087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930042087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=de.adit-jv.com
+	by mail.kernel.org (Postfix) with ESMTP id 191282087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 12:25:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0dVXeee"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191282087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933166AbeGIMZj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 08:25:39 -0400
-Received: from smtp1.de.adit-jv.com ([62.225.105.245]:49394 "EHLO
-        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932797AbeGIMZh (ORCPT
+        id S933199AbeGIMZr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 08:25:47 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:36448 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932688AbeGIMZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 08:25:37 -0400
-Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
-        by smtp1.de.adit-jv.com (Postfix) with ESMTP id EC9AE3C015E;
-        Mon,  9 Jul 2018 14:25:34 +0200 (CEST)
-Received: from smtp1.de.adit-jv.com ([127.0.0.1])
-        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id VKqtIr8A4ZVo; Mon,  9 Jul 2018 14:25:28 +0200 (CEST)
-Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 431263C09A0;
-        Mon,  9 Jul 2018 14:25:28 +0200 (CEST)
-Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
- (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.399.0; Mon, 9 Jul 2018
- 14:25:27 +0200
-Date:   Mon, 9 Jul 2018 14:25:24 +0200
-From:   Eugeniu Rosca <erosca@de.adit-jv.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>
-CC:     Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, Will Deacon <will.deacon@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>
-Subject: Re: [PATCH] locking/lockdep: Report comm/pid/timestamp information
-Message-ID: <20180709122524.GA30596@vmlxhi-102.adit-jv.com>
-References: <20180709005725.18184-1-erosca@de.adit-jv.com>
- <20180709083118.GA2476@hirez.programming.kicks-ass.net>
+        Mon, 9 Jul 2018 08:25:43 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s14-v6so20561624wmc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 05:25:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2TwJuOcSBezeE5NaeO/yC8xEeq2J3tJ1HN5t+iuuvps=;
+        b=G0dVXeee8uCPV07+wz+jKJYjCfWLh0NObrUEQ3VsF1dUFYoBlxxbmDygYKrJ1WyV7i
+         e7IeKL/l8lCKojNIBZcnbXgCcwkpkp+6gawRhbJ5ix/DGCLKeuiWC9dVocbwnRu2//0e
+         Xtr/u3LRjZIfpVvrBR8/vGdy8xYOE51GaLQQnOZwnUb2mf6vUzavEXRfgUK+jvpydsWZ
+         Ta6AjwTiAsJpCL3sj9/+IIvMyMjuseTGZofg6gsMaN6UMKaDgWoNyGtjPk9epFXLSpyr
+         POrUpA8L3nr9a6R/8gGy5zhJGQNOoBDGEKz3vxcNcuyUZKfkFZ22/2KdZj8L/lJ+48+b
+         0kyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2TwJuOcSBezeE5NaeO/yC8xEeq2J3tJ1HN5t+iuuvps=;
+        b=HyUVmknuV0AP8uRF+KETRiVW9dhyQp7Sg2ia4s9mJYqoGlpUSUm4cIz4PMM1yPHIEU
+         idMRtJcWPb1rDQCbfM6Ea6isIenVy1v1X8eSCnr2OeMSWRfQUp7UkatWjqGimIK16xuu
+         RXYY11QZsWA+zCmNu23L0Y6aHF4VpscOPKauQoBghP6ukHy/YibXWa5Vk/B8UhGkGkGG
+         GA5MP+BxDZ0F2Ut3iceEaz47xIlFzm5v7450aKs2ez6XEunAIe5zeAlcVjjsRMTC3zt0
+         RrE2KTdjB6n4a356k+JhQYlMyMLQEc3ER+s5adMS+p7oq43WlXb6iIGA4dM3vhDiL8OU
+         UVdA==
+X-Gm-Message-State: APt69E1srJoH2SXwH4H6m/T6WveYISSnTE7v9obXbUoO3gx1QDRp+6tF
+        aNNwqE0FAUYPxe4La2OSlHI=
+X-Google-Smtp-Source: AAOMgpckwp0OYrMTRio/R7wFnFmB68tBlY8L7yRLOhxCGVE+5Hv+NLBcMvYnQ1hjf2Hf4ux4KpPmoA==
+X-Received: by 2002:a1c:15ce:: with SMTP id 197-v6mr11276196wmv.99.1531139141925;
+        Mon, 09 Jul 2018 05:25:41 -0700 (PDT)
+Received: from [10.178.4.240] ([192.19.248.250])
+        by smtp.gmail.com with ESMTPSA id t53-v6sm20632219wrc.13.2018.07.09.05.25.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 05:25:40 -0700 (PDT)
+Subject: Re: [GIT PULL 4/4] bcm2835-defconfig-64-next-2018-07-03
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        bcm-kernel-feedback-list@broadcom.com
+References: <20180703200511.2725-1-eric@anholt.net>
+ <20180703200511.2725-4-eric@anholt.net>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <457fc136-42f8-c837-c943-bcfc8a7a514e@gmail.com>
+Date:   Mon, 9 Jul 2018 05:25:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180709083118.GA2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.72.93.184]
+In-Reply-To: <20180703200511.2725-4-eric@anholt.net>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 10:31:18AM +0200, Peter Zijlstra wrote:
-> On Mon, Jul 09, 2018 at 02:57:25AM +0200, Eugeniu Rosca wrote:
-> > diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-> > index 6fc77d4dbdcd..eeed7ea2e198 100644
-> > --- a/include/linux/lockdep.h
-> > +++ b/include/linux/lockdep.h
-> > @@ -186,6 +186,10 @@ struct lock_list {
-> >  	struct list_head		entry;
-> >  	struct lock_class		*class;
-> >  	struct stack_trace		trace;
-> > +	unsigned long long		ts;
-> > +	char				comm[16];
-> > +	pid_t				pid;
-> > +	int				cpu;
-> >  	int				distance;
-> >  
-> >  	/*
+
+
+On 07/03/2018 01:05 PM, Eric Anholt wrote:
+> The following changes since commit ce397d215ccd07b8ae3f71db689aedb85d56ab40:
 > 
-> Yeah, not going to happen. You grow that structure from 64 bytes to 96
-> bytes and with that grow the static footprint of the kernel by 512k (in
-> the very best case)
+>   Linux 4.18-rc1 (2018-06-17 08:04:49 +0900)
+> 
+> are available in the Git repository at:
+> 
+>   git://github.com/anholt/linux tags/bcm2835-defconfig-64-next-2018-07-03
+> 
+> for you to fetch changes up to 79db60a8bb0b32fdda90a338f09fc83d7d576abe:
+> 
+>   arm64: defconfig: Enable RPi voltage sensor (2018-06-21 17:31:19 -0700)
+> 
+> ----------------------------------------------------------------
+> This pull request enables the new RPi HWMON driver in the 64-bit
+> defconfig.
+> 
+> ----------------------------------------------------------------
 
-I  confirm that in case of x86_64, the bss size is increased by ~1M [1]
-with standard v4.18-rc4 x86_64_defconfig + CONFIG_LOCKDEP.
-
-> possibly again breaking things like sparc (which
-> have a strict limit on the kernel image size).
-
-For sparc there seems to be a dedicated CONFIG_LOCKDEP_SMALL, which
-seems to downsize the lockdep implementation anyway.
-
-> And all that for data that I've never needed and never even considered
-> useful when looking at lockdep output.
-
-It's likely because you infer about certain aspects which are not
-clearly stated in the deadlock report. As example, the original report
-doesn't say that the process which holds 'cpu_hotplug_lock.rw_sem'
-is different to the process which holds the other locks. On the
-contrary, it tells the user that all the locks are being held by the
-same task, which seems to be wrong.
-
-You likely also infer about the order of consuming the locks based on
-the contents of the stack dump associated to each lock. Without doing
-some mental diffs between the backtraces, it's not possible to see the
-chronological order of consuming the locks. Actually this only works for
-backtraces with common history, i.e. there is no clue what is the
-time/point of acquiring 'cpu_hotplug_lock.rw_sem' relative to the other
-locks.
-
-The patch mostly shares my personal experience of trying to make sense
-of lockdep output. It's OK if it doesn't reach mainline.
-
-I still hope that I can get some feedback from community regarding
-the actual cpufreq-related issue pointed out in the splat. I can also
-reproduce it on v4.14, so it appears to be in the kernel for quite
-some time.
-
-Thank you in advance.
-
-Best regards,
-Eugeniu.
-
-[1] BSS size increase after applying the patch
-$ bloaty -s vm vmlinux.after -- vmlinux.before   
-     VM SIZE                           FILE SIZE
- --------------                     --------------
-  +8.2% +1024Ki .bss                      0  [ = ]
-  ----snip----
-  +2.6% +1024Ki TOTAL               +3.36Ki  +0.0%
+Merged, thanks Eric!
+-- 
+Florian
