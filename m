@@ -2,98 +2,127 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEA7C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A88ADC6778A
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:17:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21DC120882
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:17:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21DC120882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 60EB420882
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 10:17:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qOFmYlSg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60EB420882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754514AbeGIKRH (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 06:17:07 -0400
-Received: from smtp-out6.electric.net ([192.162.217.186]:51179 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754432AbeGIKRF (ORCPT
+        id S932482AbeGIKR1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 06:17:27 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:36108 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754432AbeGIKR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 06:17:05 -0400
-Received: from 1fcTE1-0003jI-Uf by out6d.electric.net with emc1-ok (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fcTE4-0003wm-US; Mon, 09 Jul 2018 03:17:00 -0700
-Received: by emcmailer; Mon, 09 Jul 2018 03:17:00 -0700
-Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
-        by out6d.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fcTE1-0003jI-Uf; Mon, 09 Jul 2018 03:16:57 -0700
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Mon, 9 Jul 2018 11:18:36 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Mon, 9 Jul 2018 11:18:36 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Alexey Brodkin' <Alexey.Brodkin@synopsys.com>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "greg@kroah.com" <greg@kroah.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: RE: [RESEND PATCH v2] devres: Really align data field to unsigned
- long long
-Thread-Topic: [RESEND PATCH v2] devres: Really align data field to unsigned
- long long
-Thread-Index: AQHUFz/Ztg2k3cQGIk2o/MVnG+7l9qSGmpBQ///9QYCAABVykA==
-Date:   Mon, 9 Jul 2018 10:18:36 +0000
-Message-ID: <91c57eeba2134dd99a9f0e11fa883c7c@AcuMS.aculab.com>
-References: <20180709044444.6397-1-abrodkin@synopsys.com>
-         <f7499a811ba54c00a11f7525ae216213@AcuMS.aculab.com>
- <c95ac7435736d93843c45628ba4d41a4a4988074.camel@synopsys.com>
-In-Reply-To: <c95ac7435736d93843c45628ba4d41a4a4988074.camel@synopsys.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
-X-Virus-Status: Scanned by VirusSMART (c)
-X-Virus-Status: Scanned by VirusSMART (s)
+        Mon, 9 Jul 2018 06:17:26 -0400
+Received: by mail-io0-f193.google.com with SMTP id k3-v6so16557918iog.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 03:17:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=RvigYRG3J3iEcUNgk32LwqwVII13LMfAQxIwp8kGsTQ=;
+        b=qOFmYlSglJOUi6cbJUUeABXGhCyNGvikIzTRGlkjiEW9GRyG0bjRp8d/aZZpoKOE9l
+         U66DOgtbVbs+dRnaOc01x9GE+tBc/DVwtuY3Q68N7LUnN19s1yZULZFodkGP7hIjP4UM
+         92CAx5V6XXbSsmvaenSeoiIrI44ZWjEH+WWdWTULWCgZOqSXiTiaQCQJ4gPqcgsFjYbs
+         sbZC+7CHaFeGdaWaSiSzykcH/dCTUvN7W8jnwcBtm66LGub9asdvyX54YXkCbaSZEleo
+         uYWaI2utvVTxh03nJL71y9x3x2GgRctJQF//9Bg2Se+Y0dpkgaiDuoEEzPw2kkajqMwI
+         WNDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RvigYRG3J3iEcUNgk32LwqwVII13LMfAQxIwp8kGsTQ=;
+        b=e7ek7bmp4DtVIhQF/sxGjlvWTnmAV53LWNO4Bv/jVmmLl5PJi7M67PBlaorm9upEN+
+         0iwCMAh/YV/xB9XhhS7WSVm2lea2hLZUhAmEONRzvLY1yDx+opaekkgXXULFiojdLdoG
+         prBxBiSgclX1fcvnkPb21aivyNbwuKharJIf982ipvmMm7AiCNBXFq9CdxhkD5dxF/kO
+         TVnIbA899SwPFbdw8l24r91nsmuNT42g9znOfxpf4sGk6OGxHSLRBLWXXFetVaA2xH96
+         f6CovFoG7UUmxZcn0xpvtgmbDujROFw7jFPTFtZqMxhKOphs6eGwwOT0geuXBZP6A/xf
+         AjAA==
+X-Gm-Message-State: AOUpUlE7REImSTS9SAldjCaT5WIJMWW9hopY9V7iPqrTQXCdhvRshJM7
+        3O+fTMKud6ahcmqdS9SZTQw=
+X-Google-Smtp-Source: AAOMgpcq+FC6Iy6c79BuLR6zgUaeG+ZiP9dEAGxD6wiwCE/5IcVExsmcFT556rFDmnp9P54ccLQxyg==
+X-Received: by 2002:a6b:6503:: with SMTP id z3-v6mr7926005iob.129.1531131445458;
+        Mon, 09 Jul 2018 03:17:25 -0700 (PDT)
+Received: from localhost ([14.139.180.40])
+        by smtp.gmail.com with ESMTPSA id w141-v6sm1622568itb.31.2018.07.09.03.17.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 03:17:25 -0700 (PDT)
+From:   Jaya Durga <rjdurga@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     quytelda@tamalin.org, jonathankim@gctsemi.com, deanahn@gctsemi.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Staging: gdm724x: gdm_tty.c:Fixed Macro argument reuse
+Date:   Mon,  9 Jul 2018 15:30:20 +0530
+Message-Id: <20180709100020.7399-1-rjdurga@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogQWxleGV5IEJyb2RraW4NCj4gU2VudDogMDkgSnVseSAyMDE4IDExOjAwDQouLi4NCj4g
-VGhhdCdzIGEgZ29vZCBpZGVhIGluZGVlZCBidXQgaXQgZG9lc24ndCBzb2x2ZSB0aGUgcHJvYmxl
-bSB3aXRoDQo+IHN0cnVjdCBkZXZyZXNfbm9kZS4gQ29uc2lkZXIgdGhlIGZvbGxvd2luZyBzbmlw
-cGV0Og0KPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLQ0KPiAJc3RydWN0IG15c3RydWN0IHsNCj4gCQlhdG9taWM2NF90IG15
-dmFyOw0KPiAJfQ0KPiANCj4gCXN0cnVjdCBteXN0cnVjdCAqcDsNCj4gCXAgPSBkZXZtX2t6YWxs
-b2MoZGV2LCBzaXplb2YoKnApLCBHRlBfS0VSTkVMKTsNCj4gLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gDQo+IEhlcmUg
-bXl2YXIgYWRkcmVzcyB3aWxsIG1hdGNoIGFkZHJlc3Mgb2YgImRhdGEiIG1lbWJlciBvZiBzdHJ1
-Y3QgZGV2cmVzX25vZGUuDQo+IFNvIGlmICJkYXRhIiBpcyBoYXMgb2Zmc2V0IG9mIDEyIGJ5dGVz
-IGZyb20gdGhlIGJlZ2lubmluZyBvZiBhIHBhZ2UgdGhlbg0KPiBteXZhciB3b24ndCBiZSA2NC1i
-aXQgYWxpZ25lZCByZWdhcmRsZXNzIG9mIG15dmFyJ3MgYXR0cmlidXRlLCByaWdodD8NCi4uLg0K
-PiA+ID4gLQl1bnNpZ25lZCBsb25nIGxvbmcJCWRhdGFbXTsJLyogZ3VhcmFudGVlIHVsbCBhbGln
-bm1lbnQgKi8NCg0KQWhoLCB0aGF0IGxpbmUgc2hvdWxkIGJlOg0KCXU4IGRhdGFbXSBfX2FsaWdu
-ZWQoOCk7IC8qIEd1YXJhbnRlZSA2NGJpdCBhbGlnbm1lbnQgKi8NCg0KCURhdmlkDQoNCg==
+From: root <root@boss.chennai.cdac.in>
+
+CHECK: Macro argument reuse 'gdm' - possible side-effects?
+
+convert GDM_TTY_READY to gdm_tty_ready static function
+to fix checkpath check
+
+Signed-off-by: Jaya Durga <rjdurga@gmail.com>
+---
+ drivers/staging/gdm724x/gdm_tty.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/staging/gdm724x/gdm_tty.c b/drivers/staging/gdm724x/gdm_tty.c
+index bf554f7c56ca..5de1940c1f79 100644
+--- a/drivers/staging/gdm724x/gdm_tty.c
++++ b/drivers/staging/gdm724x/gdm_tty.c
+@@ -27,7 +27,11 @@
+#define MUX_TX_MAX_SIZE 2048
+-#define GDM_TTY_READY(gdm) (gdm && gdm->tty_dev && gdm->port.count)
++static unsigned int gdm_tty_ready(struct gdm *gdm)
++{
++return (gdm && gdm->tty_dev && gdm->port.count);
++}
++
+static struct tty_driver *gdm_driver[TTY_MAX_COUNT];
+static struct gdm *gdm_table[TTY_MAX_COUNT][GDM_TTY_MINOR];
+@@ -127,7 +131,7 @@ static int gdm_tty_recv_complete(void *data,
+{
+ 	struct gdm *gdm = tty_dev->gdm[index];
+-	if (!GDM_TTY_READY(gdm)) {
++	if (!gdm_tty_ready(gdm)) {
+ 		if (complete == RECV_PACKET_PROCESS_COMPLETE)
+ 			gdm->tty_dev->recv_func(gdm->tty_dev->priv_dev,
+ 						gdm_tty_recv_complete);
+@@ -154,7 +158,7 @@ static void gdm_tty_send_complete(void *arg)
+ {
+ 	struct gdm *gdm = arg;
+-	if (!GDM_TTY_READY(gdm))
++	if (!gdm_tty_ready(gdm))
+ 		return;
+ 	tty_port_tty_wakeup(&gdm->port);
+@@ -168,7 +172,7 @@ static int gdm_tty_write(struct tty_struct *tty, const unsigned char *buf,
+ 	int sent_len = 0;
+ 	int sending_len = 0;
+-	if (!GDM_TTY_READY(gdm))
++	if (!gdm_tty_ready(gdm))
+ 		return -ENODEV;
+ 	if (!len)
+@@ -195,7 +199,7 @@ static int gdm_tty_write_room(struct tty_struct *tty)
+{
+ 	struct gdm *gdm = tty->driver_data;
+-	if (!GDM_TTY_READY(gdm))
++	if (!gdm_tty_ready(gdm))
+ 		return -ENODEV;
+ 	return WRITE_SIZE;
+
+
