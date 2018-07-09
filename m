@@ -2,89 +2,120 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F391C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D64C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C512320875
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C512320875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxonhyperv.com
+	by mail.kernel.org (Postfix) with ESMTP id A57F420875
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 16:44:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2a+EjE5s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57F420875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933655AbeGIQoh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 12:44:37 -0400
-Received: from a2nlsmtp01-03.prod.iad2.secureserver.net ([198.71.225.37]:48928
-        "EHLO a2nlsmtp01-03.prod.iad2.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932755AbeGIQoe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 12:44:34 -0400
-Received: from linuxonhyperv2.linuxonhyperv.com ([107.180.71.197])
-        by : HOSTING RELAY : with SMTP
-        id cZG9friwnIHuScZG9fQ5qv; Mon, 09 Jul 2018 09:43:33 -0700
-x-originating-ip: 107.180.71.197
-Received: from haiyangz by linuxonhyperv2.linuxonhyperv.com with local (Exim 4.91)
-        (envelope-from <haiyangz@linuxonhyperv2.linuxonhyperv.com>)
-        id 1fcZG9-0001KK-7Z; Mon, 09 Jul 2018 09:43:33 -0700
-From:   Haiyang Zhang <haiyangz@linuxonhyperv.com>
-To:     davem@davemloft.net, netdev@vger.kernel.org
-Cc:     haiyangz@microsoft.com, kys@microsoft.com, sthemmin@microsoft.com,
-        olaf@aepfle.de, vkuznets@redhat.com, devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH net] hv_netvsc: Fix napi reschedule while receive completion is busy
-Date:   Mon,  9 Jul 2018 16:43:19 +0000
-Message-Id: <20180709164319.5058-1-haiyangz@linuxonhyperv.com>
-X-Mailer: git-send-email 2.17.1
-Reply-To: haiyangz@microsoft.com
-X-CMAE-Envelope: MS4wfOHQ2SEyFCyxYbuYwolLF18kkTSSUxE6dStyPtcpB1e9EsCFRDxBhJHrHccapKviWcktFcvx2NAHOAJkRA1ji//DcKHRF8mq4IgBxI0X+GU7nmwfeRyV
- PjNgAChrBJG49gdcWBgDA/cuHVoKdHlobdWxRle1U3TIGozjgzG1trhDxWbIeI+tKYVT3KEvdyTPJJrr6QndlPgRa3O41JV9Ct+JitvHwQnroJ8ZFCFxrjTM
- RvFuwnQpd2iz5EF5LTaoZROC4E2I6fL4xnuFgJ3/DFeDTQTvGKHOgdrijcKLgeEirYiv/ukCu6Slb6EX8Abnu2xdb/0DhCpx0EfbXl/SK3qQgwgAEE6G02Ba
- ykpFrozoH88xB6SgB9yhsLCc/q2LHYlIJhf7vkC+HOUBo95i5ZvOUbcAjjVWu3umLxX7QVFA1W2ZrPjkZ45ajB7RYJLacJhe3BdHxeTTnJ69szCvhHpnNtUo
- KPN6OokvLseaPIK0iZzxbpx2Ai/5OPiH5+MHyw==
+        id S933678AbeGIQor (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 12:44:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933488AbeGIQog (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 12:44:36 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60DFE20852;
+        Mon,  9 Jul 2018 16:44:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531154675;
+        bh=3GET6Id+TPlG3dPKg1EAjtldeaCZ7hfbO0K79r/q/5k=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=2a+EjE5s/FNLgOLq4gLobHG31Ee6j2JXKf1RXf090Y0O4baBUMztQZXrzWdC76F8h
+         42s3224d3FmXj2/sNmun9r2d7IB0dvBTip8Jbn7FH/jaY2jtbj1TQROhpllcIHe96K
+         2BpJ4qE3mnw5Pb9loqvNtX5LLj64nM4AImm0XBtk=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Gregory CLEMENT <gregory.clement@bootlin.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <87va9oct5k.fsf@bootlin.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Jason Cooper <jason@lakedaemon.net>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>, Ken Ma <make@marvell.com>,
+        Victor Gu <xigu@marvell.com>,
+        Neta Zur Hershkovits <neta@marvell.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Wilson Ding <dingwei@marvell.com>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Hua Jing <jinghua@marvell.com>
+References: <20180619123446.694-1-gregory.clement@bootlin.com>
+ <20180619123446.694-2-gregory.clement@bootlin.com>
+ <87tvpl4pql.fsf@bootlin.com>
+ <153092068418.143105.5823916627333449732@swboyd.mtv.corp.google.com>
+ <87va9oct5k.fsf@bootlin.com>
+Message-ID: <153115467464.143105.10844577294634998251@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/2] clk: mvebu: armada-37xx-periph: Fix switching CPU rate from
+ 300Mhz to 1.2GHz
+Date:   Mon, 09 Jul 2018 09:44:34 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Haiyang Zhang <haiyangz@microsoft.com>
+Quoting Gregory CLEMENT (2018-07-09 08:42:31)
+> Hi Stephen,
+>  =
 
-If out ring is full temporarily and receive completion cannot go out,
-we may still need to reschedule napi if other conditions are met.
-Otherwise the napi poll might be stopped forever, and cause network
-disconnect.
+>  On ven., juil. 06 2018, Stephen Boyd <sboyd@kernel.org> wrote:
+> =
 
-Fixes: 7426b1a51803 ("netvsc: optimize receive completions")
-Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
----
- drivers/net/hyperv/netvsc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> > Quoting Gregory CLEMENT (2018-06-29 07:44:02)
+> >> Hi,
+> >>  =
 
-diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-index 8e9d0ee1572b..caaf5054f446 100644
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -1285,14 +1285,14 @@ int netvsc_poll(struct napi_struct *napi, int budget)
- 		nvchan->desc = hv_pkt_iter_next(channel, nvchan->desc);
- 	}
- 
--	/* If send of pending receive completions suceeded
--	 *   and did not exhaust NAPI budget this time
-+	send_recv_completions(ndev, net_device, nvchan);
-+
-+	/* If it did not exhaust NAPI budget this time
- 	 *   and not doing busy poll
- 	 * then re-enable host interrupts
- 	 *     and reschedule if ring is not empty.
- 	 */
--	if (send_recv_completions(ndev, net_device, nvchan) == 0 &&
--	    work_done < budget &&
-+	if (work_done < budget &&
- 	    napi_complete_done(napi, work_done) &&
- 	    hv_end_read(&channel->inbound) &&
- 	    napi_schedule_prep(napi)) {
--- 
-2.17.1
+> >>  On mar., juin 19 2018, Gregory CLEMENT <gregory.clement@bootlin.com> =
+wrote:
+> >> =
 
+> >> > Switching the CPU from the L2 or L3 frequencies (300 and 200 Mhz
+> >> > respectively) to L0 frequency (1.2 Ghz) requires a significant amount
+> >> > of time to let VDD stabilize to the appropriate voltage. This amount=
+ of
+> >> > time is large enough that it cannot be covered by the hardware
+> >> > countdown register. Due to this, the CPU might start operating at L0
+> >> > before the voltage is stabilized, leading to CPU stalls.
+> >> >
+> >> > To work around this problem, we prevent switching directly from the
+> >> > L2/L3 frequencies to the L0 frequency, and instead switch to the L1
+> >> > frequency in-between. The sequence therefore becomes:
+> >> >
+> >> > 1. First switch from L2/L3(200/300MHz) to L1(600MHZ)
+> >> > 2. Sleep 20ms for stabling VDD voltage
+> >> > 3. Then switch from L1(600MHZ) to L0(1200Mhz).
+> >> =
+
+> >> Do you have any comment on this fix?
+> >> =
+
+> >
+> > Looks good. Is it crashing right now? I can throw it into clk-fixes if
+> > it's fixing pain.
+> =
+
+> Yes for the SoC capable to run at 1200Mhz it crashes. At the time the
+> initial support was provided, my SoC version only ran at 1000MHz, so the
+> problem was not noticed.
+> =
+
+
+Ok. Applied to clk-fixes.
