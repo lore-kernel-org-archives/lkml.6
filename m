@@ -2,194 +2,161 @@ Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE516C6778A
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B4CC6778F
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A96C20882
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:49:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A96C20882
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
+	by mail.kernel.org (Postfix) with ESMTP id F310520882
+	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 08:49:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mrqbcm7W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F310520882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932482AbeGIItM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 04:49:12 -0400
-Received: from proxima.lasnet.de ([78.47.171.185]:53431 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751211AbeGIItL (ORCPT
+        id S932617AbeGIItv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 04:49:51 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:47074 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932508AbeGIItt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 04:49:11 -0400
-Received: from [IPv6:2003:e9:d74b:829:3252:cbff:fe54:190f] (p200300E9D74B08293252CBFFFE54190F.dip0.t-ipconnect.de [IPv6:2003:e9:d74b:829:3252:cbff:fe54:190f])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id EDFABC759F;
-        Mon,  9 Jul 2018 10:49:08 +0200 (CEST)
-Subject: Re: [PATCH] ieee802154: add rx LQI from userspace
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Romuald Cari <romuald.cari@devialet.com>,
-        linux-wpan@vger.kernel.org
-Cc:     Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
-References: <20180607140802.22666-1-peron.clem@gmail.com>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <ac0ff951-627d-9694-741d-03f6bc4d6ddc@datenfreihafen.org>
-Date:   Mon, 9 Jul 2018 10:49:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 9 Jul 2018 04:49:49 -0400
+Received: by mail-pf0-f195.google.com with SMTP id l123-v6so13185240pfl.13;
+        Mon, 09 Jul 2018 01:49:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HatlDdLkdCGZiiH4zsg1PKKYLJ9AGUgcoOCwUB0hlNU=;
+        b=Mrqbcm7WCf3eRBa0NzmPYOv7e7K1MCVcGDt7SNpy9R9cCW/5M07qb9CCCFUw4TpfIC
+         IlJNcH82dFkRMJheC7ryOnvKp9AMNz0VkWnvMoKMkgjxF7aBok6QMRn25wcJKF+ua6mo
+         iI7Jg6vUyktjqNTDV9QwxWTnEYyrvJMUcuXJC6nIJvbGBjaWDY1+6CFF6kUsunHGaRgs
+         yqCRyc2i2EREfwov6yLuEFnrxp9LTBHSh27MvkLWNVq/w6hVr/JeCve4A56s+pRudPGM
+         HIK4r0nC0VcFs2mtPIDq1S0f1AiYnwm3veJewOvi+oe1c2khwCcZeryaNxnP+K93DZn8
+         GUow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HatlDdLkdCGZiiH4zsg1PKKYLJ9AGUgcoOCwUB0hlNU=;
+        b=PCkGK6cDWEJW0FlCU1/STNBTJlLHVUuwVe4W0ZyjOJcmg0btsF6uaM+UWTwF1xlPTZ
+         r5gMxxM18tvKE8Vo+9iYPRx8Isvc0gscsHKesknkNf5QaPgobqulleiQfwO59zxrLMx9
+         TqYdyc/+Z6WaM3TWRvXEVy/tsa9CDxoy+1Gn4czil/J4EGFmc9qOd1POBiy7yXzNwVOF
+         9Tn18eELJxou7nPEuExEswDatij93Qwex7QI0RCYfi/e4kyteD8v5ZrCtn4+AeYnt5uG
+         gDstcNGfceV1fMQ5eSD2KAcYI5dQlfml+BT6ihcObVq7fBzTvJ3HVabved8EJljoJnR8
+         rLLg==
+X-Gm-Message-State: APt69E0raxxx240etMu6eGatkqgeJUnL5nGsMEywbmiceDZLhMSnYqFd
+        zKR9RvD5FVnT2g5RsrZtUjo=
+X-Google-Smtp-Source: AAOMgpc8TmWBJWgc8Oc9FHvIdvonM/tq2ctmc797UBGG2/nL9j72pYNS9xIbYqd1P9B4iTxGDIHY0g==
+X-Received: by 2002:a63:7703:: with SMTP id s3-v6mr12381856pgc.339.1531126188525;
+        Mon, 09 Jul 2018 01:49:48 -0700 (PDT)
+Received: from roar.ozlabs.ibm.com ([122.99.82.10])
+        by smtp.gmail.com with ESMTPSA id p18-v6sm14301279pfe.22.2018.07.09.01.49.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 01:49:47 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 18:49:37 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+To:     john.hubbard@gmail.com
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 0/2] mm/fs: put_user_page() proposal
+Message-ID: <20180709184937.7a70c3aa@roar.ozlabs.ibm.com>
+In-Reply-To: <20180709080554.21931-1-jhubbard@nvidia.com>
+References: <20180709080554.21931-1-jhubbard@nvidia.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180607140802.22666-1-peron.clem@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Clement.
+On Mon,  9 Jul 2018 01:05:52 -0700
+john.hubbard@gmail.com wrote:
 
-Finally coming to review the patch. Sorry for the delay.
-
-On 07.06.2018 16:08, Clément Péron wrote:
-> From: Romuald CARI <romuald.cari@devialet.com>
+> From: John Hubbard <jhubbard@nvidia.com>
 > 
-> The Link Quality Indication data exposed by drivers could not be accessed from
-> userspace. Since this data is per-datagram received, it makes sense to make it
-> available to userspace application through the ancillary data mechanism in
-> recvmsg rather than through ioctls. This can be activated using the socket
-> option WPAN_WANTLQI under SOL_IEEE802154 protocol.
-
-I can see that it makes the application life a lot easier to have data
-send out and LQI value synced up by using the socket approach instead of
-dealing with socket and ioctl's. I am good with this patch in general.
-
-So you have some public code that uses this approach? I would be
-interesting in the userspace part of yours. A demo would be fine. If the
-network handling part of your application is public anyway that would be
-even better. :-)
-
-As Alex mentioned we have some socket examples in the wpa-tools package
-to give people a head start when wanting to use the subsystem. Having
-such a simple example for the LQI feature would really give you bonus
-points. :-)
-
-https://github.com/linux-wpan/wpan-tools/tree/master/examples
-
+> Hi,
 > 
-> This LQI data is available in the ancillary data buffer under the SOL_IEEE802154
-> level as the type WPAN_LQI. The value is an unsigned byte indicating the link
-> quality with values ranging 0-255.
+> With respect to tracking get_user_pages*() pages with page->dma_pinned*
+> fields [1], I spent a few days retrofitting most of the get_user_pages*()
+> call sites, by adding calls to a new put_user_page() function, in place
+> of put_page(), where appropriate. This will work, but it's a large effort.
 > 
-> Signed-off-by: Romuald Cari <romuald.cari@devialet.com>
-> Signed-off-by: Clément Peron <clement.peron@devialet.com>
-> ---
->  include/net/af_ieee802154.h |  1 +
->  net/ieee802154/socket.c     | 17 +++++++++++++++++
->  2 files changed, 18 insertions(+)
+> Design note: I didn't see anything that hinted at a way to fix this
+> problem, without actually changing all of the get_user_pages*() call sites,
+> so I think it's reasonable to start with that.
 > 
-> diff --git a/include/net/af_ieee802154.h b/include/net/af_ieee802154.h
-> index a5563d27a3eb..8003a9f6eb43 100644
-> --- a/include/net/af_ieee802154.h
-> +++ b/include/net/af_ieee802154.h
-> @@ -56,6 +56,7 @@ struct sockaddr_ieee802154 {
->  #define WPAN_WANTACK		0
->  #define WPAN_SECURITY		1
->  #define WPAN_SECURITY_LEVEL	2
-> +#define WPAN_WANTLQI		3
->  
->  #define WPAN_SECURITY_DEFAULT	0
->  #define WPAN_SECURITY_OFF	1
-> diff --git a/net/ieee802154/socket.c b/net/ieee802154/socket.c
-> index a60658c85a9a..bc6b912603f1 100644
-> --- a/net/ieee802154/socket.c
-> +++ b/net/ieee802154/socket.c
-> @@ -25,6 +25,7 @@
->  #include <linux/termios.h>	/* For TIOCOUTQ/INQ */
->  #include <linux/list.h>
->  #include <linux/slab.h>
-> +#include <linux/socket.h>
->  #include <net/datalink.h>
->  #include <net/psnap.h>
->  #include <net/sock.h>
-> @@ -452,6 +453,7 @@ struct dgram_sock {
->  	unsigned int bound:1;
->  	unsigned int connected:1;
->  	unsigned int want_ack:1;
-> +	unsigned int want_lqi:1;
->  	unsigned int secen:1;
->  	unsigned int secen_override:1;
->  	unsigned int seclevel:3;
-> @@ -486,6 +488,7 @@ static int dgram_init(struct sock *sk)
->  	struct dgram_sock *ro = dgram_sk(sk);
->  
->  	ro->want_ack = 1;
-> +	ro->want_lqi = 0;
->  	return 0;
->  }
->  
-> @@ -713,6 +716,7 @@ static int dgram_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
->  	size_t copied = 0;
->  	int err = -EOPNOTSUPP;
->  	struct sk_buff *skb;
-> +	struct dgram_sock *ro = dgram_sk(sk);
->  	DECLARE_SOCKADDR(struct sockaddr_ieee802154 *, saddr, msg->msg_name);
->  
->  	skb = skb_recv_datagram(sk, flags, noblock, &err);
-> @@ -744,6 +748,13 @@ static int dgram_recvmsg(struct sock *sk, struct msghdr *msg, size_t len,
->  		*addr_len = sizeof(*saddr);
->  	}
->  
-> +	if (ro->want_lqi) {
-> +		err = put_cmsg(msg, SOL_IEEE802154, WPAN_WANTLQI,
-> +			       sizeof(uint8_t), &(mac_cb(skb)->lqi));
-> +		if (err)
-> +			goto done;
-> +	}
-> +
-
-I am wondering a bit about the LQI you get back here. Maybe Alex can
-also shed some lights on it. The LQI value stored here is always from
-the last frame send (to any peer)? Or is it the last frame send to this
-specific peer?
-
-I have not put much thoughts into the LQI thing so far.Just thinking we
-need to be careful what we are providing to not let userspace make bad
-decisions (e.g. wrong routing changes due to link values given for a
-different peer connection).
-
->  	if (flags & MSG_TRUNC)
->  		copied = skb->len;
->  done:
-> @@ -847,6 +858,9 @@ static int dgram_getsockopt(struct sock *sk, int level, int optname,
->  	case WPAN_WANTACK:
->  		val = ro->want_ack;
->  		break;
-> +	case WPAN_WANTLQI:
-> +		val = ro->want_lqi;
-> +		break;
->  	case WPAN_SECURITY:
->  		if (!ro->secen_override)
->  			val = WPAN_SECURITY_DEFAULT;
-> @@ -892,6 +906,9 @@ static int dgram_setsockopt(struct sock *sk, int level, int optname,
->  	case WPAN_WANTACK:
->  		ro->want_ack = !!val;
->  		break;
-> +	case WPAN_WANTLQI:
-> +		ro->want_lqi = !!val;
-> +		break;
->  	case WPAN_SECURITY:
->  		if (!ns_capable(net->user_ns, CAP_NET_ADMIN) &&
->  		    !ns_capable(net->user_ns, CAP_NET_RAW)) {
+> Anyway, it's still incomplete, but because this is a large, tree-wide
+> change (that will take some time and testing), I'd like to propose a plan,
+> before spamming zillions of people with put_user_page() conversion patches.
+> So I picked out the first two patches to show where this is going.
 > 
+> Proposed steps:
+> 
+> Step 1:
+> 
+> Start with the patches here, then continue with...dozens more.
+> This will eventually convert all of the call sites to use put_user_page().
+> This is easy in some places, but complex in others, such as:
+> 
+>     -- drivers/gpu/drm/amd
+>     -- bio
+>     -- fuse
+>     -- cifs
+>     -- anything from:
+>            git grep  iov_iter_get_pages | cut -f1 -d ':' | sort | uniq
+> 
+> The easy ones can be grouped into a single patchset, perhaps, and the
+> complex ones probably each need a patchset, in order to get the in-depth
+> review they'll need.
+> 
+> Furthermore, some of these areas I hope to attract some help on, once
+> this starts going.
+> 
+> Step 2:
+> 
+> In parallel, tidy up the core patchset that was discussed in [1], (version
+> 2 has already been reviewed, so I know what to do), and get it perfected
+> and reviewed. Don't apply it until step 1 is all done, though.
+> 
+> Step 3:
+> 
+> Activate refcounting of dma-pinned pages (essentially, patch #5, which is
+> [1]), but don't use it yet. Place a few WARN_ON_ONCE calls to start
+> mopping up any missed call sites.
+> 
+> Step 4:
+> 
+> After some soak time, actually connect it up (patch #6 of [1]) and start
+> taking action based on the new page->dma_pinned* fields.
 
-Review wise I am happy with the patch. I will give it a test.
+You can use my decade old patch!
 
-regards
-Stefan Schmidt
+https://lkml.org/lkml/2009/2/17/113
+
+The problem with blocking in clear_page_dirty_for_io is that the fs is
+holding the page lock (or locks) and possibly others too. If you
+expect to have a bunch of long term references hanging around on the
+page, then there will be hangs and deadlocks everywhere. And if you do
+not have such log term references, then page lock (or some similar lock
+bit) for the duration of the DMA should be about enough?
+
+I think it has to be more fundamental to the filesystem. Filesystem
+would get callbacks to register such long term dirtying on its files.
+Then it can do locking, resource allocation, -ENOTSUPP, etc.
+
+Thanks,
+Nick
