@@ -3,101 +3,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754CEC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 961C3C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2730E2089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:51:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2730E2089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A2F02089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:53:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2F02089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933446AbeGJNvL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 09:51:11 -0400
-Received: from gateway30.websitewelcome.com ([192.185.180.41]:16360 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933145AbeGJNvH (ORCPT
+        id S933352AbeGJNx3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 09:53:29 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56938 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754201AbeGJNx2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 09:51:07 -0400
-X-Greylist: delayed 1318 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Jul 2018 09:51:07 EDT
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id 9A04E1568F
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 08:29:08 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id cshYfQYYRBcCXcshYf8EwC; Tue, 10 Jul 2018 08:29:08 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.65.56] (port=58128 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fcshX-001WPf-AN; Tue, 10 Jul 2018 08:29:07 -0500
-Date:   Tue, 10 Jul 2018 08:29:02 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Wan ZongShun <mcuos.com@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] mtd: nuc900_nand: mark expected switch fall-through
-Message-ID: <20180710132902.GA13541@embeddedor.com>
+        Tue, 10 Jul 2018 09:53:28 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 6A3AA804D8; Tue, 10 Jul 2018 15:53:26 +0200 (CEST)
+Date:   Tue, 10 Jul 2018 15:53:26 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: droid 4: no sound in the morning
+Message-ID: <20180710135325.GA23878@amd>
+References: <20180710105910.GA4442@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.65.56
-X-Source-L: No
-X-Exim-ID: 1fcshX-001WPf-AN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.65.56]:58128
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20180710105910.GA4442@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-where we are expecting to fall through.
 
-Addresses-Coverity-ID: 1471717 ("Missing break in switch")
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/mtd/nand/raw/nuc900_nand.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+--r5Pyd7+fXNt84Ff3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mtd/nand/raw/nuc900_nand.c b/drivers/mtd/nand/raw/nuc900_nand.c
-index af5b32c9..53a9f6c 100644
---- a/drivers/mtd/nand/raw/nuc900_nand.c
-+++ b/drivers/mtd/nand/raw/nuc900_nand.c
-@@ -191,8 +191,9 @@ static void nuc900_nand_command_lp(struct mtd_info *mtd, unsigned int command,
- 		return;
- 
- 	case NAND_CMD_READ0:
--
- 		write_cmd_reg(nand, NAND_CMD_READSTART);
-+		/* fall through */
-+
- 	default:
- 
- 		if (!chip->dev_ready) {
--- 
-2.7.4
+On Tue 2018-07-10 12:59:10, Pavel Machek wrote:
+> Hi!
+>=20
+> I attempted to use droid 4 as an alarm clock, but got no sound in the
+> morning.
+>=20
+> Log said:
+>=20
+> [78798.682830] omap-mcbsp 40124000.mcbsp: CLKS: could not
+> clk_set_parent() to prcm_fck
+> [78803.561767] omap-mcbsp 40126000.mcbsp: CLKS: could not
+> clk_set_parent() to prcm_fck
+>=20
+> Could it be related? Everything ok after reboot, v4.18-rc4.
+>=20
+> Does anyone else see that? Any ideas?
 
+Ok, so I see that
+
+[ 1775.896270] Charging, 4350000 uV, 532000 uA
+[ 1778.700286] omap-mcbsp 40124000.mcbsp: CLKS: could not
+clk_set_parent() to prcm_fck
+[ 1778.898468] Charging, 4350000 uV, 532000 uA
+
+=2E..even when audio still works. So possibly not related.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--r5Pyd7+fXNt84Ff3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltEulUACgkQMOfwapXb+vJTMACeIPf7uc+TNJ5u3B2DyqzETeFi
+5eUAnRiPLxAC+DKBwE/o/KfX6a3Bv+QX
+=emDT
+-----END PGP SIGNATURE-----
+
+--r5Pyd7+fXNt84Ff3--
