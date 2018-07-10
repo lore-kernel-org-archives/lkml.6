@@ -1,127 +1,171 @@
 Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3A4C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39234C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B51F820870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:46:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51F820870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id EFF0D20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:46:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AyFlw8rF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF0D20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389053AbeGJSqW (ORCPT
+        id S2389091AbeGJSqg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:46:22 -0400
-Received: from mga02.intel.com ([134.134.136.20]:49770 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732278AbeGJSqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:46:21 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 11:46:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
-   d="scan'208";a="73722475"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga002.jf.intel.com with ESMTP; 10 Jul 2018 11:46:04 -0700
-Date:   Tue, 10 Jul 2018 11:45:07 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Eduardo Habkost <ehabkost@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v2 1/4] x86/split_lock: Enumerate #AC exception for split
- locked access feature
-Message-ID: <20180710184506.GA37857@romley-ivt3.sc.intel.com>
-References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
- <1530282807-66555-2-git-send-email-fenghua.yu@intel.com>
- <b0267bb2-7d1f-c1d6-cff8-addf358009b3@intel.com>
- <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
- <20180704200742.GD7451@localhost.localdomain>
+        Tue, 10 Jul 2018 14:46:36 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39012 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732278AbeGJSqf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 14:46:35 -0400
+Received: by mail-lj1-f193.google.com with SMTP id t7-v6so17514570ljj.6;
+        Tue, 10 Jul 2018 11:46:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HwMfIp6qq4Py9nW1BBZLqpEEcR/GqgFA7zz3v9IC9Ms=;
+        b=AyFlw8rFv1eJ8/6MsEXor3CHRH2AouMgRG9jwSFcVuO/5b/NmT+6V4wXIPm9MVCwuY
+         iQYQa0+HaJJMyaIdLbBzME2pIv7DSP3kms6xU9k3n1ccosGYEWMDu8fyvc6fkbR2zMD4
+         QBiGKsRAxgb9aXyYJSBgDCxiL2j9NexhmAX8caL0kuopb7k6RZFfeON1Z7s7Tz0Ulz/y
+         1MZEd46yolCw5UbT/Ca/IuMEehgSpZoKgGo8hQWTOoY4yuL8NwFc7gGfaXnZxC2ojekn
+         1IpTc+xJeb+WL9TysKdoIlZDTzvYu3Ge3tWxL6qN+HsPQmMckE9iRN0aTPyRZiPzyNHi
+         eWlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HwMfIp6qq4Py9nW1BBZLqpEEcR/GqgFA7zz3v9IC9Ms=;
+        b=nmXM375Xk6oJfwp1MgmM1FX4zqgjMoXJcwC03SFpJZxr/Kt8MuCJUsvck32gjoby2b
+         cX77z5Z+Iv77jh8Rto7CeybyF0PKaKqvX45Nryzk6XJaO7Y+ywWOlC0VK5TvXby0hNsg
+         Azq+ATKi8y+CXTHjeHx/L000ej3s80mY0khz1bBhcdj8E557L/DeielDbw/tTX23wwYX
+         FaE+gO6397G/02xVVf1+NX2gM2GAv9q8+k4Ajgnojkihf41BRoKyifqxfr/8NAhPpuOp
+         9FDHx9Xbg8IZT+aTmomn1+iuX9YUIpcp3kzFFLXuk/3ybHwu/VXC7KlWvPLYM3R/XT7R
+         6sVQ==
+X-Gm-Message-State: APt69E0hmdp5qnQCqqeakaesy5A3XBn2NF0UoCHJ5sCmYSuuCVDrPWlR
+        FPUHu4po66ulxFltt8TWNKE=
+X-Google-Smtp-Source: AAOMgpdHd66mKOgpulwxWNbnPUJmJX5voT6/cnvWqY0kRHdt3VvTYszUIAc57EoyhjOQNyjm6AU2xA==
+X-Received: by 2002:a2e:5c4:: with SMTP id 187-v6mr15208999ljf.28.1531248376519;
+        Tue, 10 Jul 2018 11:46:16 -0700 (PDT)
+Received: from gmail.com ([46.194.208.109])
+        by smtp.gmail.com with ESMTPSA id w4-v6sm2797053ljj.58.2018.07.10.11.46.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 11:46:15 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 20:46:17 +0200
+From:   Marcus Folkesson <marcus.folkesson@gmail.com>
+To:     Felipe Balbi <balbi@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, davem@davemloft.net,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Ruslan Bilovol <ruslan.bilovol@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] usb: gadget: ccid: add support for USB CCID
+ Gadget Device
+Message-ID: <20180710184617.GA5839@gmail.com>
+References: <20180529185021.13738-1-marcus.folkesson@gmail.com>
+ <87r2ltcopp.fsf@linux.intel.com>
+ <20180530140415.GE2939@gmail.com>
+ <20180608185443.GB874@gmail.com>
+ <87efh4zeqb.fsf@linux.intel.com>
+ <20180622164823.GA5351@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180704200742.GD7451@localhost.localdomain>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180622164823.GA5351@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 05:07:42PM -0300, Eduardo Habkost wrote:
-> On Fri, Jun 29, 2018 at 06:23:35PM +0200, Thomas Gleixner wrote:
-> > On Fri, 29 Jun 2018, Dave Hansen wrote:
-> > > On 06/29/2018 07:33 AM, Fenghua Yu wrote:
-> > > > +/* Detect feature of #AC for split lock by probing bit 29 in MSR_TEST_CTL. */
-> > > > +void detect_ac_split_lock(void)
-> > > > +{
-> > > > +	u64 val, orig_val;
-> > > > +	int ret;
-> > > > +
-> > > > +	/* Attempt to read the MSR. If the MSR doesn't exist, reading fails. */
-> > > > +	ret = rdmsrl_safe(MSR_TEST_CTL, &val);
-> > > > +	if (ret)
-> > > > +		return;
-> > > 
-> > > This is a bit fast and loose with how the feature is detected, which
-> > > might be OK, but can we call out why we are doing this, please?
-> > > 
-> > > Is this MSR not really model-specific?  Is it OK to go poking at it on
-> > > all x86 variants?  Or, do we at _least_ need a check for Intel cpus in here?
-> > 
-> > That definitely needs a vendor check. Also the whole code needs to be
-> > compiled out if CONFIG_INTEL=n.
-> > 
-> > Aside of that this wants to be enumerated. CPUID or MISC_FEATURES and not
-> > this guess work detection logic. Why do I have to ask for that for every
-> > other new feature thingy?
+Hi Filipe,
+
+On Fri, Jun 22, 2018 at 06:48:23PM +0200, Marcus Folkesson wrote:
+> Hi Filipe,
 > 
-> Yes, please.  KVM hosts normally expect guests to not touch MSRs
-> unless we explicitly tell them the MSR is available (normally
-> through CPUID).  This is important to ensure live migration
-> between different host kernel versions works reliably.
+> On Mon, Jun 18, 2018 at 11:22:04AM +0300, Felipe Balbi wrote:
+> > 
+> > Hi,
+> > 
+> > Marcus Folkesson <marcus.folkesson@gmail.com> writes:
+> > > Hi Felipe,
+> > >
+> > > Should I send out v4 or what do you think?
+> > 
+> > sorry for the delay, have been busy with other tasks.
+> > 
+> 
+> It is no hurry :-)
+> 
+> > > On Wed, May 30, 2018 at 04:04:15PM +0200, Marcus Folkesson wrote:
+> > >> Hi Filipe,
+> > >> 
+> > >> On Wed, May 30, 2018 at 03:28:18PM +0300, Felipe Balbi wrote:
+> > >> > Marcus Folkesson <marcus.folkesson@gmail.com> writes:
+> > >> > 
+> > >> > > Chip Card Interface Device (CCID) protocol is a USB protocol that
+> > >> > > allows a smartcard device to be connected to a computer via a card
+> > >> > > reader using a standard USB interface, without the need for each manufacturer
+> > >> > > of smartcards to provide its own reader or protocol.
+> > >> > >
+> > >> > > This gadget driver makes Linux show up as a CCID device to the host and let a
+> > >> > > userspace daemon act as the smartcard.
+> > >> > >
+> > >> > > This is useful when the Linux gadget itself should act as a cryptographic
+> > >> > > device or forward APDUs to an embedded smartcard device.
+> > >> > >
+> > >> > > Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> > >> > 
+> > >> > this could be done entirely in userspace with functionfs, why do we need
+> > >> > this part in the kernel? It does very little.
+> > >> 
+> > >> Andrzej pointed this out, and I actually do not have any good answer
+> > >> more than that the userspace application could be kept small and the
+> > >> important configuration of the CCID device is done with well (I hope)
+> > >> documented configfs attributes.
+> > 
+> > can we use existing open source applications without modification by
+> > accepting this glue layer?
+> 
+> 
+> If you mean existing open source application to talk to the "daemon", the answer is
+> yes. I have been using PCSC-lite and OpenSC on Linux, and PCSC on
+> Windows to communicate with the smartcard.
+> 
+> If you mean existing application as the "daemon", the answer is probably
+> no.
 
-The problem is the hardware design for the feature is complete. The
-hardware designer cannot change the feature enumeration to CPUID or
-MISC_FEATURES. In the future, the designer will put future model-
-specific feature bits in a processor feature MSR and hopefully we will
-have a nice standard enumeration way for all future model specific
-features. But split lock is too late (or too early) to be in the feature
-MSR.
 
-Considering the current situation, can we do split lock as following?
+Just sending a friendly ping on this one.
+I've sent out v4 as I had it prepared for a long time, just to catch
+comments in the meanwhile, but none so far.
 
-By default, #AC for split lock is not enabled by kernel. It's disabled
-by BIOS by default (bit29=0). Kernel doesn't clear bit 29.
+> 
+> > 
+> > -- 
+> > balbi
+> 
+> Thanks,
+> 
+> Best regards
+> Marcus Folkesson
+> 
 
-For IOT/real time users, they know the feature is in the processor and
-they know the consequence of enabling the feature (e.g. some apps will
-be killed because of split lock issues). They want to enable #AC for
-split lock by kernel parameter "split_lock_detect=on". Kernel calls
-wrmsr_safe(), which can fail on processor not supporting
-the feature, to enable the feature.
+Thanks,
 
-There is no enumeration and no flag in /proc/cpuinfo flag for the feature.
-
-Is this a right way to go? Please advise.
-
-Thanks.
-
--Fenghua
+Best regards
+Marcus Folkesson
+> 
