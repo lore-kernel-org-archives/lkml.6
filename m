@@ -2,166 +2,130 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C05C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0913C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:32:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A108120871
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:31:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="enOsQ7i2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A108120871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A3C5F20878
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:32:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C5F20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751267AbeGJIbn (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:31:43 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:42184 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751191AbeGJIbl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:31:41 -0400
-Received: by mail-io0-f195.google.com with SMTP id r24-v6so19572936ioh.9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 01:31:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oyiwvm7THiupXaKy9J1yZU76ybaXRbibAyw/egA7zI0=;
-        b=enOsQ7i218zX+cBpOE8bW4Mgo261UTfzeWZRiEYYRDbYKAnGI70zp1HeiLl58Pb8k9
-         OtBPDplSrCBANzrrpKBnxyNylROtijkKDNHGXArcf0PAySprzdM5hRjNNSj3+GlBJylg
-         gDw0oW6RDuUR/7ay6FlPFqx6ewsR6PsFu3dWI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oyiwvm7THiupXaKy9J1yZU76ybaXRbibAyw/egA7zI0=;
-        b=tI3oL8A4Oocy+Uh3OgQsyaY9o6XuiQTesXr0dqqCd+86eAbDaWYMWrUAY+5KS6uNy5
-         l6kNyP442psg2V3lB3y9WsBa9v0QWf6rubP5OR8NpTLbCxKYCrJfo6VWfR6eHhzYE7cb
-         KYoKt2lYgQrmz0vDrlR1GwIeDA/qV+an3ayWa11LWtk7QSp8c+vxghtRwrdKuUNbOXdq
-         +pzGSFHYls64X7fxUTXNX0LP11unqIa1DuqSHsvZsgpjrjZa4CKU7vxrZsANONc81aC2
-         W+BjqfGBKIlQFV72CuUOFVm1WMqXfFyXpP/Vih1EzLh9+riHauS/0a9mvfKGTXM8KALa
-         9JEQ==
-X-Gm-Message-State: AOUpUlHvABvNcSshNoLhXj4G7ROzMZsjQKb5mzuzapvq1YDDIFqqU6Fc
-        oUOSOCYE3qJfiwFQnYqdeohH4ArXjFwWa81ybGL0kw==
-X-Google-Smtp-Source: AAOMgpdjVrgaWLbcaayDMYIPNFOkZPpDhmZjzAW6sQurcctcABKh5BgQhWYP5hKVNiCUY/KRN9suhhkEtez30v1km/A=
-X-Received: by 2002:a6b:c997:: with SMTP id z145-v6mr20542443iof.266.1531211500415;
- Tue, 10 Jul 2018 01:31:40 -0700 (PDT)
+        id S932172AbeGJIcK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:32:10 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42432 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751182AbeGJIcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:32:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 975D680D;
+        Tue, 10 Jul 2018 01:32:08 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9ABDB3F318;
+        Tue, 10 Jul 2018 01:32:04 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 09:32:03 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     peterz@infradead.org, rjw@rjwysocki.net,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        gregkh@linuxfoundation.org, mingo@redhat.com,
+        morten.rasmussen@arm.com, chris.redpath@arm.com,
+        patrick.bellasi@arm.com, valentin.schneider@arm.com,
+        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
+        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
+        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
+        pkondeti@codeaurora.org, juri.lelli@redhat.com,
+        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
+        currojerez@riseup.net, javi.merino@kernel.org
+Subject: Re: [RFC PATCH v4 03/12] PM: Introduce an Energy Model management
+ framework
+Message-ID: <20180710083202.GD17598@e108498-lin.cambridge.arm.com>
+References: <20180628114043.24724-1-quentin.perret@arm.com>
+ <20180628114043.24724-4-quentin.perret@arm.com>
+ <4341d199-8018-21e1-c2ce-9af8f7719297@arm.com>
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 01:31:39
- -0700 (PDT)
-In-Reply-To: <1528373500-24663-3-git-send-email-manish.narani@xilinx.com>
-References: <1528373500-24663-1-git-send-email-manish.narani@xilinx.com> <1528373500-24663-3-git-send-email-manish.narani@xilinx.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 10 Jul 2018 10:31:39 +0200
-Message-ID: <CAPDyKFoGJOE-h4rLqzMO=wzNjkfcuU_oQ3NLK5=OQfSMj3dDHg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/3] sdhci: arasan: Add support to read Tap Delay
- values from DT
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Moritz Fischer <mdf@kernel.org>, stefan.krsmanovic@aggios.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Michal Simek <michal.simek@xilinx.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4341d199-8018-21e1-c2ce-9af8f7719297@arm.com>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7 June 2018 at 14:11, Manish Narani <manish.narani@xilinx.com> wrote:
-> This patch adds support for reading Tap Delay values from Device Tree
-> and write them via eemi calls. The macros containing these tap delay
-> values are removed from the driver.
->
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  drivers/mmc/host/sdhci-of-arasan.c | 131 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 131 insertions(+)
->
-> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-> index e3332a5..fc0fd01 100644
-> --- a/drivers/mmc/host/sdhci-of-arasan.c
-> +++ b/drivers/mmc/host/sdhci-of-arasan.c
-> @@ -36,6 +36,8 @@
->
->  #define PHY_CLK_TOO_SLOW_HZ            400000
->
-> +#define MMC_BANK2              0x2
-> +
->  /*
->   * On some SoCs the syscon area has a feature where the upper 16-bits of
->   * each 32-bit register act as a write mask for the lower 16-bits.  This allows
-> @@ -90,6 +92,10 @@ struct sdhci_arasan_data {
->         struct sdhci_host *host;
->         struct clk      *clk_ahb;
->         struct phy      *phy;
-> +       u32 mio_bank;
-> +       u32 device_id;
-> +       u32 itapdly[MMC_TIMING_MMC_HS400 + 1];
-> +       u32 otapdly[MMC_TIMING_MMC_HS400 + 1];
->         bool            is_phy_on;
->
->         bool            has_cqe;
-> @@ -160,11 +166,36 @@ static int sdhci_arasan_syscon_write(struct sdhci_host *host,
->         return ret;
->  }
->
-> +/**
-> + * arasan_zynqmp_set_tap_delay - Program the tap delays.
-> + * @deviceid:          Unique Id of device
-> + * @itap_delay:                Input Tap Delay
-> + * @oitap_delay:       Output Tap Delay
-> + */
-> +static void arasan_zynqmp_set_tap_delay(u8 deviceid, u8 itap_delay, u8 otap_delay)
-> +{
-> +       const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
+On Monday 09 Jul 2018 at 20:07:31 (+0200), Dietmar Eggemann wrote:
+> On 06/28/2018 01:40 PM, Quentin Perret wrote:
+> This em_rescale_cpu_capacity() function is still very much specific to
+> systems with asymmetric cpu capacity (Arm big.Little/DynamIQ). Only after
+> cpufreq is up we can determine the capacity of a CPU, hence we need this one
+> to set the CPU capacity values for the individual performance states.
 
-No thanks!
+The abstraction is that this function is needed by all systems where the
+capacities of CPUs are discovered late, or can be changed at run-time.
+But yeah, AFAICT this applies mainly to Arm big.LITTLE and/or DynamIQ
+systems, at least for now.
 
-Isn't there a more generic framework we can use to change the tap
-values, rather than calling SoC specific functions from the driver?
+> 
+> Can you not calculate capacity 'on the fly' just using freq and max freq as
+> well as arch_scale_cpu_capacity() which gives you max capacity?
+> 
+> capacity = arch_scale_cpu_capacity() * freq / max_freq
+> 
+> In this case we could get rid of the 'ugly' EM rescaling infrastructure.
 
-BTW, what is a tap value, more exactly?
+Indeed, having 'capacity' values in the EM framework is just an
+optimization for the scheduler, so that it doesn't need to compute them
+in the wake-up path. I could get rid of the whole
+em_rescale_cpu_capacity() mess (and by the same occasion the RCU
+protection of the tables ...) if I removed the 'capacity' values from
+the EM. But that means a slightly higher complexity on the scheduler side.
 
-What does changing a tap value mean and where does the property belong, really?
+As you said, the capacity of a CPU at a specific OPP is:
 
-Of course this doesn't even compile, as you have a dependency to
-another series. Next time, please clarify that in a cover-letter
-(maybe you did, but I can't find it).
+    cap(opp) = freq(opp) * scale_cpu / max_freq
 
-> +       u32 node_id = (deviceid == 0) ? NODE_SD_0 : NODE_SD_1;
-> +
-> +       if (!eemi_ops || !eemi_ops->ioctl)
-> +               return;
-> +
-> +       if (itap_delay)
-> +               eemi_ops->ioctl(node_id, IOCTL_SET_SD_TAPDELAY,
-> +                               PM_TAPDELAY_INPUT, itap_delay, NULL);
-> +
-> +       if (otap_delay)
-> +               eemi_ops->ioctl(node_id, IOCTL_SET_SD_TAPDELAY,
-> +                               PM_TAPDELAY_OUTPUT, otap_delay, NULL);
-> +}
+Now, we estimate the energy consumed by this CPU as:
 
-Another overall comment for the series.
+    nrg = power(opp) * util / cap(opp)
 
-I would recommend to change the order of the patches in the series.
-Let the DT doc change come first, next the driver change and finally
-the change to the DTS file(s). This makes it easier to follow and
-review.
+because 'util / cap(opp)' represents its percentage of busy time. If I
+inject the first equation in the second, I get:
 
-[...]
+    nrg =  power(opp) * util * max_freq / (scale_cpu * freq(opp))
 
-Kind regards
-Uffe
+and this can be re-arranged as:
+
+    nrg = (power(opp) * max_freq / freq(opp)) * (util / scale_cpu)
+
+In the above equation, the first term between () is static so I could
+pre-compute it as a 'cost' for that OPP and store it in the EM table:
+
+    cost(opp) = power(opp) * max_freq / freq(opp)
+
+And then the energy calculation would be something like:
+
+   nrg = cost(opp) * util / scale_cpu
+
+If 'scale_cpu' was static, I could fold it into 'cost' and avoid the cost
+of the division. But it's not really, so I can either re-do the division
+all the time on the scheduler side, or play with RCU to cache the result
+of the division in the EM framework.
+
+(I now realize that the current implementation of em_fd_energy() does
+'cs->power * sum_util / cs->capacity' but the power / capacity ratio is
+constant so, if we decide to keep the capacity values in the EM, I
+should still cache 'power / capacity' in the EM tables and actually save
+the division ...)
+
+This is really a performance vs. code complexity trade-off. I made the
+choice of performance since we're talking about the scheduler here, but
+I'm not sure how much we really save by saving this division TBH.
+
+Thoughts ?
+
+Thanks,
+Quentin
