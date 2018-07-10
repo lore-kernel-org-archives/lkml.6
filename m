@@ -6,41 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379CFC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA094C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04598208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04598208E8
+	by mail.kernel.org (Postfix) with ESMTP id 8E9D0208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E9D0208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389317AbeGJSeh (ORCPT
+        id S2389328AbeGJSek (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:34:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48090 "EHLO
+        Tue, 10 Jul 2018 14:34:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48104 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732920AbeGJSeg (ORCPT
+        with ESMTP id S2388380AbeGJSei (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:34:36 -0400
+        Tue, 10 Jul 2018 14:34:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AE8CDEC2;
-        Tue, 10 Jul 2018 18:34:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9CB8CE3D;
+        Tue, 10 Jul 2018 18:34:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Cannon Matthews <cannonmatthews@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andres Lagar-Cavilla <andreslc@google.com>,
-        Peter Feiner <pfeiner@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.17 02/56] mm: hugetlb: yield when prepping struct pages
-Date:   Tue, 10 Jul 2018 20:24:44 +0200
-Message-Id: <20180710182503.642095800@linuxfoundation.org>
+        stable@vger.kernel.org, Steve Best <sbest@redhat.com>,
+        Raghava Aditya Renukunta 
+        <RaghavaAditya.Renukunta@microsemi.com>,
+        David Carroll <David.Carroll@microsemi.com>,
+        "Ewan D. Milne" <emilne@redhat.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.17 11/56] scsi: aacraid: Fix PD performance regression over incorrect qd being set
+Date:   Tue, 10 Jul 2018 20:24:53 +0200
+Message-Id: <20180710182504.070527701@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -57,50 +54,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cannon Matthews <cannonmatthews@google.com>
+From: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
 
-commit 520495fe96d74e05db585fc748351e0504d8f40d upstream.
+commit 59b433c825569ce251371485f0e29fca888b549d upstream.
 
-When booting with very large numbers of gigantic (i.e.  1G) pages, the
-operations in the loop of gather_bootmem_prealloc, and specifically
-prep_compound_gigantic_page, takes a very long time, and can cause a
-softlockup if enough pages are requested at boot.
+The driver fails to set the correct queue depth for native devices, due to
+failing to set the device type prior to calling aac_set_safw_target_qd().
+This results in slave configure setting the queue depth to 1.
 
-For example booting with 3844 1G pages requires prepping
-(set_compound_head, init the count) over 1 billion 4K tail pages, which
-takes considerable time.
+This causes around 30% performance degradation. Fixed by setting the dev
+type before trying to set queue depth.
 
-Add a cond_resched() to the outer loop in gather_bootmem_prealloc() to
-prevent this lockup.
-
-Tested: Booted with softlockup_panic=1 hugepagesz=1G hugepages=3844 and
-no softlockup is reported, and the hugepages are reported as
-successfully setup.
-
-Link: http://lkml.kernel.org/r/20180627214447.260804-1-cannonmatthews@google.com
-Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Andres Lagar-Cavilla <andreslc@google.com>
-Cc: Peter Feiner <pfeiner@google.com>
-Cc: Greg Thelen <gthelen@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Steve Best <sbest@redhat.com>
+Fixes: 0bcb45fb20c21 ("scsi: aacraid: Add helper function to set queue depth")
+cc: stable@vger.kernel.org
+Signed-off-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+Reviewed-by: David Carroll <David.Carroll@microsemi.com>
+Reviewed-by: Ewan D. Milne <emilne@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hugetlb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/aacraid/aachba.c |   15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2163,6 +2163,7 @@ static void __init gather_bootmem_preall
- 		 */
- 		if (hstate_is_gigantic(h))
- 			adjust_managed_page_count(page, 1 << h->order);
-+		cond_resched();
+--- a/drivers/scsi/aacraid/aachba.c
++++ b/drivers/scsi/aacraid/aachba.c
+@@ -1974,7 +1974,6 @@ static void aac_set_safw_attr_all_target
+ 	u32 lun_count, nexus;
+ 	u32 i, bus, target;
+ 	u8 expose_flag, attribs;
+-	u8 devtype;
+ 
+ 	lun_count = aac_get_safw_phys_lun_count(dev);
+ 
+@@ -1992,23 +1991,23 @@ static void aac_set_safw_attr_all_target
+ 			continue;
+ 
+ 		if (expose_flag != 0) {
+-			devtype = AAC_DEVTYPE_RAID_MEMBER;
+-			goto update_devtype;
++			dev->hba_map[bus][target].devtype =
++				AAC_DEVTYPE_RAID_MEMBER;
++			continue;
+ 		}
+ 
+ 		if (nexus != 0 && (attribs & 8)) {
+-			devtype = AAC_DEVTYPE_NATIVE_RAW;
++			dev->hba_map[bus][target].devtype =
++				AAC_DEVTYPE_NATIVE_RAW;
+ 			dev->hba_map[bus][target].rmw_nexus =
+ 					nexus;
+ 		} else
+-			devtype = AAC_DEVTYPE_ARC_RAW;
++			dev->hba_map[bus][target].devtype =
++				AAC_DEVTYPE_ARC_RAW;
+ 
+ 		dev->hba_map[bus][target].scan_counter = dev->scan_counter;
+ 
+ 		aac_set_safw_target_qd(dev, bus, target);
+-
+-update_devtype:
+-		dev->hba_map[bus][target].devtype = devtype;
  	}
  }
  
