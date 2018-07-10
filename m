@@ -2,135 +2,182 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBCFFC6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 421AFC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F06920936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="aZbRJxfk";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A6rIabyS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F06920936
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 0FC1C20936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC1C20936
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732987AbeGJS1G (ORCPT
+        id S1732956AbeGJS1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:27:06 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:42645 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732958AbeGJS1E (ORCPT
+        Tue, 10 Jul 2018 14:27:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44668 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732943AbeGJS1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:27:04 -0400
-Received: by mail-yw0-f194.google.com with SMTP id y203-v6so8196558ywd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 11:26:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=k/2WrfJlFXl+GUONhoZXlRF6G32vrxpccWnhEaOJRbA=;
-        b=aZbRJxfkwB9Xei6FDEZbmuAXq8mhHIKtwJqzOqj7xY5OPH6iWDn0bpwYbVWkRMaxvq
-         rdy7hi90VptOESZJbrKO4w7qdmZ7suH1nA+VCeDTF0hn5qJpfItXlFidn74uRIr7Dl3c
-         JQyhEYodzwpp7jDfD+4PNChbxVrdenPMVADD3wBsYlqGFFcsHF3/jS+UfCwU/GG2x/2k
-         xH/0qm8XcX8fcpMr9IEUgk7TCpEuh5M2NWkncadG+HRmLUDo2O+IHcMTYbn6P32uby5u
-         LKnKql1JI+saeGDfmVHs7rDAmMB8lucwsKBxUA0qtEruxz0bVMYvP3q8Z06AJzHqeBQh
-         ox8g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=k/2WrfJlFXl+GUONhoZXlRF6G32vrxpccWnhEaOJRbA=;
-        b=A6rIabySl4xc50ojT4C+gnr9BMk1+HZAumJ2LvO45YSlgKiluD7LAqY8qOOWxf+IM8
-         kzhMy4pENv5Qz8maVAxX8XmiSfUeP4H9i7DZ6saZ7Pj/ycGmEuhKDcxF9n75wH7QIg4e
-         ShAY8RMYc1oKdGQovs8NWtObyCSIuccJSNJb4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=k/2WrfJlFXl+GUONhoZXlRF6G32vrxpccWnhEaOJRbA=;
-        b=NMetbci0Q5fBn0oXFVnd+9nH6pOi9U3Ug7f25hxx6wsAtGGN2ARU97+A2YrdaHUew0
-         jzIqiYp26AN3cg5rT81g3n7aAly9C/S/B2iIB2lza1wq1NC8Pn+WMTItuZlkv6E2sxrb
-         Mtj1lxTNE74fdkTPsX4N5hm4zZ+V41gBFkiAOu3CnoyrdZRSDnX70lWDQdAut0rtRIyS
-         tnzdadWixygblUK8yQitj1NSYIemHVBnR+V5WPMe6Qi2nk+x5pxYl0qIpVCDV9iKkJcz
-         hVZ/JaF4bPt4AAI4aBNo8kroYurXElMHXq3EACtywCCB9kTkMkVxpbC5bqafpiiv7byX
-         oouw==
-X-Gm-Message-State: AOUpUlGFg9OxS1N8VN+xJ6e0bd7PlzKdbalKNY6a0fxkj9T6Fqjhq9zV
-        jp6uy/7HFrWgrIa5u7lfFlFrPvgmrH4zav3XmUQrPg==
-X-Google-Smtp-Source: AAOMgpfsdCENTWZvsbaIChq1+Oh78aBP+Y3egizHl68oFTSxssbEdcuFku5DPMU6xOrkHD2KJS6SbAh1c0bIRdd3GPE=
-X-Received: by 2002:a0d:f002:: with SMTP id z2-v6mr1856668ywe.116.1531247213219;
- Tue, 10 Jul 2018 11:26:53 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 11:26:52
- -0700 (PDT)
-In-Reply-To: <20180710042609.zie5fgrvoyusmeod@treble>
-References: <1531186516-15764-1-git-send-email-yamada.masahiro@socionext.com>
- <20180710022904.e3oql2ts4qz43bzo@treble> <CAK7LNASM+81JkGu5-z8GRZ9+sRyd55gO0G0M5c54zRhE5JhE3g@mail.gmail.com>
- <20180710042609.zie5fgrvoyusmeod@treble>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 10 Jul 2018 11:26:52 -0700
-X-Google-Sender-Auth: i6uOLtl_f6xZaR9-Yce_2hYfxEE
-Message-ID: <CAGXu5jKiPFdP-wMeH5RpRuT9RAK9v-Ce=2=tmsZVYm0Bn3A-Lw@mail.gmail.com>
-Subject: Re: [PATCH v2] objtool: move libelf detection to Kconfig from Makefile
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tue, 10 Jul 2018 14:27:02 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13016DB4;
+        Tue, 10 Jul 2018 18:26:51 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, fenghua.yu@intel.com,
+        yu-cheng.yu@intel.com, Ingo Molnar <mingo@kernel.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 3.18 03/23] x86/boot: Fix early command-line parsing when matching at end
+Date:   Tue, 10 Jul 2018 20:24:36 +0200
+Message-Id: <20180710182309.025696403@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
+References: <20180710182308.877332304@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 9:26 PM, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
-> I wasn't a part of the -fstack-protector conversation, but I doubt it's
-> the same pattern.  We're trying to phase out frame pointers, for several
-> reasons.  One big reason is that they cause a general slowdown across
-> the entire kernel.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-My primary concern with stack-protector was that I wanted to avoid a
-disconnect between what was visible in CONFIG_* and how the kernel
-actually got built. i.e. a kernel config had
-CONFIG_STACKPROTECTOR_STRONG, it was actually built with
--fstack-protector-strong. Having it silently downgrade to
--fstack-protector while keeping CONFIG_STACKPROTECTOR_STRONG would
-lead to serious confusion.
+------------------
 
-The second issue was that I wanted the best stack protector a compiler
-supported, and at the time it wasn't possible to do this from kconfig.
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-Masahiro fixed both of these now. :) (Thank you!)
+commit 02afeaae9843733a39cd9b11053748b2d1dc5ae7 upstream.
 
-> Since we switched the x86_64 default to the ORC unwinder, a lot of
-> people have switched over.  But this patch will reverse (or at least
-> slow down) that trend, because almost nobody has the libelf devel
-> packaged installed by default.  So over time, it will effectively make
-> frame pointers the default again in many cases.  That's exactly what we
-> *don't* want to do.  It will also cause people to accidentally re-enable
-> frame pointers when they thought they had ORC.
+The x86 early command line parsing in cmdline_find_option_bool() is
+buggy. If it matches a specified 'option' all the way to the end of the
+command-line, it will consider it a match.
 
-This is more like the gcc-plugins: kconfig will just not make the
-plugin CONFIG_*s visible if the gcc plugin dev package is missing on
-the build host. However, having or not having these isn't something
-we're trying to phase in or out, so the ORC case is more like how
-stack-protector was originally: fail the build if your CONFIG requires
-some additional build host package.
+For instance,
 
-What might be interesting is having "make *config" report certain
-CONFIG_* failures with helpful text. "WARNING: missing libelf for
-CONFIG_ORC..." or "Warning: missing gcc-plugin-dev for
-CONFIG_GCC_PLUGINS" etc?
+  cmdline = "foo";
+  cmdline_find_option_bool(cmdline, "fool");
 
--Kees
+will return 1. This is particularly annoying since we have actual FPU
+options like "noxsave" and "noxsaves" So, command-line "foo bar noxsave"
+will match *BOTH* a "noxsave" and "noxsaves". (This turns out not to be
+an actual problem because "noxsave" implies "noxsaves", but it's still
+confusing.)
 
--- 
-Kees Cook
-Pixel Security
+To fix this, we simplify the code and stop tracking 'len'. 'len'
+was trying to indicate either the NULL terminator *OR* the end of a
+non-NULL-terminated command line at 'COMMAND_LINE_SIZE'. But, each of the
+three states is *already* checking 'cmdline' for a NULL terminator.
+
+We _only_ need to check if we have overrun 'COMMAND_LINE_SIZE', and that
+we can do without keeping 'len' around.
+
+Also add some commends to clarify what is going on.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com
+Cc: yu-cheng.yu@intel.com
+Link: http://lkml.kernel.org/r/20151222225238.9AEB560C@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/x86/lib/cmdline.c |   34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
+
+--- a/arch/x86/lib/cmdline.c
++++ b/arch/x86/lib/cmdline.c
+@@ -21,12 +21,14 @@ static inline int myisspace(u8 c)
+  * @option: option string to look for
+  *
+  * Returns the position of that @option (starts counting with 1)
+- * or 0 on not found.
++ * or 0 on not found.  @option will only be found if it is found
++ * as an entire word in @cmdline.  For instance, if @option="car"
++ * then a cmdline which contains "cart" will not match.
+  */
+ int cmdline_find_option_bool(const char *cmdline, const char *option)
+ {
+ 	char c;
+-	int len, pos = 0, wstart = 0;
++	int pos = 0, wstart = 0;
+ 	const char *opptr = NULL;
+ 	enum {
+ 		st_wordstart = 0,	/* Start of word/after whitespace */
+@@ -37,11 +39,14 @@ int cmdline_find_option_bool(const char
+ 	if (!cmdline)
+ 		return -1;      /* No command line */
+ 
+-	len = min_t(int, strlen(cmdline), COMMAND_LINE_SIZE);
+-	if (!len)
++	if (!strlen(cmdline))
+ 		return 0;
+ 
+-	while (len--) {
++	/*
++	 * This 'pos' check ensures we do not overrun
++	 * a non-NULL-terminated 'cmdline'
++	 */
++	while (pos < COMMAND_LINE_SIZE) {
+ 		c = *(char *)cmdline++;
+ 		pos++;
+ 
+@@ -58,17 +63,26 @@ int cmdline_find_option_bool(const char
+ 			/* fall through */
+ 
+ 		case st_wordcmp:
+-			if (!*opptr)
++			if (!*opptr) {
++				/*
++				 * We matched all the way to the end of the
++				 * option we were looking for.  If the
++				 * command-line has a space _or_ ends, then
++				 * we matched!
++				 */
+ 				if (!c || myisspace(c))
+ 					return wstart;
+ 				else
+ 					state = st_wordskip;
+-			else if (!c)
++			} else if (!c) {
++				/*
++				 * Hit the NULL terminator on the end of
++				 * cmdline.
++				 */
+ 				return 0;
+-			else if (c != *opptr++)
++			} else if (c != *opptr++) {
+ 				state = st_wordskip;
+-			else if (!len)		/* last word and is matching */
+-				return wstart;
++			}
+ 			break;
+ 
+ 		case st_wordskip:
+
+
