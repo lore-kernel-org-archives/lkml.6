@@ -2,136 +2,243 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 042FFC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90ED1C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E0620878
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:59:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3224020878
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="MztnYUUe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E0620878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CLmQ3RpW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3224020878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751335AbeGJH7C (ORCPT
+        id S1751235AbeGJIBe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 03:59:02 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:44888 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1751057AbeGJH7A (ORCPT
+        Tue, 10 Jul 2018 04:01:34 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:39704 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751103AbeGJIBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 03:59:00 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie2.idc.renesas.com with ESMTP; 10 Jul 2018 16:58:58 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 3BFD67A749;
-        Tue, 10 Jul 2018 16:58:58 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.51,333,1526310000"; 
-   d="scan'208";a="284956920"
-Received: from mail-ty1jpn01lp0182.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.182])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 10 Jul 2018 16:58:58 +0900
+        Tue, 10 Jul 2018 04:01:33 -0400
+Received: by mail-oi0-f68.google.com with SMTP id d189-v6so40898371oib.6
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 01:01:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mDMEpyAvgeagx37HUySUIjoSt/jQF5CW8J47u6oOYM8=;
- b=MztnYUUejoiz4hkEmcfZyGqWWqREGsPIy9VZQ5z8yPeuM21C8EzymP332/qzWz++Xj67ExRcBvdxA2975iRyxL1T1QkobjhHZo/wuMa0zn7NLurR92Ado0JBKsj2GhhW7HMhxvzz4kzNnHOjvwB+n0V6R6ywUZg3ojC0hmniLtU=
-Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com (52.134.243.14) by
- OSBPR01MB3239.jpnprd01.prod.outlook.com (52.134.255.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.19; Tue, 10 Jul 2018 07:58:56 +0000
-Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com
- ([fe80::3820:2ee6:79bd:c8b6]) by OSBPR01MB2293.jpnprd01.prod.outlook.com
- ([fe80::3820:2ee6:79bd:c8b6%3]) with mapi id 15.20.0930.022; Tue, 10 Jul 2018
- 07:58:56 +0000
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     Rob Herring <robh@kernel.org>, "kishon@ti.com" <kishon@ti.com>
-CC:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH] dt-bindings: rcar-gen3-phy-usb2: Add bindings for
- r8a77990
-Thread-Topic: [PATCH] dt-bindings: rcar-gen3-phy-usb2: Add bindings for
- r8a77990
-Thread-Index: AQHT/WGkDAJMbto4EkClw9TYI4L8S6RdMlaAgCsaQjA=
-Date:   Tue, 10 Jul 2018 07:58:56 +0000
-Message-ID: <OSBPR01MB2293646B55B7C7ECA13BD37FD85B0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
-References: <1528267348-18960-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
- <20180612214433.GA28082@rob-hp-laptop>
-In-Reply-To: <20180612214433.GA28082@rob-hp-laptop>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
-x-originating-ip: [211.11.155.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;OSBPR01MB3239;7:RIyntBx0zQmGbSjhqxmFZgr+h4yVzQpIJaaxwiTcEGaZa212wCg0P4gGg83uezjZZF13CkDP5P31EYyMko+gT1xn5oC7PjAppWgpOXKyolfBJRJE3oepoLi2UCu3JfR26vta7IyXI/8WWIKXWuXKFIPPcYS+v9yyo4mGYKXSVsxkHwUP4NLy/pqcUiRj+dL5n5fA252SixNH/Egjz6csiIwT2xKuf/0vP6cB46OB6BFtQQytOaMiziqSX2huYSqt;20:XfoZ3w+ApAFa9bmVqJ5BuneQTFJlBxoV4mlQspuY95AY7vPsC7Igym1g+GKTkKoUEexuYuCp2AOZa2NB8gZFeAQMl+FBZodAYA2ywV9+1NDBw0xDZWAfhl4icArmYr+yOmWoxmJRGrQ8fAvd65qg0IEEolReVsOJ+SG+cLnR6Zg=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: c085aef1-ef74-4eed-cbcc-08d5e63afca6
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB3239;
-x-ms-traffictypediagnostic: OSBPR01MB3239:
-x-microsoft-antispam-prvs: <OSBPR01MB32392F8D332EEC490CD2B67CD85B0@OSBPR01MB3239.jpnprd01.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(31051911155226)(9452136761055);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:OSBPR01MB3239;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB3239;
-x-forefront-prvs: 0729050452
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(136003)(396003)(366004)(376002)(346002)(199004)(13464003)(189003)(3846002)(8936002)(305945005)(53936002)(476003)(6436002)(102836004)(33656002)(5660300001)(6116002)(478600001)(26005)(2501003)(2906002)(106356001)(486006)(7696005)(97736004)(5250100002)(9686003)(68736007)(14454004)(99286004)(53546011)(105586002)(66066001)(55016002)(8676002)(54906003)(110136005)(316002)(6246003)(11346002)(4326008)(7736002)(229853002)(76176011)(2900100001)(25786009)(186003)(446003)(6506007)(74316002)(81156014)(86362001)(256004)(345774005)(81166006);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB3239;H:OSBPR01MB2293.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Pf7ZkOZe5vNz6HOZsNidi3ioqG6fVuDAVpLW6gqJJR2mraLQ0HeCCVzyQXXpH/FU0PZIVZqrZtKBbfet+UbO/fdv2lGF1+0aNu0FTmh/GyiQlsIhuMhCxmQDxqjjJvVT8aHjvne7ZUUV7PNfp8xmhT2qXluZ+JzfMoZlIMPgXnAGXFvcy7gDZkc7GonZYe0RGNpobFe6tWlcubNU6vmr+Udu5slcmySbJjSbpcqo84Ss4Svk5KRLNrDw/nniIsIP+/nJikvfaepMrE4h/V7P1YCS0Lr6bbbuTjFwnwd2MT2Cl7kqcR/mIvp/ufX1wvED/yrKv/xpnEkDg2sK/RNQHuInSu6jQ8Tt/cozywDQHlk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=xBshCbIP9kcPO4YjFvZg6AWSXEnyw/dh8APn7DxB+Cs=;
+        b=CLmQ3RpW/zMhnPo/Lhh2nDyCNCIY0d+yyrCJNYFbOyO2q+Q8h04i2/Q4ntgLyvJTpX
+         PKWxf6SF+suFROdhIZnxDttPbjeXiIwOaIutEpcs/8+WWWyxLHErxY2cdtM8xWEuEKEZ
+         2r5rhf6fdCQHdD4vbq3mVeqrONZ4HaGu9tsCM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=xBshCbIP9kcPO4YjFvZg6AWSXEnyw/dh8APn7DxB+Cs=;
+        b=hECEUCsWoEC99vKG33ls+oidScsIhtIJiC7cIAXE7RqbNElUNpG6tK40zJGjOmfqvJ
+         cW5R0xKrZSVu5xR5HvZTZr6/aYecUhuWSVk7icGSBCGa2Ce89s3bXV8gqbFKCZCaA/G4
+         Joow61Hh4X5bA2U0PD6A5sY+1Bhf+2Kis42kdbRoQyPlXu5JPPz3SZCkZXOXPO0skkMg
+         RkoUITzK3GfsC1VjjBwzkx6xu+/j7B0X7fq7j4WkmMwKVAGVZ6z/JhWBgwzX61UkuYYc
+         YZVvkvlZDjnOgB4LE9ikND6H+k5f1uEz4x4COmEnLFFalwFmJW0PV5+0LjqUfADB5UEE
+         EeAw==
+X-Gm-Message-State: AOUpUlHw3/QiGNAZtawc9wuehaaDxx27be9GCYQ9QnAQqhALzp76LlfX
+        ApPD/tjY63PhacKr55xRFYJdBT6riqIf+hlO3K6YCQ==
+X-Google-Smtp-Source: AAOMgpcjI8E8BTYwd+a1L2HoiV0aLTsFDCnLxAl8kmgTJ74tdGE9RglcvfWPnNH99dbWCKOmhBcBEgHTfFYxqTyR24k=
+X-Received: by 2002:aca:44c5:: with SMTP id r188-v6mr6948731oia.280.1531209692282;
+ Tue, 10 Jul 2018 01:01:32 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c085aef1-ef74-4eed-cbcc-08d5e63afca6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2018 07:58:56.2543
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB3239
+Received: by 2002:a9d:6043:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 01:01:31
+ -0700 (PDT)
+In-Reply-To: <CABe79T4qj6SaZJzTn_ZY7XfGkj_z6JJ57+WfMm3zGE7XLbT4Lg@mail.gmail.com>
+References: <1531131569-13727-1-git-send-email-srinath.mannam@broadcom.com>
+ <055f7c8a-c3c9-af3a-d762-a26329270e4d@roeck-us.net> <CABe79T4qj6SaZJzTn_ZY7XfGkj_z6JJ57+WfMm3zGE7XLbT4Lg@mail.gmail.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Tue, 10 Jul 2018 13:31:31 +0530
+Message-ID: <CABe79T4DumpWbtXj_g-zGdE59JmsdJNtHVnQpbvXKM92t1FJhg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] watchdog: sp805: Add clock-frequency property
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     wim@linux-watchdog.org, Ray Jui <ray.jui@broadcom.com>,
+        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-watchdog@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kishon,
+Hi Guenter,
 
-Would you review this patch?
+I missed your comment about "Clearing wdt->clk is useless." I will
+remove that line.
 
+Regards,
+Srinath.
 
-Hi Rob,
-
-Thank you for your review!
-
-Best regards,
-Yoshihiro Shimoda
-
-> -----Original Message-----
-> From: Rob Herring <robh@kernel.org>
-> Sent: Wednesday, June 13, 2018 6:45 AM
-> To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Cc: kishon@ti.com; mark.rutland@arm.com; linux-kernel@vger.kernel.org; de=
-vicetree@vger.kernel.org;
-> linux-renesas-soc@vger.kernel.org
-> Subject: Re: [PATCH] dt-bindings: rcar-gen3-phy-usb2: Add bindings for r8=
-a77990
->=20
-> On Wed, Jun 06, 2018 at 03:42:28PM +0900, Yoshihiro Shimoda wrote:
-> > This patch adds suuport for r8a77990 (R-Car E3).
-> >
-> > Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> > ---
-> >  Documentation/devicetree/bindings/phy/rcar-gen3-phy-usb2.txt | 2 ++
-> >  1 file changed, 2 insertions(+)
->=20
-> Acked-by: Rob Herring <robh@kernel.org>
+On Tue, Jul 10, 2018 at 1:27 PM, Srinath Mannam
+<srinath.mannam@broadcom.com> wrote:
+> Hi Guenter,
+>
+> Thank you for your feedback. Please find my answers in lined.
+>
+> On Mon, Jul 9, 2018 at 7:15 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+>> On 07/09/2018 03:19 AM, Srinath Mannam wrote:
+>>>
+>>> When using ACPI node, binding clock devices are
+>>> not available as device tree, So clock-frequency
+>>> property given in _DSD object of ACPI device is
+>>> used to calculate Watchdog rate.
+>>>
+>>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+>>> ---
+>>>   drivers/watchdog/sp805_wdt.c | 34 ++++++++++++++++++++++++++--------
+>>>   1 file changed, 26 insertions(+), 8 deletions(-)
+>>>
+>>> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+>>> index 9849db0..ad5ed64 100644
+>>> --- a/drivers/watchdog/sp805_wdt.c
+>>> +++ b/drivers/watchdog/sp805_wdt.c
+>>> @@ -11,6 +11,7 @@
+>>>    * warranty of any kind, whether express or implied.
+>>>    */
+>>>   +#include <linux/acpi.h>
+>>>   #include <linux/device.h>
+>>>   #include <linux/resource.h>
+>>>   #include <linux/amba/bus.h>
+>>> @@ -22,6 +23,7 @@
+>>>   #include <linux/math64.h>
+>>>   #include <linux/module.h>
+>>>   #include <linux/moduleparam.h>
+>>> +#include <linux/of.h>
+>>>   #include <linux/pm.h>
+>>>   #include <linux/slab.h>
+>>>   #include <linux/spinlock.h>
+>>> @@ -65,6 +67,7 @@ struct sp805_wdt {
+>>>         spinlock_t                      lock;
+>>>         void __iomem                    *base;
+>>>         struct clk                      *clk;
+>>> +       u64                             rate;
+>>>         struct amba_device              *adev;
+>>>         unsigned int                    load_val;
+>>>   };
+>>> @@ -80,7 +83,7 @@ static int wdt_setload(struct watchdog_device *wdd,
+>>> unsigned int timeout)
+>>>         struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>>>         u64 load, rate;
+>>>   -     rate = clk_get_rate(wdt->clk);
+>>> +       rate = wdt->rate;
+>>>         /*
+>>>          * sp805 runs counter with given value twice, after the end of
+>>> first
+>>> @@ -106,9 +109,7 @@ static int wdt_setload(struct watchdog_device *wdd,
+>>> unsigned int timeout)
+>>>   static unsigned int wdt_timeleft(struct watchdog_device *wdd)
+>>>   {
+>>>         struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>>> -       u64 load, rate;
+>>> -
+>>> -       rate = clk_get_rate(wdt->clk);
+>>> +       u64 load;
+>>>         spin_lock(&wdt->lock);
+>>>         load = readl_relaxed(wdt->base + WDTVALUE);
+>>> @@ -118,7 +119,7 @@ static unsigned int wdt_timeleft(struct
+>>> watchdog_device *wdd)
+>>>                 load += wdt->load_val + 1;
+>>>         spin_unlock(&wdt->lock);
+>>>   -     return div_u64(load, rate);
+>>> +       return div_u64(load, wdt->rate);
+>>>   }
+>>>     static int
+>>> @@ -228,10 +229,27 @@ sp805_wdt_probe(struct amba_device *adev, const
+>>> struct amba_id *id)
+>>>         if (IS_ERR(wdt->base))
+>>>                 return PTR_ERR(wdt->base);
+>>>   -     wdt->clk = devm_clk_get(&adev->dev, NULL);
+>>> -       if (IS_ERR(wdt->clk)) {
+>>> +       if (adev->dev.of_node) {
+>>> +               wdt->clk = devm_clk_get(&adev->dev, NULL);
+>>> +               if (IS_ERR(wdt->clk)) {
+>>> +                       ret = PTR_ERR(wdt->clk);
+>>> +                       wdt->clk = NULL;
+>>
+>>
+>> Clearing wdt->clk is useless.
+>
+> If not, clk_prepare_enable and clk_disable_unprepare functions calls
+> made in this driver will crash.
+Sorry I missed your point. I will remove that.
+>
+>>
+>>> +               } else
+>>> +                       wdt->rate = clk_get_rate(wdt->clk);
+>>
+>>
+>> The else branch should be in { } as well per coding style.
+> I will add the change.
+>>
+>>> +       } else if (has_acpi_companion(&adev->dev)) {
+>>> +               /*
+>>> +                * When Driver probe with ACPI device, clock devices
+>>> +                * are not available, so watchdog rate get from
+>>> +                * clock-frequency property given in _DSD object.
+>>> +                */
+>>> +               device_property_read_u64(&adev->dev, "clock-frequency",
+>>> +                               &wdt->rate);
+>>
+>>
+>> Continuation line alignment is off.
+> I missed it, Thank you, I will make the change.
+>>
+>> Still not documented. Maybe that is common for ACPI devices nowadays.
+>> If so, I'll need at least a pointer to a document or something declaring
+>> that ACPI devices do not use well documented properties, and a confirmation
+>> that using such properties is acceptable in the Linux kernel.
+>>
+> patches listed below has same approach to add ACPI support.
+> ex:
+> 1. commit 515da746983bc6382e380ba8b1ce9345a9550ffe
+> Author: Naveen Kaje <nkaje@codeaurora.org>
+> Date:   Tue Oct 11 10:27:56 2016 -0600
+>
+>     i2c: qup: add ACPI support
+>
+> 2. commit 82a19035d000c8b4fd7d6f61b614f63dec75d389
+> Author: Lendacky, Thomas <Thomas.Lendacky@amd.com>
+> Date:   Fri Jan 16 12:47:16 2015 -0600
+>
+>     amd-xgbe: Add ACPI support
+>
+>>> +               if (!wdt->rate)
+>>> +                       ret = -ENODEV;
+>>> +       }
+>>> +
+>>> +       if (ret) {
+>>>                 dev_warn(&adev->dev, "Clock not found\n");
+>>> -               ret = PTR_ERR(wdt->clk);
+>>>                 goto err;
+>>>         }
+>>
+>>
+>> Please move the error handling to where the error occurs. While doing that,
+>> please change the message to dev_err() - this is an error, not a warning -
+>> and change the second error message to match the error (it did not find
+>> the property).
+>>
+>> Also, return directly - the goto just generates another error message
+>> which is ridiculous.
+> Thank you, I will add the changes.
+>>
+>> Thanks,
+>> Guenter
+>
+> Regards,
+> Srinath.
