@@ -2,88 +2,118 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D8BC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C02CC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:49:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36C7820B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:43:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C7820B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id DC9F1208FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:49:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9F1208FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732672AbeGJUoU (ORCPT
+        id S1732432AbeGJUtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 16:44:20 -0400
-Received: from complete.lackof.org ([198.49.126.79]:38868 "EHLO
-        complete.lackof.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732263AbeGJUoT (ORCPT
+        Tue, 10 Jul 2018 16:49:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55992 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732263AbeGJUtq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 16:44:19 -0400
-Received: from localhost (c-73-78-137-212.hsd1.co.comcast.net [73.78.137.212])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by complete.lackof.org (Postfix) with ESMTPSA id EBE1133E0027;
-        Tue, 10 Jul 2018 14:43:29 -0600 (MDT)
-Date:   Tue, 10 Jul 2018 14:43:29 -0600
-From:   dann frazier <dann.frazier@canonical.com>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yanaijie@huawei.com,
-        colin.king@canonical.com, kamal.mostafa@canonical.com,
-        ike.pan@canonical.com
-Subject: Re: [Bisect] ext4_validate_inode_bitmap:98: comm stress-ng: Corrupt
- inode bitmap
-Message-ID: <20180710204329.GB20459@xps13.dannf>
-References: <20180706174324.GA3049@xps13.dannf>
- <20180707041018.GB3546@thunk.org>
- <20180710165143.GA20459@xps13.dannf>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180710165143.GA20459@xps13.dannf>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Virus-Scanned: clamav-milter 0.100.0 at complete.lackof.org
-X-Virus-Status: Clean
+        Tue, 10 Jul 2018 16:49:46 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A324D4D;
+        Tue, 10 Jul 2018 20:48:59 +0000 (UTC)
+Date:   Tue, 10 Jul 2018 13:48:58 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: Fix vma_is_anonymous() false-positives
+Message-Id: <20180710134858.3506f097104859b533c81bf3@linux-foundation.org>
+In-Reply-To: <20180710134821.84709-2-kirill.shutemov@linux.intel.com>
+References: <20180710134821.84709-1-kirill.shutemov@linux.intel.com>
+        <20180710134821.84709-2-kirill.shutemov@linux.intel.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 10:51:43AM -0600, dann frazier wrote:
-> On Sat, Jul 07, 2018 at 12:10:18AM -0400, Theodore Y. Ts'o wrote:
-> > On Fri, Jul 06, 2018 at 11:43:24AM -0600, dann frazier wrote:
-> > > Hi,
-> > >   We're seeing a regression triggered by the stress-ng[*] "chdir" test
-> > > that I've bisected to:
-> > > 
-> > > 044e6e3d74a3 ext4: don't update checksum of new initialized bitmaps
-> > > 
-> > > So far we've only seen failures on servers based on HiSilicon's family
-> > > of ARM64 SoCs (D05/Hi1616 SoC, D06/Hi1620 SoC). On these systems it is
-> > > very reproducible.
-> > 
-> > Thanks for the report.  Can you verify whether or not this patch fixes
-> > things for you?
+On Tue, 10 Jul 2018 16:48:20 +0300 "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com> wrote:
+
+> vma_is_anonymous() relies on ->vm_ops being NULL to detect anonymous
+> VMA. This is unreliable as ->mmap may not set ->vm_ops.
 > 
-> hey Ted,
->   Sorry for the delayed response - was afk for a long weekend.
-> Your patch does seem to fix the issue for me - after applying the
-> patch, I was able to survive 20 iterations (and counting), where
-> previously it would always fail the first time.
+> False-positive vma_is_anonymous() may lead to crashes:
 > 
-> However, I've received a conflicting report from a colleague who
-> appears to still be seeing errors. I'll get back to you ASAP once I am
-> able to (in-?)validate that observation.
+> ...
+> 
+> This can be fixed by assigning anonymous VMAs own vm_ops and not relying
+> on it being NULL.
+> 
+> If ->mmap() failed to set ->vm_ops, mmap_region() will set it to
+> dummy_vm_ops. This way we will have non-NULL ->vm_ops for all VMAs.
 
-OK - I believe I found an explanation for my colleague's continued
-test failures after applying the patch. The filesystem being used may
-have already been corrupted from a previous run, and the test w/ your
-patch just tripped over it. Details are here starting in comment #9 if
-you'd like to look them over:
+Is there a smaller, simpler fix which we can use for backporting
+purposes and save the larger rework for development kernels?
 
-  https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780137
+>
+> ...
+>
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -71,6 +71,9 @@ int mmap_rnd_compat_bits __read_mostly = CONFIG_ARCH_MMAP_RND_COMPAT_BITS;
+>  static bool ignore_rlimit_data;
+>  core_param(ignore_rlimit_data, ignore_rlimit_data, bool, 0644);
+>  
+> +const struct vm_operations_struct anon_vm_ops = {};
+> +const struct vm_operations_struct dummy_vm_ops = {};
 
-  -dann
+Some nice comments here would be useful.  Especially for dummy_vm_ops. 
+Why does it exist, what is its role, etc.
+
+>  static void unmap_region(struct mm_struct *mm,
+>  		struct vm_area_struct *vma, struct vm_area_struct *prev,
+>  		unsigned long start, unsigned long end);
+> @@ -561,6 +564,8 @@ static unsigned long count_vma_pages_range(struct mm_struct *mm,
+>  void __vma_link_rb(struct mm_struct *mm, struct vm_area_struct *vma,
+>  		struct rb_node **rb_link, struct rb_node *rb_parent)
+>  {
+> +	WARN_ONCE(!vma->vm_ops, "missing vma->vm_ops");
+> +
+>  	/* Update tracking information for the gap following the new vma. */
+>  	if (vma->vm_next)
+>  		vma_gap_update(vma->vm_next);
+> @@ -1774,12 +1779,19 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+>  		 */
+>  		WARN_ON_ONCE(addr != vma->vm_start);
+>  
+> +		/* All mappings must have ->vm_ops set */
+> +		if (!vma->vm_ops)
+> +			vma->vm_ops = &dummy_vm_ops;
+
+Can this happen?  Can we make it a rule that file_operations.mmap(vma)
+must initialize vma->vm_ops?  Should we have a WARN here to detect when
+the fs implementation failed to do that?
+
+>  		addr = vma->vm_start;
+>  		vm_flags = vma->vm_flags;
+>  	} else if (vm_flags & VM_SHARED) {
+>  		error = shmem_zero_setup(vma);
+>  		if (error)
+>  			goto free_vma;
+> +	} else {
+> +		/* vma_is_anonymous() relies on this. */
+> +		vma->vm_ops = &anon_vm_ops;
+>  	}
+>  
+>  	vma_link(mm, vma, prev, rb_link, rb_parent);
+> ...
+>
