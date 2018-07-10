@@ -3,305 +3,188 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5929C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC0CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C03F2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C03F2083E
+	by mail.kernel.org (Postfix) with ESMTP id 704022083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 704022083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388525AbeGJScH (ORCPT
+        id S2388539AbeGJScJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:32:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47400 "EHLO
+        Tue, 10 Jul 2018 14:32:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47432 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732845AbeGJScF (ORCPT
+        with ESMTP id S1732845AbeGJScH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:32:05 -0400
+        Tue, 10 Jul 2018 14:32:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 01BA0CED;
-        Tue, 10 Jul 2018 18:31:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18312E78;
+        Tue, 10 Jul 2018 18:31:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.14 00/53] 4.14.55-stable review
-Date:   Tue, 10 Jul 2018 20:24:36 +0200
-Message-Id: <20180710182458.736721865@linuxfoundation.org>
+        stable@vger.kernel.org, Jianhong Yin <jiyin@redhat.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 12/53] cifs: Fix slab-out-of-bounds in send_set_info() on SMB2 ACE setting
+Date:   Tue, 10 Jul 2018 20:24:48 +0200
+Message-Id: <20180710182459.628491182@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-MIME-Version: 1.0
+In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
+References: <20180710182458.736721865@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.55-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.14.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.14.55-rc1
-X-KernelTest-Deadline: 2018-07-12T18:25+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.14.55 release.
-There are 53 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Thu Jul 12 18:24:36 UTC 2018.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.55-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
-and the diffstat can be found below.
+From: Stefano Brivio <sbrivio@redhat.com>
 
-thanks,
+commit f46ecbd97f508e68a7806291a139499794874f3d upstream.
 
-greg k-h
+A "small" CIFS buffer is not big enough in general to hold a
+setacl request for SMB2, and we end up overflowing the buffer in
+send_set_info(). For instance:
 
--------------
-Pseudo-Shortlog of commits:
+ # mount.cifs //127.0.0.1/test /mnt/test -o username=test,password=test,nounix,cifsacl
+ # touch /mnt/test/acltest
+ # getcifsacl /mnt/test/acltest
+ REVISION:0x1
+ CONTROL:0x9004
+ OWNER:S-1-5-21-2926364953-924364008-418108241-1000
+ GROUP:S-1-22-2-1001
+ ACL:S-1-5-21-2926364953-924364008-418108241-1000:ALLOWED/0x0/0x1e01ff
+ ACL:S-1-22-2-1001:ALLOWED/0x0/R
+ ACL:S-1-22-2-1001:ALLOWED/0x0/R
+ ACL:S-1-5-21-2926364953-924364008-418108241-1000:ALLOWED/0x0/0x1e01ff
+ ACL:S-1-1-0:ALLOWED/0x0/R
+ # setcifsacl -a "ACL:S-1-22-2-1004:ALLOWED/0x0/R" /mnt/test/acltest
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.14.55-rc1
+this setacl will cause the following KASAN splat:
 
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-    Revert mm/vmstat.c: fix vmstat_update() preemption BUG
+[  330.777927] BUG: KASAN: slab-out-of-bounds in send_set_info+0x4dd/0xc20 [cifs]
+[  330.779696] Write of size 696 at addr ffff88010d5e2860 by task setcifsacl/1012
 
-Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-    sched, tracing: Fix trace_sched_pi_setprio() for deboosting
+[  330.781882] CPU: 1 PID: 1012 Comm: setcifsacl Not tainted 4.18.0-rc2+ #2
+[  330.783140] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+[  330.784395] Call Trace:
+[  330.784789]  dump_stack+0xc2/0x16b
+[  330.786777]  print_address_description+0x6a/0x270
+[  330.787520]  kasan_report+0x258/0x380
+[  330.788845]  memcpy+0x34/0x50
+[  330.789369]  send_set_info+0x4dd/0xc20 [cifs]
+[  330.799511]  SMB2_set_acl+0x76/0xa0 [cifs]
+[  330.801395]  set_smb2_acl+0x7ac/0xf30 [cifs]
+[  330.830888]  cifs_xattr_set+0x963/0xe40 [cifs]
+[  330.840367]  __vfs_setxattr+0x84/0xb0
+[  330.842060]  __vfs_setxattr_noperm+0xe6/0x370
+[  330.843848]  vfs_setxattr+0xc2/0xd0
+[  330.845519]  setxattr+0x258/0x320
+[  330.859211]  path_setxattr+0x15b/0x1b0
+[  330.864392]  __x64_sys_setxattr+0xc0/0x160
+[  330.866133]  do_syscall_64+0x14e/0x4b0
+[  330.876631]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  330.878503] RIP: 0033:0x7ff2e507db0a
+[  330.880151] Code: 48 8b 0d 89 93 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 bc 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 56 93 2c 00 f7 d8 64 89 01 48
+[  330.885358] RSP: 002b:00007ffdc4903c18 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
+[  330.887733] RAX: ffffffffffffffda RBX: 000055d1170de140 RCX: 00007ff2e507db0a
+[  330.890067] RDX: 000055d1170de7d0 RSI: 000055d115b39184 RDI: 00007ffdc4904818
+[  330.892410] RBP: 0000000000000001 R08: 0000000000000000 R09: 000055d1170de7e4
+[  330.894785] R10: 00000000000002b8 R11: 0000000000000246 R12: 0000000000000007
+[  330.897148] R13: 000055d1170de0c0 R14: 0000000000000008 R15: 000055d1170de550
 
-Dan Carpenter <dan.carpenter@oracle.com>
-    staging: comedi: quatech_daqp_cs: fix no-op loop daqp_ao_insn_write()
+[  330.901057] Allocated by task 1012:
+[  330.902888]  kasan_kmalloc+0xa0/0xd0
+[  330.904714]  kmem_cache_alloc+0xc8/0x1d0
+[  330.906615]  mempool_alloc+0x11e/0x380
+[  330.908496]  cifs_small_buf_get+0x35/0x60 [cifs]
+[  330.910510]  smb2_plain_req_init+0x4a/0xd60 [cifs]
+[  330.912551]  send_set_info+0x198/0xc20 [cifs]
+[  330.914535]  SMB2_set_acl+0x76/0xa0 [cifs]
+[  330.916465]  set_smb2_acl+0x7ac/0xf30 [cifs]
+[  330.918453]  cifs_xattr_set+0x963/0xe40 [cifs]
+[  330.920426]  __vfs_setxattr+0x84/0xb0
+[  330.922284]  __vfs_setxattr_noperm+0xe6/0x370
+[  330.924213]  vfs_setxattr+0xc2/0xd0
+[  330.926008]  setxattr+0x258/0x320
+[  330.927762]  path_setxattr+0x15b/0x1b0
+[  330.929592]  __x64_sys_setxattr+0xc0/0x160
+[  330.931459]  do_syscall_64+0x14e/0x4b0
+[  330.933314]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-Jann Horn <jannh@google.com>
-    netfilter: nf_log: don't hold nf_log_mutex during user access
+[  330.936843] Freed by task 0:
+[  330.938588] (stack is not available)
 
-Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-    mtd: cfi_cmdset_0002: Change erase functions to check chip good only
+[  330.941886] The buggy address belongs to the object at ffff88010d5e2800
+ which belongs to the cache cifs_small_rq of size 448
+[  330.946362] The buggy address is located 96 bytes inside of
+ 448-byte region [ffff88010d5e2800, ffff88010d5e29c0)
+[  330.950722] The buggy address belongs to the page:
+[  330.952789] page:ffffea0004357880 count:1 mapcount:0 mapping:ffff880108fdca80 index:0x0 compound_mapcount: 0
+[  330.955665] flags: 0x17ffffc0008100(slab|head)
+[  330.957760] raw: 0017ffffc0008100 dead000000000100 dead000000000200 ffff880108fdca80
+[  330.960356] raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+[  330.963005] page dumped because: kasan: bad access detected
 
-Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-    mtd: cfi_cmdset_0002: Change erase functions to retry for error
+[  330.967039] Memory state around the buggy address:
+[  330.969255]  ffff88010d5e2880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  330.971833]  ffff88010d5e2900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+[  330.974397] >ffff88010d5e2980: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
+[  330.976956]                                            ^
+[  330.979226]  ffff88010d5e2a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  330.981755]  ffff88010d5e2a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+[  330.984225] ==================================================================
 
-Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-    mtd: cfi_cmdset_0002: Change definition naming to retry write operation
+Fix this by allocating a regular CIFS buffer in
+smb2_plain_req_init() if the request command is SMB2_SET_INFO.
 
-Ross Zwisler <ross.zwisler@linux.intel.com>
-    dm: prevent DAX mounts if not supported
+Reported-by: Jianhong Yin <jiyin@redhat.com>
+Fixes: 366ed846df60 ("cifs: Use smb 2 - 3 and cifsacl mount options setacl function")
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Reviewed-and-tested-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Mike Snitzer <snitzer@redhat.com>
-    dm: set QUEUE_FLAG_DAX accordingly in dm_table_set_restrictions()
+---
+ fs/cifs/smb2pdu.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-Ross Zwisler <ross.zwisler@linux.intel.com>
-    dax: check for QUEUE_FLAG_DAX in bdev_dax_supported()
-
-Dave Jiang <dave.jiang@intel.com>
-    dax: change bdev_dax_supported() to support boolean returns
-
-Darrick J. Wong <darrick.wong@oracle.com>
-    fs: allow per-device dax status checking for filesystems
-
-Martin Kaiser <martin@kaiser.cx>
-    mtd: rawnand: mxc: set spare area size register explicitly
-
-Brad Love <brad@nextdimension.cc>
-    media: cx25840: Use subdev host data for PLL override
-
-Rasmus Villemoes <linux@rasmusvillemoes.dk>
-    Kbuild: fix # escaping in .cmd files for future Make
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Revert "dpaa_eth: fix error in dpaa_remove()"
-
-Jaegeuk Kim <jaegeuk@kernel.org>
-    f2fs: truncate preallocated blocks in error case
-
-Sakari Ailus <sakari.ailus@linux.intel.com>
-    media: vb2: core: Finish buffers at the end of the stream
-
-Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-    mm: hwpoison: disable memory error handling on 1GB hugepage
-
-Rakib Mullick <rakib.mullick@gmail.com>
-    irq/core: Fix boot crash when the irqaffinity= boot parameter is passed on CPUMASK_OFFSTACK=y kernels(v1)
-
-Daniel Rosenberg <drosen@google.com>
-    HID: debug: check length before copy_to_user()
-
-Gustavo A. R. Silva <gustavo@embeddedor.com>
-    HID: hiddev: fix potential Spectre v1
-
-Jason Andryuk <jandryuk@gmail.com>
-    HID: i2c-hid: Fix "incomplete report" noise
-
-Ilya Dryomov <idryomov@gmail.com>
-    block: cope with WRITE ZEROES failing in blkdev_issue_zeroout()
-
-Ilya Dryomov <idryomov@gmail.com>
-    block: factor out __blkdev_issue_zero_pages()
-
-Jon Derrick <jonathan.derrick@intel.com>
-    ext4: check superblock mapped prior to committing
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: add more mount time checks of the superblock
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: add more inode number paranoia checks
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: avoid running out of journal credits when appending to an inline file
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: never move the system.data xattr out of the inode body
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: clear i_data in ext4_inode_info when removing inline data
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: include the illegal physical block in the bad map ext4_error msg
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: verify the depth of extent tree in ext4_find_extent()
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: only look at the bg_flags field if it is valid
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: always check block group bounds in ext4_init_block_bitmap()
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: make sure bitmaps and the inode table don't overlap with bg descriptors
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: always verify the magic number in xattr blocks
-
-Theodore Ts'o <tytso@mit.edu>
-    ext4: add corruption check in ext4_xattr_set_entry()
-
-Theodore Ts'o <tytso@mit.edu>
-    jbd2: don't mark block as modified if the handle is out of credits
-
-Mikulas Patocka <mpatocka@redhat.com>
-    drm/udl: fix display corruption of the last line
-
-Michel Dänzer <michel.daenzer@amd.com>
-    drm: Use kvzalloc for allocating blob property memory
-
-Stefano Brivio <sbrivio@redhat.com>
-    cifs: Fix slab-out-of-bounds in send_set_info() on SMB2 ACE setting
-
-Paulo Alcantara <paulo@paulo.ac>
-    cifs: Fix infinite loop when using hard mount option
-
-Paulo Alcantara <paulo@paulo.ac>
-    cifs: Fix memory leak in smb2_set_ea()
-
-Lars Persson <lars.persson@axis.com>
-    cifs: Fix use after free of a mid_q_entry
-
-Jason Gunthorpe <jgg@mellanox.com>
-    vfio: Use get_user_pages_longterm correctly
-
-Lars Ellenberg <lars.ellenberg@linbit.com>
-    drbd: fix access after free
-
-Christian Borntraeger <borntraeger@de.ibm.com>
-    s390: Correct register corruption in critical section cleanup
-
-David Disseldorp <ddiss@suse.de>
-    scsi: target: Fix truncated PR-in ReadKeys response
-
-Jann Horn <jannh@google.com>
-    scsi: sg: mitigate read/write abuse
-
-Changbin Du <changbin.du@intel.com>
-    tracing: Fix missing return symbol in function_graph output
-
-Cannon Matthews <cannonmatthews@google.com>
-    mm: hugetlb: yield when prepping struct pages
-
-Janosch Frank <frankja@linux.ibm.com>
-    userfaultfd: hugetlbfs: fix userfaultfd_huge_must_wait() pte access
-
-
--------------
-
-Diffstat:
-
- Makefile                                         |   4 +-
- arch/s390/kernel/entry.S                         |   4 +-
- block/blk-lib.c                                  | 108 +++++++++++++++--------
- drivers/block/drbd/drbd_worker.c                 |   2 +-
- drivers/dax/super.c                              |  42 +++++----
- drivers/gpu/drm/drm_property.c                   |   6 +-
- drivers/gpu/drm/udl/udl_fb.c                     |   5 +-
- drivers/gpu/drm/udl/udl_transfer.c               |  11 ++-
- drivers/hid/hid-debug.c                          |   8 +-
- drivers/hid/i2c-hid/i2c-hid.c                    |   2 +-
- drivers/hid/usbhid/hiddev.c                      |  11 +++
- drivers/md/dm-table.c                            |   9 +-
- drivers/md/dm.c                                  |   6 +-
- drivers/media/i2c/cx25840/cx25840-core.c         |  28 ++++--
- drivers/media/v4l2-core/videobuf2-core.c         |   9 ++
- drivers/mtd/chips/cfi_cmdset_0002.c              |  30 +++++--
- drivers/mtd/nand/mxc_nand.c                      |   5 +-
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c   |   2 +-
- drivers/scsi/sg.c                                |  42 ++++++++-
- drivers/staging/comedi/drivers/quatech_daqp_cs.c |   2 +-
- drivers/target/target_core_pr.c                  |  15 ++--
- drivers/vfio/vfio_iommu_type1.c                  |  16 ++--
- fs/cifs/cifsglob.h                               |   1 +
- fs/cifs/cifsproto.h                              |   1 +
- fs/cifs/cifssmb.c                                |  10 ++-
- fs/cifs/connect.c                                |   8 +-
- fs/cifs/smb1ops.c                                |   1 +
- fs/cifs/smb2ops.c                                |   3 +
- fs/cifs/smb2pdu.c                                |  25 ++++--
- fs/cifs/smb2transport.c                          |   1 +
- fs/cifs/transport.c                              |  18 +++-
- fs/ext2/super.c                                  |   3 +-
- fs/ext4/balloc.c                                 |  21 +++--
- fs/ext4/ext4.h                                   |   8 --
- fs/ext4/ext4_extents.h                           |   1 +
- fs/ext4/extents.c                                |   6 ++
- fs/ext4/ialloc.c                                 |  14 ++-
- fs/ext4/inline.c                                 |  39 +-------
- fs/ext4/inode.c                                  |   7 +-
- fs/ext4/mballoc.c                                |   6 +-
- fs/ext4/super.c                                  |  89 ++++++++++++++++---
- fs/ext4/xattr.c                                  |  40 ++++-----
- fs/f2fs/file.c                                   |   9 ++
- fs/jbd2/transaction.c                            |   9 +-
- fs/userfaultfd.c                                 |  12 +--
- fs/xfs/xfs_ioctl.c                               |   3 +-
- fs/xfs/xfs_iops.c                                |  30 +++++--
- fs/xfs/xfs_super.c                               |  10 ++-
- include/linux/dax.h                              |  11 +--
- include/linux/mm.h                               |   1 +
- include/trace/events/sched.h                     |   4 +-
- kernel/irq/irqdesc.c                             |   6 +-
- kernel/trace/trace_functions_graph.c             |   5 +-
- mm/hugetlb.c                                     |   1 +
- mm/memory-failure.c                              |  16 ++++
- mm/vmstat.c                                      |   2 -
- net/netfilter/nf_log.c                           |   9 +-
- scripts/Kbuild.include                           |   5 +-
- tools/build/Build.include                        |   5 +-
- tools/objtool/Makefile                           |   2 +-
- tools/scripts/Makefile.include                   |   2 +
- 61 files changed, 556 insertions(+), 255 deletions(-)
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -338,7 +338,10 @@ smb2_plain_req_init(__le16 smb2_command,
+ 		return rc;
+ 
+ 	/* BB eventually switch this to SMB2 specific small buf size */
+-	*request_buf = cifs_small_buf_get();
++	if (smb2_command == SMB2_SET_INFO)
++		*request_buf = cifs_buf_get();
++	else
++		*request_buf = cifs_small_buf_get();
+ 	if (*request_buf == NULL) {
+ 		/* BB should we add a retry in here if not a writepage? */
+ 		return -ENOMEM;
+@@ -3168,7 +3171,7 @@ send_set_info(const unsigned int xid, st
+ 	}
+ 
+ 	rc = SendReceive2(xid, ses, iov, num, &resp_buftype, flags, &rsp_iov);
+-	cifs_small_buf_release(req);
++	cifs_buf_release(req);
+ 	rsp = (struct smb2_set_info_rsp *)rsp_iov.iov_base;
+ 
+ 	if (rc != 0)
 
 
