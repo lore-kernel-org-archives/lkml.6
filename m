@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3D3C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9296DC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69EBE21365
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:31:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69EBE21365
+	by mail.kernel.org (Postfix) with ESMTP id 0084B21365
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:31:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0084B21365
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732577AbeGJWc3 (ORCPT
+        id S1732626AbeGJWcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:32:29 -0400
-Received: from mga11.intel.com ([192.55.52.93]:41888 "EHLO mga11.intel.com"
+        Tue, 10 Jul 2018 18:32:31 -0400
+Received: from mga11.intel.com ([192.55.52.93]:41892 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732514AbeGJWc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:32:28 -0400
+        id S1732519AbeGJWca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:32:30 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 15:31:16 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 15:31:17 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
-   d="scan'208";a="70305448"
+   d="scan'208";a="70305465"
 Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by fmsmga004.fm.intel.com with ESMTP; 10 Jul 2018 15:31:16 -0700
+  by fmsmga004.fm.intel.com with ESMTP; 10 Jul 2018 15:31:17 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
 To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -53,9 +53,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v2 22/27] x86/cet/ibt: User-mode indirect branch tracking support
-Date:   Tue, 10 Jul 2018 15:26:34 -0700
-Message-Id: <20180710222639.8241-23-yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v2 27/27] x86/cet: Add arch_prctl functions for CET
+Date:   Tue, 10 Jul 2018 15:26:39 -0700
+Message-Id: <20180710222639.8241-28-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180710222639.8241-1-yu-cheng.yu@intel.com>
 References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
@@ -64,266 +64,337 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add user-mode indirect branch tracking enabling/disabling
-and supporting routines.
+arch_prctl(ARCH_CET_STATUS, unsigned long *addr)
+    Return CET feature status.
+
+    The parameter 'addr' is a pointer to a user buffer.
+    On returning to the caller, the kernel fills the following
+    information:
+
+    *addr = SHSTK/IBT status
+    *(addr + 1) = SHSTK base address
+    *(addr + 2) = SHSTK size
+
+arch_prctl(ARCH_CET_DISABLE, unsigned long features)
+    Disable SHSTK and/or IBT specified in 'features'.  Return -EPERM
+    if CET is locked out.
+
+arch_prctl(ARCH_CET_LOCK)
+    Lock out CET feature.
+
+arch_prctl(ARCH_CET_ALLOC_SHSTK, unsigned long *addr)
+    Allocate a new SHSTK.
+
+    The parameter 'addr' is a pointer to a user buffer and indicates
+    the desired SHSTK size to allocate.  On returning to the caller
+    the buffer contains the address of the new SHSTK.
+
+arch_prctl(ARCH_CET_LEGACY_BITMAP, unsigned long *addr)
+    Allocate an IBT legacy code bitmap if the current task does not
+    have one.
+
+    The parameter 'addr' is a pointer to a user buffer.
+    On returning to the caller, the kernel fills the following
+    information:
+
+    *addr = IBT bitmap base address
+    *(addr + 1) = IBT bitmap size
 
 Signed-off-by: H.J. Lu <hjl.tools@gmail.com>
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/include/asm/cet.h               |  8 +++
- arch/x86/include/asm/disabled-features.h |  8 ++-
- arch/x86/kernel/cet.c                    | 73 ++++++++++++++++++++++++
- arch/x86/kernel/cpu/common.c             | 20 ++++++-
- arch/x86/kernel/elf.c                    | 16 +++++-
- arch/x86/kernel/process.c                |  1 +
- 6 files changed, 123 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/cet.h        |   5 ++
+ arch/x86/include/uapi/asm/prctl.h |   6 ++
+ arch/x86/kernel/Makefile          |   2 +-
+ arch/x86/kernel/cet.c             |  26 ++++++
+ arch/x86/kernel/cet_prctl.c       | 141 ++++++++++++++++++++++++++++++
+ arch/x86/kernel/elf.c             |   4 +
+ arch/x86/kernel/process.c         |   6 ++
+ 7 files changed, 189 insertions(+), 1 deletion(-)
+ create mode 100644 arch/x86/kernel/cet_prctl.c
 
 diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-index d9ae3d86cdd7..71da2cccba16 100644
+index d5737f3346f2..50b5284c6667 100644
 --- a/arch/x86/include/asm/cet.h
 +++ b/arch/x86/include/asm/cet.h
-@@ -12,7 +12,10 @@ struct task_struct;
- struct cet_status {
- 	unsigned long	shstk_base;
- 	unsigned long	shstk_size;
-+	unsigned long	ibt_bitmap_addr;
-+	unsigned long	ibt_bitmap_size;
+@@ -16,11 +16,14 @@ struct cet_status {
+ 	unsigned long	ibt_bitmap_size;
  	unsigned int	shstk_enabled:1;
-+	unsigned int	ibt_enabled:1;
+ 	unsigned int	ibt_enabled:1;
++	unsigned int	locked:1;
  };
  
  #ifdef CONFIG_X86_INTEL_CET
-@@ -21,6 +24,9 @@ void cet_disable_shstk(void);
++int prctl_cet(int option, unsigned long arg2);
+ int cet_setup_shstk(void);
+ int cet_setup_thread_shstk(struct task_struct *p);
++int cet_alloc_shstk(unsigned long *arg);
+ void cet_disable_shstk(void);
  void cet_disable_free_shstk(struct task_struct *p);
  int cet_restore_signal(unsigned long ssp);
- int cet_setup_signal(bool ia32, unsigned long rstor, unsigned long *new_ssp);
-+int cet_setup_ibt(void);
-+int cet_setup_ibt_bitmap(void);
-+void cet_disable_ibt(void);
+@@ -29,8 +32,10 @@ int cet_setup_ibt(void);
+ int cet_setup_ibt_bitmap(void);
+ void cet_disable_ibt(void);
  #else
++static inline int prctl_cet(int option, unsigned long arg2) { return 0; }
  static inline int cet_setup_shstk(void) { return 0; }
+ static inline int cet_setup_thread_shstk(struct task_struct *p) { return 0; }
++static inline int cet_alloc_shstk(unsigned long *arg) { return -EINVAL; }
  static inline void cet_disable_shstk(void) {}
-@@ -28,6 +34,8 @@ static inline void cet_disable_free_shstk(struct task_struct *p) {}
+ static inline void cet_disable_free_shstk(struct task_struct *p) {}
  static inline int cet_restore_signal(unsigned long ssp) { return 0; }
- static inline int cet_setup_signal(bool ia32, unsigned long rstor,
- 				   unsigned long *new_ssp) { return 0; }
-+static inline int cet_setup_ibt(void) { return 0; }
-+static inline void cet_disable_ibt(void) {}
- #endif
+diff --git a/arch/x86/include/uapi/asm/prctl.h b/arch/x86/include/uapi/asm/prctl.h
+index 5a6aac9fa41f..52ec04e443c5 100644
+--- a/arch/x86/include/uapi/asm/prctl.h
++++ b/arch/x86/include/uapi/asm/prctl.h
+@@ -14,4 +14,10 @@
+ #define ARCH_MAP_VDSO_32	0x2002
+ #define ARCH_MAP_VDSO_64	0x2003
  
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/x86/include/asm/disabled-features.h b/arch/x86/include/asm/disabled-features.h
-index 3624a11e5ba6..ce5bdaf0f1ff 100644
---- a/arch/x86/include/asm/disabled-features.h
-+++ b/arch/x86/include/asm/disabled-features.h
-@@ -62,6 +62,12 @@
- #define DISABLE_SHSTK	(1<<(X86_FEATURE_SHSTK & 31))
- #endif
- 
-+#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
-+#define DISABLE_IBT	0
-+#else
-+#define DISABLE_IBT	(1<<(X86_FEATURE_IBT & 31))
-+#endif
++#define ARCH_CET_STATUS		0x3001
++#define ARCH_CET_DISABLE	0x3002
++#define ARCH_CET_LOCK		0x3003
++#define ARCH_CET_LEGACY_BITMAP	0x3004
++#define ARCH_CET_ALLOC_SHSTK	0x3005
 +
- /*
-  * Make sure to add features to the correct mask
-  */
-@@ -72,7 +78,7 @@
- #define DISABLED_MASK4	(DISABLE_PCID)
- #define DISABLED_MASK5	0
- #define DISABLED_MASK6	0
--#define DISABLED_MASK7	(DISABLE_PTI)
-+#define DISABLED_MASK7	(DISABLE_PTI|DISABLE_IBT)
- #define DISABLED_MASK8	0
- #define DISABLED_MASK9	(DISABLE_MPX)
- #define DISABLED_MASK10	0
+ #endif /* _ASM_X86_PRCTL_H */
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 36b14ef410c8..b9e6cdc6b4f7 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -139,7 +139,7 @@ obj-$(CONFIG_UNWINDER_ORC)		+= unwind_orc.o
+ obj-$(CONFIG_UNWINDER_FRAME_POINTER)	+= unwind_frame.o
+ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
+ 
+-obj-$(CONFIG_X86_INTEL_CET)		+= cet.o
++obj-$(CONFIG_X86_INTEL_CET)		+= cet.o cet_prctl.o
+ 
+ obj-$(CONFIG_ARCH_HAS_PROGRAM_PROPERTIES) += elf.o
+ 
 diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
-index 4eba7790c4e4..8bbd63e1a2ba 100644
+index 2a366a5ccf20..20ce9ac8a0df 100644
 --- a/arch/x86/kernel/cet.c
 +++ b/arch/x86/kernel/cet.c
-@@ -12,6 +12,8 @@
- #include <linux/slab.h>
- #include <linux/uaccess.h>
- #include <linux/sched/signal.h>
-+#include <linux/vmalloc.h>
-+#include <linux/bitops.h>
- #include <asm/msr.h>
- #include <asm/user.h>
- #include <asm/fpu/xstate.h>
-@@ -241,3 +243,74 @@ int cet_setup_signal(bool ia32, unsigned long rstor_addr,
- 	set_shstk_ptr(ssp);
- 	return 0;
+@@ -132,6 +132,32 @@ static unsigned long shstk_mmap(unsigned long addr, unsigned long len)
+ 	return addr;
  }
-+
-+static unsigned long ibt_mmap(unsigned long addr, unsigned long len)
+ 
++int cet_alloc_shstk(unsigned long *arg)
 +{
-+	struct mm_struct *mm = current->mm;
-+	unsigned long populate;
++	unsigned long len = *arg;
++	unsigned long addr;
++	unsigned long token;
++	unsigned long ssp;
 +
-+	down_write(&mm->mmap_sem);
-+	addr = do_mmap(NULL, addr, len, PROT_READ | PROT_WRITE,
-+		       MAP_ANONYMOUS | MAP_PRIVATE,
-+		       VM_DONTDUMP, 0, &populate, NULL);
-+	up_write(&mm->mmap_sem);
-+
-+	if (populate)
-+		mm_populate(addr, populate);
-+
-+	return addr;
-+}
-+
-+int cet_setup_ibt(void)
-+{
-+	u64 r;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_IBT))
-+		return -EOPNOTSUPP;
-+
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	r |= (MSR_IA32_CET_ENDBR_EN | MSR_IA32_CET_NO_TRACK_EN);
-+	wrmsrl(MSR_IA32_U_CET, r);
-+	current->thread.cet.ibt_enabled = 1;
-+	return 0;
-+}
-+
-+int cet_setup_ibt_bitmap(void)
-+{
-+	u64 r;
-+	unsigned long bitmap;
-+	unsigned long size;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_IBT))
-+		return -EOPNOTSUPP;
-+
-+	size = TASK_SIZE_MAX / PAGE_SIZE / BITS_PER_BYTE;
-+	bitmap = ibt_mmap(0, size);
-+
-+	if (bitmap >= TASK_SIZE_MAX)
++	addr = shstk_mmap(0, len);
++	if (addr >= TASK_SIZE_MAX)
 +		return -ENOMEM;
 +
-+	bitmap &= PAGE_MASK;
++	/* Restore token is 8 bytes and aligned to 8 bytes */
++	ssp = addr + len;
++	token = ssp;
 +
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	r |= (MSR_IA32_CET_LEG_IW_EN | bitmap);
-+	wrmsrl(MSR_IA32_U_CET, r);
++	if (!in_ia32_syscall())
++		token |= 1;
++	ssp -=8;
 +
-+	current->thread.cet.ibt_bitmap_addr = bitmap;
-+	current->thread.cet.ibt_bitmap_size = size;
++	if (write_user_shstk_64(ssp, token))
++		return -EINVAL;
++
++	*arg = addr;
 +	return 0;
 +}
 +
-+void cet_disable_ibt(void)
-+{
-+	u64 r;
-+
-+	if (!cpu_feature_enabled(X86_FEATURE_IBT))
-+		return;
-+
-+	rdmsrl(MSR_IA32_U_CET, r);
-+	r &= ~(MSR_IA32_CET_ENDBR_EN | MSR_IA32_CET_LEG_IW_EN |
-+	       MSR_IA32_CET_NO_TRACK_EN);
-+	wrmsrl(MSR_IA32_U_CET, r);
-+	current->thread.cet.ibt_enabled = 0;
-+}
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 705467839ce8..c609c9ce5691 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -413,7 +413,8 @@ __setup("nopku", setup_disable_pku);
- 
- static __always_inline void setup_cet(struct cpuinfo_x86 *c)
+ int cet_setup_shstk(void)
  {
--	if (cpu_feature_enabled(X86_FEATURE_SHSTK))
-+	if (cpu_feature_enabled(X86_FEATURE_SHSTK) ||
-+	    cpu_feature_enabled(X86_FEATURE_IBT))
- 		cr4_set_bits(X86_CR4_CET);
- }
- 
-@@ -434,6 +435,23 @@ static __init int setup_disable_shstk(char *s)
- __setup("no_cet_shstk", setup_disable_shstk);
- #endif
- 
-+#ifdef CONFIG_X86_INTEL_BRANCH_TRACKING_USER
-+static __init int setup_disable_ibt(char *s)
-+{
-+	/* require an exact match without trailing characters */
-+	if (strlen(s))
-+		return 0;
+ 	unsigned long addr, size;
+diff --git a/arch/x86/kernel/cet_prctl.c b/arch/x86/kernel/cet_prctl.c
+new file mode 100644
+index 000000000000..86bb78ae656d
+--- /dev/null
++++ b/arch/x86/kernel/cet_prctl.c
+@@ -0,0 +1,141 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +
-+	if (!boot_cpu_has(X86_FEATURE_IBT))
-+		return 1;
-+
-+	setup_clear_cpu_cap(X86_FEATURE_IBT);
-+	pr_info("x86: 'no_cet_ibt' specified, disabling Branch Tracking\n");
-+	return 1;
-+}
-+__setup("no_cet_ibt", setup_disable_ibt);
-+#endif
-+
- /*
-  * Some CPU features depend on higher CPUID levels, which may not always
-  * be available due to CPUID level capping or broken virtualization
-diff --git a/arch/x86/kernel/elf.c b/arch/x86/kernel/elf.c
-index 233f6dad9c1f..42e08d3b573e 100644
---- a/arch/x86/kernel/elf.c
-+++ b/arch/x86/kernel/elf.c
-@@ -15,6 +15,7 @@
- #include <linux/fs.h>
- #include <linux/uaccess.h>
- #include <linux/string.h>
++#include <linux/errno.h>
++#include <linux/uaccess.h>
++#include <linux/prctl.h>
 +#include <linux/compat.h>
- 
- /*
-  * The .note.gnu.property layout:
-@@ -222,7 +223,8 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 
- 	struct elf64_hdr *ehdr64 = ehdr_p;
- 
--	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
++#include <asm/processor.h>
++#include <asm/prctl.h>
++#include <asm/elf.h>
++#include <asm/elf_property.h>
++#include <asm/cet.h>
++
++/* See Documentation/x86/intel_cet.txt. */
++
++static int handle_get_status(unsigned long arg2)
++{
++	unsigned int features = 0;
++	unsigned long shstk_base, shstk_size;
++
++	if (current->thread.cet.shstk_enabled)
++		features |= GNU_PROPERTY_X86_FEATURE_1_SHSTK;
++	if (current->thread.cet.ibt_enabled)
++		features |= GNU_PROPERTY_X86_FEATURE_1_IBT;
++
++	shstk_base = current->thread.cet.shstk_base;
++	shstk_size = current->thread.cet.shstk_size;
++
++	if (in_ia32_syscall()) {
++		unsigned int buf[3];
++
++		buf[0] = features;
++		buf[1] = (unsigned int)shstk_base;
++		buf[2] = (unsigned int)shstk_size;
++		return copy_to_user((unsigned int __user *)arg2, buf,
++				    sizeof(buf));
++	} else {
++		unsigned long buf[3];
++
++		buf[0] = (unsigned long)features;
++		buf[1] = shstk_base;
++		buf[2] = shstk_size;
++		return copy_to_user((unsigned long __user *)arg2, buf,
++				    sizeof(buf));
++	}
++}
++
++static int handle_alloc_shstk(unsigned long arg2)
++{
++	int err = 0;
++	unsigned long shstk_size = 0;
++
++	if (in_ia32_syscall()) {
++		unsigned int size;
++
++		err = get_user(size, (unsigned int __user *)arg2);
++		if (!err)
++			shstk_size = size;
++	} else {
++		err = get_user(shstk_size, (unsigned long __user *)arg2);
++	}
++
++	if (err)
++		return -EFAULT;
++
++	err = cet_alloc_shstk(&shstk_size);
++	if (err)
++		return -err;
++
++	if (in_ia32_syscall()) {
++		if (put_user(shstk_size, (unsigned int __user *)arg2))
++			return -EFAULT;
++	} else {
++		if (put_user(shstk_size, (unsigned long __user *)arg2))
++			return -EFAULT;
++	}
++	return 0;
++}
++
++static int handle_bitmap(unsigned long arg2)
++{
++	unsigned long addr, size;
++
++	if (current->thread.cet.ibt_enabled) {
++		if (!current->thread.cet.ibt_bitmap_addr)
++			cet_setup_ibt_bitmap();
++		addr = current->thread.cet.ibt_bitmap_addr;
++		size = current->thread.cet.ibt_bitmap_size;
++	} else {
++		addr = 0;
++		size = 0;
++	}
++
++	if (in_compat_syscall()) {
++		if (put_user(addr, (unsigned int __user *)arg2) ||
++		    put_user(size, (unsigned int __user *)arg2 + 1))
++			return -EFAULT;
++	} else {
++		if (put_user(addr, (unsigned long __user *)arg2) ||
++		    put_user(size, (unsigned long __user *)arg2 + 1))
++		return -EFAULT;
++	}
++	return 0;
++}
++
++int prctl_cet(int option, unsigned long arg2)
++{
 +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) &&
 +	    !cpu_feature_enabled(X86_FEATURE_IBT))
- 		return 0;
++		return -EINVAL;
++
++	switch (option) {
++	case ARCH_CET_STATUS:
++		return handle_get_status(arg2);
++
++	case ARCH_CET_DISABLE:
++		if (current->thread.cet.locked)
++			return -EPERM;
++		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_SHSTK)
++			cet_disable_free_shstk(current);
++		if (arg2 & GNU_PROPERTY_X86_FEATURE_1_IBT)
++			cet_disable_ibt();
++
++		return 0;
++
++	case ARCH_CET_LOCK:
++		current->thread.cet.locked = 1;
++		return 0;
++
++	case ARCH_CET_ALLOC_SHSTK:
++		return handle_alloc_shstk(arg2);
++
++	/*
++	 * Allocate legacy bitmap and return address & size to user.
++	 */
++	case ARCH_CET_LEGACY_BITMAP:
++		return handle_bitmap(arg2);
++
++	default:
++		return -EINVAL;
++	}
++}
+diff --git a/arch/x86/kernel/elf.c b/arch/x86/kernel/elf.c
+index 42e08d3b573e..3d4934fdac7f 100644
+--- a/arch/x86/kernel/elf.c
++++ b/arch/x86/kernel/elf.c
+@@ -8,7 +8,10 @@
  
- 	if (ehdr64->e_ident[EI_CLASS] == ELFCLASS64) {
-@@ -250,6 +252,9 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 	current->thread.cet.shstk_enabled = 0;
- 	current->thread.cet.shstk_base = 0;
- 	current->thread.cet.shstk_size = 0;
-+	current->thread.cet.ibt_enabled = 0;
-+	current->thread.cet.ibt_bitmap_addr = 0;
-+	current->thread.cet.ibt_bitmap_size = 0;
+ #include <asm/cet.h>
+ #include <asm/elf_property.h>
++#include <asm/prctl.h>
++#include <asm/processor.h>
+ #include <uapi/linux/elf-em.h>
++#include <uapi/linux/prctl.h>
+ #include <linux/binfmts.h>
+ #include <linux/elf.h>
+ #include <linux/slab.h>
+@@ -255,6 +258,7 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
+ 	current->thread.cet.ibt_enabled = 0;
+ 	current->thread.cet.ibt_bitmap_addr = 0;
+ 	current->thread.cet.ibt_bitmap_size = 0;
++	current->thread.cet.locked = 0;
  	if (cpu_feature_enabled(X86_FEATURE_SHSTK)) {
  		if (shstk) {
  			err = cet_setup_shstk();
-@@ -257,6 +262,15 @@ int arch_setup_features(void *ehdr_p, void *phdr_p,
- 				goto out;
- 		}
- 	}
-+
-+	if (cpu_feature_enabled(X86_FEATURE_IBT)) {
-+		if (ibt) {
-+			err = cet_setup_ibt();
-+			if (err < 0)
-+				goto out;
-+		}
-+	}
-+
- out:
- 	return err;
- }
 diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index b3b0b482983a..309ebb7f9d8d 100644
+index 43a57d284a22..259b92664981 100644
 --- a/arch/x86/kernel/process.c
 +++ b/arch/x86/kernel/process.c
-@@ -138,6 +138,7 @@ void flush_thread(void)
- 	memset(tsk->thread.tls_array, 0, sizeof(tsk->thread.tls_array));
+@@ -795,6 +795,12 @@ long do_arch_prctl_common(struct task_struct *task, int option,
+ 		return get_cpuid_mode();
+ 	case ARCH_SET_CPUID:
+ 		return set_cpuid_mode(task, cpuid_enabled);
++	case ARCH_CET_STATUS:
++	case ARCH_CET_DISABLE:
++	case ARCH_CET_LOCK:
++	case ARCH_CET_ALLOC_SHSTK:
++	case ARCH_CET_LEGACY_BITMAP:
++		return prctl_cet(option, cpuid_enabled);
+ 	}
  
- 	cet_disable_shstk();
-+	cet_disable_ibt();
- 	fpu__clear(&tsk->thread.fpu);
- }
- 
+ 	return -EINVAL;
 -- 
 2.17.1
 
