@@ -3,614 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,WEIRD_QUOTING autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2FECC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2507EC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A55B20862
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:52:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A55B20862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CC21420862
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC21420862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732368AbeGJWyB convert rfc822-to-8bit (ORCPT
+        id S1732398AbeGJWyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:54:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40424 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732242AbeGJWyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:54:01 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 337D1401DE60;
-        Tue, 10 Jul 2018 22:52:44 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EFDFD7C41;
-        Tue, 10 Jul 2018 22:52:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <153126249579.14533.18370053915999978123.stgit@warthog.procyon.org.uk>
-References: <153126249579.14533.18370053915999978123.stgit@warthog.procyon.org.uk> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
-To:     Michael Kerrisk <mtk.manpages@gmail.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-man@vger.kernel.org
-Subject: [MANPAGE PATCH] Add manpages for move_mount(2) and open_tree(2)
+        Tue, 10 Jul 2018 18:54:13 -0400
+Received: from mga03.intel.com ([134.134.136.65]:22619 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732340AbeGJWyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:54:13 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 15:52:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
+   d="scan'208";a="73773138"
+Received: from mgcarrol-mobl1.amr.corp.intel.com (HELO [10.252.202.182]) ([10.252.202.182])
+  by orsmga002.jf.intel.com with ESMTP; 10 Jul 2018 15:52:55 -0700
+Subject: Re: [RFC PATCH v2 12/27] x86/mm: Shadow stack page fault error
+ checking
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-13-yu-cheng.yu@intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <61793360-f37c-ec19-c390-abe3c76a5f5c@linux.intel.com>
+Date:   Tue, 10 Jul 2018 15:52:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <15448.1531263162.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 10 Jul 2018 23:52:42 +0100
-Message-ID: <15449.1531263162@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 10 Jul 2018 22:52:44 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 10 Jul 2018 22:52:44 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+In-Reply-To: <20180710222639.8241-13-yu-cheng.yu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add manual pages to document the move_mount and open_tree() system calls.
+On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
+> +++ b/arch/x86/include/asm/traps.h
+> @@ -157,6 +157,7 @@ enum {
+>   *   bit 3 ==				1: use of reserved bit detected
+>   *   bit 4 ==				1: fault was an instruction fetch
+>   *   bit 5 ==				1: protection keys block access
+> + *   bit 6 ==				1: shadow stack access fault
+>   */
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Could we document this bit better?
 
- man2/move_mount.2 |  274 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- man2/open_tree.2  |  260 ++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 534 insertions(+)
- create mode 100644 man2/move_mount.2
- create mode 100644 man2/open_tree.2
-
-diff --git a/man2/move_mount.2 b/man2/move_mount.2
-new file mode 100644
-index 000000000..3a819fb84
---- /dev/null
-+++ b/man2/move_mount.2
-@@ -0,0 +1,274 @@
-+'\" t
-+.\" Copyright (c) 2018 David Howells <dhowells@redhat.com>
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH MOVE_MOUNT 2 2018-06-08 "Linux" "Linux Programmer's Manual"
-+.SH NAME
-+move_mount \- Move mount objects around the filesystem topology
-+.SH SYNOPSIS
-+.nf
-+.B #include <sys/types.h>
-+.br
-+.B #include <sys/mount.h>
-+.br
-+.B #include <unistd.h>
-+.br
-+.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
-+.PP
-+.BI "int move_mount(int " from_dirfd ", const char *" from_pathname ","
-+.BI "               int " to_dirfd ", const char *" to_pathname ","
-+.BI "               unsigned int " flags );
-+.fi
-+.PP
-+.IR Note :
-+There are no glibc wrappers for these system calls.
-+.SH DESCRIPTION
-+The
-+.BR move_mount ()
-+call moves a mount from one place to another; it can also be used to attach an
-+unattached mount created by
-+.BR fsmount "() or " open_tree "() with " OPEN_TREE_CLONE .
-+.PP
-+If
-+.BR move_mount ()
-+is called repeatedly with a file descriptor that refers to a mount object,
-+then the object will be attached/moved the first time and then moved again and
-+again and again, detaching it from the previous mountpoint each time.
-+.PP
-+To access the source mount object or the destination mountpoint, no
-+permissions are required on the object itself, but if either pathname is
-+supplied, execute (search) permission is required on all of the directories
-+specified in
-+.IR from_pathname " or " to_pathname .
-+.PP
-+The caller does, however, require the appropriate capabilities or permission
-+to effect a mount.
-+.PP
-+.BR move_mount ()
-+uses
-+.IR from_pathname ", " from_dirfd " and some " flags
-+to locate the mount object to be moved and
-+.IR to_pathname ", " to_dirfd " and some other " flags
-+to locate the destination mountpoint.  Each lookup can be done in one of a
-+variety of ways:
-+.TP
-+[*] By absolute path.
-+The pathname points to an absolute path and the dirfd is ignored.  The file is
-+looked up by name, starting from the root of the filesystem as seen by the
-+calling process.
-+.TP
-+[*] By cwd-relative path.
-+The pathname points to a relative path and the dirfd is
-+.IR AT_FDCWD .
-+The file is looked up by name, starting from the current working directory.
-+.TP
-+[*] By dir-relative path.
-+The pathname points to relative path and the dirfd indicates a file descriptor
-+pointing to a directory.  The file is looked up by name, starting from the
-+directory specified by
-+.IR dirfd .
-+.TP
-+[*] By file descriptor.
-+The pathname points to "", the dirfd points directly to the mount object to
-+move or the destination mount point and the appropriate
-+.B *_EMPTY_PATH
-+flag is set.
-+.PP
-+.I flags
-+can be used to influence a path-based lookup.  A value for
-+.I flags
-+is constructed by OR'ing together zero or more of the following constants:
-+.TP
-+.BR MOVE_MOUNT_F_EMPTY_PATH
-+.\" commit 65cfc6722361570bfe255698d9cd4dccaf47570d
-+If
-+.I from_pathname
-+is an empty string, operate on the file referred to by
-+.IR from_dirfd
-+(which may have been obtained using the
-+.BR open (2)
-+.B O_PATH
-+flag or
-+.BR open_tree ())
-+If
-+.I from_dirfd
-+is
-+.BR AT_FDCWD ,
-+the call operates on the current working directory.
-+In this case,
-+.I from_dirfd
-+can refer to any type of file, not just a directory.
-+This flag is Linux-specific; define
-+.B _GNU_SOURCE
-+.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
-+to obtain its definition.
-+.TP
-+.B MOVE_MOUNT_T_EMPTY_PATH
-+As above, but operating on
-+.IR to_pathname " and " to_dirfd .
-+.TP
-+.B MOVE_MOUNT_F_NO_AUTOMOUNT
-+Don't automount the terminal ("basename") component of
-+.I from_pathname
-+if it is a directory that is an automount point.  This allows a mount object
-+that has an automount point at its root to be moved and prevents unintended
-+triggering of an automount point.
-+The
-+.B MOVE_MOUNT_F_NO_AUTOMOUNT
-+flag has no effect if the automount point has already been mounted over.  This
-+flag is Linux-specific; define
-+.B _GNU_SOURCE
-+.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
-+to obtain its definition.
-+.TP
-+.B MOVE_MOUNT_T_NO_AUTOMOUNT
-+As above, but operating on
-+.IR to_pathname " and " to_dirfd .
-+This allows an automount point to be manually mounted over.
-+.TP
-+.B MOVE_MOUNT_F_SYMLINKS
-+If
-+.I from_pathname
-+is a symbolic link, then dereference it.  The default for
-+.BR move_mount ()
-+is to not follow symlinks.
-+.TP
-+.B MOVE_MOUNT_T_SYMLINKS
-+As above, but operating on
-+.IR to_pathname " and " to_dirfd .
-+
-+.SH EXAMPLES
-+The
-+.BR move_mount ()
-+function can be used like the following:
-+.PP
-+.RS
-+.nf
-+move_mount(AT_FDCWD, "/a", AT_FDCWD, "/b", 0);
-+.fi
-+.RE
-+.PP
-+This would move the object mounted on "/a" to "/b".  It can also be used in
-+conjunction with
-+.BR open_tree "(2) or " open "(2) with " O_PATH :
-+.PP
-+.RS
-+.nf
-+fd = open_tree(AT_FDCWD, "/mnt", 0);
-+move_mount(fd, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
-+move_mount(fd, "", AT_FDCWD, "/mnt3", MOVE_MOUNT_F_EMPTY_PATH);
-+move_mount(fd, "", AT_FDCWD, "/mnt4", MOVE_MOUNT_F_EMPTY_PATH);
-+.fi
-+.RE
-+.PP
-+This would attach the path point for "/mnt" to fd, then it would move the
-+mount to "/mnt2", then move it to "/mnt3" and finally to "/mnt4".
-+.PP
-+It can also be used to attach new mounts:
-+.PP
-+.RS
-+.nf
-+sfd = fsopen("ext4", FSOPEN_CLOEXEC);
-+write(sfd, "s /dev/sda1");
-+write(sfd, "o user_xattr");
-+mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MS_NODEV);
-+move_mount(mfd, "", AT_FDCWD, "/home", MOVE_MOUNT_F_EMPTY_PATH);
-+.fi
-+.RE
-+.PP
-+Which would open the Ext4 filesystem mounted on "/dev/sda1", turn on user
-+extended attribute support and create a mount object for it.  Finally, the new
-+mount object would be attached with
-+.BR move_mount ()
-+to "/home".
-+
-+
-+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-+.SH RETURN VALUE
-+On success, 0 is returned.  On error, \-1 is returned, and
-+.I errno
-+is set appropriately.
-+.SH ERRORS
-+.TP
-+.B EACCES
-+Search permission is denied for one of the directories
-+in the path prefix of
-+.IR pathname .
-+(See also
-+.BR path_resolution (7).)
-+.TP
-+.B EBADF
-+.IR from_dirfd " or " to_dirfd
-+is not a valid open file descriptor.
-+.TP
-+.B EFAULT
-+.IR from_pathname " or " to_pathname
-+is NULL or either one point to a location outside the process's accessible
-+address space.
-+.TP
-+.B EINVAL
-+Reserved flag specified in
-+.IR flags .
-+.TP
-+.B ELOOP
-+Too many symbolic links encountered while traversing the pathname.
-+.TP
-+.B ENAMETOOLONG
-+.IR from_pathname " or " to_pathname
-+is too long.
-+.TP
-+.B ENOENT
-+A component of
-+.IR from_pathname " or " to_pathname
-+does not exist, or one is an empty string and the appropriate
-+.B *_EMPTY_PATH
-+was not specified in
-+.IR flags .
-+.TP
-+.B ENOMEM
-+Out of memory (i.e., kernel memory).
-+.TP
-+.B ENOTDIR
-+A component of the path prefix of
-+.IR from_pathname " or " to_pathname
-+is not a directory or one or the other is relative and the appropriate
-+.I *_dirfd
-+is a file descriptor referring to a file other than a directory.
-+.SH VERSIONS
-+.BR move_mount ()
-+was added to Linux in kernel 4.18.
-+.SH CONFORMING TO
-+.BR move_mount ()
-+is Linux-specific.
-+.SH NOTES
-+Glibc does not (yet) provide a wrapper for the
-+.BR move_mount ()
-+system call; call it using
-+.BR syscall (2).
-+.SH SEE ALSO
-+.BR fsmount (2),
-+.BR fsopen (2),
-+.BR open_tree (2)
-diff --git a/man2/open_tree.2 b/man2/open_tree.2
-new file mode 100644
-index 000000000..7e9c86fe3
---- /dev/null
-+++ b/man2/open_tree.2
-@@ -0,0 +1,260 @@
-+'\" t
-+.\" Copyright (c) 2018 David Howells <dhowells@redhat.com>
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH OPEN_TREE 2 2018-06-08 "Linux" "Linux Programmer's Manual"
-+.SH NAME
-+open_tree \- Pick or clone mount object and attach to fd
-+.SH SYNOPSIS
-+.nf
-+.B #include <sys/types.h>
-+.br
-+.B #include <sys/mount.h>
-+.br
-+.B #include <unistd.h>
-+.br
-+.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
-+.PP
-+.BI "int open_tree(int " dirfd ", const char *" pathname ", unsigned int " flags );
-+.fi
-+.PP
-+.IR Note :
-+There are no glibc wrappers for these system calls.
-+.SH DESCRIPTION
-+.BR open_tree ()
-+picks the mount object specified by the pathname and attaches it to a new file
-+descriptor or clones it and attaches the clone to the file descriptor.  The
-+resultant file descriptor is indistinguishable from one produced by
-+.BR open "(2) with " O_PATH .
-+.PP
-+In the case that the mount object is cloned, the clone will be "unmounted" and
-+destroyed when the file descriptor is closed if it is not otherwise mounted
-+somewhere by calling
-+.BR move_mount (2).
-+.PP
-+To select a mount object, no permissions are required on the object referred
-+to by the path, but execute (search) permission is required on all of the
-+directories in
-+.I pathname
-+that lead to the object.
-+.PP
-+To clone an object, however, the caller must have mount capabilities and
-+permissions.
-+.PP
-+.BR open_tree ()
-+uses
-+.IR pathname ", " dirfd " and " flags
-+to locate the target object in one of a variety of ways:
-+.TP
-+[*] By absolute path.
-+.I pathname
-+points to an absolute path and
-+.I dirfd
-+is ignored.  The object is looked up by name, starting from the root of the
-+filesystem as seen by the calling process.
-+.TP
-+[*] By cwd-relative path.
-+.I pathname
-+points to a relative path and
-+.IR dirfd " is " AT_FDCWD .
-+The object is looked up by name, starting from the current working directory.
-+.TP
-+[*] By dir-relative path.
-+.I pathname
-+points to relative path and
-+.I dirfd
-+indicates a file descriptor pointing to a directory.  The object is looked up
-+by name, starting from the directory specified by
-+.IR dirfd .
-+.TP
-+[*] By file descriptor.
-+.I pathname
-+is "",
-+.I dirfd
-+indicates a file descriptor and
-+.B AT_EMPTY_PATH
-+is set in
-+.IR flags .
-+The mount attached to the file descriptor is queried directly.  The file
-+descriptor may point to any type of file, not just a directory.
-+
-+.\"______________________________________________________________
-+.PP
-+.I flags
-+can be used to control the operation of the function and to influence a
-+path-based lookup.  A value for
-+.I flags
-+is constructed by OR'ing together zero or more of the following constants:
-+.TP
-+.BR AT_EMPTY_PATH
-+.\" commit 65cfc6722361570bfe255698d9cd4dccaf47570d
-+If
-+.I pathname
-+is an empty string, operate on the file referred to by
-+.IR dirfd
-+(which may have been obtained from
-+.BR open "(2) with"
-+.BR O_PATH ", from " fsmount (2)
-+or from another
-+.BR open_tree ()).
-+If
-+.I dirfd
-+is
-+.BR AT_FDCWD ,
-+the call operates on the current working directory.
-+In this case,
-+.I dirfd
-+can refer to any type of file, not just a directory.
-+This flag is Linux-specific; define
-+.B _GNU_SOURCE
-+.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
-+to obtain its definition.
-+.TP
-+.BR AT_NO_AUTOMOUNT
-+Don't automount the terminal ("basename") component of
-+.I pathname
-+if it is a directory that is an automount point.  This flag allows the
-+automount point itself to be picked up or a mount cloned that is rooted on the
-+automount point.  The
-+.B AT_NO_AUTOMOUNT
-+flag has no effect if the mount point has already been mounted over.
-+This flag is Linux-specific; define
-+.B _GNU_SOURCE
-+.\" Before glibc 2.16, defining _ATFILE_SOURCE sufficed
-+to obtain its definition.
-+.TP
-+.B AT_SYMLINK_NOFOLLOW
-+If
-+.I pathname
-+is a symbolic link, do not dereference it: instead pick up or clone a mount
-+rooted on the link itself.
-+.TP
-+.B OPEN_TREE_CLOEXEC
-+Set the close-on-exec flag for the new file descriptor.  This will cause the
-+file descriptor to be closed automatically when a process exec's.
-+.TP
-+.B OPEN_TREE_CLONE
-+Rather than directly attaching the selected object to the file descriptor,
-+clone the object, set the root of the new mount object to that point and
-+attach the clone to the file descriptor.
-+.TP
-+.B AT_RECURSIVE
-+This is only permitted in conjunction with OPEN_TREE_CLONE.  It causes the
-+entire mount subtree rooted at the selected spot to be cloned rather than just
-+that one mount object.
-+
-+
-+.SH EXAMPLE
-+The
-+.BR open_tree ()
-+function can be used like the following:
-+.PP
-+.RS
-+.nf
-+fd1 = open_tree(AT_FDCWD, "/mnt", 0);
-+fd2 = open_tree(fd1, "",
-+                AT_EMPTY_PATH | OPEN_TREE_CLONE | AT_RECURSIVE);
-+move_mount(fd2, "", AT_FDCWD, "/mnt2", MOVE_MOUNT_F_EMPTY_PATH);
-+.fi
-+.RE
-+.PP
-+This would attach the path point for "/mnt" to fd1, then it would copy the
-+entire subtree at the point referred to by fd1 and attach that to fd2; lastly,
-+it would attach the clone to "/mnt2".
-+
-+
-+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-+.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-+.SH RETURN VALUE
-+On success, the new file descriptor is returned.  On error, \-1 is returned,
-+and
-+.I errno
-+is set appropriately.
-+.SH ERRORS
-+.TP
-+.B EACCES
-+Search permission is denied for one of the directories
-+in the path prefix of
-+.IR pathname .
-+(See also
-+.BR path_resolution (7).)
-+.TP
-+.B EBADF
-+.I dirfd
-+is not a valid open file descriptor.
-+.TP
-+.B EFAULT
-+.I pathname
-+is NULL or
-+.IR pathname
-+point to a location outside the process's accessible address space.
-+.TP
-+.B EINVAL
-+Reserved flag specified in
-+.IR flags .
-+.TP
-+.B ELOOP
-+Too many symbolic links encountered while traversing the pathname.
-+.TP
-+.B ENAMETOOLONG
-+.I pathname
-+is too long.
-+.TP
-+.B ENOENT
-+A component of
-+.I pathname
-+does not exist, or
-+.I pathname
-+is an empty string and
-+.B AT_EMPTY_PATH
-+was not specified in
-+.IR flags .
-+.TP
-+.B ENOMEM
-+Out of memory (i.e., kernel memory).
-+.TP
-+.B ENOTDIR
-+A component of the path prefix of
-+.I pathname
-+is not a directory or
-+.I pathname
-+is relative and
-+.I dirfd
-+is a file descriptor referring to a file other than a directory.
-+.SH VERSIONS
-+.BR open_tree ()
-+was added to Linux in kernel 4.18.
-+.SH CONFORMING TO
-+.BR open_tree ()
-+is Linux-specific.
-+.SH NOTES
-+Glibc does not (yet) provide a wrapper for the
-+.BR open_tree ()
-+system call; call it using
-+.BR syscall (2).
-+.SH SEE ALSO
-+.BR fsmount (2),
-+.BR move_mount (2),
-+.BR open (2)
+Is this a fault where the *processor* thought it should be a shadow
+stack fault?  Or is it also set on faults to valid shadow stack PTEs
+that just happen to fault for other reasons, say protection keys?
