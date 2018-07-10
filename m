@@ -2,115 +2,96 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2737C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0055C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B6622089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:28:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BiCqEkf2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B6622089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id A56B22086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:31:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A56B22086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754749AbeGJB2j (ORCPT
+        id S1754681AbeGJBb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 21:28:39 -0400
-Received: from ozlabs.org ([203.11.71.1]:39195 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754607AbeGJB2e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 21:28:34 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Pl2l3rRKz9rxs;
-        Tue, 10 Jul 2018 11:28:31 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531186113;
-        bh=ZEQB+neK7YvDcuybQfJNJRI+KLVMN8AI5nzCocVYq18=;
-        h=Date:From:To:Cc:Subject:From;
-        b=BiCqEkf2CHOnp+FtbtOnkCX6pAHEzW2iCaXSP3dbdKcGwf+kl01WtBSlIYCd89tTZ
-         8u1benyR0VBmuT8jtKQOaRZzXWDRBaJE4Hu8SYPHGW+ATikrXIp+tcT0eEXpCI2KId
-         apm1bchnZ1zLWAAPvtq54XqZiEicYBuO9IkJKKNjcr0idIJCXyAM4HgEFMUZl3p8Kx
-         233tPr+0QP/L77n/yp7JP4LROZMsAnFCJ4RZtghLjqcPCHw6+UMTBUmxfKI9tYgnRt
-         FPKGpeWut8VlfyM+qFmq99WvMpCcW0h+zP17KstQf0UcSo7nO787DMPP80Ciz8JCgL
-         zJsyDfoH3UTpQ==
-Date:   Tue, 10 Jul 2018 11:28:31 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bart Van Assche <bart.vanassche@wdc.com>
-Subject: linux-next: build warning after merge of the rdma tree
-Message-ID: <20180710112831.40add0eb@canb.auug.org.au>
+        Mon, 9 Jul 2018 21:31:28 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:46370 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754597AbeGJBbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 21:31:23 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2FC62943FEBA;
+        Tue, 10 Jul 2018 09:31:20 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Tue, 10 Jul 2018
+ 09:31:18 +0800
+Subject: Re: [V9fs-developer] [PATCH] p9_check_errors() validate PDU length
+To:     Tomas Bortoli <tomasbortoli@gmail.com>, <ericvh@gmail.com>,
+        <rminnich@sandia.gov>, <lucho@ionkov.net>
+References: <20180709224323.20597-1-tomasbortoli@gmail.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <syzkaller@googlegroups.com>,
+        <v9fs-developer@lists.sourceforge.net>, <davem@davemloft.net>
+From:   piaojun <piaojun@huawei.com>
+Message-ID: <5B440C5E.2040909@huawei.com>
+Date:   Tue, 10 Jul 2018 09:31:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/JTUXcpEHUhp==jV4n4.f5.m"; protocol="application/pgp-signature"
+In-Reply-To: <20180709224323.20597-1-tomasbortoli@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/JTUXcpEHUhp==jV4n4.f5.m
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Tomas,
 
-Hi all,
+On 2018/7/10 6:43, Tomas Bortoli wrote:
+> p9_check_errors() does not validate the size of the PDU read
+> in p9_parse_header(). Any size can be passed, provoking out-of-bound reads.
+> 
+> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+> Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
+> ---
+> As suggested by Dominique:
+> https://lkml.org/lkml/2018/7/9/688
+> Such check is not enough as it will prevent to read more than how it has
+> been allocated but it won't prevent to read more than how it has been read
+> So this patch will require some more changes to prevent bad sizes.
+> 
+>  net/9p/client.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 40f7c47f2f74..5b161b576b8a 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -520,10 +520,13 @@ EXPORT_SYMBOL(p9_parse_header);
+>  static int p9_check_errors(struct p9_client *c, struct p9_req_t *req)
+>  {
+>  	int8_t type;
+> +	int32_t size;
+>  	int err;
+>  	int ecode;
+>  
+> -	err = p9_parse_header(req->rc, NULL, &type, NULL, 0);
+> +	err = p9_parse_header(req->rc, &size, &type, NULL, 0);
+> +	if (size > req->rc->capacity)
+> +		return -EINVAL;
 
-After merging the rdma tree, today's linux-next build (powerpc
-ppc64_defconfig) produced this warning:
+I think we should print some error logs here to remind uppper users.
 
-In file included from include/linux/kernel.h:14:0,
-                 from include/asm-generic/bug.h:18,
-                 from arch/powerpc/include/asm/bug.h:128,
-                 from include/linux/bug.h:5,
-                 from arch/powerpc/include/asm/mmu.h:126,
-                 from arch/powerpc/include/asm/lppaca.h:36,
-                 from arch/powerpc/include/asm/paca.h:21,
-                 from arch/powerpc/include/asm/current.h:16,
-                 from include/linux/mutex.h:14,
-                 from drivers/infiniband/hw/cxgb4/iw_cxgb4.h:34,
-                 from drivers/infiniband/hw/cxgb4/cq.c:33:
-drivers/infiniband/hw/cxgb4/cq.c: In function '__c4iw_poll_cq_one':
-include/linux/printk.h:308:2: warning: 'cqe.header' may be used uninitializ=
-ed in this function [-Wmaybe-uninitialized]
-  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-  ^~~~~~
-drivers/infiniband/hw/cxgb4/cq.c:674:16: note: 'cqe.header' was declared he=
-re
-  struct t4_cqe cqe;
-                ^~~
+Thanks,
+Jun
 
-Introduced by commit
-
-  4ab39e2f98f2 ("RDMA/cxgb4: Make c4iw_poll_cq_one() easier to analyze")
-
-I can't tell easily if this is a false positive or not.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/JTUXcpEHUhp==jV4n4.f5.m
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltEC78ACgkQAVBC80lX
-0GyPCAf+IqZk0Sv0KxNnHkDKpk02JHcaxI5+FeOlTfNvhD6i0LUgK6fsviV7NN8M
-XE71jz0hsPeywZLRKw8A3WP0xAcN9F1EolfG5pBXkdHIQ0s/HMziLT9qplBREqAt
-HkkMgEXX8BBYIObUGF8B73GrEqHRLbeYf7cZtExepvOMLZeFEp2mCzliKpFJuFjc
-FIYAZmob6kM77Ns6WlpEmhy80mOkvFNALsSf5dN8+p17kN3PEbE74YQhxBDc4cFI
-XP7mlhaD8sFI9abFVh1jwj807615nMe8xi4Jur3LJI+g0miHdOiMKi7mod1jioQ/
-Twvb57Xnqk1sdMkIp/4cvlkacCcXew==
-=HGmh
------END PGP SIGNATURE-----
-
---Sig_/JTUXcpEHUhp==jV4n4.f5.m--
+>  	/*
+>  	 * dump the response from server
+>  	 * This should be after check errors which poplulate pdu_fcall.
+> 
