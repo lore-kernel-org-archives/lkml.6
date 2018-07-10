@@ -2,137 +2,107 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69658C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7414C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20EDB20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:45:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20EDB20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
+	by mail.kernel.org (Postfix) with ESMTP id 56DBE2087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:48:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="pHemk2DS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56DBE2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752464AbeGJKpE (ORCPT
+        id S1753275AbeGJKsQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 06:45:04 -0400
-Received: from asrmicro.com ([210.13.118.86]:45606 "EHLO mail2012.asrmicro.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751289AbeGJKpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 06:45:02 -0400
-Received: from mail2012.asrmicro.com (10.1.24.123) by mail2012.asrmicro.com
- (10.1.24.123) with Microsoft SMTP Server (TLS) id 15.0.847.32; Tue, 10 Jul
- 2018 18:44:27 +0800
-Received: from mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b]) by
- mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b%16]) with mapi id
- 15.00.0847.030; Tue, 10 Jul 2018 18:44:27 +0800
-From:   =?utf-8?B?RmFuZyBIb25namllKOaWuea0quadsCk=?= 
-        <hongjiefang@asrmicro.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Bastian Stender" <bst@pengutronix.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Chanho Min <chanho.min@lge.com>,
-        "Kyle Roeschley" <kyle.roeschley@ni.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] mmc: core: improve rationality of bus width setting for
- HS400es
-Thread-Topic: [PATCH] mmc: core: improve rationality of bus width setting
- for HS400es
-Thread-Index: AQHUF1C1UTyNnhfPe06ky8JfBeUWZqSGO/IAgAGhJWD//7pOAIAAqAxQ
-Date:   Tue, 10 Jul 2018 10:44:26 +0000
-Message-ID: <63a5c7d969eb4e5d99c5e289e28cab09@mail2012.asrmicro.com>
-References: <1531118843-796-1-git-send-email-hongjiefang@asrmicro.com>
- <CAPDyKFpzJV-UQbMa7_tHms7o3hMn9_g=H_M0jW+ZN9G=8XCqRg@mail.gmail.com>
- <86aa8215d6e44e578cd34f0625c5ebef@mail2012.asrmicro.com>
- <CAPDyKFqfwxGgVhKp-RU1Ksd2BKhxvqdqXf0JV3dzyJdgfeBV+w@mail.gmail.com>
-In-Reply-To: <CAPDyKFqfwxGgVhKp-RU1Ksd2BKhxvqdqXf0JV3dzyJdgfeBV+w@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.1.170.195]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 10 Jul 2018 06:48:16 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:39607 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751332AbeGJKsO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 06:48:14 -0400
+Received: by mail-pl0-f65.google.com with SMTP id s24-v6so7447661plq.6
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 03:48:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5oA9LmbQFK3VzJ8SeHWtK4CM5G/SOqpVvGH6cHFDOtc=;
+        b=pHemk2DSFeKtqjMk0YD4ODT+ss4LT95426Au5SRjfWadHIPk0b1THs91wz1AxN2X8n
+         WXwvn5FOfBSLijN+U/qXbdVcnuy7F34nKHbk2ZVQk8wmiXKr/H5znH43CQAJOBvGC5Ol
+         c++4Lh2igr9CuXmJhE5MrPu02sJF5RWIbzaY8/HyVlowzdRbxSZbZec97+Ksy3dUwAuF
+         /2kmjuKZ+eZX3VwpemtrN42L64IIkPKa09uTXBl4UMPiZRsSOrnuKWJEubl96fHN5RyN
+         EGjh8RXbUdkJ0PtRqb9pYhJfHcqGZo4qLLR3F1IKffLs4O4togIIwLU+4GP9bVqaUABw
+         xGKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5oA9LmbQFK3VzJ8SeHWtK4CM5G/SOqpVvGH6cHFDOtc=;
+        b=FtqKGe25H45EtNb1hBtcAd3vSwZE7ofQUSZOxNMlvf1N3ts7lnWE7GC+MhKBBQrCOR
+         RZ3RMpvUG8bVYjdaCF/RwuoTj3KMbocG8mV7KIQ0f4VT4EmoB9Bh+7QAgP33T1RdBmIl
+         lHSizN5w932/UQ7ASctRQmX7YnBgukAvFor98KDXd3qh49+ylO1j3/258e5JMng8JEFV
+         +kRiBe0pCGZ0Q/Clb6stU/ndumRsyNhucoEccoz2Xs1/+LHmdhelM99mT5ZfVBD9VYKz
+         M4Di9a1WAIkYYx2n8/GW/AsU2wcDDe4kBeLGiI9G1atZM8/onqEDZludpoBcuH9QRjXW
+         iQwg==
+X-Gm-Message-State: APt69E2VmMlvekgLueULN2vg7KVWroHP8T/B5SrBQVv2flh/xXbqEmvx
+        R/pRTQjcvFzjyk2AeAnDEPhD9w==
+X-Google-Smtp-Source: AAOMgpe4b1IJCl7K3GciX7vO0v6b23/H1lO5Br04DrkPCCFvwduoNiScma6uJrK7CVijUdrxHjjjZg==
+X-Received: by 2002:a17:902:1566:: with SMTP id b35-v6mr24400986plh.107.1531219694332;
+        Tue, 10 Jul 2018 03:48:14 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
+        by smtp.gmail.com with ESMTPSA id 8-v6sm33049448pfk.132.2018.07.10.03.48.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 03:48:13 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 3057C30003F; Tue, 10 Jul 2018 13:48:09 +0300 (+03)
+Date:   Tue, 10 Jul 2018 13:48:09 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv4 07/18] x86/mm: Introduce variables to store number,
+ shift and mask of KeyIDs
+Message-ID: <20180710104809.pigivw4n4yuehdpo@kshutemo-mobl1>
+References: <20180626142245.82850-1-kirill.shutemov@linux.intel.com>
+ <20180626142245.82850-8-kirill.shutemov@linux.intel.com>
+ <20180709180949.GH6873@char.US.ORACLE.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709180949.GH6873@char.US.ORACLE.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IE9uIDEwIEp1bHkgMjAxOCBhdCAwNzowNCwgRmFuZyBIb25namllKOaWuea0quadsCkgPGhv
-bmdqaWVmYW5nQGFzcm1pY3JvLmNvbT4NCj4gd3JvdGU6DQo+ID4+IE9uIDkgSnVseSAyMDE4IGF0
-IDA4OjQ3LCBIb25namllIEZhbmcgPGhvbmdqaWVmYW5nQGFzcm1pY3JvLmNvbT4gd3JvdGU6DQo+
-ID4+ID4gbW1jX3NlbGVjdF9oczQwMGVzKCkgY2FsbHMgbW1jX3NlbGVjdF9idXNfd2lkdGgoKSB3
-aGljaCB3aWxsIHRyeSB0bw0KPiA+PiA+IHNldCA0Yml0IHRyYW5zZmVyIG1vZGUgaWYgZmFpbCB0
-byBzZXQgOGJpdCBtb2RlLiBUaGUgcHJvYmxlbSBpcyB0aGF0DQo+ID4+ID4gdGhlIGJ1cyB3aWR0
-aCBzaG91bGQgbm90IGJlIHNldCB0byA0Yml0IGluIEhTNDAwZXMgbW9kZS4NCj4gPj4NCj4gPj4g
-SSBndWVzcyBpdCBmYWlscyBiZWNhdXNlIHRoZXJlIGlzIHNvbWV0aGluZyB3cm9uZy4gQ2FuIHlv
-dSBwbGVhc2UNCj4gPj4gZWxhYm9yYXRlIHVuZGVyIHdoYXQgY2lyY3Vtc3RhbmNlIHRoZSBwcm9i
-bGVtIG9jY3Vycz8NCj4gPj4NCj4gPiBUaGlzIHByb2JsZW0gdmVyeSBvY2Nhc2lvbmFsbHkgb2Nj
-dXJyZWQgd2hlbiBzeXN0ZW0gcmVzdW1lIGZyb20NCj4gPiBzdXNwZW5kIHN0YXRlLiBUaGUgY2Fy
-ZCBzdHVjayBpbiB0aGUgcHJvZ3JhbW1pbmcgc3RhdGUgYWZ0ZXIgc2V0dGluZw0KPiA+IDhiaXQg
-bW9kZS4gQWZ0ZXIgdGhhdCwgbW1jX3NlbGVjdF9idXNfd2lkdGgoKSB3aWxsIGNvbnRpbnVlIHRv
-IHNldA0KPiA+IDRiaXQgbW9kZSBhbmQgcmV0dXJuIHdpdGhvdXQgZXJyb3JzLiBPZiBjb3Vyc2Us
-IHRoZSBmb2xsb3dpbmcgUi9XDQo+ID4gcmVxdWVzdHMgd2lsbCBiZSBhbGwgZmFpbGluZy4NCj4g
-DQo+IEkgc2VlLiBTbyBpdCdzIHRoZSBtbWNfc3dpdGNoKCkgb3BlcmF0aW9uIHRoYXQgZmFpbHMs
-IHdoZW4gdHJ5aW5nIDgtYml0LiBIbW0uDQo+IA0KPiA+DQo+ID4gVGhlIHByb2JsZW0gc2NlbmUg
-aXMgaGFyZCB0byByZXByb2R1Y2UuIE1heWJlIGl0IGhhcHBlbmVkDQo+ID4gYmVjYXVzZSB0aGVy
-ZSBpcyBzb21ldGhpbmcgd3JvbmcgYWJvdXQgYnVzIGNsb2NrIG9yIGNvcmUgdm9sdGFnZQ0KPiA+
-IHN0YWJpbGl0eSB3aGVuIHN5c3RlbSBkbyByZXN1bWUuDQo+IA0KPiBZZWFoLCB0aGF0IG5lZWRz
-IGZ1cnRoZXIgZGVidWdnaW5nLg0KPiANCj4gRG9uJ3Qga25vdyB3aGF0IGhvc3QgZHJpdmVyIHlv
-dSBhcmUgdXNpbmcsIGJ1dCBwb3RlbnRpYWxseSB5b3UgY291bGQNCj4gcGxheSB3aXRoIGEgY291
-cGxlIGhvc3Qgc3BlY2lmaWMgbWVjaGFuaXNtLiBUaGUgLT5ob3N0LT5jYXJkX2J1c3koKQ0KPiBj
-YWxsYmFjaywgaG9zdC0+bWF4X2J1c3lfdGltZW91dCBhbmQgTU1DX0NBUF9XQUlUX1dISUxFX0JV
-U1kuDQo+IERlcGVuZGluZyBvbiB0aGVzZSwgX19tbWNfc3dpdGNoKCkgY2hhbmdlcyBpdHMgcG9s
-aWN5IHdoZW4gcG9sbGluZyBmb3INCj4gYnVzeS4gSGF2ZSBhIGxvb2sgYXQgX19tbWNfc3dpdGNo
-KCkgYW5kIG1tY19wb2xsX2Zvcl9idXN5KCksIHRvIHNlZQ0KPiB3aGF0IGdvZXMgb24uDQo+IA0K
-VGhhbmtzLg0KSSB3aWxsIGRvIHRoZSBmdXJ0aGVyIGRlYnVnZ2luZyBhY2NvcmRpbmcgdG8geW91
-ciBhZHZpY2UuDQoNCj4gPg0KPiA+PiA+DQo+ID4+ID4gU2lnbmVkLW9mZi1ieTogSG9uZ2ppZSBG
-YW5nIDxob25namllZmFuZ0Bhc3JtaWNyby5jb20+DQo+ID4+ID4gLS0tDQo+ID4+ID4gIGRyaXZl
-cnMvbW1jL2NvcmUvbW1jLmMgfCAyMyArKysrKysrKysrKysrKysrKysrKystLQ0KPiA+PiA+ICAx
-IGZpbGUgY2hhbmdlZCwgMjEgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPj4gPg0K
-PiA+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9jb3JlL21tYy5jIGIvZHJpdmVycy9tbWMv
-Y29yZS9tbWMuYw0KPiA+PiA+IGluZGV4IDQ0NjZmNWQuLjk0YzNjYzUgMTAwNjQ0DQo+ID4+ID4g
-LS0tIGEvZHJpdmVycy9tbWMvY29yZS9tbWMuYw0KPiA+PiA+ICsrKyBiL2RyaXZlcnMvbW1jL2Nv
-cmUvbW1jLmMNCj4gPj4gPiBAQCAtMTMzNyw5ICsxMzM3LDI4IEBAIHN0YXRpYyBpbnQgbW1jX3Nl
-bGVjdF9oczQwMGVzKHN0cnVjdCBtbWNfY2FyZA0KPiAqY2FyZCkNCj4gPj4gPiAgICAgICAgIGlm
-IChlcnIpDQo+ID4+ID4gICAgICAgICAgICAgICAgIGdvdG8gb3V0X2VycjsNCj4gPj4gPg0KPiA+
-PiA+IC0gICAgICAgZXJyID0gbW1jX3NlbGVjdF9idXNfd2lkdGgoY2FyZCk7DQo+ID4+ID4gLSAg
-ICAgICBpZiAoZXJyIDwgMCkNCj4gPj4gPiArICAgICAgIC8qIFN3aXRjaCBjYXJkIHRvIDggYml0
-IG1vZGUgKi8NCj4gPj4gPiArICAgICAgIGVyciA9IG1tY19zd2l0Y2goY2FyZCwgRVhUX0NTRF9D
-TURfU0VUX05PUk1BTCwNCj4gPj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgRVhUX0NTRF9C
-VVNfV0lEVEgsDQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgIEVYVF9DU0RfQlVTX1dJ
-RFRIXzgsDQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgIGNhcmQtPmV4dF9jc2QuZ2Vu
-ZXJpY19jbWQ2X3RpbWUpOw0KPiA+PiA+ICsgICAgICAgaWYgKGVycikgew0KPiA+PiA+ICsgICAg
-ICAgICAgICAgICBwcl9lcnIoIiVzOiBzd2l0Y2ggdG8gOCBiaXQgbW9kZSBmb3IgaHM0MDBlcyBm
-YWlsZWQsIGVycjolZFxuIiwNCj4gPj4gPiArICAgICAgICAgICAgICAgICAgICAgICBtbWNfaG9z
-dG5hbWUoaG9zdCksIGVycik7DQo+ID4+ID4gKyAgICAgICAgICAgICAgIGdvdG8gb3V0X2VycjsN
-Cj4gPj4gPiArICAgICAgIH0NCj4gPj4gPiArDQo+ID4+ID4gKyAgICAgICBtbWNfc2V0X2J1c193
-aWR0aChob3N0LCBNTUNfQlVTX1dJRFRIXzgpOw0KPiA+PiA+ICsNCj4gPj4gPiArICAgICAgIGlm
-ICghKGhvc3QtPmNhcHMgJiBNTUNfQ0FQX0JVU19XSURUSF9URVNUKSkNCj4gPj4gPiArICAgICAg
-ICAgICAgICAgZXJyID0gbW1jX2NvbXBhcmVfZXh0X2NzZHMoY2FyZCwgTU1DX0JVU19XSURUSF84
-KTsNCj4gPj4gPiArICAgICAgIGVsc2UNCj4gPj4gPiArICAgICAgICAgICAgICAgZXJyID0gbW1j
-X2J1c190ZXN0KGNhcmQsIE1NQ19CVVNfV0lEVEhfOCk7DQo+ID4+ID4gKyAgICAgICBpZiAoZXJy
-KSB7DQo+ID4+ID4gKyAgICAgICAgICAgICAgIHByX2VycigiJXM6IHRlc3QgOCBiaXQgbW9kZSBm
-b3IgaHM0MDBlcyBmYWlsZWQsIGVycjolZFxuIiwNCj4gPj4gPiArICAgICAgICAgICAgICAgICAg
-ICAgICBtbWNfaG9zdG5hbWUoaG9zdCksIGVycik7DQo+ID4+ID4gICAgICAgICAgICAgICAgIGdv
-dG8gb3V0X2VycjsNCj4gPj4NCj4gPj4gTG90J3Mgb3BlbiBjb2RpbmcsIG5vIEkgZG9uJ3QgbGlr
-ZSBpdC4NCj4gPj4NCj4gPj4gV291bGRuJ3QgaXQgaW5zdGVhZCBiZSBwb3NzaWJsZSB0byBjaGVj
-ayB0aGUgcmV0dXJuIHZhbHVlIGZyb20NCj4gPj4gbW1jX3NlbGVjdF9idXNfd2lkdGgoKSwgYXMg
-aXQgc2hvdWxkIHRlbGwgd2hhdCB3aWR0aCBpdCBtYW5hZ2UgdG8NCj4gPj4gc2VsZWN0LiBUaGVu
-IGlmIGl0IGlzbid0IDgtYml0LCB0aGVuIHdlIHNob3VsZCBiYWlsIG91dC4gRG9lcyB0aGF0DQo+
-ID4+IHdvcms/DQo+ID4+DQo+ID4gQWZ0ZXIgc2V0dGluZyA0Yml0IG1vZGUsIGl0IGNhbid0IHdv
-cmsgYmVjYXVzZSBpdCBjYW5ub3QgYmFjayB0bw0KPiA+IEhTMjAwIG1vZGUgbGlrZSB0aGUgSFM0
-MDAgbW9kZS4NCj4gPiBGb3IgSFM0MDBlcywgaWYgZmFpbCB0byBzZXQgOGJpdCBtb2RlLCBtYXli
-ZSBpdCBpcyBtb3JlIHJlYXNvbmFibGUNCj4gPiB0aGF0IHJldHVybiBlcnJvciBkaXJlY3RseS4N
-Cj4gDQo+IFllYWguIENhcmUgdG8gc2VuZCBhIHBhdGNoIGZvciB0aGF0Pw0KT0suIEkgd2lsbCB0
-cnkgdG8gc2VuZCBhIG5ldyBwYXRjaCB0aGF0IGxldCBtbWNfc2VsZWN0X2J1c193aWR0aCgpDQpy
-ZXR1cm4gZXJyb3IgZGlyZWN0bHkgd2hlbiBmYWlsIHRvIHNldCA4Yml0IGZvciBIUzQwMGVzLg0K
-DQo+IA0KPiBbLi4uXQ0KPiANCj4gS2luZCByZWdhcmRzDQo+IFVmZmUNCg0KQiZSDQpIb25namll
-DQo=
+On Mon, Jul 09, 2018 at 02:09:49PM -0400, Konrad Rzeszutek Wilk wrote:
+> > diff --git a/arch/x86/mm/Makefile b/arch/x86/mm/Makefile
+> > index 4b101dd6e52f..4ebee899c363 100644
+> > --- a/arch/x86/mm/Makefile
+> > +++ b/arch/x86/mm/Makefile
+> > @@ -53,3 +53,5 @@ obj-$(CONFIG_PAGE_TABLE_ISOLATION)		+= pti.o
+> >  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt.o
+> >  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_identity.o
+> >  obj-$(CONFIG_AMD_MEM_ENCRYPT)	+= mem_encrypt_boot.o
+> > +
+> > +obj-$(CONFIG_X86_INTEL_MKTME)	+= mktme.o
+> 
+> Any particular reason to have x86 in the CONFIG?
+
+It is consistent with MPX and protection keys.
+
+-- 
+ Kirill A. Shutemov
