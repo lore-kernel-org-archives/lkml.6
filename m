@@ -2,117 +2,103 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594F7C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6A3C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CC6220878
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eMfK8KOL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CC6220878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A82420878
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A82420878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933496AbeGJIFo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:05:44 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:56253 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751129AbeGJIFl (ORCPT
+        id S933528AbeGJIFy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:05:54 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34967 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933409AbeGJIFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:05:41 -0400
-Received: by mail-wm0-f66.google.com with SMTP id v128-v6so6053063wme.5;
-        Tue, 10 Jul 2018 01:05:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=AEMtbuUhv/qRM3s7RRCVxxLavMk2dUJQTwmx2LJebgs=;
-        b=eMfK8KOLCQ81Qhxyaf4lB5w8cw/HqZB7cwi5Bvj4m+D9z/khXxADaI0PERkUnY2Dyz
-         LlzGTjPYnXmEXGIisTyV7w6KsNko/Um6xToI87A88xwUzB1EGxZRMgbMOkrB8pB00t9r
-         DTcakFHOcSbV26vPwoNIGz83gQ/uOSSVitT5DcktsUV0v50WmQPOzxM195MytM2a+YOw
-         0osiUhGwqu5hLNw8XlESoDaEXlsSFbPd6w0QtpCsz1x+CC6kCrnyy7nSUI+45CAJAjLU
-         aRSZ0f6ZhPv2rYSfgxWcMRCzPKsxwL8F7xbLgfl4U72uPc73b5cvdPv0janVWwUF2EEc
-         ddhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=AEMtbuUhv/qRM3s7RRCVxxLavMk2dUJQTwmx2LJebgs=;
-        b=sNHcdQ/jfOQAiVE3S+QlbqXqRjChgKk7QLz4BdCL1eFaZHr74ZaYFsyLSMMnOwumRw
-         WsLggWbInM2acVud4Qq8IJiBp0E8UUmIj7PmAeVUmCU2MSv2FgAtWruzYPWmpOGA8odh
-         PNqvPE0GjHjaUkoMHWDWsbMwFUbCx3GN5iox8REH/TB0BbBdoPblCftzSObdFLKViR5i
-         f7cAjpOKEcuO8jc+/+p2sOYV7gkZ+llE8+5Htog6tlKRolYKfJNo1T/Xq7jvgRlV7L4Y
-         mjMDJMsC93uhxIxTwtM5CGxZR5X1OU8tE2oMgkJgYr8hwqM1otl+u1iXy8l9LwRqv84x
-         D+nA==
-X-Gm-Message-State: APt69E1ZMFuQ4Y87PfmWUSZo9nV7BH9TweBqFE2qpM5I9+rkDxOI87zx
-        fW/j56ZTzXAmhwMbisPFfJo=
-X-Google-Smtp-Source: AAOMgpc1MzK643hSMah5QL5y+iA1LAlw7FImrEgRfKG2bVWRJqemGxRqURyzzV1DSI/jwDMXocttiQ==
-X-Received: by 2002:a1c:bd5:: with SMTP id 204-v6mr15240129wml.160.1531209940021;
-        Tue, 10 Jul 2018 01:05:40 -0700 (PDT)
-Received: from sch.bme.hu (ecklm-pi.sch.bme.hu. [152.66.179.182])
-        by smtp.gmail.com with ESMTPSA id c13-v6sm3689260wrt.24.2018.07.10.01.05.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Jul 2018 01:05:39 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 10:05:38 +0200
-From:   =?utf-8?B?TcOhdMOp?= Eckl <ecklm94@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Flavio Leitner <fbl@redhat.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] netfilter: NFT_SOCKET don't use NF_SOCKET_IPV6 without
- NF_TABLES_IPV6
-Message-ID: <20180710080538.d7xqpjdvpksfrx6o@sch.bme.hu>
-References: <20180709213537.2748896-1-arnd@arndb.de>
- <20180710080227.qwh53ahq26j6phhd@sch.bme.hu>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Tue, 10 Jul 2018 04:05:52 -0400
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1fcneb-0004jZ-6S; Tue, 10 Jul 2018 10:05:45 +0200
+Message-ID: <1531209943.3163.31.camel@pengutronix.de>
+Subject: Re: [PATCH v3] soc: imx: gpc: Turn PU domain on/off in sleep on 6qp
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Robin Gong <yibin.gong@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>
+Date:   Tue, 10 Jul 2018 10:05:43 +0200
+In-Reply-To: <CAPDyKFqb6eZ2SYG612yqiNisv7UV1q3UHYfZfemmvv9Q4w=Png@mail.gmail.com>
+References: <ab0c7997bdb0caf6fe7e842315bb9565c2cb059d.1530895248.git.leonard.crestez@nxp.com>
+         <CAPDyKFqb6eZ2SYG612yqiNisv7UV1q3UHYfZfemmvv9Q4w=Png@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180710080227.qwh53ahq26j6phhd@sch.bme.hu>
-User-Agent: NeoMutt/20180622
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 10:02:27AM +0200, Máté Eckl wrote:
-> On Mon, Jul 09, 2018 at 11:35:09PM +0200, Arnd Bergmann wrote:
-> > It is now possible to build the nft_socket module as built-in when
-> > NF_TABLES_IPV6 is disabled, and have NF_SOCKET_IPV6=m set manually.
-> > 
-> > In this case, the NF_SOCKET_IPV6 functionality will be useless according
-> > to the explanation in commit 35bf1ccecaaa ("netfilter: Kconfig: Change
-> > IPv6 select dependencies"), but on top of that it also causes a link
-> > error:
-> > 
-> > net/netfilter/nft_socket.o: In function `nft_socket_eval':
-> > nft_socket.c:(.text+0x162): undefined reference to `nf_sk_lookup_slow_v6'
-> > 
-> > This changes the compile-time check so we don't attempt to use
-> > the NF_SOCKET_IPV6 code when it cannot be used, and make it all
-> > compile again. That may lead to unexpected behavior when a user
-> > enables NF_SOCKET_IPV6 but cannot use it, but seems to be the
-> > logical conclusion of the 35bf1ccecaaa change.
-> > 
-> > Fixes: 35bf1ccecaaa ("netfilter: Kconfig: Change IPv6 select dependencies")
-> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Am Dienstag, den 10.07.2018, 00:27 +0200 schrieb Ulf Hansson:
+> > On 6 July 2018 at 18:46, Leonard Crestez <leonard.crestez@nxp.com> wrote:
+> > On imx6qp power gating on the PU domain is disabled because of errata
+> > ERR009619. However power gating during suspend/resume can still be
+> > performed.
 > 
-> I think this should be fixed in the Kconfig rather than inside the module(s).
-> 
-> I did some investigation and it turns out that you missed a circumstance. This
-> link error occures only if NFT_SOCKET=y && NF_SOCKET_IPV6=m && NF_TABLES_IPV6=y
-> (cannot be m here if NFT_SOCKET is y). And probably the same with
-> iptables-related modules. Probably this possibility should be eliminated.
+> Sounds a bit hand wavy. Exactly why can it be done during system suspend/resume?
 
-NF_TPROXY_IPV6 might be in the same situation.
+Power gatingÂ this domain in normal operation may introduce a glitch in
+unrelated modules, potentially disturbing a running display scanout.
+This is not a concern when the whole system enters suspend state, so
+it's safe to do in this case.
+
+Regards,
+Lucas
+
+> > 
+> > Enable this by implementing SLEEP_PM_OPS in imx_pgc_power_domain_driver.
+> > 
+> > In order to ensure correct ordering add device links from devices inside
+> > the PU domain to the pgc platform_device.
+> 
+> In genpd, the PM domain gets powered off after all device's
+> corresponding ->suspend_noirq() callback has been invoked - and it
+> also considers if there are some wakeup settings enabled, possibly
+> avoiding to do the power off.
+> 
+> It sound like the imx's power domain driver ->power_off|on() callback
+> should deal with this, to make get a consistent behavior. I understand
+> that you currently can't tell under what circumstances the
+> ->power_off|on() callbacks are being invoked, that may need some
+> changes in genpd.
+> 
+> Currently we have a flag, GENPD_FLAG_ALWAYS_ON which makes genpd to
+> always prevent power off. Perhaps we should add a new flag
+> "GENPD_FLAG_RUNTIME_ON", which makes genpd to call the
+> ->power_on|off() callbacks, but only during system wide PM.
+> 
+> Thoughts?
+
+Yes, this might work for this case.
+
+Regards,
+Lucas
