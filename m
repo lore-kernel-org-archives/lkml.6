@@ -6,42 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA86C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BACC3C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F330E208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F330E208E8
+	by mail.kernel.org (Postfix) with ESMTP id 887EB208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 887EB208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389866AbeGJSg0 (ORCPT
+        id S2389881AbeGJSg3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:36:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48492 "EHLO
+        Tue, 10 Jul 2018 14:36:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48502 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389851AbeGJSg0 (ORCPT
+        with ESMTP id S2389852AbeGJSg2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:36:26 -0400
+        Tue, 10 Jul 2018 14:36:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5166EC6;
-        Tue, 10 Jul 2018 18:36:11 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8ECB4EC2;
+        Tue, 10 Jul 2018 18:36:14 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.17 01/56] userfaultfd: hugetlbfs: fix userfaultfd_huge_must_wait() pte access
-Date:   Tue, 10 Jul 2018 20:24:43 +0200
-Message-Id: <20180710182503.601211213@linuxfoundation.org>
+        stable@vger.kernel.org, John Smith <john-s-84@gmx.net>,
+        Jason Andryuk <jandryuk@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.17 41/56] HID: i2c-hid: Fix "incomplete report" noise
+Date:   Tue, 10 Jul 2018 20:25:23 +0200
+Message-Id: <20180710182505.544168925@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,63 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Janosch Frank <frankja@linux.ibm.com>
+From: Jason Andryuk <jandryuk@gmail.com>
 
-commit 1e2c043628c7736dd56536d16c0ce009bc834ae7 upstream.
+commit ef6eaf27274c0351f7059163918f3795da13199c upstream.
 
-Use huge_ptep_get() to translate huge ptes to normal ptes so we can
-check them with the huge_pte_* functions.  Otherwise some architectures
-will check the wrong values and will not wait for userspace to bring in
-the memory.
+Commit ac75a041048b ("HID: i2c-hid: fix size check and type usage") started
+writing messages when the ret_size is <= 2 from i2c_master_recv.  However, my
+device i2c-DLL07D1 returns 2 for a short period of time (~0.5s) after I stop
+moving the pointing stick or touchpad.  It varies, but you get ~50 messages
+each time which spams the log hard.
 
-Link: http://lkml.kernel.org/r/20180626132421.78084-1-frankja@linux.ibm.com
-Fixes: 369cd2121be4 ("userfaultfd: hugetlbfs: userfaultfd_huge_must_wait for hugepmd ranges")
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+[  95.925055] i2c_hid i2c-DLL07D1:01: i2c_hid_get_input: incomplete report (83/2)
+
+This has also been observed with a i2c-ALP0017.
+
+[ 1781.266353] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
+
+Only print the message when ret_size is totally invalid and less than 2 to cut
+down on the log spam.
+
+Fixes: ac75a041048b ("HID: i2c-hid: fix size check and type usage")
+Reported-by: John Smith <john-s-84@gmx.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/userfaultfd.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -220,24 +220,26 @@ static inline bool userfaultfd_huge_must
- 					 unsigned long reason)
- {
- 	struct mm_struct *mm = ctx->mm;
--	pte_t *pte;
-+	pte_t *ptep, pte;
- 	bool ret = true;
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -486,7 +486,7 @@ static void i2c_hid_get_input(struct i2c
+ 		return;
+ 	}
  
- 	VM_BUG_ON(!rwsem_is_locked(&mm->mmap_sem));
- 
--	pte = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
--	if (!pte)
-+	ptep = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
-+
-+	if (!ptep)
- 		goto out;
- 
- 	ret = false;
-+	pte = huge_ptep_get(ptep);
- 
- 	/*
- 	 * Lockless access: we're in a wait_event so it's ok if it
- 	 * changes under us.
- 	 */
--	if (huge_pte_none(*pte))
-+	if (huge_pte_none(pte))
- 		ret = true;
--	if (!huge_pte_write(*pte) && (reason & VM_UFFD_WP))
-+	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
- 		ret = true;
- out:
- 	return ret;
+-	if ((ret_size > size) || (ret_size <= 2)) {
++	if ((ret_size > size) || (ret_size < 2)) {
+ 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
+ 			__func__, size, ret_size);
+ 		return;
 
 
