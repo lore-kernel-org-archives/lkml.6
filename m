@@ -6,49 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E77C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C552EC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6449620936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6449620936
+	by mail.kernel.org (Postfix) with ESMTP id 89EC520936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89EC520936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733017AbeGJS1L (ORCPT
+        id S1733030AbeGJS1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:27:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44706 "EHLO
+        Tue, 10 Jul 2018 14:27:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44730 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732958AbeGJS1K (ORCPT
+        with ESMTP id S1732516AbeGJS1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:27:10 -0400
+        Tue, 10 Jul 2018 14:27:14 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6F70EA8;
-        Tue, 10 Jul 2018 18:26:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2F22AEB8;
+        Tue, 10 Jul 2018 18:27:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ye Xiaolong <xiaolong.ye@intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Alexey Makhalov <amakhalov@vmware.com>
-Subject: [PATCH 4.4 11/47] kprobes/x86: Do not modify singlestep buffer while resuming
-Date:   Tue, 10 Jul 2018 20:24:35 +0200
-Message-Id: <20180710182337.592464332@linuxfoundation.org>
+        stable@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 12/47] nvme-pci: initialize queue memory before interrupts
+Date:   Tue, 10 Jul 2018 20:24:36 +0200
+Message-Id: <20180710182337.649747627@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -65,107 +52,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Keith Busch <keith.busch@intel.com>
 
-commit 804dec5bda9b4fcdab5f67fe61db4a0498af5221 upstream.
+commit 161b8be2bd6abad250d4b3f674bdd5480f15beeb upstream.
 
-Do not modify singlestep execution buffer (kprobe.ainsn.insn)
-while resuming from single-stepping, instead, modifies
-the buffer to add a jump back instruction at preparing
-buffer.
+A spurious interrupt before the nvme driver has initialized the completion
+queue may inadvertently cause the driver to believe it has a completion
+to process. This may result in a NULL dereference since the nvmeq's tags
+are not set at this point.
 
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David S . Miller <davem@davemloft.net>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ye Xiaolong <xiaolong.ye@intel.com>
-Link: http://lkml.kernel.org/r/149076361560.22469.1610155860343077495.stgit@devbox
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Reviewed-by: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
+The patch initializes the host's CQ memory so that a spurious interrupt
+isn't mistaken for a real completion.
+
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[bwh: Backported to 4.4: adjust context]
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/kprobes/core.c |   42 +++++++++++++++++++----------------------
- 1 file changed, 20 insertions(+), 22 deletions(-)
+ drivers/nvme/host/pci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/arch/x86/kernel/kprobes/core.c
-+++ b/arch/x86/kernel/kprobes/core.c
-@@ -411,25 +411,38 @@ void free_insn_page(void *page)
- 	module_memfree(page);
- }
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1589,11 +1589,11 @@ static int nvme_create_queue(struct nvme
+ 	if (result < 0)
+ 		goto release_cq;
  
-+/* Prepare reljump right after instruction to boost */
-+static void prepare_boost(struct kprobe *p, int length)
-+{
-+	if (can_boost(p->ainsn.insn, p->addr) &&
-+	    MAX_INSN_SIZE - length >= RELATIVEJUMP_SIZE) {
-+		/*
-+		 * These instructions can be executed directly if it
-+		 * jumps back to correct address.
-+		 */
-+		synthesize_reljump(p->ainsn.insn + length, p->addr + length);
-+		p->ainsn.boostable = 1;
-+	} else {
-+		p->ainsn.boostable = -1;
-+	}
-+}
-+
- static int arch_copy_kprobe(struct kprobe *p)
- {
--	int ret;
-+	int len;
++	nvme_init_queue(nvmeq, qid);
+ 	result = queue_request_irq(dev, nvmeq, nvmeq->irqname);
+ 	if (result < 0)
+ 		goto release_sq;
  
- 	set_memory_rw((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
+-	nvme_init_queue(nvmeq, qid);
+ 	return result;
  
- 	/* Copy an instruction with recovering if other optprobe modifies it.*/
--	ret = __copy_instruction(p->ainsn.insn, p->addr);
--	if (!ret)
-+	len = __copy_instruction(p->ainsn.insn, p->addr);
-+	if (!len)
- 		return -EINVAL;
+  release_sq:
+@@ -1797,6 +1797,7 @@ static int nvme_configure_admin_queue(st
+ 		goto free_nvmeq;
  
- 	/*
- 	 * __copy_instruction can modify the displacement of the instruction,
- 	 * but it doesn't affect boostable check.
- 	 */
--	if (can_boost(p->ainsn.insn, p->addr))
--		p->ainsn.boostable = 0;
--	else
--		p->ainsn.boostable = -1;
-+	prepare_boost(p, len);
- 
- 	set_memory_ro((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
- 
-@@ -894,21 +907,6 @@ static void resume_execution(struct kpro
- 		break;
+ 	nvmeq->cq_vector = 0;
++	nvme_init_queue(nvmeq, 0);
+ 	result = queue_request_irq(dev, nvmeq, nvmeq->irqname);
+ 	if (result) {
+ 		nvmeq->cq_vector = -1;
+@@ -3165,7 +3166,6 @@ static void nvme_probe_work(struct work_
+ 		goto disable;
  	}
  
--	if (p->ainsn.boostable == 0) {
--		if ((regs->ip > copy_ip) &&
--		    (regs->ip - copy_ip) + 5 < MAX_INSN_SIZE) {
--			/*
--			 * These instructions can be executed directly if it
--			 * jumps back to correct address.
--			 */
--			synthesize_reljump((void *)regs->ip,
--				(void *)orig_ip + (regs->ip - copy_ip));
--			p->ainsn.boostable = 1;
--		} else {
--			p->ainsn.boostable = -1;
--		}
--	}
--
- 	regs->ip += orig_ip - copy_ip;
- 
- no_change:
+-	nvme_init_queue(dev->queues[0], 0);
+ 	result = nvme_alloc_admin_tags(dev);
+ 	if (result)
+ 		goto disable;
 
 
