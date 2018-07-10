@@ -2,137 +2,137 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9816AC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:37:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F93AC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D6A7208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:37:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vw4PdAuA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6A7208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 133A3208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:38:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 133A3208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934272AbeGJPhc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:37:32 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41248 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934205AbeGJPh1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:37:27 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j5-v6so8581449wrr.8
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 08:37:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iB3NQWhNtvhrYaPl+I86BSep0jrycQY/IplfPd7Cyh8=;
-        b=Vw4PdAuAX8t1iqM8+V+FZe2+waTvy1cHI5m/ShGplYWGTXNsBvgl4jeTzXrtRGLdpr
-         nCrBdkTffabL+RbI+hrhzsHS3YtLNqaOTBzRA46SiwfYNuMp4gufTR0pehWkHXVrCbV6
-         qxEdIKoixAupoBC/jzQxpwBdCG5BI8ni+7SPA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iB3NQWhNtvhrYaPl+I86BSep0jrycQY/IplfPd7Cyh8=;
-        b=jyGEOHwjDMwCsMcUTW6NoUMSP11LEgVOa00P+ry0GOgG2ud7+tIULHTS8qKKGiCQd7
-         oMS01b5sj3xpV3o2DDuXcUaElu3Ahlt+3HmYqIU9C3XDScgz9RvQoVSSp0TUyUbcGQPy
-         WNA9vO/uLzou2e9jb+4aexfUWAa5NUPh41F0/6zHRMW4uB5Prh/82D2E9u5IlT4kTWbo
-         9fI+Z2oEQKxjdyf3D1ESM8pS0kfy/0LVhy6D1ZDgoi1YzeVMAkKfzULEhL6MGG7R4hv9
-         0hvEaEWU/0VBEU6ZzKOPie8uyh8TRxf3wVMfg7/bmKGQlREnsT2esBj3vx3514U8huB0
-         JOtg==
-X-Gm-Message-State: APt69E3Oxs7EcMkfT38eNldDbSa+8iERPk4uQNVgZML+knxFlalEwauG
-        qaOPA1hYu2xV5MiYWKqCtfbOLQ==
-X-Google-Smtp-Source: AAOMgpd9ZB6vlVvoqltTqcHiFO7+ubLm//QTyVufCNHfXUhqeuf3mJM2hL/iX0CK77moYii1fmlI9w==
-X-Received: by 2002:adf:e14a:: with SMTP id f10-v6mr17244218wri.42.1531237046278;
-        Tue, 10 Jul 2018 08:37:26 -0700 (PDT)
-Received: from [192.168.8.101] ([37.173.242.72])
-        by smtp.googlemail.com with ESMTPSA id i9-v6sm14561089wrs.92.2018.07.10.08.37.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 08:37:25 -0700 (PDT)
-Subject: Re: [PATCH v7 0/5] Reintroduce i.MX EPIT Timer
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Cc:     Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
-References: <20180611155001.3506-1-peron.clem@gmail.com>
- <CAJiuCcf3g2fzrR2_4mthjwKRcyZ8KVPX+EZ5_Uifh2E6TkzusQ@mail.gmail.com>
- <52591c2d-e9df-7078-7cdf-0fd8d06c9ee0@linaro.org>
- <CAJiuCcc-eGRr_RT01dNfhQso5PbXfWy+YZS4PHHcL=_yhA-3Sw@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <c9db3848-378f-8e1e-c194-53d878894716@linaro.org>
-Date:   Tue, 10 Jul 2018 17:37:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934287AbeGJPi0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:38:26 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49100 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933475AbeGJPiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 11:38:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D8BCC80D;
+        Tue, 10 Jul 2018 08:38:24 -0700 (PDT)
+Received: from red-moon (unknown [10.1.206.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A73823F589;
+        Tue, 10 Jul 2018 08:38:23 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 16:40:17 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Songxiaowei (Kirin_DRV)" <songxiaowei@hisilicon.com>
+Cc:     "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chenyao (F)" <chenyao11@huawei.com>
+Subject: Re: =?utf-8?B?562U5aSN?= =?utf-8?Q?=3A?= [PATCH v5 1/1] PCI: kirin:
+ Add MSI support
+Message-ID: <20180710154017.GA16825@red-moon>
+References: <20180628124803.110315-1-songxiaowei@hisilicon.com>
+ <20180628124803.110315-2-songxiaowei@hisilicon.com>
+ <99B4C6BADD9E3241B25E52B02BA737C5412D2511@dggema525-mbx.china.huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJiuCcc-eGRr_RT01dNfhQso5PbXfWy+YZS4PHHcL=_yhA-3Sw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <99B4C6BADD9E3241B25E52B02BA737C5412D2511@dggema525-mbx.china.huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/07/2018 17:22, Clément Péron wrote:
-> Hi Daniel,
+On Mon, Jul 09, 2018 at 01:54:07AM +0000, Songxiaowei (Kirin_DRV) wrote:
+> Hi Bjorn Helgaas,
 > 
-> On Tue, 10 Jul 2018 at 17:12, Daniel Lezcano <daniel.lezcano@linaro.org> wrote:
->>
->> On 10/07/2018 16:55, Clément Péron wrote:
->>> Hi,
->>>
->>> Is there still some remark against merging this ?
->>
->> How do you want this to be merged ?
->>
->> Shall I take the two patches related to the timer ? Or Ack them ?
+> Would you help to review this patch?
 > 
-> I'm not an expert on how submitting patches works, it's the first
-> driver I submit.
+> Best regards,
+> 
+> Xiaowei.
+> 
+> > -----邮件原件-----
+> > 发件人: Songxiaowei (Kirin_DRV)
+> > 发送时间: 2018年6月28日 20:48
+> > 收件人: Wangbinghui <wangbinghui@hisilicon.com>; bhelgaas@google.com;
+> > robh+dt@kernel.org; linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > dimitrysh@google.com
+> > 抄送: chenyao (F) <chenyao11@huawei.com>; Songxiaowei (Kirin_DRV)
+> > <songxiaowei@hisilicon.com>
+> > 主题: [PATCH v5 1/1] PCI: kirin: Add MSI support
+> > 
+> > Add support for MSI.
+> > 
+> > Signed-off-by: Xiaowei Song <songxiaowei@hisilicon.com>
+> > ---
+> >  drivers/pci/dwc/pcie-kirin.c | 28 ++++++++++++++++++++++++++++
+> >  1 file changed, 28 insertions(+)
+> > 
+> > diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c index
+> > d2970a009eb5..6997276eb69c 100644
+> > --- a/drivers/pci/dwc/pcie-kirin.c
+> > +++ b/drivers/pci/dwc/pcie-kirin.c
+> > @@ -430,6 +430,9 @@ static int kirin_pcie_host_init(struct pcie_port *pp)
+> > {
+> >  	kirin_pcie_establish_link(pp);
+> > 
+> > +	if (IS_ENABLED(CONFIG_PCI_MSI))
+> > +		dw_pcie_msi_init(pp);
+> > +
+> >  	return 0;
+> >  }
+> > 
+> > @@ -445,9 +448,34 @@ static const struct dw_pcie_host_ops
+> > kirin_pcie_host_ops = {
+> >  	.host_init = kirin_pcie_host_init,
+> >  };
+> > 
+> > +static int kirin_pcie_add_msi(struct dw_pcie *pci,
+> > +				struct platform_device *pdev)
+> > +{
+> > +	int ret = 0;
+> > +
+> > +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> > +		ret = platform_get_irq(pdev, 0);
+> > +		if (ret < 0) {
+> > +			dev_err(&pdev->dev,
+> > +				"failed to get MSI IRQ (%d)\n", ret);
+> > +			return ret;
+> > +		}
+> > +
+> > +		pci->pp.msi_irq = ret;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> >  static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+> >  				      struct platform_device *pdev)  {
+> > +	int ret;
+> > +
+> > +	ret = kirin_pcie_add_msi(pci, pdev);
+> > +	if (ret)
+> > +		return ret;
 
-Ok, so usually this is what happens when there is a set of changes:
+If kirin_pcie_add_msi() returns an IRQ number we return from
+this function here, is that what you really want ?
 
- 1.  they all touch the same subsystem (eg. drivers/clocksource), you
-just send all the patches to the maintainer(s) + mailing list + related
-people
+Lorenzo
 
- 2. they touch different subsystems:
-
-   2.1) the changes are not connected (not related together), you have
-to split in smaller parts and send the patches to the right subsystem
-maintainer (so falling back to 1.)
-
-   2.2) the changes are connected:
-
-      2.2.1) Ask all the different subsystem maintainers to acknowledge
-the changes and submit the patches to arm-soc@
-
-      2.2.2) Ask each maintainer to take their part if the changes are
-connected but not interdependent (patches individually won't break the
-system)
-
-
-You are in the 2.2) situation. My question is do you want 2.2.1) or 2.2.2) ?
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+> > +
+> >  	pci->pp.ops = &kirin_pcie_host_ops;
+> > 
+> >  	return dw_pcie_host_init(&pci->pp);
+> > --
+> > 2.11.GIT
+> 
