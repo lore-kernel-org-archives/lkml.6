@@ -6,123 +6,98 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F39BC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C52CC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF49C2089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:56:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF49C2089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A32E62089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:57:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A32E62089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933427AbeGJN4d (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 09:56:33 -0400
-Received: from mga06.intel.com ([134.134.136.31]:55191 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933255AbeGJN4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 09:56:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 06:56:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,334,1526367600"; 
-   d="scan'208";a="55780622"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga008.jf.intel.com with ESMTP; 10 Jul 2018 06:56:28 -0700
-Message-ID: <ee2443ab6b413e9d7f0148e8916b0bd0d4924375.camel@linux.intel.com>
-Subject: Re: [PATCH v4 2/3] serial: 8250: export serial8250_do_set_divisor()
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org
-Date:   Tue, 10 Jul 2018 16:56:28 +0300
-In-Reply-To: <20180710111327.072584c0@xhacker.debian>
-References: <20180710110942.5b0a016e@xhacker.debian>
-         <20180710111327.072584c0@xhacker.debian>
-Organization: Intel Finland Oy
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S933454AbeGJN5T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 09:57:19 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:33642 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S933255AbeGJN5S (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 09:57:18 -0400
+Received: (qmail 1601 invoked by uid 2102); 10 Jul 2018 09:57:17 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 10 Jul 2018 09:57:17 -0400
+Date:   Tue, 10 Jul 2018 09:57:17 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+In-Reply-To: <20180709214514.GJ3593@linux.vnet.ibm.com>
+Message-ID: <Pine.LNX.4.44L0.1807100954490.1449-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-10 at 11:13 +0800, Jisheng Zhang wrote:
-> Some drivers could call serial8250_do_set_divisor() to complete its
-> own set_divisor routine. Export this symbol for code reusing.
+On Mon, 9 Jul 2018, Paul E. McKenney wrote:
+
+> On Mon, Jul 09, 2018 at 04:01:57PM -0400, Alan Stern wrote:
+> > More than one kernel developer has expressed the opinion that the LKMM
+> > should enforce ordering of writes by locking.  In other words, given
+> > the following code:
+> > 
+> > 	WRITE_ONCE(x, 1);
+> > 	spin_unlock(&s):
+> > 	spin_lock(&s);
+> > 	WRITE_ONCE(y, 1);
+> > 
+> > the stores to x and y should be propagated in order to all other CPUs,
+> > even though those other CPUs might not access the lock s.  In terms of
+> > the memory model, this means expanding the cumul-fence relation.
+> > 
+> > Locks should also provide read-read (and read-write) ordering in a
+> > similar way.  Given:
+> > 
+> > 	READ_ONCE(x);
+> > 	spin_unlock(&s);
+> > 	spin_lock(&s);
+> > 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
+> > 
+> > the load of x should be executed before the load of (or store to) y.
+> > The LKMM already provides this ordering, but it provides it even in
+> > the case where the two accesses are separated by a release/acquire
+> > pair of fences rather than unlock/lock.  This would prevent
+> > architectures from using weakly ordered implementations of release and
+> > acquire, which seems like an unnecessary restriction.  The patch
+> > therefore removes the ordering requirement from the LKMM for that
+> > case.
+> > 
+> > All the architectures supported by the Linux kernel (including RISC-V)
+> > do provide this ordering for locks, albeit for varying reasons.
+> > Therefore this patch changes the model in accordance with the
+> > developers' wishes.
+> > 
+> > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
 > 
-
-I dunno Greg's preferences here, but it could be merged with patch 1.
-
-In any case,
-
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-for this part.
-
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> ---
->  drivers/tty/serial/8250/8250_port.c | 5 +++--
->  include/linux/serial_8250.h         | 3 +++
->  2 files changed, 6 insertions(+), 2 deletions(-)
+> Nice!
 > 
-> diff --git a/drivers/tty/serial/8250/8250_port.c
-> b/drivers/tty/serial/8250/8250_port.c
-> index ce0dc17f18ee..945f8dc2d50f 100644
-> --- a/drivers/tty/serial/8250/8250_port.c
-> +++ b/drivers/tty/serial/8250/8250_port.c
-> @@ -2580,8 +2580,8 @@ static unsigned char
-> serial8250_compute_lcr(struct uart_8250_port *up,
->  	return cval;
->  }
->  
-> -static void serial8250_do_set_divisor(struct uart_port *port,
-> unsigned int baud,
-> -			    unsigned int quot, unsigned int
-> quot_frac)
-> +void serial8250_do_set_divisor(struct uart_port *port, unsigned int
-> baud,
-> +			       unsigned int quot, unsigned int
-> quot_frac)
->  {
->  	struct uart_8250_port *up = up_to_u8250p(port);
->  
-> @@ -2612,6 +2612,7 @@ static void serial8250_do_set_divisor(struct
-> uart_port *port, unsigned int baud,
->  		serial_port_out(port, 0x2, quot_frac);
->  	}
->  }
-> +EXPORT_SYMBOL_GPL(serial8250_do_set_divisor);
->  
->  static void serial8250_set_divisor(struct uart_port *port, unsigned
-> int baud,
->  				   unsigned int quot, unsigned int
-> quot_frac)
-> diff --git a/include/linux/serial_8250.h b/include/linux/serial_8250.h
-> index 76b9db71e489..18e21427bce4 100644
-> --- a/include/linux/serial_8250.h
-> +++ b/include/linux/serial_8250.h
-> @@ -160,6 +160,9 @@ extern void serial8250_do_shutdown(struct
-> uart_port *port);
->  extern void serial8250_do_pm(struct uart_port *port, unsigned int
-> state,
->  			     unsigned int oldstate);
->  extern void serial8250_do_set_mctrl(struct uart_port *port, unsigned
-> int mctrl);
-> +extern void serial8250_do_set_divisor(struct uart_port *port,
-> unsigned int baud,
-> +				      unsigned int quot,
-> +				      unsigned int quot_frac);
->  extern int fsl8250_handle_irq(struct uart_port *port);
->  int serial8250_handle_irq(struct uart_port *port, unsigned int iir);
->  unsigned char serial8250_rx_chars(struct uart_8250_port *up, unsigned
-> char lsr);
+> However, it doesn't apply against current -rcu.  Am I missing a patch?
+> Or is this supposed to apply against origin/lkmm?
 
--- 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Intel Finland Oy
+I wrote it based on 4.18-rc.  However, I can rebase it against your
+current dev branch.
+
+Alan
+
