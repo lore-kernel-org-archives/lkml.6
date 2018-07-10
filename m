@@ -2,127 +2,132 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6114CC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEFAC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A1DC20840
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:26:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="lpSjKrGO";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="liWVsBka"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A1DC20840
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	by mail.kernel.org (Postfix) with ESMTP id A018520849
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:29:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A018520849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754611AbeGJA0C (ORCPT
+        id S1754629AbeGJA32 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 20:26:02 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:38397 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754530AbeGJAZz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 20:25:55 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 920BB21CEC;
-        Mon,  9 Jul 2018 20:25:54 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 09 Jul 2018 20:25:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
-        :content-transfer-encoding:content-type:date:from:message-id
-        :mime-version:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=IIF83T2qnhOGbSBhuNPhD0kHKfuX+binvvjo3yvIdhQ=; b=lpSjKrGO
-        O0vTX/TzFu8f6CBFrjj09vzPcZKVUoopvO+lePelDYydUdRUflgvjr6+e8N3/gYs
-        OZSc1A9uafPVxVq4+qgMaA7mV4INDr9Ll/li2EGQbFWibU1156tLYPxRgQ5Dguc9
-        bqYYT9mqP6GtOYIYnl4QIdlYc7ibyo6neLyK1DcDbHr8g0aDc01RG9R1Jiu4nR7t
-        zuacsfXnbIWCsE+QOvAC58Qy9y6Tol/706IvjgwNgUmD9NZF91nsSfns1DKy1Uv9
-        VoI6wXC9g5BB0I1b4k/PJz8Tvlu4ki9VobtJ+Lyh3JpSLoVJRUAXcO5p2FbvPhhM
-        6qDXwoVWAk4VUw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:message-id:mime-version:subject:to:x-me-sender
-        :x-me-sender:x-sasl-enc; s=fm3; bh=IIF83T2qnhOGbSBhuNPhD0kHKfuX+
-        binvvjo3yvIdhQ=; b=liWVsBkaHQ8A0Xo9dyVaNFUHyt91ihyapKaWj7c+fxtMu
-        YKdCa13nyngRcIRteXwoDexhRcTaQJxteDDk32vBygBf3bJa/llR3+r3IOXBNo1E
-        tzQrngRk9SrEB9PfpZQhX3TYRd+Ip1KkUkeTcHyEo1Cvgcg/8oze2BpC+to5FWhX
-        /hRC3wwAKswxj3BH/C90/06ixqWc/l9NmSxO5vkY1s3ea4FzkWMorAUJ0ABCVLWD
-        /HUNE/3XsHbDVUbsZ1IU6f7HG+VUOehz5Yt69RIYV/sRCOaGuNaewcnhYMe0y5Kp
-        ev6jMGM5SkfAO5cnNOawZ9P6+EByS2cEGR0dvxokw==
-X-ME-Proxy: <xmx:Ef1DW3m-g-kML_X1A0-8wg7I_vG-5dLCWLnsCTKkIDPHeg7t_hVQFQ>
-    <xmx:Ef1DW1TdXRmn32eTNFdpwIl-8y7dkAkMjqfyHpnOsh7Zvc1EK9suAg>
-    <xmx:Ef1DW1Izq1XFdFegGudWe4MdVVd_LP90b04Bdgx_rUMd17fOzHSpCg>
-    <xmx:Ef1DW3GniDJRP0ZySgFnP5qydBZh_P1svGRy_sRv-qFECDCydwfOBw>
-    <xmx:Ef1DW61wOAr9hckcYo-muY-vHhkKLWfVagXhKJSY0DBlEFkoE88lsQ>
-    <xmx:Ev1DW4s9GbIhdLndb_ByrP5oFGixB5Y9mMlOr8ayio3pvUFC2BSK7w>
-X-ME-Sender: <xms:Ef1DW-Bd4hiVFTFTAWnQm77peJ_by5ZYhe9Pi_9TSPWHzRC1LZO4Lg>
-Received: from localhost (ppp121-44-208-89.bras1.syd2.internode.on.net [121.44.208.89])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 317351025C;
-        Mon,  9 Jul 2018 20:25:52 -0400 (EDT)
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Theodore Ts'o <tytso@mit.edu>
-Cc:     "Tobin C. Harding" <me@tobin.cc>, Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] fix: enable early printing of hashed pointers
-Date:   Tue, 10 Jul 2018 10:25:16 +1000
-Message-Id: <20180710002519.5044-1-me@tobin.cc>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Mon, 9 Jul 2018 20:29:28 -0400
+Received: from gate.crashing.org ([63.228.1.57]:49314 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754550AbeGJA3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 20:29:25 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6A0TAxO026799;
+        Mon, 9 Jul 2018 19:29:11 -0500
+Message-ID: <70f1312e76a9f53bf7749525ea881272c7007a34.camel@kernel.crashing.org>
+Subject: [PATCH v2 2/2] drivers: core: Remove glue dirs from sysfs earlier
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Tejun Heo <tj@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 10 Jul 2018 10:29:10 +1000
+In-Reply-To: <CA+55aFx-UX8nxewRFFWdBgYfPqfipnxaqJuJCUni9h4JvhoPFw@mail.gmail.com>
+References: <CA+55aFyzYXSTTuVoGfVeC574-7i0zp3q39RTsiPn3GoRceuwAQ@mail.gmail.com>
+         <213dd8fa77629e04277e68552068581da881e7e4.camel@kernel.crashing.org>
+         <CA+55aFy927VYjFDwe9Zy_M+XFNxSFh2HLFcQ25pm8AMNXBUoQA@mail.gmail.com>
+         <CA+55aFx7wgjx+d0Vdtpgzc46HM-4vN2r-Hyf2ZC4gQU-nxopMQ@mail.gmail.com>
+         <1303e511c44f639c562a02ae28aa530144277c99.camel@kernel.crashing.org>
+         <b15584ccdfcb3bf6d42665635aaa9150ed3244ba.camel@kernel.crashing.org>
+         <CA+55aFzKmzC-2_6+RsRRu9KfK_r=UGgLN2Q0hSNBV=ScGR7=8g@mail.gmail.com>
+         <6e3ca577f8dd5f3621d1054447d3f928a73dfcf9.camel@kernel.crashing.org>
+         <CA+55aFy+ZSu5cPzk887N-ZgXqvTB=Bp1JQYMWT1SZY81MqLH6Q@mail.gmail.com>
+         <1bc873980e7f63291fbe19dbc7e1607b8e126241.camel@kernel.crashing.org>
+         <20180707164241.GB16279@kroah.com>
+         <CA+55aFx-UX8nxewRFFWdBgYfPqfipnxaqJuJCUni9h4JvhoPFw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ted,
+For devices with a class, we create a "glue" directory between
+the parent device and the new device with the class name.
 
-Sending this set to you because it fixes the recent patch set applied to
-your random-next branch.
+This directory is never "explicitely" removed when empty however,
+this is left to the implicit sysfs removal done by kobject_release()
+when the object loses its last reference via kobject_put().
 
-This set includes changes already posted on LKML as
+This is problematic because as long as it's not been removed from
+sysfs, it is still present in the class kset and in sysfs directory
+structure.
 
-	[PATCH v9 0/4] enable early printing of hashed pointers
+The presence in the class kset exposes a use after free bug fixed
+by the previous patch, but the presence in sysfs means that until
+the kobject is released, which can take a while (especially with
+kobject debugging), any attempt at re-creating such as binding a
+new device for that class/parent pair, will result in a sysfs
+duplicate file name error.
 
-Since I'm a massive noob I did not realise that since v7 of this set was
-applied to random-next already that doing incremental versions was
-pointless.
+This fixes it by instead doing an explicit kobject_del() when
+the glue dir is empty, by keeping track of the number of
+child devices of the gluedir.
 
-So, this set is the changes done in v8 and v9 of the above patch set.
-I have retained the acked-by tag from Randy for the docs fixes.
-Attribution for pointing out the issues has been 'lost in translation',
-I'll buy you guys a beer one day instead ...
+This is made easy by the fact that all glue dir operations are
+done with a global mutex, and there's already a function
+(cleanup_glue_dir) called in all the right places taking that
+mutex that can be enhanced for this. It appears that this was
+in fact the intent of the function, but the implementation was
+wrong.
 
-With this set applied linux-next still throws a build warning
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+---
+ drivers/base/core.c     |  2 ++
+ include/linux/kobject.h | 17 +++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
-	lib/vsprintf.c:1667:13: warning: ‘have_filled_random_ptr_key’
- 	defined but not used [-Wunused-variable] 
-
-This is fixed by another patch currently in flight ([PATCH] "vsprintf:
-fix build warning" - thanks Arnd).
-
-Epic amounts of confusion, solely caused as usual by myself.
-
-thanks,
-Tobin.
-
-
-Tobin C. Harding (3):
-  random: Remove unnecessary cast
-  vsprintf: Remove incorrect EXPORT_SYMBOL
-  docs: Fix docs for boot parameter debug_boot_weak_hash
-
- Documentation/admin-guide/kernel-parameters.txt | 13 ++++++-------
- drivers/char/random.c                           |  2 +-
- lib/vsprintf.c                                  |  1 -
- 3 files changed, 7 insertions(+), 9 deletions(-)
-
--- 
-2.17.1
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index e9eff2099896..93c0f8d1a447 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1572,6 +1572,8 @@ static void cleanup_glue_dir(struct device *dev, struct kobject *glue_dir)
+ 		return;
+ 
+ 	mutex_lock(&gdp_mutex);
++	if (!kobject_has_children(glue_dir))
++		kobject_del(glue_dir);
+ 	kobject_put(glue_dir);
+ 	mutex_unlock(&gdp_mutex);
+ }
+diff --git a/include/linux/kobject.h b/include/linux/kobject.h
+index 7f6f93c3df9c..270b40515e79 100644
+--- a/include/linux/kobject.h
++++ b/include/linux/kobject.h
+@@ -116,6 +116,23 @@ extern void kobject_put(struct kobject *kobj);
+ extern const void *kobject_namespace(struct kobject *kobj);
+ extern char *kobject_get_path(struct kobject *kobj, gfp_t flag);
+ 
++/**
++ * kobject_has_children - Returns whether a kobject has children.
++ * @kobj: the object to test
++ *
++ * This will return whether a kobject has other kobjects as children.
++ *
++ * It does NOT account for the presence of attribute files, only sub
++ * directories. It also assumes there is no concurrent addition or
++ * removal of such children, and thus relies on external locking.
++ */
++static inline bool kobject_has_children(struct kobject *kobj)
++{
++	WARN_ON_ONCE(kref_read(&kobj->kref) == 0);
++
++	return kobj->sd && kobj->sd->dir.subdirs;
++}
++
+ struct kobj_type {
+ 	void (*release)(struct kobject *kobj);
+ 	const struct sysfs_ops *sysfs_ops;
 
