@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE904C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE01FC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AAE320BF2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AAE320BF2
+	by mail.kernel.org (Postfix) with ESMTP id 8B4BA2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B4BA2083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388920AbeGJSdX (ORCPT
+        id S2388934AbeGJSd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47756 "EHLO
+        Tue, 10 Jul 2018 14:33:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47770 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387961AbeGJSdX (ORCPT
+        with ESMTP id S2388124AbeGJSdZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:23 -0400
+        Tue, 10 Jul 2018 14:33:25 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 38299E3D;
-        Tue, 10 Jul 2018 18:33:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E612CE3D;
+        Tue, 10 Jul 2018 18:33:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
         Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 36/53] media: vb2: core: Finish buffers at the end of the stream
-Date:   Tue, 10 Jul 2018 20:25:12 +0200
-Message-Id: <20180710182500.874667405@linuxfoundation.org>
+Subject: [PATCH 4.14 37/53] f2fs: truncate preallocated blocks in error case
+Date:   Tue, 10 Jul 2018 20:25:13 +0200
+Message-Id: <20180710182500.923996959@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -54,49 +51,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-commit 03703ed1debf777ea845aa9b50ba2e80a5e7dd3c upstream.
+commit dc7a10ddee0c56c6d891dd18de5c4ee9869545e0 upstream.
 
-If buffers were prepared or queued and the buffers were released without
-starting the queue, the finish mem op (corresponding to the prepare mem
-op) was never called to the buffers.
+If write is failed, we must deallocate the blocks that we couldn't write.
 
-Before commit a136f59c0a1f there was no need to do this as in such a case
-the prepare mem op had not been called yet. Address the problem by
-explicitly calling finish mem op when the queue is stopped if the buffer
-is in either prepared or queued state.
-
-Fixes: a136f59c0a1f ("[media] vb2: Move buffer cache synchronisation to prepare from queue")
-
-Cc: stable@vger.kernel.org # for v4.13 and up
-Signed-off-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Tested-by: Devin Heitmueller <dheitmueller@kernellabs.com>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/media/v4l2-core/videobuf2-core.c |    9 +++++++++
+ fs/f2fs/file.c |    9 +++++++++
  1 file changed, 9 insertions(+)
 
---- a/drivers/media/v4l2-core/videobuf2-core.c
-+++ b/drivers/media/v4l2-core/videobuf2-core.c
-@@ -1689,6 +1689,15 @@ static void __vb2_queue_cancel(struct vb
- 	for (i = 0; i < q->num_buffers; ++i) {
- 		struct vb2_buffer *vb = q->bufs[i];
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2694,11 +2694,16 @@ static ssize_t f2fs_file_write_iter(stru
+ 	inode_lock(inode);
+ 	ret = generic_write_checks(iocb, from);
+ 	if (ret > 0) {
++		bool preallocated = false;
++		size_t target_size = 0;
+ 		int err;
  
-+		if (vb->state == VB2_BUF_STATE_PREPARED ||
-+		    vb->state == VB2_BUF_STATE_QUEUED) {
-+			unsigned int plane;
+ 		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
+ 			set_inode_flag(inode, FI_NO_PREALLOC);
+ 
++		preallocated = true;
++		target_size = iocb->ki_pos + iov_iter_count(from);
 +
-+			for (plane = 0; plane < vb->num_planes; ++plane)
-+				call_void_memop(vb, finish,
-+						vb->planes[plane].mem_priv);
-+		}
+ 		err = f2fs_preallocate_blocks(iocb, from);
+ 		if (err) {
+ 			clear_inode_flag(inode, FI_NO_PREALLOC);
+@@ -2710,6 +2715,10 @@ static ssize_t f2fs_file_write_iter(stru
+ 		blk_finish_plug(&plug);
+ 		clear_inode_flag(inode, FI_NO_PREALLOC);
+ 
++		/* if we couldn't write data, we should deallocate blocks. */
++		if (preallocated && i_size_read(inode) < target_size)
++			f2fs_truncate(inode);
 +
- 		if (vb->state != VB2_BUF_STATE_DEQUEUED) {
- 			vb->state = VB2_BUF_STATE_PREPARED;
- 			call_void_vb_qop(vb, buf_finish, vb);
+ 		if (ret > 0)
+ 			f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
+ 	}
 
 
