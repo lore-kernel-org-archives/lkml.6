@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C96AC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5F3C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEA6C208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA6C208E8
+	by mail.kernel.org (Postfix) with ESMTP id F0AEE208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0AEE208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389168AbeGJSeJ (ORCPT
+        id S2389182AbeGJSeM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:34:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47950 "EHLO
+        Tue, 10 Jul 2018 14:34:12 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387589AbeGJSeI (ORCPT
+        with ESMTP id S2387589AbeGJSeL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:34:08 -0400
+        Tue, 10 Jul 2018 14:34:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E968CE78;
-        Tue, 10 Jul 2018 18:33:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 09A2CD0B;
+        Tue, 10 Jul 2018 18:33:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.14 41/53] mtd: rawnand: mxc: set spare area size register explicitly
-Date:   Tue, 10 Jul 2018 20:25:17 +0200
-Message-Id: <20180710182501.139911549@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Eric Sandeen <sandeen@redhat.com>
+Subject: [PATCH 4.14 42/53] fs: allow per-device dax status checking for filesystems
+Date:   Tue, 10 Jul 2018 20:25:18 +0200
+Message-Id: <20180710182501.180824741@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -52,65 +52,225 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kaiser <martin@kaiser.cx>
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-commit 3f77f244d8ec28e3a0a81240ffac7d626390060c upstream.
+commit ba23cba9b3bdc967aabdc6ff1e3e9b11ce05bb4f upstream.
 
-The v21 version of the NAND flash controller contains a Spare Area Size
-Register (SPAS) at offset 0x10. Its setting defaults to the maximum
-spare area size of 218 bytes. The size that is set in this register is
-used by the controller when it calculates the ECC bytes internally in
-hardware.
+Change bdev_dax_supported so it takes a bdev parameter.  This enables
+multi-device filesystems like xfs to check that a dax device can work for
+the particular filesystem.  Once that's in place, actually fix all the
+parts of XFS where we need to be able to distinguish between datadev and
+rtdev.
 
-Usually, this register is updated from settings in the IIM fuses when
-the system is booting from NAND flash. For other boot media, however,
-the SPAS register remains at the default setting, which may not work for
-the particular flash chip on the board. The same goes for flash chips
-whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
-sector size and 128 bytes spare area size can't be configured in the IIM
-fuses on imx25 systems).
+This patch fixes the problem where we screw up the dax support checking
+in xfs if the datadev and rtdev have different dax capabilities.
 
-Set the SPAS register explicitly during the preset operation. Derive the
-register value from mtd->oobsize that was detected during probe by
-decoding the flash chip's ID bytes.
-
-While at it, rename the define for the spare area register's offset to
-NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
-different from the register on v21 controllers.
-
-Fixes: d484018 ("mtd: mxc_nand: set NFC registers after reset")
-Cc: stable@vger.kernel.org
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+[rez: Re-added __bdev_dax_supported() for !CONFIG_FS_DAX cases]
+Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Reviewed-by: Eric Sandeen <sandeen@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- drivers/mtd/nand/mxc_nand.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/dax/super.c |   22 +++++++++++-----------
+ fs/ext2/super.c     |    2 +-
+ fs/ext4/super.c     |    2 +-
+ fs/xfs/xfs_ioctl.c  |    3 ++-
+ fs/xfs/xfs_iops.c   |   30 +++++++++++++++++++++++++-----
+ fs/xfs/xfs_super.c  |   10 ++++++++--
+ include/linux/dax.h |    9 +++++----
+ 7 files changed, 53 insertions(+), 25 deletions(-)
 
---- a/drivers/mtd/nand/mxc_nand.c
-+++ b/drivers/mtd/nand/mxc_nand.c
-@@ -48,7 +48,7 @@
- #define NFC_V1_V2_CONFIG		(host->regs + 0x0a)
- #define NFC_V1_V2_ECC_STATUS_RESULT	(host->regs + 0x0c)
- #define NFC_V1_V2_RSLTMAIN_AREA		(host->regs + 0x0e)
--#define NFC_V1_V2_RSLTSPARE_AREA	(host->regs + 0x10)
-+#define NFC_V21_RSLTSPARE_AREA		(host->regs + 0x10)
- #define NFC_V1_V2_WRPROT		(host->regs + 0x12)
- #define NFC_V1_UNLOCKSTART_BLKADDR	(host->regs + 0x14)
- #define NFC_V1_UNLOCKEND_BLKADDR	(host->regs + 0x16)
-@@ -1119,6 +1119,9 @@ static void preset_v2(struct mtd_info *m
- 	writew(config1, NFC_V1_V2_CONFIG1);
- 	/* preset operation */
+--- a/drivers/dax/super.c
++++ b/drivers/dax/super.c
+@@ -73,7 +73,7 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
  
-+	/* spare area size in 16-bit half-words */
-+	writew(mtd->oobsize / 2, NFC_V21_RSLTSPARE_AREA);
+ /**
+  * __bdev_dax_supported() - Check if the device supports dax for filesystem
+- * @sb: The superblock of the device
++ * @bdev: block device to check
+  * @blocksize: The block size of the device
+  *
+  * This is a library function for filesystems to check if the block device
+@@ -81,33 +81,33 @@ EXPORT_SYMBOL_GPL(fs_dax_get_by_bdev);
+  *
+  * Return: negative errno if unsupported, 0 if supported.
+  */
+-int __bdev_dax_supported(struct super_block *sb, int blocksize)
++int __bdev_dax_supported(struct block_device *bdev, int blocksize)
+ {
+-	struct block_device *bdev = sb->s_bdev;
+ 	struct dax_device *dax_dev;
+ 	pgoff_t pgoff;
+ 	int err, id;
+ 	void *kaddr;
+ 	pfn_t pfn;
+ 	long len;
++	char buf[BDEVNAME_SIZE];
+ 
+ 	if (blocksize != PAGE_SIZE) {
+-		pr_err("VFS (%s): error: unsupported blocksize for dax\n",
+-				sb->s_id);
++		pr_debug("%s: error: unsupported blocksize for dax\n",
++				bdevname(bdev, buf));
+ 		return -EINVAL;
+ 	}
+ 
+ 	err = bdev_dax_pgoff(bdev, 0, PAGE_SIZE, &pgoff);
+ 	if (err) {
+-		pr_err("VFS (%s): error: unaligned partition for dax\n",
+-				sb->s_id);
++		pr_debug("%s: error: unaligned partition for dax\n",
++				bdevname(bdev, buf));
+ 		return err;
+ 	}
+ 
+ 	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
+ 	if (!dax_dev) {
+-		pr_err("VFS (%s): error: device does not support dax\n",
+-				sb->s_id);
++		pr_debug("%s: error: device does not support dax\n",
++				bdevname(bdev, buf));
+ 		return -EOPNOTSUPP;
+ 	}
+ 
+@@ -118,8 +118,8 @@ int __bdev_dax_supported(struct super_bl
+ 	put_dax(dax_dev);
+ 
+ 	if (len < 1) {
+-		pr_err("VFS (%s): error: dax access failed (%ld)",
+-				sb->s_id, len);
++		pr_debug("%s: error: dax access failed (%ld)\n",
++				bdevname(bdev, buf), len);
+ 		return len < 0 ? len : -EIO;
+ 	}
+ 
+--- a/fs/ext2/super.c
++++ b/fs/ext2/super.c
+@@ -953,7 +953,7 @@ static int ext2_fill_super(struct super_
+ 	blocksize = BLOCK_SIZE << le32_to_cpu(sbi->s_es->s_log_block_size);
+ 
+ 	if (sbi->s_mount_opt & EXT2_MOUNT_DAX) {
+-		err = bdev_dax_supported(sb, blocksize);
++		err = bdev_dax_supported(sb->s_bdev, blocksize);
+ 		if (err)
+ 			goto failed_mount;
+ 	}
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3770,7 +3770,7 @@ static int ext4_fill_super(struct super_
+ 					" that may contain inline data");
+ 			goto failed_mount;
+ 		}
+-		err = bdev_dax_supported(sb, blocksize);
++		err = bdev_dax_supported(sb->s_bdev, blocksize);
+ 		if (err)
+ 			goto failed_mount;
+ 	}
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -1101,7 +1101,8 @@ xfs_ioctl_setattr_dax_invalidate(
+ 	if (fa->fsx_xflags & FS_XFLAG_DAX) {
+ 		if (!(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
+ 			return -EINVAL;
+-		if (bdev_dax_supported(sb, sb->s_blocksize) < 0)
++		if (bdev_dax_supported(xfs_find_bdev_for_inode(VFS_I(ip)),
++				sb->s_blocksize) < 0)
+ 			return -EINVAL;
+ 	}
+ 
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1184,6 +1184,30 @@ static const struct inode_operations xfs
+ 	.update_time		= xfs_vn_update_time,
+ };
+ 
++/* Figure out if this file actually supports DAX. */
++static bool
++xfs_inode_supports_dax(
++	struct xfs_inode	*ip)
++{
++	struct xfs_mount	*mp = ip->i_mount;
 +
- 	/* Unlock the internal RAM Buffer */
- 	writew(0x2, NFC_V1_V2_CONFIG);
++	/* Only supported on non-reflinked files. */
++	if (!S_ISREG(VFS_I(ip)->i_mode) || xfs_is_reflink_inode(ip))
++		return false;
++
++	/* DAX mount option or DAX iflag must be set. */
++	if (!(mp->m_flags & XFS_MOUNT_DAX) &&
++	    !(ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
++		return false;
++
++	/* Block size must match page size */
++	if (mp->m_sb.sb_blocksize != PAGE_SIZE)
++		return false;
++
++	/* Device has to support DAX too. */
++	return xfs_find_daxdev_for_inode(VFS_I(ip)) != NULL;
++}
++
+ STATIC void
+ xfs_diflags_to_iflags(
+ 	struct inode		*inode,
+@@ -1202,11 +1226,7 @@ xfs_diflags_to_iflags(
+ 		inode->i_flags |= S_SYNC;
+ 	if (flags & XFS_DIFLAG_NOATIME)
+ 		inode->i_flags |= S_NOATIME;
+-	if (S_ISREG(inode->i_mode) &&
+-	    ip->i_mount->m_sb.sb_blocksize == PAGE_SIZE &&
+-	    !xfs_is_reflink_inode(ip) &&
+-	    (ip->i_mount->m_flags & XFS_MOUNT_DAX ||
+-	     ip->i_d.di_flags2 & XFS_DIFLAG2_DAX))
++	if (xfs_inode_supports_dax(ip))
+ 		inode->i_flags |= S_DAX;
+ }
  
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1640,11 +1640,17 @@ xfs_fs_fill_super(
+ 		sb->s_flags |= SB_I_VERSION;
+ 
+ 	if (mp->m_flags & XFS_MOUNT_DAX) {
++		int	error2 = 0;
++
+ 		xfs_warn(mp,
+ 		"DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
+ 
+-		error = bdev_dax_supported(sb, sb->s_blocksize);
+-		if (error) {
++		error = bdev_dax_supported(mp->m_ddev_targp->bt_bdev,
++				sb->s_blocksize);
++		if (mp->m_rtdev_targp)
++			error2 = bdev_dax_supported(mp->m_rtdev_targp->bt_bdev,
++					sb->s_blocksize);
++		if (error && error2) {
+ 			xfs_alert(mp,
+ 			"DAX unsupported by block device. Turning off DAX.");
+ 			mp->m_flags &= ~XFS_MOUNT_DAX;
+--- a/include/linux/dax.h
++++ b/include/linux/dax.h
+@@ -40,10 +40,10 @@ static inline void put_dax(struct dax_de
+ 
+ int bdev_dax_pgoff(struct block_device *, sector_t, size_t, pgoff_t *pgoff);
+ #if IS_ENABLED(CONFIG_FS_DAX)
+-int __bdev_dax_supported(struct super_block *sb, int blocksize);
+-static inline int bdev_dax_supported(struct super_block *sb, int blocksize)
++int __bdev_dax_supported(struct block_device *bdev, int blocksize);
++static inline int bdev_dax_supported(struct block_device *bdev, int blocksize)
+ {
+-	return __bdev_dax_supported(sb, blocksize);
++	return __bdev_dax_supported(bdev, blocksize);
+ }
+ 
+ static inline struct dax_device *fs_dax_get_by_host(const char *host)
+@@ -58,7 +58,8 @@ static inline void fs_put_dax(struct dax
+ 
+ struct dax_device *fs_dax_get_by_bdev(struct block_device *bdev);
+ #else
+-static inline int bdev_dax_supported(struct super_block *sb, int blocksize)
++static inline int bdev_dax_supported(struct block_device *bdev,
++		int blocksize)
+ {
+ 	return -EOPNOTSUPP;
+ }
 
 
