@@ -6,36 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C7DC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45683C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D51620936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D51620936
+	by mail.kernel.org (Postfix) with ESMTP id E5E0020B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E0020B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733301AbeGJS2R (ORCPT
+        id S2387397AbeGJS2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:28:17 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44986 "EHLO
+        Tue, 10 Jul 2018 14:28:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45000 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732408AbeGJS2Q (ORCPT
+        with ESMTP id S1732408AbeGJS2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:28:16 -0400
+        Tue, 10 Jul 2018 14:28:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 96FD3DB4;
-        Tue, 10 Jul 2018 18:28:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B833EA8;
+        Tue, 10 Jul 2018 18:28:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>,
-        Kalle Valo <kvalo@qca.qualcomm.com>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 08/47] ath10k: fix rfc1042 header retrieval in QCA4019 with eth decap mode
-Date:   Tue, 10 Jul 2018 20:24:32 +0200
-Message-Id: <20180710182337.391814838@linuxfoundation.org>
+Subject: [PATCH 4.4 09/47] i2c: rcar: fix resume by always initializing registers before transfer
+Date:   Tue, 10 Jul 2018 20:24:33 +0200
+Message-Id: <20180710182337.433779967@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -52,48 +53,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-commit 2f38c3c01de945234d23dd163e3528ccb413066d upstream.
+commit ae481cc139658e89eb3ea671dd00b67bd87f01a3 upstream.
 
-Chipset from QCA99X0 onwards (QCA99X0, QCA9984, QCA4019 & future)
-rx_hdr_status is not padded to align in 4-byte boundary. Define a
-new hw_params field to handle different alignment behaviour between
-different hw. This patch fixes improper retrieval of rfc1042 header
-with QCA4019. This patch along with "ath10k: Properly remove padding
-from the start of rx payload" will fix traffic failure in ethernet
-decap mode for QCA4019.
+Resume failed because of uninitialized registers. Instead of adding a
+resume callback, we simply initialize registers before every transfer.
+This lightweight change is more robust and will keep us safe if we ever
+need support for power domains or dynamic frequency changes.
 
-Signed-off-by: Vasanthakumar Thiagarajan <vthiagar@qti.qualcomm.com>
-Signed-off-by: Kalle Valo <kvalo@qca.qualcomm.com>
-[bwh: This just adds the part that was left out of the previous backport,
- commit b88fb9ea475a.]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/wireless/ath/ath10k/htt_rx.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/ath/ath10k/htt_rx.c
-+++ b/drivers/net/wireless/ath/ath10k/htt_rx.c
-@@ -1166,6 +1166,7 @@ static void *ath10k_htt_rx_h_find_rfc104
- 	size_t hdr_len, crypto_len;
- 	void *rfc1042;
- 	bool is_first, is_last, is_amsdu;
-+	int bytes_aligned = ar->hw_params.decap_align_bytes;
+---
+ drivers/i2c/busses/i2c-rcar.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -484,6 +484,8 @@ static int rcar_i2c_master_xfer(struct i
  
- 	rxd = (void *)msdu->data - sizeof(*rxd);
- 	hdr = (void *)rxd->rx_hdr_status;
-@@ -1182,8 +1183,8 @@ static void *ath10k_htt_rx_h_find_rfc104
- 		hdr_len = ieee80211_hdrlen(hdr->frame_control);
- 		crypto_len = ath10k_htt_rx_crypto_param_len(ar, enctype);
+ 	pm_runtime_get_sync(dev);
  
--		rfc1042 += round_up(hdr_len, 4) +
--			   round_up(crypto_len, 4);
-+		rfc1042 += round_up(hdr_len, bytes_aligned) +
-+			   round_up(crypto_len, bytes_aligned);
- 	}
++	rcar_i2c_init(priv);
++
+ 	ret = rcar_i2c_bus_barrier(priv);
+ 	if (ret < 0)
+ 		goto out;
+@@ -624,7 +626,6 @@ static int rcar_i2c_probe(struct platfor
+ 	if (ret < 0)
+ 		goto out_pm_put;
  
- 	if (is_amsdu)
+-	rcar_i2c_init(priv);
+ 	pm_runtime_put(dev);
+ 
+ 	irq = platform_get_irq(pdev, 0);
 
 
