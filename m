@@ -2,96 +2,171 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 961C3C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A37C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A2F02089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:53:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A2F02089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2E29C208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:54:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E29C208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933352AbeGJNx3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 09:53:29 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:56938 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754201AbeGJNx2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 09:53:28 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 6A3AA804D8; Tue, 10 Jul 2018 15:53:26 +0200 (CEST)
-Date:   Tue, 10 Jul 2018 15:53:26 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: droid 4: no sound in the morning
-Message-ID: <20180710135325.GA23878@amd>
-References: <20180710105910.GA4442@amd>
+        id S933399AbeGJNyv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 09:54:51 -0400
+Received: from mga02.intel.com ([134.134.136.20]:30109 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933330AbeGJNyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 09:54:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 06:54:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,334,1526367600"; 
+   d="scan'208";a="71555789"
+Received: from precciox-mobl.amr.corp.intel.com (HELO [10.254.107.89]) ([10.254.107.89])
+  by orsmga001.jf.intel.com with ESMTP; 10 Jul 2018 06:54:24 -0700
+Subject: Re: [PATCH -mm -v4 04/21] mm, THP, swap: Support PMD swap mapping in
+ swapcache_free_cluster()
+To:     "Huang, Ying" <ying.huang@intel.com>
+References: <20180622035151.6676-1-ying.huang@intel.com>
+ <20180622035151.6676-5-ying.huang@intel.com>
+ <dd7b3dd7-9e10-4b9f-b931-915298bfd627@linux.intel.com>
+ <874lh7intc.fsf@yhuang-dev.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <444d0718-8b89-5ef1-15c8-1bbbc6cb1bf3@linux.intel.com>
+Date:   Tue, 10 Jul 2018 06:54:21 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
-Content-Disposition: inline
-In-Reply-To: <20180710105910.GA4442@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <874lh7intc.fsf@yhuang-dev.intel.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/09/2018 11:53 PM, Huang, Ying wrote:
+> Dave Hansen <dave.hansen@linux.intel.com> writes:
+>>> +#ifdef CONFIG_THP_SWAP
+>>> +static inline int cluster_swapcount(struct swap_cluster_info *ci)
+>>> +{
+>>> +	if (!ci || !cluster_is_huge(ci))
+>>> +		return 0;
+>>> +
+>>> +	return cluster_count(ci) - SWAPFILE_CLUSTER;
+>>> +}
+>>> +#else
+>>> +#define cluster_swapcount(ci)			0
+>>> +#endif
+>>
+>> Dumb questions, round 2:  On a CONFIG_THP_SWAP=n build, presumably,
+>> cluster_is_huge()=0 always, so cluster_swapout() always returns 0.  Right?
+>>
+>> So, why the #ifdef?
+> 
+> #ifdef here is to reduce the code size for !CONFIG_THP_SWAP.
 
---r5Pyd7+fXNt84Ff3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'd just remove the !CONFIG_THP_SWAP version entirely.
 
-On Tue 2018-07-10 12:59:10, Pavel Machek wrote:
-> Hi!
->=20
-> I attempted to use droid 4 as an alarm clock, but got no sound in the
-> morning.
->=20
-> Log said:
->=20
-> [78798.682830] omap-mcbsp 40124000.mcbsp: CLKS: could not
-> clk_set_parent() to prcm_fck
-> [78803.561767] omap-mcbsp 40126000.mcbsp: CLKS: could not
-> clk_set_parent() to prcm_fck
->=20
-> Could it be related? Everything ok after reboot, v4.18-rc4.
->=20
-> Does anyone else see that? Any ideas?
+>>> @@ -1288,24 +1301,30 @@ static void swapcache_free_cluster(swp_entry_t entry)
+>>>  
+>>>  	ci = lock_cluster(si, offset);
+>>>  	VM_BUG_ON(!cluster_is_huge(ci));
+>>> +	VM_BUG_ON(!is_cluster_offset(offset));
+>>> +	VM_BUG_ON(cluster_count(ci) < SWAPFILE_CLUSTER);
+>>>  	map = si->swap_map + offset;
+>>> -	for (i = 0; i < SWAPFILE_CLUSTER; i++) {
+>>> -		val = map[i];
+>>> -		VM_BUG_ON(!(val & SWAP_HAS_CACHE));
+>>> -		if (val == SWAP_HAS_CACHE)
+>>> -			free_entries++;
+>>> +	if (!cluster_swapcount(ci)) {
+>>> +		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
+>>> +			val = map[i];
+>>> +			VM_BUG_ON(!(val & SWAP_HAS_CACHE));
+>>> +			if (val == SWAP_HAS_CACHE)
+>>> +				free_entries++;
+>>> +		}
+>>> +		if (free_entries != SWAPFILE_CLUSTER)
+>>> +			cluster_clear_huge(ci);
+>>>  	}
+>>
+>> Also, I'll point out that cluster_swapcount() continues the horrific
+>> naming of cluster_couunt(), not saying what the count is *of*.  The
+>> return value doesn't help much:
+>>
+>> 	return cluster_count(ci) - SWAPFILE_CLUSTER;
+> 
+> We have page_swapcount() for page, swp_swapcount() for swap entry.
+> cluster_swapcount() tries to mimic them for swap cluster.  But I am not
+> good at naming in general.  What's your suggestion?
 
-Ok, so I see that
+I don't have a suggestion because I haven't the foggiest idea what it is
+doing. :)
 
-[ 1775.896270] Charging, 4350000 uV, 532000 uA
-[ 1778.700286] omap-mcbsp 40124000.mcbsp: CLKS: could not
-clk_set_parent() to prcm_fck
-[ 1778.898468] Charging, 4350000 uV, 532000 uA
-
-=2E..even when audio still works. So possibly not related.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---r5Pyd7+fXNt84Ff3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltEulUACgkQMOfwapXb+vJTMACeIPf7uc+TNJ5u3B2DyqzETeFi
-5eUAnRiPLxAC+DKBwE/o/KfX6a3Bv+QX
-=emDT
------END PGP SIGNATURE-----
-
---r5Pyd7+fXNt84Ff3--
+Is it the number of instantiated swap cache pages that are referring to
+this cluster?  Is it just huge pages?  Huge and small?  One refcount per
+huge page, or 512?
