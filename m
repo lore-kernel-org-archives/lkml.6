@@ -6,280 +6,176 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB0DC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E3BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4FC220B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FC220B6F
+	by mail.kernel.org (Postfix) with ESMTP id 7A5F8208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A5F8208E8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732473AbeGJXgJ (ORCPT
+        id S1732485AbeGJXgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 19:36:09 -0400
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:35035 "EHLO
+        Tue, 10 Jul 2018 19:36:15 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:46550 "EHLO
         out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732413AbeGJXgI (ORCPT
+        by vger.kernel.org with ESMTP id S1732302AbeGJXgI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Jul 2018 19:36:08 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T4Ny6oS_1531265651;
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R961e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07488;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T4Ny6oS_1531265651;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T4Ny6oS_1531265651)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Wed, 11 Jul 2018 07:34:25 +0800
+          Wed, 11 Jul 2018 07:34:24 +0800
 From:   Yang Shi <yang.shi@linux.alibaba.com>
 To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
         kirill@shutemov.name, akpm@linux-foundation.org
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC v4 PATCH 1/3] mm: introduce VM_DEAD flag and extend check_stable_address_space to check it
-Date:   Wed, 11 Jul 2018 07:34:07 +0800
-Message-Id: <1531265649-93433-2-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [RFC v4 0/3] mm: zap pages with read mmap_sem in munmap for large mapping
+Date:   Wed, 11 Jul 2018 07:34:06 +0800
+Message-Id: <1531265649-93433-1-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1531265649-93433-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1531265649-93433-1-git-send-email-yang.shi@linux.alibaba.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VM_DEAD flag is used to mark a vma is being unmapped for the later
-munmap large address space optimization. Before the optimization PF
-race with munmap, may return the right content or SIGSEGV, but with
-the optimization, it may return a zero page.
 
-Use this flag to mark PF to this area is unstable, will trigger SIGSEGV,
-in order to prevent from the 3rd state.
+Background:
+Recently, when we ran some vm scalability tests on machines with large memory,
+we ran into a couple of mmap_sem scalability issues when unmapping large memory
+space, please refer to https://lkml.org/lkml/2017/12/14/733 and
+https://lkml.org/lkml/2018/2/20/576.
 
-This flag will be set by the optimization for unmapping large address
-space (>= 1GB) in the later patch. It is 64 bit only at the moment,
-since:
-  * we used up vm_flags bit for 32 bit
-  * 32 bit machine typically will not have such large mapping
 
-Extend check_stable_address_space() to check this flag, as well as the
-page fault path of shmem and hugetlb.
+History:
+Then akpm suggested to unmap large mapping section by section and drop mmap_sem
+at a time to mitigate it (see https://lkml.org/lkml/2018/3/6/784).
 
-Since oom reaper doesn't tear down shmem and hugetlb, so skip those two
-cases for MMF_UNSTABLE.
+V1 patch series was submitted to the mailing list per Andrew's suggestion
+(see https://lkml.org/lkml/2018/3/20/786). Then I received a lot great feedback
+and suggestions.
 
-Suggested-by: Michal Hocko <mhocko@kernel.org>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
----
- include/linux/mm.h  |  8 ++++++++
- include/linux/oom.h | 20 --------------------
- mm/huge_memory.c    |  4 ++--
- mm/hugetlb.c        |  5 +++++
- mm/memory.c         | 39 +++++++++++++++++++++++++++++++++++----
- mm/shmem.c          |  9 ++++++++-
- 6 files changed, 58 insertions(+), 27 deletions(-)
+Then this topic was discussed on LSFMM summit 2018. In the summit, Michal Hocko
+suggested (also in the v1 patches review) to try "two phases" approach. Zapping
+pages with read mmap_sem, then doing via cleanup with write mmap_sem (for
+discussion detail, see https://lwn.net/Articles/753269/)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index a0fbb9f..ce7b112 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -242,6 +242,12 @@ extern int overcommit_kbytes_handler(struct ctl_table *, int, void __user *,
- #endif
- #endif /* CONFIG_ARCH_HAS_PKEYS */
- 
-+#ifdef CONFIG_64BIT
-+#define VM_DEAD			BIT(37)	/* bit only usable on 64 bit kernel */
-+#else
-+#define VM_DEAD			0
-+#endif
-+
- #if defined(CONFIG_X86)
- # define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
- #elif defined(CONFIG_PPC)
-@@ -2782,5 +2788,7 @@ static inline bool page_is_guard(struct page *page)
- static inline void setup_nr_node_ids(void) {}
- #endif
- 
-+extern int check_stable_address_space(struct vm_area_struct *vma);
-+
- #endif /* __KERNEL__ */
- #endif /* _LINUX_MM_H */
-diff --git a/include/linux/oom.h b/include/linux/oom.h
-index 6adac11..0265ed5 100644
---- a/include/linux/oom.h
-+++ b/include/linux/oom.h
-@@ -75,26 +75,6 @@ static inline bool mm_is_oom_victim(struct mm_struct *mm)
- 	return test_bit(MMF_OOM_VICTIM, &mm->flags);
- }
- 
--/*
-- * Checks whether a page fault on the given mm is still reliable.
-- * This is no longer true if the oom reaper started to reap the
-- * address space which is reflected by MMF_UNSTABLE flag set in
-- * the mm. At that moment any !shared mapping would lose the content
-- * and could cause a memory corruption (zero pages instead of the
-- * original content).
-- *
-- * User should call this before establishing a page table entry for
-- * a !shared mapping and under the proper page table lock.
-- *
-- * Return 0 when the PF is safe VM_FAULT_SIGBUS otherwise.
-- */
--static inline int check_stable_address_space(struct mm_struct *mm)
--{
--	if (unlikely(test_bit(MMF_UNSTABLE, &mm->flags)))
--		return VM_FAULT_SIGBUS;
--	return 0;
--}
--
- void __oom_reap_task_mm(struct mm_struct *mm);
- 
- extern unsigned long oom_badness(struct task_struct *p,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1cd7c1a..997bac9 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -578,7 +578,7 @@ static int __do_huge_pmd_anonymous_page(struct vm_fault *vmf, struct page *page,
- 	} else {
- 		pmd_t entry;
- 
--		ret = check_stable_address_space(vma->vm_mm);
-+		ret = check_stable_address_space(vma);
- 		if (ret)
- 			goto unlock_release;
- 
-@@ -696,7 +696,7 @@ int do_huge_pmd_anonymous_page(struct vm_fault *vmf)
- 		ret = 0;
- 		set = false;
- 		if (pmd_none(*vmf->pmd)) {
--			ret = check_stable_address_space(vma->vm_mm);
-+			ret = check_stable_address_space(vma);
- 			if (ret) {
- 				spin_unlock(vmf->ptl);
- 			} else if (userfaultfd_missing(vma)) {
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 3612fbb..8965d02 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3887,6 +3887,10 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 	int need_wait_lock = 0;
- 	unsigned long haddr = address & huge_page_mask(h);
- 
-+	ret = check_stable_address_space(vma);
-+	if (ret)
-+		goto out;
-+
- 	ptep = huge_pte_offset(mm, haddr, huge_page_size(h));
- 	if (ptep) {
- 		entry = huge_ptep_get(ptep);
-@@ -4006,6 +4010,7 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 	 */
- 	if (need_wait_lock)
- 		wait_on_page_locked(page);
-+out:
- 	return ret;
- }
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 7206a63..250547f 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -68,7 +68,7 @@
- #include <linux/debugfs.h>
- #include <linux/userfaultfd_k.h>
- #include <linux/dax.h>
--#include <linux/oom.h>
-+#include <linux/shmem_fs.h>
- 
- #include <asm/io.h>
- #include <asm/mmu_context.h>
-@@ -776,6 +776,37 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
- }
- 
- /*
-+ * Checks whether a page fault on the given mm is still reliable.
-+ * This is no longer true if the oom reaper started to reap the
-+ * address space which is reflected by MMF_UNSTABLE flag set in
-+ * the mm. At that moment any !shared mapping would lose the content
-+ * and could cause a memory corruption (zero pages instead of the
-+ * original content).
-+ * oom reaper doesn't reap hugetlb and shmem, so skip the check for
-+ * such vmas.
-+ *
-+ * And, check if the given vma has VM_DEAD flag set, which means
-+ * the vma will be unmapped soon, PF is not safe for such vma.
-+ *
-+ * User should call this before establishing a page table entry for
-+ * a !shared mapping (disk file based), or shmem mapping, or hugetlb
-+ * mapping, and under the proper page table lock.
-+ *
-+ * Return 0 when the PF is safe, VM_FAULT_SIGBUS or VM_FAULT_SIGSEGV
-+ * otherwise.
-+ */
-+int check_stable_address_space(struct vm_area_struct *vma)
-+{
-+	if (vma->vm_flags & VM_DEAD)
-+		return VM_FAULT_SIGSEGV;
-+	if (!is_vm_hugetlb_page(vma) && !shmem_file(vma->vm_file)) {
-+		if (unlikely(test_bit(MMF_UNSTABLE, &vma->vm_mm->flags)))
-+			return VM_FAULT_SIGBUS;
-+	}
-+	return 0;
-+}
-+
-+/*
-  * vm_normal_page -- This function gets the "struct page" associated with a pte.
-  *
-  * "Special" mappings do not wish to be associated with a "struct page" (either
-@@ -3147,7 +3178,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
- 				vmf->address, &vmf->ptl);
- 		if (!pte_none(*vmf->pte))
- 			goto unlock;
--		ret = check_stable_address_space(vma->vm_mm);
-+		ret = check_stable_address_space(vma);
- 		if (ret)
- 			goto unlock;
- 		/* Deliver the page fault to userland, check inside PT lock */
-@@ -3184,7 +3215,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
- 	if (!pte_none(*vmf->pte))
- 		goto release;
- 
--	ret = check_stable_address_space(vma->vm_mm);
-+	ret = check_stable_address_space(vma);
- 	if (ret)
- 		goto release;
- 
-@@ -3495,7 +3526,7 @@ int finish_fault(struct vm_fault *vmf)
- 	 * page
- 	 */
- 	if (!(vmf->vma->vm_flags & VM_SHARED))
--		ret = check_stable_address_space(vmf->vma->vm_mm);
-+		ret = check_stable_address_space(vmf->vma);
- 	if (!ret)
- 		ret = alloc_set_pte(vmf, vmf->memcg, page);
- 	if (vmf->pte)
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 2cab844..9f9ac7c 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1953,7 +1953,13 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
- 	gfp_t gfp = mapping_gfp_mask(inode->i_mapping);
- 	enum sgp_type sgp;
- 	int err;
--	vm_fault_t ret = VM_FAULT_LOCKED;
-+	vm_fault_t ret = 0;
-+
-+	ret = check_stable_address_space(vma);
-+	if (ret)
-+		goto out;
-+
-+	ret = VM_FAULT_LOCKED;
- 
- 	/*
- 	 * Trinity finds that probing a hole which tmpfs is punching can
-@@ -2025,6 +2031,7 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
- 				  gfp, vma, vmf, &ret);
- 	if (err)
- 		return vmf_error(err);
-+out:
- 	return ret;
- }
- 
--- 
-1.8.3.1
 
+Approach:
+Zapping pages is the most time consuming part, according to the suggestion from
+Michal Hocko [1], zapping pages can be done with holding read mmap_sem, like
+what MADV_DONTNEED does. Then re-acquire write mmap_sem to cleanup vmas.
+
+But, we can't call MADV_DONTNEED directly, since there are two major drawbacks:
+  * The unexpected state from PF if it wins the race in the middle of munmap.
+    It may return zero page, instead of the content or SIGSEGV.
+  * Can’t handle VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe mappings, which
+    is a showstopper from akpm
+
+And, some part may need write mmap_sem, for example, vma splitting. So, the
+design is as follows:
+        acquire write mmap_sem
+        lookup vmas (find and split vmas)
+        set VM_DEAD flags
+        deal with special mappings
+        downgrade_write
+
+        zap pages
+        release mmap_sem
+
+        retake mmap_sem exclusively
+        cleanup vmas
+        release mmap_sem
+
+Define large mapping size thresh as PUD size, just zap pages with read mmap_sem
+for mappings which are >= PUD_SIZE. So, unmapping less than PUD_SIZE area still
+goes with the regular path.
+
+All vmas which will be zapped soon will have VM_DEAD flag set. Since PF may race
+with munmap, may just return the right content or SIGSEGV before the optimization,
+but with the optimization, it may return a zero page. Here use this flag to mark
+PF to this area is unstable, will trigger SIGSEGV, in order to prevent from the
+unexpected 3rd state.
+
+If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are considered
+as special mappings. They will be dealt with before zapping pages with write
+mmap_sem held. Basically, just update vm_flags. The actual unmapping is still
+done with read mmap_sem.
+
+And, since they are also manipulated by unmap_single_vma() which is called by
+zap_page_range() with read mmap_sem held in this case, to prevent from updating
+vm_flags in read critical section and considering the complexity of coding, just
+check if VM_DEAD is set, then skip any VM_DEAD area since they should be handled
+before.
+
+When cleaning up vmas, just call do_munmap() without carrying vmas from the above
+to avoid race condition, since the address space might be already changed under
+our feet after retaking exclusive lock.
+
+For the time being, just do this in munmap syscall path. Other vm_munmap() or
+do_munmap() call sites (i.e mmap, mremap, etc) remain intact for stability reason.
+And, make this 64 bit only explicitly per akpm's suggestion.
+
+Changelog:
+v3 -> v4:
+* Extend check_stable_address_space to check VM_DEAD as Michal suggested
+* Deal with vm_flags update of VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe
+  mappings with exclusive lock held. The actual unmapping is still done with read
+  mmap_sem to solve akpm's concern
+* Clean up vmas with calling do_munmap to prevent from race condition by not
+  carrying vmas as Kirill suggested
+* Extracted more common code
+* Solved some code cleanup comments from akpm
+* Dropped uprobe and arch specific code, now all the changes are mm only
+* Still keep PUD_SIZE threshold, if everyone thinks it is better to extend to all
+  sizes or smaller size, will remove it
+* Make this optimization 64 bit only explicitly per akpm's suggestion
+
+v2 —> v3:
+* Refactor do_munmap code to extract the common part per Peter's sugestion
+* Introduced VM_DEAD flag per Michal's suggestion. Just handled VM_DEAD in 
+  x86's page fault handler for the time being. Other architectures will be covered
+  once the patch series is reviewed
+* Now lookup vma (find and split) and set VM_DEAD flag with write mmap_sem, then
+  zap mapping with read mmap_sem, then clean up pgtables and vmas with write
+  mmap_sem per Peter's suggestion
+
+v1 —> v2:
+* Re-implemented the code per the discussion on LSFMM summit
+
+ 
+Regression and performance data:
+Did the below regression test with setting thresh to 4K manually in the code:
+  * Full LTP
+  * Trinity (munmap/all vm syscalls)
+  * Stress-ng mmap
+  * mm-tests: kernbench, phpbench, sysbench-mariadb, will-it-scale
+  * vm-scalability
+
+With the patches, exclusive mmap_sem hold time when munmap a 80GB address
+space on a machine with 32 cores of E5-2680 @ 2.70GHz dropped to us level
+from second.
+
+                w/o             w/
+do_munmap    2165433 us      35148.923 us
+SyS_munmap   2165369 us      2166535 us
+
+
+Yang Shi (3):
+      mm: introduce VM_DEAD flag and extend check_stable_address_space to check it
+      mm: refactor do_munmap() to extract the common part
+      mm: mmap: zap pages with read mmap_sem for large mapping
+
+ include/linux/mm.h  |   8 +++
+ include/linux/oom.h |  20 -------
+ mm/huge_memory.c    |   4 +-
+ mm/hugetlb.c        |   5 ++
+ mm/memory.c         |  57 ++++++++++++++++---
+ mm/mmap.c           | 221 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------------
+ mm/shmem.c          |   9 ++-
+ 7 files changed, 255 insertions(+), 69 deletions(-)
