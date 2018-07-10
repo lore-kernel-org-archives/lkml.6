@@ -2,111 +2,238 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9760C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6C5C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72121208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xl5xkc88";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="itGRs11F"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72121208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B0BCC208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0BCC208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732432AbeGJXfi (ORCPT
+        id S1732444AbeGJXf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 19:35:38 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43746 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732302AbeGJXfi (ORCPT
+        Tue, 10 Jul 2018 19:35:58 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:41637 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732302AbeGJXf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 19:35:38 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b15-v6so16290759wrv.10;
-        Tue, 10 Jul 2018 16:34:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=MVNFJlGhsROJmiWx5pxXnmd1iUxMcua6aZ6nFGJFSmw=;
-        b=Xl5xkc88mivneFgf/TWu/xVZKnVpvvzYhDlavo8EAOm9ZAxHtjWXcCdxsw+/kFVYoZ
-         a2QoEPxPsMhlQoi6kxfcTn5mLKN4iNDXuDqgpfP6FGQyW7xD8ySCOgRZCsBrBvk/P7dm
-         DOHr6o22x89nGejgMfqXrujgu6zvhhbiItJgrv+Vhd3wvoG9LTDI83zO9dmqTu1wV3Js
-         IJybZSsXKsanjRSSo5WFoCYZDMJ0TEbd8cQZgFje2R5ZmnlMBF9b9nKNuaObH8gWVxw9
-         izg0Mf4b8Z81+Q19eWvkGhUimkAE085GQQn2+eznKRMMK0Ce1mtxteh8icbAxCZsO3r7
-         jSOg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=MVNFJlGhsROJmiWx5pxXnmd1iUxMcua6aZ6nFGJFSmw=;
-        b=itGRs11FVkzpbN0qfccYNn5n7epTEF/M0kCX3z8DXP/c7szVOgFLRFppTWv1D8Hdto
-         GbLBVyKfkSyzVzRtF4p15aviZN+aMY+YRuDCeu6Kmt4CQpS50fUG2E2GfWgGxRvSfrbK
-         2Dgv/4rSLbXjxGgZrV7J1KRtoy8IgjzoMAYsQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=MVNFJlGhsROJmiWx5pxXnmd1iUxMcua6aZ6nFGJFSmw=;
-        b=TeGNhJWvgQd/J3Z2pbpxeMeUDmGIaz+hJw2oaQt6e5T7KU7VdCLNvQPHsSVV2nOTW2
-         7uJtOZ2p4XL/ZLtLXhGmfywugky59qfP4dvSd/2MhmicSr8diBP7G7GDiU4qzK8QW98/
-         OIhaKUHFmeG6ujhU3nYHwTADXJRIyVEBbX+/tbFifX/nlX7TApk4Xwz4QMfjI0eJ/8C2
-         vAUSBdOh+B3Q9lhIRoMV1qyKmEA8cu3KIRXhhPDIbdeZ2+uhNp+yZBlyWY3o1YBKSBrq
-         RV/AGwZDbUtpUGOXBgdjEEH2g14nQV9zePCkEzc4xAbHe2kygLCcfhZgrTsY+g3veVR6
-         Kf2g==
-X-Gm-Message-State: APt69E1vljFyeQ1PUygjOvM6nFXlAN9Vvo9gvrBGxUj10zRT0sbttCNm
-        2su73zdNFhWAJS240i7r3v80t1Qu9RGhp1k94Ew=
-X-Google-Smtp-Source: AAOMgpetaNFMbprzNHkdANhC9qM8nXpYbOMJkkShI9nOKcp/oPZ65LVSG+FKwqqUHzl159LUlhhI6uzBi3WxK6zRts0=
-X-Received: by 2002:adf:f188:: with SMTP id h8-v6mr20590793wro.214.1531265653154;
- Tue, 10 Jul 2018 16:34:13 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:ec16:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 16:34:12
- -0700 (PDT)
-In-Reply-To: <20180706162154.196345-3-dianders@chromium.org>
-References: <20180706162154.196345-1-dianders@chromium.org> <20180706162154.196345-3-dianders@chromium.org>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 10 Jul 2018 16:34:12 -0700
-X-Google-Sender-Auth: Jjemzv5EmqjqcpH-iK2iKAZmY1M
-Message-ID: <CANcMJZDYpvwKaNPf_jAvTbLifv2JRcDqo5+JCOkdB7j2A_1gLQ@mail.gmail.com>
-Subject: Re: [RFT PATCH 2/4] usb: dwc2: Turn on uframe_sched on "his" platforms
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     hminas@synopsys.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Zhangfei Gao <zhangfei.gao@linaro.org>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        Bruno Herrera <bruherrera@gmail.com>,
-        linux-usb@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 10 Jul 2018 19:35:58 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R591e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01429;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T4Ny6oS_1531265651;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T4Ny6oS_1531265651)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 11 Jul 2018 07:34:25 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC v4 PATCH 2/3] mm: refactor do_munmap() to extract the common part
+Date:   Wed, 11 Jul 2018 07:34:08 +0800
+Message-Id: <1531265649-93433-3-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1531265649-93433-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1531265649-93433-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 6, 2018 at 9:21 AM, Douglas Anderson <dianders@chromium.org> wrote:
-> There's no reason to have the uframe scheduler off on dwc2.  Running
-> with uframe_sched = False is equivalent to saying "I don't want to run
-> the correct code, I want to run the old and incorrect code".
->
-> The uframe scheduler has been off on HiSilicon since commit
-> 37dd9d65cc41 ("usb: dwc2: add support of hi6220").  Since then there
-> have been many many improvements, notably the commit 9f9f09b048f5
-> ("usb: dwc2: host: Totally redo the microframe scheduler")
->
-> Presumably if everyone is good w/ the uframe_sched turned back on we
-> can kill all the old and crufty non-uframe sched code.
->
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Introduces three new helper functions:
+  * munmap_addr_sanity()
+  * munmap_lookup_vma()
+  * munmap_mlock_vma()
 
-Not sure exactly how to exercise this, but in my initial testing with
-usb on HiKey, this seems to work ok.
+They will be used by do_munmap() and the new do_munmap with zapping
+large mapping early in the later patch.
 
-Tested-by: John Stultz <john.stultz@linaro.org>
+There is no functional change, just code refactor.
 
-thanks
--john
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ mm/mmap.c | 120 ++++++++++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 82 insertions(+), 38 deletions(-)
+
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d1eb87e..2504094 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -2686,34 +2686,44 @@ int split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	return __split_vma(mm, vma, addr, new_below);
+ }
+ 
+-/* Munmap is split into 2 main parts -- this part which finds
+- * what needs doing, and the areas themselves, which do the
+- * work.  This now handles partial unmappings.
+- * Jeremy Fitzhardinge <jeremy@goop.org>
+- */
+-int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+-	      struct list_head *uf)
++static inline bool munmap_addr_sanity(unsigned long start, size_t len)
+ {
+-	unsigned long end;
+-	struct vm_area_struct *vma, *prev, *last;
+-
+ 	if ((offset_in_page(start)) || start > TASK_SIZE || len > TASK_SIZE-start)
+-		return -EINVAL;
++		return false;
+ 
+-	len = PAGE_ALIGN(len);
+-	if (len == 0)
+-		return -EINVAL;
++	if (PAGE_ALIGN(len) == 0)
++		return false;
++
++	return true;
++}
++
++/*
++ * munmap_lookup_vma: find the first overlap vma and split overlap vmas.
++ * @mm: mm_struct
++ * @vma: the first overlapping vma
++ * @prev: vma's prev
++ * @start: start address
++ * @end: end address
++ *
++ * returns 1 if successful, 0 or errno otherwise
++ */
++static int munmap_lookup_vma(struct mm_struct *mm, struct vm_area_struct **vma,
++			     struct vm_area_struct **prev, unsigned long start,
++			     unsigned long end)
++{
++	struct vm_area_struct *tmp, *last;
+ 
+ 	/* Find the first overlapping VMA */
+-	vma = find_vma(mm, start);
+-	if (!vma)
++	tmp = find_vma(mm, start);
++	if (!tmp)
+ 		return 0;
+-	prev = vma->vm_prev;
+-	/* we have  start < vma->vm_end  */
++
++	*prev = tmp->vm_prev;
++
++	/* we have start < vma->vm_end  */
+ 
+ 	/* if it doesn't overlap, we have nothing.. */
+-	end = start + len;
+-	if (vma->vm_start >= end)
++	if (tmp->vm_start >= end)
+ 		return 0;
+ 
+ 	/*
+@@ -2723,7 +2733,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 	 * unmapped vm_area_struct will remain in use: so lower split_vma
+ 	 * places tmp vma above, and higher split_vma places tmp vma below.
+ 	 */
+-	if (start > vma->vm_start) {
++	if (start > tmp->vm_start) {
+ 		int error;
+ 
+ 		/*
+@@ -2731,13 +2741,14 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 		 * not exceed its limit; but let map_count go just above
+ 		 * its limit temporarily, to help free resources as expected.
+ 		 */
+-		if (end < vma->vm_end && mm->map_count >= sysctl_max_map_count)
++		if (end < tmp->vm_end &&
++		    mm->map_count > sysctl_max_map_count)
+ 			return -ENOMEM;
+ 
+-		error = __split_vma(mm, vma, start, 0);
++		error = __split_vma(mm, tmp, start, 0);
+ 		if (error)
+ 			return error;
+-		prev = vma;
++		*prev = tmp;
+ 	}
+ 
+ 	/* Does it split the last one? */
+@@ -2747,7 +2758,48 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 		if (error)
+ 			return error;
+ 	}
+-	vma = prev ? prev->vm_next : mm->mmap;
++
++	*vma = *prev ? (*prev)->vm_next : mm->mmap;
++
++	return 1;
++}
++
++static inline void munmap_mlock_vma(struct vm_area_struct *vma,
++				    unsigned long end)
++{
++	struct vm_area_struct *tmp = vma;
++
++	while (tmp && tmp->vm_start < end) {
++		if (tmp->vm_flags & VM_LOCKED) {
++			vma->vm_mm->locked_vm -= vma_pages(tmp);
++			munlock_vma_pages_all(tmp);
++		}
++		tmp = tmp->vm_next;
++	}
++}
++
++/* Munmap is split into 2 main parts -- this part which finds
++ * what needs doing, and the areas themselves, which do the
++ * work.  This now handles partial unmappings.
++ * Jeremy Fitzhardinge <jeremy@goop.org>
++ */
++int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
++	      struct list_head *uf)
++{
++	unsigned long end;
++	struct vm_area_struct *vma = NULL, *prev;
++	int ret = 0;
++
++	if (!munmap_addr_sanity(start, len))
++		return -EINVAL;
++
++	len = PAGE_ALIGN(len);
++
++	end = start + len;
++
++	ret = munmap_lookup_vma(mm, &vma, &prev, start, end);
++	if (ret != 1)
++		return ret;
+ 
+ 	if (unlikely(uf)) {
+ 		/*
+@@ -2759,24 +2811,16 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+ 		 * split, despite we could. This is unlikely enough
+ 		 * failure that it's not worth optimizing it for.
+ 		 */
+-		int error = userfaultfd_unmap_prep(vma, start, end, uf);
+-		if (error)
+-			return error;
++		ret = userfaultfd_unmap_prep(vma, start, end, uf);
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	/*
+ 	 * unlock any mlock()ed ranges before detaching vmas
+ 	 */
+-	if (mm->locked_vm) {
+-		struct vm_area_struct *tmp = vma;
+-		while (tmp && tmp->vm_start < end) {
+-			if (tmp->vm_flags & VM_LOCKED) {
+-				mm->locked_vm -= vma_pages(tmp);
+-				munlock_vma_pages_all(tmp);
+-			}
+-			tmp = tmp->vm_next;
+-		}
+-	}
++	if (mm->locked_vm)
++		munmap_mlock_vma(vma, end);
+ 
+ 	/*
+ 	 * Remove the vma's, and unmap the actual pages
+-- 
+1.8.3.1
+
