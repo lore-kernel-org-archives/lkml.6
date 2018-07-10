@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 654D9C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34FC9C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:01:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FE38208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:01:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D880A208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:01:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kArPiVey"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE38208E8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5+9t6V6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D880A208E8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933600AbeGJOBf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 10:01:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34096 "EHLO mail.kernel.org"
+        id S933651AbeGJOBk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 10:01:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933248AbeGJOBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 10:01:32 -0400
+        id S933549AbeGJOBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 10:01:34 -0400
 Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CA8D208E5;
-        Tue, 10 Jul 2018 14:01:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92F5F208E7;
+        Tue, 10 Jul 2018 14:01:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531231292;
-        bh=rTBPS2lTBV4tvGy1bAXhJwa9kjE2MD8nXDGQjALKBFQ=;
+        s=default; t=1531231294;
+        bh=EIovew2vjeqv/jNHJXH4BxasomoAs9xnjmcwBrky7Uc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kArPiVeyLFR9Ai1JHx8cjeNeFfo+Lc0B5XJBttsPV2D37k3niaPTFCnz/IRUGouhj
-         OVvKZ3GNwCOL1Y2AchFNMniIk5RGGd/MvpKyTi5F3APjPC672fasneo4dOappGyvg6
-         ENIhWxZepsNHe33aaqtZHDoAhEEe3ONMpZvcs9FE=
+        b=k5+9t6V68JGgQn8HHPuClNnWLDvlOW9wOzkx8q5eMXO0Sh4pSW9TFKB/XGVKUzzBO
+         YmbNRbAtzA3vmjumk3fJ1kJl/+EA/GbVU9NbzuSD/Bby90nGN78m+oU2x6rpbCF4Xd
+         d3sToghNT6VFhFJPA3o2HbiCG86i9tqf7j4/IJ8Y=
 From:   Jeff Layton <jlayton@kernel.org>
 To:     viro@ZenIV.linux.org.uk, dhowells@redhat.com
 Cc:     willy@infradead.org, andres@anarazel.de, cmaiolino@redhat.com,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 2/4] errseq: add a new errseq_scrape function
-Date:   Tue, 10 Jul 2018 10:01:25 -0400
-Message-Id: <20180710140127.20739-3-jlayton@kernel.org>
+Subject: [PATCH v2 4/4] samples: extend test-fsinfo to access error_state
+Date:   Tue, 10 Jul 2018 10:01:27 -0400
+Message-Id: <20180710140127.20739-5-jlayton@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180710140127.20739-1-jlayton@kernel.org>
 References: <20180710140127.20739-1-jlayton@kernel.org>
@@ -52,85 +52,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jeff Layton <jlayton@redhat.com>
 
-To grab the current value of an errseq_t, mark it as seen and then
-return the value with the seen bit masked off.
+Add support for error_state struct to test-fsinfo sample program.
 
 Signed-off-by: Jeff Layton <jlayton@redhat.com>
 ---
- include/linux/errseq.h |  1 +
- lib/errseq.c           | 33 +++++++++++++++++++++++++++++++--
- 2 files changed, 32 insertions(+), 2 deletions(-)
+ samples/statx/test-fsinfo.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/include/linux/errseq.h b/include/linux/errseq.h
-index fc2777770768..de165623fa86 100644
---- a/include/linux/errseq.h
-+++ b/include/linux/errseq.h
-@@ -9,6 +9,7 @@ typedef u32	errseq_t;
+diff --git a/samples/statx/test-fsinfo.c b/samples/statx/test-fsinfo.c
+index 9e9fa62a3b9f..01dd8c6d3c86 100644
+--- a/samples/statx/test-fsinfo.c
++++ b/samples/statx/test-fsinfo.c
+@@ -60,6 +60,7 @@ static const __u8 fsinfo_buffer_sizes[fsinfo_attr__nr] = {
+ 	FSINFO_STRING		(name_encoding),
+ 	FSINFO_STRING		(name_codepage),
+ 	FSINFO_STRUCT		(io_size),
++	FSINFO_STRUCT		(error_state),
+ };
  
- errseq_t errseq_set(errseq_t *eseq, int err);
- errseq_t errseq_sample(errseq_t *eseq);
-+errseq_t errseq_scrape(errseq_t *eseq);
- int errseq_check(errseq_t *eseq, errseq_t since);
- int errseq_check_and_advance(errseq_t *eseq, errseq_t *since);
- #endif
-diff --git a/lib/errseq.c b/lib/errseq.c
-index 81f9e33aa7e7..8ded0920eed3 100644
---- a/lib/errseq.c
-+++ b/lib/errseq.c
-@@ -108,7 +108,7 @@ errseq_t errseq_set(errseq_t *eseq, int err)
- EXPORT_SYMBOL(errseq_set);
+ #define FSINFO_NAME(N) [fsinfo_attr_##N] = #N
+@@ -84,6 +85,7 @@ static const char *fsinfo_attr_names[fsinfo_attr__nr] = {
+ 	FSINFO_NAME(name_encoding),
+ 	FSINFO_NAME(name_codepage),
+ 	FSINFO_NAME(io_size),
++	FSINFO_NAME(error_state),
+ };
  
- /**
-- * errseq_sample() - Grab current errseq_t value.
-+ * errseq_sample() - Grab current errseq_t value (or 0 if it hasn't been seen)
-  * @eseq: Pointer to errseq_t to be sampled.
-  *
-  * This function allows callers to initialise their errseq_t variable.
-@@ -117,7 +117,7 @@ EXPORT_SYMBOL(errseq_set);
-  * see it the next time it checks for an error.
-  *
-  * Context: Any context.
-- * Return: The current errseq value.
-+ * Return: The current errseq value or 0 if it wasn't previously seen
-  */
- errseq_t errseq_sample(errseq_t *eseq)
- {
-@@ -130,6 +130,35 @@ errseq_t errseq_sample(errseq_t *eseq)
+ union reply {
+@@ -98,6 +100,7 @@ union reply {
+ 	struct fsinfo_volume_uuid uuid;
+ 	struct fsinfo_server_address srv_addr;
+ 	struct fsinfo_io_size io_size;
++	struct fsinfo_error_state error_state;
+ };
+ 
+ static void dump_hex(unsigned int *data, int from, int to)
+@@ -304,6 +307,15 @@ static void dump_attr_io_size(union reply *r, int size)
+ 	printf("bs=%u\n", f->block_size);
  }
- EXPORT_SYMBOL(errseq_sample);
  
-+/**
-+ * errseq_scrape() - Grab current errseq_t value
-+ * @eseq: Pointer to errseq_t to be sampled.
-+ *
-+ * This function allows callers to scrape the current value of an errseq_t.
-+ * Unlike errseq_sample, this will always return the current value with
-+ * the SEEN flag unset, even when the value has not yet been seen.
-+ *
-+ * Context: Any context.
-+ * Return: The current errseq value with ERRSEQ_SEEN masked off
-+ */
-+errseq_t errseq_scrape(errseq_t *eseq)
++static void dump_attr_error_state(union reply *r, int size)
 +{
-+	errseq_t old = READ_ONCE(*eseq);
++	struct fsinfo_error_state *f = &r->error_state;
 +
-+	/*
-+	 * For the common case of no errors ever having been set, we can skip
-+	 * marking the SEEN bit. Once an error has been set, the value will
-+	 * never go back to zero.
-+	 */
-+	if (old != 0) {
-+		errseq_t new = old | ERRSEQ_SEEN;
-+		if (old != new)
-+			cmpxchg(eseq, old, new);
-+	}
-+	return old & ~ERRSEQ_SEEN;
++	printf("err_cookie=0x%x err_last=%u\n",
++			f->wb_error_cookie,
++			f->wb_error_last);
 +}
-+EXPORT_SYMBOL(errseq_scrape);
 +
- /**
-  * errseq_check() - Has an error occurred since a particular sample point?
-  * @eseq: Pointer to errseq_t value to be checked.
+ /*
+  *
+  */
+@@ -321,6 +333,7 @@ static const dumper_t fsinfo_attr_dumper[fsinfo_attr__nr] = {
+ 	FSINFO_DUMPER(volume_uuid),
+ 	FSINFO_DUMPER(server_address),
+ 	FSINFO_DUMPER(io_size),
++	FSINFO_DUMPER(error_state),
+ };
+ 
+ static void dump_fsinfo(enum fsinfo_attribute attr, __u8 about,
 -- 
 2.17.1
 
