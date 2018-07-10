@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2C1C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B86AC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5092A20936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5092A20936
+	by mail.kernel.org (Postfix) with ESMTP id 31F6220936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F6220936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732719AbeGJS2A (ORCPT
+        id S1733232AbeGJS2D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:28:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44910 "EHLO
+        Tue, 10 Jul 2018 14:28:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44920 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732632AbeGJS17 (ORCPT
+        with ESMTP id S1732632AbeGJS2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:27:59 -0400
+        Tue, 10 Jul 2018 14:28:02 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 46BD9D66;
-        Tue, 10 Jul 2018 18:27:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 270FCD66;
+        Tue, 10 Jul 2018 18:27:50 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.4 27/47] ext4: include the illegal physical block in the bad map ext4_error msg
-Date:   Tue, 10 Jul 2018 20:24:51 +0200
-Message-Id: <20180710182338.285158331@linuxfoundation.org>
+        stable@vger.kernel.org, Karoly Pados <pados@pados.hu>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 03/47] USB: serial: cp210x: add Silicon Labs IDs for Windows Update
+Date:   Tue, 10 Jul 2018 20:24:27 +0200
+Message-Id: <20180710182337.191184818@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -50,31 +50,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Karoly Pados <pados@pados.hu>
 
-commit bdbd6ce01a70f02e9373a584d0ae9538dcf0a121 upstream.
+commit 2f839823382748664b643daa73f41ee0cc01ced6 upstream.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Silicon Labs defines alternative VID/PID pairs for some chips that when
+used will automatically install drivers for Windows users without manual
+intervention. Unfortunately, these IDs are not recognized by the Linux
+module, so using these IDs improves user experience on one platform but
+degrades it on Linux. This patch addresses this problem.
+
+Signed-off-by: Karoly Pados <pados@pados.hu>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/inode.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/usb/serial/cp210x.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -380,9 +380,9 @@ static int __check_block_validity(struct
- 	if (!ext4_data_block_valid(EXT4_SB(inode->i_sb), map->m_pblk,
- 				   map->m_len)) {
- 		ext4_error_inode(inode, func, line, map->m_pblk,
--				 "lblock %lu mapped to illegal pblock "
-+				 "lblock %lu mapped to illegal pblock %llu "
- 				 "(length %d)", (unsigned long) map->m_lblk,
--				 map->m_len);
-+				 map->m_pblk, map->m_len);
- 		return -EFSCORRUPTED;
- 	}
- 	return 0;
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -150,8 +150,11 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
+ 	{ USB_DEVICE(0x10C4, 0xEA60) }, /* Silicon Labs factory default */
+ 	{ USB_DEVICE(0x10C4, 0xEA61) }, /* Silicon Labs factory default */
++	{ USB_DEVICE(0x10C4, 0xEA63) }, /* Silicon Labs Windows Update (CP2101-4/CP2102N) */
+ 	{ USB_DEVICE(0x10C4, 0xEA70) }, /* Silicon Labs factory default */
+ 	{ USB_DEVICE(0x10C4, 0xEA71) }, /* Infinity GPS-MIC-1 Radio Monophone */
++	{ USB_DEVICE(0x10C4, 0xEA7A) }, /* Silicon Labs Windows Update (CP2105) */
++	{ USB_DEVICE(0x10C4, 0xEA7B) }, /* Silicon Labs Windows Update (CP2108) */
+ 	{ USB_DEVICE(0x10C4, 0xF001) }, /* Elan Digital Systems USBscope50 */
+ 	{ USB_DEVICE(0x10C4, 0xF002) }, /* Elan Digital Systems USBwave12 */
+ 	{ USB_DEVICE(0x10C4, 0xF003) }, /* Elan Digital Systems USBpulse100 */
 
 
