@@ -6,164 +6,200 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8366EC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F30ACC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 377A2208E2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:17:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 377A2208E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id AD5FD208E2
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:17:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD5FD208E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752464AbeGJKRm (ORCPT
+        id S1754354AbeGJKRu convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 06:17:42 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:59724 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751342AbeGJKRk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 06:17:40 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 41PynF6v28z1qx9S;
-        Tue, 10 Jul 2018 12:17:37 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 41PynF4pDJz1qxFl;
-        Tue, 10 Jul 2018 12:17:37 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id Z8feycl0Fz5w; Tue, 10 Jul 2018 12:17:36 +0200 (CEST)
-X-Auth-Info: G9YdqR/N9N8DrBHtVzxPjpC7P+4i2Fhc+Bd91fqZ0U8=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 10 Jul 2018 12:17:35 +0200 (CEST)
-Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
-To:     Stefan Agner <stefan@agner.ch>, Marek Vasut <marek.vasut@gmail.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>, festevam@gmail.com,
-        shawnguo@kernel.org, devicetree@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, marcofrk@gmail.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        dl-linux-imx <linux-imx@nxp.com>, kernel@pengutronix.de,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, l.stach@pengutronix.de
-References: <cover.1529091248.git.leonard.crestez@nxp.com>
- <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
- <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
- <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
- <638457fd-85da-8fec-d146-517c43f71813@denx.de>
- <b3fa74c5110b45e5992920485749869ab1f7ebce.camel@nxp.com>
- <6995fa4b-47a9-887b-5e4f-4284ca6a2c79@gmail.com>
- <fd22085f646d97f66cff5b7f22785500@agner.ch>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <6fdba55b-0be6-9e28-d87a-43d876a1fd09@denx.de>
-Date:   Tue, 10 Jul 2018 11:11:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <fd22085f646d97f66cff5b7f22785500@agner.ch>
-Content-Type: text/plain; charset=utf-8
+        Tue, 10 Jul 2018 06:17:50 -0400
+Received: from mga02.intel.com ([134.134.136.20]:18782 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753072AbeGJKRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 06:17:46 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 03:17:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,334,1526367600"; 
+   d="scan'208";a="70129616"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by fmsmga004.fm.intel.com with ESMTP; 10 Jul 2018 03:17:01 -0700
+Received: from fmsmsx115.amr.corp.intel.com (10.18.116.19) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 10 Jul 2018 03:17:01 -0700
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ fmsmsx115.amr.corp.intel.com (10.18.116.19) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 10 Jul 2018 03:17:00 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.17]) with mapi id 14.03.0319.002;
+ Tue, 10 Jul 2018 18:16:58 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "peterx@redhat.com" <peterx@redhat.com>
+Subject: RE: [PATCH v35 1/5] mm: support to get hints of free page blocks
+Thread-Topic: [PATCH v35 1/5] mm: support to get hints of free page blocks
+Thread-Index: AQHUGDRRNGdK3F5na0yhzVOAicw6EaSIOJOA
+Date:   Tue, 10 Jul 2018 10:16:57 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7396E91B6@SHSMSX101.ccr.corp.intel.com>
+References: <1531215067-35472-1-git-send-email-wei.w.wang@intel.com>
+ <1531215067-35472-2-git-send-email-wei.w.wang@intel.com>
+In-Reply-To: <1531215067-35472-2-git-send-email-wei.w.wang@intel.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGYxODllNmQtZDQ2OS00MzA1LWIxMzAtNmMxMTc3NzU0MWUzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiRTVISVlRWmFiQmE5TVU0ZEplc25lNnloRjhpQmx1Zm12dkRURFFRSVZNUGpkZlh0QVwvdlJ1Q3pYNjZGYU9xMGwifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 11:06 AM, Stefan Agner wrote:
-> On 16.06.2018 01:32, Marek Vasut wrote:
->> On 06/16/2018 12:42 AM, Leonard Crestez wrote:
->>> On Fri, 2018-06-15 at 23:36 +0200, Marek Vasut wrote:
->>>> On 06/15/2018 10:58 PM, Leonard Crestez wrote:
->>>>> On Fri, 2018-06-15 at 16:47 -0300, Fabio Estevam wrote:
->>>>>> On Fri, Jun 15, 2018 at 4:43 PM, Leonard Crestez
->>>>>> <leonard.crestez@nxp.com> wrote:
->>>
->>>>>>> The FBDEV driver uses the same name and both can't be registered at the
->>>>>>> same time. Fix this by renaming the drm driver to mxsfb-drm
->>>>>>
->>>>>> Stefan sent the same patch a few days ago:
->>>>>
->>>>> In that thread there is a proposal for removing the old fbdev/mxsfb
->>>>> driver entirely.
->>>>>
->>>>> That would break old DTBs, isn't this generally considered bad? Also,
->>>>> are we sure the removal of fbdev/mxsfb wouldn't lose any features?
->>>>>
->>>>> What my series does is make both drivers work with the same kernel
->>>>> image and turns the choice into a board-level dtb decision. Supporting
->>>>> everything at once seems desirable to me and it allows for a very
->>>>> smooth upgrade path.
->>>>
->>>> Having two drivers in the kernel with different set of bugs is always bad.
->>>>
->>>>> The old driver could be removed later, after all users are converted.
->>>>
->>>> Both drivers were in for long enough already. And let's be realistic,
->>>> how many MX23/MX28 users of old DTs with new kernels are there who
->>>> cannot update the DT as well ?
->>>
->>> Grepping for "display =" in arch/arm/boot/dts/imx* I see that old
->>> bindings are also used by 3rd-party boards for imx6/7:
->>>  * imx6sx-nitrogen6sx
->>>  * imx6ul-geam
->>>  * imx6ul-isiot
->>>  * imx6ul-opos6uldev
->>>  * imx6ul-pico-hobbit
->>>  * imx6ul-tx6ul
->>>  * imx7d-nitrogen7
->>
->> Er, yes, a handful of boards which could be updated :)
->>
->>> Converting everything might be quite a bit of work, and explicitly
->>> supporting old bindings is also work.
->>
->> Does adding support for old bindings justify the effort invested ? I
->> doubt so, it only adds more code to maintain.
->>
->>> It is very confusing that there is a whole set of displays for imx6/7
->>> which are supported by upstream but only with a non-default config.
->>> While it is extremely common in the embedded field to have custom
->>> configs the default one in the kernel should try to "just work".
->>>
->>> Couldn't this patch series be considered a bugfix? It was also
->>> surprisingly small.
->>
->> I think it's just a workaround which allows you to postpone the real
->> fix, and I don't like that.
+On Tuesday, July 10, 2018 5:31 PM, Wang, Wei W wrote:
+> Subject: [PATCH v35 1/5] mm: support to get hints of free page blocks
 > 
-> This is one of the situation where states quo is kinda the worst
-> situation.
+> This patch adds support to get free page blocks from a free page list.
+> The physical addresses of the blocks are stored to a list of buffers passed
+> from the caller. The obtained free page blocks are hints about free pages,
+> because there is no guarantee that they are still on the free page list after the
+> function returns.
 > 
-> Currently imx_v6_v7_defconfig and mxs_defconfig actually still uses
-> CONFIG_FB_MXS.
+> One use example of this patch is to accelerate live migration by skipping the
+> transfer of free pages reported from the guest. A popular method used by
+> the hypervisor to track which part of memory is written during live migration
+> is to write-protect all the guest memory. So, those pages that are hinted as
+> free pages but are written after this function returns will be captured by the
+> hypervisor, and they will be added to the next round of memory transfer.
 > 
-> I understand that you'd rather prefer to move forward. I suggest we do
-> it in steps.
+> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+> Signed-off-by: Liang Li <liang.z.li@intel.com>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michael S. Tsirkin <mst@redhat.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> ---
+>  include/linux/mm.h |  3 ++
+>  mm/page_alloc.c    | 98
+> ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 101 insertions(+)
 > 
-> In 4.19:
+> diff --git a/include/linux/mm.h b/include/linux/mm.h index a0fbb9f..5ce654f
+> 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2007,6 +2007,9 @@ extern void free_area_init(unsigned long *
+> zones_size);  extern void free_area_init_node(int nid, unsigned long *
+> zones_size,
+>  		unsigned long zone_start_pfn, unsigned long *zholes_size);
+> extern void free_initmem(void);
+> +unsigned long max_free_page_blocks(int order); int
+> +get_from_free_page_list(int order, struct list_head *pages,
+> +			    unsigned int size, unsigned long *loaded_num);
 > 
-> - Change DRM driver.name to mxsfb-drm so we avoid conflicts for now
+>  /*
+>   * Free reserved pages within range [PAGE_ALIGN(start), end & PAGE_MASK)
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c index 1521100..b67839b
+> 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5043,6 +5043,104 @@ void show_free_areas(unsigned int filter,
+> nodemask_t *nodemask)
+>  	show_swap_cache_info();
+>  }
+> 
+> +/**
+> + * max_free_page_blocks - estimate the max number of free page blocks
+> + * @order: the order of the free page blocks to estimate
+> + *
+> + * This function gives a rough estimation of the possible maximum
+> +number of
+> + * free page blocks a free list may have. The estimation works on an
+> +assumption
+> + * that all the system pages are on that list.
+> + *
+> + * Context: Any context.
+> + *
+> + * Return: The largest number of free page blocks that the free list can have.
+> + */
+> +unsigned long max_free_page_blocks(int order) {
+> +	return totalram_pages / (1 << order);
+> +}
+> +EXPORT_SYMBOL_GPL(max_free_page_blocks);
+> +
+> +/**
+> + * get_from_free_page_list - get hints of free pages from a free page
+> +list
+> + * @order: the order of the free page list to check
+> + * @pages: the list of page blocks used as buffers to load the
+> +addresses
+> + * @size: the size of each buffer in bytes
+> + * @loaded_num: the number of addresses loaded to the buffers
+> + *
+> + * This function offers hints about free pages. The addresses of free
+> +page
+> + * blocks are stored to the list of buffers passed from the caller.
+> +There is
+> + * no guarantee that the obtained free pages are still on the free page
+> +list
+> + * after the function returns. pfn_to_page on the obtained free pages
+> +is
+> + * strongly discouraged and if there is an absolute need for that, make
+> +sure
+> + * to contact MM people to discuss potential problems.
+> + *
+> + * The addresses are currently stored to a buffer in little endian.
+> +This
+> + * avoids the overhead of converting endianness by the caller who needs
+> +data
+> + * in the little endian format. Big endian support can be added on
+> +demand in
+> + * the future.
+> + *
+> + * Context: Process context.
+> + *
+> + * Return: 0 if all the free page block addresses are stored to the buffers;
+> + *         -ENOSPC if the buffers are not sufficient to store all the
+> + *         addresses; or -EINVAL if an unexpected argument is received (e.g.
+> + *         incorrect @order, empty buffer list).
+> + */
+> +int get_from_free_page_list(int order, struct list_head *pages,
+> +			    unsigned int size, unsigned long *loaded_num) {
 
-But this will break mesa if it depends on mxsfb name for ie. etnaviv
-binding.
 
-> - Remove CONFIG_FB_MXS from imx_v6_v7_defconfig/mxs_defconfig now, and
-> only enable CONFIG_DRM_MXSFB=y
-> - Add (deprecated) to CONFIG_FB_MXS
-> 
-> In 4.19/4.20:
-> - Fix the above device trees
-> 
-> In 4.20/4.21:
-> - Remove FB_MXS
-> 
-> Does that sound reasonable? If yes, I can send the patch set to do step
-> 1.
+Hi Linus,
 
-Can you fix the DTs for 4.19 too ?
+We  took your original suggestion - pass in pre-allocated buffers to load the addresses (now we use a list of pre-allocated page blocks as buffers). Hope that suggestion is still acceptable (the advantage of this method was explained here: https://lkml.org/lkml/2018/6/28/184).
+Look forward to getting your feedback. Thanks.
 
--- 
-Best regards,
-Marek Vasut
+Best,
+Wei 
