@@ -1,123 +1,156 @@
 Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 723EDC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87AE9C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 362C2208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:15:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 362C2208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 44C2720881
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:19:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C2720881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732689AbeGJTPa (ORCPT
+        id S1732725AbeGJTTa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 15:15:30 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58336 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732502AbeGJTP3 (ORCPT
+        Tue, 10 Jul 2018 15:19:30 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:40999 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732620AbeGJTT3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 15:15:29 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6AJDjVR013721
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 15:15:03 -0400
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k4yhmj603-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 15:15:03 -0400
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
-        Tue, 10 Jul 2018 13:15:02 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 10 Jul 2018 13:14:58 -0600
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6AJEvTv60621048
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 10 Jul 2018 12:14:57 -0700
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BAD256A04F;
-        Tue, 10 Jul 2018 13:14:57 -0600 (MDT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F1C6F6A04D;
-        Tue, 10 Jul 2018 13:14:45 -0600 (MDT)
-Received: from oc6728276242.ibm.com (unknown [9.80.208.154])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 10 Jul 2018 13:14:45 -0600 (MDT)
-Subject: Re: [PATCH v11 5/8] i2c: fsi: Add transfer implementation
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        benh@kernel.crashing.org, joel@jms.id.au, mark.rutland@arm.com,
-        gregkh@linuxfoundation.org, rdunlap@infradead.org,
-        andy.shevchenko@gmail.com, peda@axentia.se
-References: <1530816030-13010-1-git-send-email-eajames@linux.vnet.ibm.com>
- <1530816030-13010-6-git-send-email-eajames@linux.vnet.ibm.com>
- <20180709224114.4h47enyt4tucqcou@ninjato>
- <d7128886-148f-d255-fb33-3727cad01569@linux.vnet.ibm.com>
- <20180710185042.x3slnms5wzocobqu@ninjato>
-From:   Eddie James <eajames@linux.vnet.ibm.com>
-Date:   Tue, 10 Jul 2018 14:14:40 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 10 Jul 2018 15:19:29 -0400
+Received: by mail-it0-f70.google.com with SMTP id h26-v6so98383itj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 12:19:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Uy0H9RDLnISO8wgzzMR7U91yOFyinPkkNszQpObd6oE=;
+        b=kEIHM7uJ+x2YZAvcj12kmesH9O5XbQe6hL2ancFMgUB2w5FQ4QfmxOWPnqhdDZBCA5
+         MEZH7+WtxzRcRUNULpUpVTBc6jjRqzx2l6KbxFNfzzp6rTXxPcScAOP/+s0OhwOOLdSZ
+         f/aYj+WyoiKqOEsbHlmpZxOQ0WpepWveLHadUNzZFZu+FTOn47McyYvgxYnSI3jaXy6m
+         0n5BxuixFeVoU5HJAKOtFB/i8mLPxo/Xw/Vu+sPugFvNVr41Q0HPELsuAhtyLC0jsbkX
+         xWYKAVk2ptbXzuVr5cMaXoTbB/+BdWrqNC0g34mUzjraHzqgBC9JVI/EuPRluCbxiDl3
+         nw1Q==
+X-Gm-Message-State: APt69E0wrMVQDisuwROQFO9S+IlX3HdfGv5W1oIs4An0OG8AHGX28kwE
+        xXlwEpNG9+hznSmmE52dEityBlfMs0jrqjRsjcXe7S5r/szD
+X-Google-Smtp-Source: AAOMgpeSrwNAfnpSPoajFcupU500B5wJowAfAch1oQpglNBs2xb+Yrr6X3jDPbxmwHl3UPxmDlIdM+dLHiLCRL7IGGesWoggIs34
 MIME-Version: 1.0
-In-Reply-To: <20180710185042.x3slnms5wzocobqu@ninjato>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18071019-0020-0000-0000-00000E3C283C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009346; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01059430; UDB=6.00543726; IPR=6.00837350;
- MB=3.00022090; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-10 19:15:02
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071019-0021-0000-0000-0000623C4E58
-Message-Id: <cda1b231-eeff-626d-5c79-a07c9bc5a9ec@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-10_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807100204
+X-Received: by 2002:a24:7b0e:: with SMTP id q14-v6mr10913314itc.44.1531250343029;
+ Tue, 10 Jul 2018 12:19:03 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 12:19:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000c242e90570aa0062@google.com>
+Subject: general protection fault in in_aton
+From:   syzbot <syzbot+2a831e062bb4aebd8755@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, bart.vanassche@wdc.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        sagi@grimberg.me, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    092150a25cb7 Merge branch 'for-linus' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1687b168400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
+dashboard link: https://syzkaller.appspot.com/bug?extid=2a831e062bb4aebd8755
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+userspace arch: i386
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=158cc2c2400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e7ef48400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2a831e062bb4aebd8755@syzkaller.appspotmail.com
+
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+random: sshd: uninitialized urandom read (32 bytes read)
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 0 PID: 4524 Comm: syz-executor617 Not tainted 4.18.0-rc4+ #42
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:in_aton+0x3e/0x180 net/core/utils.c:63
+Code: f6 41 55 41 54 49 89 fc 53 48 83 ec 08 c7 45 d4 00 00 00 00 e8 a3 a5  
+7c fb 4c 89 e0 4c 89 e2 c1 65 d4 08 48 c1 e8 03 83 e2 07 <42> 0f b6 04 38  
+38 d0 7f 08 84 c0 0f 85 1a 01 00 00 41 0f be 1c 24
+RSP: 0018:ffff8801a8f171a0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8801acc613a4 RCX: ffffffff87685d49
+RDX: 0000000000000000 RSI: ffffffff85ff65fd RDI: 0000000000000000
+RBP: ffff8801a8f171d0 R08: ffff8801ac928040 R09: ffffed00351e2df9
+R10: ffffed00351e2df9 R11: 0000000000000003 R12: 0000000000000000
+R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0063) knlGS:000000000961b840
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000020000140 CR3: 00000001ac93c000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  rdma_create_trans+0xdbe/0x1ed0 net/9p/trans_rdma.c:678
+  p9_client_create+0x915/0x16c9 net/9p/client.c:1062
+  v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
+  v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
+  mount_fs+0xae/0x328 fs/super.c:1277
+  vfs_kern_mount.part.34+0xdc/0x4e0 fs/namespace.c:1037
+  vfs_kern_mount fs/namespace.c:1027 [inline]
+  do_new_mount fs/namespace.c:2518 [inline]
+  do_mount+0x581/0x30e0 fs/namespace.c:2848
+  __do_compat_sys_mount fs/compat.c:125 [inline]
+  __se_compat_sys_mount fs/compat.c:92 [inline]
+  __ia32_compat_sys_mount+0x5d5/0x860 fs/compat.c:92
+  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
+  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7f65cb9
+Code: 55 08 8b 88 64 cd ff ff 8b 98 68 cd ff ff 89 c8 85 d2 74 02 89 0a 5b  
+5d c3 8b 04 24 c3 8b 1c 24 c3 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
+90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 002b:00000000ffb9d3bc EFLAGS: 00000282 ORIG_RAX: 0000000000000015
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000200000c0
+RDX: 0000000020000340 RSI: 0000000000000000 RDI: 0000000020000180
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace 5db7de5a7d39bf0a ]---
+RIP: 0010:in_aton+0x3e/0x180 net/core/utils.c:63
+Code: f6 41 55 41 54 49 89 fc 53 48 83 ec 08 c7 45 d4 00 00 00 00 e8 a3 a5  
+7c fb 4c 89 e0 4c 89 e2 c1 65 d4 08 48 c1 e8 03 83 e2 07 <42> 0f b6 04 38  
+38 d0 7f 08 84 c0 0f 85 1a 01 00 00 41 0f be 1c 24
+RSP: 0018:ffff8801a8f171a0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8801acc613a4 RCX: ffffffff87685d49
+RDX: 0000000000000000 RSI: ffffffff85ff65fd RDI: 0000000000000000
+RBP: ffff8801a8f171d0 R08: ffff8801ac928040 R09: ffffed00351e2df9
+R10: ffffed00351e2df9 R11: 0000000000000003 R12: 0000000000000000
+R13: dffffc0000000000 R14: 0000000000000000 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0063) knlGS:000000000961b840
+CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+CR2: 0000000020000140 CR3: 00000001ac93c000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-On 07/10/2018 01:50 PM, Wolfram Sang wrote:
->>>> +	cmd |= FIELD_PREP(I2C_CMD_ADDR, msg->addr >> 1);
->>> I just noticed this and wonder: Don't you need the LSB of the address?
->>> It is not the RW flag, this is encoded in msg->flags.
->> So, the hardware interprets the LSB as the RW flag. It wouldn't be possible
->> to have a device addressed with the LSB set on this I2C master.
-> But msg->addr is 7 bit and LSB aligned. If I am not horribly wrong, with
-> the above code, an EEPROM at 0x50 would show up as 0x28 with your
-> driver?
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Sorry, what do you mean "show up as"? Yes, we could first shift all our 
-addresses in user-space before passing them to the driver, so that the 
-msg->addr field is exactly what the hardware expects already... This 
-would be non-trivial for our users considering all our documentation 
-represents the addresses as the top 7 bits of a byte :(
-
->
->> Indeed, real 10-bit addresses require some additional manipulation of this
->> I2C master in order to work. We don't support it right now.
-> Then you should remove the associated FUNC flag.
-
-Ah, but due to the addressing situation, tools like i2cget don't work 
-with our addresses unless the 10 bit flag is specified. For example, we 
-may want to access 0xA0.
-
->
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
