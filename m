@@ -6,335 +6,104 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEC8AC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CED7C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:48:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F4DC20873
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:47:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F4DC20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C374D20873
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:48:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C374D20873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754559AbeGJBrB (ORCPT
+        id S1754591AbeGJBs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 21:47:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43788 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752112AbeGJBq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 21:46:56 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C2A574001388;
-        Tue, 10 Jul 2018 01:46:55 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 981B42156889;
-        Tue, 10 Jul 2018 01:46:55 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w6A1kta3011752;
-        Mon, 9 Jul 2018 21:46:55 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w6A1ksf0011700;
-        Mon, 9 Jul 2018 21:46:55 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Mon, 9 Jul 2018 21:46:54 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     John Stoffel <john@stoffel.org>
-cc:     Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org,
-        linux-block@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>,
-        linux-kernel@vger.kernel.org, mhocko@kernel.org,
-        dm-devel@redhat.com, xia <jing.xia.mail@gmail.com>,
-        "Alasdair G. Kergon" <agk@redhat.com>
-Subject: Re: [dm-devel] [PATCH] mm: set PF_LESS_THROTTLE when allocating
- memory for i/o
-In-Reply-To: <23358.29981.262730.50194@quad.stoffel.home>
-Message-ID: <alpine.LRH.2.02.1807092139150.30863@file01.intranet.prod.int.rdu2.redhat.com>
-References: <alpine.LRH.2.02.1807031837110.16609@file01.intranet.prod.int.rdu2.redhat.com> <23358.29981.262730.50194@quad.stoffel.home>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Mon, 9 Jul 2018 21:48:26 -0400
+Received: from icp-osb-irony-out2.external.iinet.net.au ([203.59.1.155]:26059
+        "EHLO icp-osb-irony-out2.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754410AbeGJBsU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 21:48:20 -0400
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2CnAAA3D0Rb/zXSMGcNTxoBAQEBAQIBA?=
+ =?us-ascii?q?QEBCAEBAQGFPxODepYWCCKVMoF6hHcCgmY2FgECAQEBAQEBAoZLAQEBAQIBIxV?=
+ =?us-ascii?q?BBQsLDQsCAiYCAlcGAQwGAgEBgxyBcwWoWm6CHBqEQYNxgTqBC4l4gTYMglyHe?=
+ =?us-ascii?q?4JVAodihSyMQQgBjx6ILwOFMZNYAYICMxoIKAiDJJBkXY59AQE?=
+X-IPAS-Result: =?us-ascii?q?A2CnAAA3D0Rb/zXSMGcNTxoBAQEBAQIBAQEBCAEBAQGFPxO?=
+ =?us-ascii?q?DepYWCCKVMoF6hHcCgmY2FgECAQEBAQEBAoZLAQEBAQIBIxVBBQsLDQsCAiYCA?=
+ =?us-ascii?q?lcGAQwGAgEBgxyBcwWoWm6CHBqEQYNxgTqBC4l4gTYMglyHe4JVAodihSyMQQg?=
+ =?us-ascii?q?Bjx6ILwOFMZNYAYICMxoIKAiDJJBkXY59AQE?=
+X-IronPort-AV: E=Sophos;i="5.51,332,1526313600"; 
+   d="scan'208";a="123830785"
+Received: from unknown (HELO [10.44.0.22]) ([103.48.210.53])
+  by icp-osb-irony-out2.iinet.net.au with ESMTP; 10 Jul 2018 09:48:15 +0800
+Subject: Re: [PATCH 0/5] m68k: IO Fixes and Cleanups
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Helge Deller <deller@gmx.de>
+Cc:     linux-m68k@lists.linux-m68k.org, netdev@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180709093040.23597-1-geert@linux-m68k.org>
+From:   Greg Ungerer <gerg@linux-m68k.org>
+Message-ID: <0f38c6fd-82f1-7211-3b2e-425bbd44b157@linux-m68k.org>
+Date:   Tue, 10 Jul 2018 11:48:14 +1000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 10 Jul 2018 01:46:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 10 Jul 2018 01:46:55 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+In-Reply-To: <20180709093040.23597-1-geert@linux-m68k.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Geert,
 
-
-On Thu, 5 Jul 2018, John Stoffel wrote:
-
-> >>>>> "Mikulas" == Mikulas Patocka <mpatocka@redhat.com> writes:
+On 09/07/18 19:30, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> Mikulas> It has been noticed that congestion throttling can slow down
-> Mikulas> allocations path that participate in the IO and thus help the
-> Mikulas> memory reclaim.  Stalling those allocation is therefore not
-> Mikulas> productive. Moreover mempool allocator and md variants of the
-> Mikulas> same already implement their own throttling which has a
-> Mikulas> better way to be feedback driven. Stalling at the page
-> Mikulas> allocator is therefore even counterproductive.
+> This patch series contains fixes and cleanups for I/O accessors on m68k
+> platforms (with MMU).
 > 
-> Can you show numbers for this claim?
+> The first patch contains small fixes without any dependencies.
+> Patches 2 and 3 make small adjustments to drivers that are dependencies
+> for further cleanup.
+> Patch 4 and 5 complete the cleanup.
+> 
+> Changes compared to v1:
+>    - Move ARCH_HAS_IOREMAP_WT to fix "ioremap_wt redefined" warnings with
+>      m5475evb defconfig,
+>    - Add Acked-by.
+> 
+> Given the dependencies, I think it's easiest if the respective
+> maintainers would provide their Acked-by, so all patches can go in
+> through the m68k tree.
 
-This is bug report where this problem is reported:
-https://www.redhat.com/archives/dm-devel/2018-June/msg00161.html
+Retested on ColdFire 5475, looks good.
+For the whole series:
 
-A process takes dm-bufio lock, allocates memory and memory allocation 
-sleeps in wait_iff_congested. kswapd is attempting to take the dm-bufio 
-lock as well, so sleeping in wait_iff_congested delays kswapd. Delaying 
-kswapd prevents the system from reclaiming memory.
+Acked-by: Greg Ungerer <gerg@linux-m68k.org>
 
-> I would think that throttling needs to be done as close to the disk as 
-> possible, and propogate back up the layers to have this all work well, 
-> so that faster devices (and the layers stacked on them) will work better 
-> without stalling on a slow device.
+Regards
+Greg
 
-The drivers that participate in memory reclaim shouldn't be throttled at 
-all. If you throttle them, you slow down reclaim - and if you slow down 
-reclaim, the congestion will not be resolved.
 
-> Mikulas> PF_LESS_THROTTLE is a task flag denoting allocation context that is
-> Mikulas> participating in the memory reclaim which fits into these IO paths
-> Mikulas> model, so use the flag and make the page allocator aware they are
-> Mikulas> special and they do not really want any dirty data throttling.
+
+> Thanks!
 > 
-> Mikulas> The throttling causes stalls on Android - it uses the dm-verity driver 
-> Mikulas> that uses dm-bufio. Allocations in dm-bufio were observed to sleep in 
-> Mikulas> wait_iff_congested repeatedly.
+> Geert Uytterhoeven (5):
+>    m68k/io: Add missing ioremap define guards, fix typo
+>    net: mac8390: Use standard memcpy_{from,to}io()
+>    Input: hilkbd - Add casts to HP9000/300 I/O accessors
+>    m68k/io: Move mem*io define guards to <asm/kmap.h>
+>    m68k/io: Switch mmu variant to <asm-generic/io.h>
 > 
-> Mikulas> Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-> Mikulas> Acked-by: Michal Hocko <mhocko@suse.com> # mempool_alloc and bvec_alloc
-> Mikulas> Cc: stable@vger.kernel.org
-> 
-> Mikulas> ---
-> Mikulas>  block/bio.c                   |    4 ++++
-> Mikulas>  drivers/md/dm-bufio.c         |   14 +++++++++++---
-> Mikulas>  drivers/md/dm-crypt.c         |    8 ++++++++
-> Mikulas>  drivers/md/dm-integrity.c     |    4 ++++
-> Mikulas>  drivers/md/dm-kcopyd.c        |    3 +++
-> Mikulas>  drivers/md/dm-verity-target.c |    4 ++++
-> Mikulas>  drivers/md/dm-writecache.c    |    4 ++++
-> Mikulas>  mm/mempool.c                  |    4 ++++
-> Mikulas>  8 files changed, 42 insertions(+), 3 deletions(-)
-> 
-> Mikulas> Index: linux-2.6/mm/mempool.c
-> Mikulas> ===================================================================
-> Mikulas> --- linux-2.6.orig/mm/mempool.c	2018-06-29 03:47:16.290000000 +0200
-> Mikulas> +++ linux-2.6/mm/mempool.c	2018-06-29 03:47:16.270000000 +0200
-> Mikulas> @@ -369,6 +369,7 @@ void *mempool_alloc(mempool_t *pool, gfp
-> Mikulas>  	unsigned long flags;
-> Mikulas>  	wait_queue_entry_t wait;
-> Mikulas>  	gfp_t gfp_temp;
-> Mikulas> +	unsigned old_flags;
->  
-> Mikulas>  	VM_WARN_ON_ONCE(gfp_mask & __GFP_ZERO);
-> Mikulas>  	might_sleep_if(gfp_mask & __GFP_DIRECT_RECLAIM);
-> Mikulas> @@ -381,7 +382,10 @@ void *mempool_alloc(mempool_t *pool, gfp
->  
-> Mikulas>  repeat_alloc:
->  
-> Mikulas> +	old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +	current->flags |= PF_LESS_THROTTLE;
-> Mikulas>  	element = pool->alloc(gfp_temp, pool->pool_data);
-> Mikulas> +	current_restore_flags(old_flags, PF_LESS_THROTTLE);
-> Mikulas>  	if (likely(element != NULL))
-> Mikulas>  		return element;
->  
-> Mikulas> Index: linux-2.6/block/bio.c
-> Mikulas> ===================================================================
-> Mikulas> --- linux-2.6.orig/block/bio.c	2018-06-29 03:47:16.290000000 +0200
-> Mikulas> +++ linux-2.6/block/bio.c	2018-06-29 03:47:16.270000000 +0200
-> Mikulas> @@ -217,6 +217,7 @@ fallback:
-> Mikulas>  	} else {
-> Mikulas>  		struct biovec_slab *bvs = bvec_slabs + *idx;
-> Mikulas>  		gfp_t __gfp_mask = gfp_mask & ~(__GFP_DIRECT_RECLAIM | __GFP_IO);
-> Mikulas> +		unsigned old_flags;
->  
-> Mikulas>  		/*
-> Mikulas>  		 * Make this allocation restricted and don't dump info on
-> Mikulas> @@ -229,7 +230,10 @@ fallback:
-> Mikulas>  		 * Try a slab allocation. If this fails and __GFP_DIRECT_RECLAIM
-> Mikulas>  		 * is set, retry with the 1-entry mempool
-> Mikulas>  		 */
-> Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +		current->flags |= PF_LESS_THROTTLE;
-> Mikulas>  		bvl = kmem_cache_alloc(bvs->slab, __gfp_mask);
-> Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
-> Mikulas>  		if (unlikely(!bvl && (gfp_mask & __GFP_DIRECT_RECLAIM))) {
-> Mikulas>  			*idx = BVEC_POOL_MAX;
-> Mikulas>  			goto fallback;
-> Mikulas> Index: linux-2.6/drivers/md/dm-bufio.c
-> Mikulas> ===================================================================
-> Mikulas> --- linux-2.6.orig/drivers/md/dm-bufio.c	2018-06-29 03:47:16.290000000 +0200
-> Mikulas> +++ linux-2.6/drivers/md/dm-bufio.c	2018-06-29 03:47:16.270000000 +0200
-> Mikulas> @@ -356,6 +356,7 @@ static void __cache_size_refresh(void)
-> Mikulas>  static void *alloc_buffer_data(struct dm_bufio_client *c, gfp_t gfp_mask,
-> Mikulas>  			       unsigned char *data_mode)
-> Mikulas>  {
-> Mikulas> +	void *ptr;
-> Mikulas>  	if (unlikely(c->slab_cache != NULL)) {
-> Mikulas>  		*data_mode = DATA_MODE_SLAB;
-> Mikulas>  		return kmem_cache_alloc(c->slab_cache, gfp_mask);
-> Mikulas> @@ -363,9 +364,14 @@ static void *alloc_buffer_data(struct dm
->  
-> Mikulas>  	if (c->block_size <= KMALLOC_MAX_SIZE &&
-> Mikulas>  	    gfp_mask & __GFP_NORETRY) {
-> Mikulas> +		unsigned old_flags;
-> Mikulas>  		*data_mode = DATA_MODE_GET_FREE_PAGES;
-> Mikulas> -		return (void *)__get_free_pages(gfp_mask,
-> Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +		current->flags |= PF_LESS_THROTTLE;
-> Mikulas> +		ptr = (void *)__get_free_pages(gfp_mask,
-> c-> sectors_per_block_bits - (PAGE_SHIFT - SECTOR_SHIFT));
-> Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
-> Mikulas> +		return ptr;
-> Mikulas>  	}
->  
-> Mikulas>  	*data_mode = DATA_MODE_VMALLOC;
-> Mikulas> @@ -381,8 +387,10 @@ static void *alloc_buffer_data(struct dm
-> Mikulas>  	 */
-> Mikulas>  	if (gfp_mask & __GFP_NORETRY) {
-> Mikulas>  		unsigned noio_flag = memalloc_noio_save();
-> Mikulas> -		void *ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
-> Mikulas> -
-> Mikulas> +		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +		current->flags |= PF_LESS_THROTTLE;
-> Mikulas> +		ptr = __vmalloc(c->block_size, gfp_mask, PAGE_KERNEL);
-> Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
-> Mikulas>  		memalloc_noio_restore(noio_flag);
-> Mikulas>  		return ptr;
-> Mikulas>  	}
-> Mikulas> Index: linux-2.6/drivers/md/dm-integrity.c
-> Mikulas> ===================================================================
-> Mikulas> --- linux-2.6.orig/drivers/md/dm-integrity.c	2018-06-29 03:47:16.290000000 +0200
-> Mikulas> +++ linux-2.6/drivers/md/dm-integrity.c	2018-06-29 03:47:16.270000000 +0200
-> Mikulas> @@ -1318,6 +1318,7 @@ static void integrity_metadata(struct wo
-> Mikulas>  	int r;
->  
-> Mikulas>  	if (ic->internal_hash) {
-> Mikulas> +		unsigned old_flags;
-> Mikulas>  		struct bvec_iter iter;
-> Mikulas>  		struct bio_vec bv;
-> Mikulas>  		unsigned digest_size = crypto_shash_digestsize(ic->internal_hash);
-> Mikulas> @@ -1331,8 +1332,11 @@ static void integrity_metadata(struct wo
-> Mikulas>  		if (unlikely(ic->mode == 'R'))
-> Mikulas>  			goto skip_io;
->  
-> Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +		current->flags |= PF_LESS_THROTTLE;
-> Mikulas>  		checksums = kmalloc((PAGE_SIZE >> SECTOR_SHIFT >> ic->sb->log2_sectors_per_block) * ic->tag_size + extra_space,
-> Mikulas>  				    GFP_NOIO | __GFP_NORETRY | __GFP_NOWARN);
-> Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
-> Mikulas>  		if (!checksums)
-> Mikulas>  			checksums = checksums_onstack;
->  
-> Mikulas> Index: linux-2.6/drivers/md/dm-kcopyd.c
-> Mikulas> ===================================================================
-> Mikulas> --- linux-2.6.orig/drivers/md/dm-kcopyd.c	2018-06-29 03:47:16.290000000 +0200
-> Mikulas> +++ linux-2.6/drivers/md/dm-kcopyd.c	2018-06-29 03:47:16.270000000 +0200
-> Mikulas> @@ -245,7 +245,10 @@ static int kcopyd_get_pages(struct dm_kc
-> Mikulas>  	*pages = NULL;
->  
-> Mikulas>  	do {
-> Mikulas> +		unsigned old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +		current->flags |= PF_LESS_THROTTLE;
-> Mikulas>  		pl = alloc_pl(__GFP_NOWARN | __GFP_NORETRY | __GFP_KSWAPD_RECLAIM);
-> Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
-> Mikulas>  		if (unlikely(!pl)) {
-> Mikulas>  			/* Use reserved pages */
-> Mikulas>  			pl = kc->pages;
-> Mikulas> Index: linux-2.6/drivers/md/dm-verity-target.c
-> Mikulas> ===================================================================
-> Mikulas> --- linux-2.6.orig/drivers/md/dm-verity-target.c	2018-06-29 03:47:16.290000000 +0200
-> Mikulas> +++ linux-2.6/drivers/md/dm-verity-target.c	2018-06-29 03:47:16.280000000 +0200
-> Mikulas> @@ -596,9 +596,13 @@ no_prefetch_cluster:
-> Mikulas>  static void verity_submit_prefetch(struct dm_verity *v, struct dm_verity_io *io)
-> Mikulas>  {
-> Mikulas>  	struct dm_verity_prefetch_work *pw;
-> Mikulas> +	unsigned old_flags;
->  
-> Mikulas> +	old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +	current->flags |= PF_LESS_THROTTLE;
-> Mikulas>  	pw = kmalloc(sizeof(struct dm_verity_prefetch_work),
-> Mikulas>  		GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
-> Mikulas> +	current_restore_flags(old_flags, PF_LESS_THROTTLE);
->  
-> Mikulas>  	if (!pw)
-> Mikulas>  		return;
-> Mikulas> Index: linux-2.6/drivers/md/dm-writecache.c
-> Mikulas> ===================================================================
-> Mikulas> --- linux-2.6.orig/drivers/md/dm-writecache.c	2018-06-29 03:47:16.290000000 +0200
-> Mikulas> +++ linux-2.6/drivers/md/dm-writecache.c	2018-06-29 03:47:16.280000000 +0200
-> Mikulas> @@ -1473,6 +1473,7 @@ static void __writecache_writeback_pmem(
-> Mikulas>  	unsigned max_pages;
->  
-> Mikulas>  	while (wbl->size) {
-> Mikulas> +		unsigned old_flags;
-> wbl-> size--;
-> Mikulas>  		e = container_of(wbl->list.prev, struct wc_entry, lru);
-> Mikulas>  		list_del(&e->lru);
-> Mikulas> @@ -1486,6 +1487,8 @@ static void __writecache_writeback_pmem(
-> Mikulas>  		bio_set_dev(&wb->bio, wc->dev->bdev);
-> wb-> bio.bi_iter.bi_sector = read_original_sector(wc, e);
-> wb-> page_offset = PAGE_SIZE;
-> Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +		current->flags |= PF_LESS_THROTTLE;
-> Mikulas>  		if (max_pages <= WB_LIST_INLINE ||
-> Mikulas>  		    unlikely(!(wb->wc_list = kmalloc(max_pages * sizeof(struct wc_entry *),
-> Mikulas>  						     GFP_NOIO | __GFP_NORETRY |
-> Mikulas> @@ -1493,6 +1496,7 @@ static void __writecache_writeback_pmem(
-> wb-> wc_list = wb->wc_list_inline;
-> Mikulas>  			max_pages = WB_LIST_INLINE;
-> Mikulas>  		}
-> Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
->  
-> Mikulas>  		BUG_ON(!wc_add_block(wb, e, GFP_NOIO));
->  
-> Mikulas> Index: linux-2.6/drivers/md/dm-crypt.c
-> Mikulas> ===================================================================
-> Mikulas> --- linux-2.6.orig/drivers/md/dm-crypt.c	2018-06-29 03:47:16.290000000 +0200
-> Mikulas> +++ linux-2.6/drivers/md/dm-crypt.c	2018-06-29 03:47:16.280000000 +0200
-> Mikulas> @@ -2181,12 +2181,16 @@ static void *crypt_page_alloc(gfp_t gfp_
-> Mikulas>  {
-> Mikulas>  	struct crypt_config *cc = pool_data;
-> Mikulas>  	struct page *page;
-> Mikulas> +	unsigned old_flags;
->  
-> Mikulas>  	if (unlikely(percpu_counter_compare(&cc->n_allocated_pages, dm_crypt_pages_per_client) >= 0) &&
-> Mikulas>  	    likely(gfp_mask & __GFP_NORETRY))
-> Mikulas>  		return NULL;
->  
-> Mikulas> +	old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +	current->flags |= PF_LESS_THROTTLE;
-> Mikulas>  	page = alloc_page(gfp_mask);
-> Mikulas> +	current_restore_flags(old_flags, PF_LESS_THROTTLE);
-> Mikulas>  	if (likely(page != NULL))
-> Mikulas>  		percpu_counter_add(&cc->n_allocated_pages, 1);
->  
-> Mikulas> @@ -2893,7 +2897,10 @@ static int crypt_map(struct dm_target *t
->  
-> Mikulas>  	if (cc->on_disk_tag_size) {
-> Mikulas>  		unsigned tag_len = cc->on_disk_tag_size * (bio_sectors(bio) >> cc->sector_shift);
-> Mikulas> +		unsigned old_flags;
->  
-> Mikulas> +		old_flags = current->flags & PF_LESS_THROTTLE;
-> Mikulas> +		current->flags |= PF_LESS_THROTTLE;
-> Mikulas>  		if (unlikely(tag_len > KMALLOC_MAX_SIZE) ||
-> Mikulas>  		    unlikely(!(io->integrity_metadata = kmalloc(tag_len,
-> Mikulas>  				GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN)))) {
-> Mikulas> @@ -2902,6 +2909,7 @@ static int crypt_map(struct dm_target *t
-> io-> integrity_metadata = mempool_alloc(&cc->tag_pool, GFP_NOIO);
-> io-> integrity_metadata_from_pool = true;
-> Mikulas>  		}
-> Mikulas> +		current_restore_flags(old_flags, PF_LESS_THROTTLE);
-> Mikulas>  	}
->  
-> Mikulas>  	if (crypt_integrity_aead(cc))
-> 
-> Mikulas> --
-> Mikulas> dm-devel mailing list
-> Mikulas> dm-devel@redhat.com
-> Mikulas> https://www.redhat.com/mailman/listinfo/dm-devel
+>   arch/m68k/include/asm/io.h          |  7 +++++
+>   arch/m68k/include/asm/io_mm.h       | 42 +++--------------------------
+>   arch/m68k/include/asm/io_no.h       | 12 ---------
+>   arch/m68k/include/asm/kmap.h        |  9 ++++++-
+>   drivers/input/keyboard/hilkbd.c     |  4 +--
+>   drivers/net/ethernet/8390/mac8390.c | 20 +++++++-------
+>   6 files changed, 30 insertions(+), 64 deletions(-)
 > 
