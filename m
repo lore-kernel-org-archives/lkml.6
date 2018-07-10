@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE75BC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC871C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC0B20936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC0B20936
+	by mail.kernel.org (Postfix) with ESMTP id 928A220936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 928A220936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732907AbeGJS0x (ORCPT
+        id S1732925AbeGJS04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:26:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43850 "EHLO
+        Tue, 10 Jul 2018 14:26:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44618 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732879AbeGJS0x (ORCPT
+        with ESMTP id S1732909AbeGJS04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:26:53 -0400
+        Tue, 10 Jul 2018 14:26:56 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 883C6E7D;
-        Tue, 10 Jul 2018 18:26:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E20EDB4;
+        Tue, 10 Jul 2018 18:26:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paulo Alcantara <palcantara@suse.de>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 3.18 10/23] cifs: Fix infinite loop when using hard mount option
-Date:   Tue, 10 Jul 2018 20:24:43 +0200
-Message-Id: <20180710182309.324236828@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 3.18 11/23] ext4: make sure bitmaps and the inode table dont overlap with bg descriptors
+Date:   Tue, 10 Jul 2018 20:24:44 +0200
+Message-Id: <20180710182309.365908106@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
 References: <20180710182308.877332304@linuxfoundation.org>
@@ -51,129 +50,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paulo Alcantara <paulo@paulo.ac>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 7ffbe65578b44fafdef577a360eb0583929f7c6e upstream.
+commit 77260807d1170a8cf35dbb06e07461a655f67eee upstream.
 
-For every request we send, whether it is SMB1 or SMB2+, we attempt to
-reconnect tcon (cifs_reconnect_tcon or smb2_reconnect) before carrying
-out the request.
+It's really bad when the allocation bitmaps and the inode table
+overlap with the block group descriptors, since it causes random
+corruption of the bg descriptors.  So we really want to head those off
+at the pass.
 
-So, while server->tcpStatus != CifsNeedReconnect, we wait for the
-reconnection to succeed on wait_event_interruptible_timeout(). If it
-returns, that means that either the condition was evaluated to true, or
-timeout elapsed, or it was interrupted by a signal.
+https://bugzilla.kernel.org/show_bug.cgi?id=199865
 
-Since we're not handling the case where the process woke up due to a
-received signal (-ERESTARTSYS), the next call to
-wait_event_interruptible_timeout() will _always_ fail and we end up
-looping forever inside either cifs_reconnect_tcon() or smb2_reconnect().
-
-Here's an example of how to trigger that:
-
-$ mount.cifs //foo/share /mnt/test -o
-username=foo,password=foo,vers=1.0,hard
-
-(break connection to server before executing bellow cmd)
-$ stat -f /mnt/test & sleep 140
-[1] 2511
-
-$ ps -aux -q 2511
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root      2511  0.0  0.0  12892  1008 pts/0    S    12:24   0:00 stat -f
-/mnt/test
-
-$ kill -9 2511
-
-(wait for a while; process is stuck in the kernel)
-$ ps -aux -q 2511
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root      2511 83.2  0.0  12892  1008 pts/0    R    12:24  30:01 stat -f
-/mnt/test
-
-By using 'hard' mount point means that cifs.ko will keep retrying
-indefinitely, however we must allow the process to be killed otherwise
-it would hang the system.
-
-Signed-off-by: Paulo Alcantara <palcantara@suse.de>
-Cc: stable@vger.kernel.org
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifssmb.c |   10 ++++++++--
- fs/cifs/smb2pdu.c |   18 ++++++++++++------
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ fs/ext4/super.c |   25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -150,8 +150,14 @@ cifs_reconnect_tcon(struct cifs_tcon *tc
- 	 * greater than cifs socket timeout which is 7 seconds
- 	 */
- 	while (server->tcpStatus == CifsNeedReconnect) {
--		wait_event_interruptible_timeout(server->response_q,
--			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
-+		rc = wait_event_interruptible_timeout(server->response_q,
-+						      (server->tcpStatus != CifsNeedReconnect),
-+						      10 * HZ);
-+		if (rc < 0) {
-+			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
-+				 " signal by the process\n", __func__);
-+			return -ERESTARTSYS;
-+		}
- 
- 		/* are we still trying to reconnect? */
- 		if (server->tcpStatus != CifsNeedReconnect)
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -144,7 +144,7 @@ out:
- static int
- smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon)
- {
--	int rc = 0;
-+	int rc;
- 	struct nls_table *nls_codepage;
- 	struct cifs_ses *ses;
- 	struct TCP_Server_Info *server;
-@@ -155,10 +155,10 @@ smb2_reconnect(__le16 smb2_command, stru
- 	 * for those three - in the calling routine.
- 	 */
- 	if (tcon == NULL)
--		return rc;
-+		return 0;
- 
- 	if (smb2_command == SMB2_TREE_CONNECT)
--		return rc;
-+		return 0;
- 
- 	if (tcon->tidStatus == CifsExiting) {
- 		/*
-@@ -201,8 +201,14 @@ smb2_reconnect(__le16 smb2_command, stru
- 			return -EAGAIN;
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2064,6 +2064,7 @@ static int ext4_check_descriptors(struct
+ 	struct ext4_sb_info *sbi = EXT4_SB(sb);
+ 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
+ 	ext4_fsblk_t last_block;
++	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
+ 	ext4_fsblk_t block_bitmap;
+ 	ext4_fsblk_t inode_bitmap;
+ 	ext4_fsblk_t inode_table;
+@@ -2096,6 +2097,14 @@ static int ext4_check_descriptors(struct
+ 			if (!(sb->s_flags & MS_RDONLY))
+ 				return 0;
  		}
- 
--		wait_event_interruptible_timeout(server->response_q,
--			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
-+		rc = wait_event_interruptible_timeout(server->response_q,
-+						      (server->tcpStatus != CifsNeedReconnect),
-+						      10 * HZ);
-+		if (rc < 0) {
-+			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
-+				 " signal by the process\n", __func__);
-+			return -ERESTARTSYS;
++		if (block_bitmap >= sb_block + 1 &&
++		    block_bitmap <= last_bg_block) {
++			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
++				 "Block bitmap for group %u overlaps "
++				 "block group descriptors", i);
++			if (!(sb->s_flags & MS_RDONLY))
++				return 0;
 +		}
- 
- 		/* are we still trying to reconnect? */
- 		if (server->tcpStatus != CifsNeedReconnect)
-@@ -220,7 +226,7 @@ smb2_reconnect(__le16 smb2_command, stru
- 	}
- 
- 	if (!tcon->ses->need_reconnect && !tcon->need_reconnect)
--		return rc;
-+		return 0;
- 
- 	nls_codepage = load_nls_default();
- 
+ 		if (block_bitmap < first_block || block_bitmap > last_block) {
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+ 			       "Block bitmap for group %u not in group "
+@@ -2110,6 +2119,14 @@ static int ext4_check_descriptors(struct
+ 			if (!(sb->s_flags & MS_RDONLY))
+ 				return 0;
+ 		}
++		if (inode_bitmap >= sb_block + 1 &&
++		    inode_bitmap <= last_bg_block) {
++			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
++				 "Inode bitmap for group %u overlaps "
++				 "block group descriptors", i);
++			if (!(sb->s_flags & MS_RDONLY))
++				return 0;
++		}
+ 		if (inode_bitmap < first_block || inode_bitmap > last_block) {
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+ 			       "Inode bitmap for group %u not in group "
+@@ -2124,6 +2141,14 @@ static int ext4_check_descriptors(struct
+ 			if (!(sb->s_flags & MS_RDONLY))
+ 				return 0;
+ 		}
++		if (inode_table >= sb_block + 1 &&
++		    inode_table <= last_bg_block) {
++			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
++				 "Inode table for group %u overlaps "
++				 "block group descriptors", i);
++			if (!(sb->s_flags & MS_RDONLY))
++				return 0;
++		}
+ 		if (inode_table < first_block ||
+ 		    inode_table + sbi->s_itb_per_group - 1 > last_block) {
+ 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
 
 
