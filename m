@@ -2,78 +2,91 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4459C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 956EEC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B46C20877
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:18:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B46C20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 62CA620877
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:18:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62CA620877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732427AbeGJSSh (ORCPT
+        id S1732441AbeGJSSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:18:37 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51616 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732373AbeGJSSh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:18:37 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2B1191DCB;
-        Tue, 10 Jul 2018 11:11:43 -0700 (PDT)
-Received: from [10.1.210.23] (e110467-lin.cambridge.arm.com [10.1.210.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7913F3F5AD;
-        Tue, 10 Jul 2018 11:11:40 -0700 (PDT)
-Subject: Re: [RFC PATCH 0/4] Stop losing firmware-set DMA masks
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     m.szyprowski@samsung.com, iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lorenzo.pieralisi@arm.com, hanjun.guo@linaro.org,
-        sudeep.holla@arm.com, robh+dt@kernel.org, frowand.list@gmail.com,
-        gregkh@linuxfoundation.org, joro@8bytes.org, x86@kernel.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        linux-riscv@lists.infradead.org
-References: <cover.1531239284.git.robin.murphy@arm.com>
- <20180710180232.GA26285@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <89365af4-19fa-1dc2-27d0-37e9145134af@arm.com>
-Date:   Tue, 10 Jul 2018 19:11:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 10 Jul 2018 14:18:42 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:48757 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732266AbeGJSSl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 14:18:41 -0400
+Received: from localhost ([2.166.249.57]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0MTbOB-1fTmeu1VSh-00SMjX; Tue, 10 Jul 2018 20:17:59 +0200
+Date:   Tue, 10 Jul 2018 20:17:54 +0200
+From:   Andreas Klinger <ak@it-klinger.de>
+To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        mchehab@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        linus.walleij@linaro.org, rdunlap@infradead.org,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/3] iio: hx711: add data-ready-delay
+Message-ID: <20180710181754.GA5360@arbeit>
 MIME-Version: 1.0
-In-Reply-To: <20180710180232.GA26285@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Provags-ID: V03:K1:0/jUMgqpROhf1M6t9Ss1OZ/A4ZBXu6VXadWMb14jZvDygEK/idX
+ AMfxvl5q9oIN1v5Yp6M8beRHA2MYtv+hw7wStbYtJkca9mxi729tWM15ye56QVej1desHjg
+ 0xSuTcvbjHKH4ztk58JygdiX7a0aj0cj3ja1mO1nsmRa7BWKWxzxlFIoJGhxObk7t+Dts2h
+ X5O9So+nU8LYdI5JWiUkg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:dic1am/54Yw=:ZLIv04wf+LdUSXFSMvnQVs
+ aYZ5Goo/i27Y00AHDHln0ISZj60b0yjEY+iewR1Qzzbq1E8vKH4y9j9ZuG2XIN9VGY/lflZa/
+ pjCnnnvR7OzRw1cGdWLNKPdCBLqSWnH87915U6xDWdWZNiT8f7UYx5bpJNIjLiMwx8qRYK1UF
+ Jl0IeqC0gX6wHASf8V2Gi830mM5g5BU2tcNxhoUjUeBT7TIYWac/0mLNJNEjr5wU/jXOYuRQX
+ qeZyS2W+G+6xrYzMqx+gxT1SUDyCS6g2ACo6BqKSthJrBml0qo1SYx8LfC+CaQAemyEN8423B
+ Unj8IrKvmEDmNGqoBVsm/Pvqb1TIMJDG6jG01iq0tGkVnECWIst+nXPLQiCkDB66nPx+S/cKo
+ 94Uum3YjHvJ0ET+yQ/JEKFFyCNwnn39TkDHGt47oxxAn5kQ/KXsADKEaT2tXY8lqhzOq+I6Ye
+ 9sHvLSycocp1lsk3oxEMOvcxN7Wb9vELBfJcoyw9d2gfNZNNPWN53o6reV9dkens94+ESOg6A
+ X4W7gexiZW1m5Bm4SflgReL3efoWQXGWIjpXZsIBQBatUSyhXbN5ILgGt5ciW6Krc3Q56XniY
+ /lT4MCyfFp8F6SbmYUB+ahhCPv7Wx6/KNVUZ2XHTTylour0GcZh7pH0zxiLQed7pc7+w4rC2P
+ I08HG9r1N8LZr0D+1YVvp5Qli0Puixk/22YslF1RAM1ndyjPp93XP9kVjnSOCSGRuSWc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/07/18 19:02, Christoph Hellwig wrote:
->> These patches attempt to deal with this in the simplest way possible by
->> generalising the specific quirk for 32-bit bridges into an arbitrary
->> mask which can then also be plumbed into the firmware code. In the
->> interest of being minimally invasive, I've only included a point fix
->> for the IOMMU issue as seen on arm64 - there may be further tweaks
->> needed in DMA ops to catch all possible incarnations of this problem,
->> but this initial RFC is mostly about the impact beyond the dma-mapping
->> subsystem itself.
-> 
-> Thanks, this looks very nice to me.
-> 
-> In fact it probably solves the RISC-V/Xiling problem as well if we can
-> just add the dma-ranges property to the device tree for the affected
-> systems.  Palmer, do you know how easily the DT could be updated for
-> that case?
+This patch adds an additional property in the device tree for adjusting the
+delay between a rising edge on PD_SCK until data is ready on DOUT.
 
-That would indeed be nice, but beware that the way PCI devices are 
-bodged through of_dma_configure() only actually works for dma-coherent 
-and is busted WRT parsing dma-ranges correctly. Fixing that is my next 
-step after getting these basics done ;)
+This is necessary because of parasitic capacitance on different systems.
 
-Robin.
+In the last patch there is a fix of dtc warning if someone is using the
+given example.
+
+Changes against v4:
+- Thanks to Rob for giving me explanations
+- make square wave with clock PD_SCK and change documentation for it
+
+Changes against v3:
+- added suggestion of Rob to rename the new attribute to clock-frequency
+
+Changes against v2:
+- added suggestion of Jonathan to add vendor prefix in device tree setting
+
+Andreas Klinger (3):
+  iio: hx711: add clock-frequency property in DT
+  iio: hx711: add delay until DOUT is ready
+  iio: hx711: fix spurious unit-address in example
+
+ .../devicetree/bindings/iio/adc/avia-hx711.txt     |  8 ++++-
+ drivers/iio/adc/hx711.c                            | 39 ++++++++++++++++++++++
+ 2 files changed, 46 insertions(+), 1 deletion(-)
+
+-- 
+2.1.4
