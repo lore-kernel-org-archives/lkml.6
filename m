@@ -2,117 +2,149 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9DE5C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F4FC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F02A20858
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:21:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F02A20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 74E5C20858
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:21:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E5C20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751309AbeGJIVK (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:21:10 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44490 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1751082AbeGJIVI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:21:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6917CAEBC;
-        Tue, 10 Jul 2018 08:21:06 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A050A1E3BF2; Tue, 10 Jul 2018 10:21:00 +0200 (CEST)
-Date:   Tue, 10 Jul 2018 10:21:00 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Jan Kara <jack@suse.cz>, Nicholas Piggin <npiggin@gmail.com>,
-        john.hubbard@gmail.com, Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/2] mm/fs: put_user_page() proposal
-Message-ID: <20180710082100.mkdwngdv5kkrcz6n@quack2.suse.cz>
-References: <20180709080554.21931-1-jhubbard@nvidia.com>
- <20180709184937.7a70c3aa@roar.ozlabs.ibm.com>
- <20180709160806.xjt2l2pbmyiutbyi@quack2.suse.cz>
- <20180709171651.GE2662@bombadil.infradead.org>
- <20180709194740.rymbt2fzohbdmpye@quack2.suse.cz>
- <20180709200049.GA5335@bombadil.infradead.org>
+        id S933036AbeGJIVP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:21:15 -0400
+Received: from www62.your-server.de ([213.133.104.62]:47767 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751082AbeGJIVL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:21:11 -0400
+Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fcntQ-0003JQ-2z; Tue, 10 Jul 2018 10:21:04 +0200
+Received: from [2a02:120b:c3f4:b8b0:b5ea:3969:d380:aafd] (helo=linux.home)
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fcntP-0004cw-GL; Tue, 10 Jul 2018 10:21:03 +0200
+Subject: Re: [PATCH bpf 1/1] bpf: btf: Fix bitfield extraction for big endian
+To:     Martin KaFai Lau <kafai@fb.com>, Okash Khawaja <osk@fb.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        kernel-team@fb.com, linux-kernel@vger.kernel.org
+References: <20180709002202.019053555@fb.com>
+ <20180709004002.440153594@fb.com>
+ <20180709183236.r4b7gzmev5h4lcbw@kafai-mbp.dhcp.thefacebook.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <58136182-0eb1-78c9-ceb9-402418c7d10c@iogearbox.net>
+Date:   Tue, 10 Jul 2018 10:21:02 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709200049.GA5335@bombadil.infradead.org>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180709183236.r4b7gzmev5h4lcbw@kafai-mbp.dhcp.thefacebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24739/Tue Jul 10 06:45:06 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09-07-18 13:00:49, Matthew Wilcox wrote:
-> On Mon, Jul 09, 2018 at 09:47:40PM +0200, Jan Kara wrote:
-> > On Mon 09-07-18 10:16:51, Matthew Wilcox wrote:
-> > > > 2) What to do when some page is pinned but we need to do e.g.
-> > > > clear_page_dirty_for_io(). After some more thinking I agree with you that
-> > > > just blocking waiting for page to unpin will create deadlocks like:
-> > > 
-> > > Why are we trying to writeback a page that is pinned?  It's presumed to
-> > > be continuously redirtied by its pinner.  We can't evict it.
-> > 
-> > So what should be a result of fsync(file), where some 'file' pages are
-> > pinned e.g. by running direct IO? If we just skip those pages, we'll lie to
-> > userspace that data was committed while it was not (and it's not only about
-> > data that has landed in those pages via DMA, you can have first 1k of a page
-> > modified by normal IO in parallel to DMA modifying second 1k chunk). If
-> > fsync(2) returns error, it would be really unexpected by userspace and most
-> > apps will just not handle that correctly. So what else can you do than
-> > block?
+On 07/09/2018 08:32 PM, Martin KaFai Lau wrote:
+> On Sun, Jul 08, 2018 at 05:22:03PM -0700, Okash Khawaja wrote:
+>> When extracting bitfield from a number, btf_int_bits_seq_show() builds
+>> a mask and accesses least significant byte of the number in a way
+>> specific to little-endian. This patch fixes that by checking endianness
+>> of the machine and then shifting left and right the unneeded bits.
+>>
+>> Thanks to Martin Lau for the help in navigating potential pitfalls when
+>> dealing with endianess and for the final solution.
+>>
+>> Fixes: b00b8daec828 ("bpf: btf: Add pretty print capability for data with BTF type info")
+>> Signed-off-by: Okash Khawaja <osk@fb.com>
+>>
+>> ---
+>>  kernel/bpf/btf.c |   32 +++++++++++++++-----------------
+>>  1 file changed, 15 insertions(+), 17 deletions(-)
+>>
+>> --- a/kernel/bpf/btf.c
+>> +++ b/kernel/bpf/btf.c
+>> @@ -162,6 +162,8 @@
+>>  #define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
+>>  #define BITS_ROUNDUP_BYTES(bits) \
+>>  	(BITS_ROUNDDOWN_BYTES(bits) + !!BITS_PER_BYTE_MASKED(bits))
+>> +const int one = 1;
+>> +#define is_big_endian() ((*(char *)&one) == 0)
+
+Also here, in the kernel archs provide proper definitions.
+
+>>  #define BTF_INFO_MASK 0x0f00ffff
+>>  #define BTF_INT_MASK 0x0fffffff
+>> @@ -991,16 +993,13 @@ static void btf_int_bits_seq_show(const
+>>  				  void *data, u8 bits_offset,
+>>  				  struct seq_file *m)
+>>  {
+>> +	u8 left_shift_bits, right_shift_bits;
+> Nit.
+> Although only max 64 bit int is allowed now (ensured by btf_int_check_meta),
+> it is better to use u16 such that it will be consistent to BTF_INT_BITS.
 > 
-> I was thinking about writeback, and neglected the fsync case.
+>>  	u32 int_data = btf_type_int(t);
+>>  	u16 nr_bits = BTF_INT_BITS(int_data);
+>>  	u16 total_bits_offset;
+>>  	u16 nr_copy_bytes;
+>>  	u16 nr_copy_bits;
+>> -	u8 nr_upper_bits;
+>> -	union {
+>> -		u64 u64_num;
+>> -		u8  u8_nums[8];
+>> -	} print_num;
+>> +	u64 print_num;
+>>  
+>>  	total_bits_offset = bits_offset + BTF_INT_OFFSET(int_data);
+>>  	data += BITS_ROUNDDOWN_BYTES(total_bits_offset);
+>> @@ -1008,21 +1007,20 @@ static void btf_int_bits_seq_show(const
+>>  	nr_copy_bits = nr_bits + bits_offset;
+>>  	nr_copy_bytes = BITS_ROUNDUP_BYTES(nr_copy_bits);
+>>  
+>> -	print_num.u64_num = 0;
+>> -	memcpy(&print_num.u64_num, data, nr_copy_bytes);
+>> -
+>> -	/* Ditch the higher order bits */
+>> -	nr_upper_bits = BITS_PER_BYTE_MASKED(nr_copy_bits);
+>> -	if (nr_upper_bits) {
+>> -		/* We need to mask out some bits of the upper byte. */
+>> -		u8 mask = (1 << nr_upper_bits) - 1;
+>> -
+>> -		print_num.u8_nums[nr_copy_bytes - 1] &= mask;
+>> +	print_num = 0;
+>> +	memcpy(&print_num, data, nr_copy_bytes);
+>> +	if (is_big_endian()) {
+>> +		left_shift_bits = bits_offset;
+>> +		right_shift_bits = BITS_PER_U64 - nr_bits;
+>> +	} else {
+>> +		left_shift_bits = BITS_PER_U64 - nr_copy_bits;
+>> +		right_shift_bits = BITS_PER_U64 - nr_bits;
+> Nit.
+> right_shift_bits is the same for both cases.  Lets simplify it.
+> 
+>>  	}
+>>  
+>> -	print_num.u64_num >>= bits_offset;
+>> +	print_num <<= left_shift_bits;
+>> +	print_num >>= right_shift_bits;
+>>  
+>> -	seq_printf(m, "0x%llx", print_num.u64_num);
+>> +	seq_printf(m, "0x%llx", print_num);
+>>  }
+>>  
+>>  static void btf_int_seq_show(const struct btf *btf, const struct btf_type *t,
+>>
 
-For memory cleaning writeback skipping is certainly the right thing to do
-and that's what we plan to do.
-
-> For fsync, we could copy the "current" contents of the page to a
-> freshly-allocated page and write _that_ to disc?  As long as we redirty
-> the real page after the pin is dropped, I think we're fine.
-
-So for record, this technique is called "bouncing" in block layer
-terminology and we do have a support for it there (see block/bounce.c). It
-would need some tweaking (e.g. a bio flag to indicate that some page in a
-bio needs bouncing if underlying storage requires stable pages) but that is
-easy to do - we even had support for something similar some years back as
-ext3 needed it to provide guarantee metadata buffer cannot be modified
-while IO is running on it.
-
-I was actually already considering using this some time ago but then
-disregarded it as it seemed it won't buy us much compared to blocking /
-skipping. But now seeing the troubles with blocking, using page bouncing
-for situations where we cannot just skip page writeout looks indeed
-appealing. Thanks for suggesting that!
-
-As a side note I'm not 100% decided whether it is better to keep the
-original page dirty all the time while it is pinned or not. I'm more
-inclined to keeping it dirty all the time as it gives mm more accurate
-information about the amount of really dirty pages, prevents reclaim of
-filesystem's dirtiness / allocation tracking information (buffers or
-whatever it has attached to the page), and generally avoids "surprising"
-set_page_dirty() once page is unpinned (one less dirtying path for
-filesystems to care about). OTOH it would make flusher threads always try
-to writeback these pages only to skip them, fsync(2) would always write
-them, etc...
-
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
