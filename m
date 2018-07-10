@@ -2,127 +2,363 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E82B1C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AC5C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF6CE208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:01:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6CE208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 386BC208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:01:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="leKU0Xuj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 386BC208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933822AbeGJPBM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:01:12 -0400
-Received: from foss.arm.com ([217.140.101.70]:48298 "EHLO foss.arm.com"
+        id S933861AbeGJPBv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:01:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933383AbeGJPBL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:01:11 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34D0880D;
-        Tue, 10 Jul 2018 08:01:11 -0700 (PDT)
-Received: from [10.37.9.109] (unknown [10.37.9.109])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B320D3F589;
-        Tue, 10 Jul 2018 08:01:09 -0700 (PDT)
-Subject: Re: [PATCH v5 0/7] arm64: perf: Support for chained counters
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, julien.thierry@arm.com, robin.murphy@arm.com
-References: <1531213084-27417-1-git-send-email-suzuki.poulose@arm.com>
- <20180710143105.GC9022@arm.com>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <50b0107c-b01d-956a-bd85-d588bf9869ee@arm.com>
-Date:   Tue, 10 Jul 2018 16:01:35 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <20180710143105.GC9022@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S933406AbeGJPBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 11:01:50 -0400
+Received: from localhost.localdomain (unknown [49.77.238.31])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A075208E8;
+        Tue, 10 Jul 2018 15:01:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531234909;
+        bh=eLb/IPi+pls0QwapUoaeRY+76H33KBjKRv46vneADdY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=leKU0XujZD1iI8yNc2N3c60d6PWktota++qU2bzb4lPsoD9Ey3+lOtjXIKJaT2fv1
+         sTHoOQNw6b/6/kmFOATc+BBrfPW38vArIqarr4/2o6+u+totIIWekYCnHy6DS4kE1Y
+         q3h5v+RsaRaqxLEqsZUt154eIq9OCewtskvDy9iY=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH v2 5/5] f2fs: fix to propagate error from __get_meta_page()
+Date:   Tue, 10 Jul 2018 23:00:45 +0800
+Message-Id: <20180710150045.6231-1-chao@kernel.org>
+X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 03:31 PM, Will Deacon wrote:
-> Hi Suzuki,
-> 
-> On Tue, Jul 10, 2018 at 09:57:57AM +0100, Suzuki K Poulose wrote:
->> This series adds support for counting PMU events using 64bit counters
->> for arm64 PMU.
->>
->> The Arm v8 PMUv3 supports combining two adjacent 32bit counters
->> (low even and hig odd counters) to count a given "event" in 64bit mode.
->> This series adds the support for 64bit events in the core arm_pmu driver
->> infrastructure and adds the support for armv8 64bit kernel PMU to use
->> chained counters to count in 64bit mode. For CPU cycles, we use the cycle
->> counter in 64bit mode, only when requested. If the cycle counter is not
->> available, we fall back to chaining the counters.
->>
->> Tested on Juno, Fast models. Applies on 4.18-rc4
-> 
-> Thanks, this looks pretty good to me. How far did you get with the perf
-> fuzzer?
+From: Chao Yu <yuchao0@huawei.com>
 
-Hi Will,
+If caller of __get_meta_page() can handle error, let's propagate error
+from __get_meta_page().
 
-I ran perf_fuzzer on Juno and the fuzzer hung with RCU stalls.
-However, this was reproducible without the series. I am yet to
-investigate the RCU stall.
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+v2:
+- handle error path in __get_meta_page() correctly.
+ fs/f2fs/checkpoint.c | 21 +++++++++++++++++----
+ fs/f2fs/f2fs.h       |  2 +-
+ fs/f2fs/node.c       | 27 +++++++++++++++++++--------
+ fs/f2fs/recovery.c   |  8 ++++++++
+ fs/f2fs/segment.c    | 33 +++++++++++++++++++++++++++------
+ 5 files changed, 72 insertions(+), 19 deletions(-)
 
-Log below (from 4.18-rc3, without the series).
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index 41e6e5769a2c..b672fc1cdb05 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -71,6 +71,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
+ 		.encrypted_page = NULL,
+ 		.is_meta = is_meta,
+ 	};
++	int err;
+ 
+ 	if (unlikely(!is_meta))
+ 		fio.op_flags &= ~REQ_META;
+@@ -85,11 +86,12 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
+ 
+ 	fio.page = page;
+ 
+-	if (f2fs_submit_page_bio(&fio)) {
++	err = f2fs_submit_page_bio(&fio);
++	if (err) {
+ 		memset(page_address(page), 0, PAGE_SIZE);
++		f2fs_put_page(page, 1);
+ 		f2fs_stop_checkpoint(sbi, false);
+-		f2fs_bug_on(sbi, 1);
+-		return page;
++		return ERR_PTR(err);
+ 	}
+ 
+ 	lock_page(page);
+@@ -658,9 +660,15 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
+ 	f2fs_ra_meta_pages(sbi, start_blk, orphan_blocks, META_CP, true);
+ 
+ 	for (i = 0; i < orphan_blocks; i++) {
+-		struct page *page = f2fs_get_meta_page(sbi, start_blk + i);
++		struct page *page;
+ 		struct f2fs_orphan_block *orphan_blk;
+ 
++		page = f2fs_get_meta_page(sbi, start_blk + i);
++		if (IS_ERR(page)) {
++			err = PTR_ERR(page);
++			goto out;
++		}
++
+ 		orphan_blk = (struct f2fs_orphan_block *)page_address(page);
+ 		for (j = 0; j < le32_to_cpu(orphan_blk->entry_count); j++) {
+ 			nid_t ino = le32_to_cpu(orphan_blk->ino[j]);
+@@ -751,6 +759,9 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
+ 	__u32 crc = 0;
+ 
+ 	*cp_page = f2fs_get_meta_page(sbi, cp_addr);
++	if (IS_ERR(*cp_page))
++		return PTR_ERR(*cp_page);
++
+ 	*cp_block = (struct f2fs_checkpoint *)page_address(*cp_page);
+ 
+ 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
+@@ -876,6 +887,8 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
+ 		unsigned char *ckpt = (unsigned char *)sbi->ckpt;
+ 
+ 		cur_page = f2fs_get_meta_page(sbi, cp_blk_no + i);
++		if (IS_ERR(cur_page))
++			goto free_fail_no_cp;
+ 		sit_bitmap_ptr = page_address(cur_page);
+ 		memcpy(ckpt + i * blk_size, sit_bitmap_ptr, blk_size);
+ 		f2fs_put_page(cur_page, 1);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 359526d88d3f..76b51a0de3cd 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2864,7 +2864,7 @@ int f2fs_try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink);
+ void f2fs_recover_inline_xattr(struct inode *inode, struct page *page);
+ int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
+ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
+-void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
++int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+ 			unsigned int segno, struct f2fs_summary_block *sum);
+ void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+ int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index c48e2a2e5e82..248d401bf40a 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -113,25 +113,26 @@ static void clear_node_page_dirty(struct page *page)
+ 
+ static struct page *get_current_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+ {
+-	pgoff_t index = current_nat_addr(sbi, nid);
+-	return f2fs_get_meta_page(sbi, index);
++	struct page *page;
++
++	page = f2fs_get_meta_page(sbi, current_nat_addr(sbi, nid));
++	BUG_ON(IS_ERR(page));
++	return page;
+ }
+ 
+ static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
+ {
+ 	struct page *src_page;
+ 	struct page *dst_page;
+-	pgoff_t src_off;
+ 	pgoff_t dst_off;
+ 	void *src_addr;
+ 	void *dst_addr;
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+ 
+-	src_off = current_nat_addr(sbi, nid);
+-	dst_off = next_nat_addr(sbi, src_off);
++	dst_off = next_nat_addr(sbi, current_nat_addr(sbi, nid));
+ 
+ 	/* get current nat block page with lock */
+-	src_page = f2fs_get_meta_page(sbi, src_off);
++	src_page = get_current_nat_page(sbi, nid);
+ 	dst_page = f2fs_grab_meta_page(sbi, dst_off);
+ 	f2fs_bug_on(sbi, PageDirty(src_page));
+ 
+@@ -2502,7 +2503,7 @@ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
+ 	return 0;
+ }
+ 
+-void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
++int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+ 			unsigned int segno, struct f2fs_summary_block *sum)
+ {
+ 	struct f2fs_node *rn;
+@@ -2524,6 +2525,9 @@ void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+ 		for (idx = addr; idx < addr + nrpages; idx++) {
+ 			struct page *page = f2fs_get_tmp_page(sbi, idx);
+ 
++			if (IS_ERR(page))
++				return PTR_ERR(page);
++
+ 			rn = F2FS_NODE(page);
+ 			sum_entry->nid = rn->footer.nid;
+ 			sum_entry->version = 0;
+@@ -2535,6 +2539,7 @@ void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+ 		invalidate_mapping_pages(META_MAPPING(sbi), addr,
+ 							addr + nrpages);
+ 	}
++	return 0;
+ }
+ 
+ static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
+@@ -2771,7 +2776,13 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+ 	nat_bits_addr = __start_cp_addr(sbi) + sbi->blocks_per_seg -
+ 						nm_i->nat_bits_blocks;
+ 	for (i = 0; i < nm_i->nat_bits_blocks; i++) {
+-		struct page *page = f2fs_get_meta_page(sbi, nat_bits_addr++);
++		struct page *page;
++
++		page = f2fs_get_meta_page(sbi, nat_bits_addr++);
++		if (IS_ERR(page)) {
++			disable_nat_bits(sbi, true);
++			return PTR_ERR(page);
++		}
+ 
+ 		memcpy(nm_i->nat_bits + (i << F2FS_BLKSIZE_BITS),
+ 					page_address(page), F2FS_BLKSIZE);
+diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
+index 0d927ae26c48..ac70d5547a97 100644
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -256,6 +256,10 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
+ 			return 0;
+ 
+ 		page = f2fs_get_tmp_page(sbi, blkaddr);
++		if (IS_ERR(page)) {
++			err = PTR_ERR(page);
++			break;
++		}
+ 
+ 		if (!is_recoverable_dnode(page))
+ 			break;
+@@ -574,6 +578,10 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
+ 		f2fs_ra_meta_pages_cond(sbi, blkaddr);
+ 
+ 		page = f2fs_get_tmp_page(sbi, blkaddr);
++		if (IS_ERR(page)) {
++			err = PTR_ERR(page);
++			break;
++		}
+ 
+ 		if (!is_recoverable_dnode(page)) {
+ 			f2fs_put_page(page, 1);
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index e55188975fcc..22600002c690 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -2096,7 +2096,11 @@ int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra)
+  */
+ struct page *f2fs_get_sum_page(struct f2fs_sb_info *sbi, unsigned int segno)
+ {
+-	return f2fs_get_meta_page(sbi, GET_SUM_BLOCK(sbi, segno));
++	struct page *page;
++
++	page = f2fs_get_meta_page(sbi, GET_SUM_BLOCK(sbi, segno));
++	BUG_ON(IS_ERR(page));
++	return page;
+ }
+ 
+ void f2fs_update_meta_page(struct f2fs_sb_info *sbi,
+@@ -3122,7 +3126,7 @@ void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
+ 	}
+ }
+ 
+-static void read_compacted_summaries(struct f2fs_sb_info *sbi)
++static int read_compacted_summaries(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+ 	struct curseg_info *seg_i;
+@@ -3134,6 +3138,8 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
+ 	start = start_sum_block(sbi);
+ 
+ 	page = f2fs_get_meta_page(sbi, start++);
++	if (IS_ERR(page))
++		return PTR_ERR(page);
+ 	kaddr = (unsigned char *)page_address(page);
+ 
+ 	/* Step 1: restore nat cache */
+@@ -3174,11 +3180,14 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
+ 			page = NULL;
+ 
+ 			page = f2fs_get_meta_page(sbi, start++);
++			if (IS_ERR(page))
++				return PTR_ERR(page);
+ 			kaddr = (unsigned char *)page_address(page);
+ 			offset = 0;
+ 		}
+ 	}
+ 	f2fs_put_page(page, 1);
++	return 0;
+ }
+ 
+ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+@@ -3190,6 +3199,7 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ 	unsigned short blk_off;
+ 	unsigned int segno = 0;
+ 	block_t blk_addr = 0;
++	int err = 0;
+ 
+ 	/* get segment number and block addr */
+ 	if (IS_DATASEG(type)) {
+@@ -3213,6 +3223,8 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ 	}
+ 
+ 	new = f2fs_get_meta_page(sbi, blk_addr);
++	if (IS_ERR(new))
++		return PTR_ERR(new);
+ 	sum = (struct f2fs_summary_block *)page_address(new);
+ 
+ 	if (IS_NODESEG(type)) {
+@@ -3224,7 +3236,9 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ 				ns->ofs_in_node = 0;
+ 			}
+ 		} else {
+-			f2fs_restore_node_summary(sbi, segno, sum);
++			err = f2fs_restore_node_summary(sbi, segno, sum);
++			if (err)
++				goto out;
+ 		}
+ 	}
+ 
+@@ -3244,8 +3258,9 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
+ 	curseg->alloc_type = ckpt->alloc_type[type];
+ 	curseg->next_blkoff = blk_off;
+ 	mutex_unlock(&curseg->curseg_mutex);
++out:
+ 	f2fs_put_page(new, 1);
+-	return 0;
++	return err;
+ }
+ 
+ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
+@@ -3263,7 +3278,9 @@ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
+ 							META_CP, true);
+ 
+ 		/* restore for compacted data summary */
+-		read_compacted_summaries(sbi);
++		err = read_compacted_summaries(sbi);
++		if (err)
++			return err;
+ 		type = CURSEG_HOT_NODE;
+ 	}
+ 
+@@ -3394,7 +3411,11 @@ int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
+ static struct page *get_current_sit_page(struct f2fs_sb_info *sbi,
+ 					unsigned int segno)
+ {
+-	return f2fs_get_meta_page(sbi, current_sit_addr(sbi, segno));
++	struct page *page;
++
++	page = f2fs_get_meta_page(sbi, current_sit_addr(sbi, segno));
++	BUG_ON(IS_ERR(page));
++	return page;
+ }
+ 
+ static struct page *get_next_sit_page(struct f2fs_sb_info *sbi,
+-- 
+2.16.2.17.g38e79b1fd
 
-[445885.968489] perf_fuzzer     R  running task        0 11468   4397 
-0x00000003
-[445885.975568] Call trace:
-[445885.978084]  ret_from_fork+0x0/0x1c
-[445963.841606] INFO: rcu_preempt self-detected stall on CPU
-[445963.845814] INFO: rcu_preempt detected stalls on CPUs/tasks:
-[445963.846957] 	2-....: (1 GPs behind) idle=376/1/4611686018427387908 
-softirq=57145/57145 fqs=54519307
-[445963.852649] 	
-[445963.861784] 	2-....: (1 GPs behind) idle=376/1/4611686018427387908 
-softirq=57145/57145 fqs=54519307
-[445963.861787]  (t=109254007 jiffies g=61092 c=61091 q=1517144)
-[445963.878244] 	
-[445963.878245] Task dump for CPU 2:
-[445963.878250] perf_fuzzer     R
-[445963.879897] (detected by 0, t=109254007 jiffies, g=61092, c=61091, 
-q=1517144)
-[445963.883167]   running task        0 11468   4397 0x00000003
-[445963.898932] Call trace:
-[445963.901439]  dump_backtrace+0x0/0x1e0
-[445963.905149]  show_stack+0x24/0x30
-[445963.908516]  sched_show_task+0x220/0x2c0
-[445963.912484]  dump_cpu_task+0x48/0x58
-[445963.916109]  rcu_dump_cpu_stacks+0xa0/0xe0
-[445963.920250]  rcu_check_callbacks+0xa40/0xc20
-[445963.924564]  update_process_times+0x34/0x60
-[445963.928791]  tick_sched_handle.isra.5+0x44/0x68
-[445963.933361]  tick_sched_timer+0x50/0xa0
-[445963.937244]  __hrtimer_run_queues+0x19c/0x6d0
-[445963.941644]  hrtimer_interrupt+0xec/0x248
-[445963.945699]  arch_timer_handler_phys+0x3c/0x50
-[445963.950184]  handle_percpu_devid_irq+0xcc/0x4a0
-[445963.954754]  generic_handle_irq+0x34/0x50
-[445963.958808]  __handle_domain_irq+0x68/0xc0
-[445963.962948]  gic_handle_irq+0x60/0xb8
-[445963.966657]  el1_irq+0xb4/0x130
-[445963.969851]  __do_softirq+0xcc/0x5c4
-[445963.973475]  irq_exit+0x12c/0x138
-[445963.976841]  __handle_domain_irq+0x6c/0xc0
-[445963.980981]  gic_handle_irq+0x60/0xb8
-[445963.984691]  el0_irq_naked+0x50/0x5c
-[445963.988316] Task dump for CPU 2:
-[445963.991601] perf_fuzzer     R  running task        0 11468   4397 
-0x00000003
-[445963.998679] Call trace:
-[445964.001194]  ret_from_fork+0x0/0x1c
-root@localhost:~# uname -a
-Linux localhost.localdomain 4.18.0-rc3 #117 SMP PREEMPT Thu Jul 5 
-11:47:12 BST 2018 aarch64 aarch64 aarch64 GNU/Linux
-
-Suzuki
