@@ -2,143 +2,155 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBE8C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:13:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22505C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04EB820BF2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:13:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4D49208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:14:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D3TgIVLL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04EB820BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M1WaHjLJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D49208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732626AbeGJTNe (ORCPT
+        id S1732673AbeGJTOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 15:13:34 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36888 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732502AbeGJTNe (ORCPT
+        Tue, 10 Jul 2018 15:14:47 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:36998 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732502AbeGJTOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 15:13:34 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v9-v6so7258981ljk.4;
-        Tue, 10 Jul 2018 12:13:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ggW1R3iMgkA9CS8e7IhJg5iSjttFX5GWOBFUTrbHqWA=;
-        b=D3TgIVLLU9kUzf8wIe4sukhJ48i1jcbphoe4gCfbNl5bU8tQXiqVejIEThR5rM36Rs
-         7vwzIQBOiCKUcFl6bqDEYP0tCzIoMNs26hGXd4T94tJ0vwneG8TzqFLf9Ic5PXRKzyuJ
-         wQzZJM3MeTpKQThZ5rv18DYeodtf0mTaUlD278mFnAfop0O+4EtaBJdR/gmIX735hsGY
-         0LL20tFQCX4AhzbW2MsVHYpfwz//HISv2C3vaXWs5MPlzB73L2L40EOl0U0fBYzQtJCh
-         h4ba7EOnwKxT5YxO6YseGwa1dB3fuVj1yfpvsGCo8bTr/IOzNwKIMKl4OkjxSftyGl1C
-         mEBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ggW1R3iMgkA9CS8e7IhJg5iSjttFX5GWOBFUTrbHqWA=;
-        b=GvVXfYWDHT02uDYY8K/iv1B6a03Ac7ZR4Vy+n5ih0Yt1PtiJe/iumKj3WG/+fKrnrm
-         wD+PQ7NG5x0/r7JcEFU8ZAQ+9nCE8oupujkGvAOM9tj2HyEjIv2SNOtkTthfx/8RBDXS
-         3/QrHJmyCus3E5XXFPomTfdz1CLvWfVj8UUYbS0TQykjBSLtcCVR6UpsUQFh7YdK41JA
-         tnxDgWA8W2moVjdmmHUjFUfEIq0lM8S4+QFa3AnWTVWQGL55GMzaiH1uL170/yU+0WFG
-         xrtoypHvEpykyV/2MMJHDLKRGWYnNzmPdCP3oYZh+O7GdxPUK13xn3E5wrPwLJJTVv+J
-         2Skw==
-X-Gm-Message-State: APt69E1J8S+y8OU9Fw9QS+KGxzSxFS8cMyokDCxj7i2ccMIwbJmHO/Z3
-        dMWXllCrHFZMDmc/VimiD2U=
-X-Google-Smtp-Source: AAOMgpe66n6hJzTIsXijXn6IrULUyPYwMe9FLvMX5TeVwxhkFml4pLvDrytflut8Rq05I0Jv1Nux4g==
-X-Received: by 2002:a2e:9883:: with SMTP id b3-v6mr15213961ljj.80.1531249987719;
-        Tue, 10 Jul 2018 12:13:07 -0700 (PDT)
-Received: from mobilestation ([5.166.218.73])
-        by smtp.gmail.com with ESMTPSA id p20-v6sm2875063lji.37.2018.07.10.12.13.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 12:13:06 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 22:13:54 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, okaya@codeaurora.org,
-        chenhc@lemote.com, Sergey.Semin@t-platforms.ru,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "# v4 . 11" <stable@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mips: mm: Discard ioremap_uncached_accelerated()
- method
-Message-ID: <20180710191354.GA32182@mobilestation>
-References: <20180709135713.8083-1-fancer.lancer@gmail.com>
- <20180709135713.8083-2-fancer.lancer@gmail.com>
- <CA+7wUsxDfBdiGt5tZ7dxb63oMd=3Ry4s1Xysed8RSHJi35=VxQ@mail.gmail.com>
- <20180710074815.GA30235@mobilestation>
- <20180710175940.rbjmdcpm54gfrael@pburton-laptop>
+        Tue, 10 Jul 2018 15:14:47 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6AJE0Nq080691;
+        Tue, 10 Jul 2018 14:14:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531250040;
+        bh=SldqOA8lT+zRIGArWhumukQTJWXMCoY3ACqrkm6R+T8=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=M1WaHjLJK22aFHuZQ1LK13VHCZH0F8WLRvXvWlJHxbLaLFVOxNdBw4mxT29A3nRHI
+         qQ/VkHOMuXXL8WIynVxbKkuwmRWQeBBqnqMfz1YXLF6RoBrWm3EM7HSPW9c1PLzARr
+         XpS5BVXV4f4zrD2KzqRT5imtoNnrsfVTGHdKdHJM=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6AJE0SG011710;
+        Tue, 10 Jul 2018 14:14:00 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 10
+ Jul 2018 14:14:00 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 10 Jul 2018 14:14:00 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6AJDusE025610;
+        Tue, 10 Jul 2018 14:13:57 -0500
+Subject: Re: [PATCH v2] driver core: Partially revert "driver core: correct
+ device's shutdown order"
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
+ <8816662.k3KXbdkA2e@aspire.rjw.lan> <2927655.Y1qg3UnIrE@aspire.rjw.lan>
+ <5284251.Resgjlja2Q@aspire.rjw.lan> <20180710125956.GA25343@kroah.com>
+ <CAJZ5v0iV0ZaCbhoVOrGx08f6Y7Ei2q+qazxEMQRYD4LAq9LUbA@mail.gmail.com>
+ <20180710154715.GA20793@kroah.com>
+CC:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pingfan Liu <kernelfans@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Linux PM <linux-pm@vger.kernel.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <a35d5f42-a89e-9614-e621-a3274475ef55@ti.com>
+Date:   Wed, 11 Jul 2018 00:43:55 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180710175940.rbjmdcpm54gfrael@pburton-laptop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180710154715.GA20793@kroah.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 10:59:40AM -0700, Paul Burton <paul.burton@mips.com> wrote:
-Hello Paul,
+Hi,
 
-> Hi Sergey,
+On Tuesday 10 July 2018 09:17 PM, Greg Kroah-Hartman wrote:
+> On Tue, Jul 10, 2018 at 05:40:21PM +0200, Rafael J. Wysocki wrote:
+>> On Tue, Jul 10, 2018 at 2:59 PM, Greg Kroah-Hartman
+>> <gregkh@linuxfoundation.org> wrote:
+>>> On Tue, Jul 10, 2018 at 02:51:33PM +0200, Rafael J. Wysocki wrote:
+>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>>
+>>>> Commit 52cdbdd49853 (driver core: correct device's shutdown order)
+>>>> introduced a regression by breaking device shutdown on some systems.
+>>>>
+>>>> Namely, the devices_kset_move_last() call in really_probe() added by
+>>>> that commit is a mistake as it may cause parents to follow children
+>>>> in the devices_kset list which then causes shutdown to fail.  For
+>>>> example, if a device has children before really_probe() is called
+>>>> for it (which is not uncommon), that call will cause it to be
+>>>> reordered after the children in the devices_kset list and the
+>>>> ordering of that list will not reflect the correct device shutdown
+>>>> order any more.
+>>>>
+>>>> Also it causes the devices_kset list to be constantly reordered
+>>>> until all drivers have been probed which is totally pointless
+>>>> overhead in the majority of cases and it only covered an issue
+>>>> with system shutdown, while system-wide suspend/resume potentially
+>>>> had the same issue on the affected platforms (which was not covered).
+>>>>
+>>>> Moreover, the shutdown issue originally addressed by the change in
+>>>> really_probe() made by commit 52cdbdd49853 is not present in 4.18-rc
+>>>> any more, since dra7 started to use the sdhci-omap driver which
+>>>> doesn't disable any regulators during shutdown, so the really_probe()
+>>>> part of commit 52cdbdd49853 can be safely reverted.  [The original
+>>>> issue was related to the omap_hsmmc driver used by dra7 previously.]
+>>>>
+>>>> For the above reasons, revert the really_probe() modifications made
+>>>> by commit 52cdbdd49853.
+>>>>
+>>>> The other code changes made by commit 52cdbdd49853 are useful and
+>>>> they need not be reverted.
+>>>>
+>>>> Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
+>>>> Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
+>>>> Reported-by: Pingfan Liu <kernelfans@gmail.com>
+>>>> Tested-by: Pingfan Liu <kernelfans@gmail.com>
+>>>> Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
+>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>> ---
+>>>>
+>>>> -> v2: Added information from Kishon on the fact that it should be safe
+>>>>        to revert the really_probe() modifications added by the
+>>>>        problematic commit.  Also added the Reviewed-by tag from Kishon.
+>>>
+>>> Looks good to me, want me to queue it up in my tree, or are you going to
+>>> send it on to Linus?
+>>
+>> Please queue it up.
+>>
+>>> And shouldn't this have a stable tag as well?
+>>
+>> That is sort of a gray area, because I think it may expose the
+>> shutdown issue on dra7 in -stable, but technically it still fixes a
+>> regression in the driver core.  So your call I suppose. :-)
 > 
-> On Tue, Jul 10, 2018 at 10:48:15AM +0300, Serge Semin wrote:
-> > On Tue, Jul 10, 2018 at 09:15:17AM +0200, Mathieu Malaterre <malat@debian.org> wrote:
-> > > On Mon, Jul 9, 2018 at 3:57 PM Serge Semin <fancer.lancer@gmail.com> wrote:
-> > > > Adaptive ioremap_wc() method is now available (see "mips: mm:
-> > > > Create UCA-based ioremap_wc() method" commit). We can use it for
-> > > > UCA-featured MMIO transactions in the kernel, so we don't need
-> > > > it platform clone ioremap_uncached_accelerated() being declard.
-> > > > Seeing it is also unused anywhere in the kernel code, lets remove
-> > > > it from io.h arch-specific header then.
-> > > >
-> > > > Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
-> > > > Singed-off-by: Paul Burton <paul.burton@mips.com>
-> > > 
-> > > nit: 'Signed' (on both patches)
-> > 
-> > Good catch! Thanks. Didn't notice the typo. Should have copy-pasted
-> > both the signature and the e-mail from another letter.
-> > 
-> > I'll fix it if there will be a second version of the patchset. Otherwise
-> > I suppose it would be easier for the integrator to do this.
+> Being bug compatible is key :)
 > 
-> I've fixed this up & applied these 2 patches with minor tweaks to
-> mips-next for 4.19.
-> 
+> I'll add a stable tag.
 
-Great! Thanks.
+sure. If I see the issue in dra7, I'll send a stable fix in omap_hsmmmc driver.
 
-> However FYI for next time - you shouldn't really add someone else's
-> Signed-off-by tag anyway. The tag effectively states that a person can
-> agree to the Developer's Certificate of Origin for this patch (see
-> Documentation/process/submitting-patches.rst), and you can't agree that
-> on behalf of someone else. Generally a maintainer should add this tag
-> for themselves when they apply a patch.
-> 
-
-I'm sorry if it seemed like I added Signed-off on your behalf. I thought
-the Signed-off also concerns the ones, who participated in the patch
-preparation. Since you suggested the design of the change, I've decided
-to put your name in the Signed-off tag. What shall I use in this way
-then?
-
-> Anyway, I think we should reserve the Singed-off-by tag for patches that
-> quell fires. ;)
-> 
-> Thanks,
->     Paul
-
-Regards,
--Sergey
-
+Thanks
+Kishon
