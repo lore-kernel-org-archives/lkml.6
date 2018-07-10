@@ -2,211 +2,207 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C04C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BD7C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 993C4208EB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:17:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 993C4208EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 72786208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:18:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72786208E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934514AbeGJQRM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:17:12 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:9809 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934265AbeGJQRK (ORCPT
+        id S934524AbeGJQSx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:18:53 -0400
+Received: from mailoutvs59.siol.net ([185.57.226.250]:51605 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S934265AbeGJQSt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:17:10 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b44dc000000>; Tue, 10 Jul 2018 09:17:04 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 10 Jul 2018 09:17:09 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 10 Jul 2018 09:17:09 -0700
-Received: from [10.21.132.122] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 10 Jul
- 2018 16:17:06 +0000
-Subject: Re: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
-To:     Aapo Vienamo <avienamo@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
- <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
-Date:   Tue, 10 Jul 2018 17:17:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 10 Jul 2018 12:18:49 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id 1640E522280;
+        Tue, 10 Jul 2018 18:18:46 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id wbibwnb8HJYA; Tue, 10 Jul 2018 18:18:45 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 59DBB522281;
+        Tue, 10 Jul 2018 18:18:45 +0200 (CEST)
+Received: from jernej-laptop.localnet (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPA id D7A77522280;
+        Tue, 10 Jul 2018 18:18:43 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [PATCH 16/17] drm/sun4i: tcon-top: Remove mux configuration at probe time
+Date:   Tue, 10 Jul 2018 18:18:43 +0200
+Message-ID: <1843348.gnui32CGBV@jernej-laptop>
+In-Reply-To: <CAGb2v64rjUnwnXbWxTSYJyhMyCV5QmV9YSr+Jryx3nEeMP8GJg@mail.gmail.com>
+References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-17-jernej.skrabec@siol.net> <CAGb2v64rjUnwnXbWxTSYJyhMyCV5QmV9YSr+Jryx3nEeMP8GJg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 09/07/18 17:38, Aapo Vienamo wrote:
-> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+Dne torek, 10. julij 2018 ob 18:09:26 CEST je Chen-Yu Tsai napisal(a):
+> On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
+wrote:
+> > Now that R40 TCON migrated to runtime mux configuration, old code can be
+> > removed.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 81 +++-----------------------
+> >  1 file changed, 7 insertions(+), 74 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c index c09b15b64192..78795d6cb174
+> > 100644
+> > --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > @@ -87,34 +87,6 @@ int sun8i_tcon_top_de_config(struct device *dev, int
+> > mixer, int tcon)> 
+> >  }
+> >  EXPORT_SYMBOL(sun8i_tcon_top_de_config);
+> > 
+> > -static int sun8i_tcon_top_get_connected_ep_id(struct device_node *node,
+> > -                                             int port_id)
+> > -{
+> > -       struct device_node *ep, *remote, *port;
+> > -       struct of_endpoint endpoint;
+> > -
+> > -       port = of_graph_get_port_by_id(node, port_id);
+> > -       if (!port)
+> > -               return -ENOENT;
+> > -
+> > -       for_each_available_child_of_node(port, ep) {
+> > -               remote = of_graph_get_remote_port_parent(ep);
+> > -               if (!remote)
+> > -                       continue;
+> > -
+> > -               if (of_device_is_available(remote)) {
+> > -                       of_graph_parse_endpoint(ep, &endpoint);
+> > -
+> > -                       of_node_put(remote);
+> > -
+> > -                       return endpoint.id;
+> > -               }
+> > -
+> > -               of_node_put(remote);
+> > -       }
+> > -
+> > -       return -ENOENT;
+> > -}
+> > 
+> >  static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
+> >  
+> >                                                    const char *parent,
+> > 
+> > @@ -149,11 +121,9 @@ static int sun8i_tcon_top_bind(struct device *dev,
+> > struct device *master,> 
+> >         struct platform_device *pdev = to_platform_device(dev);
+> >         struct clk_hw_onecell_data *clk_data;
+> >         struct sun8i_tcon_top *tcon_top;
+> > 
+> > -       bool mixer0_unused = false;
+> > 
+> >         struct resource *res;
+> >         void __iomem *regs;
+> > 
+> > -       int ret, i, id;
+> > -       u32 val;
+> > +       int ret, i;
+> > 
+> >         tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
+> >         if (!tcon_top)
+> > 
+> > @@ -198,49 +168,12 @@ static int sun8i_tcon_top_bind(struct device *dev,
+> > struct device *master,> 
+> >                 goto err_assert_reset;
+> >         
+> >         }
+> > 
+> > -       val = 0;
+> > -
+> > -       /* check if HDMI mux output is connected */
+> > -       if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >= 0) {
+> > -               /* find HDMI input endpoint id, if it is connected at
+> > all*/
+> > -               id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 4);
+> > -               if (id >= 0)
+> > -                       val = FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id + 1);
+> > -               else
+> > -                       DRM_DEBUG_DRIVER("TCON TOP HDMI input is not
+> > connected\n"); -       } else {
+> > -               DRM_DEBUG_DRIVER("TCON TOP HDMI output is not
+> > connected\n"); -       }
+> > -
+> > -       writel(val, regs + TCON_TOP_GATE_SRC_REG);
+> > -
+> > -       val = 0;
+> > -
+> > -       /* process mixer0 mux output */
+> > -       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
+> > -       if (id >= 0) {
+> > -               val = FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
+> > -       } else {
+> > -               DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not
+> > connected\n"); -               mixer0_unused = true;
+> > -       }
+> > -
+> > -       /* process mixer1 mux output */
+> > -       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
+> > -       if (id >= 0) {
+> > -               val |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
+> > -
+> > -               /*
+> > -                * mixer0 mux has priority over mixer1 mux. We have to
+> > -                * make sure mixer0 doesn't overtake TCON from mixer1.
+> > -                */
+> > -               if (mixer0_unused && id == 0)
+> > -                       val |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
+> > -       } else {
+> > -               DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not
+> > connected\n"); -       }
+> > -
+> > -       writel(val, regs + TCON_TOP_PORT_SEL_REG);
+> > +       /*
+> > +        * Default register values might have some reserved bits set,
+> > which
+> > +        * prevents TCON TOP from working properly. Set them to 0 here.
+> > +        */
+> > +       writel(0, regs + TCON_TOP_GATE_SRC_REG);
+> > +       writel(0, regs + TCON_TOP_PORT_SEL_REG);
 > 
-> Move this to a separate file so it can be used to calculate the sdmmc
-> clock dividers.
+> Would it make sense to just force a reset using the reset control?
 
-Sorry for not commenting sooner, but what is the motivation for moving
-this to its own file? I don't see why we need to do this in order to use
-elsewhere. Furthermore, the original file is quite aptly named 'clk-divider.c'
-and now we have a div71.c which seems quite specific.
-> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> ---
->  drivers/clk/tegra/Makefile      |  1 +
->  drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
->  drivers/clk/tegra/clk.h         |  3 +++
->  drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 52 insertions(+), 25 deletions(-)
->  create mode 100644 drivers/clk/tegra/div71.c
-> 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index b716923..6d4f563 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
->  obj-y					+= cvb.o
->  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
->  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
-> +obj-y					+= div71.o
-> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> index 16e0aee..ad87858 100644
-> --- a/drivers/clk/tegra/clk-divider.c
-> +++ b/drivers/clk/tegra/clk-divider.c
-> @@ -32,35 +32,15 @@
->  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
->  		   unsigned long parent_rate)
->  {
-> -	u64 divider_ux1 = parent_rate;
-> -	u8 flags = divider->flags;
-> -	int mul;
-> -
-> -	if (!rate)
-> -		return 0;
-> -
-> -	mul = get_mul(divider);
-> -
-> -	if (!(flags & TEGRA_DIVIDER_INT))
-> -		divider_ux1 *= mul;
-> -
-> -	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> -		divider_ux1 += rate - 1;
-> -
-> -	do_div(divider_ux1, rate);
-> -
-> -	if (flags & TEGRA_DIVIDER_INT)
-> -		divider_ux1 *= mul;
-> +	int div;
->  
-> -	divider_ux1 -= mul;
-> +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
-> +			divider->flags);
->  
-> -	if ((s64)divider_ux1 < 0)
-> +	if (div < 0)
->  		return 0;
->  
-> -	if (divider_ux1 > get_max_div(divider))
-> -		return get_max_div(divider);
-> -
-> -	return divider_ux1;
-> +	return div;
->  }
->  
->  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index e3b9c22..149cc70 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
->  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
->  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
->  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +	      u8 frac_width, u8 flags);
-> +
->  
->  /* Combined read fence with delay */
->  #define fence_udelay(delay, reg)	\
-> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
-> new file mode 100644
-> index 0000000..1eecc84
-> --- /dev/null
-> +++ b/drivers/clk/tegra/div71.c
-> @@ -0,0 +1,43 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-> + */
-> +
-> +#include <asm/div64.h>
-> +
-> +#include "clk.h"
-> +
-> +#define div_mask(w) ((1 << (w)) - 1)
-> +
-> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
-> +	      u8 frac_width, u8 flags)
-> +{
-> +	u64 divider_ux1 = parent_rate;
-> +	int mul;
-> +
-> +	if (!rate)
-> +		return 0;
-> +
-> +	mul = 1 << frac_width;
-> +
-> +	if (!(flags & TEGRA_DIVIDER_INT))
-> +		divider_ux1 *= mul;
-> +
-> +	if (flags & TEGRA_DIVIDER_ROUND_UP)
-> +		divider_ux1 += rate - 1;
-> +
-> +	do_div(divider_ux1, rate);
-> +
-> +	if (flags & TEGRA_DIVIDER_INT)
-> +		divider_ux1 *= mul;
-> +
-> +	if (divider_ux1 < mul)
-> +		return 0;
-> +
-> +	divider_ux1 -= mul;
-> +
-> +	if (divider_ux1 > div_mask(width))
-> +		return div_mask(width);
-> +
-> +	return divider_ux1;
-> +}
+I wrote TCON TOP driver for H6 at first. For some reason, some registers had 
+reserved bits set after reset line was released. TCON TOP was not used in U-
+Boot, so I guess this counts as full reset.
 
-I don't see anything in the above that makes this 7.1? It seems that the
-fractional width is being passed meaning it could be m.n unless I am missing
-something.
+I never tried to find out how it behaves on R40 because setting those 
+registers to 0 seems like simple, good enough solution, which works 
+everywhere.
 
-Cheers
-Jon
+Best regards,
+Jernej
 
--- 
-nvpublic
+
+
