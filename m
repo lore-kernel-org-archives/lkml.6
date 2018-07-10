@@ -2,363 +2,171 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AC5C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 076E1C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 386BC208EB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:01:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="leKU0Xuj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 386BC208EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BEF3E208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:02:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF3E208EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933861AbeGJPBv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:01:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43970 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933406AbeGJPBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:01:50 -0400
-Received: from localhost.localdomain (unknown [49.77.238.31])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A075208E8;
-        Tue, 10 Jul 2018 15:01:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531234909;
-        bh=eLb/IPi+pls0QwapUoaeRY+76H33KBjKRv46vneADdY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=leKU0XujZD1iI8yNc2N3c60d6PWktota++qU2bzb4lPsoD9Ey3+lOtjXIKJaT2fv1
-         sTHoOQNw6b/6/kmFOATc+BBrfPW38vArIqarr4/2o6+u+totIIWekYCnHy6DS4kE1Y
-         q3h5v+RsaRaqxLEqsZUt154eIq9OCewtskvDy9iY=
-From:   Chao Yu <chao@kernel.org>
-To:     jaegeuk@kernel.org
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH v2 5/5] f2fs: fix to propagate error from __get_meta_page()
-Date:   Tue, 10 Jul 2018 23:00:45 +0800
-Message-Id: <20180710150045.6231-1-chao@kernel.org>
-X-Mailer: git-send-email 2.16.2.17.g38e79b1fd
+        id S933901AbeGJPCQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:02:16 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43969 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933406AbeGJPCO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 11:02:14 -0400
+Received: by mail-ed1-f65.google.com with SMTP id u11-v6so16804552eds.10;
+        Tue, 10 Jul 2018 08:02:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=DbEgON8kVKpLMh5AFZq1Ud4Wjo/eM6wJle1h5v83A5E=;
+        b=AOVNzM7+hCsyP20wGX1fFTaXdeeQvsJNfYtQr7r7tRAi59W+mAfOMzXG9Tyh+nxvlq
+         ckgsdRKiEDu4V/jB1TvYD2vFq5ksP7on9st/ha7eAw0BXQ/HoHFho+tDk9ucezgUVoy/
+         7MH+pkP9aA36YkQP+J9jhUtEn3LuvhMII9N4XpVWyxZUyc7WCGjMQKVIzBKuYpwe7ArV
+         J4yLKwownDfYAgptommQkKIouYKWZPZv5RbEj1sRjGWwfIplSHMBmVV69j4DyzGgIgcF
+         2IN7kByqJKlPS59QOjxNMYbUIbdvBcAHbDdiBG/N8wdZG4ynasjDR/GsSBB3bOQVCm1Z
+         tCHQ==
+X-Gm-Message-State: APt69E1jrXoKYq34HOGyhYnl09fpIVY/dbsP5yKvomO7IuLxs/F7AoT2
+        Ppg5CW8hMofZP/Ja2K03gmnD/kJUhHY=
+X-Google-Smtp-Source: AAOMgpfz9x/DSkUXLOQV2UAzU9Mhc3f5mYfRjLhw4+l3G4mmP5hs8fwO62gqaSosGvE8m+XH+2aABg==
+X-Received: by 2002:a50:9662:: with SMTP id y89-v6mr27786207eda.32.1531234932960;
+        Tue, 10 Jul 2018 08:02:12 -0700 (PDT)
+Received: from mail-wm0-f41.google.com (mail-wm0-f41.google.com. [74.125.82.41])
+        by smtp.gmail.com with ESMTPSA id y89-v6sm8226145edy.80.2018.07.10.08.02.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 08:02:12 -0700 (PDT)
+Received: by mail-wm0-f41.google.com with SMTP id z6-v6so13815912wma.0;
+        Tue, 10 Jul 2018 08:02:12 -0700 (PDT)
+X-Received: by 2002:a1c:3b54:: with SMTP id i81-v6mr15690178wma.143.1531234444936;
+ Tue, 10 Jul 2018 07:54:04 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 07:53:44
+ -0700 (PDT)
+In-Reply-To: <20180710080114.31469-10-paul.kocialkowski@bootlin.com>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com> <20180710080114.31469-10-paul.kocialkowski@bootlin.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 10 Jul 2018 22:53:44 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64HbpvJhy5KQOepc61nU7NECaWMPvhZ16dk5hJXiPBHxA@mail.gmail.com>
+Message-ID: <CAGb2v64HbpvJhy5KQOepc61nU7NECaWMPvhZ16dk5hJXiPBHxA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v5 09/22] ARM: dts: sun5i: Use
+ most-qualified system control compatibles
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chao Yu <yuchao0@huawei.com>
+On Tue, Jul 10, 2018 at 4:01 PM, Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
+> This switches the sun5i dtsi to use the most qualified compatibles for
+> the system-control block (previously named SRAM controller) as well as
+> the SRAM blocks. The sun4i-a10 compatibles are kept since these hardware
+> blocks are backward-compatible.
 
-If caller of __get_meta_page() can handle error, let's propagate error
-from __get_meta_page().
+Not quite sure why they are backward-compatible. The A13 has less SRAM
+mapping controls than the A10.
 
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
----
-v2:
-- handle error path in __get_meta_page() correctly.
- fs/f2fs/checkpoint.c | 21 +++++++++++++++++----
- fs/f2fs/f2fs.h       |  2 +-
- fs/f2fs/node.c       | 27 +++++++++++++++++++--------
- fs/f2fs/recovery.c   |  8 ++++++++
- fs/f2fs/segment.c    | 33 +++++++++++++++++++++++++++------
- 5 files changed, 72 insertions(+), 19 deletions(-)
+ChenYu
 
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index 41e6e5769a2c..b672fc1cdb05 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -71,6 +71,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 		.encrypted_page = NULL,
- 		.is_meta = is_meta,
- 	};
-+	int err;
- 
- 	if (unlikely(!is_meta))
- 		fio.op_flags &= ~REQ_META;
-@@ -85,11 +86,12 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 
- 	fio.page = page;
- 
--	if (f2fs_submit_page_bio(&fio)) {
-+	err = f2fs_submit_page_bio(&fio);
-+	if (err) {
- 		memset(page_address(page), 0, PAGE_SIZE);
-+		f2fs_put_page(page, 1);
- 		f2fs_stop_checkpoint(sbi, false);
--		f2fs_bug_on(sbi, 1);
--		return page;
-+		return ERR_PTR(err);
- 	}
- 
- 	lock_page(page);
-@@ -658,9 +660,15 @@ int f2fs_recover_orphan_inodes(struct f2fs_sb_info *sbi)
- 	f2fs_ra_meta_pages(sbi, start_blk, orphan_blocks, META_CP, true);
- 
- 	for (i = 0; i < orphan_blocks; i++) {
--		struct page *page = f2fs_get_meta_page(sbi, start_blk + i);
-+		struct page *page;
- 		struct f2fs_orphan_block *orphan_blk;
- 
-+		page = f2fs_get_meta_page(sbi, start_blk + i);
-+		if (IS_ERR(page)) {
-+			err = PTR_ERR(page);
-+			goto out;
-+		}
-+
- 		orphan_blk = (struct f2fs_orphan_block *)page_address(page);
- 		for (j = 0; j < le32_to_cpu(orphan_blk->entry_count); j++) {
- 			nid_t ino = le32_to_cpu(orphan_blk->ino[j]);
-@@ -751,6 +759,9 @@ static int get_checkpoint_version(struct f2fs_sb_info *sbi, block_t cp_addr,
- 	__u32 crc = 0;
- 
- 	*cp_page = f2fs_get_meta_page(sbi, cp_addr);
-+	if (IS_ERR(*cp_page))
-+		return PTR_ERR(*cp_page);
-+
- 	*cp_block = (struct f2fs_checkpoint *)page_address(*cp_page);
- 
- 	crc_offset = le32_to_cpu((*cp_block)->checksum_offset);
-@@ -876,6 +887,8 @@ int f2fs_get_valid_checkpoint(struct f2fs_sb_info *sbi)
- 		unsigned char *ckpt = (unsigned char *)sbi->ckpt;
- 
- 		cur_page = f2fs_get_meta_page(sbi, cp_blk_no + i);
-+		if (IS_ERR(cur_page))
-+			goto free_fail_no_cp;
- 		sit_bitmap_ptr = page_address(cur_page);
- 		memcpy(ckpt + i * blk_size, sit_bitmap_ptr, blk_size);
- 		f2fs_put_page(cur_page, 1);
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 359526d88d3f..76b51a0de3cd 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2864,7 +2864,7 @@ int f2fs_try_to_free_nids(struct f2fs_sb_info *sbi, int nr_shrink);
- void f2fs_recover_inline_xattr(struct inode *inode, struct page *page);
- int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
- int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
--void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
-+int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 			unsigned int segno, struct f2fs_summary_block *sum);
- void f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
- int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index c48e2a2e5e82..248d401bf40a 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -113,25 +113,26 @@ static void clear_node_page_dirty(struct page *page)
- 
- static struct page *get_current_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
- {
--	pgoff_t index = current_nat_addr(sbi, nid);
--	return f2fs_get_meta_page(sbi, index);
-+	struct page *page;
-+
-+	page = f2fs_get_meta_page(sbi, current_nat_addr(sbi, nid));
-+	BUG_ON(IS_ERR(page));
-+	return page;
- }
- 
- static struct page *get_next_nat_page(struct f2fs_sb_info *sbi, nid_t nid)
- {
- 	struct page *src_page;
- 	struct page *dst_page;
--	pgoff_t src_off;
- 	pgoff_t dst_off;
- 	void *src_addr;
- 	void *dst_addr;
- 	struct f2fs_nm_info *nm_i = NM_I(sbi);
- 
--	src_off = current_nat_addr(sbi, nid);
--	dst_off = next_nat_addr(sbi, src_off);
-+	dst_off = next_nat_addr(sbi, current_nat_addr(sbi, nid));
- 
- 	/* get current nat block page with lock */
--	src_page = f2fs_get_meta_page(sbi, src_off);
-+	src_page = get_current_nat_page(sbi, nid);
- 	dst_page = f2fs_grab_meta_page(sbi, dst_off);
- 	f2fs_bug_on(sbi, PageDirty(src_page));
- 
-@@ -2502,7 +2503,7 @@ int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page)
- 	return 0;
- }
- 
--void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
-+int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 			unsigned int segno, struct f2fs_summary_block *sum)
- {
- 	struct f2fs_node *rn;
-@@ -2524,6 +2525,9 @@ void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 		for (idx = addr; idx < addr + nrpages; idx++) {
- 			struct page *page = f2fs_get_tmp_page(sbi, idx);
- 
-+			if (IS_ERR(page))
-+				return PTR_ERR(page);
-+
- 			rn = F2FS_NODE(page);
- 			sum_entry->nid = rn->footer.nid;
- 			sum_entry->version = 0;
-@@ -2535,6 +2539,7 @@ void f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
- 		invalidate_mapping_pages(META_MAPPING(sbi), addr,
- 							addr + nrpages);
- 	}
-+	return 0;
- }
- 
- static void remove_nats_in_journal(struct f2fs_sb_info *sbi)
-@@ -2771,7 +2776,13 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
- 	nat_bits_addr = __start_cp_addr(sbi) + sbi->blocks_per_seg -
- 						nm_i->nat_bits_blocks;
- 	for (i = 0; i < nm_i->nat_bits_blocks; i++) {
--		struct page *page = f2fs_get_meta_page(sbi, nat_bits_addr++);
-+		struct page *page;
-+
-+		page = f2fs_get_meta_page(sbi, nat_bits_addr++);
-+		if (IS_ERR(page)) {
-+			disable_nat_bits(sbi, true);
-+			return PTR_ERR(page);
-+		}
- 
- 		memcpy(nm_i->nat_bits + (i << F2FS_BLKSIZE_BITS),
- 					page_address(page), F2FS_BLKSIZE);
-diff --git a/fs/f2fs/recovery.c b/fs/f2fs/recovery.c
-index 0d927ae26c48..ac70d5547a97 100644
---- a/fs/f2fs/recovery.c
-+++ b/fs/f2fs/recovery.c
-@@ -256,6 +256,10 @@ static int find_fsync_dnodes(struct f2fs_sb_info *sbi, struct list_head *head,
- 			return 0;
- 
- 		page = f2fs_get_tmp_page(sbi, blkaddr);
-+		if (IS_ERR(page)) {
-+			err = PTR_ERR(page);
-+			break;
-+		}
- 
- 		if (!is_recoverable_dnode(page))
- 			break;
-@@ -574,6 +578,10 @@ static int recover_data(struct f2fs_sb_info *sbi, struct list_head *inode_list,
- 		f2fs_ra_meta_pages_cond(sbi, blkaddr);
- 
- 		page = f2fs_get_tmp_page(sbi, blkaddr);
-+		if (IS_ERR(page)) {
-+			err = PTR_ERR(page);
-+			break;
-+		}
- 
- 		if (!is_recoverable_dnode(page)) {
- 			f2fs_put_page(page, 1);
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index e55188975fcc..22600002c690 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -2096,7 +2096,11 @@ int f2fs_npages_for_summary_flush(struct f2fs_sb_info *sbi, bool for_ra)
-  */
- struct page *f2fs_get_sum_page(struct f2fs_sb_info *sbi, unsigned int segno)
- {
--	return f2fs_get_meta_page(sbi, GET_SUM_BLOCK(sbi, segno));
-+	struct page *page;
-+
-+	page = f2fs_get_meta_page(sbi, GET_SUM_BLOCK(sbi, segno));
-+	BUG_ON(IS_ERR(page));
-+	return page;
- }
- 
- void f2fs_update_meta_page(struct f2fs_sb_info *sbi,
-@@ -3122,7 +3126,7 @@ void f2fs_wait_on_block_writeback(struct f2fs_sb_info *sbi, block_t blkaddr)
- 	}
- }
- 
--static void read_compacted_summaries(struct f2fs_sb_info *sbi)
-+static int read_compacted_summaries(struct f2fs_sb_info *sbi)
- {
- 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
- 	struct curseg_info *seg_i;
-@@ -3134,6 +3138,8 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
- 	start = start_sum_block(sbi);
- 
- 	page = f2fs_get_meta_page(sbi, start++);
-+	if (IS_ERR(page))
-+		return PTR_ERR(page);
- 	kaddr = (unsigned char *)page_address(page);
- 
- 	/* Step 1: restore nat cache */
-@@ -3174,11 +3180,14 @@ static void read_compacted_summaries(struct f2fs_sb_info *sbi)
- 			page = NULL;
- 
- 			page = f2fs_get_meta_page(sbi, start++);
-+			if (IS_ERR(page))
-+				return PTR_ERR(page);
- 			kaddr = (unsigned char *)page_address(page);
- 			offset = 0;
- 		}
- 	}
- 	f2fs_put_page(page, 1);
-+	return 0;
- }
- 
- static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
-@@ -3190,6 +3199,7 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 	unsigned short blk_off;
- 	unsigned int segno = 0;
- 	block_t blk_addr = 0;
-+	int err = 0;
- 
- 	/* get segment number and block addr */
- 	if (IS_DATASEG(type)) {
-@@ -3213,6 +3223,8 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 	}
- 
- 	new = f2fs_get_meta_page(sbi, blk_addr);
-+	if (IS_ERR(new))
-+		return PTR_ERR(new);
- 	sum = (struct f2fs_summary_block *)page_address(new);
- 
- 	if (IS_NODESEG(type)) {
-@@ -3224,7 +3236,9 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 				ns->ofs_in_node = 0;
- 			}
- 		} else {
--			f2fs_restore_node_summary(sbi, segno, sum);
-+			err = f2fs_restore_node_summary(sbi, segno, sum);
-+			if (err)
-+				goto out;
- 		}
- 	}
- 
-@@ -3244,8 +3258,9 @@ static int read_normal_summaries(struct f2fs_sb_info *sbi, int type)
- 	curseg->alloc_type = ckpt->alloc_type[type];
- 	curseg->next_blkoff = blk_off;
- 	mutex_unlock(&curseg->curseg_mutex);
-+out:
- 	f2fs_put_page(new, 1);
--	return 0;
-+	return err;
- }
- 
- static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
-@@ -3263,7 +3278,9 @@ static int restore_curseg_summaries(struct f2fs_sb_info *sbi)
- 							META_CP, true);
- 
- 		/* restore for compacted data summary */
--		read_compacted_summaries(sbi);
-+		err = read_compacted_summaries(sbi);
-+		if (err)
-+			return err;
- 		type = CURSEG_HOT_NODE;
- 	}
- 
-@@ -3394,7 +3411,11 @@ int f2fs_lookup_journal_in_cursum(struct f2fs_journal *journal, int type,
- static struct page *get_current_sit_page(struct f2fs_sb_info *sbi,
- 					unsigned int segno)
- {
--	return f2fs_get_meta_page(sbi, current_sit_addr(sbi, segno));
-+	struct page *page;
-+
-+	page = f2fs_get_meta_page(sbi, current_sit_addr(sbi, segno));
-+	BUG_ON(IS_ERR(page));
-+	return page;
- }
- 
- static struct page *get_next_sit_page(struct f2fs_sb_info *sbi,
--- 
-2.16.2.17.g38e79b1fd
-
+> The phandle for system control is also updated to reflect the fact that
+> the controller described is really about system control rather than SRAM
+> control.
+>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  arch/arm/boot/dts/sun5i.dtsi | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+> index 07f2248ed5f8..68711954c293 100644
+> --- a/arch/arm/boot/dts/sun5i.dtsi
+> +++ b/arch/arm/boot/dts/sun5i.dtsi
+> @@ -114,8 +114,9 @@
+>                 #size-cells = <1>;
+>                 ranges;
+>
+> -               sram-controller@1c00000 {
+> -                       compatible = "allwinner,sun4i-a10-sram-controller";
+> +               system-control@1c00000 {
+> +                       compatible = "allwinner,sun5i-a13-system-control",
+> +                                    "allwinner,sun4i-a10-system-control";
+>                         reg = <0x01c00000 0x30>;
+>                         #address-cells = <1>;
+>                         #size-cells = <1>;
+> @@ -130,7 +131,8 @@
+>                         };
+>
+>                         emac_sram: sram-section@8000 {
+> -                               compatible = "allwinner,sun4i-a10-sram-a3-a4";
+> +                               compatible = "allwinner,sun5i-a13-sram-a3-a4",
+> +                                            "allwinner,sun4i-a10-sram-a3-a4";
+>                                 reg = <0x8000 0x4000>;
+>                                 status = "disabled";
+>                         };
+> @@ -143,7 +145,8 @@
+>                                 ranges = <0 0x00010000 0x1000>;
+>
+>                                 otg_sram: sram-section@0 {
+> -                                       compatible = "allwinner,sun4i-a10-sram-d";
+> +                                       compatible = "allwinner,sun5i-a13-sram-d",
+> +                                                    "allwinner,sun4i-a10-sram-d";
+>                                         reg = <0x0000 0x1000>;
+>                                         status = "disabled";
+>                                 };
+> --
+> 2.17.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
