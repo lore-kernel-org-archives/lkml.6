@@ -6,152 +6,117 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E280C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FC2C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE7F2089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:24:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEFA72089D
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:26:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Mz5ZarAb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADE7F2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="cr3rWPSj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEFA72089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751213AbeGJHYf (ORCPT
+        id S1751230AbeGJH0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 03:24:35 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:57230 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751053AbeGJHYe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 03:24:34 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id E33F45C01B2;
-        Tue, 10 Jul 2018 09:24:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1531207472;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=d8CU79KHEK5N028rdN55yi9l3syBS8qhN8JVv4bV7qc=;
-        b=Mz5ZarAbT3TLyZDt/QssetfQiU4EJwi2YNALPKW3FGCvTFijtBIaMMAnj1AlZwjcHzVSSt
-        nN45RdSLWFOoJhxaumdI8wcA50Km8ekeiaV+dXxOxZ8AHy60UgoXF/SCtKH9FGMCxUtOU0
-        /unI/dA1H9OOWhEkax40bhA7gb3QHco=
+        Tue, 10 Jul 2018 03:26:24 -0400
+Received: from ozlabs.org ([203.11.71.1]:34953 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750937AbeGJH0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 03:26:22 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Ptzc47dyz9rvt;
+        Tue, 10 Jul 2018 17:26:19 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1531207580;
+        bh=jwjkTpi4mWtASbmvN6inf5YS+xuMWOkGUe2OF9z1mgc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=cr3rWPSj4fcR4e/iGNanKAGv1uwLi3nMefUFtg9VvMMXEXUdmmQ4dWk1D0aOLRz5s
+         WiFZN/pQrggbOFofuONXXmP0tMgLn0ZAmlS9klPiGjKhXByAWIo0PRZFuggIQrGZG4
+         90QsWIqhBRfJRF/71/ejnYeKx+NhecZFlTD7HX4uRDqiaW3EH+QpT6oju4DmiX3yXo
+         b/ePjAqwuLZVR+jFKG4ZGPIPcoswZcp7kpAg74ClhwHYCWQ6IiFC71o75cNKDzrGFZ
+         j7qidNAcgp1vgByRrnBZvgQJQX6cvdLQRDWsm4KEYqNGF2JAJQGKnyjcZ1JindMKed
+         aiEvraEoKQ85g==
+Date:   Tue, 10 Jul 2018 17:26:19 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Theodore Ts'o <tytso@mit.edu>
+Cc:     "Tobin C. Harding" <me@tobin.cc>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the random tree
+Message-ID: <20180710172619.45e290a2@canb.auug.org.au>
+In-Reply-To: <20180618052900.GA4579@eros>
+References: <20180608133748.58a272d5@canb.auug.org.au>
+        <20180618133523.30db3ba0@canb.auug.org.au>
+        <20180618052900.GA4579@eros>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 10 Jul 2018 09:24:32 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        abelvesa@linux.com, Abhishek Sagar <sagar.abhishek@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] ARM: ftrace: Only set kernel memory back to read-only
- after boot
-In-Reply-To: <7aa5a479aa484775f492dc5251bcf5c9@agner.ch>
-References: <20180621124710.453ee0ae@gandalf.local.home>
- <7aa5a479aa484775f492dc5251bcf5c9@agner.ch>
-Message-ID: <c15a7eaba14073149a04d9aa649b10f9@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-2.96 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-2.86)[99.42%];
-         ARC_NA(0.00)[]
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/H55fNMiWsX4Atmo=EKYh.Lq"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.07.2018 13:30, Stefan Agner wrote:
-> On 21.06.2018 18:47, Steven Rostedt wrote:
->> From: Steven Rostedt (VMware) <rostedt@goodmis.org>
->>
->> Dynamic ftrace requires modifying the code segments that are usually
->> set to read-only. To do this, a per arch function is called both before
->> and after the ftrace modifications are performed. The "before" function
->> will set kernel code text to read-write to allow for ftrace to make the
->> modifications, and the "after" function will set the kernel code text
->> back to "read-only" to keep the kernel code text protected.
->>
->> The issue happens when dynamic ftrace is tested at boot up. The test is
->> done before the kernel code text has been set to read-only. But the
->> "before" and "after" calls are still performed. The "after" call will
->> change the kernel code text to read-only prematurely, and other boot
->> code that expects this code to be read-write will fail.
->>
->> The solution is to add a variable that is set when the kernel code text
->> is expected to be converted to read-only, and make the ftrace "before"
->> and "after" calls do nothing if that variable is not yet set. This is
->> similar to the x86 solution from commit 162396309745 ("ftrace, x86:
->> make kernel text writable only for conversions").
->>
->> Reported-by: Stefan Agner <stefan@agner.ch>
->> Tested-by: Stefan Agner <stefan@agner.ch>
->> Link: http://lkml.kernel.org/r/20180620212906.24b7b66e@vmware.local.home
->> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
->> ---
->> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
->> index c186474422f3..0cc8e04295a4 100644
->> --- a/arch/arm/mm/init.c
->> +++ b/arch/arm/mm/init.c
-> 
-> I guess this can be seen as reviewed?
-> 
-> Patches touching core ARM port usually go through Russels patch tracker.
-> 
-> You have to submit the patch here:
-> http://www.armlinux.org.uk/developer/patches/
-> 
+--Sig_/H55fNMiWsX4Atmo=EKYh.Lq
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-FWIW, I added this patch to the patch tracker, its patch ID is 8780/1.
+Hi all,
 
---
-Stefan
+On Mon, 18 Jun 2018 15:29:00 +1000 "Tobin C. Harding" <me@tobin.cc> wrote:
+>
+> On Mon, Jun 18, 2018 at 01:35:23PM +1000, Stephen Rothwell wrote:
+> >=20
+> > On Fri, 8 Jun 2018 13:37:48 +1000 Stephen Rothwell <sfr@canb.auug.org.a=
+u> wrote: =20
+> > >
+> > > After merging the random tree, today's linux-next build (arm
+> > > multi_v7_defconfig) produced this warning:
+> > >=20
+> > > lib/vsprintf.c:1668:13: warning: 'have_filled_random_ptr_key' defined=
+ but not used [-Wunused-variable]
+> > >  static bool have_filled_random_ptr_key __read_mostly;
+> > >              ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> > >=20
+> > > Introduced by commit
+> > >=20
+> > >   bfe80ed3d7c7 ("vsprintf: add command line option debug_boot_weak_ha=
+sh") =20
+> >=20
+> > I am still getting this ... =20
+>=20
+> This is fixed in:
+>=20
+> 	[PATCH v7 0/4] enable early printing of hashed pointers
+>=20
+>=20
+> FYI v8 to come with unrelated change removing EXPORT_SYMBOL() (as suggest=
+ed
+> on LKML in response to v7)
 
-> 
-> 
->> @@ -736,20 +736,29 @@ static int __mark_rodata_ro(void *unused)
->>  	return 0;
->>  }
->>
->> +static int kernel_set_to_readonly __read_mostly;
->> +
->>  void mark_rodata_ro(void)
->>  {
->> +	kernel_set_to_readonly = 1;
->>  	stop_machine(__mark_rodata_ro, NULL, NULL);
->>  	debug_checkwx();
->>  }
->>
->>  void set_kernel_text_rw(void)
->>  {
->> +	if (!kernel_set_to_readonly)
->> +		return;
->> +
->>  	set_section_perms(ro_perms, ARRAY_SIZE(ro_perms), false,
->>  				current->active_mm);
->>  }
->>
->>  void set_kernel_text_ro(void)
->>  {
->> +	if (!kernel_set_to_readonly)
->> +		return;
->> +
->>  	set_section_perms(ro_perms, ARRAY_SIZE(ro_perms), true,
->>  				current->active_mm);
->>  }
+Still getting this warning ...
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/H55fNMiWsX4Atmo=EKYh.Lq
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltEX5sACgkQAVBC80lX
+0Gyqmgf/RHgGjnLbREECJ1WUC0Vi1jsbkSm3sPMHcKFSJntJ2AAnE2qOGKTdXQFO
+kVQpVgTiklTnzayjVCYHrWlHBA/4wgxYgsDRv+mLDszCcPyTg4AsHSNSDUHwAffY
+uIxWJTWfCtqmGZKjP44l6eQRUrrPDPB41tdG0d4swFCYTFfx888LAQ9lB6Z5hbRu
+HBDUdpuMZ6pq3VYBNd21JuwaXagOCEMDRfUYeY3Vi6M25GMaYvn52x1Z6/lTsgWw
+caOpl9CTBHBBXxGsWFNSCAl1zti947G9LRG4VBe4G7aN7FrnzNKd1U4njuMRkC0n
+bNUlAxArrbRMzxbgp7LMTKN+bwcAGQ==
+=Ke9K
+-----END PGP SIGNATURE-----
+
+--Sig_/H55fNMiWsX4Atmo=EKYh.Lq--
