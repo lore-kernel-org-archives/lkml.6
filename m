@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28B65C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DD4C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB1E42083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1E42083E
+	by mail.kernel.org (Postfix) with ESMTP id 45D4B2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D4B2083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387785AbeGJS3c (ORCPT
+        id S2387801AbeGJS3f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:29:32 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45350 "EHLO
+        Tue, 10 Jul 2018 14:29:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45358 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732245AbeGJS3b (ORCPT
+        with ESMTP id S1733079AbeGJS3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:29:31 -0400
+        Tue, 10 Jul 2018 14:29:34 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B402EB8;
-        Tue, 10 Jul 2018 18:29:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE77EEB8;
+        Tue, 10 Jul 2018 18:29:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 12/52] netfilter: nf_tables: use WARN_ON_ONCE instead of BUG_ON in nft_do_chain()
-Date:   Tue, 10 Jul 2018 20:24:40 +0200
-Message-Id: <20180710182450.745062875@linuxfoundation.org>
+        stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Luca Boccassi <luca.boccassi@gmail.com>
+Subject: [PATCH 4.9 13/52] Revert "sit: reload iphdr in ipip6_rcv"
+Date:   Tue, 10 Jul 2018 20:24:41 +0200
+Message-Id: <20180710182450.817080523@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -51,34 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: David S. Miller <davem@davemloft.net>
 
-commit adc972c5b88829d38ede08b1069718661c7330ae upstream.
+commit f4eb17e1efe538d4da7d574bedb00a8dafcc26b7 upstream.
 
-When depth of chain is bigger than NFT_JUMP_STACK_SIZE, the nft_do_chain
-crashes. But there is no need to crash hard here.
+This reverts commit b699d0035836f6712917a41e7ae58d84359b8ff9.
 
-Suggested-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+As per Eric Dumazet, the pskb_may_pull() is a NOP in this
+particular case, so the 'iph' reload is unnecessary.
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Luca Boccassi <luca.boccassi@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_tables_core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv6/sit.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/net/netfilter/nf_tables_core.c
-+++ b/net/netfilter/nf_tables_core.c
-@@ -185,7 +185,8 @@ next_rule:
+--- a/net/ipv6/sit.c
++++ b/net/ipv6/sit.c
+@@ -659,7 +659,6 @@ static int ipip6_rcv(struct sk_buff *skb
+ 		if (iptunnel_pull_header(skb, 0, htons(ETH_P_IPV6),
+ 		    !net_eq(tunnel->net, dev_net(tunnel->dev))))
+ 			goto out;
+-		iph = ip_hdr(skb);
  
- 	switch (regs.verdict.code) {
- 	case NFT_JUMP:
--		BUG_ON(stackptr >= NFT_JUMP_STACK_SIZE);
-+		if (WARN_ON_ONCE(stackptr >= NFT_JUMP_STACK_SIZE))
-+			return NF_DROP;
- 		jumpstack[stackptr].chain = chain;
- 		jumpstack[stackptr].rule  = rule;
- 		jumpstack[stackptr].rulenum = rulenum;
+ 		err = IP_ECN_decapsulate(iph, skb);
+ 		if (unlikely(err)) {
 
 
