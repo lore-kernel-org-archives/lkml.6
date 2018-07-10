@@ -6,37 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A539C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC24C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF56C2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF56C2083E
+	by mail.kernel.org (Postfix) with ESMTP id DD7832083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD7832083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388969AbeGJSdf (ORCPT
+        id S2388982AbeGJSdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47806 "EHLO
+        Tue, 10 Jul 2018 14:33:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47816 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732681AbeGJSde (ORCPT
+        with ESMTP id S1732681AbeGJSdh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:34 -0400
+        Tue, 10 Jul 2018 14:33:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5B517E3D;
-        Tue, 10 Jul 2018 18:33:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 470D7E3D;
+        Tue, 10 Jul 2018 18:33:24 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Kurz <okurz@suse.com>,
-        =?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <ptesarik@suse.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.14 06/53] s390: Correct register corruption in critical section cleanup
-Date:   Tue, 10 Jul 2018 20:24:42 +0200
-Message-Id: <20180710182459.243595473@linuxfoundation.org>
+        stable@vger.kernel.org, Sarah Newman <srn@prgmr.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 07/53] drbd: fix access after free
+Date:   Tue, 10 Jul 2018 20:24:43 +0200
+Message-Id: <20180710182459.306244641@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -53,48 +51,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Lars Ellenberg <lars.ellenberg@linbit.com>
 
-commit 891f6a726cacbb87e5b06076693ffab53bd378d7 upstream.
+commit 64dafbc9530c10300acffc57fae3269d95fa8f93 upstream.
 
-In the critical section cleanup we must not mess with r1.  For march=z9
-or older, larl + ex (instead of exrl) are used with r1 as a temporary
-register. This can clobber r1 in several interrupt handlers. Fix this by
-using r11 as a temp register.  r11 is being saved by all callers of
-cleanup_critical.
+We have
+  struct drbd_requests { ... struct bio *private_bio;  ... }
+to hold a bio clone for local submission.
 
-Fixes: 6dd85fbb87 ("s390: move expoline assembler macros to a header")
-Cc: stable@vger.kernel.org #v4.16
-Reported-by: Oliver Kurz <okurz@suse.com>
-Reported-by: Petr Tesařík <ptesarik@suse.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+On local IO completion, we put that bio, and in case we want to use the
+result later, we overload that member to hold the ERR_PTR() of the
+completion result,
+
+Which, before v4.3, used to be the passed in "int error",
+so we could first bio_put(), then assign.
+
+v4.3-rc1~100^2~21 4246a0b63bd8 block: add a bi_error field to struct bio
+changed that:
+  	bio_put(req->private_bio);
+ -	req->private_bio = ERR_PTR(error);
+ +	req->private_bio = ERR_PTR(bio->bi_error);
+
+Which introduces an access after free,
+because it was non obvious that req->private_bio == bio.
+
+Impact of that was mostly unnoticable, because we only use that value
+in a multiple-failure case, and even then map any "unexpected" error
+code to EIO, so worst case we could potentially mask a more specific
+error with EIO in a multiple failure case.
+
+Unless the pointed to memory region was unmapped, as is the case with
+CONFIG_DEBUG_PAGEALLOC, in which case this results in
+
+  BUG: unable to handle kernel paging request
+
+v4.13-rc1~70^2~75 4e4cbee93d56 block: switch bios to blk_status_t
+changes it further to
+  	bio_put(req->private_bio);
+  	req->private_bio = ERR_PTR(blk_status_to_errno(bio->bi_status));
+
+And blk_status_to_errno() now contains a WARN_ON_ONCE() for unexpected
+values, which catches this "sometimes", if the memory has been reused
+quickly enough for other things.
+
+Should also go into stable since 4.3, with the trivial change around 4.13.
+
+Cc: stable@vger.kernel.org
+Fixes: 4246a0b63bd8 block: add a bi_error field to struct bio
+Reported-by: Sarah Newman <srn@prgmr.com>
+Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/entry.S |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/block/drbd/drbd_worker.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -1244,7 +1244,7 @@ cleanup_critical:
- 	jl	0f
- 	clg	%r9,BASED(.Lcleanup_table+104)	# .Lload_fpu_regs_end
- 	jl	.Lcleanup_load_fpu_regs
--0:	BR_EX	%r14
-+0:	BR_EX	%r14,%r11
+--- a/drivers/block/drbd/drbd_worker.c
++++ b/drivers/block/drbd/drbd_worker.c
+@@ -282,8 +282,8 @@ void drbd_request_endio(struct bio *bio)
+ 		what = COMPLETED_OK;
+ 	}
  
- 	.align	8
- .Lcleanup_table:
-@@ -1280,7 +1280,7 @@ cleanup_critical:
- 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
- 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
- 	larl	%r9,sie_exit			# skip forward to sie_exit
--	BR_EX	%r14
-+	BR_EX	%r14,%r11
- #endif
+-	bio_put(req->private_bio);
+ 	req->private_bio = ERR_PTR(blk_status_to_errno(bio->bi_status));
++	bio_put(bio);
  
- .Lcleanup_system_call:
+ 	/* not req_mod(), we need irqsave here! */
+ 	spin_lock_irqsave(&device->resource->req_lock, flags);
 
 
