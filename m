@@ -2,82 +2,167 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 996DFC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA4EC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:03:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3206520863
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:03:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3206520863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C81D720863
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:03:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81D720863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933384AbeGJBDZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 21:03:25 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:9165 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933206AbeGJBDW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 21:03:22 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5911F5162DF2C;
-        Tue, 10 Jul 2018 09:03:09 +0800 (CST)
-Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.382.0; Tue, 10 Jul 2018
- 09:03:05 +0800
-Subject: Re: [V9fs-developer] [PATCH] version pointer uninitialized
-To:     Tomas Bortoli <tomasbortoli@gmail.com>, <ericvh@gmail.com>,
-        <rminnich@sandia.gov>, <lucho@ionkov.net>
-References: <20180709222943.19503-1-tomasbortoli@gmail.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <syzkaller@googlegroups.com>,
-        <v9fs-developer@lists.sourceforge.net>, <davem@davemloft.net>
-From:   piaojun <piaojun@huawei.com>
-Message-ID: <5B4405C0.3060705@huawei.com>
-Date:   Tue, 10 Jul 2018 09:02:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        id S933451AbeGJBDh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 21:03:37 -0400
+Received: from mga09.intel.com ([134.134.136.24]:51034 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933206AbeGJBD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 21:03:29 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 18:03:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,332,1526367600"; 
+   d="scan'208";a="73502988"
+Received: from yexl-desktop.sh.intel.com (HELO localhost) ([10.239.159.124])
+  by orsmga002.jf.intel.com with ESMTP; 09 Jul 2018 18:03:19 -0700
+Date:   Tue, 10 Jul 2018 08:59:28 +0800
+From:   Ye Xiaolong <xiaolong.ye@intel.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     kbuild test robot <lkp@intel.com>, nicolas.pitre@linaro.org,
+        brijesh.singh@amd.com, thomas.lendacky@amd.com, airlied@linux.ie,
+        linux-pci@vger.kernel.org, richard.weiyang@gmail.com,
+        keith.busch@intel.com, jcmvbkbc@gmail.com,
+        baiyaowei@cmss.chinamobile.com, frowand.list@gmail.com,
+        tglx@linutronix.de, lorenzo.pieralisi@arm.com,
+        sthemmin@microsoft.com, linux-nvdimm@lists.01.org,
+        patrik.r.jakobsson@gmail.com, andy.shevchenko@gmail.com,
+        linux-input@vger.kernel.org, gustavo@padovan.org, bp@suse.de,
+        dyoung@redhat.com, vgoyal@redhat.com, ebiederm@xmission.com,
+        devicetree@vger.kernel.org, haiyangz@microsoft.com,
+        maarten.lankhorst@linux.intel.com, josh@joshtriplett.org,
+        jglisse@redhat.com, robh+dt@kernel.org, seanpaul@chromium.org,
+        bhelgaas@google.com, dan.j.williams@intel.com, yinghai@kernel.org,
+        jonathan.derrick@intel.com, chris@zankel.net, monstr@monstr.eu,
+        linux-parisc@vger.kernel.org, gregkh@linuxfoundation.org,
+        dmitry.torokhov@gmail.com, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, kbuild-all@01.org,
+        devel@linuxdriverproject.org, akpm@linux-foundation.org,
+        fengguang.wu@intel.com, linuxppc-dev@lists.ozlabs.org,
+        davem@davemloft.net
+Subject: Re: [kbuild-all] [PATCH v6 2/4] resource: Use list_head to link
+ sibling resource
+Message-ID: <20180710005927.GG10005@yexl-desktop>
+References: <20180704041038.8190-3-bhe@redhat.com>
+ <201807042347.hfDcKxmG%fengguang.wu@intel.com>
+ <20180708025946.GI3047@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-In-Reply-To: <20180709222943.19503-1-tomasbortoli@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180708025946.GI3047@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LGTM
+Hi,
 
-On 2018/7/10 6:29, Tomas Bortoli wrote:
-> The p9_client_version() does not initialize the version
-> pointer. If the call to p9pdu_readf() returns an error and version has not
-> been allocated in p9pdu_readf(), then the program will jump to the "error"
-> label and will try to free the version pointer. If version is not
-> initialized, free() will be called with uninitialized, garbage data and
-> will provoke a crash.
-> 
-> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-> Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
-Reviewed-by: Jun Piao <piaojun@huawei.com>
-> ---
->  net/9p/client.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index 18c5271910dc..40f7c47f2f74 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -957,7 +957,7 @@ static int p9_client_version(struct p9_client *c)
->  {
->  	int err = 0;
->  	struct p9_req_t *req;
-> -	char *version;
-> +	char *version = NULL;
->  	int msize;
->  
->  	p9_debug(P9_DEBUG_9P, ">>> TVERSION msize %d protocol %d\n",
-> 
+On 07/08, Baoquan He wrote:
+>Hi,
+>
+>On 07/05/18 at 01:00am, kbuild test robot wrote:
+>> Hi Baoquan,
+>> 
+>> I love your patch! Yet something to improve:
+>> 
+>> [auto build test ERROR on linus/master]
+>> [also build test ERROR on v4.18-rc3 next-20180704]
+>> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+>Thanks for telling. 
+>
+>I cloned 0day-ci/linut to my local pc.
+>https://github.com/0day-ci/linux.git
+>
+>However, I didn't find below branch. And tried to open it in web
+>broswer, also failed.
+>
+
+Sorry for the inconvenience, 0day bot didn't push the branch to github successfully,
+Just push it manually, you can have a try again.
+
+Thanks,
+Xiaolong
+
+
+>
+>> url:    https://github.com/0day-ci/linux/commits/Baoquan-He/resource-Use-list_head-to-link-sibling-resource/20180704-121402
+>> config: mips-rb532_defconfig (attached as .config)
+>> compiler: mipsel-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+>> reproduce:
+>>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>>         chmod +x ~/bin/make.cross
+>>         # save the attached .config to linux build tree
+>>         GCC_VERSION=7.2.0 make.cross ARCH=mips 
+>
+>I did find a old one which is for the old version 5 post.
+>
+>[bhe@linux]$ git remote -v
+>0day-ci	https://github.com/0day-ci/linux.git (fetch)
+>0day-ci	https://github.com/0day-ci/linux.git (push)
+>[bhe@dhcp-128-28 linux]$ git branch -a| grep Baoquan| grep resource
+>  remotes/0day-ci/Baoquan-He/resource-Use-list_head-to-link-sibling-resource/20180612-113600
+>
+>Could you help have a look at this?
+>
+>Thanks
+>Baoquan
+>
+>> 
+>> All error/warnings (new ones prefixed by >>):
+>> 
+>> >> arch/mips/pci/pci-rc32434.c:57:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
+>>      .child = &rc32434_res_pci_mem2
+>>               ^
+>>    arch/mips/pci/pci-rc32434.c:57:11: note: (near initialization for 'rc32434_res_pci_mem1.child.next')
+>> >> arch/mips/pci/pci-rc32434.c:51:47: warning: missing braces around initializer [-Wmissing-braces]
+>>     static struct resource rc32434_res_pci_mem1 = {
+>>                                                   ^
+>>    arch/mips/pci/pci-rc32434.c:60:47: warning: missing braces around initializer [-Wmissing-braces]
+>>     static struct resource rc32434_res_pci_mem2 = {
+>>                                                   ^
+>>    cc1: some warnings being treated as errors
+>> 
+>> vim +57 arch/mips/pci/pci-rc32434.c
+>> 
+>> 73b4390f Ralf Baechle 2008-07-16  50  
+>> 73b4390f Ralf Baechle 2008-07-16 @51  static struct resource rc32434_res_pci_mem1 = {
+>> 73b4390f Ralf Baechle 2008-07-16  52  	.name = "PCI MEM1",
+>> 73b4390f Ralf Baechle 2008-07-16  53  	.start = 0x50000000,
+>> 73b4390f Ralf Baechle 2008-07-16  54  	.end = 0x5FFFFFFF,
+>> 73b4390f Ralf Baechle 2008-07-16  55  	.flags = IORESOURCE_MEM,
+>> 73b4390f Ralf Baechle 2008-07-16  56  	.sibling = NULL,
+>> 73b4390f Ralf Baechle 2008-07-16 @57  	.child = &rc32434_res_pci_mem2
+>> 73b4390f Ralf Baechle 2008-07-16  58  };
+>> 73b4390f Ralf Baechle 2008-07-16  59  
+>> 
+>> :::::: The code at line 57 was first introduced by commit
+>> :::::: 73b4390fb23456964201abda79f1210fe337d01a [MIPS] Routerboard 532: Support for base system
+>> 
+>> :::::: TO: Ralf Baechle <ralf@linux-mips.org>
+>> :::::: CC: Ralf Baechle <ralf@linux-mips.org>
+>> 
+>> ---
+>> 0-DAY kernel test infrastructure                Open Source Technology Center
+>> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>
+>
+>_______________________________________________
+>kbuild-all mailing list
+>kbuild-all@lists.01.org
+>https://lists.01.org/mailman/listinfo/kbuild-all
