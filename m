@@ -2,137 +2,104 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B64D9C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE28C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:28:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76EA62086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:24:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76EA62086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AF7BF208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:28:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="VK+7u4v6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF7BF208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732386AbeGJX0F (ORCPT
+        id S1732358AbeGJXaB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 19:26:05 -0400
-Received: from mga18.intel.com ([134.134.136.126]:42266 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732272AbeGJX0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 19:26:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 16:24:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
-   d="scan'208";a="73784428"
-Received: from mgcarrol-mobl1.amr.corp.intel.com (HELO [10.252.202.182]) ([10.252.202.182])
-  by orsmga002.jf.intel.com with ESMTP; 10 Jul 2018 16:24:41 -0700
-Subject: Re: [RFC PATCH v2 12/27] x86/mm: Shadow stack page fault error
- checking
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-13-yu-cheng.yu@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <175662bd-f979-ac5f-b78e-480608bdbf55@linux.intel.com>
-Date:   Tue, 10 Jul 2018 16:24:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Tue, 10 Jul 2018 19:30:01 -0400
+Received: from sonic308-16.consmr.mail.gq1.yahoo.com ([98.137.68.40]:39238
+        "EHLO sonic308-16.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732305AbeGJXaA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 19:30:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1531265316; bh=7ZsuvngLdaQKxqLuRYKT98yYZUfA+IY8qbGPlm++Fzw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=VK+7u4v6w3UeWDdCtkLkSBwAxT4LgHzKwIAFpS9PAh6/FaMe3JfRY3e9NtA/Q9uQF02TlWs54MyXu6OkE0mho2WthibrknDV0iyU4bEXJUrTTOxSgxeMImeqcVMU7jywqlXrQBrIf1W1bs2uvc8dXsqhCTm7c+mVbounVxqqz/9uiqYwMK5qrzs5cKXLML1HsHdVgdx8T6bzHyha3r+ac65otvfSMlz92uk2LIDkxulvJ5I/O3qRAGzsj0hIKETyXiZdjICYdWvq/H5mreNmsxmQZMk+E5W7Z411b66QWI8UYsfEdREZy7shgd1bDL2A2a0r7Rep0MK/YWi/vDhoxA==
+X-YMail-OSG: 3NsdhXsVM1k2U315gBRA_Ua5ZIbQzYQ.SJM41hQWemG6MbJnn.lrx.vRpTPUF6P
+ e.0gmj1KP2FTJ.4Hd93RXlqCbGoST1_Xq50YFCRULpIdA7RZDUkMCVxDT8FCIIjdH8AC6HPOp9W4
+ FQbGvrq2eS7Ptfugj_of04jyvTjFXrNDomc9zGtVF5ddI45vFPINQZT4x0loL1vfkgxA.ZD_hCZb
+ PT7R.YEf5kA1zaRWWIJIWCMc4LNf4ZeywR_XsVwf2HNjjr56_yhmLzQMwZzj1CMwDQjCiR6h2a0L
+ VbGVmTilbf3rbVAN6cUhEr0QWgCXFLwIPIuOWnS.Rrnz9AaEWMPxjBlI3svULjmBEyQidhjlDwNP
+ XYSAKiPwWeWOwDlUaPhxVA.ut.iXqlImqXm.XMrSHPF3tRuV14tOtyZqvZTLYtIQFiFe44KzsPvC
+ YXB7L3ni0JBnnaRhb2HaKsagLLvH1B.7KuJtRGpQoFcTWwl0pfnDQ0ph4XcW.dNuBMz8jcVJF32l
+ 9vnKhIPWD1PfqKVJtiySiX_vgRR8AQiBhXPhk7HoQzw.DkwMC_hKPFBLZW9OQHGbEsV0kfQRFWJ9
+ fKE13ZuheHt9ASQSL_ibbot0MJWfhbvxvP0D1O4.LfFHTRzigph0n61pHD0wIFIcykaaFMJU41FG
+ .KwsMEGgeEXQbakZE.uWd1SFP28MtTtWEsBMdRiauezxw1DKpE16dS.s2.VtkZuJ9IgpYQgktM2t
+ GxkEkm2OZhlx6G.3D3rdfiV76GTKSLbClwRSplh3Wh5eZXTNAJbDJUJTo6C8GjqFKmw3Ree4QerZ
+ 12l6Mle_2OlI6wXx7zmM4umz7dXpxAxmYQK6217SdQhVXuomsUjFDeyiqxvFLcl6SlRDhzIDgYEB
+ QjZvD7F8RB7kxTWL_BlkkkQ6NoQz8CeOBIm7kZ03OylXRXuZq2622TGPUOQQ2pPoayj.v4mm3cMx
+ KknoDLebfiKYRZcY8goqOgRmlwTAaC23BUXsZ9HD47eGes0OIyQakziO1DQ71csyssu84PzeaS.7
+ xSEdPj7qP.ff.
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Tue, 10 Jul 2018 23:28:36 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
+          by smtp412.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8d8fe1d099b610d34f46cf9228dbb2bb;
+          Tue, 10 Jul 2018 23:28:31 +0000 (UTC)
+Subject: Re: [PATCH 08/32] smack: Implement filesystem context security hooks
+ [ver #9]
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        torvalds@linux-foundation.org
+References: <dc5039cb-97cf-fe72-d601-f48eb26e8e66@schaufler-ca.com>
+ <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+ <153126254346.14533.14191961720018099798.stgit@warthog.procyon.org.uk>
+ <16480.1531264793@warthog.procyon.org.uk>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <27bf0500-470d-d68a-2757-25cfae05d5a0@schaufler-ca.com>
+Date:   Tue, 10 Jul 2018 16:28:30 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180710222639.8241-13-yu-cheng.yu@intel.com>
+In-Reply-To: <16480.1531264793@warthog.procyon.org.uk>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
-> +	/*
-> +	 * Verify X86_PF_SHSTK is within a shadow stack VMA.
-> +	 * It is always an error if there is a shadow stack
-> +	 * fault outside a shadow stack VMA.
-> +	 */
-> +	if (error_code & X86_PF_SHSTK) {
-> +		if (!(vma->vm_flags & VM_SHSTK))
-> +			return 1;
-> +		return 0;
-> +	}
+On 7/10/2018 4:19 PM, David Howells wrote:
+> Casey Schaufler <casey@schaufler-ca.com> wrote:
+>
+>>> Implement filesystem context security hooks for the smack LSM.
+>>>
+>>> Question: Should the ->fs_context_parse_source() hook be implemented to
+>>> check the labels on any source devices specified?
+>> Checking the label on a block device when doing a mount
+>> is just going to end in tears. If you're remounting from
+>> an already mounted filesystem it might make sense to check
+>> that the new mount doesn't provide greater access than the
+>> existing mount. If the original mount has smackfsdefault="_"
+>> I could see prohibiting the additional mount having
+>> smackfsdefault="*" on a filesystem that doesn't support
+>> xattrs. But that requires that a (hopefully) privileged
+>> process be involved, and we expect them to have a clue.
+>> So no, I don't see it necessary.
+> I think I may have meant the device file rather than the actual device
+> content.
 
-It turns out that a X86_PF_SHSTK just means that the processor faulted
-while doing access to something it thinks should be a shadow-stack
-virtual address.
+You may have! I see no reason to look at the label on /dev/sdb1
+when mounting it. There's already sufficient privilege required
+to protect that in my mind.
 
-But, we *can* have faults on shadow stack accesses for non-shadow-stack
-reasons.
+>
+> David
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
 
-I think you need to remove the 'return 0' and let it fall through to the
-other access checks that we might be failing.  If it's a shadow stack
-access, it has to be a shadow stack VMA.  But, a shadow-stack access
-fault to a shadow stack VMA isn't _necessarily_ OK.
