@@ -2,170 +2,195 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A61DFC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4365C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61AFB208E1
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:44:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YBEGkGit"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61AFB208E1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 7270320871
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:49:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7270320871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933178AbeGJIo4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:44:56 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:45229 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751432AbeGJIoy (ORCPT
+        id S1751355AbeGJItY (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:49:24 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38012 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751212AbeGJItV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:44:54 -0400
-Received: by mail-qt0-f196.google.com with SMTP id y5-v6so17641973qti.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 01:44:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=+GIAKQDQFSFQztEFMaVeioL3lzy9BxfSG2/K3Fqo07E=;
-        b=YBEGkGitM+tKnduN/qc3hKn+WfJnPZM3oOYcvwV8fqm0GRbbGFaFgf2pWpUU+m7+oD
-         Lrcd7qf8VP62kNRoEvb+3C35rn3+k87m4SnAYuZdq7028GkuI4gXaG7bANqkQTk4jZE0
-         PhIUom0Cop5oiO8jYP+CabtfnanSibFrXthhM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+GIAKQDQFSFQztEFMaVeioL3lzy9BxfSG2/K3Fqo07E=;
-        b=D49ViDKCRx3MOCFxu+XOfR0fhZ0619/vVI3bm+h2KV97Wns6WOsrUBjEvy6vbygiZJ
-         fLUAm+JA8YV9po5Rjfw1s51TbUJBJ0CdRbNRDp8LBgfnxVrpB6oJ5HFtpt/ovQLLVUVK
-         THwi1psCbw89caFiqDynWuNaON1Q2CZAgJsC0YMGmzOs/qgIpMVOVEm+y/S6Qk5+LwpF
-         AYUl314GgxrqektDj+X5SeHMVBooOdWBgRQByWByag8vuDMqPKuj8sFxUBftCtQLPQsu
-         subKA+uEAbZR1tA186h9Tkuff2sPicpjtdN/mr70qtK3gQHs2Bgncd+rVG/Qu2GeoDbi
-         sQfw==
-X-Gm-Message-State: APt69E0Bp5ZHTVE+EsfhXeH4yh+IWs6Ummmcr/3XAyE1Emz6jWRhJLuZ
-        uu0xCW0U7nx2S/SrvapIMfaVhw==
-X-Google-Smtp-Source: AAOMgpdE3ZcwsxOcHQzPGJ6Z2niyEyVyAj8TAzlquev3JFnnwHOuYCW87dFuPpNyEasW8EBDB/1x3g==
-X-Received: by 2002:a0c:aa06:: with SMTP id d6-v6mr20436334qvb.26.1531212293826;
-        Tue, 10 Jul 2018 01:44:53 -0700 (PDT)
-Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id j20-v6sm13893422qtc.71.2018.07.10.01.44.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 10 Jul 2018 01:44:52 -0700 (PDT)
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-To:     wim@linux-watchdog.org, linux@roeck-us.net
-Cc:     ray.jui@broadcom.com, vladimir.olovyannikov@broadcom.com,
-        vikram.prakash@broadcom.com, scott.branden@broadcom.com,
-        sudeep.holla@arm.com, linux-watchdog@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [RFC PATCH v3] watchdog: sp805: Add clock-frequency property
-Date:   Tue, 10 Jul 2018 14:14:39 +0530
-Message-Id: <1531212279-24953-1-git-send-email-srinath.mannam@broadcom.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 10 Jul 2018 04:49:21 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6A8iMf2075341
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 04:49:21 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k4qt20wgp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 04:49:20 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Tue, 10 Jul 2018 09:49:19 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 10 Jul 2018 09:49:16 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6A8nE9T41615550
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Jul 2018 08:49:14 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3780011C05B;
+        Tue, 10 Jul 2018 11:49:32 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6612D11C04A;
+        Tue, 10 Jul 2018 11:49:31 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 10 Jul 2018 11:49:31 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v6 21/21] s390: doc: detailed specifications for AP
+ virtualization
+To:     Halil Pasic <pasic@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com,
+        Tony Krowiak <akrowiak@linux.ibm.com>
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-22-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <753c5e17-c241-580d-6e3a-a3c3159d44a8@linux.ibm.com>
+ <0580735b-8813-f860-a2ac-654d82203b35@linux.ibm.com>
+ <2e30976a-a2d0-c407-c491-acde565b63f1@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Tue, 10 Jul 2018 10:49:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <2e30976a-a2d0-c407-c491-acde565b63f1@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18071008-0016-0000-0000-000001E5269A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071008-0017-0000-0000-00003239AAE0
+Message-Id: <fa82b7e9-b6c5-440e-422d-cf3ad8c08757@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-10_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807100100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When using ACPI node, binding clock devices are
-not available as device tree, So clock-frequency
-property given in _DSD object of ACPI device is
-used to calculate Watchdog rate.
+On 09/07/2018 17:50, Halil Pasic wrote:
+>
+>
+> On 07/09/2018 05:21 AM, Pierre Morel wrote:
+>> On 03/07/2018 01:10, Halil Pasic wrote:
+>>>
+>>>
+>>> On 06/29/2018 11:11 PM, Tony Krowiak wrote:
+>>>> This patch provides documentation describing the AP architecture and
+>>>> design concepts behind the virtualization of AP devices. It also
+>>>> includes an example of how to configure AP devices for exclusive
+>>>> use of KVM guests.
+>>>>
+>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>
+>>> I don't like the design of external interfaces except for:
+>>> * cpu model features, and
+>>> * reset handling.
+>>>
+>>> In particular:
+>>>
+>>>
+>> ...snip...
+>>
+>>> 4) If I were to act out the role of the administrator, I would 
+>>> prefer to think of
+>>> specifying or changing the access controls of a guest in respect to 
+>>> AP (that is
+>>> setting the AP matrix) as a single atomic operation -- which either 
+>>> succeeds or fails.
+>>>
+>>> The operation should succeed for any valid configuration, and fail 
+>>> for any invalid
+>>> on.
+>>>
+>>> The current piecemeal approach seems even less fitting if we 
+>>> consider changing the
+>>> access controls of a running guest. AFAIK changing access controls 
+>>> for a running
+>>> guest is possible, and I don't see a reason why should we 
+>>> artificially prohibit this.
+>>>
+>>> I think the current sysfs interface for manipulating the matrix is 
+>>> good for
+>>> manual playing around, but I would prefer having an interface that 
+>>> is better
+>>> suited for programs (e.g. ioctl).
+>>
+>> I disagree with using ioctl.
+>
+> Why? What speaks against ioctl?
 
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
----
- drivers/watchdog/sp805_wdt.c | 35 +++++++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 10 deletions(-)
+Using a sysfs interface is easy and can be done using any interpreted 
+language.
+It has become the standard way to configure drivers.
+Even the existing interface must be consolidated, it exist and is 
+functional.
 
-diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
-index 9849db0..a896b1c 100644
---- a/drivers/watchdog/sp805_wdt.c
-+++ b/drivers/watchdog/sp805_wdt.c
-@@ -11,6 +11,7 @@
-  * warranty of any kind, whether express or implied.
-  */
- 
-+#include <linux/acpi.h>
- #include <linux/device.h>
- #include <linux/resource.h>
- #include <linux/amba/bus.h>
-@@ -22,6 +23,7 @@
- #include <linux/math64.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-+#include <linux/of.h>
- #include <linux/pm.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -65,6 +67,7 @@ struct sp805_wdt {
- 	spinlock_t			lock;
- 	void __iomem			*base;
- 	struct clk			*clk;
-+	u64				rate;
- 	struct amba_device		*adev;
- 	unsigned int			load_val;
- };
-@@ -80,7 +83,7 @@ static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
- 	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
- 	u64 load, rate;
- 
--	rate = clk_get_rate(wdt->clk);
-+	rate = wdt->rate;
- 
- 	/*
- 	 * sp805 runs counter with given value twice, after the end of first
-@@ -106,9 +109,7 @@ static int wdt_setload(struct watchdog_device *wdd, unsigned int timeout)
- static unsigned int wdt_timeleft(struct watchdog_device *wdd)
- {
- 	struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
--	u64 load, rate;
--
--	rate = clk_get_rate(wdt->clk);
-+	u64 load;
- 
- 	spin_lock(&wdt->lock);
- 	load = readl_relaxed(wdt->base + WDTVALUE);
-@@ -118,7 +119,7 @@ static unsigned int wdt_timeleft(struct watchdog_device *wdd)
- 		load += wdt->load_val + 1;
- 	spin_unlock(&wdt->lock);
- 
--	return div_u64(load, rate);
-+	return div_u64(load, wdt->rate);
- }
- 
- static int
-@@ -228,11 +229,25 @@ sp805_wdt_probe(struct amba_device *adev, const struct amba_id *id)
- 	if (IS_ERR(wdt->base))
- 		return PTR_ERR(wdt->base);
- 
--	wdt->clk = devm_clk_get(&adev->dev, NULL);
--	if (IS_ERR(wdt->clk)) {
--		dev_warn(&adev->dev, "Clock not found\n");
--		ret = PTR_ERR(wdt->clk);
--		goto err;
-+	if (adev->dev.of_node) {
-+		wdt->clk = devm_clk_get(&adev->dev, NULL);
-+		if (IS_ERR(wdt->clk)) {
-+			dev_err(&adev->dev, "Clock not found\n");
-+			return PTR_ERR(wdt->clk);
-+		}
-+		wdt->rate = clk_get_rate(wdt->clk);
-+	} else if (has_acpi_companion(&adev->dev)) {
-+		/*
-+		 * When Driver probe with ACPI device, clock devices
-+		 * are not available, so watchdog rate get from
-+		 * clock-frequency property given in _DSD object.
-+		 */
-+		device_property_read_u64(&adev->dev, "clock-frequency",
-+					 &wdt->rate);
-+		if (!wdt->rate) {
-+			dev_err(&adev->dev, "no clock-frequency property\n");
-+			return -ENODEV;
-+		}
- 	}
- 
- 	wdt->adev = adev;
+
+For what I understood, the problem is to have an atomic update of the 
+matrix to avoid possible dead-lock
+when two admin tasks try to configure a matrix for a guest.
+
+The problematic is a userland problem it is not a kernel problem.
+
+We have several possibilities to avoid this problem but  still keep a 
+sysfs interface:
+- the admin tasks may use a lock
+- the admin task may use a policy like freeing owned resources if they 
+can not get all resources.
+
+Using a step by step configuration allows to easily know the missing 
+resource in case of failure.
+
+Regards,
+
+Pierre
+
+
+>
+>> I agree that the current implementation is not right.
+>> The configuration of APM and AQM should always be guarantied as coherent
+>> within the host but it can be done doing the right checks when using 
+>> the sysfs.
+>>
+>
+> I'm glad we agree on this one at least.
+>
+> Regards,
+> Halil
+
+
 -- 
-2.7.4
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
