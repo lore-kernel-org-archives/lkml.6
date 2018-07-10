@@ -6,76 +6,229 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A349C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25007C6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C76D620A8B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:43:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76D620A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DC35020B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:43:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC35020B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389021AbeGJSdm (ORCPT
+        id S2388798AbeGJSn2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:51800 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732681AbeGJSdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 044811713;
-        Tue, 10 Jul 2018 10:17:39 -0700 (PDT)
-Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.210.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 751F63F589;
-        Tue, 10 Jul 2018 10:17:36 -0700 (PDT)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     hch@lst.de, m.szyprowski@samsung.com,
-        iommu@lists.linux-foundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lorenzo.pieralisi@arm.com, hanjun.guo@linaro.org,
-        sudeep.holla@arm.com, robh+dt@kernel.org, frowand.list@gmail.com,
-        gregkh@linuxfoundation.org, joro@8bytes.org, x86@kernel.org
-Subject: [RFC PATCH 4/4] iommu/dma: Respect bus DMA limit for IOVAs
-Date:   Tue, 10 Jul 2018 18:17:19 +0100
-Message-Id: <2c0d7437ee7ccdd58da25faa283bd3c3148b961b.1531239284.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.17.1.dirty
-In-Reply-To: <cover.1531239284.git.robin.murphy@arm.com>
-References: <cover.1531239284.git.robin.murphy@arm.com>
+        Tue, 10 Jul 2018 14:43:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47836 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389016AbeGJSdn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 14:33:43 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00A2CE78;
+        Tue, 10 Jul 2018 18:33:29 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lars Persson <larper@axis.com>,
+        Paulo Alcantara <palcantara@suse.de>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 09/53] cifs: Fix use after free of a mid_q_entry
+Date:   Tue, 10 Jul 2018 20:24:45 +0200
+Message-Id: <20180710182459.427508106@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
+References: <20180710182458.736721865@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Take the new bus limit into account (when present) for IOVA allocations,
-to accommodate those SoCs which integrate off-the-shelf IP blocks with
-narrower interconnects such that the link between a device output and an
-IOMMU input can truncate DMA addresses to even fewer bits than the
-native size of either block's interface would imply.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Eventually it might make sense for the DMA core to apply this constraint
-up-front in dma_set_mask() and friends, but for now this seems like the
-least risky approach.
+------------------
 
-Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+From: Lars Persson <lars.persson@axis.com>
+
+commit 696e420bb2a6624478105651d5368d45b502b324 upstream.
+
+With protocol version 2.0 mounts we have seen crashes with corrupt mid
+entries. Either the server->pending_mid_q list becomes corrupt with a
+cyclic reference in one element or a mid object fetched by the
+demultiplexer thread becomes overwritten during use.
+
+Code review identified a race between the demultiplexer thread and the
+request issuing thread. The demultiplexer thread seems to be written
+with the assumption that it is the sole user of the mid object until
+it calls the mid callback which either wakes the issuer task or
+deletes the mid.
+
+This assumption is not true because the issuer task can be woken up
+earlier by a signal. If the demultiplexer thread has proceeded as far
+as setting the mid_state to MID_RESPONSE_RECEIVED then the issuer
+thread will happily end up calling cifs_delete_mid while the
+demultiplexer thread still is using the mid object.
+
+Inserting a delay in the cifs demultiplexer thread widens the race
+window and makes reproduction of the race very easy:
+
+		if (server->large_buf)
+			buf = server->bigbuf;
+
++		usleep_range(500, 4000);
+
+		server->lstrp = jiffies;
+
+To resolve this I think the proper solution involves putting a
+reference count on the mid object. This patch makes sure that the
+demultiplexer thread holds a reference until it has finished
+processing the transaction.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Lars Persson <larper@axis.com>
+Acked-by: Paulo Alcantara <palcantara@suse.de>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/iommu/dma-iommu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/cifs/cifsglob.h      |    1 +
+ fs/cifs/cifsproto.h     |    1 +
+ fs/cifs/connect.c       |    8 +++++++-
+ fs/cifs/smb1ops.c       |    1 +
+ fs/cifs/smb2ops.c       |    1 +
+ fs/cifs/smb2transport.c |    1 +
+ fs/cifs/transport.c     |   18 +++++++++++++++++-
+ 7 files changed, 29 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index ddcbbdb5d658..511ff9a1d6d9 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -367,6 +367,9 @@ static dma_addr_t iommu_dma_alloc_iova(struct iommu_domain *domain,
- 	if (iova_len < (1 << (IOVA_RANGE_CACHE_MAX_SIZE - 1)))
- 		iova_len = roundup_pow_of_two(iova_len);
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -1340,6 +1340,7 @@ typedef int (mid_handle_t)(struct TCP_Se
+ /* one of these for every pending CIFS request to the server */
+ struct mid_q_entry {
+ 	struct list_head qhead;	/* mids waiting on reply from this server */
++	struct kref refcount;
+ 	struct TCP_Server_Info *server;	/* server corresponding to this mid */
+ 	__u64 mid;		/* multiplex id */
+ 	__u32 pid;		/* process id */
+--- a/fs/cifs/cifsproto.h
++++ b/fs/cifs/cifsproto.h
+@@ -76,6 +76,7 @@ extern struct mid_q_entry *AllocMidQEntr
+ 					struct TCP_Server_Info *server);
+ extern void DeleteMidQEntry(struct mid_q_entry *midEntry);
+ extern void cifs_delete_mid(struct mid_q_entry *mid);
++extern void cifs_mid_q_entry_release(struct mid_q_entry *midEntry);
+ extern void cifs_wake_up_task(struct mid_q_entry *mid);
+ extern int cifs_handle_standard(struct TCP_Server_Info *server,
+ 				struct mid_q_entry *mid);
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -889,6 +889,7 @@ cifs_demultiplex_thread(void *p)
+ 			continue;
+ 		server->total_read += length;
  
-+	if (dev->bus_dma_mask)
-+		dma_limit &= dev->bus_dma_mask;
++		mid_entry = NULL;
+ 		if (server->ops->is_transform_hdr &&
+ 		    server->ops->receive_transform &&
+ 		    server->ops->is_transform_hdr(buf)) {
+@@ -903,8 +904,11 @@ cifs_demultiplex_thread(void *p)
+ 				length = mid_entry->receive(server, mid_entry);
+ 		}
+ 
+-		if (length < 0)
++		if (length < 0) {
++			if (mid_entry)
++				cifs_mid_q_entry_release(mid_entry);
+ 			continue;
++		}
+ 
+ 		if (server->large_buf)
+ 			buf = server->bigbuf;
+@@ -920,6 +924,8 @@ cifs_demultiplex_thread(void *p)
+ 
+ 			if (!mid_entry->multiRsp || mid_entry->multiEnd)
+ 				mid_entry->callback(mid_entry);
 +
- 	if (domain->geometry.force_aperture)
- 		dma_limit = min(dma_limit, domain->geometry.aperture_end);
++			cifs_mid_q_entry_release(mid_entry);
+ 		} else if (server->ops->is_oplock_break &&
+ 			   server->ops->is_oplock_break(buf, server)) {
+ 			cifs_dbg(FYI, "Received oplock break\n");
+--- a/fs/cifs/smb1ops.c
++++ b/fs/cifs/smb1ops.c
+@@ -105,6 +105,7 @@ cifs_find_mid(struct TCP_Server_Info *se
+ 		if (compare_mid(mid->mid, buf) &&
+ 		    mid->mid_state == MID_REQUEST_SUBMITTED &&
+ 		    le16_to_cpu(mid->command) == buf->Command) {
++			kref_get(&mid->refcount);
+ 			spin_unlock(&GlobalMid_Lock);
+ 			return mid;
+ 		}
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -202,6 +202,7 @@ smb2_find_mid(struct TCP_Server_Info *se
+ 		if ((mid->mid == wire_mid) &&
+ 		    (mid->mid_state == MID_REQUEST_SUBMITTED) &&
+ 		    (mid->command == shdr->Command)) {
++			kref_get(&mid->refcount);
+ 			spin_unlock(&GlobalMid_Lock);
+ 			return mid;
+ 		}
+--- a/fs/cifs/smb2transport.c
++++ b/fs/cifs/smb2transport.c
+@@ -548,6 +548,7 @@ smb2_mid_entry_alloc(const struct smb2_s
  
--- 
-2.17.1.dirty
+ 	temp = mempool_alloc(cifs_mid_poolp, GFP_NOFS);
+ 	memset(temp, 0, sizeof(struct mid_q_entry));
++	kref_init(&temp->refcount);
+ 	temp->mid = le64_to_cpu(shdr->MessageId);
+ 	temp->pid = current->pid;
+ 	temp->command = shdr->Command; /* Always LE */
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -56,6 +56,7 @@ AllocMidQEntry(const struct smb_hdr *smb
+ 
+ 	temp = mempool_alloc(cifs_mid_poolp, GFP_NOFS);
+ 	memset(temp, 0, sizeof(struct mid_q_entry));
++	kref_init(&temp->refcount);
+ 	temp->mid = get_mid(smb_buffer);
+ 	temp->pid = current->pid;
+ 	temp->command = cpu_to_le16(smb_buffer->Command);
+@@ -77,6 +78,21 @@ AllocMidQEntry(const struct smb_hdr *smb
+ 	return temp;
+ }
+ 
++static void _cifs_mid_q_entry_release(struct kref *refcount)
++{
++	struct mid_q_entry *mid = container_of(refcount, struct mid_q_entry,
++					       refcount);
++
++	mempool_free(mid, cifs_mid_poolp);
++}
++
++void cifs_mid_q_entry_release(struct mid_q_entry *midEntry)
++{
++	spin_lock(&GlobalMid_Lock);
++	kref_put(&midEntry->refcount, _cifs_mid_q_entry_release);
++	spin_unlock(&GlobalMid_Lock);
++}
++
+ void
+ DeleteMidQEntry(struct mid_q_entry *midEntry)
+ {
+@@ -105,7 +121,7 @@ DeleteMidQEntry(struct mid_q_entry *midE
+ 		}
+ 	}
+ #endif
+-	mempool_free(midEntry, cifs_mid_poolp);
++	cifs_mid_q_entry_release(midEntry);
+ }
+ 
+ void
+
 
