@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4181C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6816FC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 821E82083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 821E82083E
+	by mail.kernel.org (Postfix) with ESMTP id 268E52083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 268E52083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388397AbeGJSbd (ORCPT
+        id S2388408AbeGJSbg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:31:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45852 "EHLO
+        Tue, 10 Jul 2018 14:31:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45862 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732481AbeGJSbc (ORCPT
+        with ESMTP id S2387531AbeGJSbf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:31:32 -0400
+        Tue, 10 Jul 2018 14:31:35 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 81AEEEC2;
-        Tue, 10 Jul 2018 18:31:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 69D7CEB4;
+        Tue, 10 Jul 2018 18:31:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.9 52/52] staging: comedi: quatech_daqp_cs: fix no-op loop daqp_ao_insn_write()
-Date:   Tue, 10 Jul 2018 20:25:20 +0200
-Message-Id: <20180710182454.122783954@linuxfoundation.org>
+        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
+        Theodore Tso <tytso@mit.edu>, stable@kernel.org
+Subject: [PATCH 4.9 35/52] ext4: check superblock mapped prior to committing
+Date:   Tue, 10 Jul 2018 20:25:03 +0200
+Message-Id: <20180710182452.612088046@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -50,31 +50,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jon Derrick <jonathan.derrick@intel.com>
 
-commit 1376b0a2160319125c3a2822e8c09bd283cd8141 upstream.
+commit a17712c8e4be4fa5404d20e9cd3b2b21eae7bc56 upstream.
 
-There is a '>' vs '<' typo so this loop is a no-op.
+This patch attempts to close a hole leading to a BUG seen with hot
+removals during writes [1].
 
-Fixes: d35dcc89fc93 ("staging: comedi: quatech_daqp_cs: fix daqp_ao_insn_write()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+A block device (NVME namespace in this test case) is formatted to EXT4
+without partitions. It's mounted and write I/O is run to a file, then
+the device is hot removed from the slot. The superblock attempts to be
+written to the drive which is no longer present.
+
+The typical chain of events leading to the BUG:
+ext4_commit_super()
+  __sync_dirty_buffer()
+    submit_bh()
+      submit_bh_wbc()
+        BUG_ON(!buffer_mapped(bh));
+
+This fix checks for the superblock's buffer head being mapped prior to
+syncing.
+
+[1] https://www.spinics.net/lists/linux-ext4/msg56527.html
+
+Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/comedi/drivers/quatech_daqp_cs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ext4/super.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-+++ b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-@@ -642,7 +642,7 @@ static int daqp_ao_insn_write(struct com
- 	/* Make sure D/A update mode is direct update */
- 	outb(0, dev->iobase + DAQP_AUX_REG);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -4629,6 +4629,14 @@ static int ext4_commit_super(struct supe
  
--	for (i = 0; i > insn->n; i++) {
-+	for (i = 0; i < insn->n; i++) {
- 		unsigned int val = data[i];
- 		int ret;
- 
+ 	if (!sbh || block_device_ejected(sb))
+ 		return error;
++
++	/*
++	 * The superblock bh should be mapped, but it might not be if the
++	 * device was hot-removed. Not much we can do but fail the I/O.
++	 */
++	if (!buffer_mapped(sbh))
++		return error;
++
+ 	/*
+ 	 * If the file system is mounted read-only, don't update the
+ 	 * superblock write time.  This avoids updating the superblock
 
 
