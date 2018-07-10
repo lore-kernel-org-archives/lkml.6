@@ -6,35 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70243C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE767C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CB3A20B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB3A20B6F
+	by mail.kernel.org (Postfix) with ESMTP id AA79420B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA79420B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388879AbeGJSdP (ORCPT
+        id S2388891AbeGJSdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47704 "EHLO
+        Tue, 10 Jul 2018 14:33:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47716 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387748AbeGJSdO (ORCPT
+        with ESMTP id S1732621AbeGJSdR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:14 -0400
+        Tue, 10 Jul 2018 14:33:17 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78F3FD0B;
-        Tue, 10 Jul 2018 18:33:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93513D0B;
+        Tue, 10 Jul 2018 18:33:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 33/53] HID: debug: check length before copy_to_user()
-Date:   Tue, 10 Jul 2018 20:25:09 +0200
-Message-Id: <20180710182500.719568903@linuxfoundation.org>
+        stable@vger.kernel.org, Rakib Mullick <rakib.mullick@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Janne Huttunen <janne.huttunen@nokia.com>
+Subject: [PATCH 4.14 34/53] irq/core: Fix boot crash when the irqaffinity= boot parameter is passed on CPUMASK_OFFSTACK=y kernels(v1)
+Date:   Tue, 10 Jul 2018 20:25:10 +0200
+Message-Id: <20180710182500.766216757@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -51,53 +54,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Rosenberg <drosen@google.com>
+From: Rakib Mullick <rakib.mullick@gmail.com>
 
-commit 717adfdaf14704fd3ec7fa2c04520c0723247eac upstream.
+commit 10d94ff4d558b96bfc4f55bb0051ae4d938246fe upstream.
 
-If our length is greater than the size of the buffer, we
-overflow the buffer
+When the irqaffinity= kernel parameter is passed in a CPUMASK_OFFSTACK=y
+kernel, it fails to boot, because zalloc_cpumask_var() cannot be used before
+initializing the slab allocator to allocate a cpumask.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+So, use alloc_bootmem_cpumask_var() instead.
+
+Also do some cleanups while at it: in init_irq_default_affinity() remove
+an #ifdef via using cpumask_available().
+
+Signed-off-by: Rakib Mullick <rakib.mullick@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/20171026045800.27087-1-rakib.mullick@gmail.com
+Link: http://lkml.kernel.org/r/20171101041451.12581-1-rakib.mullick@gmail.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Janne Huttunen <janne.huttunen@nokia.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-debug.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ kernel/irq/irqdesc.c |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -1154,6 +1154,8 @@ copy_rest:
- 			goto out;
- 		if (list->tail > list->head) {
- 			len = list->tail - list->head;
-+			if (len > count)
-+				len = count;
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -27,7 +27,7 @@ static struct lock_class_key irq_desc_lo
+ #if defined(CONFIG_SMP)
+ static int __init irq_affinity_setup(char *str)
+ {
+-	zalloc_cpumask_var(&irq_default_affinity, GFP_NOWAIT);
++	alloc_bootmem_cpumask_var(&irq_default_affinity);
+ 	cpulist_parse(str, irq_default_affinity);
+ 	/*
+ 	 * Set at least the boot cpu. We don't want to end up with
+@@ -40,10 +40,8 @@ __setup("irqaffinity=", irq_affinity_set
  
- 			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
-@@ -1163,6 +1165,8 @@ copy_rest:
- 			list->head += len;
- 		} else {
- 			len = HID_DEBUG_BUFSIZE - list->head;
-+			if (len > count)
-+				len = count;
- 
- 			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
-@@ -1170,7 +1174,9 @@ copy_rest:
- 			}
- 			list->head = 0;
- 			ret += len;
--			goto copy_rest;
-+			count -= len;
-+			if (count > 0)
-+				goto copy_rest;
- 		}
- 
- 	}
+ static void __init init_irq_default_affinity(void)
+ {
+-#ifdef CONFIG_CPUMASK_OFFSTACK
+-	if (!irq_default_affinity)
++	if (!cpumask_available(irq_default_affinity))
+ 		zalloc_cpumask_var(&irq_default_affinity, GFP_NOWAIT);
+-#endif
+ 	if (cpumask_empty(irq_default_affinity))
+ 		cpumask_setall(irq_default_affinity);
+ }
 
 
