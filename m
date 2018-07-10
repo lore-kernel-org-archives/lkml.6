@@ -2,104 +2,164 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36EAC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9751FC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7673220870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50D8A20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:45:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="aGS4rqPd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7673220870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pGMn10+h";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CRdIOZOj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D8A20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389171AbeGJSp1 (ORCPT
+        id S2389226AbeGJSp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:45:27 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43783 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732237AbeGJSpU (ORCPT
+        Tue, 10 Jul 2018 14:45:29 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36666 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732443AbeGJSp3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:45:20 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v13-v6so2232533pgr.10
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 11:45:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=Y2bIJtBP3OgG7qKzFC83bGjRZ6M9zD795pKCvqrP400=;
-        b=aGS4rqPd8D+f/YUwPBZyrf+wdfNezAQ5fO9W4mBgwWiEcxXQ0AFfupNGYwYbbQXsw/
-         cCSkihR4moUaHi+HHeZRvW2wWFqG4oXLfLPq4GAtXiLAkSRGejmS1PBwfqG7UifzDp7t
-         4d8fNLQ5g+ehAEzDvs0fyFdhgd6yNli8lgdqI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Y2bIJtBP3OgG7qKzFC83bGjRZ6M9zD795pKCvqrP400=;
-        b=qjvOp3BNh0JdOBtQrz8LOTZilM7AZ8zjV6S3l46RHquE03y9IRgYd2wbYB3aaf52JT
-         7UgsMbg47d5uoj7L+zKbNMfbdO6R6UA8ULj/cpwKXnwmOMQKeLu4UED8po6D3XVgvliZ
-         afo8UZENWcNx61U5ZmBuU55o7r8OneJyvAfx5/QgtYpcoFmH+48iJRzPYyr2EOaSODqu
-         +++gc1TpBZMdA93p3EgdgXqmOu69C9GNfZvMPyiUXue/nXP734bl881+Yu2S+pmEYWzR
-         nterb5DvqPHithYpdfjJ4B0BSmMqqa2yOeKnQQNVxEDhbp21XQFSzQmXt0qw+kDLKbQh
-         Ucow==
-X-Gm-Message-State: APt69E25eMQcZY/GzT6EVHcd3ZPYLBNH2qyaD+iMn18O8umhJjM27a4J
-        XcvCgTDyw5K427anoYX0kpfU/VhAIHM=
-X-Google-Smtp-Source: AAOMgpfTb9LjDNL7Qt8ssdYOoNlwuO3TRpKPf2Oe2SySKsgR+Ovvwx6QV5ZbG/XZ9CuDTxBP3OH8YA==
-X-Received: by 2002:a65:5a49:: with SMTP id z9-v6mr23718441pgs.244.1531244700736;
-        Tue, 10 Jul 2018 10:45:00 -0700 (PDT)
-Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id r77-v6sm32459182pfr.117.2018.07.10.10.44.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 10:45:00 -0700 (PDT)
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH] trace: Add SPDX-License-Identifier to trace_preemptirq.c
-Date:   Tue, 10 Jul 2018 10:44:49 -0700
-Message-Id: <20180710174449.110865-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+        Tue, 10 Jul 2018 14:45:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5360B60B26; Tue, 10 Jul 2018 17:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531243628;
+        bh=M5IFkUPlOhbJ7uNEKajrwoZY2izVPWF9L2p6i0my0a4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=pGMn10+hVxQYJy6I4z0lkn4ulU5JEQb6tzxgXb1rwLydxoU6KpS0JXEGXgg2oPZSr
+         7cDvUFjCGx0MWEvP0oSuYNvtg0c4jjnHADCYzCqS/op4shtEcrL5kYriZ81mEKyZBH
+         5bu14YI2X3rrLfB073R1wIjxqRlBLuJMVL0In0qg=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A93BB607EB;
+        Tue, 10 Jul 2018 17:27:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531243627;
+        bh=M5IFkUPlOhbJ7uNEKajrwoZY2izVPWF9L2p6i0my0a4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=CRdIOZOjXvBIojugC2jknEdEI+MS0IANBf+aOQWjuW5PnegTsE3bAkldMzklaHJi7
+         u/SB49sOYQmExsgzZs/XlCspmIcGzgtL2qQ16FJxbZDeT6svpt1ax34B3g6H3Nf0L6
+         +ekiuXEUJYpCWyZymLeB7345znS1HOQ5N5ZeonXU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A93BB607EB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v5 6/6] crypto: qcom: Add ACPI support
+To:     Vinod Koul <vkoul@kernel.org>, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arm-msm@vger.kernel.org,
+        Stephen Boyd <swboyd@chromium.org>,
+        Timur Tabi <timur@codeaurora.org>
+References: <20180709061925.20276-1-vkoul@kernel.org>
+ <20180709061925.20276-7-vkoul@kernel.org>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <2a678412-26d4-769e-ff6f-ace5d53e70b5@codeaurora.org>
+Date:   Tue, 10 Jul 2018 11:27:05 -0600
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180709061925.20276-7-vkoul@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+On 7/9/2018 12:19 AM, Vinod Koul wrote:
+> From: Timur Tabi <timur@codeaurora.org>
+> 
+> Add support for probing on ACPI systems, with ACPI HID QCOM8160.
+> 
+> On ACPI systems, clocks are always enabled, the PRNG should
+> already be enabled, and the register region is read-only.
+> The driver only verifies that the hardware is already
+> enabled never tries to disable or configure it.
+> 
+> Signed-off-by: Timur Tabi <timur@codeaurora.org>
+> [port to crypto API]
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
 
-This patch adds a SPDX-License-Identifier to trace_preemptirq.c.
+Tested-by: Jeffrey Hugo <jhugo@codeaurora.org>
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
-This patch is based on top of the v9 posting of "Centralize and unify
-usage of preempt/irq tracepoints": https://lkml.org/lkml/2018/6/28/643
+> ---
+>   drivers/crypto/qcom-rng.c | 22 ++++++++++++++++++----
+>   1 file changed, 18 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/crypto/qcom-rng.c b/drivers/crypto/qcom-rng.c
+> index f1bd86acaf9d..8118d4cd93b2 100644
+> --- a/drivers/crypto/qcom-rng.c
+> +++ b/drivers/crypto/qcom-rng.c
+> @@ -4,6 +4,7 @@
+>   // Based on msm-rng.c and downstream driver
+>   
+>   #include <crypto/internal/rng.h>
+> +#include <linux/acpi.h>
+>   #include <linux/clk.h>
+>   #include <linux/crypto.h>
+>   #include <linux/module.h>
+> @@ -168,13 +169,17 @@ static int qcom_rng_probe(struct platform_device *pdev)
+>   	if (IS_ERR(rng->base))
+>   		return PTR_ERR(rng->base);
+>   
+> -	rng->clk = devm_clk_get(&pdev->dev, "core");
+> -	if (IS_ERR(rng->clk))
+> -		return PTR_ERR(rng->clk);
+>   
+> -	rng->skip_init = (unsigned long)of_device_get_match_data(&pdev->dev);
+> +	/* ACPI systems have clk already on, so skip clk_get */
+> +	if (!has_acpi_companion(&pdev->dev)) {
+> +		rng->clk = devm_clk_get(&pdev->dev, "core");
+> +		if (IS_ERR(rng->clk))
+> +			return PTR_ERR(rng->clk);
+> +	}
+>   
+> +	rng->skip_init = (unsigned long)device_get_match_data(&pdev->dev);
+>   	qcom_rng_dev = rng;
+> +
+>   	ret = crypto_register_rng(&qcom_rng_alg);
+>   	if (ret) {
+>   		dev_err(&pdev->dev, "Register crypto rng failed: %d\n", ret);
+> @@ -193,6 +198,14 @@ static int qcom_rng_remove(struct platform_device *pdev)
+>   	return 0;
+>   }
+>   
+> +#if IS_ENABLED(CONFIG_ACPI)
+> +static const struct acpi_device_id qcom_rng_acpi_match[] = {
+> +	{ .id = "QCOM8160", .driver_data = 1 },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(acpi, qcom_rng_acpi_match);
+> +#endif
+> +
+>   static const struct of_device_id qcom_rng_of_match[] = {
+>   	{ .compatible = "qcom,prng", .data = (void *)0},
+>   	{ .compatible = "qcom,prng-ee", .data = (void *)1},
+> @@ -206,6 +219,7 @@ static struct platform_driver qcom_rng_driver = {
+>   	.driver = {
+>   		.name = KBUILD_MODNAME,
+>   		.of_match_table = of_match_ptr(qcom_rng_of_match),
+> +		.acpi_match_table = ACPI_PTR(qcom_rng_acpi_match),
+>   	}
+>   };
+>   module_platform_driver(qcom_rng_driver);
+> 
 
- kernel/trace/trace_preemptirq.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
-index dc01c7f4d326..13e2c6e99465 100644
---- a/kernel/trace/trace_preemptirq.c
-+++ b/kernel/trace/trace_preemptirq.c
-@@ -1,3 +1,4 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  * preemptoff and irqoff tracepoints
-  *
 -- 
-2.18.0.203.gfac676dfb9-goog
-
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
