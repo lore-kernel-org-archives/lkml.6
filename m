@@ -3,127 +3,352 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7356C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA31C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F738208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:33:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F738208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 5F13D208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:38:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F13D208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934535AbeGJQdb convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:33:31 -0400
-Received: from smtp-out6.electric.net ([192.162.217.187]:50464 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934101AbeGJQda (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:33:30 -0400
-Received: from 1fcvZt-0004di-UD by out6d.electric.net with emc1-ok (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fcvZv-0004jq-TR; Tue, 10 Jul 2018 09:33:27 -0700
-Received: by emcmailer; Tue, 10 Jul 2018 09:33:27 -0700
-Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
-        by out6d.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fcvZt-0004di-UD; Tue, 10 Jul 2018 09:33:25 -0700
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 10 Jul 2018 17:35:04 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 10 Jul 2018 17:35:04 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Martin KaFai Lau' <kafai@fb.com>, Okash Khawaja <osk@fb.com>
-CC:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-team@fb.com" <kernel-team@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH bpf 1/1] bpf: btf: Fix bitfield extraction for big endian
-Thread-Topic: [PATCH bpf 1/1] bpf: btf: Fix bitfield extraction for big endian
-Thread-Index: AQHUF7OfQA7M1iwM3EWyyOlGSAzC+KSIqAuw
-Date:   Tue, 10 Jul 2018 16:35:04 +0000
-Message-ID: <457ec72d8d7c4cdd8c112f9c8c91b0e7@AcuMS.aculab.com>
-References: <20180709002202.019053555@fb.com>
- <20180709004002.440153594@fb.com>
- <20180709183236.r4b7gzmev5h4lcbw@kafai-mbp.dhcp.thefacebook.com>
-In-Reply-To: <20180709183236.r4b7gzmev5h4lcbw@kafai-mbp.dhcp.thefacebook.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S934573AbeGJQiq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:38:46 -0400
+Received: from foss.arm.com ([217.140.101.70]:50154 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933436AbeGJQio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 12:38:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0265F80D;
+        Tue, 10 Jul 2018 09:38:44 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A94E3F589;
+        Tue, 10 Jul 2018 09:38:41 -0700 (PDT)
+Subject: Re: [PATCH v3 15/20] kvm: arm/arm64: Allow tuning the physical
+ address size for VM
+To:     Dave Martin <Dave.Martin@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     cdall@kernel.org, kvm@vger.kernel.org, catalin.marinas@arm.com,
+        punit.agrawal@arm.com, Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
+References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
+ <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
+ <20180704155104.GN4828@arm.com>
+ <12d1832a-1a13-7dd4-662b-addf58400789@arm.com>
+ <fe9f5aa5-b283-07e0-5f0e-e97d96b780e7@arm.com>
+ <9f1af26e-2913-2b0b-1352-63160096f78f@arm.com>
+ <f3463d0a-c6a3-c34d-acb3-13c99fc61c5a@arm.com>
+ <20180709112326.GD9486@e103592.cambridge.arm.com>
+ <17f8d585-3489-ab6f-6ee1-4d8d337dcf9c@arm.com>
+ <20180709133750.GE9486@e103592.cambridge.arm.com>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <377420ce-97a8-4359-6224-273d91f37247@arm.com>
+Date:   Tue, 10 Jul 2018 17:38:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
-X-Virus-Status: Scanned by VirusSMART (c)
-X-Virus-Status: Scanned by VirusSMART (s)
+In-Reply-To: <20180709133750.GE9486@e103592.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin KaFai Lau
-> Sent: 09 July 2018 19:33
-> On Sun, Jul 08, 2018 at 05:22:03PM -0700, Okash Khawaja wrote:
-> > When extracting bitfield from a number, btf_int_bits_seq_show() builds
-> > a mask and accesses least significant byte of the number in a way
-> > specific to little-endian. This patch fixes that by checking endianness
-> > of the machine and then shifting left and right the unneeded bits.
-> >
-> > Thanks to Martin Lau for the help in navigating potential pitfalls when
-> > dealing with endianess and for the final solution.
-> >
-> > Fixes: b00b8daec828 ("bpf: btf: Add pretty print capability for data with BTF type info")
-> > Signed-off-by: Okash Khawaja <osk@fb.com>
-> >
-> > ---
-> >  kernel/bpf/btf.c |   32 +++++++++++++++-----------------
-> >  1 file changed, 15 insertions(+), 17 deletions(-)
-> >
-> > --- a/kernel/bpf/btf.c
-> > +++ b/kernel/bpf/btf.c
-> > @@ -162,6 +162,8 @@
-> >  #define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
-> >  #define BITS_ROUNDUP_BYTES(bits) \
-> >  	(BITS_ROUNDDOWN_BYTES(bits) + !!BITS_PER_BYTE_MASKED(bits))
-> > +const int one = 1;
-> > +#define is_big_endian() ((*(char *)&one) == 0)
-> >
-> >  #define BTF_INFO_MASK 0x0f00ffff
-> >  #define BTF_INT_MASK 0x0fffffff
-> > @@ -991,16 +993,13 @@ static void btf_int_bits_seq_show(const
-> >  				  void *data, u8 bits_offset,
-> >  				  struct seq_file *m)
-> >  {
-> > +	u8 left_shift_bits, right_shift_bits;
-> Nit.
-> Although only max 64 bit int is allowed now (ensured by btf_int_check_meta),
-> it is better to use u16 such that it will be consistent to BTF_INT_BITS.
+On 09/07/18 14:37, Dave Martin wrote:
+> On Mon, Jul 09, 2018 at 01:29:42PM +0100, Marc Zyngier wrote:
+>> On 09/07/18 12:23, Dave Martin wrote:
+>>> On Fri, Jul 06, 2018 at 05:39:00PM +0100, Suzuki K Poulose wrote:
+>>>> On 07/06/2018 04:09 PM, Marc Zyngier wrote:
+>>>>> On 06/07/18 14:49, Suzuki K Poulose wrote:
+>>>>>> On 04/07/18 23:03, Suzuki K Poulose wrote:
+>>>>>>> On 07/04/2018 04:51 PM, Will Deacon wrote:
+>>>>>>>> Hi Suzuki,
+>>>>>>>>
+>>>>>>>> On Fri, Jun 29, 2018 at 12:15:35PM +0100, Suzuki K Poulose wrote:
+>>>>>>>>> Allow specifying the physical address size for a new VM via
+>>>>>>>>> the kvm_type argument for KVM_CREATE_VM ioctl. This allows
+>>>>>>>>> us to finalise the stage2 page table format as early as possible
+>>>>>>>>> and hence perform the right checks on the memory slots without
+>>>>>>>>> complication. The size is encoded as Log2(PA_Size) in the bits[7:0]
+>>>>>>>>> of the type field and can encode more information in the future if
+>>>>>>>>> required. The IPA size is still capped at 40bits.
+>>>>>>>>>
+>>>>>>>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>>>>>>>>> Cc: Christoffer Dall <cdall@kernel.org>
+>>>>>>>>> Cc: Peter Maydel <peter.maydell@linaro.org>
+>>>>>>>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
+>>>>>>>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
+>>>>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>>>>>>> ---
+>>>>>>>>>    arch/arm/include/asm/kvm_mmu.h   |  2 ++
+>>>>>>>>>    arch/arm64/include/asm/kvm_arm.h | 10 +++-------
+>>>>>>>>>    arch/arm64/include/asm/kvm_mmu.h |  2 ++
+>>>>>>>>>    include/uapi/linux/kvm.h         | 10 ++++++++++
+>>>>>>>>>    virt/kvm/arm/arm.c               | 24 ++++++++++++++++++++++--
+>>>>>>>>>    5 files changed, 39 insertions(+), 9 deletions(-)
+>>>>>>>>
+>>>>>>>> [...]
+>>>>>>>>
+>>>>>>>>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+>>>>>>>>> index 4df9bb6..fa4cab0 100644
+>>>>>>>>> --- a/include/uapi/linux/kvm.h
+>>>>>>>>> +++ b/include/uapi/linux/kvm.h
+>>>>>>>>> @@ -751,6 +751,16 @@ struct kvm_ppc_resize_hpt {
+>>>>>>>>>    #define KVM_S390_SIE_PAGE_OFFSET 1
+>>>>>>>>>    /*
+>>>>>>>>> + * On arm/arm64, machine type can be used to request the physical
+>>>>>>>>> + * address size for the VM. Bits [7-0] have been reserved for the
+>>>>>>>>> + * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
+>>>>>>>>> + * value 0 implies the default IPA size, which is 40bits.
+>>>>>>>>> + */
+>>>>>>>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK    0xff
+>>>>>>>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)        \
+>>>>>>>>> +    ((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
+>>>>>>>>
+>>>>>>>> This seems like you're allocating quite a lot of bits in a non-extensible
+>>>>>>>> interface to a fairly esoteric parameter. Would it be better to add another
+>>>>>>>> ioctl, or condense the number of sizes you support instead?
+>>>>>>>
+>>>>>>> As I explained in the other thread, we need the size as soon as the VM
+>>>>>>> is created. The major challenge is keeping the backward compatibility by
+>>>>>>> mapping 0 to 40bits. I will give it a thought.
+>>>>>>
+>>>>>> Here is one option. We could re-use the {V}TCR_ELx.{I}PS field format, which
+>>>>>> occupies 3 bits and has the following definitions. (ID_AA64MMFR0_EL1:PARange
+>>>>>> also has the field definitions, except that the field is 4bits wide, but
+>>>>>> only 3bits are used)
+>>>>>>
+>>>>>> 000 32 bits, 4GB.
+>>>>>> 001 36 bits, 64GB.
+>>>>>> 010 40 bits, 1TB.
+>>>>>> 011 42 bits, 4TB.
+>>>>>> 100 44 bits, 16TB.
+>>>>>> 101 48 bits, 256TB.
+>>>>>> 110 52 bits, 4PB
+>>>>>>
+>>>>>> But we need to map 0 => 40bits IPA to make our ABI backward compatible. So
+>>>>>> we could use the additional one bit to indicate that IPA size is requested
+>>>>>> in the 3 bits.
+>>>>>>
+>>>>>> i.e,
+>>>>>>
+>>>>>> machine_type:
+>>>>>>
+>>>>>> Bit [2:0]	- Requested IPA size. Values follow VTCR_EL2.PS format.
+>>>>>>
+>>>>>> Bit [3]		- 1 => IPA Size bits (Bits[2:0]) requested.
+>>>>>> 		0 => Not requested
+>>>>>>
+>>>>>> The only minor down side is restricting to the predefined values above,
+>>>>>> which is not a real issue for a VM.
+>>>>>>
+>>>>>> Thoughts ?
+>>>>>
+>>>>> I'd be very wary of using that 4th bit to do something that is not in
+>>>>> the architecture. We have only a single value left to be used (0b111),
+>>>>> and then your scheme clashes with the architecture definition.
+>>>>
+>>>> I agree. However, if we ever go beyond the 3bits in PARange, we have an
+>>>> issue with {V}TCR counter part. But lets not take that chance.
+>>>>
+>>>>>
+>>>>> I'd rather encode things in a way that is independent from the
+>>>>> architecture, and be done with it. You can map 0 to 40bits, and we have
+>>>>> the ability to express all values the architecture has (just in a
+>>>>> different order).
+>>>>
+>>>> The other option I can think of is encoding a signed number which is the
+>>>> difference of the IPA from 40. But that would need 5 bits if we were to
+>>>> encode it as it is. And if we want to squeeze it in 4bit, we could store
+>>>> half the difference (limiting the IPA limit to even numbers).
+>>>>
+>>>> i.e IPA = 40 + 2 * sign_extend(bits[3:0);
+>>>
+>>> I came across similar issues when trying to work out how to enable
+>>> SVE for KVM.  In the end I reduced this to a per-vcpu feature, but
+>>> it means that there is no global opt-in for the SVE-specific KVM
+>>> API extensions:
+>>>
+>>> That's a bit gross, because SVE may require a change to the way
+>>> vcpus are initialised.  The set of supported SVE vector lengths needs
+>>> to be set somehow before the vcpu is set running, but it's tricky do
+>>> do that without a new ioctl -- which would mean that if SVE is enabled
+>>> for a vcpu then the vcpu is not considered runnable until the new
+>>> magic ioctl is called.
+>>>
+>>> Opting into that semantic change globally at VM creation time might
+>>> be preferable.  On the SVE side, this is still very much subject to
+>>> review/change.
+>>>
+>>>
+>>> Here:
+>>>
+>>> The KVM_CREATE_VM init argument seems undefined by the KVM core code and
+>>> is available for arches to abuse in creative ways.  x86 and arm have
+>>> nothing here and reject non-zero values with -EINVAL; s390 treats it as
+>>> a bitmask, and defines a sincle feature-like bit here; powerpc treats it
+>>> as an enumeration of VM types.
+>>>
+>>> If we want to be extensible, we could
+>>>
+>>>   a) Pass a pointer in type, and come up with some extensible VM parameter
+>>>      struct for it to point to (which then wouldn't need a cryptic
+>>>      compressed encoding), or
+>>>
+>>>   b) Introduce a new "KVM_CREATE_VM2" variant that either takes such
+>>>      an argument, or mandates a parameter negotiation phase involving
+>>>      additional ioctls before marking the VM as ready for vcpu and
+>>>      device creation.
+>>>
+>>> (a) feels like an easy backwards-compatible approach, but cannot be
+>>> readily adopted by other arches (maybe not an issue).
+>>>
+>>> (b) might be considered overengineered, so it would need a bit of
+>>> thought.
+>>>
+>>> Wedging arguments into a few bits in the type argument feels awkward,
+>>> and may be regretted later if we run out of bits, or something can't be
+>>> represented in the chosen encoding.
+>>
+>> I think that's a pretty convincing argument for a "better" CREATE_VM,
+>> one that would have a clearly defined, structured (and potentially
+>> extensible) argument.
+>>
+>> I've quickly hacked the following:
+>>
+>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+>> index b6270a3b38e9..3e76214034c2 100644
+>> --- a/include/uapi/linux/kvm.h
+>> +++ b/include/uapi/linux/kvm.h
+>> @@ -735,6 +735,20 @@ struct kvm_ppc_resize_hpt {
+>>   	__u32 pad;
+>>   };
+>>
+>> +struct kvm_create_vm2 {
+>> +	__u64	version;	/* Or maybe not */
+>> +	union {
+>> +		struct {
+>> +#define KVM_ARM_SVE_CAPABLE	(1 << 0)
+>> +#define KVM_ARM_SELECT_IPA	{1 << 1)
+>> +			__u64	capabilities;
+>> +			__u16	sve_vlen;
+>> +			__u8	ipa_size;
+>> +		} arm64;
+>> +		__u64	dummy[15];
+>> +	};
+>> +};
+>> +
+>>   #define KVMIO 0xAE
+>>
+>>   /* machine type bits, to be used as argument to KVM_CREATE_VM */
+>>
+>> Other architectures could fill in their own bits if they need to.
+>>
+>> Thoughts?
+> 
+> This kind of thing should work, but it may still get messy when we
+> add additional fields.
 
-Double-nit.
 
-Use 'int' or 'unsigned int'.
-Sub-word arithmetic will require extra instructions on almost everything
-except x86.
+Marc, Dave,
 
-	David
+I like Dave's approach. Some comments below.
 
+> 
+> It we want this to work cross-arch, would it make sense to go
+> for a more generic approach, say
+> 
+> struct kvm_create_vm_attr_any {
+>          __u32   type;
+> };
+> 
+> #define KVM_CREATE_VM_ATTR_ARCH_CAPABILITIES 1
+> struct kvm_create_vm_attr_arch_capabilities {
+>          __u32   type;
+>          __u16   size; /* support future expansion of capabilities[] */
+>          __u16   reserved;
+>          __u64   capabilities[1];
+> };
+
+We also need to advertise which attributes are supported by the host,
+so that the user can tune the available ones. That would make a bit mask
+like the above trickier, unless we return the supported values back
+in the argument ptr for the "probe" call. And this scheme in general
+can be useful for passing back a non-boolean result specific to the
+attribute, without having a per-attribute ioctl. (e.g, maximum limit
+for IPA).
+
+> 
+> #define KVM_CREATE_VM_ATTR_ARM64_PHYSADDR_SIZE 2
+> struct kvm_create_vm_attr_arm64_physaddr_size {
+>          __u32   type;
+>          __u32   physaddr_bits;
+> };
+> 
+> /* ... */
+> 
+> union kvm_create_vm_attr {
+>          struct kvm_create_vm_attr_any;
+>          struct kvm_create_vm_attr_arch_capabilities;
+>          struct kvm_create_vm_attr_arm64_physaddr_size;
+>          /* ... */
+> };
+
+nit: Could we simply do s/kvm_create_vm_attr/kvm_vm_attr/ everywhere ?
+While I agree that the kvm_create_vm_attr makes it implicit that the attributes
+are valid only "create" ioctl, the lack of an ioctl to set the VM attribute
+should be sufficient to indicate the same.
+
+> 
+> struct kvm_create_vm2 {
+>          __u32   version;        /* harmless, even if not useful */
+>          __u16   nr_attrs;       /* or could just terminate attrs with a
+>                                     NULL entry */
+>          union kvm_create_vm_attr __user *__user *attrs;
+> };
+> 
+> 
+> This is quite flexible, but obviously a bit heavy.
+> 
+> However, if we're adding a new interface due to lack of extensibility,
+> it may be worth going for something that's freely extensible.
+
+True. I could hack something up along the lines above and send it here.
+
+> 
+> 
+> Userspace might call this as
+> 
+> 	struct kvm_create_vm_attr_arch_capabilities vm_arch_caps = {
+> 		.type = KVM_CREATE_VM_ATTR_ARCH_CAPABILITIES,
+> 		.size = 64,
+> 		.capabilities[0] = KVM_CREATE_VM_ARM64_VCPU_NEEDS_SET_SVE_VLS,
+> 	};
+> 
+> 	struct kvm_create_vm_attr_arch_arm64_physaddr_size = {
+> 		.type = KVM_CREATE_VM_ATTR_ARM64_PHYSADDR_SIZE,
+> 		.physaddr_bits = 52,
+> 	};
+> 
+> 	union kvm_create_vm_attr **vmattrs[] = {
+> 		&vm_arch_caps,
+> 		&vm_arm64_physaddr_size,
+> 		NULL, /* maybe */
+> 	};
+> 
+> 	struct kvm_create_vm2 vm;
+> 
+> 	vm.version = 0;
+> 	vm.nr_attrs = 2; /* maybe */
+> 	vm.attrs = vmattrs;
+> 
+> 	ioctl(..., KVM_CREATE_VM2, &vm);
+
+Thanks
+Suzuki
