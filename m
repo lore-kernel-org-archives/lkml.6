@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D4AC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B49D7C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A4C7208EB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:09:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A4C7208EB
+	by mail.kernel.org (Postfix) with ESMTP id 6A50F208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:10:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A50F208EB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934488AbeGJQJw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:09:52 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44015 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934062AbeGJQJv (ORCPT
+        id S934512AbeGJQKN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:10:13 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42261 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934491AbeGJQKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:09:51 -0400
-Received: by mail-ed1-f67.google.com with SMTP id u11-v6so16968575eds.10;
-        Tue, 10 Jul 2018 09:09:50 -0700 (PDT)
+        Tue, 10 Jul 2018 12:10:10 -0400
+Received: by mail-ed1-f66.google.com with SMTP id g12-v6so16969926edi.9;
+        Tue, 10 Jul 2018 09:10:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=1X+dgrB2ev9jDKmiI+Gt6wRc268Q8H8t0C/Ab9v9Vcw=;
-        b=GCeNeQIG2OCy+pTisXG0uX5N6B4t66TSijIP1tVLtgbiwRRuqoDhVu3B40KzECL9Hx
-         oULMSTPdJTmZoF/0ZDeCuZWPTXAGwch/JNpuLixKATqmtj9148sm/1Mrz+pomXHhYMYX
-         KdUznAWj8VvoAE57eZuF6aCg8fTwzdgz7Bh5+uESXzU/wZxAAy8AiAxIAftWq7r+NgCD
-         Oisck+aJ5fUcFBZLVUL2RRmQazbAH9LRzS/bCQTIzwyPPxPqNavuLn2RLovnxEjWzW66
-         Wmq+KnkgIe3knDjpOIw0GXJZY3ZFqQkfbpZGLeFsXSvW7WPWx7Es8YVWRavf/9N7epGx
-         Ct/A==
-X-Gm-Message-State: APt69E26hH0US6dpLWV3W6AK+aeTewvpUfXMHjgWDHa8uBxExiC4Lkwo
-        hVXpvJNkm5XcRB8tOWIbiNJdhwGm
-X-Google-Smtp-Source: AAOMgpeURH7wJ4OrxzGR9gfjqZGGvrISMKLZmolEmJA8Oz0ZMt+2rshR9TN81BqpiRPitdEwoVWiBA==
-X-Received: by 2002:a50:8386:: with SMTP id 6-v6mr27246758edi.170.1531238988868;
-        Tue, 10 Jul 2018 09:09:48 -0700 (PDT)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm957993edb.33.2018.07.10.09.09.47
+        bh=VU+Gt5JFFoLcSSu4/hDeAaoG/rSveKmSAU/Z4RK+QTY=;
+        b=NSaliWUhWfj1CUvARhyvlXlVeao6hRXarX3Wnwwt9xWz5gCxGt51si2iT9PvkZS4/5
+         5leSovcT/KlKC/6F0BbnEUjkhob1xuzKKlF/ArD2Mqvcqr1m6AO6l2QeyiW2BIwVCRCM
+         vLA/6BnmvIApl/zUFLBoAXzjxYe7FpRhOltZhmU7jg/ZOD7lLoIfiwbxLe1Q2cFZ7g0e
+         c7Uxj/L51h7VLyXr5vb33RQR4WXmswyrP+vBPLB6xn2wH3oQskMn4ReuphsLuqxa4Qz2
+         cGu25TPLQH1LbzdWp52MFcJeLVIPLd5P7xwQZYrJqckjluVedeAhZ2fLz0f/XbN7G+bz
+         YLww==
+X-Gm-Message-State: APt69E1+TyntxQwhHpzk6JhSQFlFAz2z+CB5p/bGS5FpKo78Dlv4qeud
+        4bUFxQylY6810Q6nJX6QKeC9dT9z
+X-Google-Smtp-Source: AAOMgpfZ3zBTaIYFgeBYze6yhSZT9Y0od1qw1Su8haF5+2L6Z5ouuydP2zhB+rg5S7gR7+WNbTBRAQ==
+X-Received: by 2002:a50:e0c9:: with SMTP id j9-v6mr28134674edl.198.1531239009153;
+        Tue, 10 Jul 2018 09:10:09 -0700 (PDT)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
+        by smtp.gmail.com with ESMTPSA id v8-v6sm8667736edr.48.2018.07.10.09.10.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 09:09:48 -0700 (PDT)
-Received: by mail-wr1-f51.google.com with SMTP id j5-v6so8690190wrr.8;
-        Tue, 10 Jul 2018 09:09:47 -0700 (PDT)
-X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr17805049wrh.148.1531238987130;
- Tue, 10 Jul 2018 09:09:47 -0700 (PDT)
+        Tue, 10 Jul 2018 09:10:08 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id p1-v6so15211061wrs.9;
+        Tue, 10 Jul 2018 09:10:08 -0700 (PDT)
+X-Received: by 2002:adf:b202:: with SMTP id u2-v6mr17697836wra.19.1531239007903;
+ Tue, 10 Jul 2018 09:10:07 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 09:09:26
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 09:09:47
  -0700 (PDT)
-In-Reply-To: <20180706175113.26698-17-jernej.skrabec@siol.net>
-References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-17-jernej.skrabec@siol.net>
+In-Reply-To: <20180706175113.26698-18-jernej.skrabec@siol.net>
+References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-18-jernej.skrabec@siol.net>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 11 Jul 2018 00:09:26 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64rjUnwnXbWxTSYJyhMyCV5QmV9YSr+Jryx3nEeMP8GJg@mail.gmail.com>
-Message-ID: <CAGb2v64rjUnwnXbWxTSYJyhMyCV5QmV9YSr+Jryx3nEeMP8GJg@mail.gmail.com>
-Subject: Re: [PATCH 16/17] drm/sun4i: tcon-top: Remove mux configuration at
- probe time
+Date:   Wed, 11 Jul 2018 00:09:47 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65x3CBw009gFTH-DmAFjfX_xSbSzOXLWbkyJU1PQ1yD+g@mail.gmail.com>
+Message-ID: <CAGb2v65x3CBw009gFTH-DmAFjfX_xSbSzOXLWbkyJU1PQ1yD+g@mail.gmail.com>
+Subject: Re: [PATCH 17/17] dt-bindings: display: sun4i-drm: Fix order of DW
+ HDMI PHY compatibles
 To:     Jernej Skrabec <jernej.skrabec@siol.net>
 Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -76,120 +76,11 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> Now that R40 TCON migrated to runtime mux configuration, old code can be
-> removed.
+> They are currently sorted alphabetically. However, they should be sorted
+> by release date of the family and then alphabetically.
+>
+> Fixes: 03c35dbf73e0 ("dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY")
 >
 > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 81 +++-----------------------
->  1 file changed, 7 insertions(+), 74 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> index c09b15b64192..78795d6cb174 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> @@ -87,34 +87,6 @@ int sun8i_tcon_top_de_config(struct device *dev, int mixer, int tcon)
->  }
->  EXPORT_SYMBOL(sun8i_tcon_top_de_config);
->
-> -static int sun8i_tcon_top_get_connected_ep_id(struct device_node *node,
-> -                                             int port_id)
-> -{
-> -       struct device_node *ep, *remote, *port;
-> -       struct of_endpoint endpoint;
-> -
-> -       port = of_graph_get_port_by_id(node, port_id);
-> -       if (!port)
-> -               return -ENOENT;
-> -
-> -       for_each_available_child_of_node(port, ep) {
-> -               remote = of_graph_get_remote_port_parent(ep);
-> -               if (!remote)
-> -                       continue;
-> -
-> -               if (of_device_is_available(remote)) {
-> -                       of_graph_parse_endpoint(ep, &endpoint);
-> -
-> -                       of_node_put(remote);
-> -
-> -                       return endpoint.id;
-> -               }
-> -
-> -               of_node_put(remote);
-> -       }
-> -
-> -       return -ENOENT;
-> -}
->
->  static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
->                                                    const char *parent,
-> @@ -149,11 +121,9 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
->         struct platform_device *pdev = to_platform_device(dev);
->         struct clk_hw_onecell_data *clk_data;
->         struct sun8i_tcon_top *tcon_top;
-> -       bool mixer0_unused = false;
->         struct resource *res;
->         void __iomem *regs;
-> -       int ret, i, id;
-> -       u32 val;
-> +       int ret, i;
->
->         tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
->         if (!tcon_top)
-> @@ -198,49 +168,12 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
->                 goto err_assert_reset;
->         }
->
-> -       val = 0;
-> -
-> -       /* check if HDMI mux output is connected */
-> -       if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >= 0) {
-> -               /* find HDMI input endpoint id, if it is connected at all*/
-> -               id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 4);
-> -               if (id >= 0)
-> -                       val = FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id + 1);
-> -               else
-> -                       DRM_DEBUG_DRIVER("TCON TOP HDMI input is not connected\n");
-> -       } else {
-> -               DRM_DEBUG_DRIVER("TCON TOP HDMI output is not connected\n");
-> -       }
-> -
-> -       writel(val, regs + TCON_TOP_GATE_SRC_REG);
-> -
-> -       val = 0;
-> -
-> -       /* process mixer0 mux output */
-> -       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
-> -       if (id >= 0) {
-> -               val = FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
-> -       } else {
-> -               DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not connected\n");
-> -               mixer0_unused = true;
-> -       }
-> -
-> -       /* process mixer1 mux output */
-> -       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
-> -       if (id >= 0) {
-> -               val |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
-> -
-> -               /*
-> -                * mixer0 mux has priority over mixer1 mux. We have to
-> -                * make sure mixer0 doesn't overtake TCON from mixer1.
-> -                */
-> -               if (mixer0_unused && id == 0)
-> -                       val |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
-> -       } else {
-> -               DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not connected\n");
-> -       }
-> -
-> -       writel(val, regs + TCON_TOP_PORT_SEL_REG);
-> +       /*
-> +        * Default register values might have some reserved bits set, which
-> +        * prevents TCON TOP from working properly. Set them to 0 here.
-> +        */
-> +       writel(0, regs + TCON_TOP_GATE_SRC_REG);
-> +       writel(0, regs + TCON_TOP_PORT_SEL_REG);
 
-Would it make sense to just force a reset using the reset control?
-
-ChenYu
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
