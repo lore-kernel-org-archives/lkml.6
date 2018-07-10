@@ -2,178 +2,150 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BA5C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBF9C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F30020870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:42:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F30020870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id A0A6F20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:43:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="G7DmXxmT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A6F20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933294AbeGJLmz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 07:42:55 -0400
-Received: from muru.com ([72.249.23.125]:50940 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932910AbeGJLmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 07:42:52 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 8352A8027;
-        Tue, 10 Jul 2018 11:45:54 +0000 (UTC)
-Date:   Tue, 10 Jul 2018 04:42:48 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Faiz Abbas <faiz_abbas@ti.com>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, robh+dt@kernel.org,
-        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com,
-        mark.rutland@arm.com, sboyd@kernel.org
-Subject: Re: [PATCH v5 4/6] bus: ti-sysc: Add support for software reset
-Message-ID: <20180710114248.GI99251@atomide.com>
-References: <20180709164841.14182-1-faiz_abbas@ti.com>
- <20180709164841.14182-5-faiz_abbas@ti.com>
+        id S933324AbeGJLnI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 07:43:08 -0400
+Received: from services.gouders.net ([141.101.32.176]:57227 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932710AbeGJLnH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 07:43:07 -0400
+Received: from localhost ([193.175.198.193])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w6ABYD9Q019341
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 10 Jul 2018 13:34:14 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1531222454; bh=vcc6INzz65UroB/xi3pojtcCibnRgd3Pem2GZu87BB4=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date;
+        b=G7DmXxmT/8JPB1mnHrKsH2WfqSF7C+lMx1ccYbrzd5D47XiSzRdSlxv+GmKp55Yx8
+         f5xK2cEB2zxWIvUSi5IiwC6OHTm/N1+agZkenG/27UCZcLiXzMtIZBt42txX8JTSvZ
+         /lT5X3/MetZ4w7u//2+EOAVPvA0p6n8g1Ltt72JQ=
+From:   Dirk Gouders <dirk@gouders.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 00/12] kbuild/kconfig: do not update config during installation
+In-Reply-To: <1530758389-30862-1-git-send-email-yamada.masahiro@socionext.com>
+        (Masahiro Yamada's message of "Thu, 5 Jul 2018 11:39:37 +0900")
+References: <1530758389-30862-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+Date:   Tue, 10 Jul 2018 13:34:10 +0200
+Message-ID: <gh36wr1g0d.fsf@lena.gouders.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709164841.14182-5-faiz_abbas@ti.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Masahiro Yamada <yamada.masahiro@socionext.com> writes:
 
-* Faiz Abbas <faiz_abbas@ti.com> [180709 16:50]:
-> Add support for the software reset of a target interconnect
-> module using its sysconfig and sysstatus registers.
-...
-> --- a/drivers/bus/ti-sysc.c
-> +++ b/drivers/bus/ti-sysc.c
-...
-> +static int sysc_reset(struct sysc *ddata)
-> +{
-> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
-> +	int val = sysc_read(ddata, offset);
+> The main motivation of this patch series is to suppress the syncconfig
+> during running installation targets.
+>
+> V1 consisted of only two patches:
+>   https://patchwork.kernel.org/patch/10468105/
+>   https://patchwork.kernel.org/patch/10468103/
+>
+> I noticed that installation targets would continue running
+> even if the source tree is not configured at all
+> because the inclusion of include/config/auto.conf was optional.
+>
+> So, I added one more patch in V2:
+>  https://patchwork.kernel.org/patch/10483637/
+>
+> However, kbuild test robot reported a new warning message was displayed:
+>
+> Makefile:592: include/config/auto.conf: No such file or directory
+>
+> This warning is displayed only for Make 4.1 or older.
+>
+> To fix this annoying warning, I changed Kconfig too,
+> which leaded to more clean-up, improvements in Kconfig.
+>
+> So, V3 is a big patch series.
 
-Testing with omap4 sysc dts data I noticed we already
-have modules where there is only rev register and no
-SYSC_SYSCONFIG. So not using legacy mode. The
-above offset with -ENODEV value will not work :)
+Hello Masahiro,
 
-I added some more checks and moved them to the reset
-function.
+I tested your series for a while, now.  I did not notice real issues
+with it but want to leave some remarks about what I noticed in
+the surroundings of your patches.
 
-Updated patch below for reference, I've pushed out
-new branches omap-for-v4.19/ti-sysc-v2 and
-omap-for-v4.19/dt-mcan-v2. I've also updated my
-for-next branch.
 
-Regards,
+> Masahiro Yamada (12):
+>   kconfig: rename file_write_dep and move it to confdata.c
 
-Tony
+I might be missing some trivial use-case, but when looking at this
+patch, I noticed an inconsistency with the file names auto.conf and
+auto.conf.cmd.
 
-8< -----------
-From tony Mon Sep 17 00:00:00 2001
-From: Faiz Abbas <faiz_abbas@ti.com>
-Date: Mon, 9 Jul 2018 22:18:39 +0530
-Subject: [PATCH] bus: ti-sysc: Add support for software reset
+The first can be modified by an environment variable but when this
+happens, auto.conf.cmd remains as is.  I noticed that only the
+Documentation mentions that KCONFIG_AUTOCONFIG exists and confdata.c
+uses it to serve the file name -- no other use anywhere.
 
-Add support for the software reset of a target interconnect
-module using its sysconfig and sysstatus registers.
+Now, I am wondering if I just don't see an important case when the
+use of KCONFIG_AUTOCONFIG is really helpful or even mandatory.
 
-Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-[tony@atomide.com: updated to check if sysconfig exists]
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/bus/ti-sysc.c | 46 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+>   kconfig: split out helpers to check file/directory, create directory
+>   kconfig: remove unneeded directory generation from local*config
+>   kconfig: create directories needed for syncconfig by itself
+>   kconfig: make syncconfig update .config regardless of sym_change_count
 
-diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
---- a/drivers/bus/ti-sysc.c
-+++ b/drivers/bus/ti-sysc.c
-@@ -23,11 +23,14 @@
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
- #include <linux/slab.h>
-+#include <linux/iopoll.h>
- 
- #include <linux/platform_data/ti-sysc.h>
- 
- #include <dt-bindings/bus/ti-sysc.h>
- 
-+#define MAX_MODULE_SOFTRESET_WAIT		10000
-+
- static const char * const reg_names[] = { "rev", "sysc", "syss", };
- 
- enum sysc_clocks {
-@@ -88,6 +91,11 @@ struct sysc {
- 	struct delayed_work idle_work;
- };
- 
-+void sysc_write(struct sysc *ddata, int offset, u32 value)
-+{
-+	writel_relaxed(value, ddata->module_va + offset);
-+}
-+
- static u32 sysc_read(struct sysc *ddata, int offset)
- {
- 	if (ddata->cfg.quirks & SYSC_QUIRK_16BIT) {
-@@ -943,6 +951,36 @@ static void sysc_init_revision_quirks(struct sysc *ddata)
- 	}
- }
- 
-+static int sysc_reset(struct sysc *ddata)
-+{
-+	int offset = ddata->offsets[SYSC_SYSCONFIG];
-+	int val;
-+
-+	if (ddata->legacy_mode || offset < 0 ||
-+	    ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT)
-+		return 0;
-+
-+	/*
-+	 * Currently only support reset status in sysstatus.
-+	 * Warn and return error in all other cases
-+	 */
-+	if (!ddata->cfg.syss_mask) {
-+		dev_err(ddata->dev, "No ti,syss-mask. Reset failed\n");
-+		return -EINVAL;
-+	}
-+
-+	val = sysc_read(ddata, offset);
-+	val |= (0x1 << ddata->cap->regbits->srst_shift);
-+	sysc_write(ddata, offset, val);
-+
-+	/* Poll on reset status */
-+	offset = ddata->offsets[SYSC_SYSSTATUS];
-+
-+	return readl_poll_timeout(ddata->module_va + offset, val,
-+				  (val & ddata->cfg.syss_mask) == 0x0,
-+				  100, MAX_MODULE_SOFTRESET_WAIT);
-+}
-+
- /* At this point the module is configured enough to read the revision */
- static int sysc_init_module(struct sysc *ddata)
- {
-@@ -960,6 +998,14 @@ static int sysc_init_module(struct sysc *ddata)
- 		return 0;
- 	}
- 
-+	error = sysc_reset(ddata);
-+	if (error) {
-+		dev_err(ddata->dev, "Reset failed with %d\n", error);
-+		pm_runtime_put_sync(ddata->dev);
-+
-+		return error;
-+	}
-+
- 	ddata->revision = sysc_read_revision(ddata);
- 	pm_runtime_put_sync(ddata->dev);
- 
--- 
-2.17.1
+For this patch, I already mentioned that `conf --help' perhaps could be
+updated.  On the other side, none of the entries there tells us such
+details, so there is probably no need for syncconfig to do so.
+
+>   kconfig: allow all config targets to write auto.conf if missing
+>   kbuild: use 'include' directive to load auto.conf from top Makefile
+>   kbuild: add .DELETE_ON_ERROR special target
+>   kbuild: do not update config when running install targets
+>   kbuild: do not update config for 'make kernelrelease'
+>   kbuild: remove auto.conf and tristate.conf from prerequisites
+
+In the surrounding of this patch I noticed -include of auto.conf and
+tristate.conf in scripts/Makfile.modbuildin.  I tried it in some ways
+but was not able to trigger that file being used with a missing
+auto.conf.  On the other hand, if I now manually remove tristate.conf,
+that would not be fixed or even noticed, because of -include and I
+wonder if it is safer to also change the -includes in that file.
+
+It seems, if one of those files is missing, one must have done it
+manually or some other serious issue is present that we probably want to
+notice.
+
+Dirk
+
+>   kbuild: replace include/config/%.conf with include/config/auto.conf
+>
+>  Makefile                    |  46 +++++++++------
+>  scripts/Kbuild.include      |   3 +
+>  scripts/kconfig/Makefile    |  16 ++---
+>  scripts/kconfig/conf.c      |  39 +++++++------
+>  scripts/kconfig/confdata.c  | 139 +++++++++++++++++++++++++++++++++++++-------
+>  scripts/kconfig/gconf.c     |   1 +
+>  scripts/kconfig/lkc.h       |   1 -
+>  scripts/kconfig/lkc_proto.h |   2 +-
+>  scripts/kconfig/mconf.c     |   1 +
+>  scripts/kconfig/nconf.c     |   1 +
+>  scripts/kconfig/qconf.cc    |   2 +
+>  scripts/kconfig/util.c      |  30 ----------
+>  12 files changed, 182 insertions(+), 99 deletions(-)
