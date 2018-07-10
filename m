@@ -4,60 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6B64C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:26:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F354C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79F6A208EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:26:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1941208EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:27:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G5MFSQaS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F6A208EC
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PWbu+cXZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1941208EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732307AbeGJW1s (ORCPT
+        id S1732358AbeGJW2g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:27:48 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:57810 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732263AbeGJW1s (ORCPT
+        Tue, 10 Jul 2018 18:28:36 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:58202 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732298AbeGJW2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:27:48 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6AMOHGC038737;
-        Tue, 10 Jul 2018 22:26:13 GMT
+        Tue, 10 Jul 2018 18:28:36 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6AMOJVj040481;
+        Tue, 10 Jul 2018 22:27:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
  references : from : message-id : date : mime-version : in-reply-to :
  content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=oxEVvoJw3O9gqMJNFtO+LrEXv38tvzhXg9Fk9CIdUSQ=;
- b=G5MFSQaSZBM6Wo8v+MU3DOssIF/B6+8OSiOTkHv3rHKsob07P+VHgSfVqchme8ngON2O
- VwkzEQeErXaPxN1Lj29J4ZZPKWwPx1Nfq2HsGDOECa//yVweTcI7hg9Wos2XwQ2/1eTO
- HIyNOdFCrsLgg4VG91G7DHS9y2CQv/cGVI1Zv6lKyPy9B1NSfqzwMg8tgtI4QCIR0oJ1
- ixT0NOzpAMYZX9vvelJ4KqGwZ0ZhXi6US5Zdr/3+dZwo8ztUwhcGfVAVeMPta3iYTNe6
- 258Zl4beaThSx9p/adVByE1vHVfvA/RLwn0IWIuI8t4AfTN5iI5Y7VvQCFgYLcFd0AOI Ew== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2k2p763vr4-1
+ bh=UBxcw7fAmK4MP5KAVBIBXxJQlkjyEYq8zRzCZXHWdGw=;
+ b=PWbu+cXZ92w8dZukjtqcdCzvwQd0yPDIcWYtm5NzjOJLAEUA1ag+Nze7NI8w/tzWSOEq
+ JKT3wJpFCYEWyMo5E7EHo9V5VHsnVOzjoPWJlvJ5NqrK45kSsS+dfJ5EgIULWgWbpJUo
+ QIV6I394knKBd+yycDXnj8Hzy+CmZYsij5qW9tW+W1vkCMWcT8JTjL7mmmgWKNXTJh4X
+ 31sUPRAsnE0UWZHGKNOZEL88LGt8+So6DwrCB1GYDZdHILdZXtqLlo3RaFxH/UAWj1Sf
+ XBy7mkcn+lAIqt2a0ACbokm+ntRqAiZ3Jb9Tb3ydjkHxzGH+N55BtDhiNK7IiXdZTPfE 3w== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2k2p7vbtwf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Jul 2018 22:26:12 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6AMQBjI009344
+        Tue, 10 Jul 2018 22:27:02 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6AMR29V003261
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Jul 2018 22:26:11 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6AMQApe023636;
-        Tue, 10 Jul 2018 22:26:10 GMT
+        Tue, 10 Jul 2018 22:27:02 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6AMR1Hx006324;
+        Tue, 10 Jul 2018 22:27:01 GMT
 Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 10 Jul 2018 15:26:10 -0700
-Subject: Re: [PATCH] xen: setup pv irq ops vector earlier
+        with ESMTP ; Tue, 10 Jul 2018 15:27:01 -0700
+Subject: Re: [PATCH] xen: remove global bit from __default_kernel_pte_mask for
+ pv guests
 To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
         xen-devel@lists.xenproject.org, x86@kernel.org
 Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com,
         stable@vger.kernel.org
-References: <20180702100001.19953-1-jgross@suse.com>
+References: <20180702100018.26279-1-jgross@suse.com>
 From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
@@ -103,12 +104,12 @@ Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
  Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
  19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
  Jg6OxFYd01z+a+oL
-Message-ID: <7ed006f3-22ea-2c35-1cbe-15d7cf04a71b@oracle.com>
-Date:   Tue, 10 Jul 2018 18:26:39 -0400
+Message-ID: <204ae9dc-e949-1db9-5dd8-8649079e0ae0@oracle.com>
+Date:   Tue, 10 Jul 2018 18:27:30 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180702100001.19953-1-jgross@suse.com>
+In-Reply-To: <20180702100018.26279-1-jgross@suse.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
@@ -123,62 +124,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 07/02/2018 06:00 AM, Juergen Gross wrote:
-> Setting pv_irq_ops for Xen PV domains should be done as early as
-> possible in order to support e.g. very early printk() usage.
-
-Will printk() work as result of this move? We still, for example,
-haven't set up console.
-
-This will (probably) allow us not to crash (due to STI and such) but I
-am not sure "support" is the right term here.
-
--boris
-
-
+> When removing the global bit from __supported_pte_mask do the same for
+> __default_kernel_pte_mask in order to avoid the WARN_ONCE() in
+> check_pgprot() when setting a kernel pte before having called
+> init_mem_mapping().
 >
-> Remove the no longer necessary conditional in xen_init_irq_ops()
-> from PVH V1 times to make clear this is a PV only function.
->
-> Cc: <stable@vger.kernel.org> # 4.14
+> Cc: <stable@vger.kernel.org> # 4.17
+> Reported-by: Michael Young <m.a.young@durham.ac.uk>
 > Signed-off-by: Juergen Gross <jgross@suse.com>
-> ---
->  arch/x86/xen/enlighten_pv.c | 3 +--
->  arch/x86/xen/irq.c          | 4 +---
->  2 files changed, 2 insertions(+), 5 deletions(-)
->
-> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-> index 8d4e2e1ae60b..0f4cd9e5bed4 100644
-> --- a/arch/x86/xen/enlighten_pv.c
-> +++ b/arch/x86/xen/enlighten_pv.c
-> @@ -1213,6 +1213,7 @@ asmlinkage __visible void __init xen_start_kernel(void)
->  	pv_info = xen_info;
->  	pv_init_ops.patch = paravirt_patch_default;
->  	pv_cpu_ops = xen_cpu_ops;
-> +	xen_init_irq_ops();
->  
->  	x86_platform.get_nmi_reason = xen_get_nmi_reason;
->  
-> @@ -1249,8 +1250,6 @@ asmlinkage __visible void __init xen_start_kernel(void)
->  	get_cpu_cap(&boot_cpu_data);
->  	x86_configure_nx();
->  
-> -	xen_init_irq_ops();
-> -
->  	/* Let's presume PV guests always boot on vCPU with id 0. */
->  	per_cpu(xen_vcpu_id, 0) = 0;
->  
-> diff --git a/arch/x86/xen/irq.c b/arch/x86/xen/irq.c
-> index 74179852e46c..7515a19fd324 100644
-> --- a/arch/x86/xen/irq.c
-> +++ b/arch/x86/xen/irq.c
-> @@ -128,8 +128,6 @@ static const struct pv_irq_ops xen_irq_ops __initconst = {
->  
->  void __init xen_init_irq_ops(void)
->  {
-> -	/* For PVH we use default pv_irq_ops settings. */
-> -	if (!xen_feature(XENFEAT_hvm_callback_vector))
-> -		pv_irq_ops = xen_irq_ops;
-> +	pv_irq_ops = xen_irq_ops;
->  	x86_init.irqs.intr_init = xen_init_IRQ;
->  }
+
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+
 
