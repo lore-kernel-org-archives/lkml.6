@@ -2,111 +2,109 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D852DC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 02:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D433C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 02:27:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C77D208A2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 02:21:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZeCaym6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C77D208A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A7C042089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 02:27:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7C042089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933112AbeGJCV4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 22:21:56 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39577 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932824AbeGJCVu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 22:21:50 -0400
-Received: by mail-pf0-f193.google.com with SMTP id s21-v6so14997344pfm.6
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 19:21:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=vDKwRhBT3xRWEawJSRgrGiYt4RPW/JhbX7FaiHY8aIw=;
-        b=kZeCaym6SRHjpAsekCH79GJNC24Q9erSL9P+hGDiFAGB3JRNdoJMrAJPotfgowSQYY
-         jajY4d2YMAy3c0/LaIvswbiGSfhdq0m6bysmcF49yqWhsd0IwrF1GYYTZTXz5mokM8kG
-         0cwvVhjB1W7Ylv2T7yQ6o79Q6Q10ukk9iZwFST+xNeWywN9i2oZSI+hsU3+jtxukju5l
-         8l+3j5lc0GxZlxdZ7Vf0RW7ZLohL4S3T0EDxh4Dovmc2lHOEr8wEHRmMQ2mb4FCPPPeR
-         rEs5vG0kvNSUh6hPOvHpY/dOelcBG4Q0PmuZ17mj2vNHuGVFXWTHIpScAiwOOcxTRBNC
-         ULkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vDKwRhBT3xRWEawJSRgrGiYt4RPW/JhbX7FaiHY8aIw=;
-        b=a4vyo4YfMtih3LxdCsg8goBgPP42MtFOdHpfP68EcI+kcwZVcuN07IVvyTFI/UcMlX
-         RwvRzewJjZkbcH23mM9LMTmtBTfej2/wxbR6eCKZG2tCzS65Rau2fEit3YM5FvJq7qx5
-         yC+rRWmOxrd+/F16+Re39ItwCDaHM9PEH3rDw8DsBsVrrJb5oV4IO2KtpKheRhQJGffP
-         kcB2NBcmmufb4wlBjirX6OHk8+XBIpFwQuQ6x8suUbyKgb7+iZxyV7RK/kkEPRCuSCjO
-         PtK47QDyGjdLNBexszweLBqodambSFwAJioiKf1w2MNYva+mfqmRvwOAO+ya8nZV45qS
-         P7Vg==
-X-Gm-Message-State: APt69E0WI143FTCybvCpyqnd1HXYCfNommoJwStM2znXUKeQQlEm+8Sl
-        59zyHdUg9tX8WtpOUaocXNY=
-X-Google-Smtp-Source: AAOMgpdSM5yfvTnzqD0Joitp3/svAjmD5nxmuFc6rE292NBfSzY12Da9A9m7vKPtKYw/XGQUNR0jkA==
-X-Received: by 2002:a62:384:: with SMTP id 126-v6mr6271152pfd.11.1531189309736;
-        Mon, 09 Jul 2018 19:21:49 -0700 (PDT)
-Received: from bj03003pcul8.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id x28-v6sm26331105pfk.55.2018.07.09.19.21.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 09 Jul 2018 19:21:49 -0700 (PDT)
-From:   "Yandong.Zhao" <yandong77520@gmail.com>
-To:     Dave.Martin@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org, zhaoyd@thundersoft.com,
-        zhaoxb@thundersoft.com, fanlc0801@thundersoft.com,
-        Yandong Zhao <yandong77520@gmail.com>
-Subject: [PATCH] arm64: neon: Fix function may_use_simd() return error status
-Date:   Tue, 10 Jul 2018 10:21:40 +0800
-Message-Id: <1531189300-26216-1-git-send-email-yandong77520@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        id S1754567AbeGJC1d (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 22:27:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58522 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754463AbeGJC12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 22:27:28 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A54362089D;
+        Tue, 10 Jul 2018 02:27:27 +0000 (UTC)
+Date:   Mon, 9 Jul 2018 22:27:25 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     "Tobin C. Harding" <me@tobin.cc>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, Petr Mladek <pmladek@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        kernelnewbies@kernelnewbies.org
+Subject: Re: [PATCH] vsprintf: fix build warning
+Message-ID: <20180709222725.66a763e9@vmware.local.home>
+In-Reply-To: <20180709234203.GG4447@eros>
+References: <20180706134724.563799-1-arnd@arndb.de>
+        <20180706144213.GA411@tigerII.localdomain>
+        <20180706114951.6e739180@gandalf.local.home>
+        <20180709234203.GG4447@eros>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yandong Zhao <yandong77520@gmail.com>
+On Tue, 10 Jul 2018 09:42:03 +1000
+"Tobin C. Harding" <me@tobin.cc> wrote:
 
-Operations for contexts where we do not want to do any checks for
-preemptions.  Unless strictly necessary, always use this_cpu_read()
-instead.  Because of the kernel_neon_busy here we have to make sure
-that it is the current cpu.
+> Steve if you do not rebase your next branch and the branch ends up
+> containing fixes to patches like the above doesn't this mean that when
+> you do a pull request to Linus the branch you are asking to be pulled
+> will be too 'dirty' i.e. I thought that the pull request should be like
+> a patch set and only contain the 'final product' not every change that
+> was made during development?
 
-Signed-off-by: Yandong Zhao <yandong77520@gmail.com>
----
- arch/arm64/include/asm/simd.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Nope, once I push to next, my branch is ready to be worked against.
+Sha1 and all. Rebasing will break that. I also have a full test suite
+that all my code runs through and it must pass before sending to Linus
+or linux-next.
 
-diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
-index fa8b3fe..8b97f8b 100644
---- a/arch/arm64/include/asm/simd.h
-+++ b/arch/arm64/include/asm/simd.h
-@@ -29,7 +29,8 @@
- static __must_check inline bool may_use_simd(void)
- {
- 	/*
--	 * The raw_cpu_read() is racy if called with preemption enabled.
-+	 * The this_cpu_read() is racy if called with preemption enabled,
-+	 * since the task my subsequently migrate to another CPU.
- 	 * This is not a bug: kernel_neon_busy is only set when
- 	 * preemption is disabled, so we cannot migrate to another CPU
- 	 * while it is set, nor can we migrate to a CPU where it is set.
-@@ -42,7 +43,7 @@ static __must_check inline bool may_use_simd(void)
- 	 * false.
- 	 */
- 	return !in_irq() && !irqs_disabled() && !in_nmi() &&
--		!raw_cpu_read(kernel_neon_busy);
-+		!this_cpu_read(kernel_neon_busy);
- }
- 
- #else /* ! CONFIG_KERNEL_MODE_NEON */
--- 
-1.9.1
+> 
+> I was under the impression that each maintainer constantly rebased their
+> next branches and that was why one has to checkout the tagged linux-next
 
+Some maintainers (Ingo being one) is very against any unnecessary
+rebasing. This is because it can hide the history and development of
+code. Linus doesn't like to see rebasing of public trees. Once you
+rebase, you lose all the prior testing done on the previous code. It
+also makes it difficult for anyone that is basing code off of it.
+
+> each day instead of just pulling.  From information on the net somewhere
+> I have been checking out linux-next using this shell function
+> 
+> checkout-next () {
+> 	local branch='linux-next' 
+> 
+> 	git checkout master
+> 	git remote update linux-next
+> 	git branch -D $branch
+> 	git checkout -b $branch $(git tag -l "next-*" | tail -1)
+> }
+
+I believe linux-next itself creates its master branch each time it
+pulls in everyone's branches. It throws away the old one, and pulls in
+all the new ones. This makes sense because otherwise the history will be
+loaded with pulls from various branches. And yes, some branches will
+rebase. If just one branch rebases, then it would need to do this.
+
+> 
+> Also, when my leaks tree got included in linux-next I was told that it
+> was ok to rebase and have since been rebasing mercilessly.
+
+It's really a choice for the maintainer. I consider a branch that goes
+into next as "tested". I wont rebase unless there is a nasty bug that I
+don't want to go upstream. Or a compiler failure. Warnings don't bother
+me. I've sometimes rebased to add Acked-by/Reviewed-by tags. But that's
+because the code is identical to what was there before (I do git diffs
+to confirm that).
+
+Linus has yelled at people that have rebased just before sending a
+pull request to him.
+
+-- Steve
