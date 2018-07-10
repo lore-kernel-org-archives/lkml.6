@@ -2,115 +2,142 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 659D4C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 03:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BE1C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 03:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1291E2089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 03:48:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1291E2089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B8FA2089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 03:48:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="lquDG3xG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B8FA2089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933179AbeGJDsD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 23:48:03 -0400
-Received: from mga02.intel.com ([134.134.136.20]:52303 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932939AbeGJDrv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 23:47:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 20:47:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,332,1526367600"; 
-   d="scan'208";a="55666042"
-Received: from precciox-mobl.amr.corp.intel.com (HELO [10.254.107.89]) ([10.254.107.89])
-  by orsmga008.jf.intel.com with ESMTP; 09 Jul 2018 20:47:49 -0700
-Subject: Re: Kernel 4.17.4 lockup
-To:     "H.J. Lu" <hjl.tools@gmail.com>
-References: <CAMe9rOqXsQ4Onv8_-kYE_yVYVfN0Hsg81XM0sq9k2cVYE_LvaQ@mail.gmail.com>
- <50d6bb50-5fa4-33d1-1f88-3844d0237f16@intel.com>
- <CAMe9rOoA=OoyaUfOvWuHGTp_ii9-A_ecR5tj8CefBKx_Hmi50g@mail.gmail.com>
- <7db385ef-0940-8f28-87b0-828921dd2f1d@intel.com>
- <CAMe9rOoZ=8ROyR6U3-JY+4hib2Bb5LGhBYzY5S_Xp38coj16aQ@mail.gmail.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <9548e10a-7403-425e-bf1f-b1eb9d055d99@intel.com>
-Date:   Mon, 9 Jul 2018 20:47:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933275AbeGJDst (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 23:48:49 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:30991 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932939AbeGJDsm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 23:48:42 -0400
+Received: from mail-ua0-f173.google.com (mail-ua0-f173.google.com [209.85.217.173]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w6A3mVSc023794;
+        Tue, 10 Jul 2018 12:48:31 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w6A3mVSc023794
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1531194511;
+        bh=iHHlyH7TsD8dZvCRpwNdq0+NZ48GC8u1aqhq5kW7td4=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=lquDG3xGyxv46fk6UStmSbjujrYK9oPdU/eV7rjPLyqT/bcU2A+kasj6da9tYhYzR
+         ZGzJat4wTIVt+YFaehldpQbnKmpv4YejfTIxXGqYUKsWYNmanbWmG5JjgFSIi70cre
+         Cfg5De+uWbIGmg5IgiMWirvfyVctl8+fjmuQrZk2NpaavLBc/9K+H046XbMZc1UJD/
+         pI+J/AuAIaB5r8Ds+uZtJuUZdGW/KzHZNiERELJWA/d6DeFLajBiVq7jtvJKRIE8Cl
+         92JIo4p/hrBMia3b79VWQ2tCa+OavkkWu94UWhdRCTUsT4UC79flrlRrZLlqzAEB+w
+         B+q/XmX6C3Xcw==
+X-Nifty-SrcIP: [209.85.217.173]
+Received: by mail-ua0-f173.google.com with SMTP id y8-v6so13096895uan.3;
+        Mon, 09 Jul 2018 20:48:31 -0700 (PDT)
+X-Gm-Message-State: APt69E2wwCRbkjSjFvO2iThaCuqFC7MrwAfYflgI3TapdzyzGA0v5L1w
+        75xHHy+IapL+hD+CGxlSt6U2fK0mgsgr7gZsHoA=
+X-Google-Smtp-Source: AAOMgpfGlb7A/Arjo8FUQFsR0i2XH+kH1t08+X/pnJuIFnmPiKLu8hxDuBwwzrWP1z7PH6HWLDV7WBF0nl+co+2jxSQ=
+X-Received: by 2002:a9f:3d6e:: with SMTP id m46-v6mr14442889uai.17.1531194510341;
+ Mon, 09 Jul 2018 20:48:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAMe9rOoZ=8ROyR6U3-JY+4hib2Bb5LGhBYzY5S_Xp38coj16aQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 20:47:49 -0700 (PDT)
+In-Reply-To: <20180710022904.e3oql2ts4qz43bzo@treble>
+References: <1531186516-15764-1-git-send-email-yamada.masahiro@socionext.com> <20180710022904.e3oql2ts4qz43bzo@treble>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 10 Jul 2018 12:47:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASM+81JkGu5-z8GRZ9+sRyd55gO0G0M5c54zRhE5JhE3g@mail.gmail.com>
+Message-ID: <CAK7LNASM+81JkGu5-z8GRZ9+sRyd55gO0G0M5c54zRhE5JhE3g@mail.gmail.com>
+Subject: Re: [PATCH v2] objtool: move libelf detection to Kconfig from Makefile
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/2018 07:14 PM, H.J. Lu wrote:
->> I'd really want to see this reproduced without KASLR to make the oops
->> easier to read.  It would also be handy to try your workload with all
->> the pedantic debugging: KASAN, slab debugging, DEBUG_PAGE_ALLOC, etc...
->> and see if it still triggers.
-> How can I turn them on at boot time?
+Hi.
 
-The only thing you can add at boot time is slab debugging, and it's
-probably the most useless of the three that I listed since you're not
-actually seeing any slab corruption.
 
-The rest are compile-time options.
+2018-07-10 11:29 GMT+09:00 Josh Poimboeuf <jpoimboe@redhat.com>:
+> On Tue, Jul 10, 2018 at 10:35:16AM +0900, Masahiro Yamada wrote:
+>> Currently, users are allowed to enable STACK_VALIDATION regardless
+>> of the compiler capability.  The top-level Makefile warns or breaks
+>> the build if it turns out that the host compiler cannot link libelf.
+>>
+>> Move the libelf test to Kconfig so that users can enable the feature
+>> only when the host compiler can build the objtool.  The ugly check
+>> in the Makefile will go away.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> Acked-by: Josh Poimboeuf <jpoimboe@redhat.com>
+>
+> Actually, looking at this again, I want to rescind my ack.
+>
+> This patches changes the behavior in a subtle (but important) way.
+>
+> Before, if I did "make defconfig", it would *always* choose the ORC
+> unwinder.  Then, if I didn't have libelf-devel, the build would fail and
+> it would tell me what I need to install.
+>
+> But now with this patch, if I do "make defconfig", the generated config
+> actually changes based on what I happen to have installed on my build
+> system.  If I don't have libelf-devel, then it silently chooses the
+> non-default unwinder (frame pointer).
+>
+> This is a subtle difference, but IMO it's dangerous, because it will
+> silently enable the frame pointer unwinder for the majority of new
+> systems, even though it's not the default.
+>
+> I strongly prefer the original behavior, because we really want to
+> encourage people to use the ORC unwinder, even if that means they have
+> to install a package to build it.
+>
+> Also -- in general -- I suspect that silently changing the defaults like
+> this will create a lot of bad surprises.  The output of "make defconfig"
+> should be predictable and not dependent on what RPMs I happen to have
+> installed.
+
+
+
+Actually, we had similar discussion for stack protector.
+
+
+First, Kees liked to let the build fail
+instead of disabling the stack protector silently:
+
+https://lkml.org/lkml/2018/2/9/697
+
+
+
+Linus said:
+But yes, I also reacted to your earlier " It can't silently rewrite it
+to _REGULAR because the compiler support for _STRONG regressed."
+Because it damn well can. If the compiler doesn't support
+-fstack-protector-strong, we can just fall back on -fstack-protector.
+Silently. No extra crazy complex logic for that either.
+
+(https://lkml.org/lkml/2018/2/10/281)
+
+
+
+I hope this is the same pattern.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
