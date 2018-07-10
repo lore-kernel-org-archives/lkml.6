@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5A6C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F2BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9917C2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9917C2083E
+	by mail.kernel.org (Postfix) with ESMTP id D299B2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D299B2083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387813AbeGJS3i (ORCPT
+        id S2387828AbeGJS3m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:29:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45366 "EHLO
+        Tue, 10 Jul 2018 14:29:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45380 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732245AbeGJS3h (ORCPT
+        with ESMTP id S1732245AbeGJS3k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:29:37 -0400
+        Tue, 10 Jul 2018 14:29:40 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BE5BAEB4;
-        Tue, 10 Jul 2018 18:29:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7DEEEB8;
+        Tue, 10 Jul 2018 18:29:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dan Rue <dan.rue@linaro.org>
-Subject: [PATCH 4.9 14/52] net: phy: micrel: fix crash when statistic requested for KSZ9031 phy
-Date:   Tue, 10 Jul 2018 20:24:42 +0200
-Message-Id: <20180710182450.939104219@linuxfoundation.org>
+        stable@vger.kernel.org, Sean Nyekjaer <sean.nyekjaer@prevas.dk>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 4.9 15/52] ARM: dts: imx6q: Use correct SDMA script for SPI5 core
+Date:   Tue, 10 Jul 2018 20:24:43 +0200
+Message-Id: <20180710182451.005764125@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -54,116 +51,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
 
-commit bfe72442578bb112626e476ffe1f276504d85b95 upstream.
+commit df07101e1c4a29e820df02f9989a066988b160e6 upstream.
 
-Now the command:
-	ethtool --phy-statistics eth0
-will cause system crash with meassage "Unable to handle kernel NULL pointer
-dereference at virtual address 00000010" from:
+According to the reference manual the shp_2_mcu / mcu_2_shp
+scripts must be used for devices connected through the SPBA.
 
- (kszphy_get_stats) from [<c069f1d8>] (ethtool_get_phy_stats+0xd8/0x210)
- (ethtool_get_phy_stats) from [<c06a0738>] (dev_ethtool+0x5b8/0x228c)
- (dev_ethtool) from [<c06b5484>] (dev_ioctl+0x3fc/0x964)
- (dev_ioctl) from [<c0679f7c>] (sock_ioctl+0x170/0x2c0)
- (sock_ioctl) from [<c02419d4>] (do_vfs_ioctl+0xa8/0x95c)
- (do_vfs_ioctl) from [<c02422c4>] (SyS_ioctl+0x3c/0x64)
- (SyS_ioctl) from [<c0107d60>] (ret_fast_syscall+0x0/0x44)
+This fixes an issue we saw with DMA transfers.
+Sometimes the SPI controller RX FIFO was not empty after a DMA
+transfer and the driver got stuck in the next PIO transfer when
+it read one word more than expected.
 
-The reason: phy_driver structure for KSZ9031 phy has no .probe() callback
-defined. As result, struct phy_device *phydev->priv pointer will not be
-initializes (null).
-This issue will affect also following phys:
- KSZ8795, KSZ886X, KSZ8873MLL, KSZ9031, KSZ9021, KSZ8061, KS8737
+commit dd4b487b32a35 ("ARM: dts: imx6: Use correct SDMA script
+for SPI cores") is fixing the same issue but only for SPI1 - 4.
 
-Fix it by:
-- adding .probe() = kszphy_probe() callback to KSZ9031, KSZ9021
-phys. The kszphy_probe() can be re-used as it doesn't do any phy specific
-settings.
-- removing statistic callbacks from other phys (KSZ8795, KSZ886X,
-KSZ8873MLL, KSZ8061, KS8737) as they doesn't have corresponding
-statistic counters.
-
-Fixes: 2b2427d06426 ("phy: micrel: Add ethtool statistics counters")
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Cc: Dan Rue <dan.rue@linaro.org>
+Fixes: 677940258dd8e ("ARM: dts: imx6q: enable dma for ecspi5")
+Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/phy/micrel.c |   17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+ arch/arm/boot/dts/imx6q.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/phy/micrel.c
-+++ b/drivers/net/phy/micrel.c
-@@ -801,9 +801,6 @@ static struct phy_driver ksphy_driver[]
- 	.read_status	= genphy_read_status,
- 	.ack_interrupt	= kszphy_ack_interrupt,
- 	.config_intr	= kszphy_config_intr,
--	.get_sset_count = kszphy_get_sset_count,
--	.get_strings	= kszphy_get_strings,
--	.get_stats	= kszphy_get_stats,
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
- }, {
-@@ -948,9 +945,6 @@ static struct phy_driver ksphy_driver[]
- 	.read_status	= genphy_read_status,
- 	.ack_interrupt	= kszphy_ack_interrupt,
- 	.config_intr	= kszphy_config_intr,
--	.get_sset_count = kszphy_get_sset_count,
--	.get_strings	= kszphy_get_strings,
--	.get_stats	= kszphy_get_stats,
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
- }, {
-@@ -960,6 +954,7 @@ static struct phy_driver ksphy_driver[]
- 	.features	= (PHY_GBIT_FEATURES | SUPPORTED_Pause),
- 	.flags		= PHY_HAS_MAGICANEG | PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz9021_type,
-+	.probe		= kszphy_probe,
- 	.config_init	= ksz9021_config_init,
- 	.config_aneg	= genphy_config_aneg,
- 	.read_status	= genphy_read_status,
-@@ -979,6 +974,7 @@ static struct phy_driver ksphy_driver[]
- 	.features	= (PHY_GBIT_FEATURES | SUPPORTED_Pause),
- 	.flags		= PHY_HAS_MAGICANEG | PHY_HAS_INTERRUPT,
- 	.driver_data	= &ksz9021_type,
-+	.probe		= kszphy_probe,
- 	.config_init	= ksz9031_config_init,
- 	.config_aneg	= genphy_config_aneg,
- 	.read_status	= ksz9031_read_status,
-@@ -998,9 +994,6 @@ static struct phy_driver ksphy_driver[]
- 	.config_init	= kszphy_config_init,
- 	.config_aneg	= ksz8873mll_config_aneg,
- 	.read_status	= ksz8873mll_read_status,
--	.get_sset_count = kszphy_get_sset_count,
--	.get_strings	= kszphy_get_strings,
--	.get_stats	= kszphy_get_stats,
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
- }, {
-@@ -1012,9 +1005,6 @@ static struct phy_driver ksphy_driver[]
- 	.config_init	= kszphy_config_init,
- 	.config_aneg	= genphy_config_aneg,
- 	.read_status	= genphy_read_status,
--	.get_sset_count = kszphy_get_sset_count,
--	.get_strings	= kszphy_get_strings,
--	.get_stats	= kszphy_get_stats,
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
- }, {
-@@ -1026,9 +1016,6 @@ static struct phy_driver ksphy_driver[]
- 	.config_init	= kszphy_config_init,
- 	.config_aneg	= ksz8873mll_config_aneg,
- 	.read_status	= ksz8873mll_read_status,
--	.get_sset_count = kszphy_get_sset_count,
--	.get_strings	= kszphy_get_strings,
--	.get_stats	= kszphy_get_stats,
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
- } };
+--- a/arch/arm/boot/dts/imx6q.dtsi
++++ b/arch/arm/boot/dts/imx6q.dtsi
+@@ -96,7 +96,7 @@
+ 					clocks = <&clks IMX6Q_CLK_ECSPI5>,
+ 						 <&clks IMX6Q_CLK_ECSPI5>;
+ 					clock-names = "ipg", "per";
+-					dmas = <&sdma 11 7 1>, <&sdma 12 7 2>;
++					dmas = <&sdma 11 8 1>, <&sdma 12 8 2>;
+ 					dma-names = "rx", "tx";
+ 					status = "disabled";
+ 				};
 
 
