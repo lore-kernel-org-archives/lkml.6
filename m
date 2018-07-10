@@ -2,150 +2,130 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FBF9C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B67D0C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A6F20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D34520883
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:45:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="G7DmXxmT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A6F20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="urIxQrZ/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D34520883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933324AbeGJLnI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 07:43:08 -0400
-Received: from services.gouders.net ([141.101.32.176]:57227 "EHLO
-        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932710AbeGJLnH (ORCPT
+        id S933229AbeGJLpW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 07:45:22 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:40057 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751715AbeGJLpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 07:43:07 -0400
-Received: from localhost ([193.175.198.193])
-        (authenticated bits=0)
-        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w6ABYD9Q019341
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Jul 2018 13:34:14 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
-        t=1531222454; bh=vcc6INzz65UroB/xi3pojtcCibnRgd3Pem2GZu87BB4=;
-        h=From:To:Cc:Subject:In-Reply-To:References:Date;
-        b=G7DmXxmT/8JPB1mnHrKsH2WfqSF7C+lMx1ccYbrzd5D47XiSzRdSlxv+GmKp55Yx8
-         f5xK2cEB2zxWIvUSi5IiwC6OHTm/N1+agZkenG/27UCZcLiXzMtIZBt42txX8JTSvZ
-         /lT5X3/MetZ4w7u//2+EOAVPvA0p6n8g1Ltt72JQ=
-From:   Dirk Gouders <dirk@gouders.net>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, Ulf Magnusson <ulfalizer@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 00/12] kbuild/kconfig: do not update config during installation
-In-Reply-To: <1530758389-30862-1-git-send-email-yamada.masahiro@socionext.com>
-        (Masahiro Yamada's message of "Thu, 5 Jul 2018 11:39:37 +0900")
-References: <1530758389-30862-1-git-send-email-yamada.masahiro@socionext.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
-Date:   Tue, 10 Jul 2018 13:34:10 +0200
-Message-ID: <gh36wr1g0d.fsf@lena.gouders.net>
+        Tue, 10 Jul 2018 07:45:20 -0400
+Received: by mail-wm0-f66.google.com with SMTP id z13-v6so23992872wma.5;
+        Tue, 10 Jul 2018 04:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=xx/PLLx6EWLqF4F86zk9igPafRB4/MabVhZpdNyR1k0=;
+        b=urIxQrZ/yLPYepz7g3XFZsZ6unhshcb7zg193ATBa3tlf93bV9bYK4VL9lU5NzoY/Y
+         2/3dF7XRwBbK1alo9bZ6zRS0qQfyEZRHYrYVslpdZ9tCaHWqjp7cpxxUZMe1pbzkbbEy
+         XqVHebbsWKHjtqE9dkvrBKCWdq53NVxdy/+k3Dm+SkCksgUkOF/ppSJObmRqwZ1+IhgM
+         a2GIgugAfy2vG8Mm4OcH18rT7NQlW9Om8DYKHvWLpSIH4otHblfkMcprA3h/Xgd01GXR
+         jwHQhBDcFqQGmbgyJoSife4ugv565c8IEqJ3TEbZJTGTPJLDq4STzSSdOI+VxrWZFTNj
+         1YRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=xx/PLLx6EWLqF4F86zk9igPafRB4/MabVhZpdNyR1k0=;
+        b=SdF17zqh2FWl2BqdmMkE0hknDsWlx2A/RQyHKtHn7oexA/qI3o80AKbo0TdctGrbIZ
+         w+FYHcme8AZHR+RX2lZ6lTodNHiv//oNDvziHgFjCzCE4sb1hhqJA6Aka2o1aaW82tpv
+         aeueUC7wWwz2VFFI8Oe6kDMK2/GxmGBA3khpC5ImvJMZr6ow3/XyIOjLVx2k8feRL8kF
+         gXV50SvPrmbvRVOCNBor9ru8Tg2bd2ienRtY8Ri0AcPRsmb92OZneOhdu0GXWUooepgr
+         SCTxqg68fFAEly/tMXiBdIjO0qLFP2osxldKz7wK1b8dQLeqENaMDK+U8OUek7jcyqak
+         7pcA==
+X-Gm-Message-State: APt69E30yrKqttOVVSjRAEi+6kPR3PSJFrghMSoA7BV9jgkTjvYfXyaY
+        ZyVXXevGlyUzAE83EcXZw28=
+X-Google-Smtp-Source: AAOMgpeLp5kv2zEFrbElyoK9DR1CApy5MDAHI5cckZgB7tGduEE+PTgt4OGOvz6/G8+WlVmtHc+uKw==
+X-Received: by 2002:a1c:888e:: with SMTP id k136-v6mr15414965wmd.6.1531223119023;
+        Tue, 10 Jul 2018 04:45:19 -0700 (PDT)
+Received: from sch.bme.hu (ecklm-pi.sch.bme.hu. [152.66.179.182])
+        by smtp.gmail.com with ESMTPSA id f133-v6sm18752804wme.42.2018.07.10.04.45.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 04:45:18 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 13:45:17 +0200
+From:   =?utf-8?B?TcOhdMOp?= Eckl <ecklm94@gmail.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Flavio Leitner <fbl@redhat.com>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] netfilter: NFT_SOCKET don't use NF_SOCKET_IPV6 without
+ NF_TABLES_IPV6
+Message-ID: <20180710114517.nxnkav6mimyivh4m@sch.bme.hu>
+References: <20180709213537.2748896-1-arnd@arndb.de>
+ <20180710080227.qwh53ahq26j6phhd@sch.bme.hu>
+ <20180710080538.d7xqpjdvpksfrx6o@sch.bme.hu>
+ <CAK8P3a0zYmdoMdWdFDcWprZY_4w2hbMYq4--iZB=JE4x2UiscA@mail.gmail.com>
+ <20180710105605.evgtmjiq5z46zld6@salvia>
+ <20180710111536.hio2xalz7pyxucc6@sch.bme.hu>
+ <20180710112459.ielgaydrgd4kxizo@salvia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180710112459.ielgaydrgd4kxizo@salvia>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+On Tue, Jul 10, 2018 at 01:24:59PM +0200, Pablo Neira Ayuso wrote:
+> On Tue, Jul 10, 2018 at 01:15:36PM +0200, Máté Eckl wrote:
+> > On Tue, Jul 10, 2018 at 12:56:05PM +0200, Pablo Neira Ayuso wrote:
+> [...]
+> > This patch only solves the nf_socket and nft_socket modules problem so I can
+> > only submit a v2 for 'netfilter: Kconfig: Change IPv6 select dependencies' but
+> > you already applied it so it would meen a force push. Should I do this?
+> > 
+> > I think Arnd's patch solves these problems in case we don't want to force-push
+> > or rebase.
+> 
+> You are refering to these two patches, right?
+> 
+> https://patchwork.ozlabs.org/patch/941374/
+> https://patchwork.ozlabs.org/patch/941696/
 
-> The main motivation of this patch series is to suppress the syncconfig
-> during running installation targets.
->
-> V1 consisted of only two patches:
->   https://patchwork.kernel.org/patch/10468105/
->   https://patchwork.kernel.org/patch/10468103/
->
-> I noticed that installation targets would continue running
-> even if the source tree is not configured at all
-> because the inclusion of include/config/auto.conf was optional.
->
-> So, I added one more patch in V2:
->  https://patchwork.kernel.org/patch/10483637/
->
-> However, kbuild test robot reported a new warning message was displayed:
->
-> Makefile:592: include/config/auto.conf: No such file or directory
->
-> This warning is displayed only for Make 4.1 or older.
->
-> To fix this annoying warning, I changed Kconfig too,
-> which leaded to more clean-up, improvements in Kconfig.
->
-> So, V3 is a big patch series.
+Oh, I missed the first one. So basically I should just squash them and resubmit
+right? Or even replace ("netfilter: Kconfig: Change IPv6 select
+dependencies") with these changes?
 
-Hello Masahiro,
-
-I tested your series for a while, now.  I did not notice real issues
-with it but want to leave some remarks about what I noticed in
-the surroundings of your patches.
-
-
-> Masahiro Yamada (12):
->   kconfig: rename file_write_dep and move it to confdata.c
-
-I might be missing some trivial use-case, but when looking at this
-patch, I noticed an inconsistency with the file names auto.conf and
-auto.conf.cmd.
-
-The first can be modified by an environment variable but when this
-happens, auto.conf.cmd remains as is.  I noticed that only the
-Documentation mentions that KCONFIG_AUTOCONFIG exists and confdata.c
-uses it to serve the file name -- no other use anywhere.
-
-Now, I am wondering if I just don't see an important case when the
-use of KCONFIG_AUTOCONFIG is really helpful or even mandatory.
-
->   kconfig: split out helpers to check file/directory, create directory
->   kconfig: remove unneeded directory generation from local*config
->   kconfig: create directories needed for syncconfig by itself
->   kconfig: make syncconfig update .config regardless of sym_change_count
-
-For this patch, I already mentioned that `conf --help' perhaps could be
-updated.  On the other side, none of the entries there tells us such
-details, so there is probably no need for syncconfig to do so.
-
->   kconfig: allow all config targets to write auto.conf if missing
->   kbuild: use 'include' directive to load auto.conf from top Makefile
->   kbuild: add .DELETE_ON_ERROR special target
->   kbuild: do not update config when running install targets
->   kbuild: do not update config for 'make kernelrelease'
->   kbuild: remove auto.conf and tristate.conf from prerequisites
-
-In the surrounding of this patch I noticed -include of auto.conf and
-tristate.conf in scripts/Makfile.modbuildin.  I tried it in some ways
-but was not able to trigger that file being used with a missing
-auto.conf.  On the other hand, if I now manually remove tristate.conf,
-that would not be fixed or even noticed, because of -include and I
-wonder if it is safer to also change the -includes in that file.
-
-It seems, if one of those files is missing, one must have done it
-manually or some other serious issue is present that we probably want to
-notice.
-
-Dirk
-
->   kbuild: replace include/config/%.conf with include/config/auto.conf
->
->  Makefile                    |  46 +++++++++------
->  scripts/Kbuild.include      |   3 +
->  scripts/kconfig/Makefile    |  16 ++---
->  scripts/kconfig/conf.c      |  39 +++++++------
->  scripts/kconfig/confdata.c  | 139 +++++++++++++++++++++++++++++++++++++-------
->  scripts/kconfig/gconf.c     |   1 +
->  scripts/kconfig/lkc.h       |   1 -
->  scripts/kconfig/lkc_proto.h |   2 +-
->  scripts/kconfig/mconf.c     |   1 +
->  scripts/kconfig/nconf.c     |   1 +
->  scripts/kconfig/qconf.cc    |   2 +
->  scripts/kconfig/util.c      |  30 ----------
->  12 files changed, 182 insertions(+), 99 deletions(-)
+> > > I think it's better if we toss your original patch in the tree and
+> > > rebase, ie. take the new one that fixes all issues that Arnd is
+> > > reporting. It would be good if we can sort out this before I send the
+> > > next pull request for net-next stuff.
+> > > 
+> > > I was afraid of fallout like this when I saw your original patch,
+> > > kbuild is always tricky.
+> > 
+> > This patch is not related to the nft_tproxy module (it seems that you refer to
+> > that) as Arnd didn't have that in the tree when doing this. I'll send a v4 fot
+> > the tproxy module, but that cannot be related to this one as it is not in tree
+> > yet.
+> 
+> No, I'm refering to 35bf1ccecaaa ("netfilter: Kconfig: Change IPv6
+> select dependencies"), that is causing the issues.
+> 
+> Thanks.
