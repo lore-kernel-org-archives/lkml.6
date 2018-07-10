@@ -2,199 +2,106 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45DBBC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD8FC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F29DF20877
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:59:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F29DF20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 288F12089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:00:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QhrI07Cm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 288F12089B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933336AbeGJI70 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:59:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43000 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932721AbeGJI6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:58:21 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52AAD1688;
-        Tue, 10 Jul 2018 01:58:21 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F31663F318;
-        Tue, 10 Jul 2018 01:58:19 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        will.deacon@arm.com, julien.thierry@arm.com, robin.murphy@arm.com,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v5 2/7] arm_pmu: Change API to support 64bit counter values
-Date:   Tue, 10 Jul 2018 09:57:59 +0100
-Message-Id: <1531213084-27417-3-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531213084-27417-1-git-send-email-suzuki.poulose@arm.com>
-References: <1531213084-27417-1-git-send-email-suzuki.poulose@arm.com>
+        id S933302AbeGJJAJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 05:00:09 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50430 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751285AbeGJJAI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 05:00:08 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v25-v6so23841425wmc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 02:00:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WIYyJRfyP+2i54rBHI2OnQKGYax6WOy8p0Q7tsazNak=;
+        b=QhrI07CmRUMXNInj78WoSAvmO9BVhxSH117SHWPIqBtWLNO8jgOwU1hAVmodnwXyqN
+         GH9JwMMj/zlZfuOLOn23W09IQDBZYCEsnkVUK9qqlnKY9rm+qSQBMPe9phWZLRiWtSS7
+         U4Tv93kG6+iZOmzjm1Idg+LKxlQDcWwdgcPVo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WIYyJRfyP+2i54rBHI2OnQKGYax6WOy8p0Q7tsazNak=;
+        b=NZNEQxosYrFoc2U0zG6DNe090Ol5mTKSUdBn41Xqatfaw8KY+Weu7ckM6gGe6SGukl
+         TIEK0dPMryJ2xcPj4a5VN2jfE6KG3OsxU9fBwZJD0Hpsb7YDRsaBFpv8cLkIwaMejJo2
+         XXDcpHw7/2mXhvto5u7VDpWJsTIobM/vUoaY2aHKmEuUFK8JkyFBUz42kuaWIpD6FncS
+         6eggVocRxMzRzHoTdlY9r2G0BTkSAx2cQ7iGMOAc/MeI+dccUHmN0Xl9l8qYoxxx8dwj
+         70FBJu8sJOWtcaGMoFzQWdFAmzvZigR6ylcFYvoGfH9TIkZatvrQnRkSa7yun3O6y3B+
+         R4sw==
+X-Gm-Message-State: APt69E2gsSr3zI10M71Ib8bkJhWaAphbP7VG7R0HESCtTT9xp5/t002g
+        JgcPQbI6rsbPnZk+sJbFakdYLg==
+X-Google-Smtp-Source: AAOMgpcK1MsysmV/3IUfqsHSPaO6NTf0OG+cNGnLgMzEZdvS241o1mWjvK1etURD2+uAz3qcFAFEWw==
+X-Received: by 2002:a1c:8b0d:: with SMTP id n13-v6mr13241695wmd.46.1531213207003;
+        Tue, 10 Jul 2018 02:00:07 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id q200-v6sm10149620wmg.8.2018.07.10.02.00.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 02:00:05 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 10:00:03 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Michael Hennerich <michael.hennerich@analog.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] backlight: adp8860: Mark expected switch fall-through
+Message-ID: <20180710090003.2flpkbgkakmnefpn@holly.lan>
+References: <20180709215156.GA8782@embeddedor.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709215156.GA8782@embeddedor.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the {read/write}_counter APIs to handle 64bit values
-to enable supporting chained event counters. The backends still
-use 32bit values and we pass them 32bit values only. So in effect
-there are no functional changes.
+On Mon, Jul 09, 2018 at 04:51:56PM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Cc: Will Deacon <will.deacon@arm.com>
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- - No changes since v2
----
- arch/arm/kernel/perf_event_v6.c     | 4 ++--
- arch/arm/kernel/perf_event_v7.c     | 4 ++--
- arch/arm/kernel/perf_event_xscale.c | 8 ++++----
- arch/arm64/kernel/perf_event.c      | 9 ++++-----
- include/linux/perf/arm_pmu.h        | 4 ++--
- 5 files changed, 14 insertions(+), 15 deletions(-)
+Having checked the datasheets...
 
-diff --git a/arch/arm/kernel/perf_event_v6.c b/arch/arm/kernel/perf_event_v6.c
-index f64a6bf..0729f98 100644
---- a/arch/arm/kernel/perf_event_v6.c
-+++ b/arch/arm/kernel/perf_event_v6.c
-@@ -233,7 +233,7 @@ armv6_pmcr_counter_has_overflowed(unsigned long pmcr,
- 	return ret;
- }
- 
--static inline u32 armv6pmu_read_counter(struct perf_event *event)
-+static inline u64 armv6pmu_read_counter(struct perf_event *event)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-@@ -251,7 +251,7 @@ static inline u32 armv6pmu_read_counter(struct perf_event *event)
- 	return value;
- }
- 
--static inline void armv6pmu_write_counter(struct perf_event *event, u32 value)
-+static inline void armv6pmu_write_counter(struct perf_event *event, u64 value)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-diff --git a/arch/arm/kernel/perf_event_v7.c b/arch/arm/kernel/perf_event_v7.c
-index ecca4cd..fd7ce01 100644
---- a/arch/arm/kernel/perf_event_v7.c
-+++ b/arch/arm/kernel/perf_event_v7.c
-@@ -743,7 +743,7 @@ static inline void armv7_pmnc_select_counter(int idx)
- 	isb();
- }
- 
--static inline u32 armv7pmu_read_counter(struct perf_event *event)
-+static inline u64 armv7pmu_read_counter(struct perf_event *event)
- {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
-@@ -763,7 +763,7 @@ static inline u32 armv7pmu_read_counter(struct perf_event *event)
- 	return value;
- }
- 
--static inline void armv7pmu_write_counter(struct perf_event *event, u32 value)
-+static inline void armv7pmu_write_counter(struct perf_event *event, u64 value)
- {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
-diff --git a/arch/arm/kernel/perf_event_xscale.c b/arch/arm/kernel/perf_event_xscale.c
-index c4f0294..942230f 100644
---- a/arch/arm/kernel/perf_event_xscale.c
-+++ b/arch/arm/kernel/perf_event_xscale.c
-@@ -316,7 +316,7 @@ static void xscale1pmu_stop(struct arm_pmu *cpu_pmu)
- 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
- }
- 
--static inline u32 xscale1pmu_read_counter(struct perf_event *event)
-+static inline u64 xscale1pmu_read_counter(struct perf_event *event)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-@@ -337,7 +337,7 @@ static inline u32 xscale1pmu_read_counter(struct perf_event *event)
- 	return val;
- }
- 
--static inline void xscale1pmu_write_counter(struct perf_event *event, u32 val)
-+static inline void xscale1pmu_write_counter(struct perf_event *event, u64 val)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-@@ -678,7 +678,7 @@ static void xscale2pmu_stop(struct arm_pmu *cpu_pmu)
- 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
- }
- 
--static inline u32 xscale2pmu_read_counter(struct perf_event *event)
-+static inline u64 xscale2pmu_read_counter(struct perf_event *event)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-@@ -705,7 +705,7 @@ static inline u32 xscale2pmu_read_counter(struct perf_event *event)
- 	return val;
- }
- 
--static inline void xscale2pmu_write_counter(struct perf_event *event, u32 val)
-+static inline void xscale2pmu_write_counter(struct perf_event *event, u64 val)
- {
- 	struct hw_perf_event *hwc = &event->hw;
- 	int counter = hwc->idx;
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-index 678ecff..66a2ffd 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -512,7 +512,7 @@ static inline int armv8pmu_select_counter(int idx)
- 	return idx;
- }
- 
--static inline u32 armv8pmu_read_counter(struct perf_event *event)
-+static inline u64 armv8pmu_read_counter(struct perf_event *event)
- {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
-@@ -530,7 +530,7 @@ static inline u32 armv8pmu_read_counter(struct perf_event *event)
- 	return value;
- }
- 
--static inline void armv8pmu_write_counter(struct perf_event *event, u32 value)
-+static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
- {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
- 	struct hw_perf_event *hwc = &event->hw;
-@@ -545,9 +545,8 @@ static inline void armv8pmu_write_counter(struct perf_event *event, u32 value)
- 		 * count using the lower 32bits and we want an interrupt when
- 		 * it overflows.
- 		 */
--		u64 value64 = 0xffffffff00000000ULL | value;
--
--		write_sysreg(value64, pmccntr_el0);
-+		value |= 0xffffffff00000000ULL;
-+		write_sysreg(value, pmccntr_el0);
- 	} else if (armv8pmu_select_counter(idx) == idx)
- 		write_sysreg(value, pmxevcntr_el0);
- }
-diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
-index 12c30a2..f7126a2 100644
---- a/include/linux/perf/arm_pmu.h
-+++ b/include/linux/perf/arm_pmu.h
-@@ -87,8 +87,8 @@ struct arm_pmu {
- 					 struct perf_event *event);
- 	int		(*set_event_filter)(struct hw_perf_event *evt,
- 					    struct perf_event_attr *attr);
--	u32		(*read_counter)(struct perf_event *event);
--	void		(*write_counter)(struct perf_event *event, u32 val);
-+	u64		(*read_counter)(struct perf_event *event);
-+	void		(*write_counter)(struct perf_event *event, u64 val);
- 	void		(*start)(struct arm_pmu *);
- 	void		(*stop)(struct arm_pmu *);
- 	void		(*reset)(void *);
--- 
-2.7.4
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
 
+> ---
+>  drivers/video/backlight/adp8860_bl.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/video/backlight/adp8860_bl.c b/drivers/video/backlight/adp8860_bl.c
+> index 16119bd..f1dc41c 100644
+> --- a/drivers/video/backlight/adp8860_bl.c
+> +++ b/drivers/video/backlight/adp8860_bl.c
+> @@ -690,6 +690,7 @@ static int adp8860_probe(struct i2c_client *client,
+>  	switch (ADP8860_MANID(reg_val)) {
+>  	case ADP8863_MANUFID:
+>  		data->gdwn_dis = !!pdata->gdwn_dis;
+> +		/* fall through */
+>  	case ADP8860_MANUFID:
+>  		data->en_ambl_sens = !!pdata->en_ambl_sens;
+>  		break;
+> -- 
+> 2.7.4
+> 
