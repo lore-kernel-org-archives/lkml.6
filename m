@@ -3,155 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B21DC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:14:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB8CC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B57B20878
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:14:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B57B20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E1A9920878
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:15:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1A9920878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751214AbeGJHOC (ORCPT
+        id S1751250AbeGJHPc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 03:14:02 -0400
-Received: from mga04.intel.com ([192.55.52.120]:18769 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751047AbeGJHOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 03:14:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 00:14:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,333,1526367600"; 
-   d="scan'208";a="63538422"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
-  by FMSMGA003.fm.intel.com with ESMTP; 10 Jul 2018 00:13:58 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Shaohua Li" <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-Subject: Re: [PATCH -mm -v4 05/21] mm, THP, swap: Support PMD swap mapping in free_swap_and_cache()/swap_free()
-References: <20180622035151.6676-1-ying.huang@intel.com>
-        <20180622035151.6676-6-ying.huang@intel.com>
-        <49178f48-6635-353c-678d-3db436d3f9c3@linux.intel.com>
-Date:   Tue, 10 Jul 2018 15:13:58 +0800
-In-Reply-To: <49178f48-6635-353c-678d-3db436d3f9c3@linux.intel.com> (Dave
-        Hansen's message of "Mon, 9 Jul 2018 10:19:25 -0700")
-Message-ID: <87y3ejh8ax.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Tue, 10 Jul 2018 03:15:32 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:43054 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750937AbeGJHPa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 03:15:30 -0400
+Received: by mail-oi0-f65.google.com with SMTP id b15-v6so40669710oib.10;
+        Tue, 10 Jul 2018 00:15:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pwKrW6mT4u9JAZLluFBYtFh88wVkaqRFNP7pLqPDvSw=;
+        b=AnZ0y2WvtqAoOOt+HXTgwej35jzTE9UkYYVadh3h4qUhJ66gOWrE6xp/vuV4ulGe9O
+         6eQnZ5lSilxZdfM40G9hMVYjIUmpimLGnh2KO8Fh2g3yWr0JJa/NwQ6DiZP/Loy8aiGF
+         8W6PR+jWc44gi1IVSQ+WPpAYVRZgEyPVbMcx6ft5wtu+1jn8pmS3AOSwaKUhIoJ1d1pv
+         cc8aUOAS29CD9V2bsfMnnsL+TCq83zrIdj+Ch2aPnbmpTa8EXd/7uzvpO71tKacCWPub
+         VQHG4OhSeJc7J6INyHuO8Z1mKlqlwPnGZXV8+zsD/paW5rn5KUnotPcHre/vIW8EMl9i
+         0sLw==
+X-Gm-Message-State: APt69E0QlkxOyzQH0koL5xpAe+zxXwmEJwF3lS6fP0E/9tZ9TqvRurSH
+        Axa5+ZU2rE4PfMDsy6U9ZZtIwn4z1yoL3saSjZsG1A2W
+X-Google-Smtp-Source: AAOMgpeb/ovXsMPVl9nZNvQHJMFLUCKwpfMnxiISzdezqDVswi3v60twltm9p8wzsd+8ZtEXC6ydWspX177f6lSdx5c=
+X-Received: by 2002:aca:758c:: with SMTP id q134-v6mr28498734oic.334.1531206930180;
+ Tue, 10 Jul 2018 00:15:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+References: <20180709135713.8083-1-fancer.lancer@gmail.com> <20180709135713.8083-2-fancer.lancer@gmail.com>
+In-Reply-To: <20180709135713.8083-2-fancer.lancer@gmail.com>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Tue, 10 Jul 2018 09:15:17 +0200
+Message-ID: <CA+7wUsxDfBdiGt5tZ7dxb63oMd=3Ry4s1Xysed8RSHJi35=VxQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mips: mm: Discard ioremap_uncached_accelerated() method
+To:     Serge Semin <fancer.lancer@gmail.com>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>, okaya@codeaurora.org,
+        chenhc@lemote.com, Sergey.Semin@t-platforms.ru,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "# v4 . 11" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dave Hansen <dave.hansen@linux.intel.com> writes:
-
-> I'm seeing a pattern here.
+'
+On Mon, Jul 9, 2018 at 3:57 PM Serge Semin <fancer.lancer@gmail.com> wrote:
 >
-> old code:
+> Adaptive ioremap_wc() method is now available (see "mips: mm:
+> Create UCA-based ioremap_wc() method" commit). We can use it for
+> UCA-featured MMIO transactions in the kernel, so we don't need
+> it platform clone ioremap_uncached_accelerated() being declard.
+> Seeing it is also unused anywhere in the kernel code, lets remove
+> it from io.h arch-specific header then.
 >
-> foo()
-> {
-> 	do_swap_something()
-> }
+> Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> Singed-off-by: Paul Burton <paul.burton@mips.com>
+
+nit: 'Signed' (on both patches)
+
+> Cc: James Hogan <jhogan@kernel.org>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: linux-mips@linux-mips.org
+> Cc: stable@vger.kernel.org
+> ---
+>  arch/mips/include/asm/io.h | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
 >
-> new code:
+> diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
+> index babe5155a..360b7ddeb 100644
+> --- a/arch/mips/include/asm/io.h
+> +++ b/arch/mips/include/asm/io.h
+> @@ -301,15 +301,11 @@ static inline void __iomem * __ioremap_mode(phys_addr_t offset, unsigned long si
+>         __ioremap_mode((offset), (size), boot_cpu_data.writecombine)
 >
-> foo(bool cluster)
-> {
-> 	if (cluster)
-> 		do_swap_cluster_something();
-> 	else
-> 		do_swap_something();
-> }
+>  /*
+> - * These two are MIPS specific ioremap variant.         ioremap_cacheable_cow
+> - * requests a cachable mapping, ioremap_uncached_accelerated requests a
+> - * mapping using the uncached accelerated mode which isn't supported on
+> - * all processors.
+> + * This is a MIPS specific ioremap variant. ioremap_cacheable_cow
+> + * requests a cachable mapping with CWB attribute enabled.
+>   */
+>  #define ioremap_cacheable_cow(offset, size)                            \
+>         __ioremap_mode((offset), (size), _CACHE_CACHABLE_COW)
+> -#define ioremap_uncached_accelerated(offset, size)                     \
+> -       __ioremap_mode((offset), (size), _CACHE_UNCACHED_ACCELERATED)
 >
-> That make me fear that we have:
-> 1. Created a new, wholly untested code path
-> 2. Created two places to patch bugs
-> 3. Are not reusing code when possible
+>  static inline void iounmap(const volatile void __iomem *addr)
+>  {
+> --
+> 2.12.0
 >
-> The code non-resuse was, and continues to be, IMNHO, one of the largest
-> sources of bugs with the original THP implementation.  It might be
-> infeasible to do here, but let's at least give it as much of a go as we can.
-
-I totally agree that we should unify the code path for huge and normal
-page/swap if possible.  One concern is code size for !CONFIG_THP_SWAP.
-The original method is good for that.  The new method may introduce some
-huge swap related code that is hard to be eliminated for
-!CONFIG_THP_SWAP.  Andrew Morton pointed this out for the patchset of
-the first step of the THP swap optimization.
-
-This may be mitigated at least partly via,
-
-`
-#ifdef CONFIG_THP_SWAP
-#define nr_swap_entries(nr)          (nr)
-#else
-#define nr_swap_entries(nr)          1
-#endif
-
-void do_something(swp_entry_t entry, int __nr_entries)
-{
-        int i, nr_entries = nr_swap_entries(__nr_entries);
-
-        if (nr_entries = SWAPFILE_CLUSTER)
-                ; /* huge swap specific */
-        else
-                ; /* normal swap specific */
-
-        for (i = 0; i < nr_entries; i++) {
-                ; /* do something for each entry */
-        }
-
-        /* ... */
-}
-`
-
-and rely on compiler to do the dirty work for us if possible.
-
-Hi, Andrew,
-
-What do you think about this?
-
-> Can I ask that you take another round through this set and:
 >
-> 1. Consolidate code refactoring into separate patches
-
-Sure.
-
-> 2. Add comments to code, and avoid doing it solely in changelogs
-
-Sure.
-
-> 3. Make an effort to share more code between the old code and new
->    code.  Where code can not be shared, call that out in the changelog.
-
-Will do that if we resolve the code size concern.
-
-> This is a *really* hard-to-review set at the moment.  Doing those things
-> will make it much easier to review and hopefully give us more
-> maintainable code going forward.
->
-> My apologies for not having done this review sooner.
-
-Thanks a lot for your comments!
-
-Best Regards,
-Huang, Ying
