@@ -2,593 +2,233 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 457B7C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4B8C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D39342084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:52:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PqSUrJ1m";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YLt/s1OP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D39342084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 957F1208E4
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:53:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957F1208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933340AbeGJMwH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 08:52:07 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:33310 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933132AbeGJMwF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 08:52:05 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D40596028D; Tue, 10 Jul 2018 12:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531227124;
-        bh=/o0n/5KeXr+ah4K70+oS1fzJLM0AgabQ8Ak+6RxvOA4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PqSUrJ1m8+3qktR17H3Mi+Z9zrvoHBaDZd/k7P6OI/gqqTVsKEmHT8Hzffg+WERAt
-         C+hrmcBtKZHDHRsjlBEbVB9AFBvyofD8CE4GU9tSEPcs7yQq68clXbViD85Il3S/Zz
-         SSKsdDOSAVn+xQecTF64iDX1qB/J9/3m57/C1IjI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id E43F86028D;
-        Tue, 10 Jul 2018 12:52:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531227123;
-        bh=/o0n/5KeXr+ah4K70+oS1fzJLM0AgabQ8Ak+6RxvOA4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YLt/s1OPfwlfXNYeqEwfFfLajsy0VxydloLPXSYA0sBCbLyNZ+SZoyyUMftcbDcXp
-         5mZFXlcSnBA3lPgSD6skwoGnSk/X8X4T0wgkFCPuYrHduCdAZ7x5BHmCYvTAk6MUVL
-         W8rMAyc/bqiYg1mal55u5uROGdaqjqxtMLBvpuLc=
+        id S933347AbeGJMxE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 08:53:04 -0400
+Received: from mga12.intel.com ([192.55.52.136]:7212 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933132AbeGJMxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 08:53:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 05:53:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,334,1526367600"; 
+   d="scan'208";a="55407973"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga007.jf.intel.com with ESMTP; 10 Jul 2018 05:53:00 -0700
+Subject: Re: [PATCH 1/1] mmc: sdhci-pci: fix eMMC controller issue on Intel
+ Baytrail SoCs
+To:     Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
+Cc:     ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de
+References: <20180619063119.3955-1-kurt@linutronix.de>
+ <20180619063119.3955-2-kurt@linutronix.de>
+ <293c2771-ea9b-4f0c-bd31-f8844de12dc4@intel.com>
+ <20180620131509.dhshihzxhfebracx@linutronix.de>
+ <4d3d9d0d-79b5-ef6c-cca8-9cd9ea7112af@intel.com>
+ <20180625143641.mmplqwrldmzx3rvg@linutronix.de>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <b5c03c57-87ea-e4a1-950c-5e7892bfd2ca@intel.com>
+Date:   Tue, 10 Jul 2018 15:51:28 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180625143641.mmplqwrldmzx3rvg@linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 10 Jul 2018 18:22:02 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v9 7/7] Bluetooth: hci_qca: Add support for Qualcomm
- Bluetooth chip wcn3990
-In-Reply-To: <20180706222110.GK129942@google.com>
-References: <20180705165515.13340-1-bgodavar@codeaurora.org>
- <20180705165515.13340-8-bgodavar@codeaurora.org>
- <20180706222110.GK129942@google.com>
-Message-ID: <a5d87ad5d916df5b5ca7c0c69a786e4a@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+On 25/06/18 17:36, Kurt Kanzenbach wrote:
+>> On 06/20/2018 04:15 PM, Kurt Kanzenbach wrote:
+>>> Hi,
+>>>
+>>> thanks for your response.
+>>>
+>>> On Tue, Jun 19, 2018 at 10:03:01AM +0300, Adrian Hunter wrote:
+>>>> On 19/06/18 09:31, Kurt Kanzenbach wrote:
+>>>>> Sometimes the eMMC controller doesn't respond anymore on Intel Baytrail
+>>>>> SoCs. The resulting error looks like:
+>>>>>
+>>>>> |mmc1: Reset 0x1 never completed.
+>>>>> |sdhci: =========== REGISTER DUMP (mmc1)===========
+>>>>> |sdhci: Sys addr: 0xffffffff | Version:  0x0000ffff
+>>>>> |sdhci: Blk size: 0x0000ffff | Blk cnt:  0x0000ffff
+>>>>> |sdhci: Argument: 0xffffffff | Trn mode: 0x0000ffff
+>>>>> |sdhci: Present:  0xffffffff | Host ctl: 0x000000ff
+>>>>> |sdhci: Power:    0x000000ff | Blk gap:  0x000000ff
+>>>>> |sdhci: Wake-up:  0x000000ff | Clock:    0x0000ffff
+>>>>> |sdhci: Timeout:  0x000000ff | Int stat: 0xffffffff
+>>>>> |sdhci: Int enab: 0xffffffff | Sig enab: 0xffffffff
+>>>>> |sdhci: AC12 err: 0x0000ffff | Slot int: 0x0000ffff
+>>>>> |sdhci: Caps:     0xffffffff | Caps_1:   0xffffffff
+>>>>> |sdhci: Cmd:      0x0000ffff | Max curr: 0xffffffff
+>>>>> |sdhci: Host ctl2: 0x0000ffff
+>>>>> |sdhci: ADMA Err: 0xffffffff | ADMA Ptr: 0xffffffff
+>>>>>
+>>>>> The behavior was observed on an Intel Atom E3825 performing lots of reboots. The
+>>>>
+>>>> So you are saying this only happens at boot time?  And only when
+>>>> re-booting?
+>>>
+>>> well, exactly. This issue was only observed when rebooting, not on cold
+>>> boots.
+>>>
+>>>> Can you send all the kernel messages?  Can you send an acpidump?
+>>>
+>>> The kernel log is straightforward. The system is booting and starting a
+>>> few applications. Afterwards the issue happens. The rootfilesystem is
+>>> located on the eMMC.
+>>
+>> The full messages can be more revealing such as showing what else was
+>> happening and the order of events, so I would still like to see them.
+>>
+>>>
+>>> The error message above is from the Linux v4.9 boot log.
+>>>
+>>> On v4.17 the same issue happens, but the error messages are different:
+>>>
+>>> |mmc1: Timeout waiting for hardware interrupt.
+>>> |mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
+>>> |mmc1: sdhci: Sys addr:  0x00000002 | Version:  0x00001002
+>>> |mmc1: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000000
+>>> |mmc1: sdhci: Argument:  0x00040fd4 | Trn mode: 0x0000003b
+>>> |mmc1: sdhci: Present:   0x1fff0000 | Host ctl: 0x00000035
+>>> |mmc1: sdhci: Power:     0x0000000b | Blk gap:  0x00000080
+>>> |mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x00000207
+>>> |mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000003
+>>> |mmc1: sdhci: Int enab:  0x02ff000b | Sig enab: 0x02ff000b
+>>> |mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000001
+>>> |mmc1: sdhci: Caps:      0x446cc801 | Caps_1:   0x00000005
+>>> |mmc1: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
+>>> |mmc1: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffff
+>>> |mmc1: sdhci: Resp[2]:   0x320f5913 | Resp[3]:  0x00000900
+>>> |mmc1: sdhci: Host ctl2: 0x0000000c
+>>> |mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x34ee5208
+>>> |mmc1: sdhci: ============================================
+>>> |[...]
+>>
+>> Those messages show that the interrupt did happen but the driver did not see
+>> it.  Are you doing anything unusual like using threadirqs?
+> 
+> No, I'm not doing anything unusual. The mmc core uses threaded irqs by
+> default. But, most of the work is performed in the primary handler. So,
+> that shouldn't be a problem.
+> 
+> But in the v4.9 case, we use preempt rt. I took a few scheduler traces
 
-On 2018-07-07 03:51, Matthias Kaehlcke wrote:
-> On Thu, Jul 05, 2018 at 10:25:15PM +0530, Balakrishna Godavarthi wrote:
->> Add support to set voltage/current of various regulators
->> to power up/down Bluetooth chip wcn3990.
->> 
->> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> ---
->> changes in v9:
->>     * moved flow control to vendor and set_baudarte functions.
->>     * removed parent regs.
->> 
->> changes in v8:
->>     * closing qca buffer, if qca_power_setup fails
->>     * chnaged ibs start timer function call location.
->>     * updated review comments.
->> 
->> changes in v7:
->>     * addressed review comments.
->> 
->> changes in v6:
->>     * Hooked up qca_power to qca_serdev.
->>     * renamed all the naming inconsistency functions with qca_*
->>     * leveraged common code of ROME for wcn3990.
->>     * created wrapper functions for re-usable blocks.
->>     * updated function of _*regulator_enable and _*regualtor_disable.
->>     * removed redundant comments and functions.
->>     * addressed review comments.
->> 
->> Changes in v5:
->>     * updated regulator vddpa min_uV to 1304000.
->>       * addressed review comments.
->> 
->> Changes in v4:
->>     * Segregated the changes of btqca from hci_qca
->>     * rebased all changes on top of bluetooth-next.
->>     * addressed review comments.
->> 
->> ---
->>  drivers/bluetooth/btqca.h   |   3 +
->>  drivers/bluetooth/hci_qca.c | 387 
->> +++++++++++++++++++++++++++++++-----
->>  2 files changed, 345 insertions(+), 45 deletions(-)
->> 
->> diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
->> index a9c2779f3e07..0c01f375fe83 100644
->> --- a/drivers/bluetooth/btqca.h
->> +++ b/drivers/bluetooth/btqca.h
->> @@ -37,6 +37,9 @@
->>  #define EDL_TAG_ID_HCI			(17)
->>  #define EDL_TAG_ID_DEEP_SLEEP		(27)
->> 
->> +#define QCA_WCN3990_POWERON_PULSE	0xFC
->> +#define QCA_WCN3990_POWEROFF_PULSE	0xC0
->> +
->>  enum qca_bardrate {
->>  	QCA_BAUDRATE_115200 	= 0,
->>  	QCA_BAUDRATE_57600,
->> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> index 7ebfaa0edf3f..d62c7785a618 100644
->> --- a/drivers/bluetooth/hci_qca.c
->> +++ b/drivers/bluetooth/hci_qca.c
->> @@ -5,7 +5,7 @@
->>   *  protocol extension to H4.
->>   *
->>   *  Copyright (C) 2007 Texas Instruments, Inc.
->> - *  Copyright (c) 2010, 2012 The Linux Foundation. All rights 
->> reserved.
->> + *  Copyright (c) 2010, 2012, 2018 The Linux Foundation. All rights 
->> reserved.
->>   *
->>   *  Acknowledgements:
->>   *  This file is based on hci_ll.c, which was...
->> @@ -31,9 +31,14 @@
->>  #include <linux/kernel.h>
->>  #include <linux/clk.h>
->>  #include <linux/debugfs.h>
->> +#include <linux/delay.h>
->> +#include <linux/device.h>
->>  #include <linux/gpio/consumer.h>
->>  #include <linux/mod_devicetable.h>
->>  #include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regulator/consumer.h>
->>  #include <linux/serdev.h>
->> 
->>  #include <net/bluetooth/bluetooth.h>
->> @@ -124,12 +129,46 @@ enum qca_speed_type {
->>  	QCA_OPER_SPEED
->>  };
->> 
->> +/*
->> + * Voltage regulator information required for configuring the
->> + * QCA Bluetooth chipset
->> + */
->> +struct qca_vreg {
->> +	const char *name;
->> +	unsigned int min_uV;
->> +	unsigned int max_uV;
->> +	unsigned int load_uA;
->> +};
->> +
->> +struct qca_vreg_data {
->> +	enum qca_btsoc_type soc_type;
->> +	struct qca_vreg *vregs;
->> +	size_t num_vregs;
->> +};
->> +
->> +/*
->> + * Platform data for the QCA Bluetooth power driver.
->> + */
->> +struct qca_power {
->> +	struct device *dev;
->> +	const struct qca_vreg_data *vreg_data;
->> +	struct regulator_bulk_data *vreg_bulk;
->> +	bool vregs_on;
->> +};
->> +
->>  struct qca_serdev {
->>  	struct hci_uart	 serdev_hu;
->>  	struct gpio_desc *bt_en;
->>  	struct clk	 *susclk;
->> +	enum qca_btsoc_type btsoc_type;
->> +	struct qca_power *bt_power;
->> +	u32 init_speed;
->> +	u32 oper_speed;
->>  };
->> 
->> +static int qca_power_setup(struct hci_uart *hu, bool on);
->> +static void qca_power_shutdown(struct hci_uart *hu);
->> +
->>  static void __serial_clock_on(struct tty_struct *tty)
->>  {
->>  	/* TODO: Some chipset requires to enable UART clock on client
->> @@ -407,6 +446,7 @@ static int qca_open(struct hci_uart *hu)
->>  {
->>  	struct qca_serdev *qcadev;
->>  	struct qca_data *qca;
->> +	int ret;
->> 
->>  	BT_DBG("hu %p qca_open", hu);
->> 
->> @@ -458,19 +498,32 @@ static int qca_open(struct hci_uart *hu)
->> 
->>  	hu->priv = qca;
->> 
->> -	timer_setup(&qca->wake_retrans_timer, hci_ibs_wake_retrans_timeout, 
->> 0);
->> -	qca->wake_retrans = IBS_WAKE_RETRANS_TIMEOUT_MS;
->> -
->> -	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
->> -	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
->> -
->>  	if (hu->serdev) {
->>  		serdev_device_open(hu->serdev);
->> 
->>  		qcadev = serdev_device_get_drvdata(hu->serdev);
->> -		gpiod_set_value_cansleep(qcadev->bt_en, 1);
->> +		if (qcadev->btsoc_type != QCA_WCN3990) {
->> +			gpiod_set_value_cansleep(qcadev->bt_en, 1);
->> +		} else {
->> +			hu->init_speed = qcadev->init_speed;
->> +			hu->oper_speed = qcadev->oper_speed;
->> +			ret = qca_power_setup(hu, true);
->> +			if (ret) {
->> +				destroy_workqueue(qca->workqueue);
->> +				kfree_skb(qca->rx_skb);
->> +				hu->priv = NULL;
->> +				kfree(qca);
->> +				return ret;
->> +			}
->> +		}
->>  	}
->> 
->> +	timer_setup(&qca->wake_retrans_timer, hci_ibs_wake_retrans_timeout, 
->> 0);
->> +	qca->wake_retrans = IBS_WAKE_RETRANS_TIMEOUT_MS;
->> +
->> +	timer_setup(&qca->tx_idle_timer, hci_ibs_tx_idle_timeout, 0);
->> +	qca->tx_idle_delay = IBS_TX_IDLE_TIMEOUT_MS;
->> +
->>  	BT_DBG("HCI_UART_QCA open, tx_idle_delay=%u, wake_retrans=%u",
->>  	       qca->tx_idle_delay, qca->wake_retrans);
->> 
->> @@ -554,10 +607,13 @@ static int qca_close(struct hci_uart *hu)
->>  	qca->hu = NULL;
->> 
->>  	if (hu->serdev) {
->> -		serdev_device_close(hu->serdev);
->> -
->>  		qcadev = serdev_device_get_drvdata(hu->serdev);
->> -		gpiod_set_value_cansleep(qcadev->bt_en, 0);
->> +		if (qcadev->btsoc_type == QCA_WCN3990)
->> +			qca_power_shutdown(hu);
->> +		else
->> +			gpiod_set_value_cansleep(qcadev->bt_en, 0);
->> +
->> +		serdev_device_close(hu->serdev);
->>  	}
->> 
->>  	kfree_skb(qca->rx_skb);
->> @@ -891,6 +947,7 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
->> uint8_t baudrate)
->>  	struct hci_uart *hu = hci_get_drvdata(hdev);
->>  	struct qca_data *qca = hu->priv;
->>  	struct sk_buff *skb;
->> +	struct qca_serdev *qcadev;
->>  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
->> 
->>  	if (baudrate > QCA_BAUDRATE_3200000)
->> @@ -904,6 +961,13 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
->> uint8_t baudrate)
->>  		return -ENOMEM;
->>  	}
->> 
->> +	/* Disabling hardware flow control is mandate while
-> 
-> nit: s/mandate/mandatory|required/
-> 
-[Bala]: will update.
+preempt rt is unusual.  SDHCI uses synchronize_hardirq() and that might
+explain the difference between the 4.9 case with preempt rt and the 4.17
+without.
 
->> +	 * sending change baudrate request to wcn3990 SoC.
->> +	 */
->> +	qcadev = serdev_device_get_drvdata(hu->serdev);
->> +	if (qcadev->btsoc_type == QCA_WCN3990)
->> +		hci_uart_set_flow_control(hu, true);
->> +
->>  	/* Assign commands to change baudrate and packet type. */
->>  	skb_put_data(skb, cmd, sizeof(cmd));
->>  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
->> @@ -919,6 +983,9 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
->> uint8_t baudrate)
->>  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
->>  	set_current_state(TASK_RUNNING);
->> 
->> +	if (qcadev->btsoc_type == QCA_WCN3990)
->> +		hci_uart_set_flow_control(hu, false);
->> +
->>  	return 0;
->>  }
->> 
->> @@ -930,6 +997,36 @@ static inline void host_set_baudrate(struct 
->> hci_uart *hu, unsigned int speed)
->>  		hci_uart_set_baudrate(hu, speed);
->>  }
->> 
->> +static int qca_send_vendor_cmd(struct hci_dev *hdev, u8 cmd)
->> +{
->> +	struct hci_uart *hu = hci_get_drvdata(hdev);
->> +	struct qca_data *qca = hu->priv;
->> +	struct sk_buff *skb;
->> +
->> +	bt_dev_dbg(hdev, "sending command %02x to SoC", cmd);
->> +
->> +	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
->> +	if (!skb)
->> +		return -ENOMEM;
->> +
->> +	/* Disabling hardware flow control is mandate while
+> in order to see if there might be any task blocking or preempting the
+> mmc irqs. However, that's not the case.
 > 
-> Same nit as above
+> The common pattern is: mmc1 is suspended, afterwards some applications
+> use mmc0 and finally a different application accesses mmc1. The suspend
+> function is called and during initialization the reset doesn't work
+> anymore.
+> 
+> Anyway, I'll perform more tests.
+> 
+> Thanks, Kurt
+> 
+>>
+>>>
+>>> Both issues disappear when disabling runtime pm.
+>>>
+>>> Anyway I'll prepare an acpidump for you.
+>>>
+>>>>
+>>>>> issue seems to occur if runtime power management is used. Found by utilizing
+>>>>> ftrace.
+>>>>>
+>>>>> The erratum VLI10 for the Intel E3825 states, that the eMMC controller
+>>>>> incorrectly announces that it supports suspend/resume. However, that shouldn't
+>>>>> be used, as the controller may incorrectly transfer data between memory and the
+>>>>> SD device.
+>>>>
+>>>> That erratum is not related to this problem.  The suspend/resume that is
+>>>> documented is an internal SDHCI feature, not the kernel's suspend/resume.
+>>>> The SDHCI Suspend/Resume Mechanism is not supported in the driver, so it is
+>>>> not being used anyway.
+>>>
+>>> Thanks for the clarification.
+>>>
+>>> Do you have any idea why this issue might happen?
+>>
+>> No, but it seems like the runtime pm callbacks aren't happening when they
+>> are supposed to.
+>>
+>>>
+>>> Thanks, Kurt
+>>>
+>>>>
+>>>>>
+>>>>> Therefore, disallowing runtime pm resolves the issue. Tested on the E3825.
+>>>>>
+>>>>> Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+>>>>> ---
+>>>>>  drivers/mmc/host/sdhci-pci-core.c | 17 ++++++++++++++++-
+>>>>>  1 file changed, 16 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+>>>>> index 77dd3521daae..df89381944cd 100644
+>>>>> --- a/drivers/mmc/host/sdhci-pci-core.c
+>>>>> +++ b/drivers/mmc/host/sdhci-pci-core.c
+>>>>> @@ -870,6 +870,21 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
+>>>>>  	.priv_size	= sizeof(struct intel_host),
+>>>>>  };
+>>>>>
+>>>>> +/*
+>>>>> + * See Erratum VLI10 from Errata List for Intel Atom E3825, Link:
+>>>>> + * https://www.intel.ca/content/dam/www/public/us/en/documents/specification-updates/atom-e3800-family-spec-update.pdf
+>>>>> + */
+>>>>> +static const struct sdhci_pci_fixes sdhci_intel_byt_emmc_no_runtime_pm = {
+>>>>> +	.allow_runtime_pm = false,
+>>>>> +	.probe_slot	= byt_emmc_probe_slot,
+>>>>> +	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
+>>>>> +	.quirks2	= SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+>>>>> +			  SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400 |
+>>>>> +			  SDHCI_QUIRK2_STOP_WITH_TC,
+>>>>> +	.ops		= &sdhci_intel_byt_ops,
+>>>>> +	.priv_size	= sizeof(struct intel_host),
+>>>>> +};
+>>>>> +
+>>>>>  static const struct sdhci_pci_fixes sdhci_intel_glk_emmc = {
+>>>>>  	.allow_runtime_pm	= true,
+>>>>>  	.probe_slot		= glk_emmc_probe_slot,
+>>>>> @@ -1470,7 +1485,7 @@ static const struct pci_device_id pci_ids[] = {
+>>>>>  	SDHCI_PCI_SUBDEVICE(INTEL, BYT_SDIO, NI, 7884, ni_byt_sdio),
+>>>>>  	SDHCI_PCI_DEVICE(INTEL, BYT_SDIO,  intel_byt_sdio),
+>>>>>  	SDHCI_PCI_DEVICE(INTEL, BYT_SD,    intel_byt_sd),
+>>>>> -	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc),
+>>>>> +	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc_no_runtime_pm),
+>>>>>  	SDHCI_PCI_DEVICE(INTEL, BSW_EMMC,  intel_byt_emmc),
+>>>>>  	SDHCI_PCI_DEVICE(INTEL, BSW_SDIO,  intel_byt_sdio),
+>>>>>  	SDHCI_PCI_DEVICE(INTEL, BSW_SD,    intel_byt_sd),
+>>>>>
+>>>>
+>>>
+>>
 > 
 
-[Bala]: will update.
-
->> +	 * sending vendor power on and off pulse to SoC.
->> +	 */
-> 
-> The function is called qca_send_vendor_cmd(), the comment about power
-> on/off pulses seems misplaced here. Are there other 'vendor commands'
-> that require a different flow control behavior?
-> 
-> Perhaps the function should have a different name or we need another
-> wrapper.
-> 
-
-[Bala]: this function is used to send single byte vendor commands. like 
-power on and off pulse.
-         and all single byte vendor commands require an flow control off 
-and on.
-         so might be function name change is required.
-         instead of qca_send_vendor_cmd(). i want to change function name 
-to qca_send_pulse() as this will be generic.
-
->> +	hci_uart_set_flow_control(hu, true);
-> 
-> Should the changing of the flow control be limited to wcn3990? As of
-> now the function is only called for wcn3990, however this is not
-> stated as a requirement and might change in the future.
-> 
->> +	skb_put_u8(skb, cmd);
->> +	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
->> +
->> +	skb_queue_tail(&qca->txq, skb);
->> +	hci_uart_tx_wakeup(hu);
->> +
->> +	/* Wait for 100 uS for SoC to settle down */
->> +	usleep_range(100, 200);
-> 
-> Is this needed for any 'vendor command' or directly related with the
-> power on/off pulses?
-> 
-
-[Bala] : flow control  off/on is needed for power on and off pulses 
-along with
-          command to set baudrate.. this is common across all the present 
-chips and chips which are in development stages.
-          might be function name is confusing will update the function 
-name.
-
->> +	hci_uart_set_flow_control(hu, false);
->> +
->> +	return 0;
->> +}
->> +
->>  static unsigned int qca_get_speed(struct hci_uart *hu,
->>  				  enum qca_speed_type speed_type)
->>  {
->> @@ -952,10 +1049,19 @@ static unsigned int qca_get_speed(struct 
->> hci_uart *hu,
->> 
->>  static int qca_check_speeds(struct hci_uart *hu)
->>  {
->> -	/* One or the other speeds should be non zero. */
->> -	if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
->> -	    !qca_get_speed(hu, QCA_OPER_SPEED))
->> +	struct qca_serdev *qcadev;
->> +
->> +	qcadev = serdev_device_get_drvdata(hu->serdev);
->> +	if ((qcadev->btsoc_type == QCA_WCN3990 &&
->> +	    !qca_get_speed(hu, QCA_INIT_SPEED)) ||
->> +	    !qca_get_speed(hu, QCA_OPER_SPEED)) {
->> +		/* Both INIT and OPER speed should be non zero. */
->>  		return -EINVAL;
->> +	} else if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
->> +		    !qca_get_speed(hu, QCA_OPER_SPEED)) {
->> +		/* One or the other speeds should be non zero. */
->> +		return -EINVAL;
->> +	}
-> 
-> It is questionable if the comments are useful, they are basically
-> stating the same as the conditions.
-> 
-> if-else statements with a single statement in all branches shouldn't
-> use curly braces. Personally I don't dislike them in this case with
-> the multi-line conditions, but in principle they shoulnd't be there.
-> 
-> nit: this would be easier to read with nested if statements:
-> 
-[Bala]: will update
-
-> 	if (qcadev->btsoc_type == QCA_WCN3990)
-> 		if (!qca_get_speed(hu, QCA_INIT_SPEED)) ||
-> 		    !qca_get_speed(hu, QCA_OPER_SPEED))
-> 			return -EINVAL;
-> 	else
-> 		if (!qca_get_speed(hu, QCA_INIT_SPEED) &&
-> 		    !qca_get_speed(hu, QCA_OPER_SPEED)) {
-> 			return -EINVAL;
-> 
->>  	return 0;
->>  }
->> @@ -986,15 +1092,40 @@ static int qca_set_speed(struct hci_uart *hu, 
->> enum qca_speed_type speed_type)
->>  	return 0;
->>  }
->> 
->> +static int qca_wcn3990_init(struct hci_uart *hu)
->> +{
->> +	int ret;
->> +
->> +	ret = qca_send_vendor_cmd(hu->hdev, QCA_WCN3990_POWERON_PULSE);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Wait for 100 ms for SoC to boot up */
->> +	msleep(100);
->> +	serdev_device_close(hu->serdev);
->> +	ret = serdev_device_open(hu->serdev);
->> +	if (ret) {
->> +		bt_dev_err(hu->hdev, "failed to open port");
->> +		return ret;
->> +	}
->> +
->> +	/* Setup initial baudrate */
->> +	qca_set_speed(hu, QCA_INIT_SPEED);
-> 
-> The comment is a bit redundant.
-> 
-[Bala]: will update
-
->> +	hci_uart_set_flow_control(hu, false);
->> +
->> +	return 0;
->> +}
->> +
->>  static int qca_setup(struct hci_uart *hu)
->>  {
->>  	struct hci_dev *hdev = hu->hdev;
->>  	struct qca_data *qca = hu->priv;
->>  	unsigned int speed, qca_baudrate = QCA_BAUDRATE_115200;
->> +	struct qca_serdev *qcadev;
->>  	int ret;
->>  	int soc_ver = 0;
->> 
->> -	bt_dev_info(hdev, "ROME setup");
->> +	qcadev = serdev_device_get_drvdata(hu->serdev);
->> 
->>  	ret = qca_check_speeds(hu);
->>  	if (ret)
->> @@ -1006,6 +1137,21 @@ static int qca_setup(struct hci_uart *hu)
->>  	/* Setup initial baudrate */
->>  	qca_set_speed(hu, QCA_INIT_SPEED);
->> 
->> +	if (qcadev->btsoc_type == QCA_WCN3990) {
->> +		bt_dev_dbg(hdev, "setting up wcn3990");
-> 
-> Seems like this should be bt_dev_info() for consistency with Rome.
-> 
-[Bala]: will update
-
->> +		ret = qca_wcn3990_init(hu);
->> +		if (ret)
->> +			return ret;
->> +
->> +		ret = qca_read_soc_version(hdev, &soc_ver);
->> +		if (ret < 0 || soc_ver == 0) {
->> +			bt_dev_err(hdev, "Failed to get version %d", ret);
->> +			return ret;
->> +		}
->> +	} else {
->> +		bt_dev_info(hdev, "ROME setup");
->> +	}
->> +
->>  	/* Setup user speed if needed */
->>  	speed = qca_get_speed(hu, QCA_OPER_SPEED);
->>  	if (speed) {
->> @@ -1016,16 +1162,18 @@ static int qca_setup(struct hci_uart *hu)
->>  		qca_baudrate = qca_get_baudrate_value(speed);
->>  	}
->> 
->> -	/* Get QCA version information */
->> -	ret = qca_read_soc_version(hdev, &soc_ver);
->> -	if (ret < 0 || soc_ver == 0) {
->> -		bt_dev_err(hdev, "QCA Failed to get version (%d)", ret);
->> -		return ret;
->> +	if (!soc_ver) {
-> 
-> 
-> The following would probably be clearer:
-> 
->   	if (qcadev->btsoc_type != QCA_WCN3990) {
-> 
->> +		/* Get QCA version information */
->> +		ret = qca_read_soc_version(hdev, &soc_ver);
->> +		if (ret < 0 || soc_ver == 0) {
->> +			bt_dev_err(hdev, "QCA Failed to get version (%d)", ret);
->> +			return ret;
->> +		}
->> +		bt_dev_info(hdev, "QCA controller version 0x%08x", soc_ver);
-> 
-> Couldn't we hide some of this in qca_read_soc_version()?
-> 
-
-[Bala]: we can hide soc_ver==0 in qca_read_soc_version()
-         will update.
-
-> qca_read_soc_version() could at least do the logging in the error case
-> (the 'soc_ver == 0' case could be handled there as well), which would
-> leave us with:
-> 
-> 
-> 	ret = qca_read_soc_version(hdev, &soc_ver);
-> 	if (ret)
-> 		return ret;
-> 
-> And the same above.
-> 
-> The controller version can be logged outside of the branch for both
-> wcn3990 and Rome.
-> 
-
-[Bala]: will update.
-
-
->>  	}
->> -	bt_dev_info(hdev, "QCA controller version 0x%08x", soc_ver);
->> 
->>  	/* Setup patch / NVM configurations */
->> -	ret = qca_uart_setup(hdev, qca_baudrate, QCA_ROME, soc_ver);
->> +	ret = qca_uart_setup(hdev, qca_baudrate, qcadev->btsoc_type, 
->> soc_ver);
->>  	if (!ret) {
->>  		set_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
->>  		qca_debugfs_init(hdev);
->> @@ -1061,9 +1209,123 @@ static struct hci_uart_proto qca_proto = {
->>  	.dequeue	= qca_dequeue,
->>  };
->> 
->> +static const struct qca_vreg_data qca_soc_data = {
->> +	.soc_type = QCA_WCN3990,
->> +	.vregs = (struct qca_vreg []) {
->> +		{ "vddio",   1800000, 1800000,  0 },
->> +		{ "vddxo",   1800000, 1800000,  1 },
->> +		{ "vddrf",   1304000, 1304000,  1 },
->> +		{ "vddch0",  3000000, 3312000,  1 },
->> +	},
->> +	.num_vregs = 4,
->> +};
-> 
-> I didn't chime in earlier in the discussion with Stephen on the
-> regulators (https://patchwork.kernel.org/patch/10467911/), however I
-> agree with him that specifying at load of 1uA doesn't seem to make
-> much sense. What would happen if the load remained unspecified (or 0)?
-
-[Bala]: will test and get back to you on this.
-
--- 
-Regards
-Balakrishna.
