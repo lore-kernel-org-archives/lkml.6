@@ -2,79 +2,108 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A10C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8915AC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AADD520B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:19:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AADD520B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F404208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:20:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XThm3uT5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F404208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732348AbeGJXVR (ORCPT
+        id S1732386AbeGJXVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 19:21:17 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41152 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732291AbeGJXVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 19:21:17 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 10 Jul 2018 19:21:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732291AbeGJXVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 19:21:19 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3393470219;
-        Tue, 10 Jul 2018 23:19:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B386111AF0A;
-        Tue, 10 Jul 2018 23:19:54 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <dc5039cb-97cf-fe72-d601-f48eb26e8e66@schaufler-ca.com>
-References: <dc5039cb-97cf-fe72-d601-f48eb26e8e66@schaufler-ca.com> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126254346.14533.14191961720018099798.stgit@warthog.procyon.org.uk>
-To:     Casey Schaufler <casey@schaufler-ca.com>
-Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        torvalds@linux-foundation.org
-Subject: Re: [PATCH 08/32] smack: Implement filesystem context security hooks [ver #9]
+        by mail.kernel.org (Postfix) with ESMTPSA id F3582208E3;
+        Tue, 10 Jul 2018 23:19:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531264798;
+        bh=hDSOXMk/BJkfcShvgrNo1DmIU2HAnzmH3JNPJTrUxN0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XThm3uT5yVFWz+yzZQh3CHRPK3nu6UcToSobgcL8YiRMs2oeDNssav1vKC6bW2/It
+         t+WcQs1po3eQ1x4M6cOd9l7/JUxSR34k4k33S198fPGGkBQVSZ8JIB8cZ4mRzIkJqT
+         l+Gfqvy70y8HopbHpQPiVrkE7Tq3GvZFB+uOuBL0=
+Date:   Tue, 10 Jul 2018 18:19:56 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc:     bhelgaas@google.com, keith.busch@intel.com,
+        alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, Frederick Lawler <fred@fredlawl.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] PCI/AER: Fix aerdrv loading with "pcie_ports=native"
+ parameter
+Message-ID: <20180710231956.GD188359@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180703163854.GA61685@bhelgaas-glaptop.roam.corp.google.com>
+ <20180703232755.2472-1-mr.nuke.me@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16479.1531264793.1@warthog.procyon.org.uk>
-Date:   Wed, 11 Jul 2018 00:19:53 +0100
-Message-ID: <16480.1531264793@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 10 Jul 2018 23:19:55 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Tue, 10 Jul 2018 23:19:55 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180703232755.2472-1-mr.nuke.me@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Casey Schaufler <casey@schaufler-ca.com> wrote:
-
-> > Implement filesystem context security hooks for the smack LSM.
-> >
-> > Question: Should the ->fs_context_parse_source() hook be implemented to
-> > check the labels on any source devices specified?
+On Tue, Jul 03, 2018 at 06:27:43PM -0500, Alexandru Gagniuc wrote:
+> According to the documentation, "pcie_ports=native", linux should use
+> native AER and DPC services. While that is true for the _OSC method
+> parsing, this is not the only place that is checked. Should the HEST
+> table list PCIe ports as firmware-first, linux will not use native
+> services.
 > 
-> Checking the label on a block device when doing a mount
-> is just going to end in tears. If you're remounting from
-> an already mounted filesystem it might make sense to check
-> that the new mount doesn't provide greater access than the
-> existing mount. If the original mount has smackfsdefault="_"
-> I could see prohibiting the additional mount having
-> smackfsdefault="*" on a filesystem that doesn't support
-> xattrs. But that requires that a (hopefully) privileged
-> process be involved, and we expect them to have a clue.
-> So no, I don't see it necessary.
+> This happens because aer_acpi_firmware_first() doesn't take
+> 'pcie_ports' into account. This is wrong. DPC uses the same logic when
+> it decides whether to load or not, so fixing this also fixes DPC not
+> loading.
+> 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 
-I think I may have meant the device file rather than the actual device
-content.
+Applied to pci/aer for v4.19, thanks!
 
-David
+> ---
+>  drivers/pci/pcie/aer.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index a2e88386af28..63a66a3b2fb5 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -303,6 +303,9 @@ int pcie_aer_get_firmware_first(struct pci_dev *dev)
+>  	if (!pci_is_pcie(dev))
+>  		return 0;
+>  
+> +	if (pcie_ports_native)
+> +		return 0;
+> +
+>  	if (!dev->__aer_firmware_first_valid)
+>  		aer_set_firmware_first(dev);
+>  	return dev->__aer_firmware_first;
+> @@ -323,6 +326,9 @@ bool aer_acpi_firmware_first(void)
+>  		.firmware_first	= 0,
+>  	};
+>  
+> +	if (pcie_ports_native)
+> +		return 0;
+> +
+>  	if (!parsed) {
+>  		apei_hest_parse(aer_hest_parse, &info);
+>  		aer_firmware_first = info.firmware_first;
+> -- 
+> 2.14.3
+> 
