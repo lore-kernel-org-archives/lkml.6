@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89299C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5AB6C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 554FD208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 554FD208E8
+	by mail.kernel.org (Postfix) with ESMTP id 725B7208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 725B7208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390079AbeGJSg6 (ORCPT
+        id S2390093AbeGJShB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:36:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48658 "EHLO
+        Tue, 10 Jul 2018 14:37:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49766 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390064AbeGJSg5 (ORCPT
+        with ESMTP id S2390062AbeGJShB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:36:57 -0400
+        Tue, 10 Jul 2018 14:37:01 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 34FBCECB;
-        Tue, 10 Jul 2018 18:36:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05620DF2;
+        Tue, 10 Jul 2018 18:36:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.17 44/56] HID: core: allow concurrent registration of drivers
-Date:   Tue, 10 Jul 2018 20:25:26 +0200
-Message-Id: <20180710182505.683450110@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wang6495@umn.edu>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: [PATCH 4.17 45/56] i2c: core: smbus: fix a potential missing-check bug
+Date:   Tue, 10 Jul 2018 20:25:27 +0200
+Message-Id: <20180710182505.723396757@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -52,72 +50,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Wenwen Wang <wang6495@umn.edu>
 
-commit 8f732850df1b2b4d8d719f7e606dfb3050e7ea11 upstream.
+commit 8e03477cb709b73a2c1e1f4349ee3b7b33c50416 upstream.
 
-Detected on the Dell XPS 9365.
+In i2c_smbus_xfer_emulated(), the function i2c_transfer() is invoked to
+transfer i2c messages. The number of actual transferred messages is
+returned and saved to 'status'. If 'status' is negative, that means an
+error occurred during the transfer process. In that case, the value of
+'status' is an error code to indicate the reason of the transfer failure.
+In most cases, i2c_transfer() can transfer 'num' messages with no error.
+And so 'status' == 'num'. However, due to unexpected errors, it is probable
+that only partial messages are transferred by i2c_transfer(). As a result,
+'status' != 'num'. This special case is not checked after the invocation of
+i2c_transfer() and can potentially lead to unexpected issues in the
+following execution since it is expected that 'status' == 'num'.
 
-The laptop has 2 devices that benefit from the hid-generic auto-unbinding.
-When those 2 devices are presented to the userspace, udev loads both wacom and
-hid-multitouch. When this happens, the code in __hid_bus_reprobe_drivers() is
-called concurrently and the second device gets reprobed twice.
+This patch checks the return value of i2c_transfer() and returns an error
+code -EIO if the number of actual transferred messages 'status' is not
+equal to 'num'.
 
-An other bug in the power_supply subsystem prevent to remove the wacom driver
-if it just finished its initialization, which basically kills the wacom node.
-
-[jkosina@suse.cz: reformat changelog a bit]
-Fixes c17a7476e4c4 ("HID: core: rewrite the hid-generic automatic unbind")
-Cc: stable@vger.kernel.org # v4.17
-Tested-by: Mario Limonciello <mario.limonciello@dell.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-core.c |    5 ++++-
- include/linux/hid.h    |    3 ++-
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/i2c/i2c-core-smbus.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -1942,6 +1942,8 @@ static int hid_device_probe(struct devic
- 	}
- 	hdev->io_started = false;
+--- a/drivers/i2c/i2c-core-smbus.c
++++ b/drivers/i2c/i2c-core-smbus.c
+@@ -466,6 +466,8 @@ static s32 i2c_smbus_xfer_emulated(struc
+ 	status = i2c_transfer(adapter, msg, num);
+ 	if (status < 0)
+ 		return status;
++	if (status != num)
++		return -EIO;
  
-+	clear_bit(ffs(HID_STAT_REPROBED), &hdev->status);
-+
- 	if (!hdev->driver) {
- 		id = hid_match_device(hdev, hdrv);
- 		if (id == NULL) {
-@@ -2205,7 +2207,8 @@ static int __hid_bus_reprobe_drivers(str
- 	struct hid_device *hdev = to_hid_device(dev);
- 
- 	if (hdev->driver == hdrv &&
--	    !hdrv->match(hdev, hid_ignore_special_drivers))
-+	    !hdrv->match(hdev, hid_ignore_special_drivers) &&
-+	    !test_and_set_bit(ffs(HID_STAT_REPROBED), &hdev->status))
- 		return device_reprobe(dev);
- 
- 	return 0;
---- a/include/linux/hid.h
-+++ b/include/linux/hid.h
-@@ -502,6 +502,7 @@ struct hid_output_fifo {
- 
- #define HID_STAT_ADDED		BIT(0)
- #define HID_STAT_PARSED		BIT(1)
-+#define HID_STAT_REPROBED	BIT(3)
- 
- struct hid_input {
- 	struct list_head list;
-@@ -568,7 +569,7 @@ struct hid_device {							/* device repo
- 	bool battery_avoid_query;
- #endif
- 
--	unsigned int status;						/* see STAT flags above */
-+	unsigned long status;						/* see STAT flags above */
- 	unsigned claimed;						/* Claimed by hidinput, hiddev? */
- 	unsigned quirks;						/* Various quirks the device can pull on us */
- 	bool io_started;						/* If IO has started */
+ 	/* Check PEC if last message is a read */
+ 	if (i && (msg[num-1].flags & I2C_M_RD)) {
 
 
