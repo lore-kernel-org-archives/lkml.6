@@ -2,212 +2,118 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74D0C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:18:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F025C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 727B020881
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:18:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC4B120881
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:18:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCUd4T/b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 727B020881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Wp7UZaOx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4B120881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933364AbeGJBSB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 21:18:01 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35004 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754588AbeGJBRo (ORCPT
+        id S933416AbeGJBSX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 21:18:23 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:13984 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933372AbeGJBSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 21:17:44 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e6-v6so1621462pgv.2;
-        Mon, 09 Jul 2018 18:17:44 -0700 (PDT)
+        Mon, 9 Jul 2018 21:18:16 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie3.idc.renesas.com with ESMTP; 10 Jul 2018 10:18:15 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 3163669AD1;
+        Tue, 10 Jul 2018 10:18:15 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,332,1526310000"; 
+   d="scan'208";a="284914041"
+Received: from mail-os2jpn01lp0148.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.148])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 10 Jul 2018 10:18:14 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Vo153coLu9EEasa537CpPxbKQej9n+mqzvgyXUU8RWQ=;
-        b=RCUd4T/bHJtdlIyhyWGy5MWb8V6kX8Rb/dM9nxTrU0/bvxI77f490cvoTPtsHmI8NF
-         pRZEzZ+KlNAIRyRxm1moBfZO6KKkHJd3EHPSn1p7ymqTVyCZYXqx8bb4KKDTTC6YrHnQ
-         8XOUtl0I3PTSyZmMPptkCflQVPsdwxF/wk5sMdNb1VpokGGY06e7lZCgHPdaUQYzORQl
-         K8PVhOuV3WQaoGuH3/vEPa8ISjMggtOKIH+yC4bofjyvsat25Mb3xbkzFG/+8UlTDvpg
-         cH17nNy0pH3NYMc9iiOz9ud15SVoreOo1qvOppB4EeSVq2dV8G9v1fZCHLqoetQAPjUl
-         XPFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vo153coLu9EEasa537CpPxbKQej9n+mqzvgyXUU8RWQ=;
-        b=KUiDu/qALoD+CyLShg1YfWhMKxiiWRKKvKH8ZQkJKfHRVCHQu+R2Cfm496RVG2Q84Q
-         XLFgGecy3nIg3Lh99n+NfrQ1PkUuQlI7Yet4vs5yYFSsNWmC0081UD7pnssgwW4pckl9
-         cooKA/vxRx92335T+xwG6dtwojIpq+kXvfxAm98gKNvIk6HF+31TerDG+zSZlF2JaIHI
-         Lw2T0VyuBYwmmkw4wp9++g//cq7ELCzFIk3rg7IA0Qj0N0A0ARLxsCv38W94G73jXuxh
-         hJtRw2EGOfqQJX497mbl3h1g2rucZeipDeiSxSDJd7W4P0rbtRgfsR57+pkQgvp0hjL2
-         ZcCg==
-X-Gm-Message-State: APt69E3HzXWgyoqLR573Dy8h5jFNv7gNewfsEtbUQ1qvE42TqmhVWwwj
-        2OBlEuOQFTJA8XebxKEKSh0=
-X-Google-Smtp-Source: AAOMgpfO7/lyZwWNHcSI3pft7y4oa0NH38UVPDeWnAC5H4fzpZMGyhkvilD7GmaRQ4DZ/GUcRtReNQ==
-X-Received: by 2002:a65:6104:: with SMTP id z4-v6mr20672082pgu.361.1531185463558;
-        Mon, 09 Jul 2018 18:17:43 -0700 (PDT)
-Received: from sol.localdomain (c-67-185-97-198.hsd1.wa.comcast.net. [67.185.97.198])
-        by smtp.gmail.com with ESMTPSA id q78-v6sm22589575pfi.185.2018.07.09.18.17.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 18:17:42 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 18:17:41 -0700
-From:   Eric Biggers <ebiggers3@gmail.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH 07/18] fs_context: fix double free of legacy_fs_context
- data
-Message-ID: <20180710011741.GA1014@sol.localdomain>
-References: <20180708210154.10423-8-ebiggers3@gmail.com>
- <20180708210154.10423-1-ebiggers3@gmail.com>
- <3014.1531139469@warthog.procyon.org.uk>
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Oyvg9ov135CxohgvrI4liiAseTCNnub9BG8hLJT4AMg=;
+ b=Wp7UZaOx+5cluVwzDI/XoC5mnYMT90KMVLsF5JEJR0/JupzuOZ/hEBof0IPwRG9FbaJM7B/0iJrjtOku1AY3wM63Grziv2LwvSfNTeiNBIzdM6ekWSvmHoIyaPTpDnzSRK6ImsLUFzg4+ovD+MysI9EW5ceHy76n7DDa6U4/XBI=
+Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com (52.134.243.14) by
+ OSBPR01MB2919.jpnprd01.prod.outlook.com (52.134.253.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.930.21; Tue, 10 Jul 2018 01:18:13 +0000
+Received: from OSBPR01MB2293.jpnprd01.prod.outlook.com
+ ([fe80::3820:2ee6:79bd:c8b6]) by OSBPR01MB2293.jpnprd01.prod.outlook.com
+ ([fe80::3820:2ee6:79bd:c8b6%3]) with mapi id 15.20.0930.022; Tue, 10 Jul 2018
+ 01:18:13 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        TAKESHI KIHARA <takeshi.kihara.df@renesas.com>
+Subject: RE: linux-next: Signed-off-by missing for commit in the pinctrl tree
+Thread-Topic: linux-next: Signed-off-by missing for commit in the pinctrl tree
+Thread-Index: AQHUF890Gn0hmXHEX06i70DSwMUcQKSHfaKAgAApiQA=
+Date:   Tue, 10 Jul 2018 01:18:13 +0000
+Message-ID: <OSBPR01MB22933EFD31CAC8A88CE08EDAD85B0@OSBPR01MB2293.jpnprd01.prod.outlook.com>
+References: <20180710075439.4a449b3d@canb.auug.org.au>
+ <CACRpkdZrsGzULrNaoaX6bSy6z6o-gshQXrRhzUk=tuFF86shDw@mail.gmail.com>
+In-Reply-To: <CACRpkdZrsGzULrNaoaX6bSy6z6o-gshQXrRhzUk=tuFF86shDw@mail.gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [211.11.155.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;OSBPR01MB2919;7:IbdTsbnKIYJW39wKyWxcRoiRTIUXfiXp3yIZCHY3ynpbwDzlzpHCA8alQJH64n1Q04kcQC9rQYa4q6apd699bk3M/qxfBHTPYdu8Mg3c8LsqjDVDF7J/ud2kfprlPrdEEkneCE/GbVsdWFpP1oyIW6ukrXvn48n2VYfInU+OrsbPy3QCCSqtsWD7FaoLc1FK1AywaIUcKyF/My7esaxOXg+DL9X7hXIYc28T+ZylzHS2BB/o2uA63+BfyqSBuarn;20:CHhsysDoBcmmYz0pKNQQYJo9yjhG6bit8gPs1HEXdm/JHXDE3UB8zxsHtFVopumLvbfBuEZWWvtA5yRSD2pZquRIT7vbrG1EjX/J9pqt9TS9z5y9frFe3VmX2NGHLlYav7GGbM3AMjX0McwWyrr/h+qAawkeHAiD0WCkbyNGNtg=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: 23acd9ae-38ff-4650-2fd2-08d5e60301e2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2919;
+x-ms-traffictypediagnostic: OSBPR01MB2919:
+x-microsoft-antispam-prvs: <OSBPR01MB29191031FA27465FEAC0D211D85B0@OSBPR01MB2919.jpnprd01.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:OSBPR01MB2919;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB2919;
+x-forefront-prvs: 0729050452
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(346002)(366004)(136003)(396003)(376002)(13464003)(199004)(189003)(4326008)(6246003)(2900100001)(107886003)(53936002)(25786009)(3846002)(6116002)(76176011)(256004)(14444005)(99286004)(7696005)(2906002)(86362001)(14454004)(478600001)(106356001)(110136005)(105586002)(66066001)(316002)(97736004)(305945005)(33656002)(8936002)(81166006)(81156014)(26005)(6506007)(53546011)(8676002)(186003)(102836004)(74316002)(7736002)(476003)(486006)(54906003)(9686003)(446003)(11346002)(55016002)(5660300001)(229853002)(6436002)(5250100002)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2919;H:OSBPR01MB2293.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: aOQtUFTPZVp8x2fzo7vdhBrPb1PgzqcWPGJxgVWCaOrGuX4+/kLeUt//GZ1tHGTZIlzIAewqTzhJ+vovkZaoyccYSCYop6PTfXJjUnFojxsqZchjTW/6hy948L5KI2S0JaYTLI+P36mMsquU+wvUq7Y5wtwtoXavyIFlMF+B+H85RIt20ROoOf5Ll9mw5NKiD8HA3AZd0HZXerLzvmImLdDevqjEkJjPyQalp41LEspshoP0Q/dbedEV0ntxRwrtDEJYSNPv8cXmuoIywSj8pdYGMDXkKVq/9qcSR/cwdkvSd8ihdIl4JdklSxZl2qDvhRbvodBDD5D0Oq9EEl4+Fk0xwQ9SqYmUb6xKb2XT50k=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3014.1531139469@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23acd9ae-38ff-4650-2fd2-08d5e60301e2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2018 01:18:13.1032
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2919
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 01:31:09PM +0100, David Howells wrote:
-> Eric Biggers <ebiggers3@gmail.com> wrote:
-> 
-> > sys_fsmount() calls fc->ops->free() to free the data, zeroes
-> > ->fs_private, then proceeds to reuse the context.  But legacy_fs_context
-> > doesn't use ->fs_private, so we need to handle zeroing it too; otherwise
-> > there's a double free of legacy_fs_context::{legacy_data,secdata}.
-> 
-> I think the attached is better.  I stopped embedding the fs_context in the
-> xxx_fs_context to make certain things simpler, but I missed the legacy
-> wrapper.
-> 
-> David
-> ---
-> diff --git a/fs/fs_context.c b/fs/fs_context.c
-> index f91facc769f7..ab93a0b73dc6 100644
-> --- a/fs/fs_context.c
-> +++ b/fs/fs_context.c
-> @@ -34,7 +34,6 @@ enum legacy_fs_param {
->  };
->  
->  struct legacy_fs_context {
-> -	struct fs_context	fc;
->  	char			*legacy_data;	/* Data page for legacy filesystems */
->  	char			*secdata;
->  	size_t			data_size;
-> @@ -239,12 +238,21 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
->  				      enum fs_context_purpose purpose)
->  {
->  	struct fs_context *fc;
-> -	int ret;
-> +	int ret = -ENOMEM;
->  
-> -	fc = kzalloc(sizeof(struct legacy_fs_context), GFP_KERNEL);
-> +	fc = kzalloc(sizeof(struct fs_context), GFP_KERNEL);
->  	if (!fc)
->  		return ERR_PTR(-ENOMEM);
->  
-> +	if (!fs_type->init_fs_context) {
-> +		fc->fs_private = kzalloc(sizeof(struct legacy_fs_context),
-> +					 GFP_KERNEL);
-> +		if (!fc->fs_private)
-> +			goto err_fc;
-> +
-> +		fc->ops = &legacy_fs_context_ops;
-> +	}
-> +
-
-Why isn't this done in the same place that ->init_fs_context() would otherwise
-be called?  It logically does the same thing, right?
-
->  	fc->purpose	= purpose;
->  	fc->sb_flags	= sb_flags;
->  	fc->fs_type	= get_filesystem(fs_type);
-> @@ -277,8 +285,6 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
->  		ret = fc->fs_type->init_fs_context(fc, reference);
->  		if (ret < 0)
->  			goto err_fc;
-> -	} else {
-> -		fc->ops = &legacy_fs_context_ops;
->  	}
->  
->  	/* Do the security check last because ->init_fs_context may change the
-> @@ -395,7 +401,7 @@ EXPORT_SYMBOL(put_fs_context);
->   */
->  static void legacy_fs_context_free(struct fs_context *fc)
->  {
-> -	struct legacy_fs_context *ctx = container_of(fc, struct legacy_fs_context, fc);
-> +	struct legacy_fs_context *ctx = fc->fs_private;
->  
->  	free_secdata(ctx->secdata);
->  	switch (ctx->param_type) {
-> @@ -408,6 +414,8 @@ static void legacy_fs_context_free(struct fs_context *fc)
->  		kfree(ctx->legacy_data);
->  		break;
->  	}
-> +
-> +	kfree(ctx);
->  }
-
-Okay, but now there's a NULL pointer dereference because fc->ops->free() can be
-called with NULL fc->fs_private.  Probably fc->ops->free() shouldn't be called
-in that case.
-
-int main()
-{
-        int fd = syscall(__NR_fsopen, "tmpfs", 0);
-        write(fd, "x create", 8);
-        syscall(__NR_fsmount, fd, 0, 0);
-}
-
-BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
-PGD 0 P4D 0 
-Oops: 0000 [#1] SMP
-CPU: 1 PID: 186 Comm: fsopen Not tainted 4.18.0-rc1-00001-g0f067bdbfeca0 #29
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-20171110_100015-anatol 04/01/2014
-RIP: 0010:legacy_fs_context_free+0xc/0x40 fs/fs_context.c:500
-Code: 02 75 08 48 c7 42 08 01 00 00 00 31 c0 c3 c7 42 18 01 00 00 00 31 c0 c3 66 0f 1f 44 00 00 55 48 89 e5 53 48 8b 9f 90 00 00 00 <8b> 4b 18 83 f9 04 77 0c b8 01 00 00 00 48 d3 e0 a8 13 75 08 48 8b 
-RSP: 0018:ffffc9000079bd88 EFLAGS: 00010282
-RAX: ffffffff8118fbe0 RBX: 0000000000000000 RCX: 0000000000000001
-RDX: ffff88007c82c0f4 RSI: 0000000000000001 RDI: ffff88007be77700
-RBP: ffffc9000079bd90 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff88007c82c000
-R13: 0000000000060003 R14: ffff88007d34d020 R15: ffff88007ab8aea8
-FS:  00007fee62b79740(0000) GS:ffff88007fc80000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000018 CR3: 0000000001c0f000 CR4: 00000000003406e0
-Call Trace:
- put_fs_context+0x4c/0x180 fs/fs_context.c:479
- fscontext_release+0x20/0x30 fs/fsopen.c:196
- __fput+0xbb/0x210 fs/file_table.c:210
- ____fput+0x9/0x10 fs/file_table.c:246
- task_work_run+0x86/0xc0 kernel/task_work.c:113
- exit_task_work include/linux/task_work.h:22 [inline]
- do_exit+0x27a/0xa30 kernel/exit.c:865
- do_group_exit+0x3c/0xc0 kernel/exit.c:968
- __do_sys_exit_group kernel/exit.c:979 [inline]
- __se_sys_exit_group kernel/exit.c:977 [inline]
- __x64_sys_exit_group+0x13/0x20 kernel/exit.c:977
- do_syscall_64+0x4a/0x180 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x7fee6224eee8
-Code: Bad RIP value.
-RSP: 002b:00007ffc3efc0cd8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fee6224eee8
-RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
-RBP: 00007fee625386d8 R08: 00000000000000e7 R09: ffffffffffffff80
-R10: 00007fee62745100 R11: 0000000000000246 R12: 00007fee625386d8
-R13: 00007fee6253dbe0 R14: 0000000000000000 R15: 0000000000000000
-CR2: 0000000000000018
----[ end trace 8ac26865cb821d07 ]---
+SGkgU3RlcGhlbiwgTGludXMsIEdlZXJ0LA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0t
+DQo+IEZyb206IExpbnVzIFdhbGxlaWosIFNlbnQ6IFR1ZXNkYXksIEp1bHkgMTAsIDIwMTggNzo0
+NiBBTQ0KPiANCj4gSG0gbXVzdCBoYXZlIGNvbWUgZnJvbSBHZWVydCdzIHB1bGwgcmVxdWVzdD8N
+Cj4gDQo+IChJJ20gcmVndWxhcmx5IHdyb25nIGFib3V0IHRoaXMgc28gbm90IHNvIGNlcnRhaW4u
+Li4pDQo+IA0KPiBHZWVydCBjYW4gSSBmaXggaXQgdGhlIHVzdWFsIHdheSBieSBzaW1wbHkgcmVi
+YXNpbmcgYW5kDQo+IGFkZGluZyB0aGUgcmlnaHQgU29CPw0KDQpJJ20gdmVyeSBzb3JyeSBmb3Ig
+dGhpcyB0cm91YmxlLg0KV2hlbiBJIHBvcnRlZCB0aGlzIHBhdGNoLCBJIGRyb3BwZWQgdGhlIGF1
+dGhvcidzIFNpZ25lZC1vZi1ieSB3cm9uZ2x5Li4NCg0KU2lnbmVkLW9mZi1ieTogVGFrZXNoaSBL
+aWhhcmEgPHRha2VzaGkua2loYXJhLmRmQHJlbmVzYXMuY29tPg0KDQpCZXN0IHJlZ2FyZHMsDQpZ
+b3NoaWhpcm8gU2hpbW9kYQ0KDQo+IFlvdXJzLA0KPiBMaW51cyBXYWxsZWlqDQo+IA0KPiBPbiBN
+b24sIEp1bCA5LCAyMDE4IGF0IDExOjU0IFBNIFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1
+dWcub3JnLmF1PiB3cm90ZToNCj4gPg0KPiA+IEhpIExpbnVzLA0KPiA+DQo+ID4gQ29tbWl0DQo+
+ID4NCj4gPiAgIGE3NDJmY2Y3MjkwMiAoInBpbmN0cmw6IHNoLXBmYzogcjhhNzc5OTA6IEFkZCBV
+U0IzLjAgcGlucywgZ3JvdXBzIGFuZCBmdW5jdGlvbnMiKQ0KPiA+DQo+ID4gaXMgbWlzc2luZyBh
+IFNpZ25lZC1vZmYtYnkgZnJvbSBpdHMgYXV0aG9yLg0KPiA+DQo+ID4gLS0NCj4gPiBDaGVlcnMs
+DQo+ID4gU3RlcGhlbiBSb3Rod2VsbA0K
