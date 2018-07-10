@@ -3,100 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBB6FC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:34:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67413C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B313208EB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:34:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B313208EB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 284CE208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:36:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284CE208EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934101AbeGJPer (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:34:47 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:34360 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1754384AbeGJPeq (ORCPT
+        id S934137AbeGJPgU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:36:20 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36811 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933475AbeGJPgT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:34:46 -0400
-Received: (qmail 4006 invoked by uid 2102); 10 Jul 2018 11:34:45 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 10 Jul 2018 11:34:45 -0400
-Date:   Tue, 10 Jul 2018 11:34:45 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-In-Reply-To: <20180710152404.GA11437@andrea>
-Message-ID: <Pine.LNX.4.44L0.1807101127320.1449-100000@iolanthe.rowland.org>
+        Tue, 10 Jul 2018 11:36:19 -0400
+Received: by mail-ed1-f65.google.com with SMTP id t3-v6so16893417eds.3;
+        Tue, 10 Jul 2018 08:36:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=J2SeNWct7GmDmL5hAA/YV+NlfJuYT1WoW5dNj7f9oFs=;
+        b=b52lYv0qzfzIe5lOW2DuByR130nUTwXJXo5Ahi3FKrX4JUFVtZmR6IZBpmkioR58sq
+         SVKTEKuvhVkJQxb623+kVgxsZ2vCwAr/9qxMZ7rySwiYjo715NmThSrM1aCfogCnyFRM
+         cZRzuj5GzaSe3F5m6BQbf2vGIBd0gFSHZATB985Wvo/PBSdzfgR+RdFlTtGr/72z1P0J
+         WePtD5ILR1NIifsQhq8KQfrACzL1qJGYGqoPSAv3AtKQ9K1qQrwt2qZZnWRbQZb4BzFO
+         ci554hXJBki1KFnBS8ppuXMDGtem0DDpDVprlInccrSBaiSbmBzmiHYMOJzcOgBjsbEM
+         +oOw==
+X-Gm-Message-State: APt69E0gLYZ9mJzb0mU0HdYSkrHonh4JatTCfW014sacXIMO0z8fJXdD
+        NI92hPWB4jv0/bXp2Jff3mepWUoo
+X-Google-Smtp-Source: AAOMgpdlHbanB3HPqvM7R9/8ONPh1VA2/EutQorKIIQOVieFxat7PqrU5L1P7tLx37HNQUkl5sBP6Q==
+X-Received: by 2002:a50:aec9:: with SMTP id f9-v6mr27276414edd.72.1531236977560;
+        Tue, 10 Jul 2018 08:36:17 -0700 (PDT)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
+        by smtp.gmail.com with ESMTPSA id o2-v6sm8100553edd.84.2018.07.10.08.36.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 08:36:15 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id p1-v6so15097170wrs.9;
+        Tue, 10 Jul 2018 08:36:15 -0700 (PDT)
+X-Received: by 2002:adf:b202:: with SMTP id u2-v6mr17602642wra.19.1531236975065;
+ Tue, 10 Jul 2018 08:36:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 08:35:54
+ -0700 (PDT)
+In-Reply-To: <20180706175113.26698-9-jernej.skrabec@siol.net>
+References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-9-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 10 Jul 2018 23:35:54 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65YsW+SiP6_sV9Hd6eQE6ZF0+Lm6CWfNdmwpgMEHBTDgQ@mail.gmail.com>
+Message-ID: <CAGb2v65YsW+SiP6_sV9Hd6eQE6ZF0+Lm6CWfNdmwpgMEHBTDgQ@mail.gmail.com>
+Subject: Re: [PATCH 08/17] ARM: dts: sun8i: r40: Add mixer ids to TCON TOP
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Jul 2018, Andrea Parri wrote:
+On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> Mixer has to have a way to read its id, if needed.
 
-> > >   ACQUIRE operations include LOCK operations and both smp_load_acquire()
-> > >   and smp_cond_acquire() operations.  [BTW, the latter was replaced by
-> > >   smp_cond_load_acquire() in 1f03e8d2919270 ...]
-> > > 
-> > >   RELEASE operations include UNLOCK operations and smp_store_release()
-> > >   operations. [...]
-> > > 
-> > >   [...] after an ACQUIRE on a given variable, all memory accesses
-> > >   preceding any prior RELEASE on that same variable are guaranteed
-> > >   to be visible.
-> > 
-> > As far as I can see, these statements remain valid.
-> 
-> Interesting; ;-)  What does these statement tells you ;-)  when applied
-> to a: and b: below?
-> 
->   a: WRITE_ONCE(x, 1); // "preceding any prior RELEASE..."
->   smp_store_release(&s, 1);
->   smp_load_acquire(&s);
->   b: WRITE_ONCE(y, 1); // "after an ACQUIRE..."
+You should mention that this is required by the device tree binding sun4i-drm,
+in the second paragraph of the first section:
 
-The first statement tells me that b: follows an ACQUIRE.
+    For all connections between components up to the TCONs in the display
+    pipeline, when there are multiple components of the same type at the
+    same depth, the local endpoint ID must be the same as the remote
+    component's index.
 
-The second tells me that a: precedes a RELEASE.
+You might also want to update the diagram for TCON TOP in the binding doc.
 
-And the third tells me that any READ_ONCE(x) statements coming po-after 
-b: would see x = 1 or a later value of x.  (Of course, they would have 
-to see that anyway because of the cache coherency rules.)
+ChenYu
 
-More to the point, given:
-
-P0()
-{
-	WRITE_ONCE(x, 1);
-	a: smp_store_release(&s, 1);
-}
-
-P1()
-{
-	b: r1 = smp_load_acquire(&s);
-	r2 = READ_ONCE(x);
-}
-
-the third statement tells me that if r1 = 1 (that is, if a: is prior to
-b:) then r2 must be 1.
-
-Alan
-
+> Add them in R40 DT.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  arch/arm/boot/dts/sun8i-r40.dtsi | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
+> index 2afb079a3776..1dd088d82773 100644
+> --- a/arch/arm/boot/dts/sun8i-r40.dtsi
+> +++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+> @@ -576,9 +576,12 @@
+>                                 #size-cells = <0>;
+>
+>                                 tcon_top_mixer0_in: port@0 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                         reg = <0>;
+>
+> -                                       tcon_top_mixer0_in_mixer0: endpoint {
+> +                                       tcon_top_mixer0_in_mixer0: endpoint@0 {
+> +                                               reg = <0>;
+>                                                 remote-endpoint = <&mixer0_out_tcon_top>;
+>                                         };
+>                                 };
+> @@ -606,9 +609,12 @@
+>                                 };
+>
+>                                 tcon_top_mixer1_in: port@2 {
+> +                                       #address-cells = <1>;
+> +                                       #size-cells = <0>;
+>                                         reg = <2>;
+>
+> -                                       tcon_top_mixer1_in_mixer1: endpoint {
+> +                                       tcon_top_mixer1_in_mixer1: endpoint@1 {
+> +                                               reg = <1>;
+>                                                 remote-endpoint = <&mixer1_out_tcon_top>;
+>                                         };
+>                                 };
+> --
+> 2.18.0
+>
