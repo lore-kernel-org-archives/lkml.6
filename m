@@ -2,353 +2,149 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA31C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5FCC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F13D208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:38:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F13D208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A1CE208FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:39:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XOMC4pvj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A1CE208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934573AbeGJQiq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:38:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:50154 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933436AbeGJQio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:38:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0265F80D;
-        Tue, 10 Jul 2018 09:38:44 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A94E3F589;
-        Tue, 10 Jul 2018 09:38:41 -0700 (PDT)
-Subject: Re: [PATCH v3 15/20] kvm: arm/arm64: Allow tuning the physical
- address size for VM
-To:     Dave Martin <Dave.Martin@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     cdall@kernel.org, kvm@vger.kernel.org, catalin.marinas@arm.com,
-        punit.agrawal@arm.com, Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org
-References: <1530270944-11351-1-git-send-email-suzuki.poulose@arm.com>
- <1530270944-11351-16-git-send-email-suzuki.poulose@arm.com>
- <20180704155104.GN4828@arm.com>
- <12d1832a-1a13-7dd4-662b-addf58400789@arm.com>
- <fe9f5aa5-b283-07e0-5f0e-e97d96b780e7@arm.com>
- <9f1af26e-2913-2b0b-1352-63160096f78f@arm.com>
- <f3463d0a-c6a3-c34d-acb3-13c99fc61c5a@arm.com>
- <20180709112326.GD9486@e103592.cambridge.arm.com>
- <17f8d585-3489-ab6f-6ee1-4d8d337dcf9c@arm.com>
- <20180709133750.GE9486@e103592.cambridge.arm.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <377420ce-97a8-4359-6224-273d91f37247@arm.com>
-Date:   Tue, 10 Jul 2018 17:38:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934601AbeGJQjN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:39:13 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:42919 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933593AbeGJQjK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 12:39:10 -0400
+Received: by mail-pf0-f194.google.com with SMTP id l9-v6so4836224pff.9
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 09:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lyrOhDGkSPjRymf5ynKh3WaWJ8tf4tUoSUk0CLQT0fk=;
+        b=XOMC4pvjlNQhbNKfzedNXC7CI3YX5dBjFRfM+Nps8CcX2/ueGUJWPwW+34/J9iHXV0
+         LQCel+sNYq3XZRjZ5goMfoFX+W+lmhmf8eyKkxJZBep9TmKt2q0RY8C6Zlg4yv6SACXr
+         DNSK5qBL6NxDOEe8ZKRWBDzzr53SNnghWO/Z8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lyrOhDGkSPjRymf5ynKh3WaWJ8tf4tUoSUk0CLQT0fk=;
+        b=kbIYb9G0Y5F8CL2X1nvOX6utW3gH/IUpmltNcXQmFTpRQpQ1BZ08P6nDtjTR78eMwA
+         JoBW3h7B8cLXoqMjp3PMj96esYnBfI0kxHMlefVNex6sSE0vp5mmRc8M8x2+qUdyc38s
+         O3CR8bwJ8fYwd85c2VsM+mRai2tvX4qoi/U/FD5x8kGSOsXUc27urd+hFH+BCX6WPWUR
+         tj8i3Y0fSg9kHRrstFdNPNAfs2pw3emlAzWpqddYjOT6nnEj66JTFgCniLpPjaxzzvsM
+         h/DMBh6H4UcSxrBiMY8e+fribAbVSCUZdToWtNmZETf5z09zGuLeIYJRjpORw1mR9Fql
+         QYnQ==
+X-Gm-Message-State: APt69E2D+CaQOxHmmIWWMVfNUM0j/YmrWLnT4TmFje+cKySEStVNTSez
+        vSQDjE/mEHlVG54tFvLhgha1Hg==
+X-Google-Smtp-Source: AAOMgpeCyO8Ct5OMiU9fiZKdHexotIC6cIzOEVLkBEpVMl556zewlLmfmnZxdr79l3QbuixRXPuIXw==
+X-Received: by 2002:a63:5d09:: with SMTP id r9-v6mr23162731pgb.303.1531240750254;
+        Tue, 10 Jul 2018 09:39:10 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id 22-v6sm38350890pfl.126.2018.07.10.09.39.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 09:39:09 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 09:39:09 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
+        rtatiya@codeaurora.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH v9 7/7] Bluetooth: hci_qca: Add support for Qualcomm
+ Bluetooth chip wcn3990
+Message-ID: <20180710163909.GQ129942@google.com>
+References: <20180705165515.13340-1-bgodavar@codeaurora.org>
+ <20180705165515.13340-8-bgodavar@codeaurora.org>
+ <20180706222110.GK129942@google.com>
+ <a5d87ad5d916df5b5ca7c0c69a786e4a@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20180709133750.GE9486@e103592.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a5d87ad5d916df5b5ca7c0c69a786e4a@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/18 14:37, Dave Martin wrote:
-> On Mon, Jul 09, 2018 at 01:29:42PM +0100, Marc Zyngier wrote:
->> On 09/07/18 12:23, Dave Martin wrote:
->>> On Fri, Jul 06, 2018 at 05:39:00PM +0100, Suzuki K Poulose wrote:
->>>> On 07/06/2018 04:09 PM, Marc Zyngier wrote:
->>>>> On 06/07/18 14:49, Suzuki K Poulose wrote:
->>>>>> On 04/07/18 23:03, Suzuki K Poulose wrote:
->>>>>>> On 07/04/2018 04:51 PM, Will Deacon wrote:
->>>>>>>> Hi Suzuki,
->>>>>>>>
->>>>>>>> On Fri, Jun 29, 2018 at 12:15:35PM +0100, Suzuki K Poulose wrote:
->>>>>>>>> Allow specifying the physical address size for a new VM via
->>>>>>>>> the kvm_type argument for KVM_CREATE_VM ioctl. This allows
->>>>>>>>> us to finalise the stage2 page table format as early as possible
->>>>>>>>> and hence perform the right checks on the memory slots without
->>>>>>>>> complication. The size is encoded as Log2(PA_Size) in the bits[7:0]
->>>>>>>>> of the type field and can encode more information in the future if
->>>>>>>>> required. The IPA size is still capped at 40bits.
->>>>>>>>>
->>>>>>>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>>>>>>>> Cc: Christoffer Dall <cdall@kernel.org>
->>>>>>>>> Cc: Peter Maydel <peter.maydell@linaro.org>
->>>>>>>>> Cc: Paolo Bonzini <pbonzini@redhat.com>
->>>>>>>>> Cc: Radim Krčmář <rkrcmar@redhat.com>
->>>>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>>>>>>>> ---
->>>>>>>>>    arch/arm/include/asm/kvm_mmu.h   |  2 ++
->>>>>>>>>    arch/arm64/include/asm/kvm_arm.h | 10 +++-------
->>>>>>>>>    arch/arm64/include/asm/kvm_mmu.h |  2 ++
->>>>>>>>>    include/uapi/linux/kvm.h         | 10 ++++++++++
->>>>>>>>>    virt/kvm/arm/arm.c               | 24 ++++++++++++++++++++++--
->>>>>>>>>    5 files changed, 39 insertions(+), 9 deletions(-)
->>>>>>>>
->>>>>>>> [...]
->>>>>>>>
->>>>>>>>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->>>>>>>>> index 4df9bb6..fa4cab0 100644
->>>>>>>>> --- a/include/uapi/linux/kvm.h
->>>>>>>>> +++ b/include/uapi/linux/kvm.h
->>>>>>>>> @@ -751,6 +751,16 @@ struct kvm_ppc_resize_hpt {
->>>>>>>>>    #define KVM_S390_SIE_PAGE_OFFSET 1
->>>>>>>>>    /*
->>>>>>>>> + * On arm/arm64, machine type can be used to request the physical
->>>>>>>>> + * address size for the VM. Bits [7-0] have been reserved for the
->>>>>>>>> + * PA size shift (i.e, log2(PA_Size)). For backward compatibility,
->>>>>>>>> + * value 0 implies the default IPA size, which is 40bits.
->>>>>>>>> + */
->>>>>>>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK    0xff
->>>>>>>>> +#define KVM_VM_TYPE_ARM_PHYS_SHIFT(x)        \
->>>>>>>>> +    ((x) & KVM_VM_TYPE_ARM_PHYS_SHIFT_MASK)
->>>>>>>>
->>>>>>>> This seems like you're allocating quite a lot of bits in a non-extensible
->>>>>>>> interface to a fairly esoteric parameter. Would it be better to add another
->>>>>>>> ioctl, or condense the number of sizes you support instead?
->>>>>>>
->>>>>>> As I explained in the other thread, we need the size as soon as the VM
->>>>>>> is created. The major challenge is keeping the backward compatibility by
->>>>>>> mapping 0 to 40bits. I will give it a thought.
->>>>>>
->>>>>> Here is one option. We could re-use the {V}TCR_ELx.{I}PS field format, which
->>>>>> occupies 3 bits and has the following definitions. (ID_AA64MMFR0_EL1:PARange
->>>>>> also has the field definitions, except that the field is 4bits wide, but
->>>>>> only 3bits are used)
->>>>>>
->>>>>> 000 32 bits, 4GB.
->>>>>> 001 36 bits, 64GB.
->>>>>> 010 40 bits, 1TB.
->>>>>> 011 42 bits, 4TB.
->>>>>> 100 44 bits, 16TB.
->>>>>> 101 48 bits, 256TB.
->>>>>> 110 52 bits, 4PB
->>>>>>
->>>>>> But we need to map 0 => 40bits IPA to make our ABI backward compatible. So
->>>>>> we could use the additional one bit to indicate that IPA size is requested
->>>>>> in the 3 bits.
->>>>>>
->>>>>> i.e,
->>>>>>
->>>>>> machine_type:
->>>>>>
->>>>>> Bit [2:0]	- Requested IPA size. Values follow VTCR_EL2.PS format.
->>>>>>
->>>>>> Bit [3]		- 1 => IPA Size bits (Bits[2:0]) requested.
->>>>>> 		0 => Not requested
->>>>>>
->>>>>> The only minor down side is restricting to the predefined values above,
->>>>>> which is not a real issue for a VM.
->>>>>>
->>>>>> Thoughts ?
->>>>>
->>>>> I'd be very wary of using that 4th bit to do something that is not in
->>>>> the architecture. We have only a single value left to be used (0b111),
->>>>> and then your scheme clashes with the architecture definition.
->>>>
->>>> I agree. However, if we ever go beyond the 3bits in PARange, we have an
->>>> issue with {V}TCR counter part. But lets not take that chance.
->>>>
->>>>>
->>>>> I'd rather encode things in a way that is independent from the
->>>>> architecture, and be done with it. You can map 0 to 40bits, and we have
->>>>> the ability to express all values the architecture has (just in a
->>>>> different order).
->>>>
->>>> The other option I can think of is encoding a signed number which is the
->>>> difference of the IPA from 40. But that would need 5 bits if we were to
->>>> encode it as it is. And if we want to squeeze it in 4bit, we could store
->>>> half the difference (limiting the IPA limit to even numbers).
->>>>
->>>> i.e IPA = 40 + 2 * sign_extend(bits[3:0);
->>>
->>> I came across similar issues when trying to work out how to enable
->>> SVE for KVM.  In the end I reduced this to a per-vcpu feature, but
->>> it means that there is no global opt-in for the SVE-specific KVM
->>> API extensions:
->>>
->>> That's a bit gross, because SVE may require a change to the way
->>> vcpus are initialised.  The set of supported SVE vector lengths needs
->>> to be set somehow before the vcpu is set running, but it's tricky do
->>> do that without a new ioctl -- which would mean that if SVE is enabled
->>> for a vcpu then the vcpu is not considered runnable until the new
->>> magic ioctl is called.
->>>
->>> Opting into that semantic change globally at VM creation time might
->>> be preferable.  On the SVE side, this is still very much subject to
->>> review/change.
->>>
->>>
->>> Here:
->>>
->>> The KVM_CREATE_VM init argument seems undefined by the KVM core code and
->>> is available for arches to abuse in creative ways.  x86 and arm have
->>> nothing here and reject non-zero values with -EINVAL; s390 treats it as
->>> a bitmask, and defines a sincle feature-like bit here; powerpc treats it
->>> as an enumeration of VM types.
->>>
->>> If we want to be extensible, we could
->>>
->>>   a) Pass a pointer in type, and come up with some extensible VM parameter
->>>      struct for it to point to (which then wouldn't need a cryptic
->>>      compressed encoding), or
->>>
->>>   b) Introduce a new "KVM_CREATE_VM2" variant that either takes such
->>>      an argument, or mandates a parameter negotiation phase involving
->>>      additional ioctls before marking the VM as ready for vcpu and
->>>      device creation.
->>>
->>> (a) feels like an easy backwards-compatible approach, but cannot be
->>> readily adopted by other arches (maybe not an issue).
->>>
->>> (b) might be considered overengineered, so it would need a bit of
->>> thought.
->>>
->>> Wedging arguments into a few bits in the type argument feels awkward,
->>> and may be regretted later if we run out of bits, or something can't be
->>> represented in the chosen encoding.
->>
->> I think that's a pretty convincing argument for a "better" CREATE_VM,
->> one that would have a clearly defined, structured (and potentially
->> extensible) argument.
->>
->> I've quickly hacked the following:
->>
->> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->> index b6270a3b38e9..3e76214034c2 100644
->> --- a/include/uapi/linux/kvm.h
->> +++ b/include/uapi/linux/kvm.h
->> @@ -735,6 +735,20 @@ struct kvm_ppc_resize_hpt {
->>   	__u32 pad;
->>   };
->>
->> +struct kvm_create_vm2 {
->> +	__u64	version;	/* Or maybe not */
->> +	union {
->> +		struct {
->> +#define KVM_ARM_SVE_CAPABLE	(1 << 0)
->> +#define KVM_ARM_SELECT_IPA	{1 << 1)
->> +			__u64	capabilities;
->> +			__u16	sve_vlen;
->> +			__u8	ipa_size;
->> +		} arm64;
->> +		__u64	dummy[15];
->> +	};
->> +};
->> +
->>   #define KVMIO 0xAE
->>
->>   /* machine type bits, to be used as argument to KVM_CREATE_VM */
->>
->> Other architectures could fill in their own bits if they need to.
->>
->> Thoughts?
-> 
-> This kind of thing should work, but it may still get messy when we
-> add additional fields.
+Hi Bala,
 
+On Tue, Jul 10, 2018 at 06:22:02PM +0530, Balakrishna Godavarthi wrote:
+> Hi Matthias,
+> 
+> On 2018-07-07 03:51, Matthias Kaehlcke wrote:
+> > On Thu, Jul 05, 2018 at 10:25:15PM +0530, Balakrishna Godavarthi wrote:
+> > > +	 * sending vendor power on and off pulse to SoC.
+> > > +	 */
+> > 
+> > The function is called qca_send_vendor_cmd(), the comment about power
+> > on/off pulses seems misplaced here. Are there other 'vendor commands'
+> > that require a different flow control behavior?
+> > 
+> > Perhaps the function should have a different name or we need another
+> > wrapper.
+> > 
+> 
+> [Bala]: this function is used to send single byte vendor commands. like
+> power on and off pulse.
+>         and all single byte vendor commands require an flow control off and
+> on.
+>         so might be function name change is required.
+>         instead of qca_send_vendor_cmd(). i want to change function name to
+> qca_send_pulse() as this will be generic.
 
-Marc, Dave,
+'pulse' covers power on/off pulses, is it also applicable to other
+single byte commands? How are these commands named in the QCA
+documentation?
 
-I like Dave's approach. Some comments below.
+In any case the comment about 'vendor power on and off pulse' should
+be updated to refer to 'vendor commands'/'pulses' or whatever
+terminology we decide to use.
 
+> > > +	hci_uart_set_flow_control(hu, true);
+> > 
+> > Should the changing of the flow control be limited to wcn3990? As of
+> > now the function is only called for wcn3990, however this is not
+> > stated as a requirement and might change in the future.
+> > 
+> > > +	skb_put_u8(skb, cmd);
+> > > +	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+> > > +
+> > > +	skb_queue_tail(&qca->txq, skb);
+> > > +	hci_uart_tx_wakeup(hu);
+> > > +
+> > > +	/* Wait for 100 uS for SoC to settle down */
+> > > +	usleep_range(100, 200);
+> > 
+> > Is this needed for any 'vendor command' or directly related with the
+> > power on/off pulses?
+> > 
 > 
-> It we want this to work cross-arch, would it make sense to go
-> for a more generic approach, say
-> 
-> struct kvm_create_vm_attr_any {
->          __u32   type;
-> };
-> 
-> #define KVM_CREATE_VM_ATTR_ARCH_CAPABILITIES 1
-> struct kvm_create_vm_attr_arch_capabilities {
->          __u32   type;
->          __u16   size; /* support future expansion of capabilities[] */
->          __u16   reserved;
->          __u64   capabilities[1];
-> };
+> [Bala] : flow control  off/on is needed for power on and off pulses along
+> with
+>          command to set baudrate.. this is common across all the present
+> chips and chips which are in development stages.
+>          might be function name is confusing will update the function name.
 
-We also need to advertise which attributes are supported by the host,
-so that the user can tune the available ones. That would make a bit mask
-like the above trickier, unless we return the supported values back
-in the argument ptr for the "probe" call. And this scheme in general
-can be useful for passing back a non-boolean result specific to the
-attribute, without having a per-attribute ioctl. (e.g, maximum limit
-for IPA).
+The current name *might* be ok, depending on if we come up with
+something better. If the QCA docs refer to them as 'vendor commands'
+and there are no other multi-byte 'vendor commands' I'm fine with it.
 
-> 
-> #define KVM_CREATE_VM_ATTR_ARM64_PHYSADDR_SIZE 2
-> struct kvm_create_vm_attr_arm64_physaddr_size {
->          __u32   type;
->          __u32   physaddr_bits;
-> };
-> 
-> /* ... */
-> 
-> union kvm_create_vm_attr {
->          struct kvm_create_vm_attr_any;
->          struct kvm_create_vm_attr_arch_capabilities;
->          struct kvm_create_vm_attr_arm64_physaddr_size;
->          /* ... */
-> };
-
-nit: Could we simply do s/kvm_create_vm_attr/kvm_vm_attr/ everywhere ?
-While I agree that the kvm_create_vm_attr makes it implicit that the attributes
-are valid only "create" ioctl, the lack of an ioctl to set the VM attribute
-should be sufficient to indicate the same.
-
-> 
-> struct kvm_create_vm2 {
->          __u32   version;        /* harmless, even if not useful */
->          __u16   nr_attrs;       /* or could just terminate attrs with a
->                                     NULL entry */
->          union kvm_create_vm_attr __user *__user *attrs;
-> };
-> 
-> 
-> This is quite flexible, but obviously a bit heavy.
-> 
-> However, if we're adding a new interface due to lack of extensibility,
-> it may be worth going for something that's freely extensible.
-
-True. I could hack something up along the lines above and send it here.
-
-> 
-> 
-> Userspace might call this as
-> 
-> 	struct kvm_create_vm_attr_arch_capabilities vm_arch_caps = {
-> 		.type = KVM_CREATE_VM_ATTR_ARCH_CAPABILITIES,
-> 		.size = 64,
-> 		.capabilities[0] = KVM_CREATE_VM_ARM64_VCPU_NEEDS_SET_SVE_VLS,
-> 	};
-> 
-> 	struct kvm_create_vm_attr_arch_arm64_physaddr_size = {
-> 		.type = KVM_CREATE_VM_ATTR_ARM64_PHYSADDR_SIZE,
-> 		.physaddr_bits = 52,
-> 	};
-> 
-> 	union kvm_create_vm_attr **vmattrs[] = {
-> 		&vm_arch_caps,
-> 		&vm_arm64_physaddr_size,
-> 		NULL, /* maybe */
-> 	};
-> 
-> 	struct kvm_create_vm2 vm;
-> 
-> 	vm.version = 0;
-> 	vm.nr_attrs = 2; /* maybe */
-> 	vm.attrs = vmattrs;
-> 
-> 	ioctl(..., KVM_CREATE_VM2, &vm);
+Is the settling down of 100us specific to the power on/off pulses or
+also applicable to other commands?
 
 Thanks
-Suzuki
+
+Matthias
