@@ -2,73 +2,233 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 141C0C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:39:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED745C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D527E208EB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:39:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D527E208EB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id ACDC4208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:41:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACDC4208EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390047AbeGJSkI (ORCPT
+        id S2390118AbeGJSlS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:40:08 -0400
-Received: from www62.your-server.de ([213.133.104.62]:37597 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732424AbeGJSkI (ORCPT
+        Tue, 10 Jul 2018 14:41:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48192 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388754AbeGJSfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:40:08 -0400
-Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fcx8z-0000zR-6Y; Tue, 10 Jul 2018 20:13:45 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fcx8y-0000Ej-VF; Tue, 10 Jul 2018 20:13:45 +0200
-Subject: Re: [PATCH bpf 1/1] bpf: btf: Fix bitfield extraction for big endian
-To:     Martin KaFai Lau <kafai@fb.com>,
-        David Laight <David.Laight@ACULAB.COM>
-Cc:     Okash Khawaja <osk@fb.com>, Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-team@fb.com" <kernel-team@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180709002202.019053555@fb.com>
- <20180709004002.440153594@fb.com>
- <20180709183236.r4b7gzmev5h4lcbw@kafai-mbp.dhcp.thefacebook.com>
- <457ec72d8d7c4cdd8c112f9c8c91b0e7@AcuMS.aculab.com>
- <20180710171836.xcegzammqym4sqri@kafai-mbp.dhcp.thefacebook.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <fb5cbecc-219b-b65c-cdc0-daddf6017d11@iogearbox.net>
-Date:   Tue, 10 Jul 2018 20:13:44 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Tue, 10 Jul 2018 14:35:02 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A15EDD0B;
+        Tue, 10 Jul 2018 18:34:48 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lars Persson <larper@axis.com>,
+        Paulo Alcantara <palcantara@suse.de>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.17 19/56] cifs: Fix use after free of a mid_q_entry
+Date:   Tue, 10 Jul 2018 20:25:01 +0200
+Message-Id: <20180710182504.561090274@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
+References: <20180710182503.544433950@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180710171836.xcegzammqym4sqri@kafai-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24740/Tue Jul 10 15:42:50 2018)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 07:18 PM, Martin KaFai Lau wrote:
-[...]
-> I would prefer to keep it as u16 which is the max width that is allowed for
-> this field in the wire format.  Keeping the usage consistent can avoid
-> accidentally incorrect offsetting or writing wrong data out in other
-> cases.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-+1
+------------------
+
+From: Lars Persson <lars.persson@axis.com>
+
+commit 696e420bb2a6624478105651d5368d45b502b324 upstream.
+
+With protocol version 2.0 mounts we have seen crashes with corrupt mid
+entries. Either the server->pending_mid_q list becomes corrupt with a
+cyclic reference in one element or a mid object fetched by the
+demultiplexer thread becomes overwritten during use.
+
+Code review identified a race between the demultiplexer thread and the
+request issuing thread. The demultiplexer thread seems to be written
+with the assumption that it is the sole user of the mid object until
+it calls the mid callback which either wakes the issuer task or
+deletes the mid.
+
+This assumption is not true because the issuer task can be woken up
+earlier by a signal. If the demultiplexer thread has proceeded as far
+as setting the mid_state to MID_RESPONSE_RECEIVED then the issuer
+thread will happily end up calling cifs_delete_mid while the
+demultiplexer thread still is using the mid object.
+
+Inserting a delay in the cifs demultiplexer thread widens the race
+window and makes reproduction of the race very easy:
+
+		if (server->large_buf)
+			buf = server->bigbuf;
+
++		usleep_range(500, 4000);
+
+		server->lstrp = jiffies;
+
+To resolve this I think the proper solution involves putting a
+reference count on the mid object. This patch makes sure that the
+demultiplexer thread holds a reference until it has finished
+processing the transaction.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Lars Persson <larper@axis.com>
+Acked-by: Paulo Alcantara <palcantara@suse.de>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ fs/cifs/cifsglob.h      |    1 +
+ fs/cifs/cifsproto.h     |    1 +
+ fs/cifs/connect.c       |    8 +++++++-
+ fs/cifs/smb1ops.c       |    1 +
+ fs/cifs/smb2ops.c       |    1 +
+ fs/cifs/smb2transport.c |    1 +
+ fs/cifs/transport.c     |   18 +++++++++++++++++-
+ 7 files changed, 29 insertions(+), 2 deletions(-)
+
+--- a/fs/cifs/cifsglob.h
++++ b/fs/cifs/cifsglob.h
+@@ -1362,6 +1362,7 @@ typedef int (mid_handle_t)(struct TCP_Se
+ /* one of these for every pending CIFS request to the server */
+ struct mid_q_entry {
+ 	struct list_head qhead;	/* mids waiting on reply from this server */
++	struct kref refcount;
+ 	struct TCP_Server_Info *server;	/* server corresponding to this mid */
+ 	__u64 mid;		/* multiplex id */
+ 	__u32 pid;		/* process id */
+--- a/fs/cifs/cifsproto.h
++++ b/fs/cifs/cifsproto.h
+@@ -76,6 +76,7 @@ extern struct mid_q_entry *AllocMidQEntr
+ 					struct TCP_Server_Info *server);
+ extern void DeleteMidQEntry(struct mid_q_entry *midEntry);
+ extern void cifs_delete_mid(struct mid_q_entry *mid);
++extern void cifs_mid_q_entry_release(struct mid_q_entry *midEntry);
+ extern void cifs_wake_up_task(struct mid_q_entry *mid);
+ extern int cifs_handle_standard(struct TCP_Server_Info *server,
+ 				struct mid_q_entry *mid);
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -906,6 +906,7 @@ cifs_demultiplex_thread(void *p)
+ 			continue;
+ 		server->total_read += length;
+ 
++		mid_entry = NULL;
+ 		if (server->ops->is_transform_hdr &&
+ 		    server->ops->receive_transform &&
+ 		    server->ops->is_transform_hdr(buf)) {
+@@ -920,8 +921,11 @@ cifs_demultiplex_thread(void *p)
+ 				length = mid_entry->receive(server, mid_entry);
+ 		}
+ 
+-		if (length < 0)
++		if (length < 0) {
++			if (mid_entry)
++				cifs_mid_q_entry_release(mid_entry);
+ 			continue;
++		}
+ 
+ 		if (server->large_buf)
+ 			buf = server->bigbuf;
+@@ -938,6 +942,8 @@ cifs_demultiplex_thread(void *p)
+ 
+ 			if (!mid_entry->multiRsp || mid_entry->multiEnd)
+ 				mid_entry->callback(mid_entry);
++
++			cifs_mid_q_entry_release(mid_entry);
+ 		} else if (server->ops->is_oplock_break &&
+ 			   server->ops->is_oplock_break(buf, server)) {
+ 			cifs_dbg(FYI, "Received oplock break\n");
+--- a/fs/cifs/smb1ops.c
++++ b/fs/cifs/smb1ops.c
+@@ -107,6 +107,7 @@ cifs_find_mid(struct TCP_Server_Info *se
+ 		if (compare_mid(mid->mid, buf) &&
+ 		    mid->mid_state == MID_REQUEST_SUBMITTED &&
+ 		    le16_to_cpu(mid->command) == buf->Command) {
++			kref_get(&mid->refcount);
+ 			spin_unlock(&GlobalMid_Lock);
+ 			return mid;
+ 		}
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -203,6 +203,7 @@ smb2_find_mid(struct TCP_Server_Info *se
+ 		if ((mid->mid == wire_mid) &&
+ 		    (mid->mid_state == MID_REQUEST_SUBMITTED) &&
+ 		    (mid->command == shdr->Command)) {
++			kref_get(&mid->refcount);
+ 			spin_unlock(&GlobalMid_Lock);
+ 			return mid;
+ 		}
+--- a/fs/cifs/smb2transport.c
++++ b/fs/cifs/smb2transport.c
+@@ -548,6 +548,7 @@ smb2_mid_entry_alloc(const struct smb2_s
+ 
+ 	temp = mempool_alloc(cifs_mid_poolp, GFP_NOFS);
+ 	memset(temp, 0, sizeof(struct mid_q_entry));
++	kref_init(&temp->refcount);
+ 	temp->mid = le64_to_cpu(shdr->MessageId);
+ 	temp->pid = current->pid;
+ 	temp->command = shdr->Command; /* Always LE */
+--- a/fs/cifs/transport.c
++++ b/fs/cifs/transport.c
+@@ -61,6 +61,7 @@ AllocMidQEntry(const struct smb_hdr *smb
+ 
+ 	temp = mempool_alloc(cifs_mid_poolp, GFP_NOFS);
+ 	memset(temp, 0, sizeof(struct mid_q_entry));
++	kref_init(&temp->refcount);
+ 	temp->mid = get_mid(smb_buffer);
+ 	temp->pid = current->pid;
+ 	temp->command = cpu_to_le16(smb_buffer->Command);
+@@ -82,6 +83,21 @@ AllocMidQEntry(const struct smb_hdr *smb
+ 	return temp;
+ }
+ 
++static void _cifs_mid_q_entry_release(struct kref *refcount)
++{
++	struct mid_q_entry *mid = container_of(refcount, struct mid_q_entry,
++					       refcount);
++
++	mempool_free(mid, cifs_mid_poolp);
++}
++
++void cifs_mid_q_entry_release(struct mid_q_entry *midEntry)
++{
++	spin_lock(&GlobalMid_Lock);
++	kref_put(&midEntry->refcount, _cifs_mid_q_entry_release);
++	spin_unlock(&GlobalMid_Lock);
++}
++
+ void
+ DeleteMidQEntry(struct mid_q_entry *midEntry)
+ {
+@@ -110,7 +126,7 @@ DeleteMidQEntry(struct mid_q_entry *midE
+ 		}
+ 	}
+ #endif
+-	mempool_free(midEntry, cifs_mid_poolp);
++	cifs_mid_q_entry_release(midEntry);
+ }
+ 
+ void
+
+
