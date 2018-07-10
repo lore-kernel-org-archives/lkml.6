@@ -2,189 +2,155 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 457F6C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30E88C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 085CD208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:04:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 085CD208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E9571208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:05:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9571208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933842AbeGJPE0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:04:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:48386 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933600AbeGJPEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:04:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5A4780D;
-        Tue, 10 Jul 2018 08:04:22 -0700 (PDT)
-Received: from [192.168.100.244] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4771C3F589;
-        Tue, 10 Jul 2018 08:04:22 -0700 (PDT)
-Subject: Re: 4.18rc3 TX2 boot failure with "ACPICA: AML parser: attempt to
- continue loading table after error"
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <c49a3666-7d23-6a05-703c-1273d79a00cd@arm.com>
- <218e4339-477d-eb0d-6007-764c8e24229f@arm.com>
- <3574827.zOC4apc8e1@aspire.rjw.lan> <2264016.O8iB3BUh2s@aspire.rjw.lan>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <dc4c68bb-089c-6c99-31df-e8d3587b6029@arm.com>
-Date:   Tue, 10 Jul 2018 10:04:21 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933854AbeGJPE7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:04:59 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:55950 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933324AbeGJPE6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 11:04:58 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fcuCF-0005lH-A7; Tue, 10 Jul 2018 15:04:55 +0000
+Date:   Tue, 10 Jul 2018 16:04:55 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the vfs tree with the overlayfs tree
+Message-ID: <20180710150455.GK30522@ZenIV.linux.org.uk>
+References: <20180710101736.32d6cc6c@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <2264016.O8iB3BUh2s@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180710101736.32d6cc6c@canb.auug.org.au>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 07/10/2018 06:25 AM, Rafael J. Wysocki wrote:
-> On Tuesday, July 10, 2018 1:13:17 PM CEST Rafael J. Wysocki wrote:
->> On Tuesday, July 10, 2018 5:44:05 AM CEST Jeremy Linton wrote:
->>> Hi,
->>>
->>> On 07/09/2018 04:28 PM, Rafael J. Wysocki wrote:
->>>> On Mon, Jul 9, 2018 at 10:45 PM, Jeremy Linton <jeremy.linton@arm.com> wrote:
->>>>> Hi,
->>>>>
->>>>> First thanks for the patch..
->>>>>
->>>>> On 07/08/2018 04:14 AM, Rafael J. Wysocki wrote:
->>>>>>
->>>>>> On Monday, July 2, 2018 11:41:42 PM CEST Jeremy Linton wrote:
->>>>>>>
->>>>>>> Hi,
->>>>>>>
->>>>>>> I'm experiencing two problems with commit 5088814a6e931 which is
->>>>>>> "ACPICA: AML parser: attempt to continue loading table after error"
->>>>>>>
->>>>>>> The first is this boot failure on a thunderX2:
->>>>>>>
->>>>>>> [   10.770098] ACPI Error: Ignore error and continue table load
->>>>>
->>>>>
->>>>> [trimming]
->>>>>
->>>>>>> ]---
->>>>>>>
->>>>>>> Which does appear to be the result of some bad data in the table, but it
->>>>>>> was working with 4.17, and reverting this commit solves the problem.
->>>>>>
->>>>>>
->>>>>> Does the patch below make any difference?
->>>>>>
->>>>>> ---
->>>>>>     drivers/acpi/acpica/psobject.c |    3 +++
->>>>>>     1 file changed, 3 insertions(+)
->>>>>>
->>>>>> Index: linux-pm/drivers/acpi/acpica/psobject.c
->>>>>> ===================================================================
->>>>>> --- linux-pm.orig/drivers/acpi/acpica/psobject.c
->>>>>> +++ linux-pm/drivers/acpi/acpica/psobject.c
->>>>>> @@ -39,6 +39,9 @@ static acpi_status acpi_ps_get_aml_opcod
->>>>>>           ACPI_FUNCTION_TRACE_PTR(ps_get_aml_opcode, walk_state);
->>>>>>           walk_state->aml = walk_state->parser_state.aml;
->>>>>> +       if (!walk_state->aml)
->>>>>> +               return AE_CTRL_PARSE_CONTINUE;
->>>>>> +
->>>>>
->>>>>
->>>>> Well this seems to avoid the crash, but now it hangs right after on the
->>>>> "Ignore error and continue table load" message.
->>>>
->>>> Well, maybe we should just abort in that case.
->>>>
->>>> I'm wondering what happens if you replace the return statement in the
->>>> patch above with
->>>>
->>>> return_ACPI_STATUS(AE_AML_BAD_OPCODE)
->>>
->>> Yes, that is where I went when I applied the patch but I used
->>> AE_CTRL_TERMINATE, which terminates the loop in acpi_ps_parse_loop() and
->>> that appears to successfully finish/terminate the initial parsing pass.
->>> But, it then crashes in acpi_ns_lookup called via the
->>> acpi_walk_resources sequences that goes through ut_evalute_object() due
->>> to the path/scope_info->scope.node being ACPI_ROOT_OBJECT (-1) and
->>> bypassing the null check. Adding a ACPI_ROOT_OBJECT check as well as the
->>> null checks in acpi_ns_lookup results in a successful boot. Tracking
->>> down how the terminate (or whatever) is leaving the info->prefix_node
->>> (in acpi_ns_evaluate) set to ROOT_OBJECT instead of null, is something I
->>> don't yet understand.
->>>
->>> Anyway, I tried Using BAD_OPCODE rather than TERMINATE and it seems to
->>> have the same basic result as PARSE_CONTINUE.
->>
->> OK, thanks!
->>
->> I evidently didn't look deep enough.
->>
->> Can you please check the patch below?
->>
->> I'm not sure if we can pass this broken state to
->> acpi_ps_complete_final_op(), so it may be necessary to return
->> an error directly when aml_op_start is NULL.
->>
->> ---
->>   drivers/acpi/acpica/psloop.c |    3 +++
->>   1 file changed, 3 insertions(+)
->>
->> Index: linux-pm/drivers/acpi/acpica/psloop.c
->> ===================================================================
->> --- linux-pm.orig/drivers/acpi/acpica/psloop.c
->> +++ linux-pm/drivers/acpi/acpica/psloop.c
->> @@ -493,6 +493,9 @@ acpi_status acpi_ps_parse_loop(struct ac
->>   		ASL_CV_CAPTURE_COMMENTS(walk_state);
->>   
->>   		aml_op_start = parser_state->aml;
->> +		if (!aml_op_start)
->> +			break;
->> +
->>   		if (!op) {
->>   			status =
->>   			    acpi_ps_create_op(walk_state, aml_op_start, &op);
->>
->> --
-> 
-> So maybe something like this:
-> 
-> ---
->   drivers/acpi/acpica/psloop.c |    3 +++
->   1 file changed, 3 insertions(+)
-> 
-> Index: linux-pm/drivers/acpi/acpica/psloop.c
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/acpica/psloop.c
-> +++ linux-pm/drivers/acpi/acpica/psloop.c
-> @@ -494,6 +494,9 @@ acpi_status acpi_ps_parse_loop(struct ac
+On Tue, Jul 10, 2018 at 10:17:36AM +1000, Stephen Rothwell wrote:
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@@ -731,7 -732,6 +721,7 @@@ static int do_dentry_open(struct file *
+>   	static const struct file_operations empty_fops = {};
+>   	int error;
 >   
->   		aml_op_start = parser_state->aml;
->   		if (!op) {
-> +			if (!aml_op_start)
-> +				return_ACPI_STATUS(AE_AML_INTERNAL);
-> +
->   			status =
->   			    acpi_ps_create_op(walk_state, aml_op_start, &op);
->   			if (ACPI_FAILURE(status)) {
-> 
-> 
+> - 	WARN_ON(f->f_mode & ~FMODE_NOACCOUNT);
+> ++	WARN_ON(f->f_mode & ~ (FMODE_NOACCOUNT | FMODE_CREATED));
+>   	f->f_mode |= OPEN_FMODE(f->f_flags) | FMODE_LSEEK |
+>   				FMODE_PREAD | FMODE_PWRITE;
 
-This gets rid of the infinite loop, but its still has the problem with 
-acpi_ns_lookup crashing due to -1 in the scope.node.
+That part is sane
+
+>  +/**
+>  + * path_open() - Open an inode by a particular name.
+>  + * @path: The name of the file.
+>  + * @flags: The O_ flags used to open this file.
+>  + * @inode: The inode to open.
+>  + * @cred: The task's credentials used when opening this file.
+>  + *
+>  + * Context: Process context.
+>  + * Return: A pointer to a struct file or an IS_ERR pointer.  Cannot return NULL.
+>  + */
+>  +struct file *path_open(const struct path *path, int flags, struct inode *inode,
+>  +		       const struct cred *cred, bool account)
+>  +{
+>  +	struct file *file;
+>  +	int error;
+>  +
+>  +	file = __get_empty_filp(account);
+>  +	if (IS_ERR(file))
+>  +		return file;
+>   
+>  +	file->f_flags = flags;
+>   	file->f_path = *path;
+>  -	return do_dentry_open(file, d_backing_inode(dentry), NULL, cred);
+>  +	error = do_dentry_open(file, inode, NULL, cred);
+>  +	if (error) {
+> - 		put_filp(file);
+> ++		if (file->f_mode & FMODE_OPENED)
+> ++			fput(file);
+> ++		else
+> ++			put_filp(file);
+>  +		return ERR_PTR(error);
+>  +	}
+>  +
+> - 	error = open_check_o_direct(file);
+> - 	if (error) {
+> - 		fput(file);
+> - 		file = ERR_PTR(error);
+> - 	}
+> - 
+>  +	return file;
+>   }
+>  +EXPORT_SYMBOL(path_open);
+
+First of all, I'm still not at all convinced that this "noaccount" thing is
+sane, especially since path_open() is exported.  But that aside, __get_empty_filp()
+needs to be shot, just for the name and calling conventions alone.
+
+It gets a bullshit argument (bool account) *AND* does not get the argument it
+does need.  Note that the first thing get_empty_filp() (now __get...) does
+is
+        const struct cred *cred = current_cred();
+followed by
+        f->f_cred = get_cred(cred);
+
+Now look at path_open().  What happens to the cred argument it gets?  It goes
+to do_dentry_open(), where it gets passed to security_file_open() and not
+used by anything else.  In security_file_open() we have it passed to
+	ret = call_int_hook(file_open, 0, file, cred);
+and there are three instances of ->file_open() - apparmor, selinux and tomoyo.
+The last one ignores cred entirely; the other two do checks based on it,
+but *all* of them leave file->f_cred as it was.
+
+This is not a new crap.  It had been inherited from dentry_open(), which got it
+from "CRED: Pass credentials through dentry_open()" back in 2008.  Note that
+	* among the callers of dentry_open() (20) and vfs_open() (2 more)
+only these
+fs/cachefiles/rdwr.c:913:       file = dentry_open(&path, O_RDWR | O_LARGEFILE, cache->cache_cred);
+security/apparmor/file.c:695:   devnull = dentry_open(&aa_null, O_RDWR, cred);
+security/selinux/hooks.c:2628:  devnull = dentry_open(&selinux_null, O_RDWR, cred);
+get cred != current_cred().  Which helps masking the issue, but makes the
+decision to add that argument (instead of a separate helper) rather dubious.
+	* overlayfs itself appears to *have* run into the problem, judging
+by
+        old_cred = ovl_override_creds(inode->i_sb);
+        realfile = path_open(&file->f_path, file->f_flags | O_NOATIME,
+                             realinode, current_cred(), false);
+        revert_creds(old_cred);
+in there.
+
+Folks, if you have to go to that kind of contortions, why not do it right?
+	* add static __alloc_file(cred), which would get cred pointer (and not
+use current_cred() internally), allocated a file (without bothering with
+nr_files) and returned it
+	* have alloc_empty_file(cred) that would do the song and dance
+with nr_files (and used __alloc_file() internally).
+	* use that as a replacement for get_empty_filp() - path_openat() would
+*probably* use current_cred() for argument, alloc_file() definitely would and
+dentry_open() would pass its cred argument.
+	* in internal.h, static inline alloc_empty_file_noaccount(cred) would
+use __alloc_file() and set FMODE_NOACCOUNT in case of success.
+	* do_dentry_open() loses the fucking cred argument - it should be in
+file->f_cred.
+	* vfs_open() goes away - in your branch it's absolutely pointless.
+	* path_open() loses its 'account' argument - it's always false.
+Uses alloc_empty_file_noaccount() to allocate the sucker.  And for fsck
+sake, pass it the creds you want to use rather than playing that kind of
+games with override/revert.
