@@ -2,119 +2,107 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EA8C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:39:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41775C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5648208E1
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:39:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5648208E1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 034F1208E1
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:40:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034F1208E1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932743AbeGJIjE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:39:04 -0400
-Received: from nautica.notk.org ([91.121.71.147]:60195 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751129AbeGJIjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:39:01 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id B605BC009; Tue, 10 Jul 2018 10:38:59 +0200 (CEST)
-Date:   Tue, 10 Jul 2018 10:38:44 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Tomas Bortoli <tomasbortoli@gmail.com>
-Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com, v9fs-developer@lists.sourceforge.net,
-        davem@davemloft.net, Al Viro <viro@ZenIV.linux.org.uk>
-Subject: Re: [V9fs-developer] [PATCH] p9_check_errors() validate PDU length
-Message-ID: <20180710083844.GA23124@nautica>
-References: <20180709224323.20597-1-tomasbortoli@gmail.com>
- <20180709235403.GB19917@nautica>
- <20180710022819.GA19285@nautica>
- <ba4e159c-a78e-1d42-ca11-d4c8897a9a83@gmail.com>
+        id S1754201AbeGJIkR (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:40:17 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:19720 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751099AbeGJIkM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:40:12 -0400
+Received: from localhost.localdomain (10.18.20.250) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Tue, 10 Jul 2018
+ 16:39:25 +0800
+From:   Yixun Lan <yixun.lan@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock controller
+Date:   Tue, 10 Jul 2018 16:36:56 +0000
+Message-ID: <20180710163658.6175-2-yixun.lan@amlogic.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180710163658.6175-1-yixun.lan@amlogic.com>
+References: <20180710163658.6175-1-yixun.lan@amlogic.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ba4e159c-a78e-1d42-ca11-d4c8897a9a83@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.18.20.250]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tomas Bortoli wrote on Tue, Jul 10, 2018:
-> > This however gets more complicated once you start factoring in that
-> > change I suggested about p9_parse_header not setting size (and checking
-> > size) because trans_fd relies on it; so I'm not sure how we should
-> > proceed.
->
-> Mmh, me neither. I don't see where the *actual* PDU length is stored.
+Document the MMC sub clock controller driver, the potential consumer
+of this driver is MMC or NAND.
 
-That's precisely the problem, none of the transports actually write in
-the pdu how much has been read.
-Instead, we blindly trust how much the client says it has written and
-p9_parse_header will write pdu->size which is then used as the 'actual'
-PDU length.
+Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+---
+ .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
 
-
-With the three lines I added in each file all transports will store the
-PDU length in pdu->size so my following suggestion would be to just
-check that in p9_parse_header the length read from the packet match that
-of the received data and flag any packet where this is wrong as invalid.
-
-The only problem with that is that TCP will use p9_parse_header with a
-partial packet to know how much it needs to read, so that modification
-needs actual testing (hence my question below) as it is more intrusive
-than a simple boundary check.
-
-I'd suggest implementing some logic like already here with the if
-(pdu->size == 0) -- only check if pdu->size was previously set, and set
-it if it wasn't... But feel free to try something else.
-
-With that done I don't expect more problems but if I do it there's
-little point in making you do it as well ;)
-
-
-> > Do you have a working 9p tcp server to test changes are valid, or are
-> > you only working off the syzbot reproducer?
->
-> No, I was just using the reproducer to test.
->
-> > In the first place, are you willing to take the time to do that bigger
-> > fix?
->
-> Yes.
-
-Ok, let's get you a working setup for TCP then.
-You need to install a 9p server, the two I'm aware of are diod and
-nfs-ganesha (I'm using ganesha); once you have a working config you can
-mount with something like this:
- mount -t 9p -o aname=path,trans=fd <server-ip> <mount-point>
-
-Once you have that you should be able to fiddle with things until it
-works as expected.
-(for virtio I use qemu, that's probably easy to test as well; for RDMA
-you can use rxe to setup a virtual interface (with rxe_cfg) and then use
-either diod or ganesha again but the setup is more complicated so it's
-OK to leave that aside for now)
-
-> For me both ways are good. Signed-off-by will be good.
-> You know for sure more than me about 9p as I started delving it for the
-> first time yesterday. I can also make and test a patch but I'll need to
-> understand more about it. Let me know if you find out more.
-
-There's a saying about giving a fish or teaching how to fish, so let's
-have you try if you're motivated :)
-
-I don't think much is left if you can sew the pieces together, the most
-difficult part will probably to set the test environment up if you want
-to do this properly.
-
-
-Please ask if you run into any trouble,
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+new file mode 100644
+index 000000000000..ff6b4bf3ecf9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+@@ -0,0 +1,31 @@
++* Amlogic MMC Sub Clock Controller Driver
++
++The Amlogic MMC clock controller generates and supplies clock to support
++MMC and NAND controller
++
++Required Properties:
++
++- compatible: should be:
++		"amlogic,meson-gx-mmc-clkc"
++		"amlogic,meson-axg-mmc-clkc"
++
++- #clock-cells: should be 1.
++- clocks: phandles to clocks corresponding to the clock-names property
++- clock-names: list of parent clock names
++	- "clkin0", "clkin1"
++
++Parent node should have the following properties :
++- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
++- reg: base address and size of the MMC control register space.
++
++Example: Clock controller node:
++
++sd_mmc_c_clkc: clock-controller@7000 {
++	compatible = "amlogic,mmc-clkc", "syscon", "simple-mfd";
++	reg = <0x0 0x7000 0x0 0x4>;
++	#clock-cells = <1>;
++
++	clock-names = "clkin0", "clkin1";
++	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
++			<&clkc CLKID_FCLK_DIV2>;
++};
 -- 
-Dominique Martinet | Asmadeus
+2.18.0
+
