@@ -2,133 +2,85 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA98C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0FEC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF5A4208EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:55:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="PBs3tZ46"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5A4208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DF93208EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:56:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF93208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934380AbeGJPzh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:55:37 -0400
-Received: from mail-eopbgr80082.outbound.protection.outlook.com ([40.107.8.82]:27680
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933846AbeGJPzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:55:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=20d3Iyiqp9ABSrZnVo/qJtoEREky2d2iZRKceBMCs48=;
- b=PBs3tZ46Yxi+BqJgt4KzFCkek05EWNjiHUBKZMmRlxe86M+tMbK62c38B/VrMi6pcvzAHdZlIzIxl/kRwJBTXdEVGi3fC/tv36z5wXqfe1CZbMARmhVis2n6cTXbaAMHFDHryUHKUsE90qHBfRl8YXEGjsL4Hebl1L3oFCDwZsE=
-Received: from AM3PR04MB338.eurprd04.prod.outlook.com (10.242.110.15) by
- AM3PR04MB1218.eurprd04.prod.outlook.com (10.163.6.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.952.17; Tue, 10 Jul 2018 15:55:32 +0000
-Received: from AM3PR04MB338.eurprd04.prod.outlook.com
- ([fe80::84f9:3f8e:a8c7:1720]) by AM3PR04MB338.eurprd04.prod.outlook.com
- ([fe80::84f9:3f8e:a8c7:1720%10]) with mapi id 15.20.0930.022; Tue, 10 Jul
- 2018 15:55:32 +0000
-From:   Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: RE: [PATCH 5/5] staging: fsl-dpaa2/eth: Remove Rx frame size check
-Thread-Topic: [PATCH 5/5] staging: fsl-dpaa2/eth: Remove Rx frame size check
-Thread-Index: AQHUF5W7AkhTBmuvJU2/fCjJwRzd7qSHRsSAgAFV10A=
-Date:   Tue, 10 Jul 2018 15:55:32 +0000
-Message-ID: <AM3PR04MB338B88A42C1B4802D832DCE945B0@AM3PR04MB338.eurprd04.prod.outlook.com>
-References: <20180709150111.8875-1-ruxandra.radulescu@nxp.com>
- <20180709150111.8875-6-ruxandra.radulescu@nxp.com>
- <20180709192809.msmwmtmgj4yxrhme@mwanda>
-In-Reply-To: <20180709192809.msmwmtmgj4yxrhme@mwanda>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ruxandra.radulescu@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM3PR04MB1218;7:uwhHmkUk5sBNOcns3554GUNBGU35UsYRIlxFgcwFDYfJjj6eDKDcOl5za4KEYD9eQWpwJy0aDQtHyFpWW6OVGAl/5ZdvM2geAcA8YqejXBHd2WJEswFGZ8epgmrhrqva96GuMJQeB5xwr3A69RKswaoKzvpLJn2qCdoUCTJ9kdcZfmFemrtmJoNNWaeSScTwlnwOanFgtMr/zSDZe6XKS9qNzR3ytrCKA/ZiNgcA7o9dPPbXt7XQQPLc081p7tRf
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a859a620-c449-4d52-e5b7-08d5e67d9171
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM3PR04MB1218;
-x-ms-traffictypediagnostic: AM3PR04MB1218:
-x-microsoft-antispam-prvs: <AM3PR04MB12188159A1562634FEAC7AE0945B0@AM3PR04MB1218.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(146099531331640)(17755550239193);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(3231311)(944501410)(52105095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:AM3PR04MB1218;BCL:0;PCL:0;RULEID:;SRVR:AM3PR04MB1218;
-x-forefront-prvs: 0729050452
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(346002)(39860400002)(376002)(199004)(189003)(13464003)(6436002)(74316002)(33656002)(86362001)(106356001)(7736002)(66066001)(229853002)(305945005)(105586002)(6916009)(6116002)(25786009)(4326008)(81156014)(81166006)(2906002)(53936002)(3846002)(97736004)(8936002)(6246003)(68736007)(2900100001)(8676002)(478600001)(14444005)(5660300001)(256004)(14454004)(55016002)(26005)(186003)(53546011)(446003)(11346002)(476003)(102836004)(6506007)(316002)(9686003)(7696005)(486006)(99286004)(54906003)(76176011)(5250100002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM3PR04MB1218;H:AM3PR04MB338.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: GLxP/mnrW34pKpI83vsj8kKr1Abmout1RLIhOSEKzcX8ENKM4M8IqT8663wRCP6TCIQCyMXYixGUFf4w/+NGQNtN35fRWhQZwITpuI+g3de0SMbvLotC4udzSLlhmyo0zwPtDYqEJJKcjKUd0EoJy2SU5xCClz0ioE0JxhiKV/KZdnWPcb6xsEex5X6Oy0ec9FgaVqcBMIdaOohz4pK9VPOtjEdebNUAnVAJnVtZcycDLBCv8PUVBaf9xVN96sMQQKdg8lRgsozgz0cyqe/Y3TsSO2rU2Wkh/1Jo7Sjvzit7eox234zI4S0ONZhHRW9RQacimT4W2jvoP6L/Xs0zGkzDcRt2vDxTTVfZg6Sv0Zs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S934368AbeGJP4v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:56:51 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35740 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933796AbeGJP4u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 11:56:50 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b10-v6so16938558edi.2;
+        Tue, 10 Jul 2018 08:56:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=sFJgnebbdYO3u1u1RHDwVn3p0a6RqE+snYl0Qe6aLE8=;
+        b=mHjX6W43IUZ2pyOzzaooUhyhFfLv4urx/efjVXxIKx0RbbEsk5XwfLnoMcY6tltGjc
+         /qHto+LvbFydiXfPjfGdCKiHXZJOkbmsQmYE7ML7Au5e9bWy/eMtp0UJAM9fWN3lTdcU
+         PYgHr/fVfWNXE1Q+6JREiuGBzwqol0JMzzVYP7YY699jDD/VA9m9UMCwPe6j24rqOOD8
+         7qwxsGyvHl1DqCp9tncBgV1gJIs/WwbBCvcMsMfA8vZbrUUY/8l+U1oZbHvmK4UupMiV
+         SbtP5qYVe7QjSqWJqlp2QjdjlsgxQvB8UFbuNSSaQ7Zhp2OqDZ65M5c/+eaBX56O+ozP
+         2qbg==
+X-Gm-Message-State: APt69E1I5vn4rYvFsFPg+NHAEqApb+q/BxiZ2oIIB2RAxACynLl5dwKF
+        2Ye2kqmRWKXN+ayCnJiIyjld8ED9
+X-Google-Smtp-Source: AAOMgpdzmwO5zogVAOdCWqR986VAEilviYUClVnqdA97nE6QPUTjoQPmKAnMlHOBUwG1f8VzcwqWyg==
+X-Received: by 2002:a50:92c5:: with SMTP id l5-v6mr26795375eda.52.1531238208618;
+        Tue, 10 Jul 2018 08:56:48 -0700 (PDT)
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
+        by smtp.gmail.com with ESMTPSA id b18-v6sm8924244ede.21.2018.07.10.08.56.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 08:56:47 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id r16-v6so15179681wrt.11;
+        Tue, 10 Jul 2018 08:56:47 -0700 (PDT)
+X-Received: by 2002:adf:f9c9:: with SMTP id w9-v6mr17736496wrr.105.1531238207548;
+ Tue, 10 Jul 2018 08:56:47 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a859a620-c449-4d52-e5b7-08d5e67d9171
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2018 15:55:32.7629
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM3PR04MB1218
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 08:56:27
+ -0700 (PDT)
+In-Reply-To: <20180706175113.26698-11-jernej.skrabec@siol.net>
+References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-11-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 10 Jul 2018 23:56:27 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65TTC_JmcrAvd0fYDuMs4H+MwvqrL+LUfGpp_zY+qsavQ@mail.gmail.com>
+Message-ID: <CAGb2v65TTC_JmcrAvd0fYDuMs4H+MwvqrL+LUfGpp_zY+qsavQ@mail.gmail.com>
+Subject: Re: [PATCH 10/17] drm/sun4i: tcon-top: Add helpers for switching mux
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Dan Carpenter [mailto:dan.carpenter@oracle.com]
-> Sent: Monday, July 9, 2018 10:28 PM
-> To: Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>
-> Cc: gregkh@linuxfoundation.org; devel@driverdev.osuosl.org; linux-
-> kernel@vger.kernel.org; Ioana Ciornei <ioana.ciornei@nxp.com>
-> Subject: Re: [PATCH 5/5] staging: fsl-dpaa2/eth: Remove Rx frame size che=
-ck
->=20
-> On Mon, Jul 09, 2018 at 10:01:11AM -0500, Ioana Radulescu wrote:
-> > @@ -2385,6 +2365,12 @@ static int netdev_init(struct net_device
-> *net_dev)
-> >
-> >  	/* Set MTU upper limit; lower limit is 68B (default value) */
-> >  	net_dev->max_mtu =3D DPAA2_ETH_MAX_MTU;
-> > +	err =3D dpni_set_max_frame_length(priv->mc_io, 0, priv->mc_token,
-> > +					(u16)DPAA2_ETH_MFL);
->=20
-> The cast was there in the original code so this is not a comment on this
-> particular patch (which seems fine) but there is no need to cast.
->=20
-> Generally it's best to avoid unnecessary casts.  As a human reader, I
-> find the cast confusing.  It indicates that DPAA2_ETH_MFL somehow
-> requires special handling.  Perhaps it's negative or we are trying to
-> truncate away the high bits.  But neither of those things really make
-> sense.
->=20
-> From a static analysis perspective if DPAA2_ETH_MFL doesn't fit nicely
-> then we would want to generate a warning.  But the cast explicitly
-> disables the check.
+On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> We want to be able to set TCON TOP muxes at runtime. Add helpers for
+> that.
+>
+> Old, static configuration of muxes at probe time is preserved for now.
+> It will be removed when R40 TCON starts using them.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-I really don't remember why the cast was there in the first place.
-It doesn't look like it's needed anymore, DPAA2_ETH_MFL has a
-positive value (around 10K) that fits just fine inside a u16.
-
-I see Greg already applied the patch, so I'll send a separate one to
-remove the cast.
-
-Thanks,
-Ioana
-
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
