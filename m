@@ -6,35 +6,49 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A141C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96E77C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 316DE20936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316DE20936
+	by mail.kernel.org (Postfix) with ESMTP id 6449620936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6449620936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733002AbeGJS1I (ORCPT
+        id S1733017AbeGJS1L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:27:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44690 "EHLO
+        Tue, 10 Jul 2018 14:27:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44706 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732958AbeGJS1H (ORCPT
+        with ESMTP id S1732958AbeGJS1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:27:07 -0400
+        Tue, 10 Jul 2018 14:27:10 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FF3FEB4;
-        Tue, 10 Jul 2018 18:26:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6F70EA8;
+        Tue, 10 Jul 2018 18:26:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "stable@vger.kernel.org, Eric Dumazet" <edumazet@google.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 10/47] ipv4: Fix error return value in fib_convert_metrics()
-Date:   Tue, 10 Jul 2018 20:24:34 +0200
-Message-Id: <20180710182337.475654419@linuxfoundation.org>
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ye Xiaolong <xiaolong.ye@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Alexey Makhalov <amakhalov@vmware.com>
+Subject: [PATCH 4.4 11/47] kprobes/x86: Do not modify singlestep buffer while resuming
+Date:   Tue, 10 Jul 2018 20:24:35 +0200
+Message-Id: <20180710182337.592464332@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -51,30 +65,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ben Hutchings <ben.hutchings@codethink.co.uk>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-The validation code modified by commit 5b5e7a0de2bb ("net: metrics:
-add proper netlink validation") is organised differently in older
-kernel versions.  The fib_convert_metrics() function that is modified
-in the backports to 4.4 and 4.9 needs to returns an error code, not a
-success flag.
+commit 804dec5bda9b4fcdab5f67fe61db4a0498af5221 upstream.
 
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Do not modify singlestep execution buffer (kprobe.ainsn.insn)
+while resuming from single-stepping, instead, modifies
+the buffer to add a jump back instruction at preparing
+buffer.
+
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: David S . Miller <davem@davemloft.net>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ye Xiaolong <xiaolong.ye@intel.com>
+Link: http://lkml.kernel.org/r/149076361560.22469.1610155860343077495.stgit@devbox
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Signed-off-by: Alexey Makhalov <amakhalov@vmware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv4/fib_semantics.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/kprobes/core.c |   42 +++++++++++++++++++----------------------
+ 1 file changed, 20 insertions(+), 22 deletions(-)
 
---- a/net/ipv4/fib_semantics.c
-+++ b/net/ipv4/fib_semantics.c
-@@ -980,7 +980,7 @@ fib_convert_metrics(struct fib_info *fi,
- 				return -EINVAL;
- 		} else {
- 			if (nla_len(nla) != sizeof(u32))
--				return false;
-+				return -EINVAL;
- 			val = nla_get_u32(nla);
- 		}
- 		if (type == RTAX_ADVMSS && val > 65535 - 40)
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -411,25 +411,38 @@ void free_insn_page(void *page)
+ 	module_memfree(page);
+ }
+ 
++/* Prepare reljump right after instruction to boost */
++static void prepare_boost(struct kprobe *p, int length)
++{
++	if (can_boost(p->ainsn.insn, p->addr) &&
++	    MAX_INSN_SIZE - length >= RELATIVEJUMP_SIZE) {
++		/*
++		 * These instructions can be executed directly if it
++		 * jumps back to correct address.
++		 */
++		synthesize_reljump(p->ainsn.insn + length, p->addr + length);
++		p->ainsn.boostable = 1;
++	} else {
++		p->ainsn.boostable = -1;
++	}
++}
++
+ static int arch_copy_kprobe(struct kprobe *p)
+ {
+-	int ret;
++	int len;
+ 
+ 	set_memory_rw((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
+ 
+ 	/* Copy an instruction with recovering if other optprobe modifies it.*/
+-	ret = __copy_instruction(p->ainsn.insn, p->addr);
+-	if (!ret)
++	len = __copy_instruction(p->ainsn.insn, p->addr);
++	if (!len)
+ 		return -EINVAL;
+ 
+ 	/*
+ 	 * __copy_instruction can modify the displacement of the instruction,
+ 	 * but it doesn't affect boostable check.
+ 	 */
+-	if (can_boost(p->ainsn.insn, p->addr))
+-		p->ainsn.boostable = 0;
+-	else
+-		p->ainsn.boostable = -1;
++	prepare_boost(p, len);
+ 
+ 	set_memory_ro((unsigned long)p->ainsn.insn & PAGE_MASK, 1);
+ 
+@@ -894,21 +907,6 @@ static void resume_execution(struct kpro
+ 		break;
+ 	}
+ 
+-	if (p->ainsn.boostable == 0) {
+-		if ((regs->ip > copy_ip) &&
+-		    (regs->ip - copy_ip) + 5 < MAX_INSN_SIZE) {
+-			/*
+-			 * These instructions can be executed directly if it
+-			 * jumps back to correct address.
+-			 */
+-			synthesize_reljump((void *)regs->ip,
+-				(void *)orig_ip + (regs->ip - copy_ip));
+-			p->ainsn.boostable = 1;
+-		} else {
+-			p->ainsn.boostable = -1;
+-		}
+-	}
+-
+ 	regs->ip += orig_ip - copy_ip;
+ 
+ no_change:
 
 
