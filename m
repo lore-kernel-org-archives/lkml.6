@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB1DC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC17C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2910E2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2910E2083E
+	by mail.kernel.org (Postfix) with ESMTP id 9EAEA2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EAEA2083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387620AbeGJS3B (ORCPT
+        id S2387636AbeGJS3E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:29:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45192 "EHLO
+        Tue, 10 Jul 2018 14:29:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45202 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732459AbeGJS3A (ORCPT
+        with ESMTP id S1732459AbeGJS3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:29:00 -0400
+        Tue, 10 Jul 2018 14:29:03 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9AF28D66;
-        Tue, 10 Jul 2018 18:28:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7E358D66;
+        Tue, 10 Jul 2018 18:28:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.4 31/47] ext4: check superblock mapped prior to committing
-Date:   Tue, 10 Jul 2018 20:24:55 +0200
-Message-Id: <20180710182338.445935811@linuxfoundation.org>
+        stable@vger.kernel.org, John Smith <john-s-84@gmx.net>,
+        Jason Andryuk <jandryuk@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.4 32/47] HID: i2c-hid: Fix "incomplete report" noise
+Date:   Tue, 10 Jul 2018 20:24:56 +0200
+Message-Id: <20180710182338.489800118@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -50,55 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jon Derrick <jonathan.derrick@intel.com>
+From: Jason Andryuk <jandryuk@gmail.com>
 
-commit a17712c8e4be4fa5404d20e9cd3b2b21eae7bc56 upstream.
+commit ef6eaf27274c0351f7059163918f3795da13199c upstream.
 
-This patch attempts to close a hole leading to a BUG seen with hot
-removals during writes [1].
+Commit ac75a041048b ("HID: i2c-hid: fix size check and type usage") started
+writing messages when the ret_size is <= 2 from i2c_master_recv.  However, my
+device i2c-DLL07D1 returns 2 for a short period of time (~0.5s) after I stop
+moving the pointing stick or touchpad.  It varies, but you get ~50 messages
+each time which spams the log hard.
 
-A block device (NVME namespace in this test case) is formatted to EXT4
-without partitions. It's mounted and write I/O is run to a file, then
-the device is hot removed from the slot. The superblock attempts to be
-written to the drive which is no longer present.
+[  95.925055] i2c_hid i2c-DLL07D1:01: i2c_hid_get_input: incomplete report (83/2)
 
-The typical chain of events leading to the BUG:
-ext4_commit_super()
-  __sync_dirty_buffer()
-    submit_bh()
-      submit_bh_wbc()
-        BUG_ON(!buffer_mapped(bh));
+This has also been observed with a i2c-ALP0017.
 
-This fix checks for the superblock's buffer head being mapped prior to
-syncing.
+[ 1781.266353] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
 
-[1] https://www.spinics.net/lists/linux-ext4/msg56527.html
+Only print the message when ret_size is totally invalid and less than 2 to cut
+down on the log spam.
 
-Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Fixes: ac75a041048b ("HID: i2c-hid: fix size check and type usage")
+Reported-by: John Smith <john-s-84@gmx.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/hid/i2c-hid/i2c-hid.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4442,6 +4442,14 @@ static int ext4_commit_super(struct supe
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -413,7 +413,7 @@ static void i2c_hid_get_input(struct i2c
+ 		return;
+ 	}
  
- 	if (!sbh || block_device_ejected(sb))
- 		return error;
-+
-+	/*
-+	 * The superblock bh should be mapped, but it might not be if the
-+	 * device was hot-removed. Not much we can do but fail the I/O.
-+	 */
-+	if (!buffer_mapped(sbh))
-+		return error;
-+
- 	if (buffer_write_io_error(sbh)) {
- 		/*
- 		 * Oh, dear.  A previous attempt to write the
+-	if ((ret_size > size) || (ret_size <= 2)) {
++	if ((ret_size > size) || (ret_size < 2)) {
+ 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
+ 			__func__, size, ret_size);
+ 		return;
 
 
