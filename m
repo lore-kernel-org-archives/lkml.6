@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD8AC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B99DC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF12920B80
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF12920B80
+	by mail.kernel.org (Postfix) with ESMTP id 67AE420936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67AE420936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389977AbeGJSgo (ORCPT
+        id S2389993AbeGJSgq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:36:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48600 "EHLO
+        Tue, 10 Jul 2018 14:36:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48606 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389961AbeGJSgn (ORCPT
+        with ESMTP id S2389962AbeGJSgq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:36:43 -0400
+        Tue, 10 Jul 2018 14:36:46 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EB421EE8;
-        Tue, 10 Jul 2018 18:36:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DE7C1EE8;
+        Tue, 10 Jul 2018 18:36:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.17 54/56] netfilter: nf_log: dont hold nf_log_mutex during user access
-Date:   Tue, 10 Jul 2018 20:25:36 +0200
-Message-Id: <20180710182506.101868893@linuxfoundation.org>
+        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 4.17 55/56] staging: comedi: quatech_daqp_cs: fix no-op loop daqp_ao_insn_write()
+Date:   Tue, 10 Jul 2018 20:25:37 +0200
+Message-Id: <20180710182506.157125104@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -50,49 +50,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit ce00bf07cc95a57cd20b208e02b3c2604e532ae8 upstream.
+commit 1376b0a2160319125c3a2822e8c09bd283cd8141 upstream.
 
-The old code would indefinitely block other users of nf_log_mutex if
-a userspace access in proc_dostring() blocked e.g. due to a userfaultfd
-region. Fix it by moving proc_dostring() out of the locked region.
+There is a '>' vs '<' typo so this loop is a no-op.
 
-This is a followup to commit 266d07cb1c9a ("netfilter: nf_log: fix
-sleeping function called from invalid context"), which changed this code
-from using rcu_read_lock() to taking nf_log_mutex.
-
-Fixes: 266d07cb1c9a ("netfilter: nf_log: fix sleeping function calle[...]")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: d35dcc89fc93 ("staging: comedi: quatech_daqp_cs: fix daqp_ao_insn_write()")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_log.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/staging/comedi/drivers/quatech_daqp_cs.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/nf_log.c
-+++ b/net/netfilter/nf_log.c
-@@ -457,14 +457,17 @@ static int nf_log_proc_dostring(struct c
- 		rcu_assign_pointer(net->nf.nf_loggers[tindex], logger);
- 		mutex_unlock(&nf_log_mutex);
- 	} else {
-+		struct ctl_table tmp = *table;
-+
-+		tmp.data = buf;
- 		mutex_lock(&nf_log_mutex);
- 		logger = nft_log_dereference(net->nf.nf_loggers[tindex]);
- 		if (!logger)
--			table->data = "NONE";
-+			strlcpy(buf, "NONE", sizeof(buf));
- 		else
--			table->data = logger->name;
--		r = proc_dostring(table, write, buffer, lenp, ppos);
-+			strlcpy(buf, logger->name, sizeof(buf));
- 		mutex_unlock(&nf_log_mutex);
-+		r = proc_dostring(&tmp, write, buffer, lenp, ppos);
- 	}
+--- a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
++++ b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
+@@ -642,7 +642,7 @@ static int daqp_ao_insn_write(struct com
+ 	/* Make sure D/A update mode is direct update */
+ 	outb(0, dev->iobase + DAQP_AUX_REG);
  
- 	return r;
+-	for (i = 0; i > insn->n; i++) {
++	for (i = 0; i < insn->n; i++) {
+ 		unsigned int val = data[i];
+ 		int ret;
+ 
 
 
