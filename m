@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92B8C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70243C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90FA120B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90FA120B6F
+	by mail.kernel.org (Postfix) with ESMTP id 3CB3A20B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB3A20B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388869AbeGJSdM (ORCPT
+        id S2388879AbeGJSdP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47696 "EHLO
+        Tue, 10 Jul 2018 14:33:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47704 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388294AbeGJSdL (ORCPT
+        with ESMTP id S2387748AbeGJSdO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:11 -0400
+        Tue, 10 Jul 2018 14:33:14 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 868B2E3D;
-        Tue, 10 Jul 2018 18:32:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78F3FD0B;
+        Tue, 10 Jul 2018 18:33:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 32/53] HID: hiddev: fix potential Spectre v1
-Date:   Tue, 10 Jul 2018 20:25:08 +0200
-Message-Id: <20180710182500.671123874@linuxfoundation.org>
+Subject: [PATCH 4.14 33/53] HID: debug: check length before copy_to_user()
+Date:   Tue, 10 Jul 2018 20:25:09 +0200
+Message-Id: <20180710182500.719568903@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -51,90 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Daniel Rosenberg <drosen@google.com>
 
-commit 4f65245f2d178b9cba48350620d76faa4a098841 upstream.
+commit 717adfdaf14704fd3ec7fa2c04520c0723247eac upstream.
 
-uref->field_index, uref->usage_index, finfo.field_index and cinfo.index can be
-indirectly controlled by user-space, hence leading to a potential exploitation
-of the Spectre variant 1 vulnerability.
-
-This issue was detected with the help of Smatch:
-
-drivers/hid/usbhid/hiddev.c:473 hiddev_ioctl_usage() warn: potential spectre issue 'report->field' (local cap)
-drivers/hid/usbhid/hiddev.c:477 hiddev_ioctl_usage() warn: potential spectre issue 'field->usage' (local cap)
-drivers/hid/usbhid/hiddev.c:757 hiddev_ioctl() warn: potential spectre issue 'report->field' (local cap)
-drivers/hid/usbhid/hiddev.c:801 hiddev_ioctl() warn: potential spectre issue 'hid->collection' (local cap)
-
-Fix this by sanitizing such structure fields before using them to index
-report->field, field->usage and hid->collection
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+If our length is greater than the size of the buffer, we
+overflow the buffer
 
 Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/usbhid/hiddev.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/hid/hid-debug.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/hid/usbhid/hiddev.c
-+++ b/drivers/hid/usbhid/hiddev.c
-@@ -36,6 +36,7 @@
- #include <linux/hiddev.h>
- #include <linux/compat.h>
- #include <linux/vmalloc.h>
-+#include <linux/nospec.h>
- #include "usbhid.h"
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -1154,6 +1154,8 @@ copy_rest:
+ 			goto out;
+ 		if (list->tail > list->head) {
+ 			len = list->tail - list->head;
++			if (len > count)
++				len = count;
  
- #ifdef CONFIG_USB_DYNAMIC_MINORS
-@@ -469,10 +470,14 @@ static noinline int hiddev_ioctl_usage(s
+ 			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
+ 				ret = -EFAULT;
+@@ -1163,6 +1165,8 @@ copy_rest:
+ 			list->head += len;
+ 		} else {
+ 			len = HID_DEBUG_BUFSIZE - list->head;
++			if (len > count)
++				len = count;
  
- 		if (uref->field_index >= report->maxfield)
- 			goto inval;
-+		uref->field_index = array_index_nospec(uref->field_index,
-+						       report->maxfield);
+ 			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
+ 				ret = -EFAULT;
+@@ -1170,7 +1174,9 @@ copy_rest:
+ 			}
+ 			list->head = 0;
+ 			ret += len;
+-			goto copy_rest;
++			count -= len;
++			if (count > 0)
++				goto copy_rest;
+ 		}
  
- 		field = report->field[uref->field_index];
- 		if (uref->usage_index >= field->maxusage)
- 			goto inval;
-+		uref->usage_index = array_index_nospec(uref->usage_index,
-+						       field->maxusage);
- 
- 		uref->usage_code = field->usage[uref->usage_index].hid;
- 
-@@ -499,6 +504,8 @@ static noinline int hiddev_ioctl_usage(s
- 
- 			if (uref->field_index >= report->maxfield)
- 				goto inval;
-+			uref->field_index = array_index_nospec(uref->field_index,
-+							       report->maxfield);
- 
- 			field = report->field[uref->field_index];
- 
-@@ -753,6 +760,8 @@ static long hiddev_ioctl(struct file *fi
- 
- 		if (finfo.field_index >= report->maxfield)
- 			break;
-+		finfo.field_index = array_index_nospec(finfo.field_index,
-+						       report->maxfield);
- 
- 		field = report->field[finfo.field_index];
- 		memset(&finfo, 0, sizeof(finfo));
-@@ -797,6 +806,8 @@ static long hiddev_ioctl(struct file *fi
- 
- 		if (cinfo.index >= hid->maxcollection)
- 			break;
-+		cinfo.index = array_index_nospec(cinfo.index,
-+						 hid->maxcollection);
- 
- 		cinfo.type = hid->collection[cinfo.index].type;
- 		cinfo.usage = hid->collection[cinfo.index].usage;
+ 	}
 
 
