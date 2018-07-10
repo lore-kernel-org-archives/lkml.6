@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EB3C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90295C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D780820936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D780820936
+	by mail.kernel.org (Postfix) with ESMTP id 522AB208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522AB208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389341AbeGJSem (ORCPT
+        id S2389355AbeGJSep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:34:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48116 "EHLO
+        Tue, 10 Jul 2018 14:34:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388607AbeGJSel (ORCPT
+        with ESMTP id S2388607AbeGJSeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:34:41 -0400
+        Tue, 10 Jul 2018 14:34:44 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7AEE3E3D;
-        Tue, 10 Jul 2018 18:34:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 30736E6B;
+        Tue, 10 Jul 2018 18:34:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
-        Mike Christie <mchristi@redhat.com>,
-        Maged Mokhtar <mmokhtar@petasan.org>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 12/56] scsi: target: Fix truncated PR-in ReadKeys response
-Date:   Tue, 10 Jul 2018 20:24:54 +0200
-Message-Id: <20180710182504.141738182@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Kurz <okurz@suse.com>,
+        =?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <ptesarik@suse.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.17 13/56] s390: Correct register corruption in critical section cleanup
+Date:   Tue, 10 Jul 2018 20:24:55 +0200
+Message-Id: <20180710182504.193963259@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -53,58 +53,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Disseldorp <ddiss@suse.de>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-commit 63ce3c384db26494615e3c8972bcd419ed71f4c4 upstream.
+commit 891f6a726cacbb87e5b06076693ffab53bd378d7 upstream.
 
-SPC5r17 states that the contents of the ADDITIONAL LENGTH field are not
-altered based on the allocation length, so always calculate and pack the
-full key list length even if the list itself is truncated.
+In the critical section cleanup we must not mess with r1.  For march=z9
+or older, larl + ex (instead of exrl) are used with r1 as a temporary
+register. This can clobber r1 in several interrupt handlers. Fix this by
+using r11 as a temp register.  r11 is being saved by all callers of
+cleanup_critical.
 
-According to Maged:
-
-  Yes it fixes the "Storage Spaces Persistent Reservation" test in the
-  Windows 2016 Server Failover Cluster validation suites when having
-  many connections that result in more than 8 registrations. I tested
-  your patch on 4.17 with iblock.
-
-This behaviour can be tested using the libiscsi PrinReadKeys.Truncate test.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: David Disseldorp <ddiss@suse.de>
-Reviewed-by: Mike Christie <mchristi@redhat.com>
-Tested-by: Maged Mokhtar <mmokhtar@petasan.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Fixes: 6dd85fbb87 ("s390: move expoline assembler macros to a header")
+Cc: stable@vger.kernel.org #v4.16
+Reported-by: Oliver Kurz <okurz@suse.com>
+Reported-by: Petr Tesařík <ptesarik@suse.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/target/target_core_pr.c |   15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/s390/kernel/entry.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/target/target_core_pr.c
-+++ b/drivers/target/target_core_pr.c
-@@ -3727,11 +3727,16 @@ core_scsi3_pri_read_keys(struct se_cmd *
- 		 * Check for overflow of 8byte PRI READ_KEYS payload and
- 		 * next reservation key list descriptor.
- 		 */
--		if ((add_len + 8) > (cmd->data_length - 8))
--			break;
--
--		put_unaligned_be64(pr_reg->pr_res_key, &buf[off]);
--		off += 8;
-+		if (off + 8 <= cmd->data_length) {
-+			put_unaligned_be64(pr_reg->pr_res_key, &buf[off]);
-+			off += 8;
-+		}
-+		/*
-+		 * SPC5r17: 6.16.2 READ KEYS service action
-+		 * The ADDITIONAL LENGTH field indicates the number of bytes in
-+		 * the Reservation key list. The contents of the ADDITIONAL
-+		 * LENGTH field are not altered based on the allocation length
-+		 */
- 		add_len += 8;
- 	}
- 	spin_unlock(&dev->t10_pr.registration_lock);
+--- a/arch/s390/kernel/entry.S
++++ b/arch/s390/kernel/entry.S
+@@ -1265,7 +1265,7 @@ cleanup_critical:
+ 	jl	0f
+ 	clg	%r9,BASED(.Lcleanup_table+104)	# .Lload_fpu_regs_end
+ 	jl	.Lcleanup_load_fpu_regs
+-0:	BR_EX	%r14
++0:	BR_EX	%r14,%r11
+ 
+ 	.align	8
+ .Lcleanup_table:
+@@ -1301,7 +1301,7 @@ cleanup_critical:
+ 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
+ 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
+ 	larl	%r9,sie_exit			# skip forward to sie_exit
+-	BR_EX	%r14
++	BR_EX	%r14,%r11
+ #endif
+ 
+ .Lcleanup_system_call:
 
 
