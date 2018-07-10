@@ -1,664 +1,148 @@
-Return-Path: <SRS0=qUjc=JZ=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95983C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C87C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EB2A20873
-	for <linux-kernel@archiver.kernel.org>; Mon,  9 Jul 2018 23:56:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16B032089E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:05:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Bj9pBjFH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EB2A20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Aj8j/sr5";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="LPNw36aw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16B032089E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754645AbeGIX4Z (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 19:56:25 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35177 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754550AbeGIX4M (ORCPT
+        id S933209AbeGJAFq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 20:05:46 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:42773 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754547AbeGJAFm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 19:56:12 -0400
-Received: by mail-pl0-f66.google.com with SMTP id k1-v6so6747152plt.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 16:56:11 -0700 (PDT)
+        Mon, 9 Jul 2018 20:05:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1531181143; x=1562717143;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=gN6DSkeYJzhxUhVpv78+9bx/7lNEg0UZdYaP54vNZ3s=;
+  b=Aj8j/sr55Za5WRIRSiiSU30M9L3yQjaiR092COnuYnL31vdQm2HzYEZq
+   Fwb+3BYtJGkoP0vS36VJhybFDfTnQf8pl+tkVg5+lqkXUMh8qaPzfm9KN
+   rxyrHRRk6T7z/gw2Ofe56Jm2/kxy1QuHDCN3wv3Wx4EZnvMOjV5kL3i9K
+   Hq1wfWfN3f5uh2Mi0zu4Gho88xpGIY4u9iegHz1n4P7TbLwg30+6cBq5L
+   zoB1XXRTK1Ok3IKaGdEmWxa0RLUj1dFtlhTG426MX3Inqi80EfsTeIV22
+   tFI8hY5s5G071/f9dUVyGByUpebOZu/8+bnh2myQtqtA8YfpelOnSWEFb
+   w==;
+X-IronPort-AV: E=Sophos;i="5.51,332,1526313600"; 
+   d="scan'208";a="83569376"
+Received: from mail-cys01nam02lp0048.outbound.protection.outlook.com (HELO NAM02-CY1-obe.outbound.protection.outlook.com) ([207.46.163.48])
+  by ob1.hgst.iphmx.com with ESMTP; 10 Jul 2018 08:05:41 +0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HYTusu2YZ1CoxhHiAh5rNbM8TYzFw8hHmfOqMTzP3jw=;
-        b=Bj9pBjFHLpy5JGxucD+0FyzAiUs2zwHCoSQBc73LKQL46fnT3q7pCRn6e+iLpfXq/9
-         CNewASk3grJrN23v9Wz4h7F7o/FdDHR8KLw+D2IgOPwPWgjyrwZ/060okTsorVa2nUBo
-         g66JvlAlAt+u4fuIaxiT6p8B8oAGSUF+n231g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HYTusu2YZ1CoxhHiAh5rNbM8TYzFw8hHmfOqMTzP3jw=;
-        b=t0tjUemkEs70JWlgtIrMN33w+pLu4KrtJgzM0fc+G0pNwTE8U9T6yHbnVCkff/fM4f
-         IyRV/gRqIr7+IyuEe33WZ3gt9lkTAzVxBw556ebb4mtoHPzE7huqyD1zRPd4mL0VDbVw
-         siYT0fquEJM0N3sJPjLacGTQ3Mg9ZvJ51PfEL1SrStayn4/4P1XX8N4/JJoMVX5PULh5
-         54lPACRaNoKdxOZ1PD2i716jAjpm8HwsEdRA2B5320l0EqGjYYWTy3Yk0Tj94md/vFiA
-         B3Q/kjZvr8bESMYW3kkjMNBVSEP7yQ2FUOCiahlUhKcXQHWlQx39y3y+qtwmGE5J9D8d
-         J0Cw==
-X-Gm-Message-State: APt69E2NF4izxkjCJkJuFPFuqmaG8aQOtJ3XUFHm7SsinGlwaUNOCu2g
-        SYp0IvS7hnfv1tjKmd/wmWX8XA==
-X-Google-Smtp-Source: AAOMgpfVzu4MvhJih9g8rwzDEb/Ejw/vDfELhskfEqwqDCoAsjEd7X6El60XJBvBJvUm/bRWNtxDEA==
-X-Received: by 2002:a17:902:1e6:: with SMTP id b93-v6mr22609379plb.149.1531180571352;
-        Mon, 09 Jul 2018 16:56:11 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id n22-v6sm22204808pgv.60.2018.07.09.16.56.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 16:56:10 -0700 (PDT)
-Date:   Mon, 9 Jul 2018 16:56:10 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Georgi Djakov <georgi.djakov@linaro.org>
-Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        rjw@rjwysocki.net, robh+dt@kernel.org, mturquette@baylibre.com,
-        khilman@baylibre.com, abailon@baylibre.com,
-        vincent.guittot@linaro.org, skannan@codeaurora.org,
-        bjorn.andersson@linaro.org, amit.kucheria@linaro.org,
-        seansw@qti.qualcomm.com, daidavid1@codeaurora.org,
-        evgreen@chromium.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v6 6/8] interconnect: qcom: Add msm8916 interconnect
- provider driver
-Message-ID: <20180709235610.GO129942@google.com>
-References: <20180709155104.25528-1-georgi.djakov@linaro.org>
- <20180709155104.25528-7-georgi.djakov@linaro.org>
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gN6DSkeYJzhxUhVpv78+9bx/7lNEg0UZdYaP54vNZ3s=;
+ b=LPNw36awZufz6bg6kxmel5aHuZu44P2ONQSJOfbjT6tb+kEWhduLYzp+oSelnvODrRim14Lia4bxIxhO7opL3AvCOT+YzUNsRf8wDyywWBC51rft6ov+0LoeFR+wpcNN8+5T43814ZNgnwbITTPUNlZSdbhmxSdZIf+xoZQ+5ZI=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0446.namprd04.prod.outlook.com (10.173.48.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.930.19; Tue, 10 Jul 2018 00:05:39 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::a134:ec95:a6c0:7c44]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::a134:ec95:a6c0:7c44%4]) with mapi id 15.20.0930.022; Tue, 10 Jul 2018
+ 00:05:38 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "mb@lightnvm.io" <mb@lightnvm.io>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "loberman@redhat.com" <loberman@redhat.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>
+Subject: Re: [PATCH 0/2] null_blk: zone support
+Thread-Topic: [PATCH 0/2] null_blk: zone support
+Thread-Index: AQHUFVBFT/qkypCZAUO1k/LTlwEax6SCd5QAgAQSDYCAAJEkAIAAfhCA
+Date:   Tue, 10 Jul 2018 00:05:38 +0000
+Message-ID: <8d8ae6c620217db92b95b6561345d7bdf7c7cdfa.camel@wdc.com>
+References: <20180706173839.28355-1-mb@lightnvm.io>
+         <1530899118.31977.1.camel@redhat.com>
+         <296d2d14-0bf6-e0a2-84dc-7d6e819625c1@lightnvm.io>
+         <4421a151-85d9-52e4-2233-03ed7f17528a@kernel.dk>
+In-Reply-To: <4421a151-85d9-52e4-2233-03ed7f17528a@kernel.dk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [199.255.44.174]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0446;7:imSZZZaLk/bFkvbilYu8oIzM8CHVhMQz/ISBMy/8KmX4lwbG7sXqcRTjjw+PNubGBP3LtZCZvQDUGt+Ff+O1L8/eq4dU2G3/IOspPgtQgFEnQs88IJafHjvXEYygruvyyRRhIeXePSvehCSkKXwdb9UY/nnR6nk+XQoZjcMcoUTlXozO7bL+kuZNikgm2M2P8DgcexZA4cOJ87cnJ1kP470UdUvk3B8+s4+Foxcn4iwyvCwhFy6DRB6nkMv28qF8;20:Y2RX9VfRjaq5Rw19U0jhe6rTZlEruqU4hO3vugpLozLaBNzVjb65yWEpCpHERZ3tjsSEFw61b6alC4mUjCJHe7WwJXMDJoCPmTMbpL0RmPA4KPTrGime+Q8mu2jXtTNSKBy07IkENktgdJHELphXBmwAxIumcELFThRMvsjOtR8=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-correlation-id: c29790b8-5efb-47d4-69bb-08d5e5f8de69
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0446;
+x-ms-traffictypediagnostic: MWHPR04MB0446:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0446E2672AA93F7DD934CCFA985B0@MWHPR04MB0446.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(166708455590820)(17755550239193);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0446;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0446;
+x-forefront-prvs: 0729050452
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(396003)(346002)(366004)(376002)(199004)(189003)(53546011)(81156014)(5250100002)(8676002)(2900100001)(446003)(256004)(11346002)(305945005)(7736002)(106356001)(5660300001)(26005)(6506007)(118296001)(81166006)(2501003)(2616005)(486006)(476003)(105586002)(186003)(8936002)(36756003)(53936002)(6116002)(3846002)(97736004)(7520500002)(99286004)(102836004)(76176011)(2906002)(229853002)(25786009)(6246003)(68736007)(93886005)(54906003)(316002)(4326008)(110136005)(66066001)(6512007)(6306002)(6486002)(6436002)(2201001)(86362001)(14454004)(478600001)(72206003)(966005);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0446;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-microsoft-antispam-message-info: zfPCYB2LNRUpaqvw1z8uRmJF8Ie22Eq9xOYNNiM/8V2XLBI9IZ7OCCd+z4f0D6eE+DX1NGdCRiqD6jJt00nULdriqwBtadsz0uBgIVTKcNuUvFJF75UGQHRnmxsX8LZUpL2gSktBEBh7S29WOKkzUBqxZLQgczg1Ome/hqqi4Vl6dA0DWCiihW3jN6AFt8WhvA0JzyrpyqaOdsRtUnKTnUTnpEPYdlRRwxOsJ7UhjI9aLtj/Gz4CgL0g6Wz6p5yXhCNZHbdBVF0nL23RwQcquZYyy++Y0GQ4o9NRWuRueOzjRCySKZgWLmy8gVU8Oj882BaKgWgokAT9pM4G98Cy4QUYJmhMOFogaMA+FKWwmtI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F11ACFAD5B4766478F8075AACAC07786@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180709155104.25528-7-georgi.djakov@linaro.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c29790b8-5efb-47d4-69bb-08d5e5f8de69
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2018 00:05:38.7532
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0446
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Mon, Jul 09, 2018 at 06:51:02PM +0300, Georgi Djakov wrote:
-> Add driver for the Qualcomm interconnect buses found in msm8916 based
-> platforms.
-> 
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  drivers/interconnect/Kconfig        |   5 +
->  drivers/interconnect/Makefile       |   1 +
->  drivers/interconnect/qcom/Kconfig   |  10 +
->  drivers/interconnect/qcom/Makefile  |   2 +
->  drivers/interconnect/qcom/msm8916.c | 499 ++++++++++++++++++++++++++++
->  5 files changed, 517 insertions(+)
->  create mode 100644 drivers/interconnect/qcom/msm8916.c
-> 
-> diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
-> index a261c7d41deb..07a8276fa35a 100644
-> --- a/drivers/interconnect/Kconfig
-> +++ b/drivers/interconnect/Kconfig
-> @@ -8,3 +8,8 @@ menuconfig INTERCONNECT
->  
->  	  If unsure, say no.
->  
-> +if INTERCONNECT
-> +
-> +source "drivers/interconnect/qcom/Kconfig"
-> +
-> +endif
-> diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
-> index 97fca2e09d24..7944cbca0527 100644
-> --- a/drivers/interconnect/Makefile
-> +++ b/drivers/interconnect/Makefile
-> @@ -1,2 +1,3 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_INTERCONNECT)		+= core.o
-> +obj-$(CONFIG_INTERCONNECT_QCOM)		+= qcom/
-> diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
-> index b0c2ff928d88..a87afdef1bf7 100644
-> --- a/drivers/interconnect/qcom/Kconfig
-> +++ b/drivers/interconnect/qcom/Kconfig
-> @@ -2,6 +2,8 @@ config INTERCONNECT_QCOM
->  	bool "Qualcomm Network-on-Chip interconnect drivers"
->  	depends on INTERCONNECT
->  	depends on ARCH_QCOM || COMPILE_TEST
-> +	help
-> +	  Support for Qualcomm's Network-on-Chip interconnect hardware.
->  
->  config INTERCONNECT_QCOM_SMD_RPM
->  	tristate "Qualcomm SMD RPM interconnect driver"
-> @@ -9,3 +11,11 @@ config INTERCONNECT_QCOM_SMD_RPM
->  	help
->  	  This is a driver for communicating interconnect related configuration
->  	  details with a remote processor (RPM) on Qualcomm platforms.
-> +
-> +config INTERCONNECT_QCOM_MSM8916
-> +	tristate "Qualcomm MSM8916 interconnect driver"
-> +	depends on INTERCONNECT_QCOM
-> +	select INTERCONNECT_QCOM_SMD_RPM
-> +	help
-> +	  This is a driver for the Qualcomm Network-on-Chip on msm8916-based
-> +	  platforms.
-> diff --git a/drivers/interconnect/qcom/Makefile b/drivers/interconnect/qcom/Makefile
-> index 5b65e4011b59..53f3380277f6 100644
-> --- a/drivers/interconnect/qcom/Makefile
-> +++ b/drivers/interconnect/qcom/Makefile
-> @@ -1,2 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0
->  obj-$(CONFIG_INTERCONNECT_QCOM_SMD_RPM) += smd-rpm.o
-> +
-> +obj-$(CONFIG_INTERCONNECT_QCOM_MSM8916) += msm8916.o
-> diff --git a/drivers/interconnect/qcom/msm8916.c b/drivers/interconnect/qcom/msm8916.c
-> new file mode 100644
-> index 000000000000..f1d96f43e634
-> --- /dev/null
-> +++ b/drivers/interconnect/qcom/msm8916.c
-> @@ -0,0 +1,499 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 Linaro Ltd
-> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
-> + */
-> +
-> +#include <dt-bindings/interconnect/qcom.h>
-> +#include <linux/clk.h>
-> +#include <linux/device.h>
-> +#include <linux/interconnect-provider.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include "smd-rpm.h"
-> +
-> +#define RPM_BUS_MASTER_REQ      0x73616d62
-> +#define RPM_BUS_SLAVE_REQ       0x766c7362
-> +
-> +#define to_qcom_provider(_provider) \
-> +	container_of(_provider, struct qcom_icc_provider, provider)
-> +
-> +enum qcom_qos_mode {
-> +	QCOM_QOS_MODE_BYPASS = 0,
-> +	QCOM_QOS_MODE_FIXED,
-> +	QCOM_QOS_MODE_MAX,
-> +};
-> +
-> +struct qcom_icc_provider {
-> +	struct icc_provider	provider;
-> +	void __iomem		*base;
-> +	struct clk		*bus_clk;
-> +	struct clk		*bus_a_clk;
-> +};
-> +
-> +#define MSM8916_MAX_LINKS	8
-> +
-> +/**
-> + * struct qcom_icc_node - Qualcomm specific interconnect nodes
-> + * @name: the node name used in debugfs
-> + * @links: an array of nodes where we can go next while traversing
-> + * @id: a unique node identifier
-
-nit: move up to keep 'links' and 'num_links' together? Also 'name' and
-'id' are similar fields, so keeping them together makes sense.
-
-> + * @num_links: the total number of @links
-> + * @port: the offset index into the masters QoS register space
-> + * @buswidth: width of the interconnect between a node and the bus (bytes)
-> + * @ap_owned: the AP CPU does the writing to QoS registers
-> + * @qos_mode: QoS mode for ap_owned resources
-> + * @mas_rpm_id:	RPM id for devices that are bus masters
-> + * @slv_rpm_id:	RPM id for devices that are bus slaves
-> + * @rate: current bus clock rate in Hz
-> + */
-> +struct qcom_icc_node {
-> +	unsigned char *name;
-> +	u16 links[MSM8916_MAX_LINKS];
-> +	u16 id;
-> +	u16 num_links;
-> +	u16 port;
-> +	u16 buswidth;
-> +	bool ap_owned;
-> +	enum qcom_qos_mode qos_mode;
-> +	int mas_rpm_id;
-> +	int slv_rpm_id;
-> +	u64 rate;
-> +};
-> +
-> +struct qcom_icc_desc {
-> +	struct qcom_icc_node **nodes;
-> +	size_t num_nodes;
-> +};
-> +
-> +#define DEFINE_QNODE(_name, _id, _port, _buswidth, _ap_owned,		\
-> +			_mas_rpm_id, _slv_rpm_id, _qos_mode,		\
-> +			_numlinks, ...)					\
-> +		static struct qcom_icc_node _name = {			\
-> +		.id = _id,						\
-> +		.name = #_name,						\
-
-nit: init fields in same order as parameters.
-
-> +		.port = _port,						\
-> +		.buswidth = _buswidth,					\
-> +		.qos_mode = _qos_mode,					\
-> +		.ap_owned = _ap_owned,					\
-> +		.mas_rpm_id = _mas_rpm_id,				\
-> +		.slv_rpm_id = _slv_rpm_id,				\
-> +		.num_links = _numlinks,					\
-> +		.links = { __VA_ARGS__ },				\
-> +	}
-> +
-> +DEFINE_QNODE(mas_video, MASTER_VIDEO_P0, 8, 16, 1, -1, -1, QCOM_QOS_MODE_BYPASS, 2, SNOC_MM_INT_0, SNOC_MM_INT_2);
-> +DEFINE_QNODE(mas_jpeg, MASTER_JPEG, 6, 16, 1, -1, -1, QCOM_QOS_MODE_BYPASS, 2, SNOC_MM_INT_0, SNOC_MM_INT_2);
-> +DEFINE_QNODE(mas_vfe, MASTER_VFE, 9, 16, 1, -1, -1, QCOM_QOS_MODE_BYPASS, 2, SNOC_MM_INT_1, SNOC_MM_INT_2);
-> +DEFINE_QNODE(mas_mdp, MASTER_MDP_PORT0, 7, 16, 1, -1, -1, QCOM_QOS_MODE_BYPASS, 2, SNOC_MM_INT_0, SNOC_MM_INT_2);
-> +DEFINE_QNODE(mas_qdss_bam, MASTER_QDSS_BAM, 11, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_QDSS_INT);
-> +DEFINE_QNODE(mas_snoc_cfg, MASTER_SNOC_CFG, 0, 16, 0, 20, -1, QCOM_QOS_MODE_BYPASS, 1, SNOC_QDSS_INT);
-> +DEFINE_QNODE(mas_qdss_etr, MASTER_QDSS_ETR, 10, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_QDSS_INT);
-> +DEFINE_QNODE(mm_int_0, SNOC_MM_INT_0, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_MM_INT_BIMC);
-> +DEFINE_QNODE(mm_int_1, SNOC_MM_INT_1, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_MM_INT_BIMC);
-> +DEFINE_QNODE(mm_int_2, SNOC_MM_INT_2, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_INT_0);
-> +DEFINE_QNODE(mm_int_bimc, SNOC_MM_INT_BIMC, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_BIMC_1_MAS);
-> +DEFINE_QNODE(snoc_int_0, SNOC_INT_0, 0, 8, 0, 99, 130, QCOM_QOS_MODE_FIXED, 3, SLAVE_QDSS_STM, SLAVE_SYSTEM_IMEM, MNOC_BIMC_MAS);
-> +DEFINE_QNODE(snoc_int_1, SNOC_INT_1, 0, 8, 0, 100, 131, QCOM_QOS_MODE_FIXED, 3, SYSTEM_SLAVE_FAB_APPS, SLAVE_CATS_128, SLAVE_OCMEM_64);
-> +DEFINE_QNODE(snoc_int_bimc, SNOC_INT_BIMC, 0, 8, 0, 101, 132, QCOM_QOS_MODE_FIXED, 1, SNOC_BIMC_0_MAS);
-> +DEFINE_QNODE(snoc_bimc_0_mas, SNOC_BIMC_0_MAS, 0, 8, 0, 3, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_BIMC_0_SLV);
-> +DEFINE_QNODE(snoc_bimc_1_mas, SNOC_BIMC_1_MAS, 0, 16, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SNOC_BIMC_1_SLV);
-> +DEFINE_QNODE(qdss_int, SNOC_QDSS_INT, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 2, SNOC_INT_0, SNOC_INT_BIMC);
-> +DEFINE_QNODE(bimc_snoc_slv, BIMC_SNOC_SLV, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 2, SNOC_INT_0, SNOC_INT_1);
-> +DEFINE_QNODE(snoc_pnoc_mas, MNOC_BIMC_MAS, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, MNOC_BIMC_SLV);
-
-Shouldn't this be SNOC_PNOC_MAS?
-
-> +DEFINE_QNODE(pnoc_snoc_slv, PNOC_SNOC_SLV, 0, 8, 0, -1, 45, QCOM_QOS_MODE_FIXED, 3, SNOC_INT_0, SNOC_INT_BIMC, SNOC_INT_1);
-> +DEFINE_QNODE(slv_srvc_snoc, SLAVE_SERVICE_SNOC, 0, 8, 0, -1, 29, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_qdss_stm, SLAVE_QDSS_STM, 0, 4, 0, -1, 30, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_imem, SLAVE_SYSTEM_IMEM, 0, 8, 0, -1, 26, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_apss, SYSTEM_SLAVE_FAB_APPS, 0, 4, 0, -1, 20, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_cats_0, SLAVE_CATS_128, 0, 16, 0, -1, 106, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_cats_1, SLAVE_OCMEM_64, 0, 8, 0, -1, 107, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(mas_apss, MASTER_AMPSS_M0, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_EBI_CH0, BIMC_SNOC_MAS, SLAVE_AMPSS_L2);
-> +DEFINE_QNODE(mas_tcu0, MASTER_TCU_0, 5, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_EBI_CH0, BIMC_SNOC_MAS, SLAVE_AMPSS_L2);
-> +DEFINE_QNODE(mas_tcu1, MASTER_TCU_1, 6, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_EBI_CH0, BIMC_SNOC_MAS, SLAVE_AMPSS_L2);
-> +DEFINE_QNODE(mas_gfx, MASTER_GRAPHICS_3D, 2, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_EBI_CH0, BIMC_SNOC_MAS, SLAVE_AMPSS_L2);
-> +DEFINE_QNODE(bimc_snoc_mas, BIMC_SNOC_MAS, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, BIMC_SNOC_SLV);
-> +DEFINE_QNODE(snoc_bimc_0_slv, SNOC_BIMC_0_SLV, 0, 8, 0, -1, 24, QCOM_QOS_MODE_FIXED, 1, SLAVE_EBI_CH0);
-> +DEFINE_QNODE(snoc_bimc_1_slv, SNOC_BIMC_1_SLV, 0, 8, 1, -1, -1, QCOM_QOS_MODE_FIXED, 1, SLAVE_EBI_CH0);
-> +DEFINE_QNODE(slv_ebi_ch0, SLAVE_EBI_CH0, 0, 8, 0, -1, 0, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_apps_l2, SLAVE_AMPSS_L2, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(snoc_pnoc_slv, MNOC_BIMC_SLV, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_0);
-
-Shouldn't this be SNOC_PNOC_SLV?
-
-> +DEFINE_QNODE(pnoc_int_0, PNOC_INT_0, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 8, PNOC_SNOC_MAS, PNOC_SLV_0, PNOC_SLV_1, PNOC_SLV_2, PNOC_SLV_3, PNOC_SLV_4, PNOC_SLV_8, PNOC_SLV_9);
-> +DEFINE_QNODE(pnoc_int_1, PNOC_INT_1, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_SNOC_MAS);
-> +DEFINE_QNODE(pnoc_m_0, PNOC_M_0, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_0);
-> +DEFINE_QNODE(pnoc_m_1, PNOC_M_1, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_SNOC_MAS);
-> +DEFINE_QNODE(pnoc_s_0, PNOC_SLV_0, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 5, SLAVE_CLK_CTL, SLAVE_TLMM, SLAVE_MSM_TCSR, SLAVE_SECURITY, SLAVE_MSS);
-> +DEFINE_QNODE(pnoc_s_1, PNOC_SLV_1, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 5, SLAVE_IMEM_CFG, SLAVE_CRYPTO_0_CFG, SLAVE_RPM_MSG_RAM, SLAVE_MSM_PDM, SLAVE_PRNG);
-> +DEFINE_QNODE(pnoc_s_2, PNOC_SLV_2, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 5, SLAVE_SPDM, SLAVE_BOOT_ROM, SLAVE_BIMC_CFG, SLAVE_PNOC_CFG, SLAVE_PMIC_ARB);
-> +DEFINE_QNODE(pnoc_s_3, PNOC_SLV_3, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 5, SLAVE_MPM, SLAVE_IPS_CFG, SLAVE_RBCPR_CFG, SLAVE_QDSS_CFG, SLAVE_DEHR_CFG);
-> +DEFINE_QNODE(pnoc_s_4, PNOC_SLV_4, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_VENUS_CFG, SLAVE_CAMERA_CFG, SLAVE_DISPLAY_CFG);
-> +DEFINE_QNODE(pnoc_s_8, PNOC_SLV_8, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_USB_HS, SLAVE_SDCC_1, SLAVE_BLSP_1);
-> +DEFINE_QNODE(pnoc_s_9, PNOC_SLV_9, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 3, SLAVE_SDCC_4, SLAVE_LPASS, SLAVE_GRAPHICS_3D_CFG);
-> +DEFINE_QNODE(slv_imem_cfg, SLAVE_IMEM_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_crypto_0_cfg, SLAVE_CRYPTO_0_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_msg_ram, SLAVE_RPM_MSG_RAM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_pdm, SLAVE_MSM_PDM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_prng, SLAVE_PRNG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_clk_ctl, SLAVE_CLK_CTL, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_mss, SLAVE_MSS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_tlmm, SLAVE_TLMM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_tcsr, SLAVE_MSM_TCSR, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_security, SLAVE_SECURITY, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_spdm, SLAVE_SPDM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_pnoc_cfg, SLAVE_PNOC_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_pmic_arb, SLAVE_PMIC_ARB, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_bimc_cfg, SLAVE_BIMC_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_boot_rom, SLAVE_BOOT_ROM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_mpm, SLAVE_MPM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_qdss_cfg, SLAVE_QDSS_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_rbcpr_cfg, SLAVE_RBCPR_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_snoc_cfg, SLAVE_IPS_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-
-Shouldn't this be SLAVE_SNOC_CFG ?
-
-> +DEFINE_QNODE(slv_dehr_cfg, SLAVE_DEHR_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_venus_cfg, SLAVE_VENUS_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_display_cfg, SLAVE_DISPLAY_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_camera_cfg, SLAVE_CAMERA_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_usb_hs, SLAVE_USB_HS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_sdcc_1, SLAVE_SDCC_1, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_blsp_1, SLAVE_BLSP_1, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_sdcc_2, SLAVE_SDCC_4, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_gfx_cfg, SLAVE_GRAPHICS_3D_CFG, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(slv_audio, SLAVE_LPASS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 0, 0);
-> +DEFINE_QNODE(mas_blsp_1, MASTER_BLSP_1, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_1);
-> +DEFINE_QNODE(mas_spdm, MASTER_SPDM, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_0);
-> +DEFINE_QNODE(mas_dehr, MASTER_DEHR, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_0);
-> +DEFINE_QNODE(mas_audio, MASTER_LPASS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_0);
-> +DEFINE_QNODE(mas_usb_hs, MASTER_USB_HS, 0, 4, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_M_1);
-> +DEFINE_QNODE(mas_pnoc_crypto_0, MASTER_CRYPTO_CORE0, 0, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_1);
-> +DEFINE_QNODE(mas_pnoc_sdcc_1, MASTER_SDCC_1, 7, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_1);
-> +DEFINE_QNODE(mas_pnoc_sdcc_2, MASTER_SDCC_2, 8, 8, 0, -1, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_INT_1);
-> +DEFINE_QNODE(pnoc_snoc_mas, PNOC_SNOC_MAS, 0, 8, 0, 29, -1, QCOM_QOS_MODE_FIXED, 1, PNOC_SNOC_SLV);
-
-nit: you could consider to group these by NoC and use alphabetical
-order within each block, and also sort msm8916_*_nodes below. Purely
-optional though :)
-
-> +static struct qcom_icc_node *msm8916_snoc_nodes[] = {
-> +	&mas_video,
-> +	&mas_jpeg,
-> +	&mas_vfe,
-> +	&mas_mdp,
-> +	&mas_qdss_bam,
-> +	&mas_snoc_cfg,
-> +	&mas_qdss_etr,
-> +	&mm_int_0,
-> +	&mm_int_1,
-> +	&mm_int_2,
-> +	&mm_int_bimc,
-> +	&snoc_int_0,
-> +	&snoc_int_1,
-> +	&snoc_int_bimc,
-> +	&snoc_bimc_0_mas,
-> +	&snoc_bimc_1_mas,
-> +	&qdss_int,
-> +	&bimc_snoc_slv,
-> +	&snoc_pnoc_mas,
-> +	&pnoc_snoc_slv,
-> +	&slv_srvc_snoc,
-> +	&slv_qdss_stm,
-> +	&slv_imem,
-> +	&slv_apss,
-> +	&slv_cats_0,
-> +	&slv_cats_1,
-> +};
-> +
-> +static struct qcom_icc_desc msm8916_snoc = {
-> +	.nodes = msm8916_snoc_nodes,
-> +	.num_nodes = ARRAY_SIZE(msm8916_snoc_nodes),
-> +};
-> +
-> +static struct qcom_icc_node *msm8916_bimc_nodes[] = {
-> +	&mas_apss,
-> +	&mas_tcu0,
-> +	&mas_tcu1,
-> +	&mas_gfx,
-> +	&bimc_snoc_mas,
-> +	&snoc_bimc_0_slv,
-> +	&snoc_bimc_1_slv,
-> +	&slv_ebi_ch0,
-> +	&slv_apps_l2,
-> +};
-> +
-> +static struct qcom_icc_desc msm8916_bimc = {
-> +	.nodes = msm8916_bimc_nodes,
-> +	.num_nodes = ARRAY_SIZE(msm8916_bimc_nodes),
-> +};
-> +
-> +static struct qcom_icc_node *msm8916_pnoc_nodes[] = {
-> +	&snoc_pnoc_slv,
-> +	&pnoc_int_0,
-> +	&pnoc_int_1,
-> +	&pnoc_m_0,
-> +	&pnoc_m_1,
-> +	&pnoc_s_0,
-> +	&pnoc_s_1,
-> +	&pnoc_s_2,
-> +	&pnoc_s_3,
-> +	&pnoc_s_4,
-> +	&pnoc_s_8,
-> +	&pnoc_s_9,
-> +	&slv_imem_cfg,
-> +	&slv_crypto_0_cfg,
-> +	&slv_msg_ram,
-> +	&slv_pdm,
-> +	&slv_prng,
-> +	&slv_clk_ctl,
-> +	&slv_mss,
-> +	&slv_tlmm,
-> +	&slv_tcsr,
-> +	&slv_security,
-> +	&slv_spdm,
-> +	&slv_pnoc_cfg,
-> +	&slv_pmic_arb,
-> +	&slv_bimc_cfg,
-> +	&slv_boot_rom,
-> +	&slv_mpm,
-> +	&slv_qdss_cfg,
-> +	&slv_rbcpr_cfg,
-> +	&slv_snoc_cfg,
-> +	&slv_dehr_cfg,
-> +	&slv_venus_cfg,
-> +	&slv_display_cfg,
-> +	&slv_camera_cfg,
-> +	&slv_usb_hs,
-> +	&slv_sdcc_1,
-> +	&slv_blsp_1,
-> +	&slv_sdcc_2,
-> +	&slv_gfx_cfg,
-> +	&slv_audio,
-> +	&mas_blsp_1,
-> +	&mas_spdm,
-> +	&mas_dehr,
-> +	&mas_audio,
-> +	&mas_usb_hs,
-> +	&mas_pnoc_crypto_0,
-> +	&mas_pnoc_sdcc_1,
-> +	&mas_pnoc_sdcc_2,
-> +	&pnoc_snoc_mas,
-> +};
-> +
-> +static struct qcom_icc_desc msm8916_pnoc = {
-> +	.nodes = msm8916_pnoc_nodes,
-> +	.num_nodes = ARRAY_SIZE(msm8916_pnoc_nodes),
-> +};
-> +
-> +static int qcom_icc_aggregate(struct icc_node *node, u32 avg_bw, u32 peak_bw,
-> +			      u32 *agg_avg, u32 *agg_peak)
-> +{
-> +	*agg_avg += avg_bw;
-> +	*agg_peak = max(*agg_peak, peak_bw);
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_icc_set(struct icc_node *src, struct icc_node *dst,
-> +			u32 avg, u32 peak)
-> +{
-> +	struct qcom_icc_provider *qp;
-> +	struct qcom_icc_node *qn;
-> +	struct icc_node *node;
-> +	struct icc_provider *provider;
-> +	u64 avg_bw = icc_units_to_bps(avg);
-> +	u64 peak_bw = icc_units_to_bps(peak);
-> +	u64 rate = 0;
-
-Initialization is unnecessary.
-
-> +	int ret = 0;
-> +
-> +	if (!src)
-> +		node = dst;
-> +	else
-> +		node = src;
-> +
-> +	qn = node->data;
-> +	provider = node->provider;
-> +	qp = to_qcom_provider(node->provider);
-
-nit: you could pass provider instead of node->provider.
-
-> +
-> +	/* set bandwidth */
-> +	if (qn->ap_owned) {
-> +		/* TODO: set QoS */
-> +	} else {
-> +		/* send message to the RPM processor */
-> +		if (qn->mas_rpm_id != -1) {
-> +			ret = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE,
-> +						    RPM_BUS_MASTER_REQ,
-> +						    qn->mas_rpm_id,
-> +						    avg_bw);
-> +			if (ret) {
-> +				pr_err("qcom_icc_rpm_smd_send mas error %d\n",
-> +				       ret);
-> +				return ret;
-> +			}
-> +		}
-> +
-> +		if (qn->slv_rpm_id != -1) {
-> +			ret = qcom_icc_rpm_smd_send(QCOM_SMD_RPM_ACTIVE_STATE,
-> +						    RPM_BUS_SLAVE_REQ,
-> +						    qn->slv_rpm_id,
-> +						    avg_bw);
-> +			if (ret) {
-> +				pr_err("qcom_icc_rpm_smd_send slv error %d\n",
-> +				       ret);
-> +				return ret;
-> +			}
-> +		}
-> +	}
-> +
-> +	rate = max(avg_bw, peak_bw);
-
-This looks trivial, however avg_bw is a sum of average bandwidths and
-peak_bw is the max peak bandwidth of all nodes, which is not evident
-in this context. I guess it makes sense since a node that uses it's
-peak bandwdith frequently would have a average bandwidth close to that
-value, which would be reflected in avg_bw.
-
-> +static int qnoc_probe(struct platform_device *pdev)
-> +{
-> +	const struct qcom_icc_desc *desc;
-> +	struct qcom_icc_node **qnodes;
-> +	struct icc_node *node;
-> +	struct qcom_icc_provider *qp;
-> +	struct resource *res;
-> +	struct icc_provider *provider;
-> +	size_t num_nodes, i;
-> +	int ret;
-> +
-> +	/* wait for RPM */
-> +	if (!qcom_icc_rpm_smd_available())
-> +		return -EPROBE_DEFER;
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	qnodes = desc->nodes;
-> +	num_nodes = desc->num_nodes;
-> +
-> +	qp = devm_kzalloc(&pdev->dev, sizeof(*qp), GFP_KERNEL);
-> +	if (!qp)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	qp->base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(qp->base))
-> +		return PTR_ERR(qp->base);
-> +
-> +	qp->bus_clk = devm_clk_get(&pdev->dev, "bus_clk");
-> +	if (IS_ERR(qp->bus_clk))
-> +		return PTR_ERR(qp->bus_clk);
-> +
-> +	ret = clk_prepare_enable(qp->bus_clk);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "error enabling bus_clk: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	qp->bus_a_clk = devm_clk_get(&pdev->dev, "bus_a_clk");
-> +	if (IS_ERR(qp->bus_a_clk))
-
-		clk_disable_unprepare(qp->bus_clk);
-
-Same for other error paths.
-
-> +		return PTR_ERR(qp->bus_a_clk);
-> +
-> +	ret = clk_prepare_enable(qp->bus_a_clk);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "error enabling bus_a_clk: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	provider = &qp->provider;
-> +	provider->dev = &pdev->dev;
-> +	provider->set = &qcom_icc_set;
-> +	provider->aggregate = &qcom_icc_aggregate;
-> +	INIT_LIST_HEAD(&provider->nodes);
-> +	provider->data = qp;
-> +
-> +	ret = icc_provider_add(provider);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "error adding interconnect provider\n");
-
-		clk_disable_unprepare(qp->bus_a_clk);
-
-Same for other error paths.
-
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < num_nodes; i++) {
-> +		int ret;
-> +		size_t j;
-> +
-> +		node = icc_node_create(qnodes[i]->id);
-> +		if (IS_ERR(node)) {
-> +			ret = PTR_ERR(node);
-> +			goto err;
-> +		}
-> +
-> +		node->name = qnodes[i]->name;
-> +		node->data = qnodes[i];
-> +		icc_node_add(node, provider);
-> +
-> +		dev_dbg(&pdev->dev, "registered node %s\n", node->name);
-> +
-> +		/* populate links */
-> +		for (j = 0; j < qnodes[i]->num_links; j++)
-> +			if (qnodes[i]->links[j])
-> +				icc_link_create(node, qnodes[i]->links[j]);
-> +	}
-> +
-> +	platform_set_drvdata(pdev, provider);
-> +
-> +	return ret;
-> +err:
-> +	list_for_each_entry(node, &provider->nodes, node_list) {
-> +		icc_node_del(node);
-> +		icc_node_destroy(node->id);
-> +	}
-> +	icc_provider_del(provider);
-> +
-> +	return ret;
-> +}
-> +
-> +static int qnoc_remove(struct platform_device *pdev)
-> +{
-> +	struct icc_provider *provider = platform_get_drvdata(pdev);
-> +	struct icc_node *n;
-> +
-> +	list_for_each_entry(n, &provider->nodes, node_list) {
-> +		icc_node_del(n);
-> +		icc_node_destroy(n->id);
-> +	}
-
-	clk_disable_unprepare(qp->bus_a_clk);
-	clk_disable_unprepare(qp->bus_clk);
-
-Cheers
-
-Matthias
+T24gTW9uLCAyMDE4LTA3LTA5IGF0IDEwOjM0IC0wNjAwLCBKZW5zIEF4Ym9lIHdyb3RlOg0KPiBP
+biA3LzkvMTggMTo1NCBBTSwgTWF0aWFzIEJqw7hybGluZyB3cm90ZToNCj4gPiBGb3IgZmlvLCB5
+b3UgY2FuIHVzZSB0aGUgem9uZSBzdXBwb3J0IGhlcmU6DQo+ID4gDQo+ID4gICAgaHR0cHM6Ly9n
+aXRodWIuY29tL2J2YW5hc3NjaGUvZmlvDQo+ID4gDQo+ID4gSXQgaXMgaW4gdGhlIHByb2Nlc3Mg
+b2YgYmVpbmcgdXBzdHJlYW1lZC4NCj4gDQo+IEluIHRoZSBzcGlyaXQgb2YgbWFraW5nIHNvbWUg
+cHJvZ3Jlc3Mgb24gdGhpcywgSSBqdXN0IGRvbid0IGxpa2UgaG93DQo+IGl0J3MgZG9uZS4gRm9y
+IGV4YW1wbGUsIGl0IHNob3VsZCBub3QgYmUgbmVjZXNzYXJ5IHRvIGFkanVzdCB3aGF0DQo+IGNv
+bWVzIG91dCBvZiB0aGUgYmxvY2sgZ2VuZXJhdG9yLCBpbnN0ZWFkIHRoZSBibG9jayBnZW5lcmF0
+b3Igc2hvdWxkDQo+IGJlIHRvbGQgdG8gZG8gd2hhdCB3ZSBuZWVkIG9uIHpiYy4gVGhpcyBpcyBh
+IGtleSBjb25jZXB0LiBUaGUgd29ya2xvYWQNCj4gc2hvdWxkIGJlIGRlZmluZWQgYXMgc3VjaCB0
+aGF0IGl0IHdvcmtzIGZvciB6b25lZCBkZXZpY2VzLg0KDQpIZWxsbyBKZW5zLA0KDQpIb3cgd291
+bGQgeW91IGxpa2UgdG8gc2VlIGJsb2NrIGdlbmVyYXRpb24gd29yaz8gSSBkb24ndCBzZWUgYW4g
+YWx0ZXJuYXRpdmUNCmZvciByYW5kb20gSS9PIG90aGVyIHN0YXJ0aW5nIGZyb20gdGhlIG91dHB1
+dCBvZiBhIHJhbmRvbSBnZW5lcmF0b3IgYW5kDQp0cmFuc2xhdGluZyB0aGF0IG91dHB1dCBpbnRv
+IHNvbWV0aGluZyB0aGF0IGlzIGFwcHJvcHJpYXRlIGZvciBhIHpvbmVkIGJsb2NrDQpkZXZpY2Uu
+IFJhbmRvbSByZWFkcyBtdXN0IGhhcHBlbiBiZWxvdyB0aGUgem9uZSBwb2ludGVyIGlmIGZpbyBp
+cyBjb25maWd1cmVkDQp0byByZWFkIGJlbG93IHRoZSB6b25lIHBvaW50ZXIuIFJhbmRvbSB3cml0
+ZXMgbXVzdCBoYXBwZW4gYXQgdGhlIHdyaXRlDQpwb2ludGVyLiBUaGUgb25seSB3YXkgSSBzZWUg
+dG8gaW1wbGVtZW50IHN1Y2ggYW4gSS9PIHBhdHRlcm4gaXMgdG8gc3RhcnQNCmZyb20gdGhlIG91
+dHB1dCBvZiBhIHJhbmRvbSBnZW5lcmF0b3IgYW5kIHRvIGFkanVzdCB0aGUgb3V0cHV0IG9mIHRo
+YXQNCnJhbmRvbSBnZW5lcmF0b3IuIEhvd2V2ZXIsIEkgZG9uJ3QgaGF2ZSBhIHN0cm9uZyBvcGlu
+aW9uIHdoZXRoZXIgYWRqdXN0aW5nDQp0aGUgb3V0cHV0IG9mIGEgcmFuZG9tIGdlbmVyYXRvciBz
+aG91bGQgaGFwcGVuIGJ5IHRoZSBjYWxsZXIgb2YNCmdldF9uZXh0X2J1ZmxlbigpIG9yIGluc2lk
+ZSBnZXRfbmV4dF9idWZsZW4oKS4gT3IgaXMgeW91ciBjb25jZXJuIHBlcmhhcHMNCnRoYXQgdGhl
+IGN1cnJlbnQgYXBwcm9hY2ggaW50ZXJmZXJlcyB3aXRoIGZpbyBqb2Igb3B0aW9ucyBsaWtlIGJz
+X3VuYWxpZ25lZD8NCg0KPiBUaGUgdHJpbSBhcyB6b25lIHJlc2V0cyBzZWVtcyBvZGQuIFdoYXQg
+aGFwcGVucyBpZiB5b3UgZW5kIHVwIHdpdGggYQ0KPiB6b25lZCBmbGFzaCBkZXZpY2UgaW4gdGhl
+IGZ1dHVyZT8NCg0KV2UgY2FuIGxlYXZlIG91dCB0aGUgY29kZSB0aGF0IHRyYW5zbGF0ZXMgdHJp
+bSBpbnRvIHpvbmUgcmVzZXRzIGZyb20gZmlvDQphbmQgZGlzY3VzcyBsYXRlciBob3cgdG8gaGFu
+ZGxlIHRoaXMuIE9uZSBwb3NzaWJpbGl0eSBpcyB0byBtb2RpZnkgdGhlIHNkDQpkcml2ZXIgc3Vj
+aCB0aGF0IGl0IHRyYW5zbGF0ZXMgUkVRX09QX0RJU0NBUkQgaW50byB6b25lIHJlc2V0cyB3aGVu
+DQphcHByb3ByaWF0ZS4gVGhlcmUgbWF5IGJlIGJldHRlciBhbHRlcm5hdGl2ZXMuDQoNCkJhcnQu
+DQoNCg0KDQoNCg==
