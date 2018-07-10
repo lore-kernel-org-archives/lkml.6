@@ -2,88 +2,126 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56BFCC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BE8C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04747208F7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:45:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="DqSrVO4z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04747208F7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=crapouillou.net
+	by mail.kernel.org (Postfix) with ESMTP id AFF75208F7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:47:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF75208F7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934256AbeGJPpL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:45:11 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:39258 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933501AbeGJPpJ (ORCPT
+        id S934173AbeGJPrU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:47:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:49972 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933132AbeGJPrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:45:09 -0400
-Date:   Tue, 10 Jul 2018 17:45:02 +0200
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 06/14] dmaengine: dma-jz4780: Add support for the JZ4725B
- SoC
-To:     Vinod <vkoul@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@linux-mips.org
-Message-Id: <1531237502.17118.3@crapouillou.net>
-In-Reply-To: <20180709171458.GL22377@vkoul-mobl>
-References: <20180703123214.23090-1-paul@crapouillou.net>
-        <20180703123214.23090-7-paul@crapouillou.net>
-        <20180709171458.GL22377@vkoul-mobl>
+        Tue, 10 Jul 2018 11:47:18 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E1185C9D;
+        Tue, 10 Jul 2018 15:47:17 +0000 (UTC)
+Date:   Tue, 10 Jul 2018 17:47:15 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pingfan Liu <kernelfans@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v2] driver core: Partially revert "driver core: correct
+ device's shutdown order"
+Message-ID: <20180710154715.GA20793@kroah.com>
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
+ <8816662.k3KXbdkA2e@aspire.rjw.lan>
+ <2927655.Y1qg3UnIrE@aspire.rjw.lan>
+ <5284251.Resgjlja2Q@aspire.rjw.lan>
+ <20180710125956.GA25343@kroah.com>
+ <CAJZ5v0iV0ZaCbhoVOrGx08f6Y7Ei2q+qazxEMQRYD4LAq9LUbA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net; s=mail; t=1531237507; bh=WjTJmSBBrurN9JyF9IyWDMyPaD+mqwPGq8mYopQDoG8=; h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:MIME-Version:Content-Type:Content-Transfer-Encoding; b=DqSrVO4z5BhlGLAOU7Z7L7XLCxV2kHd9ITCUDKWOvlkRE+7O0nP2/683PCeGYv3cWc3IJg75AogCbLYK/lEnrvC2CDpXNh/7qnaTqTTlxitVmskMLN6u8CHblLLIT36BaR2eRDLMn7z9CBmhWFHhg82K+V0WC6boUZNfTN4v+K0=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0iV0ZaCbhoVOrGx08f6Y7Ei2q+qazxEMQRYD4LAq9LUbA@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 10, 2018 at 05:40:21PM +0200, Rafael J. Wysocki wrote:
+> On Tue, Jul 10, 2018 at 2:59 PM, Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > On Tue, Jul 10, 2018 at 02:51:33PM +0200, Rafael J. Wysocki wrote:
+> >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>
+> >> Commit 52cdbdd49853 (driver core: correct device's shutdown order)
+> >> introduced a regression by breaking device shutdown on some systems.
+> >>
+> >> Namely, the devices_kset_move_last() call in really_probe() added by
+> >> that commit is a mistake as it may cause parents to follow children
+> >> in the devices_kset list which then causes shutdown to fail.  For
+> >> example, if a device has children before really_probe() is called
+> >> for it (which is not uncommon), that call will cause it to be
+> >> reordered after the children in the devices_kset list and the
+> >> ordering of that list will not reflect the correct device shutdown
+> >> order any more.
+> >>
+> >> Also it causes the devices_kset list to be constantly reordered
+> >> until all drivers have been probed which is totally pointless
+> >> overhead in the majority of cases and it only covered an issue
+> >> with system shutdown, while system-wide suspend/resume potentially
+> >> had the same issue on the affected platforms (which was not covered).
+> >>
+> >> Moreover, the shutdown issue originally addressed by the change in
+> >> really_probe() made by commit 52cdbdd49853 is not present in 4.18-rc
+> >> any more, since dra7 started to use the sdhci-omap driver which
+> >> doesn't disable any regulators during shutdown, so the really_probe()
+> >> part of commit 52cdbdd49853 can be safely reverted.  [The original
+> >> issue was related to the omap_hsmmc driver used by dra7 previously.]
+> >>
+> >> For the above reasons, revert the really_probe() modifications made
+> >> by commit 52cdbdd49853.
+> >>
+> >> The other code changes made by commit 52cdbdd49853 are useful and
+> >> they need not be reverted.
+> >>
+> >> Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
+> >> Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
+> >> Reported-by: Pingfan Liu <kernelfans@gmail.com>
+> >> Tested-by: Pingfan Liu <kernelfans@gmail.com>
+> >> Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
+> >> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >> ---
+> >>
+> >> -> v2: Added information from Kishon on the fact that it should be safe
+> >>        to revert the really_probe() modifications added by the
+> >>        problematic commit.  Also added the Reviewed-by tag from Kishon.
+> >
+> > Looks good to me, want me to queue it up in my tree, or are you going to
+> > send it on to Linus?
+> 
+> Please queue it up.
+> 
+> > And shouldn't this have a stable tag as well?
+> 
+> That is sort of a gray area, because I think it may expose the
+> shutdown issue on dra7 in -stable, but technically it still fixes a
+> regression in the driver core.  So your call I suppose. :-)
 
+Being bug compatible is key :)
 
-Le lun. 9 juil. 2018 =E0 19:14, Vinod <vkoul@kernel.org> a =E9crit :
-> On 03-07-18, 14:32, Paul Cercueil wrote:
->>  The JZ4725B has one DMA core starring six DMA channels.
->>  As for the JZ4770, each DMA channel's clock can be enabled with
->>  a register write, the difference here being that once started, it
->>  is not possible to turn it off.
->=20
-> ok so disable for this, right..
->=20
->>  @@ -204,6 +205,8 @@ static inline void=20
->> jz4780_dma_chan_enable(struct jz4780_dma_dev *jzdma,
->>   {
->>   	if (jzdma->version =3D=3D ID_JZ4770)
->>   		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKES, BIT(chn));
->>  +	else if (jzdma->version =3D=3D ID_JZ4725B)
->>  +		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKE, BIT(chn));
->=20
-> but you are writing to a different register here..
+I'll add a stable tag.
 
-Yes. SoCs >=3D JZ4770 have the DCKE read-only register, and DCKES/DCKEC=20
-to set/clear bits in DCKE.
-On JZ4725B, DCKE is read/write, but the zeros written are ignored (at=20
-least that's what the
-documentation says).
+thanks,
 
-> --
-> ~Vinod
-
-Thanks,
--Paul
-=
-
+greg k-h
