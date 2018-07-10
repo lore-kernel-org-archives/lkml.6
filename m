@@ -2,259 +2,149 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AF1C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104A0C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:20:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072D820881
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:19:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072D820881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BFAD120881
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:20:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GHu9GVTI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFAD120881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732755AbeGJTTq (ORCPT
+        id S1732781AbeGJTUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 15:19:46 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39868 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732572AbeGJTTq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 15:19:46 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8AC8BC057FAB;
-        Tue, 10 Jul 2018 19:19:19 +0000 (UTC)
-Received: from t450s.home (ovpn-116-29.phx2.redhat.com [10.3.116.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 66CD9600CD;
-        Tue, 10 Jul 2018 19:19:16 +0000 (UTC)
-Date:   Tue, 10 Jul 2018 13:19:15 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v5 3/3] PCI: Introduce the disable_acs_redir parameter
-Message-ID: <20180710131915.0d669e7a@t450s.home>
-In-Reply-To: <01dfc5ba-43cb-fbea-93e6-4963c411c750@deltatee.com>
-References: <20180627174650.27433-1-logang@deltatee.com>
-        <20180627174650.27433-4-logang@deltatee.com>
-        <20180706165655.62306b6f@t450s.home>
-        <01dfc5ba-43cb-fbea-93e6-4963c411c750@deltatee.com>
+        Tue, 10 Jul 2018 15:20:38 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:45047 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732569AbeGJTUi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 15:20:38 -0400
+Received: by mail-pl0-f65.google.com with SMTP id m16-v6so8040734pls.11
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 12:20:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2FHkm7J3JFBU8jDq70+aeSWQOjpjy0bgC98oleZT/qo=;
+        b=GHu9GVTILoKHv0hUkjNMhhOvNOsrooPHWKH479Rz+Dn7iq7ikHNb+yXBpHSaxnd2ny
+         Y8hcHlTV3QxjQ8/So8kuw94e7NHabX51qtnHVyHJ9J190V69Qu6AIo2jUNDQl9gW9GWp
+         ZLLj5DjbzgmYpFwVCMS2XIrpozLyyhow6ahSY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2FHkm7J3JFBU8jDq70+aeSWQOjpjy0bgC98oleZT/qo=;
+        b=fcyMNQj4U8dlJyqsH29Lqcag6hRgQXuYfe6uTVs8GIVX4+BwI5ssW6wvoatPQA++6p
+         iwLi9bwGR6GihlkQYFyIIXneneyk9woqXf8j6EqjFux9uhtFN4WRGV5MzHNDNjxNcMyw
+         krXO8aTLelaLqHrt7fQ+e5ByMeWqF62CguFQE7AL2qIHqRUXigpejFmNnu3d6qhMyRHA
+         mdrHfS+u1QP5vqigckGgrAy4yroujhRe/yXR0iS2YnNPkM6ksFIl82sY7R50lCeBYb73
+         HgLzKbWlckwXNhjuGXMtYAGDUg6utSa7L5QgotZZ6iD+cV9jWG2xOA9lK2KGFo7emNL4
+         oDsQ==
+X-Gm-Message-State: APt69E18V6rnILxJi/MRG53Jy2+b0DQJ1pcN36zdLDPmDfJkx7HOOcUv
+        Li9WaIOynQd9+jqsZe+nQOvd0Q==
+X-Google-Smtp-Source: AAOMgpcF9Cq9AWtHVb1dXUHL5hR1/2gSHECIFdQPqNqTDQ9DnqtQSYyCZ9QYl3usefcO+gMxnCGeYw==
+X-Received: by 2002:a17:902:1703:: with SMTP id i3-v6mr25295761pli.263.1531250411924;
+        Tue, 10 Jul 2018 12:20:11 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id x68-v6sm30897918pfb.138.2018.07.10.12.20.10
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 12:20:11 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 12:19:51 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v5 7/8] ima: based on policy warn about loading firmware
+ (pre-allocated buffer)
+Message-ID: <20180710191951.GF1731@minitux>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
+ <CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
+ <1531165294.3332.40.camel@linux.ibm.com>
+ <CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
+ <CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Tue, 10 Jul 2018 19:19:19 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018 16:27:40 -0600
-Logan Gunthorpe <logang@deltatee.com> wrote:
+On Mon 09 Jul 23:56 PDT 2018, Ard Biesheuvel wrote:
 
-> Hey Alex,
-> 
-> On 06/07/18 04:56 PM, Alex Williamson wrote:
-> > Maybe we track if we enabled ACS via a device specific quirk and
-> > minimally print an incompatibility error if it's also specified for
-> > disable_acs_redir?  Thanks,  
-> 
-> Ok, I dug into this a bit and I think tracking if we enabled via a
-> device specific quirk does not work. If 'pci_acs_enable' is not set, we
-> wouldn't know if we used a device specific quirk and still try to
-> disable a quirked device the standard way.
-> 
-> Instead, I've looked at adding a device specific disable_acs_redir
-> function next to enable_acs. In this way, the device specific quirks can
-> override the operation. See the diff below.
-> 
-> Implementing the Intel SPT PCH version is pretty trivial, so I've done
-> that. The Intel PCH variant I've just left as unsupported and printed a
-> warning.
-> 
-> If this sounds good to you, I'll fold it into my patchset and resubmit a v6.
-> 
-> Thanks,
-> 
-> Logan
-> 
-> --
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 079f7c911e09..54001b307496 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3028,6 +3028,9 @@ static void pci_disable_acs_redir(struct pci_dev *dev)
->  	if (!pos)
->  		return;
-> 
-> +	if (!pci_dev_specific_disable_acs_redir(dev))
-> +		return;
-> +
->  	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
-> 
->  	/* P2P Request & Completion Redirect */
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index f439de848658..c976a025ae92 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -4526,6 +4526,16 @@ static int pci_quirk_enable_intel_pch_acs(struct
-> pci_dev *dev)
->  	return 0;
->  }
-> 
-> +static int pci_quirk_disable_intel_pch_acs_redir(struct pci_dev *dev)
-> +{
-> +	if (!pci_quirk_intel_pch_acs_match(dev))
-> +		return -ENOTTY;
-> +
-> +	pci_warn(dev, "Disabling ACS redirect on the Intel PCH root port is
-> not supported\n");
-> +
-> +	return 0;
-> +}
+> On 10 July 2018 at 08:51, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> > On 9 July 2018 at 21:41, Mimi Zohar <zohar@linux.ibm.com> wrote:
+> >> On Mon, 2018-07-02 at 17:30 +0200, Ard Biesheuvel wrote:
+> >>> On 2 July 2018 at 16:38, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+[..]
+> > So to summarize again: in my opinion, using a single buffer is not a
+> > problem as long as the validation completes before the DMA map is
+> > performed. This will provide the expected guarantees on systems with
+> > IOMMUs, and will not complicate matters on systems where there is no
+> > point in obsessing about this anyway given that devices can access all
+> > of memory whenever they want to.
+> >
+> > As for the Qualcomm case: dma_alloc_coherent() is not needed here but
+> > simply ends up being used because it was already wired up in the
+> > qualcomm specific secure world API, which amounts to doing syscalls
+> > into a higher privilege level than the one the kernel itself runs at.
 
-Note that these devices don't have an ACS capability, so they should
-drop out just as any other device without an ACS capability would.
-Should pci_disable_acs_redir() perhaps issue the pci_warn() for all
-such devices, removing this device specific disable function?
+As I said before, the dma_alloc_coherent() referred to in this
+discussion holds parameters for the Trustzone call, i.e. it will hold
+the address to the buffer that the firmware was loaded into - it won't
+hold any data that comes from the actual firmware.
 
-> +
->  static int pci_quirk_enable_intel_spt_pch_acs(struct pci_dev *dev)
->  {
->  	int pos;
-> @@ -4553,22 +4563,53 @@ static int
-> pci_quirk_enable_intel_spt_pch_acs(struct pci_dev *dev)
->  	return 0;
->  }
+> > So again, reasoning about whether the secure world will look at your
+> > data before you checked the sig is rather pointless, and adding
+> > special cases to the IMA api to cater for this use case seems like a
+> > waste of engineering and review effort to me.
+
+Forgive me if I'm missing something in the implementation here, but
+aren't the IMA checks done before request_firmware*() returns?
+
+> > If we have to do
+> > something to tie up this loose end, let's try switching it to the
+> > streaming DMA api instead.
+> >
 > 
-> -static const struct pci_dev_enable_acs {
-> +static int pci_quirk_disable_intel_spt_pch_acs_redir(struct pci_dev *dev)
-> +{
-> +	int pos;
-> +	u32 cap, ctrl;
-> +
-> +	if (!pci_quirk_intel_spt_pch_acs_match(dev))
-> +		return -ENOTTY;
-> +
-> +	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ACS);
-> +	if (!pos)
-> +		return -ENOTTY;
-> +
-> +	pci_read_config_dword(dev, pos + PCI_ACS_CAP, &cap);
-> +	pci_read_config_dword(dev, pos + INTEL_SPT_ACS_CTRL, &ctrl);
-> +
-> +	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
-> +
-> +	pci_write_config_dword(dev, pos + INTEL_SPT_ACS_CTRL, ctrl);
-> +
-> +	pci_info(dev, "Intel SPT PCH root port workaround: disabled ACS
-> redirect\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct pci_dev_acs_ops {
->  	u16 vendor;
->  	u16 device;
->  	int (*enable_acs)(struct pci_dev *dev);
-> -} pci_dev_enable_acs[] = {
-> -	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_enable_intel_pch_acs },
-> -	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_enable_intel_spt_pch_acs },
-> +	int (*disable_acs_redir)(struct pci_dev *dev);
-> +} pci_dev_acs_ops[] = {
-> +	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
-> +	  .enable_acs = pci_quirk_enable_intel_pch_acs,
-> +	  .disable_acs_redir = pci_quirk_disable_intel_pch_acs_redir,
-> +	},
-> +	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID,
-> +	  .enable_acs = pci_quirk_enable_intel_spt_pch_acs,
-> +	  .disable_acs_redir = pci_quirk_disable_intel_spt_pch_acs_redir
-> +	},
+> Forgot to mention: the Qualcomm case is about passing data to the CPU
+> running at another privilege level, so IOMMU vs !IOMMU is not a factor
+> here.
 
-Kind of cumbersome, and as above, maybe the reverse path is optional.
-I wonder if there's a better callback we should use or if we should not
-rely on quirks providing both.
+Further more, all scenarios we've look at so far is completely
+sequential, so if the firmware request fails we won't invoke the
+Trustzone operation that would consume the memory or we won't turn on
+the power to the CPU that would execute the firmware.
 
->  	{ 0 }
->  };
-> 
->  int pci_dev_specific_enable_acs(struct pci_dev *dev)
->  {
-> -	const struct pci_dev_enable_acs *i;
-> +	const struct pci_dev_acs_ops *i;
->  	int ret;
-> 
-> -	for (i = pci_dev_enable_acs; i->enable_acs; i++) {
-> +	for (i = pci_dev_acs_ops; i->enable_acs; i++) {
 
-Perhaps this would walk via ARRAY_SIZE if we decide one or the other
-callback is optional.
+Tbh the only case I can think of where there would be a "race condition"
+here is if we have a device that is polling the last byte of a
+predefined firmware memory area for the firmware loader to read some
+specific data into it. In cases where the firmware request is followed
+by some explicit signalling to the device (or a power on sequence) I'm
+unable to see the issue discussed here.
 
->  		if ((i->vendor == dev->vendor ||
->  		     i->vendor == (u16)PCI_ANY_ID) &&
->  		    (i->device == dev->device ||
-> @@ -4582,6 +4623,25 @@ int pci_dev_specific_enable_acs(struct pci_dev *dev)
->  	return -ENOTTY;
->  }
-> 
-> +int pci_dev_specific_disable_acs_redir(struct pci_dev *dev)
-> +{
-> +	const struct pci_dev_acs_ops *i;
-> +	int ret;
-> +
-> +	for (i = pci_dev_acs_ops; i->enable_acs; i++) {
-
-Test i->disable_acs_redir?
-
-> +		if ((i->vendor == dev->vendor ||
-> +		     i->vendor == (u16)PCI_ANY_ID) &&
-> +		    (i->device == dev->device ||
-> +		     i->device == (u16)PCI_ANY_ID)) {
-> +			ret = i->disable_acs_redir(dev);
-> +			if (ret >= 0)
-> +				return ret;
-> +		}
-> +	}
-> +
-> +	return -ENOTTY;
-> +}
-> +
->  /*
->   * The PCI capabilities list for Intel DH895xCC VFs (device ID 0x0443) with
->   * QuickAssist Technology (QAT) is prematurely terminated in hardware.  The
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 340029b2fb38..7ee208aa1a31 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -1878,6 +1878,7 @@ enum pci_fixup_pass {
->  void pci_fixup_device(enum pci_fixup_pass pass, struct pci_dev *dev);
->  int pci_dev_specific_acs_enabled(struct pci_dev *dev, u16 acs_flags);
->  int pci_dev_specific_enable_acs(struct pci_dev *dev);
-> +int pci_dev_specific_disable_acs_redir(struct pci_dev *dev);
-
-static inline version for !CONFIG_PCI_QUIRKS?  Thanks,
-
-Alex
-
->  #else
->  static inline void pci_fixup_device(enum pci_fixup_pass pass,
->  				    struct pci_dev *dev) { }
-
+Regards,
+Bjorn
