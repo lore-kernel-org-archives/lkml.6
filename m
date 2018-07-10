@@ -2,105 +2,103 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FA1C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F38C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B44220883
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:11:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B44220883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A2CF2089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:15:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A2CF2089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933283AbeGJNLZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 09:11:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:46188 "EHLO foss.arm.com"
+        id S933256AbeGJNPw convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 09:15:52 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:35223 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754201AbeGJNLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 09:11:24 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 26A62ED1;
-        Tue, 10 Jul 2018 06:11:24 -0700 (PDT)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E01F3F5A0;
-        Tue, 10 Jul 2018 06:11:22 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 14:11:20 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     "Yandong.Zhao" <yandong77520@gmail.com>
-Cc:     zhaoxb@thundersoft.com, ard.biesheuvel@linaro.org,
-        catalin.marinas@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, zhaoyd@thundersoft.com,
-        linux-arm-kernel@lists.infradead.org, fanlc0801@thundersoft.com
-Subject: Re: [PATCH] arm64: neon: Fix function may_use_simd() return error
- status
-Message-ID: <20180710131119.GI9486@e103592.cambridge.arm.com>
-References: <1531189300-26216-1-git-send-email-yandong77520@gmail.com>
+        id S1754265AbeGJNPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 09:15:51 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id A664E64915;
+        Tue, 10 Jul 2018 13:15:36 +0000 (UTC)
+Date:   Tue, 10 Jul 2018 21:15:05 +0800
+In-Reply-To: <20180710130517.GA27236@Red>
+References: <1531149658-27030-1-git-send-email-clabbe@baylibre.com> <EF718AB4-DD07-4D67-BE2E-1B9EBA5EB25F@aosc.io> <20180710130517.GA27236@Red>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531189300-26216-1-git-send-email-yandong77520@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Subject: Re: [PATCH v2 0/4] sun8i: r40: add AHCI
+To:     linux-arm-kernel@lists.infradead.org,
+        LABBE Corentin <clabbe@baylibre.com>
+CC:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-sunxi@googlegroups.com, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        wens@csie.org, robh+dt@kernel.org, tj@kernel.org,
+        maxime.ripard@free-electrons.com
+From:   Icenowy Zheng <icenowy@aosc.io>
+Message-ID: <A588EEB5-5305-4EFC-8DDD-369F0751E382@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 10:21:40AM +0800, Yandong.Zhao wrote:
-> From: Yandong Zhao <yandong77520@gmail.com>
-> 
-> Operations for contexts where we do not want to do any checks for
-> preemptions.  Unless strictly necessary, always use this_cpu_read()
-> instead.  Because of the kernel_neon_busy here we have to make sure
-> that it is the current cpu.
-
-I find this wording a bit confusing.
-
-Does the following make look OK to you?
-
---8<--
-
-It does not matter if the caller of may_use_simd() migrates to
-another cpu after the call, but it is still important that the
-kernel_neon_busy percpu instance that is read matches the cpu the
-task is running on at the time of the read.
-
-This means that raw_cpu_read() is not sufficient.  kernel_neon_busy
-may appear true if the caller migrates during the execution of
-raw_cpu_read() and the next task to be scheduled in on the initial
-cpu calls kernel_neon_begin().
-
-This patch replaces raw_cpu_read() with this_cpu_read() to protect
-against this race.
-
--->8--
-
-> 
-> Signed-off-by: Yandong Zhao <yandong77520@gmail.com>
-> ---
->  arch/arm64/include/asm/simd.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
-> index fa8b3fe..8b97f8b 100644
-> --- a/arch/arm64/include/asm/simd.h
-> +++ b/arch/arm64/include/asm/simd.h
-> @@ -29,7 +29,8 @@
->  static __must_check inline bool may_use_simd(void)
->  {
->  	/*
-> -	 * The raw_cpu_read() is racy if called with preemption enabled.
-> +	 * The this_cpu_read() is racy if called with preemption enabled,
-> +	 * since the task my subsequently migrate to another CPU.
-
-"my" -> "may"
-
-(apologies if I was responsible for that typo)
 
 
-[...]
+于 2018年7月10日 GMT+08:00 下午9:05:17, LABBE Corentin <clabbe@baylibre.com> 写到:
+>On Mon, Jul 09, 2018 at 11:44:20PM +0800, Icenowy Zheng wrote:
+>> 
+>> 
+>> 于 2018年7月9日 GMT+08:00 下午11:20:54, Corentin Labbe
+><clabbe@baylibre.com> 写到:
+>> >Hello
+>> >
+>> >With Moeicenowy's agreement, I have take leadership ot this
+>patchset.
+>> >
+>> >There are no really changes appart renaming struct quirck to
+>variant.
+>> >
+>> >Since the last serie is really old, I will answer comment here.
+>> >The two regulator (1.2 and 2.5V) are not for the PHY since:
+>> >- nothing in the schematic said that they are for the PHY, they
+>seems
+>> >  only for controller
+>> >- all other AHCI driver use 5V for the target/PHY (vs 1.2/2.5 which
+>> >  cannot be used for target)
+>> 
+>> Target is not equal to PHY. Target means the supply
+>> of the disk, which can be usually 5v (for 2.5" HDD) or
+>> 12v (3.5" HDD).
+>> 
+>> By reading Wikipedia articles  about SATA and LVDS, I assume
+>> 2.5V is for PHY and 1.2V is for internal digital logic (VDD-SYS
+>> is commonly 1.2V on 40nm Allwinner SoCs; 2.5V VDD can be
+>> used to efficiently deliver ~1.2V LVDS.)
+>> 
+>> P.S. VDD-SATA and VDD25-SATA also exist on A20, and by checking
+>> Banana Pi M1 (the original Banana Pi) schematics, VDD-SATA
+>> is connected to common VDD-SYS (called INTVDD on the
+>> schematics) and VDD25-SATA is connected to an always-on
+>> fixed LDO, maybe due to the lack of power outputs on AXP209.
+>> 
+>
+>So we still need to add a regulator on the controller and add an
+>optionnal "phy" regulator for AHCI port.
 
-Cheers
----Dave
+No, phy is not a part of the port. From the perspective of
+the users, phy is part of the controller.
+
+I still suggest generic multiple regulator support, to
+reduce sunxi-specified code.
+
+>
+>
+>_______________________________________________
+>linux-arm-kernel mailing list
+>linux-arm-kernel@lists.infradead.org
+>http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
