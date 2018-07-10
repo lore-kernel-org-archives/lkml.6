@@ -2,139 +2,153 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19372C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EEC5C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A88F8208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:51:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="B/81kgN7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A88F8208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id CBDE2208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:53:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBDE2208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933800AbeGJOvR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 10:51:17 -0400
-Received: from mail.efficios.com ([167.114.142.138]:43612 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933248AbeGJOvQ (ORCPT
+        id S933634AbeGJOxF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 10:53:05 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37227 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754260AbeGJOxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 10:51:16 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id B60D423291E;
-        Tue, 10 Jul 2018 10:51:13 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 2p9DwOWowcO4; Tue, 10 Jul 2018 10:51:13 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 4515223291B;
-        Tue, 10 Jul 2018 10:51:13 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 4515223291B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1531234273;
-        bh=ODic+Lg+0ChzzV47acBOkHsASv1d2OnG7NruxF01/Bo=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=B/81kgN7tD9FHh46BV9yCJWuhnvtDCMwcshI6ZWZfGcdDwuyWRwGoENFRksv+aVlr
-         9TEStH+3OGlIQ+YRV3zZt7w87IldfO97U6Elp0exxK+Bm9msk84hN+aDRqsmrQUs32
-         H0T+Dyl4fs9UibXKz8vD2O0e48ImTi/ovsOxfidJpjKwqjOu1JbrjxR7x0AsHWWoWg
-         0//SOIqXUY5Ul2EZcU39SUE4gTp7poTi05y15qXoT3Dj4kcR2Yz8XU6F+ySJ5Y4Mg7
-         s9k8YbI0l/LfpCAvEUOCr6ptH+PvfTbVrhxizKA3YYFkHXThH8ttV0tQmyiGZez9IO
-         pQKehtN0JdpPg==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id Hr0YmVbxxmSa; Tue, 10 Jul 2018 10:51:13 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 2EE20232911;
-        Tue, 10 Jul 2018 10:51:13 -0400 (EDT)
-Date:   Tue, 10 Jul 2018 10:51:13 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        peter maydell <peter.maydell@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <745627929.3050.1531234273058.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180710144907.GD9022@arm.com>
-References: <1531145985-3747-1-git-send-email-will.deacon@arm.com> <1957291037.1983.1531152382750.JavaMail.zimbra@efficios.com> <20180709165307.GB4689@arm.com> <1187011512.2158.1531156674389.JavaMail.zimbra@efficios.com> <20180710144907.GD9022@arm.com>
-Subject: Re: [PATCH v2 0/3] Support rseq on arm64
+        Tue, 10 Jul 2018 10:53:02 -0400
+Received: by mail-ed1-f67.google.com with SMTP id v22-v6so16791411edq.4;
+        Tue, 10 Jul 2018 07:53:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=jk30uSDXIIcEdGbxinovusH04dLyMW7GcRxb7on3fvA=;
+        b=sGeifRY73aBB0HW+rTz6RTkeR1N+2ySIKNAuIESwFsAd6AHFtcEbD6YHhuPCeJlJt+
+         otfxfwi9X3KDj/J5AOQHZfLqHIZyZRttS8n3gc92Mtzw2PnOsIEe054WT96bL9N580VK
+         k160x/NuofSLDOf1cMur7V5M7hJqnFrJ30LhKxzXwCWqvJ4zM7Cv4yee1HCom03sC5Id
+         vZ281H9y6XnKlZj8X8kJSVKPAbMbiZJIhBh3gNCyJmDC9O5RWG87UNugYtxWhY7WVU/N
+         jDqrjQ5PUlwANEYLwHr+mozqirqCEE6NXMetWGXe4CfKzvMYXQND98aje1QXf2RCDaZ1
+         QNhQ==
+X-Gm-Message-State: APt69E0RS73Kv4hgmfPeTMoeIB2c1XUydHsOc37pDWEAf4mdylR5rzpv
+        u+Rpn9jMQYI6H34+XHba/+qFJCxCbEg=
+X-Google-Smtp-Source: AAOMgpfKpEur6J/9f0MHJf4+Yv8YGptsc/hktGv5X37etcBzI5b8qXhGAID1s+rR5bH9Ff3SSLiqgg==
+X-Received: by 2002:aa7:d0d8:: with SMTP id u24-v6mr14826014edo.144.1531234380796;
+        Tue, 10 Jul 2018 07:53:00 -0700 (PDT)
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
+        by smtp.gmail.com with ESMTPSA id 33-v6sm1640083edy.82.2018.07.10.07.53.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 07:53:00 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id b15-v6so14956890wrv.10;
+        Tue, 10 Jul 2018 07:53:00 -0700 (PDT)
+X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr17590496wrh.148.1531234379902;
+ Tue, 10 Jul 2018 07:52:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: Support rseq on arm64
-Thread-Index: GpPfAc5cZ9szojz/dzMaGMxuhyo3rw==
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 07:52:39
+ -0700 (PDT)
+In-Reply-To: <20180710080114.31469-9-paul.kocialkowski@bootlin.com>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com> <20180710080114.31469-9-paul.kocialkowski@bootlin.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 10 Jul 2018 22:52:39 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65JP8fBvD6Sbexjg2cv5AXVufWxjMVuOPa7J1A9qQjZ2g@mail.gmail.com>
+Message-ID: <CAGb2v65JP8fBvD6Sbexjg2cv5AXVufWxjMVuOPa7J1A9qQjZ2g@mail.gmail.com>
+Subject: Re: [PATCH v5 08/22] ARM: dts: sun4i-a10: Use system-control compatible
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jul 10, 2018, at 10:49 AM, Will Deacon will.deacon@arm.com wrote:
+On Tue, Jul 10, 2018 at 4:01 PM, Paul Kocialkowski
+<paul.kocialkowski@bootlin.com> wrote:
 
-> On Mon, Jul 09, 2018 at 01:17:54PM -0400, Mathieu Desnoyers wrote:
->> ----- On Jul 9, 2018, at 12:53 PM, Will Deacon will.deacon@arm.com wrote:
->> 
->> > On Mon, Jul 09, 2018 at 12:06:22PM -0400, Mathieu Desnoyers wrote:
->> >> ----- On Jul 9, 2018, at 10:19 AM, Will Deacon will.deacon@arm.com wrote:
->> >> 
->> >> > Hello,
->> >> > 
->> >> > This is version two of the patches previously posted here:
->> >> > 
->> >> > http://lkml.kernel.org/r/1529949285-11013-1-git-send-email-will.deacon@arm.com
->> >> > 
->> >> > Changes since v1 include:
->> >> > 
->> >> >  * Move abort handler in-line to avoid possibility of it being
->> >> >    out-of-range for conditional branch instructions
->> >> > 
->> >> > I've tested both native and compat (little-endian only) with the selftests
->> >> > and they pass successfully on my Seattle box.
->> >> 
->> >> For the whole series:
->> >> 
->> >> Acked-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> > 
->> > Thanks, Mathieu! Are you ok with me taking this via the arm64 tree for
->> > 4.19 once I have an Ack for the asm-generic change, or would you rather
->> > this went via somewhere else?
->> 
->> Adding Thomas Gleixner in CC. He has been picking up the rseq bits for
->> 4.18. I've noticed it was rather easier to gather rseq stuff through a
->> single tree (less chances of confusion).
-> 
-> Whilst I can see that making some sense for the selftests (particularly
-> if the ABI is liable to further changes before 4.18 is released), I'd
-> prefer to take the arm64 bits via the arm64 tree, as they will conflict
-> with some ongoing work to rewrite the syscall entry path in C which I
-> plan to queue in the next week (pending final testing results).
+Subject prefix should be "ARM: dts: sun4i:"
 
-Considering this, indeed going through the arm64 tree seems like the right
-approach.
+We don't need the "a10" part since the A10 owns into this category
+all by itself.
 
-> 
->> Also, support for additional architectures (e.g. MIPS) was added to rseq
->> after rc1. Is it too late to merge arm64 support targeting 4.18 ?
-> 
-> Personally, I don't see the rush, but I won't stop anybody who wants to
-> try steam-rollering them into mainline ;)
+Also, it doesn't say what the system control compatible is for.
+"Switch to new system control compatible string" would be slightly
+better.
 
-There is indeed no rush. 4.19 it is then.
+> This switches the sun4i-a10 dtsi to use the new compatible for the
+> system-control block (previously named SRAM controller) instead of
+> the deprecated one.
+>
+> The phandle is also updated to reflect the fact that the controller
 
-Thanks!
+The label actually.
 
-Mathieu
+ChenYu
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+> described is really about system control rather than SRAM control.
+>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  arch/arm/boot/dts/sun4i-a10.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
+> index 3a1c6b45c9a1..82f81f06f201 100644
+> --- a/arch/arm/boot/dts/sun4i-a10.dtsi
+> +++ b/arch/arm/boot/dts/sun4i-a10.dtsi
+> @@ -190,8 +190,8 @@
+>                 #size-cells = <1>;
+>                 ranges;
+>
+> -               sram-controller@1c00000 {
+> -                       compatible = "allwinner,sun4i-a10-sram-controller";
+> +               system-control@1c00000 {
+> +                       compatible = "allwinner,sun4i-a10-system-control";
+>                         reg = <0x01c00000 0x30>;
+>                         #address-cells = <1>;
+>                         #size-cells = <1>;
+> --
+> 2.17.1
+>
