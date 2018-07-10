@@ -6,35 +6,45 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B46C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F179C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E40082083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E40082083E
+	by mail.kernel.org (Postfix) with ESMTP id D0A292083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A292083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387666AbeGJS3J (ORCPT
+        id S2387684AbeGJS3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:29:09 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45224 "EHLO
+        Tue, 10 Jul 2018 14:29:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45240 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732459AbeGJS3I (ORCPT
+        with ESMTP id S1732459AbeGJS3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:29:08 -0400
+        Tue, 10 Jul 2018 14:29:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 461E3EB4;
-        Tue, 10 Jul 2018 18:28:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8447EB8;
+        Tue, 10 Jul 2018 18:28:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.4 34/47] HID: debug: check length before copy_to_user()
-Date:   Tue, 10 Jul 2018 20:24:58 +0200
-Message-Id: <20180710182338.578922243@linuxfoundation.org>
+        stable@vger.kernel.org, Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        Borislav Petkov <bp@suse.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Tony Luck <tony.luck@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 35/47] x86/mce: Detect local MCEs properly
+Date:   Tue, 10 Jul 2018 20:24:59 +0200
+Message-Id: <20180710182338.617388540@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -51,53 +61,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Rosenberg <drosen@google.com>
+From: Yazen Ghannam <Yazen.Ghannam@amd.com>
 
-commit 717adfdaf14704fd3ec7fa2c04520c0723247eac upstream.
+commit fead35c68926682c90c995f22b48f1c8d78865c1 upstream.
 
-If our length is greater than the size of the buffer, we
-overflow the buffer
+Check the MCG_STATUS_LMCES bit on Intel to verify that current MCE is
+local. It is always local on AMD.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Yazen Ghannam <Yazen.Ghannam@amd.com>
+[ Massaged it a bit. Reflowed comments. Shut up -Wmaybe-uninitialized. ]
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Link: http://lkml.kernel.org/r/1462019637-16474-8-git-send-email-bp@alien8.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-debug.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/mcheck/mce.c |   33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
 
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -1152,6 +1152,8 @@ copy_rest:
- 			goto out;
- 		if (list->tail > list->head) {
- 			len = list->tail - list->head;
-+			if (len > count)
-+				len = count;
+--- a/arch/x86/kernel/cpu/mcheck/mce.c
++++ b/arch/x86/kernel/cpu/mcheck/mce.c
+@@ -980,11 +980,12 @@ void do_machine_check(struct pt_regs *re
+ 	int i;
+ 	int worst = 0;
+ 	int severity;
++
+ 	/*
+ 	 * Establish sequential order between the CPUs entering the machine
+ 	 * check handler.
+ 	 */
+-	int order;
++	int order = -1;
+ 	/*
+ 	 * If no_way_out gets set, there is no safe way to recover from this
+ 	 * MCE.  If mca_cfg.tolerant is cranked up, we'll try anyway.
+@@ -1000,7 +1001,12 @@ void do_machine_check(struct pt_regs *re
+ 	char *msg = "Unknown";
+ 	u64 recover_paddr = ~0ull;
+ 	int flags = MF_ACTION_REQUIRED;
+-	int lmce = 0;
++
++	/*
++	 * MCEs are always local on AMD. Same is determined by MCG_STATUS_LMCES
++	 * on Intel.
++	 */
++	int lmce = 1;
  
- 			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
-@@ -1161,6 +1163,8 @@ copy_rest:
- 			list->head += len;
- 		} else {
- 			len = HID_DEBUG_BUFSIZE - list->head;
-+			if (len > count)
-+				len = count;
+ 	/* If this CPU is offline, just bail out. */
+ 	if (cpu_is_offline(smp_processor_id())) {
+@@ -1039,19 +1045,20 @@ void do_machine_check(struct pt_regs *re
+ 		kill_it = 1;
  
- 			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
-@@ -1168,7 +1172,9 @@ copy_rest:
- 			}
- 			list->head = 0;
- 			ret += len;
--			goto copy_rest;
-+			count -= len;
-+			if (count > 0)
-+				goto copy_rest;
- 		}
+ 	/*
+-	 * Check if this MCE is signaled to only this logical processor
++	 * Check if this MCE is signaled to only this logical processor,
++	 * on Intel only.
+ 	 */
+-	if (m.mcgstatus & MCG_STATUS_LMCES)
+-		lmce = 1;
+-	else {
+-		/*
+-		 * Go through all the banks in exclusion of the other CPUs.
+-		 * This way we don't report duplicated events on shared banks
+-		 * because the first one to see it will clear it.
+-		 * If this is a Local MCE, then no need to perform rendezvous.
+-		 */
++	if (m.cpuvendor == X86_VENDOR_INTEL)
++		lmce = m.mcgstatus & MCG_STATUS_LMCES;
++
++	/*
++	 * Go through all banks in exclusion of the other CPUs. This way we
++	 * don't report duplicated events on shared banks because the first one
++	 * to see it will clear it. If this is a Local MCE, then no need to
++	 * perform rendezvous.
++	 */
++	if (!lmce)
+ 		order = mce_start(&no_way_out);
+-	}
  
- 	}
+ 	for (i = 0; i < cfg->banks; i++) {
+ 		__clear_bit(i, toclear);
 
 
