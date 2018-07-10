@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8FBC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39006C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C3A420BF2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:23:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C3A420BF2
+	by mail.kernel.org (Postfix) with ESMTP id F119920BF2
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:23:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F119920BF2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732569AbeGJUXn (ORCPT
+        id S1732714AbeGJUXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 16:23:43 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38699 "EHLO
+        Tue, 10 Jul 2018 16:23:45 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:34651 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732332AbeGJUXn (ORCPT
+        with ESMTP id S1732332AbeGJUXo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 16:23:43 -0400
+        Tue, 10 Jul 2018 16:23:44 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6AKMRNx3266437
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6AKLsfD3266401
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 10 Jul 2018 13:22:27 -0700
+        Tue, 10 Jul 2018 13:21:54 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6AKMR7O3266433;
-        Tue, 10 Jul 2018 13:22:27 -0700
-Date:   Tue, 10 Jul 2018 13:22:27 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6AKLp653266395;
+        Tue, 10 Jul 2018 13:21:51 -0700
+Date:   Tue, 10 Jul 2018 13:21:51 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Mathieu Desnoyers <tipbot@zytor.com>
-Message-ID: <tip-8f28177014925f968baf45fc833c25848faf8c1c@git.kernel.org>
-Cc:     peterz@infradead.org, catalin.marinas@arm.com, rostedt@goodmis.org,
-        luto@amacapital.net, mtk.manpages@gmail.com,
-        linux-kernel@vger.kernel.org, bmaurer@fb.com, tglx@linutronix.de,
-        mingo@kernel.org, joelaf@google.com, andi@firstfloor.org,
-        pjt@google.com, mathieu.desnoyers@efficios.com,
-        paulmck@linux.vnet.ibm.com, boqun.feng@gmail.com,
-        davejwatson@fb.com, linux@arm.linux.org.uk, hpa@zytor.com,
-        torvalds@linux-foundation.org, cl@linux.com,
-        akpm@linux-foundation.org, josh@joshtriplett.org,
-        will.deacon@arm.com
-Reply-To: bmaurer@fb.com, tglx@linutronix.de, mingo@kernel.org,
-          joelaf@google.com, peterz@infradead.org, catalin.marinas@arm.com,
-          mtk.manpages@gmail.com, luto@amacapital.net, rostedt@goodmis.org,
-          linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-          will.deacon@arm.com, josh@joshtriplett.org, pjt@google.com,
-          mathieu.desnoyers@efficios.com, andi@firstfloor.org,
-          boqun.feng@gmail.com, paulmck@linux.vnet.ibm.com,
-          davejwatson@fb.com, hpa@zytor.com, cl@linux.com,
-          torvalds@linux-foundation.org, linux@arm.linux.org.uk
-In-Reply-To: <20180709195155.7654-3-mathieu.desnoyers@efficios.com>
-References: <20180709195155.7654-3-mathieu.desnoyers@efficios.com>
+Message-ID: <tip-e96d71359e9bbea846a2111e4469a03a055dfa6f@git.kernel.org>
+Cc:     will.deacon@arm.com, davejwatson@fb.com, pjt@google.com,
+        tglx@linutronix.de, mathieu.desnoyers@efficios.com,
+        torvalds@linux-foundation.org, cl@linux.com, hpa@zytor.com,
+        mtk.manpages@gmail.com, josh@joshtriplett.org,
+        catalin.marinas@arm.com, andi@firstfloor.org,
+        linux@arm.linux.org.uk, rostedt@goodmis.org, peterz@infradead.org,
+        akpm@linux-foundation.org, paulmck@linux.vnet.ibm.com,
+        bmaurer@fb.com, luto@amacapital.net, linux-kernel@vger.kernel.org,
+        boqun.feng@gmail.com, joelaf@google.com, mingo@kernel.org
+Reply-To: cl@linux.com, torvalds@linux-foundation.org,
+          mathieu.desnoyers@efficios.com, tglx@linutronix.de,
+          pjt@google.com, davejwatson@fb.com, will.deacon@arm.com,
+          josh@joshtriplett.org, catalin.marinas@arm.com,
+          mtk.manpages@gmail.com, hpa@zytor.com, peterz@infradead.org,
+          rostedt@goodmis.org, linux@arm.linux.org.uk, andi@firstfloor.org,
+          boqun.feng@gmail.com, mingo@kernel.org, joelaf@google.com,
+          linux-kernel@vger.kernel.org, luto@amacapital.net,
+          bmaurer@fb.com, paulmck@linux.vnet.ibm.com,
+          akpm@linux-foundation.org
+In-Reply-To: <20180709195155.7654-2-mathieu.desnoyers@efficios.com>
+References: <20180709195155.7654-2-mathieu.desnoyers@efficios.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] rseq: Use get_user/put_user rather than
- __get_user/__put_user
-Git-Commit-ID: 8f28177014925f968baf45fc833c25848faf8c1c
+Subject: [tip:core/urgent] rseq: Use __u64 for rseq_cs fields, validate user
+ inputs
+Git-Commit-ID: e96d71359e9bbea846a2111e4469a03a055dfa6f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -72,24 +72,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8f28177014925f968baf45fc833c25848faf8c1c
-Gitweb:     https://git.kernel.org/tip/8f28177014925f968baf45fc833c25848faf8c1c
+Commit-ID:  e96d71359e9bbea846a2111e4469a03a055dfa6f
+Gitweb:     https://git.kernel.org/tip/e96d71359e9bbea846a2111e4469a03a055dfa6f
 Author:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-AuthorDate: Mon, 9 Jul 2018 15:51:51 -0400
+AuthorDate: Mon, 9 Jul 2018 15:51:50 -0400
 Committer:  Thomas Gleixner <tglx@linutronix.de>
-CommitDate: Tue, 10 Jul 2018 22:18:52 +0200
+CommitDate: Tue, 10 Jul 2018 22:18:51 +0200
 
-rseq: Use get_user/put_user rather than __get_user/__put_user
+rseq: Use __u64 for rseq_cs fields, validate user inputs
 
-__get_user()/__put_user() is used to read values for address ranges that
-were already checked with access_ok() on rseq registration.
+Change the rseq ABI so rseq_cs start_ip, post_commit_offset and abort_ip
+fields are seen as 64-bit fields by both 32-bit and 64-bit kernels rather
+that ignoring the 32 upper bits on 32-bit kernels. This ensures we have a
+consistent behavior for a 32-bit binary executed on 32-bit kernels and in
+compat mode on 64-bit kernels.
 
-It has been recognized that __get_user/__put_user are optimizing the
-wrong thing. Replace them by get_user/put_user across rseq instead.
+Validating the value of abort_ip field to be below TASK_SIZE ensures the
+kernel don't return to an invalid address when returning to userspace
+after an abort. I don't fully trust each architecture code to consistently
+deal with invalid return addresses.
 
-If those end up showing up in benchmarks, the proper approach would be to
-use user_access_begin() / unsafe_{get,put}_user() / user_access_end()
-anyway.
+Validating the value of the start_ip and post_commit_offset fields
+prevents overflow on arithmetic performed on those values, used to
+check whether abort_ip is within the rseq critical section.
+
+If validation fails, the process is killed with a segmentation fault.
+
+When the signature encountered before abort_ip does not match the expected
+signature, return -EINVAL rather than -EPERM to be consistent with other
+input validation return codes from rseq_get_rseq_cs().
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -113,70 +124,67 @@ Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 Cc: Joel Fernandes <joelaf@google.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: https://lkml.kernel.org/r/20180709195155.7654-3-mathieu.desnoyers@efficios.com
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lkml.kernel.org/r/20180709195155.7654-2-mathieu.desnoyers@efficios.com
 
 ---
- kernel/rseq.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ include/uapi/linux/rseq.h |  6 +++---
+ kernel/rseq.c             | 14 ++++++++++----
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index 16b38c5342f9..2c8463acb50d 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -85,9 +85,9 @@ static int rseq_update_cpu_id(struct task_struct *t)
- {
- 	u32 cpu_id = raw_smp_processor_id();
- 
--	if (__put_user(cpu_id, &t->rseq->cpu_id_start))
-+	if (put_user(cpu_id, &t->rseq->cpu_id_start))
- 		return -EFAULT;
--	if (__put_user(cpu_id, &t->rseq->cpu_id))
-+	if (put_user(cpu_id, &t->rseq->cpu_id))
- 		return -EFAULT;
- 	trace_rseq_update(t);
- 	return 0;
-@@ -100,14 +100,14 @@ static int rseq_reset_rseq_cpu_id(struct task_struct *t)
- 	/*
- 	 * Reset cpu_id_start to its initial state (0).
- 	 */
--	if (__put_user(cpu_id_start, &t->rseq->cpu_id_start))
-+	if (put_user(cpu_id_start, &t->rseq->cpu_id_start))
- 		return -EFAULT;
- 	/*
- 	 * Reset cpu_id to RSEQ_CPU_ID_UNINITIALIZED, so any user coming
- 	 * in after unregistration can figure out that rseq needs to be
- 	 * registered again.
- 	 */
--	if (__put_user(cpu_id, &t->rseq->cpu_id))
-+	if (put_user(cpu_id, &t->rseq->cpu_id))
- 		return -EFAULT;
- 	return 0;
- }
-@@ -120,7 +120,7 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
- 	u32 sig;
- 	int ret;
- 
--	ret = __get_user(ptr, &t->rseq->rseq_cs);
-+	ret = get_user(ptr, &t->rseq->rseq_cs);
- 	if (ret)
- 		return ret;
- 	if (!ptr) {
-@@ -163,7 +163,7 @@ static int rseq_need_restart(struct task_struct *t, u32 cs_flags)
- 	int ret;
- 
- 	/* Get thread flags. */
--	ret = __get_user(flags, &t->rseq->flags);
-+	ret = get_user(flags, &t->rseq->flags);
- 	if (ret)
- 		return ret;
- 
-@@ -203,7 +203,7 @@ static int clear_rseq_cs(struct task_struct *t)
- 	 *
- 	 * Set rseq_cs to NULL with single-copy atomicity.
- 	 */
--	return __put_user(0UL, &t->rseq->rseq_cs);
-+	return put_user(0UL, &t->rseq->rseq_cs);
- }
+diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+index d620fa43756c..519ad6e176d1 100644
+--- a/include/uapi/linux/rseq.h
++++ b/include/uapi/linux/rseq.h
+@@ -52,10 +52,10 @@ struct rseq_cs {
+ 	__u32 version;
+ 	/* enum rseq_cs_flags */
+ 	__u32 flags;
+-	LINUX_FIELD_u32_u64(start_ip);
++	__u64 start_ip;
+ 	/* Offset from start_ip. */
+-	LINUX_FIELD_u32_u64(post_commit_offset);
+-	LINUX_FIELD_u32_u64(abort_ip);
++	__u64 post_commit_offset;
++	__u64 abort_ip;
+ } __attribute__((aligned(4 * sizeof(__u64))));
  
  /*
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index 22b6acf1ad63..16b38c5342f9 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -130,14 +130,20 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
+ 	urseq_cs = (struct rseq_cs __user *)ptr;
+ 	if (copy_from_user(rseq_cs, urseq_cs, sizeof(*rseq_cs)))
+ 		return -EFAULT;
+-	if (rseq_cs->version > 0)
+-		return -EINVAL;
+ 
++	if (rseq_cs->start_ip >= TASK_SIZE ||
++	    rseq_cs->start_ip + rseq_cs->post_commit_offset >= TASK_SIZE ||
++	    rseq_cs->abort_ip >= TASK_SIZE ||
++	    rseq_cs->version > 0)
++		return -EINVAL;
++	/* Check for overflow. */
++	if (rseq_cs->start_ip + rseq_cs->post_commit_offset < rseq_cs->start_ip)
++		return -EINVAL;
+ 	/* Ensure that abort_ip is not in the critical section. */
+ 	if (rseq_cs->abort_ip - rseq_cs->start_ip < rseq_cs->post_commit_offset)
+ 		return -EINVAL;
+ 
+-	usig = (u32 __user *)(rseq_cs->abort_ip - sizeof(u32));
++	usig = (u32 __user *)(unsigned long)(rseq_cs->abort_ip - sizeof(u32));
+ 	ret = get_user(sig, usig);
+ 	if (ret)
+ 		return ret;
+@@ -146,7 +152,7 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
+ 		printk_ratelimited(KERN_WARNING
+ 			"Possible attack attempt. Unexpected rseq signature 0x%x, expecting 0x%x (pid=%d, addr=%p).\n",
+ 			sig, current->rseq_sig, current->pid, usig);
+-		return -EPERM;
++		return -EINVAL;
+ 	}
+ 	return 0;
+ }
