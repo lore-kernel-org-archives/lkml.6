@@ -2,178 +2,112 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF613C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F49BC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8340720936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8340720936
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id CB9E520936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="CrGVha/z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9E520936
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732593AbeGJS1n (ORCPT
+        id S1733117AbeGJS1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:27:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44842 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732499AbeGJS1m (ORCPT
+        Tue, 10 Jul 2018 14:27:47 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37977 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732610AbeGJS1q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:27:42 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DDA6DB4;
-        Tue, 10 Jul 2018 18:27:31 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paulo Alcantara <palcantara@suse.de>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.4 21/47] cifs: Fix infinite loop when using hard mount option
-Date:   Tue, 10 Jul 2018 20:24:45 +0200
-Message-Id: <20180710182338.030299765@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
-References: <20180710182337.047502999@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 10 Jul 2018 14:27:46 -0400
+Received: by mail-pl0-f66.google.com with SMTP id b1-v6so7987457pls.5
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 11:27:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=amrNnaZhe4X4AzMg7tJ95AaHhzytXQJ6jphe+s7QY0U=;
+        b=CrGVha/zJk3hhKdmHNZPWeby2LKowWWqIHaBDgIR5KmYDPTjGibvWI4MFqvn5hR0kD
+         oA15tp+N2m7kvrVC7IDGVluyA7/lns/AKaQkeL7j8gWrwc6yyLiysO3MX9d1JSUeNRMl
+         8tTY8A2i7AsEokzGDtjxvmgsU7aPv83GrOgjU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=amrNnaZhe4X4AzMg7tJ95AaHhzytXQJ6jphe+s7QY0U=;
+        b=W9RPR2rMlm3JMdsefVJbqZFkVRpFMeFx+QxeIuY4XI1+EOtDc5qWW5doMTjcyCXLFT
+         4APtNEH0GX940QRA6lrwRoTOGggjBG4yyap3mWMuFsIQClNDUKILikre71mehL4shCPz
+         xDdBiC0HYRn23MApYcJvIqXhLhk51rd9i66ySvKgxMbDpg2TbPWzBaHaezkXs7C5yQvK
+         yu8OBpVtcYOCS9OC0FqGIurMI1ro4F0nnEued7k7dhMv+KD/pdZDJvaecQ/WODInuGf+
+         zlV9e5UsGb8aePW+DQmC1jEF3TY2IA3VMnWw7F/cW9bpuozfqhw5EVvToMGSb5mUByLF
+         vvYg==
+X-Gm-Message-State: APt69E0ozhzZEz/qe3zXpTFqDjnDRfUGysp4YuLc5s99QQKNlSkx8evf
+        i/PnbV9AMjhFa+q+tcEAcXOqSw==
+X-Google-Smtp-Source: AAOMgpfDCLovj5IkF4+zr/M6SgYrXcF6lCfgFnrkVXgt3CBejotQT8IneS70fV+wL11wepavgE0i9g==
+X-Received: by 2002:a17:902:9695:: with SMTP id n21-v6mr25738935plp.6.1531244026848;
+        Tue, 10 Jul 2018 10:33:46 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id t3-v6sm32744212pfk.161.2018.07.10.10.33.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 10:33:45 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 10:33:45 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v9 5/7] tracing: Centralize preemptirq tracepoints and
+ unify their usage
+Message-ID: <20180710173345.GB103636@joelaf.mtv.corp.google.com>
+References: <20180628182149.226164-1-joel@joelfernandes.org>
+ <20180628182149.226164-6-joel@joelfernandes.org>
+ <20180710102050.78ae0ea8@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180710102050.78ae0ea8@gandalf.local.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Jul 10, 2018 at 10:20:50AM -0400, Steven Rostedt wrote:
+> On Thu, 28 Jun 2018 11:21:47 -0700
+> Joel Fernandes <joel@joelfernandes.org> wrote:
+> 
+> > diff --git a/kernel/trace/trace_preemptirq.c b/kernel/trace/trace_preemptirq.c
+> > new file mode 100644
+> > index 000000000000..dc01c7f4d326
+> > --- /dev/null
+> > +++ b/kernel/trace/trace_preemptirq.c
+> > @@ -0,0 +1,71 @@
+> 
+> Can you send a patch on top of this, that adds a SPDX header here. Just
+> add another patch, no need to resend this one.
+> 
+> I need to go through all the files in kernel/trace/* and add SPDX
+> headers. I don't want to add more files that don't have them.
 
-------------------
+Sure, I'll send a patch ontop of this.
 
-From: Paulo Alcantara <paulo@paulo.ac>
+> I'm still playing around with this patch, and testing it.
 
-commit 7ffbe65578b44fafdef577a360eb0583929f7c6e upstream.
+Ok, thanks.
 
-For every request we send, whether it is SMB1 or SMB2+, we attempt to
-reconnect tcon (cifs_reconnect_tcon or smb2_reconnect) before carrying
-out the request.
-
-So, while server->tcpStatus != CifsNeedReconnect, we wait for the
-reconnection to succeed on wait_event_interruptible_timeout(). If it
-returns, that means that either the condition was evaluated to true, or
-timeout elapsed, or it was interrupted by a signal.
-
-Since we're not handling the case where the process woke up due to a
-received signal (-ERESTARTSYS), the next call to
-wait_event_interruptible_timeout() will _always_ fail and we end up
-looping forever inside either cifs_reconnect_tcon() or smb2_reconnect().
-
-Here's an example of how to trigger that:
-
-$ mount.cifs //foo/share /mnt/test -o
-username=foo,password=foo,vers=1.0,hard
-
-(break connection to server before executing bellow cmd)
-$ stat -f /mnt/test & sleep 140
-[1] 2511
-
-$ ps -aux -q 2511
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root      2511  0.0  0.0  12892  1008 pts/0    S    12:24   0:00 stat -f
-/mnt/test
-
-$ kill -9 2511
-
-(wait for a while; process is stuck in the kernel)
-$ ps -aux -q 2511
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root      2511 83.2  0.0  12892  1008 pts/0    R    12:24  30:01 stat -f
-/mnt/test
-
-By using 'hard' mount point means that cifs.ko will keep retrying
-indefinitely, however we must allow the process to be killed otherwise
-it would hang the system.
-
-Signed-off-by: Paulo Alcantara <palcantara@suse.de>
-Cc: stable@vger.kernel.org
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/cifs/cifssmb.c |   10 ++++++++--
- fs/cifs/smb2pdu.c |   18 ++++++++++++------
- 2 files changed, 20 insertions(+), 8 deletions(-)
-
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -150,8 +150,14 @@ cifs_reconnect_tcon(struct cifs_tcon *tc
- 	 * greater than cifs socket timeout which is 7 seconds
- 	 */
- 	while (server->tcpStatus == CifsNeedReconnect) {
--		wait_event_interruptible_timeout(server->response_q,
--			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
-+		rc = wait_event_interruptible_timeout(server->response_q,
-+						      (server->tcpStatus != CifsNeedReconnect),
-+						      10 * HZ);
-+		if (rc < 0) {
-+			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
-+				 " signal by the process\n", __func__);
-+			return -ERESTARTSYS;
-+		}
- 
- 		/* are we still trying to reconnect? */
- 		if (server->tcpStatus != CifsNeedReconnect)
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -158,7 +158,7 @@ out:
- static int
- smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon)
- {
--	int rc = 0;
-+	int rc;
- 	struct nls_table *nls_codepage;
- 	struct cifs_ses *ses;
- 	struct TCP_Server_Info *server;
-@@ -169,10 +169,10 @@ smb2_reconnect(__le16 smb2_command, stru
- 	 * for those three - in the calling routine.
- 	 */
- 	if (tcon == NULL)
--		return rc;
-+		return 0;
- 
- 	if (smb2_command == SMB2_TREE_CONNECT)
--		return rc;
-+		return 0;
- 
- 	if (tcon->tidStatus == CifsExiting) {
- 		/*
-@@ -215,8 +215,14 @@ smb2_reconnect(__le16 smb2_command, stru
- 			return -EAGAIN;
- 		}
- 
--		wait_event_interruptible_timeout(server->response_q,
--			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
-+		rc = wait_event_interruptible_timeout(server->response_q,
-+						      (server->tcpStatus != CifsNeedReconnect),
-+						      10 * HZ);
-+		if (rc < 0) {
-+			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
-+				 " signal by the process\n", __func__);
-+			return -ERESTARTSYS;
-+		}
- 
- 		/* are we still trying to reconnect? */
- 		if (server->tcpStatus != CifsNeedReconnect)
-@@ -234,7 +240,7 @@ smb2_reconnect(__le16 smb2_command, stru
- 	}
- 
- 	if (!tcon->ses->need_reconnect && !tcon->need_reconnect)
--		return rc;
-+		return 0;
- 
- 	nls_codepage = load_nls_default();
- 
-
+-Joel
 
