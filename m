@@ -6,39 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A97C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C96AC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A807C208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A807C208E8
+	by mail.kernel.org (Postfix) with ESMTP id CEA6C208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEA6C208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389155AbeGJSeG (ORCPT
+        id S2389168AbeGJSeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:34:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47936 "EHLO
+        Tue, 10 Jul 2018 14:34:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47950 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387589AbeGJSeF (ORCPT
+        with ESMTP id S2387589AbeGJSeI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:34:05 -0400
+        Tue, 10 Jul 2018 14:34:08 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 311D0E6B;
-        Tue, 10 Jul 2018 18:33:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E968CE78;
+        Tue, 10 Jul 2018 18:33:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        "Steven J. Hill" <steven.hill@cavium.com>,
-        Tejun Heo <htejun@gmail.com>, Vlastimil Babka <vbabka@suse.cz>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 53/53] Revert mm/vmstat.c: fix vmstat_update() preemption BUG
-Date:   Tue, 10 Jul 2018 20:25:29 +0200
-Message-Id: <20180710182501.761133548@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.14 41/53] mtd: rawnand: mxc: set spare area size register explicitly
+Date:   Tue, 10 Jul 2018 20:25:17 +0200
+Message-Id: <20180710182501.139911549@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -55,60 +52,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Martin Kaiser <martin@kaiser.cx>
 
-commit 28557cc106e6d2aa8b8c5c7687ea9f8055ff3911 upstream.
+commit 3f77f244d8ec28e3a0a81240ffac7d626390060c upstream.
 
-Revert commit c7f26ccfb2c3 ("mm/vmstat.c: fix vmstat_update() preemption
-BUG").  Steven saw a "using smp_processor_id() in preemptible" message
-and added a preempt_disable() section around it to keep it quiet.  This
-is not the right thing to do it does not fix the real problem.
+The v21 version of the NAND flash controller contains a Spare Area Size
+Register (SPAS) at offset 0x10. Its setting defaults to the maximum
+spare area size of 218 bytes. The size that is set in this register is
+used by the controller when it calculates the ECC bytes internally in
+hardware.
 
-vmstat_update() is invoked by a kworker on a specific CPU.  This worker
-it bound to this CPU.  The name of the worker was "kworker/1:1" so it
-should have been a worker which was bound to CPU1.  A worker which can
-run on any CPU would have a `u' before the first digit.
+Usually, this register is updated from settings in the IIM fuses when
+the system is booting from NAND flash. For other boot media, however,
+the SPAS register remains at the default setting, which may not work for
+the particular flash chip on the board. The same goes for flash chips
+whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
+sector size and 128 bytes spare area size can't be configured in the IIM
+fuses on imx25 systems).
 
-smp_processor_id() can be used in a preempt-enabled region as long as
-the task is bound to a single CPU which is the case here.  If it could
-run on an arbitrary CPU then this is the problem we have an should seek
-to resolve.
+Set the SPAS register explicitly during the preset operation. Derive the
+register value from mtd->oobsize that was detected during probe by
+decoding the flash chip's ID bytes.
 
-Not only this smp_processor_id() must not be migrated to another CPU but
-also refresh_cpu_vm_stats() which might access wrong per-CPU variables.
-Not to mention that other code relies on the fact that such a worker
-runs on one specific CPU only.
+While at it, rename the define for the spare area register's offset to
+NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
+different from the register on v21 controllers.
 
-Therefore revert that commit and we should look instead what broke the
-affinity mask of the kworker.
-
-Link: http://lkml.kernel.org/r/20180504104451.20278-1-bigeasy@linutronix.de
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Steven J. Hill <steven.hill@cavium.com>
-Cc: Tejun Heo <htejun@gmail.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: d484018 ("mtd: mxc_nand: set NFC registers after reset")
+Cc: stable@vger.kernel.org
+Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- mm/vmstat.c |    2 --
- 1 file changed, 2 deletions(-)
 
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1770,11 +1770,9 @@ static void vmstat_update(struct work_st
- 		 * to occur in the future. Keep on running the
- 		 * update worker thread.
- 		 */
--		preempt_disable();
- 		queue_delayed_work_on(smp_processor_id(), mm_percpu_wq,
- 				this_cpu_ptr(&vmstat_work),
- 				round_jiffies_relative(sysctl_stat_interval));
--		preempt_enable();
- 	}
- }
+---
+ drivers/mtd/nand/mxc_nand.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/mtd/nand/mxc_nand.c
++++ b/drivers/mtd/nand/mxc_nand.c
+@@ -48,7 +48,7 @@
+ #define NFC_V1_V2_CONFIG		(host->regs + 0x0a)
+ #define NFC_V1_V2_ECC_STATUS_RESULT	(host->regs + 0x0c)
+ #define NFC_V1_V2_RSLTMAIN_AREA		(host->regs + 0x0e)
+-#define NFC_V1_V2_RSLTSPARE_AREA	(host->regs + 0x10)
++#define NFC_V21_RSLTSPARE_AREA		(host->regs + 0x10)
+ #define NFC_V1_V2_WRPROT		(host->regs + 0x12)
+ #define NFC_V1_UNLOCKSTART_BLKADDR	(host->regs + 0x14)
+ #define NFC_V1_UNLOCKEND_BLKADDR	(host->regs + 0x16)
+@@ -1119,6 +1119,9 @@ static void preset_v2(struct mtd_info *m
+ 	writew(config1, NFC_V1_V2_CONFIG1);
+ 	/* preset operation */
+ 
++	/* spare area size in 16-bit half-words */
++	writew(mtd->oobsize / 2, NFC_V21_RSLTSPARE_AREA);
++
+ 	/* Unlock the internal RAM Buffer */
+ 	writew(0x2, NFC_V1_V2_CONFIG);
  
 
 
