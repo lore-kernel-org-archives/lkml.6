@@ -2,119 +2,231 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41408C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F443C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F8020878
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:56:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1F8020878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id CBD2220878
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:58:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Feg8qrj+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBD2220878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751351AbeGJH4K (ORCPT
+        id S1751250AbeGJH57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 03:56:10 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41251 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1751061AbeGJHz6 (ORCPT
+        Tue, 10 Jul 2018 03:57:59 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:44457 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751057AbeGJH55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 03:55:58 -0400
-X-UUID: 95e0f4c5a5984173a8412444d58cdfe1-20180710
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 902700977; Tue, 10 Jul 2018 15:55:51 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Tue, 10 Jul 2018 15:55:49 +0800
-Received: from mtkslt306.mediatek.inc (10.21.14.136) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Tue, 10 Jul 2018 15:55:49 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [PATCH 1/2] arm64: dts: mt7622: add some misc device nodes
-Date:   Tue, 10 Jul 2018 15:55:47 +0800
-Message-ID: <2ff39c40ef6bc3054667e63c785a1d28527b5ddf.1531209126.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 1.9.1
+        Tue, 10 Jul 2018 03:57:57 -0400
+Received: by mail-oi0-f67.google.com with SMTP id s198-v6so40877441oih.11
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 00:57:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Y4EnCWaOAVUF5B+AODLodIl188bLvbImybQ4iXvlSoI=;
+        b=Feg8qrj+HJqf6lef5bjGDnbCqTNKq4QDYzlUV5x3m4ncC2P3ol/w0mEDuTRUBdEgM6
+         jWwSUC8TUNrZRkYS6KK+EeAdML8FWyJGsacMA7vPp97PmNBmlQNgSgBeI+5CCRTnAyH0
+         pr9AbgwhEc8C6dj9acybOrziw8PO03XdpIBJc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Y4EnCWaOAVUF5B+AODLodIl188bLvbImybQ4iXvlSoI=;
+        b=RIhkVp3rdEhEj9wIEju/yIw7P91u8hdVxaUzh7rv/iq8IQUadW6NJjbWVQhssQlKxV
+         TrY1wCfKZVHKhCicJdGrJXc6MpkXKptZti/LOxDUTFKyplSgBCpI1ryM4tPVQu8g6Tqm
+         i6S2+DDMRq4tH7Vd2PQuKJS9EIiMI4/My/AjqrSG3f7XrpnU6hDV9tPqJm2QGtgrUql+
+         bA5VRKJy9OuOZotNdTQLFbA7JnF6sw+bgYQSW5fPtp9sjDwXMiCsrL/Nq1B+/bsVG7dT
+         9IQcaj7V7Itu98JypYB9MLbFEI+MsMMipuJah33tGZT/o6jifufFGQ4zDWUbBjd5UUgo
+         p4fA==
+X-Gm-Message-State: APt69E2IoC2/wuGegXxmrwmqyBFhBcrlct44GANrTOGtLQdpkEhwdjjQ
+        J9hMXrWRG8yaNR3JJ6OLozm/cgk0NtibORhjiR/nRA==
+X-Google-Smtp-Source: AAOMgpfQ+6xRsVGpKbkewT2UqZ0who1lASOqC8iVTEqCpqW3fcZ06ShRPjphoQUFWWbQ6+yeMK79z3bWdOS1emOThp0=
+X-Received: by 2002:aca:ccc4:: with SMTP id c187-v6mr24866551oig.282.1531209476553;
+ Tue, 10 Jul 2018 00:57:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Received: by 2002:a9d:6043:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 00:57:55
+ -0700 (PDT)
+In-Reply-To: <055f7c8a-c3c9-af3a-d762-a26329270e4d@roeck-us.net>
+References: <1531131569-13727-1-git-send-email-srinath.mannam@broadcom.com> <055f7c8a-c3c9-af3a-d762-a26329270e4d@roeck-us.net>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Tue, 10 Jul 2018 13:27:55 +0530
+Message-ID: <CABe79T4qj6SaZJzTn_ZY7XfGkj_z6JJ57+WfMm3zGE7XLbT4Lg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] watchdog: sp805: Add clock-frequency property
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     wim@linux-watchdog.org, Ray Jui <ray.jui@broadcom.com>,
+        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        Scott Branden <scott.branden@broadcom.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-watchdog@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add some misc nodes support - timer and ARM CCI-400.
+Hi Guenter,
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt7622.dtsi | 36 ++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Thank you for your feedback. Please find my answers in lined.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7622.dtsi b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-index 9213c96..8cdec52 100644
---- a/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7622.dtsi
-@@ -217,6 +217,16 @@
- 		#reset-cells = <1>;
- 	};
- 
-+	timer: timer@10004000 {
-+		compatible = "mediatek,mt7622-timer",
-+			     "mediatek,mt6577-timer";
-+		reg = <0 0x10004000 0 0x80>;
-+		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&infracfg CLK_INFRA_APXGPT_PD>,
-+			 <&topckgen CLK_TOP_RTC>;
-+		clock-names = "system-clk", "rtc-clk";
-+	};
-+
- 	scpsys: scpsys@10006000 {
- 		compatible = "mediatek,mt7622-scpsys",
- 			     "syscon";
-@@ -317,6 +327,32 @@
- 		      <0 0x10360000 0 0x2000>;
- 	};
- 
-+	cci: cci@10390000 {
-+		compatible = "arm,cci-400";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		reg = <0 0x10390000 0 0x1000>;
-+		ranges = <0 0 0x10390000 0x10000>;
-+
-+		cci_control0: slave-if@1000 {
-+			compatible = "arm,cci-400-ctrl-if";
-+			interface-type = "ace-lite";
-+			reg = <0x1000 0x1000>;
-+		};
-+
-+		cci_control1: slave-if@4000 {
-+			compatible = "arm,cci-400-ctrl-if";
-+			interface-type = "ace";
-+			reg = <0x4000 0x1000>;
-+		};
-+
-+		cci_control2: slave-if@5000 {
-+			compatible = "arm,cci-400-ctrl-if";
-+			interface-type = "ace";
-+			reg = <0x5000 0x1000>;
-+		};
-+	};
-+
- 	auxadc: adc@11001000 {
- 		compatible = "mediatek,mt7622-auxadc";
- 		reg = <0 0x11001000 0 0x1000>;
--- 
-1.9.1
+On Mon, Jul 9, 2018 at 7:15 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 07/09/2018 03:19 AM, Srinath Mannam wrote:
+>>
+>> When using ACPI node, binding clock devices are
+>> not available as device tree, So clock-frequency
+>> property given in _DSD object of ACPI device is
+>> used to calculate Watchdog rate.
+>>
+>> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+>> ---
+>>   drivers/watchdog/sp805_wdt.c | 34 ++++++++++++++++++++++++++--------
+>>   1 file changed, 26 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/watchdog/sp805_wdt.c b/drivers/watchdog/sp805_wdt.c
+>> index 9849db0..ad5ed64 100644
+>> --- a/drivers/watchdog/sp805_wdt.c
+>> +++ b/drivers/watchdog/sp805_wdt.c
+>> @@ -11,6 +11,7 @@
+>>    * warranty of any kind, whether express or implied.
+>>    */
+>>   +#include <linux/acpi.h>
+>>   #include <linux/device.h>
+>>   #include <linux/resource.h>
+>>   #include <linux/amba/bus.h>
+>> @@ -22,6 +23,7 @@
+>>   #include <linux/math64.h>
+>>   #include <linux/module.h>
+>>   #include <linux/moduleparam.h>
+>> +#include <linux/of.h>
+>>   #include <linux/pm.h>
+>>   #include <linux/slab.h>
+>>   #include <linux/spinlock.h>
+>> @@ -65,6 +67,7 @@ struct sp805_wdt {
+>>         spinlock_t                      lock;
+>>         void __iomem                    *base;
+>>         struct clk                      *clk;
+>> +       u64                             rate;
+>>         struct amba_device              *adev;
+>>         unsigned int                    load_val;
+>>   };
+>> @@ -80,7 +83,7 @@ static int wdt_setload(struct watchdog_device *wdd,
+>> unsigned int timeout)
+>>         struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>>         u64 load, rate;
+>>   -     rate = clk_get_rate(wdt->clk);
+>> +       rate = wdt->rate;
+>>         /*
+>>          * sp805 runs counter with given value twice, after the end of
+>> first
+>> @@ -106,9 +109,7 @@ static int wdt_setload(struct watchdog_device *wdd,
+>> unsigned int timeout)
+>>   static unsigned int wdt_timeleft(struct watchdog_device *wdd)
+>>   {
+>>         struct sp805_wdt *wdt = watchdog_get_drvdata(wdd);
+>> -       u64 load, rate;
+>> -
+>> -       rate = clk_get_rate(wdt->clk);
+>> +       u64 load;
+>>         spin_lock(&wdt->lock);
+>>         load = readl_relaxed(wdt->base + WDTVALUE);
+>> @@ -118,7 +119,7 @@ static unsigned int wdt_timeleft(struct
+>> watchdog_device *wdd)
+>>                 load += wdt->load_val + 1;
+>>         spin_unlock(&wdt->lock);
+>>   -     return div_u64(load, rate);
+>> +       return div_u64(load, wdt->rate);
+>>   }
+>>     static int
+>> @@ -228,10 +229,27 @@ sp805_wdt_probe(struct amba_device *adev, const
+>> struct amba_id *id)
+>>         if (IS_ERR(wdt->base))
+>>                 return PTR_ERR(wdt->base);
+>>   -     wdt->clk = devm_clk_get(&adev->dev, NULL);
+>> -       if (IS_ERR(wdt->clk)) {
+>> +       if (adev->dev.of_node) {
+>> +               wdt->clk = devm_clk_get(&adev->dev, NULL);
+>> +               if (IS_ERR(wdt->clk)) {
+>> +                       ret = PTR_ERR(wdt->clk);
+>> +                       wdt->clk = NULL;
+>
+>
+> Clearing wdt->clk is useless.
 
+If not, clk_prepare_enable and clk_disable_unprepare functions calls
+made in this driver will crash.
+
+>
+>> +               } else
+>> +                       wdt->rate = clk_get_rate(wdt->clk);
+>
+>
+> The else branch should be in { } as well per coding style.
+I will add the change.
+>
+>> +       } else if (has_acpi_companion(&adev->dev)) {
+>> +               /*
+>> +                * When Driver probe with ACPI device, clock devices
+>> +                * are not available, so watchdog rate get from
+>> +                * clock-frequency property given in _DSD object.
+>> +                */
+>> +               device_property_read_u64(&adev->dev, "clock-frequency",
+>> +                               &wdt->rate);
+>
+>
+> Continuation line alignment is off.
+I missed it, Thank you, I will make the change.
+>
+> Still not documented. Maybe that is common for ACPI devices nowadays.
+> If so, I'll need at least a pointer to a document or something declaring
+> that ACPI devices do not use well documented properties, and a confirmation
+> that using such properties is acceptable in the Linux kernel.
+>
+patches listed below has same approach to add ACPI support.
+ex:
+1. commit 515da746983bc6382e380ba8b1ce9345a9550ffe
+Author: Naveen Kaje <nkaje@codeaurora.org>
+Date:   Tue Oct 11 10:27:56 2016 -0600
+
+    i2c: qup: add ACPI support
+
+2. commit 82a19035d000c8b4fd7d6f61b614f63dec75d389
+Author: Lendacky, Thomas <Thomas.Lendacky@amd.com>
+Date:   Fri Jan 16 12:47:16 2015 -0600
+
+    amd-xgbe: Add ACPI support
+
+>> +               if (!wdt->rate)
+>> +                       ret = -ENODEV;
+>> +       }
+>> +
+>> +       if (ret) {
+>>                 dev_warn(&adev->dev, "Clock not found\n");
+>> -               ret = PTR_ERR(wdt->clk);
+>>                 goto err;
+>>         }
+>
+>
+> Please move the error handling to where the error occurs. While doing that,
+> please change the message to dev_err() - this is an error, not a warning -
+> and change the second error message to match the error (it did not find
+> the property).
+>
+> Also, return directly - the goto just generates another error message
+> which is ridiculous.
+Thank you, I will add the changes.
+>
+> Thanks,
+> Guenter
+
+Regards,
+Srinath.
