@@ -2,140 +2,148 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8F2C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CA6C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:06:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 715BD208EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:02:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715BD208EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EB5A20835
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:06:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVjRSXoK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB5A20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934418AbeGJQCE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:02:04 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48809 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934062AbeGJQCC (ORCPT
+        id S934410AbeGJQGD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:06:03 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:40482 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933796AbeGJQGB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:02:02 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6AG0tQH3196546
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 10 Jul 2018 09:00:56 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6AG0tnN3196543;
-        Tue, 10 Jul 2018 09:00:55 -0700
-Date:   Tue, 10 Jul 2018 09:00:55 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Peter Zijlstra <tipbot@zytor.com>
-Message-ID: <tip-aef92a8bed25d03b8f03ce499a56e8e8e5e2c05e@git.kernel.org>
-Cc:     mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org,
-        peterz@infradead.org, sfr@canb.auug.org.au,
-        sachinp@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linux-next@vger.kernel.org, mpe@ellerman.id.au, tglx@linutronix.de,
-        linuxppc-dev@lists.ozlabs.org, abdhalee@linux.vnet.ibm.com
-Reply-To: mpe@ellerman.id.au, linux-next@vger.kernel.org,
-          linuxppc-dev@lists.ozlabs.org, abdhalee@linux.vnet.ibm.com,
-          tglx@linutronix.de, hpa@zytor.com, torvalds@linux-foundation.org,
-          peterz@infradead.org, mingo@kernel.org,
-          sachinp@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-          sfr@canb.auug.org.au
-In-Reply-To: <20180710114210.GI2476@hirez.programming.kicks-ass.net>
-References: <20180710114210.GI2476@hirez.programming.kicks-ass.net>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] watchdog/softlockup: Fix the SOFTLOCKUP_DETECTOR=n
- build
-Git-Commit-ID: aef92a8bed25d03b8f03ce499a56e8e8e5e2c05e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Tue, 10 Jul 2018 12:06:01 -0400
+Received: by mail-yb0-f193.google.com with SMTP id y11-v6so8805575ybm.7;
+        Tue, 10 Jul 2018 09:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=yTk0n/NgKzUbEjfBuTldG0UqP4/DSDGQ7OliRuwyFMM=;
+        b=BVjRSXoK6Qf7cYbrpUV5ItlK9HTn3Uf66vhcIZSLcJaouCX+NEQ1X7oCuklMG47ax/
+         orzRWoIxas+o9qbjBhLHDCHkzJgwwsGXPtbWidD1ces/G64tO12yQWc5pLly4WVLXENZ
+         g4YOTjhF0QWtdU/y17XLCP329wT1yrSXlnjgZqgfz4552+p3BLboTyS+k/G2HIo/2Mm6
+         ecR7JH6DNJMyS8UNwoyhVGJLZvpJc/i8TDpZUDyQq0fCGLJbG/zlouof49DDnH9ipx14
+         yKXZLSsSojn+6mbhdzyL98WAZq87I9iL4RG2gQ25wIuGD0/SmrAFxWvC77eckKystdnA
+         FiBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=yTk0n/NgKzUbEjfBuTldG0UqP4/DSDGQ7OliRuwyFMM=;
+        b=a7FEezi00YvylUemJcndKmLpAl2Ba2w5yfvRyiVHAWNP6hfSvaH+A104OTlr8iFVBd
+         ypiEStwEVibV4jGg2LxvFRSRm2z6mNrOOXZBjmOyfvmrwZ7NGccg1VSzEIQizfH61rJx
+         13H/TkEU1+KU/4aUhLB/lAIpGqhcYyAzCiJvbvX1pQ2dLtJEqBIT4aMd/jAACrm5nlBl
+         FvDuN74VVTnrzAYip90LOEBX9Wyqu7uxMgqLFj5qN1CYVgLo1CipzIPNRodsrD21Al+C
+         eHwMY0VP7F8gHOYmQnjk3f2/4VagLbxdQemTpc1DAxllJA16oMaSpMQrtxwY/5Jr4FBs
+         3Q+A==
+X-Gm-Message-State: APt69E0wDCImvwgEu2RHj6Q7Om/oCr5BWzLhNMeeSAYNo+ryk//EQgRg
+        DqAjghgihoXiF8Z5Cra8P3ofp6KyVSC0YWLQNHE=
+X-Google-Smtp-Source: AAOMgpfZrI8DhanSJIyLNkL86XcEJo3TWsyinwLfJQohHLZops/1MjY2+Sdxyk+N1AR2CKcUK811W79oVYPzw3T6nqw=
+X-Received: by 2002:a25:8102:: with SMTP id o2-v6mr13270664ybk.379.1531238760497;
+ Tue, 10 Jul 2018 09:06:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20180611155001.3506-1-peron.clem@gmail.com> <CAJiuCcf3g2fzrR2_4mthjwKRcyZ8KVPX+EZ5_Uifh2E6TkzusQ@mail.gmail.com>
+ <52591c2d-e9df-7078-7cdf-0fd8d06c9ee0@linaro.org> <CAJiuCcc-eGRr_RT01dNfhQso5PbXfWy+YZS4PHHcL=_yhA-3Sw@mail.gmail.com>
+ <c9db3848-378f-8e1e-c194-53d878894716@linaro.org>
+In-Reply-To: <c9db3848-378f-8e1e-c194-53d878894716@linaro.org>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Tue, 10 Jul 2018 18:05:49 +0200
+Message-ID: <CAJiuCce7yBA+_s44RboKr9x-Ts5qk4T4vCXyVbVuUUxMSc+ScQ@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] Reintroduce i.MX EPIT Timer
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  aef92a8bed25d03b8f03ce499a56e8e8e5e2c05e
-Gitweb:     https://git.kernel.org/tip/aef92a8bed25d03b8f03ce499a56e8e8e5e2c05e
-Author:     Peter Zijlstra <peterz@infradead.org>
-AuthorDate: Tue, 10 Jul 2018 13:42:10 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Tue, 10 Jul 2018 17:56:22 +0200
+HI Daniel,
 
-watchdog/softlockup: Fix the SOFTLOCKUP_DETECTOR=n build
 
-I got confused by all the various CONFIG options here about and
-conflated CONFIG_LOCKUP_DETECTOR and CONFIG_SOFTLOCKUP_DETECTOR.
+On Tue, 10 Jul 2018 at 17:37, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
+ote:
+>
+> On 10/07/2018 17:22, Cl=C3=A9ment P=C3=A9ron wrote:
+> > Hi Daniel,
+> >
+> > On Tue, 10 Jul 2018 at 17:12, Daniel Lezcano <daniel.lezcano@linaro.org=
+> wrote:
+> >>
+> >> On 10/07/2018 16:55, Cl=C3=A9ment P=C3=A9ron wrote:
+> >>> Hi,
+> >>>
+> >>> Is there still some remark against merging this ?
+> >>
+> >> How do you want this to be merged ?
+> >>
+> >> Shall I take the two patches related to the timer ? Or Ack them ?
+> >
+> > I'm not an expert on how submitting patches works, it's the first
+> > driver I submit.
+>
+> Ok, so usually this is what happens when there is a set of changes:
+>
+>  1.  they all touch the same subsystem (eg. drivers/clocksource), you
+> just send all the patches to the maintainer(s) + mailing list + related
+> people
+>
+>  2. they touch different subsystems:
+>
+>    2.1) the changes are not connected (not related together), you have
+> to split in smaller parts and send the patches to the right subsystem
+> maintainer (so falling back to 1.)
+>
+>    2.2) the changes are connected:
+>
+>       2.2.1) Ask all the different subsystem maintainers to acknowledge
+> the changes and submit the patches to arm-soc@
+>
+>       2.2.2) Ask each maintainer to take their part if the changes are
+> connected but not interdependent (patches individually won't break the
+> system)
+>
+>
+> You are in the 2.2) situation. My question is do you want 2.2.1) or 2.2.2=
+) ?
 
-This results in a build failure for:
+Thanks for the explanation, I think in 2.2.1 as I still need an Ack
+for the "ARM: dts" patch
 
-   CONFIG_LOCKUP_DETECTOR=y && CONFIG_SOFTLOCKUP_DETECTOR=n
+Regards,
+Clement
 
-As reported by Abdul.
-
-Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-next <linux-next@vger.kernel.org>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Cc: mpe <mpe@ellerman.id.au>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>
-Cc: stephen Rothwell <sfr@canb.auug.org.au>
-Fixes: 9cf57731b63e ("watchdog/softlockup: Replace "watchdog/%u" threads with cpu_stop_work")
-Link: http://lkml.kernel.org/r/20180710114210.GI2476@hirez.programming.kicks-ass.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/nmi.h | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/include/linux/nmi.h b/include/linux/nmi.h
-index 80664bbeca43..08f9247e9827 100644
---- a/include/linux/nmi.h
-+++ b/include/linux/nmi.h
-@@ -33,15 +33,10 @@ extern int sysctl_hardlockup_all_cpu_backtrace;
- #define sysctl_hardlockup_all_cpu_backtrace 0
- #endif /* !CONFIG_SMP */
- 
--extern int lockup_detector_online_cpu(unsigned int cpu);
--extern int lockup_detector_offline_cpu(unsigned int cpu);
--
- #else /* CONFIG_LOCKUP_DETECTOR */
- static inline void lockup_detector_init(void) { }
- static inline void lockup_detector_soft_poweroff(void) { }
- static inline void lockup_detector_cleanup(void) { }
--#define lockup_detector_online_cpu	NULL
--#define lockup_detector_offline_cpu	NULL
- #endif /* !CONFIG_LOCKUP_DETECTOR */
- 
- #ifdef CONFIG_SOFTLOCKUP_DETECTOR
-@@ -50,12 +45,18 @@ extern void touch_softlockup_watchdog(void);
- extern void touch_softlockup_watchdog_sync(void);
- extern void touch_all_softlockup_watchdogs(void);
- extern unsigned int  softlockup_panic;
--#else
-+
-+extern int lockup_detector_online_cpu(unsigned int cpu);
-+extern int lockup_detector_offline_cpu(unsigned int cpu);
-+#else /* CONFIG_SOFTLOCKUP_DETECTOR */
- static inline void touch_softlockup_watchdog_sched(void) { }
- static inline void touch_softlockup_watchdog(void) { }
- static inline void touch_softlockup_watchdog_sync(void) { }
- static inline void touch_all_softlockup_watchdogs(void) { }
--#endif
-+
-+#define lockup_detector_online_cpu	NULL
-+#define lockup_detector_offline_cpu	NULL
-+#endif /* CONFIG_SOFTLOCKUP_DETECTOR */
- 
- #ifdef CONFIG_DETECT_HUNG_TASK
- void reset_hung_task_detector(void);
+>
+>
+> --
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
