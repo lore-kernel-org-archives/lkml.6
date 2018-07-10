@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E7F9C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F2CC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B46052089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 952922089D
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:52:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QYmYEtaj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46052089D
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HGNiWmEJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 952922089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933114AbeGJGwU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 02:52:20 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:50394 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751046AbeGJGvW (ORCPT
+        id S933267AbeGJGwd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 02:52:33 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:44648 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932910AbeGJGwR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 02:51:22 -0400
+        Tue, 10 Jul 2018 02:52:17 -0400
 Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6A6pAch057117;
-        Tue, 10 Jul 2018 01:51:10 -0500
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6A6p5DC080990;
+        Tue, 10 Jul 2018 01:51:05 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531205470;
-        bh=df2Fs4DQpevOtnixiGjSBXZEN3IWtGv53nu1tMHN57g=;
+        s=ti-com-17Q1; t=1531205465;
+        bh=C3N2ciUM+LCD4z/x1J6iOrrciDZGTWBSpANBUOPdXEU=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=QYmYEtajsn0Xs0dzfMUE2XF93VNHZlm35UpAmghwo7jXSgxuqvJa3j0FlZgbLQhc/
-         XOoaj0T890le/YotVWiDCNXXwESDtiRnfA8E+r4JnJpwvIRFBcBdFC8pSrFVIW+qLf
-         sKRE23aOlzfv0wz1OI0iZJl6YZjteRMKHdh4BrVg=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6A6pAqH018431;
-        Tue, 10 Jul 2018 01:51:10 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+        b=HGNiWmEJ0LvM69hPCQFX7sO7X/9gcLbseH6k56dLWVYWyqjy/SRvB7DCgndKTC2Mq
+         UCgJrtWjmxswSZG04FtWfufEIVKRUKTJjMoPlauNE2Eksr3eiV9nvLHY+oBa6xSuai
+         iJQ9LZuom3NhtnOOUbCOQ9PV8Svk3TotVki9+RKY=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6A6p57m018171;
+        Tue, 10 Jul 2018 01:51:05 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 10
- Jul 2018 01:51:10 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
+ Jul 2018 01:51:04 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 10 Jul 2018 01:51:09 -0500
+ Tue, 10 Jul 2018 01:51:04 -0500
 Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6A6ouGW000378;
-        Tue, 10 Jul 2018 01:51:07 -0500
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6A6ouGU000378;
+        Tue, 10 Jul 2018 01:51:02 -0500
 From:   Keerthy <j-keerthy@ti.com>
 To:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>
 CC:     <t-kristo@ti.com>, <j-keerthy@ti.com>, <linux-rtc@vger.kernel.org>,
         <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <johan@kernel.org>
-Subject: [PATCH v3 4/4] rtc: interface: Add power_off_program to rtc_class_ops
-Date:   Tue, 10 Jul 2018 12:20:52 +0530
-Message-ID: <1531205452-6086-5-git-send-email-j-keerthy@ti.com>
+Subject: [PATCH v3 2/4] rtc: OMAP: Add support for rtc-only mode
+Date:   Tue, 10 Jul 2018 12:20:50 +0530
+Message-ID: <1531205452-6086-3-git-send-email-j-keerthy@ti.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1531205452-6086-1-git-send-email-j-keerthy@ti.com>
 References: <1531205452-6086-1-git-send-email-j-keerthy@ti.com>
@@ -67,77 +67,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add an interface function to set up the rtc for a power_off
-mode.
+Prepare rtc driver for rtc-only with DDR in self-refresh mode.
+omap_rtc_power_off now should cater to two features:
+
+1) RTC plus DDR in self-refresh is power a saving mode where in the
+entire system including the different voltage rails from PMIC are
+shutdown except the ones feeding on to RTC and DDR. DDR is kept in
+self-refresh hence the contents are preserved. RTC ALARM2 is connected
+to PMIC_EN line once we the ALARM2 is triggered we enter the mode with
+DDR in self-refresh and RTC Ticking. After a predetermined time an RTC
+ALARM1 triggers waking up the system[1]. The control goes to bootloader.
+The bootloader then checks RTC scratchpad registers to confirm it was an
+rtc_only wakeup and follows a different path, configure bare minimal
+clocks for ddr and then jumps to the resume address in another RTC
+scratchpad registers and transfers the control to Kernel. Kernel then
+restores the saved context. omap_rtc_power_off_program does the ALARM2
+programming part.
+
+     [1] http://www.ti.com/lit/ug/spruhl7h/spruhl7h.pdf Page 2884
+
+2) Power-off: This is usual poweroff mode. omap_rtc_power_off calls the
+above omap_rtc_power_off_program function and in addition to that
+programs the OMAP_RTC_PMIC_REG for any external wake ups for PMIC like
+the pushbutton and shuts off the PMIC.
+
+Hence the split in omap_rtc_power_off.
 
 Signed-off-by: Keerthy <j-keerthy@ti.com>
 ---
+ drivers/rtc/rtc-omap.c | 58 +++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 43 insertions(+), 15 deletions(-)
 
-Alexandre,
-
-If you feel power_off_program will be very use case specific then
-I can name this as custom_rtc_program so that even other rtc
-drivers if need be can use this for a custom programming.
-
-- Keerthy
-
- drivers/rtc/interface.c | 12 ++++++++++++
- drivers/rtc/rtc-omap.c  |  1 +
- include/linux/rtc.h     |  2 ++
- 3 files changed, 15 insertions(+)
-
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index 6d4012d..c19668b9 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -1139,3 +1139,15 @@ int rtc_set_offset(struct rtc_device *rtc, long offset)
- 	trace_rtc_set_offset(offset, ret);
- 	return ret;
- }
-+
-+/**
-+ * rtc_power_off_program - Some of the rtc are hooked on to PMIC_EN
-+ * line and can be used to power off the SoC.
-+ *
-+ * Kernel interface to program rtc to power off
-+ */
-+int rtc_power_off_program(struct rtc_device *rtc)
-+{
-+	return rtc->ops->power_off_program(rtc->dev.parent);
-+}
-+EXPORT_SYMBOL_GPL(rtc_power_off_program);
 diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
-index 75a12eb..a1f9dde 100644
+index 14f2241..af46140 100644
 --- a/drivers/rtc/rtc-omap.c
 +++ b/drivers/rtc/rtc-omap.c
-@@ -519,6 +519,7 @@ static void omap_rtc_power_off(void)
- 	.read_alarm	= omap_rtc_read_alarm,
- 	.set_alarm	= omap_rtc_set_alarm,
- 	.alarm_irq_enable = omap_rtc_alarm_irq_enable,
-+	.power_off_program = omap_rtc_power_off_program,
- };
+@@ -415,28 +415,23 @@ static int omap_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alm)
  
- static const struct omap_rtc_device_type omap_rtc_default_type = {
-diff --git a/include/linux/rtc.h b/include/linux/rtc.h
-index 6268208..3fc640c 100644
---- a/include/linux/rtc.h
-+++ b/include/linux/rtc.h
-@@ -85,6 +85,7 @@ struct rtc_class_ops {
- 	int (*alarm_irq_enable)(struct device *, unsigned int enabled);
- 	int (*read_offset)(struct device *, long *offset);
- 	int (*set_offset)(struct device *, long offset);
-+	int (*power_off_program)(struct device *dev);
- };
+ static struct omap_rtc *omap_rtc_power_off_rtc;
  
- typedef struct rtc_task {
-@@ -229,6 +230,7 @@ int rtc_timer_start(struct rtc_device *rtc, struct rtc_timer *timer,
- int rtc_read_offset(struct rtc_device *rtc, long *offset);
- int rtc_set_offset(struct rtc_device *rtc, long offset);
- void rtc_timer_do_work(struct work_struct *work);
-+int rtc_power_off_program(struct rtc_device *rtc);
- 
- static inline bool is_leap_year(unsigned int year)
+-/*
+- * omap_rtc_poweroff: RTC-controlled power off
+- *
+- * The RTC can be used to control an external PMIC via the pmic_power_en pin,
+- * which can be configured to transition to OFF on ALARM2 events.
+- *
+- * Notes:
+- * The two-second alarm offset is the shortest offset possible as the alarm
+- * registers must be set before the next timer update and the offset
+- * calculation is too heavy for everything to be done within a single access
+- * period (~15 us).
+- *
+- * Called with local interrupts disabled.
++/**
++ * omap_rtc_power_off_program: Set the pmic power off sequence. The RTC
++ * generates pmic_pwr_enable control, which can be used to control an external
++ * PMIC.
+  */
+-static void omap_rtc_power_off(void)
++static int omap_rtc_power_off_program(struct device *dev)
  {
+ 	struct omap_rtc *rtc = omap_rtc_power_off_rtc;
+ 	struct rtc_time tm;
+ 	unsigned long now;
++	int seconds;
+ 	u32 val;
+ 
+ 	rtc->type->unlock(rtc);
++	/* Clear any existing ALARM2 event */
++	rtc_writel(rtc, OMAP_RTC_STATUS_REG, OMAP_RTC_STATUS_ALARM2);
++
+ 	/* enable pmic_power_en control */
+ 	val = rtc_readl(rtc, OMAP_RTC_PMIC_REG);
+ 	rtc_writel(rtc, OMAP_RTC_PMIC_REG, val | OMAP_RTC_PMIC_POWER_EN_EN);
+@@ -444,6 +439,7 @@ static void omap_rtc_power_off(void)
+ again:
+ 	/* set alarm one second from now */
+ 	omap_rtc_read_time_raw(rtc, &tm);
++	seconds = tm.tm_sec;
+ 	bcd2tm(&tm);
+ 	rtc_tm_to_time(&tm, &now);
+ 	rtc_time_to_tm(now + 1, &tm);
+@@ -451,7 +447,7 @@ static void omap_rtc_power_off(void)
+ 	if (tm2bcd(&tm) < 0) {
+ 		dev_err(&rtc->rtc->dev, "power off failed\n");
+ 		rtc->type->lock(rtc);
+-		return;
++		return -EINVAL;
+ 	}
+ 
+ 	rtc_wait_not_busy(rtc);
+@@ -477,6 +473,38 @@ static void omap_rtc_power_off(void)
+ 			val | OMAP_RTC_INTERRUPTS_IT_ALARM2);
+ 	rtc->type->lock(rtc);
+ 
++	return 0;
++}
++
++/*
++ * omap_rtc_poweroff: RTC-controlled power off
++ *
++ * The RTC can be used to control an external PMIC via the pmic_power_en pin,
++ * which can be configured to transition to OFF on ALARM2 events.
++ *
++ * Notes:
++ * The one-second alarm offset is the shortest offset possible as the alarm
++ * registers must be set before the next timer update and the offset
++ * calculation is too heavy for everything to be done within a single access
++ * period (~15 us).
++ *
++ * Called with local interrupts disabled.
++ */
++static void omap_rtc_power_off(void)
++{
++	struct rtc_device *rtc = omap_rtc_power_off_rtc->rtc;
++	u32 val;
++
++	omap_rtc_power_off_program(rtc->dev.parent);
++
++	/* Set PMIC power enable and EXT_WAKEUP in case PB power on is used */
++	omap_rtc_power_off_rtc->type->unlock(omap_rtc_power_off_rtc);
++	val = rtc_readl(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG);
++	val |= OMAP_RTC_PMIC_POWER_EN_EN | OMAP_RTC_PMIC_EXT_WKUP_POL(0) |
++			OMAP_RTC_PMIC_EXT_WKUP_EN(0);
++	rtc_writel(omap_rtc_power_off_rtc, OMAP_RTC_PMIC_REG, val);
++	omap_rtc_power_off_rtc->type->lock(omap_rtc_power_off_rtc);
++
+ 	/*
+ 	 * Wait for alarm to trigger (within two seconds) and external PMIC to
+ 	 * power off the system. Add a 500 ms margin for external latencies
 -- 
 1.9.1
 
