@@ -6,34 +6,41 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF08BC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:46:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 054F2C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A9B20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:46:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A9B20870
+	by mail.kernel.org (Postfix) with ESMTP id C367D20870
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:47:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C367D20870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388898AbeGJSrK (ORCPT
+        id S2388512AbeGJScG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:47:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47452 "EHLO
+        Tue, 10 Jul 2018 14:32:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47414 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387982AbeGJScQ (ORCPT
+        with ESMTP id S2387468AbeGJScF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:32:16 -0400
+        Tue, 10 Jul 2018 14:32:05 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 92A43D0B;
-        Tue, 10 Jul 2018 18:32:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9434AD0B;
+        Tue, 10 Jul 2018 18:31:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.14 15/53] jbd2: dont mark block as modified if the handle is out of credits
-Date:   Tue, 10 Jul 2018 20:24:51 +0200
-Message-Id: <20180710182459.776881655@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Cannon Matthews <cannonmatthews@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andres Lagar-Cavilla <andreslc@google.com>,
+        Peter Feiner <pfeiner@google.com>,
+        Greg Thelen <gthelen@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 02/53] mm: hugetlb: yield when prepping struct pages
+Date:   Tue, 10 Jul 2018 20:24:38 +0200
+Message-Id: <20180710182458.945026166@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -50,58 +57,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Cannon Matthews <cannonmatthews@google.com>
 
-commit e09463f220ca9a1a1ecfda84fcda658f99a1f12a upstream.
+commit 520495fe96d74e05db585fc748351e0504d8f40d upstream.
 
-Do not set the b_modified flag in block's journal head should not
-until after we're sure that jbd2_journal_dirty_metadat() will not
-abort with an error due to there not being enough space reserved in
-the jbd2 handle.
+When booting with very large numbers of gigantic (i.e.  1G) pages, the
+operations in the loop of gather_bootmem_prealloc, and specifically
+prep_compound_gigantic_page, takes a very long time, and can cause a
+softlockup if enough pages are requested at boot.
 
-Otherwise, future attempts to modify the buffer may lead a large
-number of spurious errors and warnings.
+For example booting with 3844 1G pages requires prepping
+(set_compound_head, init the count) over 1 billion 4K tail pages, which
+takes considerable time.
 
-This addresses CVE-2018-10883.
+Add a cond_resched() to the outer loop in gather_bootmem_prealloc() to
+prevent this lockup.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200071
+Tested: Booted with softlockup_panic=1 hugepagesz=1G hugepages=3844 and
+no softlockup is reported, and the hugepages are reported as
+successfully setup.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Link: http://lkml.kernel.org/r/20180627214447.260804-1-cannonmatthews@google.com
+Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Andres Lagar-Cavilla <andreslc@google.com>
+Cc: Peter Feiner <pfeiner@google.com>
+Cc: Greg Thelen <gthelen@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/jbd2/transaction.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ mm/hugetlb.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/jbd2/transaction.c
-+++ b/fs/jbd2/transaction.c
-@@ -1366,6 +1366,13 @@ int jbd2_journal_dirty_metadata(handle_t
- 		if (jh->b_transaction == transaction &&
- 		    jh->b_jlist != BJ_Metadata) {
- 			jbd_lock_bh_state(bh);
-+			if (jh->b_transaction == transaction &&
-+			    jh->b_jlist != BJ_Metadata)
-+				pr_err("JBD2: assertion failure: h_type=%u "
-+				       "h_line_no=%u block_no=%llu jlist=%u\n",
-+				       handle->h_type, handle->h_line_no,
-+				       (unsigned long long) bh->b_blocknr,
-+				       jh->b_jlist);
- 			J_ASSERT_JH(jh, jh->b_transaction != transaction ||
- 					jh->b_jlist == BJ_Metadata);
- 			jbd_unlock_bh_state(bh);
-@@ -1385,11 +1392,11 @@ int jbd2_journal_dirty_metadata(handle_t
- 		 * of the transaction. This needs to be done
- 		 * once a transaction -bzzz
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -2159,6 +2159,7 @@ static void __init gather_bootmem_preall
  		 */
--		jh->b_modified = 1;
- 		if (handle->h_buffer_credits <= 0) {
- 			ret = -ENOSPC;
- 			goto out_unlock_bh;
- 		}
-+		jh->b_modified = 1;
- 		handle->h_buffer_credits--;
+ 		if (hstate_is_gigantic(h))
+ 			adjust_managed_page_count(page, 1 << h->order);
++		cond_resched();
  	}
+ }
  
 
 
