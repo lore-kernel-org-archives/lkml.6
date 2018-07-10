@@ -2,78 +2,284 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9E66C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB0DC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFE5208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EFE5208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id B4FC220B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:34:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4FC220B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732460AbeGJXgI (ORCPT
+        id S1732473AbeGJXgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 19:36:08 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:30774 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732414AbeGJXgH (ORCPT
+        Tue, 10 Jul 2018 19:36:09 -0400
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:35035 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732413AbeGJXgI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 19:36:07 -0400
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6ANYJZi033614;
-        Wed, 11 Jul 2018 08:34:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Wed, 11 Jul 2018 08:34:19 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6ANYJI7033609;
-        Wed, 11 Jul 2018 08:34:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w6ANYJCl033608;
-        Wed, 11 Jul 2018 08:34:19 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201807102334.w6ANYJCl033608@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [PATCH 10/32] tomoyo: Implement security hooks for the new mount API
- [ver #9]
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        tomoyo-dev-en@lists.sourceforge.jp, torvalds@linux-foundation.org
-MIME-Version: 1.0
-Date:   Wed, 11 Jul 2018 08:34:19 +0900
-References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126255706.14533.4069320423640498264.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153126255706.14533.4069320423640498264.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+        Tue, 10 Jul 2018 19:36:08 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04452;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0T4Ny6oS_1531265651;
+Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T4Ny6oS_1531265651)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 11 Jul 2018 07:34:25 +0800
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+To:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        kirill@shutemov.name, akpm@linux-foundation.org
+Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC v4 PATCH 1/3] mm: introduce VM_DEAD flag and extend check_stable_address_space to check it
+Date:   Wed, 11 Jul 2018 07:34:07 +0800
+Message-Id: <1531265649-93433-2-git-send-email-yang.shi@linux.alibaba.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1531265649-93433-1-git-send-email-yang.shi@linux.alibaba.com>
+References: <1531265649-93433-1-git-send-email-yang.shi@linux.alibaba.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Howells wrote:
-> Implement the security hook to check the creation of a new mountpoint for
-> Tomoyo.
-> 
-> As far as I can tell, Tomoyo doesn't make use of the mount data or parse
-> any mount options, so I haven't implemented any of the fs_context hooks for
-> it.
-> 
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> cc: tomoyo-dev-en@lists.sourceforge.jp
-> cc: linux-security-module@vger.kernel.org
-> 
+VM_DEAD flag is used to mark a vma is being unmapped for the later
+munmap large address space optimization. Before the optimization PF
+race with munmap, may return the right content or SIGSEGV, but with
+the optimization, it may return a zero page.
 
-Would you provide examples of each possible combination as a C program?
-For example, if one mount point from multiple sources with different
-options are possible, please describe such pattern using syscall so that
-LSM modules can run it to see whether they are working as expected.
+Use this flag to mark PF to this area is unstable, will trigger SIGSEGV,
+in order to prevent from the 3rd state.
+
+This flag will be set by the optimization for unmapping large address
+space (>= 1GB) in the later patch. It is 64 bit only at the moment,
+since:
+  * we used up vm_flags bit for 32 bit
+  * 32 bit machine typically will not have such large mapping
+
+Extend check_stable_address_space() to check this flag, as well as the
+page fault path of shmem and hugetlb.
+
+Since oom reaper doesn't tear down shmem and hugetlb, so skip those two
+cases for MMF_UNSTABLE.
+
+Suggested-by: Michal Hocko <mhocko@kernel.org>
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+---
+ include/linux/mm.h  |  8 ++++++++
+ include/linux/oom.h | 20 --------------------
+ mm/huge_memory.c    |  4 ++--
+ mm/hugetlb.c        |  5 +++++
+ mm/memory.c         | 39 +++++++++++++++++++++++++++++++++++----
+ mm/shmem.c          |  9 ++++++++-
+ 6 files changed, 58 insertions(+), 27 deletions(-)
+
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index a0fbb9f..ce7b112 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -242,6 +242,12 @@ extern int overcommit_kbytes_handler(struct ctl_table *, int, void __user *,
+ #endif
+ #endif /* CONFIG_ARCH_HAS_PKEYS */
+ 
++#ifdef CONFIG_64BIT
++#define VM_DEAD			BIT(37)	/* bit only usable on 64 bit kernel */
++#else
++#define VM_DEAD			0
++#endif
++
+ #if defined(CONFIG_X86)
+ # define VM_PAT		VM_ARCH_1	/* PAT reserves whole VMA at once (x86) */
+ #elif defined(CONFIG_PPC)
+@@ -2782,5 +2788,7 @@ static inline bool page_is_guard(struct page *page)
+ static inline void setup_nr_node_ids(void) {}
+ #endif
+ 
++extern int check_stable_address_space(struct vm_area_struct *vma);
++
+ #endif /* __KERNEL__ */
+ #endif /* _LINUX_MM_H */
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 6adac11..0265ed5 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -75,26 +75,6 @@ static inline bool mm_is_oom_victim(struct mm_struct *mm)
+ 	return test_bit(MMF_OOM_VICTIM, &mm->flags);
+ }
+ 
+-/*
+- * Checks whether a page fault on the given mm is still reliable.
+- * This is no longer true if the oom reaper started to reap the
+- * address space which is reflected by MMF_UNSTABLE flag set in
+- * the mm. At that moment any !shared mapping would lose the content
+- * and could cause a memory corruption (zero pages instead of the
+- * original content).
+- *
+- * User should call this before establishing a page table entry for
+- * a !shared mapping and under the proper page table lock.
+- *
+- * Return 0 when the PF is safe VM_FAULT_SIGBUS otherwise.
+- */
+-static inline int check_stable_address_space(struct mm_struct *mm)
+-{
+-	if (unlikely(test_bit(MMF_UNSTABLE, &mm->flags)))
+-		return VM_FAULT_SIGBUS;
+-	return 0;
+-}
+-
+ void __oom_reap_task_mm(struct mm_struct *mm);
+ 
+ extern unsigned long oom_badness(struct task_struct *p,
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 1cd7c1a..997bac9 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -578,7 +578,7 @@ static int __do_huge_pmd_anonymous_page(struct vm_fault *vmf, struct page *page,
+ 	} else {
+ 		pmd_t entry;
+ 
+-		ret = check_stable_address_space(vma->vm_mm);
++		ret = check_stable_address_space(vma);
+ 		if (ret)
+ 			goto unlock_release;
+ 
+@@ -696,7 +696,7 @@ int do_huge_pmd_anonymous_page(struct vm_fault *vmf)
+ 		ret = 0;
+ 		set = false;
+ 		if (pmd_none(*vmf->pmd)) {
+-			ret = check_stable_address_space(vma->vm_mm);
++			ret = check_stable_address_space(vma);
+ 			if (ret) {
+ 				spin_unlock(vmf->ptl);
+ 			} else if (userfaultfd_missing(vma)) {
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 3612fbb..8965d02 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3887,6 +3887,10 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	int need_wait_lock = 0;
+ 	unsigned long haddr = address & huge_page_mask(h);
+ 
++	ret = check_stable_address_space(vma);
++	if (ret)
++		goto out;
++
+ 	ptep = huge_pte_offset(mm, haddr, huge_page_size(h));
+ 	if (ptep) {
+ 		entry = huge_ptep_get(ptep);
+@@ -4006,6 +4010,7 @@ int hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	 */
+ 	if (need_wait_lock)
+ 		wait_on_page_locked(page);
++out:
+ 	return ret;
+ }
+ 
+diff --git a/mm/memory.c b/mm/memory.c
+index 7206a63..250547f 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -68,7 +68,7 @@
+ #include <linux/debugfs.h>
+ #include <linux/userfaultfd_k.h>
+ #include <linux/dax.h>
+-#include <linux/oom.h>
++#include <linux/shmem_fs.h>
+ 
+ #include <asm/io.h>
+ #include <asm/mmu_context.h>
+@@ -776,6 +776,37 @@ static void print_bad_pte(struct vm_area_struct *vma, unsigned long addr,
+ }
+ 
+ /*
++ * Checks whether a page fault on the given mm is still reliable.
++ * This is no longer true if the oom reaper started to reap the
++ * address space which is reflected by MMF_UNSTABLE flag set in
++ * the mm. At that moment any !shared mapping would lose the content
++ * and could cause a memory corruption (zero pages instead of the
++ * original content).
++ * oom reaper doesn't reap hugetlb and shmem, so skip the check for
++ * such vmas.
++ *
++ * And, check if the given vma has VM_DEAD flag set, which means
++ * the vma will be unmapped soon, PF is not safe for such vma.
++ *
++ * User should call this before establishing a page table entry for
++ * a !shared mapping (disk file based), or shmem mapping, or hugetlb
++ * mapping, and under the proper page table lock.
++ *
++ * Return 0 when the PF is safe, VM_FAULT_SIGBUS or VM_FAULT_SIGSEGV
++ * otherwise.
++ */
++int check_stable_address_space(struct vm_area_struct *vma)
++{
++	if (vma->vm_flags & VM_DEAD)
++		return VM_FAULT_SIGSEGV;
++	if (!is_vm_hugetlb_page(vma) && !shmem_file(vma->vm_file)) {
++		if (unlikely(test_bit(MMF_UNSTABLE, &vma->vm_mm->flags)))
++			return VM_FAULT_SIGBUS;
++	}
++	return 0;
++}
++
++/*
+  * vm_normal_page -- This function gets the "struct page" associated with a pte.
+  *
+  * "Special" mappings do not wish to be associated with a "struct page" (either
+@@ -3147,7 +3178,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 				vmf->address, &vmf->ptl);
+ 		if (!pte_none(*vmf->pte))
+ 			goto unlock;
+-		ret = check_stable_address_space(vma->vm_mm);
++		ret = check_stable_address_space(vma);
+ 		if (ret)
+ 			goto unlock;
+ 		/* Deliver the page fault to userland, check inside PT lock */
+@@ -3184,7 +3215,7 @@ static int do_anonymous_page(struct vm_fault *vmf)
+ 	if (!pte_none(*vmf->pte))
+ 		goto release;
+ 
+-	ret = check_stable_address_space(vma->vm_mm);
++	ret = check_stable_address_space(vma);
+ 	if (ret)
+ 		goto release;
+ 
+@@ -3495,7 +3526,7 @@ int finish_fault(struct vm_fault *vmf)
+ 	 * page
+ 	 */
+ 	if (!(vmf->vma->vm_flags & VM_SHARED))
+-		ret = check_stable_address_space(vmf->vma->vm_mm);
++		ret = check_stable_address_space(vmf->vma);
+ 	if (!ret)
+ 		ret = alloc_set_pte(vmf, vmf->memcg, page);
+ 	if (vmf->pte)
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 2cab844..9f9ac7c 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1953,7 +1953,13 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 	gfp_t gfp = mapping_gfp_mask(inode->i_mapping);
+ 	enum sgp_type sgp;
+ 	int err;
+-	vm_fault_t ret = VM_FAULT_LOCKED;
++	vm_fault_t ret = 0;
++
++	ret = check_stable_address_space(vma);
++	if (ret)
++		goto out;
++
++	ret = VM_FAULT_LOCKED;
+ 
+ 	/*
+ 	 * Trinity finds that probing a hole which tmpfs is punching can
+@@ -2025,6 +2031,7 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 				  gfp, vma, vmf, &ret);
+ 	if (err)
+ 		return vmf_error(err);
++out:
+ 	return ret;
+ }
+ 
+-- 
+1.8.3.1
+
