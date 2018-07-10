@@ -2,194 +2,416 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E8FC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F8CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A36E220A8B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:40:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KItWB+1I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A36E220A8B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B0EE520BEC
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0EE520BEC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732312AbeGJWmG (ORCPT
+        id S1732356AbeGJWmM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:42:06 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40667 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732258AbeGJWmG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:42:06 -0400
-Received: by mail-lj1-f196.google.com with SMTP id a6-v6so17958896ljj.7
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 15:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aOVonLEpB15KdDJ4tIVBSy7yFCnJmuqT/9YRwse9dCQ=;
-        b=KItWB+1I/Fq9nmEhHNpkX8aV8beqMfDgoVSeBNKTOXH76E0baf4QC1ew4GKUqX1c/g
-         hOtQ04LiRDAR1rQH4Pjfb85tlcUN+yHRkjTp1KkXmu3lOWHaebFuxxFUj9RsHLW8nwoc
-         fEomqD1UOlLNZ9a/Gl5xh3IqJRrF+C23r8tl4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aOVonLEpB15KdDJ4tIVBSy7yFCnJmuqT/9YRwse9dCQ=;
-        b=Cd8EeEACGu/c7t3BwBJauT8RKUISZypihFa+qm5T1LNuEuMTicqXHCh7fuCBblhr2l
-         1L4PU28YS8rBlzW74x0a79MQT1rPkG5JgSXHLYX3SsrBHht+obzxOWrb6GrUZ0aJe+yH
-         Vpv9Fpnyoxo7GT6Ru4fEiWZvFq73yCVN27kyajWLCTnoC0lju7cP7cd7z9Kqzr6RNMEU
-         RFJGc9k/g1E0IjvVgRtCxEVrgr6nqWRzzINWjNT8dqodo4rIyCRkPQv3EQuRddgt3QTM
-         MCF73B2NXGrWMhmHRkP4WvC+CcidXK7QS+K91cHQ02h97rnsD+164cyBMmd0GSfLXZuP
-         ydvA==
-X-Gm-Message-State: APt69E1tmTXbmcScMohjXaFVCbvz5ihio9dg3+NZHBs5WEfde80taHbD
-        9+3VW52QViQGAa9t4xiTXEBzikbrCbQ=
-X-Google-Smtp-Source: AAOMgpfr8eNFultoXHCiVxaVgm2mZNAFcMUnUs6s2CQBWmEnhKwsoyN/68+zR9XJsB4cTFw/c5XFjg==
-X-Received: by 2002:a2e:205b:: with SMTP id g88-v6mr17225402ljg.39.1531262451145;
-        Tue, 10 Jul 2018 15:40:51 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id o62-v6sm4714370lfe.71.2018.07.10.15.40.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 15:40:51 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id v9-v6so7631350ljk.4
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 15:40:51 -0700 (PDT)
-X-Received: by 2002:a2e:5c07:: with SMTP id q7-v6mr15662949ljb.119.1531262099626;
- Tue, 10 Jul 2018 15:34:59 -0700 (PDT)
+        Tue, 10 Jul 2018 18:42:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51546 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732258AbeGJWmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:42:12 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BCA3140363A8;
+        Tue, 10 Jul 2018 22:40:58 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B70082026D6B;
+        Tue, 10 Jul 2018 22:40:57 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 01/32] vfs: syscall: Add open_tree(2) to reference or clone
+ a mount
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 10 Jul 2018 23:40:57 +0100
+Message-ID: <153126245717.14372.12511335851917797573.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-References: <20180709155104.25528-1-georgi.djakov@linaro.org> <20180709155104.25528-5-georgi.djakov@linaro.org>
-In-Reply-To: <20180709155104.25528-5-georgi.djakov@linaro.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 10 Jul 2018 15:34:23 -0700
-X-Gmail-Original-Message-ID: <CAE=gft6pPcxfYqEcb-yQpf7S6CDTZNavhqYaKi37962U78qO3Q@mail.gmail.com>
-Message-ID: <CAE=gft6pPcxfYqEcb-yQpf7S6CDTZNavhqYaKi37962U78qO3Q@mail.gmail.com>
-Subject: Re: [PATCH v6 4/8] interconnect: qcom: Add RPM communication
-To:     georgi.djakov@linaro.org
-Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
-        rjw@rjwysocki.net, robh+dt@kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        khilman@baylibre.com, Alexandre Bailon <abailon@baylibre.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Saravana Kannan <skannan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, mka@chromium.org, mark.rutland@arm.com,
-        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, tfiga@chromium.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 22:40:58 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 22:40:58 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 8:51 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
->
-> On some Qualcomm SoCs, there is a remote processor, which controls some of
-> the Network-On-Chip interconnect resources. Other CPUs express their needs
-> by communicating with this processor. Add a driver to handle communication
-> with this remote processor.
->
-> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-> ---
->  .../bindings/interconnect/qcom-smd.txt        | 32 +++++++
->  drivers/interconnect/qcom/Kconfig             | 11 +++
->  drivers/interconnect/qcom/Makefile            |  2 +
->  drivers/interconnect/qcom/smd-rpm.c           | 91 +++++++++++++++++++
->  drivers/interconnect/qcom/smd-rpm.h           | 15 +++
->  5 files changed, 151 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interconnect/qcom-smd.txt
->  create mode 100644 drivers/interconnect/qcom/Kconfig
->  create mode 100644 drivers/interconnect/qcom/Makefile
->  create mode 100644 drivers/interconnect/qcom/smd-rpm.c
->  create mode 100644 drivers/interconnect/qcom/smd-rpm.h
->
-> diff --git a/Documentation/devicetree/bindings/interconnect/qcom-smd.txt b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
-> new file mode 100644
-> index 000000000000..88a5aeb50935
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interconnect/qcom-smd.txt
-> @@ -0,0 +1,32 @@
-> +Qualcomm SMD-RPM interconnect driver binding
-> +------------------------------------------------
-> +The RPM (Resource Power Manager) is a dedicated hardware engine
-> +for managing the shared SoC resources in order to keep the lowest
-> +power profile. It communicates with other hardware subsystems via
-> +the shared memory driver (SMD) back-end and accepts requests for
-> +various resources.
-> +
-> +Required properties :
-> +- compatible : shall contain only one of the following:
-> +                       "qcom,interconnect-smd-rpm"
-> +
-> +Example:
-> +       smd {
-> +               compatible = "qcom,smd";
-> +
-> +               rpm {
-> +                       interrupts = <0 168 1>;
-> +                       qcom,ipc = <&apcs 8 0>;
-> +                       qcom,smd-edge = <15>;
-> +
-> +                       rpm_requests {
-> +                               compatible = "qcom,rpm-msm8916";
-> +                               qcom,smd-channels = "rpm_requests";
-> +
-> +                               interconnect-smd-rpm {
-> +                                       compatible = "qcom,interconnect-smd-rpm";
-> +                               };
-> +
-> +                       };
-> +               };
-> +       };
-> diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
-> new file mode 100644
-> index 000000000000..b0c2ff928d88
-> --- /dev/null
-> +++ b/drivers/interconnect/qcom/Kconfig
-> @@ -0,0 +1,11 @@
-> +config INTERCONNECT_QCOM
-> +       bool "Qualcomm Network-on-Chip interconnect drivers"
-> +       depends on INTERCONNECT
-> +       depends on ARCH_QCOM || COMPILE_TEST
-> +
-> +config INTERCONNECT_QCOM_SMD_RPM
-> +       tristate "Qualcomm SMD RPM interconnect driver"
-> +       depends on INTERCONNECT_QCOM
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Should this also depend on CONFIG_QCOM_SMD_RPM, since it uses
-qcom_rpm_smd_write?
+open_tree(dfd, pathname, flags)
 
-> +       help
-> +         This is a driver for communicating interconnect related configuration
-> +         details with a remote processor (RPM) on Qualcomm platforms.
-...
-> diff --git a/drivers/interconnect/qcom/smd-rpm.h b/drivers/interconnect/qcom/smd-rpm.h
-> new file mode 100644
-> index 000000000000..c33b91a3dd51
-> --- /dev/null
-> +++ b/drivers/interconnect/qcom/smd-rpm.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2018, Linaro Ltd.
-> + * Author: Georgi Djakov <georgi.djakov@linaro.org>
-> + */
-> +
-> +#ifndef __DRIVERS_INTERCONNECT_QCOM_RPM_H
-> +#define __DRIVERS_INTERCONNECT_QCOM_RPM_H
+Returns an O_PATH-opened file descriptor or an error.
+dfd and pathname specify the location to open, in usual
+fashion (see e.g. fstatat(2)).  flags should be an OR of
+some of the following:
+	* AT_PATH_EMPTY, AT_NO_AUTOMOUNT, AT_SYMLINK_NOFOLLOW -
+same meanings as usual
+	* OPEN_TREE_CLOEXEC - make the resulting descriptor
+close-on-exec
+	* OPEN_TREE_CLONE or OPEN_TREE_CLONE | AT_RECURSIVE -
+instead of opening the location in question, create a detached
+mount tree matching the subtree rooted at location specified by
+dfd/pathname.  With AT_RECURSIVE the entire subtree is cloned,
+without it - only the part within in the mount containing the
+location in question.  In other words, the same as mount --rbind
+or mount --bind would've taken.  The detached tree will be
+dissolved on the final close of obtained file.  Creation of such
+detached trees requires the same capabilities as doing mount --bind.
 
-Nit: this still doesn't quite match, it would need an _SMD like:
-__DRIVERS_INTERCONNECT_QCOM_SMD_RPM_H
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+cc: linux-api@vger.kernel.org
+---
 
-> +
-> +#include <linux/soc/qcom/smd-rpm.h>
-> +
-> +bool qcom_icc_rpm_smd_available(void);
-> +int qcom_icc_rpm_smd_send(int ctx, int rsc_type, int id, u32 val);
-> +
-> +#endif
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 
+ fs/file_table.c                        |    9 +-
+ fs/internal.h                          |    1 
+ fs/namespace.c                         |  132 +++++++++++++++++++++++++++-----
+ include/linux/fs.h                     |    3 +
+ include/linux/syscalls.h               |    1 
+ include/uapi/linux/fcntl.h             |    2 
+ include/uapi/linux/mount.h             |   10 ++
+ 9 files changed, 135 insertions(+), 25 deletions(-)
+ create mode 100644 include/uapi/linux/mount.h
+
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 3cf7b533b3d1..ea1b413afd47 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -398,3 +398,4 @@
+ 384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
+ 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
+ 386	i386	rseq			sys_rseq			__ia32_sys_rseq
++387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index f0b1709a5ffb..0545bed581dc 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -343,6 +343,7 @@
+ 332	common	statx			__x64_sys_statx
+ 333	common	io_pgetevents		__x64_sys_io_pgetevents
+ 334	common	rseq			__x64_sys_rseq
++335	common	open_tree		__x64_sys_open_tree
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 7ec0b3e5f05d..7480271a0d21 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -189,6 +189,7 @@ static void __fput(struct file *file)
+ 	struct dentry *dentry = file->f_path.dentry;
+ 	struct vfsmount *mnt = file->f_path.mnt;
+ 	struct inode *inode = file->f_inode;
++	fmode_t mode = file->f_mode;
+ 
+ 	might_sleep();
+ 
+@@ -209,14 +210,14 @@ static void __fput(struct file *file)
+ 		file->f_op->release(inode, file);
+ 	security_file_free(file);
+ 	if (unlikely(S_ISCHR(inode->i_mode) && inode->i_cdev != NULL &&
+-		     !(file->f_mode & FMODE_PATH))) {
++		     !(mode & FMODE_PATH))) {
+ 		cdev_put(inode->i_cdev);
+ 	}
+ 	fops_put(file->f_op);
+ 	put_pid(file->f_owner.pid);
+-	if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
++	if ((mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
+ 		i_readcount_dec(inode);
+-	if (file->f_mode & FMODE_WRITER) {
++	if (mode & FMODE_WRITER) {
+ 		put_write_access(inode);
+ 		__mnt_drop_write(mnt);
+ 	}
+@@ -224,6 +225,8 @@ static void __fput(struct file *file)
+ 	file->f_path.mnt = NULL;
+ 	file->f_inode = NULL;
+ 	file_free(file);
++	if (unlikely(mode & FMODE_NEED_UNMOUNT))
++		dissolve_on_fput(mnt);
+ 	dput(dentry);
+ 	mntput(mnt);
+ }
+diff --git a/fs/internal.h b/fs/internal.h
+index 980d005b21b4..b55575b9b55c 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -85,6 +85,7 @@ extern void __mnt_drop_write(struct vfsmount *);
+ extern void __mnt_drop_write_file(struct file *);
+ extern void mnt_drop_write_file_path(struct file *);
+ 
++extern void dissolve_on_fput(struct vfsmount *);
+ /*
+  * fs_struct.c
+  */
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 8ddd14806799..b355a555b4db 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -20,12 +20,14 @@
+ #include <linux/init.h>		/* init_rootfs */
+ #include <linux/fs_struct.h>	/* get_fs_root et.al. */
+ #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
++#include <linux/file.h>
+ #include <linux/uaccess.h>
+ #include <linux/proc_ns.h>
+ #include <linux/magic.h>
+ #include <linux/bootmem.h>
+ #include <linux/task_work.h>
+ #include <linux/sched/task.h>
++#include <uapi/linux/mount.h>
+ 
+ #include "pnode.h"
+ #include "internal.h"
+@@ -1839,6 +1841,16 @@ struct vfsmount *collect_mounts(const struct path *path)
+ 	return &tree->mnt;
+ }
+ 
++void dissolve_on_fput(struct vfsmount *mnt)
++{
++	namespace_lock();
++	lock_mount_hash();
++	mntget(mnt);
++	umount_tree(real_mount(mnt), UMOUNT_SYNC);
++	unlock_mount_hash();
++	namespace_unlock();
++}
++
+ void drop_collected_mounts(struct vfsmount *mnt)
+ {
+ 	namespace_lock();
+@@ -2198,6 +2210,30 @@ static bool has_locked_children(struct mount *mnt, struct dentry *dentry)
+ 	return false;
+ }
+ 
++static struct mount *__do_loopback(struct path *old_path, int recurse)
++{
++	struct mount *mnt = ERR_PTR(-EINVAL), *old = real_mount(old_path->mnt);
++
++	if (IS_MNT_UNBINDABLE(old))
++		return mnt;
++
++	if (!check_mnt(old) && old_path->dentry->d_op != &ns_dentry_operations)
++		return mnt;
++
++	if (!recurse && has_locked_children(old, old_path->dentry))
++		return mnt;
++
++	if (recurse)
++		mnt = copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
++	else
++		mnt = clone_mnt(old, old_path->dentry, 0);
++
++	if (!IS_ERR(mnt))
++		mnt->mnt.mnt_flags &= ~MNT_LOCKED;
++
++	return mnt;
++}
++
+ /*
+  * do loopback mount.
+  */
+@@ -2205,7 +2241,7 @@ static int do_loopback(struct path *path, const char *old_name,
+ 				int recurse)
+ {
+ 	struct path old_path;
+-	struct mount *mnt = NULL, *old, *parent;
++	struct mount *mnt = NULL, *parent;
+ 	struct mountpoint *mp;
+ 	int err;
+ 	if (!old_name || !*old_name)
+@@ -2219,38 +2255,21 @@ static int do_loopback(struct path *path, const char *old_name,
+ 		goto out;
+ 
+ 	mp = lock_mount(path);
+-	err = PTR_ERR(mp);
+-	if (IS_ERR(mp))
++	if (IS_ERR(mp)) {
++		err = PTR_ERR(mp);
+ 		goto out;
++	}
+ 
+-	old = real_mount(old_path.mnt);
+ 	parent = real_mount(path->mnt);
+-
+-	err = -EINVAL;
+-	if (IS_MNT_UNBINDABLE(old))
+-		goto out2;
+-
+ 	if (!check_mnt(parent))
+ 		goto out2;
+ 
+-	if (!check_mnt(old) && old_path.dentry->d_op != &ns_dentry_operations)
+-		goto out2;
+-
+-	if (!recurse && has_locked_children(old, old_path.dentry))
+-		goto out2;
+-
+-	if (recurse)
+-		mnt = copy_tree(old, old_path.dentry, CL_COPY_MNT_NS_FILE);
+-	else
+-		mnt = clone_mnt(old, old_path.dentry, 0);
+-
++	mnt = __do_loopback(&old_path, recurse);
+ 	if (IS_ERR(mnt)) {
+ 		err = PTR_ERR(mnt);
+ 		goto out2;
+ 	}
+ 
+-	mnt->mnt.mnt_flags &= ~MNT_LOCKED;
+-
+ 	err = graft_tree(mnt, parent, mp);
+ 	if (err) {
+ 		lock_mount_hash();
+@@ -2264,6 +2283,75 @@ static int do_loopback(struct path *path, const char *old_name,
+ 	return err;
+ }
+ 
++SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
++{
++	struct file *file;
++	struct path path;
++	int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
++	bool detached = flags & OPEN_TREE_CLONE;
++	int error;
++	int fd;
++
++	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
++
++	if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
++		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
++		      OPEN_TREE_CLOEXEC))
++		return -EINVAL;
++
++	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) == AT_RECURSIVE)
++		return -EINVAL;
++
++	if (flags & AT_NO_AUTOMOUNT)
++		lookup_flags &= ~LOOKUP_AUTOMOUNT;
++	if (flags & AT_SYMLINK_NOFOLLOW)
++		lookup_flags &= ~LOOKUP_FOLLOW;
++	if (flags & AT_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
++
++	if (detached && !may_mount())
++		return -EPERM;
++
++	fd = get_unused_fd_flags(flags & O_CLOEXEC);
++	if (fd < 0)
++		return fd;
++
++	error = user_path_at(dfd, filename, lookup_flags, &path);
++	if (error)
++		goto out;
++
++	if (detached) {
++		struct mount *mnt = __do_loopback(&path, flags & AT_RECURSIVE);
++		if (IS_ERR(mnt)) {
++			error = PTR_ERR(mnt);
++			goto out2;
++		}
++		mntput(path.mnt);
++		path.mnt = &mnt->mnt;
++	}
++
++	file = dentry_open(&path, O_PATH, current_cred());
++	if (IS_ERR(file)) {
++		error = PTR_ERR(file);
++		goto out3;
++	}
++
++	if (detached)
++		file->f_mode |= FMODE_NEED_UNMOUNT;
++	path_put(&path);
++	fd_install(fd, file);
++	return fd;
++
++out3:
++	if (detached)
++		dissolve_on_fput(path.mnt);
++out2:
++	path_put(&path);
++out:
++	put_unused_fd(fd);
++	return error;
++}
++
+ static int change_mount_flags(struct vfsmount *mnt, int ms_flags)
+ {
+ 	int error = 0;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 5c91108846db..00e255c195f2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -154,6 +154,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File is capable of returning -EAGAIN if I/O will block */
+ #define FMODE_NOWAIT	((__force fmode_t)0x8000000)
+ 
++/* File represents mount that needs unmounting */
++#define FMODE_NEED_UNMOUNT     ((__force fmode_t)0x10000000)
++
+ /*
+  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+  * that indicates that they should check the contents of the iovec are
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 73810808cdf2..3cc6b8f8bd2f 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -900,6 +900,7 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+ 			  unsigned mask, struct statx __user *buffer);
+ asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
+ 			 int flags, uint32_t sig);
++asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 6448cdd9a350..594b85f7cb86 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -90,5 +90,7 @@
+ #define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
+ #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
+ 
++#define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
++
+ 
+ #endif /* _UAPI_LINUX_FCNTL_H */
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+new file mode 100644
+index 000000000000..e8db2911adca
+--- /dev/null
++++ b/include/uapi/linux/mount.h
+@@ -0,0 +1,10 @@
++#ifndef _UAPI_LINUX_MOUNT_H
++#define _UAPI_LINUX_MOUNT_H
++
++/*
++ * open_tree() flags.
++ */
++#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
++#define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
++
++#endif /* _UAPI_LINUX_MOUNT_H */
+
