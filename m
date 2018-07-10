@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF46C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF90C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A6E820936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6E820936
+	by mail.kernel.org (Postfix) with ESMTP id 1789F20BF2
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1789F20BF2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732697AbeGJS0L (ORCPT
+        id S1732709AbeGJS0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:26:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43642 "EHLO
+        Tue, 10 Jul 2018 14:26:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732630AbeGJS0K (ORCPT
+        with ESMTP id S1732699AbeGJS0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:26:10 -0400
+        Tue, 10 Jul 2018 14:26:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0CB88E74;
-        Tue, 10 Jul 2018 18:25:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4406E7D;
+        Tue, 10 Jul 2018 18:26:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, John Smith <john-s-84@gmx.net>,
-        Jason Andryuk <jandryuk@gmail.com>,
+        stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
         Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 3.18 14/23] HID: i2c-hid: Fix "incomplete report" noise
-Date:   Tue, 10 Jul 2018 20:24:47 +0200
-Message-Id: <20180710182309.489751204@linuxfoundation.org>
+Subject: [PATCH 3.18 15/23] HID: debug: check length before copy_to_user()
+Date:   Tue, 10 Jul 2018 20:24:48 +0200
+Message-Id: <20180710182309.536961789@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
 References: <20180710182308.877332304@linuxfoundation.org>
@@ -51,46 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Andryuk <jandryuk@gmail.com>
+From: Daniel Rosenberg <drosen@google.com>
 
-commit ef6eaf27274c0351f7059163918f3795da13199c upstream.
+commit 717adfdaf14704fd3ec7fa2c04520c0723247eac upstream.
 
-Commit ac75a041048b ("HID: i2c-hid: fix size check and type usage") started
-writing messages when the ret_size is <= 2 from i2c_master_recv.  However, my
-device i2c-DLL07D1 returns 2 for a short period of time (~0.5s) after I stop
-moving the pointing stick or touchpad.  It varies, but you get ~50 messages
-each time which spams the log hard.
+If our length is greater than the size of the buffer, we
+overflow the buffer
 
-[  95.925055] i2c_hid i2c-DLL07D1:01: i2c_hid_get_input: incomplete report (83/2)
-
-This has also been observed with a i2c-ALP0017.
-
-[ 1781.266353] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
-
-Only print the message when ret_size is totally invalid and less than 2 to cut
-down on the log spam.
-
-Fixes: ac75a041048b ("HID: i2c-hid: fix size check and type usage")
-Reported-by: John Smith <john-s-84@gmx.net>
 Cc: stable@vger.kernel.org
-Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/i2c-hid/i2c-hid.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/hid/hid-debug.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -399,7 +399,7 @@ static void i2c_hid_get_input(struct i2c
- 		return;
- 	}
+--- a/drivers/hid/hid-debug.c
++++ b/drivers/hid/hid-debug.c
+@@ -1150,6 +1150,8 @@ copy_rest:
+ 			goto out;
+ 		if (list->tail > list->head) {
+ 			len = list->tail - list->head;
++			if (len > count)
++				len = count;
  
--	if ((ret_size > size) || (ret_size <= 2)) {
-+	if ((ret_size > size) || (ret_size < 2)) {
- 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
- 			__func__, size, ret_size);
- 		return;
+ 			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
+ 				ret = -EFAULT;
+@@ -1159,6 +1161,8 @@ copy_rest:
+ 			list->head += len;
+ 		} else {
+ 			len = HID_DEBUG_BUFSIZE - list->head;
++			if (len > count)
++				len = count;
+ 
+ 			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
+ 				ret = -EFAULT;
+@@ -1166,7 +1170,9 @@ copy_rest:
+ 			}
+ 			list->head = 0;
+ 			ret += len;
+-			goto copy_rest;
++			count -= len;
++			if (count > 0)
++				goto copy_rest;
+ 		}
+ 
+ 	}
 
 
