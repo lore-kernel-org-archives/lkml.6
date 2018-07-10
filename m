@@ -6,41 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 054F2C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD507C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C367D20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:47:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C367D20870
+	by mail.kernel.org (Postfix) with ESMTP id 77DD120870
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77DD120870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388512AbeGJScG (ORCPT
+        id S2388497AbeGJScG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 10 Jul 2018 14:32:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47414 "EHLO
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47428 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387468AbeGJScF (ORCPT
+        with ESMTP id S2387533AbeGJScG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:32:05 -0400
+        Tue, 10 Jul 2018 14:32:06 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9434AD0B;
-        Tue, 10 Jul 2018 18:31:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DF810E3D;
+        Tue, 10 Jul 2018 18:31:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Cannon Matthews <cannonmatthews@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andres Lagar-Cavilla <andreslc@google.com>,
-        Peter Feiner <pfeiner@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 02/53] mm: hugetlb: yield when prepping struct pages
-Date:   Tue, 10 Jul 2018 20:24:38 +0200
-Message-Id: <20180710182458.945026166@linuxfoundation.org>
+        stable@vger.kernel.org, Paulo Alcantara <palcantara@suse.de>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.14 11/53] cifs: Fix infinite loop when using hard mount option
+Date:   Tue, 10 Jul 2018 20:24:47 +0200
+Message-Id: <20180710182459.562609048@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -57,52 +51,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cannon Matthews <cannonmatthews@google.com>
+From: Paulo Alcantara <paulo@paulo.ac>
 
-commit 520495fe96d74e05db585fc748351e0504d8f40d upstream.
+commit 7ffbe65578b44fafdef577a360eb0583929f7c6e upstream.
 
-When booting with very large numbers of gigantic (i.e.  1G) pages, the
-operations in the loop of gather_bootmem_prealloc, and specifically
-prep_compound_gigantic_page, takes a very long time, and can cause a
-softlockup if enough pages are requested at boot.
+For every request we send, whether it is SMB1 or SMB2+, we attempt to
+reconnect tcon (cifs_reconnect_tcon or smb2_reconnect) before carrying
+out the request.
 
-For example booting with 3844 1G pages requires prepping
-(set_compound_head, init the count) over 1 billion 4K tail pages, which
-takes considerable time.
+So, while server->tcpStatus != CifsNeedReconnect, we wait for the
+reconnection to succeed on wait_event_interruptible_timeout(). If it
+returns, that means that either the condition was evaluated to true, or
+timeout elapsed, or it was interrupted by a signal.
 
-Add a cond_resched() to the outer loop in gather_bootmem_prealloc() to
-prevent this lockup.
+Since we're not handling the case where the process woke up due to a
+received signal (-ERESTARTSYS), the next call to
+wait_event_interruptible_timeout() will _always_ fail and we end up
+looping forever inside either cifs_reconnect_tcon() or smb2_reconnect().
 
-Tested: Booted with softlockup_panic=1 hugepagesz=1G hugepages=3844 and
-no softlockup is reported, and the hugepages are reported as
-successfully setup.
+Here's an example of how to trigger that:
 
-Link: http://lkml.kernel.org/r/20180627214447.260804-1-cannonmatthews@google.com
-Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Andres Lagar-Cavilla <andreslc@google.com>
-Cc: Peter Feiner <pfeiner@google.com>
-Cc: Greg Thelen <gthelen@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+$ mount.cifs //foo/share /mnt/test -o
+username=foo,password=foo,vers=1.0,hard
+
+(break connection to server before executing bellow cmd)
+$ stat -f /mnt/test & sleep 140
+[1] 2511
+
+$ ps -aux -q 2511
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      2511  0.0  0.0  12892  1008 pts/0    S    12:24   0:00 stat -f
+/mnt/test
+
+$ kill -9 2511
+
+(wait for a while; process is stuck in the kernel)
+$ ps -aux -q 2511
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      2511 83.2  0.0  12892  1008 pts/0    R    12:24  30:01 stat -f
+/mnt/test
+
+By using 'hard' mount point means that cifs.ko will keep retrying
+indefinitely, however we must allow the process to be killed otherwise
+it would hang the system.
+
+Signed-off-by: Paulo Alcantara <palcantara@suse.de>
+Cc: stable@vger.kernel.org
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hugetlb.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/cifssmb.c |   10 ++++++++--
+ fs/cifs/smb2pdu.c |   18 ++++++++++++------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2159,6 +2159,7 @@ static void __init gather_bootmem_preall
- 		 */
- 		if (hstate_is_gigantic(h))
- 			adjust_managed_page_count(page, 1 << h->order);
-+		cond_resched();
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -150,8 +150,14 @@ cifs_reconnect_tcon(struct cifs_tcon *tc
+ 	 * greater than cifs socket timeout which is 7 seconds
+ 	 */
+ 	while (server->tcpStatus == CifsNeedReconnect) {
+-		wait_event_interruptible_timeout(server->response_q,
+-			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
++		rc = wait_event_interruptible_timeout(server->response_q,
++						      (server->tcpStatus != CifsNeedReconnect),
++						      10 * HZ);
++		if (rc < 0) {
++			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
++				 " signal by the process\n", __func__);
++			return -ERESTARTSYS;
++		}
+ 
+ 		/* are we still trying to reconnect? */
+ 		if (server->tcpStatus != CifsNeedReconnect)
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -153,7 +153,7 @@ out:
+ static int
+ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon)
+ {
+-	int rc = 0;
++	int rc;
+ 	struct nls_table *nls_codepage;
+ 	struct cifs_ses *ses;
+ 	struct TCP_Server_Info *server;
+@@ -164,10 +164,10 @@ smb2_reconnect(__le16 smb2_command, stru
+ 	 * for those three - in the calling routine.
+ 	 */
+ 	if (tcon == NULL)
+-		return rc;
++		return 0;
+ 
+ 	if (smb2_command == SMB2_TREE_CONNECT)
+-		return rc;
++		return 0;
+ 
+ 	if (tcon->tidStatus == CifsExiting) {
+ 		/*
+@@ -210,8 +210,14 @@ smb2_reconnect(__le16 smb2_command, stru
+ 			return -EAGAIN;
+ 		}
+ 
+-		wait_event_interruptible_timeout(server->response_q,
+-			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
++		rc = wait_event_interruptible_timeout(server->response_q,
++						      (server->tcpStatus != CifsNeedReconnect),
++						      10 * HZ);
++		if (rc < 0) {
++			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
++				 " signal by the process\n", __func__);
++			return -ERESTARTSYS;
++		}
+ 
+ 		/* are we still trying to reconnect? */
+ 		if (server->tcpStatus != CifsNeedReconnect)
+@@ -229,7 +235,7 @@ smb2_reconnect(__le16 smb2_command, stru
  	}
- }
+ 
+ 	if (!tcon->ses->need_reconnect && !tcon->need_reconnect)
+-		return rc;
++		return 0;
+ 
+ 	nls_codepage = load_nls_default();
  
 
 
