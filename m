@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADB3C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBF6C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58DF520A8B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58DF520A8B
+	by mail.kernel.org (Postfix) with ESMTP id 9FC23208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC23208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389519AbeGJSfY (ORCPT
+        id S2389534AbeGJSf1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:35:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48264 "EHLO
+        Tue, 10 Jul 2018 14:35:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48272 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389507AbeGJSfX (ORCPT
+        with ESMTP id S2387899AbeGJSfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:35:23 -0400
+        Tue, 10 Jul 2018 14:35:25 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A3F7E78;
-        Tue, 10 Jul 2018 18:35:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 226DDE78;
+        Tue, 10 Jul 2018 18:35:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
         Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.17 25/56] drm/amdgpu: Add amdgpu_atpx_get_dhandle()
-Date:   Tue, 10 Jul 2018 20:25:07 +0200
-Message-Id: <20180710182504.861243642@linuxfoundation.org>
+Subject: [PATCH 4.17 26/56] drm/amdgpu: Dynamically probe for ATIF handle (v2)
+Date:   Tue, 10 Jul 2018 20:25:08 +0200
+Message-Id: <20180710182504.908951487@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -52,12 +52,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lyude Paul <lyude@redhat.com>
 
-commit 4aa5d5eb82bb237d0bb3a38b2a7555054d018081 upstream.
+commit f9ff68521a5541e1fdaeb0ef11871c035b30e409 upstream.
 
-Since it seems that some vendors are storing the ATIF ACPI methods under
-the same handle that ATPX lives under instead of the device's own
-handle, we're going to need to be able to retrieve this handle later so
-we can probe for ATIF there.
+The other day I was testing one of the HP laptops at my office with an
+i915/amdgpu hybrid setup and noticed that hotplugging was non-functional
+on almost all of the display outputs. I eventually discovered that all
+of the external outputs were connected to the amdgpu device instead of
+i915, and that the hotplugs weren't being detected so long as the GPU
+was in runtime suspend. After some talking with folks at AMD, I learned
+that amdgpu is actually supposed to support hotplug detection in runtime
+suspend so long as the OEM has implemented it properly in the firmware.
+
+On this HP ZBook 15 G4 (the machine in question), amdgpu wasn't managing
+to find the ATIF handle at all despite the fact that I could see acpi
+events being sent in response to any hotplugging. After going through
+dumps of the firmware, I discovered that this machine did in fact
+support ATIF, but that it's ATIF method lived in an entirely different
+namespace than this device's handle (the device handle was
+\_SB_.PCI0.PEG0.PEGP, but ATIF lives in ATPX's handle at
+\_SB_.PCI0.GFX0).
+
+So, fix this by probing ATPX's ACPI parent's namespace if we can't find
+ATIF elsewhere, along with storing a pointer to the proper handle to use
+for ATIF and using that instead of the device's handle.
+
+This fixes HPD detection while in runtime suspend for this ZBook!
+
+v2: Update the comment to reflect how the namespaces are arranged
+based on the system configuration. (Alex)
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
@@ -65,39 +87,199 @@ Cc: stable@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu.h              |    6 ++++++
- drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c |    6 ++++++
- 2 files changed, 12 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c |   79 ++++++++++++++++++++++---------
+ 1 file changed, 58 insertions(+), 21 deletions(-)
 
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-@@ -1819,6 +1819,12 @@ static inline bool amdgpu_atpx_dgpu_req_
- static inline bool amdgpu_has_atpx(void) { return false; }
- #endif
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+@@ -65,6 +65,8 @@ struct amdgpu_atif_functions {
+ };
  
-+#if defined(CONFIG_VGA_SWITCHEROO) && defined(CONFIG_ACPI)
-+void *amdgpu_atpx_get_dhandle(void);
-+#else
-+static inline void *amdgpu_atpx_get_dhandle(void) { return NULL; }
-+#endif
+ struct amdgpu_atif {
++	acpi_handle handle;
 +
- /*
-  * KMS
+ 	struct amdgpu_atif_notifications notifications;
+ 	struct amdgpu_atif_functions functions;
+ 	struct amdgpu_atif_notification_cfg notification_cfg;
+@@ -83,8 +85,9 @@ struct amdgpu_atif {
+  * Executes the requested ATIF function (all asics).
+  * Returns a pointer to the acpi output buffer.
   */
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atpx_handler.c
-@@ -90,6 +90,12 @@ bool amdgpu_atpx_dgpu_req_power_for_disp
- 	return amdgpu_atpx_priv.atpx.dgpu_req_power_for_displays;
+-static union acpi_object *amdgpu_atif_call(acpi_handle handle, int function,
+-		struct acpi_buffer *params)
++static union acpi_object *amdgpu_atif_call(struct amdgpu_atif *atif,
++					   int function,
++					   struct acpi_buffer *params)
+ {
+ 	acpi_status status;
+ 	union acpi_object atif_arg_elements[2];
+@@ -107,7 +110,8 @@ static union acpi_object *amdgpu_atif_ca
+ 		atif_arg_elements[1].integer.value = 0;
+ 	}
+ 
+-	status = acpi_evaluate_object(handle, "ATIF", &atif_arg, &buffer);
++	status = acpi_evaluate_object(atif->handle, NULL, &atif_arg,
++				      &buffer);
+ 
+ 	/* Fail only if calling the method fails and ATIF is supported */
+ 	if (ACPI_FAILURE(status) && status != AE_NOT_FOUND) {
+@@ -178,15 +182,14 @@ static void amdgpu_atif_parse_functions(
+  * (all asics).
+  * returns 0 on success, error on failure.
+  */
+-static int amdgpu_atif_verify_interface(acpi_handle handle,
+-		struct amdgpu_atif *atif)
++static int amdgpu_atif_verify_interface(struct amdgpu_atif *atif)
+ {
+ 	union acpi_object *info;
+ 	struct atif_verify_interface output;
+ 	size_t size;
+ 	int err = 0;
+ 
+-	info = amdgpu_atif_call(handle, ATIF_FUNCTION_VERIFY_INTERFACE, NULL);
++	info = amdgpu_atif_call(atif, ATIF_FUNCTION_VERIFY_INTERFACE, NULL);
+ 	if (!info)
+ 		return -EIO;
+ 
+@@ -213,6 +216,35 @@ out:
+ 	return err;
  }
  
-+#if defined(CONFIG_ACPI)
-+void *amdgpu_atpx_get_dhandle(void) {
-+	return amdgpu_atpx_priv.dhandle;
++static acpi_handle amdgpu_atif_probe_handle(acpi_handle dhandle)
++{
++	acpi_handle handle = NULL;
++	char acpi_method_name[255] = { 0 };
++	struct acpi_buffer buffer = { sizeof(acpi_method_name), acpi_method_name };
++	acpi_status status;
++
++	/* For PX/HG systems, ATIF and ATPX are in the iGPU's namespace, on dGPU only
++	 * systems, ATIF is in the dGPU's namespace.
++	 */
++	status = acpi_get_handle(dhandle, "ATIF", &handle);
++	if (ACPI_SUCCESS(status))
++		goto out;
++
++	if (amdgpu_has_atpx()) {
++		status = acpi_get_handle(amdgpu_atpx_get_dhandle(), "ATIF",
++					 &handle);
++		if (ACPI_SUCCESS(status))
++			goto out;
++	}
++
++	DRM_DEBUG_DRIVER("No ATIF handle found\n");
++	return NULL;
++out:
++	acpi_get_name(handle, ACPI_FULL_PATHNAME, &buffer);
++	DRM_DEBUG_DRIVER("Found ATIF handle %s\n", acpi_method_name);
++	return handle;
 +}
-+#endif
 +
  /**
-  * amdgpu_atpx_call - call an ATPX method
+  * amdgpu_atif_get_notification_params - determine notify configuration
   *
+@@ -225,15 +257,16 @@ out:
+  * where n is specified in the result if a notifier is used.
+  * Returns 0 on success, error on failure.
+  */
+-static int amdgpu_atif_get_notification_params(acpi_handle handle,
+-		struct amdgpu_atif_notification_cfg *n)
++static int amdgpu_atif_get_notification_params(struct amdgpu_atif *atif)
+ {
+ 	union acpi_object *info;
++	struct amdgpu_atif_notification_cfg *n = &atif->notification_cfg;
+ 	struct atif_system_params params;
+ 	size_t size;
+ 	int err = 0;
+ 
+-	info = amdgpu_atif_call(handle, ATIF_FUNCTION_GET_SYSTEM_PARAMETERS, NULL);
++	info = amdgpu_atif_call(atif, ATIF_FUNCTION_GET_SYSTEM_PARAMETERS,
++				NULL);
+ 	if (!info) {
+ 		err = -EIO;
+ 		goto out;
+@@ -287,14 +320,15 @@ out:
+  * (all asics).
+  * Returns 0 on success, error on failure.
+  */
+-static int amdgpu_atif_get_sbios_requests(acpi_handle handle,
+-		struct atif_sbios_requests *req)
++static int amdgpu_atif_get_sbios_requests(struct amdgpu_atif *atif,
++					  struct atif_sbios_requests *req)
+ {
+ 	union acpi_object *info;
+ 	size_t size;
+ 	int count = 0;
+ 
+-	info = amdgpu_atif_call(handle, ATIF_FUNCTION_GET_SYSTEM_BIOS_REQUESTS, NULL);
++	info = amdgpu_atif_call(atif, ATIF_FUNCTION_GET_SYSTEM_BIOS_REQUESTS,
++				NULL);
+ 	if (!info)
+ 		return -EIO;
+ 
+@@ -327,11 +361,10 @@ out:
+  * Returns NOTIFY code
+  */
+ static int amdgpu_atif_handler(struct amdgpu_device *adev,
+-			struct acpi_bus_event *event)
++			       struct acpi_bus_event *event)
+ {
+ 	struct amdgpu_atif *atif = adev->atif;
+ 	struct atif_sbios_requests req;
+-	acpi_handle handle;
+ 	int count;
+ 
+ 	DRM_DEBUG_DRIVER("event, device_class = %s, type = %#x\n",
+@@ -347,8 +380,7 @@ static int amdgpu_atif_handler(struct am
+ 		return NOTIFY_DONE;
+ 
+ 	/* Check pending SBIOS requests */
+-	handle = ACPI_HANDLE(&adev->pdev->dev);
+-	count = amdgpu_atif_get_sbios_requests(handle, &req);
++	count = amdgpu_atif_get_sbios_requests(atif, &req);
+ 
+ 	if (count <= 0)
+ 		return NOTIFY_DONE;
+@@ -679,7 +711,7 @@ static int amdgpu_acpi_event(struct noti
+  */
+ int amdgpu_acpi_init(struct amdgpu_device *adev)
+ {
+-	acpi_handle handle;
++	acpi_handle handle, atif_handle;
+ 	struct amdgpu_atif *atif;
+ 	struct amdgpu_atcs *atcs = &adev->atcs;
+ 	int ret;
+@@ -696,14 +728,20 @@ int amdgpu_acpi_init(struct amdgpu_devic
+ 		DRM_DEBUG_DRIVER("Call to ATCS verify_interface failed: %d\n", ret);
+ 	}
+ 
+-	/* Call the ATIF method */
++	/* Probe for ATIF, and initialize it if found */
++	atif_handle = amdgpu_atif_probe_handle(handle);
++	if (!atif_handle)
++		goto out;
++
+ 	atif = kzalloc(sizeof(*atif), GFP_KERNEL);
+ 	if (!atif) {
+ 		DRM_WARN("Not enough memory to initialize ATIF\n");
+ 		goto out;
+ 	}
++	atif->handle = atif_handle;
+ 
+-	ret = amdgpu_atif_verify_interface(handle, atif);
++	/* Call the ATIF method */
++	ret = amdgpu_atif_verify_interface(atif);
+ 	if (ret) {
+ 		DRM_DEBUG_DRIVER("Call to ATIF verify_interface failed: %d\n", ret);
+ 		kfree(atif);
+@@ -739,8 +777,7 @@ int amdgpu_acpi_init(struct amdgpu_devic
+ 	}
+ 
+ 	if (atif->functions.system_params) {
+-		ret = amdgpu_atif_get_notification_params(handle,
+-				&atif->notification_cfg);
++		ret = amdgpu_atif_get_notification_params(atif);
+ 		if (ret) {
+ 			DRM_DEBUG_DRIVER("Call to GET_SYSTEM_PARAMS failed: %d\n",
+ 					ret);
 
 
