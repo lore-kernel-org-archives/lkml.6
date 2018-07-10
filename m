@@ -2,149 +2,88 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA116C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D8BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BB5920B80
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:43:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAMruWly"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BB5920B80
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 36C7820B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:43:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36C7820B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732581AbeGJUoQ (ORCPT
+        id S1732672AbeGJUoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 16:44:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732263AbeGJUoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 16:44:16 -0400
-Received: from localhost (unknown [104.132.1.88])
+        Tue, 10 Jul 2018 16:44:20 -0400
+Received: from complete.lackof.org ([198.49.126.79]:38868 "EHLO
+        complete.lackof.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732263AbeGJUoT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 16:44:19 -0400
+Received: from localhost (c-73-78-137-212.hsd1.co.comcast.net [73.78.137.212])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD320208FA;
-        Tue, 10 Jul 2018 20:43:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531255410;
-        bh=7DGhAbRGkR8UiTfHfBI+D8R+hDrKZawUjmuYqodUbYg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VAMruWlytv8Vlf1tWSGtmr2cFpEURCDIJW7DuErNVDQNOHJVnzGbJsRXbighyQN+y
-         HSbZhSeibXWsVkIxzxqt3vVnZrg1tG3JCsUMmrs/DvA/xkhT/untRp7YulxbleL7K6
-         mm8U1+u6Q+qPPnM0X8+NVjna5sN4aXj6UftBX9WA=
-Date:   Tue, 10 Jul 2018 13:43:29 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 4/4] f2fs: should check the type of end_io
- after pullback by fscrypto
-Message-ID: <20180710204329.GA79040@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180706210903.77887-1-jaegeuk@kernel.org>
- <20180706210903.77887-4-jaegeuk@kernel.org>
- <d09dbae7-8073-1df6-e7ab-a0241c4023ff@kernel.org>
+        (Client did not present a certificate)
+        by complete.lackof.org (Postfix) with ESMTPSA id EBE1133E0027;
+        Tue, 10 Jul 2018 14:43:29 -0600 (MDT)
+Date:   Tue, 10 Jul 2018 14:43:29 -0600
+From:   dann frazier <dann.frazier@canonical.com>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yanaijie@huawei.com,
+        colin.king@canonical.com, kamal.mostafa@canonical.com,
+        ike.pan@canonical.com
+Subject: Re: [Bisect] ext4_validate_inode_bitmap:98: comm stress-ng: Corrupt
+ inode bitmap
+Message-ID: <20180710204329.GB20459@xps13.dannf>
+References: <20180706174324.GA3049@xps13.dannf>
+ <20180707041018.GB3546@thunk.org>
+ <20180710165143.GA20459@xps13.dannf>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d09dbae7-8073-1df6-e7ab-a0241c4023ff@kernel.org>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20180710165143.GA20459@xps13.dannf>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Virus-Scanned: clamav-milter 0.100.0 at complete.lackof.org
+X-Virus-Status: Clean
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09, Chao Yu wrote:
-> On 2018/7/7 5:09, Jaegeuk Kim wrote:
-> > This fixes to get the page type after pullback by fscrypto, since the original
-> > page is bounce page but we should need to get control page which is what we
-> > originally submitted.
+On Tue, Jul 10, 2018 at 10:51:43AM -0600, dann frazier wrote:
+> On Sat, Jul 07, 2018 at 12:10:18AM -0400, Theodore Y. Ts'o wrote:
+> > On Fri, Jul 06, 2018 at 11:43:24AM -0600, dann frazier wrote:
+> > > Hi,
+> > >   We're seeing a regression triggered by the stress-ng[*] "chdir" test
+> > > that I've bisected to:
+> > > 
+> > > 044e6e3d74a3 ext4: don't update checksum of new initialized bitmaps
+> > > 
+> > > So far we've only seen failures on servers based on HiSilicon's family
+> > > of ARM64 SoCs (D05/Hi1616 SoC, D06/Hi1620 SoC). On these systems it is
+> > > very reproducible.
 > > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/data.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> > index c3f9b9baf140..9a0fcec53d0e 100644
-> > --- a/fs/f2fs/data.c
-> > +++ b/fs/f2fs/data.c
-> > @@ -152,7 +152,6 @@ static void f2fs_write_end_io(struct bio *bio)
-> >  
-> >  	bio_for_each_segment_all(bvec, bio, i) {
-> >  		struct page *page = bvec->bv_page;
-> > -		enum count_type type = WB_DATA_TYPE(page);
-> >  
-> >  		if (IS_DUMMY_WRITTEN_PAGE(page)) {
-> >  			set_page_private(page, (unsigned long)NULL);
-> > @@ -169,14 +168,14 @@ static void f2fs_write_end_io(struct bio *bio)
-> >  
-> >  		if (unlikely(bio->bi_status)) {
-> >  			mapping_set_error(page->mapping, -EIO);
-> > -			if (type == F2FS_WB_CP_DATA)
-> > +			if (WB_DATA_TYPE(page) == F2FS_WB_CP_DATA)
-> >  				f2fs_stop_checkpoint(sbi, true);
-> >  		}
-> >  
-> >  		f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
-> >  					page->index != nid_of_node(page));
-> >  
-> > -		dec_page_count(sbi, type);
-> > +		dec_page_count(sbi, WB_DATA_TYPE(page));
+> > Thanks for the report.  Can you verify whether or not this patch fixes
+> > things for you?
 > 
-> But we account F2FS_WB_CP_DATA/F2FS_WB_DATA type page based bounce page instead
-> of original page.
+> hey Ted,
+>   Sorry for the delayed response - was afk for a long weekend.
+> Your patch does seem to fix the issue for me - after applying the
+> patch, I was able to survive 20 iterations (and counting), where
+> previously it would always fail the first time.
 > 
-> 	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
-> 
-> 	/* set submitted = true as a return value */
-> 	fio->submitted = true;
-> 
-> 	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
-> 
-> Because for encrypted page of regular inode, we should account it with
-> F2FS_WB_DATA type:
-> 
-> static bool __is_cp_guaranteed(struct page *page)
-> {
-> ....
-> 	if (!mapping)   <---bounce page's mapping is NULL
-> 		return false;
-> }
-> 
-> So we will get F2FS_WB_DATA type from __is_cp_guaranteed below:
-> 
-> enum count_type type = WB_DATA_TYPE(page);
-> 
-> Is there any problem?
+> However, I've received a conflicting report from a colleague who
+> appears to still be seeing errors. I'll get back to you ASAP once I am
+> able to (in-?)validate that observation.
 
-Wait a minute.
+OK - I believe I found an explanation for my colleague's continued
+test failures after applying the patch. The filesystem being used may
+have already been corrupted from a previous run, and the test w/ your
+patch just tripped over it. Details are here starting in comment #9 if
+you'd like to look them over:
 
-	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
+  https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780137
 
-1. fio->encrypted_page
-
-	inc_page_count(sbi, F2FS_WB_CP_DATA); // page->mapping == META_MAPPING
-
-  In write_end_io(),
-	type = F2FS_WB_DATA; // page->mapping == NULL
-	fscrypt_pullback_bio_page(&page);
-	  page = fio->encrypted_page;
-	
-	dec_page_count(F2FS_WB_DATA);
-
-2. fio->page
-
-	inc_page_count(sbi, F2FS_WB_DATA);
-
-  In write_end_io(),
-	type = F2FS_WB_DATA; // page->mapping == NULL
-	fscrypt_pullback_bio_page(&page);
-	  page = fio->encrypted_page;
-	
-	dec_page_count(F2FS_WB_DATA);
-
-Thoughts?
+  -dann
