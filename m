@@ -2,103 +2,73 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D81CC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:37:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB77AC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3D8420936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:37:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3D8420936
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id A6760208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:38:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6760208EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390167AbeGJShP (ORCPT
+        id S2389763AbeGJSin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:37:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:50060 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389912AbeGJShO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:37:14 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14840ACC;
-        Tue, 10 Jul 2018 18:36:59 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Derrick <jonathan.derrick@intel.com>,
-        Theodore Tso <tytso@mit.edu>, stable@kernel.org
-Subject: [PATCH 4.17 40/56] ext4: check superblock mapped prior to committing
-Date:   Tue, 10 Jul 2018 20:25:22 +0200
-Message-Id: <20180710182505.499799121@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
-References: <20180710182503.544433950@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 10 Jul 2018 14:38:43 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51876 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389766AbeGJSin (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 14:38:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 57A4C19BF;
+        Tue, 10 Jul 2018 10:21:16 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 28A6E3F589;
+        Tue, 10 Jul 2018 10:21:16 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id EF7271AE53F3; Tue, 10 Jul 2018 18:21:57 +0100 (BST)
+Date:   Tue, 10 Jul 2018 18:21:57 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Nikunj Kela <nkela@cisco.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: make flatmem depend on !NUMA
+Message-ID: <20180710172157.GB10177@arm.com>
+References: <20180710151639.2184213-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180710151639.2184213-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+On Tue, Jul 10, 2018 at 05:16:27PM +0200, Arnd Bergmann wrote:
+> Building without NUMA but with FLATMEM results in a link error
+> because mem_map[] is not available:
+> 
+> aarch64-linux-ld -EB -maarch64elfb --no-undefined -X -pie -shared -Bsymbolic --no-apply-dynamic-relocs --build-id -o .tmp_vmlinux1 -T ./arch/arm64/kernel/vmlinux.lds --whole-archive built-in.a --no-whole-archive --start-group arch/arm64/lib/lib.a lib/lib.a --end-group
+> init/do_mounts.o: In function `mount_block_root':
+> do_mounts.c:(.init.text+0x1e8): undefined reference to `mem_map'
+> arch/arm64/kernel/vdso.o: In function `vdso_init':
+> vdso.c:(.init.text+0xb4): undefined reference to `mem_map'
+> 
+> This uses the same trick as the other architectures, making flatmem
+> depend on !NUMA to avoid the broken configuration.
+> 
+> Fixes: e7d4bac428ed ("arm64: add ARM64-specific support for flatmem")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm64/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-------------------
+Thanks, Arnd. I've picked this one up.
 
-From: Jon Derrick <jonathan.derrick@intel.com>
-
-commit a17712c8e4be4fa5404d20e9cd3b2b21eae7bc56 upstream.
-
-This patch attempts to close a hole leading to a BUG seen with hot
-removals during writes [1].
-
-A block device (NVME namespace in this test case) is formatted to EXT4
-without partitions. It's mounted and write I/O is run to a file, then
-the device is hot removed from the slot. The superblock attempts to be
-written to the drive which is no longer present.
-
-The typical chain of events leading to the BUG:
-ext4_commit_super()
-  __sync_dirty_buffer()
-    submit_bh()
-      submit_bh_wbc()
-        BUG_ON(!buffer_mapped(bh));
-
-This fix checks for the superblock's buffer head being mapped prior to
-syncing.
-
-[1] https://www.spinics.net/lists/linux-ext4/msg56527.html
-
-Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- fs/ext4/super.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
-
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -4763,6 +4763,14 @@ static int ext4_commit_super(struct supe
- 
- 	if (!sbh || block_device_ejected(sb))
- 		return error;
-+
-+	/*
-+	 * The superblock bh should be mapped, but it might not be if the
-+	 * device was hot-removed. Not much we can do but fail the I/O.
-+	 */
-+	if (!buffer_mapped(sbh))
-+		return error;
-+
- 	/*
- 	 * If the file system is mounted read-only, don't update the
- 	 * superblock write time.  This avoids updating the superblock
-
-
+Will
