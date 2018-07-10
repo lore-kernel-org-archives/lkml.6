@@ -2,627 +2,228 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB60AC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A790C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CF6120877
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:58:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CF6120877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BD8DA208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:01:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="prxMonvl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD8DA208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933461AbeGJJ6Q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 05:58:16 -0400
-Received: from mga18.intel.com ([134.134.136.126]:6916 "EHLO mga18.intel.com"
+        id S932813AbeGJKB5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 06:01:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751235AbeGJJ4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 05:56:54 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 02:56:53 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,334,1526367600"; 
-   d="scan'208";a="73598578"
-Received: from devel-ww.sh.intel.com ([10.239.48.110])
-  by orsmga002.jf.intel.com with ESMTP; 10 Jul 2018 02:56:33 -0700
-From:   Wei Wang <wei.w.wang@intel.com>
-To:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
-        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
-        akpm@linux-foundation.org
-Cc:     torvalds@linux-foundation.org, pbonzini@redhat.com,
-        wei.w.wang@intel.com, liliang.opensource@gmail.com,
-        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
-        riel@redhat.com, peterx@redhat.com
-Subject: [PATCH v35 3/5] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Date:   Tue, 10 Jul 2018 17:31:05 +0800
-Message-Id: <1531215067-35472-4-git-send-email-wei.w.wang@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531215067-35472-1-git-send-email-wei.w.wang@intel.com>
-References: <1531215067-35472-1-git-send-email-wei.w.wang@intel.com>
+        id S1751235AbeGJKBz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 06:01:55 -0400
+Received: from mail.kernel.org (host-091-097-077-058.ewe-ip-backbone.de [91.97.77.58])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE51120877;
+        Tue, 10 Jul 2018 10:01:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531216915;
+        bh=Ml68ZiTrD127mPxmTON/knQCM0kE47DWQF+YvPCFCbA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=prxMonvlBF6Uw3f9fOiLs6R2wZvIJltkt93M3Oo62+aOZhyJIAM2F8rt4NPbJmgf1
+         Nb1XzhkluRWy+AZj92ukeQ4tZFw7hwIi6PD4UZbUyMu4KURqRQjAGQowfsm5AiuK9O
+         QpZqjNFtK9U3SDUeadvwz71ATCQwY6H0lYTD3OXE=
+Date:   Tue, 10 Jul 2018 12:01:52 +0200
+From:   Sebastian Reichel <sre@kernel.org>
+To:     Javier Martinez Canillas <javierm@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Rob Herring <robh@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Peter Robinson <pbrobinson@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v4] driver core: add a debugfs entry to show deferred
+ devices
+Message-ID: <20180710100152.bb562zgbv7yimb7r@earth.universe>
+References: <20180708133459.24883-1-javierm@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3nly5mrcv7g5p6mv"
+Content-Disposition: inline
+In-Reply-To: <20180708133459.24883-1-javierm@redhat.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Negotiation of the VIRTIO_BALLOON_F_FREE_PAGE_HINT feature indicates the
-support of reporting hints of guest free pages to host via virtio-balloon.
 
-Host requests the guest to report free page hints by sending a new cmd id
-to the guest via the free_page_report_cmd_id configuration register.
+--3nly5mrcv7g5p6mv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-As the first step here, virtio-balloon only reports free page hints from
-the max order (i.e. 10) free page list to host. This has generated similar
-good results as reporting all free page hints during our tests.
+Hi,
 
-When the guest starts to report, it first sends a start cmd to host via
-the free page vq, which acks to host the cmd id received, and tells it the
-hint size (e.g. 4MB each on x86). When the guest finishes the reporting,
-a stop cmd is sent to host via the vq.
+On Sun, Jul 08, 2018 at 03:34:59PM +0200, Javier Martinez Canillas wrote:
+> With Device Trees (DT), the dependencies of the devices are defined in the
+> DT, then the drivers parse that information to lookup the needed resources
+> that have as dependencies.
+>=20
+> Since drivers and devices are registered in a non-deterministic way, it is
+> possible that a device that is a dependency has not been registered yet by
+> the time that is looked up.
+>=20
+> In this case the driver that requires this dependency cannot probe and has
+> to defer it. So the driver core adds it to a list of deferred devices that
+> is iterated again every time that a new driver is probed successfully.
+>=20
+> For debugging purposes it may be useful to know what are the devices whose
+> probe function was deferred. Add a debugfs entry showing that information.
+>=20
+>   $ cat /sys/kernel/debug/devices_deferred
+>   48070000.i2c:twl@48:bci
+>   musb-hdrc.0.auto
+>   omapdrm.0
+>=20
+> This information could be obtained partially by enabling debugging, but it
+> means that the kernel log has to be parsed and the probe deferral balanced
+> with the successes. This can be error probe and has to be done in a ad-hoc
+> manner by everyone who needs to debug these kind of issues.
+>=20
+> Since the information is already known by the kernel, just show it to make
+> it easier to debug.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javierm@redhat.com>
+> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
 
-TODO:
-- support reporting free page hints from smaller order free page lists
-  when there is a need/request from users.
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
 
-Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-Signed-off-by: Liang Li <liang.z.li@intel.com>
-Cc: Michael S. Tsirkin <mst@redhat.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- drivers/virtio/virtio_balloon.c     | 399 +++++++++++++++++++++++++++++++++---
- include/uapi/linux/virtio_balloon.h |  11 +
- 2 files changed, 384 insertions(+), 26 deletions(-)
+-- Sebastian
 
-diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_balloon.c
-index 9356a1a..8754154 100644
---- a/drivers/virtio/virtio_balloon.c
-+++ b/drivers/virtio/virtio_balloon.c
-@@ -43,6 +43,14 @@
- #define OOM_VBALLOON_DEFAULT_PAGES 256
- #define VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
- 
-+/* The order used to allocate a buffer to load free page hints */
-+#define VIRTIO_BALLOON_HINT_BUF_ORDER (MAX_ORDER - 1)
-+/* The number of pages a hint buffer has */
-+#define VIRTIO_BALLOON_HINT_BUF_PAGES (1 << VIRTIO_BALLOON_HINT_BUF_ORDER)
-+/* The size of a hint buffer in bytes */
-+#define VIRTIO_BALLOON_HINT_BUF_SIZE (VIRTIO_BALLOON_HINT_BUF_PAGES << \
-+				      PAGE_SHIFT)
-+
- static int oom_pages = OOM_VBALLOON_DEFAULT_PAGES;
- module_param(oom_pages, int, S_IRUSR | S_IWUSR);
- MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
-@@ -51,9 +59,22 @@ MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
- static struct vfsmount *balloon_mnt;
- #endif
- 
-+enum virtio_balloon_vq {
-+	VIRTIO_BALLOON_VQ_INFLATE,
-+	VIRTIO_BALLOON_VQ_DEFLATE,
-+	VIRTIO_BALLOON_VQ_STATS,
-+	VIRTIO_BALLOON_VQ_FREE_PAGE,
-+	VIRTIO_BALLOON_VQ_MAX
-+};
-+
- struct virtio_balloon {
- 	struct virtio_device *vdev;
--	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq;
-+	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq;
-+
-+	/* Balloon's own wq for cpu-intensive work items */
-+	struct workqueue_struct *balloon_wq;
-+	/* The free page reporting work item submitted to the balloon wq */
-+	struct work_struct report_free_page_work;
- 
- 	/* The balloon servicing is delegated to a freezable workqueue. */
- 	struct work_struct update_balloon_stats_work;
-@@ -63,6 +84,15 @@ struct virtio_balloon {
- 	spinlock_t stop_update_lock;
- 	bool stop_update;
- 
-+	/* Command buffers to start and stop the reporting of hints to host */
-+	struct virtio_balloon_free_page_hints_cmd cmd_start;
-+	struct virtio_balloon_free_page_hints_cmd cmd_stop;
-+
-+	/* The cmd id received from host */
-+	u32 cmd_id_received;
-+	/* The cmd id that is actively in use */
-+	u32 cmd_id_active;
-+
- 	/* Waiting for host to ack the pages we released. */
- 	wait_queue_head_t acked;
- 
-@@ -326,17 +356,6 @@ static void stats_handle_request(struct virtio_balloon *vb)
- 	virtqueue_kick(vq);
- }
- 
--static void virtballoon_changed(struct virtio_device *vdev)
--{
--	struct virtio_balloon *vb = vdev->priv;
--	unsigned long flags;
--
--	spin_lock_irqsave(&vb->stop_update_lock, flags);
--	if (!vb->stop_update)
--		queue_work(system_freezable_wq, &vb->update_balloon_size_work);
--	spin_unlock_irqrestore(&vb->stop_update_lock, flags);
--}
--
- static inline s64 towards_target(struct virtio_balloon *vb)
- {
- 	s64 target;
-@@ -353,6 +372,35 @@ static inline s64 towards_target(struct virtio_balloon *vb)
- 	return target - vb->num_pages;
- }
- 
-+static void virtballoon_changed(struct virtio_device *vdev)
-+{
-+	struct virtio_balloon *vb = vdev->priv;
-+	unsigned long flags;
-+	s64 diff = towards_target(vb);
-+
-+	if (diff) {
-+		spin_lock_irqsave(&vb->stop_update_lock, flags);
-+		if (!vb->stop_update)
-+			queue_work(system_freezable_wq,
-+				   &vb->update_balloon_size_work);
-+		spin_unlock_irqrestore(&vb->stop_update_lock, flags);
-+	}
-+
-+	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
-+		virtio_cread(vdev, struct virtio_balloon_config,
-+			     free_page_report_cmd_id, &vb->cmd_id_received);
-+		if (vb->cmd_id_received !=
-+		    VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID &&
-+		    vb->cmd_id_received != vb->cmd_id_active) {
-+			spin_lock_irqsave(&vb->stop_update_lock, flags);
-+			if (!vb->stop_update)
-+				queue_work(vb->balloon_wq,
-+					   &vb->report_free_page_work);
-+			spin_unlock_irqrestore(&vb->stop_update_lock, flags);
-+		}
-+	}
-+}
-+
- static void update_balloon_size(struct virtio_balloon *vb)
- {
- 	u32 actual = vb->num_pages;
-@@ -425,28 +473,61 @@ static void update_balloon_size_func(struct work_struct *work)
- 		queue_work(system_freezable_wq, work);
- }
- 
-+static void virtio_balloon_free_used_hint_buf(struct virtqueue *vq)
-+{
-+	unsigned int len;
-+	void *buf;
-+	struct virtio_balloon *vb = vq->vdev->priv;
-+
-+	do {
-+		buf = virtqueue_get_buf(vq, &len);
-+		if (buf == &vb->cmd_start || buf == &vb->cmd_stop)
-+			continue;
-+		free_pages((unsigned long)buf, VIRTIO_BALLOON_HINT_BUF_ORDER);
-+	} while (buf);
-+}
-+
- static int init_vqs(struct virtio_balloon *vb)
- {
--	struct virtqueue *vqs[3];
--	vq_callback_t *callbacks[] = { balloon_ack, balloon_ack, stats_request };
--	static const char * const names[] = { "inflate", "deflate", "stats" };
--	int err, nvqs;
-+	struct virtqueue *vqs[VIRTIO_BALLOON_VQ_MAX];
-+	vq_callback_t *callbacks[VIRTIO_BALLOON_VQ_MAX];
-+	const char *names[VIRTIO_BALLOON_VQ_MAX];
-+	int err;
- 
- 	/*
--	 * We expect two virtqueues: inflate and deflate, and
--	 * optionally stat.
-+	 * Inflateq and deflateq are used unconditionally. The names[]
-+	 * will be NULL if the related feature is not enabled, which will
-+	 * cause no allocation for the corresponding virtqueue in find_vqs.
- 	 */
--	nvqs = virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ) ? 3 : 2;
--	err = virtio_find_vqs(vb->vdev, nvqs, vqs, callbacks, names, NULL);
-+	callbacks[VIRTIO_BALLOON_VQ_INFLATE] = balloon_ack;
-+	names[VIRTIO_BALLOON_VQ_INFLATE] = "inflate";
-+	callbacks[VIRTIO_BALLOON_VQ_DEFLATE] = balloon_ack;
-+	names[VIRTIO_BALLOON_VQ_DEFLATE] = "deflate";
-+	names[VIRTIO_BALLOON_VQ_STATS] = NULL;
-+	names[VIRTIO_BALLOON_VQ_FREE_PAGE] = NULL;
-+
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
-+		names[VIRTIO_BALLOON_VQ_STATS] = "stats";
-+		callbacks[VIRTIO_BALLOON_VQ_STATS] = stats_request;
-+	}
-+
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
-+		names[VIRTIO_BALLOON_VQ_FREE_PAGE] = "free_page_vq";
-+		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] =
-+					virtio_balloon_free_used_hint_buf;
-+	}
-+
-+	err = vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
-+					 vqs, callbacks, names, NULL, NULL);
- 	if (err)
- 		return err;
- 
--	vb->inflate_vq = vqs[0];
--	vb->deflate_vq = vqs[1];
-+	vb->inflate_vq = vqs[VIRTIO_BALLOON_VQ_INFLATE];
-+	vb->deflate_vq = vqs[VIRTIO_BALLOON_VQ_DEFLATE];
- 	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
- 		struct scatterlist sg;
- 		unsigned int num_stats;
--		vb->stats_vq = vqs[2];
-+		vb->stats_vq = vqs[VIRTIO_BALLOON_VQ_STATS];
- 
- 		/*
- 		 * Prime this virtqueue with one buffer so the hypervisor can
-@@ -464,9 +545,246 @@ static int init_vqs(struct virtio_balloon *vb)
- 		}
- 		virtqueue_kick(vb->stats_vq);
- 	}
-+
-+	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
-+		vb->free_page_vq = vqs[VIRTIO_BALLOON_VQ_FREE_PAGE];
-+
- 	return 0;
- }
- 
-+static int send_start_cmd_id(struct virtio_balloon *vb)
-+{
-+	struct scatterlist sg;
-+	struct virtqueue *vq = vb->free_page_vq;
-+	int err;
-+
-+	virtio_balloon_free_used_hint_buf(vq);
-+
-+	vb->cmd_start.id = cpu_to_virtio32(vb->vdev, vb->cmd_id_active);
-+	vb->cmd_start.size = cpu_to_virtio32(vb->vdev,
-+					     MAX_ORDER_NR_PAGES * PAGE_SIZE);
-+	sg_init_one(&sg, &vb->cmd_start,
-+		    sizeof(struct virtio_balloon_free_page_hints_cmd));
-+
-+	err = virtqueue_add_outbuf(vq, &sg, 1, &vb->cmd_start, GFP_KERNEL);
-+	if (!err)
-+		virtqueue_kick(vq);
-+	return err;
-+}
-+
-+static int send_stop_cmd_id(struct virtio_balloon *vb)
-+{
-+	struct scatterlist sg;
-+	struct virtqueue *vq = vb->free_page_vq;
-+	int err;
-+
-+	virtio_balloon_free_used_hint_buf(vq);
-+
-+	vb->cmd_stop.id = cpu_to_virtio32(vb->vdev,
-+				VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID);
-+	vb->cmd_stop.size = 0;
-+	sg_init_one(&sg, &vb->cmd_stop,
-+		    sizeof(struct virtio_balloon_free_page_hints_cmd));
-+	err = virtqueue_add_outbuf(vq, &sg, 1, &vb->cmd_stop, GFP_KERNEL);
-+	if (!err)
-+		virtqueue_kick(vq);
-+	return err;
-+}
-+
-+static int send_hint_buf(struct virtio_balloon *vb, void *buf,
-+			 unsigned int size)
-+{
-+	int err;
-+	struct scatterlist sg;
-+	struct virtqueue *vq = vb->free_page_vq;
-+
-+	virtio_balloon_free_used_hint_buf(vq);
-+
-+	/*
-+	 * If a stop id or a new cmd id was just received from host,
-+	 * stop the reporting, return -EINTR to indicate an active stop.
-+	 */
-+	if (vb->cmd_id_received != vb->cmd_id_active)
-+		return -EINTR;
-+
-+	/* There is always one entry reserved for the cmd id to use. */
-+	if (vq->num_free < 2)
-+		return -ENOSPC;
-+
-+	sg_init_one(&sg, buf, size);
-+	err = virtqueue_add_inbuf(vq, &sg, 1, buf, GFP_KERNEL);
-+	if (!err)
-+		virtqueue_kick(vq);
-+	return err;
-+}
-+
-+static void virtio_balloon_free_hint_bufs(struct list_head *pages)
-+{
-+	struct page *page, *next;
-+
-+	list_for_each_entry_safe(page, next, pages, lru) {
-+		__free_pages(page, VIRTIO_BALLOON_HINT_BUF_ORDER);
-+		list_del(&page->lru);
-+	}
-+}
-+
-+/*
-+ * virtio_balloon_send_hints - send buffers of hints to host
-+ * @vb: the virtio_balloon struct
-+ * @pages: the list of page blocks used as buffers
-+ * @hint_num: the total number of hints
-+ *
-+ * Send buffers of hints to host. This begins by sending a start cmd, which
-+ * contains a cmd id received from host and the free page block size in bytes
-+ * of each hint. At the end, a stop cmd is sent to host to indicate the end
-+ * of this reporting. If host actively requests to stop the reporting, free
-+ * the buffers that have not been sent.
-+ */
-+static void virtio_balloon_send_hints(struct virtio_balloon *vb,
-+				      struct list_head *pages,
-+				      unsigned long hint_num)
-+{
-+	struct page *page, *next;
-+	void *buf;
-+	unsigned int buf_size, hint_size;
-+	int err;
-+
-+	/* Start by sending the received cmd id to host with an outbuf. */
-+	err = send_start_cmd_id(vb);
-+	if (unlikely(err))
-+		goto out_free;
-+
-+	list_for_each_entry_safe(page, next, pages, lru) {
-+		/* We've sent all the hints. */
-+		if (!hint_num)
-+			break;
-+		hint_size = hint_num * sizeof(__le64);
-+		buf = page_address(page);
-+		buf_size = hint_size > VIRTIO_BALLOON_HINT_BUF_SIZE ?
-+			   VIRTIO_BALLOON_HINT_BUF_SIZE : hint_size;
-+		hint_num -= buf_size / sizeof(__le64);
-+		err = send_hint_buf(vb, buf, buf_size);
-+		/*
-+		 * If host actively stops the reporting or no space to add more
-+		 * hint bufs, just stop adding hints and continue to add the
-+		 * stop cmd. Other device errors need to bail out with an error
-+		 * message.
-+		 */
-+		if (unlikely(err == -EINTR || err == -ENOSPC))
-+			break;
-+		else if (unlikely(err))
-+			goto out_free;
-+		/*
-+		 * Remove the buffer from the list only when it has been given
-+		 * to host. Otherwise, it will stay on the list and will be
-+		 * freed via virtio_balloon_free_hint_bufs.
-+		 */
-+		list_del(&page->lru);
-+	}
-+
-+	/* End by sending a stop id to host with an outbuf. */
-+	err = send_stop_cmd_id(vb);
-+out_free:
-+	if (err)
-+		dev_err(&vb->vdev->dev, "%s: err = %d\n", __func__, err);
-+	/* Free all the buffers that are not sent to host. */
-+	virtio_balloon_free_hint_bufs(pages);
-+}
-+
-+/*
-+ * Allocate a list of buffers to load free page hints. Those buffers are
-+ * allocated based on the estimation of the max number of free page blocks
-+ * that the system may have, so that they are sufficient to store all the
-+ * free page addresses.
-+ *
-+ * Return 0 on success, otherwise false.
-+ */
-+static int virtio_balloon_alloc_hint_bufs(struct list_head *pages)
-+{
-+	struct page *page;
-+	unsigned long max_entries, entries_per_page, entries_per_buf,
-+		      max_buf_num;
-+	int i;
-+
-+	max_entries = max_free_page_blocks(VIRTIO_BALLOON_HINT_BUF_ORDER);
-+	entries_per_page = PAGE_SIZE / sizeof(__le64);
-+	entries_per_buf = entries_per_page * VIRTIO_BALLOON_HINT_BUF_PAGES;
-+	max_buf_num = max_entries / entries_per_buf +
-+		      !!(max_entries % entries_per_buf);
-+
-+	for (i = 0; i < max_buf_num; i++) {
-+		page = alloc_pages(__GFP_ATOMIC | __GFP_NOMEMALLOC,
-+				   VIRTIO_BALLOON_HINT_BUF_ORDER);
-+		if (!page) {
-+			/*
-+			 * If any one of the buffers fails to be allocated, it
-+			 * implies that the free list that we are interested
-+			 * in is empty, and there is no need to continue the
-+			 * reporting. So just free what's allocated and return
-+			 * -ENOMEM.
-+			 */
-+			virtio_balloon_free_hint_bufs(pages);
-+			return -ENOMEM;
-+		}
-+		list_add(&page->lru, pages);
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * virtio_balloon_load_hints - load free page hints into buffers
-+ * @vb: the virtio_balloon struct
-+ * @pages: the list of page blocks used as buffers
-+ *
-+ * Only free pages blocks of MAX_ORDER - 1 are loaded into the buffers.
-+ * Each buffer size is MAX_ORDER_NR_PAGES * PAGE_SIZE (e.g. 4MB on x86).
-+ * Failing to allocate such a buffer essentially implies that no such free
-+ * page blocks could be reported.
-+ *
-+ * Return the total number of hints loaded into the buffers.
-+ */
-+static unsigned long virtio_balloon_load_hints(struct virtio_balloon *vb,
-+					       struct list_head *pages)
-+{
-+	unsigned long loaded_hints = 0;
-+	int ret;
-+
-+	do {
-+		ret = virtio_balloon_alloc_hint_bufs(pages);
-+		if (ret)
-+			return 0;
-+
-+		ret = get_from_free_page_list(VIRTIO_BALLOON_HINT_BUF_ORDER,
-+					pages, VIRTIO_BALLOON_HINT_BUF_SIZE,
-+					&loaded_hints);
-+		/*
-+		 * Retry in the case that memory is onlined quickly, which
-+		 * causes the allocated buffers to be insufficient to store
-+		 * all the free page addresses. Free the hint buffers before
-+		 * retry.
-+		 */
-+		if (unlikely(ret == -ENOSPC))
-+			virtio_balloon_free_hint_bufs(pages);
-+	} while (ret == -ENOSPC);
-+
-+	return loaded_hints;
-+}
-+
-+static void report_free_page_func(struct work_struct *work)
-+{
-+	struct virtio_balloon *vb;
-+	unsigned long loaded_hints = 0;
-+	LIST_HEAD(pages);
-+
-+	vb = container_of(work, struct virtio_balloon, report_free_page_work);
-+	vb->cmd_id_active = vb->cmd_id_received;
-+
-+	loaded_hints = virtio_balloon_load_hints(vb, &pages);
-+	if (loaded_hints)
-+		virtio_balloon_send_hints(vb, &pages, loaded_hints);
-+}
-+
- #ifdef CONFIG_BALLOON_COMPACTION
- /*
-  * virtballoon_migratepage - perform the balloon page migration on behalf of
-@@ -580,18 +898,38 @@ static int virtballoon_probe(struct virtio_device *vdev)
- 	if (err)
- 		goto out_free_vb;
- 
-+	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
-+		/*
-+		 * There is always one entry reserved for cmd id, so the ring
-+		 * size needs to be at least two to report free page hints.
-+		 */
-+		if (virtqueue_get_vring_size(vb->free_page_vq) < 2) {
-+			err = -ENOSPC;
-+			goto out_del_vqs;
-+		}
-+		vb->balloon_wq = alloc_workqueue("balloon-wq",
-+					WQ_FREEZABLE | WQ_CPU_INTENSIVE, 0);
-+		if (!vb->balloon_wq) {
-+			err = -ENOMEM;
-+			goto out_del_vqs;
-+		}
-+		INIT_WORK(&vb->report_free_page_work, report_free_page_func);
-+		vb->cmd_id_received = VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID;
-+		vb->cmd_id_active = VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID;
-+	}
-+
- 	vb->nb.notifier_call = virtballoon_oom_notify;
- 	vb->nb.priority = VIRTBALLOON_OOM_NOTIFY_PRIORITY;
- 	err = register_oom_notifier(&vb->nb);
- 	if (err < 0)
--		goto out_del_vqs;
-+		goto out_del_balloon_wq;
- 
- #ifdef CONFIG_BALLOON_COMPACTION
- 	balloon_mnt = kern_mount(&balloon_fs);
- 	if (IS_ERR(balloon_mnt)) {
- 		err = PTR_ERR(balloon_mnt);
- 		unregister_oom_notifier(&vb->nb);
--		goto out_del_vqs;
-+		goto out_del_balloon_wq;
- 	}
- 
- 	vb->vb_dev_info.migratepage = virtballoon_migratepage;
-@@ -601,7 +939,7 @@ static int virtballoon_probe(struct virtio_device *vdev)
- 		kern_unmount(balloon_mnt);
- 		unregister_oom_notifier(&vb->nb);
- 		vb->vb_dev_info.inode = NULL;
--		goto out_del_vqs;
-+		goto out_del_balloon_wq;
- 	}
- 	vb->vb_dev_info.inode->i_mapping->a_ops = &balloon_aops;
- #endif
-@@ -612,6 +950,9 @@ static int virtballoon_probe(struct virtio_device *vdev)
- 		virtballoon_changed(vdev);
- 	return 0;
- 
-+out_del_balloon_wq:
-+	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT))
-+		destroy_workqueue(vb->balloon_wq);
- out_del_vqs:
- 	vdev->config->del_vqs(vdev);
- out_free_vb:
-@@ -645,6 +986,11 @@ static void virtballoon_remove(struct virtio_device *vdev)
- 	cancel_work_sync(&vb->update_balloon_size_work);
- 	cancel_work_sync(&vb->update_balloon_stats_work);
- 
-+	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
-+		cancel_work_sync(&vb->report_free_page_work);
-+		destroy_workqueue(vb->balloon_wq);
-+	}
-+
- 	remove_common(vb);
- #ifdef CONFIG_BALLOON_COMPACTION
- 	if (vb->vb_dev_info.inode)
-@@ -696,6 +1042,7 @@ static unsigned int features[] = {
- 	VIRTIO_BALLOON_F_MUST_TELL_HOST,
- 	VIRTIO_BALLOON_F_STATS_VQ,
- 	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
-+	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
- };
- 
- static struct virtio_driver virtio_balloon_driver = {
-diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/virtio_balloon.h
-index 13b8cb5..b77919b 100644
---- a/include/uapi/linux/virtio_balloon.h
-+++ b/include/uapi/linux/virtio_balloon.h
-@@ -34,15 +34,26 @@
- #define VIRTIO_BALLOON_F_MUST_TELL_HOST	0 /* Tell before reclaiming pages */
- #define VIRTIO_BALLOON_F_STATS_VQ	1 /* Memory Stats virtqueue */
- #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
-+#define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages */
- 
- /* Size of a PFN in the balloon interface. */
- #define VIRTIO_BALLOON_PFN_SHIFT 12
- 
-+#define VIRTIO_BALLOON_FREE_PAGE_REPORT_STOP_ID	0
- struct virtio_balloon_config {
- 	/* Number of pages host wants Guest to give up. */
- 	__u32 num_pages;
- 	/* Number of pages we've actually got in balloon. */
- 	__u32 actual;
-+	/* Free page report command id, readonly by guest */
-+	__u32 free_page_report_cmd_id;
-+};
-+
-+struct virtio_balloon_free_page_hints_cmd {
-+	/* The command id received from host */
-+	__virtio32 id;
-+	/* The free page block size in bytes */
-+	__virtio32 size;
- };
- 
- #define VIRTIO_BALLOON_S_SWAP_IN  0   /* Amount of memory swapped in */
--- 
-2.7.4
+> ---
+>=20
+> Changes since RFC v1:
+> - Remove unneeded ret variable from deferred_devs_show()
+>=20
+> Changes since RFC v2:
+> - Use DEFINE_SHOW_ATTRIBUTE() macro.
+> - Don't propagate debugfs_create_file() error.
+> - Remove IS_ENABLED(CONFIG_DEBUG_FS) guards.
+> - Drop RFC prefix.
+>=20
+> Changes since v1:
+> - Better explain in the commit message why this patch is useful.
+> - Rename deferred_devices entry to devices_deferred.
+> - Add an exit function and remove the debugfs entry.
+>=20
+> Changes since v2:
+> - Add Andy Shevchenko and Mark Brown Reviewed-by tag.
+> - Rebase on top of Greg's driver-core-next branch.
+>=20
+> Changes since v3:
+> - Fixed a build warning caused by a wrong conflict resolution on v3.
+>=20
+>=20
+>  drivers/base/dd.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>=20
+> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
+> index 6ea9c5cece7..e85705e8440 100644
+> --- a/drivers/base/dd.c
+> +++ b/drivers/base/dd.c
+> @@ -16,6 +16,7 @@
+>   * Copyright (c) 2007-2009 Novell Inc.
+>   */
+> =20
+> +#include <linux/debugfs.h>
+>  #include <linux/device.h>
+>  #include <linux/delay.h>
+>  #include <linux/dma-mapping.h>
+> @@ -53,6 +54,7 @@ static DEFINE_MUTEX(deferred_probe_mutex);
+>  static LIST_HEAD(deferred_probe_pending_list);
+>  static LIST_HEAD(deferred_probe_active_list);
+>  static atomic_t deferred_trigger_count =3D ATOMIC_INIT(0);
+> +static struct dentry *deferred_devices;
+> =20
+>  /*
+>   * In some cases, like suspend to RAM or hibernation, It might be reason=
+able
+> @@ -199,6 +201,24 @@ void device_unblock_probing(void)
+>  	driver_deferred_probe_trigger();
+>  }
+> =20
+> +/*
+> + * deferred_devs_show() - Show the devices in the deferred probe pending=
+ list.
+> + */
+> +static int deferred_devs_show(struct seq_file *s, void *data)
+> +{
+> +	struct device_private *curr;
+> +
+> +	mutex_lock(&deferred_probe_mutex);
+> +
+> +	list_for_each_entry(curr, &deferred_probe_pending_list, deferred_probe)
+> +		seq_printf(s, "%s\n", dev_name(curr->device));
+> +
+> +	mutex_unlock(&deferred_probe_mutex);
+> +
+> +	return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(deferred_devs);
+> +
+>  /**
+>   * deferred_probe_initcall() - Enable probing of deferred devices
+>   *
+> @@ -208,6 +228,9 @@ void device_unblock_probing(void)
+>   */
+>  static int deferred_probe_initcall(void)
+>  {
+> +	deferred_devices =3D debugfs_create_file("devices_deferred", 0444, NULL,
+> +					       NULL, &deferred_devs_fops);
+> +
+>  	driver_deferred_probe_enable =3D true;
+>  	driver_deferred_probe_trigger();
+>  	/* Sort as many dependencies as possible before exiting initcalls */
+> @@ -216,6 +239,12 @@ static int deferred_probe_initcall(void)
+>  }
+>  late_initcall(deferred_probe_initcall);
+> =20
+> +static void __exit deferred_probe_exit(void)
+> +{
+> +	debugfs_remove_recursive(deferred_devices);
+> +}
+> +__exitcall(deferred_probe_exit);
+> +
+>  /**
+>   * device_is_bound() - Check if device is bound to a driver
+>   * @dev: device to check
+> --=20
+> 2.17.1
+>=20
 
+--3nly5mrcv7g5p6mv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAltEhA0ACgkQ2O7X88g7
++pq+yw/+PjMci0Doge2pmOKN7WNSiztfnZdd9QB+v+LQH+SdF6WaoxVxr+R55Jve
+ZCmBUevwm+1j6qtPLXDH8exUOGrNqs9c7LBq9Pmn2xwEmznPxnZLMVYOjGoCL8xk
+jRbqwkf1xrteTgwPsC0uNu5/D3Ja1nVXl6wt3uhYec8rtO8UaVQbxAnggXmzBVIe
+MqtOAdW+AMR5SaoyF2KGWW47L8agg8kq+rxTncBOKMh/F4FIHYVokwcRLMNuZjW8
+t11BZXZyq9VKiGns+xWvVzRMD47bTaH/rq2N9jntS+pXWC7s1GDxxdEyJGuuAm2q
+kkAkPhVQjTgZat46r+SsUQM40yp/4yNfsh8ykUDYNm8KRNZsE91i96qqjxz+Iuir
+wb8EuDmASbhmXF4zaNn5slUnpYu3O9KPoFM9MncvhiCaq7YoR59hjxImaG72qHG4
+pxv1zq6ukxcG6calLAfhW/O/ujar3fX8t/2h79936gjolkwUywsQz8rmc72ZPiHP
++z3JLRO9mwJ4aI29GjZDkra9RPZ1E9wIcR0on/TftU5iK5qDtvpHqa6ogxFro1WZ
+IYHFUJp7Rji+KkyBvidT97mEwG2pFTa3g2N5k8hfkUBsK0h35FzbnykTy5qxDFAm
+ttFkMcuqi5AAvmPqooToKxhEQmjYbyehnwRhGW5nJv+GHsUeYto=
+=CEsB
+-----END PGP SIGNATURE-----
+
+--3nly5mrcv7g5p6mv--
