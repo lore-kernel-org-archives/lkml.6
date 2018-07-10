@@ -2,148 +2,113 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CA6C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:06:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B6FC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB5A20835
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:06:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7AB920854
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:08:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVjRSXoK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB5A20835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WbjTv3Ie"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AB920854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934410AbeGJQGD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:06:03 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:40482 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933796AbeGJQGB (ORCPT
+        id S934444AbeGJQIt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:08:49 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:51677 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934339AbeGJQIs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:06:01 -0400
-Received: by mail-yb0-f193.google.com with SMTP id y11-v6so8805575ybm.7;
-        Tue, 10 Jul 2018 09:06:01 -0700 (PDT)
+        Tue, 10 Jul 2018 12:08:48 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s12-v6so25254065wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 09:08:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=yTk0n/NgKzUbEjfBuTldG0UqP4/DSDGQ7OliRuwyFMM=;
-        b=BVjRSXoK6Qf7cYbrpUV5ItlK9HTn3Uf66vhcIZSLcJaouCX+NEQ1X7oCuklMG47ax/
-         orzRWoIxas+o9qbjBhLHDCHkzJgwwsGXPtbWidD1ces/G64tO12yQWc5pLly4WVLXENZ
-         g4YOTjhF0QWtdU/y17XLCP329wT1yrSXlnjgZqgfz4552+p3BLboTyS+k/G2HIo/2Mm6
-         ecR7JH6DNJMyS8UNwoyhVGJLZvpJc/i8TDpZUDyQq0fCGLJbG/zlouof49DDnH9ipx14
-         yKXZLSsSojn+6mbhdzyL98WAZq87I9iL4RG2gQ25wIuGD0/SmrAFxWvC77eckKystdnA
-         FiBg==
+        d=linaro.org; s=google;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9QnRfKa1nYBmy/xNm4RXIbYUvdUGreEmVbcza66JLUI=;
+        b=WbjTv3Iej2/ay4QUzYDcUYj+8QyT+EnQgm/9DDSoIQ+Z5urZQR02H8J7IYloe8Z+/T
+         yJhg3ZcK5k1+7FVJ1SaKUeor2PCLVQYp3DdWstn/htcRCgmTHw/YACWAEP6JDFI9/Q2Q
+         jDrxZNtcR1wJeDrDYwqKxktQHO80gZAgfku9s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=yTk0n/NgKzUbEjfBuTldG0UqP4/DSDGQ7OliRuwyFMM=;
-        b=a7FEezi00YvylUemJcndKmLpAl2Ba2w5yfvRyiVHAWNP6hfSvaH+A104OTlr8iFVBd
-         ypiEStwEVibV4jGg2LxvFRSRm2z6mNrOOXZBjmOyfvmrwZ7NGccg1VSzEIQizfH61rJx
-         13H/TkEU1+KU/4aUhLB/lAIpGqhcYyAzCiJvbvX1pQ2dLtJEqBIT4aMd/jAACrm5nlBl
-         FvDuN74VVTnrzAYip90LOEBX9Wyqu7uxMgqLFj5qN1CYVgLo1CipzIPNRodsrD21Al+C
-         eHwMY0VP7F8gHOYmQnjk3f2/4VagLbxdQemTpc1DAxllJA16oMaSpMQrtxwY/5Jr4FBs
-         3Q+A==
-X-Gm-Message-State: APt69E0wDCImvwgEu2RHj6Q7Om/oCr5BWzLhNMeeSAYNo+ryk//EQgRg
-        DqAjghgihoXiF8Z5Cra8P3ofp6KyVSC0YWLQNHE=
-X-Google-Smtp-Source: AAOMgpfZrI8DhanSJIyLNkL86XcEJo3TWsyinwLfJQohHLZops/1MjY2+Sdxyk+N1AR2CKcUK811W79oVYPzw3T6nqw=
-X-Received: by 2002:a25:8102:: with SMTP id o2-v6mr13270664ybk.379.1531238760497;
- Tue, 10 Jul 2018 09:06:00 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9QnRfKa1nYBmy/xNm4RXIbYUvdUGreEmVbcza66JLUI=;
+        b=gvHei97v76vexV56fMkKyI1GLy43z8WiLdj3sP2yU+VXM/OAL+qsdCTrDGzn0X/p2a
+         ihId1NMFiweRYOBbrVEBYJZrCD5E6vfdadG1TqV5xBtOGqjgMRBBjtlU44iN8PYPDqYF
+         9YCl0MOdaqVmNBMn0K9WMYylTbQhsAXl5n+Q6f380up4YHnXotecCbMV7FcJkLJ4pl6g
+         vRXHzqOlb0iha0TCBzABHjWuuVxK2NT25/nNG4GjZN3cvcgeiQyaoGKHZKF3vwsQZVTN
+         Ixd7NLNJZQHnaVKfbPPb7q67BQX+kOGPoRjGgm9VVOKlpHMhDuw29Q3re7/S8zloGdg1
+         h56g==
+X-Gm-Message-State: APt69E0uEIkHo6oyM2IKcbYIXe7HidJEdZlayKj1j2tCB9VXqfRCyrj2
+        Z+Ha0MW+GoV2mp+ANOLKQzrH/RFXz0c=
+X-Google-Smtp-Source: AAOMgpfwPKE7WJ3TsGBEFyUlb3IsLesderFscasg0kVlnDBUnNzWeDjg0dfVoGXNmijWXIwO6LP7fg==
+X-Received: by 2002:a1c:3743:: with SMTP id e64-v6mr14983569wma.63.1531238927537;
+        Tue, 10 Jul 2018 09:08:47 -0700 (PDT)
+Received: from [192.168.8.101] ([37.173.49.80])
+        by smtp.googlemail.com with ESMTPSA id m17-v6sm27165801wrg.65.2018.07.10.09.08.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 09:08:46 -0700 (PDT)
+Subject: Re: [PATCH] sched/core: Remove useless hrtimer_active check
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+To:     peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
+References: <1529416963-20271-1-git-send-email-daniel.lezcano@linaro.org>
+Message-ID: <de66301c-8c03-6dba-1ab9-c9a9f556c66a@linaro.org>
+Date:   Tue, 10 Jul 2018 18:08:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180611155001.3506-1-peron.clem@gmail.com> <CAJiuCcf3g2fzrR2_4mthjwKRcyZ8KVPX+EZ5_Uifh2E6TkzusQ@mail.gmail.com>
- <52591c2d-e9df-7078-7cdf-0fd8d06c9ee0@linaro.org> <CAJiuCcc-eGRr_RT01dNfhQso5PbXfWy+YZS4PHHcL=_yhA-3Sw@mail.gmail.com>
- <c9db3848-378f-8e1e-c194-53d878894716@linaro.org>
-In-Reply-To: <c9db3848-378f-8e1e-c194-53d878894716@linaro.org>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Tue, 10 Jul 2018 18:05:49 +0200
-Message-ID: <CAJiuCce7yBA+_s44RboKr9x-Ts5qk4T4vCXyVbVuUUxMSc+ScQ@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] Reintroduce i.MX EPIT Timer
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1529416963-20271-1-git-send-email-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Daniel,
+On 19/06/2018 16:02, Daniel Lezcano wrote:
+> The function tick_clear() checks if the timer is active and in this case
+> cancels the timer. However, hrtimer_cancel does the same check.
+> 
+> Perhaps, this test is made on purpose to skip some function calls for
+> efficiency reasons but if it is not the case we can safely remove it.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  kernel/sched/core.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index d155518..aa46aa6 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -218,8 +218,7 @@ void update_rq_clock(struct rq *rq)
+>  
+>  static void hrtick_clear(struct rq *rq)
+>  {
+> -	if (hrtimer_active(&rq->hrtick_timer))
+> -		hrtimer_cancel(&rq->hrtick_timer);
+> +	hrtimer_cancel(&rq->hrtick_timer);
+>  }
+>  
+>  /*
+
+May be not the patch of the century but just a gentle bump if it was
+lost by more important patchset review.
 
 
-On Tue, 10 Jul 2018 at 17:37, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
-ote:
->
-> On 10/07/2018 17:22, Cl=C3=A9ment P=C3=A9ron wrote:
-> > Hi Daniel,
-> >
-> > On Tue, 10 Jul 2018 at 17:12, Daniel Lezcano <daniel.lezcano@linaro.org=
-> wrote:
-> >>
-> >> On 10/07/2018 16:55, Cl=C3=A9ment P=C3=A9ron wrote:
-> >>> Hi,
-> >>>
-> >>> Is there still some remark against merging this ?
-> >>
-> >> How do you want this to be merged ?
-> >>
-> >> Shall I take the two patches related to the timer ? Or Ack them ?
-> >
-> > I'm not an expert on how submitting patches works, it's the first
-> > driver I submit.
->
-> Ok, so usually this is what happens when there is a set of changes:
->
->  1.  they all touch the same subsystem (eg. drivers/clocksource), you
-> just send all the patches to the maintainer(s) + mailing list + related
-> people
->
->  2. they touch different subsystems:
->
->    2.1) the changes are not connected (not related together), you have
-> to split in smaller parts and send the patches to the right subsystem
-> maintainer (so falling back to 1.)
->
->    2.2) the changes are connected:
->
->       2.2.1) Ask all the different subsystem maintainers to acknowledge
-> the changes and submit the patches to arm-soc@
->
->       2.2.2) Ask each maintainer to take their part if the changes are
-> connected but not interdependent (patches individually won't break the
-> system)
->
->
-> You are in the 2.2) situation. My question is do you want 2.2.1) or 2.2.2=
-) ?
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Thanks for the explanation, I think in 2.2.1 as I still need an Ack
-for the "ARM: dts" patch
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
-Regards,
-Clement
-
->
->
-> --
->  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
-RM SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
->
