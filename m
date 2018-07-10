@@ -2,167 +2,138 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA4EC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:03:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 605B6C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:04:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C81D720863
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:03:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81D720863
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0BB7420863
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 01:04:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="an+k4g/e";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="N/F3wA6a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BB7420863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933451AbeGJBDh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 21:03:37 -0400
-Received: from mga09.intel.com ([134.134.136.24]:51034 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933206AbeGJBD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 21:03:29 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 18:03:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,332,1526367600"; 
-   d="scan'208";a="73502988"
-Received: from yexl-desktop.sh.intel.com (HELO localhost) ([10.239.159.124])
-  by orsmga002.jf.intel.com with ESMTP; 09 Jul 2018 18:03:19 -0700
-Date:   Tue, 10 Jul 2018 08:59:28 +0800
-From:   Ye Xiaolong <xiaolong.ye@intel.com>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     kbuild test robot <lkp@intel.com>, nicolas.pitre@linaro.org,
-        brijesh.singh@amd.com, thomas.lendacky@amd.com, airlied@linux.ie,
-        linux-pci@vger.kernel.org, richard.weiyang@gmail.com,
-        keith.busch@intel.com, jcmvbkbc@gmail.com,
-        baiyaowei@cmss.chinamobile.com, frowand.list@gmail.com,
-        tglx@linutronix.de, lorenzo.pieralisi@arm.com,
-        sthemmin@microsoft.com, linux-nvdimm@lists.01.org,
-        patrik.r.jakobsson@gmail.com, andy.shevchenko@gmail.com,
-        linux-input@vger.kernel.org, gustavo@padovan.org, bp@suse.de,
-        dyoung@redhat.com, vgoyal@redhat.com, ebiederm@xmission.com,
-        devicetree@vger.kernel.org, haiyangz@microsoft.com,
-        maarten.lankhorst@linux.intel.com, josh@joshtriplett.org,
-        jglisse@redhat.com, robh+dt@kernel.org, seanpaul@chromium.org,
-        bhelgaas@google.com, dan.j.williams@intel.com, yinghai@kernel.org,
-        jonathan.derrick@intel.com, chris@zankel.net, monstr@monstr.eu,
-        linux-parisc@vger.kernel.org, gregkh@linuxfoundation.org,
-        dmitry.torokhov@gmail.com, kexec@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kbuild-all@01.org,
-        devel@linuxdriverproject.org, akpm@linux-foundation.org,
-        fengguang.wu@intel.com, linuxppc-dev@lists.ozlabs.org,
-        davem@davemloft.net
-Subject: Re: [kbuild-all] [PATCH v6 2/4] resource: Use list_head to link
- sibling resource
-Message-ID: <20180710005927.GG10005@yexl-desktop>
-References: <20180704041038.8190-3-bhe@redhat.com>
- <201807042347.hfDcKxmG%fengguang.wu@intel.com>
- <20180708025946.GI3047@MiWiFi-R3L-srv>
+        id S933482AbeGJBER (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 21:04:17 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:44754 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933129AbeGJBEN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 21:04:13 -0400
+Received: by mail-yw0-f195.google.com with SMTP id k18-v6so7236720ywm.11
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 18:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=jHvddHImHXaEVl4L7K9ntGP8IX103T7ufZ2k4qJpwow=;
+        b=an+k4g/es846HJhW6QdER96cLYDMPjkjP2NKTP6giNigOLbGpFoBXnM5vKS/RN2opk
+         z2/vlmPDu4JmQ3ns5DdmOJHe0zX2hFHVUcK72C+9dmB5f+NoR0YsGFOGknsd3TgFzqw7
+         KOE/tvrmGoH1PIrUU/5y5i6IZtvoHOJpWDEpj/gzEIwqoPgNC/8NxMEApjvcOda5mUAL
+         V9F+n0guGHcyK15+yL1c/X9rTD0P/AMMfvlRYyk3joaN4wXbXSGof9oJPYte0cqJourt
+         3RF+0pjOj/tlLSvnAfYBU/F5eFWsw82nkEgmJWc2tGKdvbC0byUOq75upglwUDEsVSIW
+         u0GA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=jHvddHImHXaEVl4L7K9ntGP8IX103T7ufZ2k4qJpwow=;
+        b=N/F3wA6ahUeD3eaVOMyXjHa0+3YlB2QOQMqKiwP3n7iiBeYF77w+K+tJ7j3aghHsjN
+         M33Ut6akJIdYOJ7ou7v6nD/7uS2fKYwqPmpQA1rtiM8nMp8QwP6c7Em92AXrWnTenpnD
+         ksi0mSjnN4oq6GD2u5BzJ5Ph0zIGbLfogqa5E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=jHvddHImHXaEVl4L7K9ntGP8IX103T7ufZ2k4qJpwow=;
+        b=Y4xtZZZC3lojkEYGkkBZD+mYM/b8Mti/kCv7lO2gqy0ASx4ipPj+edpMEFmNLpV8AW
+         wYo3DJvZ4Hg8n9bJSWg40tZH/E02t75gzthWyz2Z13vnRq3YPa7+PBt/vn3mUeqCefnB
+         AzI7C9Tkpt47udugNQ0Q9zi6uYMmE3lOSCCi2Fx44kAhNDJ4z3BbqDsqGOf6PwCEixSN
+         8a3A1q03xRO2IqbNrYPwq/wqa+mzfOWw9jt49nO0Gdxm2YHLrBT8B/bArodIp4W3+Lhf
+         3/aD8uexaOCEc7R8PwNsCKEUJ9NrbZPl1XcrYn9J8xi4qsHQ7O6AGkMklh2fFx9YOWvi
+         QrOA==
+X-Gm-Message-State: APt69E1UPxbNj1fOuksNLyJBwULL5kaGj0OO/QKAnA2CK/7vhybHJ96J
+        u0T+alkLuOKeLq7lK7pheTkPeFiTm0ahPsyDpALlUw==
+X-Google-Smtp-Source: AAOMgpf/YWIfK8OalcNrVC4mx/CApoeuEoUfT0U3aE3DKuFcJwrlXAK1mtMRaPh8NWnAj+/LnS+sXMSUjTGK3UOB1o8=
+X-Received: by 2002:a81:8742:: with SMTP id x63-v6mr5845994ywf.129.1531184652459;
+ Mon, 09 Jul 2018 18:04:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180708025946.GI3047@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Mon, 9 Jul 2018 18:04:11 -0700 (PDT)
+In-Reply-To: <CAK8P3a1r41cbLmWrd3fLfYfX4NRekDSS2P1N7xV-zYQ-2P0x0w@mail.gmail.com>
+References: <20180626172909.41453-1-keescook@chromium.org> <20180626172909.41453-2-keescook@chromium.org>
+ <CAK8P3a1r41cbLmWrd3fLfYfX4NRekDSS2P1N7xV-zYQ-2P0x0w@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 9 Jul 2018 18:04:11 -0700
+X-Google-Sender-Auth: ZWIHExEZKUTAWetXT6lQVQZL8rU
+Message-ID: <CAGXu5jL+Lmq=Wp_O2Lfw=rpYTUst98BVrURvS0m3bD8KCR6K-g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] NTFS: aops: Remove VLA usage
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Anton Altaparmakov <anton@tuxera.com>,
+        linux-ntfs-dev@lists.sourceforge.net,
+        Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 07/08, Baoquan He wrote:
->Hi,
->
->On 07/05/18 at 01:00am, kbuild test robot wrote:
->> Hi Baoquan,
->> 
->> I love your patch! Yet something to improve:
->> 
->> [auto build test ERROR on linus/master]
->> [also build test ERROR on v4.18-rc3 next-20180704]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
->Thanks for telling. 
->
->I cloned 0day-ci/linut to my local pc.
->https://github.com/0day-ci/linux.git
->
->However, I didn't find below branch. And tried to open it in web
->broswer, also failed.
->
-
-Sorry for the inconvenience, 0day bot didn't push the branch to github successfully,
-Just push it manually, you can have a try again.
-
-Thanks,
-Xiaolong
-
-
->
->> url:    https://github.com/0day-ci/linux/commits/Baoquan-He/resource-Use-list_head-to-link-sibling-resource/20180704-121402
->> config: mips-rb532_defconfig (attached as .config)
->> compiler: mipsel-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
->> reproduce:
->>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>         chmod +x ~/bin/make.cross
->>         # save the attached .config to linux build tree
->>         GCC_VERSION=7.2.0 make.cross ARCH=mips 
->
->I did find a old one which is for the old version 5 post.
->
->[bhe@linux]$ git remote -v
->0day-ci	https://github.com/0day-ci/linux.git (fetch)
->0day-ci	https://github.com/0day-ci/linux.git (push)
->[bhe@dhcp-128-28 linux]$ git branch -a| grep Baoquan| grep resource
->  remotes/0day-ci/Baoquan-He/resource-Use-list_head-to-link-sibling-resource/20180612-113600
->
->Could you help have a look at this?
->
->Thanks
->Baoquan
->
->> 
->> All error/warnings (new ones prefixed by >>):
->> 
->> >> arch/mips/pci/pci-rc32434.c:57:11: error: initialization from incompatible pointer type [-Werror=incompatible-pointer-types]
->>      .child = &rc32434_res_pci_mem2
->>               ^
->>    arch/mips/pci/pci-rc32434.c:57:11: note: (near initialization for 'rc32434_res_pci_mem1.child.next')
->> >> arch/mips/pci/pci-rc32434.c:51:47: warning: missing braces around initializer [-Wmissing-braces]
->>     static struct resource rc32434_res_pci_mem1 = {
->>                                                   ^
->>    arch/mips/pci/pci-rc32434.c:60:47: warning: missing braces around initializer [-Wmissing-braces]
->>     static struct resource rc32434_res_pci_mem2 = {
->>                                                   ^
->>    cc1: some warnings being treated as errors
->> 
->> vim +57 arch/mips/pci/pci-rc32434.c
->> 
->> 73b4390f Ralf Baechle 2008-07-16  50  
->> 73b4390f Ralf Baechle 2008-07-16 @51  static struct resource rc32434_res_pci_mem1 = {
->> 73b4390f Ralf Baechle 2008-07-16  52  	.name = "PCI MEM1",
->> 73b4390f Ralf Baechle 2008-07-16  53  	.start = 0x50000000,
->> 73b4390f Ralf Baechle 2008-07-16  54  	.end = 0x5FFFFFFF,
->> 73b4390f Ralf Baechle 2008-07-16  55  	.flags = IORESOURCE_MEM,
->> 73b4390f Ralf Baechle 2008-07-16  56  	.sibling = NULL,
->> 73b4390f Ralf Baechle 2008-07-16 @57  	.child = &rc32434_res_pci_mem2
->> 73b4390f Ralf Baechle 2008-07-16  58  };
->> 73b4390f Ralf Baechle 2008-07-16  59  
->> 
->> :::::: The code at line 57 was first introduced by commit
->> :::::: 73b4390fb23456964201abda79f1210fe337d01a [MIPS] Routerboard 532: Support for base system
->> 
->> :::::: TO: Ralf Baechle <ralf@linux-mips.org>
->> :::::: CC: Ralf Baechle <ralf@linux-mips.org>
->> 
+On Thu, Jul 5, 2018 at 1:44 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, Jun 26, 2018 at 7:29 PM, Kees Cook <keescook@chromium.org> wrote:
+>> In the quest to remove all stack VLA usage from the kernel[1], this
+>> uses the maximum size needed on the stack and adds a sanity check for
+>> robustness: index.block_size cannot be larger than PAGE_SIZE nor less
+>> than NTFS_BLOCK_SIZE.
+>>
+>> [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+>>
+>> Cc: Anton Altaparmakov <anton@tuxera.com>
+>> Cc: linux-ntfs-dev@lists.sourceforge.net
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
 >> ---
->> 0-DAY kernel test infrastructure                Open Source Technology Center
->> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>>  fs/ntfs/aops.c | 5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ntfs/aops.c b/fs/ntfs/aops.c
+>> index 3a2e509c77c5..58dadff3e0e0 100644
+>> --- a/fs/ntfs/aops.c
+>> +++ b/fs/ntfs/aops.c
+>> @@ -926,7 +926,7 @@ static int ntfs_write_mst_block(struct page *page,
+>>         ntfs_volume *vol = ni->vol;
+>>         u8 *kaddr;
+>>         unsigned int rec_size = ni->itype.index.block_size;
+>> -       ntfs_inode *locked_nis[PAGE_SIZE / rec_size];
+>> +       ntfs_inode *locked_nis[PAGE_SIZE / NTFS_BLOCK_SIZE];
+>>         struct buffer_head *bh, *head, *tbh, *rec_start_bh;
+>>         struct buffer_head *bhs[MAX_BUF_PER_PAGE];
+>>         runlist_element *rl;
 >
+> This has uncovered what looks like a preexisting bug on architectures
+> with large page size, this is what I get with 64K pages on arm64:
 >
->_______________________________________________
->kbuild-all mailing list
->kbuild-all@lists.01.org
->https://lists.01.org/mailman/listinfo/kbuild-all
+> fs/ntfs/aops.c: In function 'ntfs_write_mst_block':
+> fs/ntfs/aops.c:1328:1: error: the frame size of 2432 bytes is larger
+> than 2048 bytes [-Werror=frame-larger-than=]
+>
+> Since both ntfs and 64k pages are fairly obscure features, we might
+> get away with just disabling the combination of the two in Kconfig.
+>
+> Using dynamic allocation might be tricky here, since I assume this
+> could be called during writeback in order to free memory, and I can't
+> immediately see any better fix.
+
+I'm open to whatever. In crypto, my series uses specifically 4096 for
+PAGE_SIZE instead of using PAGE_SIZE, since it wasn't really related.
+Here, though, I can't tell if it really IS a page size issue.
+
+-Kees
+
+-- 
+Kees Cook
+Pixel Security
