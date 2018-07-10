@@ -2,91 +2,103 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1588FC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2442C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:16:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF59820834
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:15:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CdJuQ8hc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF59820834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8807B20834
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:16:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8807B20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732787AbeGJUPw (ORCPT
+        id S1732491AbeGJUQq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 16:15:52 -0400
-Received: from mail-it0-f43.google.com ([209.85.214.43]:36699 "EHLO
-        mail-it0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732435AbeGJUPw (ORCPT
+        Tue, 10 Jul 2018 16:16:46 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58931 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732378AbeGJUQq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 16:15:52 -0400
-Received: by mail-it0-f43.google.com with SMTP id j185-v6so467714ite.1;
-        Tue, 10 Jul 2018 13:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d75Zz5jkwot3JOPf8mNiIOEIqXlBvu4oQIskgwi/BU8=;
-        b=CdJuQ8hcaYWjYxOhukfN0fL5up9s+MAKEdCAKd1M2gkJ9NxZpCNIHk2ecfWnu5Uxlj
-         rQ2jMBLZcSGXqIJPAr2OWdHQ2oJpkWGtZ4U90kd0q+k4qS9HzYZtjA7fbgH1P2ola3G+
-         Rn4DR2DZkUHzBiKCurdDD7q9+WuaHouhQGLO8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d75Zz5jkwot3JOPf8mNiIOEIqXlBvu4oQIskgwi/BU8=;
-        b=G8vbPq28CtIOVhuqSROTsOL1cFKjdxRdwnKTjC4znY5CpahJPaGTjDfTFiCa02dPSA
-         onsf7S49c1zKYFYfv/np+kr8UaF+hpq0IoDjY4dY8BK1zqvqRlPM0Spr3IZRGugJ/B7m
-         Cs0AwKgzV5tvbz3A2FxvktnSn/lvptLaWcRAOObKLqgY9mtAaHgm2Cc4V/UHyO1KppkB
-         nABJbgxJoQ2/ejQnoi7+nzdp46z2lGos78xQIZUkqyL0HoIWEiH5uuwhGtKJORuihhEf
-         U4ts4Jmu7n5Tk6HLbs+o/4pPwgwqXHFNvVCqWEOZJ9DYb8uFG3liTt5Kw42Q1wxArCUe
-         WaDQ==
-X-Gm-Message-State: APt69E2oX97V0HjCYnuAYsHsu0jXe0CX9bq+V14tpmamiY2FBEFvdQPP
-        1kYcsQSmBqZlp49hTlkgxQ2ByQDqIbwbt1ayMrY=
-X-Google-Smtp-Source: AAOMgpdBHerIKpxx82zJr07jmx+c6PBunj5QYb03EDfBGi6KIPNk7p2y60+hcd6gyQrSpLKxd2JYyzEDw8bU4NOoGyg=
-X-Received: by 2002:a02:664b:: with SMTP id l11-v6mr22496481jaf.70.1531253713457;
- Tue, 10 Jul 2018 13:15:13 -0700 (PDT)
+        Tue, 10 Jul 2018 16:16:46 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6AKFvNT3265157
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 10 Jul 2018 13:15:57 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6AKFur33265154;
+        Tue, 10 Jul 2018 13:15:56 -0700
+Date:   Tue, 10 Jul 2018 13:15:56 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Sudeep Holla <tipbot@zytor.com>
+Message-ID: <tip-5b5ccbc2b041f98f26b984e013d303b7f9e6fb8e@git.kernel.org>
+Cc:     marc.zyngier@arm.com, mingo@kernel.org, sudeep.holla@arm.com,
+        martin.blumenstingl@googlemail.com, linux-kernel@vger.kernel.org,
+        khilman@baylibre.com, tglx@linutronix.de, hpa@zytor.com
+Reply-To: khilman@baylibre.com, tglx@linutronix.de, hpa@zytor.com,
+          marc.zyngier@arm.com, mingo@kernel.org, sudeep.holla@arm.com,
+          martin.blumenstingl@googlemail.com, linux-kernel@vger.kernel.org
+In-Reply-To: <1531151136-18297-1-git-send-email-sudeep.holla@arm.com>
+References: <1531151136-18297-1-git-send-email-sudeep.holla@arm.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:timers/urgent] Revert "tick: Prefer a lower rating device only
+ if it's CPU local device"
+Git-Commit-ID: 5b5ccbc2b041f98f26b984e013d303b7f9e6fb8e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <000000000000c242e90570aa0062@google.com> <CA+55aFyEZR=v2GySzWWF3uh9ZB53CFFv460Wzg4n8DGze8GFfw@mail.gmail.com>
- <CACT4Y+bOJx+SnkMqzDDUTU1iztQ7DpMBG7Z-oV5wArRaSEzh+Q@mail.gmail.com>
-In-Reply-To: <CACT4Y+bOJx+SnkMqzDDUTU1iztQ7DpMBG7Z-oV5wArRaSEzh+Q@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 10 Jul 2018 13:15:02 -0700
-Message-ID: <CA+55aFz1GVHUGiX1SE_5C-e9LdXdx3pBB10zwga1LOy6axk5Ww@mail.gmail.com>
-Subject: Re: general protection fault in in_aton
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     syzbot+2a831e062bb4aebd8755@syzkaller.appspotmail.com,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        syzkaller-bugs@googlegroups.com,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 12:57 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> Is it really hard to get fault address? I know that userspace
-> generally receives fault address in siginfo.
+Commit-ID:  5b5ccbc2b041f98f26b984e013d303b7f9e6fb8e
+Gitweb:     https://git.kernel.org/tip/5b5ccbc2b041f98f26b984e013d303b7f9e6fb8e
+Author:     Sudeep Holla <sudeep.holla@arm.com>
+AuthorDate: Mon, 9 Jul 2018 16:45:35 +0100
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Tue, 10 Jul 2018 22:12:47 +0200
 
-For an actual page fault it's trivial.
+Revert "tick: Prefer a lower rating device only if it's CPU local device"
 
-However, for invalid addresses (aka "non-canonical"), you don't even
-get a page fault, you get a GP like in this case. And then the actual
-address is not available.
+This reverts commit 1332a90558013ae4242e3dd7934bdcdeafb06c0d.
 
-                 Linus
+The original issue was not because of incorrect checking of cpumask for
+both new and old tick device. It was incorrectly analysed was due to the
+misunderstanding of the comment and misinterpretation of the return value
+from tick_check_preferred. The main issue is with the clockevent driver
+that sets the cpumask to cpu_all_mask instead of cpu_possible_mask.
+
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Link: https://lkml.kernel.org/r/1531151136-18297-1-git-send-email-sudeep.holla@arm.com
+
+---
+ kernel/time/tick-common.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/kernel/time/tick-common.c b/kernel/time/tick-common.c
+index b7005dd21ec1..14de3727b18e 100644
+--- a/kernel/time/tick-common.c
++++ b/kernel/time/tick-common.c
+@@ -277,8 +277,7 @@ static bool tick_check_preferred(struct clock_event_device *curdev,
+ 	 */
+ 	return !curdev ||
+ 		newdev->rating > curdev->rating ||
+-	       (!cpumask_equal(curdev->cpumask, newdev->cpumask) &&
+-	        !tick_check_percpu(curdev, newdev, smp_processor_id()));
++	       !cpumask_equal(curdev->cpumask, newdev->cpumask);
+ }
+ 
+ /*
