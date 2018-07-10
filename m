@@ -2,163 +2,101 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E40FAC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 117DDC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:47:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0986208E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:44:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="eAeASWqC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0986208E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id C4A7F208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:47:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A7F208E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732913AbeGJTo5 (ORCPT
+        id S1732794AbeGJTsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 15:44:57 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:35781 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732205AbeGJTo5 (ORCPT
+        Tue, 10 Jul 2018 15:48:19 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:37655 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732205AbeGJTsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 15:44:57 -0400
-Received: by mail-it0-f66.google.com with SMTP id l16-v6so350987ita.0;
-        Tue, 10 Jul 2018 12:44:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OPioTA7NSLb8JOZqcXPi8HBGs8dC4Uc5cuXwz5hqMb4=;
-        b=eAeASWqCXVdBHLFq0FVfQyHRtCq1ZQGpvyNFvuZiJaXl67xjnIxRm4HIGYvFLs0Y3n
-         oKjXJDiacC5ad6W/pCQ6FEIg25D6T09s8ycVvVCwkgrmz2QPoKY3SInK+0TTNK6P+1yB
-         V24AiflqF/V7yMKOLDmLTNZ61vQ4N5Q9Kro0A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OPioTA7NSLb8JOZqcXPi8HBGs8dC4Uc5cuXwz5hqMb4=;
-        b=eTBuoFep3x6UudFslO56U/L4VJUVC0sReCjZNzvnvwnquTYbkXGmKbiC0Y9ddnS6nJ
-         ml+J+Ia8ufnwFFxGA3XsPo1BSdbLgzbOQF9B5YARYMBiiRaoqSJ82rdrwn8M5WcS18EI
-         LYpztfGG2lond9jDtelpZoONpeVHroGbmToUzqCsTlA6cPdj8SiJa3fKSoeZYC+TxUcF
-         9n2Je4SHerzBO9v5mqqPQe6hvDMAGfq9aH/PJLFgLoBIKQJyX0QrbJl8Z1OJ41GQh9gF
-         FdN8mDegMxycku/roVfwEHuxHx0CdcUxiESUeRSUbWlzIciO27z1eJK5aVUo94rLIg6e
-         E7Hw==
-X-Gm-Message-State: APt69E1kLH9xqwdkfuF8PqN53OBh0vYPqIz07M4w3rTRKcSG9imzym4I
-        dPt8d2pf/dCUKyJcJ1k9eJqrViH9Y1pO5Pa65LM=
-X-Google-Smtp-Source: AAOMgpdOlXKp/OefmeoxT4pNqDwHlJTPJei9GgU/lHe9FVH2nq0n9TwKMFvcOYnD2AlnkDF2WrQA0B1ZXPyz4yxK3DA=
-X-Received: by 2002:a24:94f:: with SMTP id 76-v6mr20063287itm.113.1531251865802;
- Tue, 10 Jul 2018 12:44:25 -0700 (PDT)
+        Tue, 10 Jul 2018 15:48:19 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fcybf-0007GC-B9; Tue, 10 Jul 2018 21:47:27 +0200
+Date:   Tue, 10 Jul 2018 21:47:26 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Eduardo Habkost <ehabkost@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [PATCH v2 1/4] x86/split_lock: Enumerate #AC exception for split
+ locked access feature
+In-Reply-To: <ea23cde0-f999-0ed8-a3bc-e798511467bd@intel.com>
+Message-ID: <alpine.DEB.2.21.1807102140050.1588@nanos.tec.linutronix.de>
+References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com> <1530282807-66555-2-git-send-email-fenghua.yu@intel.com> <b0267bb2-7d1f-c1d6-cff8-addf358009b3@intel.com> <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
+ <20180704200742.GD7451@localhost.localdomain> <20180710184506.GA37857@romley-ivt3.sc.intel.com> <ea23cde0-f999-0ed8-a3bc-e798511467bd@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <000000000000c242e90570aa0062@google.com>
-In-Reply-To: <000000000000c242e90570aa0062@google.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 10 Jul 2018 12:44:14 -0700
-Message-ID: <CA+55aFyEZR=v2GySzWWF3uh9ZB53CFFv460Wzg4n8DGze8GFfw@mail.gmail.com>
-Subject: Re: general protection fault in in_aton
-To:     syzbot+2a831e062bb4aebd8755@syzkaller.appspotmail.com,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 12:19 PM syzbot
-<syzbot+2a831e062bb4aebd8755@syzkaller.appspotmail.com> wrote:
-> RIP: 0010:in_aton+0x3e/0x180 net/core/utils.c:63
+On Tue, 10 Jul 2018, Dave Hansen wrote:
+> On 07/10/2018 11:45 AM, Fenghua Yu wrote:
+> > On Wed, Jul 04, 2018 at 05:07:42PM -0300, Eduardo Habkost wrote:
+> >> On Fri, Jun 29, 2018 at 06:23:35PM +0200, Thomas Gleixner wrote:
+> >>> On Fri, 29 Jun 2018, Dave Hansen wrote:
+> >>>> Is this MSR not really model-specific?  Is it OK to go poking at it on
+> >>>> all x86 variants?  Or, do we at _least_ need a check for Intel cpus in here?
+> >>>
+> >>> That definitely needs a vendor check. Also the whole code needs to be
+> >>> compiled out if CONFIG_INTEL=n.
+> >>>
+> >>> Aside of that this wants to be enumerated. CPUID or MISC_FEATURES and not
+> >>> this guess work detection logic. Why do I have to ask for that for every
+> >>> other new feature thingy?
+> >>
+> >> Yes, please.  KVM hosts normally expect guests to not touch MSRs
+> >> unless we explicitly tell them the MSR is available (normally
+> >> through CPUID).  This is important to ensure live migration
+> >> between different host kernel versions works reliably.
+> > 
+> > The problem is the hardware design for the feature is complete. The
+> > hardware designer cannot change the feature enumeration to CPUID or
+> > MISC_FEATURES.
 
-That's
+Setting a fricking bit in a CPUID leaf or in a MSR cannot be done anymore?
+That's just hilarious.
 
-                if (*str != '\0') {
+> Let's be honest, though.  That's not *hardware* design; that is a
+> microcode update.  We've seen what microcode updates can do _very_
+> clearly with all the security issues.  We (Intel) can surely fix this if
+> sufficiently motivated.  No?
 
-in in_aton().
+Amen to that.
 
-The code disassembles to
+And please tell your hardware people that they should stop creating
+features which are not enumerated in one way or the other. That's just a
+pain all over the place. Boot code, kernel, virt, tools ....
 
-        movzbl (%rax,%r15,1),%eax
+Thanks,
 
-which is a bit odd, because
-
-> RAX: 0000000000000000
-
-Ok, NULL pointer, looks sane, but:
-
-> R15: dffffc0000000000
-
-Yeah, that's unusual. But I'm guessing it's some KASAN artifact. One
-of the big problemns with KASAN is that it makes the generated code
-completely illegible because 90% of the code is just KASAN overhead.
-
-> Call Trace:
->   rdma_create_trans+0xdbe/0x1ed0 net/9p/trans_rdma.c:678
-
-Well, rdma_create_trans() certainly doesn't verify 'addr' before using it.
-
->   p9_client_create+0x915/0x16c9 net/9p/client.c:1062
-
-p9_client_create() just blindly passes on "dev_name"
-
->   v9fs_session_init+0x21a/0x1a80 fs/9p/v9fs.c:400
->   v9fs_mount+0x7c/0x900 fs/9p/vfs_super.c:135
-
-.. as does v9fs_session_init() and v9fs_mount()
-
->   mount_fs+0xae/0x328 fs/super.c:1277
->   vfs_kern_mount.part.34+0xdc/0x4e0 fs/namespace.c:1037
->   vfs_kern_mount fs/namespace.c:1027 [inline]
->   do_new_mount fs/namespace.c:2518 [inline]
->   do_mount+0x581/0x30e0 fs/namespace.c:2848
-
-This is "name" in mount_fs(), vfs_kern_mount(), do_new_mount() and
-do_mount(), also just passed through.
-
->   __do_compat_sys_mount fs/compat.c:125 [inline]
->   __se_compat_sys_mount fs/compat.c:92 [inline]
->   __ia32_compat_sys_mount+0x5d5/0x860 fs/compat.c:92
-
-And here we have the source:
-
-        kernel_dev = copy_mount_string(dev_name);
-
-Note that copy_mount_string() just passes a NULL user space pointer
-through as a NULL kernel pointer (otherwise it does a
-"strndup_user()".
-
-And no, this is not a compat issue. The native mount does the same thing.
-
-So yes. The device name can trivially be NULL, and either rdma or the
-p9 code should check for NULL.
-
-Adding in the 9p people, because I think it's for them. Note the
-syzbot info below.
-
-               Linus
-
---
-
-syzbot found the following crash on:
-
-HEAD commit:    092150a25cb7 Merge branch 'for-linus' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1687b168400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=25856fac4e580aa7
-dashboard link: https://syzkaller.appspot.com/bug?extid=2a831e062bb4aebd8755
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=158cc2c2400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16e7ef48400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2a831e062bb4aebd8755@syzkaller.appspotmail.com
+	tglx
