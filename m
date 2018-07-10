@@ -2,147 +2,107 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8164C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F420DC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A36B420881
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:15:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZmyxaNgH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A36B420881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8199620881
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:17:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8199620881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754280AbeGJLPm (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 07:15:42 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36160 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933222AbeGJLPk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 07:15:40 -0400
-Received: by mail-wr1-f68.google.com with SMTP id h9-v6so14184479wro.3;
-        Tue, 10 Jul 2018 04:15:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=7uK/qUqCs5PlZwEmGyAxMTcfzH/r9TktAJTFyB2r4aM=;
-        b=ZmyxaNgH4VRvWPyDtC9aByrkEW/6qGLL0JQIKmZDPUaFrNOyX/IuPmb3vet0ReakST
-         /pkWiDv4UJpHt8HV4RRBqTLNvO2nLe0YIFUOD53UWmVv521t4OsCL6Yqp11OXejQ62ix
-         baGd3on/nki2bXwUhHAdkZyarveEYo+ClgWMieYQ50EK8YqCNjSdsEfDhmFYpgAWrt9G
-         IWyerGVKxWyOlChoPI2aLlROQ0Umu7ecpeN+1jx28OsuJ1xY3AxeVoTpYDAtBx2HKqkZ
-         4H0W/Sb3YDYEmkR1XO3qWVZ6J8u5t1K3ydOwLHbwASP4YJVFQQP2DiUf97InPpRrEpc4
-         YC3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=7uK/qUqCs5PlZwEmGyAxMTcfzH/r9TktAJTFyB2r4aM=;
-        b=cyPsAded0AbOimU5OZHR3lrchVZ3gm1kFHgnqMDxTqHm6m2uZ+x6Pzt90raxxTy7YR
-         uo4Iduq2G7DOsN2pOwNAVY/O8u600M9S6yejVQticlOrCC4cmsuHA7Y3XBxx0I0G41xT
-         b4y/vDFvCgw7sYs2qvZKALfojgieZJYPWGRIBs6uM8dbX2ECQahT/vdKkZMXwcp9gDbj
-         1mMnn4HoAGaKTRCsIgC11lqn1ooYknFpQ/yjTqRW5i86cavBhEzD9nYxl08MOPbzcUqb
-         nq3EsWFtUHVMRd2h+Tc4l5ihIadBp9zK0yOZFEeI3eqX119seDfBaQuk91eaLUJpPX/P
-         YrYw==
-X-Gm-Message-State: APt69E2IMGjCyBg9192yoL8uP6fiJ2ZMupGrV8VptiFj/f2uo445o9eA
-        m8faQki6ozNyoUJMdcNFeYA=
-X-Google-Smtp-Source: AAOMgpcjyjTJGX+Cz0QvdeUOwvQMwECBfnhnmURGcqJFjBXSu2Hr+yi+DSuTbELxR8JSMu0YYZjdGQ==
-X-Received: by 2002:a5d:6981:: with SMTP id g1-v6mr16463237wru.77.1531221339216;
-        Tue, 10 Jul 2018 04:15:39 -0700 (PDT)
-Received: from sch.bme.hu (ecklm-pi.sch.bme.hu. [152.66.179.182])
-        by smtp.gmail.com with ESMTPSA id t184-v6sm12775720wmf.18.2018.07.10.04.15.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Jul 2018 04:15:37 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 13:15:36 +0200
-From:   =?utf-8?B?TcOhdMOp?= Eckl <ecklm94@gmail.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Flavio Leitner <fbl@redhat.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] netfilter: NFT_SOCKET don't use NF_SOCKET_IPV6 without
- NF_TABLES_IPV6
-Message-ID: <20180710111536.hio2xalz7pyxucc6@sch.bme.hu>
-References: <20180709213537.2748896-1-arnd@arndb.de>
- <20180710080227.qwh53ahq26j6phhd@sch.bme.hu>
- <20180710080538.d7xqpjdvpksfrx6o@sch.bme.hu>
- <CAK8P3a0zYmdoMdWdFDcWprZY_4w2hbMYq4--iZB=JE4x2UiscA@mail.gmail.com>
- <20180710105605.evgtmjiq5z46zld6@salvia>
+        id S933275AbeGJLRQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 07:17:16 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9216 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751527AbeGJLRP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 07:17:15 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1F6B36D79B1DA;
+        Tue, 10 Jul 2018 19:16:59 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.382.0; Tue, 10 Jul 2018
+ 19:16:59 +0800
+Subject: Re: [V9fs-developer] [PATCH] Integer underflow in pdu_read()
+To:     Tomas Bortoli <tomasbortoli@gmail.com>, <ericvh@gmail.com>,
+        <rminnich@sandia.gov>, <lucho@ionkov.net>
+References: <20180709192651.28095-1-tomasbortoli@gmail.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <syzkaller@googlegroups.com>,
+        <v9fs-developer@lists.sourceforge.net>, <davem@davemloft.net>
+From:   piaojun <piaojun@huawei.com>
+Message-ID: <5B44959E.2000108@huawei.com>
+Date:   Tue, 10 Jul 2018 19:16:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180710105605.evgtmjiq5z46zld6@salvia>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <20180709192651.28095-1-tomasbortoli@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 12:56:05PM +0200, Pablo Neira Ayuso wrote:
-> On Tue, Jul 10, 2018 at 11:10:40AM +0200, Arnd Bergmann wrote:
-> > On Tue, Jul 10, 2018 at 10:05 AM, Máté Eckl <ecklm94@gmail.com> wrote:
-> > > On Tue, Jul 10, 2018 at 10:02:27AM +0200, Máté Eckl wrote:
-> > >> On Mon, Jul 09, 2018 at 11:35:09PM +0200, Arnd Bergmann wrote:
-> > >> > It is now possible to build the nft_socket module as built-in when
-> > >> > NF_TABLES_IPV6 is disabled, and have NF_SOCKET_IPV6=m set manually.
-> > >> >
-> > >> > In this case, the NF_SOCKET_IPV6 functionality will be useless according
-> > >> > to the explanation in commit 35bf1ccecaaa ("netfilter: Kconfig: Change
-> > >> > IPv6 select dependencies"), but on top of that it also causes a link
-> > >> > error:
-> > >> >
-> > >> > net/netfilter/nft_socket.o: In function `nft_socket_eval':
-> > >> > nft_socket.c:(.text+0x162): undefined reference to `nf_sk_lookup_slow_v6'
-> > >> >
-> > >> > This changes the compile-time check so we don't attempt to use
-> > >> > the NF_SOCKET_IPV6 code when it cannot be used, and make it all
-> > >> > compile again. That may lead to unexpected behavior when a user
-> > >> > enables NF_SOCKET_IPV6 but cannot use it, but seems to be the
-> > >> > logical conclusion of the 35bf1ccecaaa change.
-> > >> >
-> > >> > Fixes: 35bf1ccecaaa ("netfilter: Kconfig: Change IPv6 select dependencies")
-> > >> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > >>
-> > >> I think this should be fixed in the Kconfig rather than inside the module(s).
-> > 
-> > Should we revert your patch then, or do you have a better idea?
+Hi Tomas,
+
+I found some other subtraction between pdu->size and pdu->offset such as:
+p9pdu_vreadf()
+--min_t(uint32_t, *count, pdu->size - pdu->offset);
+p9_check_zc_errors()
+--len = req->rc->size - req->rc->offset;
+
+I wonder if there are underflow risks?
+
+Thanks,
+Jun
+
+On 2018/7/10 3:26, Tomas Bortoli wrote:
+> The pdu_read() function suffers from an integer underflow.
+> When pdu->offset is greater than pdu->size, the length calculation will have
+> a wrong result, resulting in an out-of-bound read.
+> This patch modifies also pdu_write() in the same way to prevent the same
+> issue from happening there and for consistency.
 > 
-> Máté, would you resubmit a new patch that addresses all the problems
-> that Arnd is reporting in one go?
-
-This patch only solves the nf_socket and nft_socket modules problem so I can
-only submit a v2 for 'netfilter: Kconfig: Change IPv6 select dependencies' but
-you already applied it so it would meen a force push. Should I do this?
-
-I think Arnd's patch solves these problems in case we don't want to force-push
-or rebase.
-
-> I think it's better if we toss your original patch in the tree and
-> rebase, ie. take the new one that fixes all issues that Arnd is
-> reporting. It would be good if we can sort out this before I send the
-> next pull request for net-next stuff.
+> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+> Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
+> ---
+>  net/9p/protocol.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
 > 
-> I was afraid of fallout like this when I saw your original patch,
-> kbuild is always tricky.
-
-This patch is not related to the nft_tproxy module (it seems that you refer to
-that) as Arnd didn't have that in the tree when doing this. I'll send a v4 fot
-the tproxy module, but that cannot be related to this one as it is not in tree
-yet.
-
-> Please Cc Arnd, Florian and me for review.
+> diff --git a/net/9p/protocol.c b/net/9p/protocol.c
+> index 931ea00c4fed..f1e2425f920b 100644
+> --- a/net/9p/protocol.c
+> +++ b/net/9p/protocol.c
+> @@ -55,16 +55,20 @@ EXPORT_SYMBOL(p9stat_free);
+>  
+>  size_t pdu_read(struct p9_fcall *pdu, void *data, size_t size)
+>  {
+> -	size_t len = min(pdu->size - pdu->offset, size);
+> -	memcpy(data, &pdu->sdata[pdu->offset], len);
+> +	size_t len = pdu->offset > pdu->size ? 0 :
+> +	 min(pdu->size - pdu->offset, size);
+> +	if (len != 0)
+> +		memcpy(data, &pdu->sdata[pdu->offset], len);
+>  	pdu->offset += len;
+>  	return size - len;
+>  }
+>  
+>  static size_t pdu_write(struct p9_fcall *pdu, const void *data, size_t size)
+>  {
+> -	size_t len = min(pdu->capacity - pdu->size, size);
+> -	memcpy(&pdu->sdata[pdu->size], data, len);
+> +	size_t len = pdu->size > pdu->capacity ? 0 :
+> +	 min(pdu->capacity - pdu->size, size);
+> +	if (len != 0)
+> +		memcpy(&pdu->sdata[pdu->size], data, len);
+>  	pdu->size += len;
+>  	return size - len;
+>  }
 > 
-> Thanks!
