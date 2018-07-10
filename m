@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1703AC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E07EC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:03:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEFE2208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:03:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEFE2208E8
+	by mail.kernel.org (Postfix) with ESMTP id 29A1B208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:03:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29A1B208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934087AbeGJPDK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:03:10 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33966 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933688AbeGJPDF (ORCPT
+        id S934057AbeGJPDH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:03:07 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37080 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933508AbeGJPDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Jul 2018 11:03:05 -0400
-Received: by mail-ed1-f65.google.com with SMTP id d3-v6so16839838edi.1;
+Received: by mail-ed1-f67.google.com with SMTP id v22-v6so16817272edq.4;
         Tue, 10 Jul 2018 08:03:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=VcUhopMecYC03kbrSoHQSrIeEm004aiaORnsSiPQ1J0=;
-        b=dZ7GtFbJAPeadMMahJYnUaPKMVO+kmTa1WUoCaAc18ZtUW3jWtOgl0Gmo1tCsPeuAc
-         lj8EiDfozbn0FSCsEk4F1daX6B/upUeM9qM3AN9h+YS+WCI6sWT4ZvZdyrqvbyzMkFKX
-         MzKPFO6Uy+RuZ2etP7yY9VpCJkg0tb0EJCN2NtHq5TNvvOuu7SuIUEEltES5wbB8Ki0u
-         y4i96/GN+2DuWQY4QHap9SChJ/2g9io/dy9AE7FqfuaQHc+Ohwh73iMuxsfrh5G+xLTX
-         f+3/ZEBGH852lqZ92Cw2+spj338Eh8VnrTspMF3l+Mgm+Kkww82xpYqzU6aLK8DZCVHW
-         hWQQ==
-X-Gm-Message-State: APt69E3KOlqnYiRp9kBzNraF9VshTyPg6xEbw10U4PL4eE9tK/NWo639
-        ier2V+33Wa9j9ZAXQtbt2oVdgzKEHPU=
-X-Google-Smtp-Source: AAOMgpdAp1lomBjJAsQSLzQV/4FhKZpA+T1EQ2h1CHLn6RjPWY77rCu7pKmahL52kGq9lEV8oSOWUQ==
-X-Received: by 2002:a50:955e:: with SMTP id v30-v6mr27751224eda.268.1531234983944;
+        bh=immCL8nvMsdQdvlzItwFTtPwi1KW9sPD0D5kRCxmUQ8=;
+        b=O7s3YWoT4q2MnoRvRkaC1TjNXY590nFTyBP8m/PqgxFSPKgl5Nd6lBKeN/ZIcjVH4l
+         L0B2Y624+mt17oobbvOpn6Jt16LqX1THa0bK+12l5TbujuYgxYq/3p23VeKs5/tEgYrD
+         q5nwTXwJLOcEtE6Gx8xiIxrjDczU3eYWsP1YKf0BRKgLK/iFl/Bd9i9uRBv+L9vHpPB0
+         YqtL5i4rNJI0SwBlF14QHSHqn7wj3nIk1jkRJE7RuevgqwezD9PkZNm/pXdkst5XPT63
+         C0B68VIpBa5WHGcd3nMhURXWwsWXlCbxRzEvqwOBJ/YvmAnXyhl2qUeoitljrLNd1GFC
+         rnlQ==
+X-Gm-Message-State: APt69E2mxKw8vFjZJJ3hb9I//4DCPsb7pBYd+WYDTsrBG+7jR+N0QNg6
+        PY++K99uJu362c/fUoNvb2IiFl4kSQE=
+X-Google-Smtp-Source: AAOMgpc42/yilRfoZ0SNl09yfR8rwKup313D++HGvhNeT4KenoA7DI8d08NYnD7i25Ou32U6CTqXUQ==
+X-Received: by 2002:a50:9226:: with SMTP id i35-v6mr26754419eda.27.1531234983490;
         Tue, 10 Jul 2018 08:03:03 -0700 (PDT)
-Received: from mail-wm0-f44.google.com (mail-wm0-f44.google.com. [74.125.82.44])
-        by smtp.gmail.com with ESMTPSA id d11-v6sm9199751edo.63.2018.07.10.08.03.03
+Received: from mail-wm0-f46.google.com (mail-wm0-f46.google.com. [74.125.82.46])
+        by smtp.gmail.com with ESMTPSA id u2-v6sm8090628eds.43.2018.07.10.08.03.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
         Tue, 10 Jul 2018 08:03:03 -0700 (PDT)
-Received: by mail-wm0-f44.google.com with SMTP id n17-v6so24730012wmh.2;
+Received: by mail-wm0-f46.google.com with SMTP id v25-v6so25037329wmc.0;
         Tue, 10 Jul 2018 08:03:03 -0700 (PDT)
-X-Received: by 2002:a1c:3b54:: with SMTP id i81-v6mr15695798wma.143.1531234603634;
- Tue, 10 Jul 2018 07:56:43 -0700 (PDT)
+X-Received: by 2002:a1c:ee9a:: with SMTP id j26-v6mr13960025wmi.116.1531234491137;
+ Tue, 10 Jul 2018 07:54:51 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 07:56:23
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 07:54:30
  -0700 (PDT)
-In-Reply-To: <20180710080114.31469-12-paul.kocialkowski@bootlin.com>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com> <20180710080114.31469-12-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20180710080114.31469-11-paul.kocialkowski@bootlin.com>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com> <20180710080114.31469-11-paul.kocialkowski@bootlin.com>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 10 Jul 2018 22:56:23 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65swXpLwAo3M9X=MJeVmUrjT=FPFZxp=eCzMrfopqHKjA@mail.gmail.com>
-Message-ID: <CAGb2v65swXpLwAo3M9X=MJeVmUrjT=FPFZxp=eCzMrfopqHKjA@mail.gmail.com>
-Subject: Re: [PATCH v5 11/22] ARM: sun5i: Add support for the C1 SRAM region
- with the SRAM controller
+Date:   Tue, 10 Jul 2018 22:54:30 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67APUGDu=KM8opavOEKCjorXRyzshdqzZAifPkQzJHNjQ@mail.gmail.com>
+Message-ID: <CAGb2v67APUGDu=KM8opavOEKCjorXRyzshdqzZAifPkQzJHNjQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v5 10/22] ARM: dts: sun7i-a20: Use
+ most-qualified system control compatibles
 To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
@@ -108,15 +108,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Jul 10, 2018 at 4:01 PM, Paul Kocialkowski
 <paul.kocialkowski@bootlin.com> wrote:
-> From: Maxime Ripard <maxime.ripard@bootlin.com>
+> This switches the sun7i-a20 dtsi to use the most qualified compatibles
+> for the system-control block (previously named SRAM controller) as well
+> as the SRAM blocks. The sun4i-a10 compatibles are kept since these
+> hardware blocks are backward-compatible.
 >
-> This adds support for the C1 SRAM region (to be used with the SRAM
-> controller driver) for sun5i-based platforms. The region is shared
-> between the Video Engine and the CPU.
+> The phandle for system control is also updated to reflect the fact that
+> the controller described is really about system control rather than SRAM
+> control.
 >
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
-But again, see discussion about SRAM compatibles.
+But see discussion about the SRAM mapping compatibles.
