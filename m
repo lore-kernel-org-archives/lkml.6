@@ -4,100 +4,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A680C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:09:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A66A2C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D962F208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:09:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C83E208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:12:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="hipqzxzY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D962F208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JLnewOo9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C83E208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933760AbeGJPJd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:09:33 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:52160 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933771AbeGJPJa (ORCPT
+        id S933709AbeGJPMJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:12:09 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45086 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933508AbeGJPMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:09:30 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6AF4JBV137215;
-        Tue, 10 Jul 2018 15:08:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=fR0CxYXB79tHEdG7X6NkNAvq9Ny8S81uLoeCrZVZD+4=;
- b=hipqzxzYbZq0AdmwGZxpbvNns2Y0kIK4JUlNjNqJI3eGCzo3LBeU34/xzGk7KpwgBQAc
- bA3qqwCO987Jcstg5qzcuU3wNso9nPtoAjfH90xXj0cm0NzibLUoIfIfDm+q993O6KNh
- cqEprXGl5RGh8ftPzzJx33MDO6/mxx78OOfEiWy6cFo7oLAaNJbs3eSSmTMcLPBHLTCk
- YtZNt8ijOiG6ZXCSdAupPT/hETwkvfKS/DNJ4k3orluvIV5Io2inkWVKyIpJp8NrGZuJ
- 6PB7pnkThescVoCZdT356egYvObqawzy4FS0DwTUPP+X2zj19LGHf2BEDRLYUbgMv3Z0 4Q== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2k2p75tcvr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Jul 2018 15:08:47 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6AF8kSV022773
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 10 Jul 2018 15:08:46 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6AF8jXW017424;
-        Tue, 10 Jul 2018 15:08:45 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 10 Jul 2018 08:08:44 -0700
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Omar Sandoval <osandov@fb.com>
-Subject: Re: linux-next: build warning after merge of the scsi tree
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20180620132911.5f6ab464@canb.auug.org.au>
-        <20180710173114.17ee69ad@canb.auug.org.au>
-        <280ebbdf-fafb-1744-f517-815a30e682bb@kernel.dk>
-        <1531232063.4963.8.camel@HansenPartnership.com>
-        <3f0359a5-6733-f9d3-a616-d27ce430c904@kernel.dk>
-        <1531232805.4963.11.camel@HansenPartnership.com>
-        <84241128-2d2e-4479-abe0-658fddc1af2d@kernel.dk>
-Date:   Tue, 10 Jul 2018 11:08:42 -0400
-In-Reply-To: <84241128-2d2e-4479-abe0-658fddc1af2d@kernel.dk> (Jens Axboe's
-        message of "Tue, 10 Jul 2018 08:35:23 -0600")
-Message-ID: <yq1a7qzruv9.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        Tue, 10 Jul 2018 11:12:07 -0400
+Received: by mail-wr1-f65.google.com with SMTP id c4-v6so2340371wrs.12
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 08:12:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=y5bw82GwtUG3RzvMIzaUtl5Ar7G2YUK8ipJJdTQVbhw=;
+        b=JLnewOo9xn4QdfBX03nCkB6OioDtLxZrfU1YkZ8kCDL3H2pG6Y/sUwsYNT25F/CBxb
+         Xt1SQBhlcyDidyGzIbv+2Fn2ppY2jd3/JNV9oe7fMVr20MdhxM38bqVGR50svCAxsXvk
+         h2sMgSl8xdE8GDYnSI5jo7eEqQwFr802q4mf0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=y5bw82GwtUG3RzvMIzaUtl5Ar7G2YUK8ipJJdTQVbhw=;
+        b=mrbUb37I4Co5/FmrmyJpa4vWXs29XvtGer30E9WhPRv1CwfTxDgNPgMeh+gP/4JXTJ
+         ONpZBRc7siH8BZdS2RzmUNvP5YduSDxp3KOyKsEsF/V5+/7H1a2BqtwDpBS+qQeLPdot
+         aIh5ax5nOzXGw5prv61XBa+gLeq1Vth62JXMrzngUpKgeOF4DifkksrEtNdgn2AFqSI3
+         iYtkWOgHhis+B71nUUZRmX4HVzVeM16zhoQOn9W+b0RhdLo56KkMmTfU069EJRq7L9Nl
+         WGi6iRJmckX2pb7GbQzlmxKffqBmnAbWp0IqQM8eIt2w1wLAZaUpS/2o2LxIXOCVLnh5
+         5vmw==
+X-Gm-Message-State: AOUpUlGyJUOfS3HyL5/rfMuW0CTbxgLFPawIkQNwDoSfdd+5n6qiB7MT
+        YBanNeFmgqkwxaSZ3JrM7ah8cA==
+X-Google-Smtp-Source: AAOMgpdO0yO0W5PHrJkSpOtxqgGG+BoCRUFTT5oH/aKF8K0UpApi+YNdZaljUVjxwWQQKS9S2XhAQA==
+X-Received: by 2002:adf:a599:: with SMTP id g25-v6mr7264548wrc.88.1531235526744;
+        Tue, 10 Jul 2018 08:12:06 -0700 (PDT)
+Received: from [192.168.8.101] ([37.173.242.72])
+        by smtp.googlemail.com with ESMTPSA id o10-v6sm12413555wrw.79.2018.07.10.08.12.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 08:12:05 -0700 (PDT)
+Subject: Re: [PATCH v7 0/5] Reintroduce i.MX EPIT Timer
+To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
+References: <20180611155001.3506-1-peron.clem@gmail.com>
+ <CAJiuCcf3g2fzrR2_4mthjwKRcyZ8KVPX+EZ5_Uifh2E6TkzusQ@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <52591c2d-e9df-7078-7cdf-0fd8d06c9ee0@linaro.org>
+Date:   Tue, 10 Jul 2018 17:12:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8949 signatures=668705
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=443
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807100162
+In-Reply-To: <CAJiuCcf3g2fzrR2_4mthjwKRcyZ8KVPX+EZ5_Uifh2E6TkzusQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/07/2018 16:55, Clément Péron wrote:
+> Hi,
+> 
+> Is there still some remark against merging this ?
 
-Jens,
+How do you want this to be merged ?
 
->> Message-Id:	<20180706201920.2185565-1-arnd@arndb.de>
->> Subject:	[PATCH] [v2] sbitmap, scsi/target: add seq_file forward declaration
-
->> Martin didn't reply and it's not yet in his tree, although I'm sure it
->> will be soon.
-
-Been out on vacation. I thought I committed it but I guess not. I'll get
-to it today.
+Shall I take the two patches related to the timer ? Or Ack them ?
 
 -- 
-Martin K. Petersen	Oracle Linux Engineering
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
