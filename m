@@ -2,155 +2,122 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22505C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 723EDC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4D49208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:14:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M1WaHjLJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D49208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 362C2208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:15:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 362C2208E8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732673AbeGJTOr (ORCPT
+        id S1732689AbeGJTPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 15:14:47 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:36998 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732502AbeGJTOr (ORCPT
+        Tue, 10 Jul 2018 15:15:30 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:58336 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732502AbeGJTP3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 15:14:47 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6AJE0Nq080691;
-        Tue, 10 Jul 2018 14:14:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531250040;
-        bh=SldqOA8lT+zRIGArWhumukQTJWXMCoY3ACqrkm6R+T8=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=M1WaHjLJK22aFHuZQ1LK13VHCZH0F8WLRvXvWlJHxbLaLFVOxNdBw4mxT29A3nRHI
-         qQ/VkHOMuXXL8WIynVxbKkuwmRWQeBBqnqMfz1YXLF6RoBrWm3EM7HSPW9c1PLzARr
-         XpS5BVXV4f4zrD2KzqRT5imtoNnrsfVTGHdKdHJM=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6AJE0SG011710;
-        Tue, 10 Jul 2018 14:14:00 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 10
- Jul 2018 14:14:00 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 10 Jul 2018 14:14:00 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6AJDusE025610;
-        Tue, 10 Jul 2018 14:13:57 -0500
-Subject: Re: [PATCH v2] driver core: Partially revert "driver core: correct
- device's shutdown order"
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
- <8816662.k3KXbdkA2e@aspire.rjw.lan> <2927655.Y1qg3UnIrE@aspire.rjw.lan>
- <5284251.Resgjlja2Q@aspire.rjw.lan> <20180710125956.GA25343@kroah.com>
- <CAJZ5v0iV0ZaCbhoVOrGx08f6Y7Ei2q+qazxEMQRYD4LAq9LUbA@mail.gmail.com>
- <20180710154715.GA20793@kroah.com>
-CC:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pingfan Liu <kernelfans@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Dave Young <dyoung@redhat.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Linux PM <linux-pm@vger.kernel.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <a35d5f42-a89e-9614-e621-a3274475ef55@ti.com>
-Date:   Wed, 11 Jul 2018 00:43:55 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 10 Jul 2018 15:15:29 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6AJDjVR013721
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 15:15:03 -0400
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k4yhmj603-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 15:15:03 -0400
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Tue, 10 Jul 2018 13:15:02 -0600
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 10 Jul 2018 13:14:58 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6AJEvTv60621048
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Jul 2018 12:14:57 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BAD256A04F;
+        Tue, 10 Jul 2018 13:14:57 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F1C6F6A04D;
+        Tue, 10 Jul 2018 13:14:45 -0600 (MDT)
+Received: from oc6728276242.ibm.com (unknown [9.80.208.154])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 10 Jul 2018 13:14:45 -0600 (MDT)
+Subject: Re: [PATCH v11 5/8] i2c: fsi: Add transfer implementation
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        benh@kernel.crashing.org, joel@jms.id.au, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, rdunlap@infradead.org,
+        andy.shevchenko@gmail.com, peda@axentia.se
+References: <1530816030-13010-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1530816030-13010-6-git-send-email-eajames@linux.vnet.ibm.com>
+ <20180709224114.4h47enyt4tucqcou@ninjato>
+ <d7128886-148f-d255-fb33-3727cad01569@linux.vnet.ibm.com>
+ <20180710185042.x3slnms5wzocobqu@ninjato>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Date:   Tue, 10 Jul 2018 14:14:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180710154715.GA20793@kroah.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20180710185042.x3slnms5wzocobqu@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18071019-0020-0000-0000-00000E3C283C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009346; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01059430; UDB=6.00543726; IPR=6.00837350;
+ MB=3.00022090; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-10 19:15:02
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071019-0021-0000-0000-0000623C4E58
+Message-Id: <cda1b231-eeff-626d-5c79-a07c9bc5a9ec@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-10_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807100204
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Tuesday 10 July 2018 09:17 PM, Greg Kroah-Hartman wrote:
-> On Tue, Jul 10, 2018 at 05:40:21PM +0200, Rafael J. Wysocki wrote:
->> On Tue, Jul 10, 2018 at 2:59 PM, Greg Kroah-Hartman
->> <gregkh@linuxfoundation.org> wrote:
->>> On Tue, Jul 10, 2018 at 02:51:33PM +0200, Rafael J. Wysocki wrote:
->>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>
->>>> Commit 52cdbdd49853 (driver core: correct device's shutdown order)
->>>> introduced a regression by breaking device shutdown on some systems.
->>>>
->>>> Namely, the devices_kset_move_last() call in really_probe() added by
->>>> that commit is a mistake as it may cause parents to follow children
->>>> in the devices_kset list which then causes shutdown to fail.  For
->>>> example, if a device has children before really_probe() is called
->>>> for it (which is not uncommon), that call will cause it to be
->>>> reordered after the children in the devices_kset list and the
->>>> ordering of that list will not reflect the correct device shutdown
->>>> order any more.
->>>>
->>>> Also it causes the devices_kset list to be constantly reordered
->>>> until all drivers have been probed which is totally pointless
->>>> overhead in the majority of cases and it only covered an issue
->>>> with system shutdown, while system-wide suspend/resume potentially
->>>> had the same issue on the affected platforms (which was not covered).
->>>>
->>>> Moreover, the shutdown issue originally addressed by the change in
->>>> really_probe() made by commit 52cdbdd49853 is not present in 4.18-rc
->>>> any more, since dra7 started to use the sdhci-omap driver which
->>>> doesn't disable any regulators during shutdown, so the really_probe()
->>>> part of commit 52cdbdd49853 can be safely reverted.  [The original
->>>> issue was related to the omap_hsmmc driver used by dra7 previously.]
->>>>
->>>> For the above reasons, revert the really_probe() modifications made
->>>> by commit 52cdbdd49853.
->>>>
->>>> The other code changes made by commit 52cdbdd49853 are useful and
->>>> they need not be reverted.
->>>>
->>>> Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
->>>> Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
->>>> Reported-by: Pingfan Liu <kernelfans@gmail.com>
->>>> Tested-by: Pingfan Liu <kernelfans@gmail.com>
->>>> Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>> ---
->>>>
->>>> -> v2: Added information from Kishon on the fact that it should be safe
->>>>        to revert the really_probe() modifications added by the
->>>>        problematic commit.  Also added the Reviewed-by tag from Kishon.
->>>
->>> Looks good to me, want me to queue it up in my tree, or are you going to
->>> send it on to Linus?
->>
->> Please queue it up.
->>
->>> And shouldn't this have a stable tag as well?
->>
->> That is sort of a gray area, because I think it may expose the
->> shutdown issue on dra7 in -stable, but technically it still fixes a
->> regression in the driver core.  So your call I suppose. :-)
-> 
-> Being bug compatible is key :)
-> 
-> I'll add a stable tag.
 
-sure. If I see the issue in dra7, I'll send a stable fix in omap_hsmmmc driver.
+On 07/10/2018 01:50 PM, Wolfram Sang wrote:
+>>>> +	cmd |= FIELD_PREP(I2C_CMD_ADDR, msg->addr >> 1);
+>>> I just noticed this and wonder: Don't you need the LSB of the address?
+>>> It is not the RW flag, this is encoded in msg->flags.
+>> So, the hardware interprets the LSB as the RW flag. It wouldn't be possible
+>> to have a device addressed with the LSB set on this I2C master.
+> But msg->addr is 7 bit and LSB aligned. If I am not horribly wrong, with
+> the above code, an EEPROM at 0x50 would show up as 0x28 with your
+> driver?
 
-Thanks
-Kishon
+Sorry, what do you mean "show up as"? Yes, we could first shift all our 
+addresses in user-space before passing them to the driver, so that the 
+msg->addr field is exactly what the hardware expects already... This 
+would be non-trivial for our users considering all our documentation 
+represents the addresses as the top 7 bits of a byte :(
+
+>
+>> Indeed, real 10-bit addresses require some additional manipulation of this
+>> I2C master in order to work. We don't support it right now.
+> Then you should remove the associated FUNC flag.
+
+Ah, but due to the addressing situation, tools like i2cget don't work 
+with our addresses unless the 10 bit flag is specified. For example, we 
+may want to access 0xA0.
+
+>
+
