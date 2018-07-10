@@ -2,102 +2,144 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4AA8C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 839D0C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D804208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:58:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E486ktNe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D804208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3F91820854
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:58:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F91820854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933629AbeGJO6Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 10:58:25 -0400
-Received: from mail-wr1-f53.google.com ([209.85.221.53]:44616 "EHLO
-        mail-wr1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933383AbeGJO6X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 10:58:23 -0400
-Received: by mail-wr1-f53.google.com with SMTP id r16-v6so14971664wrt.11
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 07:58:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=I6EIVdhVz6GeWnohGLQ/hSOl0BtOITXbwYjxUMUaY9U=;
-        b=E486ktNeXqc2AA9kablSsyxiXB7gW7IPA0nJU3E+MD4ok5eY+jFa1bnlFzlAWf7PB2
-         MVST0bdKTHf76zjAinegKNdSlYkWmFZhX8NEYPW1r2Yrhvno+MO/WGqiMltkNfer35xQ
-         W+mUWDciVwvagHIgkGxPeZKJtrB8Zszf6DGbI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I6EIVdhVz6GeWnohGLQ/hSOl0BtOITXbwYjxUMUaY9U=;
-        b=WqaFKP64sNWH0iF0srTPDF0VO57enT34Sc+zqssiZRu7EHcVNM2If/UrUA4Nq3+CIF
-         0i56VzyQ1bOwV9RWzSk/vpLz1wcUgOYKAmCcHksO6grxmbJ1OQWvkY+1/LBAkxBN1kwY
-         VkchlYtP1dln3xL8mTEvFI9WJSgFEmJTscDJzHAWXGuIJWQU3InfCWRWFpgRaYs5WJdF
-         869LuiyCQjy00SJK464dN/IKVipRMHq2mWwjoRHE11wERx421ozhM5lQcWQPME3yyUj9
-         ylnaDUDUMLoEQKliXA4wh1Gbr80LpNbcNvF6Tmp7Hj9p/t9mTxwBCxtoik8dxbBqELO0
-         E+Fw==
-X-Gm-Message-State: AOUpUlFDZ9uRPuLYwo3VwBh45LIbcxMZTivhXsVoJMU3DEyCG3zaAaow
-        HdN5yQtfyLgODqJX9snk+51FDw==
-X-Google-Smtp-Source: AAOMgpdnaHskpoBkvXpZIayPX7uL8U5hifXu1TTPkz4crvOmYRGm+H1/DUow4F9mWnfA+iGn332iIQ==
-X-Received: by 2002:adf:b243:: with SMTP id y3-v6mr10096822wra.90.1531234702536;
-        Tue, 10 Jul 2018 07:58:22 -0700 (PDT)
-Received: from [192.168.8.101] ([37.173.49.80])
-        by smtp.googlemail.com with ESMTPSA id n8-v6sm20964930wrt.56.2018.07.10.07.58.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 07:58:21 -0700 (PDT)
-Subject: Re: [PATCH v7 0/5] Reintroduce i.MX EPIT Timer
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        Colin Didier <colin.didier@devialet.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Stefan Agner <stefan@agner.ch>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        =?UTF-8?Q?Cl=c3=a9ment_Peron?= <clement.peron@devialet.com>
-References: <20180611155001.3506-1-peron.clem@gmail.com>
- <CAJiuCcf3g2fzrR2_4mthjwKRcyZ8KVPX+EZ5_Uifh2E6TkzusQ@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <5a7bab1d-52b5-ec9d-49ea-4acc3ad9ea00@linaro.org>
-Date:   Tue, 10 Jul 2018 16:58:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933786AbeGJO6m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 10:58:42 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41694 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933383AbeGJO6k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 10:58:40 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C3A1B20798; Tue, 10 Jul 2018 16:58:38 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 990122072D;
+        Tue, 10 Jul 2018 16:58:28 +0200 (CEST)
+Date:   Tue, 10 Jul 2018 16:58:28 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: Re: [PATCH v5 08/22] ARM: dts: sun4i-a10: Use system-control
+ compatible
+Message-ID: <20180710145828.ndrsiyb3ngnnxjk6@flea>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+ <20180710080114.31469-9-paul.kocialkowski@bootlin.com>
+ <CAGb2v65JP8fBvD6Sbexjg2cv5AXVufWxjMVuOPa7J1A9qQjZ2g@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAJiuCcf3g2fzrR2_4mthjwKRcyZ8KVPX+EZ5_Uifh2E6TkzusQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wutdh35tqmlryjrr"
+Content-Disposition: inline
+In-Reply-To: <CAGb2v65JP8fBvD6Sbexjg2cv5AXVufWxjMVuOPa7J1A9qQjZ2g@mail.gmail.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/07/2018 16:55, Clément Péron wrote:
-> Hi,
-> 
-> Is there still some remark against merging this ?
 
-Thanks for the heads up.
+--wutdh35tqmlryjrr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 10, 2018 at 10:52:39PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Jul 10, 2018 at 4:01 PM, Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+>=20
+> Subject prefix should be "ARM: dts: sun4i:"
+>=20
+> We don't need the "a10" part since the A10 owns into this category
+> all by itself.
+>=20
+> Also, it doesn't say what the system control compatible is for.
+> "Switch to new system control compatible string" would be slightly
+> better.
+>=20
+> > This switches the sun4i-a10 dtsi to use the new compatible for the
+> > system-control block (previously named SRAM controller) instead of
+> > the deprecated one.
+> >
+> > The phandle is also updated to reflect the fact that the controller
+>=20
+> The label actually.
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Node name, actually :)
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Maxime
 
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--wutdh35tqmlryjrr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltEyZMACgkQ0rTAlCFN
+r3SUUA/8DozE70W/Zqvjbe4aTk+VB+iQYkDprijYWz07GFnv3wyFYRIJlDti5sfo
+eVN9FDBxXY2t2HsujRr2aTDueZlKQAqwBcyluGmGUBkaAeI1UXKQH3fa9wsxh8Qo
+4lGMfrchx1QHaBv7HqCIpbbxRebX4725s/vDGWill3UgzrXgNFSg9AOplyuv7tjZ
+u+Fa0YjTVJ0vMQxpclpqMGzHRcijVDNNJaOCVt+tcKfRsnX4NFvri1aKZrf/OeoW
+jVnGj9r9Tfppsiqnvu0aNpWpkEffstW1E+LcFxBz3daHnzj16diAzt+iThD3QLZ0
+1TAdLzd90x2bFQ7xziCwBwr8v1r6suOSw5RboIyBgbLqlH0iFTUU1iXfoG7cNmHa
+DZh7qkD3cxMn+7vEbNHNDyvgkTIIB7IsYAAj3W9MBbWt9Es7VAkTb/HUxqVIUs9A
+ZTfz3TUTOaMMPJ4EtpV6zVz6qdG8lvpMD/s9m+0xw4IJtgEHh5Z0c+4ergj47mB1
+QCS1r/5kFD7OVG/oPWYl24Qhcq8H2x2eXkhOoaQVBG4MgQ7qwA0kIKTo/FJDG3F4
+eBOtkRoZ+tJvYnq6SZXHxwK2dyIb9Gr4gE+92OkzgKUm4Sz6CiQ+u/EyLCDWbou2
+Qn7YM2f8foSPnggmxL2lWktzuhJSlI+oCnOEuQ7t1NBJ5eOXlj8=
+=6knu
+-----END PGP SIGNATURE-----
+
+--wutdh35tqmlryjrr--
