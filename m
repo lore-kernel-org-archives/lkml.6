@@ -6,85 +6,207 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3CDC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C04C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEDCF208EB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:16:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEDCF208EB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 993C4208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:17:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 993C4208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934496AbeGJQQk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:16:40 -0400
-Received: from mail-ed1-f44.google.com ([209.85.208.44]:39362 "EHLO
-        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934326AbeGJQQi (ORCPT
+        id S934514AbeGJQRM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:17:12 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:9809 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934265AbeGJQRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:16:38 -0400
-Received: by mail-ed1-f44.google.com with SMTP id w14-v6so16999786eds.6;
-        Tue, 10 Jul 2018 09:16:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0/GkL0f87Q3s2mn4ZLMWfKmf5fxxt27T5VQhPb22TuY=;
-        b=dCIWL+G+SwH8pyW+et3Tx1096HQbgRbS3NIfOspi6OapBQIswD8uBo3QhjmrS5VfsX
-         MF5fXD75YPrKvWeYLAxL5ZAPaAMPMfu3+zAY3y6QidHvnq5SU6pasD7m5bA7QeUsZ+iy
-         FRAJohgc8YsvBlUIX+zL3tXq9R13gECyrbDIJcjw+aWo8WNEshIJJUGkINemI6Ntvbfs
-         bc/Z1GCFeuCZY9bXXxax2m9/nbcl3MsJojDeH94e6v9FQAz5YMd5Wmo+5xjbikxPV5MF
-         H1mJAE3R3EQQ63udAPBTI4avZh/cPu+CeFI0X6OnVGAvL1ZEXNI3XL7ZSF3iSt7IDpId
-         c4Ew==
-X-Gm-Message-State: APt69E0Bq1a5v4PGQ4l1TH655cmp8cRhVXerLozxy331q8ktr9E/f1qJ
-        HB3YYvVS0czPW7rvj7xYleF7OUtB
-X-Google-Smtp-Source: AAOMgpdVg/X2FmjV5syLSrOk/t4+vDfR/V1/CtsAs/eZBRBpY+8cPr27LA7F7L5+d7iQsnpXUWQOIQ==
-X-Received: by 2002:a50:a0a6:: with SMTP id 35-v6mr28004420edo.280.1531239397155;
-        Tue, 10 Jul 2018 09:16:37 -0700 (PDT)
-Received: from mail-wm0-f42.google.com (mail-wm0-f42.google.com. [74.125.82.42])
-        by smtp.gmail.com with ESMTPSA id p30-v6sm11980090edc.5.2018.07.10.09.16.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 09:16:36 -0700 (PDT)
-Received: by mail-wm0-f42.google.com with SMTP id i139-v6so25091928wmf.4;
-        Tue, 10 Jul 2018 09:16:35 -0700 (PDT)
-X-Received: by 2002:a1c:8c12:: with SMTP id o18-v6mr14248982wmd.120.1531239395812;
- Tue, 10 Jul 2018 09:16:35 -0700 (PDT)
+        Tue, 10 Jul 2018 12:17:10 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b44dc000000>; Tue, 10 Jul 2018 09:17:04 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 10 Jul 2018 09:17:09 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 10 Jul 2018 09:17:09 -0700
+Received: from [10.21.132.122] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 10 Jul
+ 2018 16:17:06 +0000
+Subject: Re: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
+To:     Aapo Vienamo <avienamo@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>
+CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+ <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
+Date:   Tue, 10 Jul 2018 17:17:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 09:16:15
- -0700 (PDT)
-In-Reply-To: <20180706175113.26698-16-jernej.skrabec@siol.net>
-References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-16-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 11 Jul 2018 00:16:15 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64=Mzwz6eZxvHO6XuCNa5XQcQDt8HkOrFqRO8MXTVSRjg@mail.gmail.com>
-Message-ID: <CAGb2v64=Mzwz6eZxvHO6XuCNa5XQcQDt8HkOrFqRO8MXTVSRjg@mail.gmail.com>
-Subject: Re: [PATCH 15/17] ARM: dts: sun8i: r40: Disable TCONs by default.
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> R40 has 4 TCONs, but only 2 of them can receive some kind of output at
-> the same time. Let's disable them by default, so only those which are
-> really connected on board can be enabled in board dts file.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Originally I had wanted all TCONs enabled by default. But that would
-require some more work for dynamic assignment of TCONs to CRTCs, which
-is way out of scope for this series. So,
+On 09/07/18 17:38, Aapo Vienamo wrote:
+> From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> 
+> Move this to a separate file so it can be used to calculate the sdmmc
+> clock dividers.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Sorry for not commenting sooner, but what is the motivation for moving
+this to its own file? I don't see why we need to do this in order to use
+elsewhere. Furthermore, the original file is quite aptly named 'clk-divider.c'
+and now we have a div71.c which seems quite specific.
+> Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> ---
+>  drivers/clk/tegra/Makefile      |  1 +
+>  drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
+>  drivers/clk/tegra/clk.h         |  3 +++
+>  drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 52 insertions(+), 25 deletions(-)
+>  create mode 100644 drivers/clk/tegra/div71.c
+> 
+> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> index b716923..6d4f563 100644
+> --- a/drivers/clk/tegra/Makefile
+> +++ b/drivers/clk/tegra/Makefile
+> @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+>  obj-y					+= cvb.o
+>  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+>  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
+> +obj-y					+= div71.o
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index 16e0aee..ad87858 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -32,35 +32,15 @@
+>  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+>  		   unsigned long parent_rate)
+>  {
+> -	u64 divider_ux1 = parent_rate;
+> -	u8 flags = divider->flags;
+> -	int mul;
+> -
+> -	if (!rate)
+> -		return 0;
+> -
+> -	mul = get_mul(divider);
+> -
+> -	if (!(flags & TEGRA_DIVIDER_INT))
+> -		divider_ux1 *= mul;
+> -
+> -	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> -		divider_ux1 += rate - 1;
+> -
+> -	do_div(divider_ux1, rate);
+> -
+> -	if (flags & TEGRA_DIVIDER_INT)
+> -		divider_ux1 *= mul;
+> +	int div;
+>  
+> -	divider_ux1 -= mul;
+> +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
+> +			divider->flags);
+>  
+> -	if ((s64)divider_ux1 < 0)
+> +	if (div < 0)
+>  		return 0;
+>  
+> -	if (divider_ux1 > get_max_div(divider))
+> -		return get_max_div(divider);
+> -
+> -	return divider_ux1;
+> +	return div;
+>  }
+>  
+>  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index e3b9c22..149cc70 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+>  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+>  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+>  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> +	      u8 frac_width, u8 flags);
+> +
+>  
+>  /* Combined read fence with delay */
+>  #define fence_udelay(delay, reg)	\
+> diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
+> new file mode 100644
+> index 0000000..1eecc84
+> --- /dev/null
+> +++ b/drivers/clk/tegra/div71.c
+> @@ -0,0 +1,43 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> + */
+> +
+> +#include <asm/div64.h>
+> +
+> +#include "clk.h"
+> +
+> +#define div_mask(w) ((1 << (w)) - 1)
+> +
+> +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> +	      u8 frac_width, u8 flags)
+> +{
+> +	u64 divider_ux1 = parent_rate;
+> +	int mul;
+> +
+> +	if (!rate)
+> +		return 0;
+> +
+> +	mul = 1 << frac_width;
+> +
+> +	if (!(flags & TEGRA_DIVIDER_INT))
+> +		divider_ux1 *= mul;
+> +
+> +	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> +		divider_ux1 += rate - 1;
+> +
+> +	do_div(divider_ux1, rate);
+> +
+> +	if (flags & TEGRA_DIVIDER_INT)
+> +		divider_ux1 *= mul;
+> +
+> +	if (divider_ux1 < mul)
+> +		return 0;
+> +
+> +	divider_ux1 -= mul;
+> +
+> +	if (divider_ux1 > div_mask(width))
+> +		return div_mask(width);
+> +
+> +	return divider_ux1;
+> +}
 
-I'll think about if and how this could be done.
+I don't see anything in the above that makes this 7.1? It seems that the
+fractional width is being passed meaning it could be m.n unless I am missing
+something.
+
+Cheers
+Jon
+
+-- 
+nvpublic
