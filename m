@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D5A7C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 061B0C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98902083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C98902083E
+	by mail.kernel.org (Postfix) with ESMTP id C13962083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13962083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388071AbeGJSa3 (ORCPT
+        id S2388085AbeGJSab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:30:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45576 "EHLO
+        Tue, 10 Jul 2018 14:30:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45584 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388035AbeGJSa2 (ORCPT
+        with ESMTP id S2388073AbeGJSab (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:30:28 -0400
+        Tue, 10 Jul 2018 14:30:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6D50FEC6;
-        Tue, 10 Jul 2018 18:30:16 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1BAACEB4;
+        Tue, 10 Jul 2018 18:30:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Karoly Pados <pados@pados.hu>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 03/52] USB: serial: cp210x: add Silicon Labs IDs for Windows Update
-Date:   Tue, 10 Jul 2018 20:24:31 +0200
-Message-Id: <20180710182449.522734583@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.9 30/52] ext4: verify the depth of extent tree in ext4_find_extent()
+Date:   Tue, 10 Jul 2018 20:24:58 +0200
+Message-Id: <20180710182452.159573838@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -50,38 +50,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Karoly Pados <pados@pados.hu>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 2f839823382748664b643daa73f41ee0cc01ced6 upstream.
+commit bc890a60247171294acc0bd67d211fa4b88d40ba upstream.
 
-Silicon Labs defines alternative VID/PID pairs for some chips that when
-used will automatically install drivers for Windows users without manual
-intervention. Unfortunately, these IDs are not recognized by the Linux
-module, so using these IDs improves user experience on one platform but
-degrades it on Linux. This patch addresses this problem.
+If there is a corupted file system where the claimed depth of the
+extent tree is -1, this can cause a massive buffer overrun leading to
+sadness.
 
-Signed-off-by: Karoly Pados <pados@pados.hu>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+This addresses CVE-2018-10877.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199417
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/cp210x.c |    3 +++
- 1 file changed, 3 insertions(+)
+ fs/ext4/ext4_extents.h |    1 +
+ fs/ext4/extents.c      |    6 ++++++
+ 2 files changed, 7 insertions(+)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -151,8 +151,11 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
- 	{ USB_DEVICE(0x10C4, 0xEA60) }, /* Silicon Labs factory default */
- 	{ USB_DEVICE(0x10C4, 0xEA61) }, /* Silicon Labs factory default */
-+	{ USB_DEVICE(0x10C4, 0xEA63) }, /* Silicon Labs Windows Update (CP2101-4/CP2102N) */
- 	{ USB_DEVICE(0x10C4, 0xEA70) }, /* Silicon Labs factory default */
- 	{ USB_DEVICE(0x10C4, 0xEA71) }, /* Infinity GPS-MIC-1 Radio Monophone */
-+	{ USB_DEVICE(0x10C4, 0xEA7A) }, /* Silicon Labs Windows Update (CP2105) */
-+	{ USB_DEVICE(0x10C4, 0xEA7B) }, /* Silicon Labs Windows Update (CP2108) */
- 	{ USB_DEVICE(0x10C4, 0xF001) }, /* Elan Digital Systems USBscope50 */
- 	{ USB_DEVICE(0x10C4, 0xF002) }, /* Elan Digital Systems USBwave12 */
- 	{ USB_DEVICE(0x10C4, 0xF003) }, /* Elan Digital Systems USBpulse100 */
+--- a/fs/ext4/ext4_extents.h
++++ b/fs/ext4/ext4_extents.h
+@@ -103,6 +103,7 @@ struct ext4_extent_header {
+ };
+ 
+ #define EXT4_EXT_MAGIC		cpu_to_le16(0xf30a)
++#define EXT4_MAX_EXTENT_DEPTH 5
+ 
+ #define EXT4_EXTENT_TAIL_OFFSET(hdr) \
+ 	(sizeof(struct ext4_extent_header) + \
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -881,6 +881,12 @@ ext4_find_extent(struct inode *inode, ex
+ 
+ 	eh = ext_inode_hdr(inode);
+ 	depth = ext_depth(inode);
++	if (depth < 0 || depth > EXT4_MAX_EXTENT_DEPTH) {
++		EXT4_ERROR_INODE(inode, "inode has invalid extent depth: %d",
++				 depth);
++		ret = -EFSCORRUPTED;
++		goto err;
++	}
+ 
+ 	if (path) {
+ 		ext4_ext_drop_refs(path);
 
 
