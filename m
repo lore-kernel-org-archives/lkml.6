@@ -2,132 +2,502 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF69C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 352A1C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:45:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96AE320840
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:43:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Oz1jvacY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96AE320840
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D7D52089D
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:45:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D7D52089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754101AbeGJGnE (ORCPT
+        id S1751329AbeGJGo6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 02:43:04 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:37641 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751219AbeGJGm7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 02:42:59 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id C8A3A24E2515;
-        Mon,  9 Jul 2018 23:42:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531204979; bh=4M6LkRgsUXGwvZ2hjWooK7bEBpwEDDce7o709yRC/fU=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=Oz1jvacY0BW2PafAfO5MhPH9udy8YWUW9Z2WOITkhOzwgcT0GZc6PtrtbvWbKSL4J
-         JSraQwJk0w21qWsdLZic5ryr+oCFVb+faHRLIjBlbOg7Teo04HRi5VvmC38toFqlu7
-         HQbvQ+jqMPJfkYgQXZIt1d2jsgUsqTQn1MRl7uxdMQz4kW+9pYHAFRaTQImF4vfTks
-         nCGyk18gvLdqXoOc/34UtopxAQcfcpGnIZUDTVviDin1iXoQFdwrDDV4P9dAPHHXY6
-         XlzuCZ1a5TzOwO5pQtHjVay57I4FjqZr2fJXCJgJYM4zqoJ6pa15sEZjBTBzBXlBnk
-         OfEESPrWriavA==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id A0A415C29;
-        Mon,  9 Jul 2018 23:42:58 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 9 Jul 2018 23:42:58 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Tue,
- 10 Jul 2018 08:42:56 +0200
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "greg@kroah.com" <greg@kroah.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "David.Laight@ACULAB.COM" <David.Laight@ACULAB.COM>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
-Subject: Re: [RESEND PATCH v2] devres: Really align data field to unsigned
- long long
-Thread-Topic: [RESEND PATCH v2] devres: Really align data field to unsigned
- long long
-Thread-Index: AQHUFz+a+E6GQfxV7UuzGYUzCAFtDqSGew4AgAAL/YCAAAVTAIAAAX+AgACHG4CAAM13AA==
-Date:   Tue, 10 Jul 2018 06:42:55 +0000
-Message-ID: <f73763e1375693777cd6d95a2133a36618e9412d.camel@synopsys.com>
-References: <20180709044444.6397-1-abrodkin@synopsys.com>
-         <f7499a811ba54c00a11f7525ae216213@AcuMS.aculab.com>
-         <c95ac7435736d93843c45628ba4d41a4a4988074.camel@synopsys.com>
-         <91c57eeba2134dd99a9f0e11fa883c7c@AcuMS.aculab.com>
-         <82d2b36fa913bca6d56c7bf32a653324970817b8.camel@synopsys.com>
-         <e98bd4ab-ea20-0b42-bda9-eae8a6030c8f@synopsys.com>
-In-Reply-To: <e98bd4ab-ea20-0b42-bda9-eae8a6030c8f@synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <85BF71212F3A5B47B6BDBEC3970980CA@internal.synopsys.com>
-Content-Transfer-Encoding: base64
+        Tue, 10 Jul 2018 02:44:58 -0400
+Received: from mga06.intel.com ([134.134.136.31]:24462 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750953AbeGJGoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 02:44:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Jul 2018 23:44:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,333,1526367600"; 
+   d="scan'208";a="65626699"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
+  by fmsmga002.fm.intel.com with ESMTP; 09 Jul 2018 23:44:51 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH -mm -v4 03/21] mm, THP, swap: Support PMD swap mapping in swap_duplicate()
+References: <20180622035151.6676-1-ying.huang@intel.com>
+        <20180622035151.6676-4-ying.huang@intel.com>
+        <92b86ab6-6f51-97b0-337c-b7e98a30b6cb@linux.intel.com>
+Date:   Tue, 10 Jul 2018 14:44:50 +0800
+In-Reply-To: <92b86ab6-6f51-97b0-337c-b7e98a30b6cb@linux.intel.com> (Dave
+        Hansen's message of "Mon, 9 Jul 2018 09:51:42 -0700")
+Message-ID: <878t6jio7x.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVmluZWV0LA0KDQpPbiBNb24sIDIwMTgtMDctMDkgYXQgMTE6MjcgLTA3MDAsIFZpbmVldCBH
-dXB0YSB3cm90ZToNCj4gT24gMDcvMDkvMjAxOCAwMzoyMyBBTSwgQWxleGV5IEJyb2RraW4gd3Jv
-dGU6DQo+ID4gSGkgRGF2aWQsDQo+ID4gDQo+ID4gT24gTW9uLCAyMDE4LTA3LTA5IGF0IDEwOjE4
-ICswMDAwLCBEYXZpZCBMYWlnaHQgd3JvdGU6DQo+ID4gPiBGcm9tOiBBbGV4ZXkgQnJvZGtpbg0K
-PiA+ID4gPiBTZW50OiAwOSBKdWx5IDIwMTggMTE6MDANCj4gPiA+IA0KPiA+ID4gLi4uDQo+ID4g
-PiA+IFRoYXQncyBhIGdvb2QgaWRlYSBpbmRlZWQgYnV0IGl0IGRvZXNuJ3Qgc29sdmUgdGhlIHBy
-b2JsZW0gd2l0aA0KPiA+ID4gPiBzdHJ1Y3QgZGV2cmVzX25vZGUuIENvbnNpZGVyIHRoZSBmb2xs
-b3dpbmcgc25pcHBldDoNCj4gPiA+ID4gLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+
-OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gPiA+ID4gCXN0cnVjdCBteXN0cnVj
-dCB7DQo+ID4gPiA+IAkJYXRvbWljNjRfdCBteXZhcjsNCj4gPiA+ID4gCX0NCj4gPiA+ID4gDQo+
-ID4gPiA+IAlzdHJ1Y3QgbXlzdHJ1Y3QgKnA7DQo+ID4gPiA+IAlwID0gZGV2bV9remFsbG9jKGRl
-diwgc2l6ZW9mKCpwKSwgR0ZQX0tFUk5FTCk7DQo+ID4gPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ID4gPiA+IA0K
-PiA+ID4gPiBIZXJlIG15dmFyIGFkZHJlc3Mgd2lsbCBtYXRjaCBhZGRyZXNzIG9mICJkYXRhIiBt
-ZW1iZXIgb2Ygc3RydWN0IGRldnJlc19ub2RlLg0KPiA+ID4gPiBTbyBpZiAiZGF0YSIgaXMgaGFz
-IG9mZnNldCBvZiAxMiBieXRlcyBmcm9tIHRoZSBiZWdpbm5pbmcgb2YgYSBwYWdlIHRoZW4NCj4g
-PiA+ID4gbXl2YXIgd29uJ3QgYmUgNjQtYml0IGFsaWduZWQgcmVnYXJkbGVzcyBvZiBteXZhcidz
-IGF0dHJpYnV0ZSwgcmlnaHQ/DQo+ID4gPiANCj4gPiA+IC4uLg0KPiA+ID4gPiA+ID4gLQl1bnNp
-Z25lZCBsb25nIGxvbmcJCWRhdGFbXTsJLyogZ3VhcmFudGVlIHVsbCBhbGlnbm1lbnQgKi8NCj4g
-PiA+IA0KPiA+ID4gQWhoLCB0aGF0IGxpbmUgc2hvdWxkIGJlOg0KPiA+ID4gCXU4IGRhdGFbXSBf
-X2FsaWduZWQoOCk7IC8qIEd1YXJhbnRlZSA2NGJpdCBhbGlnbm1lbnQgKi8NCj4gPiANCj4gPiBB
-bmQgdGhhdCBwcmV0dHkgbXVjaCB3aGF0IEkgc3VnZ2VzdGVkIGluIG15IGluaXRpYWwgcGF0Y2gg
-OikNCj4gPiANCj4gPiBGb3IgdGhlIHJlY29yZCB4ODYgaGFzIGV4YWN0bHkgdGhlIHNhbWUgYXRv
-bWljNjRfdCBhcyB5b3Ugc3VnZ2VzdGVkLA0KPiA+IHNlZSBodHRwczovL2VsaXhpci5ib290bGlu
-LmNvbS9saW51eC9sYXRlc3Qvc291cmNlL2FyY2gveDg2L2luY2x1ZGUvYXNtL2F0b21pYzY0XzMy
-LmgjTDEzOg0KPiA+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+OC0tLS0tLS0tLS0tLS0tLS0tLQ0K
-PiA+IHR5cGVkZWYgc3RydWN0IHsNCj4gPiAJdTY0IF9fYWxpZ25lZCg4KSBjb3VudGVyOw0KPiA+
-IH0gYXRvbWljNjRfdDsNCj4gPiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tPjgtLS0tLS0tLS0tLS0t
-LS0tLS0NCj4gDQo+IEFuZCBzbyBkb2VzIHRoZSBBUkMgdmVyc2lvbiBzaW5jZSB3aGVuIHRoZSBh
-dG9taWM2NF90IHN1cHBvcnQgd2FzIGFkZGVkIGJ5IGNvbW1pdA0KPiBjZTYzNjUyNzBlY2QNCj4g
-DQo+IEFsc28sIHlvdSBzaG91bGQgY29uc2lkZXIgdXNpbmcgdGhlIHByZS1jYW5uZWQgdHlwZSBh
-bGlnbmVkX3U2NC4NCj4gDQo+IHR5cGVkZWYgc3RydWN0IHsNCj4gICAgICAgIGFsaWduZWRfdTY0
-IGNvdW50ZXI7DQo+ICAgICAgICBeXl5eXl5eXl5eXg0KPiB9IGF0b21pYzY0X3Q7DQoNCkFzIFBl
-dGVyIG1lbnRpb25lZCBlYXJsaWVyIGF0b21pYyBpcyBzaWduZWQsIHNlZToNCmh0dHA6Ly9saXN0
-cy5pbmZyYWRlYWQub3JnL3BpcGVybWFpbC9saW51eC1zbnBzLWFyYy8yMDE4LUp1bHkvMDA0MDMw
-Lmh0bWwNCg0KU28gbG9va3MgbGlrZSB3ZSBuZWVkIHRoaXMgZml4IGZvciBBUkMgaW5zdGVhZDoN
-Ci0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQ0KZGlmZiAtLWdpdCBhL2FyY2gvYXJjL2luY2x1ZGUvYXNtL2F0b21pYy5oIGIvYXJj
-aC9hcmMvaW5jbHVkZS9hc20vYXRvbWljLmgNCmluZGV4IDExODU5Mjg3YzUyYS4uZWY5NGI3Mzcx
-ZGU2IDEwMDY0NA0KLS0tIGEvYXJjaC9hcmMvaW5jbHVkZS9hc20vYXRvbWljLmgNCisrKyBiL2Fy
-Y2gvYXJjL2luY2x1ZGUvYXNtL2F0b21pYy5oDQpAQCAtMzY3LDcgKzM2Nyw3IEBAIEFUT01JQ19P
-UFMoeG9yLCBePSwgQ1RPUF9JTlNUX0FYT1JfRElfUjJfUjJfUjMpDQogICovDQogDQogdHlwZWRl
-ZiBzdHJ1Y3Qgew0KLSAgICAgICBhbGlnbmVkX3U2NCBjb3VudGVyOw0KKyAgICAgICBsb25nIGxv
-bmcgX19hbGlnbmVkKDgpIGNvdW50ZXI7DQogfSBhdG9taWM2NF90Ow0KIA0KICNkZWZpbmUgQVRP
-TUlDNjRfSU5JVChhKSB7IChhKSB9DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0+
-OC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCg0KLUFsZXhleQ==
+Dave Hansen <dave.hansen@linux.intel.com> writes:
+
+>> +static inline bool thp_swap_supported(void)
+>> +{
+>> +	return IS_ENABLED(CONFIG_THP_SWAP);
+>> +}
+>
+> This seems like rather useless abstraction.  Why do we need it?
+
+I just want to make it shorter, 19 vs 27 characters.  But if you think
+IS_ENABLED(CONFIG_THP_SWAP) is much better, I can use that instead.
+
+> ...
+>> -static inline int swap_duplicate(swp_entry_t swp)
+>> +static inline int swap_duplicate(swp_entry_t *swp, bool cluster)
+>>  {
+>>  	return 0;
+>>  }
+>
+> FWIW, I despise true/false function arguments like this.  When I see
+> this in code:
+>
+> 	swap_duplicate(&entry, false);
+>
+> I have no idea what false does.  I'd much rather see:
+>
+> enum do_swap_cluster {
+> 	SWP_DO_CLUSTER,
+> 	SWP_NO_CLUSTER
+> };
+>
+> So you see:
+>
+> 	swap_duplicate(&entry, SWP_NO_CLUSTER);
+>
+> vs.
+>
+> 	swap_duplicate(&entry, SWP_DO_CLUSTER);
+>
+
+Yes.  Boolean parameter isn't good at most times.  Matthew Wilcox
+suggested to use
+
+        swap_duplicate(&entry, HPAGE_PMD_NR);
+
+vs.
+
+        swap_duplicate(&entry, 1);
+
+He thinks this makes the interface more flexible to support other swap
+entry size in the future.  What do you think about that?
+
+>> diff --git a/mm/memory.c b/mm/memory.c
+>> index e9cac1c4fa69..f3900282e3da 100644
+>> --- a/mm/memory.c
+>> +++ b/mm/memory.c
+>> @@ -951,7 +951,7 @@ copy_one_pte(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+>>  		swp_entry_t entry = pte_to_swp_entry(pte);
+>>  
+>>  		if (likely(!non_swap_entry(entry))) {
+>> -			if (swap_duplicate(entry) < 0)
+>> +			if (swap_duplicate(&entry, false) < 0)
+>>  				return entry.val;
+>>  
+>>  			/* make sure dst_mm is on swapoff's mmlist. */
+>
+> I'll also point out that in a multi-hundred-line patch, adding arguments
+> to a existing function would not be something I'd try to include in the
+> patch.  I'd break it out separately unless absolutely necessary.
+
+You mean add another patch, which only adds arguments to the function,
+but not change the body of the function?
+
+>> diff --git a/mm/swapfile.c b/mm/swapfile.c
+>> index f42b1b0cdc58..48e2c54385ee 100644
+>> --- a/mm/swapfile.c
+>> +++ b/mm/swapfile.c
+>> @@ -49,6 +49,9 @@ static bool swap_count_continued(struct swap_info_struct *, pgoff_t,
+>>  				 unsigned char);
+>>  static void free_swap_count_continuations(struct swap_info_struct *);
+>>  static sector_t map_swap_entry(swp_entry_t, struct block_device**);
+>> +static int add_swap_count_continuation_locked(struct swap_info_struct *si,
+>> +					      unsigned long offset,
+>> +					      struct page *page);
+>>  
+>>  DEFINE_SPINLOCK(swap_lock);
+>>  static unsigned int nr_swapfiles;
+>> @@ -319,6 +322,11 @@ static inline void unlock_cluster_or_swap_info(struct swap_info_struct *si,
+>>  		spin_unlock(&si->lock);
+>>  }
+>>  
+>> +static inline bool is_cluster_offset(unsigned long offset)
+>> +{
+>> +	return !(offset % SWAPFILE_CLUSTER);
+>> +}
+>> +
+>>  static inline bool cluster_list_empty(struct swap_cluster_list *list)
+>>  {
+>>  	return cluster_is_null(&list->head);
+>> @@ -1166,16 +1174,14 @@ struct swap_info_struct *get_swap_device(swp_entry_t entry)
+>>  	return NULL;
+>>  }
+>>  
+>> -static unsigned char __swap_entry_free(struct swap_info_struct *p,
+>> -				       swp_entry_t entry, unsigned char usage)
+>> +static unsigned char __swap_entry_free_locked(struct swap_info_struct *p,
+>> +					      struct swap_cluster_info *ci,
+>> +					      unsigned long offset,
+>> +					      unsigned char usage)
+>>  {
+>> -	struct swap_cluster_info *ci;
+>> -	unsigned long offset = swp_offset(entry);
+>>  	unsigned char count;
+>>  	unsigned char has_cache;
+>>  
+>> -	ci = lock_cluster_or_swap_info(p, offset);
+>> -
+>>  	count = p->swap_map[offset];
+>>  
+>>  	has_cache = count & SWAP_HAS_CACHE;
+>> @@ -1203,6 +1209,17 @@ static unsigned char __swap_entry_free(struct swap_info_struct *p,
+>>  	usage = count | has_cache;
+>>  	p->swap_map[offset] = usage ? : SWAP_HAS_CACHE;
+>>  
+>> +	return usage;
+>> +}
+>> +
+>> +static unsigned char __swap_entry_free(struct swap_info_struct *p,
+>> +				       swp_entry_t entry, unsigned char usage)
+>> +{
+>> +	struct swap_cluster_info *ci;
+>> +	unsigned long offset = swp_offset(entry);
+>> +
+>> +	ci = lock_cluster_or_swap_info(p, offset);
+>> +	usage = __swap_entry_free_locked(p, ci, offset, usage);
+>>  	unlock_cluster_or_swap_info(p, ci);
+>>  
+>>  	return usage;
+>> @@ -3450,32 +3467,12 @@ void si_swapinfo(struct sysinfo *val)
+>>  	spin_unlock(&swap_lock);
+>>  }
+>>  
+>> -/*
+>> - * Verify that a swap entry is valid and increment its swap map count.
+>> - *
+>> - * Returns error code in following case.
+>> - * - success -> 0
+>> - * - swp_entry is invalid -> EINVAL
+>> - * - swp_entry is migration entry -> EINVAL
+>> - * - swap-cache reference is requested but there is already one. -> EEXIST
+>> - * - swap-cache reference is requested but the entry is not used. -> ENOENT
+>> - * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
+>> - */
+>> -static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
+>> +static int __swap_duplicate_locked(struct swap_info_struct *p,
+>> +				   unsigned long offset, unsigned char usage)
+>>  {
+>> -	struct swap_info_struct *p;
+>> -	struct swap_cluster_info *ci;
+>> -	unsigned long offset;
+>>  	unsigned char count;
+>>  	unsigned char has_cache;
+>> -	int err = -EINVAL;
+>> -
+>> -	p = get_swap_device(entry);
+>> -	if (!p)
+>> -		goto out;
+>> -
+>> -	offset = swp_offset(entry);
+>> -	ci = lock_cluster_or_swap_info(p, offset);
+>> +	int err = 0;
+>>  
+>>  	count = p->swap_map[offset];
+>>  
+>> @@ -3485,12 +3482,11 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
+>>  	 */
+>>  	if (unlikely(swap_count(count) == SWAP_MAP_BAD)) {
+>>  		err = -ENOENT;
+>> -		goto unlock_out;
+>> +		goto out;
+>>  	}
+>>  
+>>  	has_cache = count & SWAP_HAS_CACHE;
+>>  	count &= ~SWAP_HAS_CACHE;
+>> -	err = 0;
+>>  
+>>  	if (usage == SWAP_HAS_CACHE) {
+>>  
+>> @@ -3517,11 +3513,39 @@ static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
+>>  
+>>  	p->swap_map[offset] = count | has_cache;
+>>  
+>> -unlock_out:
+>> +out:
+>> +	return err;
+>> +}
+>
+> ... and that all looks like refactoring, not actively implementing PMD
+> swap support.  That's unfortunate.
+>
+>> +/*
+>> + * Verify that a swap entry is valid and increment its swap map count.
+>> + *
+>> + * Returns error code in following case.
+>> + * - success -> 0
+>> + * - swp_entry is invalid -> EINVAL
+>> + * - swp_entry is migration entry -> EINVAL
+>> + * - swap-cache reference is requested but there is already one. -> EEXIST
+>> + * - swap-cache reference is requested but the entry is not used. -> ENOENT
+>> + * - swap-mapped reference requested but needs continued swap count. -> ENOMEM
+>> + */
+>> +static int __swap_duplicate(swp_entry_t entry, unsigned char usage)
+>> +{
+>> +	struct swap_info_struct *p;
+>> +	struct swap_cluster_info *ci;
+>> +	unsigned long offset;
+>> +	int err = -EINVAL;
+>> +
+>> +	p = get_swap_device(entry);
+>> +	if (!p)
+>> +		goto out;
+>
+> Is this an error, or just for running into something like a migration
+> entry?  Comments please.
+
+__swap_duplicate() may be called with invalid swap entry because the swap
+device may be swapoff after we get swap entry during page fault.  Yes, I
+will add some comments here.
+
+>> +	offset = swp_offset(entry);
+>> +	ci = lock_cluster_or_swap_info(p, offset);
+>> +	err = __swap_duplicate_locked(p, offset, usage);
+>>  	unlock_cluster_or_swap_info(p, ci);
+>> +
+>> +	put_swap_device(p);
+>>  out:
+>> -	if (p)
+>> -		put_swap_device(p);
+>>  	return err;
+>>  }
+>
+> Not a comment on this patch, but lock_cluster_or_swap_info() is woefully
+> uncommented.
+
+OK.  Will add some comments for that.
+
+>> @@ -3534,6 +3558,81 @@ void swap_shmem_alloc(swp_entry_t entry)
+>>  	__swap_duplicate(entry, SWAP_MAP_SHMEM);
+>>  }
+>>  
+>> +#ifdef CONFIG_THP_SWAP
+>> +static int __swap_duplicate_cluster(swp_entry_t *entry, unsigned char usage)
+>> +{
+>> +	struct swap_info_struct *si;
+>> +	struct swap_cluster_info *ci;
+>> +	unsigned long offset;
+>> +	unsigned char *map;
+>> +	int i, err = 0;
+>
+> Instead of an #ifdef, is there a reason we can't just do:
+>
+> 	if (!IS_ENABLED(THP_SWAP))
+> 		return 0;
+>
+> ?
+
+Good idea.  Will do this for the whole patchset.
+
+>> +	si = get_swap_device(*entry);
+>> +	if (!si) {
+>> +		err = -EINVAL;
+>> +		goto out;
+>> +	}
+>> +	offset = swp_offset(*entry);
+>> +	ci = lock_cluster(si, offset);
+>
+> Could you explain a bit why we do lock_cluster() and not
+> lock_cluster_or_swap_info() here?
+
+The code size of lock_cluster() is a little smaller, and I think it is a
+little easier to read.  But I know lock_cluster_or_swap_info() can be used
+here without functionality problems.  If we try to merge the code for
+huge and normal swap entry, that could be used.
+
+>> +	if (cluster_is_free(ci)) {
+>> +		err = -ENOENT;
+>> +		goto unlock;
+>> +	}
+>
+> Needs comments on how this could happen.  We just took the lock, so I
+> assume this is some kind of race, but can you elaborate?
+
+Sure.  Will add some comments for this.
+
+>> +	if (!cluster_is_huge(ci)) {
+>> +		err = -ENOTDIR;
+>> +		goto unlock;
+>> +	}
+>
+> Yikes!  This function is the core of the new functionality and its
+> comment count is exactly 0.  There was quite a long patch description,
+> which will be surely lost to the ages, but nothing in the code that
+> folks _will_ be looking at for decades to come.
+>
+> Can we fix that?
+
+Sure.  Will add more comments.
+
+>> +	VM_BUG_ON(!is_cluster_offset(offset));
+>> +	VM_BUG_ON(cluster_count(ci) < SWAPFILE_CLUSTER);
+>
+> So, by this point, we know we are looking at (or supposed to be looking
+> at) a cluster on the device?
+
+Yes.
+
+>> +	map = si->swap_map + offset;
+>> +	if (usage == SWAP_HAS_CACHE) {
+>> +		if (map[0] & SWAP_HAS_CACHE) {
+>> +			err = -EEXIST;
+>> +			goto unlock;
+>> +		}
+>> +		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
+>> +			VM_BUG_ON(map[i] & SWAP_HAS_CACHE);
+>> +			map[i] |= SWAP_HAS_CACHE;
+>> +		}
+>
+> So, it's OK to race with the first entry, but after that it's a bug
+> because the tail pages should agree with the head page's state?
+
+Yes.  Will add some comments about this.
+
+>> +	} else {
+>> +		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
+>> +retry:
+>> +			err = __swap_duplicate_locked(si, offset + i, usage);
+>> +			if (err == -ENOMEM) {
+>> +				struct page *page;
+>> +
+>> +				page = alloc_page(GFP_ATOMIC | __GFP_HIGHMEM);
+>
+> I noticed that the non-clustering analog of this function takes a GFP
+> mask.  Why not this one?
+
+The value of gfp_mask is GFP_ATOMIC in swap_duplicate(), so they are
+exactly same.
+
+>> +				err = add_swap_count_continuation_locked(
+>> +					si, offset + i, page);
+>> +				if (err) {
+>> +					*entry = swp_entry(si->type, offset+i);
+>> +					goto undup;
+>> +				}
+>> +				goto retry;
+>> +			} else if (err)
+>> +				goto undup;
+>> +		}
+>> +		cluster_set_count(ci, cluster_count(ci) + usage);
+>> +	}
+>> +unlock:
+>> +	unlock_cluster(ci);
+>> +	put_swap_device(si);
+>> +out:
+>> +	return err;
+>> +undup:
+>> +	for (i--; i >= 0; i--)
+>> +		__swap_entry_free_locked(
+>> +			si, ci, offset + i, usage);
+>> +	goto unlock;
+>> +}
+>
+> So, we've basically created a fork of the __swap_duplicate() code for
+> huge pages, along with a presumably new set of bugs and a second code
+> path to update.  Was this unavoidable?  Can we unify this any more with
+> the small pages path?
+
+Will discuss this in another thread.
+
+>>  /*
+>>   * Increase reference count of swap entry by 1.
+>>   * Returns 0 for success, or -ENOMEM if a swap_count_continuation is required
+>> @@ -3541,12 +3640,15 @@ void swap_shmem_alloc(swp_entry_t entry)
+>>   * if __swap_duplicate() fails for another reason (-EINVAL or -ENOENT), which
+>>   * might occur if a page table entry has got corrupted.
+>>   */
+>> -int swap_duplicate(swp_entry_t entry)
+>> +int swap_duplicate(swp_entry_t *entry, bool cluster)
+>>  {
+>>  	int err = 0;
+>>  
+>> -	while (!err && __swap_duplicate(entry, 1) == -ENOMEM)
+>> -		err = add_swap_count_continuation(entry, GFP_ATOMIC);
+>> +	if (thp_swap_supported() && cluster)
+>> +		return __swap_duplicate_cluster(entry, 1);
+>> +
+>> +	while (!err && __swap_duplicate(*entry, 1) == -ENOMEM)
+>> +		err = add_swap_count_continuation(*entry, GFP_ATOMIC);
+>>  	return err;
+>>  }
+>
+> Reading this, I wonder whether this has been refactored as much as
+> possible.  Both add_swap_count_continuation() and
+> __swap_duplciate_cluster() start off with the same get_swap_device() dance.
+
+Yes.  There's some duplicated code logic.  Will think about how to
+improve it.
+
+>> @@ -3558,9 +3660,12 @@ int swap_duplicate(swp_entry_t entry)
+>>   * -EBUSY means there is a swap cache.
+>>   * Note: return code is different from swap_duplicate().
+>>   */
+>> -int swapcache_prepare(swp_entry_t entry)
+>> +int swapcache_prepare(swp_entry_t entry, bool cluster)
+>>  {
+>> -	return __swap_duplicate(entry, SWAP_HAS_CACHE);
+>> +	if (thp_swap_supported() && cluster)
+>> +		return __swap_duplicate_cluster(&entry, SWAP_HAS_CACHE);
+>> +	else
+>> +		return __swap_duplicate(entry, SWAP_HAS_CACHE);
+>>  }
+>>  
+>>  struct swap_info_struct *swp_swap_info(swp_entry_t entry)
+>> @@ -3590,51 +3695,13 @@ pgoff_t __page_file_index(struct page *page)
+>>  }
+>>  EXPORT_SYMBOL_GPL(__page_file_index);
+>>  
+>> -/*
+>> - * add_swap_count_continuation - called when a swap count is duplicated
+>> - * beyond SWAP_MAP_MAX, it allocates a new page and links that to the entry's
+>> - * page of the original vmalloc'ed swap_map, to hold the continuation count
+>> - * (for that entry and for its neighbouring PAGE_SIZE swap entries).  Called
+>> - * again when count is duplicated beyond SWAP_MAP_MAX * SWAP_CONT_MAX, etc.
+>
+> This closes out with a lot of refactoring noise.  Any chance that can be
+> isolated into another patch?
+
+Sure.  Will do that.
+
+Best Regards,
+Huang, Ying
