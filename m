@@ -3,44 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4083DC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C92E5C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A32020BF2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A32020BF2
+	by mail.kernel.org (Postfix) with ESMTP id 96F852083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F852083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387878AbeGJS3w (ORCPT
+        id S2387892AbeGJS3z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:29:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45444 "EHLO
+        Tue, 10 Jul 2018 14:29:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45458 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732917AbeGJS3w (ORCPT
+        with ESMTP id S1732596AbeGJS3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:29:52 -0400
+        Tue, 10 Jul 2018 14:29:55 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26107EC6;
-        Tue, 10 Jul 2018 18:29:40 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A432EC7;
+        Tue, 10 Jul 2018 18:29:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Cannon Matthews <cannonmatthews@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andres Lagar-Cavilla <andreslc@google.com>,
-        Peter Feiner <pfeiner@google.com>,
-        Greg Thelen <gthelen@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 19/52] mm: hugetlb: yield when prepping struct pages
-Date:   Tue, 10 Jul 2018 20:24:47 +0200
-Message-Id: <20180710182451.317666681@linuxfoundation.org>
+        stable@vger.kernel.org, Carlos Barcala Lara <cabl@cesinel.com>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 02/52] USB: serial: cp210x: add CESINEL device ids
+Date:   Tue, 10 Jul 2018 20:24:30 +0200
+Message-Id: <20180710182449.447935757@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -57,52 +50,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cannon Matthews <cannonmatthews@google.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 520495fe96d74e05db585fc748351e0504d8f40d upstream.
+commit 24160628a34af962ac99f2f58e547ac3c4cbd26f upstream.
 
-When booting with very large numbers of gigantic (i.e.  1G) pages, the
-operations in the loop of gather_bootmem_prealloc, and specifically
-prep_compound_gigantic_page, takes a very long time, and can cause a
-softlockup if enough pages are requested at boot.
+Add device ids for CESINEL products.
 
-For example booting with 3844 1G pages requires prepping
-(set_compound_head, init the count) over 1 billion 4K tail pages, which
-takes considerable time.
-
-Add a cond_resched() to the outer loop in gather_bootmem_prealloc() to
-prevent this lockup.
-
-Tested: Booted with softlockup_panic=1 hugepagesz=1G hugepages=3844 and
-no softlockup is reported, and the hugepages are reported as
-successfully setup.
-
-Link: http://lkml.kernel.org/r/20180627214447.260804-1-cannonmatthews@google.com
-Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Andres Lagar-Cavilla <andreslc@google.com>
-Cc: Peter Feiner <pfeiner@google.com>
-Cc: Greg Thelen <gthelen@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Reported-by: Carlos Barcala Lara <cabl@cesinel.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/hugetlb.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/serial/cp210x.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2171,6 +2171,7 @@ static void __init gather_bootmem_preall
- 		 */
- 		if (hstate_is_gigantic(h))
- 			adjust_managed_page_count(page, 1 << h->order);
-+		cond_resched();
- 	}
- }
- 
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -92,6 +92,9 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x10C4, 0x8156) }, /* B&G H3000 link cable */
+ 	{ USB_DEVICE(0x10C4, 0x815E) }, /* Helicomm IP-Link 1220-DVM */
+ 	{ USB_DEVICE(0x10C4, 0x815F) }, /* Timewave HamLinkUSB */
++	{ USB_DEVICE(0x10C4, 0x817C) }, /* CESINEL MEDCAL N Power Quality Monitor */
++	{ USB_DEVICE(0x10C4, 0x817D) }, /* CESINEL MEDCAL NT Power Quality Monitor */
++	{ USB_DEVICE(0x10C4, 0x817E) }, /* CESINEL MEDCAL S Power Quality Monitor */
+ 	{ USB_DEVICE(0x10C4, 0x818B) }, /* AVIT Research USB to TTL */
+ 	{ USB_DEVICE(0x10C4, 0x819F) }, /* MJS USB Toslink Switcher */
+ 	{ USB_DEVICE(0x10C4, 0x81A6) }, /* ThinkOptics WavIt */
+@@ -109,6 +112,9 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x10C4, 0x826B) }, /* Cygnal Integrated Products, Inc., Fasttrax GPS demonstration module */
+ 	{ USB_DEVICE(0x10C4, 0x8281) }, /* Nanotec Plug & Drive */
+ 	{ USB_DEVICE(0x10C4, 0x8293) }, /* Telegesis ETRX2USB */
++	{ USB_DEVICE(0x10C4, 0x82EF) }, /* CESINEL FALCO 6105 AC Power Supply */
++	{ USB_DEVICE(0x10C4, 0x82F1) }, /* CESINEL MEDCAL EFD Earth Fault Detector */
++	{ USB_DEVICE(0x10C4, 0x82F2) }, /* CESINEL MEDCAL ST Network Analyzer */
+ 	{ USB_DEVICE(0x10C4, 0x82F4) }, /* Starizona MicroTouch */
+ 	{ USB_DEVICE(0x10C4, 0x82F9) }, /* Procyon AVS */
+ 	{ USB_DEVICE(0x10C4, 0x8341) }, /* Siemens MC35PU GPRS Modem */
+@@ -121,7 +127,9 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x10C4, 0x8470) }, /* Juniper Networks BX Series System Console */
+ 	{ USB_DEVICE(0x10C4, 0x8477) }, /* Balluff RFID */
+ 	{ USB_DEVICE(0x10C4, 0x84B6) }, /* Starizona Hyperion */
++	{ USB_DEVICE(0x10C4, 0x851E) }, /* CESINEL MEDCAL PT Network Analyzer */
+ 	{ USB_DEVICE(0x10C4, 0x85A7) }, /* LifeScan OneTouch Verio IQ */
++	{ USB_DEVICE(0x10C4, 0x85B8) }, /* CESINEL ReCon T Energy Logger */
+ 	{ USB_DEVICE(0x10C4, 0x85EA) }, /* AC-Services IBUS-IF */
+ 	{ USB_DEVICE(0x10C4, 0x85EB) }, /* AC-Services CIS-IBUS */
+ 	{ USB_DEVICE(0x10C4, 0x85F8) }, /* Virtenio Preon32 */
+@@ -131,10 +139,13 @@ static const struct usb_device_id id_tab
+ 	{ USB_DEVICE(0x10C4, 0x8857) },	/* CEL EM357 ZigBee USB Stick */
+ 	{ USB_DEVICE(0x10C4, 0x88A4) }, /* MMB Networks ZigBee USB Device */
+ 	{ USB_DEVICE(0x10C4, 0x88A5) }, /* Planet Innovation Ingeni ZigBee USB Device */
++	{ USB_DEVICE(0x10C4, 0x88FB) }, /* CESINEL MEDCAL STII Network Analyzer */
++	{ USB_DEVICE(0x10C4, 0x8938) }, /* CESINEL MEDCAL S II Network Analyzer */
+ 	{ USB_DEVICE(0x10C4, 0x8946) }, /* Ketra N1 Wireless Interface */
+ 	{ USB_DEVICE(0x10C4, 0x8962) }, /* Brim Brothers charging dock */
+ 	{ USB_DEVICE(0x10C4, 0x8977) },	/* CEL MeshWorks DevKit Device */
+ 	{ USB_DEVICE(0x10C4, 0x8998) }, /* KCF Technologies PRN */
++	{ USB_DEVICE(0x10C4, 0x89A4) }, /* CESINEL FTBC Flexible Thyristor Bridge Controller */
+ 	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
+ 	{ USB_DEVICE(0x10C4, 0x8A5E) }, /* CEL EM3588 ZigBee USB Stick Long Range */
+ 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
 
 
