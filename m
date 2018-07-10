@@ -6,98 +6,74 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C52CC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19927C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A32E62089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:57:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A32E62089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id C4C192089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:58:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C192089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933454AbeGJN5T (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 09:57:19 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:33642 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S933255AbeGJN5S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 09:57:18 -0400
-Received: (qmail 1601 invoked by uid 2102); 10 Jul 2018 09:57:17 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 10 Jul 2018 09:57:17 -0400
-Date:   Tue, 10 Jul 2018 09:57:17 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-In-Reply-To: <20180709214514.GJ3593@linux.vnet.ibm.com>
-Message-ID: <Pine.LNX.4.44L0.1807100954490.1449-100000@iolanthe.rowland.org>
+        id S933508AbeGJN56 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 09:57:58 -0400
+Received: from ozlabs.org ([203.11.71.1]:36209 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933379AbeGJN5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 09:57:55 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Q3gN5JL6z9s0W;
+        Tue, 10 Jul 2018 23:57:52 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     kbuild test robot <lkp@intel.com>, Daniel Klamt <eleon@ele0n.de>
+Cc:     kbuild-all@01.org, benh@kernel.crashing.org, paulus@samba.org,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-kernel@i4.cs.fau.de, Daniel Klamt <eleon@ele0n.de>,
+        Bjoern Noetel <bjoern@br3ak3r.de>
+Subject: Re: [PATCH] powerpc: Replaced msleep with usleep_range
+In-Reply-To: <201807100423.0p0r9QGb%fengguang.wu@intel.com>
+References: <1531144679-31675-1-git-send-email-eleon@ele0n.de> <201807100423.0p0r9QGb%fengguang.wu@intel.com>
+Date:   Tue, 10 Jul 2018 23:57:51 +1000
+Message-ID: <87y3ej9ork.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018, Paul E. McKenney wrote:
+kbuild test robot <lkp@intel.com> writes:
 
-> On Mon, Jul 09, 2018 at 04:01:57PM -0400, Alan Stern wrote:
-> > More than one kernel developer has expressed the opinion that the LKMM
-> > should enforce ordering of writes by locking.  In other words, given
-> > the following code:
-> > 
-> > 	WRITE_ONCE(x, 1);
-> > 	spin_unlock(&s):
-> > 	spin_lock(&s);
-> > 	WRITE_ONCE(y, 1);
-> > 
-> > the stores to x and y should be propagated in order to all other CPUs,
-> > even though those other CPUs might not access the lock s.  In terms of
-> > the memory model, this means expanding the cumul-fence relation.
-> > 
-> > Locks should also provide read-read (and read-write) ordering in a
-> > similar way.  Given:
-> > 
-> > 	READ_ONCE(x);
-> > 	spin_unlock(&s);
-> > 	spin_lock(&s);
-> > 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
-> > 
-> > the load of x should be executed before the load of (or store to) y.
-> > The LKMM already provides this ordering, but it provides it even in
-> > the case where the two accesses are separated by a release/acquire
-> > pair of fences rather than unlock/lock.  This would prevent
-> > architectures from using weakly ordered implementations of release and
-> > acquire, which seems like an unnecessary restriction.  The patch
-> > therefore removes the ordering requirement from the LKMM for that
-> > case.
-> > 
-> > All the architectures supported by the Linux kernel (including RISC-V)
-> > do provide this ordering for locks, albeit for varying reasons.
-> > Therefore this patch changes the model in accordance with the
-> > developers' wishes.
-> > 
-> > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> 
-> Nice!
-> 
-> However, it doesn't apply against current -rcu.  Am I missing a patch?
-> Or is this supposed to apply against origin/lkmm?
+> Hi Daniel,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on powerpc/next]
+> [also build test ERROR on v4.18-rc4 next-20180709]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Daniel-Klamt/powerpc-Replaced-msleep-with-usleep_range/20180709-231913
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
+> config: powerpc-defconfig (attached as .config)
+> compiler: powerpc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> reproduce:
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # save the attached .config to linux build tree
+>         GCC_VERSION=7.2.0 make.cross ARCH=powerpc 
+>
+> All errors (new ones prefixed by >>):
+>
+>    arch/powerpc/sysdev/xive/native.c: In function 'xive_native_configure_irq':
+>>> arch/powerpc/sysdev/xive/native.c:113:2: error: expected ';' before '}' token
+>      }
+>      ^
 
-I wrote it based on 4.18-rc.  However, I can rebase it against your
-current dev branch.
+There's also instructions here for building the powerpc kernel:
 
-Alan
+  https://github.com/linuxppc/linux/wiki/Building-powerpc-kernels
 
+cheers
