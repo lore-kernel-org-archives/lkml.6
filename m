@@ -6,47 +6,38 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 421AFC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A141C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC1C20936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC1C20936
+	by mail.kernel.org (Postfix) with ESMTP id 316DE20936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 316DE20936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732956AbeGJS1D (ORCPT
+        id S1733002AbeGJS1I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:27:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44668 "EHLO
+        Tue, 10 Jul 2018 14:27:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44690 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732943AbeGJS1C (ORCPT
+        with ESMTP id S1732958AbeGJS1H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:27:02 -0400
+        Tue, 10 Jul 2018 14:27:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 13016DB4;
-        Tue, 10 Jul 2018 18:26:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0FF3FEB4;
+        Tue, 10 Jul 2018 18:26:56 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, fenghua.yu@intel.com,
-        yu-cheng.yu@intel.com, Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org,
+        "stable@vger.kernel.org, Eric Dumazet" <edumazet@google.com>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 3.18 03/23] x86/boot: Fix early command-line parsing when matching at end
-Date:   Tue, 10 Jul 2018 20:24:36 +0200
-Message-Id: <20180710182309.025696403@linuxfoundation.org>
+Subject: [PATCH 4.4 10/47] ipv4: Fix error return value in fib_convert_metrics()
+Date:   Tue, 10 Jul 2018 20:24:34 +0200
+Message-Id: <20180710182337.475654419@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
-References: <20180710182308.877332304@linuxfoundation.org>
+In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
+References: <20180710182337.047502999@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -56,128 +47,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-commit 02afeaae9843733a39cd9b11053748b2d1dc5ae7 upstream.
+The validation code modified by commit 5b5e7a0de2bb ("net: metrics:
+add proper netlink validation") is organised differently in older
+kernel versions.  The fib_convert_metrics() function that is modified
+in the backports to 4.4 and 4.9 needs to returns an error code, not a
+success flag.
 
-The x86 early command line parsing in cmdline_find_option_bool() is
-buggy. If it matches a specified 'option' all the way to the end of the
-command-line, it will consider it a match.
-
-For instance,
-
-  cmdline = "foo";
-  cmdline_find_option_bool(cmdline, "fool");
-
-will return 1. This is particularly annoying since we have actual FPU
-options like "noxsave" and "noxsaves" So, command-line "foo bar noxsave"
-will match *BOTH* a "noxsave" and "noxsaves". (This turns out not to be
-an actual problem because "noxsave" implies "noxsaves", but it's still
-confusing.)
-
-To fix this, we simplify the code and stop tracking 'len'. 'len'
-was trying to indicate either the NULL terminator *OR* the end of a
-non-NULL-terminated command line at 'COMMAND_LINE_SIZE'. But, each of the
-three states is *already* checking 'cmdline' for a NULL terminator.
-
-We _only_ need to check if we have overrun 'COMMAND_LINE_SIZE', and that
-we can do without keeping 'len' around.
-
-Also add some commends to clarify what is going on.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: fenghua.yu@intel.com
-Cc: yu-cheng.yu@intel.com
-Link: http://lkml.kernel.org/r/20151222225238.9AEB560C@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- arch/x86/lib/cmdline.c |   34 ++++++++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 10 deletions(-)
+ net/ipv4/fib_semantics.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/lib/cmdline.c
-+++ b/arch/x86/lib/cmdline.c
-@@ -21,12 +21,14 @@ static inline int myisspace(u8 c)
-  * @option: option string to look for
-  *
-  * Returns the position of that @option (starts counting with 1)
-- * or 0 on not found.
-+ * or 0 on not found.  @option will only be found if it is found
-+ * as an entire word in @cmdline.  For instance, if @option="car"
-+ * then a cmdline which contains "cart" will not match.
-  */
- int cmdline_find_option_bool(const char *cmdline, const char *option)
- {
- 	char c;
--	int len, pos = 0, wstart = 0;
-+	int pos = 0, wstart = 0;
- 	const char *opptr = NULL;
- 	enum {
- 		st_wordstart = 0,	/* Start of word/after whitespace */
-@@ -37,11 +39,14 @@ int cmdline_find_option_bool(const char
- 	if (!cmdline)
- 		return -1;      /* No command line */
- 
--	len = min_t(int, strlen(cmdline), COMMAND_LINE_SIZE);
--	if (!len)
-+	if (!strlen(cmdline))
- 		return 0;
- 
--	while (len--) {
-+	/*
-+	 * This 'pos' check ensures we do not overrun
-+	 * a non-NULL-terminated 'cmdline'
-+	 */
-+	while (pos < COMMAND_LINE_SIZE) {
- 		c = *(char *)cmdline++;
- 		pos++;
- 
-@@ -58,17 +63,26 @@ int cmdline_find_option_bool(const char
- 			/* fall through */
- 
- 		case st_wordcmp:
--			if (!*opptr)
-+			if (!*opptr) {
-+				/*
-+				 * We matched all the way to the end of the
-+				 * option we were looking for.  If the
-+				 * command-line has a space _or_ ends, then
-+				 * we matched!
-+				 */
- 				if (!c || myisspace(c))
- 					return wstart;
- 				else
- 					state = st_wordskip;
--			else if (!c)
-+			} else if (!c) {
-+				/*
-+				 * Hit the NULL terminator on the end of
-+				 * cmdline.
-+				 */
- 				return 0;
--			else if (c != *opptr++)
-+			} else if (c != *opptr++) {
- 				state = st_wordskip;
--			else if (!len)		/* last word and is matching */
--				return wstart;
-+			}
- 			break;
- 
- 		case st_wordskip:
+--- a/net/ipv4/fib_semantics.c
++++ b/net/ipv4/fib_semantics.c
+@@ -980,7 +980,7 @@ fib_convert_metrics(struct fib_info *fi,
+ 				return -EINVAL;
+ 		} else {
+ 			if (nla_len(nla) != sizeof(u32))
+-				return false;
++				return -EINVAL;
+ 			val = nla_get_u32(nla);
+ 		}
+ 		if (type == RTAX_ADVMSS && val > 65535 - 40)
 
 
