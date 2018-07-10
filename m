@@ -2,98 +2,81 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E68C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 774B9C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD24208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:48:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iYbht0ki"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DD24208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F5022086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:48:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F5022086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754439AbeGJMs1 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 08:48:27 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:46474 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751201AbeGJMsZ (ORCPT
+        id S933283AbeGJMsh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 08:48:37 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:18447 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932752AbeGJMse (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 08:48:25 -0400
-Received: by mail-pf0-f194.google.com with SMTP id l123-v6so16017196pfl.13;
-        Tue, 10 Jul 2018 05:48:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t4Hr5h5TPA6MdWw4GEBymgaHp4gbuFgRfPybtZGR3DU=;
-        b=iYbht0kiLswSypU/o2BBkxlqz/VHSEYfDiB+HRp/JrgFrPYXdd3dVH2iL1+agrUFeC
-         EVmWD7lFeMFA49xM5/Nc4CearejaGSpRSg3AWpLeEOXa5v/Yuf3BiX7lbrvCBhv3sPN7
-         CkTWOruoRAim64IKAnB9cOyy9d0H5/WYNaY+KrOU1nCiYzRTq2grA4SwtceR3YrjzJZi
-         IMtfj6R6GoLqMUSG8ptgLNkf9aW7mn86c6t/LEcBRCmc+DdtEBez8oyS+sMSOiXaOKAf
-         fT2qemn+Uq42bYIxaj96sIDuuAi2XRmrtCYXe/3PIDfucBb+3f8mnMrS5UG5v94uIOlx
-         wKvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t4Hr5h5TPA6MdWw4GEBymgaHp4gbuFgRfPybtZGR3DU=;
-        b=lZkcgplr+ztniyEds2w6JZLOaaXLdE7eRYObt7zoNW/JMQNA7fO9jRflx5wtEEQKA/
-         LQFjJBg5MUkzqyPMPi4b18QEkZY9sabBGEzZ2iGJ4UL/2rrNFZEGaioNvqnZ5b82XaXP
-         yzfFsVgM5miat6jOtWcUVraXI6Ca9pD33sHeV3tsqgsFoh8RtKhdYVX7k0GKf6ZJimFI
-         dC5sFnoM/H7axpFh8Br8mMDz4yCJfsxOiP+Gp7p26Zk+XLPfNj37if2QiOKwV5PW114e
-         011zPZQ1QaIU536VCt+F7lcwiTXZQjEEils6qNjSFnuloUT24RkHDyPymuCxTgPDC+H2
-         cabA==
-X-Gm-Message-State: APt69E0zdpfFSQkPvrsK9EUnpY64fQkl2X5KILH1eLVls/KBSs3sjYdx
-        c5X6W04gknlT3Yp/aL3kqW0=
-X-Google-Smtp-Source: AAOMgpc54ZFwQLjnTOjjhV+BBwIV8lDtFHuxl1EHv6sPhExdTMmGYU2Xt9kdVnxI80GkY8QN9BMbkg==
-X-Received: by 2002:aa7:81d3:: with SMTP id c19-v6mr25654455pfn.224.1531226904938;
-        Tue, 10 Jul 2018 05:48:24 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id 77-v6sm56435634pga.40.2018.07.10.05.48.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 05:48:23 -0700 (PDT)
-Subject: Re: [net-next,v3] tcp: Improve setsockopt() TCP_USER_TIMEOUT accuracy
-To:     Jon Maxwell <jmaxwell37@gmail.com>, davem@davemloft.net
-Cc:     edumazet@google.com, ncardwell@google.com, David.Laight@aculab.com,
-        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmaxwell@redhat.com
-References: <20180710065147.27647-1-jmaxwell37@gmail.com>
- <3f856638-52bc-6630-a3d2-2b50f1bf7e48@gmail.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <c29f1535-3c5d-e588-862c-ba948363c973@gmail.com>
-Date:   Tue, 10 Jul 2018 05:48:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Tue, 10 Jul 2018 08:48:34 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b44ab1d0000>; Tue, 10 Jul 2018 05:48:29 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 10 Jul 2018 05:48:34 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 10 Jul 2018 05:48:34 -0700
+Received: from dhcp-10-21-25-168.Nvidia.com (10.21.25.201) by
+ HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1347.2; Tue, 10 Jul 2018 12:48:31 +0000
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+CC:     Aapo Vienamo <avienamo@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/6] Tegra PMC pinctrl pad configuration
+Date:   Tue, 10 Jul 2018 15:47:53 +0300
+Message-ID: <1531226879-11802-1-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <3f856638-52bc-6630-a3d2-2b50f1bf7e48@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
+The Tegra Power Management Controller (PMC) can set pad power states
+and voltage configuration. This series implements pinctrl interfaces
+for configuring said pad properties.
 
-On 07/10/2018 05:38 AM, Eric Dumazet wrote:
+Aapo Vienamo (6):
+  soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+  soc/tegra: pmc: Factor out DPD register bit calculation
+  soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+  soc/tegra: pmc: Use X macro to generate IO pad tables
+  dt-bindings: Add Tegra PMC pad configuration bindings
+  soc/tegra: pmc: Implement pad configuration via pinctrl
 
-> Note that if we always do jiffies_to_msecs(icsk->icsk_user_timeout) in TCP,
-> we also could change the convention and store msecs in this field instead of jiffies.
-> 
-> That would eliminate the msecs_to_jiffies() and jiffies_to_msecs() dance.
-> 
-> (That would be done in a patch of its own, of course)
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  84 ++++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  95 ++++
+ drivers/soc/tegra/pmc.c                            | 504 ++++++++++++++++-----
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+ include/soc/tegra/pmc.h                            |   1 +
+ 5 files changed, 580 insertions(+), 122 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
 
-tcp_keepalive_timer() does use icsk->icsk_user_timeout directly in jiffies unit,
-but considering keeapalive timers are rarely used, this point would have to
-do the msecs_to_jiffies() conversion.
+-- 
+2.7.4
+
