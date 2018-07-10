@@ -2,128 +2,122 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D305C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C86C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36638208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4AF2208EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:53:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="QI/JyrX7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36638208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="egTXtHwG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4AF2208EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934400AbeGJPvs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:51:48 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:36395 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933381AbeGJPvq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:51:46 -0400
-Received: by mail-wm0-f67.google.com with SMTP id s14-v6so24908662wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 08:51:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mM0WbnqZDH2CYBlyos9obkoIHoEOT9eJJXKgsGQxVsQ=;
-        b=QI/JyrX79TczWrn/mFb31fKa2BYi4r5DULIn1jINtWdm7WqkcGHefndoh0LnIgL59R
-         cKu1G1EgxK/0MlN5z+k/eb+nho7X6RcDvAigSroCK1k0keb8SXNlFHM4ygPn/Tz6yXPx
-         qLvJNImKnfRSkxKqx/W3ggdDUXmHPi3Tq4pZBHAKqIjhVLMBvvc/QSpKk/MKwguyyLdP
-         nLhC9dydea8PJvsvMWIuYAIhQmGbp8e8Z4Fqi0KXZrj3KYCAVDuIcQNzyrYPmaxueJ66
-         ys8D3Px0EEAStL8sbKyfv4PjES76Ca2vzfkGlwyNw6kn1WqFsFEGIrXE81Mdnb6c3cBd
-         9qHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mM0WbnqZDH2CYBlyos9obkoIHoEOT9eJJXKgsGQxVsQ=;
-        b=iNS1iuj/yny2uRSql5ytStS5GEhngEJsb0wnjIuCBA/pdZxHyttYfkttLGl4haX9Al
-         L/w0Boc2bIqqgh0g1mt6ZKStZZUsoRH2nC3pe71VS5v6lTFy8SvbqKdslk3F8+z/zrj2
-         YTbN94AKLlRvuF6zM9a5wtUV6W9ZNq9+CVL9ecTxjTh0vzIZFpvG77PlJODEoTQj4fEG
-         atQrCirEiGKb7lV+d+e9Xod7iiLoMllCGfk1AtIun1gG7+3/tKrgd/ObrWIr7aTHYSqo
-         je728rojUsyo+gGSL8jUZB66YagC+ttF63RK60+PGxYXltT0oC1JG88+XMuPXafKQ62E
-         WLoQ==
-X-Gm-Message-State: APt69E1WNno4mVTek8t3Hn44SyjSnhSKAPGCfdtfrag+aZPixpvMPpUT
-        A6qXFiC787t/XCFPWW4pdBuAow==
-X-Google-Smtp-Source: AAOMgpdeteEws0/LSuag8SJgNlDDSa01IQYuU58P3nJatejKxXrVotbXGBjkZZYvvzEan121Lpai7g==
-X-Received: by 2002:a1c:894f:: with SMTP id l76-v6mr14777530wmd.103.1531237905249;
-        Tue, 10 Jul 2018 08:51:45 -0700 (PDT)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id e2-v6sm12449513wrr.8.2018.07.10.08.51.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Jul 2018 08:51:44 -0700 (PDT)
-Message-ID: <1531237902.2708.76.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Yixun Lan <yixun.lan@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        jian.hu@amlogic.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        qianggui.song@amlogic.com, sboyd@kernel.org, khilman@baylibre.com,
-        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-        bo.yang@amlogic.com, qiufang.dai@amlogic.com,
-        linux-arm-kernel@lists.infradead.org, carlo@caione.org,
-        linux-amlogic@lists.infradead.org, sunny.luo@amlogic.com,
-        linux-clk@vger.kernel.org, xingyu.chen@amlogic.com,
-        Rob Herring <robh@kernel.org>
-Date:   Tue, 10 Jul 2018 17:51:42 +0200
-In-Reply-To: <cb832db4-ad2c-09c1-86ae-e7f9c05cd872@amlogic.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-         <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
-         <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
-         <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
-         <1531216472.2708.71.camel@baylibre.com>
-         <cb832db4-ad2c-09c1-86ae-e7f9c05cd872@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S934261AbeGJPxY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:53:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933976AbeGJPxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 11:53:23 -0400
+Received: from localhost (unknown [213.57.183.250])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3105A208F7;
+        Tue, 10 Jul 2018 15:53:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531238002;
+        bh=YLmV+Fy7wGILUFUkdG2vReVLfdnqZvvqKabU8QIR2Oc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=egTXtHwGhrX7PVghah+YFyMa2oHlDDLnGx2CEOtiXaEGhtbN4sWA2erigi9BY50xB
+         Mx+IMogyn1ZQxk3QkM/tchcaMfzDOUoy2ztjzd4X8hXrV1DDToa6CozaUpsfuhC36u
+         XWZZCENmZMKPN2XD9LriI+Vu0ehorycvb16z9e/g=
+Date:   Tue, 10 Jul 2018 18:53:18 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc:     "jan.dakinevich@virtuozzo.com" <jan.dakinevich@virtuozzo.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "den@virtuozzo.com" <den@virtuozzo.com>,
+        "jgg@ziepe.ca" <jgg@ziepe.ca>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "dledford@redhat.com" <dledford@redhat.com>,
+        "khorenko@virtuozzo.com" <khorenko@virtuozzo.com>
+Subject: Re: [PATCH] ib_srpt: use kvmalloc to allocate ring pointers
+Message-ID: <20180710155318.GI3014@mtr-leonro.mtl.com>
+References: <1531144268-25361-1-git-send-email-jan.dakinevich@virtuozzo.com>
+ <20180710053944.GN3014@mtr-leonro.mtl.com>
+ <5196ea6e33825dd5fde58d23b38630afafcb77f1.camel@wdc.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="yuedfix5hmtMJRO4"
+Content-Disposition: inline
+In-Reply-To: <5196ea6e33825dd5fde58d23b38630afafcb77f1.camel@wdc.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-10 at 20:59 +0800, Yixun Lan wrote:
-> > > > > +static const struct of_device_id clkc_match_table[] = {
-> > > > > +       { .compatible = "amlogic,g12a-clkc" },
-> > > > 
-> > > > I wonder if that should be "amlogic,meson-g12a-clkc" (I know that AXG
-> > > > and GXBB/GXL/GXM omit the "meson-" prefix, but I am not sure if that's
-> > > > correct - I'll CC Rob Herring on the dt-bindings patch)
-> > > > 
-> > > 
-> > > we're fine with either way, since the g12a is recently new added SoC.
-> > > 
-> > > but I guess those old compatibles which already exist won't be changed,
-> > > as it will break the DT
-> > 
-> > Yes, I doubt we are going to change the compatibles. With or without the meson
-> > prefix, I suppose it going to stay that way.
-> > 
-> > It is worth thinking about it for new drivers though.
-> > We already have the "amlogic,", so do we really to prefix even more with "meson-
-> > "
-> > 
-> > Also, if we were really strict about that scheme, should meson8b compatible be
-> > 
-> > "amlogic,meson-meson8b-foo-bar" ... the SoC is meson8b, not just 8b after all ?
-> > 
-> > For the particular case of the clock controller, I don't care very much, as long
-> > as the compatible is coherent with documentation.
-> > 
-> > I might have a preference for the current compatible ... just for consistency
-> > with the other clock controllers.
-> > 
-> 
-> do you imply that we should just stick to 'amlogic,g12a-clkc'?
-> 
-> it sound good to me, at least it's shorter than 'amlogic,meson-g12a-clkc'..
 
-I did not imply anything.
-Martin raised a valid point. I'm merely giving my opinion on the matter and I'm
-interested to get others view on this.
+--yuedfix5hmtMJRO4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Jul 10, 2018 at 03:08:38PM +0000, Bart Van Assche wrote:
+> On Tue, 2018-07-10 at 08:39 +0300, Leon Romanovsky wrote:
+> > On Mon, Jul 09, 2018 at 04:51:08PM +0300, Jan Dakinevich wrote:
+> > > An array of pointers to SRPT contexts in ib_device is over 30KiB even
+> > > in default case, in which an amount of contexts is 4095. The patch
+> > > is intended to weed out large contigous allocation for non-DMA memory.
+> >
+> > kvmalloc* doesn't "weed out" large contiguous allocations, but tries to
+> > allocate them and gracefully fallback to vmalloc if kmalloc fails.
+> >
+> > More on that, for allocations less than page (64KB for PowerPC), it will
+> > not call to vmalloc at all, which is fine too, because pages granularity.
+> >
+> > If you want to get rid of "contiguous allocations", use vmalloc instead.
+>
+> vmalloc() has a very significant disadvantage compared to kvmalloc(): with
+> vmalloc() it is guaranteed that memory allocations will be slow. That's not
+> the case for kvmalloc() if the number of bytes that is allocated is small
+> enough.
+
+Bart,
+
+I'm not arguing, just pointing that the commit message doesn't reflect
+actual change.
+
+Thanks
+
+>
+> Bart.
+>
+>
+>
+>
+
+--yuedfix5hmtMJRO4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbRNZuAAoJEORje4g2clinw5cP/0FbpRGJuK+4GFge8yXm1YAj
+gkEFjH+lntodg9luLb8ChrZXEOFJxHhfEHUS1yVk3xTjYrlrVi0er0G9o6mwEPel
+l+ndKGmaP7Uy2tfa0PKy54cSUpYTvBSlPrgJk+EoPqvSGLPpvjduZUOGJEaBChcr
+iWcYIxFgrf/TMOfDT+weJ/J5xtolIXfOhJ1GZAhJsj1kAJ0wu+14CNddiKCgy6pT
+dQoqX1AGdq0mt5YMExVIBiFk8wqeIs9F8fplHOatnCrF1SdsG/e3eSYJm7B4vihl
+we/BmTYe4xnsR5rhovghmwE00pT/mxUc4WYu+re+zh3Z90YIWjp/q1BV2heagBin
+9rL2Z84cZAGVDlfE01Z2hRhQ9aKhOioZD22Dv/TzZNSDDWkkFuIugTf5cudb9lK3
+/p/B6FNMKnhzIvqZdFh2jmM8CMfafLumEsv+Xk9INcB1EpoWioQNldELqxrGG3nM
+ttToQAuJQheOoxJnzBp5RGUoILvVYKXBPN8BRy80+oNLDSscCz2JORUeTynggeMb
+yjYkUAyfcLgshgJlOfrB6DqVOdlZvjVVkLh/3TibOqmFipb0kulNARKrVmCzsNmf
+jkKXqKJdX1itNNr7RIZocBjbOwpYYLg4iz4CDQIo2EoItHYMnyAvpUxTJTR0w6k9
+5noxFnCbhWbtdsKPT6ny
+=5ixS
+-----END PGP SIGNATURE-----
+
+--yuedfix5hmtMJRO4--
