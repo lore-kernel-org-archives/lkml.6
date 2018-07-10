@@ -2,126 +2,137 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E909C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69658C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4718E20881
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:42:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V/dKCDiq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4718E20881
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 20EDB20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:45:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20EDB20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933186AbeGJKmG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 06:42:06 -0400
-Received: from mail-wr1-f50.google.com ([209.85.221.50]:47003 "EHLO
-        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933176AbeGJKmE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 06:42:04 -0400
-Received: by mail-wr1-f50.google.com with SMTP id s11-v6so14060738wra.13;
-        Tue, 10 Jul 2018 03:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ne+O81f1J+IZg7qyHGqxRyYQPwwIPtY84sR1wh8QDiY=;
-        b=V/dKCDiqK3BHdi1CUzQu0L4eHkDk2OCs8gVXmMudIljcMwxOQRov1Y8Vg8/ER7kOX1
-         1g9g8hYd7U0+4X/wZO4EAdIuqSMoCxds9drmLHnMGXLoCfRk2jV3J/c9TfI7ausRyhlZ
-         zAcgAK4JFk9q+0NwT4YXNedRw4vw+FMpdA1WS26d+VfJpvlV3rCUtsmgITh85D83gN77
-         JotAErx93BDm3PXKicdSRUZ5hbmlET0sRH2RaKqe0YdhuYdO8GWTWsNkQeR3ojXsvhii
-         njnd5+lRwpVQTnugleY2tB+FslkOhlwWxgT4A0OtJPthUS8XYNzpwclwmpi2Kk7pwAK3
-         QP+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ne+O81f1J+IZg7qyHGqxRyYQPwwIPtY84sR1wh8QDiY=;
-        b=TzixRP5B4kfgO6kTxbteBX0YlTdGBtAbKHxpJGO1JYYMUjUfEm/c+swJ90ZxDzGnBD
-         ob7ERV0V1SSvHOeTd7erG1kX1CifWIylbnYHhSZXTDEiJbeuzg0Zn982i7jb06EDlEuL
-         9FmufSTx295Wv5XuHPJKXdUI+R/d+uJXRalUQKRnwgmlW6wtkxmq/vf7iFkvwLTgTkcU
-         2Cjf6daWG7dZk+nn9yaZGXLAKnngufDojmzg9rjhio9+r6A+98X/RzVXu/1zjV/53OI2
-         wG/nW2UkRMt21Aof+F3Ee4ghNmQxCT872KivcSP4pRnyFFj3AVJ6IHXOop8NVRfLnYLn
-         qxXw==
-X-Gm-Message-State: APt69E00rImweQqNxdLG0lVU+DMZebEfjdOfIuW6Ze67BeccF+TtpWVV
-        vPBDcP8sdN9SZsThmU91Uls=
-X-Google-Smtp-Source: AAOMgpcpsSoXFZwMegkfI4l6v7L9tg+KIk+nYaGwL9P2tthjernjEjmB15vMnTj59ptyOS5D3k8eOA==
-X-Received: by 2002:adf:f342:: with SMTP id e2-v6mr16796745wrp.161.1531219323392;
-        Tue, 10 Jul 2018 03:42:03 -0700 (PDT)
-Received: from localhost (pD9E51B8F.dip0.t-ipconnect.de. [217.229.27.143])
-        by smtp.gmail.com with ESMTPSA id m136-v6sm12979447wma.32.2018.07.10.03.42.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Jul 2018 03:42:02 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 12:42:01 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] drm/panel: ILI9881c: fix missing assignment to
- error return ret
-Message-ID: <20180710104201.GJ1504@ulmo>
-References: <20180626160354.1363-1-colin.king@canonical.com>
+        id S1752464AbeGJKpE (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 06:45:04 -0400
+Received: from asrmicro.com ([210.13.118.86]:45606 "EHLO mail2012.asrmicro.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751289AbeGJKpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 06:45:02 -0400
+Received: from mail2012.asrmicro.com (10.1.24.123) by mail2012.asrmicro.com
+ (10.1.24.123) with Microsoft SMTP Server (TLS) id 15.0.847.32; Tue, 10 Jul
+ 2018 18:44:27 +0800
+Received: from mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b]) by
+ mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b%16]) with mapi id
+ 15.00.0847.030; Tue, 10 Jul 2018 18:44:27 +0800
+From:   =?utf-8?B?RmFuZyBIb25namllKOaWuea0quadsCk=?= 
+        <hongjiefang@asrmicro.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Adrian Hunter <adrian.hunter@intel.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        "Bastian Stender" <bst@pengutronix.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Chanho Min <chanho.min@lge.com>,
+        "Kyle Roeschley" <kyle.roeschley@ni.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] mmc: core: improve rationality of bus width setting for
+ HS400es
+Thread-Topic: [PATCH] mmc: core: improve rationality of bus width setting
+ for HS400es
+Thread-Index: AQHUF1C1UTyNnhfPe06ky8JfBeUWZqSGO/IAgAGhJWD//7pOAIAAqAxQ
+Date:   Tue, 10 Jul 2018 10:44:26 +0000
+Message-ID: <63a5c7d969eb4e5d99c5e289e28cab09@mail2012.asrmicro.com>
+References: <1531118843-796-1-git-send-email-hongjiefang@asrmicro.com>
+ <CAPDyKFpzJV-UQbMa7_tHms7o3hMn9_g=H_M0jW+ZN9G=8XCqRg@mail.gmail.com>
+ <86aa8215d6e44e578cd34f0625c5ebef@mail2012.asrmicro.com>
+ <CAPDyKFqfwxGgVhKp-RU1Ksd2BKhxvqdqXf0JV3dzyJdgfeBV+w@mail.gmail.com>
+In-Reply-To: <CAPDyKFqfwxGgVhKp-RU1Ksd2BKhxvqdqXf0JV3dzyJdgfeBV+w@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.1.170.195]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HcccYpVZDxQ8hzPO"
-Content-Disposition: inline
-In-Reply-To: <20180626160354.1363-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---HcccYpVZDxQ8hzPO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 26, 2018 at 05:03:54PM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> Currently, ret is being checked for an error condition however it
-> is not being assigned in the previous statement on the call of
-> function mipi_dsi_dcs_exit_sleep_mode.  Add in the missing assignment
-> of ret.
->=20
-> Detected by CoverityScan, CID#1470174, 1470178 ("Unchecked return value")
->=20
-> Fixes: 26aec25593c2 ("drm/panel: Add Ilitek ILI9881c panel driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Applied, thanks.
-
-Thierry
-
---HcccYpVZDxQ8hzPO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltEjXkACgkQ3SOs138+
-s6HLFRAAp0RfH9dXdPIBTsFKGhAnjEGXIByABT4ePuVE48uwunerFYt8UCeBkRTR
-RxQjfMEij4yRhOK18BM7yFNYZHTrFfN6C0TlUGxqA0HmIew1X0XCLh1AEZTwfz2b
-ZSQhkIW4nCMnyCSNkz2e50sKhhBw/rUyggOtdInj9HJHprFBGU6NCAIbwPdHQYG/
-+pJaXVdQq8X1ZuRx/tLy5+BMuLua/0swCU5Tqd9JsbL1kpWtoiX/wjYuDLEj3zUf
-4uBoWmm+kAFlZg2722Am3UmonLavdpl0Uh9Q2Suq6zSpAUqnNmVqgBNXgroDbOsF
-74Prk+pDtP7RLZYJ/ParuvonR6yZv3aYU+SpJw5fBHcrKv7AHrqUoGwvX/SZsKPM
-hPJ79rFK+8Ob5lGEbGFb5zebvnRFJ3KP/RTb/1WPBUJYUILwEZR9VXdu0vVXMvel
-RYvlS9ITDBLsSVr4ktJrWxP9ONlo746+6EHhtlsnFFaab3D2BYrpSrZ1IQCdnZu3
-k+pgTKtdnXsavBqliE3FVA8ijQ+dDpeQkJMKWZTj9OjNjLxCIzL3nauoHSdpGvjY
-i9jg7BYbREZmhOJhvR5ISWuVXY5DyEjZ2fHF++BAJyu5Z+dE+Vrn+cKr+Z6EHRjY
-UteLVk8HQEwRjFEiXbMjUSVZhhkIedA9LMeVn6U19suUjDW2LTg=
-=kp2D
------END PGP SIGNATURE-----
-
---HcccYpVZDxQ8hzPO--
+DQo+IE9uIDEwIEp1bHkgMjAxOCBhdCAwNzowNCwgRmFuZyBIb25namllKOaWuea0quadsCkgPGhv
+bmdqaWVmYW5nQGFzcm1pY3JvLmNvbT4NCj4gd3JvdGU6DQo+ID4+IE9uIDkgSnVseSAyMDE4IGF0
+IDA4OjQ3LCBIb25namllIEZhbmcgPGhvbmdqaWVmYW5nQGFzcm1pY3JvLmNvbT4gd3JvdGU6DQo+
+ID4+ID4gbW1jX3NlbGVjdF9oczQwMGVzKCkgY2FsbHMgbW1jX3NlbGVjdF9idXNfd2lkdGgoKSB3
+aGljaCB3aWxsIHRyeSB0bw0KPiA+PiA+IHNldCA0Yml0IHRyYW5zZmVyIG1vZGUgaWYgZmFpbCB0
+byBzZXQgOGJpdCBtb2RlLiBUaGUgcHJvYmxlbSBpcyB0aGF0DQo+ID4+ID4gdGhlIGJ1cyB3aWR0
+aCBzaG91bGQgbm90IGJlIHNldCB0byA0Yml0IGluIEhTNDAwZXMgbW9kZS4NCj4gPj4NCj4gPj4g
+SSBndWVzcyBpdCBmYWlscyBiZWNhdXNlIHRoZXJlIGlzIHNvbWV0aGluZyB3cm9uZy4gQ2FuIHlv
+dSBwbGVhc2UNCj4gPj4gZWxhYm9yYXRlIHVuZGVyIHdoYXQgY2lyY3Vtc3RhbmNlIHRoZSBwcm9i
+bGVtIG9jY3Vycz8NCj4gPj4NCj4gPiBUaGlzIHByb2JsZW0gdmVyeSBvY2Nhc2lvbmFsbHkgb2Nj
+dXJyZWQgd2hlbiBzeXN0ZW0gcmVzdW1lIGZyb20NCj4gPiBzdXNwZW5kIHN0YXRlLiBUaGUgY2Fy
+ZCBzdHVjayBpbiB0aGUgcHJvZ3JhbW1pbmcgc3RhdGUgYWZ0ZXIgc2V0dGluZw0KPiA+IDhiaXQg
+bW9kZS4gQWZ0ZXIgdGhhdCwgbW1jX3NlbGVjdF9idXNfd2lkdGgoKSB3aWxsIGNvbnRpbnVlIHRv
+IHNldA0KPiA+IDRiaXQgbW9kZSBhbmQgcmV0dXJuIHdpdGhvdXQgZXJyb3JzLiBPZiBjb3Vyc2Us
+IHRoZSBmb2xsb3dpbmcgUi9XDQo+ID4gcmVxdWVzdHMgd2lsbCBiZSBhbGwgZmFpbGluZy4NCj4g
+DQo+IEkgc2VlLiBTbyBpdCdzIHRoZSBtbWNfc3dpdGNoKCkgb3BlcmF0aW9uIHRoYXQgZmFpbHMs
+IHdoZW4gdHJ5aW5nIDgtYml0LiBIbW0uDQo+IA0KPiA+DQo+ID4gVGhlIHByb2JsZW0gc2NlbmUg
+aXMgaGFyZCB0byByZXByb2R1Y2UuIE1heWJlIGl0IGhhcHBlbmVkDQo+ID4gYmVjYXVzZSB0aGVy
+ZSBpcyBzb21ldGhpbmcgd3JvbmcgYWJvdXQgYnVzIGNsb2NrIG9yIGNvcmUgdm9sdGFnZQ0KPiA+
+IHN0YWJpbGl0eSB3aGVuIHN5c3RlbSBkbyByZXN1bWUuDQo+IA0KPiBZZWFoLCB0aGF0IG5lZWRz
+IGZ1cnRoZXIgZGVidWdnaW5nLg0KPiANCj4gRG9uJ3Qga25vdyB3aGF0IGhvc3QgZHJpdmVyIHlv
+dSBhcmUgdXNpbmcsIGJ1dCBwb3RlbnRpYWxseSB5b3UgY291bGQNCj4gcGxheSB3aXRoIGEgY291
+cGxlIGhvc3Qgc3BlY2lmaWMgbWVjaGFuaXNtLiBUaGUgLT5ob3N0LT5jYXJkX2J1c3koKQ0KPiBj
+YWxsYmFjaywgaG9zdC0+bWF4X2J1c3lfdGltZW91dCBhbmQgTU1DX0NBUF9XQUlUX1dISUxFX0JV
+U1kuDQo+IERlcGVuZGluZyBvbiB0aGVzZSwgX19tbWNfc3dpdGNoKCkgY2hhbmdlcyBpdHMgcG9s
+aWN5IHdoZW4gcG9sbGluZyBmb3INCj4gYnVzeS4gSGF2ZSBhIGxvb2sgYXQgX19tbWNfc3dpdGNo
+KCkgYW5kIG1tY19wb2xsX2Zvcl9idXN5KCksIHRvIHNlZQ0KPiB3aGF0IGdvZXMgb24uDQo+IA0K
+VGhhbmtzLg0KSSB3aWxsIGRvIHRoZSBmdXJ0aGVyIGRlYnVnZ2luZyBhY2NvcmRpbmcgdG8geW91
+ciBhZHZpY2UuDQoNCj4gPg0KPiA+PiA+DQo+ID4+ID4gU2lnbmVkLW9mZi1ieTogSG9uZ2ppZSBG
+YW5nIDxob25namllZmFuZ0Bhc3JtaWNyby5jb20+DQo+ID4+ID4gLS0tDQo+ID4+ID4gIGRyaXZl
+cnMvbW1jL2NvcmUvbW1jLmMgfCAyMyArKysrKysrKysrKysrKysrKysrKystLQ0KPiA+PiA+ICAx
+IGZpbGUgY2hhbmdlZCwgMjEgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPj4gPg0K
+PiA+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21tYy9jb3JlL21tYy5jIGIvZHJpdmVycy9tbWMv
+Y29yZS9tbWMuYw0KPiA+PiA+IGluZGV4IDQ0NjZmNWQuLjk0YzNjYzUgMTAwNjQ0DQo+ID4+ID4g
+LS0tIGEvZHJpdmVycy9tbWMvY29yZS9tbWMuYw0KPiA+PiA+ICsrKyBiL2RyaXZlcnMvbW1jL2Nv
+cmUvbW1jLmMNCj4gPj4gPiBAQCAtMTMzNyw5ICsxMzM3LDI4IEBAIHN0YXRpYyBpbnQgbW1jX3Nl
+bGVjdF9oczQwMGVzKHN0cnVjdCBtbWNfY2FyZA0KPiAqY2FyZCkNCj4gPj4gPiAgICAgICAgIGlm
+IChlcnIpDQo+ID4+ID4gICAgICAgICAgICAgICAgIGdvdG8gb3V0X2VycjsNCj4gPj4gPg0KPiA+
+PiA+IC0gICAgICAgZXJyID0gbW1jX3NlbGVjdF9idXNfd2lkdGgoY2FyZCk7DQo+ID4+ID4gLSAg
+ICAgICBpZiAoZXJyIDwgMCkNCj4gPj4gPiArICAgICAgIC8qIFN3aXRjaCBjYXJkIHRvIDggYml0
+IG1vZGUgKi8NCj4gPj4gPiArICAgICAgIGVyciA9IG1tY19zd2l0Y2goY2FyZCwgRVhUX0NTRF9D
+TURfU0VUX05PUk1BTCwNCj4gPj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgRVhUX0NTRF9C
+VVNfV0lEVEgsDQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgIEVYVF9DU0RfQlVTX1dJ
+RFRIXzgsDQo+ID4+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgIGNhcmQtPmV4dF9jc2QuZ2Vu
+ZXJpY19jbWQ2X3RpbWUpOw0KPiA+PiA+ICsgICAgICAgaWYgKGVycikgew0KPiA+PiA+ICsgICAg
+ICAgICAgICAgICBwcl9lcnIoIiVzOiBzd2l0Y2ggdG8gOCBiaXQgbW9kZSBmb3IgaHM0MDBlcyBm
+YWlsZWQsIGVycjolZFxuIiwNCj4gPj4gPiArICAgICAgICAgICAgICAgICAgICAgICBtbWNfaG9z
+dG5hbWUoaG9zdCksIGVycik7DQo+ID4+ID4gKyAgICAgICAgICAgICAgIGdvdG8gb3V0X2VycjsN
+Cj4gPj4gPiArICAgICAgIH0NCj4gPj4gPiArDQo+ID4+ID4gKyAgICAgICBtbWNfc2V0X2J1c193
+aWR0aChob3N0LCBNTUNfQlVTX1dJRFRIXzgpOw0KPiA+PiA+ICsNCj4gPj4gPiArICAgICAgIGlm
+ICghKGhvc3QtPmNhcHMgJiBNTUNfQ0FQX0JVU19XSURUSF9URVNUKSkNCj4gPj4gPiArICAgICAg
+ICAgICAgICAgZXJyID0gbW1jX2NvbXBhcmVfZXh0X2NzZHMoY2FyZCwgTU1DX0JVU19XSURUSF84
+KTsNCj4gPj4gPiArICAgICAgIGVsc2UNCj4gPj4gPiArICAgICAgICAgICAgICAgZXJyID0gbW1j
+X2J1c190ZXN0KGNhcmQsIE1NQ19CVVNfV0lEVEhfOCk7DQo+ID4+ID4gKyAgICAgICBpZiAoZXJy
+KSB7DQo+ID4+ID4gKyAgICAgICAgICAgICAgIHByX2VycigiJXM6IHRlc3QgOCBiaXQgbW9kZSBm
+b3IgaHM0MDBlcyBmYWlsZWQsIGVycjolZFxuIiwNCj4gPj4gPiArICAgICAgICAgICAgICAgICAg
+ICAgICBtbWNfaG9zdG5hbWUoaG9zdCksIGVycik7DQo+ID4+ID4gICAgICAgICAgICAgICAgIGdv
+dG8gb3V0X2VycjsNCj4gPj4NCj4gPj4gTG90J3Mgb3BlbiBjb2RpbmcsIG5vIEkgZG9uJ3QgbGlr
+ZSBpdC4NCj4gPj4NCj4gPj4gV291bGRuJ3QgaXQgaW5zdGVhZCBiZSBwb3NzaWJsZSB0byBjaGVj
+ayB0aGUgcmV0dXJuIHZhbHVlIGZyb20NCj4gPj4gbW1jX3NlbGVjdF9idXNfd2lkdGgoKSwgYXMg
+aXQgc2hvdWxkIHRlbGwgd2hhdCB3aWR0aCBpdCBtYW5hZ2UgdG8NCj4gPj4gc2VsZWN0LiBUaGVu
+IGlmIGl0IGlzbid0IDgtYml0LCB0aGVuIHdlIHNob3VsZCBiYWlsIG91dC4gRG9lcyB0aGF0DQo+
+ID4+IHdvcms/DQo+ID4+DQo+ID4gQWZ0ZXIgc2V0dGluZyA0Yml0IG1vZGUsIGl0IGNhbid0IHdv
+cmsgYmVjYXVzZSBpdCBjYW5ub3QgYmFjayB0bw0KPiA+IEhTMjAwIG1vZGUgbGlrZSB0aGUgSFM0
+MDAgbW9kZS4NCj4gPiBGb3IgSFM0MDBlcywgaWYgZmFpbCB0byBzZXQgOGJpdCBtb2RlLCBtYXli
+ZSBpdCBpcyBtb3JlIHJlYXNvbmFibGUNCj4gPiB0aGF0IHJldHVybiBlcnJvciBkaXJlY3RseS4N
+Cj4gDQo+IFllYWguIENhcmUgdG8gc2VuZCBhIHBhdGNoIGZvciB0aGF0Pw0KT0suIEkgd2lsbCB0
+cnkgdG8gc2VuZCBhIG5ldyBwYXRjaCB0aGF0IGxldCBtbWNfc2VsZWN0X2J1c193aWR0aCgpDQpy
+ZXR1cm4gZXJyb3IgZGlyZWN0bHkgd2hlbiBmYWlsIHRvIHNldCA4Yml0IGZvciBIUzQwMGVzLg0K
+DQo+IA0KPiBbLi4uXQ0KPiANCj4gS2luZCByZWdhcmRzDQo+IFVmZmUNCg0KQiZSDQpIb25namll
+DQo=
