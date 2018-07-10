@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC871C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EA5C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 928A220936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 928A220936
+	by mail.kernel.org (Postfix) with ESMTP id 956E620936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956E620936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732925AbeGJS04 (ORCPT
+        id S1732941AbeGJS1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:26:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44618 "EHLO
+        Tue, 10 Jul 2018 14:27:00 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44642 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732909AbeGJS04 (ORCPT
+        with ESMTP id S1732909AbeGJS06 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:26:56 -0400
+        Tue, 10 Jul 2018 14:26:58 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E20EDB4;
-        Tue, 10 Jul 2018 18:26:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2B2AADB4;
+        Tue, 10 Jul 2018 18:26:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
         stable@kernel.org
-Subject: [PATCH 3.18 11/23] ext4: make sure bitmaps and the inode table dont overlap with bg descriptors
-Date:   Tue, 10 Jul 2018 20:24:44 +0200
-Message-Id: <20180710182309.365908106@linuxfoundation.org>
+Subject: [PATCH 3.18 12/23] ext4: clear i_data in ext4_inode_info when removing inline data
+Date:   Tue, 10 Jul 2018 20:24:45 +0200
+Message-Id: <20180710182309.410649178@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
 References: <20180710182308.877332304@linuxfoundation.org>
@@ -52,77 +52,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit 77260807d1170a8cf35dbb06e07461a655f67eee upstream.
+commit 6e8ab72a812396996035a37e5ca4b3b99b5d214b upstream.
 
-It's really bad when the allocation bitmaps and the inode table
-overlap with the block group descriptors, since it causes random
-corruption of the bg descriptors.  So we really want to head those off
-at the pass.
+When converting from an inode from storing the data in-line to a data
+block, ext4_destroy_inline_data_nolock() was only clearing the on-disk
+copy of the i_blocks[] array.  It was not clearing copy of the
+i_blocks[] in ext4_inode_info, in i_data[], which is the copy actually
+used by ext4_map_blocks().
 
-https://bugzilla.kernel.org/show_bug.cgi?id=199865
+This didn't matter much if we are using extents, since the extents
+header would be invalid and thus the extents could would re-initialize
+the extents tree.  But if we are using indirect blocks, the previous
+contents of the i_blocks array will be treated as block numbers, with
+potentially catastrophic results to the file system integrity and/or
+user data.
+
+This gets worse if the file system is using a 1k block size and
+s_first_data is zero, but even without this, the file system can get
+quite badly corrupted.
+
+This addresses CVE-2018-10881.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=200015
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |   25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ fs/ext4/inline.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -2064,6 +2064,7 @@ static int ext4_check_descriptors(struct
- 	struct ext4_sb_info *sbi = EXT4_SB(sb);
- 	ext4_fsblk_t first_block = le32_to_cpu(sbi->s_es->s_first_data_block);
- 	ext4_fsblk_t last_block;
-+	ext4_fsblk_t last_bg_block = sb_block + ext4_bg_num_gdb(sb, 0) + 1;
- 	ext4_fsblk_t block_bitmap;
- 	ext4_fsblk_t inode_bitmap;
- 	ext4_fsblk_t inode_table;
-@@ -2096,6 +2097,14 @@ static int ext4_check_descriptors(struct
- 			if (!(sb->s_flags & MS_RDONLY))
- 				return 0;
- 		}
-+		if (block_bitmap >= sb_block + 1 &&
-+		    block_bitmap <= last_bg_block) {
-+			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
-+				 "Block bitmap for group %u overlaps "
-+				 "block group descriptors", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
-+		}
- 		if (block_bitmap < first_block || block_bitmap > last_block) {
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 			       "Block bitmap for group %u not in group "
-@@ -2110,6 +2119,14 @@ static int ext4_check_descriptors(struct
- 			if (!(sb->s_flags & MS_RDONLY))
- 				return 0;
- 		}
-+		if (inode_bitmap >= sb_block + 1 &&
-+		    inode_bitmap <= last_bg_block) {
-+			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
-+				 "Inode bitmap for group %u overlaps "
-+				 "block group descriptors", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
-+		}
- 		if (inode_bitmap < first_block || inode_bitmap > last_block) {
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
- 			       "Inode bitmap for group %u not in group "
-@@ -2124,6 +2141,14 @@ static int ext4_check_descriptors(struct
- 			if (!(sb->s_flags & MS_RDONLY))
- 				return 0;
- 		}
-+		if (inode_table >= sb_block + 1 &&
-+		    inode_table <= last_bg_block) {
-+			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
-+				 "Inode table for group %u overlaps "
-+				 "block group descriptors", i);
-+			if (!(sb->s_flags & MS_RDONLY))
-+				return 0;
-+		}
- 		if (inode_table < first_block ||
- 		    inode_table + sbi->s_itb_per_group - 1 > last_block) {
- 			ext4_msg(sb, KERN_ERR, "ext4_check_descriptors: "
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -432,6 +432,7 @@ static int ext4_destroy_inline_data_nolo
+ 
+ 	memset((void *)ext4_raw_inode(&is.iloc)->i_block,
+ 		0, EXT4_MIN_INLINE_DATA_SIZE);
++	memset(ei->i_data, 0, EXT4_MIN_INLINE_DATA_SIZE);
+ 
+ 	if (EXT4_HAS_INCOMPAT_FEATURE(inode->i_sb,
+ 				      EXT4_FEATURE_INCOMPAT_EXTENTS)) {
 
 
