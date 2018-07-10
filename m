@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 446C8C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D39C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072D420875
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:57:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 072D420875
+	by mail.kernel.org (Postfix) with ESMTP id 2BE0720875
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:57:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BE0720875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933356AbeGJM46 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 08:56:58 -0400
-Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:35218 "EHLO
+        id S933423AbeGJM5L (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 08:57:11 -0400
+Received: from 212.199.177.27.static.012.net.il ([212.199.177.27]:35219 "EHLO
         herzl.nuvoton.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754260AbeGJM44 (ORCPT
+        with ESMTP id S1753168AbeGJM44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Jul 2018 08:56:56 -0400
 Received: from taln60.nuvoton.co.il (ntil-fw [212.199.177.25])
-        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w6ACu5kO025317;
+        by herzl.nuvoton.co.il (8.13.8/8.13.8) with ESMTP id w6ACu63L025318;
         Tue, 10 Jul 2018 15:56:08 +0300
 Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-        id 8B47E62ED5; Tue, 10 Jul 2018 15:56:05 +0300 (IDT)
+        id 146DA62EDB; Tue, 10 Jul 2018 15:56:06 +0300 (IDT)
 From:   Tomer Maimon <tmaimon77@gmail.com>
 To:     robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
         avifishman70@gmail.com, yuenn@google.com,
@@ -35,45 +35,249 @@ To:     robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-gpio@vger.kernel.org, openbmc@lists.ozlabs.org,
         Tomer Maimon <tmaimon77@gmail.com>
-Subject: [PATCH v1 0/2] pinctrl: nuvoton: add driver for NPCM7xx
-Date:   Tue, 10 Jul 2018 15:56:02 +0300
-Message-Id: <20180710125604.14458-1-tmaimon77@gmail.com>
+Subject: [PATCH v1 1/2] dt-binding: pinctrl: Add NPCM7xx pinctrl and GPIO documentation
+Date:   Tue, 10 Jul 2018 15:56:03 +0300
+Message-Id: <20180710125604.14458-2-tmaimon77@gmail.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20180710125604.14458-1-tmaimon77@gmail.com>
+References: <20180710125604.14458-1-tmaimon77@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set adds pinmux and GPIO controller for the Nuvoton
-NPCM750/730/715/705 Baseboard Management Controller (BMC).
+Added device tree binding documentation for Nuvoton BMC
+NPCM750/730/715/705 pinmux and GPIO controller.
 
-The Nuvoton BMC NPCM750/730/715/705 Pinmux functions accessible
-only for pin groups and pinconf parameters available only for 
-individual pins.
-
-The Nuvoton BMC NPCM750/730/715/705 has eight identical GPIO 
-modules, each module has 32 GPIO ports.
-
-Most of the GPIO ports are multiplexed with other system functions.
-
-The NPCM7xx pinctrl and GPIO driver tested on NPCM750 evaluation board.
-
-Tomer Maimon (2):
-  dt-binding: pinctrl: Add NPCM7xx pinctrl and GPIO documentation
-  pinctrl: nuvoton: add NPCM7xx pinctrl and GPIO driver
-
- .../bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt   |  216 ++
- drivers/pinctrl/Kconfig                            |    1 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/nuvoton/Kconfig                    |   13 +
- drivers/pinctrl/nuvoton/Makefile                   |    4 +
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c          | 2086 ++++++++++++++++++++
- 6 files changed, 2321 insertions(+)
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+---
+ .../bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt   | 216 +++++++++++++++++++++
+ 1 file changed, 216 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
- create mode 100644 drivers/pinctrl/nuvoton/Kconfig
- create mode 100644 drivers/pinctrl/nuvoton/Makefile
- create mode 100644 drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
+new file mode 100644
+index 000000000000..3a8f62ac7619
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
+@@ -0,0 +1,216 @@
++Nuvoton NPCM7XX Pin Controllers
++
++The Nuvoton BMC NPCM7XX Pin Controller multi-function routed through
++the multiplexing block, Each pin supports GPIO functionality (GPIOx)
++and multiple functions that directly connect the pin to different
++hardware blocks.
++
++Required properties:
++- #address-cells : should be 1.
++- #size-cells	 : should be 1.
++- compatible	 : "nuvoton,npcm750-pinctrl" for Poleg NPCM7XX.
++- ranges	 : defines mapping ranges between pin controller node (parent)
++			to GPIO bank node (children).
++
++=== GPIO Bank Subnode ===
++
++The NPCM7XX has 8 GPIO Banks each GPIO bank support 32 GPIO.
++
++Required GPIO Bank subnode-properties:
++- reg 			: specifies physical base address and size of the GPIO
++				bank registers.
++- gpio-controller	: Marks the device node as a GPIO controller.
++- #gpio-cells		: Must be <2>. The first cell is the gpio pin number
++				and the second cell is used for optional parameters.
++- interrupts		: contain the GPIO bank interrupt with flags for falling edge.
++- gpio-ranges		: defines the range of pins managed by the GPIO bank controller.
++
++For example, GPIO bank subnodes like the following:
++	gpio0: gpio@f0010000 {
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x0 0x80>;
++		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
++		gpio-ranges = <&pinctrl 0 0 32>;
++	};
++
++=== Pin Mux Subnode ===
++
++- pin: A string containing the name of the pin
++	An array of strings, each string containing the name of a pin.
++	These pin are used for selecting pin configuration.
++
++The following are the list of pins available:
++	"GPIO0/IOX1DI", "GPIO1/IOX1LD",	"GPIO2/IOX1CK", "GPIO3/IOX1D0",
++	"GPIO4/IOX2DI/SMB1DSDA", "GPIO5/IOX2LD/SMB1DSCL", "GPIO6/IOX2CK/SMB2DSDA",
++	"GPIO7/IOX2D0/SMB2DSCL", "GPIO8/LKGPO1", "GPIO9/LKGPO2", "GPIO10/IOXHLD",
++	"GPIO11/IOXHCK", "GPIO12/GSPICK/SMB5BSCL", "GPIO13/GSPIDO/SMB5BSDA",
++	"GPIO14/GSPIDI/SMB5CSCL", "GPIO15/GSPICS/SMB5CSDA", "GPIO16/LKGPO0",
++	"GPIO17/PSPI2DI/SMB4DEN","GPIO18/PSPI2D0/SMB4BSDA", "GPIO19/PSPI2CK/SMB4BSCL",
++	"GPIO20/SMB4CSDA/SMB15SDA", "GPIO21/SMB4CSCL/SMB15SCL", "GPIO22/SMB4DSDA/SMB14SDA",
++	"GPIO23/SMB4DSCL/SMB14SCL", "GPIO24/IOXHDO", "GPIO25/IOXHDI", "GPIO26/SMB5SDA",
++	"GPIO27/SMB5SCL", "GPIO28/SMB4SDA", "GPIO29/SMB4SCL", "GPIO30/SMB3SDA",
++	"GPIO31/SMB3SCL", "GPIO32/nSPI0CS1","SPI0D2", "SPI0D3", "GPIO37/SMB3CSDA",
++	"GPIO38/SMB3CSCL", "GPIO39/SMB3BSDA", "GPIO40/SMB3BSCL", "GPIO41/BSPRXD",
++	"GPO42/BSPTXD/STRAP11", "GPIO43/RXD1/JTMS2/BU1RXD", "GPIO44/nCTS1/JTDI2/BU1CTS",
++	"GPIO45/nDCD1/JTDO2", "GPIO46/nDSR1/JTCK2", "GPIO47/nRI1/JCP_RDY2",
++	"GPIO48/TXD2/BSPTXD", "GPIO49/RXD2/BSPRXD", "GPIO50/nCTS2", "GPO51/nRTS2/STRAP2",
++	"GPIO52/nDCD2", "GPO53/nDTR2_BOUT2/STRAP1", "GPIO54/nDSR2", "GPIO55/nRI2",
++	"GPIO56/R1RXERR", "GPIO57/R1MDC", "GPIO58/R1MDIO", "GPIO59/SMB3DSDA",
++	"GPIO60/SMB3DSCL", "GPO61/nDTR1_BOUT1/STRAP6", "GPO62/nRTST1/STRAP5",
++	"GPO63/TXD1/STRAP4", "GPIO64/FANIN0", "GPIO65/FANIN1", "GPIO66/FANIN2",
++	"GPIO67/FANIN3", "GPIO68/FANIN4", "GPIO69/FANIN5", "GPIO70/FANIN6", "GPIO71/FANIN7",
++	"GPIO72/FANIN8", "GPIO73/FANIN9", "GPIO74/FANIN10", "GPIO75/FANIN11",
++	"GPIO76/FANIN12", "GPIO77/FANIN13","GPIO78/FANIN14", "GPIO79/FANIN15",
++	"GPIO80/PWM0", "GPIO81/PWM1", "GPIO82/PWM2", "GPIO83/PWM3", "GPIO84/R2TXD0",
++	"GPIO85/R2TXD1", "GPIO86/R2TXEN", "GPIO87/R2RXD0", "GPIO88/R2RXD1", "GPIO89/R2CRSDV",
++	"GPIO90/R2RXERR", "GPIO91/R2MDC", "GPIO92/R2MDIO", "GPIO93/GA20/SMB5DSCL",
++	"GPIO94/nKBRST/SMB5DSDA", "GPIO95/nLRESET/nESPIRST", "GPIO96/RG1TXD0",
++	"GPIO97/RG1TXD1", "GPIO98/RG1TXD2", "GPIO99/RG1TXD3","GPIO100/RG1TXC",
++	"GPIO101/RG1TXCTL", "GPIO102/RG1RXD0", "GPIO103/RG1RXD1", "GPIO104/RG1RXD2",
++	"GPIO105/RG1RXD3", "GPIO106/RG1RXC", "GPIO107/RG1RXCTL", "GPIO108/RG1MDC",
++	"GPIO109/RG1MDIO", "GPIO110/RG2TXD0/DDRV0", "GPIO111/RG2TXD1/DDRV1",
++	"GPIO112/RG2TXD2/DDRV2", "GPIO113/RG2TXD3/DDRV3", "GPIO114/SMB0SCL",
++	"GPIO115/SMB0SDA", "GPIO116/SMB1SCL", "GPIO117/SMB1SDA", "GPIO118/SMB2SCL",
++	"GPIO119/SMB2SDA", "GPIO120/SMB2CSDA", "GPIO121/SMB2CSCL", "GPIO122/SMB2BSDA",
++	"GPIO123/SMB2BSCL", "GPIO124/SMB1CSDA", "GPIO125/SMB1CSCL","GPIO126/SMB1BSDA",
++	"GPIO127/SMB1BSCL", "GPIO128/SMB8SCL", "GPIO129/SMB8SDA", "GPIO130/SMB9SCL",
++	"GPIO131/SMB9SDA", "GPIO132/SMB10SCL", "GPIO133/SMB10SDA","GPIO134/SMB11SCL",
++	"GPIO135/SMB11SDA", "GPIO136/SD1DT0", "GPIO137/SD1DT1", "GPIO138/SD1DT2",
++	"GPIO139/SD1DT3", "GPIO140/SD1CLK", "GPIO141/SD1WP", "GPIO142/SD1CMD",
++	"GPIO143/SD1CD/SD1PWR", "GPIO144/PWM4",	"GPIO145/PWM5",	"GPIO146/PWM6",
++	"GPIO147/PWM7",	"GPIO148/MMCDT4", "GPIO149/MMCDT5", "GPIO150/MMCDT6",
++	"GPIO151/MMCDT7", "GPIO152/MMCCLK", "GPIO153/MMCWP", "GPIO154/MMCCMD",
++	"GPIO155/nMMCCD/nMMCRST", "GPIO156/MMCDT0", "GPIO157/MMCDT1", "GPIO158/MMCDT2",
++	"GPIO159/MMCDT3", "GPIO160/CLKOUT/RNGOSCOUT", "GPIO161/nLFRAME/nESPICS",
++	"GPIO162/SERIRQ", "GPIO163/LCLK/ESPICLK", "GPIO164/LAD0/ESPI_IO0",
++	"GPIO165/LAD1/ESPI_IO1", "GPIO166/LAD2/ESPI_IO2", "GPIO167/LAD3/ESPI_IO3",
++	"GPIO168/nCLKRUN/nESPIALERT", "GPIO169/nSCIPME", "GPIO170/nSMI", "GPIO171/SMB6SCL",
++	"GPIO172/SMB6SDA", "GPIO173/SMB7SCL", "GPIO174/SMB7SDA", "GPIO175/PSPI1CK/FANIN19",
++	"GPIO176/PSPI1DO/FANIN18", "GPIO177/PSPI1DI/FANIN17", "GPIO178/R1TXD0",
++	"GPIO179/R1TXD1", "GPIO180/R1TXEN", "GPIO181/R1RXD0", "GPIO182/R1RXD1",
++	"GPIO183/SPI3CK", "GPO184/SPI3D0/STRAP9", "GPO185/SPI3D1/STRAP10",
++	"GPIO186/nSPI3CS0", "GPIO187/nSPI3CS1",	"GPIO188/SPI3D2/nSPI3CS2",
++	"GPIO189/SPI3D3/nSPI3CS3", "GPIO190/nPRD_SMI", "GPIO191", "GPIO192", "GPIO193/R1CRSDV",
++	"GPIO194/SMB0BSCL", "GPIO195/SMB0BSDA", "GPIO196/SMB0CSCL", "GPIO197/SMB0DEN",
++	"GPIO198/SMB0DSDA", "GPIO199/SMB0DSCL", "GPIO200/R2CK", "GPIO201/R1CK",
++	"GPIO202/SMB0CSDA", "GPIO203/FANIN16", "GPIO204/DDC2SCL", "GPIO205/DDC2SDA",
++	"GPIO206/HSYNC2", "GPIO207/VSYNC2", "GPIO208/RG2TXC/DVCK", "GPIO209/RG2TXCTL/DDRV4",
++	"GPIO210/RG2RXD0/DDRV5", "GPIO211/RG2RXD1/DDRV6", "GPIO212/RG2RXD2/DDRV7",
++	"GPIO213/RG2RXD3/DDRV8", "GPIO214/RG2RXC/DDRV9", "GPIO215/RG2RXCTL/DDRV10",
++	"GPIO216/RG2MDC/DDRV11", "GPIO217/RG2MDIO/DVHSYNC", "GPIO218/nWDO1",
++	"GPIO219/nWDO2", "GPIO220/SMB12SCL", "GPIO221/SMB12SDA", "GPIO222/SMB13SCL",
++	"GPIO223/SMB13SDA", "GPIO224/SPIXCK", "GPO225/SPIXD0/STRAP12", "GPO226/SPIXD1/STRAP13",
++	"GPIO227/nSPIXCS0", "GPIO228/nSPIXCS1",	"GPO229/SPIXD2/STRAP3", "GPIO230/SPIXD3",
++	"GPIO231/nCLKREQ", "GPI255/DACOSEL"
++
++Optional Properties:
++ bias-disable, bias-pull-down, bias-pull-up, input-enable,
++ input-disable, output-high, output-low, drive-push-pull,
++ drive-open-drain, input-debounce, slew-rate, drive-strength
++
++ slew-rate valid arguments are:
++				<0> - slow
++				<1> - fast
++ drive-strength valid arguments are:
++				<2> - 2mA
++				<4> - 4mA
++				<8> - 8mA
++				<12> - 12mA
++				<16> - 16mA
++				<24> - 24mA
++
++For example, pinctrl might have pinmux subnodes like the following:
++
++	gpio0_iox1d1_pin: gpio0_iox1d1_pin {
++		pins = "GPIO0/IOX1DI";
++		output-high;
++	};
++	gpio0_iox1ck_pin: gpio0_iox1ck_pin {
++		pins = "GPIO2/IOX1CK";
++		output_high;
++	};
++
++=== Pin Group Subnode ===
++
++Required pin group subnode-properties:
++- groups : A string containing the name of the group to mux.
++- function: A string containing the name of the function to mux to the
++  group.
++
++The following are the list of the available groups and functions :
++	smb0, smb0b, smb0c, smb0d, smb0den, smb1, smb1b, smb1c, smb1d,
++	smb2, smb2b, smb2c, smb2d, smb3, smb3b, smb3c, smb3d, smb4, smb4b,
++	smb4c, smb4d, smb4den, smb5, smb5b, smb5c, smb5d, ga20kbc, smb6,
++	smb7, smb8, smb9, smb10, smb11, smb12, smb13, smb14, smb15, fanin0,
++	fanin1, fanin2, fanin3, fanin4, fanin5, fanin6, fanin7, fanin8,
++	fanin9, fanin10, fanin11 fanin12 fanin13, fanin14, fanin15, faninx,
++	pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, pwm6, pwm7, rg1, rg1mdio, rg2,
++	rg2mdio, ddr, uart1, uart2, bmcuart0a, bmcuart0b, bmcuart1, iox1,
++	iox2, ioxh, gspi, mmc, mmcwp, mmccd, mmcrst, mmc8, r1, r1err, r1md,
++	r2, r2err, r2md, sd1, sd1pwr, wdog1, wdog2, scipme, sci, serirq,
++	jtag2, spix, spixcs1, pspi1, pspi2, ddc, clkreq, clkout, spi3, spi3cs1,
++	spi3quad, spi3cs2, spi3cs3, spi0cs1, lpc, lpcclk, espi, lkgpo0, lkgpo1,
++	lkgpo2, nprd_smi
++
++For example, pinctrl might have group subnodes like the following:
++	r1err_pins: r1err_pins {
++		groups = "r1err";
++		function = "r1err";
++	};
++	r1md_pins: r1md_pins {
++		groups = "r1md";
++		function = "r1md";
++	};
++	r1_pins: r1_pins {
++		groups = "r1";
++		function = "r1";
++	};
++
++Examples
++========
++pinctrl: pinctrl@0 {
++	#address-cells = <1>;
++	#size-cells = <1>;
++	compatible = "nuvoton,npcm750-pinctrl", "syscon", "simple-mfd";
++	ranges = <0 0xf0010000 0x8000>;
++
++	gpio0: gpio@f0010000 {
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x0 0x80>;
++		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
++		gpio-ranges = <&pinctrl 0 0 32>;
++	};
++
++	....
++
++	gpio7: gpio@f0017000 {
++		gpio-controller;
++		#gpio-cells = <2>;
++		reg = <0x7000 0x80>;
++		interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
++		gpio-ranges = <&pinctrl 0 224 32>;
++	};
++
++	gpio0_iox1d1_pin: gpio0_iox1d1_pin {
++		pins = "GPIO0/IOX1DI";
++		output-high;
++	};
++
++	iox1_pins: iox1_pins {
++		groups = "iox1";
++		function = "iox1";
++	};
++	iox2_pins: iox2_pins {
++		groups = "iox2";
++		function = "iox2";
++	};
++
++	....
++
++	clkreq_pins: clkreq_pins {
++		groups = "clkreq";
++		function = "clkreq";
++	};
++};
+\ No newline at end of file
 -- 
 2.14.1
 
