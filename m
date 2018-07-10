@@ -2,104 +2,91 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE28C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A14E2C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF7BF208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:28:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="VK+7u4v6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF7BF208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B038208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:31:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B038208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732358AbeGJXaB (ORCPT
+        id S1732376AbeGJXcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 19:30:01 -0400
-Received: from sonic308-16.consmr.mail.gq1.yahoo.com ([98.137.68.40]:39238
-        "EHLO sonic308-16.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732305AbeGJXaA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 19:30:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1531265316; bh=7ZsuvngLdaQKxqLuRYKT98yYZUfA+IY8qbGPlm++Fzw=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=VK+7u4v6w3UeWDdCtkLkSBwAxT4LgHzKwIAFpS9PAh6/FaMe3JfRY3e9NtA/Q9uQF02TlWs54MyXu6OkE0mho2WthibrknDV0iyU4bEXJUrTTOxSgxeMImeqcVMU7jywqlXrQBrIf1W1bs2uvc8dXsqhCTm7c+mVbounVxqqz/9uiqYwMK5qrzs5cKXLML1HsHdVgdx8T6bzHyha3r+ac65otvfSMlz92uk2LIDkxulvJ5I/O3qRAGzsj0hIKETyXiZdjICYdWvq/H5mreNmsxmQZMk+E5W7Z411b66QWI8UYsfEdREZy7shgd1bDL2A2a0r7Rep0MK/YWi/vDhoxA==
-X-YMail-OSG: 3NsdhXsVM1k2U315gBRA_Ua5ZIbQzYQ.SJM41hQWemG6MbJnn.lrx.vRpTPUF6P
- e.0gmj1KP2FTJ.4Hd93RXlqCbGoST1_Xq50YFCRULpIdA7RZDUkMCVxDT8FCIIjdH8AC6HPOp9W4
- FQbGvrq2eS7Ptfugj_of04jyvTjFXrNDomc9zGtVF5ddI45vFPINQZT4x0loL1vfkgxA.ZD_hCZb
- PT7R.YEf5kA1zaRWWIJIWCMc4LNf4ZeywR_XsVwf2HNjjr56_yhmLzQMwZzj1CMwDQjCiR6h2a0L
- VbGVmTilbf3rbVAN6cUhEr0QWgCXFLwIPIuOWnS.Rrnz9AaEWMPxjBlI3svULjmBEyQidhjlDwNP
- XYSAKiPwWeWOwDlUaPhxVA.ut.iXqlImqXm.XMrSHPF3tRuV14tOtyZqvZTLYtIQFiFe44KzsPvC
- YXB7L3ni0JBnnaRhb2HaKsagLLvH1B.7KuJtRGpQoFcTWwl0pfnDQ0ph4XcW.dNuBMz8jcVJF32l
- 9vnKhIPWD1PfqKVJtiySiX_vgRR8AQiBhXPhk7HoQzw.DkwMC_hKPFBLZW9OQHGbEsV0kfQRFWJ9
- fKE13ZuheHt9ASQSL_ibbot0MJWfhbvxvP0D1O4.LfFHTRzigph0n61pHD0wIFIcykaaFMJU41FG
- .KwsMEGgeEXQbakZE.uWd1SFP28MtTtWEsBMdRiauezxw1DKpE16dS.s2.VtkZuJ9IgpYQgktM2t
- GxkEkm2OZhlx6G.3D3rdfiV76GTKSLbClwRSplh3Wh5eZXTNAJbDJUJTo6C8GjqFKmw3Ree4QerZ
- 12l6Mle_2OlI6wXx7zmM4umz7dXpxAxmYQK6217SdQhVXuomsUjFDeyiqxvFLcl6SlRDhzIDgYEB
- QjZvD7F8RB7kxTWL_BlkkkQ6NoQz8CeOBIm7kZ03OylXRXuZq2622TGPUOQQ2pPoayj.v4mm3cMx
- KknoDLebfiKYRZcY8goqOgRmlwTAaC23BUXsZ9HD47eGes0OIyQakziO1DQ71csyssu84PzeaS.7
- xSEdPj7qP.ff.
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.gq1.yahoo.com with HTTP; Tue, 10 Jul 2018 23:28:36 +0000
-Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
-          by smtp412.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 8d8fe1d099b610d34f46cf9228dbb2bb;
-          Tue, 10 Jul 2018 23:28:31 +0000 (UTC)
-Subject: Re: [PATCH 08/32] smack: Implement filesystem context security hooks
- [ver #9]
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        torvalds@linux-foundation.org
-References: <dc5039cb-97cf-fe72-d601-f48eb26e8e66@schaufler-ca.com>
- <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
- <153126254346.14533.14191961720018099798.stgit@warthog.procyon.org.uk>
- <16480.1531264793@warthog.procyon.org.uk>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <27bf0500-470d-d68a-2757-25cfae05d5a0@schaufler-ca.com>
-Date:   Tue, 10 Jul 2018 16:28:30 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <16480.1531264793@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=utf-8
+        Tue, 10 Jul 2018 19:32:39 -0400
+Received: from gate.crashing.org ([63.228.1.57]:34579 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732305AbeGJXcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 19:32:39 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6ANV51b013493;
+        Tue, 10 Jul 2018 18:31:07 -0500
+Message-ID: <e3076a3ea9265be8b14a4ccbe2a6c47418fd25e2.camel@kernel.crashing.org>
+Subject: Re: [PATCH v2 2/2] drivers: core: Remove glue dirs from sysfs
+ earlier
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Wed, 11 Jul 2018 09:31:05 +1000
+In-Reply-To: <20180710145519.GA11703@kroah.com>
+References: <CA+55aFx7wgjx+d0Vdtpgzc46HM-4vN2r-Hyf2ZC4gQU-nxopMQ@mail.gmail.com>
+         <1303e511c44f639c562a02ae28aa530144277c99.camel@kernel.crashing.org>
+         <b15584ccdfcb3bf6d42665635aaa9150ed3244ba.camel@kernel.crashing.org>
+         <CA+55aFzKmzC-2_6+RsRRu9KfK_r=UGgLN2Q0hSNBV=ScGR7=8g@mail.gmail.com>
+         <6e3ca577f8dd5f3621d1054447d3f928a73dfcf9.camel@kernel.crashing.org>
+         <CA+55aFy+ZSu5cPzk887N-ZgXqvTB=Bp1JQYMWT1SZY81MqLH6Q@mail.gmail.com>
+         <1bc873980e7f63291fbe19dbc7e1607b8e126241.camel@kernel.crashing.org>
+         <20180707164241.GB16279@kroah.com>
+         <CA+55aFx-UX8nxewRFFWdBgYfPqfipnxaqJuJCUni9h4JvhoPFw@mail.gmail.com>
+         <70f1312e76a9f53bf7749525ea881272c7007a34.camel@kernel.crashing.org>
+         <20180710145519.GA11703@kroah.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/10/2018 4:19 PM, David Howells wrote:
-> Casey Schaufler <casey@schaufler-ca.com> wrote:
->
->>> Implement filesystem context security hooks for the smack LSM.
->>>
->>> Question: Should the ->fs_context_parse_source() hook be implemented to
->>> check the labels on any source devices specified?
->> Checking the label on a block device when doing a mount
->> is just going to end in tears. If you're remounting from
->> an already mounted filesystem it might make sense to check
->> that the new mount doesn't provide greater access than the
->> existing mount. If the original mount has smackfsdefault="_"
->> I could see prohibiting the additional mount having
->> smackfsdefault="*" on a filesystem that doesn't support
->> xattrs. But that requires that a (hopefully) privileged
->> process be involved, and we expect them to have a clue.
->> So no, I don't see it necessary.
-> I think I may have meant the device file rather than the actual device
-> content.
+On Tue, 2018-07-10 at 16:55 +0200, Greg Kroah-Hartman wrote:
+> 
+> > +/**
+> > + * kobject_has_children - Returns whether a kobject has children.
+> > + * @kobj: the object to test
+> > + *
+> > + * This will return whether a kobject has other kobjects as children.
+> > + *
+> > + * It does NOT account for the presence of attribute files, only sub
+> > + * directories. It also assumes there is no concurrent addition or
+> > + * removal of such children, and thus relies on external locking.
+> > + */
+> > +static inline bool kobject_has_children(struct kobject *kobj)
+> > +{
+> > +	WARN_ON_ONCE(kref_read(&kobj->kref) == 0);
+> 
+> Why warn on?  Who is going to hit this and how are you going to fix up
+> the syzbot reports?  :)
 
-You may have! I see no reason to look at the label on /dev/sdb1
-when mounting it. There's already sufficient privilege required
-to protect that in my mind.
+Well, that's it, the hope is nobody ever hits it ... but if one does it
+would be useful to get a backtrace to figure it out. You can shoot the
+reports my way I suppose :-)
 
->
-> David
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+> Anyway, this looks good, I can just take this and not the 1/2 patch now,
+> right?  I really didn't like that patch.
 
+Yes, it will fix the practical problem. As for patch 1, it's rather
+funny, you and Linus seem to have a completely opposite idea of how
+this stuff should work :-)
+
+Cheers,
+Ben.
+
+> thanks,
+> 
+> greg k-h
