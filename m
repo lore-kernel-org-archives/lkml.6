@@ -3,148 +3,163 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F4FC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 220BFC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E5C20858
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:21:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E5C20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id DCEDB20858
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:21:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCEDB20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933036AbeGJIVP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:21:15 -0400
-Received: from www62.your-server.de ([213.133.104.62]:47767 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751082AbeGJIVL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:21:11 -0400
-Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fcntQ-0003JQ-2z; Tue, 10 Jul 2018 10:21:04 +0200
-Received: from [2a02:120b:c3f4:b8b0:b5ea:3969:d380:aafd] (helo=linux.home)
-        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fcntP-0004cw-GL; Tue, 10 Jul 2018 10:21:03 +0200
-Subject: Re: [PATCH bpf 1/1] bpf: btf: Fix bitfield extraction for big endian
-To:     Martin KaFai Lau <kafai@fb.com>, Okash Khawaja <osk@fb.com>
-Cc:     Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        kernel-team@fb.com, linux-kernel@vger.kernel.org
-References: <20180709002202.019053555@fb.com>
- <20180709004002.440153594@fb.com>
- <20180709183236.r4b7gzmev5h4lcbw@kafai-mbp.dhcp.thefacebook.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <58136182-0eb1-78c9-ceb9-402418c7d10c@iogearbox.net>
-Date:   Tue, 10 Jul 2018 10:21:02 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180709183236.r4b7gzmev5h4lcbw@kafai-mbp.dhcp.thefacebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.0/24739/Tue Jul 10 06:45:06 2018)
+        id S933187AbeGJIVY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:21:24 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55783 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751342AbeGJIVW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:21:22 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7AD202084E; Tue, 10 Jul 2018 10:21:20 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id C276D2079F;
+        Tue, 10 Jul 2018 10:21:09 +0200 (CEST)
+Message-ID: <c5e337620887838c2de702888bbed755f2c1d868.camel@bootlin.com>
+Subject: Re: [PATCH v5 02/22] fixup! v4l2-ctrls: add
+ v4l2_ctrl_request_hdl_find/put/ctrl_find functions
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, marco.franchi@nxp.com,
+        icenowy@aosc.io, keiichiw@chromium.org,
+        Jonathan Corbet <corbet@lwn.net>, smitha.t@samsung.com,
+        tom.saeger@oracle.com, Andrzej Hajda <a.hajda@samsung.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        jacob-chen@iotwrt.com, Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>, acourbot@chromium.org,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        posciak@chromium.org,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>, samitolvanen@google.com,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        hugues.fruchet@st.com, ayaka@soulik.info
+Date:   Tue, 10 Jul 2018 10:21:09 +0200
+In-Reply-To: <eb5fb671-4589-e0cf-5385-84a5cc912905@xs4all.nl>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+         <20180710080114.31469-3-paul.kocialkowski@bootlin.com>
+         <CAMuHMdVgJuK5G0+szV0BAWDBybxWV0iDWE5kZKuTdgNiGjpnEg@mail.gmail.com>
+         <5adf8a6aa70fd6f7f4326ccb068b66d6221d8d8b.camel@bootlin.com>
+         <eb5fb671-4589-e0cf-5385-84a5cc912905@xs4all.nl>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-tr9K18b3srFCX1uet9wE"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/2018 08:32 PM, Martin KaFai Lau wrote:
-> On Sun, Jul 08, 2018 at 05:22:03PM -0700, Okash Khawaja wrote:
->> When extracting bitfield from a number, btf_int_bits_seq_show() builds
->> a mask and accesses least significant byte of the number in a way
->> specific to little-endian. This patch fixes that by checking endianness
->> of the machine and then shifting left and right the unneeded bits.
->>
->> Thanks to Martin Lau for the help in navigating potential pitfalls when
->> dealing with endianess and for the final solution.
->>
->> Fixes: b00b8daec828 ("bpf: btf: Add pretty print capability for data with BTF type info")
->> Signed-off-by: Okash Khawaja <osk@fb.com>
->>
->> ---
->>  kernel/bpf/btf.c |   32 +++++++++++++++-----------------
->>  1 file changed, 15 insertions(+), 17 deletions(-)
->>
->> --- a/kernel/bpf/btf.c
->> +++ b/kernel/bpf/btf.c
->> @@ -162,6 +162,8 @@
->>  #define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
->>  #define BITS_ROUNDUP_BYTES(bits) \
->>  	(BITS_ROUNDDOWN_BYTES(bits) + !!BITS_PER_BYTE_MASKED(bits))
->> +const int one = 1;
->> +#define is_big_endian() ((*(char *)&one) == 0)
 
-Also here, in the kernel archs provide proper definitions.
+--=-tr9K18b3srFCX1uet9wE
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->>  #define BTF_INFO_MASK 0x0f00ffff
->>  #define BTF_INT_MASK 0x0fffffff
->> @@ -991,16 +993,13 @@ static void btf_int_bits_seq_show(const
->>  				  void *data, u8 bits_offset,
->>  				  struct seq_file *m)
->>  {
->> +	u8 left_shift_bits, right_shift_bits;
-> Nit.
-> Although only max 64 bit int is allowed now (ensured by btf_int_check_meta),
-> it is better to use u16 such that it will be consistent to BTF_INT_BITS.
-> 
->>  	u32 int_data = btf_type_int(t);
->>  	u16 nr_bits = BTF_INT_BITS(int_data);
->>  	u16 total_bits_offset;
->>  	u16 nr_copy_bytes;
->>  	u16 nr_copy_bits;
->> -	u8 nr_upper_bits;
->> -	union {
->> -		u64 u64_num;
->> -		u8  u8_nums[8];
->> -	} print_num;
->> +	u64 print_num;
->>  
->>  	total_bits_offset = bits_offset + BTF_INT_OFFSET(int_data);
->>  	data += BITS_ROUNDDOWN_BYTES(total_bits_offset);
->> @@ -1008,21 +1007,20 @@ static void btf_int_bits_seq_show(const
->>  	nr_copy_bits = nr_bits + bits_offset;
->>  	nr_copy_bytes = BITS_ROUNDUP_BYTES(nr_copy_bits);
->>  
->> -	print_num.u64_num = 0;
->> -	memcpy(&print_num.u64_num, data, nr_copy_bytes);
->> -
->> -	/* Ditch the higher order bits */
->> -	nr_upper_bits = BITS_PER_BYTE_MASKED(nr_copy_bits);
->> -	if (nr_upper_bits) {
->> -		/* We need to mask out some bits of the upper byte. */
->> -		u8 mask = (1 << nr_upper_bits) - 1;
->> -
->> -		print_num.u8_nums[nr_copy_bytes - 1] &= mask;
->> +	print_num = 0;
->> +	memcpy(&print_num, data, nr_copy_bytes);
->> +	if (is_big_endian()) {
->> +		left_shift_bits = bits_offset;
->> +		right_shift_bits = BITS_PER_U64 - nr_bits;
->> +	} else {
->> +		left_shift_bits = BITS_PER_U64 - nr_copy_bits;
->> +		right_shift_bits = BITS_PER_U64 - nr_bits;
-> Nit.
-> right_shift_bits is the same for both cases.  Lets simplify it.
-> 
->>  	}
->>  
->> -	print_num.u64_num >>= bits_offset;
->> +	print_num <<= left_shift_bits;
->> +	print_num >>= right_shift_bits;
->>  
->> -	seq_printf(m, "0x%llx", print_num.u64_num);
->> +	seq_printf(m, "0x%llx", print_num);
->>  }
->>  
->>  static void btf_int_seq_show(const struct btf *btf, const struct btf_type *t,
->>
+Hi,
+
+On Tue, 2018-07-10 at 10:17 +0200, Hans Verkuil wrote:
+> On 10/07/18 10:13, Paul Kocialkowski wrote:
+> > Hi,
+> >=20
+> > On Tue, 2018-07-10 at 10:07 +0200, Geert Uytterhoeven wrote:
+> > > On Tue, Jul 10, 2018 at 10:02 AM Paul Kocialkowski
+> > > <paul.kocialkowski@bootlin.com> wrote:
+> > > > [PATCH v5 02/22] fixup! v4l2-ctrls: add v4l2_ctrl_request_hdl_find/=
+put/ctrl_find functions
+> > >=20
+> > > git rebase -i ;-)
+> >=20
+> > Although I should have mentionned it (and did not), this is totally
+> > intentional! The first patch (from Hans Verkuil) requires said fixup to
+> > work properly. I didn't want to squash that change into the commit to
+> > make the diff obvious.
+>=20
+> Just squash the two for the next version you post.
+
+That works for me! I must admit I was rather unsure this was a sensible
+way to do things.
+
+> > Ultimately, this framework patch is not really part of the series but i=
+s
+> > one of its underlying requirements, that should be merged separately (a=
+s
+> > part of the requests API series).
+>=20
+> There is a good chance that this patch will go in via your series anyway
+> since it is not needed by vivid or vim2m.
+
+Alright, I will keep it around then.
+
+Cheers,
+
+Paul
+
+> Regards,
+>=20
+> 	Hans
+>=20
+> >=20
+> > I hope this clears up some of the confusion about this patch :)
+> >=20
+> > Cheers!
+> >=20
+> > > Gr{oetje,eeting}s,
+> > >=20
+> > >                         Geert
+> > >=20
+>=20
+>=20
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-tr9K18b3srFCX1uet9wE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltEbHUACgkQ3cLmz3+f
+v9Eipwf/W1kQNCdenaBs9GeAg5yXznUB4XGqOMqYmwjMexOjVt1hcZo8y6cZdW03
+uPHWYvQalQw6rRSQ97LA1REO4wcbG9K9Wp9vE57TjtrkRn8zmmZ5fx6tI1lceW31
+5oilZ0EAgiBqqfWbFg8729eoEZcazTcRrzXdQJ1DFsYE40zu5LhJY1nHPz+buQOi
+L4Hkcxl/aPjxNvpvYhC85AZ/WAt3IiLAMHqcvcZ9p3tRp/WQmxsVETsXBwR4r/1i
+T5s9ciulK3qCriS0tj7zY8kVAYJ+2zWaL/QrAJ8idIFmWxVRTEhF/NcaRbT78lfM
+/D3zjTuYJCF8rIjqR96/9wwkJobIQw==
+=SyDX
+-----END PGP SIGNATURE-----
+
+--=-tr9K18b3srFCX1uet9wE--
 
