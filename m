@@ -2,143 +2,99 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2190C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EA7C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:54:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DAD8208FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:54:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DAD8208FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B617208FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:54:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B617208FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733229AbeGJSyw (ORCPT
+        id S1733129AbeGJS1f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:54:52 -0400
-Received: from mga06.intel.com ([134.134.136.31]:4411 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732459AbeGJSyv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:54:51 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 11:54:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
-   d="scan'208";a="55495904"
-Received: from ray.jf.intel.com (HELO [10.7.201.145]) ([10.7.201.145])
-  by orsmga007.jf.intel.com with ESMTP; 10 Jul 2018 11:54:31 -0700
-Subject: Re: [PATCH v2 1/4] x86/split_lock: Enumerate #AC exception for split
- locked access feature
-To:     Fenghua Yu <fenghua.yu@intel.com>,
-        Eduardo Habkost <ehabkost@redhat.com>
-References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
- <1530282807-66555-2-git-send-email-fenghua.yu@intel.com>
- <b0267bb2-7d1f-c1d6-cff8-addf358009b3@intel.com>
- <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
- <20180704200742.GD7451@localhost.localdomain>
- <20180710184506.GA37857@romley-ivt3.sc.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <ea23cde0-f999-0ed8-a3bc-e798511467bd@intel.com>
-Date:   Tue, 10 Jul 2018 11:54:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 10 Jul 2018 14:27:35 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44814 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732390AbeGJS1d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 14:27:33 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03746DB4;
+        Tue, 10 Jul 2018 18:27:22 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Oliver Kurz <okurz@suse.com>,
+        =?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <ptesarik@suse.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.4 19/47] s390: Correct register corruption in critical section cleanup
+Date:   Tue, 10 Jul 2018 20:24:43 +0200
+Message-Id: <20180710182337.943202227@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
+References: <20180710182337.047502999@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180710184506.GA37857@romley-ivt3.sc.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 11:45 AM, Fenghua Yu wrote:
-> On Wed, Jul 04, 2018 at 05:07:42PM -0300, Eduardo Habkost wrote:
->> On Fri, Jun 29, 2018 at 06:23:35PM +0200, Thomas Gleixner wrote:
->>> On Fri, 29 Jun 2018, Dave Hansen wrote:
->>>> Is this MSR not really model-specific?  Is it OK to go poking at it on
->>>> all x86 variants?  Or, do we at _least_ need a check for Intel cpus in here?
->>>
->>> That definitely needs a vendor check. Also the whole code needs to be
->>> compiled out if CONFIG_INTEL=n.
->>>
->>> Aside of that this wants to be enumerated. CPUID or MISC_FEATURES and not
->>> this guess work detection logic. Why do I have to ask for that for every
->>> other new feature thingy?
->>
->> Yes, please.  KVM hosts normally expect guests to not touch MSRs
->> unless we explicitly tell them the MSR is available (normally
->> through CPUID).  This is important to ensure live migration
->> between different host kernel versions works reliably.
-> 
-> The problem is the hardware design for the feature is complete. The
-> hardware designer cannot change the feature enumeration to CPUID or
-> MISC_FEATURES.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-Let's be honest, though.  That's not *hardware* design; that is a
-microcode update.  We've seen what microcode updates can do _very_
-clearly with all the security issues.  We (Intel) can surely fix this if
-sufficiently motivated.  No?
+------------------
 
-> There is no enumeration and no flag in /proc/cpuinfo flag for the feature.
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-Huh?  /proc/cpuinfo has tons on non-CPUID-instruction-based features.
-There's a retpoline one and a PTI one for goodness sake.
+commit 891f6a726cacbb87e5b06076693ffab53bd378d7 upstream.
+
+In the critical section cleanup we must not mess with r1.  For march=z9
+or older, larl + ex (instead of exrl) are used with r1 as a temporary
+register. This can clobber r1 in several interrupt handlers. Fix this by
+using r11 as a temp register.  r11 is being saved by all callers of
+cleanup_critical.
+
+Fixes: 6dd85fbb87 ("s390: move expoline assembler macros to a header")
+Cc: stable@vger.kernel.org #v4.16
+Reported-by: Oliver Kurz <okurz@suse.com>
+Reported-by: Petr Tesařík <ptesarik@suse.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ arch/s390/kernel/entry.S |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/arch/s390/kernel/entry.S
++++ b/arch/s390/kernel/entry.S
+@@ -1170,7 +1170,7 @@ cleanup_critical:
+ 	jl	0f
+ 	clg	%r9,BASED(.Lcleanup_table+104)	# .Lload_fpu_regs_end
+ 	jl	.Lcleanup_load_fpu_regs
+-0:	BR_EX	%r14
++0:	BR_EX	%r14,%r11
+ 
+ 	.align	8
+ .Lcleanup_table:
+@@ -1200,7 +1200,7 @@ cleanup_critical:
+ 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
+ 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
+ 	larl	%r9,sie_exit			# skip forward to sie_exit
+-	BR_EX	%r14
++	BR_EX	%r14,%r11
+ #endif
+ 
+ .Lcleanup_system_call:
+
+
