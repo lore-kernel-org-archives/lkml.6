@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1338EC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD70C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F6E20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:52:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4F6E20870
+	by mail.kernel.org (Postfix) with ESMTP id 4E256208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:52:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E256208E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387580AbeGJS2z (ORCPT
+        id S2387496AbeGJS2l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:28:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45172 "EHLO
+        Tue, 10 Jul 2018 14:28:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45076 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732937AbeGJS2y (ORCPT
+        with ESMTP id S2387480AbeGJS2k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:28:54 -0400
+        Tue, 10 Jul 2018 14:28:40 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2431CEA8;
-        Tue, 10 Jul 2018 18:28:42 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 41626DB4;
+        Tue, 10 Jul 2018 18:28:29 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.4 47/47] staging: comedi: quatech_daqp_cs: fix no-op loop daqp_ao_insn_write()
-Date:   Tue, 10 Jul 2018 20:25:11 +0200
-Message-Id: <20180710182339.180666420@linuxfoundation.org>
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.4 42/47] dm bufio: dont take the lock in dm_bufio_shrink_count
+Date:   Tue, 10 Jul 2018 20:25:06 +0200
+Message-Id: <20180710182338.960109051@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -50,32 +51,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 1376b0a2160319125c3a2822e8c09bd283cd8141 upstream.
+commit d12067f428c037b4575aaeb2be00847fc214c24a upstream.
 
-There is a '>' vs '<' typo so this loop is a no-op.
+dm_bufio_shrink_count() is called from do_shrink_slab to find out how many
+freeable objects are there. The reported value doesn't have to be precise,
+so we don't need to take the dm-bufio lock.
 
-Fixes: d35dcc89fc93 ("staging: comedi: quatech_daqp_cs: fix daqp_ao_insn_write()")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+Suggested-by: David Rientjes <rientjes@google.com>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/staging/comedi/drivers/quatech_daqp_cs.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/dm-bufio.c |   16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
---- a/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-+++ b/drivers/staging/comedi/drivers/quatech_daqp_cs.c
-@@ -642,7 +642,7 @@ static int daqp_ao_insn_write(struct com
- 	/* Make sure D/A update mode is direct update */
- 	outb(0, dev->iobase + DAQP_AUX_REG);
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -1574,19 +1574,11 @@ dm_bufio_shrink_scan(struct shrinker *sh
+ static unsigned long
+ dm_bufio_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+ {
+-	struct dm_bufio_client *c;
+-	unsigned long count;
+-	unsigned long retain_target;
++	struct dm_bufio_client *c = container_of(shrink, struct dm_bufio_client, shrinker);
++	unsigned long count = READ_ONCE(c->n_buffers[LIST_CLEAN]) +
++			      READ_ONCE(c->n_buffers[LIST_DIRTY]);
++	unsigned long retain_target = get_retain_buffers(c);
  
--	for (i = 0; i > insn->n; i++) {
-+	for (i = 0; i < insn->n; i++) {
- 		unsigned val = data[i];
- 		int ret;
+-	c = container_of(shrink, struct dm_bufio_client, shrinker);
+-	if (sc->gfp_mask & __GFP_FS)
+-		dm_bufio_lock(c);
+-	else if (!dm_bufio_trylock(c))
+-		return 0;
+-
+-	count = c->n_buffers[LIST_CLEAN] + c->n_buffers[LIST_DIRTY];
+-	retain_target = get_retain_buffers(c);
+-	dm_bufio_unlock(c);
+ 	return (count < retain_target) ? 0 : (count - retain_target);
+ }
  
 
 
