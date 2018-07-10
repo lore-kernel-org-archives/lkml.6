@@ -2,106 +2,88 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A2F4C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDEAC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:20:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58CF8208E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:20:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CYV6ocda";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CYV6ocda"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58CF8208E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F5A8208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:20:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5A8208E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732554AbeGJSUZ (ORCPT
+        id S1732566AbeGJSUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:20:25 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41490 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732335AbeGJSUY (ORCPT
+        Tue, 10 Jul 2018 14:20:31 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:59973 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732335AbeGJSUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:20:24 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CA51860B28; Tue, 10 Jul 2018 17:42:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531244551;
-        bh=HWR1R+yfWHRtD9g2TH4xqUg0jf9wc1D642tkpmTJReY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CYV6ocdanqmgXr71aARB9/ehi6/gXD3Zh1zEcSwKweObysOxWBH0i89T5R77Yq/HG
-         QN+4s2c21uLvCdwJmmVyqOsjifZf+I1PA+qE/wOR1fKpzqVCroUZXUJ77weL6Orbt6
-         G5czMAqFpvqoQmP4qhkN49T3hC6L3he3gWq6/8NE=
-Received: from pheragu-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pheragu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EFBE260791;
-        Tue, 10 Jul 2018 17:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531244551;
-        bh=HWR1R+yfWHRtD9g2TH4xqUg0jf9wc1D642tkpmTJReY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CYV6ocdanqmgXr71aARB9/ehi6/gXD3Zh1zEcSwKweObysOxWBH0i89T5R77Yq/HG
-         QN+4s2c21uLvCdwJmmVyqOsjifZf+I1PA+qE/wOR1fKpzqVCroUZXUJ77weL6Orbt6
-         G5czMAqFpvqoQmP4qhkN49T3hC6L3he3gWq6/8NE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFBE260791
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pheragu@codeaurora.org
-From:   Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-To:     apw@canonical.com, joe@perches.com
-Cc:     linux-kernel@vger.kernel.org, tsoni@codeaurora.org,
-        ckadabi@codeaurora.org, bryanh@codeaurora.org,
-        Prakruthi Deepak Heragu <pheragu@codeaurora.org>
-Subject: [PATCH] checkpatch: Handle long multi-line macros better
-Date:   Tue, 10 Jul 2018 10:42:04 -0700
-Message-Id: <1531244524-16003-1-git-send-email-pheragu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Tue, 10 Jul 2018 14:20:31 -0400
+Received: from localhost ([2.166.249.57]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0MeXc7-1fRaqb35I7-00Q8oA; Tue, 10 Jul 2018 20:19:38 +0200
+Date:   Tue, 10 Jul 2018 20:19:37 +0200
+From:   Andreas Klinger <ak@it-klinger.de>
+To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        mchehab@kernel.org, davem@davemloft.net,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        linus.walleij@linaro.org, rdunlap@infradead.org,
+        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 3/3] iio: hx711: fix spurious unit-address in example
+Message-ID: <20180710181937.GA5398@arbeit>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Provags-ID: V03:K1:AfjvaIs2XiiiZ+qfm7zE388orWpIbVlUsVVkvSdKQM90YScdzVy
+ wdVvgBqPZOTOxWLSq70X3clsSHNufG2RivZiNGZ/Nqx/OnKbE6ChtnDCWHJ2Ir8QSVy+7aj
+ lSaGuuWRLUYY6L0CP5wh3klL4+1+FZxcvPhnViyFeY2iaopkk/J+EBMY+Rwe4Ov358ZMHBl
+ XiO3Fg3CJPEAxVNT3R2xQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ZgUwC0OU3CA=:Ca8V5kaWvHBlfij5rA9SAS
+ pnoCWsUcAKssYqrp1KGbvkAsOxTFyyf0YswKSYB9YhcZYBzo9BZe50VB71E9auj/RXaj6fHAe
+ 8FI0DJMMn9h5ZY6B9+4B4i2YKTfraxy58IvhIXtIUqtBKc0GqYtgoUu3v8vy/cpRPPwkrHRr8
+ sgyabZLi6FNRnhpPW4MbIqQqvyGrZD7p9XtViDHKawc9EyPT8n8tlXaMrrqO4S5kwEb3/81If
+ Q2watOevbRrU9wlWqmq5THXn7RlphQ/9o00QVE3qp3GcFu4rHmDNbAaO67qya7Z1Sld4ymYRs
+ ALwTz0VZl8fIDtveTB7kxxJlJ8dmps6RAPTg213+o1YmlHy58/1T+d38rLJipDdl5dbYNvZ9T
+ Kp0SmeM+92hVbKCGkrxENW01vLpTtpIA4J2jyIfv4lM2ehKH7qJ/UhakcBPyOmjD80SwvulKX
+ cKCxDPyXSv78pm9G0LyKisCJ6n0yp4K2Qxi3rNiC1sq2T6B+ia5SQGbccewguWr5xlqIfwZuC
+ KaitAZo2BOirvnIiC6YVjNc26YGFl9HOmYbc0InMZbyKYmPlr5FUb4H4ttLYJSrRLNE9DCyhC
+ BnpoAWZ0e1RVrmFZLp1jZPEX9XETL+po0cz8E3l4zdO5TD9b6Ph9dt+Lzw9ZIl4YHrw6D7T+n
+ /29zl1dxoap1eMtm0Suz6fMgid6U4Xp1dWRt1UY91qVKKlf1fa5ojwTNfVKM4N6jQCAc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the checkpatch throws an error on long macro expressions which
-is more than one line i.e the opening and the closing bracket pair not
-being on the same line. This patch gives the dangling backslash the
-benefit of doubt and allows it to consider the closing paranthesis on the
-next line as part of the macro expression and doesn't throw an error.
+Device tree compiler (dtc) gives a warning if a device node has "@" with a
+following number as it's name but no reg property.
 
-Signed-off-by: Prakruthi Deepak Heragu <pheragu@codeaurora.org>
+Fix the example in the documentation of avia,hx711 to conform to dtc
+behavior.
+
+Signed-off-by: Andreas Klinger <ak@it-klinger.de>
 ---
- scripts/checkpatch.pl | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 599ae61..158c96d 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -5038,7 +5038,7 @@ sub process {
- 		if ($realfile !~ m@/vmlinux.lds.h$@ &&
- 		    $line =~ /^.\s*\#\s*define\s*$Ident(\()?/) {
- 			my $ln = $linenr;
--			my $cnt = $realcnt;
-+			my $cnt = $realcnt - 1;
- 			my ($off, $dstat, $dcond, $rest);
- 			my $ctx = '';
- 			my $has_flow_statement = 0;
-@@ -5075,6 +5075,11 @@ sub process {
- 			{
- 			}
+diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+index 2c1b67d33c49..7222328a3d0d 100644
+--- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
++++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
+@@ -14,7 +14,7 @@ Optional properties:
+ 			high time of 50 microseconds.
  
-+			# Extremely long macros may fall off the end of the
-+			# available context without closing.  Give a dangling
-+			# backslash the benefit of the doubt and allow it
-+			# to gobble any hanging close-parens.
-+			$dstat =~ s/\(.+\\$/1/;
- 			# Flatten any obvious string concatentation.
- 			while ($dstat =~ s/($String)\s*$Ident/$1/ ||
- 			       $dstat =~ s/$Ident\s*($String)/$1/)
+ Example:
+-weight@0 {
++weight {
+ 	compatible = "avia,hx711";
+ 	sck-gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
+ 	dout-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+2.1.4
