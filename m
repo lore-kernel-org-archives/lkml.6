@@ -6,60 +6,60 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 716C2C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC3EC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1431520840
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:26:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC53D20840
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 00:26:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="UZktuqrw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jpi6J2lV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1431520840
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="V5rrUtXC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pnzfhcD1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC53D20840
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754635AbeGJA0H (ORCPT
+        id S1754651AbeGJA0P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 20:26:07 -0400
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:41019 "EHLO
+        Mon, 9 Jul 2018 20:26:15 -0400
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:42625 "EHLO
         out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754535AbeGJAZ6 (ORCPT
+        by vger.kernel.org with ESMTP id S1754624AbeGJA0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 20:25:58 -0400
+        Mon, 9 Jul 2018 20:26:06 -0400
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id BF53A21B54;
-        Mon,  9 Jul 2018 20:25:57 -0400 (EDT)
+        by mailout.nyi.internal (Postfix) with ESMTP id 2EA7B21D4E;
+        Mon,  9 Jul 2018 20:26:05 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 09 Jul 2018 20:25:57 -0400
+  by compute5.internal (MEProxy); Mon, 09 Jul 2018 20:26:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=cc
         :date:from:in-reply-to:message-id:references:subject:to
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=TkVq0AmKornFngldN
-        Nn2VRKSxvf+Ek+6V5wWzuv9D1k=; b=UZktuqrwJHUtFCzEaOk/FBVO6pEpWnxun
-        Fc/K6UQyV7KXXxX03nj7MtefZ/3Y/Tv7y78c1chcCjthn823xqw5e3Qv9o8QVOHa
-        p914GMuYra9BmnzwUOFM22G0Rsc9gsQRcrfkissUQ7RZq+ai6/D8neJTNQvPHlhT
-        6cwcc8APF6CtL8777JL1QApTapIc3hyyrpbIrzSRW6GLg3UyXcWvbI7mnRNFWjlP
-        /XVZx8tQuP5dS0n+2V/57JIvFDcAMtwsUjwSOM1ABLbfwSO2qtwcd0hZ2dCr5HMl
-        ZoksORuj8Ab5lfvZnUPfX7YMk04//rbMfy+xvUO1uOUprLiH233Og==
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=LZfXKN8sq5UmfFmmM
+        bxpK1K+IL+6XGgXUvN5oVmGgj4=; b=V5rrUtXCTcTUoMLi1csjl24IACICNyMdj
+        MlvqWUs2Bg+PcVW/5m1AGqsRYIfGC7b6BpxRQGr9f/qjfet14CREn0dGvs3eCXts
+        im5WgbNeonp2j+zANmQtmV2DD0pHOyXpBkuzTM4X6z025+dG5rcfyyWWKeoRKvBr
+        6SzCHv6HN984EC24pdPb3B5XELcceblrkxhFNMV3Vnh12sH09UI1nx3MG6LCq6Pv
+        Bw+4TaVBZ5NU8PTR2xyOQarjWN5Y72cjCP+hShVfNDqernGzyRaenC0UQ3WRmeNe
+        2vw50WA26oT8oqpIkLtpIRUNadnuL2L24oT1ID+lFBbJRN3sD7HnQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:date:from:in-reply-to:message-id
         :references:subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=TkVq0AmKornFngldNNn2VRKSxvf+Ek+6V5wWzuv9D1k=; b=jpi6J2lV
-        lnsm7PB4MlyUi2MQQEJxCmwXeK2HOM+bPS4ewiaIfmnZbmzABOzc+cIyQJdDfCo5
-        oN+AeIn5k+G0uvt3PVZkLDVP1AZ7Uf45m6gul5zpPQdUIAFKwzeNmPgm/iI+zEP6
-        gqMa80agAaAXy3IzYSj+wtRw8+rs2whufMyCo13dV0BthlP7nr2+hk80DOmBOMWg
-        gYbqYWaqkcvU/vKUrsIpLcNi+tQ8L7SRkB7jIpudc1gKuQzmcjmFld01Pqb2PQGW
-        7/LHkoyQ3GjtyGWbF00gUWggSWDAkrRkSBjxTee0B7XX4ESBps5kWXSHVMkFqcgV
-        qTmx8RIWpFASUA==
-X-ME-Proxy: <xmx:Ff1DW0lPUVIgRnWNiftCKOWSAPel6HQi1CzFUKpblJcUHhIITi6eVQ>
-    <xmx:Ff1DWxyhAKf4KUYLtpxcTCd7EpPBHl7KLiwl-N-k1Rj9E8WLGvJ8fA>
-    <xmx:Ff1DW6M-mmOae3If2Fv02BARZUM2y5Fiytc_hSoSMOgz0QoHCSTgpw>
-    <xmx:Ff1DW9QIz7KL2KNg0hBJyXO9rG7KivgJ6xw9OkPta2UPK8WBxWUJuw>
-    <xmx:Ff1DWwbtGfv70J4t6fOqyMSVtUt2e4EoDl5bJV76IeelfbfTX3Ss5w>
-    <xmx:Ff1DWzlGcZOBhKU8yQCz74up1Smlav40X50vfokqTvT0tSaaLF_mJw>
-X-ME-Sender: <xms:Ff1DWzl-o7wTCU0TK2FXQ-G-PkYDNc5wlbFremv7o45XuyRs38o00A>
+        fm3; bh=LZfXKN8sq5UmfFmmMbxpK1K+IL+6XGgXUvN5oVmGgj4=; b=pnzfhcD1
+        n66d09veGZ0aw0en59aF/5yf25+aPOVju7YzNMAzwVCqKf8DBNfKp1/PHIgNboym
+        n70/QWJU3WRIXvBbPOXZuVbaqlJiJBk5scRpYRoeISYb0tFCy3k4T1gIoNb3Z7sj
+        lfyY3CUvfsCAPRzaW9R9i4ewGjdyv79zC9cWEyOaB3l9q2+IzRp8hTZEBZi2IQVD
+        ldHl4y4ZC/16/DySaNUTAHAsoPqvAIvEUnUb1gvZi1brfInaBaZ6Yhm+P3erH/rU
+        50HTexoGl20EzdmdGOxDsM+ro/HePNMCxzwmvkFeTWv0RKabyIcGNYG2Xea3Bsfx
+        holgjEmnSiTABQ==
+X-ME-Proxy: <xmx:Hf1DW4Pj5D7lzsWhwfNMg4bq0plvAFbj7PzkApR0d_4Du8y9N2O7Uw>
+    <xmx:Hf1DW534Be_4t1UpLjbO-JHatqSQRPNoWlsHBNTRpJ5PgqnJb1ll4g>
+    <xmx:Hf1DWwPJq-escpnk5lLclV-USY40F_ggedZK5EsTdCZEz5XYy7QsBQ>
+    <xmx:Hf1DW3umV97Fw23d15YB_J46_URBj4pFYMyFp0lfA88vy5CJk1jwmg>
+    <xmx:Hf1DW7GjPSKT0vfF1dHtTuXhRoTfnkd3m45Vl7oAJrQaiDR_AgecZw>
+    <xmx:Hf1DW9FOBUoBLe1pm56qhFW7NiFOnNN_IRFS7imEnYCvCTi3puXP5A>
+X-ME-Sender: <xms:Hf1DW8UxX2Zjzt6Ek94JEDZOECNk-MNF63ubznv88IALwWjf36F8PA>
 Received: from localhost (ppp121-44-208-89.bras1.syd2.internode.on.net [121.44.208.89])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F25C1E45C9;
-        Mon,  9 Jul 2018 20:25:56 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5CC9CE45C9;
+        Mon,  9 Jul 2018 20:26:04 -0400 (EDT)
 From:   "Tobin C. Harding" <me@tobin.cc>
 To:     Theodore Ts'o <tytso@mit.edu>
 Cc:     "Tobin C. Harding" <me@tobin.cc>, Petr Mladek <pmladek@suse.com>,
@@ -68,9 +68,9 @@ Cc:     "Tobin C. Harding" <me@tobin.cc>, Petr Mladek <pmladek@suse.com>,
         "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] random: Remove unnecessary cast
-Date:   Tue, 10 Jul 2018 10:25:17 +1000
-Message-Id: <20180710002519.5044-2-me@tobin.cc>
+Subject: [PATCH 3/3] docs: Fix docs for boot parameter debug_boot_weak_hash
+Date:   Tue, 10 Jul 2018 10:25:19 +1000
+Message-Id: <20180710002519.5044-4-me@tobin.cc>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180710002519.5044-1-me@tobin.cc>
 References: <20180710002519.5044-1-me@tobin.cc>
@@ -79,29 +79,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we are casting an argument to the macro min_t().  This is
-unnecessary since the macro already includes a cast.
+Recently boot parameter 'debug_boot_weak_hash' was added.  Latter
+discussion on LKML developed more descriptive documentation but due to
+the programmers lack of understanding (*cough* me) on how linux-next
+works these improvements never got picked up.
 
-Remove unnecessary cast from argument to macro min_t()
+Update documentation for boot parameter 'debug_boot_weak_hash' as
+discussed (patch posted and acked) on LKML.
 
+Fixes: bfe80ed3d7c76 ("vsprintf: add command line option debug_boot_weak_hash")
+Acked-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Tobin C. Harding <me@tobin.cc>
 ---
- drivers/char/random.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/admin-guide/kernel-parameters.txt | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/char/random.c b/drivers/char/random.c
-index d686aa2a129b..03bd13876901 100644
---- a/drivers/char/random.c
-+++ b/drivers/char/random.c
-@@ -1736,7 +1736,7 @@ int __must_check get_random_bytes_arch(void *buf, int nbytes)
- 	trace_get_random_bytes_arch(left, _RET_IP_);
- 	while (left) {
- 		unsigned long v;
--		int chunk = min_t(int, left, (int)sizeof(unsigned long));
-+		int chunk = min_t(int, left, sizeof(unsigned long));
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 31c9b76058a7..e3b1c84d19c6 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -749,13 +749,12 @@
+ 	debug		[KNL] Enable kernel debugging (events log level).
  
- 		if (!arch_get_random_long(&v))
- 			break;
+ 	debug_boot_weak_hash
+-			[KNL] Enable printing pointers early in the boot
+-			sequence.  If enabled, we use a weak hash instead of
+-			siphash to hash pointers.  Use this option if you need
+-			to see pointer values during early boot (i.e you are
+-			seeing instances of '(___ptrval___)').
+-			Cryptographically insecure, please do not use on
+-			production kernels.
++			[KNL] Enable printing [hashed] pointers early in the
++			boot sequence.  If enabled, we use a weak hash instead
++			of siphash to hash pointers.  Use this option if you are
++			seeing instances of '(___ptrval___)') and need to see a
++			value (hashed pointer) instead. Cryptographically
++			insecure, please do not use on production kernels.
+ 
+ 	debug_locks_verbose=
+ 			[KNL] verbose self-tests
 -- 
 2.17.1
 
