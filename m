@@ -2,93 +2,79 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B78CC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E16BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCFE520A8B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:08:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCFE520A8B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 4FDB8208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:08:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FDB8208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732318AbeGJWJN (ORCPT
+        id S1732339AbeGJWJn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:09:13 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40195 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732237AbeGJWJM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:09:12 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 69FCA804CB; Wed, 11 Jul 2018 00:08:06 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 00:08:03 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Whitcroft <apw@canonical.com>,
-        Joe Perches <joe@perches.com>, jgg@mellanox.com,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] checkpatch: Require author Signed-off-by
-Message-ID: <20180710220803.GA6387@amd>
-References: <20180710121014.31119-1-geert+renesas@glider.be>
- <20180710204706.GA30083@amd>
- <CAMuHMdVZae7Nb-Nr=f1uJD9ASxaio0Ob-5__FHzN=gEp9MSc+g@mail.gmail.com>
+        Tue, 10 Jul 2018 18:09:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53852 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732237AbeGJWJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:09:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 03ADAAD0B;
+        Tue, 10 Jul 2018 22:08:35 +0000 (UTC)
+Date:   Tue, 10 Jul 2018 15:08:30 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Manfred Spraul <manfred@colorfullife.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH 01/12] ipc: reorganize initialization of kern_ipc_perm.id
+Message-ID: <20180710220830.pvdvq7aovja5nrmf@linux-r8p5>
+References: <20180709151019.1336-1-manfred@colorfullife.com>
+ <20180709151019.1336-2-manfred@colorfullife.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdVZae7Nb-Nr=f1uJD9ASxaio0Ob-5__FHzN=gEp9MSc+g@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180709151019.1336-2-manfred@colorfullife.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 09 Jul 2018, Manfred Spraul wrote:
 
---yrj/dFKFPuw6o+aM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>ipc_addid() initializes kern_ipc_perm.id after having called
+>ipc_idr_alloc().
+>
+>Thus a parallel semop() or msgrcv() that uses ipc_obtain_object_idr()
+>may see an uninitialized value.
+>
+>The patch moves all accesses to kern_ipc_perm.id under the spin_lock().
 
-On Tue 2018-07-10 22:50:14, Geert Uytterhoeven wrote:
-> Hi Pavel,
->=20
-> On Tue, Jul 10, 2018 at 10:47 PM Pavel Machek <pavel@ucw.cz> wrote:
-> > > Print an error if none of the Signed-off-by lines cover the patch
-> > > author.
-> >
-> > Is it good idea? Signed-off-by system was _not_ meant to prevent
-> > submission of third party patches.
->=20
-> My main motivation is catching accidentally forgotten Sobs.
-> It's still up to you to submit or accept a patch that triggers
-> checkpatch errors.
+Yeah this is a lot better than my kzalloc() idea. I was considering
+completions to avoid these races with ->getnew(), but careful init beats
+that idea for obvious reasons.
 
-Should it be at warning level, then, or explicitely saying this is
-okay if you are not patch author?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+The only thing I would say is that the title should be more descriptive.
+Unlike the next patch, this one isn't really reorganizing anything.
+How about:
 
---yrj/dFKFPuw6o+aM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+  ipc: compute kern_ipc_perm.id under the ipc lock for stat cmds
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+>
+>The issues is related to the finding of
+>syzbot+2827ef6b3385deb07eaf@syzkaller.appspotmail.com:
+>syzbot found an issue with kern_ipc_perm.seq
+>
+>Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
+>Cc: Dmitry Vyukov <dvyukov@google.com>
+>Cc: Kees Cook <keescook@chromium.org>
+>Cc: Davidlohr Bueso <dave@stgolabs.net>
 
-iEYEARECAAYFAltFLkMACgkQMOfwapXb+vLNywCfcTyBacOhMRz4xTChDqssG0fD
-PhYAoK/zkFxslDXp0t3TtjdQOCt3S/u/
-=CLpm
------END PGP SIGNATURE-----
-
---yrj/dFKFPuw6o+aM--
+Reviewed-by: Davidlohr Bueso <dbueso@suse.de>
