@@ -3,77 +3,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19927C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:58:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF1BC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4C192089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:58:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C192089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 11D5A2089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:58:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D5A2089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933508AbeGJN56 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 09:57:58 -0400
-Received: from ozlabs.org ([203.11.71.1]:36209 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933379AbeGJN5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S933480AbeGJN55 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 09:57:57 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:45006 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933255AbeGJN5z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Jul 2018 09:57:55 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Q3gN5JL6z9s0W;
-        Tue, 10 Jul 2018 23:57:52 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     kbuild test robot <lkp@intel.com>, Daniel Klamt <eleon@ele0n.de>
-Cc:     kbuild-all@01.org, benh@kernel.crashing.org, paulus@samba.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-kernel@i4.cs.fau.de, Daniel Klamt <eleon@ele0n.de>,
-        Bjoern Noetel <bjoern@br3ak3r.de>
-Subject: Re: [PATCH] powerpc: Replaced msleep with usleep_range
-In-Reply-To: <201807100423.0p0r9QGb%fengguang.wu@intel.com>
-References: <1531144679-31675-1-git-send-email-eleon@ele0n.de> <201807100423.0p0r9QGb%fengguang.wu@intel.com>
-Date:   Tue, 10 Jul 2018 23:57:51 +1000
-Message-ID: <87y3ej9ork.fsf@concordia.ellerman.id.au>
+Received: from [192.168.1.162] ([37.4.249.111]) by mrelayeu.kundenserver.de
+ (mreue007 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 0LcaOp-1gKRNU1W4t-00k3jd; Tue, 10 Jul 2018 15:57:47 +0200
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     hminas@synopsys.com, gregkh@linuxfoundation.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Zhangfei Gao <zhangfei.gao@linaro.org>,
+        Bruno Herrera <bruherrera@gmail.com>,
+        Stephen Warren <swarren@wwwdotorg.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+In-Reply-To: 
+Subject: Re: [RFT PATCH 0/4] usb: dwc2: Turn on uframe sched everywhere
+Message-ID: <9a64fc45-7722-8650-99cc-a939132e252b@i2se.com>
+Date:   Tue, 10 Jul 2018 15:57:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:8Ig6IohGBijJwqTgO4/5fOYoO2amOB6HqAqoIiCcPaz+J4u6g/c
+ 9vJ/zQfozeTgYRJk4IjjG7ISDiNOgRmpdB/YtTiXROYhlSpy9qQhyJb9CswKd+LhAZC61LS
+ LqWWmF/sM/IeJyTt/d9oidBaKdmcAPoW/jh5c2a62Bzg+LDeI67SC0jk5pqI6NCBljnow0+
+ ugIZv1BN3AbBM7JVT9l2g==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:WaYXOkDUigU=:aljA65GI3GWjKYA9v6Fypa
+ mDyGMBcIKvzQRcPG5z2JGf2AtR99V2n11kCC+s+yVen9rZAxIfYn0MCYyFwhfv+a4nAqq6TPH
+ +8lLmh6t83Yfr2BygDMWCN0UIM8sVrttu+CReM1o0MZZVPnGzB7z4e7UhMHqn3j4DC8AWwzzt
+ AC2rR4+Jfm5fu5eM38M+ENKrX9wmx15E3pclA/aaSvi7++xxDIzCP2PfTkzRbb7gaY0mVhf19
+ obM9jwpkyn+drc6evplAdAdnfp+zEcIBhEAvSDXxzkBxl9jnYTv4tcHnuoHKSszqj4jXEes3B
+ gY3tTkZFMbRernpkTQACRj0ecjObBbwgS8EpJZThax7/VyXpOO1ruF7ppsZFhIkdvNaURjkRc
+ 3NRripVXbnVT5y89XKLuuA05GtEM3VD2+SXZRNFpCZIBVBSUhUNV7G/QkY4AC4K2dAAP3PKSV
+ kE6VSZ/HiUiHe3A5b9IHVPw5LAfxmtpbFffOsO1DlxMADEoXggiWsXUaEGCGUeeDNBylPEQgl
+ t4jXwEpOmElKpbBR7AbHaEmjYLsvGDwKoPgld8YNHWp/SbcnZechaMpCbmijx6noQgjGvIgar
+ yhSw3WiqYAS2q1Hat/erGGk5c8hzS9iCQ8URQBvprKEV6DyvJfgn+BTZeGxnc449tm2oxQ0IE
+ z1N0G0eqH52QUxcLb3amtQu7TVpFZFBU+TezlWhGxTuwhRNYwOi6lUMP/ZOfOspquRJbEs8bN
+ qWxLAYhGVTA4oKGN
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kbuild test robot <lkp@intel.com> writes:
+Hi Doug,
 
-> Hi Daniel,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on powerpc/next]
-> [also build test ERROR on v4.18-rc4 next-20180709]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->
-> url:    https://github.com/0day-ci/linux/commits/Daniel-Klamt/powerpc-Replaced-msleep-with-usleep_range/20180709-231913
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git next
-> config: powerpc-defconfig (attached as .config)
-> compiler: powerpc64-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
-> reproduce:
->         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         GCC_VERSION=7.2.0 make.cross ARCH=powerpc 
->
-> All errors (new ones prefixed by >>):
->
->    arch/powerpc/sysdev/xive/native.c: In function 'xive_native_configure_irq':
->>> arch/powerpc/sysdev/xive/native.c:113:2: error: expected ';' before '}' token
->      }
->      ^
+since Stephen isn't BCM2835 maintainer anymore, please keep me in the loop.
 
-There's also instructions here for building the powerpc kernel:
+I'm not sure how to test this. Is there some kind of test scenario 
+(don't have a USB analyzer)?
 
-  https://github.com/linuxppc/linux/wiki/Building-powerpc-kernels
+Best regards
+Stefan
 
-cheers
