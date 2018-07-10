@@ -6,20 +6,20 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B12C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63156C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC152089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:55:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC152089B
+	by mail.kernel.org (Postfix) with ESMTP id 2A18E20877
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:56:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A18E20877
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933178AbeGJIzr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:55:47 -0400
+        id S933078AbeGJI4L (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:56:11 -0400
 Received: from mga06.intel.com ([134.134.136.31]:44781 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751432AbeGJIz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1751305AbeGJIz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Jul 2018 04:55:28 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -27,17 +27,17 @@ Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 01:55:27 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,333,1526367600"; 
-   d="scan'208";a="53258022"
+   d="scan'208";a="53258020"
 Received: from dst.sh.intel.com ([10.239.48.156])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Jul 2018 01:55:16 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 10 Jul 2018 01:55:13 -0700
 From:   Jingqi Liu <jingqi.liu@intel.com>
 To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
         mingo@redhat.com, hpa@zytor.com
 Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         wei.w.wang@intel.com, Jingqi Liu <jingqi.liu@intel.com>
-Subject: [PATCH 3/3] KVM: x86: expose MOVDIR64B CPU feature into VM.
-Date:   Tue, 10 Jul 2018 16:54:43 +0800
-Message-Id: <1531212883-63173-4-git-send-email-jingqi.liu@intel.com>
+Subject: [PATCH 2/3] KVM: x86: expose MOVDIRI CPU feature into VM.
+Date:   Tue, 10 Jul 2018 16:54:42 +0800
+Message-Id: <1531212883-63173-3-git-send-email-jingqi.liu@intel.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1531212883-63173-1-git-send-email-jingqi.liu@intel.com>
 References: <1531212883-63173-1-git-send-email-jingqi.liu@intel.com>
@@ -46,19 +46,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MOVDIR64B moves 64-bytes as direct-store with 64-bytes write atomicity.
-Direct store is implemented by using write combining (WC) for writing
-data directly into memory without caching the data.
+MOVDIRI moves doubleword or quadword from register to memory through
+direct store which is implemented by using write combining (WC) for
+writing data directly into memory without caching the data.
 
-Availability of the MOVDIR64B instruction is indicated by the presence
-of the CPUID feature flag MOVDIR64B (CPUID.0x07.0x0:ECX[bit 28]).
+Availability of the MOVDIRI instruction is indicated by the presence of
+the CPUID feature flag MOVDIRI(CPUID.0x07.0x0:ECX[bit 27]).
 
-This patch exposes the movdir64b feature to the guest.
+This patch exposes the movdiri feature to the guest.
 
 The release document ref below link:
 https://software.intel.com/sites/default/files/managed/c5/15/\
 architecture-instruction-set-extensions-programming-reference.pdf
-This patch has a dependency on https://lkml.org/lkml/2018/6/15/655.
+This patch has a dependency on https://lkml.org/lkml/2018/6/15/654.
 
 Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
 ---
@@ -66,15 +66,15 @@ Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index 456caf7..deaad68 100644
+index e16c05e..456caf7 100644
 --- a/arch/x86/kvm/cpuid.c
 +++ b/arch/x86/kvm/cpuid.c
 @@ -406,7 +406,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
  		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
  		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
--		F(CLDEMOTE) | F(WAITPKG) | F(MOVDIRI);
-+		F(CLDEMOTE) | F(WAITPKG) | F(MOVDIRI) | F(MOVDIR64B);
+-		F(CLDEMOTE) | F(WAITPKG);
++		F(CLDEMOTE) | F(WAITPKG) | F(MOVDIRI);
  
  	/* cpuid 7.0.edx*/
  	const u32 kvm_cpuid_7_0_edx_x86_features =
