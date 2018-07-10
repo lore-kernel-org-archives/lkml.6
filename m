@@ -2,137 +2,256 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4233DC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96802C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:42:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5F28208E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:41:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B72E208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:42:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="dyuukw6/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F28208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EiglrBJD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B72E208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732846AbeGJTln (ORCPT
+        id S1732871AbeGJTmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 15:41:43 -0400
-Received: from mail-by2nam01on0126.outbound.protection.outlook.com ([104.47.34.126]:32224
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732332AbeGJTln (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 15:41:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BHXCw6pL6PJBaXNatbO9FuO4zI3YxJkjnjkaUeDZtRg=;
- b=dyuukw6/K5baxk8TKuFyIxva2TQT/dHnGbsyGlapVfq79OMz1eTQwLoLrEkCzq6hSOekD6BQGXfZCBbPO/S87WeuG9CtMjHDY1rjMb21fp2T8/5f2Az78yo+e6C2tkIdql8AZGoO022/0z4eVmvGV+Q7omMpdxUgXWHQYlXhn78=
-Received: from SN6PR2101MB1120.namprd21.prod.outlook.com (52.132.117.161) by
- SN6PR2101MB0973.namprd21.prod.outlook.com (52.132.114.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.952.10; Tue, 10 Jul 2018 19:41:09 +0000
-Received: from SN6PR2101MB1120.namprd21.prod.outlook.com
- ([fe80::35a3:57b:9c0:9732]) by SN6PR2101MB1120.namprd21.prod.outlook.com
- ([fe80::35a3:57b:9c0:9732%4]) with mapi id 15.20.0952.017; Tue, 10 Jul 2018
- 19:41:09 +0000
-From:   "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        "x86@kernel.org" <x86@kernel.org>
-CC:     KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/2] x86/hyper-v: check for VP_INVAL in
- hyperv_flush_tlb_others()
-Thread-Topic: [PATCH 2/2] x86/hyper-v: check for VP_INVAL in
- hyperv_flush_tlb_others()
-Thread-Index: AQHUF6vplaCzQub/mU22elwWHEbh1aSI3EUA
-Date:   Tue, 10 Jul 2018 19:41:09 +0000
-Message-ID: <SN6PR2101MB1120936551C98B99231CB4E6DC5B0@SN6PR2101MB1120.namprd21.prod.outlook.com>
-References: <20180709174012.17429-1-vkuznets@redhat.com>
- <20180709174012.17429-3-vkuznets@redhat.com>
-In-Reply-To: <20180709174012.17429-3-vkuznets@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-07-10T19:41:08.2824929Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [24.22.167.197]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR2101MB0973;7:6p/WejU6JOvshrohEzLQf+e+AgT0obcCQ+UF7fz8Z8krJuc9UcZBeKB0tYAdOnvCuLzvDrla1iEu8Aw5fcjeoKBOdNGEBU65OvXJPvebwlsRPRJBKmt9vqktzoDktX7SW7o+hmmD3EgKVWMpt5fRX0IJShX8GWIvSepT0PLyGwbEBwXZTdKPTAfH/SlyLytPd/T5Czb8vSLyfpVEIQu2NaAS4tXy08NxiOgKyaPWOJvI2hog6pljtZNr8VYXa9aK
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: a26ebf96-92c8-46a4-d7bc-08d5e69d162d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7193020);SRVR:SN6PR2101MB0973;
-x-ms-traffictypediagnostic: SN6PR2101MB0973:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Michael.H.Kelley@microsoft.com; 
-x-microsoft-antispam-prvs: <SN6PR2101MB09737B7FE405B984372BB506DC5B0@SN6PR2101MB0973.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(190756311086443)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231311)(944501410)(52105095)(2018427008)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:SN6PR2101MB0973;BCL:0;PCL:0;RULEID:;SRVR:SN6PR2101MB0973;
-x-forefront-prvs: 0729050452
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(136003)(366004)(376002)(199004)(189003)(86612001)(446003)(256004)(55016002)(68736007)(26005)(110136005)(6436002)(86362001)(575784001)(54906003)(5660300001)(229853002)(2900100001)(74316002)(72206003)(476003)(6506007)(2906002)(14454004)(102836004)(9686003)(11346002)(486006)(186003)(7696005)(76176011)(6246003)(33656002)(25786009)(106356001)(5250100002)(97736004)(105586002)(316002)(305945005)(7736002)(22452003)(10290500003)(99286004)(10090500001)(478600001)(8990500004)(66066001)(4326008)(6116002)(81166006)(2501003)(53936002)(8936002)(8676002)(3846002)(81156014);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR2101MB0973;H:SN6PR2101MB1120.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: +DbTF2j6zP5lInO8a7JgN4SYIc9hAA832hTG3l5PTuLICGG3Ev0hbVPb2/233aGylAuBT2O8dWJESFtxFZKMt8oadGq2q6JLTldXsOlKDqDepL+CgfKszeIMY18sB7wNrxcHR6C6DdQ60OS6DboEoxr2fRiU4VdHTLcIccbnhmMFFFJArElKRIIo0S2ftSPafkkcFD6yIzTRHDcSGoXit7aW7OBwppbiMHr4F+mVu0btbIlff1ziBzmvvApgMg0pkBsSMgxQ1qqJcbAM7zvCPkSUXbjtn15kScgDJ7ZPhI/KzMiZpBXM6OjaI6syWuf7FfXEl2c6hxykCQkxCt6Tn/ckCcRmBN6YixCy7O1BG3A=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 10 Jul 2018 15:42:35 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:34082 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732595AbeGJTme (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 15:42:34 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s13-v6so13433419wmc.1;
+        Tue, 10 Jul 2018 12:42:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=r74C6DrzYAjJzl7k8cVl3O0+7LMpzzK/Ev1VdHWQPVU=;
+        b=EiglrBJDjEbA0mOGf8/WsX2MSvxcuho+xo5uXAdRgwzGiWYsPAHPyHFL+fFDnGVJbz
+         kndip55JRJzBJpwRxbnvC/vT1bj1D+VVf/kUcmLdjjWfitWttmvqM+TvdV1P/gPrBDPu
+         eMJcERQ6OFV2xmzgY6qWTUTC4KrOJc6oPG+83jY7N9CCPoBMwfNK34ijAcagljYFiEWh
+         nOkvsaFqIqzsk58drecQK1d2xZRbURjJui/N23WqXJtNPX4wDFmv1xsUEv0UfDwxbaek
+         BtKoSXbUtUrXCX10COn3IXOUeKzXG681A/795bbUUx10ZNZQHXZL0FZ8saPTzUAQd5Jn
+         HzjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=r74C6DrzYAjJzl7k8cVl3O0+7LMpzzK/Ev1VdHWQPVU=;
+        b=N1v3V6UbEadQPzZ1nhQmxesBtRE/OUYgKzd4g8PkKu4rmzD1v+qkcmm39EGRP/ocuK
+         BYBqiye0OG3IsERHyJPv90C1/9K4KeqdtLsPBGHVEFVvhi07j3oZbzqZy+aJfPoG9drv
+         vJL97v9HWsrZ79uIoLE6ekmRlQ0D0Us90MPQrH+YA+cdH3A3SGlpUpptH1A+PT1eBEVv
+         TcYBWEx4s93QsssXscZ2tWDMkQOKUvrbTGDRF9WRXS88fi3RtGkqK+aeu6I0ODDnnhDM
+         /fGZjBM5Wq/VpDNPYTgcOiNHEhtw9QQk+tC67Tf9kK6bm8My/b+04Fkqbg/F3IJ63g4R
+         hUeQ==
+X-Gm-Message-State: APt69E1IF7mARAF5LK2GnxwwtM7sSCV29xor9zTsh706c6QmzrVz2iu1
+        bZ999Gtkp6CndTdI8xDJGO4=
+X-Google-Smtp-Source: AAOMgpdjf7TWb7fiyCTZ7G9zMsRLbfI7HyhOd0A8Sls75K/z6cZ3g5C+Mvp5ymCeAhsMXgKJlcmJTQ==
+X-Received: by 2002:a1c:8a04:: with SMTP id m4-v6mr15115291wmd.137.1531251721461;
+        Tue, 10 Jul 2018 12:42:01 -0700 (PDT)
+Received: from jernej-laptop.localnet ([194.152.15.144])
+        by smtp.gmail.com with ESMTPSA id 185-v6sm260114wmw.23.2018.07.10.12.41.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 12:42:00 -0700 (PDT)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     linux-sunxi@googlegroups.com
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [linux-sunxi] Re: [PATCH 16/17] drm/sun4i: tcon-top: Remove mux configuration at probe time
+Date:   Tue, 10 Jul 2018 21:41:58 +0200
+Message-ID: <1819290.nadSthU6Yv@jernej-laptop>
+In-Reply-To: <1843348.gnui32CGBV@jernej-laptop>
+References: <20180706175113.26698-1-jernej.skrabec@siol.net> <CAGb2v64rjUnwnXbWxTSYJyhMyCV5QmV9YSr+Jryx3nEeMP8GJg@mail.gmail.com> <1843348.gnui32CGBV@jernej-laptop>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a26ebf96-92c8-46a4-d7bc-08d5e69d162d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2018 19:41:09.7318
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB0973
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>  Monday, July 9, 2018 10:40 AM
-> Commit 1268ed0c474a ("x86/hyper-v: Fix the circular dependency in IPI
->  enlightenment") pre-filled hv_vp_index with VP_INVAL so it is now
-> (theoretically) possible to observe hv_cpu_number_to_vp_number()
-> returning VP_INVAL. We need to check for that in hyperv_flush_tlb_others(=
-).
+Dne torek, 10. julij 2018 ob 18:18:43 CEST je Jernej =C5=A0krabec napisal(a=
+):
+> Dne torek, 10. julij 2018 ob 18:09:26 CEST je Chen-Yu Tsai napisal(a):
+> > On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net>
 >=20
-> Not checking for VP_INVAL on the first call site where we do
+> wrote:
+> > > Now that R40 TCON migrated to runtime mux configuration, old code can=
+ be
+> > > removed.
+> > >=20
+> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > ---
+> > >=20
+> > >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 81 +++---------------------=
+=2D-
+> > >  1 file changed, 7 insertions(+), 74 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c index
+> > > c09b15b64192..78795d6cb174
+> > > 100644
+> > > --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> > > @@ -87,34 +87,6 @@ int sun8i_tcon_top_de_config(struct device *dev, i=
+nt
+> > > mixer, int tcon)>
+> > >=20
+> > >  }
+> > >  EXPORT_SYMBOL(sun8i_tcon_top_de_config);
+> > >=20
+> > > -static int sun8i_tcon_top_get_connected_ep_id(struct device_node *no=
+de,
+> > > -                                             int port_id)
+> > > -{
+> > > -       struct device_node *ep, *remote, *port;
+> > > -       struct of_endpoint endpoint;
+> > > -
+> > > -       port =3D of_graph_get_port_by_id(node, port_id);
+> > > -       if (!port)
+> > > -               return -ENOENT;
+> > > -
+> > > -       for_each_available_child_of_node(port, ep) {
+> > > -               remote =3D of_graph_get_remote_port_parent(ep);
+> > > -               if (!remote)
+> > > -                       continue;
+> > > -
+> > > -               if (of_device_is_available(remote)) {
+> > > -                       of_graph_parse_endpoint(ep, &endpoint);
+> > > -
+> > > -                       of_node_put(remote);
+> > > -
+> > > -                       return endpoint.id;
+> > > -               }
+> > > -
+> > > -               of_node_put(remote);
+> > > -       }
+> > > -
+> > > -       return -ENOENT;
+> > > -}
+> > >=20
+> > >  static struct clk_hw *sun8i_tcon_top_register_gate(struct device *de=
+v,
+> > > =20
+> > >                                                    const char *parent,
+> > >=20
+> > > @@ -149,11 +121,9 @@ static int sun8i_tcon_top_bind(struct device *de=
+v,
+> > > struct device *master,>
+> > >=20
+> > >         struct platform_device *pdev =3D to_platform_device(dev);
+> > >         struct clk_hw_onecell_data *clk_data;
+> > >         struct sun8i_tcon_top *tcon_top;
+> > >=20
+> > > -       bool mixer0_unused =3D false;
+> > >=20
+> > >         struct resource *res;
+> > >         void __iomem *regs;
+> > >=20
+> > > -       int ret, i, id;
+> > > -       u32 val;
+> > > +       int ret, i;
+> > >=20
+> > >         tcon_top =3D devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
+> > >         if (!tcon_top)
+> > >=20
+> > > @@ -198,49 +168,12 @@ static int sun8i_tcon_top_bind(struct device *d=
+ev,
+> > > struct device *master,>
+> > >=20
+> > >                 goto err_assert_reset;
+> > >        =20
+> > >         }
+> > >=20
+> > > -       val =3D 0;
+> > > -
+> > > -       /* check if HDMI mux output is connected */
+> > > -       if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >=3D =
+0) {
+> > > -               /* find HDMI input endpoint id, if it is connected at
+> > > all*/
+> > > -               id =3D sun8i_tcon_top_get_connected_ep_id(dev->of_nod=
+e,
+> > > 4);
+> > > -               if (id >=3D 0)
+> > > -                       val =3D FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id =
++ 1);
+> > > -               else
+> > > -                       DRM_DEBUG_DRIVER("TCON TOP HDMI input is not
+> > > connected\n"); -       } else {
+> > > -               DRM_DEBUG_DRIVER("TCON TOP HDMI output is not
+> > > connected\n"); -       }
+> > > -
+> > > -       writel(val, regs + TCON_TOP_GATE_SRC_REG);
+> > > -
+> > > -       val =3D 0;
+> > > -
+> > > -       /* process mixer0 mux output */
+> > > -       id =3D sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
+> > > -       if (id >=3D 0) {
+> > > -               val =3D FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
+> > > -       } else {
+> > > -               DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not
+> > > connected\n"); -               mixer0_unused =3D true;
+> > > -       }
+> > > -
+> > > -       /* process mixer1 mux output */
+> > > -       id =3D sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
+> > > -       if (id >=3D 0) {
+> > > -               val |=3D FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
+> > > -
+> > > -               /*
+> > > -                * mixer0 mux has priority over mixer1 mux. We have to
+> > > -                * make sure mixer0 doesn't overtake TCON from mixer1.
+> > > -                */
+> > > -               if (mixer0_unused && id =3D=3D 0)
+> > > -                       val |=3D FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
+> > > -       } else {
+> > > -               DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not
+> > > connected\n"); -       }
+> > > -
+> > > -       writel(val, regs + TCON_TOP_PORT_SEL_REG);
+> > > +       /*
+> > > +        * Default register values might have some reserved bits set,
+> > > which
+> > > +        * prevents TCON TOP from working properly. Set them to 0 her=
+e.
+> > > +        */
+> > > +       writel(0, regs + TCON_TOP_GATE_SRC_REG);
+> > > +       writel(0, regs + TCON_TOP_PORT_SEL_REG);
+> >=20
+> > Would it make sense to just force a reset using the reset control?
 >=20
->  if (hv_cpu_number_to_vp_number(cpumask_last(cpus)) >=3D 64)
->                         goto do_ex_hypercall;
+> I wrote TCON TOP driver for H6 at first. For some reason, some registers =
+had
+> reserved bits set after reset line was released. TCON TOP was not used in
+> U- Boot, so I guess this counts as full reset.
 >=20
-> is OK, in case we're eligible for non-ex hypercall we'll catch the
-> issue later in for_each_cpu() cycle and in case we'll be doing ex-
-> hypercall cpumask_to_vpset() will fail.
->=20
-> It would be nice to change hv_cpu_number_to_vp_number() return
-> value's type to 'u32' but this will likely be a bigger change as
-> all call sites need to be checked first.
->=20
-> Fixes: 1268ed0c474a ("x86/hyper-v: Fix the circular dependency in IPI enl=
-ightenment")
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-> ---
->  arch/x86/hyperv/mmu.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> I never tried to find out how it behaves on R40 because setting those
+> registers to 0 seems like simple, good enough solution, which works
+> everywhere.
 
-Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+It seems those bits are not needed for R40. I'll leave them out for now. TC=
+ON=20
+TOP will need some adjustments for H6 anyway and I'll take a look at that=20
+then.
+=20
+Best regards,
+Jernej
+
+
+
+
