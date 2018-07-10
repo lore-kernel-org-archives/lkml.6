@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CF7C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 290FAC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E7B2208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7B2208E8
+	by mail.kernel.org (Postfix) with ESMTP id DFD7E208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFD7E208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389368AbeGJSes (ORCPT
+        id S2389383AbeGJSev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:34:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48138 "EHLO
+        Tue, 10 Jul 2018 14:34:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48148 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388393AbeGJSer (ORCPT
+        with ESMTP id S2388426AbeGJSeu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:34:47 -0400
+        Tue, 10 Jul 2018 14:34:50 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 35958E6B;
-        Tue, 10 Jul 2018 18:34:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F03F3E6B;
+        Tue, 10 Jul 2018 18:34:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sarah Newman <srn@prgmr.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.17 14/56] drbd: fix access after free
-Date:   Tue, 10 Jul 2018 20:24:56 +0200
-Message-Id: <20180710182504.243799699@linuxfoundation.org>
+        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH 4.17 15/56] vfio: Use get_user_pages_longterm correctly
+Date:   Tue, 10 Jul 2018 20:24:57 +0200
+Message-Id: <20180710182504.305621475@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -51,73 +51,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lars Ellenberg <lars.ellenberg@linbit.com>
+From: Jason Gunthorpe <jgg@mellanox.com>
 
-commit 64dafbc9530c10300acffc57fae3269d95fa8f93 upstream.
+commit bb94b55af3461e26b32f0e23d455abeae0cfca5d upstream.
 
-We have
-  struct drbd_requests { ... struct bio *private_bio;  ... }
-to hold a bio clone for local submission.
+The patch noted in the fixes below converted get_user_pages_fast() to
+get_user_pages_longterm(), however the two calls differ in a few ways.
 
-On local IO completion, we put that bio, and in case we want to use the
-result later, we overload that member to hold the ERR_PTR() of the
-completion result,
+First _fast() is documented to not require the mmap_sem, while _longterm()
+is documented to need it. Hold the mmap sem as required.
 
-Which, before v4.3, used to be the passed in "int error",
-so we could first bio_put(), then assign.
+Second, _fast accepts an 'int write' while _longterm uses 'unsigned int
+gup_flags', so the expression '!!(prot & IOMMU_WRITE)' is only working by
+luck as FOLL_WRITE is currently == 0x1. Use the expected FOLL_WRITE
+constant instead.
 
-v4.3-rc1~100^2~21 4246a0b63bd8 block: add a bi_error field to struct bio
-changed that:
-  	bio_put(req->private_bio);
- -	req->private_bio = ERR_PTR(error);
- +	req->private_bio = ERR_PTR(bio->bi_error);
-
-Which introduces an access after free,
-because it was non obvious that req->private_bio == bio.
-
-Impact of that was mostly unnoticable, because we only use that value
-in a multiple-failure case, and even then map any "unexpected" error
-code to EIO, so worst case we could potentially mask a more specific
-error with EIO in a multiple failure case.
-
-Unless the pointed to memory region was unmapped, as is the case with
-CONFIG_DEBUG_PAGEALLOC, in which case this results in
-
-  BUG: unable to handle kernel paging request
-
-v4.13-rc1~70^2~75 4e4cbee93d56 block: switch bios to blk_status_t
-changes it further to
-  	bio_put(req->private_bio);
-  	req->private_bio = ERR_PTR(blk_status_to_errno(bio->bi_status));
-
-And blk_status_to_errno() now contains a WARN_ON_ONCE() for unexpected
-values, which catches this "sometimes", if the memory has been reused
-quickly enough for other things.
-
-Should also go into stable since 4.3, with the trivial change around 4.13.
-
-Cc: stable@vger.kernel.org
-Fixes: 4246a0b63bd8 block: add a bi_error field to struct bio
-Reported-by: Sarah Newman <srn@prgmr.com>
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: 94db151dc892 ("vfio: disable filesystem-dax page pinning")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/drbd/drbd_worker.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/vfio/vfio_iommu_type1.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
 
---- a/drivers/block/drbd/drbd_worker.c
-+++ b/drivers/block/drbd/drbd_worker.c
-@@ -282,8 +282,8 @@ void drbd_request_endio(struct bio *bio)
- 		what = COMPLETED_OK;
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -346,18 +346,16 @@ static int vaddr_get_pfn(struct mm_struc
+ 	struct page *page[1];
+ 	struct vm_area_struct *vma;
+ 	struct vm_area_struct *vmas[1];
++	unsigned int flags = 0;
+ 	int ret;
+ 
++	if (prot & IOMMU_WRITE)
++		flags |= FOLL_WRITE;
++
++	down_read(&mm->mmap_sem);
+ 	if (mm == current->mm) {
+-		ret = get_user_pages_longterm(vaddr, 1, !!(prot & IOMMU_WRITE),
+-					      page, vmas);
++		ret = get_user_pages_longterm(vaddr, 1, flags, page, vmas);
+ 	} else {
+-		unsigned int flags = 0;
+-
+-		if (prot & IOMMU_WRITE)
+-			flags |= FOLL_WRITE;
+-
+-		down_read(&mm->mmap_sem);
+ 		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
+ 					    vmas, NULL);
+ 		/*
+@@ -371,8 +369,8 @@ static int vaddr_get_pfn(struct mm_struc
+ 			ret = -EOPNOTSUPP;
+ 			put_page(page[0]);
+ 		}
+-		up_read(&mm->mmap_sem);
  	}
++	up_read(&mm->mmap_sem);
  
--	bio_put(req->private_bio);
- 	req->private_bio = ERR_PTR(blk_status_to_errno(bio->bi_status));
-+	bio_put(bio);
- 
- 	/* not req_mod(), we need irqsave here! */
- 	spin_lock_irqsave(&device->resource->req_lock, flags);
+ 	if (ret == 1) {
+ 		*pfn = page_to_pfn(page[0]);
 
 
