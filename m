@@ -6,40 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8C9C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA31C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA30B20936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA30B20936
+	by mail.kernel.org (Postfix) with ESMTP id 2BECA208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BECA208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389047AbeGJSdq (ORCPT
+        id S2389060AbeGJSdt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:46 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47848 "EHLO
+        Tue, 10 Jul 2018 14:33:49 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47858 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388985AbeGJSdp (ORCPT
+        with ESMTP id S2388082AbeGJSds (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:45 -0400
+        Tue, 10 Jul 2018 14:33:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AF92AE6B;
-        Tue, 10 Jul 2018 18:33:32 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A756E6B;
+        Tue, 10 Jul 2018 18:33:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paulo Alcantara <palcantara@suse.de>,
-        Steve French <stfrench@microsoft.com>,
-        Aurelien Aptel <aaptel@suse.com>
-Subject: [PATCH 4.14 10/53] cifs: Fix memory leak in smb2_set_ea()
-Date:   Tue, 10 Jul 2018 20:24:46 +0200
-Message-Id: <20180710182459.496570516@linuxfoundation.org>
+        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 01/53] userfaultfd: hugetlbfs: fix userfaultfd_huge_must_wait() pte access
+Date:   Tue, 10 Jul 2018 20:24:37 +0200
+Message-Id: <20180710182458.838930219@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,32 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paulo Alcantara <paulo@paulo.ac>
+From: Janosch Frank <frankja@linux.ibm.com>
 
-commit 6aa0c114eceec8cc61715f74a4ce91b048d7561c upstream.
+commit 1e2c043628c7736dd56536d16c0ce009bc834ae7 upstream.
 
-This patch fixes a memory leak when doing a setxattr(2) in SMB2+.
+Use huge_ptep_get() to translate huge ptes to normal ptes so we can
+check them with the huge_pte_* functions.  Otherwise some architectures
+will check the wrong values and will not wait for userspace to bring in
+the memory.
 
-Signed-off-by: Paulo Alcantara <palcantara@suse.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Link: http://lkml.kernel.org/r/20180626132421.78084-1-frankja@linux.ibm.com
+Fixes: 369cd2121be4 ("userfaultfd: hugetlbfs: userfaultfd_huge_must_wait for hugepmd ranges")
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2ops.c |    2 ++
- 1 file changed, 2 insertions(+)
+ fs/userfaultfd.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -636,6 +636,8 @@ smb2_set_ea(const unsigned int xid, stru
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -220,24 +220,26 @@ static inline bool userfaultfd_huge_must
+ 					 unsigned long reason)
+ {
+ 	struct mm_struct *mm = ctx->mm;
+-	pte_t *pte;
++	pte_t *ptep, pte;
+ 	bool ret = true;
  
- 	rc = SMB2_set_ea(xid, tcon, fid.persistent_fid, fid.volatile_fid, ea,
- 			 len);
-+	kfree(ea);
+ 	VM_BUG_ON(!rwsem_is_locked(&mm->mmap_sem));
+ 
+-	pte = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
+-	if (!pte)
++	ptep = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
 +
- 	SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
++	if (!ptep)
+ 		goto out;
  
- 	return rc;
+ 	ret = false;
++	pte = huge_ptep_get(ptep);
+ 
+ 	/*
+ 	 * Lockless access: we're in a wait_event so it's ok if it
+ 	 * changes under us.
+ 	 */
+-	if (huge_pte_none(*pte))
++	if (huge_pte_none(pte))
+ 		ret = true;
+-	if (!huge_pte_write(*pte) && (reason & VM_UFFD_WP))
++	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
+ 		ret = true;
+ out:
+ 	return ret;
 
 
