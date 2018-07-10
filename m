@@ -2,137 +2,149 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18034C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA116C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:43:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C604020878
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:38:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BB5920B80
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:43:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bftqpUl/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="azWmmejp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C604020878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAMruWly"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BB5920B80
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732510AbeGJUix (ORCPT
+        id S1732581AbeGJUoQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 16:38:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35492 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732333AbeGJUiw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 16:38:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EC4A660B18; Tue, 10 Jul 2018 20:38:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531255088;
-        bh=hyNqHxTM2ATUYNNPkMogwMP0q3tsA8JcQrb/mmI0Ots=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bftqpUl/zzu8sa5eRPmh77HTMdIHSXU8+rkgfUSBfAG7aRUHcWLGgM7S1tnN/wFaF
-         OKh9jpKo7HM5T3Ch76tH7d0JYANy4fFwLAJR7tibPJV5TkpYxNwACX20KOxl5F6c9e
-         p5sfIpqXzWqVUIQ44Qern15MKZCIZPRJMJboHbRU=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        Tue, 10 Jul 2018 16:44:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46098 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732263AbeGJUoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 16:44:16 -0400
+Received: from localhost (unknown [104.132.1.88])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2A59560C8E;
-        Tue, 10 Jul 2018 20:38:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531255086;
-        bh=hyNqHxTM2ATUYNNPkMogwMP0q3tsA8JcQrb/mmI0Ots=;
+        by mail.kernel.org (Postfix) with ESMTPSA id AD320208FA;
+        Tue, 10 Jul 2018 20:43:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531255410;
+        bh=7DGhAbRGkR8UiTfHfBI+D8R+hDrKZawUjmuYqodUbYg=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=azWmmejpLFizt+ReAMw77L25xH9/C+HHPsFPZ4LIBPUq+jm9K+KSTw3Qc2WJOzysT
-         o3PeaLeUNHjWIe5wATQ48i1mM7mj6jCGBBvbJTyJ9HziQKMjOjuLiixl1zX49X+RYZ
-         /ntmAxRqE+302cJUTFMIpAdZ7/+gJXDXIIk3lm9s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2A59560C8E
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Tue, 10 Jul 2018 14:38:05 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, swboyd@chromium.org
-Subject: Re: [PATCH] pinctrl: msm: Pass along set_wake failures
-Message-ID: <20180710203805.GA14825@codeaurora.org>
-References: <20180619234349.166190-1-evgreen@chromium.org>
- <20180709173022.GH2050@tuxbook-pro>
- <CAE=gft5+oOFv8y-XCtiQ8mc7gQ1FFSK0+bPk=mJu--ovLfDDJg@mail.gmail.com>
+        b=VAMruWlytv8Vlf1tWSGtmr2cFpEURCDIJW7DuErNVDQNOHJVnzGbJsRXbighyQN+y
+         HSbZhSeibXWsVkIxzxqt3vVnZrg1tG3JCsUMmrs/DvA/xkhT/untRp7YulxbleL7K6
+         mm8U1+u6Q+qPPnM0X8+NVjna5sN4aXj6UftBX9WA=
+Date:   Tue, 10 Jul 2018 13:43:29 -0700
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 4/4] f2fs: should check the type of end_io
+ after pullback by fscrypto
+Message-ID: <20180710204329.GA79040@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20180706210903.77887-1-jaegeuk@kernel.org>
+ <20180706210903.77887-4-jaegeuk@kernel.org>
+ <d09dbae7-8073-1df6-e7ab-a0241c4023ff@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAE=gft5+oOFv8y-XCtiQ8mc7gQ1FFSK0+bPk=mJu--ovLfDDJg@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <d09dbae7-8073-1df6-e7ab-a0241c4023ff@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10 2018 at 12:53 -0600, Evan Green wrote:
->On Mon, Jul 9, 2018 at 10:27 AM Bjorn Andersson
-><bjorn.andersson@linaro.org> wrote:
->>
->> Sorry for not getting back to you in a timely manner Evan, I wanted to
->> read up more on the details of how this is supposed to work. I still
->> haven't done so, but here's my concern:
->>
->> When we power down the SoC we're no longer powering either the TLMM or
->> the GIC, so the MPM or PDC is used to waking the system on some set of
->> triggers. As such set_wake on an individual pin or irq should be routed
->> to the MPM/PDC driver, which (in the PDC case) is implemented using
->> hierarchical irq domains.
->>
->> As such I think that we shouldn't toggle the wake property of the
->> summary pin at all; i.e. the patch should remove that call rather than
->> propagating what I believe is a constant failure.
->>
->> Regards,
->> Bjorn
->
->Hi Bjorn,
->That's okay, I always feel bad pinging. Thanks for the thoughtful
->response. Stephen and I are starting to think about how wake
->interrupts should work with regard to the PDC, and we're at a place
->where we're a bit unsure of the path forward.
->
->Our understanding is the downstream kernel had an interrupt hierarchy
->of GIC > PDC > TLMM & everybody else. In the downstream world PDC
->acted transparently, forwarding most requests directly onto the GIC,
->but quietly handling wake interrupts as well. With the upstream PDC
->driver, the #interrupt-cells got changed to 2, and it seemed like
->folks didn't like the idea that PDC was acting transparently. Correct
->me if I'm wrong there. So now we're sort of unsure about how to wire
->in PDC. If we make everybody an interrupt child of PDC, then we lose
->the ability to specify the third GIC parameter, and we're stuck
->expressing interrupts with respect to PDC pins, which is an awkward
->mental translation.
-Its an unfortunate side effect of the design. Drivers will have to
-request the PDC pin for wakeup IRQs.
+On 07/09, Chao Yu wrote:
+> On 2018/7/7 5:09, Jaegeuk Kim wrote:
+> > This fixes to get the page type after pullback by fscrypto, since the original
+> > page is bounce page but we should need to get control page which is what we
+> > originally submitted.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/data.c | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> > index c3f9b9baf140..9a0fcec53d0e 100644
+> > --- a/fs/f2fs/data.c
+> > +++ b/fs/f2fs/data.c
+> > @@ -152,7 +152,6 @@ static void f2fs_write_end_io(struct bio *bio)
+> >  
+> >  	bio_for_each_segment_all(bvec, bio, i) {
+> >  		struct page *page = bvec->bv_page;
+> > -		enum count_type type = WB_DATA_TYPE(page);
+> >  
+> >  		if (IS_DUMMY_WRITTEN_PAGE(page)) {
+> >  			set_page_private(page, (unsigned long)NULL);
+> > @@ -169,14 +168,14 @@ static void f2fs_write_end_io(struct bio *bio)
+> >  
+> >  		if (unlikely(bio->bi_status)) {
+> >  			mapping_set_error(page->mapping, -EIO);
+> > -			if (type == F2FS_WB_CP_DATA)
+> > +			if (WB_DATA_TYPE(page) == F2FS_WB_CP_DATA)
+> >  				f2fs_stop_checkpoint(sbi, true);
+> >  		}
+> >  
+> >  		f2fs_bug_on(sbi, page->mapping == NODE_MAPPING(sbi) &&
+> >  					page->index != nid_of_node(page));
+> >  
+> > -		dec_page_count(sbi, type);
+> > +		dec_page_count(sbi, WB_DATA_TYPE(page));
+> 
+> But we account F2FS_WB_CP_DATA/F2FS_WB_DATA type page based bounce page instead
+> of original page.
+> 
+> 	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
+> 
+> 	/* set submitted = true as a return value */
+> 	fio->submitted = true;
+> 
+> 	inc_page_count(sbi, WB_DATA_TYPE(bio_page));
+> 
+> Because for encrypted page of regular inode, we should account it with
+> F2FS_WB_DATA type:
+> 
+> static bool __is_cp_guaranteed(struct page *page)
+> {
+> ....
+> 	if (!mapping)   <---bounce page's mapping is NULL
+> 		return false;
+> }
+> 
+> So we will get F2FS_WB_DATA type from __is_cp_guaranteed below:
+> 
+> enum count_type type = WB_DATA_TYPE(page);
+> 
+> Is there any problem?
 
->In this world, does TLMM need to do direct-connect
->stuff to get wake-able GPIO interrupts working? It would kind of have
->a foot in both worlds, with its summary interrupt as a GIC interrupt
->but the wakeable ones as parented by PDC?
->
-With GPIOs, I am trying to hack the TLMM driver to request a PDC pin,
-when the IRQ associated with the GPIO is requested as a wakeup
-interrupt. In that case, the TLMM driver would do the GPIO->PDC pin
-translation and request it. There is no hierarchy between TLMM and PDC.
+Wait a minute.
 
-Will try a RFC patch in a week or two.
+	bio_page = fio->encrypted_page ? fio->encrypted_page : fio->page;
 
--- Lina
+1. fio->encrypted_page
 
->So anyway, with regard to this patch, I'm happy to create a second
->spin that simply removes this function, but for me at least it brought
->up some larger questions we've been wrestling with.
->-Evan
->--
->To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
->the body of a message to majordomo@vger.kernel.org
->More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	inc_page_count(sbi, F2FS_WB_CP_DATA); // page->mapping == META_MAPPING
+
+  In write_end_io(),
+	type = F2FS_WB_DATA; // page->mapping == NULL
+	fscrypt_pullback_bio_page(&page);
+	  page = fio->encrypted_page;
+	
+	dec_page_count(F2FS_WB_DATA);
+
+2. fio->page
+
+	inc_page_count(sbi, F2FS_WB_DATA);
+
+  In write_end_io(),
+	type = F2FS_WB_DATA; // page->mapping == NULL
+	fscrypt_pullback_bio_page(&page);
+	  page = fio->encrypted_page;
+	
+	dec_page_count(F2FS_WB_DATA);
+
+Thoughts?
