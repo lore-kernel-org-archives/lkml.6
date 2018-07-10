@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0154CC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031F4C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B43A72083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B43A72083E
+	by mail.kernel.org (Postfix) with ESMTP id AF2772083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2772083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387944AbeGJSaI (ORCPT
+        id S2387958AbeGJSaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:30:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45496 "EHLO
+        Tue, 10 Jul 2018 14:30:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45504 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732596AbeGJSaG (ORCPT
+        with ESMTP id S1732596AbeGJSaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:30:06 -0400
+        Tue, 10 Jul 2018 14:30:09 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1FCDDEB4;
-        Tue, 10 Jul 2018 18:29:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E825DEB8;
+        Tue, 10 Jul 2018 18:29:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sarah Newman <srn@prgmr.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.9 23/52] drbd: fix access after free
-Date:   Tue, 10 Jul 2018 20:24:51 +0200
-Message-Id: <20180710182451.706696675@linuxfoundation.org>
+        stable@vger.kernel.org, Paulo Alcantara <palcantara@suse.de>,
+        Aurelien Aptel <aaptel@suse.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 4.9 24/52] cifs: Fix infinite loop when using hard mount option
+Date:   Tue, 10 Jul 2018 20:24:52 +0200
+Message-Id: <20180710182451.773789863@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -51,73 +51,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lars Ellenberg <lars.ellenberg@linbit.com>
+From: Paulo Alcantara <paulo@paulo.ac>
 
-commit 64dafbc9530c10300acffc57fae3269d95fa8f93 upstream.
+commit 7ffbe65578b44fafdef577a360eb0583929f7c6e upstream.
 
-We have
-  struct drbd_requests { ... struct bio *private_bio;  ... }
-to hold a bio clone for local submission.
+For every request we send, whether it is SMB1 or SMB2+, we attempt to
+reconnect tcon (cifs_reconnect_tcon or smb2_reconnect) before carrying
+out the request.
 
-On local IO completion, we put that bio, and in case we want to use the
-result later, we overload that member to hold the ERR_PTR() of the
-completion result,
+So, while server->tcpStatus != CifsNeedReconnect, we wait for the
+reconnection to succeed on wait_event_interruptible_timeout(). If it
+returns, that means that either the condition was evaluated to true, or
+timeout elapsed, or it was interrupted by a signal.
 
-Which, before v4.3, used to be the passed in "int error",
-so we could first bio_put(), then assign.
+Since we're not handling the case where the process woke up due to a
+received signal (-ERESTARTSYS), the next call to
+wait_event_interruptible_timeout() will _always_ fail and we end up
+looping forever inside either cifs_reconnect_tcon() or smb2_reconnect().
 
-v4.3-rc1~100^2~21 4246a0b63bd8 block: add a bi_error field to struct bio
-changed that:
-  	bio_put(req->private_bio);
- -	req->private_bio = ERR_PTR(error);
- +	req->private_bio = ERR_PTR(bio->bi_error);
+Here's an example of how to trigger that:
 
-Which introduces an access after free,
-because it was non obvious that req->private_bio == bio.
+$ mount.cifs //foo/share /mnt/test -o
+username=foo,password=foo,vers=1.0,hard
 
-Impact of that was mostly unnoticable, because we only use that value
-in a multiple-failure case, and even then map any "unexpected" error
-code to EIO, so worst case we could potentially mask a more specific
-error with EIO in a multiple failure case.
+(break connection to server before executing bellow cmd)
+$ stat -f /mnt/test & sleep 140
+[1] 2511
 
-Unless the pointed to memory region was unmapped, as is the case with
-CONFIG_DEBUG_PAGEALLOC, in which case this results in
+$ ps -aux -q 2511
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      2511  0.0  0.0  12892  1008 pts/0    S    12:24   0:00 stat -f
+/mnt/test
 
-  BUG: unable to handle kernel paging request
+$ kill -9 2511
 
-v4.13-rc1~70^2~75 4e4cbee93d56 block: switch bios to blk_status_t
-changes it further to
-  	bio_put(req->private_bio);
-  	req->private_bio = ERR_PTR(blk_status_to_errno(bio->bi_status));
+(wait for a while; process is stuck in the kernel)
+$ ps -aux -q 2511
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      2511 83.2  0.0  12892  1008 pts/0    R    12:24  30:01 stat -f
+/mnt/test
 
-And blk_status_to_errno() now contains a WARN_ON_ONCE() for unexpected
-values, which catches this "sometimes", if the memory has been reused
-quickly enough for other things.
+By using 'hard' mount point means that cifs.ko will keep retrying
+indefinitely, however we must allow the process to be killed otherwise
+it would hang the system.
 
-Should also go into stable since 4.3, with the trivial change around 4.13.
-
+Signed-off-by: Paulo Alcantara <palcantara@suse.de>
 Cc: stable@vger.kernel.org
-Fixes: 4246a0b63bd8 block: add a bi_error field to struct bio
-Reported-by: Sarah Newman <srn@prgmr.com>
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/block/drbd/drbd_worker.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/cifssmb.c |   10 ++++++++--
+ fs/cifs/smb2pdu.c |   18 ++++++++++++------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
 
---- a/drivers/block/drbd/drbd_worker.c
-+++ b/drivers/block/drbd/drbd_worker.c
-@@ -269,8 +269,8 @@ void drbd_request_endio(struct bio *bio)
- 		what = COMPLETED_OK;
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -150,8 +150,14 @@ cifs_reconnect_tcon(struct cifs_tcon *tc
+ 	 * greater than cifs socket timeout which is 7 seconds
+ 	 */
+ 	while (server->tcpStatus == CifsNeedReconnect) {
+-		wait_event_interruptible_timeout(server->response_q,
+-			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
++		rc = wait_event_interruptible_timeout(server->response_q,
++						      (server->tcpStatus != CifsNeedReconnect),
++						      10 * HZ);
++		if (rc < 0) {
++			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
++				 " signal by the process\n", __func__);
++			return -ERESTARTSYS;
++		}
+ 
+ 		/* are we still trying to reconnect? */
+ 		if (server->tcpStatus != CifsNeedReconnect)
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -155,7 +155,7 @@ out:
+ static int
+ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon)
+ {
+-	int rc = 0;
++	int rc;
+ 	struct nls_table *nls_codepage;
+ 	struct cifs_ses *ses;
+ 	struct TCP_Server_Info *server;
+@@ -166,10 +166,10 @@ smb2_reconnect(__le16 smb2_command, stru
+ 	 * for those three - in the calling routine.
+ 	 */
+ 	if (tcon == NULL)
+-		return rc;
++		return 0;
+ 
+ 	if (smb2_command == SMB2_TREE_CONNECT)
+-		return rc;
++		return 0;
+ 
+ 	if (tcon->tidStatus == CifsExiting) {
+ 		/*
+@@ -212,8 +212,14 @@ smb2_reconnect(__le16 smb2_command, stru
+ 			return -EAGAIN;
+ 		}
+ 
+-		wait_event_interruptible_timeout(server->response_q,
+-			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
++		rc = wait_event_interruptible_timeout(server->response_q,
++						      (server->tcpStatus != CifsNeedReconnect),
++						      10 * HZ);
++		if (rc < 0) {
++			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
++				 " signal by the process\n", __func__);
++			return -ERESTARTSYS;
++		}
+ 
+ 		/* are we still trying to reconnect? */
+ 		if (server->tcpStatus != CifsNeedReconnect)
+@@ -231,7 +237,7 @@ smb2_reconnect(__le16 smb2_command, stru
  	}
  
--	bio_put(req->private_bio);
- 	req->private_bio = ERR_PTR(bio->bi_error);
-+	bio_put(bio);
+ 	if (!tcon->ses->need_reconnect && !tcon->need_reconnect)
+-		return rc;
++		return 0;
  
- 	/* not req_mod(), we need irqsave here! */
- 	spin_lock_irqsave(&device->resource->req_lock, flags);
+ 	nls_codepage = load_nls_default();
+ 
 
 
