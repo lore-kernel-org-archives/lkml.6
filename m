@@ -5,206 +5,73 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3320BC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC61AC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC95F2098B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:38:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC95F2098B
+	by mail.kernel.org (Postfix) with ESMTP id 8D8062098B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:40:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D8062098B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732455AbeGJXjx (ORCPT
+        id S1732469AbeGJXl1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 19:39:53 -0400
-Received: from gate.crashing.org ([63.228.1.57]:57296 "EHLO gate.crashing.org"
+        Tue, 10 Jul 2018 19:41:27 -0400
+Received: from gate.crashing.org ([63.228.1.57]:57312 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732263AbeGJXjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 19:39:52 -0400
+        id S1732409AbeGJXl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 19:41:27 -0400
 Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6ANbpgG013931;
-        Tue, 10 Jul 2018 18:37:55 -0500
-Message-ID: <69a6086d25c17b03ecf3ab7ed34fe941fd993410.camel@kernel.crashing.org>
-Subject: Re: Several suspected memory leaks
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6ANdFwe014016;
+        Tue, 10 Jul 2018 18:39:17 -0500
+Message-ID: <f3085f807e19d9c5d36ef9cded2b3ee59e560899.camel@kernel.crashing.org>
+Subject: Re: [PATCH v11 5/8] i2c: fsi: Add transfer implementation
 From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Date:   Wed, 11 Jul 2018 09:37:51 +1000
-In-Reply-To: <468d3c5b-d71d-c95b-dab4-ea8c2cebe129@molgen.mpg.de>
-References: <468d3c5b-d71d-c95b-dab4-ea8c2cebe129@molgen.mpg.de>
+To:     Eddie James <eajames@linux.vnet.ibm.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org, joel@jms.id.au,
+        mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        rdunlap@infradead.org, andy.shevchenko@gmail.com, peda@axentia.se
+Date:   Wed, 11 Jul 2018 09:39:15 +1000
+In-Reply-To: <d7128886-148f-d255-fb33-3727cad01569@linux.vnet.ibm.com>
+References: <1530816030-13010-1-git-send-email-eajames@linux.vnet.ibm.com>
+         <1530816030-13010-6-git-send-email-eajames@linux.vnet.ibm.com>
+         <20180709224114.4h47enyt4tucqcou@ninjato>
+         <d7128886-148f-d255-fb33-3727cad01569@linux.vnet.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-07-10 at 17:17 +0200, Paul Menzel wrote:
-> Dear Liunx folks,
+On Tue, 2018-07-10 at 12:52 -0500, Eddie James wrote:
 > 
+> On 07/09/2018 05:41 PM, Wolfram Sang wrote:
+> > > +	cmd |= FIELD_PREP(I2C_CMD_ADDR, msg->addr >> 1);
+> > 
+> > I just noticed this and wonder: Don't you need the LSB of the address?
+> > It is not the RW flag, this is encoded in msg->flags.
 > 
-> On a the IBM S822LC (8335-GTA) with Ubuntu 18.04 I built Linux master
-> – 4.18-rc4+, commit 092150a2 (Merge branch 'for-linus'
-> of git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid) – with
-> kmemleak. Several issues are found.
+> So, the hardware interprets the LSB as the RW flag. It wouldn't be 
+> possible to have a device addressed with the LSB set on this I2C master.
 
-Some of these are completely uninteresting though and look like
-kmemleak bugs to me :-)
-
->     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
->     [<0000000007135d64>] hash__map_kernel_page+0x30c/0x4d0
->     [<0000000071677858>] __ioremap_at+0x108/0x140
->     [<000000000023e921>] __ioremap_caller+0x130/0x180
->     [<000000009dbc3923>] icp_native_init_one_node+0x5cc/0x760
->     [<0000000015f3168a>] icp_native_init+0x70/0x13c
->     [<00000000655550ed>] xics_init+0x38/0x1ac
->     [<0000000088dbf9d1>] pnv_init_IRQ+0x30/0x5c
-
-This is the interrupt controller mapping its registers, why on earth
-would that be considered a leak ? kmemleak needs to learn to ignore
-kernel page tables allocations.
-
-
->     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
->     [<000000002cdcd2db>] vmap_page_range_noflush+0x670/0x880
->     [<0000000041cc3e80>] map_vm_area+0x58/0xb0
->     [<00000000b92ed8c4>] __vmalloc_node_range+0x1cc/0x3f0
->     [<00000000f6cf150a>] __vmalloc+0x50/0x60
->     [<0000000027a0846e>] alloc_large_system_hash+0x3b8/0x554
->     [<00000000ef0d6278>] vfs_caches_init+0xd4/0x138
->     [<0000000055b60f04>] start_kernel+0x60c/0x684
->     [<00000000f8d483c1>] start_here_common+0x1c/0x520
-
-This looks like some generic VFS stuff which similarly is meant to
-remain for the whole duration of the system, what's the point on
-reporting on init leaks like that ?
-
-> unreferenced object 0xc000000007bd8000 (size 16384):
->   comm "init", pid 1, jiffies 4294895064 (age 1316.236s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
->     [<000000006ee9b8a3>] move_page_tables+0xd6c/0x13d0
->     [<0000000091930c94>] shift_arg_pages+0xc8/0x220
->     [<000000009cfa5804>] setup_arg_pages+0x26c/0x380
->     [<00000000ee516bf8>] load_elf_binary+0x600/0x29ac
->     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
->     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
->     [<0000000044d8a16f>] sys_execve+0x58/0x70
->     [<000000001deb923d>] system_call+0x5c/0x70
-
-This is odd, looks like a page table allocation, I'm pretty sure those
-get freed when the corresponding process dies, but this is init (PID1),
-it probably never does. Again, a false positive.
-
-> unreferenced object 0xc000000007bc8000 (size 16384):
->   comm "init", pid 1, jiffies 4294895064 (age 1316.236s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
->     [<000000001cb1e8bb>] __handle_mm_fault+0x34c/0x2f20
->     [<0000000028b41470>] handle_mm_fault+0x1f0/0x4e0
->     [<00000000f5d2a8db>] __do_page_fault+0x274/0xf90
->     [<0000000094f967e0>] handle_page_fault+0x18/0x38
->     [<00000000a38200c8>] 0xc000007fce3bbaf0
->     [<00000000c3aa995f>] load_elf_binary+0x99c/0x29ac
->     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
->     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
->     [<0000000044d8a16f>] sys_execve+0x58/0x70
->     [<000000001deb923d>] system_call+0x5c/0x70
-> unreferenced object 0xc000007fb84d0000 (size 16384):
->   comm "systemd-journal", pid 1796, jiffies 4294895847 (age 1313.168s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
->     [<000000006ee9b8a3>] move_page_tables+0xd6c/0x13d0
->     [<0000000091930c94>] shift_arg_pages+0xc8/0x220
->     [<000000009cfa5804>] setup_arg_pages+0x26c/0x380
->     [<00000000ee516bf8>] load_elf_binary+0x600/0x29ac
->     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
->     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
->     [<0000000044d8a16f>] sys_execve+0x58/0x70
->     [<000000001deb923d>] system_call+0x5c/0x70
-> unreferenced object 0xc000007fb84b0000 (size 16384):
->   comm "systemd-journal", pid 1796, jiffies 4294895847 (age 1313.168s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
->     [<000000001cb1e8bb>] __handle_mm_fault+0x34c/0x2f20
->     [<0000000028b41470>] handle_mm_fault+0x1f0/0x4e0
->     [<00000000f5d2a8db>] __do_page_fault+0x274/0xf90
->     [<0000000094f967e0>] handle_page_fault+0x18/0x38
->     [<00000000cc288b87>] 0xc000007f95657af0
->     [<00000000c3aa995f>] load_elf_binary+0x99c/0x29ac
->     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
->     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
->     [<0000000044d8a16f>] sys_execve+0x58/0x70
->     [<000000001deb923d>] system_call+0x5c/0x70
-> unreferenced object 0xc000007f92fe8000 (size 16384):
->   comm "lvmetad", pid 1802, jiffies 4294895860 (age 1313.116s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
->     [<000000006ee9b8a3>] move_page_tables+0xd6c/0x13d0
->     [<0000000091930c94>] shift_arg_pages+0xc8/0x220
->     [<000000009cfa5804>] setup_arg_pages+0x26c/0x380
->     [<00000000ee516bf8>] load_elf_binary+0x600/0x29ac
->     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
->     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
->     [<0000000044d8a16f>] sys_execve+0x58/0x70
->     [<000000001deb923d>] system_call+0x5c/0x70
-> unreferenced object 0xc000007f92ff0000 (size 16384):
->   comm "lvmetad", pid 1802, jiffies 4294895860 (age 1313.116s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
->     [<000000001cb1e8bb>] __handle_mm_fault+0x34c/0x2f20
->     [<0000000028b41470>] handle_mm_fault+0x1f0/0x4e0
->     [<00000000f5d2a8db>] __do_page_fault+0x274/0xf90
->     [<0000000094f967e0>] handle_page_fault+0x18/0x38
->     [<000000009b19a1a9>] 0xc000007f95633af0
->     [<00000000c3aa995f>] load_elf_binary+0x99c/0x29ac
->     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
->     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
->     [<0000000044d8a16f>] sys_execve+0x58/0x70
->     [<000000001deb923d>] system_call+0x5c/0x70
-> unreferenced object 0xc0000000052f0000 (size 16384):
->   comm "blkmapd", pid 1808, jiffies 4294895896 (age 1312.976s)
->   hex dump (first 32 bytes):
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->   backtrace:
->     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
->     [<00000000464ece1a>] copy_page_range+0x97c/0xcf0
->     [<00000000470f82ab>] copy_process.isra.6.part.7+0x1458/0x2cd0
->     [<000000001784ab04>] _do_fork+0xf4/0x7e0
->     [<00000000b8327d67>] ppc_clone+0x8/0xc
-> […]
-> ```
+What do you mean ? That doesn't sound right... 
 > 
-> Please tell me how to continue. Is this the right subsystem?
-
-Doesn't look like it...
-
-Ben.
-
+> > 
+> > Also, no seperate handling for 10 bit addresses? Technically, 7-bit 0x50
+> > is different on the wire from 10-bit 0x050. This is minor, though. There
+> > are no 10-bit devices out there. Still, did you test 10-bit support?
 > 
-> Kind regards,
+> Indeed, real 10-bit addresses require some additional manipulation of 
+> this I2C master in order to work. We don't support it right now.
 > 
-> Paul
+> Thanks,
+> Eddie
+> 
+> > 
+> > Rest looks good.
+> > 
