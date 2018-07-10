@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE01FC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 220D9C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4BA2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B4BA2083E
+	by mail.kernel.org (Postfix) with ESMTP id DD2E320B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2E320B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388934AbeGJSd0 (ORCPT
+        id S2388946AbeGJSd3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47770 "EHLO
+        Tue, 10 Jul 2018 14:33:29 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47778 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388124AbeGJSdZ (ORCPT
+        with ESMTP id S2388124AbeGJSd2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:25 -0400
+        Tue, 10 Jul 2018 14:33:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E612CE3D;
-        Tue, 10 Jul 2018 18:33:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ADE5FE3D;
+        Tue, 10 Jul 2018 18:33:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 37/53] f2fs: truncate preallocated blocks in error case
-Date:   Tue, 10 Jul 2018 20:25:13 +0200
-Message-Id: <20180710182500.923996959@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
+        Madalin Bucur <madalin.bucur@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 38/53] [PATCH] Revert "dpaa_eth: fix error in dpaa_remove()"
+Date:   Tue, 10 Jul 2018 20:25:14 +0200
+Message-Id: <20180710182500.992415319@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -51,50 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit dc7a10ddee0c56c6d891dd18de5c4ee9869545e0 upstream.
+This reverts commit 5bbb99d2fde047df596379be6c58e265e2ddbe1f which is
+commit 88075256ee817041d68c2387f29065b5cb2b342a upstream.
 
-If write is failed, we must deallocate the blocks that we couldn't write.
+Jiri writes that this was an incorrect fix, and Madalin-cristian says it
+was fixed differently in a later patch.  So just revert this from
+4.14.y.
 
-Cc: stable@vger.kernel.org
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Reported-by: Jiri Slaby <jslaby@suse.cz>
+Cc: Madalin Bucur <madalin.bucur@nxp.com>
+Cc: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/file.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2694,11 +2694,16 @@ static ssize_t f2fs_file_write_iter(stru
- 	inode_lock(inode);
- 	ret = generic_write_checks(iocb, from);
- 	if (ret > 0) {
-+		bool preallocated = false;
-+		size_t target_size = 0;
- 		int err;
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
+@@ -2863,7 +2863,7 @@ static int dpaa_remove(struct platform_d
+ 	struct device *dev;
+ 	int err;
  
- 		if (iov_iter_fault_in_readable(from, iov_iter_count(from)))
- 			set_inode_flag(inode, FI_NO_PREALLOC);
+-	dev = pdev->dev.parent;
++	dev = &pdev->dev;
+ 	net_dev = dev_get_drvdata(dev);
  
-+		preallocated = true;
-+		target_size = iocb->ki_pos + iov_iter_count(from);
-+
- 		err = f2fs_preallocate_blocks(iocb, from);
- 		if (err) {
- 			clear_inode_flag(inode, FI_NO_PREALLOC);
-@@ -2710,6 +2715,10 @@ static ssize_t f2fs_file_write_iter(stru
- 		blk_finish_plug(&plug);
- 		clear_inode_flag(inode, FI_NO_PREALLOC);
- 
-+		/* if we couldn't write data, we should deallocate blocks. */
-+		if (preallocated && i_size_read(inode) < target_size)
-+			f2fs_truncate(inode);
-+
- 		if (ret > 0)
- 			f2fs_update_iostat(F2FS_I_SB(inode), APP_WRITE_IO, ret);
- 	}
+ 	priv = netdev_priv(net_dev);
 
 
