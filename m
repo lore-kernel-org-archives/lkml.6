@@ -2,48 +2,39 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLACK,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 497CAC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B657C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1612720936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1612720936
+	by mail.kernel.org (Postfix) with ESMTP id 0941620936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0941620936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732807AbeGJS0e (ORCPT
+        id S1732821AbeGJS0h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:26:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43766 "EHLO
+        Tue, 10 Jul 2018 14:26:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43784 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732406AbeGJS0d (ORCPT
+        with ESMTP id S1732387AbeGJS0g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:26:33 -0400
+        Tue, 10 Jul 2018 14:26:36 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C393CE83;
-        Tue, 10 Jul 2018 18:26:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C2CECD71;
+        Tue, 10 Jul 2018 18:26:25 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 3.18 22/23] mtd: cfi_cmdset_0002: Change erase functions to check chip good only
-Date:   Tue, 10 Jul 2018 20:24:55 +0200
-Message-Id: <20180710182309.822119900@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 05/23] netfilter: ebtables: handle string from userspace with care
+Date:   Tue, 10 Jul 2018 20:24:38 +0200
+Message-Id: <20180710182309.105452051@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
 References: <20180710182308.877332304@linuxfoundation.org>
@@ -60,107 +51,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+From: Paolo Abeni <pabeni@redhat.com>
 
-commit 79ca484b613041ca223f74b34608bb6f5221724b upstream.
+[ Upstream commit 94c752f99954797da583a84c4907ff19e92550a4 ]
 
-Currently the functions use to check both chip ready and good.
-But the chip ready is not enough to check the operation status.
-So change this to check the chip good instead of this.
-About the retry functions to make sure the error handling remain it.
+strlcpy() can't be safely used on a user-space provided string,
+as it can try to read beyond the buffer's end, if the latter is
+not NULL terminated.
 
-Signed-off-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-Reviewed-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: linux-mtd@lists.infradead.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Leveraging the above, syzbot has been able to trigger the following
+splat:
+
+BUG: KASAN: stack-out-of-bounds in strlcpy include/linux/string.h:300
+[inline]
+BUG: KASAN: stack-out-of-bounds in compat_mtw_from_user
+net/bridge/netfilter/ebtables.c:1957 [inline]
+BUG: KASAN: stack-out-of-bounds in ebt_size_mwt
+net/bridge/netfilter/ebtables.c:2059 [inline]
+BUG: KASAN: stack-out-of-bounds in size_entry_mwt
+net/bridge/netfilter/ebtables.c:2155 [inline]
+BUG: KASAN: stack-out-of-bounds in compat_copy_entries+0x96c/0x14a0
+net/bridge/netfilter/ebtables.c:2194
+Write of size 33 at addr ffff8801b0abf888 by task syz-executor0/4504
+
+CPU: 0 PID: 4504 Comm: syz-executor0 Not tainted 4.17.0-rc2+ #40
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  memcpy+0x37/0x50 mm/kasan/kasan.c:303
+  strlcpy include/linux/string.h:300 [inline]
+  compat_mtw_from_user net/bridge/netfilter/ebtables.c:1957 [inline]
+  ebt_size_mwt net/bridge/netfilter/ebtables.c:2059 [inline]
+  size_entry_mwt net/bridge/netfilter/ebtables.c:2155 [inline]
+  compat_copy_entries+0x96c/0x14a0 net/bridge/netfilter/ebtables.c:2194
+  compat_do_replace+0x483/0x900 net/bridge/netfilter/ebtables.c:2285
+  compat_do_ebt_set_ctl+0x2ac/0x324 net/bridge/netfilter/ebtables.c:2367
+  compat_nf_sockopt net/netfilter/nf_sockopt.c:144 [inline]
+  compat_nf_setsockopt+0x9b/0x140 net/netfilter/nf_sockopt.c:156
+  compat_ip_setsockopt+0xff/0x140 net/ipv4/ip_sockglue.c:1279
+  inet_csk_compat_setsockopt+0x97/0x120 net/ipv4/inet_connection_sock.c:1041
+  compat_tcp_setsockopt+0x49/0x80 net/ipv4/tcp.c:2901
+  compat_sock_common_setsockopt+0xb4/0x150 net/core/sock.c:3050
+  __compat_sys_setsockopt+0x1ab/0x7c0 net/compat.c:403
+  __do_compat_sys_setsockopt net/compat.c:416 [inline]
+  __se_compat_sys_setsockopt net/compat.c:413 [inline]
+  __ia32_compat_sys_setsockopt+0xbd/0x150 net/compat.c:413
+  do_syscall_32_irqs_on arch/x86/entry/common.c:323 [inline]
+  do_fast_syscall_32+0x345/0xf9b arch/x86/entry/common.c:394
+  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
+RIP: 0023:0xf7fb3cb9
+RSP: 002b:00000000fff0c26c EFLAGS: 00000282 ORIG_RAX: 000000000000016e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000000000
+RDX: 0000000000000080 RSI: 0000000020000300 RDI: 00000000000005f4
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+
+The buggy address belongs to the page:
+page:ffffea0006c2afc0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 0000000000000000 0000000000000000 00000000ffffffff
+raw: 0000000000000000 ffffea0006c20101 0000000000000000 0000000000000000
+page dumped because: kasan: bad access detected
+
+Fix the issue replacing the unsafe function with strscpy() and
+taking care of possible errors.
+
+Fixes: 81e675c227ec ("netfilter: ebtables: add CONFIG_COMPAT support")
+Reported-and-tested-by: syzbot+4e42a04e0bc33cb6c087@syzkaller.appspotmail.com
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- drivers/mtd/chips/cfi_cmdset_0002.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
+ net/bridge/netfilter/ebtables.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -2294,12 +2294,13 @@ static int __xipram do_erase_chip(struct
- 			chip->erase_suspended = 0;
- 		}
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -1910,7 +1910,8 @@ static int compat_mtw_from_user(struct c
+ 	int off, pad = 0;
+ 	unsigned int size_kern, match_size = mwt->match_size;
  
--		if (chip_ready(map, adr))
-+		if (chip_good(map, adr, map_word_ff(map)))
- 			break;
+-	strlcpy(name, mwt->u.name, sizeof(name));
++	if (strscpy(name, mwt->u.name, sizeof(name)) < 0)
++		return -EINVAL;
  
- 		if (time_after(jiffies, timeo)) {
- 			printk(KERN_WARNING "MTD %s(): software timeout\n",
- 				__func__ );
-+			ret = -EIO;
- 			break;
- 		}
- 
-@@ -2307,15 +2308,15 @@ static int __xipram do_erase_chip(struct
- 		UDELAY(map, chip, adr, 1000000/HZ);
- 	}
- 	/* Did we succeed? */
--	if (!chip_good(map, adr, map_word_ff(map))) {
-+	if (ret) {
- 		/* reset on all failures. */
- 		map_write( map, CMD(0xF0), chip->start );
- 		/* FIXME - should have reset delay before continuing */
- 
--		if (++retry_cnt <= MAX_RETRIES)
-+		if (++retry_cnt <= MAX_RETRIES) {
-+			ret = 0;
- 			goto retry;
--
--		ret = -EIO;
-+		}
- 	}
- 
- 	chip->state = FL_READY;
-@@ -2389,7 +2390,7 @@ static int __xipram do_erase_oneblock(st
- 			chip->erase_suspended = 0;
- 		}
- 
--		if (chip_ready(map, adr)) {
-+		if (chip_good(map, adr, map_word_ff(map))) {
- 			xip_enable(map, chip, adr);
- 			break;
- 		}
-@@ -2398,6 +2399,7 @@ static int __xipram do_erase_oneblock(st
- 			xip_enable(map, chip, adr);
- 			printk(KERN_WARNING "MTD %s(): software timeout\n",
- 				__func__ );
-+			ret = -EIO;
- 			break;
- 		}
- 
-@@ -2405,15 +2407,15 @@ static int __xipram do_erase_oneblock(st
- 		UDELAY(map, chip, adr, 1000000/HZ);
- 	}
- 	/* Did we succeed? */
--	if (!chip_good(map, adr, map_word_ff(map))) {
-+	if (ret) {
- 		/* reset on all failures. */
- 		map_write( map, CMD(0xF0), chip->start );
- 		/* FIXME - should have reset delay before continuing */
- 
--		if (++retry_cnt <= MAX_RETRIES)
-+		if (++retry_cnt <= MAX_RETRIES) {
-+			ret = 0;
- 			goto retry;
--
--		ret = -EIO;
-+		}
- 	}
- 
- 	chip->state = FL_READY;
+ 	if (state->buf_kern_start)
+ 		dst = state->buf_kern_start + state->buf_kern_offset;
 
 
