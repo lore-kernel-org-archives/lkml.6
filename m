@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 290FAC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F77DC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFD7E208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFD7E208E8
+	by mail.kernel.org (Postfix) with ESMTP id 2DE6720936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DE6720936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389383AbeGJSev (ORCPT
+        id S2389395AbeGJSey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:34:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48148 "EHLO
+        Tue, 10 Jul 2018 14:34:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48160 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388426AbeGJSeu (ORCPT
+        with ESMTP id S2388426AbeGJSex (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:34:50 -0400
+        Tue, 10 Jul 2018 14:34:53 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F03F3E6B;
-        Tue, 10 Jul 2018 18:34:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB04DE78;
+        Tue, 10 Jul 2018 18:34:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Subject: [PATCH 4.17 15/56] vfio: Use get_user_pages_longterm correctly
-Date:   Tue, 10 Jul 2018 20:24:57 +0200
-Message-Id: <20180710182504.305621475@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Dyer <nick@shmanahar.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH 4.17 16/56] ARM: dts: imx51-zii-rdu1: fix touchscreen pinctrl
+Date:   Tue, 10 Jul 2018 20:24:58 +0200
+Message-Id: <20180710182504.366451131@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -51,68 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Gunthorpe <jgg@mellanox.com>
+From: Nick Dyer <nick@shmanahar.org>
 
-commit bb94b55af3461e26b32f0e23d455abeae0cfca5d upstream.
+commit 06d793b114e9d922c03aa077ac6c5c51fdda2722 upstream.
 
-The patch noted in the fixes below converted get_user_pages_fast() to
-get_user_pages_longterm(), however the two calls differ in a few ways.
+The pinctrl settings were incorrect for the touchscreen interrupt line, causing
+an interrupt storm. This change has been tested with both the atmel_mxt_ts and
+RMI4 drivers on the RDU1 units.
 
-First _fast() is documented to not require the mmap_sem, while _longterm()
-is documented to need it. Hold the mmap sem as required.
+The value 0x4 comes from the value of register IOMUXC_SW_PAD_CTL_PAD_CSI1_D8
+from the old vendor kernel.
 
-Second, _fast accepts an 'int write' while _longterm uses 'unsigned int
-gup_flags', so the expression '!!(prot & IOMMU_WRITE)' is only working by
-luck as FOLL_WRITE is currently == 0x1. Use the expected FOLL_WRITE
-constant instead.
-
-Fixes: 94db151dc892 ("vfio: disable filesystem-dax page pinning")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Nick Dyer <nick@shmanahar.org>
+Fixes: ceef0396f367 ("ARM: dts: imx: add ZII RDU1 board")
+Cc: <stable@vger.kernel.org> # 4.15+
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+Tested-by: Chris Healy <cphealy@gmail.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/vfio/vfio_iommu_type1.c |   16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/imx51-zii-rdu1.dts |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -346,18 +346,16 @@ static int vaddr_get_pfn(struct mm_struc
- 	struct page *page[1];
- 	struct vm_area_struct *vma;
- 	struct vm_area_struct *vmas[1];
-+	unsigned int flags = 0;
- 	int ret;
+--- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
++++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+@@ -768,7 +768,7 @@
  
-+	if (prot & IOMMU_WRITE)
-+		flags |= FOLL_WRITE;
-+
-+	down_read(&mm->mmap_sem);
- 	if (mm == current->mm) {
--		ret = get_user_pages_longterm(vaddr, 1, !!(prot & IOMMU_WRITE),
--					      page, vmas);
-+		ret = get_user_pages_longterm(vaddr, 1, flags, page, vmas);
- 	} else {
--		unsigned int flags = 0;
--
--		if (prot & IOMMU_WRITE)
--			flags |= FOLL_WRITE;
--
--		down_read(&mm->mmap_sem);
- 		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
- 					    vmas, NULL);
- 		/*
-@@ -371,8 +369,8 @@ static int vaddr_get_pfn(struct mm_struc
- 			ret = -EOPNOTSUPP;
- 			put_page(page[0]);
- 		}
--		up_read(&mm->mmap_sem);
- 	}
-+	up_read(&mm->mmap_sem);
- 
- 	if (ret == 1) {
- 		*pfn = page_to_pfn(page[0]);
+ 	pinctrl_ts: tsgrp {
+ 		fsl,pins = <
+-			MX51_PAD_CSI1_D8__GPIO3_12		0x85
++			MX51_PAD_CSI1_D8__GPIO3_12		0x04
+ 			MX51_PAD_CSI1_D9__GPIO3_13		0x85
+ 		>;
+ 	};
 
 
