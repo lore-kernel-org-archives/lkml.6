@@ -2,80 +2,37 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D966EC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B64D9C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9210E208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:23:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6PRvZZ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9210E208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 76EA62086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:24:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76EA62086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732384AbeGJXYf (ORCPT
+        id S1732386AbeGJX0F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 19:24:35 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:39018 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732272AbeGJXYf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 19:24:35 -0400
-Received: by mail-wm0-f68.google.com with SMTP id h20-v6so622399wmb.4;
-        Tue, 10 Jul 2018 16:23:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=LJ2e2wvx4ZWrvmGIqC2g8qcfq+ffiY4DZ10hg02y3XA=;
-        b=d6PRvZZ4bKMwF9Gup4YZIbDw7Y9cJkafZ9olcOgK5KA4cxqGYIrGgoKqFAC1vnFwIn
-         N7X/Qx+/Mhnk17OZ67oW1o0bwGYM+hTVrN0q5KzwodTwtgzFU5tFXCBOBX+eKD7efjdc
-         LPt47cB+m2x7Dk+QnjgD/r39yZ2qnZATFwSUMgAqaZu2n6sEGpvVP39v/5WOzpuSim4/
-         3fDEdvQXerNeyC22jdk4X1KDZ5pMFYfDlbMi/1idALPl1iwNUGC3Go4RAFAZj5zH0Z87
-         LpYGKCa6Am/7KOjEOJVoZek9pZESCf58CSa66wWK3GRLn1n700OPW8+dCTtF7aixCeFf
-         jPYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=LJ2e2wvx4ZWrvmGIqC2g8qcfq+ffiY4DZ10hg02y3XA=;
-        b=CONNpsmdoxqfMYWsoz7s2CymH6ioCYVSCewFIjKFtS6Ljziy2Qkr6bPN9iM92YuXRt
-         Ss+AhiUBOQHZeGk5lvL4VrgCI6r1083vm83vchq7LXaKX4PacHsPi32EivFYkOfiDyPO
-         S2Fl5oX4yizaOk2lbH6jO1Ck7KfC0Gp970T3AKXkkxJAvOnoZpkZ+/mJLlYo0shYOg4G
-         zP3GU4lj9STZveUoveic+uOhuiQ2Iw1bcgE/aNPi05XqSKotm6PxghYj1WJeaIYQJp10
-         tcM6mI5i94q50TSD8R7YliizWufzZDWyvYztAt5QaSrbmDBOKBqVi4BKV0TaftNdyLkN
-         TV8Q==
-X-Gm-Message-State: APt69E0jRNnI9ifvjHHYanO2ZRQAe3PZ+xMt8HlSQRBhsHxbhIITu4dA
-        oWAr7TwkJRMVUjO0OQ9NFiM=
-X-Google-Smtp-Source: AAOMgpfEVxS0GT0aDGJa8CowWNZAI9vh0g0yYknoB1fpR78PCPfOGHYmmwG4XQlL5SOHpYqy+Ao1wA==
-X-Received: by 2002:a1c:700a:: with SMTP id l10-v6mr12981311wmc.90.1531264991130;
-        Tue, 10 Jul 2018 16:23:11 -0700 (PDT)
-Received: from [10.10.40.181] ([38.97.127.241])
-        by smtp.gmail.com with ESMTPSA id g125-v6sm405858wmf.16.2018.07.10.16.23.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 16:23:10 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
-Subject: Re: [RFC PATCH v2 11/27] x86/mm: Modify ptep_set_wrprotect and
- pmdp_set_wrprotect for _PAGE_DIRTY_SW
-From:   Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <fbf45667-5388-44a6-1f22-07bcc03e1804@linux.intel.com>
-Date:   Tue, 10 Jul 2018 19:23:04 -0400
-Cc:     X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 7bit
-Message-Id: <DDFF4AF4-51D2-44F5-8B63-E8454F712EC6@gmail.com>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-12-yu-cheng.yu@intel.com>
- <fbf45667-5388-44a6-1f22-07bcc03e1804@linux.intel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        Tue, 10 Jul 2018 19:26:05 -0400
+Received: from mga18.intel.com ([134.134.136.126]:42266 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732272AbeGJX0E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 19:26:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 16:24:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
+   d="scan'208";a="73784428"
+Received: from mgcarrol-mobl1.amr.corp.intel.com (HELO [10.252.202.182]) ([10.252.202.182])
+  by orsmga002.jf.intel.com with ESMTP; 10 Jul 2018 16:24:41 -0700
+Subject: Re: [RFC PATCH v2 12/27] x86/mm: Shadow stack page fault error
+ checking
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
         "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
@@ -90,47 +47,92 @@ To:     Dave Hansen <dave.hansen@linux.intel.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Kees Cook <keescook@chromiun.org>,
         Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
         Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         Peter Zijlstra <peterz@infradead.org>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-X-Mailer: Apple Mail (2.3445.8.2)
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-13-yu-cheng.yu@intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <175662bd-f979-ac5f-b78e-480608bdbf55@linux.intel.com>
+Date:   Tue, 10 Jul 2018 16:24:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180710222639.8241-13-yu-cheng.yu@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 6:44 PM, Dave Hansen <dave.hansen@linux.intel.com> wrote:
+On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
+> +	/*
+> +	 * Verify X86_PF_SHSTK is within a shadow stack VMA.
+> +	 * It is always an error if there is a shadow stack
+> +	 * fault outside a shadow stack VMA.
+> +	 */
+> +	if (error_code & X86_PF_SHSTK) {
+> +		if (!(vma->vm_flags & VM_SHSTK))
+> +			return 1;
+> +		return 0;
+> +	}
 
-> On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
->> +	/*
->> +	 * On platforms before CET, other threads could race to
->> +	 * create a RO and _PAGE_DIRTY_HW PMD again.  However,
->> +	 * on CET platforms, this is safe without a TLB flush.
->> +	 */
-> 
-> If I didn't work for Intel, I'd wonder what the heck CET is and what the
-> heck it has to do with _PAGE_DIRTY_HW.  I think we need a better comment
-> than this.  How about:
-> 
-> 	Some processors can _start_ a write, but end up seeing
-> 	a read-only PTE by the time they get to getting the
-> 	Dirty bit.  In this case, they will set the Dirty bit,
-> 	leaving a read-only, Dirty PTE which looks like a Shadow
-> 	Stack PTE.
-> 
-> 	However, this behavior has been improved and will *not* occur on
-> 	processors supporting Shadow Stacks.  Without this guarantee, a
-> 	transition to a non-present PTE and flush the TLB would be
-> 	needed.
+It turns out that a X86_PF_SHSTK just means that the processor faulted
+while doing access to something it thinks should be a shadow-stack
+virtual address.
 
-Interesting. Does that regard the knights landing bug or something more
-general?
+But, we *can* have faults on shadow stack accesses for non-shadow-stack
+reasons.
 
-Will the write succeed or trigger a page-fault in this case?
-
-[ I know it is not related to the patch, but I would appreciate if you share
-your knowledge ]
-
-Regards,
-Nadav
+I think you need to remove the 'return 0' and let it fall through to the
+other access checks that we might be failing.  If it's a shadow stack
+access, it has to be a shadow stack VMA.  But, a shadow-stack access
+fault to a shadow stack VMA isn't _necessarily_ OK.
