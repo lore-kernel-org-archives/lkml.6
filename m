@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE01AC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E647C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9E832083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E832083E
+	by mail.kernel.org (Postfix) with ESMTP id 003F720B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 003F720B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387976AbeGJSaN (ORCPT
+        id S2387992AbeGJSaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:30:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45514 "EHLO
+        Tue, 10 Jul 2018 14:30:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45524 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732596AbeGJSaM (ORCPT
+        with ESMTP id S1732565AbeGJSaQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:30:12 -0400
+        Tue, 10 Jul 2018 14:30:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BAF9AEC2;
-        Tue, 10 Jul 2018 18:30:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3078EEB4;
+        Tue, 10 Jul 2018 18:30:04 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Dave Airlie <airlied@redhat.com>
-Subject: [PATCH 4.9 25/52] drm/udl: fix display corruption of the last line
-Date:   Tue, 10 Jul 2018 20:24:53 +0200
-Message-Id: <20180710182451.870514784@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.9 26/52] jbd2: dont mark block as modified if the handle is out of credits
+Date:   Tue, 10 Jul 2018 20:24:54 +0200
+Message-Id: <20180710182451.959928409@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -50,76 +50,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 99ec9e77511dea55d81729fc80b6c63a61bfa8e0 upstream.
+commit e09463f220ca9a1a1ecfda84fcda658f99a1f12a upstream.
 
-The displaylink hardware has such a peculiarity that it doesn't render a
-command until next command is received. This produces occasional
-corruption, such as when setting 22x11 font on the console, only the first
-line of the cursor will be blinking if the cursor is located at some
-specific columns.
+Do not set the b_modified flag in block's journal head should not
+until after we're sure that jbd2_journal_dirty_metadat() will not
+abort with an error due to there not being enough space reserved in
+the jbd2 handle.
 
-When we end up with a repeating pixel, the driver has a bug that it leaves
-one uninitialized byte after the command (and this byte is enough to flush
-the command and render it - thus it fixes the screen corruption), however
-whe we end up with a non-repeating pixel, there is no byte appended and
-this results in temporary screen corruption.
+Otherwise, future attempts to modify the buffer may lead a large
+number of spurious errors and warnings.
 
-This patch fixes the screen corruption by always appending a byte 0xAF at
-the end of URB. It also removes the uninitialized byte.
+This addresses CVE-2018-10883.
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dave Airlie <airlied@redhat.com>
+https://bugzilla.kernel.org/show_bug.cgi?id=200071
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/udl/udl_fb.c       |    5 ++++-
- drivers/gpu/drm/udl/udl_transfer.c |   11 +++++++----
- 2 files changed, 11 insertions(+), 5 deletions(-)
+ fs/jbd2/transaction.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/udl/udl_fb.c
-+++ b/drivers/gpu/drm/udl/udl_fb.c
-@@ -136,7 +136,10 @@ int udl_handle_damage(struct udl_framebu
- 
- 	if (cmd > (char *) urb->transfer_buffer) {
- 		/* Send partial buffer remaining before exiting */
--		int len = cmd - (char *) urb->transfer_buffer;
-+		int len;
-+		if (cmd < (char *) urb->transfer_buffer + urb->transfer_buffer_length)
-+			*cmd++ = 0xAF;
-+		len = cmd - (char *) urb->transfer_buffer;
- 		ret = udl_submit_urb(dev, urb, len);
- 		bytes_sent += len;
- 	} else
---- a/drivers/gpu/drm/udl/udl_transfer.c
-+++ b/drivers/gpu/drm/udl/udl_transfer.c
-@@ -152,11 +152,11 @@ static void udl_compress_hline16(
- 		raw_pixels_count_byte = cmd++; /*  we'll know this later */
- 		raw_pixel_start = pixel;
- 
--		cmd_pixel_end = pixel + (min(MAX_CMD_PIXELS + 1,
--			min((int)(pixel_end - pixel) / bpp,
--			    (int)(cmd_buffer_end - cmd) / 2))) * bpp;
-+		cmd_pixel_end = pixel + min3(MAX_CMD_PIXELS + 1UL,
-+					(unsigned long)(pixel_end - pixel) / bpp,
-+					(unsigned long)(cmd_buffer_end - 1 - cmd) / 2) * bpp;
- 
--		prefetch_range((void *) pixel, (cmd_pixel_end - pixel) * bpp);
-+		prefetch_range((void *) pixel, cmd_pixel_end - pixel);
- 		pixel_val16 = get_pixel_val16(pixel, bpp);
- 
- 		while (pixel < cmd_pixel_end) {
-@@ -192,6 +192,9 @@ static void udl_compress_hline16(
- 		if (pixel > raw_pixel_start) {
- 			/* finalize last RAW span */
- 			*raw_pixels_count_byte = ((pixel-raw_pixel_start) / bpp) & 0xFF;
-+		} else {
-+			/* undo unused byte */
-+			cmd--;
+--- a/fs/jbd2/transaction.c
++++ b/fs/jbd2/transaction.c
+@@ -1353,6 +1353,13 @@ int jbd2_journal_dirty_metadata(handle_t
+ 		if (jh->b_transaction == transaction &&
+ 		    jh->b_jlist != BJ_Metadata) {
+ 			jbd_lock_bh_state(bh);
++			if (jh->b_transaction == transaction &&
++			    jh->b_jlist != BJ_Metadata)
++				pr_err("JBD2: assertion failure: h_type=%u "
++				       "h_line_no=%u block_no=%llu jlist=%u\n",
++				       handle->h_type, handle->h_line_no,
++				       (unsigned long long) bh->b_blocknr,
++				       jh->b_jlist);
+ 			J_ASSERT_JH(jh, jh->b_transaction != transaction ||
+ 					jh->b_jlist == BJ_Metadata);
+ 			jbd_unlock_bh_state(bh);
+@@ -1372,11 +1379,11 @@ int jbd2_journal_dirty_metadata(handle_t
+ 		 * of the transaction. This needs to be done
+ 		 * once a transaction -bzzz
+ 		 */
+-		jh->b_modified = 1;
+ 		if (handle->h_buffer_credits <= 0) {
+ 			ret = -ENOSPC;
+ 			goto out_unlock_bh;
  		}
++		jh->b_modified = 1;
+ 		handle->h_buffer_credits--;
+ 	}
  
- 		*cmd_pixels_count_byte = ((pixel - cmd_pixel_start) / bpp) & 0xFF;
 
 
