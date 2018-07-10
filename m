@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3EDC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A6B2C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98A62083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B98A62083E
+	by mail.kernel.org (Postfix) with ESMTP id 44D592083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44D592083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387715AbeGJS3S (ORCPT
+        id S2387728AbeGJS3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:29:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45272 "EHLO
+        Tue, 10 Jul 2018 14:29:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45282 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732245AbeGJS3R (ORCPT
+        with ESMTP id S1732245AbeGJS3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:29:17 -0400
+        Tue, 10 Jul 2018 14:29:20 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B1059EA8;
-        Tue, 10 Jul 2018 18:29:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D9561EBA;
+        Tue, 10 Jul 2018 18:29:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 37/47] media: cx25840: Use subdev host data for PLL override
-Date:   Tue, 10 Jul 2018 20:25:01 +0200
-Message-Id: <20180710182338.718551541@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.4 28/47] ext4: clear i_data in ext4_inode_info when removing inline data
+Date:   Tue, 10 Jul 2018 20:24:52 +0200
+Message-Id: <20180710182338.323509776@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -51,86 +50,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 3ee9bc12342cf546313d300808ff47d7dbb8e7db upstream.
+commit 6e8ab72a812396996035a37e5ca4b3b99b5d214b upstream.
 
-The cx25840 driver currently configures 885, 887, and 888 using
-default divisors for each chip. This check to see if the cx23885
-driver has passed the cx25840 a non-default clock rate for a
-specific chip. If a cx23885 board has left clk_freq at 0, the
-clock default values will be used to configure the PLLs.
+When converting from an inode from storing the data in-line to a data
+block, ext4_destroy_inline_data_nolock() was only clearing the on-disk
+copy of the i_blocks[] array.  It was not clearing copy of the
+i_blocks[] in ext4_inode_info, in i_data[], which is the copy actually
+used by ext4_map_blocks().
 
-This patch only has effect on 888 boards who set clk_freq to 25M.
+This didn't matter much if we are using extents, since the extents
+header would be invalid and thus the extents could would re-initialize
+the extents tree.  But if we are using indirect blocks, the previous
+contents of the i_blocks array will be treated as block numbers, with
+potentially catastrophic results to the file system integrity and/or
+user data.
 
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+This gets worse if the file system is using a 1k block size and
+s_first_data is zero, but even without this, the file system can get
+quite badly corrupted.
+
+This addresses CVE-2018-10881.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=200015
+
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/cx25840/cx25840-core.c |   28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ fs/ext4/inline.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/media/i2c/cx25840/cx25840-core.c
-+++ b/drivers/media/i2c/cx25840/cx25840-core.c
-@@ -467,8 +467,13 @@ static void cx23885_initialize(struct i2
- {
- 	DEFINE_WAIT(wait);
- 	struct cx25840_state *state = to_state(i2c_get_clientdata(client));
-+	u32 clk_freq = 0;
- 	struct workqueue_struct *q;
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -434,6 +434,7 @@ static int ext4_destroy_inline_data_nolo
  
-+	/* cx23885 sets hostdata to clk_freq pointer */
-+	if (v4l2_get_subdev_hostdata(&state->sd))
-+		clk_freq = *((u32 *)v4l2_get_subdev_hostdata(&state->sd));
-+
- 	/*
- 	 * Come out of digital power down
- 	 * The CX23888, at least, needs this, otherwise registers aside from
-@@ -504,8 +509,13 @@ static void cx23885_initialize(struct i2
- 		 * 50.0 MHz * (0xb + 0xe8ba26/0x2000000)/4 = 5 * 28.636363 MHz
- 		 * 572.73 MHz before post divide
- 		 */
--		/* HVR1850 or 50MHz xtal */
--		cx25840_write(client, 0x2, 0x71);
-+		if (clk_freq == 25000000) {
-+			/* 888/ImpactVCBe or 25Mhz xtal */
-+			; /* nothing to do */
-+		} else {
-+			/* HVR1850 or 50MHz xtal */
-+			cx25840_write(client, 0x2, 0x71);
-+		}
- 		cx25840_write4(client, 0x11c, 0x01d1744c);
- 		cx25840_write4(client, 0x118, 0x00000416);
- 		cx25840_write4(client, 0x404, 0x0010253e);
-@@ -548,9 +558,15 @@ static void cx23885_initialize(struct i2
- 	/* HVR1850 */
- 	switch (state->id) {
- 	case CX23888_AV:
--		/* 888/HVR1250 specific */
--		cx25840_write4(client, 0x10c, 0x13333333);
--		cx25840_write4(client, 0x108, 0x00000515);
-+		if (clk_freq == 25000000) {
-+			/* 888/ImpactVCBe or 25MHz xtal */
-+			cx25840_write4(client, 0x10c, 0x01b6db7b);
-+			cx25840_write4(client, 0x108, 0x00000512);
-+		} else {
-+			/* 888/HVR1250 or 50MHz xtal */
-+			cx25840_write4(client, 0x10c, 0x13333333);
-+			cx25840_write4(client, 0x108, 0x00000515);
-+		}
- 		break;
- 	default:
- 		cx25840_write4(client, 0x10c, 0x002be2c9);
-@@ -577,7 +593,7 @@ static void cx23885_initialize(struct i2
- 		 * 368.64 MHz before post divide
- 		 * 122.88 MHz / 0xa = 12.288 MHz
- 		 */
--		/* HVR1850  or 50MHz xtal */
-+		/* HVR1850 or 50MHz xtal or 25MHz xtal */
- 		cx25840_write4(client, 0x114, 0x017dbf48);
- 		cx25840_write4(client, 0x110, 0x000a030e);
- 		break;
+ 	memset((void *)ext4_raw_inode(&is.iloc)->i_block,
+ 		0, EXT4_MIN_INLINE_DATA_SIZE);
++	memset(ei->i_data, 0, EXT4_MIN_INLINE_DATA_SIZE);
+ 
+ 	if (ext4_has_feature_extents(inode->i_sb)) {
+ 		if (S_ISDIR(inode->i_mode) ||
 
 
