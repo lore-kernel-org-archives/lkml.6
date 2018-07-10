@@ -2,40 +2,48 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLACK,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D80C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F0AC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DBEF20B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DBEF20B6F
+	by mail.kernel.org (Postfix) with ESMTP id 8103C20B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8103C20B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732763AbeGJS0Z (ORCPT
+        id S1732777AbeGJS02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:26:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43692 "EHLO
+        Tue, 10 Jul 2018 14:26:28 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43718 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732406AbeGJS0Y (ORCPT
+        with ESMTP id S1732406AbeGJS02 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:26:24 -0400
+        Tue, 10 Jul 2018 14:26:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DC6FE7D;
-        Tue, 10 Jul 2018 18:26:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26834E7F;
+        Tue, 10 Jul 2018 18:26:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Kaiser <martin@kaiser.cx>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
+        stable@vger.kernel.org,
+        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
+        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org,
         Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 3.18 19/23] mtd: rawnand: mxc: set spare area size register explicitly
-Date:   Tue, 10 Jul 2018 20:24:52 +0200
-Message-Id: <20180710182309.702361790@linuxfoundation.org>
+Subject: [PATCH 3.18 20/23] mtd: cfi_cmdset_0002: Change definition naming to retry write operation
+Date:   Tue, 10 Jul 2018 20:24:53 +0200
+Message-Id: <20180710182309.749850723@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
 References: <20180710182308.877332304@linuxfoundation.org>
@@ -52,65 +60,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Kaiser <martin@kaiser.cx>
+From: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
 
-commit 3f77f244d8ec28e3a0a81240ffac7d626390060c upstream.
+commit 85a82e28b023de9b259a86824afbd6ba07bd6475 upstream.
 
-The v21 version of the NAND flash controller contains a Spare Area Size
-Register (SPAS) at offset 0x10. Its setting defaults to the maximum
-spare area size of 218 bytes. The size that is set in this register is
-used by the controller when it calculates the ECC bytes internally in
-hardware.
+The definition can be used for other program and erase operations also.
+So change the naming to MAX_RETRIES from MAX_WORD_RETRIES.
 
-Usually, this register is updated from settings in the IIM fuses when
-the system is booting from NAND flash. For other boot media, however,
-the SPAS register remains at the default setting, which may not work for
-the particular flash chip on the board. The same goes for flash chips
-whose configuration cannot be set in the IIM fuses (e.g. chips with 2k
-sector size and 128 bytes spare area size can't be configured in the IIM
-fuses on imx25 systems).
-
-Set the SPAS register explicitly during the preset operation. Derive the
-register value from mtd->oobsize that was detected during probe by
-decoding the flash chip's ID bytes.
-
-While at it, rename the define for the spare area register's offset to
-NFC_V21_RSLTSPARE_AREA. The register at offset 0x10 on v1 controllers is
-different from the register on v21 controllers.
-
-Fixes: d484018 ("mtd: mxc_nand: set NFC registers after reset")
+Signed-off-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+Reviewed-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: linux-mtd@lists.infradead.org
 Cc: stable@vger.kernel.org
-Signed-off-by: Martin Kaiser <martin@kaiser.cx>
-Reviewed-by: Sascha Hauer <s.hauer@pengutronix.de>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
 Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/mtd/nand/mxc_nand.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/mtd/chips/cfi_cmdset_0002.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/mtd/nand/mxc_nand.c
-+++ b/drivers/mtd/nand/mxc_nand.c
-@@ -49,7 +49,7 @@
- #define NFC_V1_V2_CONFIG		(host->regs + 0x0a)
- #define NFC_V1_V2_ECC_STATUS_RESULT	(host->regs + 0x0c)
- #define NFC_V1_V2_RSLTMAIN_AREA		(host->regs + 0x0e)
--#define NFC_V1_V2_RSLTSPARE_AREA	(host->regs + 0x10)
-+#define NFC_V21_RSLTSPARE_AREA		(host->regs + 0x10)
- #define NFC_V1_V2_WRPROT		(host->regs + 0x12)
- #define NFC_V1_UNLOCKSTART_BLKADDR	(host->regs + 0x14)
- #define NFC_V1_UNLOCKEND_BLKADDR	(host->regs + 0x16)
-@@ -958,6 +958,9 @@ static void preset_v2(struct mtd_info *m
- 	writew(config1, NFC_V1_V2_CONFIG1);
- 	/* preset operation */
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -42,7 +42,7 @@
+ #define AMD_BOOTLOC_BUG
+ #define FORCE_WORD_WRITE 0
  
-+	/* spare area size in 16-bit half-words */
-+	writew(mtd->oobsize / 2, NFC_V21_RSLTSPARE_AREA);
-+
- 	/* Unlock the internal RAM Buffer */
- 	writew(0x2, NFC_V1_V2_CONFIG);
+-#define MAX_WORD_RETRIES 3
++#define MAX_RETRIES 3
  
+ #define SST49LF004B	        0x0060
+ #define SST49LF040B	        0x0050
+@@ -1645,7 +1645,7 @@ static int __xipram do_write_oneword(str
+ 		map_write( map, CMD(0xF0), chip->start );
+ 		/* FIXME - should have reset delay before continuing */
+ 
+-		if (++retry_cnt <= MAX_WORD_RETRIES)
++		if (++retry_cnt <= MAX_RETRIES)
+ 			goto retry;
+ 
+ 		ret = -EIO;
+@@ -2104,7 +2104,7 @@ retry:
+ 		map_write(map, CMD(0xF0), chip->start);
+ 		/* FIXME - should have reset delay before continuing */
+ 
+-		if (++retry_cnt <= MAX_WORD_RETRIES)
++		if (++retry_cnt <= MAX_RETRIES)
+ 			goto retry;
+ 
+ 		ret = -EIO;
 
 
