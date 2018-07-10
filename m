@@ -3,37 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80726C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA209C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38A2720BF2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38A2720BF2
+	by mail.kernel.org (Postfix) with ESMTP id A46ED20C03
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A46ED20C03
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387424AbeGJS20 (ORCPT
+        id S2387437AbeGJS2a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:28:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45024 "EHLO
+        Tue, 10 Jul 2018 14:28:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45036 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732800AbeGJS2Z (ORCPT
+        with ESMTP id S1732800AbeGJS22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:28:25 -0400
+        Tue, 10 Jul 2018 14:28:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 584D8EB8;
-        Tue, 10 Jul 2018 18:28:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 68422DB4;
+        Tue, 10 Jul 2018 18:28:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.4 29/47] ext4: add more inode number paranoia checks
-Date:   Tue, 10 Jul 2018 20:24:53 +0200
-Message-Id: <20180710182338.365010112@linuxfoundation.org>
+        stable@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 38/47] mm, page_alloc: do not break __GFP_THISNODE by zonelist reset
+Date:   Tue, 10 Jul 2018 20:25:02 +0200
+Message-Id: <20180710182338.767515511@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -50,69 +55,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Vlastimil Babka <vbabka@suse.cz>
 
-commit c37e9e013469521d9adb932d17a1795c139b36db upstream.
+commit 7810e6781e0fcbca78b91cf65053f895bf59e85f upstream.
 
-If there is a directory entry pointing to a system inode (such as a
-journal inode), complain and declare the file system to be corrupted.
+In __alloc_pages_slowpath() we reset zonelist and preferred_zoneref for
+allocations that can ignore memory policies.  The zonelist is obtained
+from current CPU's node.  This is a problem for __GFP_THISNODE
+allocations that want to allocate on a different node, e.g.  because the
+allocating thread has been migrated to a different CPU.
 
-Also, if the superblock's first inode number field is too small,
-refuse to mount the file system.
+This has been observed to break SLAB in our 4.4-based kernel, because
+there it relies on __GFP_THISNODE working as intended.  If a slab page
+is put on wrong node's list, then further list manipulations may corrupt
+the list because page_to_nid() is used to determine which node's
+list_lock should be locked and thus we may take a wrong lock and race.
 
-This addresses CVE-2018-10882.
+Current SLAB implementation seems to be immune by luck thanks to commit
+511e3a058812 ("mm/slab: make cache_grow() handle the page allocated on
+arbitrary node") but there may be others assuming that __GFP_THISNODE
+works as promised.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=200069
+We can fix it by simply removing the zonelist reset completely.  There
+is actually no reason to reset it, because memory policies and cpusets
+don't affect the zonelist choice in the first place.  This was different
+when commit 183f6371aac2 ("mm: ignore mempolicies when using
+ALLOC_NO_WATERMARK") introduced the code, as mempolicies provided their
+own restricted zonelists.
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+We might consider this for 4.17 although I don't know if there's
+anything currently broken.
+
+SLAB is currently not affected, but in kernels older than 4.7 that don't
+yet have 511e3a058812 ("mm/slab: make cache_grow() handle the page
+allocated on arbitrary node") it is.  That's at least 4.4 LTS.  Older
+ones I'll have to check.
+
+So stable backports should be more important, but will have to be
+reviewed carefully, as the code went through many changes.  BTW I think
+that also the ac->preferred_zoneref reset is currently useless if we
+don't also reset ac->nodemask from a mempolicy to NULL first (which we
+probably should for the OOM victims etc?), but I would leave that for a
+separate patch.
+
+Link: http://lkml.kernel.org/r/20180525130853.13915-1-vbabka@suse.cz
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Fixes: 183f6371aac2 ("mm: ignore mempolicies when using ALLOC_NO_WATERMARK")
+Acked-by: Mel Gorman <mgorman@techsingularity.net>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ext4.h  |    5 -----
- fs/ext4/inode.c |    3 ++-
- fs/ext4/super.c |    5 +++++
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ mm/page_alloc.c |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1468,11 +1468,6 @@ static inline struct timespec ext4_curre
- static inline int ext4_valid_inum(struct super_block *sb, unsigned long ino)
- {
- 	return ino == EXT4_ROOT_INO ||
--		ino == EXT4_USR_QUOTA_INO ||
--		ino == EXT4_GRP_QUOTA_INO ||
--		ino == EXT4_BOOT_LOADER_INO ||
--		ino == EXT4_JOURNAL_INO ||
--		ino == EXT4_RESIZE_INO ||
- 		(ino >= EXT4_FIRST_INO(sb) &&
- 		 ino <= le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count));
- }
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3991,7 +3991,8 @@ static int __ext4_get_inode_loc(struct i
- 	int			inodes_per_block, inode_offset;
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -3109,8 +3109,6 @@ retry:
+ 		 * the allocation is high priority and these type of
+ 		 * allocations are system rather than user orientated
+ 		 */
+-		ac->zonelist = node_zonelist(numa_node_id(), gfp_mask);
+-
+ 		page = __alloc_pages_high_priority(gfp_mask, order, ac);
  
- 	iloc->bh = NULL;
--	if (!ext4_valid_inum(sb, inode->i_ino))
-+	if (inode->i_ino < EXT4_ROOT_INO ||
-+	    inode->i_ino > le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count))
- 		return -EFSCORRUPTED;
- 
- 	iloc->block_group = (inode->i_ino - 1) / EXT4_INODES_PER_GROUP(sb);
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3549,6 +3549,11 @@ static int ext4_fill_super(struct super_
- 	} else {
- 		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
- 		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
-+		if (sbi->s_first_ino < EXT4_GOOD_OLD_FIRST_INO) {
-+			ext4_msg(sb, KERN_ERR, "invalid first ino: %u",
-+				 sbi->s_first_ino);
-+			goto failed_mount;
-+		}
- 		if ((sbi->s_inode_size < EXT4_GOOD_OLD_INODE_SIZE) ||
- 		    (!is_power_of_2(sbi->s_inode_size)) ||
- 		    (sbi->s_inode_size > blocksize)) {
+ 		if (page) {
 
 
