@@ -2,132 +2,126 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D91C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45764C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95535208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEBF8208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:35:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ClgJMNt5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95535208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="v8dJq3Ek"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEBF8208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933800AbeGJOfK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 10:35:10 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45536 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933449AbeGJOfI (ORCPT
+        id S933838AbeGJOf1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 10:35:27 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53340 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933449AbeGJOf0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 10:35:08 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c4-v6so2200768wrs.12
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 07:35:08 -0700 (PDT)
+        Tue, 10 Jul 2018 10:35:26 -0400
+Received: by mail-it0-f66.google.com with SMTP id a195-v6so30791747itd.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 07:35:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DrkARnj1Y5uzN7GxT/J+PMXh7Sow81EEX/wPymjML4I=;
-        b=ClgJMNt5dq9bMsxxmSlxRahH8dq6+spehLIzkkAUi9AksjualIw7CPuloJOteswrzA
-         oEzcWakQYVAILwCs2g2cGJY9pEwBebSkMZ16ym5Is5T1LvSGb30Dw7q8ym5Ufv6pMRKx
-         eOd+zdwVn7sx3bj1em2olBpAu+VMWocBWH170=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=X4wlWV81eMBSja7/7AL7JR4EP7mPJmfr3ROrjcfqyns=;
+        b=v8dJq3EkJqAchDF++KoOMg9Wz+J2UPFmqGyLbEQnLWauxOQOw2mEl0ueWlcxb3m+zV
+         orVzNBIf0oYoCPcyuVzWfukN5V/JfRLDZZWPKLmlG9j1kmHXUPSECPd0Q3Hb4sxQZf4B
+         kqf+tB0v7WgS5tlwSYRwQy9AgTnPuflS0wi7BdhVPWY0xc716ntGSaq4ImLKWPntA6pU
+         avlazAtiVDmiu9x0lrTNesg0vpFjIAlMLeP9Zux5xVt6iGH0wECzx9U213dxsyeHBw55
+         WIWBBaISjKOL3qcJbCi6ymOEgYRJX+9PNFa2BAB23LHwpIVQBW7vjiLm93po84psEmy9
+         faOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DrkARnj1Y5uzN7GxT/J+PMXh7Sow81EEX/wPymjML4I=;
-        b=l9HIDd83vr0nvdjvwTJa/C1ZzNaGTZ2YDNjPzZELTGxJEaMXVTrvq4yYaQygKgEjUh
-         Dqmbi6PIPnSpivjQGNs8uODUTJLWX9y/feYg1RiP3VJ7veWE0Lnr3R3bZozW1XELo1ub
-         u9ta7bVaKPuU0HkMN3TLSyD/pZaBorrRDp9KtWjnhWnjN2Ke80559wmH7oIgrY3jo9xH
-         9C6Qs1W1XadK42Tdf6GmDS+8KUd8b462I29J6JYXA3PYT1bXWLJZXRaKKBxso8tuV74F
-         ZzmyLnjkk77Nd1N/uqHYAb+uYfB4Osayif4ST7F81SlGUfVg1W1KwCRHQSkGYTvQ8Pb+
-         jlEw==
-X-Gm-Message-State: APt69E2aCniCBf9e9yVNgJbUsowDEI7Ql8/XUa4SawHaEoMd+ej2CBns
-        uCQmJDEuxgnBjPZ6iqJMoxGjMCpU
-X-Google-Smtp-Source: AAOMgpfCjmnLE/IgoCphxyhC5IEojMLtlZlIGNcIN7KVYGsoHMYRINN6gLrO97US/YfJpgCpWM1kiA==
-X-Received: by 2002:adf:a86a:: with SMTP id l97-v6mr18581763wrc.164.1531233307334;
-        Tue, 10 Jul 2018 07:35:07 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id i190-v6sm25640741wmd.33.2018.07.10.07.35.05
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=X4wlWV81eMBSja7/7AL7JR4EP7mPJmfr3ROrjcfqyns=;
+        b=Vxih5p2vmo/LDj6VWMjRgFvRNimgmA6wtKhnHTTV/L7HTdJzhe5mbAY0FC29Pe6vgK
+         +qn1jkNL+MRJYRs8yMDJj8EQEhYgNXy9pG3ah5jncq8AEKozgdXnffWHWlpvS9hHCFcN
+         pqV/BBXeVP+KGvfy5Ku8QdyOJmXYUOHFBwDEvdyd/+nnn7YIh5GAlHQ9FEBDiUS7iXUe
+         +j+W3vaEcy6T2Pt96tVt1cPcIJTLZt5L3cxPw28Q7Lb27Hi2kIXfFpmb9C2/bF6bTte6
+         K29gCSTczlM+QotujOBbtRXOkz+FJtDD0uuXyTChON3/BrrTogK5qxJJ79MGICQqPqd1
+         8m+w==
+X-Gm-Message-State: APt69E0PeQrjqF0WaqdtW+fOfmoBVOtevlc6PIZeHTMoUy7R4GWMP0fS
+        fGUEVfRIJsen3RNz4nTkG1fR0BmJz7o=
+X-Google-Smtp-Source: AAOMgpelXDBmy5ohCx2e6RSn9koMYXqKCAaTS22ujNNPJ2KmV1UnitK5hYi2C1rCa1Pc5EESY7f+Iw==
+X-Received: by 2002:a24:d245:: with SMTP id z66-v6mr18994122itf.124.1531233325624;
+        Tue, 10 Jul 2018 07:35:25 -0700 (PDT)
+Received: from [192.168.1.167] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id q3-v6sm9419739itc.22.2018.07.10.07.35.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 07:35:06 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 16:34:59 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] doc: Replace smp_cond_acquire() with
- smp_cond_load_acquire()
-Message-ID: <20180710143459.GA10527@andrea>
-References: <1531216943-6382-1-git-send-email-andrea.parri@amarulasolutions.com>
+        Tue, 10 Jul 2018 07:35:24 -0700 (PDT)
+Subject: Re: linux-next: build warning after merge of the scsi tree
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Omar Sandoval <osandov@fb.com>
+References: <20180620132911.5f6ab464@canb.auug.org.au>
+ <20180710173114.17ee69ad@canb.auug.org.au>
+ <280ebbdf-fafb-1744-f517-815a30e682bb@kernel.dk>
+ <1531232063.4963.8.camel@HansenPartnership.com>
+ <3f0359a5-6733-f9d3-a616-d27ce430c904@kernel.dk>
+ <1531232805.4963.11.camel@HansenPartnership.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <84241128-2d2e-4479-abe0-658fddc1af2d@kernel.dk>
+Date:   Tue, 10 Jul 2018 08:35:23 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531216943-6382-1-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1531232805.4963.11.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 12:02:23PM +0200, Andrea Parri wrote:
-> Amend commit 1f03e8d2919270 ("locking/barriers: Replace smp_cond_acquire()
-> with smp_cond_load_acquire()") by updating the documentation accordingly.
+On 7/10/18 8:26 AM, James Bottomley wrote:
+> On Tue, 2018-07-10 at 08:22 -0600, Jens Axboe wrote:
+>> On 7/10/18 8:14 AM, James Bottomley wrote:
+>>> On Tue, 2018-07-10 at 08:09 -0600, Jens Axboe wrote:
+>>>> On 7/10/18 1:31 AM, Stephen Rothwell wrote:
+>>>
+>>> [...]
+>>>>> I am still seeing these warnings ...
+>>>>
+>>>> Martin queued up the forward declaration patch for this one, not
+>>>> sure
+>>>> why it isn't showing up in the scsi tree yet.
+>>>
+>>> All the trees are fully up to date ... which commit is it?
+>>
+>> It's a patch from Arnd, I don't know what commit id it is. But
+>> Martin replied a few days ago that it was applied. I don't have
+>> the email handy, though.
 > 
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> Cc: Luc Maranget <luc.maranget@inria.fr>
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Akira Yokosawa <akiyks@gmail.com>
-> Cc: Daniel Lustig <dlustig@nvidia.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> ---
->  Documentation/memory-barriers.txt | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> You mean
 > 
-> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-> index 0d8d7ef131e9a..987a4e6cc0cd8 100644
-> --- a/Documentation/memory-barriers.txt
-> +++ b/Documentation/memory-barriers.txt
-> @@ -471,8 +471,8 @@ And a couple of implicit varieties:
->       operations after the ACQUIRE operation will appear to happen after the
->       ACQUIRE operation with respect to the other components of the system.
->       ACQUIRE operations include LOCK operations and both smp_load_acquire()
-> -     and smp_cond_acquire() operations. The later builds the necessary ACQUIRE
-> -     semantics from relying on a control dependency and smp_rmb().
-> +     and smp_cond_load_acquire() operations. The later builds the necessary
-> +     ACQUIRE semantics from relying on a control dependency and smp_rmb().
-
-Still not completely accurate: smp_rmb() would better be replaced by
-smp_acquire__after_ctrl_dep() (arm64 excluded).  Mmh... I think I'll
-just remove that "The latter builds the [...]" and resend; thoughts?
-
-  Andrea
-
-
->  
->       Memory operations that occur before an ACQUIRE operation may appear to
->       happen after it completes.
-> -- 
-> 2.7.4
+> Message-Id:	<20180706201920.2185565-1-arnd@arndb.de>
+> Subject:	[PATCH] [v2] sbitmap, scsi/target: add seq_file forward declaration
 > 
+> ?
+> 
+> Martin didn't reply and it's not yet in his tree, although I'm sure it
+> will be soon.
+
+Yeah that's the one. I now had to look it up, looks like I mixed it up
+with the host busy patch from Ming.
+
+We should get it applied. Feel free to add my reviewed-by, if you want.
+
+-- 
+Jens Axboe
+
