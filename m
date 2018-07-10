@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F2BC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5730CC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D299B2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D299B2083E
+	by mail.kernel.org (Postfix) with ESMTP id 24FE220B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24FE220B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387828AbeGJS3m (ORCPT
+        id S2387840AbeGJS3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:29:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45380 "EHLO
+        Tue, 10 Jul 2018 14:29:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45388 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732245AbeGJS3k (ORCPT
+        with ESMTP id S1732245AbeGJS3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:29:40 -0400
+        Tue, 10 Jul 2018 14:29:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7DEEEB8;
-        Tue, 10 Jul 2018 18:29:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7562EC6;
+        Tue, 10 Jul 2018 18:29:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sean Nyekjaer <sean.nyekjaer@prevas.dk>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 4.9 15/52] ARM: dts: imx6q: Use correct SDMA script for SPI5 core
-Date:   Tue, 10 Jul 2018 20:24:43 +0200
-Message-Id: <20180710182451.005764125@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Subject: [PATCH 4.9 16/52] IB/hfi1: Fix user context tail allocation for DMA_RTAIL
+Date:   Tue, 10 Jul 2018 20:24:44 +0200
+Message-Id: <20180710182451.076563626@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -51,41 +53,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
+From: Mike Marciniszyn <mike.marciniszyn@intel.com>
 
-commit df07101e1c4a29e820df02f9989a066988b160e6 upstream.
+commit 1bc0299d976e000ececc6acd76e33b4582646cb7 upstream.
 
-According to the reference manual the shp_2_mcu / mcu_2_shp
-scripts must be used for devices connected through the SPBA.
+The following code fails to allocate a buffer for the
+tail address that the hardware DMAs into when the user
+context DMA_RTAIL is set.
 
-This fixes an issue we saw with DMA transfers.
-Sometimes the SPI controller RX FIFO was not empty after a DMA
-transfer and the driver got stuck in the next PIO transfer when
-it read one word more than expected.
+if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL)) {
+	rcd->rcvhdrtail_kvaddr = dma_zalloc_coherent(
+		&dd->pcidev->dev, PAGE_SIZE, &dma_hdrqtail,
+                gfp_flags);
+	if (!rcd->rcvhdrtail_kvaddr)
+		goto bail_free;
+	rcd->rcvhdrqtailaddr_dma = dma_hdrqtail;
+}
 
-commit dd4b487b32a35 ("ARM: dts: imx6: Use correct SDMA script
-for SPI cores") is fixing the same issue but only for SPI1 - 4.
+So the rcvhdrtail_kvaddr would then be NULL.
 
-Fixes: 677940258dd8e ("ARM: dts: imx6q: enable dma for ecspi5")
-Signed-off-by: Sean Nyekjaer <sean.nyekjaer@prevas.dk>
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+The mmap logic fails to check for a NULL rcvhdrtail_kvaddr.
+
+The fix is to test for both user and kernel DMA_TAIL options
+during the allocation as well as testing for a NULL
+rcvhdrtail_kvaddr during the mmap processing.
+
+Additionally, all downstream testing of the capmask for DMA_RTAIL
+have been eliminated in favor of testing rcvhdrtail_kvaddr.
+
+Cc: <stable@vger.kernel.org> # 4.9.x
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/imx6q.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/chip.c     |    8 ++++----
+ drivers/infiniband/hw/hfi1/file_ops.c |    2 +-
+ drivers/infiniband/hw/hfi1/init.c     |    9 ++++-----
+ 3 files changed, 9 insertions(+), 10 deletions(-)
 
---- a/arch/arm/boot/dts/imx6q.dtsi
-+++ b/arch/arm/boot/dts/imx6q.dtsi
-@@ -96,7 +96,7 @@
- 					clocks = <&clks IMX6Q_CLK_ECSPI5>,
- 						 <&clks IMX6Q_CLK_ECSPI5>;
- 					clock-names = "ipg", "per";
--					dmas = <&sdma 11 7 1>, <&sdma 12 7 2>;
-+					dmas = <&sdma 11 8 1>, <&sdma 12 8 2>;
- 					dma-names = "rx", "tx";
- 					status = "disabled";
- 				};
+--- a/drivers/infiniband/hw/hfi1/chip.c
++++ b/drivers/infiniband/hw/hfi1/chip.c
+@@ -6717,7 +6717,7 @@ static void rxe_kernel_unfreeze(struct h
+ 	for (i = 0; i < dd->n_krcv_queues; i++) {
+ 		rcvmask = HFI1_RCVCTRL_CTXT_ENB;
+ 		/* HFI1_RCVCTRL_TAILUPD_[ENB|DIS] needs to be set explicitly */
+-		rcvmask |= HFI1_CAP_KGET_MASK(dd->rcd[i]->flags, DMA_RTAIL) ?
++		rcvmask |= dd->rcd[i]->rcvhdrtail_kvaddr ?
+ 			HFI1_RCVCTRL_TAILUPD_ENB : HFI1_RCVCTRL_TAILUPD_DIS;
+ 		hfi1_rcvctrl(dd, rcvmask, i);
+ 	}
+@@ -8211,7 +8211,7 @@ static inline int check_packet_present(s
+ 	u32 tail;
+ 	int present;
+ 
+-	if (!HFI1_CAP_IS_KSET(DMA_RTAIL))
++	if (!rcd->rcvhdrtail_kvaddr)
+ 		present = (rcd->seq_cnt ==
+ 				rhf_rcv_seq(rhf_to_cpu(get_rhf_addr(rcd))));
+ 	else /* is RDMA rtail */
+@@ -11550,7 +11550,7 @@ void hfi1_rcvctrl(struct hfi1_devdata *d
+ 		/* reset the tail and hdr addresses, and sequence count */
+ 		write_kctxt_csr(dd, ctxt, RCV_HDR_ADDR,
+ 				rcd->rcvhdrq_dma);
+-		if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL))
++		if (rcd->rcvhdrtail_kvaddr)
+ 			write_kctxt_csr(dd, ctxt, RCV_HDR_TAIL_ADDR,
+ 					rcd->rcvhdrqtailaddr_dma);
+ 		rcd->seq_cnt = 1;
+@@ -11630,7 +11630,7 @@ void hfi1_rcvctrl(struct hfi1_devdata *d
+ 		rcvctrl |= RCV_CTXT_CTRL_INTR_AVAIL_SMASK;
+ 	if (op & HFI1_RCVCTRL_INTRAVAIL_DIS)
+ 		rcvctrl &= ~RCV_CTXT_CTRL_INTR_AVAIL_SMASK;
+-	if (op & HFI1_RCVCTRL_TAILUPD_ENB && rcd->rcvhdrqtailaddr_dma)
++	if ((op & HFI1_RCVCTRL_TAILUPD_ENB) && rcd->rcvhdrtail_kvaddr)
+ 		rcvctrl |= RCV_CTXT_CTRL_TAIL_UPD_SMASK;
+ 	if (op & HFI1_RCVCTRL_TAILUPD_DIS) {
+ 		/* See comment on RcvCtxtCtrl.TailUpd above */
+--- a/drivers/infiniband/hw/hfi1/file_ops.c
++++ b/drivers/infiniband/hw/hfi1/file_ops.c
+@@ -609,7 +609,7 @@ static int hfi1_file_mmap(struct file *f
+ 			ret = -EINVAL;
+ 			goto done;
+ 		}
+-		if (flags & VM_WRITE) {
++		if ((flags & VM_WRITE) || !uctxt->rcvhdrtail_kvaddr) {
+ 			ret = -EPERM;
+ 			goto done;
+ 		}
+--- a/drivers/infiniband/hw/hfi1/init.c
++++ b/drivers/infiniband/hw/hfi1/init.c
+@@ -1618,7 +1618,6 @@ int hfi1_create_rcvhdrq(struct hfi1_devd
+ 	u64 reg;
+ 
+ 	if (!rcd->rcvhdrq) {
+-		dma_addr_t dma_hdrqtail;
+ 		gfp_t gfp_flags;
+ 
+ 		/*
+@@ -1641,13 +1640,13 @@ int hfi1_create_rcvhdrq(struct hfi1_devd
+ 			goto bail;
+ 		}
+ 
+-		if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL)) {
++		if (HFI1_CAP_KGET_MASK(rcd->flags, DMA_RTAIL) ||
++		    HFI1_CAP_UGET_MASK(rcd->flags, DMA_RTAIL)) {
+ 			rcd->rcvhdrtail_kvaddr = dma_zalloc_coherent(
+-				&dd->pcidev->dev, PAGE_SIZE, &dma_hdrqtail,
+-				gfp_flags);
++				&dd->pcidev->dev, PAGE_SIZE,
++				&rcd->rcvhdrqtailaddr_dma, gfp_flags);
+ 			if (!rcd->rcvhdrtail_kvaddr)
+ 				goto bail_free;
+-			rcd->rcvhdrqtailaddr_dma = dma_hdrqtail;
+ 		}
+ 
+ 		rcd->rcvhdrq_size = amt;
 
 
