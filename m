@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3C0C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11614C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B64BD2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B64BD2083E
+	by mail.kernel.org (Postfix) with ESMTP id C861B2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C861B2083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388469AbeGJSbu (ORCPT
+        id S2388483AbeGJSbx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:31:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46366 "EHLO
+        Tue, 10 Jul 2018 14:31:53 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46464 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732845AbeGJSbt (ORCPT
+        with ESMTP id S1732845AbeGJSbw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:31:49 -0400
+        Tue, 10 Jul 2018 14:31:52 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3F61FEE8;
-        Tue, 10 Jul 2018 18:31:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 19A27EE8;
+        Tue, 10 Jul 2018 18:31:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH 4.9 40/52] PM / OPP: Update voltage in case freq == old_freq
-Date:   Tue, 10 Jul 2018 20:25:08 +0200
-Message-Id: <20180710182453.043776853@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 4.9 41/52] Kbuild: fix # escaping in .cmd files for future Make
+Date:   Tue, 10 Jul 2018 20:25:09 +0200
+Message-Id: <20180710182453.213234518@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -51,71 +51,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-commit c5c2a97b3ac7d1ec19e7cff9e38caca6afefc3de upstream.
+commit 9564a8cf422d7b58f6e857e3546d346fa970191e upstream.
 
-This commit fixes a rare but possible case when the clk rate is updated
-without update of the regulator voltage.
+I tried building using a freshly built Make (4.2.1-69-g8a731d1), but
+already the objtool build broke with
 
-At boot up, CPUfreq checks if the system is running at the right freq. This
-is a sanity check in case a bootloader set clk rate that is outside of freq
-table present with cpufreq core. In such cases system can be unstable so
-better to change it to a freq that is preset in freq-table.
+orc_dump.c: In function ‘orc_dump’:
+orc_dump.c:106:2: error: ‘elf_getshnum’ is deprecated [-Werror=deprecated-declarations]
+  if (elf_getshdrnum(elf, &nr_sections)) {
 
-The CPUfreq takes next freq that is >= policy->cur and this is our
-target_freq that needs to be set now.
+Turns out that with that new Make, the backslash was not removed, so cpp
+didn't see a #include directive, grep found nothing, and
+-DLIBELF_USE_DEPRECATED was wrongly put in CFLAGS.
 
-dev_pm_opp_set_rate(dev, target_freq) checks the target_freq and the
-old_freq (a current rate). If these are equal it returns early. If not,
-it searches for OPP (old_opp) that fits best to old_freq (not listed in
-the table) and updates old_freq (!).
+Now, that new Make behaviour is documented in their NEWS file:
 
-Here, we can end up with old_freq = old_opp.rate = target_freq, which
-is not handled in _generic_set_opp_regulator(). It's supposed to update
-voltage only when freq > old_freq  || freq > old_freq.
+  * WARNING: Backward-incompatibility!
+    Number signs (#) appearing inside a macro reference or function invocation
+    no longer introduce comments and should not be escaped with backslashes:
+    thus a call such as:
+      foo := $(shell echo '#')
+    is legal.  Previously the number sign needed to be escaped, for example:
+      foo := $(shell echo '\#')
+    Now this latter will resolve to "\#".  If you want to write makefiles
+    portable to both versions, assign the number sign to a variable:
+      C := \#
+      foo := $(shell echo '$C')
+    This was claimed to be fixed in 3.81, but wasn't, for some reason.
+    To detect this change search for 'nocomment' in the .FEATURES variable.
 
-if (freq > old_freq) {
-		ret = _set_opp_voltage(dev, reg, new_supply);
-[...]
-if (freq < old_freq) {
-		ret = _set_opp_voltage(dev, reg, new_supply);
-		if (ret)
+This also fixes up the two make-cmd instances to replace # with $(pound)
+rather than with \#. There might very well be other places that need
+similar fixup in preparation for whatever future Make release contains
+the above change, but at least this builds an x86_64 defconfig with the
+new make.
 
-It results in, no voltage update while clk rate is updated.
-
-Example:
-freq-table = {
-	1000MHz   1.15V
-	 666MHZ   1.10V
-	 333MHz   1.05V
-}
-boot-up-freq        = 800MHz   # not listed in freq-table
-freq = target_freq  = 1GHz
-old_freq            = 800Mhz
-old_opp = _find_freq_ceil(opp_table, &old_freq);  #(old_freq is modified!)
-old_freq            = 1GHz
-
-Fixes: 6a0712f6f199 ("PM / OPP: Add dev_pm_opp_set_rate()")
-Cc: 4.6+ <stable@vger.kernel.org> # v4.6+
-Signed-off-by: Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=197847
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/base/power/opp/core.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/base/power/opp/core.c
-+++ b/drivers/base/power/opp/core.c
-@@ -651,7 +651,7 @@ int dev_pm_opp_set_rate(struct device *d
- 	rcu_read_unlock();
+---
+ scripts/Kbuild.include         |    5 +++--
+ tools/build/Build.include      |    5 +++--
+ tools/objtool/Makefile         |    2 +-
+ tools/scripts/Makefile.include |    2 ++
+ 4 files changed, 9 insertions(+), 5 deletions(-)
+
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -8,6 +8,7 @@ squote  := '
+ empty   :=
+ space   := $(empty) $(empty)
+ space_escape := _-_SPACE_-_
++pound := \#
  
- 	/* Scaling up? Scale voltage before frequency */
--	if (freq > old_freq) {
-+	if (freq >= old_freq) {
- 		ret = _set_opp_voltage(dev, reg, u_volt, u_volt_min,
- 				       u_volt_max);
- 		if (ret)
+ ###
+ # Name of target with a '.' as filename prefix. foo/bar.o => foo/.bar.o
+@@ -241,11 +242,11 @@ endif
+ 
+ # Replace >$< with >$$< to preserve $ when reloading the .cmd file
+ # (needed for make)
+-# Replace >#< with >\#< to avoid starting a comment in the .cmd file
++# Replace >#< with >$(pound)< to avoid starting a comment in the .cmd file
+ # (needed for make)
+ # Replace >'< with >'\''< to be able to enclose the whole string in '...'
+ # (needed for the shell)
+-make-cmd = $(call escsq,$(subst \#,\\\#,$(subst $$,$$$$,$(cmd_$(1)))))
++make-cmd = $(call escsq,$(subst $(pound),$$(pound),$(subst $$,$$$$,$(cmd_$(1)))))
+ 
+ # Find any prerequisites that is newer than target or that does not exist.
+ # PHONY targets skipped in both cases.
+--- a/tools/build/Build.include
++++ b/tools/build/Build.include
+@@ -12,6 +12,7 @@
+ # Convenient variables
+ comma   := ,
+ squote  := '
++pound   := \#
+ 
+ ###
+ # Name of target with a '.' as filename prefix. foo/bar.o => foo/.bar.o
+@@ -43,11 +44,11 @@ echo-cmd = $(if $($(quiet)cmd_$(1)),\
+ ###
+ # Replace >$< with >$$< to preserve $ when reloading the .cmd file
+ # (needed for make)
+-# Replace >#< with >\#< to avoid starting a comment in the .cmd file
++# Replace >#< with >$(pound)< to avoid starting a comment in the .cmd file
+ # (needed for make)
+ # Replace >'< with >'\''< to be able to enclose the whole string in '...'
+ # (needed for the shell)
+-make-cmd = $(call escsq,$(subst \#,\\\#,$(subst $$,$$$$,$(cmd_$(1)))))
++make-cmd = $(call escsq,$(subst $(pound),$$(pound),$(subst $$,$$$$,$(cmd_$(1)))))
+ 
+ ###
+ # Find any prerequisites that is newer than target or that does not exist.
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -35,7 +35,7 @@ CFLAGS   += -Wall -Werror $(WARNINGS) -f
+ LDFLAGS  += -lelf $(LIBSUBCMD)
+ 
+ # Allow old libelf to be used:
+-elfshdr := $(shell echo '\#include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
++elfshdr := $(shell echo '$(pound)include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
+ CFLAGS += $(if $(elfshdr),,-DLIBELF_USE_DEPRECATED)
+ 
+ AWK = awk
+--- a/tools/scripts/Makefile.include
++++ b/tools/scripts/Makefile.include
+@@ -92,3 +92,5 @@ ifneq ($(silent),1)
+ 	QUIET_INSTALL  = @printf '  INSTALL  %s\n' $1;
+   endif
+ endif
++
++pound := \#
 
 
