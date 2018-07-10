@@ -2,132 +2,177 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94094C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 783BBC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59EDA208E1
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:04:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59EDA208E1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C36420878
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:04:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C36420878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933376AbeGJICZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:02:25 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52962 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932939AbeGJICJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:02:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 74461209C3; Tue, 10 Jul 2018 10:02:07 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 78210208C5;
-        Tue, 10 Jul 2018 10:01:56 +0200 (CEST)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Subject: [PATCH v5 10/22] ARM: dts: sun7i-a20: Use most-qualified system control compatibles
-Date:   Tue, 10 Jul 2018 10:01:02 +0200
-Message-Id: <20180710080114.31469-11-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+        id S933357AbeGJICX convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:02:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54228 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932743AbeGJICG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:02:06 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E845040122D4;
+        Tue, 10 Jul 2018 08:02:05 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0591F2026D6B;
+        Tue, 10 Jul 2018 08:02:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20180710011741.GA1014@sol.localdomain>
+References: <20180710011741.GA1014@sol.localdomain> <20180708210154.10423-8-ebiggers3@gmail.com> <20180708210154.10423-1-ebiggers3@gmail.com> <3014.1531139469@warthog.procyon.org.uk>
+To:     Eric Biggers <ebiggers3@gmail.com>
+Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Eric Biggers <ebiggers@google.com>
+Subject: Re: [PATCH 07/18] fs_context: fix double free of legacy_fs_context data
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <25102.1531209724.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Tue, 10 Jul 2018 09:02:04 +0100
+Message-ID: <25103.1531209724@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 08:02:05 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 08:02:05 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This switches the sun7i-a20 dtsi to use the most qualified compatibles
-for the system-control block (previously named SRAM controller) as well
-as the SRAM blocks. The sun4i-a10 compatibles are kept since these
-hardware blocks are backward-compatible.
+Eric Biggers <ebiggers3@gmail.com> wrote:
 
-The phandle for system control is also updated to reflect the fact that
-the controller described is really about system control rather than SRAM
-control.
+> Why isn't this done in the same place that ->init_fs_context() would otherwise
+> be called?  It logically does the same thing, right?
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Fair point.  How about the attached incremental change?  It breaks the legacy
+context initialisation out into its own init function and just sets that as
+the default if the fs doesn't supply its own.
+
+It also makes the freeing conditional.
+
+David
 ---
- arch/arm/boot/dts/sun7i-a20.dtsi | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index e529e4ff2174..59abb623b249 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -239,8 +239,9 @@
- 		#size-cells = <1>;
- 		ranges;
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 8af0542ab8b6..f388ab29d37d 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -42,6 +42,7 @@ struct legacy_fs_context {
+ 	enum legacy_fs_param	param_type;
+ };
  
--		sram-controller@1c00000 {
--			compatible = "allwinner,sun4i-a10-sram-controller";
-+		system-control@1c00000 {
-+			compatible = "allwinner,sun7i-a20-system-control",
-+				     "allwinner,sun4i-a10-system-control";
- 			reg = <0x01c00000 0x30>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
-@@ -254,7 +255,8 @@
- 				ranges = <0 0x00000000 0xc000>;
++static int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry);
+ static const struct fs_context_operations legacy_fs_context_ops;
  
- 				emac_sram: sram-section@8000 {
--					compatible = "allwinner,sun4i-a10-sram-a3-a4";
-+					compatible = "allwinner,sun7i-a20-sram-a3-a4",
-+						     "allwinner,sun4i-a10-sram-a3-a4";
- 					reg = <0x8000 0x4000>;
- 					status = "disabled";
- 				};
-@@ -268,7 +270,8 @@
- 				ranges = <0 0x00010000 0x1000>;
+ static const match_table_t common_set_sb_flag = {
+@@ -239,6 +240,7 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+ 				      unsigned int sb_flags,
+ 				      enum fs_context_purpose purpose)
+ {
++	int (*init_fs_context)(struct fs_context *, struct dentry *);
+ 	struct fs_context *fc;
+ 	int ret = -ENOMEM;
  
- 				otg_sram: sram-section@0 {
--					compatible = "allwinner,sun4i-a10-sram-d";
-+					compatible = "allwinner,sun7i-a20-sram-d",
-+						     "allwinner,sun4i-a10-sram-d";
- 					reg = <0x0000 0x1000>;
- 					status = "disabled";
- 				};
--- 
-2.17.1
-
+@@ -246,15 +248,6 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+ 	if (!fc)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	if (!fs_type->init_fs_context) {
+-		fc->fs_private = kzalloc(sizeof(struct legacy_fs_context),
+-					 GFP_KERNEL);
+-		if (!fc->fs_private)
+-			goto err_fc;
+-
+-		fc->ops = &legacy_fs_context_ops;
+-	}
+-
+ 	fc->purpose	= purpose;
+ 	fc->sb_flags	= sb_flags;
+ 	fc->fs_type	= get_filesystem(fs_type);
+@@ -285,11 +278,13 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+ 
+ 
+ 	/* TODO: Make all filesystems support this unconditionally */
+-	if (fc->fs_type->init_fs_context) {
+-		ret = fc->fs_type->init_fs_context(fc, reference);
+-		if (ret < 0)
+-			goto err_fc;
+-	}
++	init_fs_context = fc->fs_type->init_fs_context;
++	if (!init_fs_context)
++		init_fs_context = legacy_init_fs_context;
++
++	ret = (*init_fs_context)(fc, reference);
++	if (ret < 0)
++		goto err_fc;
+ 
+ 	/* Do the security check last because ->init_fs_context may change the
+ 	 * namespace subscriptions.
+@@ -499,19 +494,21 @@ static void legacy_fs_context_free(struct fs_context *fc)
+ {
+ 	struct legacy_fs_context *ctx = fc->fs_private;
+ 
+-	free_secdata(ctx->secdata);
+-	switch (ctx->param_type) {
+-	case LEGACY_FS_UNSET_PARAMS:
+-	case LEGACY_FS_NO_PARAMS:
+-		break;
+-	case LEGACY_FS_MAGIC_PARAMS:
+-		break; /* ctx->data is a weird pointer */
+-	default:
+-		kfree(ctx->legacy_data);
+-		break;
+-	}
++	if (ctx) {
++		free_secdata(ctx->secdata);
++		switch (ctx->param_type) {
++		case LEGACY_FS_UNSET_PARAMS:
++		case LEGACY_FS_NO_PARAMS:
++			break;
++		case LEGACY_FS_MAGIC_PARAMS:
++			break; /* ctx->data is a weird pointer */
++		default:
++			kfree(ctx->legacy_data);
++			break;
++		}
+ 
+-	kfree(ctx);
++		kfree(ctx);
++	}
+ }
+ 
+ /*
+@@ -707,3 +704,18 @@ static const struct fs_context_operations legacy_fs_context_ops = {
+ 	.validate		= legacy_validate,
+ 	.get_tree		= legacy_get_tree,
+ };
++
++/*
++ * Initialise a legacy context for a filesystem that doesn't support
++ * fs_context.
++ */
++static int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry)
++{
++
++	fc->fs_private = kzalloc(sizeof(struct legacy_fs_context), GFP_KERNEL);
++	if (!fc->fs_private)
++		return -ENOMEM;
++
++	fc->ops = &legacy_fs_context_ops;
++	return 0;
++}
