@@ -5,43 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5E4C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94ECAC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA37A208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:55:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA37A208E3
+	by mail.kernel.org (Postfix) with ESMTP id 5902220877
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:55:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5902220877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=diehl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933248AbeGJJyM convert rfc822-to-8bit (ORCPT
+        id S933356AbeGJJzR convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 05:54:12 -0400
-Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:64394 "EHLO
-        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933112AbeGJJyI (ORCPT
+        Tue, 10 Jul 2018 05:55:17 -0400
+Received: from enterprise01.smtp.diehl.com ([193.201.238.219]:29534 "EHLO
+        enterprise01.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S932743AbeGJJyL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 05:54:08 -0400
+        Tue, 10 Jul 2018 05:54:11 -0400
 X-$ESA-Groupmapping: true
 X-IronPort-AV: E=Sophos;i="5.51,334,1526335200"; 
-   d="scan'208";a="34013273"
+   d="scan'208";a="53147488"
 From:   Denis OSTERLAND <denis.osterland@diehl.com>
-To:     "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
+To:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
         "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
         "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         Denis OSTERLAND <denis.osterland@diehl.com>
-Subject: [PATCH v4 1/5] rtc: sysfs: facilitate attribute add to rtc device
-Thread-Topic: [PATCH v4 1/5] rtc: sysfs: facilitate attribute add to rtc
- device
-Thread-Index: AQHUGDKQ7gjvnwME1UyQbN8b3dTaxg==
+Subject: [PATCH v4 5/5] rtc: isl1219: add device tree docu
+Thread-Topic: [PATCH v4 5/5] rtc: isl1219: add device tree docu
+Thread-Index: AQHUGDKQQPZVuDcxn0uq52IAiz//4g==
 Date:   Tue, 10 Jul 2018 09:44:15 +0000
-Message-ID: <20180710090710.9066-2-Denis.Osterland@diehl.com>
+Message-ID: <20180710090710.9066-6-Denis.Osterland@diehl.com>
 References: <20180710090710.9066-1-Denis.Osterland@diehl.com>
 In-Reply-To: <20180710090710.9066-1-Denis.Osterland@diehl.com>
 Accept-Language: de-DE, en-US
@@ -50,7 +49,7 @@ X-MS-TNEF-Correlator:
 x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
 MIME-Version: 1.0
 X-TrailerSkip: 1
-X-GBS-PROC: PkB65aL1SqtESF35r/jQn2OESzdj0IA8yu1PnMgu0XgzlQ5mQv/arVdZ+xMfDDY0
+X-GBS-PROC: byQFdw3ukCM+zy1/poiPc2UJHLf8TT72+4rSTBxpvIGVPWTBT4fhNdyadF9C9KMn
 X-TNEFEvaluated: 1
 Content-Transfer-Encoding: 8BIT
 Content-Type: text/plain; charset="iso-8859-1"
@@ -62,93 +61,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Denis Osterland <Denis.Osterland@diehl.com>
 
-This patches addresses following problem:
-rtc_allocate_device
-devm_device_add_group  <-- kernel oops / null pointer, because
-			sysfs entry does not yet exist
-rtc_register_device
-rc = devm_device_add_group
-if (rc)
-	return rc;     <-- forbidden to return error code
-			after device register
-
-In case groups were not yet registered (kobj.state_in_sysfs == 0)
-rtc_add_group just addes given group to dev.groups,
-otherwise it uses devm_device_add_group.
+The devicetree documentation for the ISL1219 device tree
+binding is added with an short example. It is not a trivial
+device, because it supports two interrupt souces.
 
 Signed-off-by: Denis Osterland <Denis.Osterland@diehl.com>
 ---
- drivers/rtc/rtc-core.h  |  6 ++++++
- drivers/rtc/rtc-sysfs.c | 39 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 45 insertions(+)
+ .../devicetree/bindings/rtc/isil,isl1219.txt  | 29 +++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/rtc/isil,isl1219.txt
 
-diff --git a/drivers/rtc/rtc-core.h b/drivers/rtc/rtc-core.h
-index 0abf98983e13..81d1c3ce7a96 100644
---- a/drivers/rtc/rtc-core.h
-+++ b/drivers/rtc/rtc-core.h
-@@ -40,9 +40,15 @@ static inline void rtc_proc_del_device(struct rtc_device *rtc)
- 
- #ifdef CONFIG_RTC_INTF_SYSFS
- const struct attribute_group **rtc_get_dev_attribute_groups(void);
-+int rtc_add_group(struct rtc_device *rtc, const struct attribute_group *grp);
- #else
- static inline const struct attribute_group **rtc_get_dev_attribute_groups(void)
- {
- 	return NULL;
- }
-+static inline
-+int rtc_add_group(struct rtc_device *rtc, const struct attribute_group *grp)
-+{
-+	return 0;
-+}
- #endif
-diff --git a/drivers/rtc/rtc-sysfs.c b/drivers/rtc/rtc-sysfs.c
-index 454da38c6012..9a177b8f761b 100644
---- a/drivers/rtc/rtc-sysfs.c
-+++ b/drivers/rtc/rtc-sysfs.c
-@@ -317,3 +317,42 @@ const struct attribute_group **rtc_get_dev_attribute_groups(void)
- {
- 	return rtc_attr_groups;
- }
+diff --git a/Documentation/devicetree/bindings/rtc/isil,isl1219.txt b/Documentation/devicetree/bindings/rtc/isil,isl1219.txt
+new file mode 100644
+index 000000000000..f26f1e9d4bde
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rtc/isil,isl1219.txt
+@@ -0,0 +1,29 @@
++Intersil ISL1219 I2C RTC/Alarm chip with event in
 +
-+static size_t rtc_group_count(struct rtc_device *rtc)
-+{
-+	const struct attribute_group **groups = rtc->dev.groups;
-+	size_t cnt = 0;
++ISL1219 has additional pins EVIN and #EVDET for tamper detection.
 +
-+	if (groups)
-+		for (; *groups; groups++)
-+			cnt++;
++Required properties supported by the device:
 +
-+	return cnt;
-+}
++ - "compatible": must be "isil,isl1219"
++ - "reg": I2C bus address of the device
 +
-+static inline int
-+__rtc_add_group(struct rtc_device *rtc, const struct attribute_group *grp)
-+{
-+	size_t cnt = rtc_group_count(rtc);
-+	const struct attribute_group **groups, **old;
++Optional properties:
 +
-+	groups = devm_kzalloc(&rtc->dev, (cnt+2)*sizeof(*groups), GFP_KERNEL);
-+	if (IS_ERR_OR_NULL(groups))
-+		return PTR_ERR(groups);
-+	memcpy(groups, rtc->dev.groups, cnt*sizeof(*groups));
-+	groups[cnt] = grp;
++ - "interrupt-names": list which may contains "irq" and "evdet"
++ - "interrupt-parent", "interrupts", "interrupts-extended":
++   for passing the interrupt line of the SoC connected to #IRQ pin
++   and #EVDET pin of the RTC chip.
++ - "isil,ev-evienb": if present bit can be set to disable event input pull-up
 +
-+	old = rtc->dev.groups;
-+	rtc->dev.groups = groups;
-+	if (old != rtc_attr_groups)
-+		devm_kfree(&rtc->dev, old);
 +
-+	return 0;
-+}
++Example isl1219 node with #IRQ pin connected to SoC gpio1 pin12
++ and #EVDET pin connected to SoC gpio2 pin 24:
 +
-+int rtc_add_group(struct rtc_device *rtc, const struct attribute_group *grp)
-+{
-+	return rtc->dev.kobj.state_in_sysfs ?
-+		devm_device_add_group(&rtc->dev, grp) :
-+		__rtc_add_group(rtc, grp);
-+}
++	isl1219: rtc@68 {
++		compatible = "isil,isl1219";
++		reg = <0x68>;
++		interrupt-names = "irq", "evdet";
++		interrupts-extended = <&gpio1 12 IRQ_TYPE_EDGE_FALLING>,
++			<&gpio2 24 IRQ_TYPE_EDGE_FALLING>;
++	};
++
 -- 
 2.18.0
 
