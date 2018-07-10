@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B2E8C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478F2C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D3C20878
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D3C20878
+	by mail.kernel.org (Postfix) with ESMTP id 045AD20878
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 045AD20878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933461AbeGJIFA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:05:00 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53200 "EHLO mail.bootlin.com"
+        id S933293AbeGJICT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:02:19 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52752 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933299AbeGJICV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:02:21 -0400
+        id S1751248AbeGJICE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:02:04 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1404120C9B; Tue, 10 Jul 2018 10:02:20 +0200 (CEST)
+        id 924042095C; Tue, 10 Jul 2018 10:02:02 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 40EAE20990;
-        Tue, 10 Jul 2018 10:02:03 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id CA2DD20904;
+        Tue, 10 Jul 2018 10:01:51 +0200 (CEST)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -67,9 +67,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Hugues Fruchet <hugues.fruchet@st.com>,
         Randy Li <ayaka@soulik.info>
-Subject: [PATCH v5 20/22] ARM: dts: sun7i-a20: Add Video Engine and reserved memory nodes
-Date:   Tue, 10 Jul 2018 10:01:12 +0200
-Message-Id: <20180710080114.31469-21-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v5 03/22] dt-bindings: sram: sunxi: Introduce new A10 binding for system-control
+Date:   Tue, 10 Jul 2018 10:00:55 +0200
+Message-Id: <20180710080114.31469-4-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
 References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
@@ -78,65 +78,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds nodes for the Video Engine and the associated reserved memory
-for the A20. Up to 96 MiB of memory are dedicated to the CMA pool.
+Following-up on the introduction of a new binding for the A64, this
+introduces a system-control binding for the A10 as a replacement of
+the sram-controller binding.
 
-The VPU can only map the first 256 MiB of DRAM, so the reserved memory
-pool has to be located in that area. Following Allwinner's decision in
-downstream software, the last 96 MiB of the first 256 MiB of RAM are
-reserved for this purpose.
+This change is motivated by consistency with the Allwinner literature,
+that mentions system control over SRAM controller. Moreover, the system
+control block is sometimes used for more than SRAM (e.g. for muxing
+related to the ethernet PHY).
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- arch/arm/boot/dts/sun7i-a20.dtsi | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ Documentation/devicetree/bindings/sram/sunxi-sram.txt | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 38999d791cb5..cb6e10196118 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -161,6 +161,21 @@
- 		reg = <0x40000000 0x80000000>;
- 	};
+diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+index 9ef40e2e0a48..d7dd1a393011 100644
+--- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
++++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+@@ -10,7 +10,8 @@ Controller Node
  
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
-+		cma_pool: cma@4a000000 {
-+			compatible = "shared-dma-pool";
-+			size = <0x6000000>;
-+			alloc-ranges = <0x4a000000 0x6000000>;
-+			reusable;
-+			linux,cma-default;
-+		};
-+	};
-+
- 	timer {
- 		compatible = "arm,armv7-timer";
- 		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-@@ -466,6 +481,19 @@
- 			};
- 		};
+ Required properties:
+ - compatible : should be:
+-    - "allwinner,sun4i-a10-sram-controller"
++    - "allwinner,sun4i-a10-sram-controller" (deprecated)
++    - "allwinner,sun4i-a10-system-control"
+     - "allwinner,sun50i-a64-sram-controller" (deprecated)
+     - "allwinner,sun50i-a64-system-control"
+ - reg : sram controller register offset + length
+@@ -48,8 +49,8 @@ This valid values for this argument are:
  
-+		vpu: video-codec@1c0e000 {
-+			compatible = "allwinner,sun7i-a20-video-engine";
-+			reg = <0x01c0e000 0x1000>;
-+
-+			clocks = <&ccu CLK_AHB_VE>, <&ccu CLK_VE>,
-+				 <&ccu CLK_DRAM_VE>;
-+			clock-names = "ahb", "mod", "ram";
-+
-+			resets = <&ccu RST_VE>;
-+			interrupts = <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
-+			allwinner,sram = <&ve_sram 1>;
-+		};
-+
- 		mmc0: mmc@1c0f000 {
- 			compatible = "allwinner,sun7i-a20-mmc";
- 			reg = <0x01c0f000 0x1000>;
+ Example
+ -------
+-sram-controller@1c00000 {
+-	compatible = "allwinner,sun4i-a10-sram-controller";
++system-control@1c00000 {
++	compatible = "allwinner,sun4i-a10-system-control";
+ 	reg = <0x01c00000 0x30>;
+ 	#address-cells = <1>;
+ 	#size-cells = <1>;
 -- 
 2.17.1
 
