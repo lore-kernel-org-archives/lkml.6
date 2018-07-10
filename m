@@ -2,234 +2,143 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EE9C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 17:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1103CC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 17:09:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3DDE20883
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 17:05:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3DDE20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B4EE3208F7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 17:09:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPi7a9/o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4EE3208F7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933375AbeGJRFI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 13:05:08 -0400
-Received: from foss.arm.com ([217.140.101.70]:50572 "EHLO foss.arm.com"
+        id S933349AbeGJRJH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 13:09:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933267AbeGJRFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 13:05:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B7B9280D;
-        Tue, 10 Jul 2018 10:05:06 -0700 (PDT)
-Received: from [192.168.100.244] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4ED5B3F589;
-        Tue, 10 Jul 2018 10:05:06 -0700 (PDT)
-Subject: Re: 4.18rc3 TX2 boot failure with "ACPICA: AML parser: attempt to
- continue loading table after error"
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-References: <c49a3666-7d23-6a05-703c-1273d79a00cd@arm.com>
- <2264016.O8iB3BUh2s@aspire.rjw.lan>
- <dc4c68bb-089c-6c99-31df-e8d3587b6029@arm.com>
- <24702482.jSiYyYTB4u@aspire.rjw.lan>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <0ee9c533-92af-0474-e5e5-5318a1daddbe@arm.com>
-Date:   Tue, 10 Jul 2018 12:04:58 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S933267AbeGJRJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 13:09:04 -0400
+Received: from localhost (unknown [207.160.231.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3F14208E8;
+        Tue, 10 Jul 2018 17:09:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531242544;
+        bh=wF6YIkybJ5srKLX2E+ZESowBGJN0YRq2Jn+hvbt/lKc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CPi7a9/oOTPRqyAeKxxPW2C0xQAO/IZajDnSVojIUu0PI8KDlzukJVkZb1kZO1Ult
+         od+Dw2DuQvHin0KvyMQK/Lv26CTINz25R8MaWEqhIrpK1BVq5ZpGn9s5zzmteMvjDD
+         cTE5yiwT+oNJB6doS5DsQ2OHJMRelF0e8Ej8dJr8=
+Date:   Tue, 10 Jul 2018 12:09:03 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Mark expected switch fall-throughs
+Message-ID: <20180710170902.GC188359@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180705145600.GA22099@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <24702482.jSiYyYTB4u@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180705145600.GA22099@embeddedor.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 11:56 AM, Rafael J. Wysocki wrote:
-> On Tuesday, July 10, 2018 5:04:21 PM CEST Jeremy Linton wrote:
->> Hi,
->>
->> On 07/10/2018 06:25 AM, Rafael J. Wysocki wrote:
->>> On Tuesday, July 10, 2018 1:13:17 PM CEST Rafael J. Wysocki wrote:
->>>> On Tuesday, July 10, 2018 5:44:05 AM CEST Jeremy Linton wrote:
->>>>> Hi,
->>>>>
->>>>> On 07/09/2018 04:28 PM, Rafael J. Wysocki wrote:
->>>>>> On Mon, Jul 9, 2018 at 10:45 PM, Jeremy Linton <jeremy.linton@arm.com> wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>> First thanks for the patch..
->>>>>>>
->>>>>>> On 07/08/2018 04:14 AM, Rafael J. Wysocki wrote:
->>>>>>>>
->>>>>>>> On Monday, July 2, 2018 11:41:42 PM CEST Jeremy Linton wrote:
->>>>>>>>>
->>>>>>>>> Hi,
->>>>>>>>>
->>>>>>>>> I'm experiencing two problems with commit 5088814a6e931 which is
->>>>>>>>> "ACPICA: AML parser: attempt to continue loading table after error"
->>>>>>>>>
->>>>>>>>> The first is this boot failure on a thunderX2:
->>>>>>>>>
->>>>>>>>> [   10.770098] ACPI Error: Ignore error and continue table load
->>>>>>>
->>>>>>>
->>>>>>> [trimming]
->>>>>>>
->>>>>>>>> ]---
->>>>>>>>>
->>>>>>>>> Which does appear to be the result of some bad data in the table, but it
->>>>>>>>> was working with 4.17, and reverting this commit solves the problem.
->>>>>>>>
->>>>>>>>
->>>>>>>> Does the patch below make any difference?
->>>>>>>>
->>>>>>>> ---
->>>>>>>>      drivers/acpi/acpica/psobject.c |    3 +++
->>>>>>>>      1 file changed, 3 insertions(+)
->>>>>>>>
->>>>>>>> Index: linux-pm/drivers/acpi/acpica/psobject.c
->>>>>>>> ===================================================================
->>>>>>>> --- linux-pm.orig/drivers/acpi/acpica/psobject.c
->>>>>>>> +++ linux-pm/drivers/acpi/acpica/psobject.c
->>>>>>>> @@ -39,6 +39,9 @@ static acpi_status acpi_ps_get_aml_opcod
->>>>>>>>            ACPI_FUNCTION_TRACE_PTR(ps_get_aml_opcode, walk_state);
->>>>>>>>            walk_state->aml = walk_state->parser_state.aml;
->>>>>>>> +       if (!walk_state->aml)
->>>>>>>> +               return AE_CTRL_PARSE_CONTINUE;
->>>>>>>> +
->>>>>>>
->>>>>>>
->>>>>>> Well this seems to avoid the crash, but now it hangs right after on the
->>>>>>> "Ignore error and continue table load" message.
->>>>>>
->>>>>> Well, maybe we should just abort in that case.
->>>>>>
->>>>>> I'm wondering what happens if you replace the return statement in the
->>>>>> patch above with
->>>>>>
->>>>>> return_ACPI_STATUS(AE_AML_BAD_OPCODE)
->>>>>
->>>>> Yes, that is where I went when I applied the patch but I used
->>>>> AE_CTRL_TERMINATE, which terminates the loop in acpi_ps_parse_loop() and
->>>>> that appears to successfully finish/terminate the initial parsing pass.
->>>>> But, it then crashes in acpi_ns_lookup called via the
->>>>> acpi_walk_resources sequences that goes through ut_evalute_object() due
->>>>> to the path/scope_info->scope.node being ACPI_ROOT_OBJECT (-1) and
->>>>> bypassing the null check. Adding a ACPI_ROOT_OBJECT check as well as the
->>>>> null checks in acpi_ns_lookup results in a successful boot. Tracking
->>>>> down how the terminate (or whatever) is leaving the info->prefix_node
->>>>> (in acpi_ns_evaluate) set to ROOT_OBJECT instead of null, is something I
->>>>> don't yet understand.
->>>>>
->>>>> Anyway, I tried Using BAD_OPCODE rather than TERMINATE and it seems to
->>>>> have the same basic result as PARSE_CONTINUE.
->>>>
->>>> OK, thanks!
->>>>
->>>> I evidently didn't look deep enough.
->>>>
->>>> Can you please check the patch below?
->>>>
->>>> I'm not sure if we can pass this broken state to
->>>> acpi_ps_complete_final_op(), so it may be necessary to return
->>>> an error directly when aml_op_start is NULL.
->>>>
->>>> ---
->>>>    drivers/acpi/acpica/psloop.c |    3 +++
->>>>    1 file changed, 3 insertions(+)
->>>>
->>>> Index: linux-pm/drivers/acpi/acpica/psloop.c
->>>> ===================================================================
->>>> --- linux-pm.orig/drivers/acpi/acpica/psloop.c
->>>> +++ linux-pm/drivers/acpi/acpica/psloop.c
->>>> @@ -493,6 +493,9 @@ acpi_status acpi_ps_parse_loop(struct ac
->>>>    		ASL_CV_CAPTURE_COMMENTS(walk_state);
->>>>    
->>>>    		aml_op_start = parser_state->aml;
->>>> +		if (!aml_op_start)
->>>> +			break;
->>>> +
->>>>    		if (!op) {
->>>>    			status =
->>>>    			    acpi_ps_create_op(walk_state, aml_op_start, &op);
->>>>
->>>> --
->>>
->>> So maybe something like this:
->>>
->>> ---
->>>    drivers/acpi/acpica/psloop.c |    3 +++
->>>    1 file changed, 3 insertions(+)
->>>
->>> Index: linux-pm/drivers/acpi/acpica/psloop.c
->>> ===================================================================
->>> --- linux-pm.orig/drivers/acpi/acpica/psloop.c
->>> +++ linux-pm/drivers/acpi/acpica/psloop.c
->>> @@ -494,6 +494,9 @@ acpi_status acpi_ps_parse_loop(struct ac
->>>    
->>>    		aml_op_start = parser_state->aml;
->>>    		if (!op) {
->>> +			if (!aml_op_start)
->>> +				return_ACPI_STATUS(AE_AML_INTERNAL);
->>> +
->>>    			status =
->>>    			    acpi_ps_create_op(walk_state, aml_op_start, &op);
->>>    			if (ACPI_FAILURE(status)) {
->>>
->>>
->>
->> This gets rid of the infinite loop, but its still has the problem with
->> acpi_ns_lookup crashing due to -1 in the scope.node.
+On Thu, Jul 05, 2018 at 09:56:00AM -0500, Gustavo A. R. Silva wrote:
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
 > 
-> OK, so do you mean that something like the patch below is needed for the
-> system to boot?
+> Warning level 2 was used: -Wimplicit-fallthrough=2
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Yes, the machine is back to the pre 4.18 behavior (with the addition of 
-a lot of additional ACPI error messages) boot with those two changes.
+Applied to pci/misc for v4.19, thanks!
+
+If you'd like to apply this elsewhere as part of a larger series, feel
+free to do that.  Just add my ack and let me know to drop it.
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
 
 > ---
->   drivers/acpi/acpica/nsaccess.c |    3 ++-
->   drivers/acpi/acpica/psloop.c   |    3 +++
->   2 files changed, 5 insertions(+), 1 deletion(-)
+>  drivers/pci/hotplug/pciehp_ctrl.c | 2 ++
+>  drivers/pci/hotplug/shpchp_ctrl.c | 2 ++
+>  drivers/pci/pci.c                 | 1 +
+>  drivers/pci/quirks.c              | 1 +
+>  4 files changed, 6 insertions(+)
 > 
-> Index: linux-pm/drivers/acpi/acpica/psloop.c
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/acpica/psloop.c
-> +++ linux-pm/drivers/acpi/acpica/psloop.c
-> @@ -494,6 +494,9 @@ acpi_status acpi_ps_parse_loop(struct ac
->   
->   		aml_op_start = parser_state->aml;
->   		if (!op) {
-> +			if (!aml_op_start)
-> +				return_ACPI_STATUS(AE_AML_INTERNAL);
-> +
->   			status =
->   			    acpi_ps_create_op(walk_state, aml_op_start, &op);
->   			if (ACPI_FAILURE(status)) {
-> Index: linux-pm/drivers/acpi/acpica/nsaccess.c
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/acpica/nsaccess.c
-> +++ linux-pm/drivers/acpi/acpica/nsaccess.c
-> @@ -286,7 +286,8 @@ acpi_ns_lookup(union acpi_generic_state
->   
->   	/* Get the prefix scope. A null scope means use the root scope */
->   
-> -	if ((!scope_info) || (!scope_info->scope.node)) {
-> +	if ((!scope_info) || (!scope_info->scope.node) ||
-> +	    (scope_info->scope.node == ACPI_ROOT_OBJECT)) {
->   		ACPI_DEBUG_PRINT((ACPI_DB_NAMES,
->   				  "Null scope prefix, using root node (%p)\n",
->   				  acpi_gbl_root_node));
+> diff --git a/drivers/pci/hotplug/pciehp_ctrl.c b/drivers/pci/hotplug/pciehp_ctrl.c
+> index c684faa..cfc46e8 100644
+> --- a/drivers/pci/hotplug/pciehp_ctrl.c
+> +++ b/drivers/pci/hotplug/pciehp_ctrl.c
+> @@ -436,6 +436,7 @@ int pciehp_sysfs_enable_slot(struct slot *p_slot)
+>  	switch (p_slot->state) {
+>  	case BLINKINGON_STATE:
+>  		cancel_delayed_work(&p_slot->work);
+> +		/* fall through */
+>  	case STATIC_STATE:
+>  		p_slot->state = POWERON_STATE;
+>  		mutex_unlock(&p_slot->lock);
+> @@ -473,6 +474,7 @@ int pciehp_sysfs_disable_slot(struct slot *p_slot)
+>  	switch (p_slot->state) {
+>  	case BLINKINGOFF_STATE:
+>  		cancel_delayed_work(&p_slot->work);
+> +		/* fall through */
+>  	case STATIC_STATE:
+>  		p_slot->state = POWEROFF_STATE;
+>  		mutex_unlock(&p_slot->lock);
+> diff --git a/drivers/pci/hotplug/shpchp_ctrl.c b/drivers/pci/hotplug/shpchp_ctrl.c
+> index 1047b56..1267dcc 100644
+> --- a/drivers/pci/hotplug/shpchp_ctrl.c
+> +++ b/drivers/pci/hotplug/shpchp_ctrl.c
+> @@ -654,6 +654,7 @@ int shpchp_sysfs_enable_slot(struct slot *p_slot)
+>  	switch (p_slot->state) {
+>  	case BLINKINGON_STATE:
+>  		cancel_delayed_work(&p_slot->work);
+> +		/* fall through */
+>  	case STATIC_STATE:
+>  		p_slot->state = POWERON_STATE;
+>  		mutex_unlock(&p_slot->lock);
+> @@ -689,6 +690,7 @@ int shpchp_sysfs_disable_slot(struct slot *p_slot)
+>  	switch (p_slot->state) {
+>  	case BLINKINGOFF_STATE:
+>  		cancel_delayed_work(&p_slot->work);
+> +		/* fall through */
+>  	case STATIC_STATE:
+>  		p_slot->state = POWEROFF_STATE;
+>  		mutex_unlock(&p_slot->lock);
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 97acba7..f5c6ab1 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -2045,6 +2045,7 @@ static pci_power_t pci_target_state(struct pci_dev *dev, bool wakeup)
+>  		case PCI_D2:
+>  			if (pci_no_d1d2(dev))
+>  				break;
+> +			/* else: fall through */
+>  		default:
+>  			target_state = state;
+>  		}
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index f439de8..502275c 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -2105,6 +2105,7 @@ static void quirk_netmos(struct pci_dev *dev)
+>  		if (dev->subsystem_vendor == PCI_VENDOR_ID_IBM &&
+>  				dev->subsystem_device == 0x0299)
+>  			return;
+> +		/* else: fall through */
+>  	case PCI_DEVICE_ID_NETMOS_9735:
+>  	case PCI_DEVICE_ID_NETMOS_9745:
+>  	case PCI_DEVICE_ID_NETMOS_9845:
+> -- 
+> 2.7.4
 > 
-
