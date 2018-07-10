@@ -5,41 +5,42 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAB5C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104C3C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3490D20A8B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:43:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3490D20A8B
+	by mail.kernel.org (Postfix) with ESMTP id C406420849
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:43:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C406420849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732742AbeGJWoj (ORCPT
+        id S1732749AbeGJWoq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:44:39 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43510 "EHLO mx1.redhat.com"
+        Tue, 10 Jul 2018 18:44:46 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48562 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732392AbeGJWoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:44:39 -0400
+        id S1732392AbeGJWoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:44:46 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 26390814F0B6;
-        Tue, 10 Jul 2018 22:43:25 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 75233DBDA;
+        Tue, 10 Jul 2018 22:43:31 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6E11C1C5BA;
-        Tue, 10 Jul 2018 22:43:24 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B84E77C41;
+        Tue, 10 Jul 2018 22:43:30 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 17/32] ipc: Convert mqueue fs to fs_context [ver #9]
+Subject: [PATCH 18/32] cpuset: Use fs_context [ver #9]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Date:   Tue, 10 Jul 2018 23:43:24 +0100
-Message-ID: <153126260394.14533.15198984214316176903.stgit@warthog.procyon.org.uk>
+Cc:     Tejun Heo <tj@kernel.org>, dhowells@redhat.com,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 10 Jul 2018 23:43:30 +0100
+Message-ID: <153126261028.14533.5920703815183055814.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
 References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
@@ -47,223 +48,117 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 10 Jul 2018 22:43:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 10 Jul 2018 22:43:25 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 10 Jul 2018 22:43:31 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 10 Jul 2018 22:43:31 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the mqueue filesystem to use the filesystem context stuff.
+Make the cpuset filesystem use the filesystem context.  This is potentially
+tricky as the cpuset fs is almost an alias for the cgroup filesystem, but
+with some special parameters.
 
-Notes:
-
- (1) The relevant ipc namespace is selected in when the context is
-     initialised (and it defaults to the current task's ipc namespace).
-     The caller can override this before calling vfs_get_tree().
-
- (2) Rather than simply calling kern_mount_data(), mq_init_ns() and
-     mq_internal_mount() create a context, adjust it and then do the rest
-     of the mount procedure.
-
- (3) The lazy mqueue mounting on creation of a new namespace is retained
-     from a previous patch, but the avoidance of sget() if no superblock
-     yet exists is reverted and the superblock is again keyed on the
-     namespace pointer.
-
-     Yes, there was a performance gain in not searching the superblock
-     hash, but it's only paid once per ipc namespace - and only if someone
-     uses mqueue within that namespace, so I'm not sure it's worth it,
-     especially as calling sget() allows avoidance of recursion.
+This can, however, be handled by setting up an appropriate cgroup
+filesystem and returning the root directory of that as the root dir of this
+one.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Tejun Heo <tj@kernel.org>
 ---
 
- ipc/mqueue.c |  121 +++++++++++++++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 99 insertions(+), 22 deletions(-)
+ kernel/cgroup/cpuset.c |   66 ++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 52 insertions(+), 14 deletions(-)
 
-diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-index 4671d215cb84..0f102210f89e 100644
---- a/ipc/mqueue.c
-+++ b/ipc/mqueue.c
-@@ -18,6 +18,7 @@
- #include <linux/pagemap.h>
- #include <linux/file.h>
- #include <linux/mount.h>
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 6d9f1a709af9..e6582b2f5144 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -38,7 +38,7 @@
+ #include <linux/mm.h>
+ #include <linux/memory.h>
+ #include <linux/export.h>
+-#include <linux/mount.h>
 +#include <linux/fs_context.h>
  #include <linux/namei.h>
- #include <linux/sysctl.h>
- #include <linux/poll.h>
-@@ -42,6 +43,10 @@
- #include <net/sock.h>
- #include "util.h"
- 
-+struct mqueue_fs_context {
-+	struct ipc_namespace	*ipc_ns;
-+};
-+
- #define MQUEUE_MAGIC	0x19800202
- #define DIRENT_SIZE	20
- #define FILENT_SIZE	80
-@@ -87,9 +92,11 @@ struct mqueue_inode_info {
- 	unsigned long qsize; /* size of queue in memory (sum of all msgs) */
- };
- 
-+static struct file_system_type mqueue_fs_type;
- static const struct inode_operations mqueue_dir_inode_operations;
- static const struct file_operations mqueue_file_operations;
- static const struct super_operations mqueue_super_ops;
-+static const struct fs_context_operations mqueue_fs_context_ops;
- static void remove_notification(struct mqueue_inode_info *info);
- 
- static struct kmem_cache *mqueue_inode_cachep;
-@@ -322,7 +329,7 @@ static struct inode *mqueue_get_inode(struct super_block *sb,
- 	return ERR_PTR(ret);
- }
- 
--static int mqueue_fill_super(struct super_block *sb, void *data, size_t data_size, int silent)
-+static int mqueue_fill_super(struct super_block *sb, struct fs_context *fc)
+ #include <linux/pagemap.h>
+ #include <linux/proc_fs.h>
+@@ -315,26 +315,64 @@ static inline bool is_in_v2_mode(void)
+  * users. If someone tries to mount the "cpuset" filesystem, we
+  * silently switch it to mount "cgroup" instead
+  */
+-static struct dentry *cpuset_mount(struct file_system_type *fs_type,
+-				   int flags, const char *unused_dev_name,
+-				   void *data, size_t data_size)
++static int cpuset_get_tree(struct fs_context *fc)
  {
- 	struct inode *inode;
- 	struct ipc_namespace *ns = sb->s_fs_info;
-@@ -343,19 +350,84 @@ static int mqueue_fill_super(struct super_block *sb, void *data, size_t data_siz
- 	return 0;
- }
- 
--static struct dentry *mqueue_mount(struct file_system_type *fs_type,
--			 int flags, const char *dev_name,
--			 void *data, size_t data_size)
-+static int mqueue_get_tree(struct fs_context *fc)
- {
--	struct ipc_namespace *ns;
--	if (flags & SB_KERNMOUNT) {
--		ns = data;
--		data = NULL;
--	} else {
--		ns = current->nsproxy->ipc_ns;
-+	struct mqueue_fs_context *ctx = fc->fs_private;
+-	struct file_system_type *cgroup_fs = get_fs_type("cgroup");
+-	struct dentry *ret = ERR_PTR(-ENODEV);
++	static const char opts[] = "cpuset,noprefix,release_agent=/sbin/cpuset_release_agent";
++	struct file_system_type *cgroup_fs;
++	struct fs_context *cg_fc;
++	char *p;
++	int ret = -ENODEV;
 +
-+	/* As a shortcut, if the namespace already has a superblock created,
-+	 * use the root from that directly rather than invoking sget() again.
-+	 */
-+	spin_lock(&mq_lock);
-+	if (ctx->ipc_ns->mq_mnt) {
-+		fc->root = dget(ctx->ipc_ns->mq_mnt->mnt_sb->s_root);
-+		atomic_inc(&fc->root->d_sb->s_active);
- 	}
--	return mount_ns(fs_type, flags, data, data_size, ns, ns->user_ns,
--			mqueue_fill_super);
-+	spin_unlock(&mq_lock);
-+	if (fc->root) {
-+		down_write(&fc->root->d_sb->s_umount);
-+		return 0;
++	cgroup_fs = get_fs_type("cgroup");
+ 	if (cgroup_fs) {
+-		char mountopts[] =
+-			"cpuset,noprefix,"
+-			"release_agent=/sbin/cpuset_release_agent";
+-		ret = cgroup_fs->mount(cgroup_fs, flags, unused_dev_name,
+-				       mountopts, data_size);
+-		put_filesystem(cgroup_fs);
++		ret = PTR_ERR(cgroup_fs);
++		goto out;
 +	}
 +
-+	fc->s_fs_info = ctx->ipc_ns;
-+	return vfs_get_super(fc, vfs_get_keyed_super, mqueue_fill_super);
-+}
++	cg_fc = vfs_new_fs_context(cgroup_fs, NULL, fc->sb_flags, fc->purpose);
++	put_filesystem(cgroup_fs);
++	if (IS_ERR(cg_fc)) {
++		ret = PTR_ERR(cg_fc);
++		goto out;
+ 	}
 +
-+static void mqueue_fs_context_free(struct fs_context *fc)
-+{
-+	struct mqueue_fs_context *ctx = fc->fs_private;
++	ret = -ENOMEM;
++	p = kstrdup(opts, GFP_KERNEL);
++	if (!p)
++		goto out_fc;
 +
-+	if (ctx->ipc_ns)
-+		put_ipc_ns(ctx->ipc_ns);
-+	kfree(ctx);
-+}
++	ret = generic_parse_monolithic(fc, p, sizeof(opts) - 1);
++	kfree(p);
++	if (ret < 0)
++		goto out_fc;
 +
-+static int mqueue_init_fs_context(struct fs_context *fc,
++	ret = vfs_get_tree(cg_fc);
++	if (ret < 0)
++		goto out_fc;
++
++	fc->root = dget(cg_fc->root);
++	ret = 0;
++
++out_fc:
++	put_fs_context(cg_fc);
++out:
+ 	return ret;
+ }
+ 
++static const struct fs_context_operations cpuset_fs_context_ops = {
++	.get_tree	= cpuset_get_tree,
++};
++
++static int cpuset_init_fs_context(struct fs_context *fc,
 +				  struct dentry *reference)
 +{
-+	struct mqueue_fs_context *ctx;
-+
-+	ctx = kzalloc(sizeof(struct mqueue_fs_context), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->ipc_ns = get_ipc_ns(current->nsproxy->ipc_ns);
-+	fc->fs_private = ctx;
-+	fc->ops = &mqueue_fs_context_ops;
++	fc->ops = &cpuset_fs_context_ops;
 +	return 0;
 +}
 +
-+static struct vfsmount *mq_create_mount(struct ipc_namespace *ns)
-+{
-+	struct mqueue_fs_context *ctx;
-+	struct fs_context *fc;
-+	struct vfsmount *mnt;
-+	int ret;
-+
-+	fc = vfs_new_fs_context(&mqueue_fs_type, NULL, 0,
-+				FS_CONTEXT_FOR_KERNEL_MOUNT);
-+	if (IS_ERR(fc))
-+		return ERR_CAST(fc);
-+
-+	ctx = fc->fs_private;
-+	put_ipc_ns(ctx->ipc_ns);
-+	ctx->ipc_ns = get_ipc_ns(ns);
-+
-+	ret = vfs_get_tree(fc);
-+	if (ret < 0)
-+		goto err_fc;
-+
-+	mnt = vfs_create_mount(fc, 0);
-+	if (IS_ERR(mnt)) {
-+		ret = PTR_ERR(mnt);
-+		goto err_fc;
-+	}
-+
-+	put_fs_context(fc);
-+	return mnt;
-+
-+err_fc:
-+	put_fs_context(fc);
-+	return ERR_PTR(ret);
- }
- 
- static void init_once(void *foo)
-@@ -1523,15 +1595,22 @@ static const struct super_operations mqueue_super_ops = {
- 	.statfs = simple_statfs,
+ static struct file_system_type cpuset_fs_type = {
+-	.name = "cpuset",
+-	.mount = cpuset_mount,
++	.name			= "cpuset",
++	.init_fs_context	= cpuset_init_fs_context,
  };
  
-+static const struct fs_context_operations mqueue_fs_context_ops = {
-+	.free		= mqueue_fs_context_free,
-+	.get_tree	= mqueue_get_tree,
-+};
-+
- static struct file_system_type mqueue_fs_type = {
--	.name = "mqueue",
--	.mount = mqueue_mount,
--	.kill_sb = kill_litter_super,
--	.fs_flags = FS_USERNS_MOUNT,
-+	.name			= "mqueue",
-+	.init_fs_context	= mqueue_init_fs_context,
-+	.kill_sb		= kill_litter_super,
-+	.fs_flags		= FS_USERNS_MOUNT,
- };
- 
- int mq_init_ns(struct ipc_namespace *ns)
- {
-+	struct vfsmount *m;
-+
- 	ns->mq_queues_count  = 0;
- 	ns->mq_queues_max    = DFLT_QUEUESMAX;
- 	ns->mq_msg_max       = DFLT_MSGMAX;
-@@ -1539,12 +1618,10 @@ int mq_init_ns(struct ipc_namespace *ns)
- 	ns->mq_msg_default   = DFLT_MSG;
- 	ns->mq_msgsize_default  = DFLT_MSGSIZE;
- 
--	ns->mq_mnt = kern_mount_data(&mqueue_fs_type, ns, 0);
--	if (IS_ERR(ns->mq_mnt)) {
--		int err = PTR_ERR(ns->mq_mnt);
--		ns->mq_mnt = NULL;
--		return err;
--	}
-+	m = mq_create_mount(&init_ipc_ns);
-+	if (IS_ERR(m))
-+		return PTR_ERR(m);
-+	ns->mq_mnt = m;
- 	return 0;
- }
- 
+ /*
 
