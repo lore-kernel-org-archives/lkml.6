@@ -3,81 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63156C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:56:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E372C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A18E20877
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:56:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A18E20877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C1AE020877
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:58:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1AE020877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933078AbeGJI4L (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:56:11 -0400
-Received: from mga06.intel.com ([134.134.136.31]:44781 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751305AbeGJIz2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:55:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 01:55:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,333,1526367600"; 
-   d="scan'208";a="53258020"
-Received: from dst.sh.intel.com ([10.239.48.156])
-  by fmsmga007.fm.intel.com with ESMTP; 10 Jul 2018 01:55:13 -0700
-From:   Jingqi Liu <jingqi.liu@intel.com>
-To:     pbonzini@redhat.com, rkrcmar@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        wei.w.wang@intel.com, Jingqi Liu <jingqi.liu@intel.com>
-Subject: [PATCH 2/3] KVM: x86: expose MOVDIRI CPU feature into VM.
-Date:   Tue, 10 Jul 2018 16:54:42 +0800
-Message-Id: <1531212883-63173-3-git-send-email-jingqi.liu@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1531212883-63173-1-git-send-email-jingqi.liu@intel.com>
-References: <1531212883-63173-1-git-send-email-jingqi.liu@intel.com>
+        id S1751357AbeGJI6T (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:58:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42984 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751182AbeGJI6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:58:18 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2398B80D;
+        Tue, 10 Jul 2018 01:58:18 -0700 (PDT)
+Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C3F593F318;
+        Tue, 10 Jul 2018 01:58:16 -0700 (PDT)
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        will.deacon@arm.com, julien.thierry@arm.com, robin.murphy@arm.com,
+        Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: [PATCH v5 0/7] arm64: perf: Support for chained counters
+Date:   Tue, 10 Jul 2018 09:57:57 +0100
+Message-Id: <1531213084-27417-1-git-send-email-suzuki.poulose@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MOVDIRI moves doubleword or quadword from register to memory through
-direct store which is implemented by using write combining (WC) for
-writing data directly into memory without caching the data.
 
-Availability of the MOVDIRI instruction is indicated by the presence of
-the CPUID feature flag MOVDIRI(CPUID.0x07.0x0:ECX[bit 27]).
+This series adds support for counting PMU events using 64bit counters
+for arm64 PMU.
 
-This patch exposes the movdiri feature to the guest.
+The Arm v8 PMUv3 supports combining two adjacent 32bit counters
+(low even and hig odd counters) to count a given "event" in 64bit mode.
+This series adds the support for 64bit events in the core arm_pmu driver
+infrastructure and adds the support for armv8 64bit kernel PMU to use
+chained counters to count in 64bit mode. For CPU cycles, we use the cycle
+counter in 64bit mode, only when requested. If the cycle counter is not
+available, we fall back to chaining the counters.
 
-The release document ref below link:
-https://software.intel.com/sites/default/files/managed/c5/15/\
-architecture-instruction-set-extensions-programming-reference.pdf
-This patch has a dependency on https://lkml.org/lkml/2018/6/15/654.
+Tested on Juno, Fast models. Applies on 4.18-rc4
 
-Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
----
- arch/x86/kvm/cpuid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Change since v4:
+ - Add missing clear_event_idx call back for xscale PMU
+ - Drop comment in cpu_pm_pmu_setup()
 
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index e16c05e..456caf7 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -406,7 +406,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
- 		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI) |
- 		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) | F(AVX512_BITALG) |
--		F(CLDEMOTE) | F(WAITPKG);
-+		F(CLDEMOTE) | F(WAITPKG) | F(MOVDIRI);
- 
- 	/* cpuid 7.0.edx*/
- 	const u32 kvm_cpuid_7_0_edx_x86_features =
+Changes since v3:
+ - Rename format string "bits64" => "long"
+ - Add clear_event_idx call back for all PMU backends
+ - Address style comments
+ - Add Acked-by's
+
+Changes since v2:
+ - Clean up select counter routine. (Mark Rutland)
+ - Stop PMU while processing overflows (Mark Rutland)
+ - Drop special allocation algorithm for chain indices
+ - Since we access the counters when the PMU is stopped,
+   get rid of the unncessary barriers.
+ - Ensure a counter is allocated when checking for chained event
+
+Change since v1:
+ - Remove unnecessary isb()s in chain counter reads/writes
+ - Fix event programming order for counters
+ - Tighten chain counter event read sequence
+ - Set chain event to count in all ELs
+ - Cleanup helpers to be consistent
+ - Fix build break on xcale PMU (reported by kbuild-robot)
+ - Remove the explicit counter width field from pmu backends and default
+   to 32bit.
+ - Rename flag ARMPMU_EVT_LONG => ARMPMU_EVT_64BIT and
+   the format string "chain" => "bits64". (Unfortunately we can't use "64bit"
+   and I am open for suggestion on a better name)
+ - Rename armpmu_get_event_max_period() => armpmu_event_max_period()
+ - For 64bit CPU cycles events, allow chaining if cycle counter is
+   not available.
+
+
+Suzuki K Poulose (7):
+  arm_pmu: Clean up maximum period handling
+  arm_pmu: Change API to support 64bit counter values
+  arm_pmu: Add support for 64bit event counters
+  arm_pmu: Tidy up clear_event_idx call backs
+  arm64: perf: Clean up armv8pmu_select_counter
+  arm64: perf: Disable PMU while processing counter overflows
+  arm64: perf: Add support for chaining event counters
+
+ arch/arm/kernel/perf_event_v6.c     |  14 +-
+ arch/arm/kernel/perf_event_v7.c     |  14 +-
+ arch/arm/kernel/perf_event_xscale.c |  18 ++-
+ arch/arm64/kernel/perf_event.c      | 251 +++++++++++++++++++++++++++++-------
+ drivers/perf/arm_pmu.c              |  38 +++---
+ include/linux/perf/arm_pmu.h        |  11 +-
+ 6 files changed, 264 insertions(+), 82 deletions(-)
+
 -- 
-1.8.3.1
+2.7.4
 
