@@ -3,37 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB58C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B9A8C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743512083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743512083E
+	by mail.kernel.org (Postfix) with ESMTP id 682CC2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 682CC2083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388757AbeGJScw (ORCPT
+        id S2388772AbeGJScz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:32:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47612 "EHLO
+        Tue, 10 Jul 2018 14:32:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47622 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387639AbeGJScv (ORCPT
+        with ESMTP id S2388759AbeGJScy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:32:51 -0400
+        Tue, 10 Jul 2018 14:32:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3224CED;
-        Tue, 10 Jul 2018 18:32:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B825ACED;
+        Tue, 10 Jul 2018 18:32:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
         stable@kernel.org
-Subject: [PATCH 4.14 26/53] ext4: add more inode number paranoia checks
-Date:   Tue, 10 Jul 2018 20:25:02 +0200
-Message-Id: <20180710182500.384991104@linuxfoundation.org>
+Subject: [PATCH 4.14 27/53] ext4: add more mount time checks of the superblock
+Date:   Tue, 10 Jul 2018 20:25:03 +0200
+Message-Id: <20180710182500.433866427@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -52,67 +52,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Theodore Ts'o <tytso@mit.edu>
 
-commit c37e9e013469521d9adb932d17a1795c139b36db upstream.
+commit bfe0a5f47ada40d7984de67e59a7d3390b9b9ecc upstream.
 
-If there is a directory entry pointing to a system inode (such as a
-journal inode), complain and declare the file system to be corrupted.
+The kernel's ext4 mount-time checks were more permissive than
+e2fsprogs's libext2fs checks when opening a file system.  The
+superblock is considered too insane for debugfs or e2fsck to operate
+on it, the kernel has no business trying to mount it.
 
-Also, if the superblock's first inode number field is too small,
-refuse to mount the file system.
-
-This addresses CVE-2018-10882.
-
-https://bugzilla.kernel.org/show_bug.cgi?id=200069
+This will make file system fuzzing tools work harder, but the failure
+cases that they find will be more useful and be easier to evaluate.
 
 Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ext4.h  |    5 -----
- fs/ext4/inode.c |    3 ++-
- fs/ext4/super.c |    5 +++++
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ fs/ext4/super.c |   37 ++++++++++++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1542,11 +1542,6 @@ static inline struct ext4_inode_info *EX
- static inline int ext4_valid_inum(struct super_block *sb, unsigned long ino)
- {
- 	return ino == EXT4_ROOT_INO ||
--		ino == EXT4_USR_QUOTA_INO ||
--		ino == EXT4_GRP_QUOTA_INO ||
--		ino == EXT4_BOOT_LOADER_INO ||
--		ino == EXT4_JOURNAL_INO ||
--		ino == EXT4_RESIZE_INO ||
- 		(ino >= EXT4_FIRST_INO(sb) &&
- 		 ino <= le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count));
- }
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4455,7 +4455,8 @@ static int __ext4_get_inode_loc(struct i
- 	int			inodes_per_block, inode_offset;
- 
- 	iloc->bh = NULL;
--	if (!ext4_valid_inum(sb, inode->i_ino))
-+	if (inode->i_ino < EXT4_ROOT_INO ||
-+	    inode->i_ino > le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count))
- 		return -EFSCORRUPTED;
- 
- 	iloc->block_group = (inode->i_ino - 1) / EXT4_INODES_PER_GROUP(sb);
 --- a/fs/ext4/super.c
 +++ b/fs/ext4/super.c
-@@ -3811,6 +3811,11 @@ static int ext4_fill_super(struct super_
+@@ -3749,6 +3749,13 @@ static int ext4_fill_super(struct super_
+ 			 le32_to_cpu(es->s_log_block_size));
+ 		goto failed_mount;
+ 	}
++	if (le32_to_cpu(es->s_log_cluster_size) >
++	    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
++		ext4_msg(sb, KERN_ERR,
++			 "Invalid log cluster size: %u",
++			 le32_to_cpu(es->s_log_cluster_size));
++		goto failed_mount;
++	}
+ 
+ 	if (le16_to_cpu(sbi->s_es->s_reserved_gdt_blocks) > (blocksize / 4)) {
+ 		ext4_msg(sb, KERN_ERR,
+@@ -3892,13 +3899,6 @@ static int ext4_fill_super(struct super_
+ 				 "block size (%d)", clustersize, blocksize);
+ 			goto failed_mount;
+ 		}
+-		if (le32_to_cpu(es->s_log_cluster_size) >
+-		    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
+-			ext4_msg(sb, KERN_ERR,
+-				 "Invalid log cluster size: %u",
+-				 le32_to_cpu(es->s_log_cluster_size));
+-			goto failed_mount;
+-		}
+ 		sbi->s_cluster_bits = le32_to_cpu(es->s_log_cluster_size) -
+ 			le32_to_cpu(es->s_log_block_size);
+ 		sbi->s_clusters_per_group =
+@@ -3919,10 +3919,10 @@ static int ext4_fill_super(struct super_
+ 		}
  	} else {
- 		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
- 		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
-+		if (sbi->s_first_ino < EXT4_GOOD_OLD_FIRST_INO) {
-+			ext4_msg(sb, KERN_ERR, "invalid first ino: %u",
-+				 sbi->s_first_ino);
+ 		if (clustersize != blocksize) {
+-			ext4_warning(sb, "fragment/cluster size (%d) != "
+-				     "block size (%d)", clustersize,
+-				     blocksize);
+-			clustersize = blocksize;
++			ext4_msg(sb, KERN_ERR,
++				 "fragment/cluster size (%d) != "
++				 "block size (%d)", clustersize, blocksize);
 +			goto failed_mount;
-+		}
- 		if ((sbi->s_inode_size < EXT4_GOOD_OLD_INODE_SIZE) ||
- 		    (!is_power_of_2(sbi->s_inode_size)) ||
- 		    (sbi->s_inode_size > blocksize)) {
+ 		}
+ 		if (sbi->s_blocks_per_group > blocksize * 8) {
+ 			ext4_msg(sb, KERN_ERR,
+@@ -3976,6 +3976,13 @@ static int ext4_fill_super(struct super_
+ 			 ext4_blocks_count(es));
+ 		goto failed_mount;
+ 	}
++	if ((es->s_first_data_block == 0) && (es->s_log_block_size == 0) &&
++	    (sbi->s_cluster_ratio == 1)) {
++		ext4_msg(sb, KERN_WARNING, "bad geometry: first data "
++			 "block is 0 with a 1k block and cluster size");
++		goto failed_mount;
++	}
++
+ 	blocks_count = (ext4_blocks_count(es) -
+ 			le32_to_cpu(es->s_first_data_block) +
+ 			EXT4_BLOCKS_PER_GROUP(sb) - 1);
+@@ -4011,6 +4018,14 @@ static int ext4_fill_super(struct super_
+ 		ret = -ENOMEM;
+ 		goto failed_mount;
+ 	}
++	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
++	    le32_to_cpu(es->s_inodes_count)) {
++		ext4_msg(sb, KERN_ERR, "inodes count not valid: %u vs %llu",
++			 le32_to_cpu(es->s_inodes_count),
++			 ((u64)sbi->s_groups_count * sbi->s_inodes_per_group));
++		ret = -EINVAL;
++		goto failed_mount;
++	}
+ 
+ 	bgl_lock_init(sbi->s_blockgroup_lock);
+ 
 
 
