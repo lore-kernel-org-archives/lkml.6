@@ -3,171 +3,193 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F22AC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D4AC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BA72208EB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:09:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BA72208EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A4C7208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:09:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A4C7208EB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934463AbeGJQJX convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:09:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60720 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934322AbeGJQJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:09:20 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC8DE814F0A5;
-        Tue, 10 Jul 2018 16:09:19 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-122-125.rdu2.redhat.com [10.10.122.125])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 107882156889;
-        Tue, 10 Jul 2018 16:09:17 +0000 (UTC)
-Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>
-References: <1530905572-817-1-git-send-email-longman@redhat.com>
- <20180709081920.GD22049@dhcp22.suse.cz>
- <62275711-e01d-7dbe-06f1-bf094b618195@redhat.com>
- <20180710142740.GQ14284@dhcp22.suse.cz>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <a2794bcc-9193-cbca-3a54-47420a2ab52c@redhat.com>
-Date:   Tue, 10 Jul 2018 12:09:17 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        id S934488AbeGJQJw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:09:52 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:44015 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934062AbeGJQJv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 12:09:51 -0400
+Received: by mail-ed1-f67.google.com with SMTP id u11-v6so16968575eds.10;
+        Tue, 10 Jul 2018 09:09:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=1X+dgrB2ev9jDKmiI+Gt6wRc268Q8H8t0C/Ab9v9Vcw=;
+        b=GCeNeQIG2OCy+pTisXG0uX5N6B4t66TSijIP1tVLtgbiwRRuqoDhVu3B40KzECL9Hx
+         oULMSTPdJTmZoF/0ZDeCuZWPTXAGwch/JNpuLixKATqmtj9148sm/1Mrz+pomXHhYMYX
+         KdUznAWj8VvoAE57eZuF6aCg8fTwzdgz7Bh5+uESXzU/wZxAAy8AiAxIAftWq7r+NgCD
+         Oisck+aJ5fUcFBZLVUL2RRmQazbAH9LRzS/bCQTIzwyPPxPqNavuLn2RLovnxEjWzW66
+         Wmq+KnkgIe3knDjpOIw0GXJZY3ZFqQkfbpZGLeFsXSvW7WPWx7Es8YVWRavf/9N7epGx
+         Ct/A==
+X-Gm-Message-State: APt69E26hH0US6dpLWV3W6AK+aeTewvpUfXMHjgWDHa8uBxExiC4Lkwo
+        hVXpvJNkm5XcRB8tOWIbiNJdhwGm
+X-Google-Smtp-Source: AAOMgpeURH7wJ4OrxzGR9gfjqZGGvrISMKLZmolEmJA8Oz0ZMt+2rshR9TN81BqpiRPitdEwoVWiBA==
+X-Received: by 2002:a50:8386:: with SMTP id 6-v6mr27246758edi.170.1531238988868;
+        Tue, 10 Jul 2018 09:09:48 -0700 (PDT)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
+        by smtp.gmail.com with ESMTPSA id w2-v6sm957993edb.33.2018.07.10.09.09.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 09:09:48 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id j5-v6so8690190wrr.8;
+        Tue, 10 Jul 2018 09:09:47 -0700 (PDT)
+X-Received: by 2002:adf:c98d:: with SMTP id f13-v6mr17805049wrh.148.1531238987130;
+ Tue, 10 Jul 2018 09:09:47 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180710142740.GQ14284@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 10 Jul 2018 16:09:20 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 10 Jul 2018 16:09:20 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 09:09:26
+ -0700 (PDT)
+In-Reply-To: <20180706175113.26698-17-jernej.skrabec@siol.net>
+References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-17-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 11 Jul 2018 00:09:26 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64rjUnwnXbWxTSYJyhMyCV5QmV9YSr+Jryx3nEeMP8GJg@mail.gmail.com>
+Message-ID: <CAGb2v64rjUnwnXbWxTSYJyhMyCV5QmV9YSr+Jryx3nEeMP8GJg@mail.gmail.com>
+Subject: Re: [PATCH 16/17] drm/sun4i: tcon-top: Remove mux configuration at
+ probe time
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 10:27 AM, Michal Hocko wrote:
-> On Mon 09-07-18 12:01:04, Waiman Long wrote:
->> On 07/09/2018 04:19 AM, Michal Hocko wrote:
-> [...]
->>> later needs a special treatment while the first one is ok? There are
->>> quite some resources which allow a non privileged user to consume a lot
->>> of memory and the memory controller is the only reliable way to mitigate
->>> the risk.
->> Yes, memory controller is the only reliable way to mitigate the risk,
->> but not all tasks are under the control of a memory controller with
->> kernel memory limit.
-> But those which you do not trust should. So why do we need yet another
-> mechanism for the reclaim?
-
-Sometimes it could be a programming error in the code. I had seen a
-customer report about the negative dentries because of a bug in their
-code that generated a lot of negative dentries causing problem. In such
-a controlled environment, they may not want to run their applications
-under a memory cgroup as there is overhead involved in that. So a
-mechanism to highlight and notify the problem is probably good to have.
-
+On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> Now that R40 TCON migrated to runtime mux configuration, old code can be
+> removed.
 >
-> [...]
->>>> Patch 1 tracks the number of negative dentries present in the LRU
->>>> lists and reports it in /proc/sys/fs/dentry-state.
->>> If anything I _think_ vmstat would benefit from this because behavior of
->>> the memory reclaim does depend on the amount of neg. dentries.
->>>
->>>> Patch 2 adds a "neg-dentry-pc" sysctl parameter that can be used to to
->>>> specify a soft limit on the number of negative allowed as a percentage
->>>> of total system memory. This parameter is 0 by default which means no
->>>> negative dentry limiting will be performed.
->>> percentage has turned out to be a really wrong unit for many tunables
->>> over time. Even 1% can be just too much on really large machines.
->> Yes, that is true. Do you have any suggestion of what kind of unit
->> should be used? I can scale down the unit to 0.1% of the system memory.
->> Alternatively, one unit can be 10k/cpu thread, so a 20-thread system
->> corresponds to 200k, etc.
-> I simply think this is a strange user interface. How much is a
-> reasonable number? How can any admin figure that out?
-
-Without the optional enforcement, the limit is essentially just a
-notification mechanism where the system signals that there is something
-wrong going on and the system administrator need to take a look. So it
-is perfectly OK if the limit is sufficiently high that normally we won't
-need to use that many negative dentries. The goal is to prevent negative
-dentries from consuming a significant portion of the system memory.
-
-I am going to reduce the granularity of each unit to 1/1000 of the total
-system memory so that for large system with TB of memory, a smaller
-amount of memory can be specified.
-
->>>> Patch 3 enables automatic pruning of least recently used negative
->>>> dentries when the total number is close to the preset limit.
->>> Please explain why this cannot be done in a standard dcache shrinking
->>> way. I strongly suspect that you are developing yet another reclaim with
->>> its own sets of tunable and bypassing the existing infrastructure. I
->>> haven't read patches yet but the cover letter doesn't really explain
->>> design much so I am only guessing.
->> The standard dcache shrinking happens when the system is almost running
->> out of free memory.
-> Well, the standard reclaim happens when somebody needs memory. We are
-> usually quite far away from "almost running out of memory". We do
-> reclaim fs metadata including dentries so I really do not see why
-> negative ones should be any special here.
-
-That is fine. I can certainly live without the new reclaim mechanism.
-
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 81 +++-----------------------
+>  1 file changed, 7 insertions(+), 74 deletions(-)
 >
->> This new shrinker will be turned on when the number
->> of negative dentries is closed to the limit even when there are still
->> plenty of free memory left. It will stop when the number of negative
->> dentries is lowered to a safe level. The new shrinker is designed to
->> impose as little overhead to the currently running tasks. That is not
->> true for the standard shrinker which will have a rather significant
->> performance impact to the currently running tasks.
-> Do you have any numbers to back your claim? The memory reclaim is
-> usually quite lightweight. Especially when we have a lot of clean
-> fs {meta}data
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> index c09b15b64192..78795d6cb174 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
+> @@ -87,34 +87,6 @@ int sun8i_tcon_top_de_config(struct device *dev, int mixer, int tcon)
+>  }
+>  EXPORT_SYMBOL(sun8i_tcon_top_de_config);
+>
+> -static int sun8i_tcon_top_get_connected_ep_id(struct device_node *node,
+> -                                             int port_id)
+> -{
+> -       struct device_node *ep, *remote, *port;
+> -       struct of_endpoint endpoint;
+> -
+> -       port = of_graph_get_port_by_id(node, port_id);
+> -       if (!port)
+> -               return -ENOENT;
+> -
+> -       for_each_available_child_of_node(port, ep) {
+> -               remote = of_graph_get_remote_port_parent(ep);
+> -               if (!remote)
+> -                       continue;
+> -
+> -               if (of_device_is_available(remote)) {
+> -                       of_graph_parse_endpoint(ep, &endpoint);
+> -
+> -                       of_node_put(remote);
+> -
+> -                       return endpoint.id;
+> -               }
+> -
+> -               of_node_put(remote);
+> -       }
+> -
+> -       return -ENOENT;
+> -}
+>
+>  static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
+>                                                    const char *parent,
+> @@ -149,11 +121,9 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+>         struct platform_device *pdev = to_platform_device(dev);
+>         struct clk_hw_onecell_data *clk_data;
+>         struct sun8i_tcon_top *tcon_top;
+> -       bool mixer0_unused = false;
+>         struct resource *res;
+>         void __iomem *regs;
+> -       int ret, i, id;
+> -       u32 val;
+> +       int ret, i;
+>
+>         tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
+>         if (!tcon_top)
+> @@ -198,49 +168,12 @@ static int sun8i_tcon_top_bind(struct device *dev, struct device *master,
+>                 goto err_assert_reset;
+>         }
+>
+> -       val = 0;
+> -
+> -       /* check if HDMI mux output is connected */
+> -       if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >= 0) {
+> -               /* find HDMI input endpoint id, if it is connected at all*/
+> -               id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 4);
+> -               if (id >= 0)
+> -                       val = FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id + 1);
+> -               else
+> -                       DRM_DEBUG_DRIVER("TCON TOP HDMI input is not connected\n");
+> -       } else {
+> -               DRM_DEBUG_DRIVER("TCON TOP HDMI output is not connected\n");
+> -       }
+> -
+> -       writel(val, regs + TCON_TOP_GATE_SRC_REG);
+> -
+> -       val = 0;
+> -
+> -       /* process mixer0 mux output */
+> -       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
+> -       if (id >= 0) {
+> -               val = FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
+> -       } else {
+> -               DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not connected\n");
+> -               mixer0_unused = true;
+> -       }
+> -
+> -       /* process mixer1 mux output */
+> -       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
+> -       if (id >= 0) {
+> -               val |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
+> -
+> -               /*
+> -                * mixer0 mux has priority over mixer1 mux. We have to
+> -                * make sure mixer0 doesn't overtake TCON from mixer1.
+> -                */
+> -               if (mixer0_unused && id == 0)
+> -                       val |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
+> -       } else {
+> -               DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not connected\n");
+> -       }
+> -
+> -       writel(val, regs + TCON_TOP_PORT_SEL_REG);
+> +       /*
+> +        * Default register values might have some reserved bits set, which
+> +        * prevents TCON TOP from working properly. Set them to 0 here.
+> +        */
+> +       writel(0, regs + TCON_TOP_GATE_SRC_REG);
+> +       writel(0, regs + TCON_TOP_PORT_SEL_REG);
 
-In the case of dentries, it is the lock hold time of the LRU list that
-can impact the normal filesystem operation. The new shrinker that I add
-purposely limit the lock hold time whereas the standard shrinker can
-hold the LRU for quite a long time if there are a lot of dentries to get
-rid of. I have some performance numbers in the cover letter of this
-patch about this.
+Would it make sense to just force a reset using the reset control?
 
->> I can remove the new shrinker if people really don't want to add a new
->> one as long as I can keep the option to kill off newly created negative
->> dentries when the limit is exceeded.
-> Please let's not add yet another memory reclaim mechanism. It will just
-> backfire sooner or later.
-
-As said above, I am going to remove the new shrinker in the next version
-of the patch. We can always add it back later on if we feel there is a
-need to do it.
-
-Cheers,
-Longman
-
-
+ChenYu
