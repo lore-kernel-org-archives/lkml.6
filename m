@@ -5,145 +5,439 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 544B7C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94984C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F1E20849
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:44:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F1E20849
+	by mail.kernel.org (Postfix) with ESMTP id 4490620849
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:44:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4490620849
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732809AbeGJWpT (ORCPT
+        id S1732823AbeGJWp0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:45:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51666 "EHLO mx1.redhat.com"
+        Tue, 10 Jul 2018 18:45:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43556 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732386AbeGJWpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:45:18 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        id S1732366AbeGJWpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:45:25 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 828E84059FE3;
-        Tue, 10 Jul 2018 22:44:04 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0C6718182D27;
+        Tue, 10 Jul 2018 22:44:11 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E23762026D6B;
-        Tue, 10 Jul 2018 22:44:03 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2343C111AF0A;
+        Tue, 10 Jul 2018 22:44:10 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
  Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
  Kingdom.
  Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 23/32] Make anon_inodes unconditional [ver #9]
+Subject: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for superblock
+ creation [ver #9]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Date:   Tue, 10 Jul 2018 23:44:03 +0100
-Message-ID: <153126264345.14533.10101980065131428368.stgit@warthog.procyon.org.uk>
+Cc:     dhowells@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 10 Jul 2018 23:44:09 +0100
+Message-ID: <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
 In-Reply-To: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
 References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 22:44:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 22:44:04 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 10 Jul 2018 22:44:11 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 10 Jul 2018 22:44:11 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make the anon_inodes facility unconditional so that it can be used by core
-VFS code.
+Provide an fsopen() system call that starts the process of preparing to
+create a superblock that will then be mountable, using an fd as a context
+handle.  fsopen() is given the name of the filesystem that will be used:
+
+	int mfd = fsopen(const char *fsname, unsigned int flags);
+
+where flags can be 0 or FSOPEN_CLOEXEC.
+
+For example:
+
+	sfd = fsopen("ext4", FSOPEN_CLOEXEC);
+	write(sfd, "s /dev/sdb1"); // note I'm ignoring write's length arg
+	write(sfd, "o noatime");
+	write(sfd, "o acl");
+	write(sfd, "o user_attr");
+	write(sfd, "o iversion");
+	write(sfd, "o ");
+	write(sfd, "r /my/container"); // root inside the fs
+	write(sfd, "x create"); // create the superblock
+	fsinfo(sfd, NULL, ...); // query new superblock attributes
+	mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MS_RELATIME);
+	move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+	sfd = fsopen("afs", -1);
+	write(sfd, "s %grand.central.org:root.cell");
+	write(sfd, "o cell=grand.central.org");
+	write(sfd, "r /");
+	write(sfd, "x create");
+	mfd = fsmount(sfd, 0, MS_NODEV);
+	move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
+
+If an error is reported at any step, an error message may be available to be
+read() back (ENODATA will be reported if there isn't an error available) in
+the form:
+
+	"e <subsys>:<problem>"
+	"e SELinux:Mount on mountpoint not permitted"
+
+Once fsmount() has been called, further write() calls will incur EBUSY,
+even if the fsmount() fails.  read() is still possible to retrieve error
+information.
+
+The fsopen() syscall creates a mount context and hangs it of the fd that it
+returns.
+
+Netlink is not used because it is optional and would make the core VFS
+dependent on the networking layer and also potentially add network
+namespace issues.
+
+Note that, for the moment, the caller must have SYS_CAP_ADMIN to use
+fsopen().
 
 Signed-off-by: David Howells <dhowells@redhat.com>
+cc: linux-api@vger.kernel.org
 ---
 
- fs/Makefile  |    2 +-
- init/Kconfig |   10 ----------
- 2 files changed, 1 insertion(+), 11 deletions(-)
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 
+ fs/Makefile                            |    2 
+ fs/fs_context.c                        |    4 +
+ fs/fsopen.c                            |  209 ++++++++++++++++++++++++++++++++
+ include/linux/fs_context.h             |    2 
+ include/linux/syscalls.h               |    1 
+ include/uapi/linux/fs.h                |    5 +
+ 8 files changed, 224 insertions(+), 1 deletion(-)
+ create mode 100644 fs/fsopen.c
 
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 76d092b7d1b0..1647fefd2969 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -400,3 +400,4 @@
+ 386	i386	rseq			sys_rseq			__ia32_sys_rseq
+ 387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
+ 388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
++389	i386	fsopen			sys_fsopen			__ia32_sys_fsopen
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index 37ba4e65eee6..235d33dbccb2 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -345,6 +345,7 @@
+ 334	common	rseq			__x64_sys_rseq
+ 335	common	open_tree		__x64_sys_open_tree
+ 336	common	move_mount		__x64_sys_move_mount
++337	common	fsopen			__x64_sys_fsopen
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
 diff --git a/fs/Makefile b/fs/Makefile
-index 5563cf34f7c2..7e9ca59ac3a7 100644
+index 7e9ca59ac3a7..d3b33798998e 100644
 --- a/fs/Makefile
 +++ b/fs/Makefile
-@@ -25,7 +25,7 @@ obj-$(CONFIG_PROC_FS) += proc_namespace.o
+@@ -13,7 +13,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+ 		seq_file.o xattr.o libfs.o fs-writeback.o \
+ 		pnode.o splice.o sync.o utimes.o d_path.o \
+ 		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+-		fs_context.o
++		fs_context.o fsopen.o
  
- obj-y				+= notify/
- obj-$(CONFIG_EPOLL)		+= eventpoll.o
--obj-$(CONFIG_ANON_INODES)	+= anon_inodes.o
-+obj-y				+= anon_inodes.o
- obj-$(CONFIG_SIGNALFD)		+= signalfd.o
- obj-$(CONFIG_TIMERFD)		+= timerfd.o
- obj-$(CONFIG_EVENTFD)		+= eventfd.o
-diff --git a/init/Kconfig b/init/Kconfig
-index 5a52f07259a2..d8303f4af5d2 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1066,9 +1066,6 @@ config LD_DEAD_CODE_DATA_ELIMINATION
- config SYSCTL
- 	bool
+ ifeq ($(CONFIG_BLOCK),y)
+ obj-y +=	buffer.o block_dev.o direct-io.o mpage.o
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index b7c84e0aa2f9..a2d745e6d356 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -251,6 +251,8 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
+ 	fc->fs_type	= get_filesystem(fs_type);
+ 	fc->cred	= get_current_cred();
  
--config ANON_INODES
--	bool
--
- config HAVE_UID16
- 	bool
++	mutex_init(&fc->uapi_mutex);
++
+ 	switch (purpose) {
+ 	case FS_CONTEXT_FOR_KERNEL_MOUNT:
+ 		fc->sb_flags |= SB_KERNMOUNT;
+@@ -335,6 +337,8 @@ struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
+ 	if (!fc)
+ 		return ERR_PTR(-ENOMEM);
  
-@@ -1273,14 +1270,12 @@ config HAVE_FUTEX_CMPXCHG
- config EPOLL
- 	bool "Enable eventpoll support" if EXPERT
- 	default y
--	select ANON_INODES
- 	help
- 	  Disabling this option will cause the kernel to be built without
- 	  support for epoll family of system calls.
++	mutex_init(&fc->uapi_mutex);
++
+ 	fc->fs_private	= NULL;
+ 	fc->s_fs_info	= NULL;
+ 	fc->source	= NULL;
+diff --git a/fs/fsopen.c b/fs/fsopen.c
+new file mode 100644
+index 000000000000..28bb72bda163
+--- /dev/null
++++ b/fs/fsopen.c
+@@ -0,0 +1,209 @@
++/* Filesystem access-by-fd.
++ *
++ * Copyright (C) 2017 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/fs_context.h>
++#include <linux/slab.h>
++#include <linux/uaccess.h>
++#include <linux/syscalls.h>
++#include <linux/security.h>
++#include <linux/anon_inodes.h>
++#include "mount.h"
++
++/*
++ * Userspace writes configuration data and commands to the fd and we parse it
++ * here.  For the moment, we assume a single option or command per write.  Each
++ * line written is of the form
++ *
++ *	<command_type><space><stuff...>
++ *
++ *	s /dev/sda1				-- Source device
++ *	o noatime				-- Option without value
++ *	o cell=grand.central.org		-- Option with value
++ *	x create				-- Create a superblock
++ *	x reconfigure				-- Reconfigure a superblock
++ */
++static ssize_t fscontext_write(struct file *file,
++			       const char __user *_buf, size_t len, loff_t *pos)
++{
++	struct fs_context *fc = file->private_data;
++	char opt[2], *data;
++	ssize_t ret;
++
++	if (len < 3 || len > 4095)
++		return -EINVAL;
++
++	if (copy_from_user(opt, _buf, 2) != 0)
++		return -EFAULT;
++	switch (opt[0]) {
++	case 's':
++	case 'o':
++	case 'x':
++		break;
++	default:
++		return -EINVAL;
++	}
++	if (opt[1] != ' ')
++		return -EINVAL;
++
++	data = memdup_user_nul(_buf + 2, len - 2);
++	if (IS_ERR(data))
++		return PTR_ERR(data);
++
++	/* From this point onwards we need to lock the fd against someone
++	 * trying to mount it.
++	 */
++	ret = mutex_lock_interruptible(&fc->uapi_mutex);
++	if (ret < 0)
++		goto err_free;
++
++	if (fc->phase == FS_CONTEXT_AWAITING_RECONF) {
++		if (fc->fs_type->init_fs_context) {
++			ret = fc->fs_type->init_fs_context(fc, fc->root);
++			if (ret < 0) {
++				fc->phase = FS_CONTEXT_FAILED;
++				goto err_unlock;
++			}
++		} else {
++			/* Leave legacy context ops in place */
++		}
++
++		/* Do the security check last because ->init_fs_context may
++		 * change the namespace subscriptions.
++		 */
++		ret = security_fs_context_alloc(fc, fc->root);
++		if (ret < 0) {
++			fc->phase = FS_CONTEXT_FAILED;
++			goto err_unlock;
++		}
++
++		fc->phase = FS_CONTEXT_RECONF_PARAMS;
++	}
++
++	ret = -EINVAL;
++	switch (opt[0]) {
++	case 's':
++		if (fc->phase != FS_CONTEXT_CREATE_PARAMS &&
++		    fc->phase != FS_CONTEXT_RECONF_PARAMS)
++			goto wrong_phase;
++		ret = vfs_set_fs_source(fc, data, len - 2);
++		if (ret < 0)
++			goto err_unlock;
++		break;
++
++	case 'o':
++		if (fc->phase != FS_CONTEXT_CREATE_PARAMS &&
++		    fc->phase != FS_CONTEXT_RECONF_PARAMS)
++			goto wrong_phase;
++		ret = vfs_parse_fs_option(fc, data, len - 2);
++		if (ret < 0)
++			goto err_unlock;
++		break;
++
++	case 'x':
++		if (strcmp(data, "create") == 0) {
++			if (fc->phase != FS_CONTEXT_CREATE_PARAMS)
++				goto wrong_phase;
++			fc->phase = FS_CONTEXT_CREATING;
++			ret = vfs_get_tree(fc);
++			if (ret == 0)
++				fc->phase = FS_CONTEXT_AWAITING_MOUNT;
++			else
++				fc->phase = FS_CONTEXT_FAILED;
++		} else {
++			ret = -EOPNOTSUPP;
++		}
++		if (ret < 0)
++			goto err_unlock;
++		break;
++
++	default:
++		goto err_unlock;
++	}
++
++	ret = len;
++err_unlock:
++	mutex_unlock(&fc->uapi_mutex);
++err_free:
++	kfree(data);
++	return ret;
++
++wrong_phase:
++	ret = -EBUSY;
++	goto err_unlock;
++}
++
++static int fscontext_release(struct inode *inode, struct file *file)
++{
++	struct fs_context *fc = file->private_data;
++
++	if (fc) {
++		file->private_data = NULL;
++		put_fs_context(fc);
++	}
++	return 0;
++}
++
++const struct file_operations fscontext_fs_fops = {
++	.write		= fscontext_write,
++	.release	= fscontext_release,
++	.llseek		= no_llseek,
++};
++
++/*
++ * Attach a filesystem context to a file and an fd.
++ */
++static int fscontext_create_fd(struct fs_context *fc, unsigned int o_flags)
++{
++	int fd;
++
++	fd = anon_inode_getfd("fscontext", &fscontext_fs_fops, fc,
++			      O_RDWR | o_flags);
++	if (fd < 0)
++		put_fs_context(fc);
++	return fd;
++}
++
++/*
++ * Open a filesystem by name so that it can be configured for mounting.
++ *
++ * We are allowed to specify a container in which the filesystem will be
++ * opened, thereby indicating which namespaces will be used (notably, which
++ * network namespace will be used for network filesystems).
++ */
++SYSCALL_DEFINE2(fsopen, const char __user *, _fs_name, unsigned int, flags)
++{
++	struct file_system_type *fs_type;
++	struct fs_context *fc;
++	const char *fs_name;
++
++	if (!ns_capable(current->nsproxy->mnt_ns->user_ns, CAP_SYS_ADMIN))
++		return -EPERM;
++
++	if (flags & ~FSOPEN_CLOEXEC)
++		return -EINVAL;
++
++	fs_name = strndup_user(_fs_name, PAGE_SIZE);
++	if (IS_ERR(fs_name))
++		return PTR_ERR(fs_name);
++
++	fs_type = get_fs_type(fs_name);
++	kfree(fs_name);
++	if (!fs_type)
++		return -ENODEV;
++
++	fc = vfs_new_fs_context(fs_type, NULL, 0, FS_CONTEXT_FOR_USER_MOUNT);
++	put_filesystem(fs_type);
++	if (IS_ERR(fc))
++		return PTR_ERR(fc);
++
++	fc->phase = FS_CONTEXT_CREATE_PARAMS;
++	return fscontext_create_fd(fc, flags & FSOPEN_CLOEXEC ? O_CLOEXEC : 0);
++}
+diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
+index f157ff935a1e..387f25d7acc4 100644
+--- a/include/linux/fs_context.h
++++ b/include/linux/fs_context.h
+@@ -14,6 +14,7 @@
  
- config SIGNALFD
- 	bool "Enable signalfd() system call" if EXPERT
--	select ANON_INODES
- 	default y
- 	help
- 	  Enable the signalfd() system call that allows to receive signals
-@@ -1290,7 +1285,6 @@ config SIGNALFD
+ #include <linux/kernel.h>
+ #include <linux/errno.h>
++#include <linux/mutex.h>
  
- config TIMERFD
- 	bool "Enable timerfd() system call" if EXPERT
--	select ANON_INODES
- 	default y
- 	help
- 	  Enable the timerfd() system call that allows to receive timer
-@@ -1300,7 +1294,6 @@ config TIMERFD
+ struct cred;
+ struct dentry;
+@@ -58,6 +59,7 @@ enum fs_context_phase {
+  */
+ struct fs_context {
+ 	const struct fs_context_operations *ops;
++	struct mutex		uapi_mutex;	/* Userspace access mutex */
+ 	struct file_system_type	*fs_type;
+ 	void			*fs_private;	/* The filesystem's context */
+ 	struct dentry		*root;		/* The root and superblock */
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 3c0855d9b105..ad6c7ff33c01 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -904,6 +904,7 @@ asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
+ asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
+ 			       int to_dfd, const char __user *to_path,
+ 			       unsigned int ms_flags);
++asmlinkage long sys_fsopen(const char __user *fs_name, unsigned int flags);
  
- config EVENTFD
- 	bool "Enable eventfd() system call" if EXPERT
--	select ANON_INODES
- 	default y
- 	help
- 	  Enable the eventfd() system call that allows to receive both
-@@ -1414,7 +1407,6 @@ config KALLSYMS_BASE_RELATIVE
- # syscall, maps, verifier
- config BPF_SYSCALL
- 	bool "Enable bpf() system call"
--	select ANON_INODES
- 	select BPF
- 	select IRQ_WORK
- 	default n
-@@ -1431,7 +1423,6 @@ config BPF_JIT_ALWAYS_ON
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index 1c982eb44ff4..f8818e6cddd6 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -344,4 +344,9 @@ typedef int __bitwise __kernel_rwf_t;
+ #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
+ 			 RWF_APPEND)
  
- config USERFAULTFD
- 	bool "Enable userfaultfd() system call"
--	select ANON_INODES
- 	depends on MMU
- 	help
- 	  Enable the userfaultfd() system call that allows to intercept and
-@@ -1498,7 +1489,6 @@ config PERF_EVENTS
- 	bool "Kernel performance events and counters"
- 	default y if PROFILING
- 	depends on HAVE_PERF_EVENTS
--	select ANON_INODES
- 	select IRQ_WORK
- 	select SRCU
- 	help
++/*
++ * Flags for fsopen() and co.
++ */
++#define FSOPEN_CLOEXEC		0x00000001
++
+ #endif /* _UAPI_LINUX_FS_H */
 
