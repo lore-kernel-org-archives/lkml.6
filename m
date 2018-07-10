@@ -2,107 +2,100 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E39C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 829CDC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89070208E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:16:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89070208E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1D94A208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:19:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D94A208E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933558AbeGJOP5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 10:15:57 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47510 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754265AbeGJOP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 10:15:56 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63D4880D;
-        Tue, 10 Jul 2018 07:15:56 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 316CD3F589;
-        Tue, 10 Jul 2018 07:15:56 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id E8E921AE53F3; Tue, 10 Jul 2018 15:16:37 +0100 (BST)
-Date:   Tue, 10 Jul 2018 15:16:37 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Nikunj Kela <nkela@cisco.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        xe-kernel@external.cisco.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3] arm64: add ARM64-specific support for flatmem
-Message-ID: <20180710141637.GB9022@arm.com>
-References: <20180706174724.44594-1-nkela@cisco.com>
- <CAK8P3a0Op6DudVf--n4u_qimcvJf19OkbdzGm6ak=nB44oZEGQ@mail.gmail.com>
- <20180710130650.GD31318@arm.com>
- <CAK8P3a2ss5tYve6xL7eE50ev3zVPOHzN5QtroWYmTih0F3sQYQ@mail.gmail.com>
+        id S933532AbeGJOTo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 10:19:44 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:33717 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754260AbeGJOTn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 10:19:43 -0400
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fctUT-0006uF-ET; Tue, 10 Jul 2018 16:19:41 +0200
+Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <sha@pengutronix.de>)
+        id 1fctUS-0004jL-7h; Tue, 10 Jul 2018 16:19:40 +0200
+Date:   Tue, 10 Jul 2018 16:19:40 +0200
+From:   Sascha Hauer <s.hauer@pengutronix.de>
+To:     Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     linux-arm-kernel@lists.infradead.org, dongas86@gmail.com,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Oleksij Rempel <o.rempel@pengutronix.de>, linux-imx@nxp.com,
+        kernel@pengutronix.de, fabio.estevam@nxp.com, shawnguo@kernel.org
+Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
+Message-ID: <20180710141940.oed3kwhbplnykl36@pengutronix.de>
+References: <1531061817-1980-1-git-send-email-aisheng.dong@nxp.com>
+ <1531061817-1980-4-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a2ss5tYve6xL7eE50ev3zVPOHzN5QtroWYmTih0F3sQYQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1531061817-1980-4-git-send-email-aisheng.dong@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 08:43:25 up 27 days, 15:52, 62 users,  load average: 0.05, 0.08,
+ 0.08
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 03:25:14PM +0200, Arnd Bergmann wrote:
-> On Tue, Jul 10, 2018 at 3:06 PM, Will Deacon <will.deacon@arm.com> wrote:
-> > On Tue, Jul 10, 2018 at 02:55:41PM +0200, Arnd Bergmann wrote:
-> >> On Fri, Jul 6, 2018 at 7:47 PM, Nikunj Kela <nkela@cisco.com> wrote:
-> >> > Flatmem is useful in reducing kernel memory usage.
-> >> > One usecase is in kdump kernel. We are able to save
-> >> > ~14M by moving to flatmem scheme.
-> >> >
-> >> > Cc: xe-kernel@external.cisco.com
-> >> > Cc: Nikunj Kela <nkela@cisco.com>
-> >> > Signed-off-by: Nikunj Kela <nkela@cisco.com>
-> >> > ---
-> >> >  arch/arm64/Kconfig | 3 +++
-> >> >  1 file changed, 3 insertions(+)
-> >> >
-> >> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> >> > index 42c090c..f5b4c49 100644
-> >> > --- a/arch/arm64/Kconfig
-> >> > +++ b/arch/arm64/Kconfig
-> >> > @@ -775,6 +775,9 @@ config ARCH_SPARSEMEM_DEFAULT
-> >> >  config ARCH_SELECT_MEMORY_MODEL
-> >> >         def_bool ARCH_SPARSEMEM_ENABLE
-> >> >
-> >> > +config ARCH_FLATMEM_ENABLE
-> >> > +       def_bool y
-> >> > +
-> >> >  config HAVE_ARCH_PFN_VALID
-> >> >         def_bool ARCH_HAS_HOLES_MEMORYMODEL || !SPARSEMEM
-> >> >
-> >>
-> >> I'm getting hundreds of errors in randconfig builds with this:
-> >
-> > Damn, I was worried something like this might happen. Sorry!
-> >
-> > Does randconfig also fuzz CONFIG_EXPERT? We only added ARCH_FLATMEM_ENABLE
-> > so that people can hand-configure crashkernels to make them small; there will
-> > be plenty of situations where it's just going to cause more problems than it
-> > solves, so I'd be happy hiding it behind EXPERT if it helps.
-> 
-> Yes, randconfig also tests EXPERT and COMPILE_TEST configurations, though I
-> don't test the !COMPILE_TEST ones myself, so you can also hide options from
-> me by making them 'depends on !COMPILE_TEST'.
-> 
-> > Otherwise we can probably through a 'def_bool !NUMA' at it.
-> 
-> Yes, I was going to send a patch with that next after testing it some more.
-> So far it's holding up. This is also what some other architectures have, so
-> it's probably safe.
+Hi,
 
-Ok, let's go with that then. If I don't see a patch from you in a day or
-two, I'll write one myself :)
+On Sun, Jul 08, 2018 at 10:56:55PM +0800, Dong Aisheng wrote:
+> This is used for i.MX multi core communication.
+> e.g. A core to SCU firmware(M core) on MX8.
+> 
+> Tx is using polling mode while Rx is interrupt driven and
+> schedule a hrtimer to receive remain words if have more than
+> 4 words.
 
-Will
+You told us that using interrupts is not possible due to miserable
+performance, we then provided you a way with which you could poll.  Why
+are you using interrupts now?
+
+We also suggested a way how the SCU mode could be integrated into the
+generic MU support driver Oleksij posted and now you send a driver which
+uses the same name as Oleksijs driver, but it only and exclusively works
+in SCU mode. This doesn't bring us forward.
+
+We suggested a binding that allows coexisting of the SCU mode and the
+generic mode of the MU by putting the mode information into the second
+mbox-cell. Why don't you use this?
+
+I don't think it's necessary to rewrite Oleksijs driver, instead it
+should rather be extended with the code I already provided as an
+example. With that we could make both of us happy since we can both
+have a suitable driver and even share most of the MU code.
+
+Regards,
+Sascha
+
+-- 
+Pengutronix e.K.                           |                             |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
