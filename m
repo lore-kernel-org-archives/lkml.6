@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 648E4C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 982F0C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFBB20BEC
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:31:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFBB20BEC
+	by mail.kernel.org (Postfix) with ESMTP id 5D28D20B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:31:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D28D20B6F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732594AbeGJWcb (ORCPT
+        id S1732559AbeGJWc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:32:31 -0400
+        Tue, 10 Jul 2018 18:32:29 -0400
 Received: from mga11.intel.com ([192.55.52.93]:41890 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732543AbeGJWca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:32:30 -0400
+        id S1732519AbeGJWc2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:32:28 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 15:31:17 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 15:31:16 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
-   d="scan'208";a="70305458"
+   d="scan'208";a="70305451"
 Received: from 2b52.sc.intel.com ([143.183.136.52])
   by fmsmga004.fm.intel.com with ESMTP; 10 Jul 2018 15:31:16 -0700
 From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
@@ -53,9 +53,9 @@ To:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Subject: [RFC PATCH v2 25/27] x86/cet: Add PTRACE interface for CET
-Date:   Tue, 10 Jul 2018 15:26:37 -0700
-Message-Id: <20180710222639.8241-26-yu-cheng.yu@intel.com>
+Subject: [RFC PATCH v2 23/27] mm/mmap: Add IBT bitmap size to address space limit check
+Date:   Tue, 10 Jul 2018 15:26:35 -0700
+Message-Id: <20180710222639.8241-24-yu-cheng.yu@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180710222639.8241-1-yu-cheng.yu@intel.com>
 References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
@@ -64,142 +64,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PTRACE interface for CET MSRs.
+The indirect branch tracking legacy bitmap takes a large address
+space.  This causes may_expand_vm() failure on the address limit
+check.  For a IBT-enabled task, add the bitmap size to the
+address limit.
 
 Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
 ---
- arch/x86/include/asm/fpu/regset.h |  7 +++---
- arch/x86/kernel/fpu/regset.c      | 41 +++++++++++++++++++++++++++++++
- arch/x86/kernel/ptrace.c          | 16 ++++++++++++
- include/uapi/linux/elf.h          |  1 +
- 4 files changed, 62 insertions(+), 3 deletions(-)
+ arch/x86/include/uapi/asm/resource.h |  5 +++++
+ include/uapi/asm-generic/resource.h  |  3 +++
+ mm/mmap.c                            | 12 +++++++++++-
+ 3 files changed, 19 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/fpu/regset.h b/arch/x86/include/asm/fpu/regset.h
-index d5bdffb9d27f..edad0d889084 100644
---- a/arch/x86/include/asm/fpu/regset.h
-+++ b/arch/x86/include/asm/fpu/regset.h
-@@ -7,11 +7,12 @@
- 
- #include <linux/regset.h>
- 
--extern user_regset_active_fn regset_fpregs_active, regset_xregset_fpregs_active;
-+extern user_regset_active_fn regset_fpregs_active, regset_xregset_fpregs_active,
-+				cetregs_active;
- extern user_regset_get_fn fpregs_get, xfpregs_get, fpregs_soft_get,
--				xstateregs_get;
-+				xstateregs_get, cetregs_get;
- extern user_regset_set_fn fpregs_set, xfpregs_set, fpregs_soft_set,
--				 xstateregs_set;
-+				 xstateregs_set, cetregs_set;
- 
- /*
-  * xstateregs_active == regset_fpregs_active. Please refer to the comment
-diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
-index bc02f5144b95..7008eb084d36 100644
---- a/arch/x86/kernel/fpu/regset.c
-+++ b/arch/x86/kernel/fpu/regset.c
-@@ -160,6 +160,47 @@ int xstateregs_set(struct task_struct *target, const struct user_regset *regset,
- 	return ret;
- }
- 
-+int cetregs_active(struct task_struct *target, const struct user_regset *regset)
-+{
+diff --git a/arch/x86/include/uapi/asm/resource.h b/arch/x86/include/uapi/asm/resource.h
+index 04bc4db8921b..0741b2a6101a 100644
+--- a/arch/x86/include/uapi/asm/resource.h
++++ b/arch/x86/include/uapi/asm/resource.h
+@@ -1 +1,6 @@
++/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
 +#ifdef CONFIG_X86_INTEL_CET
-+	if (target->thread.cet.shstk_enabled || target->thread.cet.ibt_enabled)
-+		return regset->n;
++#define rlimit_as_extra() current->thread.cet.ibt_bitmap_size
 +#endif
-+	return 0;
-+}
 +
-+int cetregs_get(struct task_struct *target, const struct user_regset *regset,
-+		unsigned int pos, unsigned int count,
-+		void *kbuf, void __user *ubuf)
-+{
-+	struct fpu *fpu = &target->thread.fpu;
-+	struct cet_user_state *cetregs;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SHSTK))
-+		return -ENODEV;
-+
-+	cetregs = get_xsave_addr(&fpu->state.xsave, XFEATURE_MASK_SHSTK_USER);
-+
-+	fpu__prepare_read(fpu);
-+	return user_regset_copyout(&pos, &count, &kbuf, &ubuf, cetregs, 0, -1);
-+}
-+
-+int cetregs_set(struct task_struct *target, const struct user_regset *regset,
-+		  unsigned int pos, unsigned int count,
-+		  const void *kbuf, const void __user *ubuf)
-+{
-+	struct fpu *fpu = &target->thread.fpu;
-+	struct cet_user_state *cetregs;
-+
-+	if (!boot_cpu_has(X86_FEATURE_SHSTK))
-+		return -ENODEV;
-+
-+	cetregs = get_xsave_addr(&fpu->state.xsave, XFEATURE_MASK_SHSTK_USER);
-+
-+	fpu__prepare_write(fpu);
-+	return user_regset_copyin(&pos, &count, &kbuf, &ubuf, cetregs, 0, -1);
-+}
-+
- #if defined CONFIG_X86_32 || defined CONFIG_IA32_EMULATION
+ #include <asm-generic/resource.h>
+diff --git a/include/uapi/asm-generic/resource.h b/include/uapi/asm-generic/resource.h
+index f12db7a0da64..8a7608a09700 100644
+--- a/include/uapi/asm-generic/resource.h
++++ b/include/uapi/asm-generic/resource.h
+@@ -58,5 +58,8 @@
+ # define RLIM_INFINITY		(~0UL)
+ #endif
  
- /*
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index e2ee403865eb..ac2bc3a18427 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -49,7 +49,9 @@ enum x86_regset {
- 	REGSET_IOPERM64 = REGSET_XFP,
- 	REGSET_XSTATE,
- 	REGSET_TLS,
-+	REGSET_CET64 = REGSET_TLS,
- 	REGSET_IOPERM32,
-+	REGSET_CET32,
- };
++#ifndef rlimit_as_extra
++#define rlimit_as_extra() 0
++#endif
  
- struct pt_regs_offset {
-@@ -1276,6 +1278,13 @@ static struct user_regset x86_64_regsets[] __ro_after_init = {
- 		.size = sizeof(long), .align = sizeof(long),
- 		.active = ioperm_active, .get = ioperm_get
- 	},
-+	[REGSET_CET64] = {
-+		.core_note_type = NT_X86_CET,
-+		.n = sizeof(struct cet_user_state) / sizeof(u64),
-+		.size = sizeof(u64), .align = sizeof(u64),
-+		.active = cetregs_active, .get = cetregs_get,
-+		.set = cetregs_set
-+	},
- };
+ #endif /* _UAPI_ASM_GENERIC_RESOURCE_H */
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d1eb87ef4b1a..fad41b291ae1 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3242,7 +3242,17 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+  */
+ bool may_expand_vm(struct mm_struct *mm, vm_flags_t flags, unsigned long npages)
+ {
+-	if (mm->total_vm + npages > rlimit(RLIMIT_AS) >> PAGE_SHIFT)
++	unsigned long as_limit = rlimit(RLIMIT_AS);
++	unsigned long as_limit_plus = as_limit + rlimit_as_extra();
++
++	/* as_limit_plus overflowed */
++	if (as_limit_plus < as_limit)
++		as_limit_plus = RLIM_INFINITY;
++
++	if (as_limit_plus > as_limit)
++		as_limit = as_limit_plus;
++
++	if (mm->total_vm + npages > as_limit >> PAGE_SHIFT)
+ 		return false;
  
- static const struct user_regset_view user_x86_64_view = {
-@@ -1331,6 +1340,13 @@ static struct user_regset x86_32_regsets[] __ro_after_init = {
- 		.size = sizeof(u32), .align = sizeof(u32),
- 		.active = ioperm_active, .get = ioperm_get
- 	},
-+	[REGSET_CET32] = {
-+		.core_note_type = NT_X86_CET,
-+		.n = sizeof(struct cet_user_state) / sizeof(u64),
-+		.size = sizeof(u64), .align = sizeof(u64),
-+		.active = cetregs_active, .get = cetregs_get,
-+		.set = cetregs_set
-+	},
- };
- 
- static const struct user_regset_view user_x86_32_view = {
-diff --git a/include/uapi/linux/elf.h b/include/uapi/linux/elf.h
-index dc93982b9664..0898ba719fd7 100644
---- a/include/uapi/linux/elf.h
-+++ b/include/uapi/linux/elf.h
-@@ -401,6 +401,7 @@ typedef struct elf64_shdr {
- #define NT_386_TLS	0x200		/* i386 TLS slots (struct user_desc) */
- #define NT_386_IOPERM	0x201		/* x86 io permission bitmap (1=deny) */
- #define NT_X86_XSTATE	0x202		/* x86 extended state using xsave */
-+#define NT_X86_CET	0x203		/* x86 cet state */
- #define NT_S390_HIGH_GPRS	0x300	/* s390 upper register halves */
- #define NT_S390_TIMER	0x301		/* s390 timer register */
- #define NT_S390_TODCMP	0x302		/* s390 TOD clock comparator register */
+ 	if (is_data_mapping(flags) &&
 -- 
 2.17.1
 
