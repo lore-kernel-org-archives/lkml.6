@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91944C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7401C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D579208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D579208E8
+	by mail.kernel.org (Postfix) with ESMTP id 941CD208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 941CD208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389491AbeGJSfS (ORCPT
+        id S2389505AbeGJSfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:35:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48248 "EHLO
+        Tue, 10 Jul 2018 14:35:21 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48256 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388810AbeGJSfQ (ORCPT
+        with ESMTP id S2388810AbeGJSfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:35:16 -0400
+        Tue, 10 Jul 2018 14:35:20 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7BF08E78;
-        Tue, 10 Jul 2018 18:35:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AA214E78;
+        Tue, 10 Jul 2018 18:35:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Michel=20D=C3=A4nzer?= <michel.daenzer@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.17 23/56] drm: Use kvzalloc for allocating blob property memory
-Date:   Tue, 10 Jul 2018 20:25:05 +0200
-Message-Id: <20180710182504.780939498@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 4.17 24/56] drm/udl: fix display corruption of the last line
+Date:   Tue, 10 Jul 2018 20:25:06 +0200
+Message-Id: <20180710182504.821127773@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -51,53 +50,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michel Dänzer <michel.daenzer@amd.com>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 718b5406cd76f1aa6434311241b7febf0e8571ff upstream.
+commit 99ec9e77511dea55d81729fc80b6c63a61bfa8e0 upstream.
 
-The property size may be controlled by userspace, can be large (I've
-seen failure with order 4, i.e. 16 pages / 64 KB) and doesn't need to be
-physically contiguous.
+The displaylink hardware has such a peculiarity that it doesn't render a
+command until next command is received. This produces occasional
+corruption, such as when setting 22x11 font on the console, only the first
+line of the cursor will be blinking if the cursor is located at some
+specific columns.
 
-Signed-off-by: Michel Dänzer <michel.daenzer@amd.com>
-Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180629142710.2069-1-michel@daenzer.net
+When we end up with a repeating pixel, the driver has a bug that it leaves
+one uninitialized byte after the command (and this byte is enough to flush
+the command and render it - thus it fixes the screen corruption), however
+whe we end up with a non-repeating pixel, there is no byte appended and
+this results in temporary screen corruption.
+
+This patch fixes the screen corruption by always appending a byte 0xAF at
+the end of URB. It also removes the uninitialized byte.
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 Cc: stable@vger.kernel.org
+Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/drm_property.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/udl/udl_fb.c       |    5 ++++-
+ drivers/gpu/drm/udl/udl_transfer.c |   11 +++++++----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
---- a/drivers/gpu/drm/drm_property.c
-+++ b/drivers/gpu/drm/drm_property.c
-@@ -533,7 +533,7 @@ static void drm_property_free_blob(struc
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -137,7 +137,10 @@ int udl_handle_damage(struct udl_framebu
  
- 	drm_mode_object_unregister(blob->dev, &blob->base);
+ 	if (cmd > (char *) urb->transfer_buffer) {
+ 		/* Send partial buffer remaining before exiting */
+-		int len = cmd - (char *) urb->transfer_buffer;
++		int len;
++		if (cmd < (char *) urb->transfer_buffer + urb->transfer_buffer_length)
++			*cmd++ = 0xAF;
++		len = cmd - (char *) urb->transfer_buffer;
+ 		ret = udl_submit_urb(dev, urb, len);
+ 		bytes_sent += len;
+ 	} else
+--- a/drivers/gpu/drm/udl/udl_transfer.c
++++ b/drivers/gpu/drm/udl/udl_transfer.c
+@@ -153,11 +153,11 @@ static void udl_compress_hline16(
+ 		raw_pixels_count_byte = cmd++; /*  we'll know this later */
+ 		raw_pixel_start = pixel;
  
--	kfree(blob);
-+	kvfree(blob);
- }
+-		cmd_pixel_end = pixel + (min(MAX_CMD_PIXELS + 1,
+-			min((int)(pixel_end - pixel) / bpp,
+-			    (int)(cmd_buffer_end - cmd) / 2))) * bpp;
++		cmd_pixel_end = pixel + min3(MAX_CMD_PIXELS + 1UL,
++					(unsigned long)(pixel_end - pixel) / bpp,
++					(unsigned long)(cmd_buffer_end - 1 - cmd) / 2) * bpp;
  
- /**
-@@ -560,7 +560,7 @@ drm_property_create_blob(struct drm_devi
- 	if (!length || length > ULONG_MAX - sizeof(struct drm_property_blob))
- 		return ERR_PTR(-EINVAL);
+-		prefetch_range((void *) pixel, (cmd_pixel_end - pixel) * bpp);
++		prefetch_range((void *) pixel, cmd_pixel_end - pixel);
+ 		pixel_val16 = get_pixel_val16(pixel, bpp);
  
--	blob = kzalloc(sizeof(struct drm_property_blob)+length, GFP_KERNEL);
-+	blob = kvzalloc(sizeof(struct drm_property_blob)+length, GFP_KERNEL);
- 	if (!blob)
- 		return ERR_PTR(-ENOMEM);
+ 		while (pixel < cmd_pixel_end) {
+@@ -193,6 +193,9 @@ static void udl_compress_hline16(
+ 		if (pixel > raw_pixel_start) {
+ 			/* finalize last RAW span */
+ 			*raw_pixels_count_byte = ((pixel-raw_pixel_start) / bpp) & 0xFF;
++		} else {
++			/* undo unused byte */
++			cmd--;
+ 		}
  
-@@ -577,7 +577,7 @@ drm_property_create_blob(struct drm_devi
- 	ret = __drm_mode_object_add(dev, &blob->base, DRM_MODE_OBJECT_BLOB,
- 				    true, drm_property_free_blob);
- 	if (ret) {
--		kfree(blob);
-+		kvfree(blob);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
+ 		*cmd_pixels_count_byte = ((pixel - cmd_pixel_start) / bpp) & 0xFF;
 
 
