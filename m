@@ -3,93 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4819C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A9CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81E6020870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:43:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81E6020870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D655120870
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:44:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D655120870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389512AbeGJSns (ORCPT
+        id S2389388AbeGJSoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:43:48 -0400
-Received: from foss.arm.com ([217.140.101.70]:51806 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389002AbeGJSdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:42 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D52E280D;
-        Tue, 10 Jul 2018 10:17:27 -0700 (PDT)
-Received: from e110467-lin.cambridge.arm.com (e110467-lin.cambridge.arm.com [10.1.210.23])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 59B3B3F589;
-        Tue, 10 Jul 2018 10:17:25 -0700 (PDT)
-From:   Robin Murphy <robin.murphy@arm.com>
-To:     hch@lst.de, m.szyprowski@samsung.com,
-        iommu@lists.linux-foundation.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lorenzo.pieralisi@arm.com, hanjun.guo@linaro.org,
-        sudeep.holla@arm.com, robh+dt@kernel.org, frowand.list@gmail.com,
-        gregkh@linuxfoundation.org, joro@8bytes.org, x86@kernel.org
-Subject: [RFC PATCH 0/4] Stop losing firmware-set DMA masks
-Date:   Tue, 10 Jul 2018 18:17:15 +0100
-Message-Id: <cover.1531239284.git.robin.murphy@arm.com>
-X-Mailer: git-send-email 2.17.1.dirty
+        Tue, 10 Jul 2018 14:44:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47826 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388231AbeGJSdk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 14:33:40 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 26D88E6B;
+        Tue, 10 Jul 2018 18:33:27 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jason Gunthorpe <jgg@mellanox.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Subject: [PATCH 4.14 08/53] vfio: Use get_user_pages_longterm correctly
+Date:   Tue, 10 Jul 2018 20:24:44 +0200
+Message-Id: <20180710182459.373379025@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
+References: <20180710182458.736721865@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Whilst the common firmware code invoked by dma_configure() initialises
-devices' DMA masks according to limitations described by the respective
-properties ("dma-ranges" for OF and _DMA/IORT for ACPI), the nature of
-the dma_set_mask() API leads to that information getting lost when
-well-behaved drivers probe and set a 64-bit mask, since in general
-there's no way to tell the difference between a firmware-described mask
-(which should be respected) and whatever default may have come from the
-bus code (which should be replaced outright). This can break DMA on
-systems with certain IOMMU topologies (e.g. [1]) where the IOMMU driver
-only knows its maximum supported address size, not how many of those
-address bits might actually be wired up between any of its input
-interfaces and the associated DMA master devices. Similarly, some PCIe
-root complexes only have a 32-bit native interface on their host bridge,
-which leads to the same DMA-address-truncation problem in systems with a
-larger physical memory map and RAM above 4GB (e.g. [2]).
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-These patches attempt to deal with this in the simplest way possible by
-generalising the specific quirk for 32-bit bridges into an arbitrary
-mask which can then also be plumbed into the firmware code. In the
-interest of being minimally invasive, I've only included a point fix
-for the IOMMU issue as seen on arm64 - there may be further tweaks
-needed in DMA ops to catch all possible incarnations of this problem,
-but this initial RFC is mostly about the impact beyond the dma-mapping
-subsystem itself.
+------------------
 
-Robin.
+From: Jason Gunthorpe <jgg@mellanox.com>
 
+commit bb94b55af3461e26b32f0e23d455abeae0cfca5d upstream.
 
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-May/580804.html
-[2] http://lists.infradead.org/pipermail/linux-arm-kernel/2016-December/474443.html
+The patch noted in the fixes below converted get_user_pages_fast() to
+get_user_pages_longterm(), however the two calls differ in a few ways.
 
-Robin Murphy (4):
-  dma-mapping: Generalise dma_32bit_limit flag
-  ACPI/IORT: Set bus DMA mask as appropriate
-  of/device: Set bus DMA mask as appropriate
-  iommu/dma: Respect bus DMA limit for IOVAs
+First _fast() is documented to not require the mmap_sem, while _longterm()
+is documented to need it. Hold the mmap sem as required.
 
- arch/x86/kernel/pci-dma.c | 2 +-
- drivers/acpi/arm64/iort.c | 1 +
- drivers/iommu/dma-iommu.c | 3 +++
- drivers/of/device.c       | 1 +
- include/linux/device.h    | 6 +++---
- kernel/dma/direct.c       | 2 +-
- 6 files changed, 10 insertions(+), 5 deletions(-)
+Second, _fast accepts an 'int write' while _longterm uses 'unsigned int
+gup_flags', so the expression '!!(prot & IOMMU_WRITE)' is only working by
+luck as FOLL_WRITE is currently == 0x1. Use the expected FOLL_WRITE
+constant instead.
 
--- 
-2.17.1.dirty
+Fixes: 94db151dc892 ("vfio: disable filesystem-dax page pinning")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/vfio/vfio_iommu_type1.c |   16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+--- a/drivers/vfio/vfio_iommu_type1.c
++++ b/drivers/vfio/vfio_iommu_type1.c
+@@ -339,18 +339,16 @@ static int vaddr_get_pfn(struct mm_struc
+ 	struct page *page[1];
+ 	struct vm_area_struct *vma;
+ 	struct vm_area_struct *vmas[1];
++	unsigned int flags = 0;
+ 	int ret;
+ 
++	if (prot & IOMMU_WRITE)
++		flags |= FOLL_WRITE;
++
++	down_read(&mm->mmap_sem);
+ 	if (mm == current->mm) {
+-		ret = get_user_pages_longterm(vaddr, 1, !!(prot & IOMMU_WRITE),
+-					      page, vmas);
++		ret = get_user_pages_longterm(vaddr, 1, flags, page, vmas);
+ 	} else {
+-		unsigned int flags = 0;
+-
+-		if (prot & IOMMU_WRITE)
+-			flags |= FOLL_WRITE;
+-
+-		down_read(&mm->mmap_sem);
+ 		ret = get_user_pages_remote(NULL, mm, vaddr, 1, flags, page,
+ 					    vmas, NULL);
+ 		/*
+@@ -364,8 +362,8 @@ static int vaddr_get_pfn(struct mm_struc
+ 			ret = -EOPNOTSUPP;
+ 			put_page(page[0]);
+ 		}
+-		up_read(&mm->mmap_sem);
+ 	}
++	up_read(&mm->mmap_sem);
+ 
+ 	if (ret == 1) {
+ 		*pfn = page_to_pfn(page[0]);
+
 
