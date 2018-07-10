@@ -2,177 +2,112 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 783BBC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C14BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C36420878
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:04:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C36420878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3B287208E2
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:05:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B287208E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933357AbeGJICX convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:02:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54228 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932743AbeGJICG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:02:06 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E845040122D4;
-        Tue, 10 Jul 2018 08:02:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0591F2026D6B;
-        Tue, 10 Jul 2018 08:02:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180710011741.GA1014@sol.localdomain>
-References: <20180710011741.GA1014@sol.localdomain> <20180708210154.10423-8-ebiggers3@gmail.com> <20180708210154.10423-1-ebiggers3@gmail.com> <3014.1531139469@warthog.procyon.org.uk>
-To:     Eric Biggers <ebiggers3@gmail.com>
-Cc:     dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Eric Biggers <ebiggers@google.com>
-Subject: Re: [PATCH 07/18] fs_context: fix double free of legacy_fs_context data
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <25102.1531209724.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Tue, 10 Jul 2018 09:02:04 +0100
-Message-ID: <25103.1531209724@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 08:02:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 08:02:05 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+        id S933336AbeGJICV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:02:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52788 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751263AbeGJICE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:02:04 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 419FB20994; Tue, 10 Jul 2018 10:02:03 +0200 (CEST)
+Received: from localhost.localdomain (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7996E20908;
+        Tue, 10 Jul 2018 10:01:52 +0200 (CEST)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: [PATCH v5 04/22] dt-bindings: sram: sunxi: Add A13, A20, A23 and H3 dedicated bindings
+Date:   Tue, 10 Jul 2018 10:00:56 +0200
+Message-Id: <20180710080114.31469-5-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric Biggers <ebiggers3@gmail.com> wrote:
+This introduces dedicated bindings for the system control blocks found
+on the A13, A20, A23 and H3 sunxi platforms.
 
-> Why isn't this done in the same place that ->init_fs_context() would otherwise
-> be called?  It logically does the same thing, right?
+Since the controllers on the A33 are the very same as those on the A23,
+no specific compatible is introduced for it.
 
-Fair point.  How about the attached incremental change?  It breaks the legacy
-context initialisation out into its own init function and just sets that as
-the default if the fs doesn't supply its own.
+These bindings are introduced to allow reflecting the differences that
+exist between these controllers, that may become significant to driver
+implementations.
 
-It also makes the freeing conditional.
-
-David
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
-diff --git a/fs/fs_context.c b/fs/fs_context.c
-index 8af0542ab8b6..f388ab29d37d 100644
---- a/fs/fs_context.c
-+++ b/fs/fs_context.c
-@@ -42,6 +42,7 @@ struct legacy_fs_context {
- 	enum legacy_fs_param	param_type;
- };
- 
-+static int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry);
- static const struct fs_context_operations legacy_fs_context_ops;
- 
- static const match_table_t common_set_sb_flag = {
-@@ -239,6 +240,7 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
- 				      unsigned int sb_flags,
- 				      enum fs_context_purpose purpose)
- {
-+	int (*init_fs_context)(struct fs_context *, struct dentry *);
- 	struct fs_context *fc;
- 	int ret = -ENOMEM;
- 
-@@ -246,15 +248,6 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
- 	if (!fc)
- 		return ERR_PTR(-ENOMEM);
- 
--	if (!fs_type->init_fs_context) {
--		fc->fs_private = kzalloc(sizeof(struct legacy_fs_context),
--					 GFP_KERNEL);
--		if (!fc->fs_private)
--			goto err_fc;
--
--		fc->ops = &legacy_fs_context_ops;
--	}
--
- 	fc->purpose	= purpose;
- 	fc->sb_flags	= sb_flags;
- 	fc->fs_type	= get_filesystem(fs_type);
-@@ -285,11 +278,13 @@ struct fs_context *vfs_new_fs_context(struct file_system_type *fs_type,
- 
- 
- 	/* TODO: Make all filesystems support this unconditionally */
--	if (fc->fs_type->init_fs_context) {
--		ret = fc->fs_type->init_fs_context(fc, reference);
--		if (ret < 0)
--			goto err_fc;
--	}
-+	init_fs_context = fc->fs_type->init_fs_context;
-+	if (!init_fs_context)
-+		init_fs_context = legacy_init_fs_context;
-+
-+	ret = (*init_fs_context)(fc, reference);
-+	if (ret < 0)
-+		goto err_fc;
- 
- 	/* Do the security check last because ->init_fs_context may change the
- 	 * namespace subscriptions.
-@@ -499,19 +494,21 @@ static void legacy_fs_context_free(struct fs_context *fc)
- {
- 	struct legacy_fs_context *ctx = fc->fs_private;
- 
--	free_secdata(ctx->secdata);
--	switch (ctx->param_type) {
--	case LEGACY_FS_UNSET_PARAMS:
--	case LEGACY_FS_NO_PARAMS:
--		break;
--	case LEGACY_FS_MAGIC_PARAMS:
--		break; /* ctx->data is a weird pointer */
--	default:
--		kfree(ctx->legacy_data);
--		break;
--	}
-+	if (ctx) {
-+		free_secdata(ctx->secdata);
-+		switch (ctx->param_type) {
-+		case LEGACY_FS_UNSET_PARAMS:
-+		case LEGACY_FS_NO_PARAMS:
-+			break;
-+		case LEGACY_FS_MAGIC_PARAMS:
-+			break; /* ctx->data is a weird pointer */
-+		default:
-+			kfree(ctx->legacy_data);
-+			break;
-+		}
- 
--	kfree(ctx);
-+		kfree(ctx);
-+	}
- }
- 
- /*
-@@ -707,3 +704,18 @@ static const struct fs_context_operations legacy_fs_context_ops = {
- 	.validate		= legacy_validate,
- 	.get_tree		= legacy_get_tree,
- };
-+
-+/*
-+ * Initialise a legacy context for a filesystem that doesn't support
-+ * fs_context.
-+ */
-+static int legacy_init_fs_context(struct fs_context *fc, struct dentry *dentry)
-+{
-+
-+	fc->fs_private = kzalloc(sizeof(struct legacy_fs_context), GFP_KERNEL);
-+	if (!fc->fs_private)
-+		return -ENOMEM;
-+
-+	fc->ops = &legacy_fs_context_ops;
-+	return 0;
-+}
+ Documentation/devicetree/bindings/sram/sunxi-sram.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+index d7dd1a393011..156a02ab6b54 100644
+--- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
++++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+@@ -12,6 +12,10 @@ Required properties:
+ - compatible : should be:
+     - "allwinner,sun4i-a10-sram-controller" (deprecated)
+     - "allwinner,sun4i-a10-system-control"
++    - "allwinner,sun5i-a13-system-control"
++    - "allwinner,sun7i-a20-system-control"
++    - "allwinner,sun8i-a23-system-control"
++    - "allwinner,sun8i-h3-system-control"
+     - "allwinner,sun50i-a64-sram-controller" (deprecated)
+     - "allwinner,sun50i-a64-system-control"
+ - reg : sram controller register offset + length
+-- 
+2.17.1
+
