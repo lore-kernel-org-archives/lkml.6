@@ -2,175 +2,189 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D17A1C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52620C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 848B020873
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:58:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qMIPCJdR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 848B020873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id F0A82208EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:01:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0A82208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934385AbeGJP63 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:58:29 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34350 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933846AbeGJP62 (ORCPT
+        id S934357AbeGJQBX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:01:23 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:45776 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934062AbeGJQBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:58:28 -0400
-Received: by mail-pl0-f67.google.com with SMTP id z9-v6so7801914plo.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 08:58:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RWhd2skemWnD9Td0IKlpOvYZSKBB0Oe9ZHh3dn4k588=;
-        b=qMIPCJdR4nc/tk58jQPxTv09MPydEwoU7dETiJkJLf5N3xwlc2uMubgKbB8H/BodUJ
-         hEGWoM8Bg7lNBQgcLFM6G+xc9UwhseCArMuvBsk7mhwyhbCNdx8nsEcgQzFG/yNECYN6
-         9YvMZtCQXQLqlQiuTP/ZjCpMrUAgNM13RWRwxzIFPSqCc1TTGfTl9BiLC1u/mtUzqCvG
-         xFDQMfue+bCUtBMPUBOsON+P3ZsdhS+UIm0Joqo98/hKTlB+IwS08z+JSYOQlxpHulNe
-         5FMe3C2WLMHeYkXG+5p0itjvZ4bsBnz3DPVyVrjtT3Kb8Jxz9GpAjHBR+YQDlr3CXTUy
-         XhnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RWhd2skemWnD9Td0IKlpOvYZSKBB0Oe9ZHh3dn4k588=;
-        b=g1HcG3lP22uyyFjmX2SxVQTjO0KsZ7hPp5yS1bOOf2IdvHWAIChTsAG33KzaPV1M5O
-         CKzR0+8e6fMe556BCPEexE/o1TTW2cuRi5sfcRvLjOzmJyVV2NgVT4/jnVhuIYHMHxi9
-         nuiPqvWEY0VhZn7TLawB4tFPyGaYdiIgBWqnejEE4tR+IaboII5yMceDhOEawKF1dubr
-         Owj7oyDBgFHCWZohwKgJHQ8SACVKw7q7pGNFQ/GDteECMnmux8TS0Lvzy//9UPDTTNMb
-         RSCfinN+NZrhcgMl1h4aSoY3n9IJ1T1ISJd02EIBkOW6V570sbnkklJ7MLVhWk11BeBT
-         DC6Q==
-X-Gm-Message-State: APt69E3VoHf/Eju9I6/TzJP8iuII0MQpEDWgKXKkvfVq3agqDDJCVV+H
-        +foWlohq/5AQkENUq9jO4tU=
-X-Google-Smtp-Source: AAOMgpfF4hE61mcTPu63jCtq60BT4ETvH7+2tBxvYS1A5LCUgxNaUj5mbSznKtBIH4pqupGMAbePlg==
-X-Received: by 2002:a17:902:9681:: with SMTP id n1-v6mr25964723plp.244.1531238307453;
-        Tue, 10 Jul 2018 08:58:27 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id c185-v6sm14789768pfa.157.2018.07.10.08.58.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 08:58:26 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 08:58:25 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Ju Hyung Park <qkrwngud825@gmail.com>
-Cc:     Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: Replace strncpy with memcpy
-Message-ID: <20180710155825.GB10635@roeck-us.net>
-References: <1530478626-15753-1-git-send-email-linux@roeck-us.net>
- <0250de00-adf7-7b43-5f7c-44704119e2f9@huawei.com>
- <367fb12b-3ae0-4a6a-b59e-31d3a360bf05@roeck-us.net>
- <ecb4f083-1d61-d882-c85c-53cb33fa793e@huawei.com>
- <CAD14+f0eRF9y-QNMXwXEymQGOZ_D22sbdqwAuXg5Cv=SXryApQ@mail.gmail.com>
+        Tue, 10 Jul 2018 12:01:21 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fcv4q-0006vJ-GE; Tue, 10 Jul 2018 10:01:20 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fcv4a-0002V4-Sc; Tue, 10 Jul 2018 10:01:20 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>
+References: <bug-200447-5873-b2kAsSyE1X@https.bugzilla.kernel.org/>
+        <CA+55aFyOaEGc_wjRuAxYZH7D4zi4xUQTqUwMmUzxFJQ__2pXuQ@mail.gmail.com>
+        <87h8l9p7bg.fsf@xmission.com> <20180709104158.GA23796@redhat.com>
+        <87sh4so5jv.fsf@xmission.com> <20180709145726.GA26149@redhat.com>
+        <877em4nxo0.fsf@xmission.com>
+        <CA+55aFwq90_KeRUesktap7L_4Hp3gatKZ28RYw1jXBYeOqUoeA@mail.gmail.com>
+        <87lgakm4ol.fsf@xmission.com>
+        <CA+55aFz1XFvOgJySKVNQD9VS4hys0J7rozxqd3s5ND0z80tfVw@mail.gmail.com>
+        <20180710134639.GA2453@redhat.com>
+Date:   Tue, 10 Jul 2018 11:00:55 -0500
+In-Reply-To: <20180710134639.GA2453@redhat.com> (Oleg Nesterov's message of
+        "Tue, 10 Jul 2018 15:46:39 +0200")
+Message-ID: <878t6jkrm0.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD14+f0eRF9y-QNMXwXEymQGOZ_D22sbdqwAuXg5Cv=SXryApQ@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-XM-SPF: eid=1fcv4a-0002V4-Sc;;;mid=<878t6jkrm0.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/yGH40tB9MY4+yXTQf4/t2kLsLrrbyYsU=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [Bug 200447] infinite loop in fork syscall
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 11:35:08PM +0900, Ju Hyung Park wrote:
-> I must be missing something here.
-> 
-> Shouldn't the third argument be 'strlen(name) + 1', if we were to use
-> memcpy()?
-> strcpy()/strncpy() appends null terminator to the destination whereas
-> memcpy() doesn't.
-> 
+Oleg Nesterov <oleg@redhat.com> writes:
 
-strncpy() does not append a null character if the passed length is smaller
-than or equal to the string length. strncpy(dest, "x", strlen("x")) copies
-exactly one character. The code as written specifically does _not_ append
-a terminator to the end of the copied string.
+> On 07/09, Linus Torvalds wrote:
+>>
+>> But the patch was written for testing and feedback more than anything
+>> else. Comments?
+>
+> see my reply on bugzilla. Can't we add lkml?
+Done.
 
-Guenter
+> Perhaps we can do another change? Not sure it is actually better, but I think
+> it is always good to discuss the alternatives.
+>
+> 1. Once again, we turn "int group" argument into thread/process/pgid enum, and
+>    change kill_pgrp/tty_signal_session_leader to pass "group = pgid", imo this
+>    makes sense in any case.
 
-> Thanks,
-> 
-> On Mon, Jul 2, 2018 at 11:57 AM, Chao Yu <yuchao0@huawei.com> wrote:
-> 
-> > On 2018/7/2 10:16, Guenter Roeck wrote:
-> > > On 07/01/2018 06:53 PM, Chao Yu wrote:
-> > >> On 2018/7/2 4:57, Guenter Roeck wrote:
-> > >>> gcc 8.1.0 complains:
-> > >>>
-> > >>> fs/f2fs/namei.c: In function 'f2fs_update_extension_list':
-> > >>> fs/f2fs/namei.c:257:3: warning:
-> > >>>     'strncpy' output truncated before terminating nul copying
-> > >>>     as many bytes from a string as its length
-> > >>> fs/f2fs/namei.c:249:3: warning:
-> > >>>     'strncpy' output truncated before terminating nul copying
-> > >>>     as many bytes from a string as its length
-> > >>>
-> > >>> Using strncpy() is indeed less than perfect since the length of data to
-> > >>> be copied has already been determined with strlen(). Replace strncpy()
-> > >>> with memcpy() to address the warning and optimize the code a little.
-> > >>>
-> > >>> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> > >>> ---
-> > >>>   fs/f2fs/namei.c | 4 ++--
-> > >>>   1 file changed, 2 insertions(+), 2 deletions(-)
-> > >>>
-> > >>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> > >>> index 231b7f3ea7d3..e75607544f7c 100644
-> > >>> --- a/fs/f2fs/namei.c
-> > >>> +++ b/fs/f2fs/namei.c
-> > >>> @@ -246,7 +246,7 @@ int f2fs_update_extension_list(struct
-> > f2fs_sb_info *sbi, const char *name,
-> > >>>             return -EINVAL;
-> > >>>
-> > >>>     if (hot) {
-> > >>> -           strncpy(extlist[count], name, strlen(name));
-> > >>> +           memcpy(extlist[count], name, strlen(name));
-> > >>
-> > >> How about replacing with strcpy(extlist[count], name)? Because name
-> > length has
-> > >> already been checked before f2fs_update_extension_list, it should be
-> > valid, and
-> > >> will not cause overflow during copying.
-> > >>
-> > >
-> > > Your call; feel free to submit an alternative. Since it is different
-> > files, static
-> > > analysis might not know and complain, though. You might want to make
-> > sure that this
-> > > doesn't happen, and also add a comment explaining the reason for using
-> > strcpy().
-> >
-> > Yeah, that could be changed in another patch, but it will be trivial.
-> > Anyway, to
-> > fix this gcc complaint, this patch looks good to me, thanks for the patch.
-> > :)
-> >
-> > Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> >
-> > Thanks,
-> >
-> > >
-> > > Thanks,
-> > > Guenter
-> > >
-> > >
-> >
-> >
-> > ------------------------------------------------------------
-> > ------------------
-> > Check out the vibrant tech community on one of the world's most
-> > engaging tech sites, Slashdot.org! http://sdm.link/slashdot
-> > _______________________________________________
-> > Linux-f2fs-devel mailing list
-> > Linux-f2fs-devel@lists.sourceforge.net
-> > https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> >
+I agree.  There are a lot more multi-process signals cases than handled
+in Linus's patch.   I believe this will clean that up.
+
+> 2. To simplify, lets suppose we add the new PF_INFORK flag. Yes, this is bad,
+>    we can do better. I think we can simply add "struct hlist_head forking_threads"
+>    into signal_struct, so complete_signal() can just do hlist_for_each_entry()
+>    rather than for_each_thread() + PF_INFORK check. We don't even need a new
+>    member in task_struct.
+
+We still need the distinction between multi-process signals and single
+process signals (which is the hard part).  For good performance of
+signal delivery to multi-threaded tasks we still need a new member in
+signal_struct.  Plus it is a bit more work to update the list or even
+walk the list than a sequence counter.
+
+So I think adding a sequence counter to let us know about multiprocess
+signals is the local optimum.
+
+If we ever need to remove the restart case entirely from fork and queue
+all new multi-process signals for the newly created task.  Going through
+the list of forking
+
+>
+> 3. copy_process() can simply block/unblock all signals (except KILL/STOP), see
+>    the "patch" below.
+
+All signals are effectively blocked for the duration of the fork for the
+calling task.    Where we get into trouble and where we need a fix for
+correctness is that another thread can dequeue the signal.   Blocking
+signals of the forking task does not change that.
+
+I think that reveals another bug in our current logic.  For blocked
+multi-process signals we don't ensure they get delivered to both the
+parent and the child if the signal logically comes in after the fork.
+
+Multi-threaded b0rked ness and blocked signal b0rkenness, plus periodic
+timers making for take forever for no good reason.  This business of
+ensuring a signal is logically delvered before or after a fork is
+tricky.
+
+Eric
+
+
+> diff --git a/kernel/fork.c b/kernel/fork.c
+> index 9440d61..652ef09 100644
+> --- a/kernel/fork.c
+> +++ b/kernel/fork.c
+> @@ -1591,6 +1591,23 @@ static __latent_entropy struct task_struct *copy_process(
+>  	int retval;
+>  	struct task_struct *p;
+>  
+> +	spin_lock_irq(&current->sighand->siglock);
+> +	recalc_sigpending_tsk(current);
+> +	if (signal_pending(current)) {
+> +		retval = -ERESTARTNOINTR;
+> +	} else {
+> +		// Yes, yes, this is wrong, just to explain the idea.
+> +		// We should not block SIGKILL, we need to clear PF_INFORK
+> +		// and restore ->blocked in error paths, we need helper(s).
+> +		retval = 0;
+> +		current->flags |= PF_INFORK;
+> +		current->saved_sigmask = current->blocked;
+> +		sigfillset(&current->blocked);
+> +	}
+> +	spin_unlock_irq(&current->sighand->siglock);
+> +	if (retval)
+> +		return retval;
+> +
+>  	/*
+>  	 * Don't allow sharing the root directory with processes in a different
+>  	 * namespace
+> @@ -1918,8 +1935,14 @@ static __latent_entropy struct task_struct *copy_process(
+>  	 * A fatal signal pending means that current will exit, so the new
+>  	 * thread can't slip out of an OOM kill (or normal SIGKILL).
+>  	*/
+> -	recalc_sigpending();
+> -	if (signal_pending(current)) {
+> +	// check signal_pending() before __set_task_blocked() which does
+> +	// recalc_sigpending(). Again, this is just to explain the idea,
+> +	// __set_task_blocked() is not exported, it is suboptimal, we can
+> +	// do better.
+> +	bool eintr = signal_pending();
+> +	current->flags &= ~PF_INFORK;
+> +	__set_task_blocked(current, &current->saved_sigmask);
+> +	if (eintr) {
+>  		retval = -ERESTARTNOINTR;
+>  		goto bad_fork_cancel_cgroup;
+>  	}
+> diff --git a/kernel/signal.c b/kernel/signal.c
+> index 8d8a940..3433e66 100644
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -900,6 +900,14 @@ static void complete_signal(int sig, struct task_struct *p, int group)
+>  	struct signal_struct *signal = p->signal;
+>  	struct task_struct *t;
+>  
+> +	// kill_pgrp/etc.
+> +	if (group == 2) {
+> +		for_each_thread(p, t) {
+> +			if (p->flags & PF_INFORK && !sigismember(&p->saved_sigmask, sig))
+> +				signal_wake_up(t, 0);
+> +		}
+> +	}
+> +
+>  	/*
+>  	 * Now find a thread we can wake up to take the signal off the queue.
+>  	 *
