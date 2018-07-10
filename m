@@ -6,57 +6,59 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F46C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED3B9C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA038208E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:25:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA038208E5
+	by mail.kernel.org (Postfix) with ESMTP id B30D7208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 20:25:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B30D7208E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732814AbeGJUZj (ORCPT
+        id S1732584AbeGJUZ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 16:25:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:53817 "EHLO
+        Tue, 10 Jul 2018 16:25:59 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:59395 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732246AbeGJUZj (ORCPT
+        with ESMTP id S1732332AbeGJUZ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 16:25:39 -0400
+        Tue, 10 Jul 2018 16:25:58 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6AKO7sx3268165
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6AKOcSV3268196
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 10 Jul 2018 13:24:07 -0700
+        Tue, 10 Jul 2018 13:24:38 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6AKO7wB3268161;
-        Tue, 10 Jul 2018 13:24:07 -0700
-Date:   Tue, 10 Jul 2018 13:24:07 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6AKOc8V3268193;
+        Tue, 10 Jul 2018 13:24:38 -0700
+Date:   Tue, 10 Jul 2018 13:24:38 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Mathieu Desnoyers <tipbot@zytor.com>
-Message-ID: <tip-4f4c0acdf4652a964da869d578a3c8bf6df14ce2@git.kernel.org>
-Cc:     rostedt@goodmis.org, andi@firstfloor.org, bmaurer@fb.com,
-        linux@arm.linux.org.uk, mingo@kernel.org, davejwatson@fb.com,
-        cl@linux.com, torvalds@linux-foundation.org, tglx@linutronix.de,
-        boqun.feng@gmail.com, akpm@linux-foundation.org,
-        mtk.manpages@gmail.com, mathieu.desnoyers@efficios.com,
-        catalin.marinas@arm.com, josh@joshtriplett.org, hpa@zytor.com,
-        luto@amacapital.net, joelaf@google.com, peterz@infradead.org,
-        will.deacon@arm.com, paulmck@linux.vnet.ibm.com, pjt@google.com,
-        linux-kernel@vger.kernel.org
-Reply-To: mathieu.desnoyers@efficios.com, cl@linux.com,
-          mtk.manpages@gmail.com, akpm@linux-foundation.org,
-          torvalds@linux-foundation.org, boqun.feng@gmail.com,
-          tglx@linutronix.de, bmaurer@fb.com, davejwatson@fb.com,
-          linux@arm.linux.org.uk, mingo@kernel.org, rostedt@goodmis.org,
-          andi@firstfloor.org, linux-kernel@vger.kernel.org,
-          will.deacon@arm.com, pjt@google.com, paulmck@linux.vnet.ibm.com,
-          joelaf@google.com, peterz@infradead.org, catalin.marinas@arm.com,
-          hpa@zytor.com, josh@joshtriplett.org, luto@amacapital.net
-In-Reply-To: <20180709195155.7654-6-mathieu.desnoyers@efficios.com>
-References: <20180709195155.7654-6-mathieu.desnoyers@efficios.com>
+Message-ID: <tip-8a46580128a02bdc18d7dcc0cba19d3cea4fb9c4@git.kernel.org>
+Cc:     joelaf@google.com, catalin.marinas@arm.com, hpa@zytor.com,
+        akpm@linux-foundation.org, bmaurer@fb.com, andi@firstfloor.org,
+        mtk.manpages@gmail.com, paulmck@linux.vnet.ibm.com,
+        davejwatson@fb.com, pjt@google.com, josh@joshtriplett.org,
+        will.deacon@arm.com, linux@arm.linux.org.uk, cl@linux.com,
+        mathieu.desnoyers@efficios.com, boqun.feng@gmail.com,
+        luto@amacapital.net, rostedt@goodmis.org,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        tglx@linutronix.de, mingo@kernel.org, linux-kernel@vger.kernel.org
+Reply-To: catalin.marinas@arm.com, akpm@linux-foundation.org,
+          hpa@zytor.com, joelaf@google.com, will.deacon@arm.com,
+          josh@joshtriplett.org, pjt@google.com, linux@arm.linux.org.uk,
+          mtk.manpages@gmail.com, paulmck@linux.vnet.ibm.com,
+          bmaurer@fb.com, andi@firstfloor.org, davejwatson@fb.com,
+          mathieu.desnoyers@efficios.com, cl@linux.com,
+          luto@amacapital.net, boqun.feng@gmail.com, tglx@linutronix.de,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          rostedt@goodmis.org, peterz@infradead.org,
+          torvalds@linux-foundation.org
+In-Reply-To: <20180709195155.7654-7-mathieu.desnoyers@efficios.com>
+References: <20180709195155.7654-7-mathieu.desnoyers@efficios.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:core/urgent] rseq: Remove unused types_32_64.h uapi header
-Git-Commit-ID: 4f4c0acdf4652a964da869d578a3c8bf6df14ce2
+Subject: [tip:core/urgent] rseq/selftests: cleanup: Update comment above
+ rseq_prepare_unload
+Git-Commit-ID: 8a46580128a02bdc18d7dcc0cba19d3cea4fb9c4
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -70,17 +72,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4f4c0acdf4652a964da869d578a3c8bf6df14ce2
-Gitweb:     https://git.kernel.org/tip/4f4c0acdf4652a964da869d578a3c8bf6df14ce2
+Commit-ID:  8a46580128a02bdc18d7dcc0cba19d3cea4fb9c4
+Gitweb:     https://git.kernel.org/tip/8a46580128a02bdc18d7dcc0cba19d3cea4fb9c4
 Author:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-AuthorDate: Mon, 9 Jul 2018 15:51:54 -0400
+AuthorDate: Mon, 9 Jul 2018 15:51:55 -0400
 Committer:  Thomas Gleixner <tglx@linutronix.de>
 CommitDate: Tue, 10 Jul 2018 22:18:52 +0200
 
-rseq: Remove unused types_32_64.h uapi header
+rseq/selftests: cleanup: Update comment above rseq_prepare_unload
 
-This header was introduced in the 4.18 merge window, and rseq does
-not need it anymore. Nuke it before the final release.
+rseq as it was merged does not have rseq_finish_*() in the user-space
+selftests anymore. Update the rseq_prepare_unload() helper comment to
+adapt to this reality.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
@@ -106,65 +109,33 @@ Cc: Michael Kerrisk <mtk.manpages@gmail.com>
 Cc: Joel Fernandes <joelaf@google.com>
 Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
-Link: https://lkml.kernel.org/r/20180709195155.7654-6-mathieu.desnoyers@efficios.com
+Link: https://lkml.kernel.org/r/20180709195155.7654-7-mathieu.desnoyers@efficios.com
 
 ---
- include/uapi/linux/types_32_64.h | 50 ----------------------------------------
- 1 file changed, 50 deletions(-)
+ tools/testing/selftests/rseq/rseq.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/include/uapi/linux/types_32_64.h b/include/uapi/linux/types_32_64.h
-deleted file mode 100644
-index 0a87ace34a57..000000000000
---- a/include/uapi/linux/types_32_64.h
-+++ /dev/null
-@@ -1,50 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
--#ifndef _UAPI_LINUX_TYPES_32_64_H
--#define _UAPI_LINUX_TYPES_32_64_H
--
--/*
-- * linux/types_32_64.h
-- *
-- * Integer type declaration for pointers across 32-bit and 64-bit systems.
-- *
-- * Copyright (c) 2015-2018 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-- */
--
--#ifdef __KERNEL__
--# include <linux/types.h>
--#else
--# include <stdint.h>
--#endif
--
--#include <asm/byteorder.h>
--
--#ifdef __BYTE_ORDER
--# if (__BYTE_ORDER == __BIG_ENDIAN)
--#  define LINUX_BYTE_ORDER_BIG_ENDIAN
--# else
--#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
--# endif
--#else
--# ifdef __BIG_ENDIAN
--#  define LINUX_BYTE_ORDER_BIG_ENDIAN
--# else
--#  define LINUX_BYTE_ORDER_LITTLE_ENDIAN
--# endif
--#endif
--
--#ifdef __LP64__
--# define LINUX_FIELD_u32_u64(field)			__u64 field
--# define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	field = (intptr_t)v
--#else
--# ifdef LINUX_BYTE_ORDER_BIG_ENDIAN
--#  define LINUX_FIELD_u32_u64(field)	__u32 field ## _padding, field
--#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
--	field ## _padding = 0, field = (intptr_t)v
--# else
--#  define LINUX_FIELD_u32_u64(field)	__u32 field, field ## _padding
--#  define LINUX_FIELD_u32_u64_INIT_ONSTACK(field, v)	\
--	field = (intptr_t)v, field ## _padding = 0
--# endif
--#endif
--
--#endif /* _UAPI_LINUX_TYPES_32_64_H */
+diff --git a/tools/testing/selftests/rseq/rseq.h b/tools/testing/selftests/rseq/rseq.h
+index f2073cfa4448..86ce22417e0d 100644
+--- a/tools/testing/selftests/rseq/rseq.h
++++ b/tools/testing/selftests/rseq/rseq.h
+@@ -143,12 +143,13 @@ static inline void rseq_clear_rseq_cs(void)
+ }
+ 
+ /*
+- * rseq_prepare_unload() should be invoked by each thread using rseq_finish*()
+- * at least once between their last rseq_finish*() and library unload of the
+- * library defining the rseq critical section (struct rseq_cs). This also
+- * applies to use of rseq in code generated by JIT: rseq_prepare_unload()
+- * should be invoked at least once by each thread using rseq_finish*() before
+- * reclaim of the memory holding the struct rseq_cs.
++ * rseq_prepare_unload() should be invoked by each thread executing a rseq
++ * critical section at least once between their last critical section and
++ * library unload of the library defining the rseq critical section
++ * (struct rseq_cs). This also applies to use of rseq in code generated by
++ * JIT: rseq_prepare_unload() should be invoked at least once by each
++ * thread executing a rseq critical section before reclaim of the memory
++ * holding the struct rseq_cs.
+  */
+ static inline void rseq_prepare_unload(void)
+ {
