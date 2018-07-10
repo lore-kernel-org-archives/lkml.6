@@ -2,126 +2,114 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F057C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A50C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A55C2075C
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:35:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IJU4Z7ju"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A55C2075C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E5B12075C
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:37:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5B12075C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933229AbeGJLfV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 07:35:21 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:59040 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932710AbeGJLfT (ORCPT
+        id S933279AbeGJLhP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 07:37:15 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:65436 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932620AbeGJLhN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 07:35:19 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6ABZ9bq026066;
-        Tue, 10 Jul 2018 06:35:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531222509;
-        bh=8jHYb8pSkbZpoNscD1FLbKe4HPbxVp8bp+8iyX8XiZc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=IJU4Z7juueCrQVJf/D3Br8YBx6l2NZDkWS9WLdz9sVDID4PPxTe/czq2jNh50t+W/
-         xbh+cQEKdUw/ijptWc8m3nG7imKPzmj69EP3nxsYl1sSPr46Wb1DMkzcoHpcKK+gO1
-         qDNoXm3WM8cMov5CwYq61kBWFvtQ8fUulR7Lgjbk=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6ABZ9xZ011422;
-        Tue, 10 Jul 2018 06:35:09 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 10
- Jul 2018 06:35:08 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 10 Jul 2018 06:35:08 -0500
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6ABZ5mc009601;
-        Tue, 10 Jul 2018 06:35:06 -0500
-Subject: Re: [PATCH v2] can: m_can: Fix runtime resume call
-To:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-can@vger.kernel.org>, <linux-omap@vger.kernel.org>
-CC:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>
-References: <20180703111102.26502-1-faiz_abbas@ti.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <6af0c052-b349-967a-c86c-370aba374318@ti.com>
-Date:   Tue, 10 Jul 2018 17:06:54 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Tue, 10 Jul 2018 07:37:13 -0400
+Received: from 79.184.255.246.ipv4.supernova.orange.pl (79.184.255.246) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 675df17f1068173b; Tue, 10 Jul 2018 13:37:11 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Pingfan Liu <kernelfans@gmail.com>, linux-kernel@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH] driver core: Partially revert "driver core: correct device's shutdown order"
+Date:   Tue, 10 Jul 2018 13:35:41 +0200
+Message-ID: <2927655.Y1qg3UnIrE@aspire.rjw.lan>
+In-Reply-To: <8816662.k3KXbdkA2e@aspire.rjw.lan>
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com> <CAFgQCTsGC8NH+5kXYD7vykJeUsaAzCAjgxSP-R0EqA3YvgsY0w@mail.gmail.com> <8816662.k3KXbdkA2e@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20180703111102.26502-1-faiz_abbas@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-On Tuesday 03 July 2018 04:41 PM, Faiz Abbas wrote:
-> pm_runtime_get_sync() returns a 1 if the state of the device is already
-> 'active'. This is not a failure case and should return a success.
-> 
-> Therefore fix error handling for pm_runtime_get_sync() call such that
-> it returns success when the value is 1.
-> 
-> Also cleanup the TODO for using runtime PM for sleep mode as that is
-> implemented.
-> 
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
-> 
-> Changes in v2:
-> 
-> rebased to latest mainline
-> 
->  drivers/net/can/m_can/m_can.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-> index b397a33f3d32..ac4c6dc2f8c8 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -634,10 +634,12 @@ static int m_can_clk_start(struct m_can_priv *priv)
->  	int err;
->  
->  	err = pm_runtime_get_sync(priv->device);
-> -	if (err)
-> +	if (err < 0) {
->  		pm_runtime_put_noidle(priv->device);
-> +		return err;
-> +	}
->  
-> -	return err;
-> +	return 0;
->  }
->  
->  static void m_can_clk_stop(struct m_can_priv *priv)
-> @@ -1687,8 +1689,6 @@ static int m_can_plat_probe(struct platform_device *pdev)
->  	return ret;
->  }
->  
-> -/* TODO: runtime PM with power down or sleep mode  */
-> -
->  static __maybe_unused int m_can_suspend(struct device *dev)
->  {
->  	struct net_device *ndev = dev_get_drvdata(dev);
-> 
+Commit 52cdbdd49853 (driver core: correct device's shutdown order)
+introduced a regression by breaking device shutdown on some systems.
 
-Gentle ping.
+Namely, the devices_kset_move_last() call in really_probe() added by
+that commit is a mistake as it may cause parents to follow children
+in the devices_kset list which then causes shutdown to fail.  For
+example, if a device has children before really_probe() is called
+for it (which is not uncommon), that call will cause it to be
+reordered after the children in the devices_kset list and the
+ordering of that list will not reflect the correct device shutdown
+order any more.
 
-Thanks,
-Faiz
+Also it causes the devices_kset list to be constantly reordered
+until all drivers have been probed which is totally pointless
+overhead in the majority of cases and it only covers an issue
+with system shutdown, while system-wide suspend/resume potentially
+has the same issue on the affected platforms (which is not covered).
+
+For that reason, revert the really_probe() modifications made by
+commit 52cdbdd49853 which unfortunately will expose the shutdown
+issue the problematic commit attempted to fix (and which will have
+to be addressed differently and correctly in the future).
+
+The other code changes made by commit 52cdbdd49853 are useful and
+they need not be reverted.
+
+Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
+Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
+Reported-by: Pingfan Liu <kernelfans@gmail.com>
+Tested-by: Pingfan Liu <kernelfans@gmail.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+This is a v2 of https://patchwork.kernel.org/patch/10511241/ under
+a different subject.
+
+The patch itself hasn't changed, but I rewrote the changelog (as per
+the Bjorn's request) and changed the subject accordingly.
+
+---
+ drivers/base/dd.c |    8 --------
+ 1 file changed, 8 deletions(-)
+
+Index: linux-pm/drivers/base/dd.c
+===================================================================
+--- linux-pm.orig/drivers/base/dd.c
++++ linux-pm/drivers/base/dd.c
+@@ -434,14 +434,6 @@ re_probe:
+ 			goto probe_failed;
+ 	}
+ 
+-	/*
+-	 * Ensure devices are listed in devices_kset in correct order
+-	 * It's important to move Dev to the end of devices_kset before
+-	 * calling .probe, because it could be recursive and parent Dev
+-	 * should always go first
+-	 */
+-	devices_kset_move_last(dev);
+-
+ 	if (dev->bus->probe) {
+ 		ret = dev->bus->probe(dev);
+ 		if (ret)
+
