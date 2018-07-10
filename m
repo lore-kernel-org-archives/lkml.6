@@ -2,338 +2,206 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D05CC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4131DC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FC8C20877
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:48:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FC8C20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 8D7D920877
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:48:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D7D920877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933931AbeGJOsd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 10:48:33 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:50004 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933374AbeGJOs3 (ORCPT
+        id S933952AbeGJOss (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 10:48:48 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:33874 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S933256AbeGJOsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 10:48:29 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MGJlf-1fprxW1JnL-00FAsR; Tue, 10 Jul 2018 16:48:01 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Dave Chinner <david@fromorbit.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [v2] Documentation: document ktime_get_*() APIs
-Date:   Tue, 10 Jul 2018 16:46:41 +0200
-Message-Id: <20180710144737.1136856-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:sgtWyMyvf2MpatRMDWbIGFJKsHlC+g8XU2pZLl7xHbz6qxmI/Uk
- XcTmBDx6F83YWCpYb7qvljDxEqBsybrTg1BMy1WvfSKZAF/qqX6zSUMQPhKKvUeoX4uwvkk
- 4ivviQhrmXnAO6lJSyiSJvOypepjKT7g9yHAqQN+csJqQM3ovMqU7AQux+RXXL5/1++losd
- 4YCbfdhJbt6Jx3fb5XU1w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:mstS1CWmnV4=:7X6IUN7f2SEl0MFNktIrVI
- 61F0SHV1pcoJbnqBtAvdXgoBXQPSCnyjVXUaKtN4gyQEP5TFoWNnxMvmDF5WoSqLBYlvMNTWP
- Q7KyBANvgR92uAV4tQ83DNFMxzCyhao+RNx5LB9vEKhvapTqLufpW82HmnC0sBHtQnYUBF6y0
- N8pLKPext7sqgMCHqTIEekxhtQk5o1+RpqsHEJP7/Qyg2I3XuOeCAWvxJRYfVfxBP8zt4xLl/
- icl2ecPeVYglYypJD55/uTHInupzgzewyry+pF+G671JoztEcKBK+iFv8lRmgncpR9oEzwVAT
- xnA4JJviHmWEttx4G2TmojpIKRiXQb7n2Hl4R/xENeoxkHLHJsSplG99ULhGzfUYb6QITfOU8
- BGwJiDBp9Tmmpxnc23AfxJUcydCz1tqQy4wT5ovz8NZujwRFckMVAAlJBLPfmXjOTPTKldXYf
- ThVHuIiCC6CiAweOwMphT/Z3BON+h4b0L8WipXuWKgWAun8QntVMqQmDHMFb0uu1U7rH69xFz
- YBASO9lJ37j1BXGNiUck5ODtejsr++/BpOgRSfmZ3IWYngWQyVj912jTqNRIsqV5i3rGFEK/w
- 6oC79n2khIAMJLqrXfjnRVQjSvtzvGqgUIgMDms/3QWy/iymwkM7kqbpUrFrNXFiKEuCwlWs2
- jR7G0Z6DhnMe8SgBAHV9fcE5aqVOrN5Uqa1PbU0Ugbsh6mzORGf9Ho0dGBmBh+qhF8pA=
-To:     unlisted-recipients:; (no To-header on input)
+        Tue, 10 Jul 2018 10:48:45 -0400
+Received: (qmail 2894 invoked by uid 2102); 10 Jul 2018 10:48:44 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 10 Jul 2018 10:48:44 -0400
+Date:   Tue, 10 Jul 2018 10:48:44 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+In-Reply-To: <20180710093821.GA5414@andrea>
+Message-ID: <Pine.LNX.4.44L0.1807101039310.1449-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Dave Chinner points out, we don't have a proper documentation for the
-ktime_get() family of interfaces, making it rather unclear which of the
-over 30 (!) interfaces one should actually use in a driver or elsewhere
-in the kernel.
+On Tue, 10 Jul 2018, Andrea Parri wrote:
 
-I wrote up an explanation from how I personally see the interfaces,
-documenting what each of the functions do and hopefully making it a bit
-clearer which should be used where.
+> On Mon, Jul 09, 2018 at 04:01:57PM -0400, Alan Stern wrote:
+> > More than one kernel developer has expressed the opinion that the LKMM
+> > should enforce ordering of writes by locking.  In other words, given
+> 
+> I'd like to step back on this point: I still don't have a strong opinion
+> on this, but all this debating made me curious about others' opinion ;-)
+> I'd like to see the above argument expanded: what's the rationale behind
+> that opinion? can we maybe add references to actual code relying on that
+> ordering? other that I've been missing?
+> 
+> I'd extend these same questions to the "ordering of reads" snippet below
+> (and discussed since so long...).
+> 
+> 
+> > the following code:
+> > 
+> > 	WRITE_ONCE(x, 1);
+> > 	spin_unlock(&s):
+> > 	spin_lock(&s);
+> > 	WRITE_ONCE(y, 1);
+> > 
+> > the stores to x and y should be propagated in order to all other CPUs,
+> > even though those other CPUs might not access the lock s.  In terms of
+> > the memory model, this means expanding the cumul-fence relation.
+> > 
+> > Locks should also provide read-read (and read-write) ordering in a
+> > similar way.  Given:
+> > 
+> > 	READ_ONCE(x);
+> > 	spin_unlock(&s);
+> > 	spin_lock(&s);
+> > 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
+> > 
+> > the load of x should be executed before the load of (or store to) y.
+> > The LKMM already provides this ordering, but it provides it even in
+> > the case where the two accesses are separated by a release/acquire
+> > pair of fences rather than unlock/lock.  This would prevent
+> > architectures from using weakly ordered implementations of release and
+> > acquire, which seems like an unnecessary restriction.  The patch
+> > therefore removes the ordering requirement from the LKMM for that
+> > case.
+> 
+> IIUC, the same argument could be used to support the removal of the new
+> unlock-rf-lock-po (we already discussed riscv .aq/.rl, it doesn't seem
+> hard to imagine an arm64 LDAPR-exclusive, or the adoption of ctrl+isync
+> on powerpc).  Why are we effectively preventing their adoption?  Again,
+> I'd like to see more details about the underlying motivations...
+> 
+> 
+> > 
+> > All the architectures supported by the Linux kernel (including RISC-V)
+> > do provide this ordering for locks, albeit for varying reasons.
+> > Therefore this patch changes the model in accordance with the
+> > developers' wishes.
+> > 
+> > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > 
+> > ---
+> > 
+> > v.2: Restrict the ordering to lock operations, not general release
+> > and acquire fences.
+> 
+> This is another controversial point, and one that makes me shivering ...
+> 
+> I have the impression that we're dismissing the suggestion "RMW-acquire
+> at par with LKR" with a bit of rush.  So, this patch is implying that:
+> 
+> 	while (cmpxchg_acquire(&s, 0, 1) != 0)
+> 		cpu_relax();
+> 
+> is _not_ a valid implementation of spin_lock()! or, at least, it is not
+> when paired with an smp_store_release().
 
-This is the first time I tried writing .rst format documentation, so
-in addition to any mistakes in the content, I probably also introduce
-nonstandard formatting ;-)
+At least, it's not a valid general-purpose implementation.  For a lot 
+of architectures it would be okay, but it might not be okay (for 
+example) on RISC-V.
 
-I first tried to add an extra section to
-Documentation/timers/timekeeping.txt, but this is currently not included
-in the generated API, and it seems useful to have the API docs as part
-of what gets generated in
-https://www.kernel.org/doc/html/latest/core-api/index.html#core-utilities
-instead, so I started a new file there.
+> Will was anticipating inserting
+> arch hooks into the (generic) qspinlock code,  when we know that similar
+> patterns are spread all over in (q)rwlocks, mutexes, rwsem, ... (please
+> also notice that the informal documentation is currently treating these
+> synchronization mechanisms equally as far as "ordering" is concerned...).
+> 
+> This distinction between locking operations and "other acquires" appears
+> to me not only unmotivated but also extremely _fragile (difficult to use
+> /maintain) when considering the analysis of synchronization mechanisms
+> such as those mentioned above or their porting for new arch.
 
-I also considered adding the documentation inline in the
-include/linux/timekeeping.h header, but couldn't figure out how to do
-that in a way that would result both in helpful inline comments as
-well as readable html output, so I settled for the latter, with
-a small note pointing to it from the header.
+I will leave these points for others to discuss.
 
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-v2: minor changes suggested by Randy
----
- Documentation/core-api/index.rst       |   1 +
- Documentation/core-api/timekeeping.rst | 185 +++++++++++++++++++++++++++++++++
- include/linux/timekeeping.h            |  15 +++
- 3 files changed, 201 insertions(+)
- create mode 100644 Documentation/core-api/timekeeping.rst
 
-diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-index e821cf78be3b..11b54e2bbce2 100644
---- a/Documentation/core-api/index.rst
-+++ b/Documentation/core-api/index.rst
-@@ -29,6 +29,7 @@ Core utilities
-    printk-formats
-    circular-buffers
-    gfp_mask-from-fs-io
-+   timekeeping
- 
- Interfaces for kernel debugging
- ===============================
-diff --git a/Documentation/core-api/timekeeping.rst b/Documentation/core-api/timekeeping.rst
-new file mode 100644
-index 000000000000..93cbeb9daec0
---- /dev/null
-+++ b/Documentation/core-api/timekeeping.rst
-@@ -0,0 +1,185 @@
-+ktime accessors
-+===============
-+
-+Device drivers can read the current time using ktime_get() and the many
-+related functions declared in linux/timekeeping.h. As a rule of thumb,
-+using an accessor with a shorter name is preferred over one with a longer
-+name if both are equally fit for a particular use case.
-+
-+Basic ktime_t based interfaces
-+------------------------------
-+
-+The recommended simplest form returns an opaque ktime_t, with variants
-+that return time for different clock references:
-+
-+
-+.. c:function:: ktime_t ktime_get( void )
-+
-+	CLOCK_MONOTONIC
-+
-+	Useful for reliable timestamps and measuring short time intervals
-+	accurately. Starts at system boot time but stops during suspend.
-+
-+.. c:function:: ktime_t ktime_get_boottime( void )
-+
-+	CLOCK_BOOTTIME
-+
-+	Like ktime_get(), but does not stop when suspended. This can be
-+	used e.g. for key expiration times that need to be synchronized
-+	with other machines across a suspend operation.
-+
-+.. c:function:: ktime_t ktime_get_real( void )
-+
-+	CLOCK_REALTIME
-+
-+	Returns the time in relative to the UNIX epoch starting in 1970
-+	using the Coordinated Universal Time (UTC), same as gettimeofday()
-+	user space. This is used for all timestamps that need to
-+	persist across a reboot, like inode times, but should be avoided
-+	for internal uses, since it can jump backwards due to a leap
-+	second update, NTP adjustment settimeofday() operation from user
-+	space.
-+
-+.. c:function:: ktime_t ktime_get_clocktai( void )
-+
-+	 CLOCK_TAI
-+
-+	Like ktime_get_real(), but uses the International Atomic Time (TAI)
-+	reference instead of UTC to avoid jumping on leap second updates.
-+	This is rarely useful in the kernel.
-+
-+.. c:function:: ktime_t ktime_get_raw( void )
-+
-+	CLOCK_MONOTONIC_RAW
-+
-+	Like ktime_get(), but runs at the same rate as the hardware
-+	clocksource without (NTP) adjustments for clock drift. This is
-+	also rarely needed in the kernel.
-+
-+nanosecond, timespec64, and second output
-+-----------------------------------------
-+
-+For all of the above, there are variants that return the time in a
-+different format depending on what is required by the user:
-+
-+.. c:function:: u64 ktime_get_ns( void )
-+		u64 ktime_get_boottime_ns( void )
-+		u64 ktime_get_real_ns( void )
-+		u64 ktime_get_tai_ns( void )
-+		u64 ktime_get_raw_ns( void )
-+
-+	Same as the plain ktime_get functions, but returning a u64 number
-+	of nanoseconds in the respective time reference, which may be
-+	more convenient for some callers.
-+
-+.. c:function:: void ktime_get_ts64( struct timespec64 * )
-+		void ktime_get_boottime_ts64( struct timespec64 * )
-+		void ktime_get_real_ts64( struct timespec64 * )
-+		void ktime_get_clocktai_ts64( struct timespec64 * )
-+		void ktime_get_raw_ts64( struct timespec64 * )
-+
-+	Same above, but returns the time in a 'struct timespec64', split
-+	into seconds and nanoseconds. This can avoid an extra division
-+	when printing the time, or when passing it into an external
-+	interface that expects a 'timespec' or 'timeval' structure.
-+
-+.. c:function:: time64_t ktime_get_seconds( void )
-+		time64_t ktime_get_boottime_seconds( void )
-+		time64_t ktime_get_real_seconds( void )
-+		time64_t ktime_get_clocktai_seconds( void )
-+		time64_t ktime_get_raw_seconds( void )
-+
-+	Return a coarse-grained version of the time as a scalar
-+	time64_t. This avoids accessing the clock hardware and rounds
-+	down the seconds to the full seconds of the last timer tick
-+	using the respective reference.
-+
-+Coarse and fast_ns access
-+-------------------------
-+
-+Some additional variants exist for more specialized cases:
-+
-+.. c:function:: ktime_t ktime_get_coarse_boottime( void )
-+		ktime_t ktime_get_coarse_real( void )
-+		ktime_t ktime_get_coarse_clocktai( void )
-+		ktime_t ktime_get_coarse_raw( void )
-+
-+.. c:function:: void ktime_get_coarse_ts64( struct timespec64 * )
-+		void ktime_get_coarse_boottime_ts64( struct timespec64 * )
-+		void ktime_get_coarse_real_ts64( struct timespec64 * )
-+		void ktime_get_coarse_clocktai_ts64( struct timespec64 * )
-+		void ktime_get_coarse_raw_ts64( struct timespec64 * )
-+
-+	These are quicker than the non-coarse versions, but less accurate,
-+	corresponding to CLOCK_MONONOTNIC_COARSE and CLOCK_REALTIME_COARSE
-+	in user space, along with the equivalent boottime/tai/raw
-+	timebase not available in user space.
-+
-+	The time returned here corresponds to the last timer tick, which
-+	may be as much as 10ms in the past (for CONFIG_HZ=100), same as
-+	reading the 'jiffies' variable.  These are only useful when called
-+	in a fast path and one still expects better than second accuracy,
-+	but can't easily use 'jiffies', e.g. for inode timestamps.
-+	Skipping the hardware clock access saves around 100 CPU cycles
-+	on most modern machines with a reliable cycle counter, but
-+	up to several microseconds on older hardware with an external
-+	clocksource.
-+
-+.. c:function:: u64 ktime_get_mono_fast_ns( void )
-+		u64 ktime_get_raw_fast_ns( void )
-+		u64 ktime_get_boot_fast_ns( void )
-+		u64 ktime_get_real_fast_ns( void )
-+
-+	These variants are safe to call from any context, including from
-+	a non-maskable interrupt (NMI) during a timekeeper update, and
-+	while we are entering suspend with the clocksource powered down.
-+	This is useful in some tracing or debugging code as well as
-+	machine check reporting, but most drivers should never call them,
-+	since the time is allowed to jump under certain conditions.
-+
-+Deprecated time interfaces
-+--------------------------
-+
-+Older kernels used some other interfaces that are now being phased out
-+but may appear in third-party drivers being ported here. In particular,
-+all interfaces returning a 'struct timeval' or 'struct timespec' have
-+been replaced because the tv_sec member overflows in year 2038 on 32-bit
-+architectures. These are the recommended replacements:
-+
-+.. c:function:: void ktime_get_ts( struct timespec * )
-+
-+	Use ktime_get() or ktime_get_ts64() instead.
-+
-+.. c:function:: struct timeval do_gettimeofday( void )
-+		struct timespec getnstimeofday( void )
-+		struct timespec64 getnstimeofday64( void )
-+		void ktime_get_real_ts( struct timespec * )
-+
-+	ktime_get_real_ts64() is a direct replacement, but consider using
-+	monotonic time (ktime_get_ts64()) and/or a ktime_t based interface
-+	(ktime_get()/ktime_get_real()).
-+
-+.. c:function:: struct timespec current_kernel_time( void )
-+		struct timespec64 current_kernel_time64( void )
-+		struct timespec get_monotonic_coarse( void )
-+		struct timespec64 get_monotonic_coarse64( void )
-+
-+	These are replaced by ktime_get_coarse_real_ts64() and
-+	ktime_get_coarse_ts64(). However, A lot of code that wants
-+	coarse-grained times can use the simple 'jiffies' instead, while
-+	some drivers may actually want the higher resolution accessors
-+	these days.
-+
-+.. c:function:: struct timespec getrawmonotonic( void )
-+		struct timespec64 getrawmonotonic64( void )
-+		struct timespec timekeeping_clocktai( void )
-+		struct timespec64 timekeeping_clocktai64( void )
-+		struct timespec get_monotonic_boottime( void )
-+		struct timespec64 get_monotonic_boottime64( void )
-+
-+	These are replaced by ktime_get_raw()/ktime_get_raw_ts64(),
-+	ktime_get_clocktai()/ktime_get_clocktai_ts64() as well
-+	as ktime_get_boottime()/ktime_get_boottime_ts64().
-+	However, if the particular choice of clock source is not
-+	important for the user, consider converting to
-+	ktime_get()/ktime_get_ts64() instead for consistency.
-diff --git a/include/linux/timekeeping.h b/include/linux/timekeeping.h
-index 86bc2026efce..947b1b8d2d01 100644
---- a/include/linux/timekeeping.h
-+++ b/include/linux/timekeeping.h
-@@ -21,6 +21,21 @@ extern int do_sys_settimeofday64(const struct timespec64 *tv,
- 				 const struct timezone *tz);
- 
- /*
-+ * ktime_get() family: read the current time in a multitude of ways,
-+ *
-+ * The default time reference is CLOCK_MONOTONIC, starting at
-+ * boot time but not counting the time spent in suspend.
-+ * For other references, use the functions with "real", "clocktai",
-+ * "boottime" and "raw" suffixes.
-+ *
-+ * To get the time in a different format, use the ones wit
-+ * "ns", "ts64" and "seconds" suffix.
-+ *
-+ * See Documentation/core-api/timekeeping.rst for more details.
-+ */
-+
-+
-+/*
-  * timespec64 based interfaces
-  */
- extern void ktime_get_raw_ts64(struct timespec64 *ts);
--- 
-2.9.0
+> memory-barriers.txt seems to also need an update on this regard:  e.g.,
+> "VARIETIES OF MEMORY BARRIERS" currently has:
+> 
+>   ACQUIRE operations include LOCK operations and both smp_load_acquire()
+>   and smp_cond_acquire() operations.  [BTW, the latter was replaced by
+>   smp_cond_load_acquire() in 1f03e8d2919270 ...]
+> 
+>   RELEASE operations include UNLOCK operations and smp_store_release()
+>   operations. [...]
+> 
+>   [...] after an ACQUIRE on a given variable, all memory accesses
+>   preceding any prior RELEASE on that same variable are guaranteed
+>   to be visible.
+
+As far as I can see, these statements remain valid.
+
+> Please see also "LOCK ACQUISITION FUNCTIONS".
+
+The (3) and (4) entries in that section's list seem redundant.  
+However, we should point out that one of the reorderings discussed
+later on in that section would be disallowed if the RELEASE and ACQUIRE
+were locking actions.
+
+> > +
+> > +	int x, y;
+> > +	spinlock_t x;
+> > +
+> > +	P0()
+> > +	{
+> > +		spin_lock(&s);
+> > +		WRITE_ONCE(x, 1);
+> > +		spin_unlock(&s);
+> > +	}
+> > +
+> > +	P1()
+> > +	{
+> > +		int r1;
+> > +
+> > +		spin_lock(&s);
+> > +		r1 = READ_ONCE(x);
+> > +		WRITE_ONCE(y, 1);
+> > +		spin_unlock(&s);
+> > +	}
+> > +
+> > +	P2()
+> > +	{
+> > +		int r2, r3;
+> > +
+> > +		r2 = READ_ONCE(y);
+> > +		smp_rmb();
+> > +		r3 = READ_ONCE(x);
+> > +	}
+> 
+> Commit 047213158996f2 in -rcu/dev used the above test to illustrate a
+> property of smp_mb__after_spinlock(), c.f., its header comment; if we
+> accept this patch, we should consider updating that comment.
+
+Indeed, the use of smb_mp__after_spinlock() illustrated in that comment
+would become unnecessary.
+
+Alan
 
