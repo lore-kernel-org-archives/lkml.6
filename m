@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 031F4C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE01AC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF2772083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2772083E
+	by mail.kernel.org (Postfix) with ESMTP id A9E832083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9E832083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387958AbeGJSaL (ORCPT
+        id S2387976AbeGJSaN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:30:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45504 "EHLO
+        Tue, 10 Jul 2018 14:30:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45514 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732596AbeGJSaJ (ORCPT
+        with ESMTP id S1732596AbeGJSaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:30:09 -0400
+        Tue, 10 Jul 2018 14:30:12 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E825DEB8;
-        Tue, 10 Jul 2018 18:29:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BAF9AEC2;
+        Tue, 10 Jul 2018 18:30:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paulo Alcantara <palcantara@suse.de>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.9 24/52] cifs: Fix infinite loop when using hard mount option
-Date:   Tue, 10 Jul 2018 20:24:52 +0200
-Message-Id: <20180710182451.773789863@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Dave Airlie <airlied@redhat.com>
+Subject: [PATCH 4.9 25/52] drm/udl: fix display corruption of the last line
+Date:   Tue, 10 Jul 2018 20:24:53 +0200
+Message-Id: <20180710182451.870514784@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -51,129 +50,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paulo Alcantara <paulo@paulo.ac>
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-commit 7ffbe65578b44fafdef577a360eb0583929f7c6e upstream.
+commit 99ec9e77511dea55d81729fc80b6c63a61bfa8e0 upstream.
 
-For every request we send, whether it is SMB1 or SMB2+, we attempt to
-reconnect tcon (cifs_reconnect_tcon or smb2_reconnect) before carrying
-out the request.
+The displaylink hardware has such a peculiarity that it doesn't render a
+command until next command is received. This produces occasional
+corruption, such as when setting 22x11 font on the console, only the first
+line of the cursor will be blinking if the cursor is located at some
+specific columns.
 
-So, while server->tcpStatus != CifsNeedReconnect, we wait for the
-reconnection to succeed on wait_event_interruptible_timeout(). If it
-returns, that means that either the condition was evaluated to true, or
-timeout elapsed, or it was interrupted by a signal.
+When we end up with a repeating pixel, the driver has a bug that it leaves
+one uninitialized byte after the command (and this byte is enough to flush
+the command and render it - thus it fixes the screen corruption), however
+whe we end up with a non-repeating pixel, there is no byte appended and
+this results in temporary screen corruption.
 
-Since we're not handling the case where the process woke up due to a
-received signal (-ERESTARTSYS), the next call to
-wait_event_interruptible_timeout() will _always_ fail and we end up
-looping forever inside either cifs_reconnect_tcon() or smb2_reconnect().
+This patch fixes the screen corruption by always appending a byte 0xAF at
+the end of URB. It also removes the uninitialized byte.
 
-Here's an example of how to trigger that:
-
-$ mount.cifs //foo/share /mnt/test -o
-username=foo,password=foo,vers=1.0,hard
-
-(break connection to server before executing bellow cmd)
-$ stat -f /mnt/test & sleep 140
-[1] 2511
-
-$ ps -aux -q 2511
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root      2511  0.0  0.0  12892  1008 pts/0    S    12:24   0:00 stat -f
-/mnt/test
-
-$ kill -9 2511
-
-(wait for a while; process is stuck in the kernel)
-$ ps -aux -q 2511
-USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-root      2511 83.2  0.0  12892  1008 pts/0    R    12:24  30:01 stat -f
-/mnt/test
-
-By using 'hard' mount point means that cifs.ko will keep retrying
-indefinitely, however we must allow the process to be killed otherwise
-it would hang the system.
-
-Signed-off-by: Paulo Alcantara <palcantara@suse.de>
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
 Cc: stable@vger.kernel.org
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/cifssmb.c |   10 ++++++++--
- fs/cifs/smb2pdu.c |   18 ++++++++++++------
- 2 files changed, 20 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/udl/udl_fb.c       |    5 ++++-
+ drivers/gpu/drm/udl/udl_transfer.c |   11 +++++++----
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
---- a/fs/cifs/cifssmb.c
-+++ b/fs/cifs/cifssmb.c
-@@ -150,8 +150,14 @@ cifs_reconnect_tcon(struct cifs_tcon *tc
- 	 * greater than cifs socket timeout which is 7 seconds
- 	 */
- 	while (server->tcpStatus == CifsNeedReconnect) {
--		wait_event_interruptible_timeout(server->response_q,
--			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
-+		rc = wait_event_interruptible_timeout(server->response_q,
-+						      (server->tcpStatus != CifsNeedReconnect),
-+						      10 * HZ);
-+		if (rc < 0) {
-+			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
-+				 " signal by the process\n", __func__);
-+			return -ERESTARTSYS;
-+		}
+--- a/drivers/gpu/drm/udl/udl_fb.c
++++ b/drivers/gpu/drm/udl/udl_fb.c
+@@ -136,7 +136,10 @@ int udl_handle_damage(struct udl_framebu
  
- 		/* are we still trying to reconnect? */
- 		if (server->tcpStatus != CifsNeedReconnect)
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -155,7 +155,7 @@ out:
- static int
- smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon)
- {
--	int rc = 0;
-+	int rc;
- 	struct nls_table *nls_codepage;
- 	struct cifs_ses *ses;
- 	struct TCP_Server_Info *server;
-@@ -166,10 +166,10 @@ smb2_reconnect(__le16 smb2_command, stru
- 	 * for those three - in the calling routine.
- 	 */
- 	if (tcon == NULL)
--		return rc;
-+		return 0;
+ 	if (cmd > (char *) urb->transfer_buffer) {
+ 		/* Send partial buffer remaining before exiting */
+-		int len = cmd - (char *) urb->transfer_buffer;
++		int len;
++		if (cmd < (char *) urb->transfer_buffer + urb->transfer_buffer_length)
++			*cmd++ = 0xAF;
++		len = cmd - (char *) urb->transfer_buffer;
+ 		ret = udl_submit_urb(dev, urb, len);
+ 		bytes_sent += len;
+ 	} else
+--- a/drivers/gpu/drm/udl/udl_transfer.c
++++ b/drivers/gpu/drm/udl/udl_transfer.c
+@@ -152,11 +152,11 @@ static void udl_compress_hline16(
+ 		raw_pixels_count_byte = cmd++; /*  we'll know this later */
+ 		raw_pixel_start = pixel;
  
- 	if (smb2_command == SMB2_TREE_CONNECT)
--		return rc;
-+		return 0;
+-		cmd_pixel_end = pixel + (min(MAX_CMD_PIXELS + 1,
+-			min((int)(pixel_end - pixel) / bpp,
+-			    (int)(cmd_buffer_end - cmd) / 2))) * bpp;
++		cmd_pixel_end = pixel + min3(MAX_CMD_PIXELS + 1UL,
++					(unsigned long)(pixel_end - pixel) / bpp,
++					(unsigned long)(cmd_buffer_end - 1 - cmd) / 2) * bpp;
  
- 	if (tcon->tidStatus == CifsExiting) {
- 		/*
-@@ -212,8 +212,14 @@ smb2_reconnect(__le16 smb2_command, stru
- 			return -EAGAIN;
+-		prefetch_range((void *) pixel, (cmd_pixel_end - pixel) * bpp);
++		prefetch_range((void *) pixel, cmd_pixel_end - pixel);
+ 		pixel_val16 = get_pixel_val16(pixel, bpp);
+ 
+ 		while (pixel < cmd_pixel_end) {
+@@ -192,6 +192,9 @@ static void udl_compress_hline16(
+ 		if (pixel > raw_pixel_start) {
+ 			/* finalize last RAW span */
+ 			*raw_pixels_count_byte = ((pixel-raw_pixel_start) / bpp) & 0xFF;
++		} else {
++			/* undo unused byte */
++			cmd--;
  		}
  
--		wait_event_interruptible_timeout(server->response_q,
--			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
-+		rc = wait_event_interruptible_timeout(server->response_q,
-+						      (server->tcpStatus != CifsNeedReconnect),
-+						      10 * HZ);
-+		if (rc < 0) {
-+			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
-+				 " signal by the process\n", __func__);
-+			return -ERESTARTSYS;
-+		}
- 
- 		/* are we still trying to reconnect? */
- 		if (server->tcpStatus != CifsNeedReconnect)
-@@ -231,7 +237,7 @@ smb2_reconnect(__le16 smb2_command, stru
- 	}
- 
- 	if (!tcon->ses->need_reconnect && !tcon->need_reconnect)
--		return rc;
-+		return 0;
- 
- 	nls_codepage = load_nls_default();
- 
+ 		*cmd_pixels_count_byte = ((pixel - cmd_pixel_start) / bpp) & 0xFF;
 
 
