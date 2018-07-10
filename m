@@ -2,185 +2,104 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E74C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A573C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:55:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3168208E1
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:52:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vgmyzni2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3168208E1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3BD132087C
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:55:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BD132087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751418AbeGJFwl (ORCPT
+        id S1751303AbeGJFzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 01:52:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36038 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751058AbeGJFwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 01:52:39 -0400
-Received: from localhost (unknown [106.200.232.130])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AC5020881;
-        Tue, 10 Jul 2018 05:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531201959;
-        bh=YIBjc5TiKWUYyZUl1Agnnf4BWMjT8pvgVMlK0xLkOzM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Vgmyzni2nRWBWmzXJ1dbA/BccCooAszyo5ZWMa+s5tbk2gUlRZLdvkOPjSeYyOTPe
-         xmMM0tRMVoqmTvi1ZHoat7TZLdzd4adxA1JZBd4c5Oejb+ZZp3Ee8fVILbgo3f+K1G
-         RrIqRjEKbrwCvroT8JioxTX8573bSbw6kUmEwk/8=
-Date:   Tue, 10 Jul 2018 11:22:30 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     radheys@xilinx.com, vinod.koul@intel.com, lars@metafoo.de,
-        michal.simek@xilinx.com, linux-kernel@vger.kernel.org,
-        dmaengine@vger.kernel.org, dan.j.williams@intel.com,
-        appanad@xilinx.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC] dmaengine: Add metadat_ops for dma_async_tx_descriptor
-Message-ID: <20180710055230.GB3219@vkoul-mobl>
-References: <32208a9c-2b15-d345-1432-f1e387531f9b@ti.com>
- <20180601102429.16429-1-peter.ujfalusi@ti.com>
+        Tue, 10 Jul 2018 01:55:01 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:39061 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751086AbeGJFzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 01:55:00 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 5281CBA8C5566;
+        Tue, 10 Jul 2018 13:54:56 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Tue, 10 Jul 2018
+ 13:54:56 +0800
+Subject: Re: [f2fs-dev] [PATCH 2/4] f2fs: allow wrong configure dio to
+ buffered write
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180706210903.77887-1-jaegeuk@kernel.org>
+ <20180706210903.77887-2-jaegeuk@kernel.org>
+ <af7e2fa5-b9e9-3090-7659-bd76585fd3aa@kernel.org>
+ <20180709204125.GC24534@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <5ba170bb-8837-ce0a-87a9-b996b38eb1d8@huawei.com>
+Date:   Tue, 10 Jul 2018 13:54:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180601102429.16429-1-peter.ujfalusi@ti.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180709204125.GC24534@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hey Peter,
-
-Sorry for late response on this..
-
-On 01-06-18, 13:24, Peter Ujfalusi wrote:
-> If the DMA supports per descriptor metadata it can implement the attach,
-> get_ptr/set_len callbacks.
+On 2018/7/10 4:41, Jaegeuk Kim wrote:
+> On 07/09, Chao Yu wrote:
+>> On 2018/7/7 5:09, Jaegeuk Kim wrote:
+>>> This fixes to support unaligned dio as buffered writes.
+>>
+>> Should we return -EINVAL as manual of write said:
+>>
+>> EINVAL fd is attached to an object which is unsuitable for writing; or the file
+>> was opened with the O_DIRECT flag,  and  either  the  address
+>> specified in buf, the value specified in count, or the current file offset is
+>> not suitably aligned.
 > 
-> Client drivers must only use either attach or get_ptr/set_len to avoid
-> miss configuration.
-> 
-> Wrappers are also added for the metadata_ops:
-> dmaengine_desc_attach_metadata()
-> dmaengine_desc_get_metadata_ptr()
-> dmaengine_desc_set_metadata_len()
-> 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> ---
-> Hi,
-> 
-> since attachments are bouncing back, I send the patch separately
-> 
-> Regards,
-> Peter
-> 
->  include/linux/dmaengine.h | 50 +++++++++++++++++++++++++++++++++++++++
->  1 file changed, 50 insertions(+)
-> 
-> diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
-> index 51fbb861e84b..ac42ace36aa3 100644
-> --- a/include/linux/dmaengine.h
-> +++ b/include/linux/dmaengine.h
-> @@ -491,6 +491,18 @@ struct dmaengine_unmap_data {
->  	dma_addr_t addr[0];
->  };
->  
-> +struct dma_async_tx_descriptor;
-> +
-> +struct dma_descriptor_metadata_ops {
-> +	int (*attach)(struct dma_async_tx_descriptor *desc, void *data,
-> +		      size_t len);
+> I came from many xfstests failures regarding to direct IO error. It seems other
+> filesystems allow buffered writes as well.
 
-How does one detach? When should the client free up the memory, IOW when
-does dma driver drop ref to data.
+But as I see, it allows unaligned DIO write like xfs_io -d -c "pwrite 1 512",
+where ext4 returns failure.
 
-> +
-> +	void *(*get_ptr)(struct dma_async_tx_descriptor *desc,
-> +			 size_t *payload_len, size_t *max_len);
+I guess, we only need to expand to support DIO write aligns to sector (512
+bytes) for these cases?
 
-so what is this supposed to do..?
+Thanks,
 
-> +	int (*set_len)(struct dma_async_tx_descriptor *desc,
-> +		       size_t payload_len);
-
-attach already has length, so how does this help?
-
-> +};
-> +
->  /**
->   * struct dma_async_tx_descriptor - async transaction descriptor
->   * ---dma generic offload fields---
-> @@ -520,6 +532,7 @@ struct dma_async_tx_descriptor {
->  	dma_async_tx_callback_result callback_result;
->  	void *callback_param;
->  	struct dmaengine_unmap_data *unmap;
-> +	struct dma_descriptor_metadata_ops *metadata_ops;
->  #ifdef CONFIG_ASYNC_TX_ENABLE_CHANNEL_SWITCH
->  	struct dma_async_tx_descriptor *next;
->  	struct dma_async_tx_descriptor *parent;
-> @@ -932,6 +945,43 @@ static inline struct dma_async_tx_descriptor *dmaengine_prep_dma_memcpy(
->  						    len, flags);
->  }
->  
-> +static inline int dmaengine_desc_attach_metadata(
-> +		struct dma_async_tx_descriptor *desc, void *data, size_t len)
-> +{
-> +	if (!desc)
-> +		return 0;
-> +
-> +	if (!desc->metadata_ops || !desc->metadata_ops->attach)
-> +		return -ENOTSUPP;
-> +
-> +	return desc->metadata_ops->attach(desc, data, len);
-> +}
-> +
-> +static inline void *dmaengine_desc_get_metadata_ptr(
-> +		struct dma_async_tx_descriptor *desc, size_t *payload_len,
-> +		size_t *max_len)
-> +{
-> +	if (!desc)
-> +		return NULL;
-> +
-> +	if (!desc->metadata_ops || !desc->metadata_ops->get_ptr)
-> +		return ERR_PTR(-ENOTSUPP);
-> +
-> +	return desc->metadata_ops->get_ptr(desc, payload_len, max_len);
-> +}
-> +
-> +static inline int dmaengine_desc_set_metadata_len(
-> +		struct dma_async_tx_descriptor *desc, size_t payload_len)
-> +{
-> +	if (!desc)
-> +		return 0;
-> +
-> +	if (!desc->metadata_ops || !desc->metadata_ops->set_len)
-> +		return -ENOTSUPP;
-> +
-> +	return desc->metadata_ops->set_len(desc, payload_len);
-> +}
-> +
->  /**
->   * dmaengine_terminate_all() - Terminate all active DMA transfers
->   * @chan: The channel for which to terminate the transfers
-> -- 
-> Peter
 > 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>>
+>> Thanks,
+>>
+>>>
+>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>> ---
+>>>  fs/f2fs/data.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+>>> index e66379961804..6e8e78bb64a7 100644
+>>> --- a/fs/f2fs/data.c
+>>> +++ b/fs/f2fs/data.c
+>>> @@ -2425,7 +2425,7 @@ static ssize_t f2fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+>>>  
+>>>  	err = check_direct_IO(inode, iter, offset);
+>>>  	if (err)
+>>> -		return err;
+>>> +		return 0;
+>>>  
+>>>  	if (f2fs_force_buffered_io(inode, rw))
+>>>  		return 0;
+>>>
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe dmaengine" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
--- 
-~Vinod
