@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF90C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61862C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1789F20BF2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1789F20BF2
+	by mail.kernel.org (Postfix) with ESMTP id 28E0620936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E0620936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732709AbeGJS0O (ORCPT
+        id S1732722AbeGJS0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:26:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43658 "EHLO
+        Tue, 10 Jul 2018 14:26:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43664 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732699AbeGJS0N (ORCPT
+        with ESMTP id S1732426AbeGJS0Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:26:13 -0400
+        Tue, 10 Jul 2018 14:26:16 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4406E7D;
-        Tue, 10 Jul 2018 18:26:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA8C8E7F;
+        Tue, 10 Jul 2018 18:26:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Rosenberg <drosen@google.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 3.18 15/23] HID: debug: check length before copy_to_user()
-Date:   Tue, 10 Jul 2018 20:24:48 +0200
-Message-Id: <20180710182309.536961789@linuxfoundation.org>
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 3.18 16/23] media: cx25840: Use subdev host data for PLL override
+Date:   Tue, 10 Jul 2018 20:24:49 +0200
+Message-Id: <20180710182309.577139085@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
 References: <20180710182308.877332304@linuxfoundation.org>
@@ -51,53 +51,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Rosenberg <drosen@google.com>
+From: Brad Love <brad@nextdimension.cc>
 
-commit 717adfdaf14704fd3ec7fa2c04520c0723247eac upstream.
+commit 3ee9bc12342cf546313d300808ff47d7dbb8e7db upstream.
 
-If our length is greater than the size of the buffer, we
-overflow the buffer
+The cx25840 driver currently configures 885, 887, and 888 using
+default divisors for each chip. This check to see if the cx23885
+driver has passed the cx25840 a non-default clock rate for a
+specific chip. If a cx23885 board has left clk_freq at 0, the
+clock default values will be used to configure the PLLs.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+This patch only has effect on 888 boards who set clk_freq to 25M.
+
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-debug.c |    8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/media/i2c/cx25840/cx25840-core.c |   28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -1150,6 +1150,8 @@ copy_rest:
- 			goto out;
- 		if (list->tail > list->head) {
- 			len = list->tail - list->head;
-+			if (len > count)
-+				len = count;
+--- a/drivers/media/i2c/cx25840/cx25840-core.c
++++ b/drivers/media/i2c/cx25840/cx25840-core.c
+@@ -467,8 +467,13 @@ static void cx23885_initialize(struct i2
+ {
+ 	DEFINE_WAIT(wait);
+ 	struct cx25840_state *state = to_state(i2c_get_clientdata(client));
++	u32 clk_freq = 0;
+ 	struct workqueue_struct *q;
  
- 			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
-@@ -1159,6 +1161,8 @@ copy_rest:
- 			list->head += len;
- 		} else {
- 			len = HID_DEBUG_BUFSIZE - list->head;
-+			if (len > count)
-+				len = count;
- 
- 			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
- 				ret = -EFAULT;
-@@ -1166,7 +1170,9 @@ copy_rest:
- 			}
- 			list->head = 0;
- 			ret += len;
--			goto copy_rest;
-+			count -= len;
-+			if (count > 0)
-+				goto copy_rest;
- 		}
- 
- 	}
++	/* cx23885 sets hostdata to clk_freq pointer */
++	if (v4l2_get_subdev_hostdata(&state->sd))
++		clk_freq = *((u32 *)v4l2_get_subdev_hostdata(&state->sd));
++
+ 	/*
+ 	 * Come out of digital power down
+ 	 * The CX23888, at least, needs this, otherwise registers aside from
+@@ -504,8 +509,13 @@ static void cx23885_initialize(struct i2
+ 		 * 50.0 MHz * (0xb + 0xe8ba26/0x2000000)/4 = 5 * 28.636363 MHz
+ 		 * 572.73 MHz before post divide
+ 		 */
+-		/* HVR1850 or 50MHz xtal */
+-		cx25840_write(client, 0x2, 0x71);
++		if (clk_freq == 25000000) {
++			/* 888/ImpactVCBe or 25Mhz xtal */
++			; /* nothing to do */
++		} else {
++			/* HVR1850 or 50MHz xtal */
++			cx25840_write(client, 0x2, 0x71);
++		}
+ 		cx25840_write4(client, 0x11c, 0x01d1744c);
+ 		cx25840_write4(client, 0x118, 0x00000416);
+ 		cx25840_write4(client, 0x404, 0x0010253e);
+@@ -548,9 +558,15 @@ static void cx23885_initialize(struct i2
+ 	/* HVR1850 */
+ 	switch (state->id) {
+ 	case CX23888_AV:
+-		/* 888/HVR1250 specific */
+-		cx25840_write4(client, 0x10c, 0x13333333);
+-		cx25840_write4(client, 0x108, 0x00000515);
++		if (clk_freq == 25000000) {
++			/* 888/ImpactVCBe or 25MHz xtal */
++			cx25840_write4(client, 0x10c, 0x01b6db7b);
++			cx25840_write4(client, 0x108, 0x00000512);
++		} else {
++			/* 888/HVR1250 or 50MHz xtal */
++			cx25840_write4(client, 0x10c, 0x13333333);
++			cx25840_write4(client, 0x108, 0x00000515);
++		}
+ 		break;
+ 	default:
+ 		cx25840_write4(client, 0x10c, 0x002be2c9);
+@@ -577,7 +593,7 @@ static void cx23885_initialize(struct i2
+ 		 * 368.64 MHz before post divide
+ 		 * 122.88 MHz / 0xa = 12.288 MHz
+ 		 */
+-		/* HVR1850  or 50MHz xtal */
++		/* HVR1850 or 50MHz xtal or 25MHz xtal */
+ 		cx25840_write4(client, 0x114, 0x017dbf48);
+ 		cx25840_write4(client, 0x110, 0x000a030e);
+ 		break;
 
 
