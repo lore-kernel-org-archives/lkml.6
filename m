@@ -2,90 +2,117 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLACK,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08619C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B569EC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C098620852
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C098620852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8435120B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8435120B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387508AbeGJS2m (ORCPT
+        id S2387521AbeGJS2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:28:42 -0400
-Received: from foss.arm.com ([217.140.101.70]:51734 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732889AbeGJS2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:28:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B71EB1AED;
-        Tue, 10 Jul 2018 10:52:56 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 88AEE3F589;
-        Tue, 10 Jul 2018 10:52:56 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 5EC3C1AE53F3; Tue, 10 Jul 2018 18:53:38 +0100 (BST)
-Date:   Tue, 10 Jul 2018 18:53:38 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     linux-arm-kernel@lists.infradead.org,
-        mathieu.desnoyers@efficios.com, arnd@arndb.de
-Cc:     arnd@arndb.de, peterz@infradead.org, paulmck@linux.vnet.ibm.com,
-        boqun.feng@gmail.com, peter.maydell@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] asm-generic: unistd.h: Wire up sys_rseq
-Message-ID: <20180710175337.GD10177@arm.com>
-References: <1531145985-3747-1-git-send-email-will.deacon@arm.com>
- <1531145985-3747-3-git-send-email-will.deacon@arm.com>
+        Tue, 10 Jul 2018 14:28:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45094 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387507AbeGJS2n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 14:28:43 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CFC13EB4;
+        Tue, 10 Jul 2018 18:28:31 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
+        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.4 43/47] mtd: cfi_cmdset_0002: Change definition naming to retry write operation
+Date:   Tue, 10 Jul 2018 20:25:07 +0200
+Message-Id: <20180710182339.003440890@linuxfoundation.org>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
+References: <20180710182337.047502999@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531145985-3747-3-git-send-email-will.deacon@arm.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-On Mon, Jul 09, 2018 at 03:19:44PM +0100, Will Deacon wrote:
-> The new rseq call arrived in 4.18-rc1, so provide it in the asm-generic
-> unistd.h for architectures such as arm64.
-> 
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Will Deacon <will.deacon@arm.com>
-> ---
->  include/uapi/asm-generic/unistd.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+------------------
 
-Please can you Ack this, so I can take it the arm64 tree?
+From: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
 
-Thanks,
+commit 85a82e28b023de9b259a86824afbd6ba07bd6475 upstream.
 
-Will
+The definition can be used for other program and erase operations also.
+So change the naming to MAX_RETRIES from MAX_WORD_RETRIES.
 
-> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> index 42990676a55e..df4bedb9b01c 100644
-> --- a/include/uapi/asm-generic/unistd.h
-> +++ b/include/uapi/asm-generic/unistd.h
-> @@ -734,9 +734,11 @@ __SYSCALL(__NR_pkey_free,     sys_pkey_free)
->  __SYSCALL(__NR_statx,     sys_statx)
->  #define __NR_io_pgetevents 292
->  __SC_COMP(__NR_io_pgetevents, sys_io_pgetevents, compat_sys_io_pgetevents)
-> +#define __NR_rseq 293
-> +__SYSCALL(__NR_rseq, sys_rseq)
->  
->  #undef __NR_syscalls
-> -#define __NR_syscalls 293
-> +#define __NR_syscalls 294
->  
->  /*
->   * 32 bit systems traditionally used different
-> -- 
-> 2.1.4
-> 
+Signed-off-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+Reviewed-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: linux-mtd@lists.infradead.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/mtd/chips/cfi_cmdset_0002.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -42,7 +42,7 @@
+ #define AMD_BOOTLOC_BUG
+ #define FORCE_WORD_WRITE 0
+ 
+-#define MAX_WORD_RETRIES 3
++#define MAX_RETRIES 3
+ 
+ #define SST49LF004B	        0x0060
+ #define SST49LF040B	        0x0050
+@@ -1645,7 +1645,7 @@ static int __xipram do_write_oneword(str
+ 		map_write( map, CMD(0xF0), chip->start );
+ 		/* FIXME - should have reset delay before continuing */
+ 
+-		if (++retry_cnt <= MAX_WORD_RETRIES)
++		if (++retry_cnt <= MAX_RETRIES)
+ 			goto retry;
+ 
+ 		ret = -EIO;
+@@ -2104,7 +2104,7 @@ retry:
+ 		map_write(map, CMD(0xF0), chip->start);
+ 		/* FIXME - should have reset delay before continuing */
+ 
+-		if (++retry_cnt <= MAX_WORD_RETRIES)
++		if (++retry_cnt <= MAX_RETRIES)
+ 			goto retry;
+ 
+ 		ret = -EIO;
+
+
