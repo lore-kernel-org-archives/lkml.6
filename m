@@ -3,37 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD051C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E21FC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A90208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A90208E8
+	by mail.kernel.org (Postfix) with ESMTP id D15A420936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D15A420936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389221AbeGJSeU (ORCPT
+        id S2389234AbeGJSeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:34:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47992 "EHLO
+        Tue, 10 Jul 2018 14:34:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48002 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388417AbeGJSeT (ORCPT
+        with ESMTP id S2388417AbeGJSeW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:34:19 -0400
+        Tue, 10 Jul 2018 14:34:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DC07E3D;
-        Tue, 10 Jul 2018 18:34:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 07EFDD0B;
+        Tue, 10 Jul 2018 18:34:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mike Snitzer <snitzer@redhat.com>,
-        Ross Zwisler <ross.zwisler@linux.intel.com>
-Subject: [PATCH 4.14 45/53] dm: set QUEUE_FLAG_DAX accordingly in dm_table_set_restrictions()
-Date:   Tue, 10 Jul 2018 20:25:21 +0200
-Message-Id: <20180710182501.354318085@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Toshi Kani <toshi.kani@hpe.com>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 4.14 46/53] dm: prevent DAX mounts if not supported
+Date:   Tue, 10 Jul 2018 20:25:22 +0200
+Message-Id: <20180710182501.406354959@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -50,43 +53,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Snitzer <snitzer@redhat.com>
+From: Ross Zwisler <ross.zwisler@linux.intel.com>
 
-commit ad3793fc3945173f64d82d05d3ecde41f6c0435c upstream.
+commit dbc626597c39b24cefce09fbd8e9dea85869a801 upstream.
 
-Rather than having DAX support be unique by setting it based on table
-type in dm_setup_md_queue().
+Currently device_supports_dax() just checks to see if the QUEUE_FLAG_DAX
+flag is set on the device's request queue to decide whether or not the
+device supports filesystem DAX.  Really we should be using
+bdev_dax_supported() like filesystems do at mount time.  This performs
+other tests like checking to make sure the dax_direct_access() path works.
 
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+We also explicitly clear QUEUE_FLAG_DAX on the DM device's request queue if
+any of the underlying devices do not support DAX.  This makes the handling
+of QUEUE_FLAG_DAX consistent with the setting/clearing of most other flags
+in dm_table_set_restrictions().
+
+Now that bdev_dax_supported() explicitly checks for QUEUE_FLAG_DAX, this
+will ensure that filesystems built upon DM devices will only be able to
+mount with DAX if all underlying devices also support DAX.
+
 Signed-off-by: Ross Zwisler <ross.zwisler@linux.intel.com>
+Fixes: commit 545ed20e6df6 ("dm: add infrastructure for DAX support")
+Cc: stable@vger.kernel.org
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Toshi Kani <toshi.kani@hpe.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/md/dm-table.c |    2 ++
- drivers/md/dm.c       |    3 ---
- 2 files changed, 2 insertions(+), 3 deletions(-)
+ drivers/md/dm-table.c |    7 ++++---
+ drivers/md/dm.c       |    3 +--
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
 --- a/drivers/md/dm-table.c
 +++ b/drivers/md/dm-table.c
-@@ -1813,6 +1813,8 @@ void dm_table_set_restrictions(struct dm
- 	}
- 	blk_queue_write_cache(q, wc, fua);
+@@ -883,9 +883,7 @@ EXPORT_SYMBOL_GPL(dm_table_set_type);
+ static int device_supports_dax(struct dm_target *ti, struct dm_dev *dev,
+ 			       sector_t start, sector_t len, void *data)
+ {
+-	struct request_queue *q = bdev_get_queue(dev->bdev);
+-
+-	return q && blk_queue_dax(q);
++	return bdev_dax_supported(dev->bdev, PAGE_SIZE);
+ }
  
-+	if (dm_table_supports_dax(t))
-+		queue_flag_set_unlocked(QUEUE_FLAG_DAX, q);
+ static bool dm_table_supports_dax(struct dm_table *t)
+@@ -1815,6 +1813,9 @@ void dm_table_set_restrictions(struct dm
+ 
+ 	if (dm_table_supports_dax(t))
+ 		queue_flag_set_unlocked(QUEUE_FLAG_DAX, q);
++	else
++		queue_flag_clear_unlocked(QUEUE_FLAG_DAX, q);
++
  	if (dm_table_supports_dax_write_cache(t))
  		dax_write_cache(t->md->dax_dev, true);
  
 --- a/drivers/md/dm.c
 +++ b/drivers/md/dm.c
-@@ -2050,9 +2050,6 @@ int dm_setup_md_queue(struct mapped_devi
- 		 */
- 		bioset_free(md->queue->bio_split);
- 		md->queue->bio_split = NULL;
--
--		if (type == DM_TYPE_DAX_BIO_BASED)
--			queue_flag_set_unlocked(QUEUE_FLAG_DAX, md->queue);
- 		break;
- 	case DM_TYPE_NONE:
- 		WARN_ON_ONCE(true);
+@@ -961,8 +961,7 @@ static long dm_dax_direct_access(struct
+ 	if (len < 1)
+ 		goto out;
+ 	nr_pages = min(len, nr_pages);
+-	if (ti->type->direct_access)
+-		ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
++	ret = ti->type->direct_access(ti, pgoff, nr_pages, kaddr, pfn);
+ 
+  out:
+ 	dm_put_live_table(md, srcu_idx);
 
 
