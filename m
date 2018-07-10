@@ -3,127 +3,448 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,WEIRD_QUOTING autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2507EC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:52:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D384BC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC21420862
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:52:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC21420862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 792072098B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:54:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792072098B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732398AbeGJWyN (ORCPT
+        id S1732358AbeGJWz3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:54:13 -0400
-Received: from mga03.intel.com ([134.134.136.65]:22619 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732340AbeGJWyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:54:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 15:52:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
-   d="scan'208";a="73773138"
-Received: from mgcarrol-mobl1.amr.corp.intel.com (HELO [10.252.202.182]) ([10.252.202.182])
-  by orsmga002.jf.intel.com with ESMTP; 10 Jul 2018 15:52:55 -0700
-Subject: Re: [RFC PATCH v2 12/27] x86/mm: Shadow stack page fault error
- checking
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-13-yu-cheng.yu@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <61793360-f37c-ec19-c390-abe3c76a5f5c@linux.intel.com>
-Date:   Tue, 10 Jul 2018 15:52:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 10 Jul 2018 18:55:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40452 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732246AbeGJWz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:55:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 54760400589B;
+        Tue, 10 Jul 2018 22:54:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3C50E2166BA2;
+        Tue, 10 Jul 2018 22:54:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
+References: <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+To:     Michael Kerrisk <mtk.manpages@gmail.com>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-man@vger.kernel.org
+Subject: [MANPAGE PATCH] Add manpage for fsopen(2), fspick(2) and fsmount(2)
 MIME-Version: 1.0
-In-Reply-To: <20180710222639.8241-13-yu-cheng.yu@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <15487.1531263249.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Tue, 10 Jul 2018 23:54:09 +0100
+Message-ID: <15488.1531263249@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 10 Jul 2018 22:54:11 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 10 Jul 2018 22:54:11 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
-> +++ b/arch/x86/include/asm/traps.h
-> @@ -157,6 +157,7 @@ enum {
->   *   bit 3 ==				1: use of reserved bit detected
->   *   bit 4 ==				1: fault was an instruction fetch
->   *   bit 5 ==				1: protection keys block access
-> + *   bit 6 ==				1: shadow stack access fault
->   */
+Add a manual page to document the fsopen(), fspick() and fsmount() system
+calls.
 
-Could we document this bit better?
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-Is this a fault where the *processor* thought it should be a shadow
-stack fault?  Or is it also set on faults to valid shadow stack PTEs
-that just happen to fault for other reasons, say protection keys?
+ man2/fsmount.2 |    1 
+ man2/fsopen.2  |  357 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ man2/fspick.2  |    1 
+ 3 files changed, 359 insertions(+)
+ create mode 100644 man2/fsmount.2
+ create mode 100644 man2/fsopen.2
+ create mode 100644 man2/fspick.2
+
+diff --git a/man2/fsmount.2 b/man2/fsmount.2
+new file mode 100644
+index 000000000..2bf59fc3e
+--- /dev/null
++++ b/man2/fsmount.2
+@@ -0,0 +1 @@
++.so man2/fsopen.2
+diff --git a/man2/fsopen.2 b/man2/fsopen.2
+new file mode 100644
+index 000000000..1bc761ab4
+--- /dev/null
++++ b/man2/fsopen.2
+@@ -0,0 +1,357 @@
++'\" t
++.\" Copyright (c) 2018 David Howells <dhowells@redhat.com>
++.\"
++.\" %%%LICENSE_START(VERBATIM)
++.\" Permission is granted to make and distribute verbatim copies of this
++.\" manual provided the copyright notice and this permission notice are
++.\" preserved on all copies.
++.\"
++.\" Permission is granted to copy and distribute modified versions of this
++.\" manual under the conditions for verbatim copying, provided that the
++.\" entire resulting derived work is distributed under the terms of a
++.\" permission notice identical to this one.
++.\"
++.\" Since the Linux kernel and libraries are constantly changing, this
++.\" manual page may be incorrect or out-of-date.  The author(s) assume no
++.\" responsibility for errors or omissions, or for damages resulting from
++.\" the use of the information contained herein.  The author(s) may not
++.\" have taken the same level of care in the production of this manual,
++.\" which is licensed free of charge, as they might when working
++.\" professionally.
++.\"
++.\" Formatted or processed versions of this manual, if unaccompanied by
++.\" the source, must acknowledge the copyright and authors of this work.
++.\" %%%LICENSE_END
++.\"
++.TH FSOPEN 2 2018-06-07 "Linux" "Linux Programmer's Manual"
++.SH NAME
++fsopen, fsmount, fspick \- Handle filesystem (re-)configuration and mounting
++.SH SYNOPSIS
++.nf
++.B #include <sys/types.h>
++.br
++.B #include <sys/mount.h>
++.br
++.B #include <unistd.h>
++.br
++.BR "#include <fcntl.h>           " "/* Definition of AT_* constants */"
++.PP
++.BI "int fsopen(const char *" fsname ", unsigned int " flags );
++.PP
++.BI "int fsmount(int " fd ", unsigned int " flags ", unsigned int " ms_flags );
++.PP
++.BI "int fspick(int " dirfd ", const char *" pathname ", unsigned int " flags );
++.fi
++.PP
++.IR Note :
++There are no glibc wrappers for these system calls.
++.SH DESCRIPTION
++.PP
++.BR fsopen ()
++creates a new filesystem configuration context within the kernel for the
++filesystem named in the
++.I fsname
++parameter and attaches it to a file descriptor, which it then returns.  The
++file descriptor can be marked close-on-exec by setting
++.B FSOPEN_CLOEXEC
++in flags.
++.PP
++The
++file descriptor can then be used to configure the desired filesystem parameters
++and security parameters by using
++.BR write (2)
++to pass parameters to it and then writing a command to actually create the
++filesystem representation.
++.PP
++The file descriptor also serves as a channel by which more comprehensive error,
++warning and information messages may be retrieved from the kernel using
++.BR read (2).
++.PP
++Once the kernel's filesystem representation has been created, it can be queried
++by calling
++.BR fsinfo (2)
++on the file descriptor.  fsinfo() will spot that the target is actually a
++creation context and look inside that.
++.PP
++.BR fsmount ()
++can then be called to create a mount object that refers to the newly created
++filesystem representation, with the propagation and mount restrictions to be
++applied specified in
++.IR ms_flags .
++The mount object is then attached to a new file descriptor that looks like one
++created by
++.BR open "(2) with " O_PATH " or " open_tree (2).
++This can be passed to
++.BR move_mount (2)
++to attach the mount object to a mountpoint, thereby completing the process.
++.PP
++The file descriptor returned by fsmount() is marked close-on-exec if
++FSMOUNT_CLOEXEC is specified in
++.IR flags .
++.PP
++After fsmount() has completed, the context created by fsopen() is reset and
++moved to reconfiguration state, allowing the new superblock to be reconfigured.
++.PP
++.BR fspick ()
++creates a new filesystem context within the kernel, attaches the superblock
++specified by
++.IR dfd ", " pathname ", " flags
++and puts it into the reconfiguration state and attached the context to a new
++file descriptor that can then be parameterised with
++.BR write (2)
++exactly the same as for the context created by fsopen() above.
++.PP
++.I flags
++is an OR'd together mask of
++.B FSPICK_CLOEXEC
++which indicates that the returned file descriptor should be marked
++close-on-exec and
++.BR FSPICK_SYMLINK_NOFOLLOW ", " FSPICK_NO_AUTOMOUNT " and " FSPICK_EMPTY_PATH
++which control the pathwalk to the target object (see below).
++
++.\"________________________________________________________
++.SS Writable Command Interface
++Superblock (re-)configuration is achieved by writing command strings to the
++context file descriptor using
++.BR write (2).
++Each string is prefixed with a specifier indicating the class of command
++being specified.  The available commands include:
++.TP
++\fB"o <option>"\fP
++Specify a filesystem or security parameter.
++.I <option>
++is typically a key or key=val format string.  Since the length of the option is
++given to write(), the option may include any sort of character, including
++spaces and commas or even binary data.
++.TP
++\fB"s <name>"\fP
++Specify a device file, network server or other other source specification.
++This may be optional, depending on the filesystem, and it may be possible to
++provide multiple of them to a filesystem.
++.TP
++\fB"x create"\fP
++End the filesystem configuration phase and try and create a representation in
++the kernel with the parameters specified.  After this, the context is shifted
++to the mount-pending state waiting for an fsmount() call to occur.
++.TP
++\fB"x reconfigure"\fP
++End a filesystem reconfiguration phase try to apply the parameters to the
++filesystem representation.  After this, the context gets reset and put back to
++the start of the reconfiguration phase again.
++.PP
++With this interface, option strings are not limited to 4096 bytes, either
++individually or in sum, and they are also not restricted to text-only options.
++Further, errors may be given individually for each option and not aggregated or
++dumped into the kernel log.
++
++.\"________________________________________________________
++.SS Message Retrieval Interface
++The context file descriptor may be queried for message strings at any time by
++calling
++.BR read (2)
++on the file descriptor.  This will return formatted messages that are prefixed
++to indicate their class:
++.TP
++\fB"e <message>"\fP
++An error message string was logged.
++.TP
++\fB"i <message>"\fP
++An informational message string was logged.
++.TP
++\fB"w <message>"\fP
++An warning message string was logged.
++.PP
++Messages are removed from the queue as they're read.
++
++.\"________________________________________________________
++.SH EXAMPLES
++To illustrate the process, here's an example whereby this can be used to mount
++an ext4 filesystem on /dev/sdb1 onto /mnt.  Note that the example ignores the
++fact that
++.BR write (2)
++has a length parameter and that errors might occur.
++.PP
++.in +4n
++.nf
++sfd = fsopen("ext4", FSOPEN_CLOEXEC);
++write(sfd, "s /dev/sdb1");
++write(sfd, "o noatime");
++write(sfd, "o acl");
++write(sfd, "o user_attr");
++write(sfd, "o iversion");
++write(sfd, "x create");
++fsinfo(sfd, NULL, ...);
++mfd = fsmount(sfd, FSMOUNT_CLOEXEC, MS_RELATIME);
++move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
++.fi
++.in
++.PP
++Here, an ext4 context is created first and attached to sfd.  This is then told
++where its source will be, given a bunch of options and created.
++.BR fsinfo (2)
++can then be used to query the filesystem.  Then fsmount() is called to create a
++mount object and
++.BR move_mount (2)
++is called to attach it to its intended mountpoint.
++.PP
++And here's an example of mounting from an NFS server:
++.PP
++.in +4n
++.nf
++sfd = fsopen("nfs", 0);
++write(sfd, "s example.com/pub/linux");
++write(sfd, "o nfsvers=3");
++write(sfd, "o rsize=65536");
++write(sfd, "o wsize=65536");
++write(sfd, "o rdma");
++write(sfd, "x create");
++mfd = fsmount(sfd, 0, MS_NODEV);
++move_mount(mfd, "", sfd, AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
++.fi
++.in
++.PP
++Reconfiguration can be achieved by:
++.PP
++.in +4n
++.nf
++sfd = fspick(AT_FDCWD, "/mnt", FSPICK_NO_AUTOMOUNT | FSPICK_CLOEXEC);
++write(sfd, "o ro");
++write(sfd, "x reconfigure");
++.fi
++.in
++.PP
++or:
++.PP
++.in +4n
++.nf
++sfd = fsopen(...);
++...
++mfd = fsmount(sfd, ...);
++...
++write(sfd, "o ro");
++write(sfd, "x reconfigure");
++.fi
++.in
++
++
++.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
++.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
++.\"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
++.SH RETURN VALUE
++On success, all three functions return a file descriptor.  On error, \-1 is
++returned, and
++.I errno
++is set appropriately.
++.SH ERRORS
++The error values given below result from filesystem type independent
++errors.
++Each filesystem type may have its own special errors and its
++own special behavior.
++See the Linux kernel source code for details.
++.TP
++.B EACCES
++A component of a path was not searchable.
++(See also
++.BR path_resolution (7).)
++.TP
++.B EACCES
++Mounting a read-only filesystem was attempted without giving the
++.B MS_RDONLY
++flag.
++.TP
++.B EACCES
++The block device
++.I source
++is located on a filesystem mounted with the
++.B MS_NODEV
++option.
++.\" mtk: Probably: write permission is required for MS_BIND, with
++.\" the error EPERM if not present; CAP_DAC_OVERRIDE is required.
++.TP
++.B EBUSY
++.I source
++cannot be reconfigured read-only, because it still holds files open for
++writing.
++.TP
++.B EFAULT
++One of the pointer arguments points outside the user address space.
++.TP
++.B EINVAL
++.I source
++had an invalid superblock.
++.TP
++.B EINVAL
++.I ms_flags
++includes more than one of
++.BR MS_SHARED ,
++.BR MS_PRIVATE ,
++.BR MS_SLAVE ,
++or
++.BR MS_UNBINDABLE .
++.TP
++.BR EINVAL
++An attempt was made to bind mount an unbindable mount.
++.TP
++.B ELOOP
++Too many links encountered during pathname resolution.
++.TP
++.B EMFILE
++The system has too many open files to create more.
++.TP
++.B ENFILE
++The process has too many open files to create more.
++.TP
++.B ENAMETOOLONG
++A pathname was longer than
++.BR MAXPATHLEN .
++.TP
++.B ENODEV
++Filesystem
++.I fsname
++not configured in the kernel.
++.TP
++.B ENOENT
++A pathname was empty or had a nonexistent component.
++.TP
++.B ENOMEM
++The kernel could not allocate sufficient memory to complete the call.
++.TP
++.B ENOTBLK
++.I source
++is not a block device (and a device was required).
++.TP
++.B ENOTDIR
++.IR pathname ,
++or a prefix of
++.IR source ,
++is not a directory.
++.TP
++.B ENXIO
++The major number of the block device
++.I source
++is out of range.
++.TP
++.B EPERM
++The caller does not have the required privileges.
++.SH CONFORMING TO
++These functions are Linux-specific and should not be used in programs intended
++to be portable.
++.SH VERSIONS
++.BR fsopen "(), " fsmount "() and " fspick ()
++were added to Linux in kernel 4.18.
++.SH NOTES
++Glibc does not (yet) provide a wrapper for the
++.BR fsopen "() , " fsmount "() or " fspick "()"
++system calls; call them using
++.BR syscall (2).
++.SH SEE ALSO
++.BR mountpoint (1),
++.BR move_mount (2),
++.BR open_tree (2),
++.BR umount (2),
++.BR mount_namespaces (7),
++.BR path_resolution (7),
++.BR findmnt (8),
++.BR lsblk (8),
++.BR mount (8),
++.BR umount (8)
+diff --git a/man2/fspick.2 b/man2/fspick.2
+new file mode 100644
+index 000000000..2bf59fc3e
+--- /dev/null
++++ b/man2/fspick.2
+@@ -0,0 +1 @@
++.so man2/fsopen.2
