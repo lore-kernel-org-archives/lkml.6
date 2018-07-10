@@ -2,84 +2,87 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 794AFC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C31AC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C8E5208EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:21:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8E5208EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id C07C0208E7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:21:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07C0208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934176AbeGJPVe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:21:34 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45217 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933979AbeGJPVa (ORCPT
+        id S934236AbeGJPV5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:21:57 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:40773 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934064AbeGJPVz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:21:30 -0400
-Received: by mail-ed1-f67.google.com with SMTP id i20-v6so3845665eds.12;
-        Tue, 10 Jul 2018 08:21:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=qEno4xkGoxX5pl8wmkatEtEx/qINXMH2gkDu+0Gf3u0=;
-        b=fBdOZjaqgvCgTjKp/bfnOzLbonjbd/3qk4IS4mt06GtIAyTWEC/0mRYj2Y3mc9/C5N
-         XQAFstljEBMaWAF8D5D3yP6G7bsXTPk3nr9ufxh9MzFD4a4OHbcbFxP6wqWy/vaxca+2
-         RENag3bR6ecLLsBlmUXyB0pjbq4HZA2/vdlfyP7MhBGU8EOjhYKn6d6qKCBHCIhiddtX
-         HdtCWsnA0eADkwW1na48y7lP1oTpDWRfACuQ1TWp7ms3ATrnqB2EzePWS57/4xQWyzlO
-         APX4WqG3eraxNHAW4i96yKmABq/Y7AcU3MS0oe2dgys8+n8bMRqhpDOdioefDlyItrXV
-         o9Xw==
-X-Gm-Message-State: APt69E1vfD9cyvFgAEgGeThRrulNAK+wm7QHxeALOVCXZVXppQDZXC6+
-        gy3qKLZ01gRjt96x7lRaw/bo/i0V
-X-Google-Smtp-Source: AAOMgpco8r+4V5bv8a100R+Gqv3279ulYWV3HoV6Rw9g/rQZLOVwGAmeealZKVEGXRV527LOxPGljQ==
-X-Received: by 2002:a50:afa3:: with SMTP id h32-v6mr27062444edd.129.1531236088884;
-        Tue, 10 Jul 2018 08:21:28 -0700 (PDT)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
-        by smtp.gmail.com with ESMTPSA id s19-v6sm1948552edd.53.2018.07.10.08.21.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 08:21:28 -0700 (PDT)
-Received: by mail-wr1-f46.google.com with SMTP id j5-v6so8526445wrr.8;
-        Tue, 10 Jul 2018 08:21:28 -0700 (PDT)
-X-Received: by 2002:adf:b202:: with SMTP id u2-v6mr17563271wra.19.1531236087982;
- Tue, 10 Jul 2018 08:21:27 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 08:21:07
- -0700 (PDT)
-In-Reply-To: <20180706175113.26698-4-jernej.skrabec@siol.net>
-References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-4-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 10 Jul 2018 23:21:07 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67NgyW8ATtfS_abjYhLkRa8L-cJZ5=xHurZ+tJJ=0uijg@mail.gmail.com>
-Message-ID: <CAGb2v67NgyW8ATtfS_abjYhLkRa8L-cJZ5=xHurZ+tJJ=0uijg@mail.gmail.com>
-Subject: Re: [PATCH 03/17] ARM: dts: sun8i: r40: Remove fallback display
- engine compatible
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 10 Jul 2018 11:21:55 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0LibhV-1gDKbe2WGz-00cyuN; Tue, 10 Jul 2018 17:21:47 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Tejun Heo <tj@kernel.org>,
+        Josef Bacik <jbacik@fb.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] block: iolatency: avoid 64-bit division
+Date:   Tue, 10 Jul 2018 17:21:34 +0200
+Message-Id: <20180710152146.2371336-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:XyocjbQFefAhj3c/bBIEQ15lCKAaGoxSg9237vfr9dEN8XZkfbU
+ WWAZf6Waok7o8dp+g/lNtmVlOs7p+HurBsmWWBfKrH2zZR49JuCxrovK7Bg5Ac7cFDsPkEY
+ o0XbBwSKrybbDNcjo9oUolaIrUvNZwUxYoBSStaS9oM8DuB6mB7ySZObAm4tuezVgHVZVtI
+ ell4rX/Idyevjig3J3qQQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:+9NDxLDRql0=:f1V6LWvmkqTjc91JNmh/X9
+ 950MUw3uL5eSP/jsn+IJqmlkALQ1DEfwvLdENF9Gsf2dm0oSeXPDJ0x22K8dA+oPz3GaPtKxT
+ KDYc97/lfqN+66RzZJICZf5xJ89v8+h9gc9pTlntxLc5d7cD6Z2fhmXGfLJ+Z2bLYOXEN8+6i
+ fsZuOmupy8vQkqHduUqKyZRZ+4SGhW+gyMEm272mU8vWaIiWk1XMDI4qTlDg1lq+R18G749De
+ PizaabuzHdHiF5t/nPtnEMAK2RUuR9ssP4Xk6iaUSw1uHJSNC0Dqm5w3WZACbPsq85dczmOyo
+ Ttat7HWuQtgrbTSiRzmnugMSCI7V1bJ+freExm82theUsJixhUw5HsXLawJl7RtuUtSli53t9
+ cms1XY/IcV7RMn8MyrwtcW3KWLLdEYKLksPvqEAusQZ0IzmMGRBpY3+ghORaGBTOJNpJaPFfY
+ yky9Q8bfuPMt3pB+3rMjFluZrSXU4wtNZS7nudsIcybgW6S3LezQOJXsZXySGXWIrqmXkHOnQ
+ lToVDyKCy1ptxoBG5MrCtmksgfkpr8fyaE7Xmuq60Vhii+wZoszWS8LL22+T5rK8p7VEmquAn
+ UZmeFwrwssQDmJjlTeqfKSLM19aZmynKIwvBLevv7+TvuntA+/m6T28R4tjvT6rZh+LDTHQqB
+ BHJ6FDpe+2sjI2MR1XNDdMWsncDEYtKreVWviEoc40p6LJ05ZeQBxnOzi6+3w0HttiMY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 7, 2018 at 1:50 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> R40 has pretty unique display pipeline. Because of that, H3 display
-> engine compatible fallback should be removed.
->
-> Fixes: 05a43a262d03 ("ARM: dts: sun8i: r40: Add HDMI pipeline")
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On 32-bit architectures, dividing a 64-bit number needs to use the
+do_div() function or something like it to avoid a link failure:
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+block/blk-iolatency.o: In function `iolatency_prfill_limit':
+blk-iolatency.c:(.text+0x8cc): undefined reference to `__aeabi_uldivmod'
+
+Using div_u64() gives us the best output and avoids the need for an
+explicit cast.
+
+Fixes: d70675121546 ("block: introduce blk-iolatency io controller")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ block/blk-iolatency.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
+index a35a1f580337..56ddb2c68752 100644
+--- a/block/blk-iolatency.c
++++ b/block/blk-iolatency.c
+@@ -798,8 +798,7 @@ static u64 iolatency_prfill_limit(struct seq_file *sf,
+ 	if (!dname || !iolat->min_lat_nsec)
+ 		return 0;
+ 	seq_printf(sf, "%s target=%llu\n",
+-		   dname,
+-		   (unsigned long long)iolat->min_lat_nsec / NSEC_PER_USEC);
++		   dname, div_u64(iolat->min_lat_nsec, NSEC_PER_USEC));
+ 	return 0;
+ }
+ 
+-- 
+2.9.0
+
