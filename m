@@ -2,114 +2,124 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5558BC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D9DC6778A
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1924320871
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1924320871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id A7DE7208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 19:39:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="D9RZecRG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7DE7208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732741AbeGJT12 (ORCPT
+        id S1732819AbeGJTij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 15:27:28 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:53766 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732701AbeGJT12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 15:27:28 -0400
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-        by ale.deltatee.com with esmtp (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1fcyHL-0007ZF-Rs; Tue, 10 Jul 2018 13:26:28 -0600
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
+        Tue, 10 Jul 2018 15:38:39 -0400
+Received: from mail-eopbgr700107.outbound.protection.outlook.com ([40.107.70.107]:57709
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732769AbeGJTij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 15:38:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fcr04q/DJ0qoC7qhUYFX0D/ngpf+pHDZ1wB3l11vJ7k=;
+ b=D9RZecRGO4UBrBJKWEWXDV1aMbI46d9YkQ+mowsg55Vb46nI/noykSejiUzGu582hwFs6s3kPbygiuZEbWP/K/3iiHacZ0jAu8GM1PM4AQ0qfeD22zhaE+jKTIWvNkh4UAOhwmOUD8cIiZhx7AuGCNYvKbg464OV2GtTuJ25z3k=
+Received: from SN6PR2101MB1120.namprd21.prod.outlook.com (52.132.117.161) by
+ SN6PR2101MB1021.namprd21.prod.outlook.com (52.132.116.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.4; Tue, 10 Jul 2018 19:38:07 +0000
+Received: from SN6PR2101MB1120.namprd21.prod.outlook.com
+ ([fe80::35a3:57b:9c0:9732]) by SN6PR2101MB1120.namprd21.prod.outlook.com
+ ([fe80::35a3:57b:9c0:9732%4]) with mapi id 15.20.0952.017; Tue, 10 Jul 2018
+ 19:38:06 +0000
+From:   "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        Matthew Wilcox <willy@infradead.org>
-References: <20180627174650.27433-1-logang@deltatee.com>
- <20180627174650.27433-4-logang@deltatee.com>
- <20180706165655.62306b6f@t450s.home>
- <01dfc5ba-43cb-fbea-93e6-4963c411c750@deltatee.com>
- <20180710131915.0d669e7a@t450s.home>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <b426dd67-44eb-7309-6dd1-ef527cf5d50f@deltatee.com>
-Date:   Tue, 10 Jul 2018 13:26:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180710131915.0d669e7a@t450s.home>
-Content-Type: text/plain; charset=utf-8
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] x86/hyper-v: check cpumask_to_vpset() return value in
+ hyperv_flush_tlb_others_ex()
+Thread-Topic: [PATCH 1/2] x86/hyper-v: check cpumask_to_vpset() return value
+ in hyperv_flush_tlb_others_ex()
+Thread-Index: AQHUF6vosM6nFUt8gk6AuQep2ov9fqSI2vpw
+Date:   Tue, 10 Jul 2018 19:38:06 +0000
+Message-ID: <SN6PR2101MB1120785831C2538C2C0D93DDDC5B0@SN6PR2101MB1120.namprd21.prod.outlook.com>
+References: <20180709174012.17429-1-vkuznets@redhat.com>
+ <20180709174012.17429-2-vkuznets@redhat.com>
+In-Reply-To: <20180709174012.17429-2-vkuznets@redhat.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: willy@infradead.org, christian.koenig@amd.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, alex.williamson@redhat.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v5 3/3] PCI: Introduce the disable_acs_redir parameter
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-07-10T19:38:05.4134573Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR2101MB1021;7:65aAfdp6hnIfrDRa1s6n+sZLA3KJY7mfLPi+vDYXyirvlM2TJt4xzoexYE0sqrcLEt1ScgHcXzyJioeOEmfTdjaudYAq+oNENRw7kxqtgu3yMy+OCpRJkR+h1yLg5HoCtwprLlq4vg/BGwyYIBJt3c67bNTQHvduxaqgThCFvUaVfm1sB29SyYsVU0+S+KzVY3aGi48EkSmwFZOiLjv218ezq0UTpIOjytpGFxI0Pb/qMJhE7TQpRI/nHVctBIwl
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 55d6040c-329e-44ce-62ef-08d5e69ca926
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(48565401081)(2017052603328)(7193020);SRVR:SN6PR2101MB1021;
+x-ms-traffictypediagnostic: SN6PR2101MB1021:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Michael.H.Kelley@microsoft.com; 
+x-microsoft-antispam-prvs: <SN6PR2101MB10216209AACB2104A80273B0DC5B0@SN6PR2101MB1021.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(2018427008)(10201501046)(3002001)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:SN6PR2101MB1021;BCL:0;PCL:0;RULEID:;SRVR:SN6PR2101MB1021;
+x-forefront-prvs: 0729050452
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(396003)(366004)(346002)(376002)(199004)(189003)(5250100002)(97736004)(6506007)(2501003)(81166006)(8676002)(81156014)(72206003)(76176011)(5660300001)(74316002)(7696005)(7736002)(106356001)(105586002)(54906003)(110136005)(33656002)(55016002)(478600001)(4326008)(14454004)(486006)(2900100001)(305945005)(10290500003)(25786009)(476003)(10090500001)(6436002)(99286004)(6246003)(11346002)(86362001)(256004)(3846002)(6116002)(2906002)(186003)(8936002)(446003)(8990500004)(22452003)(68736007)(66066001)(102836004)(575784001)(53936002)(86612001)(316002)(229853002)(9686003)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR2101MB1021;H:SN6PR2101MB1120.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 06SNM+3IJQGeTtetFwNZdqpii+FDDK4PPlHjTkoIPRIdsW6zsTXlxJWMkbA2+rt/YE0lzAZW+XgQOnS5wNQdneRVsQJRVIlmenA3XPnG4r9CYswPl4TiO5hd6xHel62erzFWeCpCgPm28psaIslSBPWzoexr1qwoUGVb77VHIaVnBWfFC7icc9KbCQcOi2iDzIfjTl6+E7DiSzVbQe3XlpkEGNNjKoY2SXQ/Pfvx9jVKA5rPtm5IcburAeLatEK/KqvRNyHEYm3AdZRiEJvlU94vFHGA3y20OfIJCOOr1Lv9qYQJBJWsAcujkhtjcOBHw9kPF1cpa6TOKnFANdgicIcWTfXlel97qfG/jAbuKN8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 55d6040c-329e-44ce-62ef-08d5e69ca926
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2018 19:38:06.8514
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB1021
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Vitaly Kuznetsov <vkuznets@redhat.com> Monday, July 9, 2018 10:40 AM
+> Commit 1268ed0c474a ("x86/hyper-v: Fix the circular dependency in IPI
+> enlightenment") made cpumask_to_vpset() return '-1' when there is a CPU
+> with unknown VP index in the supplied set. This needs to be checked befor=
+e
+> we pass 'nr_bank' to hypercall.
+>=20
+> Fixes: 1268ed0c474a ("x86/hyper-v: Fix the circular dependency in IPI enl=
+ightenment")
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/hyperv/mmu.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-
-On 10/07/18 01:19 PM, Alex Williamson wrote:
-> Note that these devices don't have an ACS capability, so they should
-> drop out just as any other device without an ACS capability would.
-> Should pci_disable_acs_redir() perhaps issue the pci_warn() for all
-> such devices, removing this device specific disable function?
-
-Ok, that sounds like a good idea.
-
-
-> Kind of cumbersome, and as above, maybe the reverse path is optional.
-> I wonder if there's a better callback we should use or if we should not
-> rely on quirks providing both.
-
-Well, keep in mind enable_acs() and disable_acs_redir() are not inverse
-operations. The disable function is only disabling specific ACS bits to
-enable redirect -- which are not the same bits being set by the enable
-function.
-
->>  	{ 0 }
->>  };
->>
->>  int pci_dev_specific_enable_acs(struct pci_dev *dev)
->>  {
->> -	const struct pci_dev_enable_acs *i;
->> +	const struct pci_dev_acs_ops *i;
->>  	int ret;
->>
->> -	for (i = pci_dev_enable_acs; i->enable_acs; i++) {
->> +	for (i = pci_dev_acs_ops; i->enable_acs; i++) {
-> 
-> Perhaps this would walk via ARRAY_SIZE if we decide one or the other
-> callback is optional.
-
-> Test i->disable_acs_redir?
-
-Yes, both points make sense if we start saying the operations are optional.
-
-
-> static inline version for !CONFIG_PCI_QUIRKS?  Thanks,
-
-Oops, yes, I forgot that.
-
-Logan
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
