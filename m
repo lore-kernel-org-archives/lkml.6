@@ -6,40 +6,42 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E89C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA86C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34076208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34076208E8
+	by mail.kernel.org (Postfix) with ESMTP id F330E208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:36:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F330E208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389849AbeGJSgY (ORCPT
+        id S2389866AbeGJSg0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:36:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48482 "EHLO
+        Tue, 10 Jul 2018 14:36:26 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48492 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389774AbeGJSgX (ORCPT
+        with ESMTP id S2389851AbeGJSg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:36:23 -0400
+        Tue, 10 Jul 2018 14:36:26 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E0BAEC2;
-        Tue, 10 Jul 2018 18:36:08 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5166EC6;
+        Tue, 10 Jul 2018 18:36:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Douglas Gilbert <dgilbert@interlog.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 4.17 10/56] scsi: sg: mitigate read/write abuse
-Date:   Tue, 10 Jul 2018 20:24:52 +0200
-Message-Id: <20180710182504.002060222@linuxfoundation.org>
+        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.17 01/56] userfaultfd: hugetlbfs: fix userfaultfd_huge_must_wait() pte access
+Date:   Tue, 10 Jul 2018 20:24:43 +0200
+Message-Id: <20180710182503.601211213@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,111 +53,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Janosch Frank <frankja@linux.ibm.com>
 
-commit 26b5b874aff5659a7e26e5b1997e3df2c41fa7fd upstream.
+commit 1e2c043628c7736dd56536d16c0ce009bc834ae7 upstream.
 
-As Al Viro noted in commit 128394eff343 ("sg_write()/bsg_write() is not fit
-to be called under KERNEL_DS"), sg improperly accesses userspace memory
-outside the provided buffer, permitting kernel memory corruption via
-splice().  But it doesn't just do it on ->write(), also on ->read().
+Use huge_ptep_get() to translate huge ptes to normal ptes so we can
+check them with the huge_pte_* functions.  Otherwise some architectures
+will check the wrong values and will not wait for userspace to bring in
+the memory.
 
-As a band-aid, make sure that the ->read() and ->write() handlers can not
-be called in weird contexts (kernel context or credentials different from
-file opener), like for ib_safe_file_access().
-
-If someone needs to use these interfaces from different security contexts,
-a new interface should be written that goes through the ->ioctl() handler.
-
-I've mostly copypasted ib_safe_file_access() over as sg_safe_file_access()
-because I couldn't find a good common header - please tell me if you know a
-better way.
-
-[mkp: s/_safe_/_check_/]
-
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Link: http://lkml.kernel.org/r/20180626132421.78084-1-frankja@linux.ibm.com
+Fixes: 369cd2121be4 ("userfaultfd: hugetlbfs: userfaultfd_huge_must_wait for hugepmd ranges")
+Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Jann Horn <jannh@google.com>
-Acked-by: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/sg.c |   42 ++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 40 insertions(+), 2 deletions(-)
+ fs/userfaultfd.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -51,6 +51,7 @@ static int sg_version_num = 30536;	/* 2
- #include <linux/atomic.h>
- #include <linux/ratelimit.h>
- #include <linux/uio.h>
-+#include <linux/cred.h> /* for sg_check_file_access() */
- 
- #include "scsi.h"
- #include <scsi/scsi_dbg.h>
-@@ -210,6 +211,33 @@ static void sg_device_destroy(struct kre
- 	sdev_prefix_printk(prefix, (sdp)->device,		\
- 			   (sdp)->disk->disk_name, fmt, ##a)
- 
-+/*
-+ * The SCSI interfaces that use read() and write() as an asynchronous variant of
-+ * ioctl(..., SG_IO, ...) are fundamentally unsafe, since there are lots of ways
-+ * to trigger read() and write() calls from various contexts with elevated
-+ * privileges. This can lead to kernel memory corruption (e.g. if these
-+ * interfaces are called through splice()) and privilege escalation inside
-+ * userspace (e.g. if a process with access to such a device passes a file
-+ * descriptor to a SUID binary as stdin/stdout/stderr).
-+ *
-+ * This function provides protection for the legacy API by restricting the
-+ * calling context.
-+ */
-+static int sg_check_file_access(struct file *filp, const char *caller)
-+{
-+	if (filp->f_cred != current_real_cred()) {
-+		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
-+			caller, task_tgid_vnr(current), current->comm);
-+		return -EPERM;
-+	}
-+	if (uaccess_kernel()) {
-+		pr_err_once("%s: process %d (%s) called from kernel context, this is not allowed.\n",
-+			caller, task_tgid_vnr(current), current->comm);
-+		return -EACCES;
-+	}
-+	return 0;
-+}
-+
- static int sg_allow_access(struct file *filp, unsigned char *cmd)
+--- a/fs/userfaultfd.c
++++ b/fs/userfaultfd.c
+@@ -220,24 +220,26 @@ static inline bool userfaultfd_huge_must
+ 					 unsigned long reason)
  {
- 	struct sg_fd *sfp = filp->private_data;
-@@ -394,6 +422,14 @@ sg_read(struct file *filp, char __user *
- 	struct sg_header *old_hdr = NULL;
- 	int retval = 0;
+ 	struct mm_struct *mm = ctx->mm;
+-	pte_t *pte;
++	pte_t *ptep, pte;
+ 	bool ret = true;
  
-+	/*
-+	 * This could cause a response to be stranded. Close the associated
-+	 * file descriptor to free up any resources being held.
-+	 */
-+	retval = sg_check_file_access(filp, __func__);
-+	if (retval)
-+		return retval;
+ 	VM_BUG_ON(!rwsem_is_locked(&mm->mmap_sem));
+ 
+-	pte = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
+-	if (!pte)
++	ptep = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
 +
- 	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
- 	SCSI_LOG_TIMEOUT(3, sg_printk(KERN_INFO, sdp,
-@@ -581,9 +617,11 @@ sg_write(struct file *filp, const char _
- 	struct sg_header old_hdr;
- 	sg_io_hdr_t *hp;
- 	unsigned char cmnd[SG_MAX_CDB_SIZE];
-+	int retval;
++	if (!ptep)
+ 		goto out;
  
--	if (unlikely(uaccess_kernel()))
--		return -EINVAL;
-+	retval = sg_check_file_access(filp, __func__);
-+	if (retval)
-+		return retval;
+ 	ret = false;
++	pte = huge_ptep_get(ptep);
  
- 	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
+ 	/*
+ 	 * Lockless access: we're in a wait_event so it's ok if it
+ 	 * changes under us.
+ 	 */
+-	if (huge_pte_none(*pte))
++	if (huge_pte_none(pte))
+ 		ret = true;
+-	if (!huge_pte_write(*pte) && (reason & VM_UFFD_WP))
++	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
+ 		ret = true;
+ out:
+ 	return ret;
 
 
