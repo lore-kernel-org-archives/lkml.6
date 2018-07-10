@@ -2,38 +2,40 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A83C9C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDBCC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75EED208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75EED208E8
+	by mail.kernel.org (Postfix) with ESMTP id 32970208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32970208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389757AbeGJSgG (ORCPT
+        id S2389772AbeGJSgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:36:06 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48422 "EHLO
+        Tue, 10 Jul 2018 14:36:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48434 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387444AbeGJSgG (ORCPT
+        with ESMTP id S2389729AbeGJSgI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:36:06 -0400
+        Tue, 10 Jul 2018 14:36:08 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A423BE78;
-        Tue, 10 Jul 2018 18:35:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EE25EE78;
+        Tue, 10 Jul 2018 18:35:54 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.17 39/56] ext4: add more mount time checks of the superblock
-Date:   Tue, 10 Jul 2018 20:25:21 +0200
-Message-Id: <20180710182505.458486355@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Toralf=20F=C3=B6rster?= <toralf.foerster@gmx.de>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4.17 05/56] ACPICA: Drop leading newlines from error messages
+Date:   Tue, 10 Jul 2018 20:24:47 +0200
+Message-Id: <20180710182503.762631262@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -50,99 +52,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-commit bfe0a5f47ada40d7984de67e59a7d3390b9b9ecc upstream.
+commit a0d5f3b69af7733f3173a8e19d51f68a08017c76 upstream.
 
-The kernel's ext4 mount-time checks were more permissive than
-e2fsprogs's libext2fs checks when opening a file system.  The
-superblock is considered too insane for debugfs or e2fsck to operate
-on it, the kernel has no business trying to mount it.
+Commit 5088814a6e93 (ACPICA: AML parser: attempt to continue loading
+table after error) unintentionally added leading newlines to error
+messages emitted by ACPICA which caused unexpected things to be
+printed to the kernel log.  Drop these newlines (which effectively
+reverts the part of commit 5088814a6e93 adding them).
 
-This will make file system fuzzing tools work harder, but the failure
-cases that they find will be more useful and be easier to evaluate.
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Fixes: 5088814a6e93 (ACPICA: AML parser: attempt to continue loading table after error)
+Reported-by: Toralf Förster <toralf.foerster@gmx.de>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Cc: 4.17+ <stable@vger.kernel.org> # 4.17+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/super.c |   37 ++++++++++++++++++++++++++-----------
- 1 file changed, 26 insertions(+), 11 deletions(-)
+ drivers/acpi/acpica/uterror.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3752,6 +3752,13 @@ static int ext4_fill_super(struct super_
- 			 le32_to_cpu(es->s_log_block_size));
- 		goto failed_mount;
- 	}
-+	if (le32_to_cpu(es->s_log_cluster_size) >
-+	    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
-+		ext4_msg(sb, KERN_ERR,
-+			 "Invalid log cluster size: %u",
-+			 le32_to_cpu(es->s_log_cluster_size));
-+		goto failed_mount;
-+	}
+--- a/drivers/acpi/acpica/uterror.c
++++ b/drivers/acpi/acpica/uterror.c
+@@ -182,19 +182,19 @@ acpi_ut_prefixed_namespace_error(const c
+ 	switch (lookup_status) {
+ 	case AE_ALREADY_EXISTS:
  
- 	if (le16_to_cpu(sbi->s_es->s_reserved_gdt_blocks) > (blocksize / 4)) {
- 		ext4_msg(sb, KERN_ERR,
-@@ -3898,13 +3905,6 @@ static int ext4_fill_super(struct super_
- 				 "block size (%d)", clustersize, blocksize);
- 			goto failed_mount;
- 		}
--		if (le32_to_cpu(es->s_log_cluster_size) >
--		    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
--			ext4_msg(sb, KERN_ERR,
--				 "Invalid log cluster size: %u",
--				 le32_to_cpu(es->s_log_cluster_size));
--			goto failed_mount;
--		}
- 		sbi->s_cluster_bits = le32_to_cpu(es->s_log_cluster_size) -
- 			le32_to_cpu(es->s_log_block_size);
- 		sbi->s_clusters_per_group =
-@@ -3925,10 +3925,10 @@ static int ext4_fill_super(struct super_
- 		}
- 	} else {
- 		if (clustersize != blocksize) {
--			ext4_warning(sb, "fragment/cluster size (%d) != "
--				     "block size (%d)", clustersize,
--				     blocksize);
--			clustersize = blocksize;
-+			ext4_msg(sb, KERN_ERR,
-+				 "fragment/cluster size (%d) != "
-+				 "block size (%d)", clustersize, blocksize);
-+			goto failed_mount;
- 		}
- 		if (sbi->s_blocks_per_group > blocksize * 8) {
- 			ext4_msg(sb, KERN_ERR,
-@@ -3982,6 +3982,13 @@ static int ext4_fill_super(struct super_
- 			 ext4_blocks_count(es));
- 		goto failed_mount;
- 	}
-+	if ((es->s_first_data_block == 0) && (es->s_log_block_size == 0) &&
-+	    (sbi->s_cluster_ratio == 1)) {
-+		ext4_msg(sb, KERN_WARNING, "bad geometry: first data "
-+			 "block is 0 with a 1k block and cluster size");
-+		goto failed_mount;
-+	}
-+
- 	blocks_count = (ext4_blocks_count(es) -
- 			le32_to_cpu(es->s_first_data_block) +
- 			EXT4_BLOCKS_PER_GROUP(sb) - 1);
-@@ -4017,6 +4024,14 @@ static int ext4_fill_super(struct super_
- 		ret = -ENOMEM;
- 		goto failed_mount;
- 	}
-+	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
-+	    le32_to_cpu(es->s_inodes_count)) {
-+		ext4_msg(sb, KERN_ERR, "inodes count not valid: %u vs %llu",
-+			 le32_to_cpu(es->s_inodes_count),
-+			 ((u64)sbi->s_groups_count * sbi->s_inodes_per_group));
-+		ret = -EINVAL;
-+		goto failed_mount;
-+	}
+-		acpi_os_printf("\n" ACPI_MSG_BIOS_ERROR);
++		acpi_os_printf(ACPI_MSG_BIOS_ERROR);
+ 		message = "Failure creating";
+ 		break;
  
- 	bgl_lock_init(sbi->s_blockgroup_lock);
+ 	case AE_NOT_FOUND:
  
+-		acpi_os_printf("\n" ACPI_MSG_BIOS_ERROR);
++		acpi_os_printf(ACPI_MSG_BIOS_ERROR);
+ 		message = "Could not resolve";
+ 		break;
+ 
+ 	default:
+ 
+-		acpi_os_printf("\n" ACPI_MSG_ERROR);
++		acpi_os_printf(ACPI_MSG_ERROR);
+ 		message = "Failure resolving";
+ 		break;
+ 	}
 
 
