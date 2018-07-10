@@ -5,484 +5,414 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A77BEC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D352C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5005720A8B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5005720A8B
+	by mail.kernel.org (Postfix) with ESMTP id D7BC920A8B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7BC920A8B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732423AbeGJWmr (ORCPT
+        id S1732441AbeGJWmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:42:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51558 "EHLO mx1.redhat.com"
+        Tue, 10 Jul 2018 18:42:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:49948 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732258AbeGJWmq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:42:46 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        id S1732425AbeGJWmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:42:51 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A33B340363A8;
-        Tue, 10 Jul 2018 22:41:30 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2CED240711A1;
+        Tue, 10 Jul 2018 22:41:37 +0000 (UTC)
 Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CF8F0111E41A;
-        Tue, 10 Jul 2018 22:41:29 +0000 (UTC)
-Subject: [PATCH 00/32] VFS: Introduce filesystem context [ver #9]
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 449402026D6B;
+        Tue, 10 Jul 2018 22:41:36 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 01/32] vfs: syscall: Add open_tree(2) to reference or clone
+ a mount [ver #9]
 From:   David Howells <dhowells@redhat.com>
 To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
-Date:   Tue, 10 Jul 2018 23:41:29 +0100
-Message-ID: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+Cc:     dhowells@redhat.com, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 10 Jul 2018 23:41:35 +0100
+Message-ID: <153126249579.14533.18370053915999978123.stgit@warthog.procyon.org.uk>
+In-Reply-To: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 22:41:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Tue, 10 Jul 2018 22:41:30 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 10 Jul 2018 22:41:37 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Tue, 10 Jul 2018 22:41:37 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-Hi Al,
-
-Can you update your tree with this?
-
-Here are a set of patches to create a filesystem context prior to setting
-up a new mount, populating it with the parsed options/binary data, creating
-the superblock and then effecting the mount.  This is also used for remount
-since much of the parsing stuff is common in many filesystems.
-
-This allows namespaces and other information to be conveyed through the
-mount procedure.
-
-This also allows Miklós Szeredi's idea of doing:
-
-	fd = fsopen("nfs");
-	write(fd, "option=val", ...);
-	mfd = fsmount(fd, MS_NODEV);
-	move_mount(mfd, "", AT_FDCWD, "/mnt", MOVE_MOUNT_F_EMPTY_PATH);
-
-that he presented at LSF-2017 to be implemented (see the relevant patches
-in the series).
-
-I didn't use netlink as that would make the core kernel depend on
-CONFIG_NET and CONFIG_NETLINK and would introduce network namespacing
-issues.
-
-I've implemented filesystem context handling for procfs, nfs, mqueue,
-cpuset, kernfs, sysfs, cgroup and afs filesystems.
-
-Unconverted filesystems are handled by a legacy filesystem wrapper.
-
-Significant changes:
-
- ver #9:
-
- (*) Dropped the fd cookie stuff and the FMODE_*/O_* split stuff.
-
- (*) Al added an open_tree() system call to allow a mount tree to be picked
-     referenced or cloned into an O_PATH-style fd.  This can then be used
-     with sys_move_mount().  Dropped the O_CLONE_MOUNT and O_NON_RECURSIVE
-     open() flags.
-
- (*) Brought error logging back in, though only in the fs_context and not
-     in the task_struct.
-
- (*) Separated MS_REMOUNT|MS_BIND handling from MS_REMOUNT handling.
-
- (*) Used anon_inodes for the fd returned by fsopen() and fspick().  This
-     requires making it unconditional.
-
- (*) Fixed lots of bugs.  Especial thanks to Al and Eric Biggers for
-     finding them and providing patches.
-
- (*) Wrote manual pages, which I'll post separately.
-
- ver #8:
-
- (*) Changed the way fsmount() mounts into the namespace according to some
-     of Al's ideas.
-
- (*) Put better typing on the fd cookie obtained from __fdget() & co..
-
- (*) Stored the fd cookie in struct nameidata rather than the dfd number.
-
- (*) Changed sys_fsmount() to return an O_PATH-style fd rather than
-     actually mounting into the mount namespace.
-
- (*) Separated internal FMODE_* handling from O_* handling to free up
-     certain O_* flag numbers.
-
- (*) Added two new open flags (O_CLONE_MOUNT and O_NON_RECURSIVE) for use
-     with open(O_PATH) to copy a mount or mount-subtree to an O_PATH fd.
-
- (*) Added a new syscall, sys_move_mount(), to move a mount from an
-     dfd+path source to a dfd+path destination.
-
- (*) Added a file->f_mode flag (FMODE_NEED_UNMOUNT) that indicates that the
-     vfsmount attached to file->f_path needs 'unmounting' if set.
-
- (*) Made sys_move_mount() clear FMODE_NEED_UNMOUNT if successful.
-
-	[!] This doesn't work quite right.
-
- (*) Added a new syscall, fsinfo(), to query information about a
-     filesystem.  The idea being that this will, in future, work with the
-     fd from fsopen() too and permit querying of the parameters and
-     metadata before fsmount() is called.
-
- ver #7:
-
- (*) Undo an incorrect MS_* -> SB_* conversion.
-
- (*) Pass the mount data buffer size to all the mount-related functions that
-     take the data pointer.  This fixes a problem where someone (say SELinux)
-     tries to copy the mount data, assuming it to be a page in size, and
-     overruns the buffer - thereby incurring an oops by hitting a guard page.
-
- (*) Made the AFS filesystem use them as an example.  This is a much easier to
-     deal with than with NFS or Ext4 as there are very few mount options.
-
- ver #6:
-
- (*) Dropped the supplementary error string facility for the moment.
-
- (*) Dropped the NFS patches for the moment.
-
- (*) Dropped the reserved file descriptor argument from fsopen() and
-     replaced it with three reserved pointers that must be NULL.
-
- ver #5:
-
- (*) Renamed sb_config -> fs_context and adjusted variable names.
-
- (*) Differentiated the flags in sb->s_flags (now named SB_*) from those
-     passed to mount(2) (named MS_*).
-
- (*) Renamed __vfs_new_fs_context() to vfs_new_fs_context() and made the
-     caller always provide a struct file_system_type pointer and the
-     parameters required.
-
- (*) Got rid of vfs_submount_fc() in favour of passing
-     FS_CONTEXT_FOR_SUBMOUNT to vfs_new_fs_context().  The purpose is now
-     used more.
-
- (*) Call ->validate() on the remount path.
-
- (*) Got rid of the inode locking in sys_fsmount().
-
- (*) Call security_sb_mountpoint() in the mount(2) path.
-
- ver #4:
-
- (*) Split the sb_config patch up somewhat.
-
- (*) Made the supplementary error string facility something attached to the
-     task_struct rather than the sb_config so that error messages can be
-     obtained from NFS doing a mount-root-and-pathwalk inside the
-     nfs_get_tree() operation.
-
-     Further, made this managed and read by prctl rather than through the
-     mount fd so that it's more generally available.
-
- ver #3:
-
- (*) Rebased on 4.12-rc1.
-
- (*) Split the NFS patch up somewhat.
-
- ver #2:
-
- (*) Removed the ->fill_super() from sb_config_operations and passed it in
-     directly to functions that want to call it.  NFS now calls
-     nfs_fill_super() directly rather than jumping through a pointer to it
-     since there's only the one option at the moment.
-
- (*) Removed ->mnt_ns and ->sb from sb_config and moved ->pid_ns into
-     proc_sb_config.
-
- (*) Renamed create_super -> get_tree.
-
- (*) Renamed struct mount_context to struct sb_config and amended various
-     variable names.
-
- (*) sys_fsmount() acquired AT_* flags and MS_* flags (for MNT_* flags)
-     arguments.
-
- ver #1:
-
- (*) Split the sb_config stuff out into its own header.
-
- (*) Support non-context aware filesystems through a special set of
-     sb_config operations.
-
- (*) Stored the created superblock and root dentry into the sb_config after
-     creation rather than directly into a vfsmount.  This allows some
-     arguments to be removed to various NFS functions.
-
- (*) Added an explicit superblock-creation step.  This allows a created
-     superblock to then be mounted multiple times.
-
- (*) Added a flag to say that the sb_config is degraded and cannot have
-     another go at having a superblock creation whilst getting rid of the
-     one that says it's already mounted.
-
-Possible further developments:
-
- (*) Implement sb reconfiguration (for now it returns ENOANO).
-
- (*) Implement mount context support in more filesystems, ext4 being next
-     on my list.
-
- (*) Move the walk-from-root stuff that nfs has to generic code so that you
-     can do something akin to:
-
-	mount /dev/sda1:/foo/bar /mnt
-
-     See nfs_follow_remote_path() and mount_subtree().  This is slightly
-     tricky in NFS as we have to prevent referral loops.
-
- (*) Work out how to get at the error message incurred by submounts
-     encountered during nfs_follow_remote_path().
-
-     Should the error message be moved to task_struct and made more
-     general, perhaps retrieved with a prctl() function?
-
- (*) Clean up/consolidate the security functions.  Possibly add a
-     validation hook to be called at the same time as the mount context
-     validate op.
-
-The patches can be found here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/tag/?h=mount-api-20180710-2
-
-on branch:
-
-	mount-context
-
-David
+From: Al Viro <viro@zeniv.linux.org.uk>
+
+open_tree(dfd, pathname, flags)
+
+Returns an O_PATH-opened file descriptor or an error.
+dfd and pathname specify the location to open, in usual
+fashion (see e.g. fstatat(2)).  flags should be an OR of
+some of the following:
+	* AT_PATH_EMPTY, AT_NO_AUTOMOUNT, AT_SYMLINK_NOFOLLOW -
+same meanings as usual
+	* OPEN_TREE_CLOEXEC - make the resulting descriptor
+close-on-exec
+	* OPEN_TREE_CLONE or OPEN_TREE_CLONE | AT_RECURSIVE -
+instead of opening the location in question, create a detached
+mount tree matching the subtree rooted at location specified by
+dfd/pathname.  With AT_RECURSIVE the entire subtree is cloned,
+without it - only the part within in the mount containing the
+location in question.  In other words, the same as mount --rbind
+or mount --bind would've taken.  The detached tree will be
+dissolved on the final close of obtained file.  Creation of such
+detached trees requires the same capabilities as doing mount --bind.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+cc: linux-api@vger.kernel.org
 ---
-Al Viro (2):
-      vfs: syscall: Add open_tree(2) to reference or clone a mount
-      teach move_mount(2) to work with OPEN_TREE_CLONE
 
-David Howells (30):
-      vfs: syscall: Add move_mount(2) to move mounts around
-      vfs: Suppress MS_* flag defs within the kernel unless explicitly enabled
-      vfs: Introduce the basic header for the new mount API's filesystem context
-      vfs: Add LSM hooks for the new mount API
-      selinux: Implement the new mount API LSM hooks
-      smack: Implement filesystem context security hooks
-      apparmor: Implement security hooks for the new mount API
-      tomoyo: Implement security hooks for the new mount API
-      vfs: Require specification of size of mount data for internal mounts
-      vfs: Separate changing mount flags full remount
-      vfs: Implement a filesystem superblock creation/configuration context
-      vfs: Remove unused code after filesystem context changes
-      procfs: Move proc_fill_super() to fs/proc/root.c
-      proc: Add fs_context support to procfs
-      ipc: Convert mqueue fs to fs_context
-      cpuset: Use fs_context
-      kernfs, sysfs, cgroup, intel_rdt: Support fs_context
-      hugetlbfs: Convert to fs_context
-      vfs: Remove kern_mount_data()
-      vfs: Provide documentation for new mount API
-      Make anon_inodes unconditional
-      vfs: syscall: Add fsopen() to prepare for superblock creation
-      vfs: syscall: Add fsmount() to create a mount for a superblock
-      vfs: syscall: Add fspick() to select a superblock for reconfiguration
-      vfs: Implement logging through fs_context
-      vfs: Add some logging to the core users of the fs_context log
-      afs: Add fs_context support
-      afs: Use fs_context to pass parameters over automount
-      vfs: syscall: Add fsinfo() to query filesystem information
-      afs: Add fsinfo support
-
-
- Documentation/filesystems/mount_api.txt   |  439 +++++++++++++++
- arch/arc/kernel/setup.c                   |    1 
- arch/arm/kernel/atags_parse.c             |    1 
- arch/ia64/kernel/perfmon.c                |    3 
- arch/powerpc/platforms/cell/spufs/inode.c |    6 
- arch/s390/hypfs/inode.c                   |    7 
- arch/sh/kernel/setup.c                    |    1 
- arch/sparc/kernel/setup_32.c              |    1 
- arch/sparc/kernel/setup_64.c              |    1 
- arch/x86/entry/syscalls/syscall_32.tbl    |    6 
- arch/x86/entry/syscalls/syscall_64.tbl    |    6 
- arch/x86/kernel/cpu/intel_rdt.h           |   15 
- arch/x86/kernel/cpu/intel_rdt_rdtgroup.c  |  149 +++--
- arch/x86/kernel/setup.c                   |    1 
- drivers/base/devtmpfs.c                   |    7 
- drivers/dax/super.c                       |    2 
- drivers/gpu/drm/drm_drv.c                 |    3 
- drivers/gpu/drm/i915/i915_gemfs.c         |    2 
- drivers/infiniband/hw/qib/qib_fs.c        |    7 
- drivers/misc/cxl/api.c                    |    3 
- drivers/misc/ibmasm/ibmasmfs.c            |   11 
- drivers/mtd/mtdsuper.c                    |   26 -
- drivers/oprofile/oprofilefs.c             |    8 
- drivers/scsi/cxlflash/ocxl_hw.c           |    2 
- drivers/usb/gadget/function/f_fs.c        |    7 
- drivers/usb/gadget/legacy/inode.c         |    7 
- drivers/virtio/virtio_balloon.c           |    2 
- drivers/xen/xenfs/super.c                 |    7 
- fs/9p/vfs_super.c                         |    2 
- fs/Makefile                               |    5 
- fs/adfs/super.c                           |    9 
- fs/affs/super.c                           |   13 
- fs/afs/internal.h                         |    9 
- fs/afs/mntpt.c                            |  147 ++---
- fs/afs/super.c                            |  536 +++++++++++-------
- fs/afs/volume.c                           |    4 
- fs/aio.c                                  |    3 
- fs/anon_inodes.c                          |    3 
- fs/autofs/autofs_i.h                      |    2 
- fs/autofs/init.c                          |    4 
- fs/autofs/inode.c                         |    3 
- fs/befs/linuxvfs.c                        |   11 
- fs/bfs/inode.c                            |    8 
- fs/binfmt_misc.c                          |    7 
- fs/block_dev.c                            |    2 
- fs/btrfs/super.c                          |   30 +
- fs/btrfs/tests/btrfs-tests.c              |    2 
- fs/ceph/super.c                           |    3 
- fs/cifs/cifs_dfs_ref.c                    |    3 
- fs/cifs/cifsfs.c                          |   18 -
- fs/coda/inode.c                           |   11 
- fs/configfs/mount.c                       |    7 
- fs/cramfs/inode.c                         |   17 -
- fs/debugfs/inode.c                        |   14 
- fs/devpts/inode.c                         |   10 
- fs/ecryptfs/main.c                        |    2 
- fs/efivarfs/super.c                       |    9 
- fs/efs/super.c                            |   14 
- fs/exofs/super.c                          |    7 
- fs/ext2/super.c                           |   14 
- fs/ext4/super.c                           |   16 -
- fs/f2fs/super.c                           |   13 
- fs/fat/inode.c                            |    3 
- fs/fat/namei_msdos.c                      |    8 
- fs/fat/namei_vfat.c                       |    8 
- fs/file_table.c                           |    9 
- fs/freevxfs/vxfs_super.c                  |   12 
- fs/fs_context.c                           |  721 ++++++++++++++++++++++++
- fs/fsopen.c                               |  335 +++++++++++
- fs/fuse/control.c                         |    9 
- fs/fuse/inode.c                           |   16 -
- fs/gfs2/ops_fstype.c                      |    6 
- fs/gfs2/super.c                           |    4 
- fs/hfs/super.c                            |   12 
- fs/hfsplus/super.c                        |   12 
- fs/hostfs/hostfs_kern.c                   |    7 
- fs/hpfs/super.c                           |   11 
- fs/hugetlbfs/inode.c                      |  339 +++++++----
- fs/internal.h                             |    6 
- fs/isofs/inode.c                          |   11 
- fs/jffs2/super.c                          |   10 
- fs/jfs/super.c                            |   11 
- fs/kernfs/mount.c                         |   88 +--
- fs/libfs.c                                |   19 +
- fs/minix/inode.c                          |   14 
- fs/namespace.c                            |  877 ++++++++++++++++++++++-------
- fs/nfs/internal.h                         |    4 
- fs/nfs/namespace.c                        |    3 
- fs/nfs/nfs4namespace.c                    |    3 
- fs/nfs/nfs4super.c                        |   27 -
- fs/nfs/super.c                            |   22 -
- fs/nfsd/nfsctl.c                          |    8 
- fs/nilfs2/super.c                         |   10 
- fs/nsfs.c                                 |    3 
- fs/ntfs/super.c                           |   13 
- fs/ocfs2/dlmfs/dlmfs.c                    |    5 
- fs/ocfs2/super.c                          |   14 
- fs/omfs/inode.c                           |    9 
- fs/openpromfs/inode.c                     |   11 
- fs/orangefs/orangefs-kernel.h             |    2 
- fs/orangefs/super.c                       |    5 
- fs/overlayfs/super.c                      |   11 
- fs/pipe.c                                 |    3 
- fs/pnode.c                                |    1 
- fs/proc/inode.c                           |   50 --
- fs/proc/internal.h                        |    6 
- fs/proc/root.c                            |  212 +++++--
- fs/pstore/inode.c                         |   10 
- fs/qnx4/inode.c                           |   14 
- fs/qnx6/inode.c                           |   14 
- fs/ramfs/inode.c                          |    6 
- fs/reiserfs/super.c                       |   14 
- fs/romfs/super.c                          |   13 
- fs/squashfs/super.c                       |   12 
- fs/statfs.c                               |  470 ++++++++++++++++
- fs/super.c                                |  394 ++++++++++---
- fs/sysfs/mount.c                          |   67 ++
- fs/sysv/inode.c                           |    3 
- fs/sysv/super.c                           |   16 -
- fs/tracefs/inode.c                        |   10 
- fs/ubifs/super.c                          |    5 
- fs/udf/super.c                            |   16 -
- fs/ufs/super.c                            |   11 
- fs/xfs/xfs_super.c                        |   10 
- include/linux/cgroup.h                    |    3 
- include/linux/debugfs.h                   |    8 
- include/linux/fs.h                        |   47 +-
- include/linux/fs_context.h                |  178 ++++++
- include/linux/fsinfo.h                    |   40 +
- include/linux/kernfs.h                    |   39 +
- include/linux/lsm_hooks.h                 |   88 +++
- include/linux/module.h                    |    6 
- include/linux/mount.h                     |   10 
- include/linux/mtd/super.h                 |    4 
- include/linux/ramfs.h                     |    4 
- include/linux/security.h                  |   74 ++
- include/linux/shmem_fs.h                  |    3 
- include/linux/syscalls.h                  |   11 
- include/uapi/linux/fcntl.h                |    2 
- include/uapi/linux/fs.h                   |   68 +-
- include/uapi/linux/fsinfo.h               |  237 ++++++++
- include/uapi/linux/mount.h                |   75 ++
- init/Kconfig                              |   10 
- init/do_mounts.c                          |    5 
- init/do_mounts_initrd.c                   |    1 
- ipc/mqueue.c                              |  120 +++-
- kernel/bpf/inode.c                        |    7 
- kernel/cgroup/cgroup-internal.h           |   49 +-
- kernel/cgroup/cgroup-v1.c                 |  302 +++++-----
- kernel/cgroup/cgroup.c                    |  226 ++++---
- kernel/cgroup/cpuset.c                    |   67 ++
- kernel/trace/trace.c                      |    7 
- mm/shmem.c                                |   10 
- mm/zsmalloc.c                             |    3 
- net/socket.c                              |    3 
- net/sunrpc/rpc_pipe.c                     |    7 
- samples/statx/Makefile                    |    5 
- samples/statx/test-fsinfo.c               |  539 ++++++++++++++++++
- security/apparmor/apparmorfs.c            |    8 
- security/apparmor/include/mount.h         |   11 
- security/apparmor/lsm.c                   |   84 +++
- security/apparmor/mount.c                 |   47 ++
- security/inode.c                          |    7 
- security/security.c                       |   70 ++
- security/selinux/hooks.c                  |  294 +++++++++-
- security/selinux/selinuxfs.c              |    8 
- security/smack/smack_lsm.c                |  344 ++++++++++-
- security/smack/smackfs.c                  |    9 
- security/tomoyo/common.h                  |    3 
- security/tomoyo/mount.c                   |   46 ++
- security/tomoyo/tomoyo.c                  |   19 +
- 171 files changed, 7147 insertions(+), 1805 deletions(-)
- create mode 100644 Documentation/filesystems/mount_api.txt
- create mode 100644 fs/fs_context.c
- create mode 100644 fs/fsopen.c
- create mode 100644 include/linux/fs_context.h
- create mode 100644 include/linux/fsinfo.h
- create mode 100644 include/uapi/linux/fsinfo.h
+ arch/x86/entry/syscalls/syscall_32.tbl |    1 
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 
+ fs/file_table.c                        |    9 +-
+ fs/internal.h                          |    1 
+ fs/namespace.c                         |  132 +++++++++++++++++++++++++++-----
+ include/linux/fs.h                     |    3 +
+ include/linux/syscalls.h               |    1 
+ include/uapi/linux/fcntl.h             |    2 
+ include/uapi/linux/mount.h             |   10 ++
+ 9 files changed, 135 insertions(+), 25 deletions(-)
  create mode 100644 include/uapi/linux/mount.h
- create mode 100644 samples/statx/test-fsinfo.c
+
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 3cf7b533b3d1..ea1b413afd47 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -398,3 +398,4 @@
+ 384	i386	arch_prctl		sys_arch_prctl			__ia32_compat_sys_arch_prctl
+ 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
+ 386	i386	rseq			sys_rseq			__ia32_sys_rseq
++387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index f0b1709a5ffb..0545bed581dc 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -343,6 +343,7 @@
+ 332	common	statx			__x64_sys_statx
+ 333	common	io_pgetevents		__x64_sys_io_pgetevents
+ 334	common	rseq			__x64_sys_rseq
++335	common	open_tree		__x64_sys_open_tree
+ 
+ #
+ # x32-specific system call numbers start at 512 to avoid cache impact
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 7ec0b3e5f05d..7480271a0d21 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -189,6 +189,7 @@ static void __fput(struct file *file)
+ 	struct dentry *dentry = file->f_path.dentry;
+ 	struct vfsmount *mnt = file->f_path.mnt;
+ 	struct inode *inode = file->f_inode;
++	fmode_t mode = file->f_mode;
+ 
+ 	might_sleep();
+ 
+@@ -209,14 +210,14 @@ static void __fput(struct file *file)
+ 		file->f_op->release(inode, file);
+ 	security_file_free(file);
+ 	if (unlikely(S_ISCHR(inode->i_mode) && inode->i_cdev != NULL &&
+-		     !(file->f_mode & FMODE_PATH))) {
++		     !(mode & FMODE_PATH))) {
+ 		cdev_put(inode->i_cdev);
+ 	}
+ 	fops_put(file->f_op);
+ 	put_pid(file->f_owner.pid);
+-	if ((file->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
++	if ((mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ)
+ 		i_readcount_dec(inode);
+-	if (file->f_mode & FMODE_WRITER) {
++	if (mode & FMODE_WRITER) {
+ 		put_write_access(inode);
+ 		__mnt_drop_write(mnt);
+ 	}
+@@ -224,6 +225,8 @@ static void __fput(struct file *file)
+ 	file->f_path.mnt = NULL;
+ 	file->f_inode = NULL;
+ 	file_free(file);
++	if (unlikely(mode & FMODE_NEED_UNMOUNT))
++		dissolve_on_fput(mnt);
+ 	dput(dentry);
+ 	mntput(mnt);
+ }
+diff --git a/fs/internal.h b/fs/internal.h
+index 980d005b21b4..b55575b9b55c 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -85,6 +85,7 @@ extern void __mnt_drop_write(struct vfsmount *);
+ extern void __mnt_drop_write_file(struct file *);
+ extern void mnt_drop_write_file_path(struct file *);
+ 
++extern void dissolve_on_fput(struct vfsmount *);
+ /*
+  * fs_struct.c
+  */
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 8ddd14806799..b355a555b4db 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -20,12 +20,14 @@
+ #include <linux/init.h>		/* init_rootfs */
+ #include <linux/fs_struct.h>	/* get_fs_root et.al. */
+ #include <linux/fsnotify.h>	/* fsnotify_vfsmount_delete */
++#include <linux/file.h>
+ #include <linux/uaccess.h>
+ #include <linux/proc_ns.h>
+ #include <linux/magic.h>
+ #include <linux/bootmem.h>
+ #include <linux/task_work.h>
+ #include <linux/sched/task.h>
++#include <uapi/linux/mount.h>
+ 
+ #include "pnode.h"
+ #include "internal.h"
+@@ -1839,6 +1841,16 @@ struct vfsmount *collect_mounts(const struct path *path)
+ 	return &tree->mnt;
+ }
+ 
++void dissolve_on_fput(struct vfsmount *mnt)
++{
++	namespace_lock();
++	lock_mount_hash();
++	mntget(mnt);
++	umount_tree(real_mount(mnt), UMOUNT_SYNC);
++	unlock_mount_hash();
++	namespace_unlock();
++}
++
+ void drop_collected_mounts(struct vfsmount *mnt)
+ {
+ 	namespace_lock();
+@@ -2198,6 +2210,30 @@ static bool has_locked_children(struct mount *mnt, struct dentry *dentry)
+ 	return false;
+ }
+ 
++static struct mount *__do_loopback(struct path *old_path, int recurse)
++{
++	struct mount *mnt = ERR_PTR(-EINVAL), *old = real_mount(old_path->mnt);
++
++	if (IS_MNT_UNBINDABLE(old))
++		return mnt;
++
++	if (!check_mnt(old) && old_path->dentry->d_op != &ns_dentry_operations)
++		return mnt;
++
++	if (!recurse && has_locked_children(old, old_path->dentry))
++		return mnt;
++
++	if (recurse)
++		mnt = copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
++	else
++		mnt = clone_mnt(old, old_path->dentry, 0);
++
++	if (!IS_ERR(mnt))
++		mnt->mnt.mnt_flags &= ~MNT_LOCKED;
++
++	return mnt;
++}
++
+ /*
+  * do loopback mount.
+  */
+@@ -2205,7 +2241,7 @@ static int do_loopback(struct path *path, const char *old_name,
+ 				int recurse)
+ {
+ 	struct path old_path;
+-	struct mount *mnt = NULL, *old, *parent;
++	struct mount *mnt = NULL, *parent;
+ 	struct mountpoint *mp;
+ 	int err;
+ 	if (!old_name || !*old_name)
+@@ -2219,38 +2255,21 @@ static int do_loopback(struct path *path, const char *old_name,
+ 		goto out;
+ 
+ 	mp = lock_mount(path);
+-	err = PTR_ERR(mp);
+-	if (IS_ERR(mp))
++	if (IS_ERR(mp)) {
++		err = PTR_ERR(mp);
+ 		goto out;
++	}
+ 
+-	old = real_mount(old_path.mnt);
+ 	parent = real_mount(path->mnt);
+-
+-	err = -EINVAL;
+-	if (IS_MNT_UNBINDABLE(old))
+-		goto out2;
+-
+ 	if (!check_mnt(parent))
+ 		goto out2;
+ 
+-	if (!check_mnt(old) && old_path.dentry->d_op != &ns_dentry_operations)
+-		goto out2;
+-
+-	if (!recurse && has_locked_children(old, old_path.dentry))
+-		goto out2;
+-
+-	if (recurse)
+-		mnt = copy_tree(old, old_path.dentry, CL_COPY_MNT_NS_FILE);
+-	else
+-		mnt = clone_mnt(old, old_path.dentry, 0);
+-
++	mnt = __do_loopback(&old_path, recurse);
+ 	if (IS_ERR(mnt)) {
+ 		err = PTR_ERR(mnt);
+ 		goto out2;
+ 	}
+ 
+-	mnt->mnt.mnt_flags &= ~MNT_LOCKED;
+-
+ 	err = graft_tree(mnt, parent, mp);
+ 	if (err) {
+ 		lock_mount_hash();
+@@ -2264,6 +2283,75 @@ static int do_loopback(struct path *path, const char *old_name,
+ 	return err;
+ }
+ 
++SYSCALL_DEFINE3(open_tree, int, dfd, const char *, filename, unsigned, flags)
++{
++	struct file *file;
++	struct path path;
++	int lookup_flags = LOOKUP_AUTOMOUNT | LOOKUP_FOLLOW;
++	bool detached = flags & OPEN_TREE_CLONE;
++	int error;
++	int fd;
++
++	BUILD_BUG_ON(OPEN_TREE_CLOEXEC != O_CLOEXEC);
++
++	if (flags & ~(AT_EMPTY_PATH | AT_NO_AUTOMOUNT | AT_RECURSIVE |
++		      AT_SYMLINK_NOFOLLOW | OPEN_TREE_CLONE |
++		      OPEN_TREE_CLOEXEC))
++		return -EINVAL;
++
++	if ((flags & (AT_RECURSIVE | OPEN_TREE_CLONE)) == AT_RECURSIVE)
++		return -EINVAL;
++
++	if (flags & AT_NO_AUTOMOUNT)
++		lookup_flags &= ~LOOKUP_AUTOMOUNT;
++	if (flags & AT_SYMLINK_NOFOLLOW)
++		lookup_flags &= ~LOOKUP_FOLLOW;
++	if (flags & AT_EMPTY_PATH)
++		lookup_flags |= LOOKUP_EMPTY;
++
++	if (detached && !may_mount())
++		return -EPERM;
++
++	fd = get_unused_fd_flags(flags & O_CLOEXEC);
++	if (fd < 0)
++		return fd;
++
++	error = user_path_at(dfd, filename, lookup_flags, &path);
++	if (error)
++		goto out;
++
++	if (detached) {
++		struct mount *mnt = __do_loopback(&path, flags & AT_RECURSIVE);
++		if (IS_ERR(mnt)) {
++			error = PTR_ERR(mnt);
++			goto out2;
++		}
++		mntput(path.mnt);
++		path.mnt = &mnt->mnt;
++	}
++
++	file = dentry_open(&path, O_PATH, current_cred());
++	if (IS_ERR(file)) {
++		error = PTR_ERR(file);
++		goto out3;
++	}
++
++	if (detached)
++		file->f_mode |= FMODE_NEED_UNMOUNT;
++	path_put(&path);
++	fd_install(fd, file);
++	return fd;
++
++out3:
++	if (detached)
++		dissolve_on_fput(path.mnt);
++out2:
++	path_put(&path);
++out:
++	put_unused_fd(fd);
++	return error;
++}
++
+ static int change_mount_flags(struct vfsmount *mnt, int ms_flags)
+ {
+ 	int error = 0;
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 5c91108846db..00e255c195f2 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -154,6 +154,9 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ /* File is capable of returning -EAGAIN if I/O will block */
+ #define FMODE_NOWAIT	((__force fmode_t)0x8000000)
+ 
++/* File represents mount that needs unmounting */
++#define FMODE_NEED_UNMOUNT     ((__force fmode_t)0x10000000)
++
+ /*
+  * Flag for rw_copy_check_uvector and compat_rw_copy_check_uvector
+  * that indicates that they should check the contents of the iovec are
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index 73810808cdf2..3cc6b8f8bd2f 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -900,6 +900,7 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
+ 			  unsigned mask, struct statx __user *buffer);
+ asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
+ 			 int flags, uint32_t sig);
++asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index 6448cdd9a350..594b85f7cb86 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -90,5 +90,7 @@
+ #define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
+ #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
+ 
++#define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
++
+ 
+ #endif /* _UAPI_LINUX_FCNTL_H */
+diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
+new file mode 100644
+index 000000000000..e8db2911adca
+--- /dev/null
++++ b/include/uapi/linux/mount.h
+@@ -0,0 +1,10 @@
++#ifndef _UAPI_LINUX_MOUNT_H
++#define _UAPI_LINUX_MOUNT_H
++
++/*
++ * open_tree() flags.
++ */
++#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
++#define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
++
++#endif /* _UAPI_LINUX_MOUNT_H */
 
