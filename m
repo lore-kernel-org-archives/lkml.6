@@ -6,35 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 220D9C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89420C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD2E320B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2E320B6F
+	by mail.kernel.org (Postfix) with ESMTP id 54EE42083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54EE42083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388946AbeGJSd3 (ORCPT
+        id S2388957AbeGJSdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47778 "EHLO
+        Tue, 10 Jul 2018 14:33:32 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47790 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388124AbeGJSd2 (ORCPT
+        with ESMTP id S2387938AbeGJSdb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:28 -0400
+        Tue, 10 Jul 2018 14:33:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ADE5FE3D;
-        Tue, 10 Jul 2018 18:33:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 86444D0B;
+        Tue, 10 Jul 2018 18:33:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>,
-        Madalin Bucur <madalin.bucur@nxp.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 38/53] [PATCH] Revert "dpaa_eth: fix error in dpaa_remove()"
-Date:   Tue, 10 Jul 2018 20:25:14 +0200
-Message-Id: <20180710182500.992415319@linuxfoundation.org>
+        stable@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
+        Mike Christie <mchristi@redhat.com>,
+        Maged Mokhtar <mmokhtar@petasan.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.14 05/53] scsi: target: Fix truncated PR-in ReadKeys response
+Date:   Tue, 10 Jul 2018 20:24:41 +0200
+Message-Id: <20180710182459.177767403@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -51,33 +53,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: David Disseldorp <ddiss@suse.de>
 
-This reverts commit 5bbb99d2fde047df596379be6c58e265e2ddbe1f which is
-commit 88075256ee817041d68c2387f29065b5cb2b342a upstream.
+commit 63ce3c384db26494615e3c8972bcd419ed71f4c4 upstream.
 
-Jiri writes that this was an incorrect fix, and Madalin-cristian says it
-was fixed differently in a later patch.  So just revert this from
-4.14.y.
+SPC5r17 states that the contents of the ADDITIONAL LENGTH field are not
+altered based on the allocation length, so always calculate and pack the
+full key list length even if the list itself is truncated.
 
-Reported-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Madalin Bucur <madalin.bucur@nxp.com>
-Cc: David S. Miller <davem@davemloft.net>
+According to Maged:
+
+  Yes it fixes the "Storage Spaces Persistent Reservation" test in the
+  Windows 2016 Server Failover Cluster validation suites when having
+  many connections that result in more than 8 registrations. I tested
+  your patch on 4.17 with iblock.
+
+This behaviour can be tested using the libiscsi PrinReadKeys.Truncate test.
+
+Cc: stable@vger.kernel.org
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+Reviewed-by: Mike Christie <mchristi@redhat.com>
+Tested-by: Maged Mokhtar <mmokhtar@petasan.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/freescale/dpaa/dpaa_eth.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-+++ b/drivers/net/ethernet/freescale/dpaa/dpaa_eth.c
-@@ -2863,7 +2863,7 @@ static int dpaa_remove(struct platform_d
- 	struct device *dev;
- 	int err;
- 
--	dev = pdev->dev.parent;
-+	dev = &pdev->dev;
- 	net_dev = dev_get_drvdata(dev);
- 
- 	priv = netdev_priv(net_dev);
+---
+ drivers/target/target_core_pr.c |   15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+--- a/drivers/target/target_core_pr.c
++++ b/drivers/target/target_core_pr.c
+@@ -3729,11 +3729,16 @@ core_scsi3_pri_read_keys(struct se_cmd *
+ 		 * Check for overflow of 8byte PRI READ_KEYS payload and
+ 		 * next reservation key list descriptor.
+ 		 */
+-		if ((add_len + 8) > (cmd->data_length - 8))
+-			break;
+-
+-		put_unaligned_be64(pr_reg->pr_res_key, &buf[off]);
+-		off += 8;
++		if (off + 8 <= cmd->data_length) {
++			put_unaligned_be64(pr_reg->pr_res_key, &buf[off]);
++			off += 8;
++		}
++		/*
++		 * SPC5r17: 6.16.2 READ KEYS service action
++		 * The ADDITIONAL LENGTH field indicates the number of bytes in
++		 * the Reservation key list. The contents of the ADDITIONAL
++		 * LENGTH field are not altered based on the allocation length
++		 */
+ 		add_len += 8;
+ 	}
+ 	spin_unlock(&dev->t10_pr.registration_lock);
 
 
