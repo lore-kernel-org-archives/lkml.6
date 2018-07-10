@@ -3,36 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE4CC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E1AFC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCFAB2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCFAB2083E
+	by mail.kernel.org (Postfix) with ESMTP id 5198C20B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5198C20B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388420AbeGJSbj (ORCPT
+        id S2388431AbeGJSbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:31:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45872 "EHLO
+        Tue, 10 Jul 2018 14:31:42 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46052 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387837AbeGJSbi (ORCPT
+        with ESMTP id S2387591AbeGJSbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:31:38 -0400
+        Tue, 10 Jul 2018 14:31:41 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 255E4EB4;
-        Tue, 10 Jul 2018 18:31:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D06C9EC7;
+        Tue, 10 Jul 2018 18:31:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ido Schimmel <idosch@mellanox.com>, Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH 4.9 36/52] mlxsw: spectrum: Forbid linking of VLAN devices to devices that have uppers
-Date:   Tue, 10 Jul 2018 20:25:04 +0200
-Message-Id: <20180710182452.717134990@linuxfoundation.org>
+        stable@vger.kernel.org, John Smith <john-s-84@gmx.net>,
+        Jason Andryuk <jandryuk@gmail.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.9 37/52] HID: i2c-hid: Fix "incomplete report" noise
+Date:   Tue, 10 Jul 2018 20:25:05 +0200
+Message-Id: <20180710182452.796526539@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -49,47 +51,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: Jason Andryuk <jandryuk@gmail.com>
 
-Jiri Slaby noticed that the backport of upstream commit 25cc72a33835
-("mlxsw: spectrum: Forbid linking to devices that have uppers") to
-kernel 4.9.y introduced the same check twice in the same function
-instead of in two different places.
+commit ef6eaf27274c0351f7059163918f3795da13199c upstream.
 
-Fix this by relocating one of the checks to its intended place, thus
-preventing unsupported configurations as described in the original
-commit.
+Commit ac75a041048b ("HID: i2c-hid: fix size check and type usage") started
+writing messages when the ret_size is <= 2 from i2c_master_recv.  However, my
+device i2c-DLL07D1 returns 2 for a short period of time (~0.5s) after I stop
+moving the pointing stick or touchpad.  It varies, but you get ~50 messages
+each time which spams the log hard.
 
-Fixes: 73ee5a73e75f ("mlxsw: spectrum: Forbid linking to devices that have uppers")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Reported-by: Jiri Slaby <jslaby@suse.cz>
+[  95.925055] i2c_hid i2c-DLL07D1:01: i2c_hid_get_input: incomplete report (83/2)
+
+This has also been observed with a i2c-ALP0017.
+
+[ 1781.266353] i2c_hid i2c-ALP0017:00: i2c_hid_get_input: incomplete report (30/2)
+
+Only print the message when ret_size is totally invalid and less than 2 to cut
+down on the log spam.
+
+Fixes: ac75a041048b ("HID: i2c-hid: fix size check and type usage")
+Reported-by: John Smith <john-s-84@gmx.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jason Andryuk <jandryuk@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/hid/i2c-hid/i2c-hid.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -4187,10 +4187,6 @@ static int mlxsw_sp_netdevice_port_upper
- 		if (netif_is_lag_port(dev) && is_vlan_dev(upper_dev) &&
- 		    !netif_is_lag_master(vlan_dev_real_dev(upper_dev)))
- 			return -EINVAL;
--		if (!info->linking)
--			break;
--		if (netdev_has_any_upper_dev(upper_dev))
--			return -EINVAL;
- 		break;
- 	case NETDEV_CHANGEUPPER:
- 		upper_dev = info->upper_dev;
-@@ -4566,6 +4562,8 @@ static int mlxsw_sp_netdevice_vport_even
- 			return -EINVAL;
- 		if (!info->linking)
- 			break;
-+		if (netdev_has_any_upper_dev(upper_dev))
-+			return -EINVAL;
- 		/* We can't have multiple VLAN interfaces configured on
- 		 * the same port and being members in the same bridge.
- 		 */
+--- a/drivers/hid/i2c-hid/i2c-hid.c
++++ b/drivers/hid/i2c-hid/i2c-hid.c
+@@ -477,7 +477,7 @@ static void i2c_hid_get_input(struct i2c
+ 		return;
+ 	}
+ 
+-	if ((ret_size > size) || (ret_size <= 2)) {
++	if ((ret_size > size) || (ret_size < 2)) {
+ 		dev_err(&ihid->client->dev, "%s: incomplete report (%d/%d)\n",
+ 			__func__, size, ret_size);
+ 		return;
 
 
