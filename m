@@ -3,50 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 505A3C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 202CBC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C4A8208E2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:28:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C4A8208E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id D82A0208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:29:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82A0208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933213AbeGJK2A (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 06:28:00 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38048 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933131AbeGJK17 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 06:27:59 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0B8A5ADA2;
-        Tue, 10 Jul 2018 10:27:58 +0000 (UTC)
-Message-ID: <1531218026.15323.0.camel@suse.com>
-Subject: Re: [PATCH] usb: cdc_acm: Add quirk for Castles VEGA3000
-From:   Oliver Neukum <oneukum@suse.com>
-To:     Lubomir Rintel <lkundrak@v3.sk>, linux-usb@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 10 Jul 2018 12:20:26 +0200
-In-Reply-To: <20180710062849.915863-1-lkundrak@v3.sk>
-References: <20180710062849.915863-1-lkundrak@v3.sk>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
+        id S1754089AbeGJK3Q (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 06:29:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:44330 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751332AbeGJK3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 06:29:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 660AB7A9;
+        Tue, 10 Jul 2018 03:29:12 -0700 (PDT)
+Received: from [10.1.210.28] (e107155-lin.cambridge.arm.com [10.1.210.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D7C13F5A0;
+        Tue, 10 Jul 2018 03:29:07 -0700 (PDT)
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 2/2] clocksource: arm_arch_timer: set arch_mem_timer
+ cpumask to cpu_possible_mask
+To:     Thomas Gleixner <tglx@linutronix.de>
+References: <1531151136-18297-1-git-send-email-sudeep.holla@arm.com>
+ <1531151136-18297-2-git-send-email-sudeep.holla@arm.com>
+ <alpine.DEB.2.21.1807100008100.1590@nanos.tec.linutronix.de>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <b98e0d87-3d9a-9b0c-23c4-7b289cc79a97@arm.com>
+Date:   Tue, 10 Jul 2018 11:29:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1807100008100.1590@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Di, 2018-07-10 at 08:28 +0200, Lubomir Rintel wrote:
-> The device (a POS terminal) implements CDC ACM, but has not union
-> descriptor.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Oliver Neukum <oneukum@suse.com>
 
+
+On 09/07/18 23:09, Thomas Gleixner wrote:
+> On Mon, 9 Jul 2018, Sudeep Holla wrote:
+> 
+>> Currently, arch_mem_timer cpumask is set to cpu_all_mask which should be
+>> fine. However, cpu_possible_mask is more accurate and if there are other
+>> clockevent source in the system which are set to cpu_possible_mask, then
+>> having cpu_all_mask may result in issue.
+>>
+>> E.g. on a platform with arm,sp804 timer with rating 300 and
+>> cpu_possible_mask and this arch_mem_timer timer with rating 400 and
+>> cpu_all_mask, tick_check_preferred may choose both preferred as the
+>> cpumasks are not equal though they must be.
+>>
+>> This issue was root caused incorrectly initially and a fix was merged as
+>> commit 1332a9055801 ("tick: Prefer a lower rating device only if it's CPU
+>> local device").
+> 
+> To avoid that in the future we really should fix the decision logic to mask
+> out the non possible CPUs from the supplied masks.
+
+Sure, I can do that. But do you want that as a fix for v4.18 ?
+
+I think we may need this check at another place in tick_setup_device
+
+213         /*
+214          * When the device is not per cpu, pin the interrupt to the
+215          * current cpu:
+216          */
+217         if (!cpumask_equal(newdev->cpumask, cpumask))
+218                 irq_set_affinity(newdev->irq, cpumask);
+
+Does it make sense trim dev->cpumask when registering the clockevents
+device itself instead of adding check at place where this cpumask
+can be used ? So that any future user of those masks need not have to
+take care of that.
+
+Also only few ARM clocksource drivers use cpu_all_mask which could be
+result of copy-paste, we can even fix them too.
+
+arm_arch_timer.c:	clk->cpumask = cpu_all_mask;
+tegra20_timer.c:	tegra_clockevent.cpumask = cpu_all_mask;
+timer-atcpit100.c:	.cpumask = cpu_all_mask,
+timer-keystone.c:	event_dev->cpumask = cpu_all_mask;
+zevio-timer.c:		timer->clkevt.cpumask	= cpu_all_mask;
+
+-- 
+Regards,
+Sudeep
