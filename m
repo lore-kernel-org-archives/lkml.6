@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ECC5C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50EEC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21C9A2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21C9A2083E
+	by mail.kernel.org (Postfix) with ESMTP id 82E4F2083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:31:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82E4F2083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388369AbeGJSb2 (ORCPT
+        id S2388385AbeGJSba (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:31:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45836 "EHLO
+        Tue, 10 Jul 2018 14:31:30 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45844 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388357AbeGJSb0 (ORCPT
+        with ESMTP id S2388371AbeGJSb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:31:26 -0400
+        Tue, 10 Jul 2018 14:31:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7AA0EEC7;
-        Tue, 10 Jul 2018 18:31:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5867CEC7;
+        Tue, 10 Jul 2018 18:31:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.9 51/52] netfilter: nf_log: dont hold nf_log_mutex during user access
-Date:   Tue, 10 Jul 2018 20:25:19 +0200
-Message-Id: <20180710182454.060336361@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.9 34/52] ext4: add more mount time checks of the superblock
+Date:   Tue, 10 Jul 2018 20:25:02 +0200
+Message-Id: <20180710182452.515487348@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -50,49 +50,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit ce00bf07cc95a57cd20b208e02b3c2604e532ae8 upstream.
+commit bfe0a5f47ada40d7984de67e59a7d3390b9b9ecc upstream.
 
-The old code would indefinitely block other users of nf_log_mutex if
-a userspace access in proc_dostring() blocked e.g. due to a userfaultfd
-region. Fix it by moving proc_dostring() out of the locked region.
+The kernel's ext4 mount-time checks were more permissive than
+e2fsprogs's libext2fs checks when opening a file system.  The
+superblock is considered too insane for debugfs or e2fsck to operate
+on it, the kernel has no business trying to mount it.
 
-This is a followup to commit 266d07cb1c9a ("netfilter: nf_log: fix
-sleeping function called from invalid context"), which changed this code
-from using rcu_read_lock() to taking nf_log_mutex.
+This will make file system fuzzing tools work harder, but the failure
+cases that they find will be more useful and be easier to evaluate.
 
-Fixes: 266d07cb1c9a ("netfilter: nf_log: fix sleeping function calle[...]")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nf_log.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ fs/ext4/super.c |   37 ++++++++++++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
---- a/net/netfilter/nf_log.c
-+++ b/net/netfilter/nf_log.c
-@@ -444,14 +444,17 @@ static int nf_log_proc_dostring(struct c
- 		rcu_assign_pointer(net->nf.nf_loggers[tindex], logger);
- 		mutex_unlock(&nf_log_mutex);
- 	} else {
-+		struct ctl_table tmp = *table;
-+
-+		tmp.data = buf;
- 		mutex_lock(&nf_log_mutex);
- 		logger = nft_log_dereference(net->nf.nf_loggers[tindex]);
- 		if (!logger)
--			table->data = "NONE";
-+			strlcpy(buf, "NONE", sizeof(buf));
- 		else
--			table->data = logger->name;
--		r = proc_dostring(table, write, buffer, lenp, ppos);
-+			strlcpy(buf, logger->name, sizeof(buf));
- 		mutex_unlock(&nf_log_mutex);
-+		r = proc_dostring(&tmp, write, buffer, lenp, ppos);
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -3656,6 +3656,13 @@ static int ext4_fill_super(struct super_
+ 			 le32_to_cpu(es->s_log_block_size));
+ 		goto failed_mount;
  	}
++	if (le32_to_cpu(es->s_log_cluster_size) >
++	    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
++		ext4_msg(sb, KERN_ERR,
++			 "Invalid log cluster size: %u",
++			 le32_to_cpu(es->s_log_cluster_size));
++		goto failed_mount;
++	}
  
- 	return r;
+ 	if (le16_to_cpu(sbi->s_es->s_reserved_gdt_blocks) > (blocksize / 4)) {
+ 		ext4_msg(sb, KERN_ERR,
+@@ -3794,13 +3801,6 @@ static int ext4_fill_super(struct super_
+ 				 "block size (%d)", clustersize, blocksize);
+ 			goto failed_mount;
+ 		}
+-		if (le32_to_cpu(es->s_log_cluster_size) >
+-		    (EXT4_MAX_CLUSTER_LOG_SIZE - EXT4_MIN_BLOCK_LOG_SIZE)) {
+-			ext4_msg(sb, KERN_ERR,
+-				 "Invalid log cluster size: %u",
+-				 le32_to_cpu(es->s_log_cluster_size));
+-			goto failed_mount;
+-		}
+ 		sbi->s_cluster_bits = le32_to_cpu(es->s_log_cluster_size) -
+ 			le32_to_cpu(es->s_log_block_size);
+ 		sbi->s_clusters_per_group =
+@@ -3821,10 +3821,10 @@ static int ext4_fill_super(struct super_
+ 		}
+ 	} else {
+ 		if (clustersize != blocksize) {
+-			ext4_warning(sb, "fragment/cluster size (%d) != "
+-				     "block size (%d)", clustersize,
+-				     blocksize);
+-			clustersize = blocksize;
++			ext4_msg(sb, KERN_ERR,
++				 "fragment/cluster size (%d) != "
++				 "block size (%d)", clustersize, blocksize);
++			goto failed_mount;
+ 		}
+ 		if (sbi->s_blocks_per_group > blocksize * 8) {
+ 			ext4_msg(sb, KERN_ERR,
+@@ -3878,6 +3878,13 @@ static int ext4_fill_super(struct super_
+ 			 ext4_blocks_count(es));
+ 		goto failed_mount;
+ 	}
++	if ((es->s_first_data_block == 0) && (es->s_log_block_size == 0) &&
++	    (sbi->s_cluster_ratio == 1)) {
++		ext4_msg(sb, KERN_WARNING, "bad geometry: first data "
++			 "block is 0 with a 1k block and cluster size");
++		goto failed_mount;
++	}
++
+ 	blocks_count = (ext4_blocks_count(es) -
+ 			le32_to_cpu(es->s_first_data_block) +
+ 			EXT4_BLOCKS_PER_GROUP(sb) - 1);
+@@ -3913,6 +3920,14 @@ static int ext4_fill_super(struct super_
+ 		ret = -ENOMEM;
+ 		goto failed_mount;
+ 	}
++	if (((u64)sbi->s_groups_count * sbi->s_inodes_per_group) !=
++	    le32_to_cpu(es->s_inodes_count)) {
++		ext4_msg(sb, KERN_ERR, "inodes count not valid: %u vs %llu",
++			 le32_to_cpu(es->s_inodes_count),
++			 ((u64)sbi->s_groups_count * sbi->s_inodes_per_group));
++		ret = -EINVAL;
++		goto failed_mount;
++	}
+ 
+ 	bgl_lock_init(sbi->s_blockgroup_lock);
+ 
 
 
