@@ -2,91 +2,126 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DA4C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:31:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BD58C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4866120989
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:31:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4866120989
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 08E73208F7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:33:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hRVAKyqD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08E73208F7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934285AbeGJPbd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:31:33 -0400
-Received: from mail-ed1-f42.google.com ([209.85.208.42]:33969 "EHLO
-        mail-ed1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754260AbeGJPbb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:31:31 -0400
-Received: by mail-ed1-f42.google.com with SMTP id d3-v6so16911670edi.1;
-        Tue, 10 Jul 2018 08:31:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QaDPaNX0K1DBVtm1SxL8OcsS6A9OQy9y0W3joTM8Mbc=;
-        b=QSS88uPNUKsCU7gLCQqc7mYwwG8EYvcKf6QU0fYPDI3usODddky23pYYrqczzKXZoc
-         MUdG5VKFfuv+gG8o2Qi93BjLAa9VQ522QgdhBW6+KlWtWRK3UXXv/w9FBUXpz7LLwNxc
-         5aSYWVLJf2Y77hg29owtY3SdvgSBhT/DHtesuAReanXGO9sK+24b8Mo40Ne0gRfS6ksq
-         RQX7wmaJZssCXhIFG/ukbAybhZzlfnmzkqElcQQgS6RVuvTxnCVpr5wHo7Ty0sEDKC4o
-         aqKPnH8HLb6dIEAbfdUxja9NV99H7uqkLssBxsFAVupvMMYu0GA/bSp+HgKairAMkQYc
-         +/rw==
-X-Gm-Message-State: APt69E1m2//V9FHOWeFQF/yC0e7TMFCuX5OIe0GixUQNur0ePC6QYkro
-        0RvOGaUWunM6JRkdipOjvA/fWoAI
-X-Google-Smtp-Source: AAOMgpfbSzTGtq0/WPydjzXJwvHNgKCtqcM/GNgk82bLVf18De8e91TkrhBRc3aM24HwEbdcEnCKVg==
-X-Received: by 2002:a50:d2d7:: with SMTP id q23-v6mr27941851edg.183.1531236690015;
-        Tue, 10 Jul 2018 08:31:30 -0700 (PDT)
-Received: from mail-wm0-f54.google.com (mail-wm0-f54.google.com. [74.125.82.54])
-        by smtp.gmail.com with ESMTPSA id y99-v6sm8232405ede.18.2018.07.10.08.31.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 08:31:29 -0700 (PDT)
-Received: by mail-wm0-f54.google.com with SMTP id v3-v6so21229741wmh.0;
-        Tue, 10 Jul 2018 08:31:29 -0700 (PDT)
-X-Received: by 2002:a1c:6fdd:: with SMTP id c90-v6mr14753597wmi.16.1531236688949;
- Tue, 10 Jul 2018 08:31:28 -0700 (PDT)
+        id S934057AbeGJPdh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:33:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754260AbeGJPdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 11:33:35 -0400
+Received: from localhost (unknown [106.200.232.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6618D208EB;
+        Tue, 10 Jul 2018 15:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531236815;
+        bh=uo4nkp/+GVkjqV4NlAFGWkZyTk73wKIALNb1IBVOG7o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hRVAKyqD75gPs4Tzr5LOajLlsRDbM35eSyz6HjVnnIW8S/GAKZnDbOyUkI60YaITs
+         Ai/9ZXzWAxjjmDtR06TSrbvLCD1cMQU2ZCC5bu7Az6k7uyLEyBeld8EzbMEDwRiU9F
+         Crx78HCq7PNkyW3oYc9Or0z3kxfkhOlhfsBAKJkg=
+Date:   Tue, 10 Jul 2018 21:03:26 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     dan.j.williams@intel.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, fabio.estevam@nxp.com,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        kernel@pengutronix.de, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH v1 3/4] dmaengine: imx-sdma: support dmatest
+Message-ID: <20180710153326.GG3219@vkoul-mobl>
+References: <1531239793-11781-1-git-send-email-yibin.gong@nxp.com>
+ <1531239793-11781-4-git-send-email-yibin.gong@nxp.com>
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 08:31:08
- -0700 (PDT)
-In-Reply-To: <20180706175113.26698-8-jernej.skrabec@siol.net>
-References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-8-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 10 Jul 2018 23:31:08 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65q5OkVnnjufc1kHP=sc+6Kw5EHGmNDwuguTnrgPgxJbw@mail.gmail.com>
-Message-ID: <CAGb2v65q5OkVnnjufc1kHP=sc+6Kw5EHGmNDwuguTnrgPgxJbw@mail.gmail.com>
-Subject: Re: [PATCH 07/17] drm/sun4i: DW HDMI: Release nodes if error happens
- during CRTC search
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531239793-11781-4-git-send-email-yibin.gong@nxp.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> If error happens in sun8i_dw_hdmi_find_possible_crtcs(), nodes are not
-> released with of_node_put() before returning.
->
-> Fix that by calling of_node_put() when necessary. While on it, clean up
-> the code by using of_graph_get_remote_node() which also lowers number of
-> cases where error handling has to be performed.
+On 11-07-18, 00:23, Robin Gong wrote:
+> dmatest(memcpy) will never call dmaengine_slave_config before prep,
 
-Good job!
+and that should have been a hint to you that you should not expect that
 
-> Fixes: 57e23de02f48 ("drm/sun4i: DW HDMI: Expand algorithm for possible crtcs")
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> so jobs in dmaengine_slave_config need to be moved into somewhere
+> before device_prep_dma_memcpy. Besides, dmatest never setup chan
+> ->private as other common case like uart/audio/spi will always setup
+> chan->private. Here check it to judge if it's dmatest case and do
+> jobs in slave_config.
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+and you should not do anything for dmatest. Supporting it means memcpy
+implementation is not correct :)
+
+> 
+> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
+> ---
+>  drivers/dma/imx-sdma.c | 37 ++++++++++++++++++++++++++++---------
+>  1 file changed, 28 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> index ed2267d..48f3749 100644
+> --- a/drivers/dma/imx-sdma.c
+> +++ b/drivers/dma/imx-sdma.c
+> @@ -1222,10 +1222,36 @@ static int sdma_alloc_chan_resources(struct dma_chan *chan)
+>  {
+>  	struct sdma_channel *sdmac = to_sdma_chan(chan);
+>  	struct imx_dma_data *data = chan->private;
+> +	struct imx_dma_data default_data;
+>  	int prio, ret;
+>  
+> -	if (!data)
+> -		return -EINVAL;
+> +	ret = clk_enable(sdmac->sdma->clk_ipg);
+> +	if (ret)
+> +		return ret;
+> +	ret = clk_enable(sdmac->sdma->clk_ahb);
+> +	if (ret)
+> +		goto disable_clk_ipg;
+> +	/*
+> +	 * dmatest(memcpy) will never call dmaengine_slave_config before prep,
+> +	 * so jobs in dmaengine_slave_config need to be moved into somewhere
+> +	 * before device_prep_dma_memcpy. Besides, dmatest never setup chan
+> +	 * ->private as other common cases like uart/audio/spi will setup
+> +	 * chan->private always. Here check it to judge if it's dmatest case
+> +	 * and do jobs in slave_config.
+> +	 */
+> +	if (!data) {
+> +		dev_warn(sdmac->sdma->dev, "dmatest is running?\n");
+
+why is that a warning!
+
+> +		sdmac->word_size  =  sdmac->sdma->dma_device.copy_align;
+> +		default_data.priority = 2;
+> +		default_data.peripheral_type = IMX_DMATYPE_MEMORY;
+> +		default_data.dma_request = 0;
+> +		default_data.dma_request2 = 0;
+> +		data = &default_data;
+> +
+> +		sdma_config_ownership(sdmac, false, true, false);
+> +		sdma_get_pc(sdmac, IMX_DMATYPE_MEMORY);
+> +		sdma_load_context(sdmac);
+> +	}
+
+this needs to be default for memcpy
+
+-- 
+~Vinod
