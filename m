@@ -2,90 +2,134 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D59C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 21:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9400FC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 21:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF9C3208EB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 21:12:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cb2jrxrD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF9C3208EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 57EBA208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 21:12:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57EBA208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732437AbeGJVNX (ORCPT
+        id S1732455AbeGJVN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 17:13:23 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37697 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732274AbeGJVNX (ORCPT
+        Tue, 10 Jul 2018 17:13:29 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59490 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732272AbeGJVN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 17:13:23 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 31-v6so8152430plc.4
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 14:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=Vsl1A6J2DyVsZv9vOaRlEqxB/okex/A831ghcU9LurE=;
-        b=Cb2jrxrDBmukjIpJK+9OyV0CPHULIf4seSHz9RUslcxq7QBRX213JGECsFAoOeXQzO
-         TSMiZeWPJLvSQGBuHo8CWAZ1AgYnfnPpUhJGKRq0FxjB0HDKRrVjb8W/GBuuL8GzBYud
-         +J4Zqd4IZ7CC/bMPLnXdxu/xvAjRvskJzs5j4YMZ0ukjS7cYGiq6DYaS7tv2TmmMjzed
-         5dtA/m3bDzgwr5VTmdptysY2J67kNW2eH+VXF9LmjH32Au4ZTv6NQ6/JvOLqqIP3Q19F
-         uTnZglYzjzNoTM2dEfw/5GNMOxBH851MOOfT08/tD2uKaUO+QAbp/R5BBhbTYeESpJF1
-         w4Og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=Vsl1A6J2DyVsZv9vOaRlEqxB/okex/A831ghcU9LurE=;
-        b=OLwGmj6E72wg4fJiYm110EAmtAYWkfet0/HdTBDrWLUYNCmxtm5gDaxmvba49t1yal
-         P2Umv5aCy7Qb3J2r6ClXt21d53hw6TS9lb8G55/YlosdAW1GEvGER3EbunpvJFXVXudf
-         cT09hBr5kwinROpUR5MczUhhYqOUhqAYCdwCsWsm9ggbo6zHi22EVkq8ZobU/C8v4OWl
-         srmHEUcOL6IqDdajiri7cn+m3UzJM9fPaGQWtQ4DZWiA5HzHXHuI8hP8oEHh2Oz8Ewl8
-         6+6Cql15QrbZPU9EYONEltQJNGLxkTxP6baXBiJDhSBv52ZF07a8P5fdq9zTyEioErRu
-         MMEw==
-X-Gm-Message-State: APt69E1oBNU3UYdHtAJQtxgUYMobJH+stRbw6UUs5fRO8md5SKdXYQCN
-        +kGl9q8dKDcIRl+3KjY9juCnDhcPygk=
-X-Google-Smtp-Source: AAOMgpddCqd+vbO/OLrbcqta/U96Fgl+nyM06hH4jDSpKkDBIb1lEE7HOt52WxSaBcdfUsGuP57Agw==
-X-Received: by 2002:a17:902:1a2:: with SMTP id b31-v6mr25610515plb.279.1531257149435;
-        Tue, 10 Jul 2018 14:12:29 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id p11-v6sm23876556pfj.72.2018.07.10.14.12.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Jul 2018 14:12:28 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 14:12:28 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mm, oom: remove sleep from under oom_lock
-In-Reply-To: <alpine.DEB.2.21.1807101152410.9234@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.21.1807101411480.29772@chino.kir.corp.google.com>
-References: <20180709074706.30635-1-mhocko@kernel.org> <alpine.DEB.2.21.1807091548280.125566@chino.kir.corp.google.com> <20180710094341.GD14284@dhcp22.suse.cz> <alpine.DEB.2.21.1807101152410.9234@chino.kir.corp.google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 10 Jul 2018 17:13:28 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6AKxHNN037050
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 16:59:47 -0400
+Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k53w2gwvk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 16:59:47 -0400
+Received: from localhost
+        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
+        Tue, 10 Jul 2018 14:59:47 -0600
+Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
+        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 10 Jul 2018 14:59:42 -0600
+Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6AKxfjB6685114
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Jul 2018 13:59:41 -0700
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B6D9C6A04F;
+        Tue, 10 Jul 2018 14:59:41 -0600 (MDT)
+Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5350D6A051;
+        Tue, 10 Jul 2018 14:59:27 -0600 (MDT)
+Received: from oc6728276242.ibm.com (unknown [9.80.208.154])
+        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 10 Jul 2018 14:59:26 -0600 (MDT)
+Subject: Re: [PATCH v11 5/8] i2c: fsi: Add transfer implementation
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        benh@kernel.crashing.org, joel@jms.id.au, mark.rutland@arm.com,
+        gregkh@linuxfoundation.org, rdunlap@infradead.org,
+        andy.shevchenko@gmail.com, peda@axentia.se
+References: <1530816030-13010-1-git-send-email-eajames@linux.vnet.ibm.com>
+ <1530816030-13010-6-git-send-email-eajames@linux.vnet.ibm.com>
+ <20180709224114.4h47enyt4tucqcou@ninjato>
+ <d7128886-148f-d255-fb33-3727cad01569@linux.vnet.ibm.com>
+ <20180710185042.x3slnms5wzocobqu@ninjato>
+ <cda1b231-eeff-626d-5c79-a07c9bc5a9ec@linux.vnet.ibm.com>
+ <20180710193944.34phe4zafzvwjm5v@ninjato>
+From:   Eddie James <eajames@linux.vnet.ibm.com>
+Date:   Tue, 10 Jul 2018 15:59:23 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180710193944.34phe4zafzvwjm5v@ninjato>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18071020-0016-0000-0000-0000090656A1
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009346; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01059465; UDB=6.00543746; IPR=6.00837385;
+ MB=3.00022092; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-10 20:59:46
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071020-0017-0000-0000-00003F95CD26
+Message-Id: <479b3c82-ffe7-9e6a-569c-64fcb1b43d32@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-10_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807100223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Jul 2018, David Rientjes wrote:
 
-> I think it's better, thanks.  However, does it address the question about 
-> why __oom_reap_task_mm() needs oom_lock protection?  Perhaps it would be 
-> helpful to mention synchronization between reaping triggered from 
-> oom_reaper and by exit_mmap().
-> 
 
-Actually, can't we remove the need to take oom_lock in exit_mmap() if 
-__oom_reap_task_mm() can do a test and set on MMF_UNSTABLE and, if already 
-set, bail out immediately?
+On 07/10/2018 02:39 PM, Wolfram Sang wrote:
+>> Sorry, what do you mean "show up as"? Yes, we could first shift all our
+>> addresses in user-space before passing them to the driver, so that the
+>> msg->addr field is exactly what the hardware expects already... This would
+>> be non-trivial for our users considering all our documentation represents
+>> the addresses as the top 7 bits of a byte :(
+> Ah, now I understand the whole situation! Good that I asked. But I have
+> bad news for you:
+>
+> msg->addr is 7 bit and LSB aligned. No way around that. This is how
+> Linux I2C worked since the beginning. You have to adapt to it.
+>
+> I know what you mean. Most doumentation I get has the addresses in 8
+> bit, i.e. 7 bit address shifted + RW bit. But sorry again, the Linux
+> representation is different and all drivers have to adhere to that.
+>
+> An EEPROM ist at 0x50 in Linux. There is no write addr 0xa0 and read
+> addr 0xa1.
+
+OK, I understand! Will test and resend with conforming addressing. 
+Thanks for all the feedback!
+
+Eddie
+
+>
+>>>> Indeed, real 10-bit addresses require some additional manipulation of this
+>>>> I2C master in order to work. We don't support it right now.
+>>> Then you should remove the associated FUNC flag.
+>> Ah, but due to the addressing situation, tools like i2cget don't work with
+>> our addresses unless the 10 bit flag is specified. For example, we may want
+>> to access 0xA0.
+> This is a kinda dirty workaround to the above problem. It is even wrong
+> because 10-bit addresses look totally different on the wire.
+>
+> Sorry for the hazzle with the docs, but there is no way around that.
+>
+
