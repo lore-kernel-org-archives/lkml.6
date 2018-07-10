@@ -6,85 +6,162 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8BDC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91C9C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2F620883
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D2F620883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micron.com
+	by mail.kernel.org (Postfix) with ESMTP id 87D5D20883
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:25:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D5D20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933267AbeGJMZR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 08:25:17 -0400
-Received: from mailout.micron.com ([137.201.242.129]:14080 "EHLO
-        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932620AbeGJMZQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 08:25:16 -0400
-Received: from mail.micron.com (bowex17a.micron.com [137.201.21.209])
-        by mailout.micron.com (8.14.4/8.14.6) with ESMTP id w6ACObkw014727;
-        Tue, 10 Jul 2018 06:24:37 -0600
-Received: from SIWEX4H.sing.micron.com (10.160.29.19) by bowex17a.micron.com
- (137.201.21.209) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 10 Jul
- 2018 06:24:35 -0600
-Received: from SIWEX5A.sing.micron.com (10.160.29.59) by
- SIWEX4H.sing.micron.com (10.160.29.19) with Microsoft SMTP Server (TLS) id
- 15.0.1347.2; Tue, 10 Jul 2018 20:24:28 +0800
-Received: from SIWEX5A.sing.micron.com ([fe80::a9c5:8ccb:fd84:268d]) by
- SIWEX5A.sing.micron.com ([fe80::a9c5:8ccb:fd84:268d%25]) with mapi id
- 15.00.1347.000; Tue, 10 Jul 2018 20:24:28 +0800
-From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>
-Subject: Re: [PATCH v6 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
-Thread-Topic: [PATCH v6 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
-Thread-Index: AdQYSO8EIJ6yqPwQTR61MGVlKfRbjg==
-Date:   Tue, 10 Jul 2018 12:24:28 +0000
-Message-ID: <1df9a5d95c44408ab42b34948f956351@SIWEX5A.sing.micron.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.160.29.124]
-X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-23958.005
-X-TM-AS-Result: No--7.222800-0.000000-31
-X-TM-AS-MatchedID: 150567-139010-184200-187067-700038-703788-780014-700648-7
-        80030-703747-702020-106660-703267-702161-700476-700839-703029-106230-706817
-        -139704-700047-701702-148004-148046-148133-148980-20020-41000-42000-42003-2
-        9961-63
-X-TM-AS-User-Approved-Sender: Yes
-X-TM-AS-User-Blocked-Sender: No
-x-mt-checkinternalsenderrule: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S933326AbeGJMZZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 08:25:25 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52408 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932620AbeGJMZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 08:25:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 05:25:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,334,1526367600"; 
+   d="scan'208";a="55402957"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga007.jf.intel.com with ESMTP; 10 Jul 2018 05:24:44 -0700
+Subject: Re: [PATCH V6 1/3] mmc: sdhci: Add support for O2 eMMC HS200 mode
+To:     "ernest.zhang" <ernest.zhang@bayhubtech.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     chuanjin.pang@bayhubtech.com, mike.li@bayhubtech.com,
+        chevron.li@bayhubtech.com, shirley.her@bayhubtech.com,
+        xiaoguang.yu@bayhubtech.com, bobby.wu@bayhubtech.com
+References: <20180626154647.11623-1-ernest.zhang@bayhubtech.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <0c2398b7-184b-e464-0613-c5b5609a7094@intel.com>
+Date:   Tue, 10 Jul 2018 15:23:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-X-Scanned-By: MIMEDefang 2.78 on 137.201.130.65
+In-Reply-To: <20180626154647.11623-1-ernest.zhang@bayhubtech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIEJvcmlzDQo+Pg0KPg0KPk9rYXkuIENhbiB5b3UgaGF2ZSBhIGxvb2sgYXQgdGhlIHBhdGNo
-ZXMgSSBzZW50IGFuIGxldCBtZSBrbm93IGlmIEkgZG8gdGhlDQo+cmlnaHQgdGhpbmc/DQoNCkkg
-YW0gZG9pbmcgdG9kYXkuIEFuZCB3aWxsIGJhY2sgdG8geW91IEkgY291bGQgZ2l2ZSBzb21lIGFk
-dmljZS4NCg0KDQpJIGVuY291bnRlciBvbmUgcXVlc3Rpb24gYXMgYmVsb3cgd2hlbiBJIHJlcGx5
-IHRoZSBlbWFpbCBvZiBsaW51eC1tdGQsIGJ1dCBJZiBJIHJlcGx5IG90aGVyIG1haWwgbGlzdCAN
-ClN1Y2ggYXMgc2NzaSBtYWlsIGxpc3QsIG1tYyBtYWlsIGxpc3QsIG5vIGFueSBwcm9ibGVtLiBE
-byB5b3Uga25vdyB3aHk/IA0KDQoNCllvdXIgbWFpbCB0byAnbGludXgtbXRkJyB3aXRoIHRoZSBz
-dWJqZWN0DQoNCiAgICBSZTogW1BBVENIIHY2IDAvNl0gbXRkOiByYXduYW5kOiBzdXBwb3J0IE1U
-MjlGMUcwOEFCQUZBV1AtSVRFOkYNCg0KSXMgYmVpbmcgaGVsZCB1bnRpbCB0aGUgbGlzdCBtb2Rl
-cmF0b3IgY2FuIHJldmlldyBpdCBmb3IgYXBwcm92YWwuDQoNClRoZSByZWFzb24gaXQgaXMgYmVp
-bmcgaGVsZDoNCg0KICAgIE1lc3NhZ2UgaGFzIGEgc3VzcGljaW91cyBoZWFkZXINCg0KRWl0aGVy
-IHRoZSBtZXNzYWdlIHdpbGwgZ2V0IHBvc3RlZCB0byB0aGUgbGlzdCwgb3IgeW91IHdpbGwgcmVj
-ZWl2ZSBub3RpZmljYXRpb24gb2YgdGhlIG1vZGVyYXRvcidzIGRlY2lzaW9uLiAgSWYgeW91IHdv
-dWxkIGxpa2UgdG8gY2FuY2VsIHRoaXMgcG9zdGluZywgcGxlYXNlIHZpc2l0IHRoZSBmb2xsb3dp
-bmcgVVJMOg0KDQogICAgaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9jb25maXJt
-L2xpbnV4LW10ZC8xYTI4ZjlhNDA2OWEwYmJjYWRmYjZiMmExNzBjMDFkZDhiOTYyZDBhDQoNCg0K
-Ly9iZWFuaHVvDQo=
+On 26/06/18 18:46, ernest.zhang wrote:
+> When use eMMC as boot device, the eMMC signaling voltage is tied to 1.8v
+> fixed output voltage, bios can set o2 sd host controller PCI configuration
+> register 0x308 bit4 to 1 to let driver skip 3.3v signaling voltage and
+> direct use 1.8v singling voltage in eMMC initialize process.
+> 
+> Signed-off-by: ernest.zhang <ernest.zhang@bayhubtech.com>
+> ---
+> Changes in V6:
+> 	1.Move change log to correct place.
+> 	2.Change HS200 mode clock frequency from 208MHz to 200MHz to meet
+> 	Specification.
+
+That 2nd change should be a separate patch.
+
+> 
+> Changes in V5:
+> 	Modify code format to pass checkpatch.pl check and add a summary
+> 	of what has changed in each version.
+> 
+> Changes in V4:
+> 	Skip SDIO and SD initalization when register 0x308 bit 4 is set,
+> 	and modify some typo.
+> 
+> Changes in V3:
+> 	Rebase the patch on the mmc tree 'next' branch.
+> 
+> Changes in V2:
+> 	Modify code format, and delete unused code path.
+> 
+> Changes in V1:
+> 	Check PCIe register 0x308 bit 4 and skip eMMC 3.3v initialization
+> 	process if it is set to 1.
+> ---
+>  drivers/mmc/host/sdhci-pci-o2micro.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+> index 555970a..94cf3cd 100644
+> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
+> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+> @@ -3,6 +3,7 @@
+>   *
+>   * Authors: Peter Guo <peter.guo@bayhubtech.com>
+>   *          Adam Lee <adam.lee@canonical.com>
+> + *          Ernest Zhang <ernest.zhang@bayhubtech.com>
+>   *
+>   * This software is licensed under the terms of the GNU General Public
+>   * License version 2, as published by the Free Software Foundation, and
+> @@ -39,6 +40,7 @@
+>  #define O2_SD_MISC_CTRL4	0xFC
+>  #define O2_SD_TUNING_CTRL	0x300
+>  #define O2_SD_PLL_SETTING	0x304
+> +#define O2_SD_MISC_SETTING	0x308
+>  #define O2_SD_CLK_SETTING	0x328
+>  #define O2_SD_CAP_REG2		0x330
+>  #define O2_SD_CAP_REG0		0x334
+> @@ -184,6 +186,7 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>  	struct sdhci_pci_chip *chip;
+>  	struct sdhci_host *host;
+>  	u32 reg;
+> +	int ret;
+>  
+>  	chip = slot->chip;
+>  	host = slot->host;
+> @@ -197,6 +200,21 @@ int sdhci_pci_o2_probe_slot(struct sdhci_pci_slot *slot)
+>  		if (reg & 0x1)
+>  			host->quirks |= SDHCI_QUIRK_MULTIBLOCK_READ_ACMD12;
+>  
+> +		if (chip->pdev->device == PCI_DEVICE_ID_O2_SEABIRD0) {
+> +			ret = pci_read_config_dword(chip->pdev,
+> +						    O2_SD_MISC_SETTING, &reg);
+> +			if (ret)
+> +				return -EIO;
+> +			if (reg & (1 << 4)) {
+> +				pr_info("%s: emmc 1.8v flag is set, force 1.8v signaling voltage\n",
+> +					mmc_hostname(host->mmc));
+> +				host->flags &= ~SDHCI_SIGNALING_330;
+> +				host->flags |= SDHCI_SIGNALING_180;
+> +				host->mmc->caps2 |= MMC_CAP2_NO_SD;
+> +				host->mmc->caps2 |= MMC_CAP2_NO_SDIO;
+> +			}
+> +		}
+> +
+>  		if (chip->pdev->device != PCI_DEVICE_ID_O2_FUJIN2)
+>  			break;
+>  		/* set dll watch dog timer */
+> @@ -293,7 +311,7 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
+>  
+>  			/* Check Whether subId is 0x11 or 0x12 */
+>  			if ((scratch_32 == 0x11) || (scratch_32 == 0x12)) {
+> -				scratch_32 = 0x2c280000;
+> +				scratch_32 = 0x25100000;
+>  
+>  				/* Set Base Clock to 208MZ */
+
+Need to change the comment too i.e. 208MZ -> 200 MHz
+
+>  				o2_pci_set_baseclk(chip, scratch_32);
+> @@ -388,7 +406,7 @@ int sdhci_pci_o2_probe(struct sdhci_pci_chip *chip)
+>  					       O2_SD_PLL_SETTING, scratch_32);
+>  		} else {
+>  			scratch_32 &= 0x0000FFFF;
+> -			scratch_32 |= 0x2c280000;
+> +			scratch_32 |= 0x25100000;
+>  
+>  			pci_write_config_dword(chip->pdev,
+>  					       O2_SD_PLL_SETTING, scratch_32);
+> 
+
