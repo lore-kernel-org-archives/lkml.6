@@ -2,118 +2,221 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA096C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE79CC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4325B2089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:20:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4325B2089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B26A2089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:21:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="YGt/x2Vh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B26A2089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751328AbeGJFUV (ORCPT
+        id S1751332AbeGJFU6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 01:20:21 -0400
-Received: from asrmicro.com ([210.13.118.86]:6183 "EHLO mail2012.asrmicro.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750999AbeGJFUS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 01:20:18 -0400
-Received: from mail2012.asrmicro.com (10.1.24.123) by mail2012.asrmicro.com
- (10.1.24.123) with Microsoft SMTP Server (TLS) id 15.0.847.32; Tue, 10 Jul
- 2018 13:04:53 +0800
-Received: from mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b]) by
- mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b%16]) with mapi id
- 15.00.0847.030; Tue, 10 Jul 2018 13:04:53 +0800
-From:   =?utf-8?B?RmFuZyBIb25namllKOaWuea0quadsCk=?= 
-        <hongjiefang@asrmicro.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Adrian Hunter <adrian.hunter@intel.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Bastian Stender" <bst@pengutronix.de>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Chanho Min <chanho.min@lge.com>,
-        "Kyle Roeschley" <kyle.roeschley@ni.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] mmc: core: improve rationality of bus width setting for
- HS400es
-Thread-Topic: [PATCH] mmc: core: improve rationality of bus width setting
- for HS400es
-Thread-Index: AQHUF1C1UTyNnhfPe06ky8JfBeUWZqSGO/IAgAGhJWA=
-Date:   Tue, 10 Jul 2018 05:04:53 +0000
-Message-ID: <86aa8215d6e44e578cd34f0625c5ebef@mail2012.asrmicro.com>
-References: <1531118843-796-1-git-send-email-hongjiefang@asrmicro.com>
- <CAPDyKFpzJV-UQbMa7_tHms7o3hMn9_g=H_M0jW+ZN9G=8XCqRg@mail.gmail.com>
-In-Reply-To: <CAPDyKFpzJV-UQbMa7_tHms7o3hMn9_g=H_M0jW+ZN9G=8XCqRg@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.1.170.195]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 10 Jul 2018 01:20:58 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:44856 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750879AbeGJFUy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 01:20:54 -0400
+Received: by mail-pf0-f195.google.com with SMTP id j3-v6so15264575pfh.11
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 22:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PF9TcU5UKK6X2QhTqz2FHEK1AUI8Zb/fYMcomgJVdlo=;
+        b=YGt/x2VhDMAoIVwq56rRa3FndJ82IGz41t2kv9ga/kcf0nwmLeQ15fFXCoW2OMCIc7
+         gpzjWva1Z29R+cvexktkRCwm0dCTEakwdSPRJYBFo+vBz0iJO2Zz5v8MOxi2qD1jmotL
+         ILk+Un6x26vXgF1FMX8sX1uxsFltVTlhdzSAM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PF9TcU5UKK6X2QhTqz2FHEK1AUI8Zb/fYMcomgJVdlo=;
+        b=LzND01RZJv8f+n0GxT5H6TT3rofBQhO9qbDr4ZYAQfO4aJ9W6HL2vSrVbGZFee4RlP
+         Miz/eaLQDhQhsDoaKbqvTjJckysfYbxSrRtG0WMFd9Z+hHXZ4opp+wn01PNmChKnOFN5
+         W9X9Gfsqng24WrJLb1wPvEkCKFCqD5wQvs6qIoHRReUk8m3CB1PAeK4v4AUCZGbm4T3q
+         7XkcaNJZCEV+p+ZN+XmkQAFMOjkJhdi/tJ3hzoVlEKED6nLZlhCGROM2TNpHfQ7m8nmE
+         snLpeST8iNBGaDliuFAiwR/zp8ceWE2THfumwkrDHYyBQRDFzKBp1qQqLtVYOAnx+qnJ
+         z9Uw==
+X-Gm-Message-State: APt69E3tFHx5HYgax9pa8PdcoF+hWROtlEANLlwIjexSsY+uES5F8UN5
+        1llW08vFijC014gT9PPJXislFQ==
+X-Google-Smtp-Source: AAOMgpe+srQydBRuTn1ISX4nqyGtZSH0lLXW8DPftXtYk96G3GFZcYvnjwCddPsSOFKw1pZxY/72qg==
+X-Received: by 2002:a63:4f1a:: with SMTP id d26-v6mr15594216pgb.121.1531199630462;
+        Mon, 09 Jul 2018 22:13:50 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id 84-v6sm14204893pfj.33.2018.07.09.22.13.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 09 Jul 2018 22:13:49 -0700 (PDT)
+Date:   Mon, 9 Jul 2018 22:13:47 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Joel Fernandes <joelaf@google.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Alexei Starovoitov <ast@fb.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>, fengc@google.com,
+        paulmck@linux.vnet.ibm.com
+Subject: Re: [RFC] Add BPF_SYNCHRONIZE bpf(2) command
+Message-ID: <20180710051347.GA180724@joelaf.mtv.corp.google.com>
+References: <20180707015616.25988-1-dancol@google.com>
+ <20180707025426.ssxipi7hsehoiuyo@ast-mbp.dhcp.thefacebook.com>
+ <20180707203340.GA74719@joelaf.mtv.corp.google.com>
+ <951478560.1636.1531083278064.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <951478560.1636.1531083278064.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiA5IEp1bHkgMjAxOCBhdCAwODo0NywgSG9uZ2ppZSBGYW5nIDxob25namllZmFuZ0Bhc3Jt
-aWNyby5jb20+IHdyb3RlOg0KPiA+IG1tY19zZWxlY3RfaHM0MDBlcygpIGNhbGxzIG1tY19zZWxl
-Y3RfYnVzX3dpZHRoKCkgd2hpY2ggd2lsbCB0cnkgdG8NCj4gPiBzZXQgNGJpdCB0cmFuc2ZlciBt
-b2RlIGlmIGZhaWwgdG8gc2V0IDhiaXQgbW9kZS4gVGhlIHByb2JsZW0gaXMgdGhhdA0KPiA+IHRo
-ZSBidXMgd2lkdGggc2hvdWxkIG5vdCBiZSBzZXQgdG8gNGJpdCBpbiBIUzQwMGVzIG1vZGUuDQo+
-IA0KPiBJIGd1ZXNzIGl0IGZhaWxzIGJlY2F1c2UgdGhlcmUgaXMgc29tZXRoaW5nIHdyb25nLiBD
-YW4geW91IHBsZWFzZQ0KPiBlbGFib3JhdGUgdW5kZXIgd2hhdCBjaXJjdW1zdGFuY2UgdGhlIHBy
-b2JsZW0gb2NjdXJzPw0KPiANClRoaXMgcHJvYmxlbSB2ZXJ5IG9jY2FzaW9uYWxseSBvY2N1cnJl
-ZCB3aGVuIHN5c3RlbSByZXN1bWUgZnJvbQ0Kc3VzcGVuZCBzdGF0ZS4gVGhlIGNhcmQgc3R1Y2sg
-aW4gdGhlIHByb2dyYW1taW5nIHN0YXRlIGFmdGVyIHNldHRpbmcNCjhiaXQgbW9kZS4gQWZ0ZXIg
-dGhhdCwgbW1jX3NlbGVjdF9idXNfd2lkdGgoKSB3aWxsIGNvbnRpbnVlIHRvIHNldA0KNGJpdCBt
-b2RlIGFuZCByZXR1cm4gd2l0aG91dCBlcnJvcnMuIE9mIGNvdXJzZSwgdGhlIGZvbGxvd2luZyBS
-L1cNCnJlcXVlc3RzIHdpbGwgYmUgYWxsIGZhaWxpbmcuDQoNClRoZSBwcm9ibGVtIHNjZW5lIGlz
-IGhhcmQgdG8gcmVwcm9kdWNlLiBNYXliZSBpdCBoYXBwZW5lZA0KYmVjYXVzZSB0aGVyZSBpcyBz
-b21ldGhpbmcgd3JvbmcgYWJvdXQgYnVzIGNsb2NrIG9yIGNvcmUgdm9sdGFnZQ0Kc3RhYmlsaXR5
-IHdoZW4gc3lzdGVtIGRvIHJlc3VtZS4NCg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogSG9uZ2pp
-ZSBGYW5nIDxob25namllZmFuZ0Bhc3JtaWNyby5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMv
-bW1jL2NvcmUvbW1jLmMgfCAyMyArKysrKysrKysrKysrKysrKysrKystLQ0KPiA+ICAxIGZpbGUg
-Y2hhbmdlZCwgMjEgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL21tYy9jb3JlL21tYy5jIGIvZHJpdmVycy9tbWMvY29yZS9tbWMuYw0K
-PiA+IGluZGV4IDQ0NjZmNWQuLjk0YzNjYzUgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9tbWMv
-Y29yZS9tbWMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvbW1jL2NvcmUvbW1jLmMNCj4gPiBAQCAtMTMz
-Nyw5ICsxMzM3LDI4IEBAIHN0YXRpYyBpbnQgbW1jX3NlbGVjdF9oczQwMGVzKHN0cnVjdCBtbWNf
-Y2FyZCAqY2FyZCkNCj4gPiAgICAgICAgIGlmIChlcnIpDQo+ID4gICAgICAgICAgICAgICAgIGdv
-dG8gb3V0X2VycjsNCj4gPg0KPiA+IC0gICAgICAgZXJyID0gbW1jX3NlbGVjdF9idXNfd2lkdGgo
-Y2FyZCk7DQo+ID4gLSAgICAgICBpZiAoZXJyIDwgMCkNCj4gPiArICAgICAgIC8qIFN3aXRjaCBj
-YXJkIHRvIDggYml0IG1vZGUgKi8NCj4gPiArICAgICAgIGVyciA9IG1tY19zd2l0Y2goY2FyZCwg
-RVhUX0NTRF9DTURfU0VUX05PUk1BTCwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgRVhU
-X0NTRF9CVVNfV0lEVEgsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgIEVYVF9DU0RfQlVT
-X1dJRFRIXzgsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgIGNhcmQtPmV4dF9jc2QuZ2Vu
-ZXJpY19jbWQ2X3RpbWUpOw0KPiA+ICsgICAgICAgaWYgKGVycikgew0KPiA+ICsgICAgICAgICAg
-ICAgICBwcl9lcnIoIiVzOiBzd2l0Y2ggdG8gOCBiaXQgbW9kZSBmb3IgaHM0MDBlcyBmYWlsZWQs
-IGVycjolZFxuIiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICBtbWNfaG9zdG5hbWUoaG9z
-dCksIGVycik7DQo+ID4gKyAgICAgICAgICAgICAgIGdvdG8gb3V0X2VycjsNCj4gPiArICAgICAg
-IH0NCj4gPiArDQo+ID4gKyAgICAgICBtbWNfc2V0X2J1c193aWR0aChob3N0LCBNTUNfQlVTX1dJ
-RFRIXzgpOw0KPiA+ICsNCj4gPiArICAgICAgIGlmICghKGhvc3QtPmNhcHMgJiBNTUNfQ0FQX0JV
-U19XSURUSF9URVNUKSkNCj4gPiArICAgICAgICAgICAgICAgZXJyID0gbW1jX2NvbXBhcmVfZXh0
-X2NzZHMoY2FyZCwgTU1DX0JVU19XSURUSF84KTsNCj4gPiArICAgICAgIGVsc2UNCj4gPiArICAg
-ICAgICAgICAgICAgZXJyID0gbW1jX2J1c190ZXN0KGNhcmQsIE1NQ19CVVNfV0lEVEhfOCk7DQo+
-ID4gKyAgICAgICBpZiAoZXJyKSB7DQo+ID4gKyAgICAgICAgICAgICAgIHByX2VycigiJXM6IHRl
-c3QgOCBiaXQgbW9kZSBmb3IgaHM0MDBlcyBmYWlsZWQsIGVycjolZFxuIiwNCj4gPiArICAgICAg
-ICAgICAgICAgICAgICAgICBtbWNfaG9zdG5hbWUoaG9zdCksIGVycik7DQo+ID4gICAgICAgICAg
-ICAgICAgIGdvdG8gb3V0X2VycjsNCj4gDQo+IExvdCdzIG9wZW4gY29kaW5nLCBubyBJIGRvbid0
-IGxpa2UgaXQuDQo+IA0KPiBXb3VsZG4ndCBpdCBpbnN0ZWFkIGJlIHBvc3NpYmxlIHRvIGNoZWNr
-IHRoZSByZXR1cm4gdmFsdWUgZnJvbQ0KPiBtbWNfc2VsZWN0X2J1c193aWR0aCgpLCBhcyBpdCBz
-aG91bGQgdGVsbCB3aGF0IHdpZHRoIGl0IG1hbmFnZSB0bw0KPiBzZWxlY3QuIFRoZW4gaWYgaXQg
-aXNuJ3QgOC1iaXQsIHRoZW4gd2Ugc2hvdWxkIGJhaWwgb3V0LiBEb2VzIHRoYXQNCj4gd29yaz8N
-Cj4gDQpBZnRlciBzZXR0aW5nIDRiaXQgbW9kZSwgaXQgY2FuJ3Qgd29yayBiZWNhdXNlIGl0IGNh
-bm5vdCBiYWNrIHRvDQpIUzIwMCBtb2RlIGxpa2UgdGhlIEhTNDAwIG1vZGUuDQpGb3IgSFM0MDBl
-cywgaWYgZmFpbCB0byBzZXQgOGJpdCBtb2RlLCBtYXliZSBpdCBpcyBtb3JlIHJlYXNvbmFibGUN
-CnRoYXQgcmV0dXJuIGVycm9yIGRpcmVjdGx5Lg0KDQo+ID4gKyAgICAgICB9DQo+ID4NCj4gPiAg
-ICAgICAgIC8qIFN3aXRjaCBjYXJkIHRvIEhTIG1vZGUgKi8NCj4gPiAgICAgICAgIGVyciA9IF9f
-bW1jX3N3aXRjaChjYXJkLCBFWFRfQ1NEX0NNRF9TRVRfTk9STUFMLA0KPiA+IC0tDQo+ID4gMS45
-LjENCj4gPg0KPiANCj4gS2luZCByZWdhcmRzDQo+IFVmZmUNCg0KDQpCJlINCkhvbmdqaWUNCg==
+On Sun, Jul 08, 2018 at 04:54:38PM -0400, Mathieu Desnoyers wrote:
+> ----- On Jul 7, 2018, at 4:33 PM, Joel Fernandes joelaf@google.com wrote:
+> 
+> > On Fri, Jul 06, 2018 at 07:54:28PM -0700, Alexei Starovoitov wrote:
+> >> On Fri, Jul 06, 2018 at 06:56:16PM -0700, Daniel Colascione wrote:
+> >> > BPF_SYNCHRONIZE waits for any BPF programs active at the time of
+> >> > BPF_SYNCHRONIZE to complete, allowing userspace to ensure atomicity of
+> >> > RCU data structure operations with respect to active programs. For
+> >> > example, userspace can update a map->map entry to point to a new map,
+> >> > use BPF_SYNCHRONIZE to wait for any BPF programs using the old map to
+> >> > complete, and then drain the old map without fear that BPF programs
+> >> > may still be updating it.
+> >> > 
+> >> > Signed-off-by: Daniel Colascione <dancol@google.com>
+> >> > ---
+> >> >  include/uapi/linux/bpf.h |  1 +
+> >> >  kernel/bpf/syscall.c     | 14 ++++++++++++++
+> >> >  2 files changed, 15 insertions(+)
+> >> > 
+> >> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> >> > index b7db3261c62d..4365c50e8055 100644
+> >> > --- a/include/uapi/linux/bpf.h
+> >> > +++ b/include/uapi/linux/bpf.h
+> >> > @@ -98,6 +98,7 @@ enum bpf_cmd {
+> >> >  	BPF_BTF_LOAD,
+> >> >  	BPF_BTF_GET_FD_BY_ID,
+> >> >  	BPF_TASK_FD_QUERY,
+> >> > +	BPF_SYNCHRONIZE,
+> >> >  };
+> >> >  
+> >> >  enum bpf_map_type {
+> >> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> >> > index d10ecd78105f..60ec7811846e 100644
+> >> > --- a/kernel/bpf/syscall.c
+> >> > +++ b/kernel/bpf/syscall.c
+> >> > @@ -2272,6 +2272,20 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *,
+> >> > uattr, unsigned int, siz
+> >> >  	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+> >> >  		return -EPERM;
+> >> >  
+> >> > +	if (cmd == BPF_SYNCHRONIZE) {
+> >> > +		if (uattr != NULL || size != 0)
+> >> > +			return -EINVAL;
+> >> > +		err = security_bpf(cmd, NULL, 0);
+> >> > +		if (err < 0)
+> >> > +			return err;
+> >> > +		/* BPF programs are run with preempt disabled, so
+> >> > +		 * synchronize_sched is sufficient even with
+> >> > +		 * RCU_PREEMPT.
+> >> > +		 */
+> >> > +		synchronize_sched();
+> >> > +		return 0;
+> >> 
+> >> I don't think it's necessary. sys_membarrier() can do this already
+> >> and some folks use it exactly for this use case.
+> > 
+> > Alexei, the use of sys_membarrier for this purpose seems kind of weird to me
+> > though. No where does the manpage say membarrier should be implemented this
+> > way so what happens if the implementation changes?
+> > 
+> > Further, membarrier manpage says that a memory barrier should be matched with
+> > a matching barrier. In this use case there is no matching barrier, so it
+> > makes it weirder.
+> > 
+> > Lastly, sys_membarrier seems will not work on nohz-full systems, so its a bit
+> > fragile to depend on it for this?
+> > 
+> >        case MEMBARRIER_CMD_GLOBAL:
+> >                /* MEMBARRIER_CMD_GLOBAL is not compatible with nohz_full. */
+> >                if (tick_nohz_full_enabled())
+> >                        return -EINVAL;
+> >                if (num_online_cpus() > 1)
+> >                        synchronize_sched();
+> >                return 0;
+> > 
+> > 
+> > Adding Mathieu as well who I believe is author/maintainer of membarrier.
+> 
+> See commit 907565337
+> "Fix: Disable sys_membarrier when nohz_full is enabled"
+> 
+> "Userspace applications should be allowed to expect the membarrier system
+> call with MEMBARRIER_CMD_SHARED command to issue memory barriers on
+> nohz_full CPUs, but synchronize_sched() does not take those into
+> account."
+> 
+> So AFAIU you'd want to re-use membarrier to issue synchronize_sched, and you
+> only care about kernel preempt off critical sections.
+
+Mathieu, Thanks a lot for your reply. I understand what you said and agree
+with you. Slight OT, but I tried to go back to first principles and
+understand how membarrier() uses synchronize_sched() for the "slow path" and
+it didn't make immediate sense to me. Let me clarify my dillema..
+
+My understanding is membarrier's MEMBARRIER_CMD_GLOBAL will employ
+synchronize_sched to make sure all other CPUs aren't executing anymore in an
+section of usercode that happen to be accessing memory that was written to
+before the membarrier call was made. To do this, the system call will use
+synchronize_sched to try to guarantee that all user-mode execution that
+started before the membarrier call would be completed when the membarrier
+call returns. This guarantees that without using a real memory barrier on the
+"fast path", things work just fine and everyone wins.
+
+But, going through RCU code, I see that a "RCU-sched quiecent state" on a CPU
+may be reached when the CPU receives a timer tick while executing in user
+mode:
+
+void rcu_check_callbacks(int user)
+{
+	trace_rcu_utilization(TPS("Start scheduler-tick"));
+	increment_cpu_stall_ticks();
+	if (user || rcu_is_cpu_rrupt_from_idle()) {
+[...]
+		rcu_sched_qs();
+		rcu_bh_qs();
+
+The problem I see is the CPU could be executing usermode code at the time of
+the RCU sched-QS. This IMO is enough reason for synchronize_sched() to
+return, because the CPU in question just reported a QS (assuming all other
+CPUs also happen to do so if they needed to).
+
+Then I am wondering how does the membarrier call even work, the tick could
+very well have interrupted the CPU while it was executing usermode code in
+the middle of a set of instructions performing memory accesses. Reporting a
+quiescent state at such an inopportune time would cause the membarrier call
+to prematurely return, no? Sorry if I missed something.
+
+The other question I have is about the whole "nohz-full doesn't work" thing.
+I didn't fully understand why. RCU is already tracking the state of nohz-full
+CPUs because the rcu dynticks code in (kernel/rcu/tree.c) monitors
+transitions to and from usermode even if the timer tick is turned off. So why
+would it not work?
+
+thanks a lot!
+
+ - Joel
+
