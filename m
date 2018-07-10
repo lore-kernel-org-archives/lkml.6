@@ -2,71 +2,112 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA31C3279B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCE8C6778A
 	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 03:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 160D320881
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 03:34:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 160D320881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 47BE4208A2
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 03:34:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kwd8DT2Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47BE4208A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933053AbeGJD3r (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 23:29:47 -0400
-Received: from mout.gmx.net ([212.227.17.22]:39013 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754558AbeGJD3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 23:29:44 -0400
-Received: from homer.simpson.net ([185.221.151.167]) by mail.gmx.com (mrgmx101
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0MMoU7-1fj4aJ29CZ-008Xzb; Tue, 10
- Jul 2018 05:29:00 +0200
-Message-ID: <1531193337.9619.8.camel@gmx.de>
-Subject: Re: [PATCH 1/7] mm: allocate mm_cpumask dynamically based on
- nr_cpu_ids
-From:   Mike Galbraith <efault@gmx.de>
-To:     Rik van Riel <riel@surriel.com>, linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, luto@kernel.org, dave.hansen@linux.intel.com,
-        mingo@kernel.org, kernel-team@fb.com, tglx@linutronix.de,
-        songliubraving@fb.com, hpa@zytor.com
-Date:   Tue, 10 Jul 2018 05:28:57 +0200
-In-Reply-To: <1531172317.5350.33.camel@surriel.com>
-References: <20180706215658.18018-1-riel@surriel.com>
-         <20180706215658.18018-2-riel@surriel.com>
-         <1530951813.22672.10.camel@gmx.de> <1530998709.5350.32.camel@surriel.com>
-         <1531059232.4665.38.camel@gmx.de> <1531172317.5350.33.camel@surriel.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:CMKtyu/+5Iqg8vGnD40FHY6PB99TWawUOBVt5sXpiLn2EbUN5+H
- NdoguBCsUp5SE85NWQv0PTWX6QEQul9UVrTfG1uM/4B9CHbhIJHaDJHk2x31JIJ8h4+KWL7
- 7XAjH2AWrqb98/2komzHZqpEcLEZ3oYXovaukT0pBXt5WxNNAGq+5HyaO93x3umzEH+wxQs
- lSqJTC3aqx3UmKy1ZmSRA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:bODwEg8ymwU=:5VkRgUfTaYB46g62Bi6itC
- 1SrR6dWk9PwpARxdcQAUha4eknh20r/Ihmgm1vpNw1Jj4lWVWc0rkdP78uimoHLrxGGJJkPmu
- fslUhaUlyhIUPi0FdA3YT6s5HxBcD3WJhG3MYoM6B5Ytk1AOj2Y5AvbGe81EE+PZWzHRD5Gui
- 5N766E3jIvlnlVewcIszokqSAuJvRrYO9Rojr2TbBSmJwu1LnN70wrJTCuzeN/rUZhQ+Z3w6i
- ubrx9aW4J92UkrLJYjKNjX/NoZUTSxpK/dBS/T3Rx/ch4QWjxSwgFua2TJpXZtqPVoII4kLnI
- xBeqdsFuJSC2IVrak82adJTZ0hr72fGGF+p/ihBaxhIaQnBmXHLKwJb1FRkrO82VbbyK+z7nB
- EQaEJW7PiZIkIvpxbXHp9EkV4jxwa9lMqnStO5GcV74D9dw/QJM+WOAHVX4GYHID83lb6pceU
- 2Vc2tq/zT49xj6MqGsLIqlm+bayHN22AlQRO8AOse4UzdrrLn68lYSqwfAe1P9G5/woKIMckd
- zTrVA35cdJ02RQWg2t/HJfcSF3+kPe8o5m/vK354/U6UFPA8tPGbuL/8JS6gy5S7xOelAyios
- n72sTYjQOi/M6llQMq7qasnVNwRFG/bPBAj/ImvB2MPBoOnoE3yJdhTEeEfL4TMci+r8Y+iri
- OOfKiT1b3MlT/yHXtHRYTtLYsDb7uDyVuVKbQHhw8LanDXzvDOGQVsLGbVAyqdph6yYrDs6Qg
- 1U+sbAx8GUU3l87OAM01UTTI86KuYv6WJ+bmaA5uETY+wqj7ZlOeFVL3Ycp1F0aW/l8LSZLha
- wdzpdf6
+        id S933179AbeGJDeI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 9 Jul 2018 23:34:08 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37285 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932850AbeGJDeD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 23:34:03 -0400
+Received: by mail-pf0-f196.google.com with SMTP id x10-v6so5234997pfm.4
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Jul 2018 20:34:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=WsdLPdwvHqxlWUa/+V/y2YCutcj9kExp8LPWlKCa2ww=;
+        b=kwd8DT2Qr5mDuK6ZdOVe0Ce/zmmnlcgS7ufvO31OR3hU1CsnY0Qh2DHoxTAb3WU5/N
+         IJY0GxXJPzeB5ZZsu+zEg9tNRcJAqrX6vNtcweQWqJjQn4MKLwLScODAlIZfjOv7RJrX
+         h0W+yauGw+jhqaIcCPzUj9AcYPr2/LXi3F/HMhTejdE5/BzVj4/RKbgKHYaftYR37frS
+         lMD9XGcEgralV6IYm6PQleZHMLH8Zu6KVJ3jAhh5efMrUL0G93cV4MJxzVzHsLwtglAH
+         DLuO8RbmTnq72OkweonEuE88hTWa0MT/YV/DAsA/qztTbHQYjwOVPyCfZzCjoUKD9GSQ
+         jMfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WsdLPdwvHqxlWUa/+V/y2YCutcj9kExp8LPWlKCa2ww=;
+        b=Ptoqiwwy8a7PTnkYOLpcMx2TvKlpURQo08+wHHBWZ29Plb3TlhiXiXCnUe3vHKoV3+
+         qHcfkizDHLlaXqXFBt4pO/TZjrhdtwGqj8SSQEBhl4Mg7E5yjCh/IDncWKnayNivxKOq
+         Eb1lTftuOVpQiVhZSiGHvF71OnWhFuEugTB5s2cQ52gN/BMZKY5hdmi/yCcI449Lmcav
+         9dMZBQ0LZm6vMSPpFgxmTykCMZ3JYqu/E0AsBgYYHul+XxYzIklf1uqx4SLxksOkQAUf
+         sT73AFJAhaKdhm+pviIZYf5U/T1Ys2XedpSaKJQWWjH5KPuQdBpKeQPV7atayJyfTltC
+         T/lA==
+X-Gm-Message-State: APt69E2kSDAeUauh3JwtekdhlEK7jixQRbkYdLG4dIpFo4x71+/RYEu3
+        oAXfWYVUKxVbk5rcGMvpPISICA==
+X-Google-Smtp-Source: AAOMgpclipEGo6DWAARpkIqeFvrqkavtMbjdfmR31V+4/B/MuHP/Xpkq+P1YLmkxbux/cIceqC/70g==
+X-Received: by 2002:a63:2c0d:: with SMTP id s13-v6mr21506830pgs.37.1531193643014;
+        Mon, 09 Jul 2018 20:34:03 -0700 (PDT)
+Received: from drosen.mtv.corp.google.com ([2620:0:1000:1611:7129:1142:3149:848c])
+        by smtp.gmail.com with ESMTPSA id z19-v6sm24778961pfe.163.2018.07.09.20.34.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 09 Jul 2018 20:34:02 -0700 (PDT)
+From:   Daniel Rosenberg <drosen@google.com>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+        linux-f2fs-devel@lists.sourceforge.net
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
+        Daniel Rosenberg <drosen@google.com>
+Subject: [PATCH] f2fs: Keep alloc_valid_block_count in sync
+Date:   Mon,  9 Jul 2018 20:32:42 -0700
+Message-Id: <20180710033242.177557-1-drosen@google.com>
+X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-07-09 at 17:38 -0400, Rik van Riel wrote:
-> 
-> I added your code, and Signed-off-By in patch
-> 1 for version 5 of the series.
+If we attempt to request more blocks than we have room for, we try to
+instead request as much as we can, however, alloc_valid_block_count
+is not decremented to match the new value, allowing it to drift higher
+until the next checkpoint. This always decrements it when the requested
+amount cannot be fulfilled.
 
-No objection, but no need (like taking credit for fixing a typo:).
+Signed-off-by: Daniel Rosenberg <drosen@google.com>
+---
+ fs/f2fs/f2fs.h | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 4d8b1de83143..5af955a8736e 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1680,18 +1680,20 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+ 		sbi->total_valid_block_count -= diff;
+ 		if (!*count) {
+ 			spin_unlock(&sbi->stat_lock);
+-			percpu_counter_sub(&sbi->alloc_valid_block_count, diff);
+ 			goto enospc;
+ 		}
+ 	}
+ 	spin_unlock(&sbi->stat_lock);
+ 
+-	if (unlikely(release))
++	if (unlikely(release)) {
++		percpu_counter_sub(&sbi->alloc_valid_block_count, release);
+ 		dquot_release_reservation_block(inode, release);
++	}
+ 	f2fs_i_blocks_write(inode, *count, true, true);
+ 	return 0;
+ 
+ enospc:
++	percpu_counter_sub(&sbi->alloc_valid_block_count, release);
+ 	dquot_release_reservation_block(inode, release);
+ 	return -ENOSPC;
+ }
+-- 
+2.18.0.203.gfac676dfb9-goog
+
