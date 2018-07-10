@@ -2,99 +2,107 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66EA7C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:54:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACD04C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B617208FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:54:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B617208FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4DE1B208FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:55:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CwOfcNOc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE1B208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733129AbeGJS1f (ORCPT
+        id S1733212AbeGJSzn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:27:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44814 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732390AbeGJS1d (ORCPT
+        Tue, 10 Jul 2018 14:55:43 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40119 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732459AbeGJSzm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:27:33 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 03746DB4;
-        Tue, 10 Jul 2018 18:27:22 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Kurz <okurz@suse.com>,
-        =?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <ptesarik@suse.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.4 19/47] s390: Correct register corruption in critical section cleanup
-Date:   Tue, 10 Jul 2018 20:24:43 +0200
-Message-Id: <20180710182337.943202227@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
-References: <20180710182337.047502999@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 10 Jul 2018 14:55:42 -0400
+Received: by mail-pf0-f195.google.com with SMTP id e13-v6so3329329pff.7
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 11:55:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=oUcTQPJzSIJnS2T45OrSBkyAi4U5y/CIwwnKpblntmQ=;
+        b=CwOfcNOcM1zwQiNvXCHI60/dgXOvBKCeoLvND+2gUmHDOkc6x1LvPenkNSx220Q483
+         GBYAzxYrc7GPFpDmvGPcgYX1BWz131T6Y+/mlTz0FaIwgl4NaIROdLHlvmyhTQSLzynm
+         R6htIIcv1FGVyvkA7a4v5IOejH9fw/dryfNt+VGU/wkX0pmE1tvcPR4WSxjxJmlXkJzn
+         wtBoCrYYRK0ZQsE3L7KDFaJyKnTkpHpSgT2b0oMZbd0OMIMg+/VQJc/8IYqztiaJSLLC
+         I0JPMEqp987TQmpN8roKZcEAQ1LwBYrtCzNbzTq46SCKhNb1h/Pti9nmhGqAFBTgeGUK
+         v52g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=oUcTQPJzSIJnS2T45OrSBkyAi4U5y/CIwwnKpblntmQ=;
+        b=qfmm3fFWZ7dtJu+mQIdUCzXAtULvVEZ79OdxhSYrBK3irtG+Pjg9oj9wj8acVM4lI0
+         x5QCCeuhG+mHIg6e2vBhZ+vZn4UCDIOVnlAy+ZDgQf+TGZPD8Gky3jN8/r0E9iDgBovD
+         uIxv9DE06K5vbZJqj16U+MDJi2E1UMc7JWVDYlv394BFVB3HKf8QKnJJMhpvEHhLtn7w
+         8CVuI54iDtqV7cYK7tapiTjwDSeWgpv7pdFqdzgx2Ve+ZSFFi2TZUE6ixuTu3rQ1wlrm
+         /IgE0yps9413FoTQOZseRfULKj0974ZOov+ob7zrF0D1iBOKHv0zgMmu3WSJ3Ekv3dJR
+         dEcQ==
+X-Gm-Message-State: APt69E03gSFHIRZUbN7uNopKTBG4OV7ssC+V+Q/PcWsmhjORakKPTZ1C
+        5q6ZPA5lRRq+k6O8J8eQ3c/JBObjFYU=
+X-Google-Smtp-Source: AAOMgpe+yRG75jZ/M5zJbgnDx0ivzXYqFomPcLiflqE9xjVzyBDMC69/gNbGoFJNJSzeHt6nv8at+w==
+X-Received: by 2002:a65:630e:: with SMTP id g14-v6mr3273759pgv.153.1531248922486;
+        Tue, 10 Jul 2018 11:55:22 -0700 (PDT)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id l8-v6sm36993415pfb.102.2018.07.10.11.55.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 11:55:21 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 11:55:21 -0700 (PDT)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mm, oom: remove sleep from under oom_lock
+In-Reply-To: <20180710094341.GD14284@dhcp22.suse.cz>
+Message-ID: <alpine.DEB.2.21.1807101152410.9234@chino.kir.corp.google.com>
+References: <20180709074706.30635-1-mhocko@kernel.org> <alpine.DEB.2.21.1807091548280.125566@chino.kir.corp.google.com> <20180710094341.GD14284@dhcp22.suse.cz>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Tue, 10 Jul 2018, Michal Hocko wrote:
 
-------------------
+> What do you think about the following?
+> 
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index ed9d473c571e..32e6f7becb40 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -53,6 +53,14 @@ int sysctl_panic_on_oom;
+>  int sysctl_oom_kill_allocating_task;
+>  int sysctl_oom_dump_tasks = 1;
+>  
+> +/*
+> + * Serializes oom killer invocations (out_of_memory()) from all contexts to
+> + * prevent from over eager oom killing (e.g. when the oom killer is invoked
+> + * from different domains).
+> + *
+> + * oom_killer_disable() relies on this lock to stabilize oom_killer_disabled
+> + * and mark_oom_victim
+> + */
+>  DEFINE_MUTEX(oom_lock);
+>  
+>  #ifdef CONFIG_NUMA
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
-
-commit 891f6a726cacbb87e5b06076693ffab53bd378d7 upstream.
-
-In the critical section cleanup we must not mess with r1.  For march=z9
-or older, larl + ex (instead of exrl) are used with r1 as a temporary
-register. This can clobber r1 in several interrupt handlers. Fix this by
-using r11 as a temp register.  r11 is being saved by all callers of
-cleanup_critical.
-
-Fixes: 6dd85fbb87 ("s390: move expoline assembler macros to a header")
-Cc: stable@vger.kernel.org #v4.16
-Reported-by: Oliver Kurz <okurz@suse.com>
-Reported-by: Petr Tesařík <ptesarik@suse.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/s390/kernel/entry.S |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---- a/arch/s390/kernel/entry.S
-+++ b/arch/s390/kernel/entry.S
-@@ -1170,7 +1170,7 @@ cleanup_critical:
- 	jl	0f
- 	clg	%r9,BASED(.Lcleanup_table+104)	# .Lload_fpu_regs_end
- 	jl	.Lcleanup_load_fpu_regs
--0:	BR_EX	%r14
-+0:	BR_EX	%r14,%r11
- 
- 	.align	8
- .Lcleanup_table:
-@@ -1200,7 +1200,7 @@ cleanup_critical:
- 	ni	__SIE_PROG0C+3(%r9),0xfe	# no longer in SIE
- 	lctlg	%c1,%c1,__LC_USER_ASCE		# load primary asce
- 	larl	%r9,sie_exit			# skip forward to sie_exit
--	BR_EX	%r14
-+	BR_EX	%r14,%r11
- #endif
- 
- .Lcleanup_system_call:
-
-
+I think it's better, thanks.  However, does it address the question about 
+why __oom_reap_task_mm() needs oom_lock protection?  Perhaps it would be 
+helpful to mention synchronization between reaping triggered from 
+oom_reaper and by exit_mmap().
