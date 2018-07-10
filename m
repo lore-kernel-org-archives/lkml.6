@@ -3,37 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C76C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF34CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4039920936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4039920936
+	by mail.kernel.org (Postfix) with ESMTP id 791A320936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:27:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 791A320936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732558AbeGJS1i (ORCPT
+        id S1732575AbeGJS1k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:27:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44826 "EHLO
+        Tue, 10 Jul 2018 14:27:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44832 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732564AbeGJS1g (ORCPT
+        with ESMTP id S1732499AbeGJS1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:27:36 -0400
+        Tue, 10 Jul 2018 14:27:39 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB8D3D66;
-        Tue, 10 Jul 2018 18:27:25 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8B2F9D66;
+        Tue, 10 Jul 2018 18:27:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carlos Barcala Lara <cabl@cesinel.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 02/47] USB: serial: cp210x: add CESINEL device ids
-Date:   Tue, 10 Jul 2018 20:24:26 +0200
-Message-Id: <20180710182337.150055301@linuxfoundation.org>
+        stable@vger.kernel.org, Sarah Newman <srn@prgmr.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.4 20/47] drbd: fix access after free
+Date:   Tue, 10 Jul 2018 20:24:44 +0200
+Message-Id: <20180710182337.983801661@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -50,66 +51,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Lars Ellenberg <lars.ellenberg@linbit.com>
 
-commit 24160628a34af962ac99f2f58e547ac3c4cbd26f upstream.
+commit 64dafbc9530c10300acffc57fae3269d95fa8f93 upstream.
 
-Add device ids for CESINEL products.
+We have
+  struct drbd_requests { ... struct bio *private_bio;  ... }
+to hold a bio clone for local submission.
 
-Reported-by: Carlos Barcala Lara <cabl@cesinel.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+On local IO completion, we put that bio, and in case we want to use the
+result later, we overload that member to hold the ERR_PTR() of the
+completion result,
+
+Which, before v4.3, used to be the passed in "int error",
+so we could first bio_put(), then assign.
+
+v4.3-rc1~100^2~21 4246a0b63bd8 block: add a bi_error field to struct bio
+changed that:
+  	bio_put(req->private_bio);
+ -	req->private_bio = ERR_PTR(error);
+ +	req->private_bio = ERR_PTR(bio->bi_error);
+
+Which introduces an access after free,
+because it was non obvious that req->private_bio == bio.
+
+Impact of that was mostly unnoticable, because we only use that value
+in a multiple-failure case, and even then map any "unexpected" error
+code to EIO, so worst case we could potentially mask a more specific
+error with EIO in a multiple failure case.
+
+Unless the pointed to memory region was unmapped, as is the case with
+CONFIG_DEBUG_PAGEALLOC, in which case this results in
+
+  BUG: unable to handle kernel paging request
+
+v4.13-rc1~70^2~75 4e4cbee93d56 block: switch bios to blk_status_t
+changes it further to
+  	bio_put(req->private_bio);
+  	req->private_bio = ERR_PTR(blk_status_to_errno(bio->bi_status));
+
+And blk_status_to_errno() now contains a WARN_ON_ONCE() for unexpected
+values, which catches this "sometimes", if the memory has been reused
+quickly enough for other things.
+
+Should also go into stable since 4.3, with the trivial change around 4.13.
+
+Cc: stable@vger.kernel.org
+Fixes: 4246a0b63bd8 block: add a bi_error field to struct bio
+Reported-by: Sarah Newman <srn@prgmr.com>
+Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/cp210x.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ drivers/block/drbd/drbd_worker.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -91,6 +91,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8156) }, /* B&G H3000 link cable */
- 	{ USB_DEVICE(0x10C4, 0x815E) }, /* Helicomm IP-Link 1220-DVM */
- 	{ USB_DEVICE(0x10C4, 0x815F) }, /* Timewave HamLinkUSB */
-+	{ USB_DEVICE(0x10C4, 0x817C) }, /* CESINEL MEDCAL N Power Quality Monitor */
-+	{ USB_DEVICE(0x10C4, 0x817D) }, /* CESINEL MEDCAL NT Power Quality Monitor */
-+	{ USB_DEVICE(0x10C4, 0x817E) }, /* CESINEL MEDCAL S Power Quality Monitor */
- 	{ USB_DEVICE(0x10C4, 0x818B) }, /* AVIT Research USB to TTL */
- 	{ USB_DEVICE(0x10C4, 0x819F) }, /* MJS USB Toslink Switcher */
- 	{ USB_DEVICE(0x10C4, 0x81A6) }, /* ThinkOptics WavIt */
-@@ -108,6 +111,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x826B) }, /* Cygnal Integrated Products, Inc., Fasttrax GPS demonstration module */
- 	{ USB_DEVICE(0x10C4, 0x8281) }, /* Nanotec Plug & Drive */
- 	{ USB_DEVICE(0x10C4, 0x8293) }, /* Telegesis ETRX2USB */
-+	{ USB_DEVICE(0x10C4, 0x82EF) }, /* CESINEL FALCO 6105 AC Power Supply */
-+	{ USB_DEVICE(0x10C4, 0x82F1) }, /* CESINEL MEDCAL EFD Earth Fault Detector */
-+	{ USB_DEVICE(0x10C4, 0x82F2) }, /* CESINEL MEDCAL ST Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x82F4) }, /* Starizona MicroTouch */
- 	{ USB_DEVICE(0x10C4, 0x82F9) }, /* Procyon AVS */
- 	{ USB_DEVICE(0x10C4, 0x8341) }, /* Siemens MC35PU GPRS Modem */
-@@ -120,7 +126,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8470) }, /* Juniper Networks BX Series System Console */
- 	{ USB_DEVICE(0x10C4, 0x8477) }, /* Balluff RFID */
- 	{ USB_DEVICE(0x10C4, 0x84B6) }, /* Starizona Hyperion */
-+	{ USB_DEVICE(0x10C4, 0x851E) }, /* CESINEL MEDCAL PT Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x85A7) }, /* LifeScan OneTouch Verio IQ */
-+	{ USB_DEVICE(0x10C4, 0x85B8) }, /* CESINEL ReCon T Energy Logger */
- 	{ USB_DEVICE(0x10C4, 0x85EA) }, /* AC-Services IBUS-IF */
- 	{ USB_DEVICE(0x10C4, 0x85EB) }, /* AC-Services CIS-IBUS */
- 	{ USB_DEVICE(0x10C4, 0x85F8) }, /* Virtenio Preon32 */
-@@ -130,10 +138,13 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8857) },	/* CEL EM357 ZigBee USB Stick */
- 	{ USB_DEVICE(0x10C4, 0x88A4) }, /* MMB Networks ZigBee USB Device */
- 	{ USB_DEVICE(0x10C4, 0x88A5) }, /* Planet Innovation Ingeni ZigBee USB Device */
-+	{ USB_DEVICE(0x10C4, 0x88FB) }, /* CESINEL MEDCAL STII Network Analyzer */
-+	{ USB_DEVICE(0x10C4, 0x8938) }, /* CESINEL MEDCAL S II Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x8946) }, /* Ketra N1 Wireless Interface */
- 	{ USB_DEVICE(0x10C4, 0x8962) }, /* Brim Brothers charging dock */
- 	{ USB_DEVICE(0x10C4, 0x8977) },	/* CEL MeshWorks DevKit Device */
- 	{ USB_DEVICE(0x10C4, 0x8998) }, /* KCF Technologies PRN */
-+	{ USB_DEVICE(0x10C4, 0x89A4) }, /* CESINEL FTBC Flexible Thyristor Bridge Controller */
- 	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
- 	{ USB_DEVICE(0x10C4, 0x8A5E) }, /* CEL EM3588 ZigBee USB Stick Long Range */
- 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
+--- a/drivers/block/drbd/drbd_worker.c
++++ b/drivers/block/drbd/drbd_worker.c
+@@ -256,8 +256,8 @@ void drbd_request_endio(struct bio *bio)
+ 	} else
+ 		what = COMPLETED_OK;
+ 
+-	bio_put(req->private_bio);
+ 	req->private_bio = ERR_PTR(bio->bi_error);
++	bio_put(bio);
+ 
+ 	/* not req_mod(), we need irqsave here! */
+ 	spin_lock_irqsave(&device->resource->req_lock, flags);
 
 
