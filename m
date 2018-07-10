@@ -2,113 +2,172 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B6FC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F22AC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7AB920854
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:08:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WbjTv3Ie"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7AB920854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0BA72208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:09:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BA72208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934444AbeGJQIt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:08:49 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:51677 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934339AbeGJQIs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:08:48 -0400
-Received: by mail-wm0-f65.google.com with SMTP id s12-v6so25254065wmc.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 09:08:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9QnRfKa1nYBmy/xNm4RXIbYUvdUGreEmVbcza66JLUI=;
-        b=WbjTv3Iej2/ay4QUzYDcUYj+8QyT+EnQgm/9DDSoIQ+Z5urZQR02H8J7IYloe8Z+/T
-         yJhg3ZcK5k1+7FVJ1SaKUeor2PCLVQYp3DdWstn/htcRCgmTHw/YACWAEP6JDFI9/Q2Q
-         jDrxZNtcR1wJeDrDYwqKxktQHO80gZAgfku9s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9QnRfKa1nYBmy/xNm4RXIbYUvdUGreEmVbcza66JLUI=;
-        b=gvHei97v76vexV56fMkKyI1GLy43z8WiLdj3sP2yU+VXM/OAL+qsdCTrDGzn0X/p2a
-         ihId1NMFiweRYOBbrVEBYJZrCD5E6vfdadG1TqV5xBtOGqjgMRBBjtlU44iN8PYPDqYF
-         9YCl0MOdaqVmNBMn0K9WMYylTbQhsAXl5n+Q6f380up4YHnXotecCbMV7FcJkLJ4pl6g
-         vRXHzqOlb0iha0TCBzABHjWuuVxK2NT25/nNG4GjZN3cvcgeiQyaoGKHZKF3vwsQZVTN
-         Ixd7NLNJZQHnaVKfbPPb7q67BQX+kOGPoRjGgm9VVOKlpHMhDuw29Q3re7/S8zloGdg1
-         h56g==
-X-Gm-Message-State: APt69E0uEIkHo6oyM2IKcbYIXe7HidJEdZlayKj1j2tCB9VXqfRCyrj2
-        Z+Ha0MW+GoV2mp+ANOLKQzrH/RFXz0c=
-X-Google-Smtp-Source: AAOMgpfwPKE7WJ3TsGBEFyUlb3IsLesderFscasg0kVlnDBUnNzWeDjg0dfVoGXNmijWXIwO6LP7fg==
-X-Received: by 2002:a1c:3743:: with SMTP id e64-v6mr14983569wma.63.1531238927537;
-        Tue, 10 Jul 2018 09:08:47 -0700 (PDT)
-Received: from [192.168.8.101] ([37.173.49.80])
-        by smtp.googlemail.com with ESMTPSA id m17-v6sm27165801wrg.65.2018.07.10.09.08.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 09:08:46 -0700 (PDT)
-Subject: Re: [PATCH] sched/core: Remove useless hrtimer_active check
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>
-References: <1529416963-20271-1-git-send-email-daniel.lezcano@linaro.org>
-Message-ID: <de66301c-8c03-6dba-1ab9-c9a9f556c66a@linaro.org>
-Date:   Tue, 10 Jul 2018 18:08:48 +0200
+        id S934463AbeGJQJX convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:09:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60720 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934322AbeGJQJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 12:09:20 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DC8DE814F0A5;
+        Tue, 10 Jul 2018 16:09:19 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-122-125.rdu2.redhat.com [10.10.122.125])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 107882156889;
+        Tue, 10 Jul 2018 16:09:17 +0000 (UTC)
+Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>
+References: <1530905572-817-1-git-send-email-longman@redhat.com>
+ <20180709081920.GD22049@dhcp22.suse.cz>
+ <62275711-e01d-7dbe-06f1-bf094b618195@redhat.com>
+ <20180710142740.GQ14284@dhcp22.suse.cz>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <a2794bcc-9193-cbca-3a54-47420a2ab52c@redhat.com>
+Date:   Tue, 10 Jul 2018 12:09:17 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <1529416963-20271-1-git-send-email-daniel.lezcano@linaro.org>
+In-Reply-To: <20180710142740.GQ14284@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 10 Jul 2018 16:09:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 10 Jul 2018 16:09:20 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/06/2018 16:02, Daniel Lezcano wrote:
-> The function tick_clear() checks if the timer is active and in this case
-> cancels the timer. However, hrtimer_cancel does the same check.
-> 
-> Perhaps, this test is made on purpose to skip some function calls for
-> efficiency reasons but if it is not the case we can safely remove it.
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  kernel/sched/core.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index d155518..aa46aa6 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -218,8 +218,7 @@ void update_rq_clock(struct rq *rq)
->  
->  static void hrtick_clear(struct rq *rq)
->  {
-> -	if (hrtimer_active(&rq->hrtick_timer))
-> -		hrtimer_cancel(&rq->hrtick_timer);
-> +	hrtimer_cancel(&rq->hrtick_timer);
->  }
->  
->  /*
+On 07/10/2018 10:27 AM, Michal Hocko wrote:
+> On Mon 09-07-18 12:01:04, Waiman Long wrote:
+>> On 07/09/2018 04:19 AM, Michal Hocko wrote:
+> [...]
+>>> later needs a special treatment while the first one is ok? There are
+>>> quite some resources which allow a non privileged user to consume a lot
+>>> of memory and the memory controller is the only reliable way to mitigate
+>>> the risk.
+>> Yes, memory controller is the only reliable way to mitigate the risk,
+>> but not all tasks are under the control of a memory controller with
+>> kernel memory limit.
+> But those which you do not trust should. So why do we need yet another
+> mechanism for the reclaim?
 
-May be not the patch of the century but just a gentle bump if it was
-lost by more important patchset review.
+Sometimes it could be a programming error in the code. I had seen a
+customer report about the negative dentries because of a bug in their
+code that generated a lot of negative dentries causing problem. In such
+a controlled environment, they may not want to run their applications
+under a memory cgroup as there is overhead involved in that. So a
+mechanism to highlight and notify the problem is probably good to have.
 
+>
+> [...]
+>>>> Patch 1 tracks the number of negative dentries present in the LRU
+>>>> lists and reports it in /proc/sys/fs/dentry-state.
+>>> If anything I _think_ vmstat would benefit from this because behavior of
+>>> the memory reclaim does depend on the amount of neg. dentries.
+>>>
+>>>> Patch 2 adds a "neg-dentry-pc" sysctl parameter that can be used to to
+>>>> specify a soft limit on the number of negative allowed as a percentage
+>>>> of total system memory. This parameter is 0 by default which means no
+>>>> negative dentry limiting will be performed.
+>>> percentage has turned out to be a really wrong unit for many tunables
+>>> over time. Even 1% can be just too much on really large machines.
+>> Yes, that is true. Do you have any suggestion of what kind of unit
+>> should be used? I can scale down the unit to 0.1% of the system memory.
+>> Alternatively, one unit can be 10k/cpu thread, so a 20-thread system
+>> corresponds to 200k, etc.
+> I simply think this is a strange user interface. How much is a
+> reasonable number? How can any admin figure that out?
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+Without the optional enforcement, the limit is essentially just a
+notification mechanism where the system signals that there is something
+wrong going on and the system administrator need to take a look. So it
+is perfectly OK if the limit is sufficiently high that normally we won't
+need to use that many negative dentries. The goal is to prevent negative
+dentries from consuming a significant portion of the system memory.
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+I am going to reduce the granularity of each unit to 1/1000 of the total
+system memory so that for large system with TB of memory, a smaller
+amount of memory can be specified.
+
+>>>> Patch 3 enables automatic pruning of least recently used negative
+>>>> dentries when the total number is close to the preset limit.
+>>> Please explain why this cannot be done in a standard dcache shrinking
+>>> way. I strongly suspect that you are developing yet another reclaim with
+>>> its own sets of tunable and bypassing the existing infrastructure. I
+>>> haven't read patches yet but the cover letter doesn't really explain
+>>> design much so I am only guessing.
+>> The standard dcache shrinking happens when the system is almost running
+>> out of free memory.
+> Well, the standard reclaim happens when somebody needs memory. We are
+> usually quite far away from "almost running out of memory". We do
+> reclaim fs metadata including dentries so I really do not see why
+> negative ones should be any special here.
+
+That is fine. I can certainly live without the new reclaim mechanism.
+
+>
+>> This new shrinker will be turned on when the number
+>> of negative dentries is closed to the limit even when there are still
+>> plenty of free memory left. It will stop when the number of negative
+>> dentries is lowered to a safe level. The new shrinker is designed to
+>> impose as little overhead to the currently running tasks. That is not
+>> true for the standard shrinker which will have a rather significant
+>> performance impact to the currently running tasks.
+> Do you have any numbers to back your claim? The memory reclaim is
+> usually quite lightweight. Especially when we have a lot of clean
+> fs {meta}data
+
+In the case of dentries, it is the lock hold time of the LRU list that
+can impact the normal filesystem operation. The new shrinker that I add
+purposely limit the lock hold time whereas the standard shrinker can
+hold the LRU for quite a long time if there are a lot of dentries to get
+rid of. I have some performance numbers in the cover letter of this
+patch about this.
+
+>> I can remove the new shrinker if people really don't want to add a new
+>> one as long as I can keep the option to kill off newly created negative
+>> dentries when the limit is exceeded.
+> Please let's not add yet another memory reclaim mechanism. It will just
+> backfire sooner or later.
+
+As said above, I am going to remove the new shrinker in the next version
+of the patch. We can always add it back later on if we feel there is a
+need to do it.
+
+Cheers,
+Longman
+
 
