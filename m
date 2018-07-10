@@ -2,59 +2,92 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86F00C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 02:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3586C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 02:08:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4083420881
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 02:07:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4083420881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 585F620862
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 02:08:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 585F620862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754603AbeGJCH0 (ORCPT
+        id S1754616AbeGJCIr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 9 Jul 2018 22:07:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43180 "EHLO mail.kernel.org"
+        Mon, 9 Jul 2018 22:08:47 -0400
+Received: from ozlabs.org ([203.11.71.1]:47775 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754450AbeGJCHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 9 Jul 2018 22:07:19 -0400
-Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FA6C20873;
-        Tue, 10 Jul 2018 02:07:18 +0000 (UTC)
-Date:   Mon, 9 Jul 2018 22:07:16 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Tobin C. Harding" <me@tobin.cc>
-Cc:     Theodore Ts'o <tytso@mit.edu>, Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] fix: enable early printing of hashed pointers
-Message-ID: <20180709220716.16f4f288@vmware.local.home>
-In-Reply-To: <20180710002519.5044-1-me@tobin.cc>
-References: <20180710002519.5044-1-me@tobin.cc>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1754450AbeGJCIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 9 Jul 2018 22:08:41 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 41Plx34Qfmz9s37; Tue, 10 Jul 2018 12:08:39 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     corbet@lwn.net
+Cc:     keescook@chromium.org, tglx@linutronix.de, konrad.wilk@oracle.com,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@ozlabs.org
+Subject: [PATCH] Documentation: Add powerpc options for spec_store_bypass_disable
+Date:   Tue, 10 Jul 2018 12:08:36 +1000
+Message-Id: <20180710020836.23571-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Jul 2018 10:25:16 +1000
-"Tobin C. Harding" <me@tobin.cc> wrote:
+Document the support for spec_store_bypass_disable that was added for
+powerpc in commit a048a07d7f45 ("powerpc/64s: Add support for a store
+forwarding barrier at kernel entry/exit").
 
-> Since I'm a massive noob I did not realise that since v7 of this set was
-> applied to random-next already that doing incremental versions was
-> pointless.
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ Documentation/admin-guide/kernel-parameters.txt | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-I wouldn't say you are a noob anymore. You are making the same types of
-mistakes that seasoned kernel developers make ;-)
+I tried documenting the differences between the PPC options and X86 ones in one
+section, but it got quite messy, so I went with this instead. Happy to take
+advice on how better to structure it if anyone has opinions.
 
--- Steve
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index efc7aa7a0670..f320c7168b04 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4060,6 +4060,8 @@
+ 			This parameter controls whether the Speculative Store
+ 			Bypass optimization is used.
+ 
++			On x86 the options are:
++
+ 			on      - Unconditionally disable Speculative Store Bypass
+ 			off     - Unconditionally enable Speculative Store Bypass
+ 			auto    - Kernel detects whether the CPU model contains an
+@@ -4075,12 +4077,20 @@
+ 			seccomp - Same as "prctl" above, but all seccomp threads
+ 				  will disable SSB unless they explicitly opt out.
+ 
+-			Not specifying this option is equivalent to
+-			spec_store_bypass_disable=auto.
+-
+ 			Default mitigations:
+ 			X86:	If CONFIG_SECCOMP=y "seccomp", otherwise "prctl"
+ 
++			On powerpc the options are:
++
++			on,auto - On Power8 and Power9 insert a store-forwarding
++				  barrier on kernel entry and exit. On Power7
++				  perform a software flush on kernel entry and
++				  exit.
++			off	- No action.
++
++			Not specifying this option is equivalent to
++			spec_store_bypass_disable=auto.
++
+ 	spia_io_base=	[HW,MTD]
+ 	spia_fio_base=
+ 	spia_pedr=
+-- 
+2.14.1
+
