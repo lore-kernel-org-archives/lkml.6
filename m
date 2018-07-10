@@ -2,131 +2,89 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA30C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8BDC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E6220883
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:23:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RC8F4LKw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E6220883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D2F620883
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:25:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D2F620883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=micron.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933293AbeGJMW7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 08:22:59 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:49308 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753275AbeGJMW5 (ORCPT
+        id S933267AbeGJMZR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 08:25:17 -0400
+Received: from mailout.micron.com ([137.201.242.129]:14080 "EHLO
+        mailout.micron.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932620AbeGJMZQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 08:22:57 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6ACMWZD122173;
-        Tue, 10 Jul 2018 07:22:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531225353;
-        bh=uJ507R84Xt3W5o9Pkyn0fon8FDpGq97Xuu6z1pb6AjY=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=RC8F4LKwdPWJJsGX/G9gd0lXuCDqf3sQ6BF3QuKiYRWDqXMhJMSEOA00XPh8gnCi7
-         XOvWvjl33MctvBVcTRcqwj4oBwGpzsVWUWbXPtufRpg9GNW1zVVSYWgk05ZekEkmQP
-         Fa4CFyoUuslgr4TEvQUirmi6LJdyJCk7DHBeVJKw=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6ACMWvE015851;
-        Tue, 10 Jul 2018 07:22:32 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 10
- Jul 2018 07:22:32 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 10 Jul 2018 07:22:32 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6ACMS2i022797;
-        Tue, 10 Jul 2018 07:22:29 -0500
-Subject: Re: [PATCH] driver core: Partially revert "driver core: correct
- device's shutdown order"
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
- <CAFgQCTsGC8NH+5kXYD7vykJeUsaAzCAjgxSP-R0EqA3YvgsY0w@mail.gmail.com>
- <8816662.k3KXbdkA2e@aspire.rjw.lan> <2927655.Y1qg3UnIrE@aspire.rjw.lan>
-CC:     Pingfan Liu <kernelfans@gmail.com>, <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Dave Young <dyoung@redhat.com>, <linux-pci@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Linux PM <linux-pm@vger.kernel.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <aa41cfa9-dedb-5f19-0d85-0d4c19d26ea8@ti.com>
-Date:   Tue, 10 Jul 2018 17:52:28 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
+        Tue, 10 Jul 2018 08:25:16 -0400
+Received: from mail.micron.com (bowex17a.micron.com [137.201.21.209])
+        by mailout.micron.com (8.14.4/8.14.6) with ESMTP id w6ACObkw014727;
+        Tue, 10 Jul 2018 06:24:37 -0600
+Received: from SIWEX4H.sing.micron.com (10.160.29.19) by bowex17a.micron.com
+ (137.201.21.209) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 10 Jul
+ 2018 06:24:35 -0600
+Received: from SIWEX5A.sing.micron.com (10.160.29.59) by
+ SIWEX4H.sing.micron.com (10.160.29.19) with Microsoft SMTP Server (TLS) id
+ 15.0.1347.2; Tue, 10 Jul 2018 20:24:28 +0800
+Received: from SIWEX5A.sing.micron.com ([fe80::a9c5:8ccb:fd84:268d]) by
+ SIWEX5A.sing.micron.com ([fe80::a9c5:8ccb:fd84:268d%25]) with mapi id
+ 15.00.1347.000; Tue, 10 Jul 2018 20:24:28 +0800
+From:   "Bean Huo (beanhuo)" <beanhuo@micron.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+Subject: Re: [PATCH v6 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Thread-Topic: [PATCH v6 0/6] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Thread-Index: AdQYSO8EIJ6yqPwQTR61MGVlKfRbjg==
+Date:   Tue, 10 Jul 2018 12:24:28 +0000
+Message-ID: <1df9a5d95c44408ab42b34948f956351@SIWEX5A.sing.micron.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.160.29.124]
+X-TM-AS-Product-Ver: SMEX-12.0.0.1782-8.200.1013-23958.005
+X-TM-AS-Result: No--7.222800-0.000000-31
+X-TM-AS-MatchedID: 150567-139010-184200-187067-700038-703788-780014-700648-7
+        80030-703747-702020-106660-703267-702161-700476-700839-703029-106230-706817
+        -139704-700047-701702-148004-148046-148133-148980-20020-41000-42000-42003-2
+        9961-63
+X-TM-AS-User-Approved-Sender: Yes
+X-TM-AS-User-Blocked-Sender: No
+x-mt-checkinternalsenderrule: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <2927655.Y1qg3UnIrE@aspire.rjw.lan>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Scanned-By: MIMEDefang 2.78 on 137.201.130.65
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Tuesday 10 July 2018 05:05 PM, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> Commit 52cdbdd49853 (driver core: correct device's shutdown order)
-> introduced a regression by breaking device shutdown on some systems.
-> 
-> Namely, the devices_kset_move_last() call in really_probe() added by
-> that commit is a mistake as it may cause parents to follow children
-> in the devices_kset list which then causes shutdown to fail.  For
-> example, if a device has children before really_probe() is called
-> for it (which is not uncommon), that call will cause it to be
-> reordered after the children in the devices_kset list and the
-> ordering of that list will not reflect the correct device shutdown
-> order any more.
-> 
-> Also it causes the devices_kset list to be constantly reordered
-> until all drivers have been probed which is totally pointless
-> overhead in the majority of cases and it only covers an issue
-> with system shutdown, while system-wide suspend/resume potentially
-> has the same issue on the affected platforms (which is not covered).
-> 
-> For that reason, revert the really_probe() modifications made by
-> commit 52cdbdd49853 which unfortunately will expose the shutdown
-> issue the problematic commit attempted to fix (and which will have
-> to be addressed differently and correctly in the future).
-> 
-> The other code changes made by commit 52cdbdd49853 are useful and
-> they need not be reverted.
-> 
-> Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
-> Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
-> Reported-by: Pingfan Liu <kernelfans@gmail.com>
-> Tested-by: Pingfan Liu <kernelfans@gmail.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
-
-This issue because of which 52cdbdd49853 (driver core: correct device's
-shutdown order) was added is not present from 4.18, since dra7 started using
-sdhci-omap.c driver which doesn't disable regulator during shutdown. (The
-original issue was present in omap_hsmmc driver).
-
-When sdhci-omap driver is modified to disable regulator during shutdown,
-something like device_link_add() can be added in _regulator_get().
-
-Since this doesn't reintroduce the problem that was solved by 52cdbdd49853,
-this can be safely merged.
-
-Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
-
-Thanks
-Kishon
+SGksIEJvcmlzDQo+Pg0KPg0KPk9rYXkuIENhbiB5b3UgaGF2ZSBhIGxvb2sgYXQgdGhlIHBhdGNo
+ZXMgSSBzZW50IGFuIGxldCBtZSBrbm93IGlmIEkgZG8gdGhlDQo+cmlnaHQgdGhpbmc/DQoNCkkg
+YW0gZG9pbmcgdG9kYXkuIEFuZCB3aWxsIGJhY2sgdG8geW91IEkgY291bGQgZ2l2ZSBzb21lIGFk
+dmljZS4NCg0KDQpJIGVuY291bnRlciBvbmUgcXVlc3Rpb24gYXMgYmVsb3cgd2hlbiBJIHJlcGx5
+IHRoZSBlbWFpbCBvZiBsaW51eC1tdGQsIGJ1dCBJZiBJIHJlcGx5IG90aGVyIG1haWwgbGlzdCAN
+ClN1Y2ggYXMgc2NzaSBtYWlsIGxpc3QsIG1tYyBtYWlsIGxpc3QsIG5vIGFueSBwcm9ibGVtLiBE
+byB5b3Uga25vdyB3aHk/IA0KDQoNCllvdXIgbWFpbCB0byAnbGludXgtbXRkJyB3aXRoIHRoZSBz
+dWJqZWN0DQoNCiAgICBSZTogW1BBVENIIHY2IDAvNl0gbXRkOiByYXduYW5kOiBzdXBwb3J0IE1U
+MjlGMUcwOEFCQUZBV1AtSVRFOkYNCg0KSXMgYmVpbmcgaGVsZCB1bnRpbCB0aGUgbGlzdCBtb2Rl
+cmF0b3IgY2FuIHJldmlldyBpdCBmb3IgYXBwcm92YWwuDQoNClRoZSByZWFzb24gaXQgaXMgYmVp
+bmcgaGVsZDoNCg0KICAgIE1lc3NhZ2UgaGFzIGEgc3VzcGljaW91cyBoZWFkZXINCg0KRWl0aGVy
+IHRoZSBtZXNzYWdlIHdpbGwgZ2V0IHBvc3RlZCB0byB0aGUgbGlzdCwgb3IgeW91IHdpbGwgcmVj
+ZWl2ZSBub3RpZmljYXRpb24gb2YgdGhlIG1vZGVyYXRvcidzIGRlY2lzaW9uLiAgSWYgeW91IHdv
+dWxkIGxpa2UgdG8gY2FuY2VsIHRoaXMgcG9zdGluZywgcGxlYXNlIHZpc2l0IHRoZSBmb2xsb3dp
+bmcgVVJMOg0KDQogICAgaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9jb25maXJt
+L2xpbnV4LW10ZC8xYTI4ZjlhNDA2OWEwYmJjYWRmYjZiMmExNzBjMDFkZDhiOTYyZDBhDQoNCg0K
+Ly9iZWFuaHVvDQo=
