@@ -6,42 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA31C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D37C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BECA208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BECA208E8
+	by mail.kernel.org (Postfix) with ESMTP id 4E03020A8B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E03020A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389060AbeGJSdt (ORCPT
+        id S2389074AbeGJSdw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47858 "EHLO
+        Tue, 10 Jul 2018 14:33:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47870 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388082AbeGJSds (ORCPT
+        with ESMTP id S2388051AbeGJSdv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:48 -0400
+        Tue, 10 Jul 2018 14:33:51 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7A756E6B;
-        Tue, 10 Jul 2018 18:33:35 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A74FD0B;
+        Tue, 10 Jul 2018 18:33:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 01/53] userfaultfd: hugetlbfs: fix userfaultfd_huge_must_wait() pte access
-Date:   Tue, 10 Jul 2018 20:24:37 +0200
-Message-Id: <20180710182458.838930219@linuxfoundation.org>
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.14 40/53] media: cx25840: Use subdev host data for PLL override
+Date:   Tue, 10 Jul 2018 20:25:16 +0200
+Message-Id: <20180710182501.080225476@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,63 +51,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Janosch Frank <frankja@linux.ibm.com>
+From: Brad Love <brad@nextdimension.cc>
 
-commit 1e2c043628c7736dd56536d16c0ce009bc834ae7 upstream.
+commit 3ee9bc12342cf546313d300808ff47d7dbb8e7db upstream.
 
-Use huge_ptep_get() to translate huge ptes to normal ptes so we can
-check them with the huge_pte_* functions.  Otherwise some architectures
-will check the wrong values and will not wait for userspace to bring in
-the memory.
+The cx25840 driver currently configures 885, 887, and 888 using
+default divisors for each chip. This check to see if the cx23885
+driver has passed the cx25840 a non-default clock rate for a
+specific chip. If a cx23885 board has left clk_freq at 0, the
+clock default values will be used to configure the PLLs.
 
-Link: http://lkml.kernel.org/r/20180626132421.78084-1-frankja@linux.ibm.com
-Fixes: 369cd2121be4 ("userfaultfd: hugetlbfs: userfaultfd_huge_must_wait for hugepmd ranges")
-Signed-off-by: Janosch Frank <frankja@linux.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This patch only has effect on 888 boards who set clk_freq to 25M.
+
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/userfaultfd.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/media/i2c/cx25840/cx25840-core.c |   28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -220,24 +220,26 @@ static inline bool userfaultfd_huge_must
- 					 unsigned long reason)
+--- a/drivers/media/i2c/cx25840/cx25840-core.c
++++ b/drivers/media/i2c/cx25840/cx25840-core.c
+@@ -463,8 +463,13 @@ static void cx23885_initialize(struct i2
  {
- 	struct mm_struct *mm = ctx->mm;
--	pte_t *pte;
-+	pte_t *ptep, pte;
- 	bool ret = true;
+ 	DEFINE_WAIT(wait);
+ 	struct cx25840_state *state = to_state(i2c_get_clientdata(client));
++	u32 clk_freq = 0;
+ 	struct workqueue_struct *q;
  
- 	VM_BUG_ON(!rwsem_is_locked(&mm->mmap_sem));
- 
--	pte = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
--	if (!pte)
-+	ptep = huge_pte_offset(mm, address, vma_mmu_pagesize(vma));
++	/* cx23885 sets hostdata to clk_freq pointer */
++	if (v4l2_get_subdev_hostdata(&state->sd))
++		clk_freq = *((u32 *)v4l2_get_subdev_hostdata(&state->sd));
 +
-+	if (!ptep)
- 		goto out;
- 
- 	ret = false;
-+	pte = huge_ptep_get(ptep);
- 
  	/*
- 	 * Lockless access: we're in a wait_event so it's ok if it
- 	 * changes under us.
- 	 */
--	if (huge_pte_none(*pte))
-+	if (huge_pte_none(pte))
- 		ret = true;
--	if (!huge_pte_write(*pte) && (reason & VM_UFFD_WP))
-+	if (!huge_pte_write(pte) && (reason & VM_UFFD_WP))
- 		ret = true;
- out:
- 	return ret;
+ 	 * Come out of digital power down
+ 	 * The CX23888, at least, needs this, otherwise registers aside from
+@@ -500,8 +505,13 @@ static void cx23885_initialize(struct i2
+ 		 * 50.0 MHz * (0xb + 0xe8ba26/0x2000000)/4 = 5 * 28.636363 MHz
+ 		 * 572.73 MHz before post divide
+ 		 */
+-		/* HVR1850 or 50MHz xtal */
+-		cx25840_write(client, 0x2, 0x71);
++		if (clk_freq == 25000000) {
++			/* 888/ImpactVCBe or 25Mhz xtal */
++			; /* nothing to do */
++		} else {
++			/* HVR1850 or 50MHz xtal */
++			cx25840_write(client, 0x2, 0x71);
++		}
+ 		cx25840_write4(client, 0x11c, 0x01d1744c);
+ 		cx25840_write4(client, 0x118, 0x00000416);
+ 		cx25840_write4(client, 0x404, 0x0010253e);
+@@ -544,9 +554,15 @@ static void cx23885_initialize(struct i2
+ 	/* HVR1850 */
+ 	switch (state->id) {
+ 	case CX23888_AV:
+-		/* 888/HVR1250 specific */
+-		cx25840_write4(client, 0x10c, 0x13333333);
+-		cx25840_write4(client, 0x108, 0x00000515);
++		if (clk_freq == 25000000) {
++			/* 888/ImpactVCBe or 25MHz xtal */
++			cx25840_write4(client, 0x10c, 0x01b6db7b);
++			cx25840_write4(client, 0x108, 0x00000512);
++		} else {
++			/* 888/HVR1250 or 50MHz xtal */
++			cx25840_write4(client, 0x10c, 0x13333333);
++			cx25840_write4(client, 0x108, 0x00000515);
++		}
+ 		break;
+ 	default:
+ 		cx25840_write4(client, 0x10c, 0x002be2c9);
+@@ -576,7 +592,7 @@ static void cx23885_initialize(struct i2
+ 		 * 368.64 MHz before post divide
+ 		 * 122.88 MHz / 0xa = 12.288 MHz
+ 		 */
+-		/* HVR1850  or 50MHz xtal */
++		/* HVR1850 or 50MHz xtal or 25MHz xtal */
+ 		cx25840_write4(client, 0x114, 0x017dbf48);
+ 		cx25840_write4(client, 0x110, 0x000a030e);
+ 		break;
 
 
