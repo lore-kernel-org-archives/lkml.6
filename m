@@ -6,82 +6,100 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EAE8C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFAB7C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF1B8208EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:54:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF1B8208EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 7363B208EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:55:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7363B208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934327AbeGJPyV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:54:21 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:41941 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933872AbeGJPyT (ORCPT
+        id S934339AbeGJPzZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:55:25 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:42524 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933846AbeGJPzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:54:19 -0400
-Received: by mail-ed1-f67.google.com with SMTP id s24-v6so733468edr.8;
-        Tue, 10 Jul 2018 08:54:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/JdXMA9YpiUbzTwRTL0vH2J+02KycwqmZaTSVobbCHk=;
-        b=BFzXNUPktCnc5XRkcEV6BPNPle90DXBQuwatMdiLJr218x6puPnRZOf484+wFSfejm
-         wIdKqhOpAg6uipIc3Flc9I5RrGHZ2FfvLYTjvA9Wnll2ETMAVrgtk5dS1cOtpd5vGvyT
-         CBxYS/hgVdHLnMicykOThcVrwn7DT28JCbBIFEG6sTAYwf4xIloMuvVyz+4EExSrffwc
-         y1C/gun8Zv4ZS6faAmYxJnncskMVUvrgqKkRViIL+ODTsKhxj4uZEJ+A9Jtz5YHoSRo0
-         HuYp/5T7xaHU/AzBjArGaoZjAEn52vShYUJO7wTjWB3Vsd/Pu0rqr5i2453gqy+UksyS
-         rnCQ==
-X-Gm-Message-State: APt69E3YnbuTGGvuA96WhLEUcQZ89kTJFtnjZlecHYgJWlm93ZU6D4GG
-        /V/jpWBCA40zMH8Q4ec7JPZpVfs/
-X-Google-Smtp-Source: AAOMgpcGJn42c3U5dgdfDmv98zC/3YFjTfd4K0CtjBnI1jsMbAN5DQloZYiLzCg55K/rhhnfeLx7Kw==
-X-Received: by 2002:a50:cd8e:: with SMTP id p14-v6mr26574317edi.159.1531238057968;
-        Tue, 10 Jul 2018 08:54:17 -0700 (PDT)
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
-        by smtp.gmail.com with ESMTPSA id g14-v6sm5557625edm.25.2018.07.10.08.54.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 08:54:16 -0700 (PDT)
-Received: by mail-wr1-f46.google.com with SMTP id r16-v6so15171691wrt.11;
-        Tue, 10 Jul 2018 08:54:16 -0700 (PDT)
-X-Received: by 2002:adf:a541:: with SMTP id j1-v6mr20436662wrb.155.1531238056175;
- Tue, 10 Jul 2018 08:54:16 -0700 (PDT)
+        Tue, 10 Jul 2018 11:55:24 -0400
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:52454 helo=[192.168.10.175])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1fcuz4-0004lR-3I; Tue, 10 Jul 2018 17:55:22 +0200
+Subject: Re: [PATCH] drm/tinydrm: add backlight dependency for ili9341
+To:     Arnd Bergmann <arnd@arndb.de>, David Airlie <airlied@linux.ie>,
+        David Lechner <david@lechnology.com>
+Cc:     Sean Paul <seanpaul@chromium.org>, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+References: <20180709152106.990066-1-arnd@arndb.de>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <42317727-5159-7cc2-f6a8-18c8f97b9e6e@tronnes.org>
+Date:   Tue, 10 Jul 2018 17:55:20 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 08:53:55
- -0700 (PDT)
-In-Reply-To: <20180706175113.26698-15-jernej.skrabec@siol.net>
-References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-15-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 10 Jul 2018 23:53:55 +0800
-X-Gmail-Original-Message-ID: <CAGb2v6442VWvuWnK1JCnxNqwRhp6pS+tVZkaRfs6xjYYxTRwfw@mail.gmail.com>
-Message-ID: <CAGb2v6442VWvuWnK1JCnxNqwRhp6pS+tVZkaRfs6xjYYxTRwfw@mail.gmail.com>
-Subject: Re: [PATCH 14/17] ARM: dts: sun8i: r40: Add missing TCON-TOP - TCON connections
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180709152106.990066-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> Current R40 is missing some graph connections between TCON TOP and
-> TCONs.
->
-> Add them.
->
-> Fixes: 05a43a262d03 ("ARM: dts: sun8i: r40: Add HDMI pipeline")
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Den 09.07.2018 17.20, skrev Arnd Bergmann:
+> This tinydrm driver fails to link without the backlight support:
+>
+> drivers/gpu/drm/tinydrm/ili9341.o: In function `ili9341_probe':
+> ili9341.c:(.text+0x578): undefined reference to `devm_of_find_backlight'
+>
+> Fixes: 3fa0e8f6f960 ("drm/tinydrm: new driver for ILI9341 display panels")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>   drivers/gpu/drm/tinydrm/Kconfig | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
+> index 7a8008b0783f..16f4b5c91f1b 100644
+> --- a/drivers/gpu/drm/tinydrm/Kconfig
+> +++ b/drivers/gpu/drm/tinydrm/Kconfig
+> @@ -23,6 +23,7 @@ config TINYDRM_ILI9225
+>   config TINYDRM_ILI9341
+>   	tristate "DRM support for ILI9341 display panels"
+>   	depends on DRM_TINYDRM && SPI
+> +	depends on BACKLIGHT_CLASS_DEVICE
+>   	select TINYDRM_MIPI_DBI
+>   	help
+>   	  DRM driver for the following Ilitek ILI9341 panels:
+
+There was some work done to make backlight optional, but I see now that
+it failed to take into account the possibility of the driver being
+builtin and BACKLIGHT_CLASS_DEVICE being a module.
+
+This is from include/linux/backlight.h:
+
+#if IS_ENABLED(CONFIG_BACKLIGHT_CLASS_DEVICE)
+struct backlight_device *of_find_backlight(struct device *dev);
+struct backlight_device *devm_of_find_backlight(struct device *dev);
+#else
+static inline struct backlight_device *of_find_backlight(struct device *dev)
+{
+     return NULL;
+}
+
+static inline struct backlight_device *
+devm_of_find_backlight(struct device *dev)
+{
+     return NULL;
+}
+#endif
+
+
+Anyways, thanks for fixing this:
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
+
+David Lechner do you apply this?
+
+Noralf.
+
