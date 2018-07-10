@@ -2,170 +2,195 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A832EC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A1CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DA0F2089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:32:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A4bD+sT3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DA0F2089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8D7452089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:32:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D7452089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933245AbeGJKcd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 06:32:33 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:40958 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932172AbeGJKc3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 06:32:29 -0400
-Received: by mail-oi0-f67.google.com with SMTP id w126-v6so41616467oie.7;
-        Tue, 10 Jul 2018 03:32:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=khS7D/OkYfdUVcKGmyvawna1j46BuK/HifDdC0ilySE=;
-        b=A4bD+sT3OW8+UjP43+tpEo0fQGzBZScNr+9BafeVNUK2ewyYHUiwGUgHcot1ITuiH6
-         P2IRwofS0P7OBsjocBFiMT2qRW9SV5XCMOk7zp8XeysqC9W3Zgut3jrZKN73N3akY+TR
-         MaP68G7rsr0XUWWnOyiYAYD01LIxigfkaaEgch/ylHuLNftsrJlMJ5cvRAuq5l/s2j3/
-         6jX4JvlqJamee+pIi1m/XSiQCjy1ShazA/j+AYxYFSCjOknhw9HmACyJwpb/5/suMm8Q
-         zvOhWapnKfKbmDhHZpOSUBL8usoJc9oS6wKEnXS/BlcFaxhIP8I8y9NHoMH6kca0/IzZ
-         BZMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=khS7D/OkYfdUVcKGmyvawna1j46BuK/HifDdC0ilySE=;
-        b=oOTxAnLSmndPbnazk/3cHPbpHwvoYCDD+SLsb8Qii9qEKCLxDf/69S6RCrI6WWPcZ6
-         QvugKYeMiFG/0IYerXh+qfIp1UdgSxwOPa3/h0gQUohvdAV1o0Bw54FxApqbqd2uRJKS
-         xk1XCAd+/6SE1Y2UHPEOTCAoHI4V9qPkafibNdUaQlPO0Mg2XXAp4yDzPuIymKa2+hzF
-         yGWVovdS2ey1nT1sk6lVkOUFXq519Buu2mV1CpRiv4qKDH7POFqqKW2Z9xEpMziiVfUj
-         rMDUN/CvUjOL8cnU46kYwkZ5DCX8i1H2/1UDh/oqGfKOJxS4QQ+FgImml4h1sTupnMGo
-         DeIQ==
-X-Gm-Message-State: APt69E2XavJqCz4/0pDNgc3Ub5DLh1vqx2gDRzbRheZQWP78er1JOJ1M
-        EVA3g4PSSHy47UpfRNhugU8fPG4+UbpypzLMYoo=
-X-Google-Smtp-Source: AAOMgpdJGk8qSllvajZjyANBSsen8irjnOs+8RD1nqSBzxj8NADbCflkDpv3qjCznlQkZT4mirM2WvBmhX+2bR0cO+4=
-X-Received: by 2002:aca:ccc4:: with SMTP id c187-v6mr25299446oig.282.1531218749069;
- Tue, 10 Jul 2018 03:32:29 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 03:32:28
- -0700 (PDT)
-In-Reply-To: <5b134ed3-b473-90f3-acc7-5943e1669bb5@ti.com>
-References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com>
- <2108146.dv4EAOf6IP@aspire.rjw.lan> <CAFgQCTsGC8NH+5kXYD7vykJeUsaAzCAjgxSP-R0EqA3YvgsY0w@mail.gmail.com>
- <8816662.k3KXbdkA2e@aspire.rjw.lan> <CAErSpo4eaaieQiZjAejXAoCv82wddPOcRQXpiqD6X=fFW5XAHQ@mail.gmail.com>
- <CAJZ5v0hVDo-Y2gPTxd6yHVY=vr093hai1VhLzNzzhFkKe0LoKA@mail.gmail.com>
- <CAErSpo4TOiBtdG0iwgeFpv76Lhs4s7PXAWv5_DG-VRyEoP5bOQ@mail.gmail.com> <5b134ed3-b473-90f3-acc7-5943e1669bb5@ti.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 10 Jul 2018 12:32:28 +0200
-X-Google-Sender-Auth: ZuAhyvFm53vRzpkbHG4R0O0lOLQ
-Message-ID: <CAJZ5v0j3Ss5Sa++ZjudMN0Jo2mu5YY6qJ4yEA5TG-zn=qYw2jg@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Drop devices_kset_move_last() call from really_probe()
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        id S1754085AbeGJKcm (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 06:32:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38592 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1751515AbeGJKcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 06:32:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 42938AD78;
+        Tue, 10 Jul 2018 10:32:37 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Daniel Vetter <daniel@ffwll.ch>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Tue, 10 Jul 2018 20:32:23 +1000
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pingfan Liu <kernelfans@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Dave Young <dyoung@redhat.com>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wei Wang <wvw@google.com>, Stefan Agner <stefan@agner.ch>,
+        Andrei Vagin <avagin@openvz.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Yisheng Xie <ysxie@foxmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH] kernel.h: Add for_each_if()
+In-Reply-To: <20180710075328.GG3008@phenom.ffwll.local>
+References: <20180709083650.23549-1-daniel.vetter@ffwll.ch> <20180709162509.29343-1-daniel.vetter@ffwll.ch> <20180709163001.8fb8148223a57bc46a13fbda@linux-foundation.org> <20180710075328.GG3008@phenom.ffwll.local>
+Message-ID: <871scbwfd4.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 8:19 AM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
-> +Mark, Liam
->
-> Hi,
->
-> On Tuesday 10 July 2018 03:36 AM, Bjorn Helgaas wrote:
->> [+cc Kishon]
->>
->> On Mon, Jul 9, 2018 at 4:35 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->>>
->>> On Mon, Jul 9, 2018 at 3:57 PM, Bjorn Helgaas <bhelgaas@google.com> wrote:
->>>> On Fri, Jul 6, 2018 at 5:01 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->>>>>
->>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>>
->>>>> The devices_kset_move_last() call in really_probe() is a mistake
->>>>> as it may cause parents to follow children in the devices_kset list
->>>>> which then causes system shutdown to fail.  Namely, if a device has
->>>>> children before really_probe() is called for it (which is not
->>>>> uncommon), that call will cause it to be reordered after the children
->>>>> in the devices_kset list and the ordering of that list will not
->>>>> reflect the correct device shutdown order.
->>>>>
->>>>> Also it causes the devices_kset list to be constantly reordered
->>>>> until all drivers have been probed which is totally pointless
->>>>> overhead in the majority of cases.
->>>>>
->>>>> For that reason, revert the really_probe() modifications made by
->>>>> commit 52cdbdd49853.
->>>>
->>>> I'm sure you've considered this, but I can't figure out whether this
->>>> patch will reintroduce the problem that was solved by 52cdbdd49853.
->>>> That patch updated two places: (1) really_probe(), the change you're
->>>> reverting here, and (2) device_move().
->>>>
->>>> device_move() is only called from 4-5 places, none of which look
->>>> related to the problem fixed by 52cdbdd49853, so it seems like that
->>>> problem was probably resolved by the hunk you're reverting.
->>>
->>> That's right, but I don't want to revert all of it.  The other parts
->>> of it are kind of useful as they make the handling of the devices_kset
->>> list be consistent with the handling of dpm_list.
->>>
->>> The hunk I'm reverting, however, is completely off.  It not only is
->>> incorrect (as per the above), but it also causes the devices_kset list
->>> and dpm_list to be handled differently.
->>
->> If I understand correctly, you are saying:
->>
->>   - the 52cdbdd49853 really_probe() hunk fixed a problem, but
->>   - that hunk was the wrong fix for it, and
->>   - this patch removes the wrong fix (and probably reintroduces the problem)
->>
->> If devices_kset is supposed to be ordered so children follow parents,
->> I agree the really_probe() hunk doesn't make much sense because the
->> parent/child relation is determined by the circuit design, not by the
->> probe order.
->>
->> It just seems like it's worth being clear that we're reintroducing the
->> problem fixed by 52cdbdd49853, so it needs to be solved a different
->> way.  Ideally that would be done before this patch so there's not a
->> regression, and this changelog could mention what's happening.
->>
->>> It had attempted to fix something, but it failed miserably at that.
->>
->> If you're saying that 52cdbdd49853 *tried* to fix a DRA7XX_evm reboot
->> problem, but in fact, it did not fix that problem, then I guess there
->> should be no issue with reverting that hunk.
->
-> It did fix a problem making sure the regulator's shutdown is invoked after the
-> mmc shutdown. And reverting 52cdbdd49853 reintroduces the problem.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-But, of course, it didn't prevent regulator suspend from being run
-before mmc suspend, so it really addressed part of the problem only
-and while doing that it introduced a regression.
+On Tue, Jul 10 2018, Daniel Vetter wrote:
 
-This piece of really_probe() is incorrect and it has to go away.
+> On Mon, Jul 09, 2018 at 04:30:01PM -0700, Andrew Morton wrote:
+>> On Mon,  9 Jul 2018 18:25:09 +0200 Daniel Vetter <daniel.vetter@ffwll.ch=
+> wrote:
+>>=20
+>> > To avoid compilers complainig about ambigious else blocks when putting
+>> > an if condition into a for_each macro one needs to invert the
+>> > condition and add a dummy else. We have a nice little convenience
+>> > macro for that in drm headers, let's move it out. Subsequent patches
+>> > will roll it out to other places.
+>> >=20
+>> > The issue the compilers complain about are nested if with an else
+>> > block and no {} to disambiguate which if the else belongs to. The C
+>> > standard is clear, but in practice people forget:
+>> >=20
+>> > if (foo)
+>> > 	if (bar)
+>> > 		/* something */
+>> > 	else
+>> > 		/* something else
+>>=20
+>> um, yeah, don't do that.  Kernel coding style is very much to do
+>>=20
+>> 	if (foo) {
+>> 		if (bar)
+>> 			/* something */
+>> 		else
+>> 			/* something else
+>> 	}
+>>=20
+>> And if not doing that generates a warning then, well, do that.
+>>=20
+>> > The same can happen in a for_each macro when it also contains an if
+>> > condition at the end, except the compiler message is now really
+>> > confusing since there's only 1 if:
+>> >=20
+>> > for_each_something()
+>> > 	if (bar)
+>> > 		/* something */
+>> > 	else
+>> > 		/* something else
+>> >=20
+>> > The for_each_if() macro, by inverting the condition and adding an
+>> > else, avoids the compiler warning.
+>>=20
+>> Ditto.
+>>=20
+>> > Motivated by a discussion with Andy and Yisheng, who want to add
+>> > another for_each_macro which would benefit from for_each_if() instead
+>> > of hand-rolling it.
+>>=20
+>> Ditto.
+>>=20
+>> > v2: Explain a bit better what this is good for, after the discussion
+>> > with Peter Z.
+>>=20
+>> Presumably the above was discussed in whatever-thread-that-was.
+>
+> So there's a bunch of open coded versions of this already in kernel
+> headers (at least the ones I've found). Not counting the big pile of
+> existing users in drm. They are all wrong and should be reverted to a
+> plain if? That why there's a bunch more patches in this series.
+>
+> And yes I made it clear in the discussion that if you sprinkle enough {}
+> there's no warning, should have probably captured this here.
+>
+> Aka a formal Nack-pls-keep-your-stuff-in-drm: would be appreciated so I
+> can stop bothering with this.
+
+I think is it problematic to have macros like
+
+#define for_each_foo(...) for (......) if (....)
+
+because
+   for_each_foo(...)
+      if (x) ....; else ......;
+
+is handled badly.
+So in that sense, your work seems like a good thing.
+
+However it isn't clear to me that you need a new macro.
+The above macro could simply be changed to
+
+#define for_each_foo(...) for (......) if (!....);else
+
+Clearly people don't always think to do this, but would adding a macro
+help people to think?
+
+If we were to have a macro, it isn't clear to me that for_each_if() is a
+good name.
+Every other macro I've seen that starts "for_each_" causes the body to
+loop.  This one doesn't.  If someone doesn't know what for_each_if()
+does and sees it in code, they are unlikely to jump to the right
+conclusion.
+I would suggest that "__if" would be a better choice.  I think most
+people would guess that means "like 'if', but a bit different", which is
+fairly accurate.
+
+I think the only sure way to avoid bad macros being written is to teach
+some static checker to warn about any macro with a dangling "if".
+Possibly checkpatch.pl could do that (but I'm not volunteering).
+
+I do agree that it would be good to do something, and if people find
+for_each_fi() to actually reduce the number of poorly written macros,
+then I don't object to it.
 
 Thanks,
-Rafael
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltEizcACgkQOeye3VZi
+gbkIRA/9Gdq2PO/PLeUxQ1OV2giyRABxX/KIlSN+6Yi9WdFxz2l1v+8ea5CSjT4W
+ZK7iRRGzsKTFfZKl5EoaxgHG4iHsI3dBgZVmc3YKD1BI9xOyBoClw2hTaDSw8awo
+Sgbmq5I0mV+dsSF4FuzkbfaZ923LwIqVlcztAWl7U+M1ISds2Ou03NlT45iSwWhU
+mRPuPfYTI9bciPcYaaTRkmSacjKdvCtzUZmbhT62nidy42a/fquKLNhv/s5D4hlt
+TyeArWMFdeKDwr255ffglMKiaMNBFUrEElhvFRyBnAgWI/tEVhte5Hu+MZbtboG5
+t2DKblGUpc8VpDlPsUlP75SntsTmtj5Rz6KA8EVWoVpjQxeaieBkBNowPiWDdvRx
+COlSytBaFRBxIqWSMNK/wzMZ6fLHkJy0WS+9YgAdU/l1asbI6wvVPHGyjmSQVgSj
+aRWNuXhhbaT5W9o0rUlUlwPO/kEBtokMpGynrlgLTqdaxFzNM4ia0wHBUbb7tDOO
+whiTdZ43c0uMQg8Stp+30XmcuIhJwjv9ZIJVpdMOSfmM3URd67PpyUHQJMIHZnJs
+LqbIG4QJUCAVlxVF8zy6ETtKXRsRpJeqvclrDSL0sRFaP18c2iZ3ykDhzq3AFYtt
+ffZpAvlO5DRTc+SlKtIs/P9YwZGiPhaHaT5Kfis5XPRuOCc83rk=
+=0/YR
+-----END PGP SIGNATURE-----
+--=-=-=--
