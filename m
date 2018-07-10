@@ -2,130 +2,127 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0913C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:32:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21C9C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3C5F20878
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:32:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C5F20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F4792089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:36:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F4792089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mess.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932172AbeGJIcK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:32:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42432 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751182AbeGJIcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:32:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 975D680D;
-        Tue, 10 Jul 2018 01:32:08 -0700 (PDT)
-Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9ABDB3F318;
-        Tue, 10 Jul 2018 01:32:04 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 09:32:03 +0100
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     peterz@infradead.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        gregkh@linuxfoundation.org, mingo@redhat.com,
-        morten.rasmussen@arm.com, chris.redpath@arm.com,
-        patrick.bellasi@arm.com, valentin.schneider@arm.com,
-        vincent.guittot@linaro.org, thara.gopinath@linaro.org,
-        viresh.kumar@linaro.org, tkjos@google.com, joel@joelfernandes.org,
-        smuckle@google.com, adharmap@quicinc.com, skannan@quicinc.com,
-        pkondeti@codeaurora.org, juri.lelli@redhat.com,
-        edubezval@gmail.com, srinivas.pandruvada@linux.intel.com,
-        currojerez@riseup.net, javi.merino@kernel.org
-Subject: Re: [RFC PATCH v4 03/12] PM: Introduce an Energy Model management
- framework
-Message-ID: <20180710083202.GD17598@e108498-lin.cambridge.arm.com>
-References: <20180628114043.24724-1-quentin.perret@arm.com>
- <20180628114043.24724-4-quentin.perret@arm.com>
- <4341d199-8018-21e1-c2ce-9af8f7719297@arm.com>
+        id S1751288AbeGJIgm (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:36:42 -0400
+Received: from gofer.mess.org ([88.97.38.141]:59141 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751129AbeGJIgk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:36:40 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 889E060279; Tue, 10 Jul 2018 09:36:37 +0100 (BST)
+Date:   Tue, 10 Jul 2018 09:36:37 +0100
+From:   Sean Young <sean@mess.org>
+To:     Philipp Rossak <embed3d@gmail.com>
+Cc:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        wens@csie.org, linux@armlinux.org.uk, p.zabel@pengutronix.de,
+        andi.shyti@samsung.com, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Subject: Re: [RESEND PATCH v5 0/6] IR support for A83T
+Message-ID: <20180710083637.6s36rfbi2old5uxo@gofer.mess.org>
+References: <20180213122952.8420-1-embed3d@gmail.com>
+ <85ddc129-d0f8-6299-dca0-81f79f3d04a9@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4341d199-8018-21e1-c2ce-9af8f7719297@arm.com>
-User-Agent: Mutt/1.8.3 (2017-05-23)
+In-Reply-To: <85ddc129-d0f8-6299-dca0-81f79f3d04a9@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday 09 Jul 2018 at 20:07:31 (+0200), Dietmar Eggemann wrote:
-> On 06/28/2018 01:40 PM, Quentin Perret wrote:
-> This em_rescale_cpu_capacity() function is still very much specific to
-> systems with asymmetric cpu capacity (Arm big.Little/DynamIQ). Only after
-> cpufreq is up we can determine the capacity of a CPU, hence we need this one
-> to set the CPU capacity values for the individual performance states.
-
-The abstraction is that this function is needed by all systems where the
-capacities of CPUs are discovered late, or can be changed at run-time.
-But yeah, AFAICT this applies mainly to Arm big.LITTLE and/or DynamIQ
-systems, at least for now.
-
+On Fri, Mar 02, 2018 at 01:11:34PM +0100, Philipp Rossak wrote:
 > 
-> Can you not calculate capacity 'on the fly' just using freq and max freq as
-> well as arch_scale_cpu_capacity() which gives you max capacity?
 > 
-> capacity = arch_scale_cpu_capacity() * freq / max_freq
+> On 13.02.2018 13:29, Philipp Rossak wrote:
+> > This patch series adds support for the sunxi A83T ir module and enhances
+> > the sunxi-ir driver. Right now the base clock frequency for the ir driver
+> > is a hard coded define and is set to 8 MHz.
+> > This works for the most common ir receivers. On the Sinovoip Bananapi M3
+> > the ir receiver needs, a 3 MHz base clock frequency to work without
+> > problems with this driver.
+> > 
+> > This patch series adds support for an optinal property that makes it able
+> > to override the default base clock frequency and enables the ir interface
+> > on the a83t and the Bananapi M3.
+> > 
+> > changes since v4:
+> > * rename cir pin from cir_pins to r_cir_pin
+> > * drop unit-adress from r_cir_pin
+> > * add a83t compatible to the cir node
+> > * move muxing options to dtsi
+> > * rename cir label and reorder it in the bananpim3.dts file
+> > 
+> > changes since v3:
+> > * collecting all acks & reviewd by
+> > * fixed typos
+> > 
+> > changes since v2:
+> > * reorder cir pin (alphabetical)
+> > * fix typo in documentation
+> > 
+> > changes since v1:
+> > * fix typos, reword Documentation
+> > * initialize 'b_clk_freq' to 'SUNXI_IR_BASE_CLK' & remove if statement
+> > * change dev_info() to dev_dbg()
+> > * change naming to cir* in dts/dtsi
+> > * Added acked Ackedi-by to related patch
+> > * use whole memory block instead of registers needed + fix for h3/h5
+> > 
+> > changes since rfc:
+> > * The property is now optinal. If the property is not available in
+> >    the dtb the driver uses the default base clock frequency.
+> > * the driver prints out the the selected base clock frequency.
+> > * changed devicetree property from base-clk-frequency to clock-frequency
+> > 
+> > Regards,
+> > Philipp
+> > 
+> > Philipp Rossak (6):
+> >    media: rc: update sunxi-ir driver to get base clock frequency from
+> >      devicetree
+> >    media: dt: bindings: Update binding documentation for sunxi IR
+> >      controller
+> >    arm: dts: sun8i: a83t: Add the cir pin for the A83T
+> >    arm: dts: sun8i: a83t: Add support for the cir interface
+> >    arm: dts: sun8i: a83t: bananapi-m3: Enable IR controller
+> >    arm: dts: sun8i: h3-h5: ir register size should be the whole memory
+> >      block
+> > 
+> >   Documentation/devicetree/bindings/media/sunxi-ir.txt |  3 +++
+> >   arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts         |  5 +++++
+> >   arch/arm/boot/dts/sun8i-a83t.dtsi                    | 18 ++++++++++++++++++
+> >   arch/arm/boot/dts/sunxi-h3-h5.dtsi                   |  2 +-
+> >   drivers/media/rc/sunxi-cir.c                         | 19 +++++++++++--------
+> >   5 files changed, 38 insertions(+), 9 deletions(-)
+> > 
 > 
-> In this case we could get rid of the 'ugly' EM rescaling infrastructure.
+> I talked yesterday with Maxime about this patch series. And he told me if
+> the first to patches got merged, he will apply the dts patches to the sunxi
+> tree.
+> 
+> Sean, can you merge the first two patches through the rc-core?
 
-Indeed, having 'capacity' values in the EM framework is just an
-optimization for the scheduler, so that it doesn't need to compute them
-in the wake-up path. I could get rid of the whole
-em_rescale_cpu_capacity() mess (and by the same occasion the RCU
-protection of the tables ...) if I removed the 'capacity' values from
-the EM. But that means a slightly higher complexity on the scheduler side.
+So I merged the first two patches, but the rest never made it upstream.
 
-As you said, the capacity of a CPU at a specific OPP is:
-
-    cap(opp) = freq(opp) * scale_cpu / max_freq
-
-Now, we estimate the energy consumed by this CPU as:
-
-    nrg = power(opp) * util / cap(opp)
-
-because 'util / cap(opp)' represents its percentage of busy time. If I
-inject the first equation in the second, I get:
-
-    nrg =  power(opp) * util * max_freq / (scale_cpu * freq(opp))
-
-and this can be re-arranged as:
-
-    nrg = (power(opp) * max_freq / freq(opp)) * (util / scale_cpu)
-
-In the above equation, the first term between () is static so I could
-pre-compute it as a 'cost' for that OPP and store it in the EM table:
-
-    cost(opp) = power(opp) * max_freq / freq(opp)
-
-And then the energy calculation would be something like:
-
-   nrg = cost(opp) * util / scale_cpu
-
-If 'scale_cpu' was static, I could fold it into 'cost' and avoid the cost
-of the division. But it's not really, so I can either re-do the division
-all the time on the scheduler side, or play with RCU to cache the result
-of the division in the EM framework.
-
-(I now realize that the current implementation of em_fd_energy() does
-'cs->power * sum_util / cs->capacity' but the power / capacity ratio is
-constant so, if we decide to keep the capacity values in the EM, I
-should still cache 'power / capacity' in the EM tables and actually save
-the division ...)
-
-This is really a performance vs. code complexity trade-off. I made the
-choice of performance since we're talking about the scheduler here, but
-I'm not sure how much we really save by saving this division TBH.
-
-Thoughts ?
+Should they be resubmitted?
 
 Thanks,
-Quentin
+
+Sean
