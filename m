@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF62C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F31C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3853E2083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3853E2083E
+	by mail.kernel.org (Postfix) with ESMTP id 3DE5620B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:30:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DE5620B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388234AbeGJSa5 (ORCPT
+        id S2388246AbeGJSbB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:30:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45690 "EHLO
+        Tue, 10 Jul 2018 14:31:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45700 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732400AbeGJSa5 (ORCPT
+        with ESMTP id S1732400AbeGJSbA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:30:57 -0400
+        Tue, 10 Jul 2018 14:31:00 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3DB72EC2;
-        Tue, 10 Jul 2018 18:30:45 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3307DEC2;
+        Tue, 10 Jul 2018 18:30:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.9 33/52] ext4: add more inode number paranoia checks
-Date:   Tue, 10 Jul 2018 20:25:01 +0200
-Message-Id: <20180710182452.405643904@linuxfoundation.org>
+        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
+        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.9 42/52] media: cx25840: Use subdev host data for PLL override
+Date:   Tue, 10 Jul 2018 20:25:10 +0200
+Message-Id: <20180710182453.334057799@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -50,69 +51,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Brad Love <brad@nextdimension.cc>
 
-commit c37e9e013469521d9adb932d17a1795c139b36db upstream.
+commit 3ee9bc12342cf546313d300808ff47d7dbb8e7db upstream.
 
-If there is a directory entry pointing to a system inode (such as a
-journal inode), complain and declare the file system to be corrupted.
+The cx25840 driver currently configures 885, 887, and 888 using
+default divisors for each chip. This check to see if the cx23885
+driver has passed the cx25840 a non-default clock rate for a
+specific chip. If a cx23885 board has left clk_freq at 0, the
+clock default values will be used to configure the PLLs.
 
-Also, if the superblock's first inode number field is too small,
-refuse to mount the file system.
+This patch only has effect on 888 boards who set clk_freq to 25M.
 
-This addresses CVE-2018-10882.
-
-https://bugzilla.kernel.org/show_bug.cgi?id=200069
-
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Signed-off-by: Brad Love <brad@nextdimension.cc>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/ext4.h  |    5 -----
- fs/ext4/inode.c |    3 ++-
- fs/ext4/super.c |    5 +++++
- 3 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/media/i2c/cx25840/cx25840-core.c |   28 ++++++++++++++++++++++------
+ 1 file changed, 22 insertions(+), 6 deletions(-)
 
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1542,11 +1542,6 @@ static inline struct timespec ext4_curre
- static inline int ext4_valid_inum(struct super_block *sb, unsigned long ino)
+--- a/drivers/media/i2c/cx25840/cx25840-core.c
++++ b/drivers/media/i2c/cx25840/cx25840-core.c
+@@ -467,8 +467,13 @@ static void cx23885_initialize(struct i2
  {
- 	return ino == EXT4_ROOT_INO ||
--		ino == EXT4_USR_QUOTA_INO ||
--		ino == EXT4_GRP_QUOTA_INO ||
--		ino == EXT4_BOOT_LOADER_INO ||
--		ino == EXT4_JOURNAL_INO ||
--		ino == EXT4_RESIZE_INO ||
- 		(ino >= EXT4_FIRST_INO(sb) &&
- 		 ino <= le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count));
- }
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4242,7 +4242,8 @@ static int __ext4_get_inode_loc(struct i
- 	int			inodes_per_block, inode_offset;
+ 	DEFINE_WAIT(wait);
+ 	struct cx25840_state *state = to_state(i2c_get_clientdata(client));
++	u32 clk_freq = 0;
+ 	struct workqueue_struct *q;
  
- 	iloc->bh = NULL;
--	if (!ext4_valid_inum(sb, inode->i_ino))
-+	if (inode->i_ino < EXT4_ROOT_INO ||
-+	    inode->i_ino > le32_to_cpu(EXT4_SB(sb)->s_es->s_inodes_count))
- 		return -EFSCORRUPTED;
- 
- 	iloc->block_group = (inode->i_ino - 1) / EXT4_INODES_PER_GROUP(sb);
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3713,6 +3713,11 @@ static int ext4_fill_super(struct super_
- 	} else {
- 		sbi->s_inode_size = le16_to_cpu(es->s_inode_size);
- 		sbi->s_first_ino = le32_to_cpu(es->s_first_ino);
-+		if (sbi->s_first_ino < EXT4_GOOD_OLD_FIRST_INO) {
-+			ext4_msg(sb, KERN_ERR, "invalid first ino: %u",
-+				 sbi->s_first_ino);
-+			goto failed_mount;
++	/* cx23885 sets hostdata to clk_freq pointer */
++	if (v4l2_get_subdev_hostdata(&state->sd))
++		clk_freq = *((u32 *)v4l2_get_subdev_hostdata(&state->sd));
++
+ 	/*
+ 	 * Come out of digital power down
+ 	 * The CX23888, at least, needs this, otherwise registers aside from
+@@ -504,8 +509,13 @@ static void cx23885_initialize(struct i2
+ 		 * 50.0 MHz * (0xb + 0xe8ba26/0x2000000)/4 = 5 * 28.636363 MHz
+ 		 * 572.73 MHz before post divide
+ 		 */
+-		/* HVR1850 or 50MHz xtal */
+-		cx25840_write(client, 0x2, 0x71);
++		if (clk_freq == 25000000) {
++			/* 888/ImpactVCBe or 25Mhz xtal */
++			; /* nothing to do */
++		} else {
++			/* HVR1850 or 50MHz xtal */
++			cx25840_write(client, 0x2, 0x71);
 +		}
- 		if ((sbi->s_inode_size < EXT4_GOOD_OLD_INODE_SIZE) ||
- 		    (!is_power_of_2(sbi->s_inode_size)) ||
- 		    (sbi->s_inode_size > blocksize)) {
+ 		cx25840_write4(client, 0x11c, 0x01d1744c);
+ 		cx25840_write4(client, 0x118, 0x00000416);
+ 		cx25840_write4(client, 0x404, 0x0010253e);
+@@ -548,9 +558,15 @@ static void cx23885_initialize(struct i2
+ 	/* HVR1850 */
+ 	switch (state->id) {
+ 	case CX23888_AV:
+-		/* 888/HVR1250 specific */
+-		cx25840_write4(client, 0x10c, 0x13333333);
+-		cx25840_write4(client, 0x108, 0x00000515);
++		if (clk_freq == 25000000) {
++			/* 888/ImpactVCBe or 25MHz xtal */
++			cx25840_write4(client, 0x10c, 0x01b6db7b);
++			cx25840_write4(client, 0x108, 0x00000512);
++		} else {
++			/* 888/HVR1250 or 50MHz xtal */
++			cx25840_write4(client, 0x10c, 0x13333333);
++			cx25840_write4(client, 0x108, 0x00000515);
++		}
+ 		break;
+ 	default:
+ 		cx25840_write4(client, 0x10c, 0x002be2c9);
+@@ -580,7 +596,7 @@ static void cx23885_initialize(struct i2
+ 		 * 368.64 MHz before post divide
+ 		 * 122.88 MHz / 0xa = 12.288 MHz
+ 		 */
+-		/* HVR1850  or 50MHz xtal */
++		/* HVR1850 or 50MHz xtal or 25MHz xtal */
+ 		cx25840_write4(client, 0x114, 0x017dbf48);
+ 		cx25840_write4(client, 0x110, 0x000a030e);
+ 		break;
 
 
