@@ -2,207 +2,108 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BD7C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F00DC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:19:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72786208E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:18:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72786208E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 53D60208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:19:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53D60208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934524AbeGJQSx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:18:53 -0400
-Received: from mailoutvs59.siol.net ([185.57.226.250]:51605 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934265AbeGJQSt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:18:49 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 1640E522280;
-        Tue, 10 Jul 2018 18:18:46 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id wbibwnb8HJYA; Tue, 10 Jul 2018 18:18:45 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 59DBB522281;
-        Tue, 10 Jul 2018 18:18:45 +0200 (CEST)
-Received: from jernej-laptop.localnet (unknown [194.152.15.144])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id D7A77522280;
-        Tue, 10 Jul 2018 18:18:43 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [PATCH 16/17] drm/sun4i: tcon-top: Remove mux configuration at probe time
-Date:   Tue, 10 Jul 2018 18:18:43 +0200
-Message-ID: <1843348.gnui32CGBV@jernej-laptop>
-In-Reply-To: <CAGb2v64rjUnwnXbWxTSYJyhMyCV5QmV9YSr+Jryx3nEeMP8GJg@mail.gmail.com>
-References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-17-jernej.skrabec@siol.net> <CAGb2v64rjUnwnXbWxTSYJyhMyCV5QmV9YSr+Jryx3nEeMP8GJg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        id S934568AbeGJQT1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:19:27 -0400
+Received: from mga14.intel.com ([192.55.52.115]:15989 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934501AbeGJQTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 12:19:25 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 09:19:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
+   d="scan'208";a="73684449"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga002.jf.intel.com with ESMTP; 10 Jul 2018 09:19:22 -0700
+Message-ID: <8c5b6bbbde12b0836e1f833c86b805a817596654.camel@linux.intel.com>
+Subject: Re: [PATCH v4 3/3] serial: 8250_dw: add fractional divisor support
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Date:   Tue, 10 Jul 2018 19:19:21 +0300
+In-Reply-To: <20180710111516.13b8c570@xhacker.debian>
+References: <20180710110942.5b0a016e@xhacker.debian>
+         <20180710111516.13b8c570@xhacker.debian>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne torek, 10. julij 2018 ob 18:09:26 CEST je Chen-Yu Tsai napisal(a):
-> On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > Now that R40 TCON migrated to runtime mux configuration, old code can be
-> > removed.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun8i_tcon_top.c | 81 +++-----------------------
-> >  1 file changed, 7 insertions(+), 74 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c index c09b15b64192..78795d6cb174
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > +++ b/drivers/gpu/drm/sun4i/sun8i_tcon_top.c
-> > @@ -87,34 +87,6 @@ int sun8i_tcon_top_de_config(struct device *dev, int
-> > mixer, int tcon)> 
-> >  }
-> >  EXPORT_SYMBOL(sun8i_tcon_top_de_config);
-> > 
-> > -static int sun8i_tcon_top_get_connected_ep_id(struct device_node *node,
-> > -                                             int port_id)
-> > -{
-> > -       struct device_node *ep, *remote, *port;
-> > -       struct of_endpoint endpoint;
-> > -
-> > -       port = of_graph_get_port_by_id(node, port_id);
-> > -       if (!port)
-> > -               return -ENOENT;
-> > -
-> > -       for_each_available_child_of_node(port, ep) {
-> > -               remote = of_graph_get_remote_port_parent(ep);
-> > -               if (!remote)
-> > -                       continue;
-> > -
-> > -               if (of_device_is_available(remote)) {
-> > -                       of_graph_parse_endpoint(ep, &endpoint);
-> > -
-> > -                       of_node_put(remote);
-> > -
-> > -                       return endpoint.id;
-> > -               }
-> > -
-> > -               of_node_put(remote);
-> > -       }
-> > -
-> > -       return -ENOENT;
-> > -}
-> > 
-> >  static struct clk_hw *sun8i_tcon_top_register_gate(struct device *dev,
-> >  
-> >                                                    const char *parent,
-> > 
-> > @@ -149,11 +121,9 @@ static int sun8i_tcon_top_bind(struct device *dev,
-> > struct device *master,> 
-> >         struct platform_device *pdev = to_platform_device(dev);
-> >         struct clk_hw_onecell_data *clk_data;
-> >         struct sun8i_tcon_top *tcon_top;
-> > 
-> > -       bool mixer0_unused = false;
-> > 
-> >         struct resource *res;
-> >         void __iomem *regs;
-> > 
-> > -       int ret, i, id;
-> > -       u32 val;
-> > +       int ret, i;
-> > 
-> >         tcon_top = devm_kzalloc(dev, sizeof(*tcon_top), GFP_KERNEL);
-> >         if (!tcon_top)
-> > 
-> > @@ -198,49 +168,12 @@ static int sun8i_tcon_top_bind(struct device *dev,
-> > struct device *master,> 
-> >                 goto err_assert_reset;
-> >         
-> >         }
-> > 
-> > -       val = 0;
-> > -
-> > -       /* check if HDMI mux output is connected */
-> > -       if (sun8i_tcon_top_get_connected_ep_id(dev->of_node, 5) >= 0) {
-> > -               /* find HDMI input endpoint id, if it is connected at
-> > all*/
-> > -               id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 4);
-> > -               if (id >= 0)
-> > -                       val = FIELD_PREP(TCON_TOP_HDMI_SRC_MSK, id + 1);
-> > -               else
-> > -                       DRM_DEBUG_DRIVER("TCON TOP HDMI input is not
-> > connected\n"); -       } else {
-> > -               DRM_DEBUG_DRIVER("TCON TOP HDMI output is not
-> > connected\n"); -       }
-> > -
-> > -       writel(val, regs + TCON_TOP_GATE_SRC_REG);
-> > -
-> > -       val = 0;
-> > -
-> > -       /* process mixer0 mux output */
-> > -       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 1);
-> > -       if (id >= 0) {
-> > -               val = FIELD_PREP(TCON_TOP_PORT_DE0_MSK, id);
-> > -       } else {
-> > -               DRM_DEBUG_DRIVER("TCON TOP mixer0 output is not
-> > connected\n"); -               mixer0_unused = true;
-> > -       }
-> > -
-> > -       /* process mixer1 mux output */
-> > -       id = sun8i_tcon_top_get_connected_ep_id(dev->of_node, 3);
-> > -       if (id >= 0) {
-> > -               val |= FIELD_PREP(TCON_TOP_PORT_DE1_MSK, id);
-> > -
-> > -               /*
-> > -                * mixer0 mux has priority over mixer1 mux. We have to
-> > -                * make sure mixer0 doesn't overtake TCON from mixer1.
-> > -                */
-> > -               if (mixer0_unused && id == 0)
-> > -                       val |= FIELD_PREP(TCON_TOP_PORT_DE0_MSK, 1);
-> > -       } else {
-> > -               DRM_DEBUG_DRIVER("TCON TOP mixer1 output is not
-> > connected\n"); -       }
-> > -
-> > -       writel(val, regs + TCON_TOP_PORT_SEL_REG);
-> > +       /*
-> > +        * Default register values might have some reserved bits set,
-> > which
-> > +        * prevents TCON TOP from working properly. Set them to 0 here.
-> > +        */
-> > +       writel(0, regs + TCON_TOP_GATE_SRC_REG);
-> > +       writel(0, regs + TCON_TOP_PORT_SEL_REG);
+On Tue, 2018-07-10 at 11:15 +0800, Jisheng Zhang wrote:
+> For Synopsys DesignWare 8250 uart which version >= 4.00a, there's a
+> valid divisor latch fraction register. The fractional divisor width is
+> 4bits ~ 6bits.
 > 
-> Would it make sense to just force a reset using the reset control?
+> Now the preparation is done, it's easy to add the feature support.
+> This patch firstly tries to get the fractional divisor width during
+> probe, then setups dw specific get_divisor() and set_divisor() hook.
 
-I wrote TCON TOP driver for H6 at first. For some reason, some registers had 
-reserved bits set after reset line was released. TCON TOP was not used in U-
-Boot, so I guess this counts as full reset.
+Thanks for an update, my comments below.
 
-I never tried to find out how it behaves on R40 because setting those 
-registers to 0 seems like simple, good enough solution, which works 
-everywhere.
+> +/*
+> + * divisor = div(I) + div(F)
+> + * "I" means integer, "F" means fractional
+> + * quot = div(I) = clk / (16 * baud)
+> + * frac = div(F) * 2^dlf_size
+> + *
+> + * let rem = clk % (16 * baud)
+> + * we have: div(F) * (16 * baud) = rem
+> + * so frac = 2^dlf_size * rem / (16 * baud) = (rem << dlf_size) / (16
+> * baud)
+> + */
+> +static unsigned int dw8250_get_divisor(struct uart_port *p,
+> +				       unsigned int baud,
+> +				       unsigned int *frac)
+> +{
 
-Best regards,
-Jernej
+unsigned int base_baud = baud * 16;
 
+> +	unsigned int quot, rem;
+> +	struct dw8250_data *d = p->private_data;
+> +
+> +	quot = p->uartclk / (16 * baud);
+> +	rem = p->uartclk % (16 * baud);
+> +	*frac = DIV_ROUND_CLOSEST(rem << d->dlf_size, 16 * baud);
+> +
 
+While it looks indeed better, I would rather like to have a confirmation
+it's working as designed.
 
+For example, when I did some calculus, I cooked a preliminary check in
+Python (easy and fast to prototype), for example:
+https://gist.github.com/andy-shev/06b084488b3629898121 in Python, or
+commit 9df461eca18f ("spi: pxa2xx: replace ugly table by approximation")
+in the kernel.
+
+Or another one here https://gist.github.com/andy-shev/8b2a73aeca2874f4cc
+89 and commits c1a67b48f6a5 ("serial: 8250_pci: replace switch-case by
+formula for Intel MID"), 21947ba654a6 ("serial: 8250_pci: replace
+switch-case by formula")
+
+P.S. The code itself looks good to me, thanks!
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
