@@ -2,166 +2,141 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D04F5C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB651C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78CEA2089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56FA920873
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 05:39:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfqFwfkW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78CEA2089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="STmHNsRk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56FA920873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751129AbeGJFd0 (ORCPT
+        id S1751151AbeGJFju (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 01:33:26 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:45805 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750931AbeGJFdU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 01:33:20 -0400
-Received: by mail-pl0-f68.google.com with SMTP id a17-v6so1260976plm.12;
-        Mon, 09 Jul 2018 22:33:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=FmPCm/FjMdA9Xru7/A4CAE8Aons1lApQRQi3bEo2MaI=;
-        b=WfqFwfkWlUI5dlVVHNTn2UZgIeWestNvpvv2MhLvcUt/4oYQksygWRf+guF80s48w0
-         du/IrKvXO7m+ydDgTN+B04f/XBvOXJD6x0XCnzrfAVUnHzorePBOfLFjgPanwUIxFpq0
-         8+KsFcWB1pdkeqZAtJRftlh2AAEEd1yOH/izJBQDNB3Bh6YgLZ/ybQQheMpB5ioPBtMl
-         9EUuiDZkQXgQRlsXCNJh4FJK0ZZ1++9fsnOjKfLyvh9HZtDXRzP75sr7w8txayG4orvw
-         y0KYAEvfyfqlVw88WVNZghBeISvUw8hEbZPGOXVe7eXZh3d+I9nEu+tbze0vcF0XHgzz
-         iEUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=FmPCm/FjMdA9Xru7/A4CAE8Aons1lApQRQi3bEo2MaI=;
-        b=pg8aT49sPK591wIkVXPMqX11JAaL31vOuiO5BP5IS2CzYb4owUX0YdhMF0eYiljm2D
-         dUGlRp9cw0bp6BJPQROcYBl6AdfRzAbejOjb9hV0isNMZTW25XBbiWPQefTJKMyFyHFz
-         CepS+PigrZZ7otLI8Ql2CNgOVn+7BqDXjXCIBFxApjHg5lN8ej7vaFyWOKKT4KEXyWci
-         9ZGtshDQwyPlBmzHXWw7n3ThBxGwxs2EXbFVmxEwzxHxl90UMBAZ3zAS49PS68HhOeAf
-         RcKdRmy96oyXHF44EJIwOrPkOnKMosIstxs2+E6v9jAFVUMW0C8V1L+OOvO610KG5FNY
-         4kRw==
-X-Gm-Message-State: APt69E1PfbPfBoWZpVwzSCob68UCT4ll1UfEWvxg7193FBLGWbbBKMxc
-        KkoceESRTHrwOtMuYJnJJuxfjw==
-X-Google-Smtp-Source: AAOMgpepBo1eW6FiIFB3+xa+4N+j1+mI900P0zmuxPgOvC3RgRR4sluEgpRiD3fszTcpM0qCGWJ4pA==
-X-Received: by 2002:a17:902:8306:: with SMTP id bd6-v6mr23406478plb.120.1531199057750;
-        Mon, 09 Jul 2018 22:04:17 -0700 (PDT)
-Received: from roar.ozlabs.ibm.com ([122.99.82.10])
-        by smtp.gmail.com with ESMTPSA id w16-v6sm40615851pfi.101.2018.07.09.22.04.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Jul 2018 22:04:17 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 15:04:10 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Rik van Riel <riel@surriel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "kirill.shutemov" <kirill.shutemov@linux.intel.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        kernel-team <kernel-team@fb.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>
-Subject: Re: mm,tlb: revert 4647706ebeee?
-Message-ID: <20180710150410.4207bbfa@roar.ozlabs.ibm.com>
-In-Reply-To: <20180709171356.87d834e125f06e0cdaa72f85@linux-foundation.org>
-References: <1530896635.5350.25.camel@surriel.com>
-        <20180708012538.51b2c672@roar.ozlabs.ibm.com>
-        <20180709171356.87d834e125f06e0cdaa72f85@linux-foundation.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 10 Jul 2018 01:39:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35552 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1750938AbeGJFjs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 01:39:48 -0400
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62A0320873;
+        Tue, 10 Jul 2018 05:39:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531201188;
+        bh=+L9biaam00i/5fDTM7YvKSjAvJakID01EfO8ZcCpgSk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=STmHNsRkZSA5OshD4crYYz/+tD4/fQZGeYN1Zwa47KehDag34saJPkHK+3+POzPeA
+         YXSJJKwwW2rPQPrzKrPsbPRE5UFeFgwBAm3KdB27UmCJ0LzGvW1vNnPYUcvfyKjNdp
+         /OIu02pzCNVL9Ldz1wD1JAcoQyIrQlQKTmSaBRyc=
+Date:   Tue, 10 Jul 2018 08:39:44 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Denis Lunev <den@virtuozzo.com>,
+        Konstantin Khorenko <khorenko@virtuozzo.com>
+Subject: Re: [PATCH] ib_srpt: use kvmalloc to allocate ring pointers
+Message-ID: <20180710053944.GN3014@mtr-leonro.mtl.com>
+References: <1531144268-25361-1-git-send-email-jan.dakinevich@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="0OOz7ZB592LYQf07"
+Content-Disposition: inline
+In-Reply-To: <1531144268-25361-1-git-send-email-jan.dakinevich@virtuozzo.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018 17:13:56 -0700
-Andrew Morton <akpm@linux-foundation.org> wrote:
 
-> On Sun, 8 Jul 2018 01:25:38 +1000 Nicholas Piggin <npiggin@gmail.com> wrote:
-> 
-> > On Fri, 06 Jul 2018 13:03:55 -0400
-> > Rik van Riel <riel@surriel.com> wrote:
-> >   
-> > > Hello,
-> > > 
-> > > It looks like last summer, there were 2 sets of patches
-> > > in flight to fix the issue of simultaneous mprotect/madvise
-> > > calls unmapping PTEs, and some pages not being flushed from
-> > > the TLB before returning to userspace.
-> > > 
-> > > Minchan posted these patches:
-> > > 56236a59556c ("mm: refactor TLB gathering API")
-> > > 99baac21e458 ("mm: fix MADV_[FREE|DONTNEED] TLB flush miss problem")
-> > > 
-> > > Around the same time, Mel posted:
-> > > 4647706ebeee ("mm: always flush VMA ranges affected by zap_page_range")
-> > > 
-> > > They both appear to solve the same bug.
-> > > 
-> > > Only one of the two solutions is needed.
-> > > 
-> > > However, 4647706ebeee appears to introduce extra TLB
-> > > flushes - one per VMA, instead of one over the entire
-> > > range unmapped, and also extra flushes when there are
-> > > no simultaneous unmappers of the same mm.
-> > > 
-> > > For that reason, it seems like we should revert
-> > > 4647706ebeee and keep only Minchan's solution in
-> > > the kernel.
-> > > 
-> > > Am I overlooking any reason why we should not revert
-> > > 4647706ebeee?  
-> > 
-> > Yes I think so. Discussed here recently:
-> > 
-> > https://marc.info/?l=linux-mm&m=152878780528037&w=2  
-> 
-> Unclear if that was an ack ;)
+--0OOz7ZB592LYQf07
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Jul 09, 2018 at 04:51:08PM +0300, Jan Dakinevich wrote:
+> An array of pointers to SRPT contexts in ib_device is over 30KiB even
+> in default case, in which an amount of contexts is 4095. The patch
+> is intended to weed out large contigous allocation for non-DMA memory.
+
+kvmalloc* doesn't "weed out" large contiguous allocations, but tries to
+allocate them and gracefully fallback to vmalloc if kmalloc fails.
+
+More on that, for allocations less than page (64KB for PowerPC), it will
+not call to vmalloc at all, which is fine too, because pages granularity.
+
+If you want to get rid of "contiguous allocations", use vmalloc instead.
+
+Thanks
+
+>
+> Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+> ---
+>  drivers/infiniband/ulp/srpt/ib_srpt.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/infiniband/ulp/srpt/ib_srpt.c b/drivers/infiniband/ulp/srpt/ib_srpt.c
+> index 3081c62..de167af 100644
+> --- a/drivers/infiniband/ulp/srpt/ib_srpt.c
+> +++ b/drivers/infiniband/ulp/srpt/ib_srpt.c
+> @@ -720,7 +720,7 @@ static struct srpt_ioctx **srpt_alloc_ioctx_ring(struct srpt_device *sdev,
+>  	WARN_ON(ioctx_size != sizeof(struct srpt_recv_ioctx)
+>  		&& ioctx_size != sizeof(struct srpt_send_ioctx));
+>
+> -	ring = kmalloc_array(ring_size, sizeof(ring[0]), GFP_KERNEL);
+> +	ring = kvmalloc_array(ring_size, sizeof(ring[0]), GFP_KERNEL);
+>  	if (!ring)
+>  		goto out;
+>  	for (i = 0; i < ring_size; ++i) {
+> @@ -734,7 +734,7 @@ static struct srpt_ioctx **srpt_alloc_ioctx_ring(struct srpt_device *sdev,
+>  err:
+>  	while (--i >= 0)
+>  		srpt_free_ioctx(sdev, ring[i], dma_size, dir);
+> -	kfree(ring);
+> +	kvfree(ring);
+>  	ring = NULL;
+>  out:
+>  	return ring;
+> @@ -759,7 +759,7 @@ static void srpt_free_ioctx_ring(struct srpt_ioctx **ioctx_ring,
+>
+>  	for (i = 0; i < ring_size; ++i)
+>  		srpt_free_ioctx(sdev, ioctx_ring[i], dma_size, dir);
+> -	kfree(ioctx_ring);
+> +	kvfree(ioctx_ring);
+>  }
+>
+>  /**
+> --
+> 2.1.4
 >
 
-Sure, I'm thinking Rik's mail is a ack for my patch :)
+--0OOz7ZB592LYQf07
+Content-Type: application/pgp-signature; name="signature.asc"
 
-No actually I think it's okay, but was in the middle of testing
-my series when Aneesh pointed out a bit was missing from powerpc,
-so I had to go off and fix that, I think that's upstream now. So
-need to go back and re-test this revert.
+-----BEGIN PGP SIGNATURE-----
 
-Wouldn't hurt for other arch maintainers to have a look I guess
-(cc linux-arch):
+iQIcBAEBAgAGBQJbREagAAoJEORje4g2clinc8MP/jEJQeruV+X+Af8kW/TU/Jps
+GF1fuPUL+XTh47Zr6BHbCAspjcHn853TS43o4IQOJFMaCWHfkxBAxx0Qf9dm/FfR
+xrwFmtBdOu5nvMfNG6LAQ9j1RmpsAi+wSii3xZJRgwM3uc7kYHYlkmm+y6fGALKL
+ceQS9bhhI1m9CHTR+u61p5hTesxr3s8fY2mUoYh6vmCEh2RWgPMvUF9U/Gq5u3br
+D9GAhYXd63K2OxIS1C1K9I6+5h6rpFuar/jQgrC1yrWqfOvalnjZCytiIEX1Mz2E
+T2urRf6v/h5RZFCHGkm/ke0XIug9Vig/T58d1Byj6h7tBtwq+kXiue2EHCIKh1UT
+D4T1EbwP24i+64SzYcABz5eLMIATLp6vgEtbP9HeS5HykgE01ct+4d6RT0r0V1Fe
+MyDTpg7Kl3sU4nTF4EV8ZAnG9EvRcu2ZIjb0YqDQ1BbGmPTUjUrZvfU9o8f75Pyf
+qlitI0cig2N2QzfCY12wkDP/SxEBRGaOXaAVhNvnthIQ2uHjBWvRf4lL3dK99qz2
+bq8/mF+SQBqnTHVAI+3Xxh8GQahEDk6T1+nkpa6U7PMaQNEZTqC28IKN5TefI0nD
+GpguPEmBraFCxdeHfVRKPf7pGKrmlAVXp4txyBTEf28vFlt0XhvUD3ZMgCsd9pu2
+YMviGhO3eGg28Gnw53Mb
+=Z3p4
+-----END PGP SIGNATURE-----
 
-The problem powerpc had is that mmu_gather flushing will flush a
-single page size based on the ptes it encounters when we zap. If
-we hit a different page size, it flushes and switches to the new
-size. If we have concurrent zaps on the same range, the other
-thread may have cleared a large page pte so we won't see that and
-will only do a small page flush for that range. Which means we can
-return before the other thread invalidated our TLB for the large
-pages in the range we wanted to flush.
-
-I suspect most arches are probably okay, but if you make any TLB
-flush choices based on the pte contents, then you could be exposed.
-Except in the case of archs like sparc and powerpc/hash which do
-the flushing in arch_leave_lazy_mmu_mode(), because that is called
-under the same page table lock, so there can't be concurrent zap.
-
-A quick look through the archs doesn't show anything obvious, but
-please take a look at your arch.
-
-And I'll try to do a bit more testing.
-
-Thanks,
-Nick
+--0OOz7ZB592LYQf07--
