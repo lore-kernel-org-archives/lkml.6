@@ -6,59 +6,58 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C855C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D784FC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FFD12089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:49:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FFD12089B
+	by mail.kernel.org (Postfix) with ESMTP id 9B6352089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:49:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B6352089B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934007AbeGJOtL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 10:49:11 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36643 "EHLO
+        id S933710AbeGJOtp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 10:49:45 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40805 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933416AbeGJOtI (ORCPT
+        with ESMTP id S933416AbeGJOtk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 10:49:08 -0400
-Received: by mail-ed1-f68.google.com with SMTP id t3-v6so16775821eds.3;
-        Tue, 10 Jul 2018 07:49:07 -0700 (PDT)
+        Tue, 10 Jul 2018 10:49:40 -0400
+Received: by mail-ed1-f68.google.com with SMTP id e19-v6so16768615edq.7;
+        Tue, 10 Jul 2018 07:49:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=8QuJX/qlpHUGBmz1x2NBpgBRn5q/WrQEjbsVcYafv0s=;
-        b=hgLmjJftW0VgppuvUPNlXM/3QrBtJ5NlQi2weG7K7JgkloCc/m6JINW+NXSK/KwYlf
-         2H2rEMBReKqeS77vHZ+tFTZ3RyMtLluFRjq0gh/xPUxgSLpTcI9gCdR17zhDRs6axtpZ
-         3puJgA9FAU/PtmNDZumzqc8HzTizaFc2O438XuQs3UgqWss5mwKX7j2L63XKImaABL0o
-         NNecIICSswJqRJ2o63IdJZlvqH+e1slEpeGeE39y/PvwlXoMKDU0mwatH2tLG/4dpbe5
-         /wOVtfDdkFQpnEITryxRkPfkW0O3pBAJITSOYwq/MfMOX2Rq6G4PkIYoFjuUymuttfvo
-         sgOw==
-X-Gm-Message-State: APt69E3o2M1ZsiHE5BRbSuBlKJI0vRvGDvb11r4oPP+PLJujuOyA9wcN
-        01LxnYa3RChRQcACvVmfUllKIIs40P4=
-X-Google-Smtp-Source: AAOMgpdd724ydcQ6s/xuNmsWvZPxSNg/QuGJ3al6FphIlwCr+jnxCMRtMnBA6LSNH2XXIfEyn9wq0Q==
-X-Received: by 2002:a50:8b8c:: with SMTP id m12-v6mr26946754edm.165.1531234146441;
-        Tue, 10 Jul 2018 07:49:06 -0700 (PDT)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
-        by smtp.gmail.com with ESMTPSA id p59-v6sm8628464edp.54.2018.07.10.07.49.04
+        bh=8ny+C4xDcf3N+n5UZMMoqOCqWAh3QOJJxL0mwmc0zFA=;
+        b=HYYBKO2fBGCD3Gi/JLt8+v4X/5Y10G8AqtqHYNHjQwij3wmLykQEJnsBmQz8uS08md
+         jdhqeX214r/b4XsEL+SzIkYCro/E/3MA8AnAivyDQV/vw8vkkAXYUgZlwQBha7udA51c
+         fyG+jeDq7TuKHuo8QLaODa8pMKBDzGGkbJh9rkeJDreUnhoJVnj6BMtebdUts639sSzT
+         B3EBRcHCi/PnG7nfftoIFZP8ItkEKRxCZAYvrHSDT/i+F2+AGB/Nh9QvHBO1ktidxYwY
+         P0qDbiaHRBCgMsAUAbAgmUqy/qY2wU15H6xT518IJ2I/3gLGhq1dDbB7cr1/NGcspt56
+         Qs8w==
+X-Gm-Message-State: APt69E04zz7pYIk1tAye5fgM+IvBXVGdnsjeYWWeJZT1sG63y8doWua0
+        mtDSdao+jzjllWFaRnOpGfDqa0WaFSw=
+X-Google-Smtp-Source: AAOMgpdtNkNLrsYz0x68Vji7sM0YgOWzCpj2sPi80Qn7OZG7gCcHCSc2MONLSpBPebUeLW4KBOLuPQ==
+X-Received: by 2002:a50:8141:: with SMTP id 59-v6mr27232499edc.156.1531234178681;
+        Tue, 10 Jul 2018 07:49:38 -0700 (PDT)
+Received: from mail-wm0-f50.google.com (mail-wm0-f50.google.com. [74.125.82.50])
+        by smtp.gmail.com with ESMTPSA id i89-v6sm8212086edi.10.2018.07.10.07.49.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 07:49:05 -0700 (PDT)
-Received: by mail-wr1-f44.google.com with SMTP id b15-v6so14942468wrv.10;
-        Tue, 10 Jul 2018 07:49:04 -0700 (PDT)
-X-Received: by 2002:adf:b202:: with SMTP id u2-v6mr17471864wra.19.1531234144388;
- Tue, 10 Jul 2018 07:49:04 -0700 (PDT)
+        Tue, 10 Jul 2018 07:49:38 -0700 (PDT)
+Received: by mail-wm0-f50.google.com with SMTP id w16-v6so24826971wmc.2;
+        Tue, 10 Jul 2018 07:49:37 -0700 (PDT)
+X-Received: by 2002:a1c:8c12:: with SMTP id o18-v6mr14057572wmd.120.1531234177711;
+ Tue, 10 Jul 2018 07:49:37 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 07:48:43
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 07:49:17
  -0700 (PDT)
-In-Reply-To: <20180710080114.31469-7-paul.kocialkowski@bootlin.com>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com> <20180710080114.31469-7-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20180710080114.31469-8-paul.kocialkowski@bootlin.com>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com> <20180710080114.31469-8-paul.kocialkowski@bootlin.com>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 10 Jul 2018 22:48:43 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67=TizoRQ9uKMPyXPu5fjYFG9bg3DtJ4mBQT2Zm_eZh9w@mail.gmail.com>
-Message-ID: <CAGb2v67=TizoRQ9uKMPyXPu5fjYFG9bg3DtJ4mBQT2Zm_eZh9w@mail.gmail.com>
-Subject: Re: [PATCH v5 06/22] soc: sunxi: sram: Add dt match for the A10
- system-control compatible
+Date:   Tue, 10 Jul 2018 22:49:17 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65fgkG0hiSuX_VyD1TBCw7OQLoBBJLpun1GK4yUCnPwNg@mail.gmail.com>
+Message-ID: <CAGb2v65fgkG0hiSuX_VyD1TBCw7OQLoBBJLpun1GK4yUCnPwNg@mail.gmail.com>
+Subject: Re: [PATCH v5 07/22] drivers: soc: sunxi: Add support for the C1 SRAM region
 To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
@@ -108,9 +107,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Jul 10, 2018 at 4:00 PM, Paul Kocialkowski
 <paul.kocialkowski@bootlin.com> wrote:
-> This binds the new A10 system-control compatible to the associated
-> driver, with the same driver data as the previous compatible.
+> From: Maxime Ripard <maxime.ripard@bootlin.com>
 >
+> This introduces support for the SRAM C1 section, that is controlled by
+> the system controller. This SRAM area can be muxed either to the CPU
+> or the Video Engine, that needs this area to store various tables (e.g.
+> the Huffman VLD decoding tables).
+>
+> This only supports devices with the same layout as the A10 (which also
+> includes the A13, A20, A33 and other SoCs).
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
