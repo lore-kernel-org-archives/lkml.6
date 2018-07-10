@@ -2,149 +2,139 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C96C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BDBC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1115D2089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:07:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1115D2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A2DE52089D
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:08:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2DE52089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933512AbeGJIHU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:07:20 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53011 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933176AbeGJICM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:02:12 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5380220AB4; Tue, 10 Jul 2018 10:02:11 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 874A5208E4;
-        Tue, 10 Jul 2018 10:02:00 +0200 (CEST)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Subject: [PATCH v5 16/22] media: v4l: Add definition for Allwinner's MB32-tiled NV12 format
-Date:   Tue, 10 Jul 2018 10:01:08 +0200
-Message-Id: <20180710080114.31469-17-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+        id S1754265AbeGJIIF (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:08:05 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:45952 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751335AbeGJIID (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:08:03 -0400
+Received: by mail-io0-f200.google.com with SMTP id i18-v6so18440394iog.12
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 01:08:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=lgtfvV0ZC/2AVSY7n49B5zNu6JT4hlnjI+fB229B+oQ=;
+        b=gTVejRzHAHy1BCKvh9UXfbhXJ1OEMJxmECuQucbiHpBKjBsmYsFiQvhGyf1fwb2VT1
+         /Jp9901PE7BYD+oMH9SCo5pMgqqP/FFaZ3ysKl3MH7WzDtp8ra80wXm5gKnws9gklfyT
+         gNoHL9DHCSi/NFrryyQibdATbT+mn5hvVOd0BVa+o4+nwFT9yII4m7UpNYQn5XA252N4
+         r9suRPDGIX7rUbvOI2Lq69uplpr1D14yjXfyCoKM7LLMeC21Aij5J1K4pHjeRfEkEMfn
+         32qbqF/w+X9Rt2ZucwkAA1Lm2PlDzanf6OBdXQLX6OxjbVvMHQ3mq7CrDtFTYiuFNhWP
+         sTMA==
+X-Gm-Message-State: AOUpUlFl4aP5JUb+3TNpWYX7V/rJB5PGmdlDJLfTbUaDq++uSn7tFk42
+        Yh4E3MpeG+S02cuubluMkIsQZ5YT5cVz7XviNAEKAB9bhWLY
+X-Google-Smtp-Source: AAOMgpdqB2+eVPFV5KxIF6yiY+XNyoHGkV5HVrD2xF1BlcK9rPCgNNU+PiczcN8Xy/K2mPgoY7TaIkO949yx9J75oNMZozF5xpWd
+MIME-Version: 1.0
+X-Received: by 2002:a6b:6518:: with SMTP id z24-v6mr10291890iob.20.1531210082525;
+ Tue, 10 Jul 2018 01:08:02 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 01:08:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000000bafc80570a0a1db@google.com>
+Subject: INFO: task hung in utimes_common
+From:   syzbot <syzbot+3a0570f93c0d6ca388f5@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces support for Allwinner's MB32-tiled NV12 format, where
-each plane is divided into macroblocks of 32x32 pixels. Hence, the size
-of each plane has to be aligned to 32 bytes. The pixels inside each
-macroblock are coded as they would be if the macroblock was a single
-plane, line after line.
+Hello,
 
-The MB32-tiled NV12 format is used by the video engine on Allwinner
-platforms: it is the default format for decoded frames (and the only one
-available in the oldest supported platforms).
+syzbot found the following crash on:
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+HEAD commit:    d00d6d9a339d Add linux-next specific files for 20180709
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17fdd90c400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=94fe2b586beccacd
+dashboard link: https://syzkaller.appspot.com/bug?extid=3a0570f93c0d6ca388f5
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+3a0570f93c0d6ca388f5@syzkaller.appspotmail.com
+
+9pnet_virtio: no channels available for device (null)
+Unknown ioctl 44801
+9pnet_virtio: no channels available for device (null)
+9pnet: Insufficient options for proto=fd
+9pnet: Insufficient options for proto=fd
+INFO: task syz-executor0:12044 blocked for more than 140 seconds.
+       Not tainted 4.18.0-rc3-next-20180709+ #2
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor0   D25408 12044   4539 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2853 [inline]
+  __schedule+0x87c/0x1ed0 kernel/sched/core.c:3501
+  schedule+0xfb/0x450 kernel/sched/core.c:3545
+  __rwsem_down_write_failed_common+0x95d/0x1630  
+kernel/locking/rwsem-xadd.c:566
+  rwsem_down_write_failed+0xe/0x10 kernel/locking/rwsem-xadd.c:595
+  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
+  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
+  down_write+0xaa/0x130 kernel/locking/rwsem.c:72
+  inode_lock include/linux/fs.h:748 [inline]
+  utimes_common.isra.1+0x45c/0x8e0 fs/utimes.c:90
+  do_utimes+0x1f7/0x380 fs/utimes.c:156
+  do_futimesat+0x249/0x350 fs/utimes.c:212
+  __do_sys_utimes fs/utimes.c:225 [inline]
+  __se_sys_utimes fs/utimes.c:222 [inline]
+  __x64_sys_utimes+0x59/0x80 fs/utimes.c:222
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455e29
+Code: cc 64 48 8b 0c 25 f8 ff ff ff 48 3b 61 10 0f 86 ab 04 00 00 48 83 ec  
+58 48 89 6c 24 50 48 8d 6c 24 50 48 8b 44 24 60 c6 00 00 <48> 8b 4c 24 68  
+48 89 ca 48 89 50 08 48 8b 59 20 48 01 da 31 db 31
+RSP: 002b:00007fac7c8b4c68 EFLAGS: 00000246 ORIG_RAX: 00000000000000eb
+RAX: ffffffffffffffda RBX: 00007fac7c8b56d4 RCX: 0000000000455e29
+RDX: 0000000000000000 RSI: 0000000020000380 RDI: 0000000020000180
+RBP: 000000000072bff0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004c2af0 R14: 00000000004d4600 R15: 0000000000000002
+INFO: lockdep is turned off.
+NMI backtrace for cpu 1
+CPU: 1 PID: 898 Comm: khungtaskd Not tainted 4.18.0-rc3-next-20180709+ #2
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.5+0x19/0xce lib/nmi_backtrace.c:103
+  nmi_trigger_cpumask_backtrace+0x151/0x192 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:143 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:204 [inline]
+  watchdog+0xb39/0x10b0 kernel/hung_task.c:265
+  kthread+0x345/0x410 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:415
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0 skipped: idling at native_safe_halt+0x6/0x10  
+arch/x86/include/asm/irqflags.h:54
+
+
 ---
- Documentation/media/uapi/v4l/pixfmt-reserved.rst | 15 ++++++++++++++-
- drivers/media/v4l2-core/v4l2-ioctl.c             |  1 +
- include/uapi/linux/videodev2.h                   |  1 +
- 3 files changed, 16 insertions(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/media/uapi/v4l/pixfmt-reserved.rst b/Documentation/media/uapi/v4l/pixfmt-reserved.rst
-index 38af1472a4b4..9a68b6a787bf 100644
---- a/Documentation/media/uapi/v4l/pixfmt-reserved.rst
-+++ b/Documentation/media/uapi/v4l/pixfmt-reserved.rst
-@@ -243,7 +243,20 @@ please make a proposal on the linux-media mailing list.
- 	It is an opaque intermediate format and the MDP hardware must be
- 	used to convert ``V4L2_PIX_FMT_MT21C`` to ``V4L2_PIX_FMT_NV12M``,
- 	``V4L2_PIX_FMT_YUV420M`` or ``V4L2_PIX_FMT_YVU420``.
--
-+    * .. _V4L2-PIX-FMT-MB32-NV12:
-+
-+      - ``V4L2_PIX_FMT_MB32_NV12``
-+      - 'MN12'
-+      - Two-planar NV12-based format used by the Allwinner video engine
-+        hardware, with 32x32 tiles for the luminance plane and 32x64 tiles
-+        for the chrominance plane. Each tile is a linear pixel data
-+        representation within its own bounds. Each tile follows the previous
-+        one linearly (as in, from left to right, top to bottom).
-+
-+        The frame dimensions are aligned to match an integer number of
-+        tiles, resulting in 32-aligned resolutions for the luminance plane
-+        and 16-aligned resolutions for the chrominance plane (with 2x2
-+        subsampling).
- 
- .. tabularcolumns:: |p{6.6cm}|p{2.2cm}|p{8.7cm}|
- 
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 68e914b83a03..7e1c200de10d 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -1331,6 +1331,7 @@ static void v4l_fill_fmtdesc(struct v4l2_fmtdesc *fmt)
- 		case V4L2_PIX_FMT_SE401:	descr = "GSPCA SE401"; break;
- 		case V4L2_PIX_FMT_S5C_UYVY_JPG:	descr = "S5C73MX interleaved UYVY/JPEG"; break;
- 		case V4L2_PIX_FMT_MT21C:	descr = "Mediatek Compressed Format"; break;
-+		case V4L2_PIX_FMT_MB32_NV12:	descr = "Allwinner tiled NV12 format"; break;
- 		default:
- 			WARN(1, "Unknown pixelformat 0x%08x\n", fmt->pixelformat);
- 			if (fmt->description[0])
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index bbfe95e3fba8..35bc9304a762 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -670,6 +670,7 @@ struct v4l2_pix_format {
- #define V4L2_PIX_FMT_Z16      v4l2_fourcc('Z', '1', '6', ' ') /* Depth data 16-bit */
- #define V4L2_PIX_FMT_MT21C    v4l2_fourcc('M', 'T', '2', '1') /* Mediatek compressed block mode  */
- #define V4L2_PIX_FMT_INZI     v4l2_fourcc('I', 'N', 'Z', 'I') /* Intel Planar Greyscale 10-bit and Depth 16-bit */
-+#define V4L2_PIX_FMT_MB32_NV12 v4l2_fourcc('M', 'N', '1', '2') /* Allwinner tiled NV12 format */
- 
- /* 10bit raw bayer packed, 32 bytes for every 25 pixels, last LSB 6 bits unused */
- #define V4L2_PIX_FMT_IPU3_SBGGR10	v4l2_fourcc('i', 'p', '3', 'b') /* IPU3 packed 10-bit BGGR bayer */
--- 
-2.17.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
