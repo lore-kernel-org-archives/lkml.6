@@ -4,59 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75725C3279B
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AD6C6778A
 	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 089D9208E2
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52DCE2089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:20:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AmrWR3ZZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 089D9208E2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4pgWc5K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52DCE2089B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754201AbeGJKUC (ORCPT
+        id S1754501AbeGJKUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 06:20:02 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:42051 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751335AbeGJKUA (ORCPT
+        Tue, 10 Jul 2018 06:20:08 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37892 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751335AbeGJKUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 06:20:00 -0400
-Received: by mail-pl0-f66.google.com with SMTP id f4-v6so3223371plb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 03:20:00 -0700 (PDT)
+        Tue, 10 Jul 2018 06:20:05 -0400
+Received: by mail-pf0-f196.google.com with SMTP id x13-v6so5847029pfh.5
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 03:20:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=58+cdJn7QTM1mvrc2lJA0WwYS3fv8SZeDWXEzeJaI6A=;
-        b=AmrWR3ZZAgS1yScxCjC7BjKs4jT8Of2iBzH6P2Dm+vEjCisb8e7+NZcjxYbLWhRlJF
-         VYhgQiyf8/o0ht2gDYjwNb8vmar6deYkOSOmzk6UQWpzHhkSnAXGNEjbm7+p+/1GFu29
-         0xB0FLhrhCat7+IQCehMb96vS7B05C/yoa0xTCG3uAexzMHv9kxo4fiO8uca0B7GAd9v
-         CiQoW2fO2poMsE1crKIuA186yMIR6d9GvLU7BTfXkkWk1ratuuh/6Gg+Xl8cB8NUBbhU
-         NY3rge6K3JP71eqxQYbmrUoXc5bIhq7rQrpsOCQCAx8E6/3HrrSojDuBkannjipnKw1x
-         NU6w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=x/MBL0tIfUBBDNjUvuXx8NnFcaBIN8co3DbDxNitGGc=;
+        b=j4pgWc5KeEB12wrDfls/XZTYh5etoSpD17AoPwHqD9ppTvA+ZMDVARpeoItLImfH0f
+         EK2Hj5PzIGmoxEFZ2was9F0ytvf7S7EOx+qVcixYXpWrLEJ41fNP39PoHAdwZzrmAv3A
+         0fHm5EcV3+MFq3fCenJJDs/lE22cFjpEqDR7Nr7jXZGfCxtPXX60b2IsMHWzti2HLoXG
+         MeTcsQnXUIrn+krGWkdJiPlA8pz9TJoDrMQBkhrS7g560g0krwCuMKn1jilateKmLbLq
+         8eLlSfS4VC1o5AuNjajyLaeILHbi5heSmYDXgNvFEhd8/fp7qdKD8n6RrD+Od422MaJI
+         BiEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=58+cdJn7QTM1mvrc2lJA0WwYS3fv8SZeDWXEzeJaI6A=;
-        b=rkcPDazjtSNQJdGdVGDHcThrAK5daFGPaE9ER1wL78zOg45/LZva333VIijNfkiCMM
-         6Dn4xDgqCoSVRWt43bMqEvZ00HbikdJRWyAH87l0cWnmMMrvcCZ/63m+hCtgcUF6rz7i
-         IGb033mi/hRZcH0kqBwYDoQgv63UhRN9snhpuy8evLD2mf9EIOU/6Rurcvcpr0HXllsj
-         QxfmagFaet47Q9towk3aANf8/ExHvQdFE3c7rLprrzN+tOfxqxPwEBy1GOL2QtEz2qey
-         vrk9ff88go5zjxVMeY+0Cm+JyOkGSddO8MSRSyoSN4WPX5Gqg1qj95TjixlWZ+/zsicr
-         Ltag==
-X-Gm-Message-State: APt69E3rGSwU1KllPBSBUwZb8PLpooW4Ce55DZkbHaEx11FTpavfPSV6
-        c2xFVSA16Feca8QaIb0O5gY=
-X-Google-Smtp-Source: AAOMgpdBnIH0lF5EGp7DB1UkS5IVl1DaX5YJPTqVefLsqgCJTQKRpHaWilDEcAYp+UGP2JNY6Bm2AQ==
-X-Received: by 2002:a17:902:683:: with SMTP id 3-v6mr24247594plh.291.1531218000239;
-        Tue, 10 Jul 2018 03:20:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=x/MBL0tIfUBBDNjUvuXx8NnFcaBIN8co3DbDxNitGGc=;
+        b=q9dzxHhzFP7hOZ7KfVYb+aPSStS+YjUSArFtXOei4sl8Nw7+dkiT8lt5dSVx/VHw6D
+         uc++Fgs9Yv7fQEJ4disRGewTPX8N3/wcMDdS4x47EiaC2ucBCg1vJmEer/sGGjFgratD
+         fjfpqj2kCs4sQZD4lwfRIrk+omSDqDmEWOqv+HGUkSq5uwoTPeVmQRLUrM/Vzao5gcrs
+         ubfsg7r7ZeCmO8imHmJHTlM0wzmsyYGLTVBpKfyMYfltNUphsGRslHaOv3GeCtYKYBbY
+         RnaRY3gyxjUX44AK2gQQnhDBZY41S8g4+rLRby4mqcRjMWVtNM5SUoaE41vi8GJDNHrR
+         wjXA==
+X-Gm-Message-State: APt69E3cUeVOQ/gGxLqqW2fHruoKEsrkYwurcmNsMWaq09PgKWQJr4TG
+        4ObfMPzLgUfJ98IEdktC0gQ=
+X-Google-Smtp-Source: AAOMgpeQHSD0Bwz08towpSVzC8NL8eW6L6u5VFKrRgT6z7htIeSsf5R0dEvofkA4a7a5n2+ZtQ2/Qw==
+X-Received: by 2002:a62:8917:: with SMTP id v23-v6mr25236473pfd.127.1531218005030;
+        Tue, 10 Jul 2018 03:20:05 -0700 (PDT)
 Received: from dest.didichuxing.com ([168.63.150.120])
-        by smtp.gmail.com with ESMTPSA id k4-v6sm24213518pgo.49.2018.07.10.03.19.56
+        by smtp.gmail.com with ESMTPSA id k4-v6sm24213518pgo.49.2018.07.10.03.20.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 03:19:59 -0700 (PDT)
+        Tue, 10 Jul 2018 03:20:04 -0700 (PDT)
 From:   ufo19890607@gmail.com
 To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
         kirill.shutemov@linux.intel.com, aarcange@redhat.com,
@@ -64,10 +65,12 @@ To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
         yang.s@alibaba-inc.com
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         yuzhoujian@didichuxing.com
-Subject: [PATCH v13 1/2] Reorganize the oom report in dump_header
-Date:   Tue, 10 Jul 2018 18:19:47 +0800
-Message-Id: <1531217988-33940-1-git-send-email-ufo19890607@gmail.com>
+Subject: [PATCH v13 2/2] Add oom victim's memcg to the oom context information
+Date:   Tue, 10 Jul 2018 18:19:48 +0800
+Message-Id: <1531217988-33940-2-git-send-email-ufo19890607@gmail.com>
 X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1531217988-33940-1-git-send-email-ufo19890607@gmail.com>
+References: <1531217988-33940-1-git-send-email-ufo19890607@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -75,265 +78,135 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: yuzhoujian <yuzhoujian@didichuxing.com>
 
-OOM report contains several sections. The first one is the allocation
-context that has triggered the OOM. Then we have cpuset context
-followed by the stack trace of the OOM path. Followed by the oom
-eligible tasks and the information about the chosen oom victim.
+The current oom report doesn't display victim's memcg context during the
+global OOM situation. While this information is not strictly needed, it
+can be really helpful for containerized environments to locate which
+container has lost a process. Now that we have a single line for the oom
+context, we can trivially add both the oom memcg (this can be either
+global_oom or a specific memcg which hits its hard limits) and task_memcg
+which is the victim's memcg.
 
-One thing that makes parsing more awkward than necessary is that we do
-not have a single and easily parsable line about the oom context. This
-patch is reorganizing the oom report to
-1) who invoked oom and what was the allocation request
-        [  126.168182] panic invoked oom-killer: gfp_mask=0x6280ca(GFP_HIGHUSER_MOVABLE|__GFP_ZERO), order=0, oom_score_adj=0
-
-2) OOM stack trace
-        [  126.169806] CPU: 23 PID: 8668 Comm: panic Not tainted 4.18.0-rc4+ #44
-        [  126.170494] Hardware name: Inspur SA5212M4/YZMB-00370-107, BIOS 4.1.10 11/14/2016
-        [  126.171197] Call Trace:
-        [  126.171901]  dump_stack+0x5a/0x73
-        [  126.172593]  dump_header+0x58/0x2dc
-        [  126.173294]  oom_kill_process+0x228/0x420
-        [  126.173999]  ? oom_badness+0x2a/0x130
-        [  126.174705]  out_of_memory+0x11a/0x4a0
-        [  126.175415]  __alloc_pages_slowpath+0x7cc/0xa1e
-        [  126.176128]  ? __alloc_pages_slowpath+0x194/0xa1e
-        [  126.176853]  ? page_counter_try_charge+0x54/0xc0
-        [  126.177580]  __alloc_pages_nodemask+0x277/0x290
-        [  126.178319]  alloc_pages_vma+0x73/0x180
-        [  126.179058]  do_anonymous_page+0xed/0x5a0
-        [  126.179825]  __handle_mm_fault+0xbb3/0xe70
-        [  126.180566]  handle_mm_fault+0xfa/0x210
-        [  126.181313]  __do_page_fault+0x233/0x4c0
-        [  126.182063]  do_page_fault+0x32/0x140
-        [  126.182812]  ? page_fault+0x8/0x30
-        [  126.183560]  page_fault+0x1e/0x30
-
-3) oom context (contrains and the chosen victim).
-        [  126.190619] oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0-1,task=panic,pid=10235,uid=    0
-
-An admin can easily get the full oom context at a single line which
-makes parsing much easier.
-
+Below is the single line output in the oom report after this patch.
+- global oom context information:
+oom-kill:constraint=<constraint>,nodemask=<nodemask>,global_oom,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
+- memcg oom context information:
+oom-kill:constraint=<constraint>,nodemask=<nodemask>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
 Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
 ---
-Changes since v12:
-- print the cpuset and memory allocation information after oom victim comm, pid.
+ include/linux/memcontrol.h | 14 +++++++++++---
+ mm/memcontrol.c            | 36 ++++++++++++++++++++++--------------
+ mm/oom_kill.c              |  3 ++-
+ 3 files changed, 35 insertions(+), 18 deletions(-)
 
-Changes since v11:
-- move the array of const char oom_constraint_text to oom_kill.c
-- add the cpuset information in the one line output.
-
-Changes since v10:
-- divide the patch v8 into two parts. One part is to add the array of const char and put enum
-  oom_constaint into oom.h; the other adds a new func to print the missing information for the system-
-  wide oom report.
-
-Changes since v9:
-- divide the patch v8 into two parts. One part is to move enum oom_constraint into memcontrol.h; the
-  other refactors the output info in the dump_header.
-- replace orgin_memcg and kill_memcg with oom_memcg and task_memcg resptively.
-
-Changes since v8:
-- add the constraint in the oom_control structure.
-- put enum oom_constraint and constraint array into the oom.h file.
-- simplify the description for mem_cgroup_print_oom_context.
-
-Changes since v7:
-- add the constraint parameter to dump_header and oom_kill_process.
-- remove the static char array in the mem_cgroup_print_oom_context, and
-  invoke pr_cont_cgroup_path to print memcg' name.
-- combine the patchset v6 into one.
-
-Changes since v6:
-- divide the patch v5 into two parts. One part is to add an array of const char and
-  put enum oom_constraint into the memcontrol.h; the other refactors the output
-  in the dump_header.
-- limit the memory usage for the static char array by using NAME_MAX in the mem_cgroup_print_oom_context.
-- eliminate the spurious spaces in the oom's output and fix the spelling of "constrain".
-
-Changes since v5:
-- add an array of const char for each constraint.
-- replace all of the pr_cont with a single line print of the pr_info.
-- put enum oom_constraint into the memcontrol.c file for printing oom constraint.
-
-Changes since v4:
-- rename the helper's name to mem_cgroup_print_oom_context.
-- rename the mem_cgroup_print_oom_info to mem_cgroup_print_oom_meminfo.
-- add the constrain info in the dump_header.
-
-Changes since v3:
-- rename the helper's name to mem_cgroup_print_oom_memcg_name.
-- add the rcu lock held to the helper.
-- remove the print info of memcg's name in mem_cgroup_print_oom_info.
-
-Changes since v2:
-- add the mem_cgroup_print_memcg_name helper to print the memcg's
-  name which contains the task that will be killed by the oom-killer.
-
-Changes since v1:
-- replace adding mem_cgroup_print_oom_info with printing the memcg's
-  name only.
-
- include/linux/oom.h    | 10 ++++++++++
- kernel/cgroup/cpuset.c |  4 ++--
- mm/oom_kill.c          | 37 +++++++++++++++++++++----------------
- mm/page_alloc.c        |  4 ++--
- 4 files changed, 35 insertions(+), 20 deletions(-)
-
-diff --git a/include/linux/oom.h b/include/linux/oom.h
-index 6adac113e96d..3e5e01619bc8 100644
---- a/include/linux/oom.h
-+++ b/include/linux/oom.h
-@@ -15,6 +15,13 @@ struct notifier_block;
- struct mem_cgroup;
- struct task_struct;
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 6c6fb116e925..96a73f989101 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -491,8 +491,10 @@ void mem_cgroup_handle_over_high(void);
  
-+enum oom_constraint {
-+	CONSTRAINT_NONE,
-+	CONSTRAINT_CPUSET,
-+	CONSTRAINT_MEMORY_POLICY,
-+	CONSTRAINT_MEMCG,
-+};
-+
- /*
-  * Details of the page allocation that triggered the oom killer that are used to
-  * determine what should be killed.
-@@ -42,6 +49,9 @@ struct oom_control {
- 	unsigned long totalpages;
- 	struct task_struct *chosen;
- 	unsigned long chosen_points;
-+
-+	/* Used to print the constraint info. */
-+	enum oom_constraint constraint;
- };
+ unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
  
- extern struct mutex oom_lock;
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index 266f10cb7222..9510a5b32eaf 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2666,9 +2666,9 @@ void cpuset_print_current_mems_allowed(void)
+-void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
+-				struct task_struct *p);
++void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
++		struct task_struct *p);
++
++void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg);
+ 
+ static inline void mem_cgroup_oom_enable(void)
+ {
+@@ -903,7 +905,13 @@ static inline unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
+ }
+ 
+ static inline void
+-mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
++mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
++				struct task_struct *p)
++{
++}
++
++static inline void
++mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
+ {
+ }
+ 
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e6f0d5ef320a..18deea974cfd 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1119,32 +1119,40 @@ static const char *const memcg1_stat_names[] = {
+ 
+ #define K(x) ((x) << (PAGE_SHIFT-10))
+ /**
+- * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
+- * @memcg: The memory cgroup that went over limit
++ * mem_cgroup_print_oom_context: Print OOM context information relevant to
++ * memory controller.
++ * @memcg: The origin memory cgroup that went over limit
+  * @p: Task that is going to be killed
+  *
+  * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
+  * enabled
+  */
+-void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
++void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p)
+ {
+-	struct mem_cgroup *iter;
+-	unsigned int i;
++	struct cgroup *origin_cgrp, *kill_cgrp;
+ 
  	rcu_read_lock();
- 
- 	cgrp = task_cs(current)->css.cgroup;
--	pr_info("%s cpuset=", current->comm);
-+	pr_cont(",cpuset=");
- 	pr_cont_cgroup_name(cgrp);
--	pr_cont(" mems_allowed=%*pbl\n",
-+	pr_cont(",mems_allowed=%*pbl",
- 		nodemask_pr_args(&current->mems_allowed));
- 
+-
++	if (memcg) {
++		pr_cont(",oom_memcg=");
++		pr_cont_cgroup_path(memcg->css.cgroup);
++	} else
++		pr_cont(",global_oom");
+ 	if (p) {
+-		pr_info("Task in ");
++		pr_cont(",task_memcg=");
+ 		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
+-		pr_cont(" killed as a result of limit of ");
+-	} else {
+-		pr_info("Memory limit reached of cgroup ");
+ 	}
+-
+-	pr_cont_cgroup_path(memcg->css.cgroup);
+-	pr_cont("\n");
+-
  	rcu_read_unlock();
++}
++
++/**
++ * mem_cgroup_print_oom_meminfo: Print OOM memory information relevant to
++ * memory controller.
++ * @memcg: The memory cgroup that went over limit
++ */
++void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
++{
++	struct mem_cgroup *iter;
++	unsigned int i;
+ 
+ 	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
+ 		K((u64)page_counter_read(&memcg->memory)),
 diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 84081e77bc51..531b2c86d4db 100644
+index 531b2c86d4db..9e80f6c2eb2e 100644
 --- a/mm/oom_kill.c
 +++ b/mm/oom_kill.c
-@@ -237,11 +237,11 @@ unsigned long oom_badness(struct task_struct *p, struct mem_cgroup *memcg,
- 	return points > 0 ? points : 1;
- }
- 
--enum oom_constraint {
--	CONSTRAINT_NONE,
--	CONSTRAINT_CPUSET,
--	CONSTRAINT_MEMORY_POLICY,
--	CONSTRAINT_MEMCG,
-+static const char * const oom_constraint_text[] = {
-+	[CONSTRAINT_NONE] = "CONSTRAINT_NONE",
-+	[CONSTRAINT_CPUSET] = "CONSTRAINT_CPUSET",
-+	[CONSTRAINT_MEMORY_POLICY] = "CONSTRAINT_MEMORY_POLICY",
-+	[CONSTRAINT_MEMCG] = "CONSTRAINT_MEMCG",
- };
- 
- /*
-@@ -421,15 +421,21 @@ static void dump_tasks(struct mem_cgroup *memcg, const nodemask_t *nodemask)
- 
- static void dump_header(struct oom_control *oc, struct task_struct *p)
- {
--	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), nodemask=%*pbl, order=%d, oom_score_adj=%hd\n",
--		current->comm, oc->gfp_mask, &oc->gfp_mask,
--		nodemask_pr_args(oc->nodemask), oc->order,
-+	pr_warn("%s invoked oom-killer: gfp_mask=%#x(%pGg), order=%d, oom_score_adj=%hd\n",
-+		current->comm, oc->gfp_mask, &oc->gfp_mask, oc->order,
- 			current->signal->oom_score_adj);
- 	if (!IS_ENABLED(CONFIG_COMPACTION) && oc->order)
- 		pr_warn("COMPACTION is disabled!!!\n");
- 
--	cpuset_print_current_mems_allowed();
- 	dump_stack();
-+
-+	/* one line summary of the oom killer context. */
-+	pr_info("oom-kill:constraint=%s,nodemask=%*pbl",
-+			oom_constraint_text[oc->constraint],
-+			nodemask_pr_args(oc->nodemask));
-+	cpuset_print_current_mems_allowed();
-+	pr_cont(",task=%s,pid=%5d,uid=%5d\n", p->comm, p->pid,
-+		from_kuid(&init_user_ns, task_uid(p)));
- 	if (is_memcg_oom(oc))
- 		mem_cgroup_print_oom_info(oc->memcg, p);
- 	else {
-@@ -973,8 +979,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- /*
-  * Determines whether the kernel must panic because of the panic_on_oom sysctl.
-  */
--static void check_panic_on_oom(struct oom_control *oc,
--			       enum oom_constraint constraint)
-+static void check_panic_on_oom(struct oom_control *oc)
- {
- 	if (likely(!sysctl_panic_on_oom))
- 		return;
-@@ -984,7 +989,7 @@ static void check_panic_on_oom(struct oom_control *oc,
- 		 * does not panic for cpuset, mempolicy, or memcg allocation
- 		 * failures.
- 		 */
--		if (constraint != CONSTRAINT_NONE)
-+		if (oc->constraint != CONSTRAINT_NONE)
- 			return;
- 	}
- 	/* Do not panic for oom kills triggered by sysrq */
-@@ -1021,8 +1026,8 @@ EXPORT_SYMBOL_GPL(unregister_oom_notifier);
- bool out_of_memory(struct oom_control *oc)
- {
- 	unsigned long freed = 0;
--	enum oom_constraint constraint = CONSTRAINT_NONE;
- 
-+	oc->constraint = CONSTRAINT_NONE;
- 	if (oom_killer_disabled)
- 		return false;
- 
-@@ -1057,10 +1062,10 @@ bool out_of_memory(struct oom_control *oc)
- 	 * Check if there were limitations on the allocation (only relevant for
- 	 * NUMA and memcg) that may require different handling.
- 	 */
--	constraint = constrained_alloc(oc);
--	if (constraint != CONSTRAINT_MEMORY_POLICY)
-+	oc->constraint = constrained_alloc(oc);
-+	if (oc->constraint != CONSTRAINT_MEMORY_POLICY)
- 		oc->nodemask = NULL;
--	check_panic_on_oom(oc, constraint);
-+	check_panic_on_oom(oc);
- 
- 	if (!is_memcg_oom(oc) && sysctl_oom_kill_allocating_task &&
- 	    current->mm && !oom_unkillable_task(current, NULL, oc->nodemask) &&
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 1521100f1e63..194e0763fd5f 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3416,13 +3416,13 @@ void warn_alloc(gfp_t gfp_mask, nodemask_t *nodemask, const char *fmt, ...)
- 	va_start(args, fmt);
- 	vaf.fmt = fmt;
- 	vaf.va = &args;
--	pr_warn("%s: %pV, mode:%#x(%pGg), nodemask=%*pbl\n",
-+	pr_warn("%s: %pV,mode:%#x(%pGg),nodemask=%*pbl",
- 			current->comm, &vaf, gfp_mask, &gfp_mask,
- 			nodemask_pr_args(nodemask));
- 	va_end(args);
- 
+@@ -433,11 +433,12 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
+ 	pr_info("oom-kill:constraint=%s,nodemask=%*pbl",
+ 			oom_constraint_text[oc->constraint],
+ 			nodemask_pr_args(oc->nodemask));
++	mem_cgroup_print_oom_context(oc->memcg, p);
  	cpuset_print_current_mems_allowed();
--
-+	pr_cont("\n");
- 	dump_stack();
- 	warn_alloc_show_mem(gfp_mask, nodemask);
- }
+ 	pr_cont(",task=%s,pid=%5d,uid=%5d\n", p->comm, p->pid,
+ 		from_kuid(&init_user_ns, task_uid(p)));
+ 	if (is_memcg_oom(oc))
+-		mem_cgroup_print_oom_info(oc->memcg, p);
++		mem_cgroup_print_oom_meminfo(oc->memcg);
+ 	else {
+ 		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
+ 		if (is_dump_unreclaim_slabs())
 -- 
 2.14.1
 
