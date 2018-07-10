@@ -6,36 +6,44 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8908EC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D11BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 272A620BEC
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272A620BEC
+	by mail.kernel.org (Postfix) with ESMTP id E8DA420936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DA420936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733272AbeGJS2L (ORCPT
+        id S1733287AbeGJS2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:28:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44946 "EHLO
+        Tue, 10 Jul 2018 14:28:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:44960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732408AbeGJS2K (ORCPT
+        with ESMTP id S1732408AbeGJS2N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:28:10 -0400
+        Tue, 10 Jul 2018 14:28:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A4D9AD66;
-        Tue, 10 Jul 2018 18:27:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6505CD66;
+        Tue, 10 Jul 2018 18:28:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        syzbot <syzbot+108696293d7a21ab688f@syzkaller.appspotmail.com>,
-        Peter Hurley <peter@hurleysoftware.com>
-Subject: [PATCH 4.4 06/47] n_tty: Access echo_* variables carefully.
-Date:   Tue, 10 Jul 2018 20:24:30 +0200
-Message-Id: <20180710182337.309342117@linuxfoundation.org>
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Borislav Petkov <bp@suse.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>, fenghua.yu@intel.com,
+        yu-cheng.yu@intel.com, Ingo Molnar <mingo@kernel.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 07/47] x86/boot: Fix early command-line parsing when matching at end
+Date:   Tue, 10 Jul 2018 20:24:31 +0200
+Message-Id: <20180710182337.352295617@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -52,179 +60,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-commit ebec3f8f5271139df618ebdf8427e24ba102ba94 upstream.
+commit 02afeaae9843733a39cd9b11053748b2d1dc5ae7 upstream.
 
-syzbot is reporting stalls at __process_echoes() [1]. This is because
-since ldata->echo_commit < ldata->echo_tail becomes true for some reason,
-the discard loop is serving as almost infinite loop. This patch tries to
-avoid falling into ldata->echo_commit < ldata->echo_tail situation by
-making access to echo_* variables more carefully.
+The x86 early command line parsing in cmdline_find_option_bool() is
+buggy. If it matches a specified 'option' all the way to the end of the
+command-line, it will consider it a match.
 
-Since reset_buffer_flags() is called without output_lock held, it should
-not touch echo_* variables. And omit a call to reset_buffer_flags() from
-n_tty_open() by using vzalloc().
+For instance,
 
-Since add_echo_byte() is called without output_lock held, it needs memory
-barrier between storing into echo_buf[] and incrementing echo_head counter.
-echo_buf() needs corresponding memory barrier before reading echo_buf[].
-Lack of handling the possibility of not-yet-stored multi-byte operation
-might be the reason of falling into ldata->echo_commit < ldata->echo_tail
-situation, for if I do WARN_ON(ldata->echo_commit == tail + 1) prior to
-echo_buf(ldata, tail + 1), the WARN_ON() fires.
+  cmdline = "foo";
+  cmdline_find_option_bool(cmdline, "fool");
 
-Also, explicitly masking with buffer for the former "while" loop, and
-use ldata->echo_commit > tail for the latter "while" loop.
+will return 1. This is particularly annoying since we have actual FPU
+options like "noxsave" and "noxsaves" So, command-line "foo bar noxsave"
+will match *BOTH* a "noxsave" and "noxsaves". (This turns out not to be
+an actual problem because "noxsave" implies "noxsaves", but it's still
+confusing.)
 
-[1] https://syzkaller.appspot.com/bug?id=17f23b094cd80df750e5b0f8982c521ee6bcbf40
+To fix this, we simplify the code and stop tracking 'len'. 'len'
+was trying to indicate either the NULL terminator *OR* the end of a
+non-NULL-terminated command line at 'COMMAND_LINE_SIZE'. But, each of the
+three states is *already* checking 'cmdline' for a NULL terminator.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+108696293d7a21ab688f@syzkaller.appspotmail.com>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: stable <stable@vger.kernel.org>
+We _only_ need to check if we have overrun 'COMMAND_LINE_SIZE', and that
+we can do without keeping 'len' around.
+
+Also add some commends to clarify what is going on.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com
+Cc: yu-cheng.yu@intel.com
+Link: http://lkml.kernel.org/r/20151222225238.9AEB560C@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/n_tty.c |   42 ++++++++++++++++++++++++------------------
- 1 file changed, 24 insertions(+), 18 deletions(-)
+ arch/x86/lib/cmdline.c |   34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -147,6 +147,7 @@ static inline unsigned char *read_buf_ad
- 
- static inline unsigned char echo_buf(struct n_tty_data *ldata, size_t i)
+--- a/arch/x86/lib/cmdline.c
++++ b/arch/x86/lib/cmdline.c
+@@ -21,12 +21,14 @@ static inline int myisspace(u8 c)
+  * @option: option string to look for
+  *
+  * Returns the position of that @option (starts counting with 1)
+- * or 0 on not found.
++ * or 0 on not found.  @option will only be found if it is found
++ * as an entire word in @cmdline.  For instance, if @option="car"
++ * then a cmdline which contains "cart" will not match.
+  */
+ int cmdline_find_option_bool(const char *cmdline, const char *option)
  {
-+	smp_rmb(); /* Matches smp_wmb() in add_echo_byte(). */
- 	return ldata->echo_buf[i & (N_TTY_BUF_SIZE - 1)];
- }
+ 	char c;
+-	int len, pos = 0, wstart = 0;
++	int pos = 0, wstart = 0;
+ 	const char *opptr = NULL;
+ 	enum {
+ 		st_wordstart = 0,	/* Start of word/after whitespace */
+@@ -37,11 +39,14 @@ int cmdline_find_option_bool(const char
+ 	if (!cmdline)
+ 		return -1;      /* No command line */
  
-@@ -324,9 +325,7 @@ static inline void put_tty_queue(unsigne
- static void reset_buffer_flags(struct n_tty_data *ldata)
- {
- 	ldata->read_head = ldata->canon_head = ldata->read_tail = 0;
--	ldata->echo_head = ldata->echo_tail = ldata->echo_commit = 0;
- 	ldata->commit_head = 0;
--	ldata->echo_mark = 0;
- 	ldata->line_start = 0;
+-	len = min_t(int, strlen(cmdline), COMMAND_LINE_SIZE);
+-	if (!len)
++	if (!strlen(cmdline))
+ 		return 0;
  
- 	ldata->erasing = 0;
-@@ -647,13 +646,20 @@ static size_t __process_echoes(struct tt
- 	old_space = space = tty_write_room(tty);
+-	while (len--) {
++	/*
++	 * This 'pos' check ensures we do not overrun
++	 * a non-NULL-terminated 'cmdline'
++	 */
++	while (pos < COMMAND_LINE_SIZE) {
+ 		c = *(char *)cmdline++;
+ 		pos++;
  
- 	tail = ldata->echo_tail;
--	while (ldata->echo_commit != tail) {
-+	while (MASK(ldata->echo_commit) != MASK(tail)) {
- 		c = echo_buf(ldata, tail);
- 		if (c == ECHO_OP_START) {
- 			unsigned char op;
- 			int no_space_left = 0;
+@@ -58,17 +63,26 @@ int cmdline_find_option_bool(const char
+ 			/* fall through */
  
- 			/*
-+			 * Since add_echo_byte() is called without holding
-+			 * output_lock, we might see only portion of multi-byte
-+			 * operation.
-+			 */
-+			if (MASK(ldata->echo_commit) == MASK(tail + 1))
-+				goto not_yet_stored;
-+			/*
- 			 * If the buffer byte is the start of a multi-byte
- 			 * operation, get the next byte, which is either the
- 			 * op code or a control character value.
-@@ -664,6 +670,8 @@ static size_t __process_echoes(struct tt
- 				unsigned int num_chars, num_bs;
+ 		case st_wordcmp:
+-			if (!*opptr)
++			if (!*opptr) {
++				/*
++				 * We matched all the way to the end of the
++				 * option we were looking for.  If the
++				 * command-line has a space _or_ ends, then
++				 * we matched!
++				 */
+ 				if (!c || myisspace(c))
+ 					return wstart;
+ 				else
+ 					state = st_wordskip;
+-			else if (!c)
++			} else if (!c) {
++				/*
++				 * Hit the NULL terminator on the end of
++				 * cmdline.
++				 */
+ 				return 0;
+-			else if (c != *opptr++)
++			} else if (c != *opptr++) {
+ 				state = st_wordskip;
+-			else if (!len)		/* last word and is matching */
+-				return wstart;
++			}
+ 			break;
  
- 			case ECHO_OP_ERASE_TAB:
-+				if (MASK(ldata->echo_commit) == MASK(tail + 2))
-+					goto not_yet_stored;
- 				num_chars = echo_buf(ldata, tail + 2);
- 
- 				/*
-@@ -758,7 +766,8 @@ static size_t __process_echoes(struct tt
- 	/* If the echo buffer is nearly full (so that the possibility exists
- 	 * of echo overrun before the next commit), then discard enough
- 	 * data at the tail to prevent a subsequent overrun */
--	while (ldata->echo_commit - tail >= ECHO_DISCARD_WATERMARK) {
-+	while (ldata->echo_commit > tail &&
-+	       ldata->echo_commit - tail >= ECHO_DISCARD_WATERMARK) {
- 		if (echo_buf(ldata, tail) == ECHO_OP_START) {
- 			if (echo_buf(ldata, tail + 1) == ECHO_OP_ERASE_TAB)
- 				tail += 3;
-@@ -768,6 +777,7 @@ static size_t __process_echoes(struct tt
- 			tail++;
- 	}
- 
-+ not_yet_stored:
- 	ldata->echo_tail = tail;
- 	return old_space - space;
- }
-@@ -778,6 +788,7 @@ static void commit_echoes(struct tty_str
- 	size_t nr, old, echoed;
- 	size_t head;
- 
-+	mutex_lock(&ldata->output_lock);
- 	head = ldata->echo_head;
- 	ldata->echo_mark = head;
- 	old = ldata->echo_commit - ldata->echo_tail;
-@@ -786,10 +797,12 @@ static void commit_echoes(struct tty_str
- 	 * is over the threshold (and try again each time another
- 	 * block is accumulated) */
- 	nr = head - ldata->echo_tail;
--	if (nr < ECHO_COMMIT_WATERMARK || (nr % ECHO_BLOCK > old % ECHO_BLOCK))
-+	if (nr < ECHO_COMMIT_WATERMARK ||
-+	    (nr % ECHO_BLOCK > old % ECHO_BLOCK)) {
-+		mutex_unlock(&ldata->output_lock);
- 		return;
-+	}
- 
--	mutex_lock(&ldata->output_lock);
- 	ldata->echo_commit = head;
- 	echoed = __process_echoes(tty);
- 	mutex_unlock(&ldata->output_lock);
-@@ -840,7 +853,9 @@ static void flush_echoes(struct tty_stru
- 
- static inline void add_echo_byte(unsigned char c, struct n_tty_data *ldata)
- {
--	*echo_buf_addr(ldata, ldata->echo_head++) = c;
-+	*echo_buf_addr(ldata, ldata->echo_head) = c;
-+	smp_wmb(); /* Matches smp_rmb() in echo_buf(). */
-+	ldata->echo_head++;
- }
- 
- /**
-@@ -1920,31 +1935,22 @@ static int n_tty_open(struct tty_struct
- 	struct n_tty_data *ldata;
- 
- 	/* Currently a malloc failure here can panic */
--	ldata = vmalloc(sizeof(*ldata));
-+	ldata = vzalloc(sizeof(*ldata));
- 	if (!ldata)
--		goto err;
-+		return -ENOMEM;
- 
- 	ldata->overrun_time = jiffies;
- 	mutex_init(&ldata->atomic_read_lock);
- 	mutex_init(&ldata->output_lock);
- 
- 	tty->disc_data = ldata;
--	reset_buffer_flags(tty->disc_data);
--	ldata->column = 0;
--	ldata->canon_column = 0;
- 	ldata->minimum_to_wake = 1;
--	ldata->num_overrun = 0;
--	ldata->no_room = 0;
--	ldata->lnext = 0;
- 	tty->closing = 0;
- 	/* indicate buffer work may resume */
- 	clear_bit(TTY_LDISC_HALTED, &tty->flags);
- 	n_tty_set_termios(tty, NULL);
- 	tty_unthrottle(tty);
--
- 	return 0;
--err:
--	return -ENOMEM;
- }
- 
- static inline int input_available_p(struct tty_struct *tty, int poll)
+ 		case st_wordskip:
 
 
