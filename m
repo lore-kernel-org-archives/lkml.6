@@ -2,369 +2,151 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E10EC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C955C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B384820A8B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B384820A8B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0921C20A8B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 22:41:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k5VzXVnf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0921C20A8B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732384AbeGJWmT (ORCPT
+        id S1732404AbeGJWmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 18:42:19 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:48518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732258AbeGJWmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 18:42:18 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 329D087A88;
-        Tue, 10 Jul 2018 22:41:05 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5C3622156891;
-        Tue, 10 Jul 2018 22:41:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH 02/32] vfs: syscall: Add move_mount(2) to move mounts around
-From:   David Howells <dhowells@redhat.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     dhowells@redhat.com, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 10 Jul 2018 23:41:03 +0100
-Message-ID: <153126246390.14372.6375714080664022881.stgit@warthog.procyon.org.uk>
-In-Reply-To: <153126245717.14372.12511335851917797573.stgit@warthog.procyon.org.uk>
-References: <153126245717.14372.12511335851917797573.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/0.17.1-dirty
+        Tue, 10 Jul 2018 18:42:39 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:46713 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732258AbeGJWmj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 18:42:39 -0400
+Received: by mail-lf0-f65.google.com with SMTP id l16-v6so19667089lfc.13
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 15:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Bl/OPW0Cbb9NhKnqwvj64bGfSynMjuNjZ3CBIRpObxU=;
+        b=k5VzXVnfonZ6vncEd0K9nsffLSaYFDjLN6eztf9SW+RPHjf5OoFB0zCJk8L2rFgUx2
+         hssfwv42PNkutkVeoB8rw0pRcRG3K3jF4wWz1ZpFruqMA0rUA16P4IwUD+vu31XOkeTS
+         NfTI5tijoz78QogHcZZ2PQ+vwPS5kjUU9Flbs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Bl/OPW0Cbb9NhKnqwvj64bGfSynMjuNjZ3CBIRpObxU=;
+        b=AsqTvXCg7A0UUECOsN2NZstZQeOWn5wHU2GyRLaSDKraodRSHdD5kdoyx65eu7BvBp
+         s2OSjLOxKFOewJC9GMT9vybCAt0vVeqWalgWoR7WIcEM99jwP7f8TLId8AdwaBwM9num
+         oJLWn8E6hlK4CS6aWkQpAGusi85yCI9YFndLLn56K6iZ6HtBpbJ5uqKzkmpq0N2Q5Syt
+         VI/4lGIzzwuneQ92ck0pYlmOHGe6aANGaYLKoDiiYIWldWv0oIUYjuo1pDgVvnyKEmiA
+         TIGJqv50KEGBNl5+tfoIcjjVT4rgmf9wOH1o59+azx58tg9qV0wjHJ8OyEjpMuwePfFX
+         rGLg==
+X-Gm-Message-State: APt69E35Ei08VEj5BucqTFLcTrOvOb3haOi6Vb8FUC3sLyFeHojiuNAf
+        ubktl9SQ9zTdaUca8vOmxsmpGDg4cw0=
+X-Google-Smtp-Source: AAOMgpf4CswjBOFXlN7MsuXkKt22I6Rdz4Jz9cC7XrTpVwiwffZbDqxTKhU81ehtQv3h0b+2F6q8Vw==
+X-Received: by 2002:a19:6d11:: with SMTP id i17-v6mr4225285lfc.103.1531262484518;
+        Tue, 10 Jul 2018 15:41:24 -0700 (PDT)
+Received: from mail-lf0-f51.google.com (mail-lf0-f51.google.com. [209.85.215.51])
+        by smtp.gmail.com with ESMTPSA id h40-v6sm92814lfi.84.2018.07.10.15.41.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 15:41:24 -0700 (PDT)
+Received: by mail-lf0-f51.google.com with SMTP id g6-v6so8974270lfb.11
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 15:41:24 -0700 (PDT)
+X-Received: by 2002:a19:d754:: with SMTP id o81-v6mr3886562lfg.124.1531262115999;
+ Tue, 10 Jul 2018 15:35:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 10 Jul 2018 22:41:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Tue, 10 Jul 2018 22:41:05 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+References: <20180709155104.25528-1-georgi.djakov@linaro.org> <20180709155104.25528-7-georgi.djakov@linaro.org>
+In-Reply-To: <20180709155104.25528-7-georgi.djakov@linaro.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 10 Jul 2018 15:34:39 -0700
+X-Gmail-Original-Message-ID: <CAE=gft4YR27-ZyR5GXVxbiRbGycw=ydHu182LfwaLD=M+a8CNw@mail.gmail.com>
+Message-ID: <CAE=gft4YR27-ZyR5GXVxbiRbGycw=ydHu182LfwaLD=M+a8CNw@mail.gmail.com>
+Subject: Re: [PATCH v6 6/8] interconnect: qcom: Add msm8916 interconnect
+ provider driver
+To:     georgi.djakov@linaro.org
+Cc:     linux-pm@vger.kernel.org, gregkh@linuxfoundation.org,
+        rjw@rjwysocki.net, robh+dt@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        khilman@baylibre.com, Alexandre Bailon <abailon@baylibre.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Saravana Kannan <skannan@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        amit.kucheria@linaro.org, seansw@qti.qualcomm.com,
+        daidavid1@codeaurora.org, mka@chromium.org, mark.rutland@arm.com,
+        lorenzo.pieralisi@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, tfiga@chromium.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a move_mount() system call that will move a mount from one place to
-another and, in the next commit, allow to attach an unattached mount tree.
+On Mon, Jul 9, 2018 at 8:51 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> Add driver for the Qualcomm interconnect buses found in msm8916 based
+> platforms.
+>
+> Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+> ---
+>  drivers/interconnect/Kconfig        |   5 +
+>  drivers/interconnect/Makefile       |   1 +
+>  drivers/interconnect/qcom/Kconfig   |  10 +
+>  drivers/interconnect/qcom/Makefile  |   2 +
+>  drivers/interconnect/qcom/msm8916.c | 499 ++++++++++++++++++++++++++++
+>  5 files changed, 517 insertions(+)
+>  create mode 100644 drivers/interconnect/qcom/msm8916.c
+>
+> diff --git a/drivers/interconnect/Kconfig b/drivers/interconnect/Kconfig
+> index a261c7d41deb..07a8276fa35a 100644
+> --- a/drivers/interconnect/Kconfig
+> +++ b/drivers/interconnect/Kconfig
+> @@ -8,3 +8,8 @@ menuconfig INTERCONNECT
+>
+>           If unsure, say no.
+>
+> +if INTERCONNECT
+> +
+> +source "drivers/interconnect/qcom/Kconfig"
+> +
+> +endif
+> diff --git a/drivers/interconnect/Makefile b/drivers/interconnect/Makefile
+> index 97fca2e09d24..7944cbca0527 100644
+> --- a/drivers/interconnect/Makefile
+> +++ b/drivers/interconnect/Makefile
+> @@ -1,2 +1,3 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_INTERCONNECT)             += core.o
+> +obj-$(CONFIG_INTERCONNECT_QCOM)                += qcom/
+> diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
+> index b0c2ff928d88..a87afdef1bf7 100644
+> --- a/drivers/interconnect/qcom/Kconfig
+> +++ b/drivers/interconnect/qcom/Kconfig
+> @@ -2,6 +2,8 @@ config INTERCONNECT_QCOM
+>         bool "Qualcomm Network-on-Chip interconnect drivers"
+>         depends on INTERCONNECT
+>         depends on ARCH_QCOM || COMPILE_TEST
+> +       help
+> +         Support for Qualcomm's Network-on-Chip interconnect hardware.
+>
+>  config INTERCONNECT_QCOM_SMD_RPM
+>         tristate "Qualcomm SMD RPM interconnect driver"
+> @@ -9,3 +11,11 @@ config INTERCONNECT_QCOM_SMD_RPM
+>         help
+>           This is a driver for communicating interconnect related configuration
+>           details with a remote processor (RPM) on Qualcomm platforms.
+> +
+> +config INTERCONNECT_QCOM_MSM8916
+> +       tristate "Qualcomm MSM8916 interconnect driver"
+> +       depends on INTERCONNECT_QCOM
+> +       select INTERCONNECT_QCOM_SMD_RPM
 
-The new system call looks like the following:
-
-	int move_mount(int from_dfd, const char *from_path,
-		       int to_dfd, const char *to_path,
-		       unsigned int flags);
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-api@vger.kernel.org
----
-
- arch/x86/entry/syscalls/syscall_32.tbl |    1 
- arch/x86/entry/syscalls/syscall_64.tbl |    1 
- fs/namespace.c                         |  102 ++++++++++++++++++++++++++------
- include/linux/lsm_hooks.h              |    6 ++
- include/linux/security.h               |    7 ++
- include/linux/syscalls.h               |    3 +
- include/uapi/linux/mount.h             |   11 +++
- security/security.c                    |    5 ++
- 8 files changed, 118 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-index ea1b413afd47..76d092b7d1b0 100644
---- a/arch/x86/entry/syscalls/syscall_32.tbl
-+++ b/arch/x86/entry/syscalls/syscall_32.tbl
-@@ -399,3 +399,4 @@
- 385	i386	io_pgetevents		sys_io_pgetevents		__ia32_compat_sys_io_pgetevents
- 386	i386	rseq			sys_rseq			__ia32_sys_rseq
- 387	i386	open_tree		sys_open_tree			__ia32_sys_open_tree
-+388	i386	move_mount		sys_move_mount			__ia32_sys_move_mount
-diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-index 0545bed581dc..37ba4e65eee6 100644
---- a/arch/x86/entry/syscalls/syscall_64.tbl
-+++ b/arch/x86/entry/syscalls/syscall_64.tbl
-@@ -344,6 +344,7 @@
- 333	common	io_pgetevents		__x64_sys_io_pgetevents
- 334	common	rseq			__x64_sys_rseq
- 335	common	open_tree		__x64_sys_open_tree
-+336	common	move_mount		__x64_sys_move_mount
- 
- #
- # x32-specific system call numbers start at 512 to avoid cache impact
-diff --git a/fs/namespace.c b/fs/namespace.c
-index b355a555b4db..e95b2bc8fcfe 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -2446,43 +2446,37 @@ static inline int tree_contains_unbindable(struct mount *mnt)
- 	return 0;
- }
- 
--static int do_move_mount(struct path *path, const char *old_name)
-+static int do_move_mount(struct path *old_path, struct path *new_path)
- {
--	struct path old_path, parent_path;
-+	struct path parent_path = {.mnt = NULL, .dentry = NULL};
- 	struct mount *p;
- 	struct mount *old;
- 	struct mountpoint *mp;
- 	int err;
--	if (!old_name || !*old_name)
--		return -EINVAL;
--	err = kern_path(old_name, LOOKUP_FOLLOW, &old_path);
--	if (err)
--		return err;
- 
--	mp = lock_mount(path);
-+	mp = lock_mount(new_path);
- 	err = PTR_ERR(mp);
- 	if (IS_ERR(mp))
- 		goto out;
- 
--	old = real_mount(old_path.mnt);
--	p = real_mount(path->mnt);
-+	old = real_mount(old_path->mnt);
-+	p = real_mount(new_path->mnt);
- 
- 	err = -EINVAL;
- 	if (!check_mnt(p) || !check_mnt(old))
- 		goto out1;
- 
--	if (old->mnt.mnt_flags & MNT_LOCKED)
-+	if (!mnt_has_parent(old))
- 		goto out1;
- 
--	err = -EINVAL;
--	if (old_path.dentry != old_path.mnt->mnt_root)
-+	if (old->mnt.mnt_flags & MNT_LOCKED)
- 		goto out1;
- 
--	if (!mnt_has_parent(old))
-+	if (old_path->dentry != old_path->mnt->mnt_root)
- 		goto out1;
- 
--	if (d_is_dir(path->dentry) !=
--	      d_is_dir(old_path.dentry))
-+	if (d_is_dir(new_path->dentry) !=
-+	    d_is_dir(old_path->dentry))
- 		goto out1;
- 	/*
- 	 * Don't move a mount residing in a shared parent.
-@@ -2500,7 +2494,8 @@ static int do_move_mount(struct path *path, const char *old_name)
- 		if (p == old)
- 			goto out1;
- 
--	err = attach_recursive_mnt(old, real_mount(path->mnt), mp, &parent_path);
-+	err = attach_recursive_mnt(old, real_mount(new_path->mnt), mp,
-+				   &parent_path);
- 	if (err)
- 		goto out1;
- 
-@@ -2512,6 +2507,22 @@ static int do_move_mount(struct path *path, const char *old_name)
- out:
- 	if (!err)
- 		path_put(&parent_path);
-+	return err;
-+}
-+
-+static int do_move_mount_old(struct path *path, const char *old_name)
-+{
-+	struct path old_path;
-+	int err;
-+
-+	if (!old_name || !*old_name)
-+		return -EINVAL;
-+
-+	err = kern_path(old_name, LOOKUP_FOLLOW, &old_path);
-+	if (err)
-+		return err;
-+
-+	err = do_move_mount(&old_path, path);
- 	path_put(&old_path);
- 	return err;
- }
-@@ -2931,7 +2942,7 @@ long do_mount(const char *dev_name, const char __user *dir_name,
- 	else if (flags & (MS_SHARED | MS_PRIVATE | MS_SLAVE | MS_UNBINDABLE))
- 		retval = do_change_type(&path, flags);
- 	else if (flags & MS_MOVE)
--		retval = do_move_mount(&path, dev_name);
-+		retval = do_move_mount_old(&path, dev_name);
- 	else
- 		retval = do_new_mount(&path, type_page, sb_flags, mnt_flags,
- 				      dev_name, data_page);
-@@ -3166,6 +3177,61 @@ SYSCALL_DEFINE5(mount, char __user *, dev_name, char __user *, dir_name,
- 	return ksys_mount(dev_name, dir_name, type, flags, data);
- }
- 
-+/*
-+ * Move a mount from one place to another.
-+ *
-+ * Note the flags value is a combination of MOVE_MOUNT_* flags.
-+ */
-+SYSCALL_DEFINE5(move_mount,
-+		int, from_dfd, const char *, from_pathname,
-+		int, to_dfd, const char *, to_pathname,
-+		unsigned int, flags)
-+{
-+	struct path from_path, to_path;
-+	unsigned int lflags;
-+	int ret = 0;
-+
-+	if (!may_mount())
-+		return -EPERM;
-+
-+	if (flags & ~MOVE_MOUNT__MASK)
-+		return -EINVAL;
-+
-+	/* If someone gives a pathname, they aren't permitted to move
-+	 * from an fd that requires unmount as we can't get at the flag
-+	 * to clear it afterwards.
-+	 */
-+	lflags = 0;
-+	if (flags & MOVE_MOUNT_F_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
-+	if (flags & MOVE_MOUNT_F_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-+	if (flags & MOVE_MOUNT_F_EMPTY_PATH)	lflags |= LOOKUP_EMPTY;
-+
-+	ret = user_path_at(from_dfd, from_pathname, lflags, &from_path);
-+	if (ret < 0)
-+		return ret;
-+
-+	lflags = 0;
-+	if (flags & MOVE_MOUNT_T_SYMLINKS)	lflags |= LOOKUP_FOLLOW;
-+	if (flags & MOVE_MOUNT_T_AUTOMOUNTS)	lflags |= LOOKUP_AUTOMOUNT;
-+	if (flags & MOVE_MOUNT_T_EMPTY_PATH)	lflags |= LOOKUP_EMPTY;
-+
-+	ret = user_path_at(to_dfd, to_pathname, lflags, &to_path);
-+	if (ret < 0)
-+		goto out_from;
-+
-+	ret = security_move_mount(&from_path, &to_path);
-+	if (ret < 0)
-+		goto out_to;
-+
-+	ret = do_move_mount(&from_path, &to_path);
-+
-+out_to:
-+	path_put(&to_path);
-+out_from:
-+	path_put(&from_path);
-+	return ret;
-+}
-+
- /*
-  * Return true if path is reachable from root
-  *
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 8f1131c8dd54..926607defd83 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -144,6 +144,10 @@
-  *	Parse a string of security data filling in the opts structure
-  *	@options string containing all mount options known by the LSM
-  *	@opts binary data structure usable by the LSM
-+ * @move_mount:
-+ *	Check permission before a mount is moved.
-+ *	@from_path indicates the mount that is going to be moved.
-+ *	@to_path indicates the mountpoint that will be mounted upon.
-  * @dentry_init_security:
-  *	Compute a context for a dentry as the inode is not yet available
-  *	since NFSv4 has no label backed by an EA anyway.
-@@ -1475,6 +1479,7 @@ union security_list_options {
- 					unsigned long kern_flags,
- 					unsigned long *set_kern_flags);
- 	int (*sb_parse_opts_str)(char *options, struct security_mnt_opts *opts);
-+	int (*move_mount)(const struct path *from_path, const struct path *to_path);
- 	int (*dentry_init_security)(struct dentry *dentry, int mode,
- 					const struct qstr *name, void **ctx,
- 					u32 *ctxlen);
-@@ -1806,6 +1811,7 @@ struct security_hook_heads {
- 	struct hlist_head sb_set_mnt_opts;
- 	struct hlist_head sb_clone_mnt_opts;
- 	struct hlist_head sb_parse_opts_str;
-+	struct hlist_head move_mount;
- 	struct hlist_head dentry_init_security;
- 	struct hlist_head dentry_create_files_as;
- #ifdef CONFIG_SECURITY_PATH
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 63030c85ee19..15d121f156b3 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -245,6 +245,7 @@ int security_sb_clone_mnt_opts(const struct super_block *oldsb,
- 				unsigned long kern_flags,
- 				unsigned long *set_kern_flags);
- int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts);
-+int security_move_mount(const struct path *from_path, const struct path *to_path);
- int security_dentry_init_security(struct dentry *dentry, int mode,
- 					const struct qstr *name, void **ctx,
- 					u32 *ctxlen);
-@@ -598,6 +599,12 @@ static inline int security_sb_parse_opts_str(char *options, struct security_mnt_
- 	return 0;
- }
- 
-+static inline int security_move_mount(const struct path *from_path,
-+				      const struct path *to_path)
-+{
-+	return 0;
-+}
-+
- static inline int security_inode_alloc(struct inode *inode)
- {
- 	return 0;
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 3cc6b8f8bd2f..3c0855d9b105 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -901,6 +901,9 @@ asmlinkage long sys_statx(int dfd, const char __user *path, unsigned flags,
- asmlinkage long sys_rseq(struct rseq __user *rseq, uint32_t rseq_len,
- 			 int flags, uint32_t sig);
- asmlinkage long sys_open_tree(int dfd, const char __user *path, unsigned flags);
-+asmlinkage long sys_move_mount(int from_dfd, const char __user *from_path,
-+			       int to_dfd, const char __user *to_path,
-+			       unsigned int ms_flags);
- 
- /*
-  * Architecture-specific system calls
-diff --git a/include/uapi/linux/mount.h b/include/uapi/linux/mount.h
-index e8db2911adca..89adf0d731ab 100644
---- a/include/uapi/linux/mount.h
-+++ b/include/uapi/linux/mount.h
-@@ -7,4 +7,15 @@
- #define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
- #define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
- 
-+/*
-+ * move_mount() flags.
-+ */
-+#define MOVE_MOUNT_F_SYMLINKS		0x00000001 /* Follow symlinks on from path */
-+#define MOVE_MOUNT_F_AUTOMOUNTS		0x00000002 /* Follow automounts on from path */
-+#define MOVE_MOUNT_F_EMPTY_PATH		0x00000004 /* Empty from path permitted */
-+#define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
-+#define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
-+#define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
-+#define MOVE_MOUNT__MASK		0x00000077
-+
- #endif /* _UAPI_LINUX_MOUNT_H */
-diff --git a/security/security.c b/security/security.c
-index 68f46d849abe..c4cbdb7d3a5f 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -437,6 +437,11 @@ int security_sb_parse_opts_str(char *options, struct security_mnt_opts *opts)
- }
- EXPORT_SYMBOL(security_sb_parse_opts_str);
- 
-+int security_move_mount(const struct path *from_path, const struct path *to_path)
-+{
-+	return call_int_hook(move_mount, 0, from_path, to_path);
-+}
-+
- int security_inode_alloc(struct inode *inode)
- {
- 	inode->i_security = NULL;
-
+I'm not a kconfig expert, maybe someone else could chime in. I have
+this impression that folks don't like select. Is there a way to do
+this with depends instead? If I'm way off here, ignore me.
