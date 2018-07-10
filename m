@@ -2,134 +2,128 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35794C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D305C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:51:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9F9B208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:50:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9F9B208E8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 36638208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:51:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="QI/JyrX7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36638208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934388AbeGJPuo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:50:44 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:42419 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934353AbeGJPum (ORCPT
+        id S934400AbeGJPvs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:51:48 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:36395 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933381AbeGJPvq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:50:42 -0400
-Received: by mail-vk0-f66.google.com with SMTP id t4-v6so12619024vke.9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 08:50:42 -0700 (PDT)
+        Tue, 10 Jul 2018 11:51:46 -0400
+Received: by mail-wm0-f67.google.com with SMTP id s14-v6so24908662wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 08:51:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mM0WbnqZDH2CYBlyos9obkoIHoEOT9eJJXKgsGQxVsQ=;
+        b=QI/JyrX79TczWrn/mFb31fKa2BYi4r5DULIn1jINtWdm7WqkcGHefndoh0LnIgL59R
+         cKu1G1EgxK/0MlN5z+k/eb+nho7X6RcDvAigSroCK1k0keb8SXNlFHM4ygPn/Tz6yXPx
+         qLvJNImKnfRSkxKqx/W3ggdDUXmHPi3Tq4pZBHAKqIjhVLMBvvc/QSpKk/MKwguyyLdP
+         nLhC9dydea8PJvsvMWIuYAIhQmGbp8e8Z4Fqi0KXZrj3KYCAVDuIcQNzyrYPmaxueJ66
+         ys8D3Px0EEAStL8sbKyfv4PjES76Ca2vzfkGlwyNw6kn1WqFsFEGIrXE81Mdnb6c3cBd
+         9qHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bH2023NQ4pY4zXS1VBWOo9nohWx10f+d0JK4SapALNE=;
-        b=kn81hMMu/82vkTH57QyUYIEBWNPzyaHaV4W4/fGOC/1WBQRDIMDJHAOGXCMykievdu
-         IG69uXrTfy1om6mmU18m3NHfdRE5XeBMcoSMd1Q53YvYukqJi0bB8/vDpzvIaCmKpiYH
-         jaUDZGKlo5cLAChjV6v5cOXFMXoj/BZgixog1kNMR5EtINM7y4enFeIrVFLQQtzFpLeB
-         Ywzqh80wTyPo/3WRWzwpMuKh9gtNDdwrCXZx99KE7r80oA8MHHpxWAuDCLmK7bhynHu5
-         Wy2qEOst9fvB1lDrExDsQoB4wsNDjHHE2X+6DZus1VPQymKFjl+KgzouqepAdCB+ogY1
-         /Gdg==
-X-Gm-Message-State: APt69E1dFggLBLu5UB9ktaLLYC3a6tre/i9Dy2y+JJ/TvgPbJYWomQVT
-        lxV+v2PjTfxFL5CVFHbgKjvRIL/AYYG48kjbkCk=
-X-Google-Smtp-Source: AAOMgpfheX0IaKPTwyjnM1vvbs02nN3xgi5JdseuR3SiCzAcWSlWTPFrCJUeG1+xvRIYqEKXvdViwB7eQwtRINird1I=
-X-Received: by 2002:a1f:f44f:: with SMTP id s76-v6mr14258307vkh.125.1531237841920;
- Tue, 10 Jul 2018 08:50:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180710121014.31119-1-geert+renesas@glider.be>
- <e4e25250dbea658f25dcf10504f3147731b5d2e9.camel@perches.com>
- <CAMuHMdV34P+2=-Myfzdv1-+4m2_cTHQcQO80fZ5Ai+G9J6X0kA@mail.gmail.com> <9c95ae2b06524a6638f26d61d7efe4afc86f877b.camel@perches.com>
-In-Reply-To: <9c95ae2b06524a6638f26d61d7efe4afc86f877b.camel@perches.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 10 Jul 2018 17:50:30 +0200
-Message-ID: <CAMuHMdV29UV6qrN8RhSJqh+yYevsOD0UERvYqHBhh8rRn8CXsA@mail.gmail.com>
-Subject: Re: [PATCH] checkpatch: Require author Signed-off-by
-To:     Joe Perches <joe@perches.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Andy Whitcroft <apw@canonical.com>, jgg@mellanox.com,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mM0WbnqZDH2CYBlyos9obkoIHoEOT9eJJXKgsGQxVsQ=;
+        b=iNS1iuj/yny2uRSql5ytStS5GEhngEJsb0wnjIuCBA/pdZxHyttYfkttLGl4haX9Al
+         L/w0Boc2bIqqgh0g1mt6ZKStZZUsoRH2nC3pe71VS5v6lTFy8SvbqKdslk3F8+z/zrj2
+         YTbN94AKLlRvuF6zM9a5wtUV6W9ZNq9+CVL9ecTxjTh0vzIZFpvG77PlJODEoTQj4fEG
+         atQrCirEiGKb7lV+d+e9Xod7iiLoMllCGfk1AtIun1gG7+3/tKrgd/ObrWIr7aTHYSqo
+         je728rojUsyo+gGSL8jUZB66YagC+ttF63RK60+PGxYXltT0oC1JG88+XMuPXafKQ62E
+         WLoQ==
+X-Gm-Message-State: APt69E1WNno4mVTek8t3Hn44SyjSnhSKAPGCfdtfrag+aZPixpvMPpUT
+        A6qXFiC787t/XCFPWW4pdBuAow==
+X-Google-Smtp-Source: AAOMgpdeteEws0/LSuag8SJgNlDDSa01IQYuU58P3nJatejKxXrVotbXGBjkZZYvvzEan121Lpai7g==
+X-Received: by 2002:a1c:894f:: with SMTP id l76-v6mr14777530wmd.103.1531237905249;
+        Tue, 10 Jul 2018 08:51:45 -0700 (PDT)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id e2-v6sm12449513wrr.8.2018.07.10.08.51.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 08:51:44 -0700 (PDT)
+Message-ID: <1531237902.2708.76.camel@baylibre.com>
+Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Yixun Lan <yixun.lan@amlogic.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        jian.hu@amlogic.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        qianggui.song@amlogic.com, sboyd@kernel.org, khilman@baylibre.com,
+        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
+        bo.yang@amlogic.com, qiufang.dai@amlogic.com,
+        linux-arm-kernel@lists.infradead.org, carlo@caione.org,
+        linux-amlogic@lists.infradead.org, sunny.luo@amlogic.com,
+        linux-clk@vger.kernel.org, xingyu.chen@amlogic.com,
+        Rob Herring <robh@kernel.org>
+Date:   Tue, 10 Jul 2018 17:51:42 +0200
+In-Reply-To: <cb832db4-ad2c-09c1-86ae-e7f9c05cd872@amlogic.com>
+References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
+         <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
+         <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
+         <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
+         <1531216472.2708.71.camel@baylibre.com>
+         <cb832db4-ad2c-09c1-86ae-e7f9c05cd872@amlogic.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe,
+On Tue, 2018-07-10 at 20:59 +0800, Yixun Lan wrote:
+> > > > > +static const struct of_device_id clkc_match_table[] = {
+> > > > > +       { .compatible = "amlogic,g12a-clkc" },
+> > > > 
+> > > > I wonder if that should be "amlogic,meson-g12a-clkc" (I know that AXG
+> > > > and GXBB/GXL/GXM omit the "meson-" prefix, but I am not sure if that's
+> > > > correct - I'll CC Rob Herring on the dt-bindings patch)
+> > > > 
+> > > 
+> > > we're fine with either way, since the g12a is recently new added SoC.
+> > > 
+> > > but I guess those old compatibles which already exist won't be changed,
+> > > as it will break the DT
+> > 
+> > Yes, I doubt we are going to change the compatibles. With or without the meson
+> > prefix, I suppose it going to stay that way.
+> > 
+> > It is worth thinking about it for new drivers though.
+> > We already have the "amlogic,", so do we really to prefix even more with "meson-
+> > "
+> > 
+> > Also, if we were really strict about that scheme, should meson8b compatible be
+> > 
+> > "amlogic,meson-meson8b-foo-bar" ... the SoC is meson8b, not just 8b after all ?
+> > 
+> > For the particular case of the clock controller, I don't care very much, as long
+> > as the compatible is coherent with documentation.
+> > 
+> > I might have a preference for the current compatible ... just for consistency
+> > with the other clock controllers.
+> > 
+> 
+> do you imply that we should just stick to 'amlogic,g12a-clkc'?
+> 
+> it sound good to me, at least it's shorter than 'amlogic,meson-g12a-clkc'..
 
-On Tue, Jul 10, 2018 at 5:28 PM Joe Perches <joe@perches.com> wrote:
-> On Tue, 2018-07-10 at 17:07 +0200, Geert Uytterhoeven wrote:
-> > On Tue, Jul 10, 2018 at 4:34 PM Joe Perches <joe@perches.com> wrote:
-> > > On Tue, 2018-07-10 at 14:10 +0200, Geert Uytterhoeven wrote:
-> > > > Print an error if none of the Signed-off-by lines cover the patch
-> > > > author.
-> > >
-> > > []
-> > > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> > >
-> > > []
-> > > > @@ -13,6 +13,7 @@ use POSIX;
-> > > >  use File::Basename;
-> > > >  use Cwd 'abs_path';
-> > > >  use Term::ANSIColor qw(:constants);
-> > > > +use MIME::Words 'decode_mimewords';
-> > >
-> > > Is this a typically installed perl module?
-> > > If so, what perl version installed it by default?
-> >
-> > I don't know. At least my Ubuntu 16.04LTS and 18.04LTS systems had it
-> > installed.
-> > It does not seem to be part of the core modules, cfr.
-> > https://perldoc.perl.org/index-modules-M.html
-> >
-> > I've tried using MIME::QuotedPrint instead, but then we need to parse
-> > =?UTF-8?q? ourselves, as decode_qp() only transforms the actual
-> > quoted printable bits in side the encoded From: address.
->
-> I'd looked too and couldn't find it from 5.10 forward,
-> so I'd prefer not requiring that module.
-
-"that module" = MIME::Words?
-So I can use MIME::QuotedPrint?
-
-> Also, the From: line is also an email header and I don't
-> believe it should be used author information in the
-> same way as a patch From: line.
->
-> So likely the
->
-> +# Check the patch for a From:
-> +               if ($line =~ /^\s*From: (.*)/i) {
->
-> should be "if ($in_commit_log && $line =~ /^\s*From: (.*)/) {
-
-That doesn't work. The "From:" line in the email body is only added by
-git-send-email when it detects the "From:" line in the patch differs from
-user.email in git-config.
-It is not present in patches generated by git-format-patch.
-
-So to work for both the sending ("From:" in email header only) and
-receiving ("From:" in email header, to be overridden by "From:" in email
-body) side, the $in_commit_log check must not be present.
-
-> with some regex or function to remove the MIME encoded word.
-
-I guess I can do that.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I did not imply anything.
+Martin raised a valid point. I'm merely giving my opinion on the matter and I'm
+interested to get others view on this.
