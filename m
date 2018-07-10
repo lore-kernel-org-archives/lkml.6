@@ -2,132 +2,135 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF6FC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 619E5C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B672089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:11:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B672089D
+	by mail.kernel.org (Postfix) with ESMTP id 0AE3920846
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:14:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE3920846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933169AbeGJILW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:11:22 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52806 "EHLO mail.bootlin.com"
+        id S1754497AbeGJIOk (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:14:40 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55281 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751250AbeGJICF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:02:05 -0400
+        id S1751217AbeGJIOi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:14:38 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E72D32099E; Tue, 10 Jul 2018 10:02:03 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 28C772090B;
-        Tue, 10 Jul 2018 10:01:53 +0200 (CEST)
+        id 48C522079F; Tue, 10 Jul 2018 10:14:37 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 327842093C;
+        Tue, 10 Jul 2018 10:13:50 +0200 (CEST)
+Message-ID: <5adf8a6aa70fd6f7f4326ccb068b66d6221d8d8b.camel@bootlin.com>
+Subject: Re: [PATCH v5 02/22] fixup! v4l2-ctrls: add
+ v4l2_ctrl_request_hdl_find/put/ctrl_find functions
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
+        Chen-Yu Tsai <wens@csie.org>, marco.franchi@nxp.com,
+        icenowy@aosc.io, Hans Verkuil <hverkuil@xs4all.nl>,
+        keiichiw@chromium.org, Jonathan Corbet <corbet@lwn.net>,
+        smitha.t@samsung.com, tom.saeger@oracle.com,
         Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Randy Dunlap <rdunlap@infradead.org>,
         Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+        jacob-chen@iotwrt.com, Neil Armstrong <narmstrong@baylibre.com>,
         Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
+        Todor Tomov <todor.tomov@linaro.org>, acourbot@chromium.org,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
+        posciak@chromium.org,
         Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        =?UTF-8?q?Niklas=20S=C3=B6derlund?= 
+        Hans de Goede <hdegoede@redhat.com>, samitolvanen@google.com,
+        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
         <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi@googlegroups.com,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Subject: [PATCH v5 05/22] dt-bindings: sram: sunxi: Populate valid sections compatibles
-Date:   Tue, 10 Jul 2018 10:00:57 +0200
-Message-Id: <20180710080114.31469-6-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+        hugues.fruchet@st.com, ayaka@soulik.info
+Date:   Tue, 10 Jul 2018 10:13:48 +0200
+In-Reply-To: <CAMuHMdVgJuK5G0+szV0BAWDBybxWV0iDWE5kZKuTdgNiGjpnEg@mail.gmail.com>
 References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+         <20180710080114.31469-3-paul.kocialkowski@bootlin.com>
+         <CAMuHMdVgJuK5G0+szV0BAWDBybxWV0iDWE5kZKuTdgNiGjpnEg@mail.gmail.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-heIn3Rp8HIJ7p2FH40+U"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a list of valid SRAM sections compatibles for the A13, A20,
-A23 and H3 platforms. Per-platform compatibles are introduced for the
-SRAM sections of these platforms, with the A10 compatibles also listed
-as valid when applicable.
 
-In particular, compatibles for the C1 SRAM section are introduced.
+--=-heIn3Rp8HIJ7p2FH40+U
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
----
- .../devicetree/bindings/sram/sunxi-sram.txt   | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-index 156a02ab6b54..07c53c5214a0 100644
---- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-+++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-@@ -32,8 +32,33 @@ once again the representation described in the mmio-sram binding.
- 
- The valid sections compatible for A10 are:
-     - allwinner,sun4i-a10-sram-a3-a4
-+    - allwinner,sun4i-a10-sram-c1
-     - allwinner,sun4i-a10-sram-d
- 
-+The valid sections compatible for A13 are:
-+    - allwinner,sun5i-a13-sram-a3-a4
-+    - allwinner,sun4i-a10-sram-a3-a4
-+    - allwinner,sun5i-a13-sram-c1
-+    - allwinner,sun4i-a10-sram-c1
-+    - allwinner,sun5i-a13-sram-d
-+    - allwinner,sun4i-a10-sram-d
-+
-+The valid sections compatible for A20 are:
-+    - allwinner,sun7i-a20-sram-a3-a4
-+    - allwinner,sun4i-a10-sram-a3-a4
-+    - allwinner,sun7i-a20-sram-c1
-+    - allwinner,sun4i-a10-sram-c1
-+    - allwinner,sun7i-a20-sram-d
-+    - allwinner,sun4i-a10-sram-d
-+
-+The valid sections compatible for A23/A33 are:
-+    - allwinner,sun8i-a23-sram-c1
-+    - allwinner,sun4i-a10-sram-c1
-+
-+The valid sections compatible for H3 are:
-+    - allwinner,sun8i-h3-sram-c1
-+    - allwinner,sun4i-a10-sram-c1
-+
- The valid sections compatible for A64 are:
-     - allwinner,sun50i-a64-sram-c
- 
--- 
-2.17.1
+On Tue, 2018-07-10 at 10:07 +0200, Geert Uytterhoeven wrote:
+> On Tue, Jul 10, 2018 at 10:02 AM Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+> > [PATCH v5 02/22] fixup! v4l2-ctrls: add v4l2_ctrl_request_hdl_find/put/=
+ctrl_find functions
+>=20
+> git rebase -i ;-)
+
+Although I should have mentionned it (and did not), this is totally
+intentional! The first patch (from Hans Verkuil) requires said fixup to
+work properly. I didn't want to squash that change into the commit to
+make the diff obvious.
+
+Ultimately, this framework patch is not really part of the series but is
+one of its underlying requirements, that should be merged separately (as
+part of the requests API series).
+
+I hope this clears up some of the confusion about this patch :)
+
+Cheers!
+
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-heIn3Rp8HIJ7p2FH40+U
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltEarwACgkQ3cLmz3+f
+v9Hcdwf/WEcgOv58WAWhU0lKQfgOeFzn5VbaqXdfP66RGjvHcGjuCOmEv/JmKmrt
+EdheaInYZ0X3dyrzJl+Ho103yY296+wU4QOJk2bsvccAWINk0Kz5FNwNqb9BA2pr
+G9nr00lRxIzeC7R3Ok7MpRaP6AEO55nI8ivj2hEOlUgPA6io58xVWIY7xgJYQn0c
+mmHC00PMFyij8hu2hFnPYy/0a442xAXcqO4rRN31nkAwI5hF4s66O0Wjjq0FH7lz
+RBf9QXRZUACz1z7xX2zD9rD+oiIsvEOtck9XOpHj6p5vFg8EaTLHs9Ilvpy3yvwt
+WCa/vfNFMw6bxQ2ISHvHKpnlpHpj7A==
+=Sx0a
+-----END PGP SIGNATURE-----
+
+--=-heIn3Rp8HIJ7p2FH40+U--
 
