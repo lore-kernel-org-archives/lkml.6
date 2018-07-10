@@ -2,149 +2,111 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CB7C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:10:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10835C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E22F20877
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:10:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dsw3A1qV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E22F20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id B36A620877
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:16:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B36A620877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932172AbeGJJKp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 05:10:45 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46298 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751242AbeGJJKn (ORCPT
+        id S932659AbeGJJQD convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 05:16:03 -0400
+Received: from smtp-out4.electric.net ([192.162.216.195]:59096 "EHLO
+        smtp-out4.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751213AbeGJJQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 05:10:43 -0400
-Received: by mail-lj1-f196.google.com with SMTP id 203-v6so5134173ljj.13;
-        Tue, 10 Jul 2018 02:10:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=1J8GtKyRPKpFyeKkRRHVAMbIUHykXlh1jfvtumb++7M=;
-        b=Dsw3A1qVl18iNBuxGvYN3H+dSbiBMR8+oGw6hi6T1X0KaaboikaiGtwKJh0reQ0U0x
-         k7F4MijqBRf32dSAFD//UO3RsADe6jRh+GP4XIwwN5zDfDwVgHBgJ/RBA+llLqdctng5
-         9cVGsnaapJwwGd/AjGR6Lvh1KY9aqgXHpU2RJ9lMJ4wyN/885mShRSNyhbBnxvZBQ5qA
-         RlBld8ZHU2RDuTcf+66N2nGh3ziwvskWvDodI8hiEQr5K/97YLqUG6lJxozjUzlRU7wZ
-         NtiVI4SLIje6/wElGPmOmCA60r65SuA/zXk0zeHI5j+7N1BmW8isuD/oYkc9aALWXkEB
-         nGWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=1J8GtKyRPKpFyeKkRRHVAMbIUHykXlh1jfvtumb++7M=;
-        b=r5HpLlMAwhZt23pgr7RTzy62IN828gCgqYPb+OAQVU6eNkzcOactbGgm35swMXaNKt
-         8/V+LhLvTRGm0kMK9k3Lr4huBAYnRo81jWDUw7hPmAXEDrKIZ2KhpHLkbHCDTmM8/tH+
-         VCS6i93PDKqWC/zmUrtpBoRMlX2NfXpIbDPie9D8ru92yz+kWtjQRe2SBXSoHtYspeMe
-         4UtMg17KNWdYZ8Dt9iwTPwLbrSxWf2QY+SSxJ+EONx8em3WHJ9F6Mu4HLeLDDRcx6fMd
-         OUNmLDknbBT3f45eXCRnnz23tU/qW0mntUogmwWThZSVuFRtRxU0ylk9W8/ROfDGiI8q
-         4P2g==
-X-Gm-Message-State: APt69E02KJ+dJCHVRySFIjXP3qIFA9zH3k+84spPniHCKCO2P4ria8RH
-        Btw907RMJ729+1Wtzn9vExrBfMhk0U75iOBa9wA=
-X-Google-Smtp-Source: AAOMgpcIz1pYRqzCYTBSVr8flxoYpNOf90+W4PbBO/RyxhhjPE3cj5YBNN+Zy2pJdv8ZdC5kQi5Oe/RHlM53W3cYfpk=
-X-Received: by 2002:a2e:1bcc:: with SMTP id c73-v6mr14442684ljf.0.1531213841176;
- Tue, 10 Jul 2018 02:10:41 -0700 (PDT)
+        Tue, 10 Jul 2018 05:16:01 -0400
+Received: from 1fcokO-0008Db-UM by out4c.electric.net with emc1-ok (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1fcokY-0000mU-TF; Tue, 10 Jul 2018 02:15:58 -0700
+Received: by emcmailer; Tue, 10 Jul 2018 02:15:58 -0700
+Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
+        by out4c.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <David.Laight@ACULAB.COM>)
+        id 1fcokO-0008Db-UM; Tue, 10 Jul 2018 02:15:48 -0700
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Tue, 10 Jul 2018 10:17:27 +0100
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Tue, 10 Jul 2018 10:17:27 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Jon Maxwell' <jmaxwell37@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>
+CC:     "edumazet@google.com" <edumazet@google.com>,
+        "eric.dumazet@gmail.com" <eric.dumazet@gmail.com>,
+        "ncardwell@google.com" <ncardwell@google.com>,
+        "kuznet@ms2.inr.ac.ru" <kuznet@ms2.inr.ac.ru>,
+        "yoshfuji@linux-ipv6.org" <yoshfuji@linux-ipv6.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jmaxwell@redhat.com" <jmaxwell@redhat.com>
+Subject: RE: [net-next,v3] tcp: Improve setsockopt() TCP_USER_TIMEOUT accuracy
+Thread-Topic: [net-next,v3] tcp: Improve setsockopt() TCP_USER_TIMEOUT
+ accuracy
+Thread-Index: AQHUGBrUFQL61i2aaU+ln/VrOCot4aSIK9yQ
+Date:   Tue, 10 Jul 2018 09:17:27 +0000
+Message-ID: <5f34e43135ed4948bbc32849289aeb20@AcuMS.aculab.com>
+References: <20180710065147.27647-1-jmaxwell37@gmail.com>
+In-Reply-To: <20180710065147.27647-1-jmaxwell37@gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.33]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 02:10:40
- -0700 (PDT)
-In-Reply-To: <20180710080538.d7xqpjdvpksfrx6o@sch.bme.hu>
-References: <20180709213537.2748896-1-arnd@arndb.de> <20180710080227.qwh53ahq26j6phhd@sch.bme.hu>
- <20180710080538.d7xqpjdvpksfrx6o@sch.bme.hu>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 10 Jul 2018 11:10:40 +0200
-X-Google-Sender-Auth: n8ONqyvIbAT9EE9YKSwKApTir7Y
-Message-ID: <CAK8P3a0zYmdoMdWdFDcWprZY_4w2hbMYq4--iZB=JE4x2UiscA@mail.gmail.com>
-Subject: Re: [PATCH] netfilter: NFT_SOCKET don't use NF_SOCKET_IPV6 without NF_TABLES_IPV6
-To:     =?UTF-8?B?TcOhdMOpIEVja2w=?= <ecklm94@gmail.com>
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Flavio Leitner <fbl@redhat.com>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        Networking <netdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Outbound-IP: 156.67.243.126
+X-Env-From: David.Laight@ACULAB.COM
+X-Proto: esmtps
+X-Revdns: 
+X-HELO: AcuMS.aculab.com
+X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
+X-Authenticated_ID: 
+X-PolicySMART: 3396946, 3397078
+X-Virus-Status: Scanned by VirusSMART (c)
+X-Virus-Status: Scanned by VirusSMART (s)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 10:05 AM, M=C3=A1t=C3=A9 Eckl <ecklm94@gmail.com> w=
-rote:
-> On Tue, Jul 10, 2018 at 10:02:27AM +0200, M=C3=A1t=C3=A9 Eckl wrote:
->> On Mon, Jul 09, 2018 at 11:35:09PM +0200, Arnd Bergmann wrote:
->> > It is now possible to build the nft_socket module as built-in when
->> > NF_TABLES_IPV6 is disabled, and have NF_SOCKET_IPV6=3Dm set manually.
->> >
->> > In this case, the NF_SOCKET_IPV6 functionality will be useless accordi=
-ng
->> > to the explanation in commit 35bf1ccecaaa ("netfilter: Kconfig: Change
->> > IPv6 select dependencies"), but on top of that it also causes a link
->> > error:
->> >
->> > net/netfilter/nft_socket.o: In function `nft_socket_eval':
->> > nft_socket.c:(.text+0x162): undefined reference to `nf_sk_lookup_slow_=
-v6'
->> >
->> > This changes the compile-time check so we don't attempt to use
->> > the NF_SOCKET_IPV6 code when it cannot be used, and make it all
->> > compile again. That may lead to unexpected behavior when a user
->> > enables NF_SOCKET_IPV6 but cannot use it, but seems to be the
->> > logical conclusion of the 35bf1ccecaaa change.
->> >
->> > Fixes: 35bf1ccecaaa ("netfilter: Kconfig: Change IPv6 select dependenc=
-ies")
->> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->>
->> I think this should be fixed in the Kconfig rather than inside the modul=
-e(s).
+From: Jon Maxwell
+> Sent: 10 July 2018 07:52
+...
+> +static __u32 tcp_clamp_rto_to_user_timeout(struct sock *sk)
+> +{
+> +	struct inet_connection_sock *icsk = inet_csk(sk);
+> +	__u32 elapsed, user_timeout;
+> +	u32 start_ts;
+> +
+> +	start_ts = tcp_retransmit_stamp(sk);
+> +	if (!icsk->icsk_user_timeout || !start_ts)
+> +		return icsk->icsk_rto;
+> +	elapsed = tcp_time_stamp(tcp_sk(sk)) - start_ts;
+> +	user_timeout = jiffies_to_msecs(icsk->icsk_user_timeout);
+> +	if (elapsed >= user_timeout)
+> +		return 1; /* user timeout has passed; fire ASAP */
+> +	else
+> +		return (icsk->icsk_rto < msecs_to_jiffies(user_timeout - elapsed)) ?
+> +			icsk->icsk_rto : msecs_to_jiffies(user_timeout - elapsed);
 
-Should we revert your patch then, or do you have a better idea?
+You've not looked at what the above actually does - something like:
+msecs_to_jiffies() probably rounds up, the old code rounded down
+so dividing by HZ is probably right.
 
->> I did some investigation and it turns out that you missed a circumstance=
-. This
->> link error occures only if NFT_SOCKET=3Dy && NF_SOCKET_IPV6=3Dm && NF_TA=
-BLES_IPV6=3Dy
->> (cannot be m here if NFT_SOCKET is y).
+	int new_tmo = icsk->icsk_user_timeout - (tcp_time_stamp(tcp_sk(sk)) - start_ts)/HZ;
 
-No, if NF_TABLES_IPV6=3Dy the problem cannot happen, since NFT_SOCKET then
-selects NF_SOCKET_IPV6=3Dy as well. Before your patch, it would always sele=
-ct
-NF_SOCKET_IPV6 when it could, so it worked in all configurations.
-
->>  And probably the same with
->> iptables-related modules. Probably this possibility should be eliminated=
-.
->
-> NF_TPROXY_IPV6 might be in the same situation.
-
-I tried coming up with a combination that is broken for NF_TPROXY_IPV6=3Dm
-but could not. From what I can see with
-
-config NETFILTER_XT_TARGET_TPROXY
-       tristate '"TPROXY" target transparent proxying support'
-       depends on IP6_NF_IPTABLES || IP6_NF_IPTABLES=3Dn
-       select NF_TPROXY_IPV6 if IP6_NF_IPTABLES
-
-and
-
-#if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
-
-inside of net/netfilter/xt_TPROXY.c, there is no way we can end up with
-xt_TPROXY calling into the nf_tproxy_ipv6 loadable module from
-a built-in context. This is the same approach I used in my patch,
-just with IP6_NF_IPTABLES instead of NF_SOCKET_IPV6, in both
-the Kconfig dependency and the module.
-
-      Arnd
+	if (new_tmo > (int) icsk->icsk_rto;
+		return icsk->icsk_rto;
+	return new_tmo <= 0 ? 1 : new_tmo;
+}
