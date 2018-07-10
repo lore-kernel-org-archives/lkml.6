@@ -2,149 +2,249 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF5FCC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2701C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A1CE208FA
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:39:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XOMC4pvj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A1CE208FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 7C7A4208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:40:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C7A4208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934601AbeGJQjN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:39:13 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:42919 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933593AbeGJQjK (ORCPT
+        id S934624AbeGJQkC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:40:02 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45648 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933609AbeGJQj7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:39:10 -0400
-Received: by mail-pf0-f194.google.com with SMTP id l9-v6so4836224pff.9
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 09:39:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lyrOhDGkSPjRymf5ynKh3WaWJ8tf4tUoSUk0CLQT0fk=;
-        b=XOMC4pvjlNQhbNKfzedNXC7CI3YX5dBjFRfM+Nps8CcX2/ueGUJWPwW+34/J9iHXV0
-         LQCel+sNYq3XZRjZ5goMfoFX+W+lmhmf8eyKkxJZBep9TmKt2q0RY8C6Zlg4yv6SACXr
-         DNSK5qBL6NxDOEe8ZKRWBDzzr53SNnghWO/Z8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lyrOhDGkSPjRymf5ynKh3WaWJ8tf4tUoSUk0CLQT0fk=;
-        b=kbIYb9G0Y5F8CL2X1nvOX6utW3gH/IUpmltNcXQmFTpRQpQ1BZ08P6nDtjTR78eMwA
-         JoBW3h7B8cLXoqMjp3PMj96esYnBfI0kxHMlefVNex6sSE0vp5mmRc8M8x2+qUdyc38s
-         O3CR8bwJ8fYwd85c2VsM+mRai2tvX4qoi/U/FD5x8kGSOsXUc27urd+hFH+BCX6WPWUR
-         tj8i3Y0fSg9kHRrstFdNPNAfs2pw3emlAzWpqddYjOT6nnEj66JTFgCniLpPjaxzzvsM
-         h/DMBh6H4UcSxrBiMY8e+fribAbVSCUZdToWtNmZETf5z09zGuLeIYJRjpORw1mR9Fql
-         QYnQ==
-X-Gm-Message-State: APt69E2D+CaQOxHmmIWWMVfNUM0j/YmrWLnT4TmFje+cKySEStVNTSez
-        vSQDjE/mEHlVG54tFvLhgha1Hg==
-X-Google-Smtp-Source: AAOMgpeCyO8Ct5OMiU9fiZKdHexotIC6cIzOEVLkBEpVMl556zewlLmfmnZxdr79l3QbuixRXPuIXw==
-X-Received: by 2002:a63:5d09:: with SMTP id r9-v6mr23162731pgb.303.1531240750254;
-        Tue, 10 Jul 2018 09:39:10 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id 22-v6sm38350890pfl.126.2018.07.10.09.39.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Jul 2018 09:39:09 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 09:39:09 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-bluetooth@vger.kernel.org, thierry.escande@linaro.org,
-        rtatiya@codeaurora.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v9 7/7] Bluetooth: hci_qca: Add support for Qualcomm
- Bluetooth chip wcn3990
-Message-ID: <20180710163909.GQ129942@google.com>
-References: <20180705165515.13340-1-bgodavar@codeaurora.org>
- <20180705165515.13340-8-bgodavar@codeaurora.org>
- <20180706222110.GK129942@google.com>
- <a5d87ad5d916df5b5ca7c0c69a786e4a@codeaurora.org>
+        Tue, 10 Jul 2018 12:39:59 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6AGdeX4054818
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 12:39:58 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k4xut8a4b-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 12:39:58 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 10 Jul 2018 12:39:57 -0400
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 10 Jul 2018 12:39:55 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6AGdshR9175528
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 10 Jul 2018 16:39:54 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D5548B2066;
+        Tue, 10 Jul 2018 12:39:27 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A3711B206A;
+        Tue, 10 Jul 2018 12:39:27 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 10 Jul 2018 12:39:27 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id EC6DE16C1972; Tue, 10 Jul 2018 09:42:12 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 09:42:12 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Alexei Starovoitov <ast@fb.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>, fengc@google.com
+Subject: Re: [RFC] Add BPF_SYNCHRONIZE bpf(2) command
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180707015616.25988-1-dancol@google.com>
+ <20180707025426.ssxipi7hsehoiuyo@ast-mbp.dhcp.thefacebook.com>
+ <20180707203340.GA74719@joelaf.mtv.corp.google.com>
+ <951478560.1636.1531083278064.JavaMail.zimbra@efficios.com>
+ <20180710051347.GA180724@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a5d87ad5d916df5b5ca7c0c69a786e4a@codeaurora.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180710051347.GA180724@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071016-0064-0000-0000-0000032832E5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009345; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01059378; UDB=6.00543695; IPR=6.00837299;
+ MB=3.00022089; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-10 16:39:57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071016-0065-0000-0000-000039E41AC2
+Message-Id: <20180710164212.GY3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-10_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807100177
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bala,
-
-On Tue, Jul 10, 2018 at 06:22:02PM +0530, Balakrishna Godavarthi wrote:
-> Hi Matthias,
+On Mon, Jul 09, 2018 at 10:13:47PM -0700, Joel Fernandes wrote:
+> On Sun, Jul 08, 2018 at 04:54:38PM -0400, Mathieu Desnoyers wrote:
+> > ----- On Jul 7, 2018, at 4:33 PM, Joel Fernandes joelaf@google.com wrote:
+> > 
+> > > On Fri, Jul 06, 2018 at 07:54:28PM -0700, Alexei Starovoitov wrote:
+> > >> On Fri, Jul 06, 2018 at 06:56:16PM -0700, Daniel Colascione wrote:
+> > >> > BPF_SYNCHRONIZE waits for any BPF programs active at the time of
+> > >> > BPF_SYNCHRONIZE to complete, allowing userspace to ensure atomicity of
+> > >> > RCU data structure operations with respect to active programs. For
+> > >> > example, userspace can update a map->map entry to point to a new map,
+> > >> > use BPF_SYNCHRONIZE to wait for any BPF programs using the old map to
+> > >> > complete, and then drain the old map without fear that BPF programs
+> > >> > may still be updating it.
+> > >> > 
+> > >> > Signed-off-by: Daniel Colascione <dancol@google.com>
+> > >> > ---
+> > >> >  include/uapi/linux/bpf.h |  1 +
+> > >> >  kernel/bpf/syscall.c     | 14 ++++++++++++++
+> > >> >  2 files changed, 15 insertions(+)
+> > >> > 
+> > >> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > >> > index b7db3261c62d..4365c50e8055 100644
+> > >> > --- a/include/uapi/linux/bpf.h
+> > >> > +++ b/include/uapi/linux/bpf.h
+> > >> > @@ -98,6 +98,7 @@ enum bpf_cmd {
+> > >> >  	BPF_BTF_LOAD,
+> > >> >  	BPF_BTF_GET_FD_BY_ID,
+> > >> >  	BPF_TASK_FD_QUERY,
+> > >> > +	BPF_SYNCHRONIZE,
+> > >> >  };
+> > >> >  
+> > >> >  enum bpf_map_type {
+> > >> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> > >> > index d10ecd78105f..60ec7811846e 100644
+> > >> > --- a/kernel/bpf/syscall.c
+> > >> > +++ b/kernel/bpf/syscall.c
+> > >> > @@ -2272,6 +2272,20 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *,
+> > >> > uattr, unsigned int, siz
+> > >> >  	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+> > >> >  		return -EPERM;
+> > >> >  
+> > >> > +	if (cmd == BPF_SYNCHRONIZE) {
+> > >> > +		if (uattr != NULL || size != 0)
+> > >> > +			return -EINVAL;
+> > >> > +		err = security_bpf(cmd, NULL, 0);
+> > >> > +		if (err < 0)
+> > >> > +			return err;
+> > >> > +		/* BPF programs are run with preempt disabled, so
+> > >> > +		 * synchronize_sched is sufficient even with
+> > >> > +		 * RCU_PREEMPT.
+> > >> > +		 */
+> > >> > +		synchronize_sched();
+> > >> > +		return 0;
+> > >> 
+> > >> I don't think it's necessary. sys_membarrier() can do this already
+> > >> and some folks use it exactly for this use case.
+> > > 
+> > > Alexei, the use of sys_membarrier for this purpose seems kind of weird to me
+> > > though. No where does the manpage say membarrier should be implemented this
+> > > way so what happens if the implementation changes?
+> > > 
+> > > Further, membarrier manpage says that a memory barrier should be matched with
+> > > a matching barrier. In this use case there is no matching barrier, so it
+> > > makes it weirder.
+> > > 
+> > > Lastly, sys_membarrier seems will not work on nohz-full systems, so its a bit
+> > > fragile to depend on it for this?
+> > > 
+> > >        case MEMBARRIER_CMD_GLOBAL:
+> > >                /* MEMBARRIER_CMD_GLOBAL is not compatible with nohz_full. */
+> > >                if (tick_nohz_full_enabled())
+> > >                        return -EINVAL;
+> > >                if (num_online_cpus() > 1)
+> > >                        synchronize_sched();
+> > >                return 0;
+> > > 
+> > > 
+> > > Adding Mathieu as well who I believe is author/maintainer of membarrier.
+> > 
+> > See commit 907565337
+> > "Fix: Disable sys_membarrier when nohz_full is enabled"
+> > 
+> > "Userspace applications should be allowed to expect the membarrier system
+> > call with MEMBARRIER_CMD_SHARED command to issue memory barriers on
+> > nohz_full CPUs, but synchronize_sched() does not take those into
+> > account."
+> > 
+> > So AFAIU you'd want to re-use membarrier to issue synchronize_sched, and you
+> > only care about kernel preempt off critical sections.
 > 
-> On 2018-07-07 03:51, Matthias Kaehlcke wrote:
-> > On Thu, Jul 05, 2018 at 10:25:15PM +0530, Balakrishna Godavarthi wrote:
-> > > +	 * sending vendor power on and off pulse to SoC.
-> > > +	 */
-> > 
-> > The function is called qca_send_vendor_cmd(), the comment about power
-> > on/off pulses seems misplaced here. Are there other 'vendor commands'
-> > that require a different flow control behavior?
-> > 
-> > Perhaps the function should have a different name or we need another
-> > wrapper.
-> > 
+> Mathieu, Thanks a lot for your reply. I understand what you said and agree
+> with you. Slight OT, but I tried to go back to first principles and
+> understand how membarrier() uses synchronize_sched() for the "slow path" and
+> it didn't make immediate sense to me. Let me clarify my dillema..
 > 
-> [Bala]: this function is used to send single byte vendor commands. like
-> power on and off pulse.
->         and all single byte vendor commands require an flow control off and
-> on.
->         so might be function name change is required.
->         instead of qca_send_vendor_cmd(). i want to change function name to
-> qca_send_pulse() as this will be generic.
-
-'pulse' covers power on/off pulses, is it also applicable to other
-single byte commands? How are these commands named in the QCA
-documentation?
-
-In any case the comment about 'vendor power on and off pulse' should
-be updated to refer to 'vendor commands'/'pulses' or whatever
-terminology we decide to use.
-
-> > > +	hci_uart_set_flow_control(hu, true);
-> > 
-> > Should the changing of the flow control be limited to wcn3990? As of
-> > now the function is only called for wcn3990, however this is not
-> > stated as a requirement and might change in the future.
-> > 
-> > > +	skb_put_u8(skb, cmd);
-> > > +	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
-> > > +
-> > > +	skb_queue_tail(&qca->txq, skb);
-> > > +	hci_uart_tx_wakeup(hu);
-> > > +
-> > > +	/* Wait for 100 uS for SoC to settle down */
-> > > +	usleep_range(100, 200);
-> > 
-> > Is this needed for any 'vendor command' or directly related with the
-> > power on/off pulses?
-> > 
+> My understanding is membarrier's MEMBARRIER_CMD_GLOBAL will employ
+> synchronize_sched to make sure all other CPUs aren't executing anymore in an
+> section of usercode that happen to be accessing memory that was written to
+> before the membarrier call was made. To do this, the system call will use
+> synchronize_sched to try to guarantee that all user-mode execution that
+> started before the membarrier call would be completed when the membarrier
+> call returns. This guarantees that without using a real memory barrier on the
+> "fast path", things work just fine and everyone wins.
 > 
-> [Bala] : flow control  off/on is needed for power on and off pulses along
-> with
->          command to set baudrate.. this is common across all the present
-> chips and chips which are in development stages.
->          might be function name is confusing will update the function name.
+> But, going through RCU code, I see that a "RCU-sched quiecent state" on a CPU
+> may be reached when the CPU receives a timer tick while executing in user
+> mode:
+> 
+> void rcu_check_callbacks(int user)
+> {
+> 	trace_rcu_utilization(TPS("Start scheduler-tick"));
+> 	increment_cpu_stall_ticks();
+> 	if (user || rcu_is_cpu_rrupt_from_idle()) {
+> [...]
+> 		rcu_sched_qs();
+> 		rcu_bh_qs();
+> 
+> The problem I see is the CPU could be executing usermode code at the time of
+> the RCU sched-QS. This IMO is enough reason for synchronize_sched() to
+> return, because the CPU in question just reported a QS (assuming all other
+> CPUs also happen to do so if they needed to).
 
-The current name *might* be ok, depending on if we come up with
-something better. If the QCA docs refer to them as 'vendor commands'
-and there are no other multi-byte 'vendor commands' I'm fine with it.
+This scenario will have inserted the needed smp_mb() into the userspace
+instruction execution stream, as is required by the sys_membarrier
+use cases.
 
-Is the settling down of 100us specific to the power on/off pulses or
-also applicable to other commands?
+> Then I am wondering how does the membarrier call even work, the tick could
+> very well have interrupted the CPU while it was executing usermode code in
+> the middle of a set of instructions performing memory accesses. Reporting a
+> quiescent state at such an inopportune time would cause the membarrier call
+> to prematurely return, no? Sorry if I missed something.
 
-Thanks
+One way to think of sys_membarrier() is as something that promotes a
+barrier() to an smp_mb().  This barrier then separates the target CPU's
+accesses that the caller saw before the sys_membarrier() from that same
+CPU's accesses that the caller will see after the sys_membarrier().
 
-Matthias
+> The other question I have is about the whole "nohz-full doesn't work" thing.
+> I didn't fully understand why. RCU is already tracking the state of nohz-full
+> CPUs because the rcu dynticks code in (kernel/rcu/tree.c) monitors
+> transitions to and from usermode even if the timer tick is turned off. So why
+> would it not work?
+
+In the nohz_full case, there is no need for sys_membarrier()'s call to
+synchronize_sched() to interact directly with the nohz_full CPU.  It
+can instead look at the target CPU's dyntick-idle state, and that state
+would potentially have been set in the dim distant past, thus having
+no effect on the target CPU's current execution.
+
+							Thanx, Paul
+
