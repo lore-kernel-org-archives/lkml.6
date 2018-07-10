@@ -2,211 +2,125 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AD6C6778A
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95701C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52DCE2089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51F4C208E2
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 10:21:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j4pgWc5K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52DCE2089B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EwkBe2lT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51F4C208E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754501AbeGJKUI (ORCPT
+        id S1754555AbeGJKVF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 06:20:08 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:37892 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751335AbeGJKUF (ORCPT
+        Tue, 10 Jul 2018 06:21:05 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:40578 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751342AbeGJKVE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 06:20:05 -0400
-Received: by mail-pf0-f196.google.com with SMTP id x13-v6so5847029pfh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 03:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=x/MBL0tIfUBBDNjUvuXx8NnFcaBIN8co3DbDxNitGGc=;
-        b=j4pgWc5KeEB12wrDfls/XZTYh5etoSpD17AoPwHqD9ppTvA+ZMDVARpeoItLImfH0f
-         EK2Hj5PzIGmoxEFZ2was9F0ytvf7S7EOx+qVcixYXpWrLEJ41fNP39PoHAdwZzrmAv3A
-         0fHm5EcV3+MFq3fCenJJDs/lE22cFjpEqDR7Nr7jXZGfCxtPXX60b2IsMHWzti2HLoXG
-         MeTcsQnXUIrn+krGWkdJiPlA8pz9TJoDrMQBkhrS7g560g0krwCuMKn1jilateKmLbLq
-         8eLlSfS4VC1o5AuNjajyLaeILHbi5heSmYDXgNvFEhd8/fp7qdKD8n6RrD+Od422MaJI
-         BiEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=x/MBL0tIfUBBDNjUvuXx8NnFcaBIN8co3DbDxNitGGc=;
-        b=q9dzxHhzFP7hOZ7KfVYb+aPSStS+YjUSArFtXOei4sl8Nw7+dkiT8lt5dSVx/VHw6D
-         uc++Fgs9Yv7fQEJ4disRGewTPX8N3/wcMDdS4x47EiaC2ucBCg1vJmEer/sGGjFgratD
-         fjfpqj2kCs4sQZD4lwfRIrk+omSDqDmEWOqv+HGUkSq5uwoTPeVmQRLUrM/Vzao5gcrs
-         ubfsg7r7ZeCmO8imHmJHTlM0wzmsyYGLTVBpKfyMYfltNUphsGRslHaOv3GeCtYKYBbY
-         RnaRY3gyxjUX44AK2gQQnhDBZY41S8g4+rLRby4mqcRjMWVtNM5SUoaE41vi8GJDNHrR
-         wjXA==
-X-Gm-Message-State: APt69E3cUeVOQ/gGxLqqW2fHruoKEsrkYwurcmNsMWaq09PgKWQJr4TG
-        4ObfMPzLgUfJ98IEdktC0gQ=
-X-Google-Smtp-Source: AAOMgpeQHSD0Bwz08towpSVzC8NL8eW6L6u5VFKrRgT6z7htIeSsf5R0dEvofkA4a7a5n2+ZtQ2/Qw==
-X-Received: by 2002:a62:8917:: with SMTP id v23-v6mr25236473pfd.127.1531218005030;
-        Tue, 10 Jul 2018 03:20:05 -0700 (PDT)
-Received: from dest.didichuxing.com ([168.63.150.120])
-        by smtp.gmail.com with ESMTPSA id k4-v6sm24213518pgo.49.2018.07.10.03.20.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 03:20:04 -0700 (PDT)
-From:   ufo19890607@gmail.com
-To:     akpm@linux-foundation.org, mhocko@suse.com, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        yuzhoujian@didichuxing.com
-Subject: [PATCH v13 2/2] Add oom victim's memcg to the oom context information
-Date:   Tue, 10 Jul 2018 18:19:48 +0800
-Message-Id: <1531217988-33940-2-git-send-email-ufo19890607@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1531217988-33940-1-git-send-email-ufo19890607@gmail.com>
-References: <1531217988-33940-1-git-send-email-ufo19890607@gmail.com>
+        Tue, 10 Jul 2018 06:21:04 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6AAJboj100744;
+        Tue, 10 Jul 2018 05:19:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531217978;
+        bh=vlcieRnp5WD86QUxolbOzFpAincmGS/8uDA6me29cik=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=EwkBe2lTu3sdCoAy5M1pcbXYRu68Aox6qWSUoLNnNOiwX3Htwluv/ND7Rxry2wf4x
+         eaNKORLEGfWiTG1oEa2wogK/Mbea+lj4WmpBIzr/z4XgDhGOqqcXAlvPyeRExe6DOe
+         0mK9mBl8aid1uqj/rgk2T3WyOUexvZeDmXbZ5/lY=
+Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6AAJbrt008556;
+        Tue, 10 Jul 2018 05:19:37 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 10
+ Jul 2018 05:19:37 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 10 Jul 2018 05:19:37 -0500
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6AAJUvV011219;
+        Tue, 10 Jul 2018 05:19:31 -0500
+Subject: Re: [PATCH v3 00/13] ARM: davinci: remove duplicate aemif support
+To:     David Lechner <david@lechnology.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Kevin Hilman <khilman@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20180628095748.4462-1-brgl@bgdev.pl>
+ <52a274f1-283a-a14a-54f3-4b95b6605c4f@ti.com>
+ <59fdc532-bb72-ffae-cfb6-a7f156c14771@lechnology.com>
+ <e1222b3c-dfa4-4cb0-eebf-8e2550e9d674@ti.com>
+ <125d73f7-7311-866f-1e9d-d3c1f9473899@lechnology.com>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <92e41afc-cf3a-e713-11d5-247b8d6e3a64@ti.com>
+Date:   Tue, 10 Jul 2018 15:49:30 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <125d73f7-7311-866f-1e9d-d3c1f9473899@lechnology.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: yuzhoujian <yuzhoujian@didichuxing.com>
+On Friday 06 July 2018 11:09 PM, David Lechner wrote:
+> On 07/04/2018 01:35 AM, Sekhar Nori wrote:
+>> Hi David,
+>>
+>> On Monday 02 July 2018 09:02 PM, David Lechner wrote:
+>>> On 07/02/2018 07:28 AM, Sekhar Nori wrote:
+>>>> Hi David, Stephen,
+>>>>
+>>>> On Thursday 28 June 2018 03:27 PM, Bartosz Golaszewski wrote:
+>>>>> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+>>>>>
+>>>>> This series moves all aemif/nand users to using the ti-aemif platform
+>>>>> driver located in drivers/memory instead of the older API located in
+>>>>> mach-davinci.
+>>>>>
+>>>>> First five patches add necessary changes to the clock driver. Next
+>>>>> seven convert the board files to using the ti-aemif driver. Last patch
+>>>>> removes now dead code.
+>>>>
+>>>> How do you want to handle this series? I can apply the series and
+>>>> provide you an immutable branch on v4.18-rc1 with the clock patches
+>>>> applied if that can work.
+>>>
+>>> Sounds good to me. But I'm new to this maintainer thing, so maybe
+>>> there is something to consider that I haven't thought of?
+>>
+>> I don't think there is more to it. Ultimately there should not be two
+>> commits for the same patch. Either you can apply and share the commit to
+>> use or I can do that as well. I am equally fine either way.
+>>
+>> Regards,
+>> Sekhar
+>>
+> 
+> I've created a branch for-sekhar at https://github.com/dlech/linux.git
+> with the clk commits.
 
-The current oom report doesn't display victim's memcg context during the
-global OOM situation. While this information is not strictly needed, it
-can be really helpful for containerized environments to locate which
-container has lost a process. Now that we have a single line for the oom
-context, we can trivially add both the oom memcg (this can be either
-global_oom or a specific memcg which hits its hard limits) and task_memcg
-which is the victim's memcg.
+Thanks. I merged commit f917ff75ac55b6d829c9d1142e83913064565d5b (top of
+that branch) to my v4.19/soc branch. Please do let Stephen and Mike know
+about this then when you send your stuff for v4.19.
 
-Below is the single line output in the oom report after this patch.
-- global oom context information:
-oom-kill:constraint=<constraint>,nodemask=<nodemask>,global_oom,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
-- memcg oom context information:
-oom-kill:constraint=<constraint>,nodemask=<nodemask>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
-Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
----
- include/linux/memcontrol.h | 14 +++++++++++---
- mm/memcontrol.c            | 36 ++++++++++++++++++++++--------------
- mm/oom_kill.c              |  3 ++-
- 3 files changed, 35 insertions(+), 18 deletions(-)
-
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 6c6fb116e925..96a73f989101 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -491,8 +491,10 @@ void mem_cgroup_handle_over_high(void);
- 
- unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
- 
--void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
--				struct task_struct *p);
-+void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-+		struct task_struct *p);
-+
-+void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg);
- 
- static inline void mem_cgroup_oom_enable(void)
- {
-@@ -903,7 +905,13 @@ static inline unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
- }
- 
- static inline void
--mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-+mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-+				struct task_struct *p)
-+{
-+}
-+
-+static inline void
-+mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
- {
- }
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e6f0d5ef320a..18deea974cfd 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1119,32 +1119,40 @@ static const char *const memcg1_stat_names[] = {
- 
- #define K(x) ((x) << (PAGE_SHIFT-10))
- /**
-- * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
-- * @memcg: The memory cgroup that went over limit
-+ * mem_cgroup_print_oom_context: Print OOM context information relevant to
-+ * memory controller.
-+ * @memcg: The origin memory cgroup that went over limit
-  * @p: Task that is going to be killed
-  *
-  * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
-  * enabled
-  */
--void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-+void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p)
- {
--	struct mem_cgroup *iter;
--	unsigned int i;
-+	struct cgroup *origin_cgrp, *kill_cgrp;
- 
- 	rcu_read_lock();
--
-+	if (memcg) {
-+		pr_cont(",oom_memcg=");
-+		pr_cont_cgroup_path(memcg->css.cgroup);
-+	} else
-+		pr_cont(",global_oom");
- 	if (p) {
--		pr_info("Task in ");
-+		pr_cont(",task_memcg=");
- 		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
--		pr_cont(" killed as a result of limit of ");
--	} else {
--		pr_info("Memory limit reached of cgroup ");
- 	}
--
--	pr_cont_cgroup_path(memcg->css.cgroup);
--	pr_cont("\n");
--
- 	rcu_read_unlock();
-+}
-+
-+/**
-+ * mem_cgroup_print_oom_meminfo: Print OOM memory information relevant to
-+ * memory controller.
-+ * @memcg: The memory cgroup that went over limit
-+ */
-+void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
-+{
-+	struct mem_cgroup *iter;
-+	unsigned int i;
- 
- 	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
- 		K((u64)page_counter_read(&memcg->memory)),
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 531b2c86d4db..9e80f6c2eb2e 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -433,11 +433,12 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
- 	pr_info("oom-kill:constraint=%s,nodemask=%*pbl",
- 			oom_constraint_text[oc->constraint],
- 			nodemask_pr_args(oc->nodemask));
-+	mem_cgroup_print_oom_context(oc->memcg, p);
- 	cpuset_print_current_mems_allowed();
- 	pr_cont(",task=%s,pid=%5d,uid=%5d\n", p->comm, p->pid,
- 		from_kuid(&init_user_ns, task_uid(p)));
- 	if (is_memcg_oom(oc))
--		mem_cgroup_print_oom_info(oc->memcg, p);
-+		mem_cgroup_print_oom_meminfo(oc->memcg);
- 	else {
- 		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
- 		if (is_dump_unreclaim_slabs())
--- 
-2.14.1
+Thanks,
+Sekhar
 
