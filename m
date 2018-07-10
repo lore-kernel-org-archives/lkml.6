@@ -3,48 +3,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F179C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A74B4C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A292083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A292083E
+	by mail.kernel.org (Postfix) with ESMTP id 756852083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 756852083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387684AbeGJS3N (ORCPT
+        id S2387700AbeGJS3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:29:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45240 "EHLO
+        Tue, 10 Jul 2018 14:29:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45262 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732459AbeGJS3L (ORCPT
+        with ESMTP id S2387686AbeGJS3O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:29:11 -0400
+        Tue, 10 Jul 2018 14:29:14 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D8447EB8;
-        Tue, 10 Jul 2018 18:28:59 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3DB9EB4;
+        Tue, 10 Jul 2018 18:29:02 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yazen Ghannam <Yazen.Ghannam@amd.com>,
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
         Borislav Petkov <bp@suse.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 35/47] x86/mce: Detect local MCEs properly
-Date:   Tue, 10 Jul 2018 20:24:59 +0200
-Message-Id: <20180710182338.617388540@linuxfoundation.org>
+        Ashok Raj <ashok.raj@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+        linux-edac <linux-edac@vger.kernel.org>
+Subject: [PATCH 4.4 36/47] x86/mce: Fix incorrect "Machine check from unknown source" message
+Date:   Tue, 10 Jul 2018 20:25:00 +0200
+Message-Id: <20180710182338.673569223@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
 References: <20180710182337.047502999@linuxfoundation.org>
@@ -61,95 +55,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yazen Ghannam <Yazen.Ghannam@amd.com>
+From: Tony Luck <tony.luck@intel.com>
 
-commit fead35c68926682c90c995f22b48f1c8d78865c1 upstream.
+commit 40c36e2741d7fe1e66d6ec55477ba5fd19c9c5d2 upstream.
 
-Check the MCG_STATUS_LMCES bit on Intel to verify that current MCE is
-local. It is always local on AMD.
+Some injection testing resulted in the following console log:
 
-Signed-off-by: Yazen Ghannam <Yazen.Ghannam@amd.com>
-[ Massaged it a bit. Reflowed comments. Shut up -Wmaybe-uninitialized. ]
+  mce: [Hardware Error]: CPU 22: Machine Check Exception: f Bank 1: bd80000000100134
+  mce: [Hardware Error]: RIP 10:<ffffffffc05292dd> {pmem_do_bvec+0x11d/0x330 [nd_pmem]}
+  mce: [Hardware Error]: TSC c51a63035d52 ADDR 3234bc4000 MISC 88
+  mce: [Hardware Error]: PROCESSOR 0:50654 TIME 1526502199 SOCKET 0 APIC 38 microcode 2000043
+  mce: [Hardware Error]: Run the above through 'mcelog --ascii'
+  Kernel panic - not syncing: Machine check from unknown source
+
+This confused everybody because the first line quite clearly shows
+that we found a logged error in "Bank 1", while the last line says
+"unknown source".
+
+The problem is that the Linux code doesn't do the right thing
+for a local machine check that results in a fatal error.
+
+It turns out that we know very early in the handler whether the
+machine check is fatal. The call to mce_no_way_out() has checked
+all the banks for the CPU that took the local machine check. If
+it says we must crash, we can do so right away with the right
+messages.
+
+We do scan all the banks again. This means that we might initially
+not see a problem, but during the second scan find something fatal.
+If this happens we print a slightly different message (so I can
+see if it actually every happens).
+
+[ bp: Remove unneeded severity assignment. ]
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 Cc: linux-edac <linux-edac@vger.kernel.org>
-Link: http://lkml.kernel.org/r/1462019637-16474-8-git-send-email-bp@alien8.de
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: stable@vger.kernel.org # 4.2
+Link: http://lkml.kernel.org/r/52e049a497e86fd0b71c529651def8871c804df0.1527283897.git.tony.luck@intel.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kernel/cpu/mcheck/mce.c |   33 ++++++++++++++++++++-------------
- 1 file changed, 20 insertions(+), 13 deletions(-)
+ arch/x86/kernel/cpu/mcheck/mce.c |   26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
 --- a/arch/x86/kernel/cpu/mcheck/mce.c
 +++ b/arch/x86/kernel/cpu/mcheck/mce.c
-@@ -980,11 +980,12 @@ void do_machine_check(struct pt_regs *re
- 	int i;
- 	int worst = 0;
- 	int severity;
-+
- 	/*
- 	 * Establish sequential order between the CPUs entering the machine
- 	 * check handler.
- 	 */
--	int order;
-+	int order = -1;
- 	/*
- 	 * If no_way_out gets set, there is no safe way to recover from this
- 	 * MCE.  If mca_cfg.tolerant is cranked up, we'll try anyway.
-@@ -1000,7 +1001,12 @@ void do_machine_check(struct pt_regs *re
- 	char *msg = "Unknown";
- 	u64 recover_paddr = ~0ull;
- 	int flags = MF_ACTION_REQUIRED;
--	int lmce = 0;
-+
-+	/*
-+	 * MCEs are always local on AMD. Same is determined by MCG_STATUS_LMCES
-+	 * on Intel.
-+	 */
-+	int lmce = 1;
- 
- 	/* If this CPU is offline, just bail out. */
- 	if (cpu_is_offline(smp_processor_id())) {
-@@ -1039,19 +1045,20 @@ void do_machine_check(struct pt_regs *re
- 		kill_it = 1;
+@@ -1052,13 +1052,18 @@ void do_machine_check(struct pt_regs *re
+ 		lmce = m.mcgstatus & MCG_STATUS_LMCES;
  
  	/*
--	 * Check if this MCE is signaled to only this logical processor
-+	 * Check if this MCE is signaled to only this logical processor,
-+	 * on Intel only.
++	 * Local machine check may already know that we have to panic.
++	 * Broadcast machine check begins rendezvous in mce_start()
+ 	 * Go through all banks in exclusion of the other CPUs. This way we
+ 	 * don't report duplicated events on shared banks because the first one
+-	 * to see it will clear it. If this is a Local MCE, then no need to
+-	 * perform rendezvous.
++	 * to see it will clear it.
  	 */
--	if (m.mcgstatus & MCG_STATUS_LMCES)
--		lmce = 1;
--	else {
--		/*
--		 * Go through all the banks in exclusion of the other CPUs.
--		 * This way we don't report duplicated events on shared banks
--		 * because the first one to see it will clear it.
--		 * If this is a Local MCE, then no need to perform rendezvous.
--		 */
-+	if (m.cpuvendor == X86_VENDOR_INTEL)
-+		lmce = m.mcgstatus & MCG_STATUS_LMCES;
-+
-+	/*
-+	 * Go through all banks in exclusion of the other CPUs. This way we
-+	 * don't report duplicated events on shared banks because the first one
-+	 * to see it will clear it. If this is a Local MCE, then no need to
-+	 * perform rendezvous.
-+	 */
-+	if (!lmce)
+-	if (!lmce)
++	if (lmce) {
++		if (no_way_out)
++			mce_panic("Fatal local machine check", &m, msg);
++	} else {
  		order = mce_start(&no_way_out);
--	}
++	}
  
  	for (i = 0; i < cfg->banks; i++) {
  		__clear_bit(i, toclear);
+@@ -1135,12 +1140,17 @@ void do_machine_check(struct pt_regs *re
+ 			no_way_out = worst >= MCE_PANIC_SEVERITY;
+ 	} else {
+ 		/*
+-		 * Local MCE skipped calling mce_reign()
+-		 * If we found a fatal error, we need to panic here.
++		 * If there was a fatal machine check we should have
++		 * already called mce_panic earlier in this function.
++		 * Since we re-read the banks, we might have found
++		 * something new. Check again to see if we found a
++		 * fatal error. We call "mce_severity()" again to
++		 * make sure we have the right "msg".
+ 		 */
+-		 if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3)
+-			mce_panic("Machine check from unknown source",
+-				NULL, NULL);
++		if (worst >= MCE_PANIC_SEVERITY && mca_cfg.tolerant < 3) {
++			mce_severity(&m, cfg->tolerant, &msg, true);
++			mce_panic("Local fatal machine check!", &m, msg);
++		}
+ 	}
+ 
+ 	/*
 
 
