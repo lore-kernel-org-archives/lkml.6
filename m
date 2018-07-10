@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD2AC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:58:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF858C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83CE22089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:58:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83CE22089B
+	by mail.kernel.org (Postfix) with ESMTP id 8FF7320877
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:58:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF7320877
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933255AbeGJI62 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S933304AbeGJI6r (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:58:47 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43020 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933213AbeGJI62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Jul 2018 04:58:28 -0400
-Received: from foss.arm.com ([217.140.101.70]:43018 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932998AbeGJI60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:58:26 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FB0D1993;
-        Tue, 10 Jul 2018 01:58:26 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0D2419BF;
+        Tue, 10 Jul 2018 01:58:27 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C02183F318;
-        Tue, 10 Jul 2018 01:58:24 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5D6143F318;
+        Tue, 10 Jul 2018 01:58:26 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mark.rutland@arm.com,
         will.deacon@arm.com, julien.thierry@arm.com, robin.murphy@arm.com,
         Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH v5 5/7] arm64: perf: Clean up armv8pmu_select_counter
-Date:   Tue, 10 Jul 2018 09:58:02 +0100
-Message-Id: <1531213084-27417-6-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH v5 6/7] arm64: perf: Disable PMU while processing counter overflows
+Date:   Tue, 10 Jul 2018 09:58:03 +0100
+Message-Id: <1531213084-27417-7-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531213084-27417-1-git-send-email-suzuki.poulose@arm.com>
 References: <1531213084-27417-1-git-send-email-suzuki.poulose@arm.com>
@@ -43,84 +43,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-armv8pmu_select_counter always returns the passed idx. So
-let us make that void and get rid of the pointless checks.
+The arm64 PMU updates the event counters and reprograms the
+counters in the overflow IRQ handler without disabling the
+PMU. This could potentially cause skews in for group counters,
+where the overflowed counters may potentially loose some event
+counts, while they are reprogrammed. To prevent this, disable
+the PMU while we process the counter overflows and enable it
+right back when we are done.
+
+This patch also moves the PMU stop/start routines to avoid a
+forward declaration.
 
 Suggested-by: Mark Rutland <mark.rutland@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 Acked-by: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- arch/arm64/kernel/perf_event.c | 29 +++++++++++++++++++----------
- 1 file changed, 19 insertions(+), 10 deletions(-)
+ arch/arm64/kernel/perf_event.c | 50 +++++++++++++++++++++++-------------------
+ 1 file changed, 28 insertions(+), 22 deletions(-)
 
 diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-index ac66851..bc014af 100644
+index bc014af..b414d81 100644
 --- a/arch/arm64/kernel/perf_event.c
 +++ b/arch/arm64/kernel/perf_event.c
-@@ -503,13 +503,17 @@ static inline int armv8pmu_counter_has_overflowed(u32 pmnc, int idx)
- 	return pmnc & BIT(ARMV8_IDX_TO_COUNTER(idx));
+@@ -678,6 +678,28 @@ static void armv8pmu_disable_event(struct perf_event *event)
+ 	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
  }
  
--static inline int armv8pmu_select_counter(int idx)
-+static inline void armv8pmu_select_counter(int idx)
- {
- 	u32 counter = ARMV8_IDX_TO_COUNTER(idx);
- 	write_sysreg(counter, pmselr_el0);
- 	isb();
-+}
- 
--	return idx;
-+static inline u32 armv8pmu_read_evcntr(int idx)
++static void armv8pmu_start(struct arm_pmu *cpu_pmu)
 +{
-+	armv8pmu_select_counter(idx);
-+	return read_sysreg(pmxevcntr_el0);
- }
- 
- static inline u64 armv8pmu_read_counter(struct perf_event *event)
-@@ -524,12 +528,18 @@ static inline u64 armv8pmu_read_counter(struct perf_event *event)
- 			smp_processor_id(), idx);
- 	else if (idx == ARMV8_IDX_CYCLE_COUNTER)
- 		value = read_sysreg(pmccntr_el0);
--	else if (armv8pmu_select_counter(idx) == idx)
--		value = read_sysreg(pmxevcntr_el0);
-+	else
-+		value = armv8pmu_read_evcntr(idx);
- 
- 	return value;
- }
- 
-+static inline void armv8pmu_write_evcntr(int idx, u32 value)
-+{
-+	armv8pmu_select_counter(idx);
-+	write_sysreg(value, pmxevcntr_el0);
++	unsigned long flags;
++	struct pmu_hw_events *events = this_cpu_ptr(cpu_pmu->hw_events);
++
++	raw_spin_lock_irqsave(&events->pmu_lock, flags);
++	/* Enable all counters */
++	armv8pmu_pmcr_write(armv8pmu_pmcr_read() | ARMV8_PMU_PMCR_E);
++	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
 +}
 +
- static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
++static void armv8pmu_stop(struct arm_pmu *cpu_pmu)
++{
++	unsigned long flags;
++	struct pmu_hw_events *events = this_cpu_ptr(cpu_pmu->hw_events);
++
++	raw_spin_lock_irqsave(&events->pmu_lock, flags);
++	/* Disable all counters */
++	armv8pmu_pmcr_write(armv8pmu_pmcr_read() & ~ARMV8_PMU_PMCR_E);
++	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
++}
++
+ static irqreturn_t armv8pmu_handle_irq(struct arm_pmu *cpu_pmu)
  {
- 	struct arm_pmu *cpu_pmu = to_arm_pmu(event->pmu);
-@@ -547,16 +557,15 @@ static inline void armv8pmu_write_counter(struct perf_event *event, u64 value)
- 		 */
- 		value |= 0xffffffff00000000ULL;
- 		write_sysreg(value, pmccntr_el0);
--	} else if (armv8pmu_select_counter(idx) == idx)
--		write_sysreg(value, pmxevcntr_el0);
-+	} else
-+		armv8pmu_write_evcntr(idx, value);
+ 	u32 pmovsr;
+@@ -702,6 +724,11 @@ static irqreturn_t armv8pmu_handle_irq(struct arm_pmu *cpu_pmu)
+ 	 */
+ 	regs = get_irq_regs();
+ 
++	/*
++	 * Stop the PMU while processing the counter overflows
++	 * to prevent skews in group events.
++	 */
++	armv8pmu_stop(cpu_pmu);
+ 	for (idx = 0; idx < cpu_pmu->num_events; ++idx) {
+ 		struct perf_event *event = cpuc->events[idx];
+ 		struct hw_perf_event *hwc;
+@@ -726,6 +753,7 @@ static irqreturn_t armv8pmu_handle_irq(struct arm_pmu *cpu_pmu)
+ 		if (perf_event_overflow(event, &data, regs))
+ 			cpu_pmu->disable(event);
+ 	}
++	armv8pmu_start(cpu_pmu);
+ 
+ 	/*
+ 	 * Handle the pending perf events.
+@@ -739,28 +767,6 @@ static irqreturn_t armv8pmu_handle_irq(struct arm_pmu *cpu_pmu)
+ 	return IRQ_HANDLED;
  }
  
- static inline void armv8pmu_write_evtype(int idx, u32 val)
+-static void armv8pmu_start(struct arm_pmu *cpu_pmu)
+-{
+-	unsigned long flags;
+-	struct pmu_hw_events *events = this_cpu_ptr(cpu_pmu->hw_events);
+-
+-	raw_spin_lock_irqsave(&events->pmu_lock, flags);
+-	/* Enable all counters */
+-	armv8pmu_pmcr_write(armv8pmu_pmcr_read() | ARMV8_PMU_PMCR_E);
+-	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+-}
+-
+-static void armv8pmu_stop(struct arm_pmu *cpu_pmu)
+-{
+-	unsigned long flags;
+-	struct pmu_hw_events *events = this_cpu_ptr(cpu_pmu->hw_events);
+-
+-	raw_spin_lock_irqsave(&events->pmu_lock, flags);
+-	/* Disable all counters */
+-	armv8pmu_pmcr_write(armv8pmu_pmcr_read() & ~ARMV8_PMU_PMCR_E);
+-	raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+-}
+-
+ static int armv8pmu_get_event_idx(struct pmu_hw_events *cpuc,
+ 				  struct perf_event *event)
  {
--	if (armv8pmu_select_counter(idx) == idx) {
--		val &= ARMV8_PMU_EVTYPE_MASK;
--		write_sysreg(val, pmxevtyper_el0);
--	}
-+	armv8pmu_select_counter(idx);
-+	val &= ARMV8_PMU_EVTYPE_MASK;
-+	write_sysreg(val, pmxevtyper_el0);
- }
- 
- static inline int armv8pmu_enable_counter(int idx)
 -- 
 2.7.4
 
