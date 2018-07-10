@@ -3,38 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CE59C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186F7C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5796C20936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5796C20936
+	by mail.kernel.org (Postfix) with ESMTP id DDC9A208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:35:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC9A208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389463AbeGJSfL (ORCPT
+        id S2389478AbeGJSfO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:35:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48232 "EHLO
+        Tue, 10 Jul 2018 14:35:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48240 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388810AbeGJSfK (ORCPT
+        with ESMTP id S2388810AbeGJSfN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:35:10 -0400
+        Tue, 10 Jul 2018 14:35:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2610ED0B;
-        Tue, 10 Jul 2018 18:34:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D5C03D0B;
+        Tue, 10 Jul 2018 18:34:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianhong Yin <jiyin@redhat.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
+        stable@vger.kernel.org, Paulo Alcantara <palcantara@suse.de>,
+        Aurelien Aptel <aaptel@suse.com>,
         Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.17 21/56] cifs: Fix slab-out-of-bounds in send_set_info() on SMB2 ACE setting
-Date:   Tue, 10 Jul 2018 20:25:03 +0200
-Message-Id: <20180710182504.695242119@linuxfoundation.org>
+Subject: [PATCH 4.17 22/56] cifs: Fix infinite loop when using hard mount option
+Date:   Tue, 10 Jul 2018 20:25:04 +0200
+Message-Id: <20180710182504.735642315@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -51,140 +51,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Paulo Alcantara <paulo@paulo.ac>
 
-commit f46ecbd97f508e68a7806291a139499794874f3d upstream.
+commit 7ffbe65578b44fafdef577a360eb0583929f7c6e upstream.
 
-A "small" CIFS buffer is not big enough in general to hold a
-setacl request for SMB2, and we end up overflowing the buffer in
-send_set_info(). For instance:
+For every request we send, whether it is SMB1 or SMB2+, we attempt to
+reconnect tcon (cifs_reconnect_tcon or smb2_reconnect) before carrying
+out the request.
 
- # mount.cifs //127.0.0.1/test /mnt/test -o username=test,password=test,nounix,cifsacl
- # touch /mnt/test/acltest
- # getcifsacl /mnt/test/acltest
- REVISION:0x1
- CONTROL:0x9004
- OWNER:S-1-5-21-2926364953-924364008-418108241-1000
- GROUP:S-1-22-2-1001
- ACL:S-1-5-21-2926364953-924364008-418108241-1000:ALLOWED/0x0/0x1e01ff
- ACL:S-1-22-2-1001:ALLOWED/0x0/R
- ACL:S-1-22-2-1001:ALLOWED/0x0/R
- ACL:S-1-5-21-2926364953-924364008-418108241-1000:ALLOWED/0x0/0x1e01ff
- ACL:S-1-1-0:ALLOWED/0x0/R
- # setcifsacl -a "ACL:S-1-22-2-1004:ALLOWED/0x0/R" /mnt/test/acltest
+So, while server->tcpStatus != CifsNeedReconnect, we wait for the
+reconnection to succeed on wait_event_interruptible_timeout(). If it
+returns, that means that either the condition was evaluated to true, or
+timeout elapsed, or it was interrupted by a signal.
 
-this setacl will cause the following KASAN splat:
+Since we're not handling the case where the process woke up due to a
+received signal (-ERESTARTSYS), the next call to
+wait_event_interruptible_timeout() will _always_ fail and we end up
+looping forever inside either cifs_reconnect_tcon() or smb2_reconnect().
 
-[  330.777927] BUG: KASAN: slab-out-of-bounds in send_set_info+0x4dd/0xc20 [cifs]
-[  330.779696] Write of size 696 at addr ffff88010d5e2860 by task setcifsacl/1012
+Here's an example of how to trigger that:
 
-[  330.781882] CPU: 1 PID: 1012 Comm: setcifsacl Not tainted 4.18.0-rc2+ #2
-[  330.783140] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-[  330.784395] Call Trace:
-[  330.784789]  dump_stack+0xc2/0x16b
-[  330.786777]  print_address_description+0x6a/0x270
-[  330.787520]  kasan_report+0x258/0x380
-[  330.788845]  memcpy+0x34/0x50
-[  330.789369]  send_set_info+0x4dd/0xc20 [cifs]
-[  330.799511]  SMB2_set_acl+0x76/0xa0 [cifs]
-[  330.801395]  set_smb2_acl+0x7ac/0xf30 [cifs]
-[  330.830888]  cifs_xattr_set+0x963/0xe40 [cifs]
-[  330.840367]  __vfs_setxattr+0x84/0xb0
-[  330.842060]  __vfs_setxattr_noperm+0xe6/0x370
-[  330.843848]  vfs_setxattr+0xc2/0xd0
-[  330.845519]  setxattr+0x258/0x320
-[  330.859211]  path_setxattr+0x15b/0x1b0
-[  330.864392]  __x64_sys_setxattr+0xc0/0x160
-[  330.866133]  do_syscall_64+0x14e/0x4b0
-[  330.876631]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[  330.878503] RIP: 0033:0x7ff2e507db0a
-[  330.880151] Code: 48 8b 0d 89 93 2c 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 49 89 ca b8 bc 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 56 93 2c 00 f7 d8 64 89 01 48
-[  330.885358] RSP: 002b:00007ffdc4903c18 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
-[  330.887733] RAX: ffffffffffffffda RBX: 000055d1170de140 RCX: 00007ff2e507db0a
-[  330.890067] RDX: 000055d1170de7d0 RSI: 000055d115b39184 RDI: 00007ffdc4904818
-[  330.892410] RBP: 0000000000000001 R08: 0000000000000000 R09: 000055d1170de7e4
-[  330.894785] R10: 00000000000002b8 R11: 0000000000000246 R12: 0000000000000007
-[  330.897148] R13: 000055d1170de0c0 R14: 0000000000000008 R15: 000055d1170de550
+$ mount.cifs //foo/share /mnt/test -o
+username=foo,password=foo,vers=1.0,hard
 
-[  330.901057] Allocated by task 1012:
-[  330.902888]  kasan_kmalloc+0xa0/0xd0
-[  330.904714]  kmem_cache_alloc+0xc8/0x1d0
-[  330.906615]  mempool_alloc+0x11e/0x380
-[  330.908496]  cifs_small_buf_get+0x35/0x60 [cifs]
-[  330.910510]  smb2_plain_req_init+0x4a/0xd60 [cifs]
-[  330.912551]  send_set_info+0x198/0xc20 [cifs]
-[  330.914535]  SMB2_set_acl+0x76/0xa0 [cifs]
-[  330.916465]  set_smb2_acl+0x7ac/0xf30 [cifs]
-[  330.918453]  cifs_xattr_set+0x963/0xe40 [cifs]
-[  330.920426]  __vfs_setxattr+0x84/0xb0
-[  330.922284]  __vfs_setxattr_noperm+0xe6/0x370
-[  330.924213]  vfs_setxattr+0xc2/0xd0
-[  330.926008]  setxattr+0x258/0x320
-[  330.927762]  path_setxattr+0x15b/0x1b0
-[  330.929592]  __x64_sys_setxattr+0xc0/0x160
-[  330.931459]  do_syscall_64+0x14e/0x4b0
-[  330.933314]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+(break connection to server before executing bellow cmd)
+$ stat -f /mnt/test & sleep 140
+[1] 2511
 
-[  330.936843] Freed by task 0:
-[  330.938588] (stack is not available)
+$ ps -aux -q 2511
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      2511  0.0  0.0  12892  1008 pts/0    S    12:24   0:00 stat -f
+/mnt/test
 
-[  330.941886] The buggy address belongs to the object at ffff88010d5e2800
- which belongs to the cache cifs_small_rq of size 448
-[  330.946362] The buggy address is located 96 bytes inside of
- 448-byte region [ffff88010d5e2800, ffff88010d5e29c0)
-[  330.950722] The buggy address belongs to the page:
-[  330.952789] page:ffffea0004357880 count:1 mapcount:0 mapping:ffff880108fdca80 index:0x0 compound_mapcount: 0
-[  330.955665] flags: 0x17ffffc0008100(slab|head)
-[  330.957760] raw: 0017ffffc0008100 dead000000000100 dead000000000200 ffff880108fdca80
-[  330.960356] raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
-[  330.963005] page dumped because: kasan: bad access detected
+$ kill -9 2511
 
-[  330.967039] Memory state around the buggy address:
-[  330.969255]  ffff88010d5e2880: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  330.971833]  ffff88010d5e2900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-[  330.974397] >ffff88010d5e2980: 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc
-[  330.976956]                                            ^
-[  330.979226]  ffff88010d5e2a00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  330.981755]  ffff88010d5e2a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-[  330.984225] ==================================================================
+(wait for a while; process is stuck in the kernel)
+$ ps -aux -q 2511
+USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root      2511 83.2  0.0  12892  1008 pts/0    R    12:24  30:01 stat -f
+/mnt/test
 
-Fix this by allocating a regular CIFS buffer in
-smb2_plain_req_init() if the request command is SMB2_SET_INFO.
+By using 'hard' mount point means that cifs.ko will keep retrying
+indefinitely, however we must allow the process to be killed otherwise
+it would hang the system.
 
-Reported-by: Jianhong Yin <jiyin@redhat.com>
-Fixes: 366ed846df60 ("cifs: Use smb 2 - 3 and cifsacl mount options setacl function")
-CC: Stable <stable@vger.kernel.org>
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Reviewed-and-tested-by: Aurelien Aptel <aaptel@suse.com>
+Signed-off-by: Paulo Alcantara <palcantara@suse.de>
+Cc: stable@vger.kernel.org
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2pdu.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/cifs/cifssmb.c |   10 ++++++++--
+ fs/cifs/smb2pdu.c |   18 ++++++++++++------
+ 2 files changed, 20 insertions(+), 8 deletions(-)
 
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -151,8 +151,14 @@ cifs_reconnect_tcon(struct cifs_tcon *tc
+ 	 * greater than cifs socket timeout which is 7 seconds
+ 	 */
+ 	while (server->tcpStatus == CifsNeedReconnect) {
+-		wait_event_interruptible_timeout(server->response_q,
+-			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
++		rc = wait_event_interruptible_timeout(server->response_q,
++						      (server->tcpStatus != CifsNeedReconnect),
++						      10 * HZ);
++		if (rc < 0) {
++			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
++				 " signal by the process\n", __func__);
++			return -ERESTARTSYS;
++		}
+ 
+ 		/* are we still trying to reconnect? */
+ 		if (server->tcpStatus != CifsNeedReconnect)
 --- a/fs/cifs/smb2pdu.c
 +++ b/fs/cifs/smb2pdu.c
-@@ -339,7 +339,10 @@ smb2_plain_req_init(__le16 smb2_command,
- 		return rc;
+@@ -154,7 +154,7 @@ out:
+ static int
+ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon)
+ {
+-	int rc = 0;
++	int rc;
+ 	struct nls_table *nls_codepage;
+ 	struct cifs_ses *ses;
+ 	struct TCP_Server_Info *server;
+@@ -165,10 +165,10 @@ smb2_reconnect(__le16 smb2_command, stru
+ 	 * for those three - in the calling routine.
+ 	 */
+ 	if (tcon == NULL)
+-		return rc;
++		return 0;
  
- 	/* BB eventually switch this to SMB2 specific small buf size */
--	*request_buf = cifs_small_buf_get();
-+	if (smb2_command == SMB2_SET_INFO)
-+		*request_buf = cifs_buf_get();
-+	else
-+		*request_buf = cifs_small_buf_get();
- 	if (*request_buf == NULL) {
- 		/* BB should we add a retry in here if not a writepage? */
- 		return -ENOMEM;
-@@ -3363,7 +3366,7 @@ send_set_info(const unsigned int xid, st
+ 	if (smb2_command == SMB2_TREE_CONNECT)
+-		return rc;
++		return 0;
  
- 	rc = smb2_send_recv(xid, ses, iov, num, &resp_buftype, flags,
- 			    &rsp_iov);
--	cifs_small_buf_release(req);
-+	cifs_buf_release(req);
- 	rsp = (struct smb2_set_info_rsp *)rsp_iov.iov_base;
+ 	if (tcon->tidStatus == CifsExiting) {
+ 		/*
+@@ -211,8 +211,14 @@ smb2_reconnect(__le16 smb2_command, stru
+ 			return -EAGAIN;
+ 		}
  
- 	if (rc != 0)
+-		wait_event_interruptible_timeout(server->response_q,
+-			(server->tcpStatus != CifsNeedReconnect), 10 * HZ);
++		rc = wait_event_interruptible_timeout(server->response_q,
++						      (server->tcpStatus != CifsNeedReconnect),
++						      10 * HZ);
++		if (rc < 0) {
++			cifs_dbg(FYI, "%s: aborting reconnect due to a received"
++				 " signal by the process\n", __func__);
++			return -ERESTARTSYS;
++		}
+ 
+ 		/* are we still trying to reconnect? */
+ 		if (server->tcpStatus != CifsNeedReconnect)
+@@ -230,7 +236,7 @@ smb2_reconnect(__le16 smb2_command, stru
+ 	}
+ 
+ 	if (!tcon->ses->need_reconnect && !tcon->need_reconnect)
+-		return rc;
++		return 0;
+ 
+ 	nls_codepage = load_nls_default();
+ 
 
 
