@@ -2,87 +2,114 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C31AC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B420BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:22:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07C0208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:21:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07C0208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 6BB7C2089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:22:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KkdbNSpS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BB7C2089B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934236AbeGJPV5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:21:57 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:40773 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934064AbeGJPVz (ORCPT
+        id S934245AbeGJPWT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:22:19 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:33770 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933443AbeGJPWQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:21:55 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0LibhV-1gDKbe2WGz-00cyuN; Tue, 10 Jul 2018 17:21:47 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Tejun Heo <tj@kernel.org>,
-        Josef Bacik <jbacik@fb.com>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] block: iolatency: avoid 64-bit division
-Date:   Tue, 10 Jul 2018 17:21:34 +0200
-Message-Id: <20180710152146.2371336-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:XyocjbQFefAhj3c/bBIEQ15lCKAaGoxSg9237vfr9dEN8XZkfbU
- WWAZf6Waok7o8dp+g/lNtmVlOs7p+HurBsmWWBfKrH2zZR49JuCxrovK7Bg5Ac7cFDsPkEY
- o0XbBwSKrybbDNcjo9oUolaIrUvNZwUxYoBSStaS9oM8DuB6mB7ySZObAm4tuezVgHVZVtI
- ell4rX/Idyevjig3J3qQQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:+9NDxLDRql0=:f1V6LWvmkqTjc91JNmh/X9
- 950MUw3uL5eSP/jsn+IJqmlkALQ1DEfwvLdENF9Gsf2dm0oSeXPDJ0x22K8dA+oPz3GaPtKxT
- KDYc97/lfqN+66RzZJICZf5xJ89v8+h9gc9pTlntxLc5d7cD6Z2fhmXGfLJ+Z2bLYOXEN8+6i
- fsZuOmupy8vQkqHduUqKyZRZ+4SGhW+gyMEm272mU8vWaIiWk1XMDI4qTlDg1lq+R18G749De
- PizaabuzHdHiF5t/nPtnEMAK2RUuR9ssP4Xk6iaUSw1uHJSNC0Dqm5w3WZACbPsq85dczmOyo
- Ttat7HWuQtgrbTSiRzmnugMSCI7V1bJ+freExm82theUsJixhUw5HsXLawJl7RtuUtSli53t9
- cms1XY/IcV7RMn8MyrwtcW3KWLLdEYKLksPvqEAusQZ0IzmMGRBpY3+ghORaGBTOJNpJaPFfY
- yky9Q8bfuPMt3pB+3rMjFluZrSXU4wtNZS7nudsIcybgW6S3LezQOJXsZXySGXWIrqmXkHOnQ
- lToVDyKCy1ptxoBG5MrCtmksgfkpr8fyaE7Xmuq60Vhii+wZoszWS8LL22+T5rK8p7VEmquAn
- UZmeFwrwssQDmJjlTeqfKSLM19aZmynKIwvBLevv7+TvuntA+/m6T28R4tjvT6rZh+LDTHQqB
- BHJ6FDpe+2sjI2MR1XNDdMWsncDEYtKreVWviEoc40p6LJ05ZeQBxnOzi6+3w0HttiMY=
+        Tue, 10 Jul 2018 11:22:16 -0400
+Received: by mail-yw0-f194.google.com with SMTP id c135-v6so7970420ywa.0;
+        Tue, 10 Jul 2018 08:22:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Jd0STiNOIPEjJOCCp/llyQFtGHEO7r0N9zhQTHvVqLk=;
+        b=KkdbNSpSYXuxQQczLnaM2Fc1gQkB7pnXzozryP0E5b+6xwWS4zK1P2/PnCPdIk3TZJ
+         dmveewEpAIG+gfJGqyJcpJFDxQpt8Rr+sqxSjZNWwMTocQYmufKFWdSv+KGRKxUTs+io
+         wrHiDZoaFe0yUIKwMQUyCw30WTxk42RVhyX+cJ53BGTfXF0RYfAVBK6NVye/jsHel27Z
+         CdOEejC3yo0CvWefDh62Fm2UrJxtU/Agwr3FuDGtYjY4+kuWOrD76EN1YsrUtV50u9LJ
+         JYIg/KtqpYmG4Yy/NL60RRIzn7kOQ6kcSoSkNVCZcTLuEdGYkGVInW1ysnBRznl0BiCx
+         KL5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Jd0STiNOIPEjJOCCp/llyQFtGHEO7r0N9zhQTHvVqLk=;
+        b=KTMgG+ytJfeMteHKZNwkqSXrBpASwS5yd+QJ9iA5g6pJ90TUN6CjEMisg2FzWgwv7c
+         VjOnBNdDZ8gEXoZlw7nUigGZAg5At3wZ+y64oOAYBQGLXh7J08HXyNGUut3x5N9ohR4K
+         qVgHu7qmsLvy+ngDVmzttI68l77JDbmcc4RoHO15ynDXzXyLPlM8B49PdPA1HkbFSNyF
+         MFLhbYciIu2mdbpgu8UKvsyXQZDTsDoNyTf7idCfKx21ZA7uq1JDv2a4k7oWuu8E5knt
+         ZglN9UvCzrbv71H3FN0XD8CbjNKGsKuIUqnIWn0uK6/IWwWiqtVWKusKCrVmxEOwT1Fq
+         yjOA==
+X-Gm-Message-State: AOUpUlHh3GxowBlgnZZeqam6pjTGhTkQBylqeBukePnaewDEQ8hAMGv8
+        QIs/FXEQ7yrL1pbz9/Der/5yYgRdXNZMMLNTtb8=
+X-Google-Smtp-Source: AAOMgpdHcgUJjVjtuKbVo51hx67QA1I7uOvT0F43hk3Y2xtXSOJidkPWpJ82+uMOo9L93ymjRqRNUEaGKwqZ7bkCQoY=
+X-Received: by 2002:a0d:fb44:: with SMTP id l65-v6mr4240530ywf.422.1531236135513;
+ Tue, 10 Jul 2018 08:22:15 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180611155001.3506-1-peron.clem@gmail.com> <CAJiuCcf3g2fzrR2_4mthjwKRcyZ8KVPX+EZ5_Uifh2E6TkzusQ@mail.gmail.com>
+ <52591c2d-e9df-7078-7cdf-0fd8d06c9ee0@linaro.org>
+In-Reply-To: <52591c2d-e9df-7078-7cdf-0fd8d06c9ee0@linaro.org>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Tue, 10 Jul 2018 17:22:04 +0200
+Message-ID: <CAJiuCcc-eGRr_RT01dNfhQso5PbXfWy+YZS4PHHcL=_yhA-3Sw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] Reintroduce i.MX EPIT Timer
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Colin Didier <colin.didier@devialet.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        =?UTF-8?Q?Cl=C3=A9ment_Peron?= <clement.peron@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 32-bit architectures, dividing a 64-bit number needs to use the
-do_div() function or something like it to avoid a link failure:
+Hi Daniel,
 
-block/blk-iolatency.o: In function `iolatency_prfill_limit':
-blk-iolatency.c:(.text+0x8cc): undefined reference to `__aeabi_uldivmod'
+On Tue, 10 Jul 2018 at 17:12, Daniel Lezcano <daniel.lezcano@linaro.org> wr=
+ote:
+>
+> On 10/07/2018 16:55, Cl=C3=A9ment P=C3=A9ron wrote:
+> > Hi,
+> >
+> > Is there still some remark against merging this ?
+>
+> How do you want this to be merged ?
+>
+> Shall I take the two patches related to the timer ? Or Ack them ?
 
-Using div_u64() gives us the best output and avoids the need for an
-explicit cast.
+I'm not an expert on how submitting patches works, it's the first
+driver I submit.
 
-Fixes: d70675121546 ("block: introduce blk-iolatency io controller")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- block/blk-iolatency.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+But as this has been tested and no NXP team member seems against I
+would be happy to see this patch merged.
 
-diff --git a/block/blk-iolatency.c b/block/blk-iolatency.c
-index a35a1f580337..56ddb2c68752 100644
---- a/block/blk-iolatency.c
-+++ b/block/blk-iolatency.c
-@@ -798,8 +798,7 @@ static u64 iolatency_prfill_limit(struct seq_file *sf,
- 	if (!dname || !iolat->min_lat_nsec)
- 		return 0;
- 	seq_printf(sf, "%s target=%llu\n",
--		   dname,
--		   (unsigned long long)iolat->min_lat_nsec / NSEC_PER_USEC);
-+		   dname, div_u64(iolat->min_lat_nsec, NSEC_PER_USEC));
- 	return 0;
- }
- 
--- 
-2.9.0
+Thanks,
+Clement
 
+>
+> --
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
