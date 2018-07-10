@@ -2,149 +2,219 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31704C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA092C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2F0208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:47:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CE5F208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:49:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDQikjiu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2F0208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PfLVLEVR";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="gba19rGZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CE5F208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934354AbeGJPrk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:47:40 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:37314 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933132AbeGJPr3 (ORCPT
+        id S934374AbeGJPte (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:49:34 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50114 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934017AbeGJPtb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:47:29 -0400
-Received: by mail-it0-f66.google.com with SMTP id p17-v6so31971622itc.2;
-        Tue, 10 Jul 2018 08:47:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=N5oYc937BspWe+glZQkI9w0XadUA7+lEzkqHaB6z8iI=;
-        b=pDQikjiuFxbnaxGci6xmSFWVicpzwe0e83k7Mb2LTpyNl+xFoGgao99dH1TK+HXFQA
-         IE8NKaiivCyoXnnaj7H71lkRxOOCzd/CBuFX0xNDL4716O1I9u16aOv/njopyx+KMBiU
-         zE+xWuDvKPOIrsNNtpY0nCpbv96JtjJOC5uv8C5KILrXXZRhI8MCoZqT+yRFM8doVzZt
-         VfkDbQM+6TkmuGDY5i0wGmQQ9NQUmy7Uovka70bajmr/HW+++wqzrfkRZuRdaqQtB917
-         DIXCtGVCyjEHZwVvEv6COJ7uuB64zW/pbgyjUc13JH2YFAfIY5JeV/D/2RFwcXXFqat7
-         XD+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=N5oYc937BspWe+glZQkI9w0XadUA7+lEzkqHaB6z8iI=;
-        b=Bw+e58/pFLdmdqgCGjGdcKzYwvn9NJcwWXPjZJ/yOF5Olj9wHUVQ2c6p9aDffUxcNd
-         EnxJyH2dDBEXLS+Vt5Qxs+koMFllEJkIyRCl4WgKnrjBUN0Di/NwMkF6Zr0qa9vKoyNv
-         FQ6YuVN/62fiPLMXR179Sj6/7+us/m/OZ1r6meQLcmjIvnovP9gWdopRTXNE9tLcuqOw
-         qXbfcjSR3DAGsJtEKJKS8Gc6TREizINVQam/JOcYYqNPe1m4mnmDb+cSm3xggcR6MVry
-         xrZlIPXWgyJuj580j1g3Okt1jtE5lo1yxug5tDKNQGfAihx7dSX7jKcoDc6NWv0yTPEC
-         rt/A==
-X-Gm-Message-State: APt69E1m9PktH06tFddtR8wVZnGf1Z9VE7Qff57rrCoX5+z1/MsAhkR3
-        mA5OPGq6fWXGzedQtJ3yis2oNbO5wHLRPLUy+00=
-X-Google-Smtp-Source: AAOMgpc0EOcTuRlEpGQw4fD+qZd9fIjCFOsWJw/cDkxFq94de7jokfF9yJXQZIBtlZ8nF7nUsoAuY9W1zZbGcS0ZfIo=
-X-Received: by 2002:a02:9c33:: with SMTP id q48-v6mr20323720jak.103.1531237649261;
- Tue, 10 Jul 2018 08:47:29 -0700 (PDT)
+        Tue, 10 Jul 2018 11:49:31 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F1C2960791; Tue, 10 Jul 2018 15:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531237771;
+        bh=r7pTaLXa8wg5vGLiyUtgw5EIA0KMcZNS+lopKYncceA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PfLVLEVRT5pv3rIQ7gevVDO1rh+mAtfSwPs9cORhgGRZW4Q0CR8ob9I2OajVmh1Jr
+         Puh6lKq4eoPIDXQgyxZn6oh9oPsM0hinzTvmqMOdp7Gu1p1z4S6BdyKZPqQqCh3Iny
+         HKn9h1cVlu3qjUnP31etsBJhu75cWtSzyvI/Bi08=
+Received: from [10.226.58.143] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pprakash@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B1F4C6014B;
+        Tue, 10 Jul 2018 15:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531237770;
+        bh=r7pTaLXa8wg5vGLiyUtgw5EIA0KMcZNS+lopKYncceA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=gba19rGZKejKdpXXUNKFS2f6JSTW7lo6m72KQZzjNVug18OTfhsLvjA9NXA+godCX
+         G5IOJNUhBNsnXJdfftDzruZ2AB1FUNNo2opAsMnTJ+IAbeMSZInLM/S1P9+iz6/oBb
+         QYEAycUMxnyAokf0ywAMja+AzMHTz9HhPhH6KoVE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B1F4C6014B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pprakash@codeaurora.org
+Subject: Re: [PATCH v3] cpufreq / CPPC: Add cpuinfo_cur_freq support for CPPC
+To:     George Cherian <gcherian@caviumnetworks.com>,
+        George Cherian <george.cherian@cavium.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net
+References: <1531131048-60762-1-git-send-email-george.cherian@cavium.com>
+ <802dd310-a26c-3baa-696e-15393d6e1516@codeaurora.org>
+ <3bfc37e1-e82b-c09d-462f-bf4f79aec91f@caviumnetworks.com>
+From:   "Prakash, Prashanth" <pprakash@codeaurora.org>
+Message-ID: <687232fa-d355-1a91-be3d-7cde3c62fc5b@codeaurora.org>
+Date:   Tue, 10 Jul 2018 09:49:28 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Received: by 2002:a4f:d00d:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 08:47:28
- -0700 (PDT)
-In-Reply-To: <20180707024902.439-1-andrew.smirnov@gmail.com>
-References: <20180707024902.439-1-andrew.smirnov@gmail.com>
-From:   Chris Healy <cphealy@gmail.com>
-Date:   Tue, 10 Jul 2018 08:47:28 -0700
-Message-ID: <CAFXsbZqgc7B-YE-aFgT=Qz20u+JRvvfdQFgh77Zv-+w62GA7XA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx: Add ZII SCU2 Mezz board
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3bfc37e1-e82b-c09d-462f-bf4f79aec91f@caviumnetworks.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Successfully tested on an SCU2 Mezz board.
 
-Tested-by: Chris Healy <cphealy@gmail.com>
 
-On Fri, Jul 6, 2018 at 7:49 PM, Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
-> Add support for the Zodiac Inflight Innovations SCU2 Mezz
-> board (i.MX51-based).
+On 7/9/2018 11:42 PM, George Cherian wrote:
+> Hi Prakash,
 >
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: cphealy@gmail.com
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-> Signed-off-by: Andrey Gusakov <andrey.gusakov@cogentembedded.com>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> ---
 >
-> Shawn:
+> On 07/09/2018 10:12 PM, Prakash, Prashanth wrote:
+>>
+>> Hi George,
+>>
+>>
+>> On 7/9/2018 4:10 AM, George Cherian wrote:
+>>> Per Section 8.4.7.1.3 of ACPI 6.2, The platform provides performance
+>>> feedback via set of performance counters. To determine the actual
+>>> performance level delivered over time, OSPM may read a set of
+>>> performance counters from the Reference Performance Counter Register
+>>> and the Delivered Performance Counter Register.
+>>>
+>>> OSPM calculates the delivered performance over a given time period by
+>>> taking a beginning and ending snapshot of both the reference and
+>>> delivered performance counters, and calculating:
+>>>
+>>> delivered_perf = reference_perf X (delta of delivered_perf counter / delta of reference_perf counter).
+>>>
+>>> Implement the above and hook this to the cpufreq->get method.
+>>>
+>>> Signed-off-by: George Cherian <george.cherian@cavium.com>
+>>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>> ---
+>>>   drivers/cpufreq/cppc_cpufreq.c | 44 ++++++++++++++++++++++++++++++++++++++++++
+>>>   1 file changed, 44 insertions(+)
+>>>
+>>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+>>> index a9d3eec..61132e8 100644
+>>> --- a/drivers/cpufreq/cppc_cpufreq.c
+>>> +++ b/drivers/cpufreq/cppc_cpufreq.c
+>>> @@ -296,10 +296,54 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>>>        return ret;
+>>>   }
+>>>
+>>> +static int cppc_get_rate_from_fbctrs(struct cppc_cpudata *cpu,
+>>> +                                  struct cppc_perf_fb_ctrs fb_ctrs_t0,
+>>> +                                  struct cppc_perf_fb_ctrs fb_ctrs_t1)
+>>> +{
+>>> +     u64 delta_reference, delta_delivered;
+>>> +     u64 reference_perf, delivered_perf;
+>>> +
+>>> +     reference_perf = fb_ctrs_t0.reference_perf;
+>>> +
+>>> +     delta_reference = (u32)fb_ctrs_t1.reference -
+>>> +                             (u32)fb_ctrs_t0.reference;
+>>> +     delta_delivered = (u32)fb_ctrs_t1.delivered -
+>>> +                             (u32)fb_ctrs_t0.delivered;
+>> Why (u32)? These registers can be 64bits and that's why cppc_perf_fb_ctrs
+>> have 64b fields for reference and delivered counters.
+>>
+>> Moreover, the integer math is incorrect. You can run into a scenario where
+>> t1.ref/del < t0.ref/del,  thus setting a negative number to u64! The likelihood
+>> of this is very high especially when you throw away the higher 32bits.
+>>
+> Because of binary representation, unsigned subtraction will work even if
+> t1.ref/del < t0.ref/del. So essentially, the code should look like
+> this,
 >
-> This is a spin-off of SCU2 Mezz board support originally found in [v0]
-> as per out off-list (Fabio, Chris, Nikita, myself) to add support for
-> ZII hardware fist and worry about factoring out commonalites later.
+> static inline u64 get_delta(u64 t1, u64 t0)
+> {
+>         if (t1 > t0 || t0 > ~(u32)0)
+>                 return t1 - t0;
 >
-> Original submission was done by Andrey Gusakov, but he is too busy on
-> other projects, so the honors of submitting this were delegated to me.
+>         return (u32)t1 - (u32)t0;
+> }
 >
-> NOTE: RAVE SP ("zii,rave-sp-mezz") node is technically supported by
-> upstream, but it needs some fixes from [rave-sp-fixes] to work
-> correctly. If you want me to drop that node until [rave-sp-fixes] is
-> merged, let me know.
+> As a further optimization, I used (u32) since that also works,
+> as long as the momentary delta at any point is not greater than 2 ^ 32.
+> I don't foresee any reason for any platform to increment the counters at
+> an interval greater than 2 ^ 32.
+
+We are NOT running within any critical section to make sure that there will be
+no context switch between feedback counter reads. Thus the assumptions that
+the delta always represent a very short momentary window of time and that
+it is always less than 2^32 is not accurate.
+
+The single overflow assumption about when the above interger math will
+work is also not acceptable - especially when we throw away the higher order bits.
+There are hardware out there that uses 64b counters and can overflow lower 32b
+in quite short order of time. Since the spec (and some hardware) provides 64bits,
+we should use it make our implementation more robust instead of throwing away
+ the higher order bits.
+
+I think it's ok to use the above integer math, but please add a comment about
+single overflow assumption and don't throw away the higher 32bits.
+
 >
-> Changes since [v0]:
+>> To keep things simple, do something like below:
+>>
+>> if (t1.reference <= t0.reference || t1.delivered <= t0.delivered) {
+>>       /* Atleast one of them should have overflowed */
+>>       return desired_perf;
+>> }
+>> else {
+>>       compute the delivered perf using the counters.
+>> }
 >
->  - Patch converted to be a standalone file not dependent on any
->    ZII-specific .dtsi
->
->  - Added RAVE SP node with all the children that are currently
->    supported by upstream
->
->  - Droppped ecspi2 node. That node didn't have any child devices in
->    [v0] because none of the chips connected to that bus are supported
->    upstream. This node can be added later once anything attached to it
->    has upstream drivers.
->
->  - Dropped i2c_gpio. That bus was originally added for RAVE SP related
->    prototyping and is unused in actual product.
->
->  - Various newline fixes pointed out in [v0]
->
->  - Most of then nodes should be sorted alphabetically (I might have
->    missed some)
->
->  - Collected Reviewed-by from Fabio (Fabio, I assumed you won't mind,
->    but let me know if you want me to drop it)
->
-> [v0] lkml.kernel.org/r/1529603100-31958-4-git-send-email-andrey.gusakov@cogentembedded.com
-> [rave-sp-fixes] lkml.kernel.org/r/20180707024108.32373-1-andrew.smirnov@gmail.com
->
->  arch/arm/boot/dts/Makefile                |   3 +-
->  arch/arm/boot/dts/imx51-zii-scu2-mezz.dts | 448 ++++++++++++++++++++++
->  2 files changed, 450 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/imx51-zii-scu2-mezz.dts
+> No need to do like this as this is tested and found working across counter overruns in our platform.
+>>
+>>> +
+>>> +     /* Check to avoid divide-by zero */
+>>> +     if (delta_reference || delta_delivered)
+>>> +             delivered_perf = (reference_perf * delta_delivered) /
+>>> +                                     delta_reference;
+>>> +     else
+>>> +             delivered_perf = cpu->perf_ctrls.desired_perf;
+>>> +
+>>> +     return cppc_cpufreq_perf_to_khz(cpu, delivered_perf);
+>>> +}
+>>> +
+>>> +static unsigned int cppc_cpufreq_get_rate(unsigned int cpunum)
+>>> +{
+>>> +     struct cppc_perf_fb_ctrs fb_ctrs_t0 = {0}, fb_ctrs_t1 = {0};
+>>> +     struct cppc_cpudata *cpu = all_cpu_data[cpunum];
+>>> +     int ret;
+>>> +
+>>> +     ret = cppc_get_perf_ctrs(cpunum, &fb_ctrs_t0);
+>>> +     if (ret)
+>>> +             return ret;
+>>> +
+>>> +     udelay(2); /* 2usec delay between sampling */
+>>> +
+>>> +     ret = cppc_get_perf_ctrs(cpunum, &fb_ctrs_t1);
+>>> +     if (ret)
+>>> +             return ret;
+>>> +
+>>> +     return cppc_get_rate_from_fbctrs(cpu, fb_ctrs_t0, fb_ctrs_t1);
+>>> +}
+>>> +
+>>>   static struct cpufreq_driver cppc_cpufreq_driver = {
+>>>        .flags = CPUFREQ_CONST_LOOPS,
+>>>        .verify = cppc_verify_policy,
+>>>        .target = cppc_cpufreq_set_target,
+>>> +     .get = cppc_cpufreq_get_rate,
+>>>        .init = cppc_cpufreq_cpu_init,
+>>>        .stop_cpu = cppc_cpufreq_stop_cpu,
+>>>        .name = "cppc_cpufreq",
+>>
+
