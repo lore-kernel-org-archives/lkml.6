@@ -2,88 +2,119 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDEAC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED27C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F5A8208E5
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:20:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5A8208E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
+	by mail.kernel.org (Postfix) with ESMTP id 920D1208E5
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:20:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YtmgbPpA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 920D1208E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732566AbeGJSUb (ORCPT
+        id S1732473AbeGJSVF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:20:31 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:59973 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732335AbeGJSUb (ORCPT
+        Tue, 10 Jul 2018 14:21:05 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:45244 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732391AbeGJSVE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:20:31 -0400
-Received: from localhost ([2.166.249.57]) by mrelayeu.kundenserver.de
- (mreue002 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 0MeXc7-1fRaqb35I7-00Q8oA; Tue, 10 Jul 2018 20:19:38 +0200
-Date:   Tue, 10 Jul 2018 20:19:37 +0200
-From:   Andreas Klinger <ak@it-klinger.de>
-To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        mchehab@kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        linus.walleij@linaro.org, rdunlap@infradead.org,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/3] iio: hx711: fix spurious unit-address in example
-Message-ID: <20180710181937.GA5398@arbeit>
+        Tue, 10 Jul 2018 14:21:04 -0400
+Received: by mail-io0-f193.google.com with SMTP id l25-v6so21246914ioh.12;
+        Tue, 10 Jul 2018 11:20:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HrZ35V2nfWKRv1jDHeHF/gQSl/AN8Josc8jeyNBgv7M=;
+        b=YtmgbPpAS0NvS+jJTxPonY6fOx7SFJzmiHxTSeXKagvaMZA2qqHwf9nFAtkxs3Ph49
+         fybFJDE0oJ23QRMzedD4hNKF1Rm4yAEmlUYy7JVWT1qRyz2i0viEqd1/C0xf6tPe6Gcr
+         dbLoFkPkzd2Vj8tKCBiMYLpOrGrwOvzBXuYg4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HrZ35V2nfWKRv1jDHeHF/gQSl/AN8Josc8jeyNBgv7M=;
+        b=pan7y92WB40IyuCh8G6Becf4qqKdaQO+SpAugUmqsVK+YAUQAuLYKSYN0ePaiSnYmV
+         wmQuoQ1lXCIaum+kaLCqCno4r5TwlhKE15uvG3d7w/4gpfNZJJetnY1CyYaP1yAOUFzR
+         +gydbD2hEM7/X7nX2xKoAJM5WvUu07fRGuYHRY1UFsFoXnVnvAhh6wCcGqzbZSUnsPul
+         H/+5/l2JvQbWnwA85KYJ5bu2Wjyj760p+g72mnsRuybAYXeJ3Y7m8Reg6Cjk1OR0Iocd
+         4LcRlAz2Mv7sNCSmm6gyq19XyYX7RrJp9tY2xXl1of7Z8nIu+hgRbkCeLqhhUTLk/YXG
+         odDQ==
+X-Gm-Message-State: APt69E14IoYZUJWEHESQZlAJ1F7t6ivIjvDHNlXDk6o0dmRMeAfLvr/o
+        rj5dApmv7xGm5lEank16qxwnAgSrEPVsFACU5CdcIA==
+X-Google-Smtp-Source: AAOMgpfFVG1paCCn7B9HcCmN4LUFXSxaf/JcaY1yDS9wgL+/A8Ot81F/wNbDCrcx85xEPVihald5mp9/kUMo6hnIYss=
+X-Received: by 2002:a6b:7a05:: with SMTP id h5-v6mr6474896iom.238.1531243999382;
+ Tue, 10 Jul 2018 10:33:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Provags-ID: V03:K1:AfjvaIs2XiiiZ+qfm7zE388orWpIbVlUsVVkvSdKQM90YScdzVy
- wdVvgBqPZOTOxWLSq70X3clsSHNufG2RivZiNGZ/Nqx/OnKbE6ChtnDCWHJ2Ir8QSVy+7aj
- lSaGuuWRLUYY6L0CP5wh3klL4+1+FZxcvPhnViyFeY2iaopkk/J+EBMY+Rwe4Ov358ZMHBl
- XiO3Fg3CJPEAxVNT3R2xQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZgUwC0OU3CA=:Ca8V5kaWvHBlfij5rA9SAS
- pnoCWsUcAKssYqrp1KGbvkAsOxTFyyf0YswKSYB9YhcZYBzo9BZe50VB71E9auj/RXaj6fHAe
- 8FI0DJMMn9h5ZY6B9+4B4i2YKTfraxy58IvhIXtIUqtBKc0GqYtgoUu3v8vy/cpRPPwkrHRr8
- sgyabZLi6FNRnhpPW4MbIqQqvyGrZD7p9XtViDHKawc9EyPT8n8tlXaMrrqO4S5kwEb3/81If
- Q2watOevbRrU9wlWqmq5THXn7RlphQ/9o00QVE3qp3GcFu4rHmDNbAaO67qya7Z1Sld4ymYRs
- ALwTz0VZl8fIDtveTB7kxxJlJ8dmps6RAPTg213+o1YmlHy58/1T+d38rLJipDdl5dbYNvZ9T
- Kp0SmeM+92hVbKCGkrxENW01vLpTtpIA4J2jyIfv4lM2ehKH7qJ/UhakcBPyOmjD80SwvulKX
- cKCxDPyXSv78pm9G0LyKisCJ6n0yp4K2Qxi3rNiC1sq2T6B+ia5SQGbccewguWr5xlqIfwZuC
- KaitAZo2BOirvnIiC6YVjNc26YGFl9HOmYbc0InMZbyKYmPlr5FUb4H4ttLYJSrRLNE9DCyhC
- BnpoAWZ0e1RVrmFZLp1jZPEX9XETL+po0cz8E3l4zdO5TD9b6Ph9dt+Lzw9ZIl4YHrw6D7T+n
- /29zl1dxoap1eMtm0Suz6fMgid6U4Xp1dWRt1UY91qVKKlf1fa5ojwTNfVKM4N6jQCAc=
+References: <1531215067-35472-1-git-send-email-wei.w.wang@intel.com> <1531215067-35472-2-git-send-email-wei.w.wang@intel.com>
+In-Reply-To: <1531215067-35472-2-git-send-email-wei.w.wang@intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 10 Jul 2018 10:33:08 -0700
+Message-ID: <CA+55aFz9a=D-kquM=sG5uhV_HrBAw+VAhcJmtPNz+howy4j9ow@mail.gmail.com>
+Subject: Re: [PATCH v35 1/5] mm: support to get hints of free page blocks
+To:     wei.w.wang@intel.com
+Cc:     virtio-dev@lists.oasis-open.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com,
+        Rik van Riel <riel@redhat.com>, peterx@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Device tree compiler (dtc) gives a warning if a device node has "@" with a
-following number as it's name but no reg property.
+NAK.
 
-Fix the example in the documentation of avia,hx711 to conform to dtc
-behavior.
+On Tue, Jul 10, 2018 at 2:56 AM Wei Wang <wei.w.wang@intel.com> wrote:
+>
+> +
+> +       buf_page = list_first_entry_or_null(pages, struct page, lru);
+> +       if (!buf_page)
+> +               return -EINVAL;
+> +       buf = (__le64 *)page_address(buf_page);
 
-Signed-off-by: Andreas Klinger <ak@it-klinger.de>
----
- Documentation/devicetree/bindings/iio/adc/avia-hx711.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Stop this garbage.
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-index 2c1b67d33c49..7222328a3d0d 100644
---- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-+++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.txt
-@@ -14,7 +14,7 @@ Optional properties:
- 			high time of 50 microseconds.
- 
- Example:
--weight@0 {
-+weight {
- 	compatible = "avia,hx711";
- 	sck-gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
- 	dout-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
--- 
-2.1.4
+Why the hell would you pass in some crazy "liost of pages" that uses
+that lru list?
+
+That's just insane shit.
+
+Just pass in a an array to fill in. No idiotic games like this with
+odd list entries (what's the locking?) and crazy casting to
+
+So if you want an array of page addresses, pass that in as such. If
+you want to do it in a page, do it with
+
+    u64 *array = page_address(page);
+    int nr = PAGE_SIZE / sizeof(u64);
+
+and now you pass that array in to the thing. None of this completely
+insane crazy crap interfaces.
+
+Plus, I still haven't heard an explanation for why you want so many
+pages in the first place, and why you want anything but MAX_ORDER-1.
+
+So no. This kind of unnecessarily complex code with completely insane
+calling interfaces does not make it into the VM layer.
+
+Maybe that crazy "let's pass a chain of pages that uses the lru list"
+makes sense to the virtio-balloon code. But you need to understand
+that it makes ZERO conceptual sense to anybody else. And the core VM
+code is about a million times more important than the balloon code in
+this case, so you had better make the interface make sense to *it*.
+
+               Linus
