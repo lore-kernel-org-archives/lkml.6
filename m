@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B39C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A655AC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4738620870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:08:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4738620870
+	by mail.kernel.org (Postfix) with ESMTP id 6A3802089D
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 08:09:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A3802089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933166AbeGJICL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 04:02:11 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52670 "EHLO mail.bootlin.com"
+        id S933431AbeGJII7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 04:08:59 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53011 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751233AbeGJICC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 04:02:02 -0400
+        id S933023AbeGJICK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 04:02:10 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 35E572093F; Tue, 10 Jul 2018 10:02:01 +0200 (CEST)
+        id 36F3920A0F; Tue, 10 Jul 2018 10:02:09 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6BB00208FC;
-        Tue, 10 Jul 2018 10:01:50 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id D611F2079F;
+        Tue, 10 Jul 2018 10:01:57 +0200 (CEST)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -66,11 +66,10 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-sunxi@googlegroups.com,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hans.verkuil@cisco.com>
-Subject: [PATCH v5 01/22] v4l2-ctrls: add v4l2_ctrl_request_hdl_find/put/ctrl_find functions
-Date:   Tue, 10 Jul 2018 10:00:53 +0200
-Message-Id: <20180710080114.31469-2-paul.kocialkowski@bootlin.com>
+        Randy Li <ayaka@soulik.info>
+Subject: [PATCH v5 12/22] ARM: sun7i-a20: Add support for the C1 SRAM region with the SRAM controller
+Date:   Tue, 10 Jul 2018 10:01:04 +0200
+Message-Id: <20180710080114.31469-13-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
 References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
@@ -79,121 +78,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Verkuil <hverkuil@xs4all.nl>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
-If a driver needs to find/inspect the controls set in a request then
-it can use these functions.
+This adds support for the C1 SRAM region (to be used with the SRAM
+controller driver) for the A20 platform. The region is shared
+between the Video Engine and the CPU.
 
-E.g. to check if a required control is set in a request use this in the
-req_validate() implementation:
-
-	int res = -EINVAL;
-
-	hdl = v4l2_ctrl_request_hdl_find(req, parent_hdl);
-	if (hdl) {
-		if (v4l2_ctrl_request_hdl_ctrl_find(hdl, ctrl_id))
-			res = 0;
-		v4l2_ctrl_request_hdl_put(hdl);
-	}
-	return res;
-
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- drivers/media/v4l2-core/v4l2-ctrls.c | 25 ++++++++++++++++
- include/media/v4l2-ctrls.h           | 44 +++++++++++++++++++++++++++-
- 2 files changed, 68 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/sun7i-a20.dtsi | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index 86a6ae54ccaa..198b7e924d21 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -2976,6 +2976,31 @@ static const struct media_request_object_ops req_ops = {
- 	.release = v4l2_ctrl_request_release,
- };
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index 59abb623b249..38999d791cb5 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -276,6 +276,20 @@
+ 					status = "disabled";
+ 				};
+ 			};
++
++			sram_c: sram@1d00000 {
++				compatible = "mmio-sram";
++				reg = <0x01d00000 0x80000>;
++				#address-cells = <1>;
++				#size-cells = <1>;
++				ranges = <0 0x01d00000 0x80000>;
++
++				ve_sram: sram-section@0 {
++					compatible = "allwinner,sun7i-a20-sram-c1",
++						     "allwinner,sun4i-a10-sram-c1";
++					reg = <0x000000 0x80000>;
++				};
++			};
+ 		};
  
-+struct v4l2_ctrl_handler *v4l2_ctrl_request_hdl_find(struct media_request *req,
-+					struct v4l2_ctrl_handler *parent)
-+{
-+	struct media_request_object *obj;
-+	
-+	if (WARN_ON(req->state != MEDIA_REQUEST_STATE_VALIDATING &&
-+		    req->state != MEDIA_REQUEST_STATE_QUEUED))
-+		return NULL;
-+
-+	obj = media_request_object_find(req, &req_ops, parent);
-+	if (obj)
-+		return container_of(obj, struct v4l2_ctrl_handler, req_obj);
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_ctrl_request_hdl_find);
-+
-+struct v4l2_ctrl *
-+v4l2_ctrl_request_hdl_ctrl_find(struct v4l2_ctrl_handler *hdl, u32 id)
-+{
-+	struct v4l2_ctrl_ref *ref = find_ref_lock(hdl, id);
-+
-+	return (ref && ref->req == ref) ? ref : NULL;
-+}
-+EXPORT_SYMBOL_GPL(v4l2_ctrl_request_hdl_ctrl_find);
-+
- static int v4l2_ctrl_request_bind(struct media_request *req,
- 			   struct v4l2_ctrl_handler *hdl,
- 			   struct v4l2_ctrl_handler *from)
-diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-index de70cc3a1b80..34ee3167d7dd 100644
---- a/include/media/v4l2-ctrls.h
-+++ b/include/media/v4l2-ctrls.h
-@@ -1111,7 +1111,49 @@ void v4l2_ctrl_request_setup(struct media_request *req,
-  * request object.
-  */
- void v4l2_ctrl_request_complete(struct media_request *req,
--				struct v4l2_ctrl_handler *hdl);
-+				struct v4l2_ctrl_handler *parent);
-+
-+/**
-+ * v4l2_ctrl_request_hdl_find - Find the control handler in the request
-+ *
-+ * @req: The request
-+ * @parent: The parent control handler ('priv' in media_request_object_find())
-+ *
-+ * This function finds the control handler in the request. It may return
-+ * NULL if not found. When done, you must call v4l2_ctrl_request_put_hdl()
-+ * with the returned handler pointer.
-+ *
-+ * If the request is not in state VALIDATING or QUEUED, then this function
-+ * will always return NULL.
-+ */
-+struct v4l2_ctrl_handler *v4l2_ctrl_request_hdl_find(struct media_request *req,
-+					struct v4l2_ctrl_handler *parent);
-+
-+/**
-+ * v4l2_ctrl_request_hdl_put - Put the control handler
-+ *
-+ * @hdl: Put this control handler
-+ *
-+ * This function released the control handler previously obtained from'
-+ * v4l2_ctrl_request_hdl_find().
-+ */
-+static inline void v4l2_ctrl_request_hdl_put(struct v4l2_ctrl_handler *hdl)
-+{
-+	if (hdl)
-+		media_request_object_put(&hdl->req_obj);
-+}
-+
-+/**
-+ * v4l2_ctrl_request_ctrl_find() - Find a control with the given ID.
-+ *
-+ * @hdl: The control handler from the request.
-+ * @id: The ID of the control to find.
-+ *
-+ * This function returns a pointer to the control if this control is
-+ * part of the request or NULL otherwise.
-+ */
-+struct v4l2_ctrl *
-+v4l2_ctrl_request_hdl_ctrl_find(struct v4l2_ctrl_handler *hdl, u32 id);
- 
- /* Helpers for ioctl_ops */
- 
+ 		nmi_intc: interrupt-controller@1c00030 {
 -- 
 2.17.1
 
