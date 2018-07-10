@@ -6,229 +6,114 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4B8C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E37C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:53:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 957F1208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:53:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957F1208E4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C06512084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 12:53:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C06512084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933347AbeGJMxE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 08:53:04 -0400
-Received: from mga12.intel.com ([192.55.52.136]:7212 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933132AbeGJMxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 08:53:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 05:53:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,334,1526367600"; 
-   d="scan'208";a="55407973"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
-  by orsmga007.jf.intel.com with ESMTP; 10 Jul 2018 05:53:00 -0700
-Subject: Re: [PATCH 1/1] mmc: sdhci-pci: fix eMMC controller issue on Intel
- Baytrail SoCs
-To:     Kurt Kanzenbach <kurt.kanzenbach@linutronix.de>
-Cc:     ulf.hansson@linaro.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de
-References: <20180619063119.3955-1-kurt@linutronix.de>
- <20180619063119.3955-2-kurt@linutronix.de>
- <293c2771-ea9b-4f0c-bd31-f8844de12dc4@intel.com>
- <20180620131509.dhshihzxhfebracx@linutronix.de>
- <4d3d9d0d-79b5-ef6c-cca8-9cd9ea7112af@intel.com>
- <20180625143641.mmplqwrldmzx3rvg@linutronix.de>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <b5c03c57-87ea-e4a1-950c-5e7892bfd2ca@intel.com>
-Date:   Tue, 10 Jul 2018 15:51:28 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.0
+        id S933382AbeGJMxJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 08:53:09 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:64113 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933132AbeGJMxG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 08:53:06 -0400
+Received: from 79.184.255.246.ipv4.supernova.orange.pl (79.184.255.246) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 6f96726e6321e058; Tue, 10 Jul 2018 14:53:03 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Pingfan Liu <kernelfans@gmail.com>, linux-kernel@vger.kernel.org,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Dave Young <dyoung@redhat.com>, linux-pci@vger.kernel.org,
+        Lukas Wunner <lukas@wunner.de>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH v2] driver core: Partially revert "driver core: correct device's shutdown order"
+Date:   Tue, 10 Jul 2018 14:51:33 +0200
+Message-ID: <5284251.Resgjlja2Q@aspire.rjw.lan>
+In-Reply-To: <2927655.Y1qg3UnIrE@aspire.rjw.lan>
+References: <1530600642-25090-1-git-send-email-kernelfans@gmail.com> <8816662.k3KXbdkA2e@aspire.rjw.lan> <2927655.Y1qg3UnIrE@aspire.rjw.lan>
 MIME-Version: 1.0
-In-Reply-To: <20180625143641.mmplqwrldmzx3rvg@linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/06/18 17:36, Kurt Kanzenbach wrote:
->> On 06/20/2018 04:15 PM, Kurt Kanzenbach wrote:
->>> Hi,
->>>
->>> thanks for your response.
->>>
->>> On Tue, Jun 19, 2018 at 10:03:01AM +0300, Adrian Hunter wrote:
->>>> On 19/06/18 09:31, Kurt Kanzenbach wrote:
->>>>> Sometimes the eMMC controller doesn't respond anymore on Intel Baytrail
->>>>> SoCs. The resulting error looks like:
->>>>>
->>>>> |mmc1: Reset 0x1 never completed.
->>>>> |sdhci: =========== REGISTER DUMP (mmc1)===========
->>>>> |sdhci: Sys addr: 0xffffffff | Version:  0x0000ffff
->>>>> |sdhci: Blk size: 0x0000ffff | Blk cnt:  0x0000ffff
->>>>> |sdhci: Argument: 0xffffffff | Trn mode: 0x0000ffff
->>>>> |sdhci: Present:  0xffffffff | Host ctl: 0x000000ff
->>>>> |sdhci: Power:    0x000000ff | Blk gap:  0x000000ff
->>>>> |sdhci: Wake-up:  0x000000ff | Clock:    0x0000ffff
->>>>> |sdhci: Timeout:  0x000000ff | Int stat: 0xffffffff
->>>>> |sdhci: Int enab: 0xffffffff | Sig enab: 0xffffffff
->>>>> |sdhci: AC12 err: 0x0000ffff | Slot int: 0x0000ffff
->>>>> |sdhci: Caps:     0xffffffff | Caps_1:   0xffffffff
->>>>> |sdhci: Cmd:      0x0000ffff | Max curr: 0xffffffff
->>>>> |sdhci: Host ctl2: 0x0000ffff
->>>>> |sdhci: ADMA Err: 0xffffffff | ADMA Ptr: 0xffffffff
->>>>>
->>>>> The behavior was observed on an Intel Atom E3825 performing lots of reboots. The
->>>>
->>>> So you are saying this only happens at boot time?  And only when
->>>> re-booting?
->>>
->>> well, exactly. This issue was only observed when rebooting, not on cold
->>> boots.
->>>
->>>> Can you send all the kernel messages?  Can you send an acpidump?
->>>
->>> The kernel log is straightforward. The system is booting and starting a
->>> few applications. Afterwards the issue happens. The rootfilesystem is
->>> located on the eMMC.
->>
->> The full messages can be more revealing such as showing what else was
->> happening and the order of events, so I would still like to see them.
->>
->>>
->>> The error message above is from the Linux v4.9 boot log.
->>>
->>> On v4.17 the same issue happens, but the error messages are different:
->>>
->>> |mmc1: Timeout waiting for hardware interrupt.
->>> |mmc1: sdhci: ============ SDHCI REGISTER DUMP ===========
->>> |mmc1: sdhci: Sys addr:  0x00000002 | Version:  0x00001002
->>> |mmc1: sdhci: Blk size:  0x00007200 | Blk cnt:  0x00000000
->>> |mmc1: sdhci: Argument:  0x00040fd4 | Trn mode: 0x0000003b
->>> |mmc1: sdhci: Present:   0x1fff0000 | Host ctl: 0x00000035
->>> |mmc1: sdhci: Power:     0x0000000b | Blk gap:  0x00000080
->>> |mmc1: sdhci: Wake-up:   0x00000000 | Clock:    0x00000207
->>> |mmc1: sdhci: Timeout:   0x00000000 | Int stat: 0x00000003
->>> |mmc1: sdhci: Int enab:  0x02ff000b | Sig enab: 0x02ff000b
->>> |mmc1: sdhci: AC12 err:  0x00000000 | Slot int: 0x00000001
->>> |mmc1: sdhci: Caps:      0x446cc801 | Caps_1:   0x00000005
->>> |mmc1: sdhci: Cmd:       0x0000123a | Max curr: 0x00000000
->>> |mmc1: sdhci: Resp[0]:   0x00000900 | Resp[1]:  0xffffffff
->>> |mmc1: sdhci: Resp[2]:   0x320f5913 | Resp[3]:  0x00000900
->>> |mmc1: sdhci: Host ctl2: 0x0000000c
->>> |mmc1: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x34ee5208
->>> |mmc1: sdhci: ============================================
->>> |[...]
->>
->> Those messages show that the interrupt did happen but the driver did not see
->> it.  Are you doing anything unusual like using threadirqs?
-> 
-> No, I'm not doing anything unusual. The mmc core uses threaded irqs by
-> default. But, most of the work is performed in the primary handler. So,
-> that shouldn't be a problem.
-> 
-> But in the v4.9 case, we use preempt rt. I took a few scheduler traces
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-preempt rt is unusual.  SDHCI uses synchronize_hardirq() and that might
-explain the difference between the 4.9 case with preempt rt and the 4.17
-without.
+Commit 52cdbdd49853 (driver core: correct device's shutdown order)
+introduced a regression by breaking device shutdown on some systems.
 
-> in order to see if there might be any task blocking or preempting the
-> mmc irqs. However, that's not the case.
-> 
-> The common pattern is: mmc1 is suspended, afterwards some applications
-> use mmc0 and finally a different application accesses mmc1. The suspend
-> function is called and during initialization the reset doesn't work
-> anymore.
-> 
-> Anyway, I'll perform more tests.
-> 
-> Thanks, Kurt
-> 
->>
->>>
->>> Both issues disappear when disabling runtime pm.
->>>
->>> Anyway I'll prepare an acpidump for you.
->>>
->>>>
->>>>> issue seems to occur if runtime power management is used. Found by utilizing
->>>>> ftrace.
->>>>>
->>>>> The erratum VLI10 for the Intel E3825 states, that the eMMC controller
->>>>> incorrectly announces that it supports suspend/resume. However, that shouldn't
->>>>> be used, as the controller may incorrectly transfer data between memory and the
->>>>> SD device.
->>>>
->>>> That erratum is not related to this problem.  The suspend/resume that is
->>>> documented is an internal SDHCI feature, not the kernel's suspend/resume.
->>>> The SDHCI Suspend/Resume Mechanism is not supported in the driver, so it is
->>>> not being used anyway.
->>>
->>> Thanks for the clarification.
->>>
->>> Do you have any idea why this issue might happen?
->>
->> No, but it seems like the runtime pm callbacks aren't happening when they
->> are supposed to.
->>
->>>
->>> Thanks, Kurt
->>>
->>>>
->>>>>
->>>>> Therefore, disallowing runtime pm resolves the issue. Tested on the E3825.
->>>>>
->>>>> Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
->>>>> ---
->>>>>  drivers/mmc/host/sdhci-pci-core.c | 17 ++++++++++++++++-
->>>>>  1 file changed, 16 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
->>>>> index 77dd3521daae..df89381944cd 100644
->>>>> --- a/drivers/mmc/host/sdhci-pci-core.c
->>>>> +++ b/drivers/mmc/host/sdhci-pci-core.c
->>>>> @@ -870,6 +870,21 @@ static const struct sdhci_pci_fixes sdhci_intel_byt_emmc = {
->>>>>  	.priv_size	= sizeof(struct intel_host),
->>>>>  };
->>>>>
->>>>> +/*
->>>>> + * See Erratum VLI10 from Errata List for Intel Atom E3825, Link:
->>>>> + * https://www.intel.ca/content/dam/www/public/us/en/documents/specification-updates/atom-e3800-family-spec-update.pdf
->>>>> + */
->>>>> +static const struct sdhci_pci_fixes sdhci_intel_byt_emmc_no_runtime_pm = {
->>>>> +	.allow_runtime_pm = false,
->>>>> +	.probe_slot	= byt_emmc_probe_slot,
->>>>> +	.quirks		= SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,
->>>>> +	.quirks2	= SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
->>>>> +			  SDHCI_QUIRK2_CAPS_BIT63_FOR_HS400 |
->>>>> +			  SDHCI_QUIRK2_STOP_WITH_TC,
->>>>> +	.ops		= &sdhci_intel_byt_ops,
->>>>> +	.priv_size	= sizeof(struct intel_host),
->>>>> +};
->>>>> +
->>>>>  static const struct sdhci_pci_fixes sdhci_intel_glk_emmc = {
->>>>>  	.allow_runtime_pm	= true,
->>>>>  	.probe_slot		= glk_emmc_probe_slot,
->>>>> @@ -1470,7 +1485,7 @@ static const struct pci_device_id pci_ids[] = {
->>>>>  	SDHCI_PCI_SUBDEVICE(INTEL, BYT_SDIO, NI, 7884, ni_byt_sdio),
->>>>>  	SDHCI_PCI_DEVICE(INTEL, BYT_SDIO,  intel_byt_sdio),
->>>>>  	SDHCI_PCI_DEVICE(INTEL, BYT_SD,    intel_byt_sd),
->>>>> -	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc),
->>>>> +	SDHCI_PCI_DEVICE(INTEL, BYT_EMMC2, intel_byt_emmc_no_runtime_pm),
->>>>>  	SDHCI_PCI_DEVICE(INTEL, BSW_EMMC,  intel_byt_emmc),
->>>>>  	SDHCI_PCI_DEVICE(INTEL, BSW_SDIO,  intel_byt_sdio),
->>>>>  	SDHCI_PCI_DEVICE(INTEL, BSW_SD,    intel_byt_sd),
->>>>>
->>>>
->>>
->>
-> 
+Namely, the devices_kset_move_last() call in really_probe() added by
+that commit is a mistake as it may cause parents to follow children
+in the devices_kset list which then causes shutdown to fail.  For
+example, if a device has children before really_probe() is called
+for it (which is not uncommon), that call will cause it to be
+reordered after the children in the devices_kset list and the
+ordering of that list will not reflect the correct device shutdown
+order any more.
+
+Also it causes the devices_kset list to be constantly reordered
+until all drivers have been probed which is totally pointless
+overhead in the majority of cases and it only covered an issue
+with system shutdown, while system-wide suspend/resume potentially
+had the same issue on the affected platforms (which was not covered).
+
+Moreover, the shutdown issue originally addressed by the change in
+really_probe() made by commit 52cdbdd49853 is not present in 4.18-rc
+any more, since dra7 started to use the sdhci-omap driver which
+doesn't disable any regulators during shutdown, so the really_probe()
+part of commit 52cdbdd49853 can be safely reverted.  [The original
+issue was related to the omap_hsmmc driver used by dra7 previously.]
+
+For the above reasons, revert the really_probe() modifications made
+by commit 52cdbdd49853.
+
+The other code changes made by commit 52cdbdd49853 are useful and
+they need not be reverted.
+
+Fixes: 52cdbdd49853 (driver core: correct device's shutdown order)
+Link: https://lore.kernel.org/lkml/CAFgQCTt7VfqM=UyCnvNFxrSw8Z6cUtAi3HUwR4_xPAc03SgHjQ@mail.gmail.com/
+Reported-by: Pingfan Liu <kernelfans@gmail.com>
+Tested-by: Pingfan Liu <kernelfans@gmail.com>
+Reviewed-by: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+-> v2: Added information from Kishon on the fact that it should be safe
+       to revert the really_probe() modifications added by the
+       problematic commit.  Also added the Reviewed-by tag from Kishon.
+
+---
+ drivers/base/dd.c |    8 --------
+ 1 file changed, 8 deletions(-)
+
+Index: linux-pm/drivers/base/dd.c
+===================================================================
+--- linux-pm.orig/drivers/base/dd.c
++++ linux-pm/drivers/base/dd.c
+@@ -434,14 +434,6 @@ re_probe:
+ 			goto probe_failed;
+ 	}
+ 
+-	/*
+-	 * Ensure devices are listed in devices_kset in correct order
+-	 * It's important to move Dev to the end of devices_kset before
+-	 * calling .probe, because it could be recursive and parent Dev
+-	 * should always go first
+-	 */
+-	devices_kset_move_last(dev);
+-
+ 	if (dev->bus->probe) {
+ 		ret = dev->bus->probe(dev);
+ 		if (ret)
 
