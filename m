@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C92E5C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4AE4C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96F852083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96F852083E
+	by mail.kernel.org (Postfix) with ESMTP id 9E4712083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:29:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E4712083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387892AbeGJS3z (ORCPT
+        id S2387903AbeGJS36 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:29:55 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45458 "EHLO
+        Tue, 10 Jul 2018 14:29:58 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45466 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732596AbeGJS3z (ORCPT
+        with ESMTP id S1732596AbeGJS35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:29:55 -0400
+        Tue, 10 Jul 2018 14:29:57 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A432EC7;
-        Tue, 10 Jul 2018 18:29:43 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2803EEC2;
+        Tue, 10 Jul 2018 18:29:46 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Carlos Barcala Lara <cabl@cesinel.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.9 02/52] USB: serial: cp210x: add CESINEL device ids
-Date:   Tue, 10 Jul 2018 20:24:30 +0200
-Message-Id: <20180710182449.447935757@linuxfoundation.org>
+        stable@vger.kernel.org, Changbin Du <changbin.du@intel.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.9 20/52] tracing: Fix missing return symbol in function_graph output
+Date:   Tue, 10 Jul 2018 20:24:48 +0200
+Message-Id: <20180710182451.370757987@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182449.285532226@linuxfoundation.org>
 References: <20180710182449.285532226@linuxfoundation.org>
@@ -50,66 +50,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Changbin Du <changbin.du@intel.com>
 
-commit 24160628a34af962ac99f2f58e547ac3c4cbd26f upstream.
+commit 1fe4293f4b8de75824935f8d8e9a99c7fc6873da upstream.
 
-Add device ids for CESINEL products.
+The function_graph tracer does not show the interrupt return marker for the
+leaf entry. On leaf entries, we see an unbalanced interrupt marker (the
+interrupt was entered, but nevern left).
 
-Reported-by: Carlos Barcala Lara <cabl@cesinel.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Before:
+ 1)               |  SyS_write() {
+ 1)               |    __fdget_pos() {
+ 1)   0.061 us    |      __fget_light();
+ 1)   0.289 us    |    }
+ 1)               |    vfs_write() {
+ 1)   0.049 us    |      rw_verify_area();
+ 1) + 15.424 us   |      __vfs_write();
+ 1)   ==========> |
+ 1)   6.003 us    |      smp_apic_timer_interrupt();
+ 1)   0.055 us    |      __fsnotify_parent();
+ 1)   0.073 us    |      fsnotify();
+ 1) + 23.665 us   |    }
+ 1) + 24.501 us   |  }
+
+After:
+ 0)               |  SyS_write() {
+ 0)               |    __fdget_pos() {
+ 0)   0.052 us    |      __fget_light();
+ 0)   0.328 us    |    }
+ 0)               |    vfs_write() {
+ 0)   0.057 us    |      rw_verify_area();
+ 0)               |      __vfs_write() {
+ 0)   ==========> |
+ 0)   8.548 us    |      smp_apic_timer_interrupt();
+ 0)   <========== |
+ 0) + 36.507 us   |      } /* __vfs_write */
+ 0)   0.049 us    |      __fsnotify_parent();
+ 0)   0.066 us    |      fsnotify();
+ 0) + 50.064 us   |    }
+ 0) + 50.952 us   |  }
+
+Link: http://lkml.kernel.org/r/1517413729-20411-1-git-send-email-changbin.du@intel.com
+
+Cc: stable@vger.kernel.org
+Fixes: f8b755ac8e0cc ("tracing/function-graph-tracer: Output arrows signal on hardirq call/return")
+Signed-off-by: Changbin Du <changbin.du@intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/cp210x.c |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+ kernel/trace/trace_functions_graph.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -92,6 +92,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8156) }, /* B&G H3000 link cable */
- 	{ USB_DEVICE(0x10C4, 0x815E) }, /* Helicomm IP-Link 1220-DVM */
- 	{ USB_DEVICE(0x10C4, 0x815F) }, /* Timewave HamLinkUSB */
-+	{ USB_DEVICE(0x10C4, 0x817C) }, /* CESINEL MEDCAL N Power Quality Monitor */
-+	{ USB_DEVICE(0x10C4, 0x817D) }, /* CESINEL MEDCAL NT Power Quality Monitor */
-+	{ USB_DEVICE(0x10C4, 0x817E) }, /* CESINEL MEDCAL S Power Quality Monitor */
- 	{ USB_DEVICE(0x10C4, 0x818B) }, /* AVIT Research USB to TTL */
- 	{ USB_DEVICE(0x10C4, 0x819F) }, /* MJS USB Toslink Switcher */
- 	{ USB_DEVICE(0x10C4, 0x81A6) }, /* ThinkOptics WavIt */
-@@ -109,6 +112,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x826B) }, /* Cygnal Integrated Products, Inc., Fasttrax GPS demonstration module */
- 	{ USB_DEVICE(0x10C4, 0x8281) }, /* Nanotec Plug & Drive */
- 	{ USB_DEVICE(0x10C4, 0x8293) }, /* Telegesis ETRX2USB */
-+	{ USB_DEVICE(0x10C4, 0x82EF) }, /* CESINEL FALCO 6105 AC Power Supply */
-+	{ USB_DEVICE(0x10C4, 0x82F1) }, /* CESINEL MEDCAL EFD Earth Fault Detector */
-+	{ USB_DEVICE(0x10C4, 0x82F2) }, /* CESINEL MEDCAL ST Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x82F4) }, /* Starizona MicroTouch */
- 	{ USB_DEVICE(0x10C4, 0x82F9) }, /* Procyon AVS */
- 	{ USB_DEVICE(0x10C4, 0x8341) }, /* Siemens MC35PU GPRS Modem */
-@@ -121,7 +127,9 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8470) }, /* Juniper Networks BX Series System Console */
- 	{ USB_DEVICE(0x10C4, 0x8477) }, /* Balluff RFID */
- 	{ USB_DEVICE(0x10C4, 0x84B6) }, /* Starizona Hyperion */
-+	{ USB_DEVICE(0x10C4, 0x851E) }, /* CESINEL MEDCAL PT Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x85A7) }, /* LifeScan OneTouch Verio IQ */
-+	{ USB_DEVICE(0x10C4, 0x85B8) }, /* CESINEL ReCon T Energy Logger */
- 	{ USB_DEVICE(0x10C4, 0x85EA) }, /* AC-Services IBUS-IF */
- 	{ USB_DEVICE(0x10C4, 0x85EB) }, /* AC-Services CIS-IBUS */
- 	{ USB_DEVICE(0x10C4, 0x85F8) }, /* Virtenio Preon32 */
-@@ -131,10 +139,13 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(0x10C4, 0x8857) },	/* CEL EM357 ZigBee USB Stick */
- 	{ USB_DEVICE(0x10C4, 0x88A4) }, /* MMB Networks ZigBee USB Device */
- 	{ USB_DEVICE(0x10C4, 0x88A5) }, /* Planet Innovation Ingeni ZigBee USB Device */
-+	{ USB_DEVICE(0x10C4, 0x88FB) }, /* CESINEL MEDCAL STII Network Analyzer */
-+	{ USB_DEVICE(0x10C4, 0x8938) }, /* CESINEL MEDCAL S II Network Analyzer */
- 	{ USB_DEVICE(0x10C4, 0x8946) }, /* Ketra N1 Wireless Interface */
- 	{ USB_DEVICE(0x10C4, 0x8962) }, /* Brim Brothers charging dock */
- 	{ USB_DEVICE(0x10C4, 0x8977) },	/* CEL MeshWorks DevKit Device */
- 	{ USB_DEVICE(0x10C4, 0x8998) }, /* KCF Technologies PRN */
-+	{ USB_DEVICE(0x10C4, 0x89A4) }, /* CESINEL FTBC Flexible Thyristor Bridge Controller */
- 	{ USB_DEVICE(0x10C4, 0x8A2A) }, /* HubZ dual ZigBee and Z-Wave dongle */
- 	{ USB_DEVICE(0x10C4, 0x8A5E) }, /* CEL EM3588 ZigBee USB Stick Long Range */
- 	{ USB_DEVICE(0x10C4, 0x8B34) }, /* Qivicon ZigBee USB Radio Stick */
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -830,6 +830,7 @@ print_graph_entry_leaf(struct trace_iter
+ 	struct ftrace_graph_ret *graph_ret;
+ 	struct ftrace_graph_ent *call;
+ 	unsigned long long duration;
++	int cpu = iter->cpu;
+ 	int i;
+ 
+ 	graph_ret = &ret_entry->ret;
+@@ -838,7 +839,6 @@ print_graph_entry_leaf(struct trace_iter
+ 
+ 	if (data) {
+ 		struct fgraph_cpu_data *cpu_data;
+-		int cpu = iter->cpu;
+ 
+ 		cpu_data = per_cpu_ptr(data->cpu_data, cpu);
+ 
+@@ -868,6 +868,9 @@ print_graph_entry_leaf(struct trace_iter
+ 
+ 	trace_seq_printf(s, "%ps();\n", (void *)call->func);
+ 
++	print_graph_irq(iter, graph_ret->func, TRACE_GRAPH_RET,
++			cpu, iter->ent->pid, flags);
++
+ 	return trace_handle_return(s);
+ }
+ 
 
 
