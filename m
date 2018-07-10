@@ -1,86 +1,100 @@
 Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC0FEC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:56:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00411C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF93208EC
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:56:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF93208EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id A2D14208EC
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:57:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rEQBqyGa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D14208EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934368AbeGJP4v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:56:51 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:35740 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933796AbeGJP4u (ORCPT
+        id S934413AbeGJP5D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:57:03 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37257 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933872AbeGJP5B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:56:50 -0400
-Received: by mail-ed1-f68.google.com with SMTP id b10-v6so16938558edi.2;
-        Tue, 10 Jul 2018 08:56:49 -0700 (PDT)
+        Tue, 10 Jul 2018 11:57:01 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q10-v6so15170783wrd.4;
+        Tue, 10 Jul 2018 08:57:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=BiCJVhSSHfA5nmHezhvuPqrlUUNffgNWGFWGLBeH0lg=;
+        b=rEQBqyGawWP7Zv5pBQq//x68H7XLik+K9rFibcMoY+SQaLEgXFyA6HqLH08Gj+ilwp
+         6QB0ADqljUuMmxcY37QVz3ShH/9wVNtBPBuQYAw1eI/K2ltpdFQLmf6SkYYgZE0aAXdO
+         A2DInh9AotsN0lWEGY8PhvI6JLCSfsosAa5tqPAxLxZ4rHi9zYywSjUF85vRDvYsjik3
+         IlbLqjOD5RFarUKA92Jq3VzShgRThbwmt2TaEBwno0BvrlERwzQMfvVPWYZLDflt0WK2
+         UpMrFiV2mTKPlzQvjrQQ9gXStsqI8yC/m1lyx4Y1vncSzhxkFxIsAiJuEglpTdCmol4Q
+         s6LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=sFJgnebbdYO3u1u1RHDwVn3p0a6RqE+snYl0Qe6aLE8=;
-        b=mHjX6W43IUZ2pyOzzaooUhyhFfLv4urx/efjVXxIKx0RbbEsk5XwfLnoMcY6tltGjc
-         /qHto+LvbFydiXfPjfGdCKiHXZJOkbmsQmYE7ML7Au5e9bWy/eMtp0UJAM9fWN3lTdcU
-         PYgHr/fVfWNXE1Q+6JREiuGBzwqol0JMzzVYP7YY699jDD/VA9m9UMCwPe6j24rqOOD8
-         7qwxsGyvHl1DqCp9tncBgV1gJIs/WwbBCvcMsMfA8vZbrUUY/8l+U1oZbHvmK4UupMiV
-         SbtP5qYVe7QjSqWJqlp2QjdjlsgxQvB8UFbuNSSaQ7Zhp2OqDZ65M5c/+eaBX56O+ozP
-         2qbg==
-X-Gm-Message-State: APt69E1I5vn4rYvFsFPg+NHAEqApb+q/BxiZ2oIIB2RAxACynLl5dwKF
-        2Ye2kqmRWKXN+ayCnJiIyjld8ED9
-X-Google-Smtp-Source: AAOMgpdzmwO5zogVAOdCWqR986VAEilviYUClVnqdA97nE6QPUTjoQPmKAnMlHOBUwG1f8VzcwqWyg==
-X-Received: by 2002:a50:92c5:: with SMTP id l5-v6mr26795375eda.52.1531238208618;
-        Tue, 10 Jul 2018 08:56:48 -0700 (PDT)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
-        by smtp.gmail.com with ESMTPSA id b18-v6sm8924244ede.21.2018.07.10.08.56.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 08:56:47 -0700 (PDT)
-Received: by mail-wr1-f47.google.com with SMTP id r16-v6so15179681wrt.11;
-        Tue, 10 Jul 2018 08:56:47 -0700 (PDT)
-X-Received: by 2002:adf:f9c9:: with SMTP id w9-v6mr17736496wrr.105.1531238207548;
- Tue, 10 Jul 2018 08:56:47 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BiCJVhSSHfA5nmHezhvuPqrlUUNffgNWGFWGLBeH0lg=;
+        b=d79wLBcFpENPi4tqX8N7dBFXe8arb+2mgCTmBgCHa7KU9BCklFQB8wNfLZDITr7G3e
+         HUMsO2VmYpVFETIMzIH14NXZebBocPjj/3DBn5y5KOVRgtyEWDWDXriOMrJ2KmSIplQn
+         SyJ8OLkEjeo71QLjaMfx0j+3YPIQRExRuG6ZnJ1tISQAApEzwbeELwKYOfjUrYRPSFYt
+         hAGb5OmUO9xDkdF6RdL/HF/YTepk1mYHqh1uDJfrsS66eUYZc7CjwQsywzQM3xIzHZ+r
+         znRJGkZ1e2hE+kxrWps1U9luazCK0sAqQ6PtYJzujIQUjvA0aP2HGltFG2S+WJqts2JV
+         OgGw==
+X-Gm-Message-State: AOUpUlGS1tLQlm19qswpU2YV2tPfXrSk2YFaoaEofzxE91bt/WaHi4XY
+        YHaKqC3tJ25Xns6kBh7qS4A=
+X-Google-Smtp-Source: AAOMgpenRTYOeVRRtn+oK8ozeeMJoGK4C+ZLD8vh4pcWhqOzmT0if5X/ipURo3zHD6rt0hDO4TtgWQ==
+X-Received: by 2002:adf:9e84:: with SMTP id a4-v6mr5585212wrf.70.1531238220447;
+        Tue, 10 Jul 2018 08:57:00 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 73-v6sm4739555wmu.37.2018.07.10.08.56.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 08:56:59 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 17:56:57 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-next <linux-next@vger.kernel.org>,
+        stephen Rothwell <sfr@canb.auug.org.au>,
+        mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] watchdog/softlockup: Fix SOFTLOCKUP_DETECTOR=n build
+Message-ID: <20180710155657.GA13019@gmail.com>
+References: <1531129883.6480.7.camel@abdul.in.ibm.com>
+ <20180709114716.GN2476@hirez.programming.kicks-ass.net>
+ <1531159814.6480.11.camel@abdul.in.ibm.com>
+ <20180710114210.GI2476@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 08:56:27
- -0700 (PDT)
-In-Reply-To: <20180706175113.26698-11-jernej.skrabec@siol.net>
-References: <20180706175113.26698-1-jernej.skrabec@siol.net> <20180706175113.26698-11-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 10 Jul 2018 23:56:27 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65TTC_JmcrAvd0fYDuMs4H+MwvqrL+LUfGpp_zY+qsavQ@mail.gmail.com>
-Message-ID: <CAGb2v65TTC_JmcrAvd0fYDuMs4H+MwvqrL+LUfGpp_zY+qsavQ@mail.gmail.com>
-Subject: Re: [PATCH 10/17] drm/sun4i: tcon-top: Add helpers for switching mux
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180710114210.GI2476@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 7, 2018 at 1:51 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
-> We want to be able to set TCON TOP muxes at runtime. Add helpers for
-> that.
->
-> Old, static configuration of muxes at probe time is preserved for now.
-> It will be removed when R40 TCON starts using them.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+* Peter Zijlstra <peterz@infradead.org> wrote:
+
+> On Mon, Jul 09, 2018 at 11:40:14PM +0530, Abdul Haleem wrote:
+> 
+> > Thanks Peter for the patch, build and boot is fine.
+> > 
+> > Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+> 
+> Excellent, Ingo can you stick this in?
+
+Sure, done!
+
+Thanks,
+
+	Ingo
