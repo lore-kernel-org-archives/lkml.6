@@ -2,131 +2,150 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B805C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC7DC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DE6C208E3
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:38:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A05C0208EB
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:39:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gvT5LUy9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE6C208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VbEO0wA4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05C0208EB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390191AbeGJSjC (ORCPT
+        id S1732906AbeGJSjd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:39:02 -0400
-Received: from mail-qt0-f173.google.com ([209.85.216.173]:43261 "EHLO
-        mail-qt0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389765AbeGJSjB (ORCPT
+        Tue, 10 Jul 2018 14:39:33 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:36715 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732557AbeGJSjc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:39:01 -0400
-Received: by mail-qt0-f173.google.com with SMTP id f18-v6so19219847qtp.10;
-        Tue, 10 Jul 2018 11:38:46 -0700 (PDT)
+        Tue, 10 Jul 2018 14:39:32 -0400
+Received: by mail-it0-f65.google.com with SMTP id j185-v6so81222ite.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 11:39:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=ciozfUUkUw51HSO84bCd10JwCGYhqMKeeElqN44Mg8A=;
-        b=gvT5LUy9/41c7ImMsse20iFWBg8jSgZybTngD+uo1/Sy7SPjzFKgAlrPV20s+5UA9z
-         6zswjLXsQnIRDSJCgDKwx5bn+Ge6aseCt6uE8tWG3klEZsRSUZuR0nhR7P0L9Y6j9uWK
-         imeTZdtcU6y2lfVOvUX51WCXCrfqHPMF7/u3PwP3sLwvbUFOCCAdPZtbM/DO1Qqh+yo7
-         SMoGZYuzP7xa9SFZ4Cg5QTaV0kK96Sf9X8Z1jnvF5nyuollVLMU5Fxfj0ApQY2LYQ6nL
-         5YFAyctWPVVSzK74vQaPwkNl4c9FU1+2x7gDTLtSw1NT88apNvhsaBlZ3gNNSoTUMVep
-         TwFw==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=b/qh4MmnxtcchGDhc6TQCa9qodaj+wt1P6Lw841CQsE=;
+        b=VbEO0wA4MRaXUdYoFuQOdzSE6m4MyPMKxKp7oOLgz3MFnAatXJA+Zu0C3q7q0Z/6NI
+         juw6JriPwlFo8DwKJSzTD9ZWe4lvJT9LkB5d9SwrdB39G9GV8gN+BlJYdFKb3Af0sS8Q
+         +wK3rbTZu7XOVMcktCc1MCU7G4SEmFFr2tVdY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ciozfUUkUw51HSO84bCd10JwCGYhqMKeeElqN44Mg8A=;
-        b=VxZeWbV4QKeJTqciWo4eo//Nv8oi9kdlc6gJCDiMJtHNitIblyxEzXVqWKaBp8H/uz
-         L0o0vcsbkQ7zDGvYBse/B6j4Mr6bu61NJdSIFQ2+/BYaVd8XC6lbO4O8fgjVtiY1lU+7
-         LEk/2wZTS6ZNljKdQcffjj0FP0ydo2KJTuGk+r7EVOP2aPuhV8IY/DU75jf/1aKAhHby
-         5VpIi4I43fGQtocNa/2Fd207gJ27nMxjN3PY3gAl3PlRmjcF2qbwTXdjxiJqqf748qRr
-         nA0YJ8ng23JfqBt1vFED+bD8seklDyt8RxcpMJfR9HI3a1EdrA+Vg+6E96D9FgTSv/JB
-         7rLw==
-X-Gm-Message-State: APt69E1ruKKnbOQKuBwK4DJ/oJ/smHSbEJ2VxekonQD8UTjQoYq1bOE+
-        BaxJeBEDp2T2WNH1Gytnajk=
-X-Google-Smtp-Source: AAOMgpc3ler2Dk3sM8L6cvgLijPA5wuKIS6CzvdTVARqCwARxGcdPmJJkCnI61KV02y5FZ+UooxCdQ==
-X-Received: by 2002:a0c:f386:: with SMTP id i6-v6mr23009010qvk.100.1531247926065;
-        Tue, 10 Jul 2018 11:38:46 -0700 (PDT)
-Received: from eaf ([181.47.179.0])
-        by smtp.gmail.com with ESMTPSA id h22-v6sm11091827qkj.84.2018.07.10.11.38.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Jul 2018 11:38:45 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 15:38:41 -0300
-From:   Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>
-To:     Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Cc:     pavel@ucw.cz, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Subject: Re: Mounting corrupted HFS+ causes kernel NULL pointer dereference
-Message-ID: <20180710183839.abazeghy7he4v2ai@eaf>
-References: <CAE5jQCfP1Z0oTBz_V0QkFwFqtJgekUMD2HZR=qA2oWxPvZrzsQ@mail.gmail.com>
- <20180603184955.zrowxp4y3ij66y5n@eaf>
- <20180608152557.GB11958@amd>
- <CAE5jQCeCOK5zoH4KbyP+hiMKp4MpkjJN1efzquoXCfPPXoj9Nw@mail.gmail.com>
- <20180709203455.fbmx45ehrsj6yjzr@eaf>
- <CAE5jQCd0dD2jcNLGXK0N1g6TOfNfruyTV-7R6Eh1v65bkoqi1g@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=b/qh4MmnxtcchGDhc6TQCa9qodaj+wt1P6Lw841CQsE=;
+        b=PPEApLLmz20ynJ3Pqj/bqixvg9ClzFpUXqPdRE1wZ+FqDch/KMnCGWb6aq8qHRFyxh
+         6x5aavmWLpZv5B+Gyvjxk34ToPfAKpHQ6q8VaMgxKwQ3PO4cz8W/82XxbeS16MoGthdN
+         dzL648btTuZWlrHs1epPzrT9Htxou7leNwqBv2/ff6BFKVJtxMGRF7RNl2IjCFGGDWG6
+         v1uf0ITQ8hMKdsms0BH3GVQXOgy1I0gVfOAfB7nHwAkOXRB2mLXyM+bFd6Lu/btx64lD
+         vuVRO9zGqV3l95dVXG7ngyc/RU6hD/ap+VfdZv5cnEHASqu5Sjapx8NpOG565zaUMSt4
+         1imQ==
+X-Gm-Message-State: APt69E22Jb5HJ7T/eOKsXQGabT07aSHE9yOyRoPMatrRAa2CMBmMNL0n
+        fFAFrSMPSNQ72W9FEqcnwE9h8dxwNfH4kkYmliwGPA==
+X-Google-Smtp-Source: AAOMgpc4/PFXdqst0QdZGWowAXs9bbGpKnd1AYmF1To5SAZzkLovUWiRXPKKKmCY2mB09wP0W6yqShmBmLPKq5zpHEw=
+X-Received: by 2002:a24:64d6:: with SMTP id t205-v6mr20544353itc.138.1531247957366;
+ Tue, 10 Jul 2018 11:39:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAE5jQCd0dD2jcNLGXK0N1g6TOfNfruyTV-7R6Eh1v65bkoqi1g@mail.gmail.com>
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 11:39:16
+ -0700 (PDT)
+In-Reply-To: <93c42065-bece-a4c7-ed99-5e98f91315a6@arm.com>
+References: <20180709234229.20181-1-takahiro.akashi@linaro.org>
+ <20180709234229.20181-3-takahiro.akashi@linaro.org> <93c42065-bece-a4c7-ed99-5e98f91315a6@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 10 Jul 2018 20:39:16 +0200
+Message-ID: <CAKv+Gu_fajf3_P0wKpdV34Ungu=fn0=WG1U_MSQ9WF_2GFRfDA@mail.gmail.com>
+Subject: Re: [PATCH v3.1 2/4] efi/arm: preserve early mapping of UEFI memory
+ map longer for BGRT
+To:     James Morse <james.morse@arm.com>
+Cc:     AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "Baicar, Tyler" <tbaicar@codeaurora.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Al Stone <al.stone@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kexec Mailing List <kexec@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 08:28:37PM +0300, Anatoly Trosinenko wrote:
-> Thank you,
-> 
-> When applied this single patch on v4.18-rc4 and performed "echo >
-> /mnt/xyz" on hfsplus_16mb_hang image, I get about 14 pairs of lines
-> 
-> hfsplus: unable to mark blocks free: error -5
-> hfsplus: can't free extent
-> 
-> Then `echo` exits with "No space left on device" error.
+On 10 July 2018 at 19:57, James Morse <james.morse@arm.com> wrote:
+> Hi Ard,
+>
+> On 10/07/18 00:42, AKASHI Takahiro wrote:
+>> From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>
+>> The BGRT code validates the contents of the table against the UEFI
+>> memory map, and so it expects it to be mapped when the code runs.
+>>
+>> On ARM, this is currently not the case, since we tear down the early
+>> mapping after efi_init() completes, and only create the permanent
+>> mapping in arm_enable_runtime_services(), which executes as an early
+>> initcall, but still leaves a window where the UEFI memory map is not
+>> mapped.
+>>
+>> So move the call to efi_memmap_unmap() from efi_init() to
+>> arm_enable_runtime_services().
+>
+> I don't have a machine that generates a BGRT, but I can see that efi_mem_type()
+> call in efi_bgrt_init() would cause the same problems we have with kexec and acpi.
+>
 
-Truncation does not return error codes in hfsplus, hence this weird "No
-space left" that comes from somewhere else. This should be fixed, but
-it's not as big an issue as the deadlock. Filesystems usually don't need
-to worry about protecting a crafted image from acting weird and causing
-damage to itself.
+I'm not sure I follow. The BGRT table only contains natively aligned
+fields, so the alignment faults should not occur when accessing this
+table after kexec. The issue addressed by this patch is that
+efi_mem_type() bails when called while EFI_MEMMAP is cleared.
 
->Then it
-> permits to perform `rm /mnt/xyz` and on `echo > /mnt/1` it responds
-> with no space left on device (but file *is* created and is cattable).
-> I don't know what is safer, but now it doesn't deadlock. :) Maybe it
-> is even worth to remount FS r/o, I don't know. (Please excuse me for
-> speculations)
+>
+>> diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
+>> index b5214c143fee..388a929baf95 100644
+>> --- a/drivers/firmware/efi/arm-init.c
+>> +++ b/drivers/firmware/efi/arm-init.c
+>> @@ -259,7 +259,6 @@ void __init efi_init(void)
+>>
+>>       reserve_regions();
+>>       efi_esrt_init();
+>> -     efi_memmap_unmap();
+>>
+>>       memblock_reserve(params.mmap & PAGE_MASK,
+>>                        PAGE_ALIGN(params.mmap_size +
+>> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+>> index 5889cbea60b8..59a8c0ec94d5 100644
+>> --- a/drivers/firmware/efi/arm-runtime.c
+>> +++ b/drivers/firmware/efi/arm-runtime.c
+>> @@ -115,6 +115,8 @@ static int __init arm_enable_runtime_services(void)
+>>               return 0;
+>>       }
+>>
+>> +     efi_memmap_unmap();
+>
+> This can get called twice if uefi_init() fails after setting the EFI_BOOT flag,
+> but this can only happen if the system table signature is wrong, (or we're out
+> of memory really early).
+>
 
-It's not strange that the /mnt/1 file could be created but not written
-to, since the first operation doesn't usually require allocating blocks.
+I guess we should check the EFI_MEMMAP attribute here as well then.
 
-> 
-> Thanks,
-> Anatoly
+> I think this is harmless as we end up passing NULL to early_memunmap() which
+> WARN()s and returns as its outside the fixmap range. Its just more noise on
+> systems with a corrupt efi system table.
+>
+> Acked-by: James Morse <james.morse@arm.com>
+>
 
-OK, I'll take a look at the truncation error codes as soon as I'm done
-with the other deadlocks I found. It could take a while.
-
-Thanks for the testing.
-Ernest
-
-> пн, 9 июл. 2018 г. в 23:35, Ernesto A. Fernández
-> <ernesto.mnd.fernandez@gmail.com>:
-> >
-> > On Tue, Jun 12, 2018 at 09:43:26PM +0300, Anatoly Trosinenko wrote:
-> > > And when I mount hfsplus_16mb_hang and perform `echo > /mnt/xyz`, it hangs.
-> >
-> > I just sent you a patch for this final report. Let me know if it works
-> > for you.
+Thanks James
