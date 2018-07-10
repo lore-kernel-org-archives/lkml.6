@@ -2,139 +2,178 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 296D3C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BA5C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8DB20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:42:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kFnT1had"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC8DB20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 7F30020870
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 11:42:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F30020870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933220AbeGJLm2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 07:42:28 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:57476 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751715AbeGJLm1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 07:42:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SvuSTnNEePDhX5KkxhGMjfZ3Nx5qNa6UkTikew9K8uo=; b=kFnT1hadasu5zxccHMMoBHNpA
-        a4P+kBeOoD8nZkpIrXTn7vcLc0jYuJ9g7dFHmRucq6vvs+ZcFE9/apsnixzb6eMQi6B5rF2htS8tD
-        SGFYNESW46lmqAem1l0PuqQjUTrCOTBCISrXI+rbVUJN5lf62q5s/QgmIpnLZRRQgByzxZxX3s5eK
-        UgUF6PQzExxjv7HHEjg2ObIoCUPEsquWZrYyVSh92Fl2MD1OjuwYcSuLgseZ6Za8v1651uT6TElIY
-        c61voeo/boQSsON9F1EWilzeL9XrGfRkyg6xnz5U4VLUanMS5qD7mVb09/bDCX9JWql6YVW764EL/
-        NdKmJS9NA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fcr24-0004FU-Qp; Tue, 10 Jul 2018 11:42:13 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1DA9920289331; Tue, 10 Jul 2018 13:42:10 +0200 (CEST)
-Date:   Tue, 10 Jul 2018 13:42:10 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-next <linux-next@vger.kernel.org>,
-        stephen Rothwell <sfr@canb.auug.org.au>,
-        mpe <mpe@ellerman.id.au>, sachinp <sachinp@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH] watchdog/softlockup: Fix SOFTLOCKUP_DETECTOR=n build
-Message-ID: <20180710114210.GI2476@hirez.programming.kicks-ass.net>
-References: <1531129883.6480.7.camel@abdul.in.ibm.com>
- <20180709114716.GN2476@hirez.programming.kicks-ass.net>
- <1531159814.6480.11.camel@abdul.in.ibm.com>
+        id S933294AbeGJLmz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 07:42:55 -0400
+Received: from muru.com ([72.249.23.125]:50940 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932910AbeGJLmw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 07:42:52 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 8352A8027;
+        Tue, 10 Jul 2018 11:45:54 +0000 (UTC)
+Date:   Tue, 10 Jul 2018 04:42:48 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        bcousson@baylibre.com, paul@pwsan.com, t-kristo@ti.com,
+        mark.rutland@arm.com, sboyd@kernel.org
+Subject: Re: [PATCH v5 4/6] bus: ti-sysc: Add support for software reset
+Message-ID: <20180710114248.GI99251@atomide.com>
+References: <20180709164841.14182-1-faiz_abbas@ti.com>
+ <20180709164841.14182-5-faiz_abbas@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1531159814.6480.11.camel@abdul.in.ibm.com>
+In-Reply-To: <20180709164841.14182-5-faiz_abbas@ti.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 11:40:14PM +0530, Abdul Haleem wrote:
+Hi,
 
-> Thanks Peter for the patch, build and boot is fine.
-> 
-> Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+* Faiz Abbas <faiz_abbas@ti.com> [180709 16:50]:
+> Add support for the software reset of a target interconnect
+> module using its sysconfig and sysstatus registers.
+...
+> --- a/drivers/bus/ti-sysc.c
+> +++ b/drivers/bus/ti-sysc.c
+...
+> +static int sysc_reset(struct sysc *ddata)
+> +{
+> +	int offset = ddata->offsets[SYSC_SYSCONFIG];
+> +	int val = sysc_read(ddata, offset);
 
-Excellent, Ingo can you stick this in?
+Testing with omap4 sysc dts data I noticed we already
+have modules where there is only rev register and no
+SYSC_SYSCONFIG. So not using legacy mode. The
+above offset with -ENODEV value will not work :)
 
+I added some more checks and moved them to the reset
+function.
+
+Updated patch below for reference, I've pushed out
+new branches omap-for-v4.19/ti-sysc-v2 and
+omap-for-v4.19/dt-mcan-v2. I've also updated my
+for-next branch.
+
+Regards,
+
+Tony
+
+8< -----------
+From tony Mon Sep 17 00:00:00 2001
+From: Faiz Abbas <faiz_abbas@ti.com>
+Date: Mon, 9 Jul 2018 22:18:39 +0530
+Subject: [PATCH] bus: ti-sysc: Add support for software reset
+
+Add support for the software reset of a target interconnect
+module using its sysconfig and sysstatus registers.
+
+Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+[tony@atomide.com: updated to check if sysconfig exists]
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 ---
-Subject: watchdog/softlockup: Fix SOFTLOCKUP_DETECTOR=n build
-From: Peter Zijlstra <peterz@infradead.org>
-Date: Mon, 9 Jul 2018 13:47:16 +0200
+ drivers/bus/ti-sysc.c | 46 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-I got confused by all the various CONFIG options here about and
-conflated CONFIG_LOCKUP_DETECTOR and CONFIG_SOFTLOCKUP_DETECTOR. This
-results in a build failure for:
-
-   CONFIG_LOCKUP_DETECTOR=y && CONFIG_SOFTLOCKUP_DETECTOR=n
-
-As reported by Abdul.
-
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Cc: sachinp <sachinp@linux.vnet.ibm.com>
-Cc: mpe <mpe@ellerman.id.au>
-Reported-and-tested-by: Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-Fixes: 9cf57731b63e ("watchdog/softlockup: Replace "watchdog/%u" threads with cpu_stop_work")
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180709114716.GN2476@hirez.programming.kicks-ass.net
----
- include/linux/nmi.h |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
---- a/include/linux/nmi.h
-+++ b/include/linux/nmi.h
-@@ -33,15 +33,10 @@ extern int sysctl_hardlockup_all_cpu_bac
- #define sysctl_hardlockup_all_cpu_backtrace 0
- #endif /* !CONFIG_SMP */
+diff --git a/drivers/bus/ti-sysc.c b/drivers/bus/ti-sysc.c
+--- a/drivers/bus/ti-sysc.c
++++ b/drivers/bus/ti-sysc.c
+@@ -23,11 +23,14 @@
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+ #include <linux/slab.h>
++#include <linux/iopoll.h>
  
--extern int lockup_detector_online_cpu(unsigned int cpu);
--extern int lockup_detector_offline_cpu(unsigned int cpu);
--
- #else /* CONFIG_LOCKUP_DETECTOR */
- static inline void lockup_detector_init(void) { }
- static inline void lockup_detector_soft_poweroff(void) { }
- static inline void lockup_detector_cleanup(void) { }
--#define lockup_detector_online_cpu	NULL
--#define lockup_detector_offline_cpu	NULL
- #endif /* !CONFIG_LOCKUP_DETECTOR */
+ #include <linux/platform_data/ti-sysc.h>
  
- #ifdef CONFIG_SOFTLOCKUP_DETECTOR
-@@ -50,12 +45,18 @@ extern void touch_softlockup_watchdog(vo
- extern void touch_softlockup_watchdog_sync(void);
- extern void touch_all_softlockup_watchdogs(void);
- extern unsigned int  softlockup_panic;
--#else
+ #include <dt-bindings/bus/ti-sysc.h>
+ 
++#define MAX_MODULE_SOFTRESET_WAIT		10000
 +
-+extern int lockup_detector_online_cpu(unsigned int cpu);
-+extern int lockup_detector_offline_cpu(unsigned int cpu);
-+#else /* CONFIG_SOFTLOCKUP_DETECTOR */
- static inline void touch_softlockup_watchdog_sched(void) { }
- static inline void touch_softlockup_watchdog(void) { }
- static inline void touch_softlockup_watchdog_sync(void) { }
- static inline void touch_all_softlockup_watchdogs(void) { }
--#endif
-+
-+#define lockup_detector_online_cpu	NULL
-+#define lockup_detector_offline_cpu	NULL
-+#endif /* CONFIG_SOFTLOCKUP_DETECTOR */
+ static const char * const reg_names[] = { "rev", "sysc", "syss", };
  
- #ifdef CONFIG_DETECT_HUNG_TASK
- void reset_hung_task_detector(void);
+ enum sysc_clocks {
+@@ -88,6 +91,11 @@ struct sysc {
+ 	struct delayed_work idle_work;
+ };
+ 
++void sysc_write(struct sysc *ddata, int offset, u32 value)
++{
++	writel_relaxed(value, ddata->module_va + offset);
++}
++
+ static u32 sysc_read(struct sysc *ddata, int offset)
+ {
+ 	if (ddata->cfg.quirks & SYSC_QUIRK_16BIT) {
+@@ -943,6 +951,36 @@ static void sysc_init_revision_quirks(struct sysc *ddata)
+ 	}
+ }
+ 
++static int sysc_reset(struct sysc *ddata)
++{
++	int offset = ddata->offsets[SYSC_SYSCONFIG];
++	int val;
++
++	if (ddata->legacy_mode || offset < 0 ||
++	    ddata->cfg.quirks & SYSC_QUIRK_NO_RESET_ON_INIT)
++		return 0;
++
++	/*
++	 * Currently only support reset status in sysstatus.
++	 * Warn and return error in all other cases
++	 */
++	if (!ddata->cfg.syss_mask) {
++		dev_err(ddata->dev, "No ti,syss-mask. Reset failed\n");
++		return -EINVAL;
++	}
++
++	val = sysc_read(ddata, offset);
++	val |= (0x1 << ddata->cap->regbits->srst_shift);
++	sysc_write(ddata, offset, val);
++
++	/* Poll on reset status */
++	offset = ddata->offsets[SYSC_SYSSTATUS];
++
++	return readl_poll_timeout(ddata->module_va + offset, val,
++				  (val & ddata->cfg.syss_mask) == 0x0,
++				  100, MAX_MODULE_SOFTRESET_WAIT);
++}
++
+ /* At this point the module is configured enough to read the revision */
+ static int sysc_init_module(struct sysc *ddata)
+ {
+@@ -960,6 +998,14 @@ static int sysc_init_module(struct sysc *ddata)
+ 		return 0;
+ 	}
+ 
++	error = sysc_reset(ddata);
++	if (error) {
++		dev_err(ddata->dev, "Reset failed with %d\n", error);
++		pm_runtime_put_sync(ddata->dev);
++
++		return error;
++	}
++
+ 	ddata->revision = sysc_read_revision(ddata);
+ 	pm_runtime_put_sync(ddata->dev);
+ 
+-- 
+2.17.1
