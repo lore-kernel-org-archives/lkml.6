@@ -2,95 +2,88 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A57C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D629C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A42EE2089D
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E3B12089D
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 06:51:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YcZmTJ6J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A42EE2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dvHNqjPu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E3B12089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932875AbeGJGpZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 02:45:25 -0400
-Received: from ozlabs.org ([203.11.71.1]:38681 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751017AbeGJGpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 02:45:23 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Pt4J6fQzz9s3R;
-        Tue, 10 Jul 2018 16:45:20 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531205121;
-        bh=YvN2QwVqeUnjhSUu2zgUR3cirNZ3PlgV1uCdXhZZmj8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YcZmTJ6JIbK7B/oLXHaZ7Mwf5YxGErgMs1Go0htn8Rfhfij02TDQZSH8fMAfTTBEi
-         tKTAoI0artgmHH6SsQuxdU27BLOjlIXJIp7h9ZbLjcbxmczNc9wXNNyBaNqSIB5mpe
-         IlVfG6gDTk2GXzUr0fS7fHEe5lDAKMxsIoKmIiw44AB2kxgsx3Ad2CMo90iGr95k63
-         o659qEQaeGYYe9TCvFPNDR2pICvA637T1P0qMaf8BMcw+cKMczhjdAAVZfu7tb9Xxa
-         SuRIKwneW2LS5MPuc8xNFME6TMuB8fJ9vLf9lfjNK+wCBaDAk34Fy8mL0S+lktuon+
-         W1Gq6uG4Pf7Yw==
-Date:   Tue, 10 Jul 2018 16:45:14 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Maninder Singh <maninder1.s@samsung.com>
-Subject: linux-next: build warning after merge of the printk tree
-Message-ID: <20180710164514.22c552db@canb.auug.org.au>
+        id S1751312AbeGJGvX (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 02:51:23 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:35642 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750953AbeGJGvU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 02:51:20 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6A6oxHi100320;
+        Tue, 10 Jul 2018 01:50:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531205459;
+        bh=i1btVGTdi9kSALJOZeq0Ixlqu2wdfAG5mSPtdXQO3nY=;
+        h=From:To:CC:Subject:Date;
+        b=dvHNqjPuH2XuGPBSz0yBy+L0/hXhX0FqkQ3Jooy4HT6QCwYQnutvUCtUetwHH5ZuM
+         J44AUxjdzyOgrSeJViQz/eNO4Uydkp1PuZ74c6aSidKl5HuWOvy2fpGHX10Ll+S0w3
+         FLn9QMSDCV+zaEssnaVxn3G67HGsz8YriyoNHias=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6A6oxAQ017780;
+        Tue, 10 Jul 2018 01:50:59 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 10
+ Jul 2018 01:50:59 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 10 Jul 2018 01:50:59 -0500
+Received: from ula0393675.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6A6ouGS000378;
+        Tue, 10 Jul 2018 01:50:56 -0500
+From:   Keerthy <j-keerthy@ti.com>
+To:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>
+CC:     <t-kristo@ti.com>, <j-keerthy@ti.com>, <linux-rtc@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <johan@kernel.org>
+Subject: [PATCH v3 0/4] rtc: OMAP: Add support for rtc-only mode
+Date:   Tue, 10 Jul 2018 12:20:48 +0530
+Message-ID: <1531205452-6086-1-git-send-email-j-keerthy@ti.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/FURb5/juwPe4KedDlPCpTFT"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/FURb5/juwPe4KedDlPCpTFT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Prepare rtc driver for rtc-only with DDR in self-refresh mode.
+The patch series is based on top of Johan Hovald's series:
 
-Hi all,
+https://lkml.kernel.org/r/20180704090558.16647-1-johan@kernel.org
 
-After merging the printk tree, today's linux-next build (x86_64
-allnoconfig) produced this warning:
+Tested for suspend/resume and poweroff on am437x-gp-evm.
 
-kernel/printk/printk.c:2033:13: warning: 'suppress_message_printing' define=
-d but not used [-Wunused-function]
- static bool suppress_message_printing(int level) { return false; }
-             ^~~~~~~~~~~~~~~~~~~~~~~~~
+Keerthy (4):
+  rtc: omap: Cut down the shutdown time from 2 seconds to 1 sec
+  rtc: OMAP: Add support for rtc-only mode
+  rtc: omap: use of_device_is_system_power_controller function
+  rtc: interface: Add power_off_program ops
 
-Introduced by commit
+ drivers/rtc/interface.c | 12 +++++++++
+ drivers/rtc/rtc-omap.c  | 71 ++++++++++++++++++++++++++++++++++++-------------
+ include/linux/rtc.h     |  2 ++
+ 3 files changed, 66 insertions(+), 19 deletions(-)
 
-  375899cddcbb ("printk: make sure to print log on console.")
+-- 
+1.9.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/FURb5/juwPe4KedDlPCpTFT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltEVfoACgkQAVBC80lX
-0GxQTwf9EZwdtrXMLQwD1/qJOadRHs1fyvT5nyUdMbCPctaMkdIm4Nsyx1lai8r/
-oFMjjlMqmwO+YqneRwojhv+nAZ77+CtBURnV7k2riazf3mHcrUjHCzfQ2el5Fgsj
-6p3Yaowl45+lTVYa9uEZxs59QWWFrZnfPKdDk8jDFeFppG1N3UHr9rQJm9pis6TA
-9rZFucyeWAZAe7wMkbpeKPl8whpVUPXxwDgtgIjiotVg5tKluC7RNcQwLzMbBH0o
-u2haX3SDfeqOdxi05Weh4QIXKo7kFAyX3os+wyyUPoIv40uWuhLAf1I6WhdPBdbi
-gLCiuK5xrnNYmgxURg7moHUQ+0PzDw==
-=bSrM
------END PGP SIGNATURE-----
-
---Sig_/FURb5/juwPe4KedDlPCpTFT--
