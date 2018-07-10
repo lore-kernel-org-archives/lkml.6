@@ -2,123 +2,110 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18E29C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9DDC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9BF2208EB
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:30:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21FDB208FA
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 15:31:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="phZ+ZbyT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9BF2208EB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uUxTymkH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21FDB208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934256AbeGJPaU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 11:30:20 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37690 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934108AbeGJPaP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 11:30:15 -0400
-Received: by mail-wm0-f67.google.com with SMTP id n17-v6so24832168wmh.2;
-        Tue, 10 Jul 2018 08:30:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Dg7ApQJLo/VkFt7LVm/12Ug0ZLaRO7+KaOKy1UOcDVQ=;
-        b=phZ+ZbyT5DgtdnGaXGWBV+Gc/rkWNSqcl9TfkwEDoJRNdwXLi7rgTKFIDdWOpIAd29
-         mGiap2cbJeK7v8hs/5+VzEhUu0+yF7L/DwDVUGEw0sDp2d2que+ExvMFbUS0wXvC1J8Y
-         d6qPUYJLUttLQMRuxcCHAr1ABrrms7C3keR9tmCwkNU8fxkbmC2CvdOaP1skPCbnX+mG
-         Oxgy6Tdu5BxO58GG7XOX3X14JnCVIS02JeXCAljq8sirKYpdVen4vxnCcWzGu7KmnuZZ
-         VDovUe0L2w+uESv1qoHnrCAP4iFywty2pkUrlbuw1/9A3K+iIiWWCFLVh/fvjcycUlQU
-         4Igw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Dg7ApQJLo/VkFt7LVm/12Ug0ZLaRO7+KaOKy1UOcDVQ=;
-        b=SAIjMjQr0A3IxMv0Wk+VoNQeN4B9ovPH2yMNeEjFu7EcHVxLYU06q1qZPDRTkZpQg7
-         HV8mNL5ZmccyhZ9/6nwTJbQxocQlQ4g9vUfBGEW/cOyZEA+kD7zENgN1+mboLBRPxb+p
-         1UuXxcBFBhkbHzJXiUgsX72ELuaSO61AYmX3M8BXYbGK/4ZQ982Gd49+hv+u+FzuGXR4
-         SRL1OjDC77TJaOAbVGbV/xcyi9B7jdVeI1+1fcf0PxLFri6BOSB05/QwYunHkNzY0W81
-         14+1pFKK0uWHgQzFBQKHF5Tj4ZURfFTuH/oYY+7wPUdBdszPjSCDJHw0RpLEsuZCHQOP
-         xaOA==
-X-Gm-Message-State: APt69E1FwyVCMm8naSCkvHOvjCfiNC/3L46fPZh08qh5sSoVdV/7BIa9
-        sB0Sz04gTrVKpuI77FGCDPO5Ig==
-X-Google-Smtp-Source: AAOMgpfgD6CZbkET8a0Q3sqdhrTew8krHr06FW1pahO385hYBXA5mkFkUFu9anqD0/fFoluGEekrZA==
-X-Received: by 2002:a1c:3411:: with SMTP id b17-v6mr11741749wma.85.1531236614173;
-        Tue, 10 Jul 2018 08:30:14 -0700 (PDT)
-Received: from localhost (pD9E51B8F.dip0.t-ipconnect.de. [217.229.27.143])
-        by smtp.gmail.com with ESMTPSA id f138-v6sm20146263wmd.13.2018.07.10.08.30.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 10 Jul 2018 08:30:12 -0700 (PDT)
-Date:   Tue, 10 Jul 2018 17:30:11 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] memory: tegra: Correct driver probe order
-Message-ID: <20180710153011.GA8492@ulmo>
-References: <20180526142035.21741-1-digetx@gmail.com>
+        id S934267AbeGJPbO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 11:31:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51132 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754260AbeGJPbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 11:31:13 -0400
+Received: from localhost (unknown [106.200.232.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3913D208EB;
+        Tue, 10 Jul 2018 15:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531236672;
+        bh=CYXOkUQhg75e+7V96Q+PaR/QMYhiPM2TsCrtY0NzzPc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uUxTymkHAPyrcF1KsTDYWNzSB6RanQOPfw+cDMFGv0JnPBxjE9EUFy0+M52Ai8YXp
+         Nl0LUNC1Ixm0MoUwM7mMm2e9mTAiMIeADtxLFnASH8f2T4zcGpoBK+C0wLbpOnrm2S
+         3KUDshlggRlGxYGrIQVP/nQK9dOxyw+c7Vpb/z8g=
+Date:   Tue, 10 Jul 2018 21:01:04 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Robin Gong <yibin.gong@nxp.com>
+Cc:     dan.j.williams@intel.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, fabio.estevam@nxp.com,
+        linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        kernel@pengutronix.de, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-imx@nxp.com
+Subject: Re: [PATCH v1 2/4] dmaengine: imx-sdma: add check_bd_buswidth() to
+ kill the dulicated code
+Message-ID: <20180710153104.GF3219@vkoul-mobl>
+References: <1531239793-11781-1-git-send-email-yibin.gong@nxp.com>
+ <1531239793-11781-3-git-send-email-yibin.gong@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180526142035.21741-1-digetx@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1531239793-11781-3-git-send-email-yibin.gong@nxp.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11-07-18, 00:23, Robin Gong wrote:
+> Add check_bd_buswidth() to minimize the code size.
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+this looks mostly fine and I think this should be first patch..
 
-On Sat, May 26, 2018 at 05:20:35PM +0300, Dmitry Osipenko wrote:
-> The Reset Controller should be registered in the end of probe, otherwise
-> Memory Controller device goes away if IRQ requesting fails and the Reset
-> Controller stays registered. To avoid having to unwind the MC probing in
-> a case of SMMU probe failure, let's simply print the error message without
-> failing the MC probe. This allows us to just move the Reset Controller
-> registering before the SMMU registration, reducing code churning. Also
-> let's not fail MC probe in a case of Reset Controller registration failure
-> as it doesn't prevent the MC driver to work.
->=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> 
+> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
 > ---
->  drivers/memory/tegra/mc.c | 16 ++++++----------
->  1 file changed, 6 insertions(+), 10 deletions(-)
+>  drivers/dma/imx-sdma.c | 64 +++++++++++++++++++++++---------------------------
+>  1 file changed, 29 insertions(+), 35 deletions(-)
+> 
+> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> index 27ccabf..ed2267d 100644
+> --- a/drivers/dma/imx-sdma.c
+> +++ b/drivers/dma/imx-sdma.c
+> @@ -1326,6 +1326,33 @@ static struct sdma_desc *sdma_transfer_init(struct sdma_channel *sdmac,
+>  	return NULL;
+>  }
+>  
+> +static int check_bd_buswidth(struct sdma_buffer_descriptor *bd,
+> +			     struct sdma_channel *sdmac, int count,
+> +			     dma_addr_t dma_dst, dma_addr_t dma_src)
+> +{
+> +	int ret = 0;
+> +
+> +	switch (sdmac->word_size) {
+> +	case DMA_SLAVE_BUSWIDTH_4_BYTES:
+> +		bd->mode.command = 0;
+> +		if ((count | dma_dst | dma_src) & 3)
+> +			ret = -EINVAL;
+> +		break;
 
-Applied, thanks.
+empty line after each break please
 
-Thierry
-
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAltE0QAACgkQ3SOs138+
-s6EXNQ//TmjEdaaaK+ErK3EnaTZ9oPy2xDpGGCQ1x/CW0uMT9WsRsN/r79fBcDdO
-CD5dTxZCn/n9tB1EkhdftIRZH44KA5UKnHEqZsjFRP4+gCXjuj1lSjY/eNPSRC+k
-4aJWsCEB/YT0YLsk74BT7Md56vSobQmH6575RYDbur8EE9AhHtkfX72HToZX8oRs
-3V9LEdyeCcB9wJlqTBCWvBqmqHTwqSclcNpSt38NpJ802TgQznydhGyaGmvXNdAV
-+ZnXf91y0S/kOnQLM4/axy37X7j06W+bAmgmnjADkbm5nKzTzog0eBbeo3qytyUo
-r1ge3Lnh6V/2Klmj233Gzx7jRSiEFi1EQfEOIARCGkQQGQY6pNynVzQXPLlxfk6J
-8blpAw00vlzkUMSN0tgvy8T7XhYEfKs7V90Ab3/a37IWSLObGMETA04BgEWFcwVw
-mn9BYDVYMtkLKeIbZawEaIBa3O7WrGB0tR3xWlHP+Uro4aWePnnBsGsRAhRqQxYu
-GQYnZiaL1mAWDDiAVccBcFw3rKVexu3WDbBQzvsX9BBkwqhgYsac1TMo/5OC1m15
-ITRBr2YT8y5ctW8pgrSkKu3qbQmjAYDNYDM6eV+L2fdezfrFpmWyb6phPl8opm2a
-TEywKPjQ/k5dc6zGXxvzdfjsqtT4uBZ19Z33NxeQBPkH9u2152o=
-=Sgid
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+> +	case DMA_SLAVE_BUSWIDTH_2_BYTES:
+> +		bd->mode.command = 2;
+> +		if ((count | dma_dst | dma_src) & 1)
+> +			ret = -EINVAL;
+> +		break;
+> +	case DMA_SLAVE_BUSWIDTH_1_BYTE:
+> +		 bd->mode.command = 1;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+-- 
+~Vinod
