@@ -5,143 +5,206 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F100DC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3320BC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:38:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8DB4208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:37:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8DB4208E8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DC95F2098B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 23:38:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC95F2098B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732439AbeGJXjL (ORCPT
+        id S1732455AbeGJXjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 19:39:11 -0400
-Received: from mga09.intel.com ([134.134.136.24]:19415 "EHLO mga09.intel.com"
+        Tue, 10 Jul 2018 19:39:53 -0400
+Received: from gate.crashing.org ([63.228.1.57]:57296 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732302AbeGJXjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 19:39:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 16:37:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
-   d="scan'208";a="73786964"
-Received: from mgcarrol-mobl1.amr.corp.intel.com (HELO [10.252.202.182]) ([10.252.202.182])
-  by orsmga002.jf.intel.com with ESMTP; 10 Jul 2018 16:37:43 -0700
-Subject: Re: [RFC PATCH v2 16/27] mm: Modify can_follow_write_pte/pmd for
- shadow stack
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-17-yu-cheng.yu@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <de510df6-7ea9-edc6-9c49-2f80f16472b4@linux.intel.com>
-Date:   Tue, 10 Jul 2018 16:37:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180710222639.8241-17-yu-cheng.yu@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S1732263AbeGJXjw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 19:39:52 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6ANbpgG013931;
+        Tue, 10 Jul 2018 18:37:55 -0500
+Message-ID: <69a6086d25c17b03ecf3ab7ed34fe941fd993410.camel@kernel.crashing.org>
+Subject: Re: Several suspected memory leaks
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Date:   Wed, 11 Jul 2018 09:37:51 +1000
+In-Reply-To: <468d3c5b-d71d-c95b-dab4-ea8c2cebe129@molgen.mpg.de>
+References: <468d3c5b-d71d-c95b-dab4-ea8c2cebe129@molgen.mpg.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
-> There are three possible shadow stack PTE settings:
+On Tue, 2018-07-10 at 17:17 +0200, Paul Menzel wrote:
+> Dear Liunx folks,
 > 
->   Normal SHSTK PTE: (R/O + DIRTY_HW)
->   SHSTK PTE COW'ed: (R/O + DIRTY_HW)
->   SHSTK PTE shared as R/O data: (R/O + DIRTY_SW)
 > 
-> Update can_follow_write_pte/pmd for the shadow stack.
+> On a the IBM S822LC (8335-GTA) with Ubuntu 18.04 I built Linux master
+> – 4.18-rc4+, commit 092150a2 (Merge branch 'for-linus'
+> of git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid) – with
+> kmemleak. Several issues are found.
 
-First of all, thanks for the excellent patch headers.  It's nice to have
-that reference every time even though it's repeated.
+Some of these are completely uninteresting though and look like
+kmemleak bugs to me :-)
 
-> -static inline bool can_follow_write_pte(pte_t pte, unsigned int flags)
-> +static inline bool can_follow_write_pte(pte_t pte, unsigned int flags,
-> +					bool shstk)
->  {
-> +	bool pte_cowed = shstk ? is_shstk_pte(pte):pte_dirty(pte);
-> +
->  	return pte_write(pte) ||
-> -		((flags & FOLL_FORCE) && (flags & FOLL_COW) && pte_dirty(pte));
-> +		((flags & FOLL_FORCE) && (flags & FOLL_COW) && pte_cowed);
->  }
+>     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
+>     [<0000000007135d64>] hash__map_kernel_page+0x30c/0x4d0
+>     [<0000000071677858>] __ioremap_at+0x108/0x140
+>     [<000000000023e921>] __ioremap_caller+0x130/0x180
+>     [<000000009dbc3923>] icp_native_init_one_node+0x5cc/0x760
+>     [<0000000015f3168a>] icp_native_init+0x70/0x13c
+>     [<00000000655550ed>] xics_init+0x38/0x1ac
+>     [<0000000088dbf9d1>] pnv_init_IRQ+0x30/0x5c
 
-Can we just pass the VMA in here?  This use is OK-ish, but I generally
-detest true/false function arguments because you can't tell what they
-are when they show up without a named variable.
+This is the interrupt controller mapping its registers, why on earth
+would that be considered a leak ? kmemleak needs to learn to ignore
+kernel page tables allocations.
 
-But...  Why does this even matter?  Your own example showed that all
-shadowstack PTEs have either DIRTY_HW or DIRTY_SW set, and pte_dirty()
-checks both.
 
-That makes this check seem a bit superfluous.
+>     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
+>     [<000000002cdcd2db>] vmap_page_range_noflush+0x670/0x880
+>     [<0000000041cc3e80>] map_vm_area+0x58/0xb0
+>     [<00000000b92ed8c4>] __vmalloc_node_range+0x1cc/0x3f0
+>     [<00000000f6cf150a>] __vmalloc+0x50/0x60
+>     [<0000000027a0846e>] alloc_large_system_hash+0x3b8/0x554
+>     [<00000000ef0d6278>] vfs_caches_init+0xd4/0x138
+>     [<0000000055b60f04>] start_kernel+0x60c/0x684
+>     [<00000000f8d483c1>] start_here_common+0x1c/0x520
+
+This looks like some generic VFS stuff which similarly is meant to
+remain for the whole duration of the system, what's the point on
+reporting on init leaks like that ?
+
+> unreferenced object 0xc000000007bd8000 (size 16384):
+>   comm "init", pid 1, jiffies 4294895064 (age 1316.236s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
+>     [<000000006ee9b8a3>] move_page_tables+0xd6c/0x13d0
+>     [<0000000091930c94>] shift_arg_pages+0xc8/0x220
+>     [<000000009cfa5804>] setup_arg_pages+0x26c/0x380
+>     [<00000000ee516bf8>] load_elf_binary+0x600/0x29ac
+>     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
+>     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
+>     [<0000000044d8a16f>] sys_execve+0x58/0x70
+>     [<000000001deb923d>] system_call+0x5c/0x70
+
+This is odd, looks like a page table allocation, I'm pretty sure those
+get freed when the corresponding process dies, but this is init (PID1),
+it probably never does. Again, a false positive.
+
+> unreferenced object 0xc000000007bc8000 (size 16384):
+>   comm "init", pid 1, jiffies 4294895064 (age 1316.236s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
+>     [<000000001cb1e8bb>] __handle_mm_fault+0x34c/0x2f20
+>     [<0000000028b41470>] handle_mm_fault+0x1f0/0x4e0
+>     [<00000000f5d2a8db>] __do_page_fault+0x274/0xf90
+>     [<0000000094f967e0>] handle_page_fault+0x18/0x38
+>     [<00000000a38200c8>] 0xc000007fce3bbaf0
+>     [<00000000c3aa995f>] load_elf_binary+0x99c/0x29ac
+>     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
+>     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
+>     [<0000000044d8a16f>] sys_execve+0x58/0x70
+>     [<000000001deb923d>] system_call+0x5c/0x70
+> unreferenced object 0xc000007fb84d0000 (size 16384):
+>   comm "systemd-journal", pid 1796, jiffies 4294895847 (age 1313.168s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
+>     [<000000006ee9b8a3>] move_page_tables+0xd6c/0x13d0
+>     [<0000000091930c94>] shift_arg_pages+0xc8/0x220
+>     [<000000009cfa5804>] setup_arg_pages+0x26c/0x380
+>     [<00000000ee516bf8>] load_elf_binary+0x600/0x29ac
+>     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
+>     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
+>     [<0000000044d8a16f>] sys_execve+0x58/0x70
+>     [<000000001deb923d>] system_call+0x5c/0x70
+> unreferenced object 0xc000007fb84b0000 (size 16384):
+>   comm "systemd-journal", pid 1796, jiffies 4294895847 (age 1313.168s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
+>     [<000000001cb1e8bb>] __handle_mm_fault+0x34c/0x2f20
+>     [<0000000028b41470>] handle_mm_fault+0x1f0/0x4e0
+>     [<00000000f5d2a8db>] __do_page_fault+0x274/0xf90
+>     [<0000000094f967e0>] handle_page_fault+0x18/0x38
+>     [<00000000cc288b87>] 0xc000007f95657af0
+>     [<00000000c3aa995f>] load_elf_binary+0x99c/0x29ac
+>     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
+>     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
+>     [<0000000044d8a16f>] sys_execve+0x58/0x70
+>     [<000000001deb923d>] system_call+0x5c/0x70
+> unreferenced object 0xc000007f92fe8000 (size 16384):
+>   comm "lvmetad", pid 1802, jiffies 4294895860 (age 1313.116s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
+>     [<000000006ee9b8a3>] move_page_tables+0xd6c/0x13d0
+>     [<0000000091930c94>] shift_arg_pages+0xc8/0x220
+>     [<000000009cfa5804>] setup_arg_pages+0x26c/0x380
+>     [<00000000ee516bf8>] load_elf_binary+0x600/0x29ac
+>     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
+>     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
+>     [<0000000044d8a16f>] sys_execve+0x58/0x70
+>     [<000000001deb923d>] system_call+0x5c/0x70
+> unreferenced object 0xc000007f92ff0000 (size 16384):
+>   comm "lvmetad", pid 1802, jiffies 4294895860 (age 1313.116s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
+>     [<000000001cb1e8bb>] __handle_mm_fault+0x34c/0x2f20
+>     [<0000000028b41470>] handle_mm_fault+0x1f0/0x4e0
+>     [<00000000f5d2a8db>] __do_page_fault+0x274/0xf90
+>     [<0000000094f967e0>] handle_page_fault+0x18/0x38
+>     [<000000009b19a1a9>] 0xc000007f95633af0
+>     [<00000000c3aa995f>] load_elf_binary+0x99c/0x29ac
+>     [<000000005bbeae4b>] search_binary_handler+0x114/0x330
+>     [<00000000c39037ab>] __do_execve_file.isra.8+0x8a4/0x10b0
+>     [<0000000044d8a16f>] sys_execve+0x58/0x70
+>     [<000000001deb923d>] system_call+0x5c/0x70
+> unreferenced object 0xc0000000052f0000 (size 16384):
+>   comm "blkmapd", pid 1808, jiffies 4294895896 (age 1312.976s)
+>   hex dump (first 32 bytes):
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace:
+>     [<00000000bc285bbf>] __pud_alloc+0x80/0x270
+>     [<00000000464ece1a>] copy_page_range+0x97c/0xcf0
+>     [<00000000470f82ab>] copy_process.isra.6.part.7+0x1458/0x2cd0
+>     [<000000001784ab04>] _do_fork+0xf4/0x7e0
+>     [<00000000b8327d67>] ppc_clone+0x8/0xc
+> […]
+> ```
+> 
+> Please tell me how to continue. Is this the right subsystem?
+
+Doesn't look like it...
+
+Ben.
+
+> 
+> Kind regards,
+> 
+> Paul
