@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B514DC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1A8C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F50C20B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F50C20B6F
+	by mail.kernel.org (Postfix) with ESMTP id D02F62083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02F62083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388660AbeGJSce (ORCPT
+        id S2388673AbeGJScg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:32:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47524 "EHLO
+        Tue, 10 Jul 2018 14:32:36 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47552 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387889AbeGJScd (ORCPT
+        with ESMTP id S2387889AbeGJScf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:32:33 -0400
+        Tue, 10 Jul 2018 14:32:35 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25B29CED;
-        Tue, 10 Jul 2018 18:32:17 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E673E3D;
+        Tue, 10 Jul 2018 18:32:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
-        stable@kernel.org
-Subject: [PATCH 4.14 20/53] ext4: only look at the bg_flags field if it is valid
-Date:   Tue, 10 Jul 2018 20:24:56 +0200
-Message-Id: <20180710182500.073866120@linuxfoundation.org>
+        stable@vger.kernel.org, Changbin Du <changbin.du@intel.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.14 03/53] tracing: Fix missing return symbol in function_graph output
+Date:   Tue, 10 Jul 2018 20:24:39 +0200
+Message-Id: <20180710182459.000264182@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -50,131 +50,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Theodore Ts'o <tytso@mit.edu>
+From: Changbin Du <changbin.du@intel.com>
 
-commit 8844618d8aa7a9973e7b527d038a2a589665002c upstream.
+commit 1fe4293f4b8de75824935f8d8e9a99c7fc6873da upstream.
 
-The bg_flags field in the block group descripts is only valid if the
-uninit_bg or metadata_csum feature is enabled.  We were not
-consistently looking at this field; fix this.
+The function_graph tracer does not show the interrupt return marker for the
+leaf entry. On leaf entries, we see an unbalanced interrupt marker (the
+interrupt was entered, but nevern left).
 
-Also block group #0 must never have uninitialized allocation bitmaps,
-or need to be zeroed, since that's where the root inode, and other
-special inodes are set up.  Check for these conditions and mark the
-file system as corrupted if they are detected.
+Before:
+ 1)               |  SyS_write() {
+ 1)               |    __fdget_pos() {
+ 1)   0.061 us    |      __fget_light();
+ 1)   0.289 us    |    }
+ 1)               |    vfs_write() {
+ 1)   0.049 us    |      rw_verify_area();
+ 1) + 15.424 us   |      __vfs_write();
+ 1)   ==========> |
+ 1)   6.003 us    |      smp_apic_timer_interrupt();
+ 1)   0.055 us    |      __fsnotify_parent();
+ 1)   0.073 us    |      fsnotify();
+ 1) + 23.665 us   |    }
+ 1) + 24.501 us   |  }
 
-This addresses CVE-2018-10876.
+After:
+ 0)               |  SyS_write() {
+ 0)               |    __fdget_pos() {
+ 0)   0.052 us    |      __fget_light();
+ 0)   0.328 us    |    }
+ 0)               |    vfs_write() {
+ 0)   0.057 us    |      rw_verify_area();
+ 0)               |      __vfs_write() {
+ 0)   ==========> |
+ 0)   8.548 us    |      smp_apic_timer_interrupt();
+ 0)   <========== |
+ 0) + 36.507 us   |      } /* __vfs_write */
+ 0)   0.049 us    |      __fsnotify_parent();
+ 0)   0.066 us    |      fsnotify();
+ 0) + 50.064 us   |    }
+ 0) + 50.952 us   |  }
 
-https://bugzilla.kernel.org/show_bug.cgi?id=199403
+Link: http://lkml.kernel.org/r/1517413729-20411-1-git-send-email-changbin.du@intel.com
 
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Cc: stable@kernel.org
+Cc: stable@vger.kernel.org
+Fixes: f8b755ac8e0cc ("tracing/function-graph-tracer: Output arrows signal on hardirq call/return")
+Signed-off-by: Changbin Du <changbin.du@intel.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/ext4/balloc.c  |   11 ++++++++++-
- fs/ext4/ialloc.c  |   14 ++++++++++++--
- fs/ext4/mballoc.c |    6 ++++--
- fs/ext4/super.c   |   11 ++++++++++-
- 4 files changed, 36 insertions(+), 6 deletions(-)
+ kernel/trace/trace_functions_graph.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -451,7 +451,16 @@ ext4_read_block_bitmap_nowait(struct sup
- 		goto verify;
- 	}
- 	ext4_lock_group(sb, block_group);
--	if (desc->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT)) {
-+	if (ext4_has_group_desc_csum(sb) &&
-+	    (desc->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT))) {
-+		if (block_group == 0) {
-+			ext4_unlock_group(sb, block_group);
-+			unlock_buffer(bh);
-+			ext4_error(sb, "Block bitmap for bg 0 marked "
-+				   "uninitialized");
-+			err = -EFSCORRUPTED;
-+			goto out;
-+		}
- 		err = ext4_init_block_bitmap(sb, bh, block_group, desc);
- 		set_bitmap_uptodate(bh);
- 		set_buffer_uptodate(bh);
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -155,7 +155,16 @@ ext4_read_inode_bitmap(struct super_bloc
- 	}
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -831,6 +831,7 @@ print_graph_entry_leaf(struct trace_iter
+ 	struct ftrace_graph_ret *graph_ret;
+ 	struct ftrace_graph_ent *call;
+ 	unsigned long long duration;
++	int cpu = iter->cpu;
+ 	int i;
  
- 	ext4_lock_group(sb, block_group);
--	if (desc->bg_flags & cpu_to_le16(EXT4_BG_INODE_UNINIT)) {
-+	if (ext4_has_group_desc_csum(sb) &&
-+	    (desc->bg_flags & cpu_to_le16(EXT4_BG_INODE_UNINIT))) {
-+		if (block_group == 0) {
-+			ext4_unlock_group(sb, block_group);
-+			unlock_buffer(bh);
-+			ext4_error(sb, "Inode bitmap for bg 0 marked "
-+				   "uninitialized");
-+			err = -EFSCORRUPTED;
-+			goto out;
-+		}
- 		memset(bh->b_data, 0, (EXT4_INODES_PER_GROUP(sb) + 7) / 8);
- 		ext4_mark_bitmap_end(EXT4_INODES_PER_GROUP(sb),
- 				     sb->s_blocksize * 8, bh->b_data);
-@@ -1000,7 +1009,8 @@ got:
+ 	graph_ret = &ret_entry->ret;
+@@ -839,7 +840,6 @@ print_graph_entry_leaf(struct trace_iter
  
- 		/* recheck and clear flag under lock if we still need to */
- 		ext4_lock_group(sb, group);
--		if (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT)) {
-+		if (ext4_has_group_desc_csum(sb) &&
-+		    (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT))) {
- 			gdp->bg_flags &= cpu_to_le16(~EXT4_BG_BLOCK_UNINIT);
- 			ext4_free_group_clusters_set(sb, gdp,
- 				ext4_free_clusters_after_init(sb, group, gdp));
---- a/fs/ext4/mballoc.c
-+++ b/fs/ext4/mballoc.c
-@@ -2456,7 +2456,8 @@ int ext4_mb_add_groupinfo(struct super_b
- 	 * initialize bb_free to be able to skip
- 	 * empty groups without initialization
- 	 */
--	if (desc->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT)) {
-+	if (ext4_has_group_desc_csum(sb) &&
-+	    (desc->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT))) {
- 		meta_group_info[i]->bb_free =
- 			ext4_free_clusters_after_init(sb, group, desc);
- 	} else {
-@@ -3023,7 +3024,8 @@ ext4_mb_mark_diskspace_used(struct ext4_
- #endif
- 	ext4_set_bits(bitmap_bh->b_data, ac->ac_b_ex.fe_start,
- 		      ac->ac_b_ex.fe_len);
--	if (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT)) {
-+	if (ext4_has_group_desc_csum(sb) &&
-+	    (gdp->bg_flags & cpu_to_le16(EXT4_BG_BLOCK_UNINIT))) {
- 		gdp->bg_flags &= cpu_to_le16(~EXT4_BG_BLOCK_UNINIT);
- 		ext4_free_group_clusters_set(sb, gdp,
- 					     ext4_free_clusters_after_init(sb,
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -3095,13 +3095,22 @@ static ext4_group_t ext4_has_uninit_itab
- 	ext4_group_t group, ngroups = EXT4_SB(sb)->s_groups_count;
- 	struct ext4_group_desc *gdp = NULL;
+ 	if (data) {
+ 		struct fgraph_cpu_data *cpu_data;
+-		int cpu = iter->cpu;
  
-+	if (!ext4_has_group_desc_csum(sb))
-+		return ngroups;
+ 		cpu_data = per_cpu_ptr(data->cpu_data, cpu);
+ 
+@@ -869,6 +869,9 @@ print_graph_entry_leaf(struct trace_iter
+ 
+ 	trace_seq_printf(s, "%ps();\n", (void *)call->func);
+ 
++	print_graph_irq(iter, graph_ret->func, TRACE_GRAPH_RET,
++			cpu, iter->ent->pid, flags);
 +
- 	for (group = 0; group < ngroups; group++) {
- 		gdp = ext4_get_group_desc(sb, group, NULL);
- 		if (!gdp)
- 			continue;
+ 	return trace_handle_return(s);
+ }
  
--		if (!(gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED)))
-+		if (gdp->bg_flags & cpu_to_le16(EXT4_BG_INODE_ZEROED))
-+			continue;
-+		if (group != 0)
- 			break;
-+		ext4_error(sb, "Inode table for bg 0 marked as "
-+			   "needing zeroing");
-+		if (sb_rdonly(sb))
-+			return ngroups;
- 	}
- 
- 	return group;
 
 
