@@ -2,39 +2,40 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61862C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AE31C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28E0620936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E0620936
+	by mail.kernel.org (Postfix) with ESMTP id 27F0F20936
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F0F20936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732722AbeGJS0Q (ORCPT
+        id S1732734AbeGJS0U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:26:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43664 "EHLO
+        Tue, 10 Jul 2018 14:26:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43676 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732426AbeGJS0Q (ORCPT
+        with ESMTP id S1732406AbeGJS0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:26:16 -0400
+        Tue, 10 Jul 2018 14:26:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BA8C8E7F;
-        Tue, 10 Jul 2018 18:26:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B486CD71;
+        Tue, 10 Jul 2018 18:26:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 3.18 16/23] media: cx25840: Use subdev host data for PLL override
-Date:   Tue, 10 Jul 2018 20:24:49 +0200
-Message-Id: <20180710182309.577139085@linuxfoundation.org>
+        stable@vger.kernel.org, David Rientjes <rientjes@google.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Douglas Anderson <dianders@chromium.org>,
+        Mike Snitzer <snitzer@redhat.com>
+Subject: [PATCH 3.18 17/23] dm bufio: avoid sleeping while holding the dm_bufio lock
+Date:   Tue, 10 Jul 2018 20:24:50 +0200
+Message-Id: <20180710182309.616208199@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
 References: <20180710182308.877332304@linuxfoundation.org>
@@ -51,86 +52,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Douglas Anderson <dianders@chromium.org>
 
-commit 3ee9bc12342cf546313d300808ff47d7dbb8e7db upstream.
+commit 9ea61cac0b1ad0c09022f39fd97e9b99a2cfc2dc upstream.
 
-The cx25840 driver currently configures 885, 887, and 888 using
-default divisors for each chip. This check to see if the cx23885
-driver has passed the cx25840 a non-default clock rate for a
-specific chip. If a cx23885 board has left clk_freq at 0, the
-clock default values will be used to configure the PLLs.
+We've seen in-field reports showing _lots_ (18 in one case, 41 in
+another) of tasks all sitting there blocked on:
 
-This patch only has effect on 888 boards who set clk_freq to 25M.
+  mutex_lock+0x4c/0x68
+  dm_bufio_shrink_count+0x38/0x78
+  shrink_slab.part.54.constprop.65+0x100/0x464
+  shrink_zone+0xa8/0x198
 
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+In the two cases analyzed, we see one task that looks like this:
+
+  Workqueue: kverityd verity_prefetch_io
+
+  __switch_to+0x9c/0xa8
+  __schedule+0x440/0x6d8
+  schedule+0x94/0xb4
+  schedule_timeout+0x204/0x27c
+  schedule_timeout_uninterruptible+0x44/0x50
+  wait_iff_congested+0x9c/0x1f0
+  shrink_inactive_list+0x3a0/0x4cc
+  shrink_lruvec+0x418/0x5cc
+  shrink_zone+0x88/0x198
+  try_to_free_pages+0x51c/0x588
+  __alloc_pages_nodemask+0x648/0xa88
+  __get_free_pages+0x34/0x7c
+  alloc_buffer+0xa4/0x144
+  __bufio_new+0x84/0x278
+  dm_bufio_prefetch+0x9c/0x154
+  verity_prefetch_io+0xe8/0x10c
+  process_one_work+0x240/0x424
+  worker_thread+0x2fc/0x424
+  kthread+0x10c/0x114
+
+...and that looks to be the one holding the mutex.
+
+The problem has been reproduced on fairly easily:
+0. Be running Chrome OS w/ verity enabled on the root filesystem
+1. Pick test patch: http://crosreview.com/412360
+2. Install launchBalloons.sh and balloon.arm from
+     http://crbug.com/468342
+   ...that's just a memory stress test app.
+3. On a 4GB rk3399 machine, run
+     nice ./launchBalloons.sh 4 900 100000
+   ...that tries to eat 4 * 900 MB of memory and keep accessing.
+4. Login to the Chrome web browser and restore many tabs
+
+With that, I've seen printouts like:
+  DOUG: long bufio 90758 ms
+...and stack trace always show's we're in dm_bufio_prefetch().
+
+The problem is that we try to allocate memory with GFP_NOIO while
+we're holding the dm_bufio lock.  Instead we should be using
+GFP_NOWAIT.  Using GFP_NOIO can cause us to sleep while holding the
+lock and that causes the above problems.
+
+The current behavior explained by David Rientjes:
+
+  It will still try reclaim initially because __GFP_WAIT (or
+  __GFP_KSWAPD_RECLAIM) is set by GFP_NOIO.  This is the cause of
+  contention on dm_bufio_lock() that the thread holds.  You want to
+  pass GFP_NOWAIT instead of GFP_NOIO to alloc_buffer() when holding a
+  mutex that can be contended by a concurrent slab shrinker (if
+  count_objects didn't use a trylock, this pattern would trivially
+  deadlock).
+
+This change significantly increases responsiveness of the system while
+in this state.  It makes a real difference because it unblocks kswapd.
+In the bug report analyzed, kswapd was hung:
+
+   kswapd0         D ffffffc000204fd8     0    72      2 0x00000000
+   Call trace:
+   [<ffffffc000204fd8>] __switch_to+0x9c/0xa8
+   [<ffffffc00090b794>] __schedule+0x440/0x6d8
+   [<ffffffc00090bac0>] schedule+0x94/0xb4
+   [<ffffffc00090be44>] schedule_preempt_disabled+0x28/0x44
+   [<ffffffc00090d900>] __mutex_lock_slowpath+0x120/0x1ac
+   [<ffffffc00090d9d8>] mutex_lock+0x4c/0x68
+   [<ffffffc000708e7c>] dm_bufio_shrink_count+0x38/0x78
+   [<ffffffc00030b268>] shrink_slab.part.54.constprop.65+0x100/0x464
+   [<ffffffc00030dbd8>] shrink_zone+0xa8/0x198
+   [<ffffffc00030e578>] balance_pgdat+0x328/0x508
+   [<ffffffc00030eb7c>] kswapd+0x424/0x51c
+   [<ffffffc00023f06c>] kthread+0x10c/0x114
+   [<ffffffc000203dd0>] ret_from_fork+0x10/0x40
+
+By unblocking kswapd memory pressure should be reduced.
+
+Suggested-by: David Rientjes <rientjes@google.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/media/i2c/cx25840/cx25840-core.c |   28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
+ drivers/md/dm-bufio.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/media/i2c/cx25840/cx25840-core.c
-+++ b/drivers/media/i2c/cx25840/cx25840-core.c
-@@ -467,8 +467,13 @@ static void cx23885_initialize(struct i2
- {
- 	DEFINE_WAIT(wait);
- 	struct cx25840_state *state = to_state(i2c_get_clientdata(client));
-+	u32 clk_freq = 0;
- 	struct workqueue_struct *q;
- 
-+	/* cx23885 sets hostdata to clk_freq pointer */
-+	if (v4l2_get_subdev_hostdata(&state->sd))
-+		clk_freq = *((u32 *)v4l2_get_subdev_hostdata(&state->sd));
-+
- 	/*
- 	 * Come out of digital power down
- 	 * The CX23888, at least, needs this, otherwise registers aside from
-@@ -504,8 +509,13 @@ static void cx23885_initialize(struct i2
- 		 * 50.0 MHz * (0xb + 0xe8ba26/0x2000000)/4 = 5 * 28.636363 MHz
- 		 * 572.73 MHz before post divide
- 		 */
--		/* HVR1850 or 50MHz xtal */
--		cx25840_write(client, 0x2, 0x71);
-+		if (clk_freq == 25000000) {
-+			/* 888/ImpactVCBe or 25Mhz xtal */
-+			; /* nothing to do */
-+		} else {
-+			/* HVR1850 or 50MHz xtal */
-+			cx25840_write(client, 0x2, 0x71);
-+		}
- 		cx25840_write4(client, 0x11c, 0x01d1744c);
- 		cx25840_write4(client, 0x118, 0x00000416);
- 		cx25840_write4(client, 0x404, 0x0010253e);
-@@ -548,9 +558,15 @@ static void cx23885_initialize(struct i2
- 	/* HVR1850 */
- 	switch (state->id) {
- 	case CX23888_AV:
--		/* 888/HVR1250 specific */
--		cx25840_write4(client, 0x10c, 0x13333333);
--		cx25840_write4(client, 0x108, 0x00000515);
-+		if (clk_freq == 25000000) {
-+			/* 888/ImpactVCBe or 25MHz xtal */
-+			cx25840_write4(client, 0x10c, 0x01b6db7b);
-+			cx25840_write4(client, 0x108, 0x00000512);
-+		} else {
-+			/* 888/HVR1250 or 50MHz xtal */
-+			cx25840_write4(client, 0x10c, 0x13333333);
-+			cx25840_write4(client, 0x108, 0x00000515);
-+		}
- 		break;
- 	default:
- 		cx25840_write4(client, 0x10c, 0x002be2c9);
-@@ -577,7 +593,7 @@ static void cx23885_initialize(struct i2
- 		 * 368.64 MHz before post divide
- 		 * 122.88 MHz / 0xa = 12.288 MHz
- 		 */
--		/* HVR1850  or 50MHz xtal */
-+		/* HVR1850 or 50MHz xtal or 25MHz xtal */
- 		cx25840_write4(client, 0x114, 0x017dbf48);
- 		cx25840_write4(client, 0x110, 0x000a030e);
- 		break;
+--- a/drivers/md/dm-bufio.c
++++ b/drivers/md/dm-bufio.c
+@@ -766,7 +766,8 @@ static struct dm_buffer *__alloc_buffer_
+ 	 * dm-bufio is resistant to allocation failures (it just keeps
+ 	 * one buffer reserved in cases all the allocations fail).
+ 	 * So set flags to not try too hard:
+-	 *	GFP_NOIO: don't recurse into the I/O layer
++	 *	GFP_NOWAIT: don't wait; if we need to sleep we'll release our
++	 *		    mutex and wait ourselves.
+ 	 *	__GFP_NORETRY: don't retry and rather return failure
+ 	 *	__GFP_NOMEMALLOC: don't use emergency reserves
+ 	 *	__GFP_NOWARN: don't print a warning in case of failure
+@@ -776,7 +777,7 @@ static struct dm_buffer *__alloc_buffer_
+ 	 */
+ 	while (1) {
+ 		if (dm_bufio_cache_size_latch != 1) {
+-			b = alloc_buffer(c, GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
++			b = alloc_buffer(c, GFP_NOWAIT | __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN);
+ 			if (b)
+ 				return b;
+ 		}
 
 
