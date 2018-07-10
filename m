@@ -6,44 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E0B5C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEDBC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A71E208E8
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A71E208E8
+	by mail.kernel.org (Postfix) with ESMTP id 0AE7A208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE7A208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389275AbeGJSe2 (ORCPT
+        id S2389290AbeGJSeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:34:28 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48050 "EHLO
+        Tue, 10 Jul 2018 14:34:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48066 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389248AbeGJSe1 (ORCPT
+        with ESMTP id S2389277AbeGJSea (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:34:27 -0400
+        Tue, 10 Jul 2018 14:34:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 51298E78;
-        Tue, 10 Jul 2018 18:34:14 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43FD5E6B;
+        Tue, 10 Jul 2018 18:34:17 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.14 48/53] mtd: cfi_cmdset_0002: Change erase functions to retry for error
-Date:   Tue, 10 Jul 2018 20:25:24 +0200
-Message-Id: <20180710182501.503588247@linuxfoundation.org>
+        stable@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH 4.14 39/53] Kbuild: fix # escaping in .cmd files for future Make
+Date:   Tue, 10 Jul 2018 20:25:15 +0200
+Message-Id: <20180710182501.037898694@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -60,91 +51,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 
-commit 45f75b8a919a4255f52df454f1ffdee0e42443b2 upstream.
+commit 9564a8cf422d7b58f6e857e3546d346fa970191e upstream.
 
-For the word write functions it is retried for error.
-But it is not implemented to retry for the erase functions.
-To make sure for the erase functions change to retry as same.
+I tried building using a freshly built Make (4.2.1-69-g8a731d1), but
+already the objtool build broke with
 
-This is needed to prevent the flash erase error caused only once.
-It was caused by the error case of chip_good() in the do_erase_oneblock().
-Also it was confirmed on the MACRONIX flash device MX29GL512FHT2I-11G.
-But the error issue behavior is not able to reproduce at this moment.
-The flash controller is parallel Flash interface integrated on BCM53003.
+orc_dump.c: In function ‘orc_dump’:
+orc_dump.c:106:2: error: ‘elf_getshnum’ is deprecated [-Werror=deprecated-declarations]
+  if (elf_getshdrnum(elf, &nr_sections)) {
 
-Signed-off-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-Reviewed-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: linux-mtd@lists.infradead.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Turns out that with that new Make, the backslash was not removed, so cpp
+didn't see a #include directive, grep found nothing, and
+-DLIBELF_USE_DEPRECATED was wrongly put in CFLAGS.
+
+Now, that new Make behaviour is documented in their NEWS file:
+
+  * WARNING: Backward-incompatibility!
+    Number signs (#) appearing inside a macro reference or function invocation
+    no longer introduce comments and should not be escaped with backslashes:
+    thus a call such as:
+      foo := $(shell echo '#')
+    is legal.  Previously the number sign needed to be escaped, for example:
+      foo := $(shell echo '\#')
+    Now this latter will resolve to "\#".  If you want to write makefiles
+    portable to both versions, assign the number sign to a variable:
+      C := \#
+      foo := $(shell echo '$C')
+    This was claimed to be fixed in 3.81, but wasn't, for some reason.
+    To detect this change search for 'nocomment' in the .FEATURES variable.
+
+This also fixes up the two make-cmd instances to replace # with $(pound)
+rather than with \#. There might very well be other places that need
+similar fixup in preparation for whatever future Make release contains
+the above change, but at least this builds an x86_64 defconfig with the
+new make.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=197847
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/mtd/chips/cfi_cmdset_0002.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
 
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -2241,6 +2241,7 @@ static int __xipram do_erase_chip(struct
- 	unsigned long int adr;
- 	DECLARE_WAITQUEUE(wait, current);
- 	int ret = 0;
-+	int retry_cnt = 0;
+---
+ scripts/Kbuild.include         |    5 +++--
+ tools/build/Build.include      |    5 +++--
+ tools/objtool/Makefile         |    2 +-
+ tools/scripts/Makefile.include |    2 ++
+ 4 files changed, 9 insertions(+), 5 deletions(-)
+
+--- a/scripts/Kbuild.include
++++ b/scripts/Kbuild.include
+@@ -8,6 +8,7 @@ squote  := '
+ empty   :=
+ space   := $(empty) $(empty)
+ space_escape := _-_SPACE_-_
++pound := \#
  
- 	adr = cfi->addr_unlock1;
+ ###
+ # Name of target with a '.' as filename prefix. foo/bar.o => foo/.bar.o
+@@ -251,11 +252,11 @@ endif
  
-@@ -2258,6 +2259,7 @@ static int __xipram do_erase_chip(struct
- 	ENABLE_VPP(map);
- 	xip_disable(map, chip, adr);
+ # Replace >$< with >$$< to preserve $ when reloading the .cmd file
+ # (needed for make)
+-# Replace >#< with >\#< to avoid starting a comment in the .cmd file
++# Replace >#< with >$(pound)< to avoid starting a comment in the .cmd file
+ # (needed for make)
+ # Replace >'< with >'\''< to be able to enclose the whole string in '...'
+ # (needed for the shell)
+-make-cmd = $(call escsq,$(subst \#,\\\#,$(subst $$,$$$$,$(cmd_$(1)))))
++make-cmd = $(call escsq,$(subst $(pound),$$(pound),$(subst $$,$$$$,$(cmd_$(1)))))
  
-+ retry:
- 	cfi_send_gen_cmd(0xAA, cfi->addr_unlock1, chip->start, map, cfi, cfi->device_type, NULL);
- 	cfi_send_gen_cmd(0x55, cfi->addr_unlock2, chip->start, map, cfi, cfi->device_type, NULL);
- 	cfi_send_gen_cmd(0x80, cfi->addr_unlock1, chip->start, map, cfi, cfi->device_type, NULL);
-@@ -2312,6 +2314,9 @@ static int __xipram do_erase_chip(struct
- 		map_write( map, CMD(0xF0), chip->start );
- 		/* FIXME - should have reset delay before continuing */
+ # Find any prerequisites that is newer than target or that does not exist.
+ # PHONY targets skipped in both cases.
+--- a/tools/build/Build.include
++++ b/tools/build/Build.include
+@@ -12,6 +12,7 @@
+ # Convenient variables
+ comma   := ,
+ squote  := '
++pound   := \#
  
-+		if (++retry_cnt <= MAX_RETRIES)
-+			goto retry;
+ ###
+ # Name of target with a '.' as filename prefix. foo/bar.o => foo/.bar.o
+@@ -43,11 +44,11 @@ echo-cmd = $(if $($(quiet)cmd_$(1)),\
+ ###
+ # Replace >$< with >$$< to preserve $ when reloading the .cmd file
+ # (needed for make)
+-# Replace >#< with >\#< to avoid starting a comment in the .cmd file
++# Replace >#< with >$(pound)< to avoid starting a comment in the .cmd file
+ # (needed for make)
+ # Replace >'< with >'\''< to be able to enclose the whole string in '...'
+ # (needed for the shell)
+-make-cmd = $(call escsq,$(subst \#,\\\#,$(subst $$,$$$$,$(cmd_$(1)))))
++make-cmd = $(call escsq,$(subst $(pound),$$(pound),$(subst $$,$$$$,$(cmd_$(1)))))
+ 
+ ###
+ # Find any prerequisites that is newer than target or that does not exist.
+--- a/tools/objtool/Makefile
++++ b/tools/objtool/Makefile
+@@ -35,7 +35,7 @@ CFLAGS   += -Wall -Werror $(WARNINGS) -f
+ LDFLAGS  += -lelf $(LIBSUBCMD)
+ 
+ # Allow old libelf to be used:
+-elfshdr := $(shell echo '\#include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
++elfshdr := $(shell echo '$(pound)include <libelf.h>' | $(CC) $(CFLAGS) -x c -E - | grep elf_getshdr)
+ CFLAGS += $(if $(elfshdr),,-DLIBELF_USE_DEPRECATED)
+ 
+ AWK = awk
+--- a/tools/scripts/Makefile.include
++++ b/tools/scripts/Makefile.include
+@@ -101,3 +101,5 @@ ifneq ($(silent),1)
+ 	QUIET_INSTALL  = @printf '  INSTALL  %s\n' $1;
+   endif
+ endif
 +
- 		ret = -EIO;
- 	}
- 
-@@ -2331,6 +2336,7 @@ static int __xipram do_erase_oneblock(st
- 	unsigned long timeo = jiffies + HZ;
- 	DECLARE_WAITQUEUE(wait, current);
- 	int ret = 0;
-+	int retry_cnt = 0;
- 
- 	adr += chip->start;
- 
-@@ -2348,6 +2354,7 @@ static int __xipram do_erase_oneblock(st
- 	ENABLE_VPP(map);
- 	xip_disable(map, chip, adr);
- 
-+ retry:
- 	cfi_send_gen_cmd(0xAA, cfi->addr_unlock1, chip->start, map, cfi, cfi->device_type, NULL);
- 	cfi_send_gen_cmd(0x55, cfi->addr_unlock2, chip->start, map, cfi, cfi->device_type, NULL);
- 	cfi_send_gen_cmd(0x80, cfi->addr_unlock1, chip->start, map, cfi, cfi->device_type, NULL);
-@@ -2405,6 +2412,9 @@ static int __xipram do_erase_oneblock(st
- 		map_write( map, CMD(0xF0), chip->start );
- 		/* FIXME - should have reset delay before continuing */
- 
-+		if (++retry_cnt <= MAX_RETRIES)
-+			goto retry;
-+
- 		ret = -EIO;
- 	}
- 
++pound := \#
 
 
