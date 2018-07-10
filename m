@@ -6,35 +6,44 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D37C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6B3C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E03020A8B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E03020A8B
+	by mail.kernel.org (Postfix) with ESMTP id 293D020A8B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:33:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 293D020A8B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389074AbeGJSdw (ORCPT
+        id S2389087AbeGJSdz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:33:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47870 "EHLO
+        Tue, 10 Jul 2018 14:33:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47886 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388051AbeGJSdv (ORCPT
+        with ESMTP id S2388051AbeGJSdy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:33:51 -0400
+        Tue, 10 Jul 2018 14:33:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3A74FD0B;
-        Tue, 10 Jul 2018 18:33:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8B6AE3D;
+        Tue, 10 Jul 2018 18:33:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brad Love <brad@nextdimension.cc>,
-        Mauro Carvalho Chehab <mchehab@s-opensource.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.14 40/53] media: cx25840: Use subdev host data for PLL override
-Date:   Tue, 10 Jul 2018 20:25:16 +0200
-Message-Id: <20180710182501.080225476@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
+        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Boris Brezillon <boris.brezillon@free-electrons.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH 4.14 49/53] mtd: cfi_cmdset_0002: Change erase functions to check chip good only
+Date:   Tue, 10 Jul 2018 20:25:25 +0200
+Message-Id: <20180710182501.552402598@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -51,86 +60,107 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Brad Love <brad@nextdimension.cc>
+From: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
 
-commit 3ee9bc12342cf546313d300808ff47d7dbb8e7db upstream.
+commit 79ca484b613041ca223f74b34608bb6f5221724b upstream.
 
-The cx25840 driver currently configures 885, 887, and 888 using
-default divisors for each chip. This check to see if the cx23885
-driver has passed the cx25840 a non-default clock rate for a
-specific chip. If a cx23885 board has left clk_freq at 0, the
-clock default values will be used to configure the PLLs.
+Currently the functions use to check both chip ready and good.
+But the chip ready is not enough to check the operation status.
+So change this to check the chip good instead of this.
+About the retry functions to make sure the error handling remain it.
 
-This patch only has effect on 888 boards who set clk_freq to 25M.
-
-Signed-off-by: Brad Love <brad@nextdimension.cc>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@s-opensource.com>
-Cc: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
+Reviewed-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: Brian Norris <computersforpeace@gmail.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
+Cc: linux-mtd@lists.infradead.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/media/i2c/cx25840/cx25840-core.c |   28 ++++++++++++++++++++++------
- 1 file changed, 22 insertions(+), 6 deletions(-)
 
---- a/drivers/media/i2c/cx25840/cx25840-core.c
-+++ b/drivers/media/i2c/cx25840/cx25840-core.c
-@@ -463,8 +463,13 @@ static void cx23885_initialize(struct i2
- {
- 	DEFINE_WAIT(wait);
- 	struct cx25840_state *state = to_state(i2c_get_clientdata(client));
-+	u32 clk_freq = 0;
- 	struct workqueue_struct *q;
+---
+ drivers/mtd/chips/cfi_cmdset_0002.c |   22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
+
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -2296,12 +2296,13 @@ static int __xipram do_erase_chip(struct
+ 			chip->erase_suspended = 0;
+ 		}
  
-+	/* cx23885 sets hostdata to clk_freq pointer */
-+	if (v4l2_get_subdev_hostdata(&state->sd))
-+		clk_freq = *((u32 *)v4l2_get_subdev_hostdata(&state->sd));
-+
- 	/*
- 	 * Come out of digital power down
- 	 * The CX23888, at least, needs this, otherwise registers aside from
-@@ -500,8 +505,13 @@ static void cx23885_initialize(struct i2
- 		 * 50.0 MHz * (0xb + 0xe8ba26/0x2000000)/4 = 5 * 28.636363 MHz
- 		 * 572.73 MHz before post divide
- 		 */
--		/* HVR1850 or 50MHz xtal */
--		cx25840_write(client, 0x2, 0x71);
-+		if (clk_freq == 25000000) {
-+			/* 888/ImpactVCBe or 25Mhz xtal */
-+			; /* nothing to do */
-+		} else {
-+			/* HVR1850 or 50MHz xtal */
-+			cx25840_write(client, 0x2, 0x71);
+-		if (chip_ready(map, adr))
++		if (chip_good(map, adr, map_word_ff(map)))
+ 			break;
+ 
+ 		if (time_after(jiffies, timeo)) {
+ 			printk(KERN_WARNING "MTD %s(): software timeout\n",
+ 				__func__ );
++			ret = -EIO;
+ 			break;
+ 		}
+ 
+@@ -2309,15 +2310,15 @@ static int __xipram do_erase_chip(struct
+ 		UDELAY(map, chip, adr, 1000000/HZ);
+ 	}
+ 	/* Did we succeed? */
+-	if (!chip_good(map, adr, map_word_ff(map))) {
++	if (ret) {
+ 		/* reset on all failures. */
+ 		map_write( map, CMD(0xF0), chip->start );
+ 		/* FIXME - should have reset delay before continuing */
+ 
+-		if (++retry_cnt <= MAX_RETRIES)
++		if (++retry_cnt <= MAX_RETRIES) {
++			ret = 0;
+ 			goto retry;
+-
+-		ret = -EIO;
 +		}
- 		cx25840_write4(client, 0x11c, 0x01d1744c);
- 		cx25840_write4(client, 0x118, 0x00000416);
- 		cx25840_write4(client, 0x404, 0x0010253e);
-@@ -544,9 +554,15 @@ static void cx23885_initialize(struct i2
- 	/* HVR1850 */
- 	switch (state->id) {
- 	case CX23888_AV:
--		/* 888/HVR1250 specific */
--		cx25840_write4(client, 0x10c, 0x13333333);
--		cx25840_write4(client, 0x108, 0x00000515);
-+		if (clk_freq == 25000000) {
-+			/* 888/ImpactVCBe or 25MHz xtal */
-+			cx25840_write4(client, 0x10c, 0x01b6db7b);
-+			cx25840_write4(client, 0x108, 0x00000512);
-+		} else {
-+			/* 888/HVR1250 or 50MHz xtal */
-+			cx25840_write4(client, 0x10c, 0x13333333);
-+			cx25840_write4(client, 0x108, 0x00000515);
+ 	}
+ 
+ 	chip->state = FL_READY;
+@@ -2391,7 +2392,7 @@ static int __xipram do_erase_oneblock(st
+ 			chip->erase_suspended = 0;
+ 		}
+ 
+-		if (chip_ready(map, adr)) {
++		if (chip_good(map, adr, map_word_ff(map))) {
+ 			xip_enable(map, chip, adr);
+ 			break;
+ 		}
+@@ -2400,6 +2401,7 @@ static int __xipram do_erase_oneblock(st
+ 			xip_enable(map, chip, adr);
+ 			printk(KERN_WARNING "MTD %s(): software timeout\n",
+ 				__func__ );
++			ret = -EIO;
+ 			break;
+ 		}
+ 
+@@ -2407,15 +2409,15 @@ static int __xipram do_erase_oneblock(st
+ 		UDELAY(map, chip, adr, 1000000/HZ);
+ 	}
+ 	/* Did we succeed? */
+-	if (!chip_good(map, adr, map_word_ff(map))) {
++	if (ret) {
+ 		/* reset on all failures. */
+ 		map_write( map, CMD(0xF0), chip->start );
+ 		/* FIXME - should have reset delay before continuing */
+ 
+-		if (++retry_cnt <= MAX_RETRIES)
++		if (++retry_cnt <= MAX_RETRIES) {
++			ret = 0;
+ 			goto retry;
+-
+-		ret = -EIO;
 +		}
- 		break;
- 	default:
- 		cx25840_write4(client, 0x10c, 0x002be2c9);
-@@ -576,7 +592,7 @@ static void cx23885_initialize(struct i2
- 		 * 368.64 MHz before post divide
- 		 * 122.88 MHz / 0xa = 12.288 MHz
- 		 */
--		/* HVR1850  or 50MHz xtal */
-+		/* HVR1850 or 50MHz xtal or 25MHz xtal */
- 		cx25840_write4(client, 0x114, 0x017dbf48);
- 		cx25840_write4(client, 0x110, 0x000a030e);
- 		break;
+ 	}
+ 
+ 	chip->state = FL_READY;
 
 
