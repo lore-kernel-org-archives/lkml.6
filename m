@@ -2,125 +2,96 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB350C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCB2C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:43:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 641372089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:43:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 641372089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 8B7382089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:43:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B7382089B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933840AbeGJOnT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 10:43:19 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38476 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933353AbeGJOnR (ORCPT
+        id S933873AbeGJOne (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 10:43:34 -0400
+Received: from gateway30.websitewelcome.com ([192.185.147.85]:27565 "EHLO
+        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933849AbeGJOnc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 10:43:17 -0400
-Received: by mail-ed1-f68.google.com with SMTP id t2-v6so2164479edr.5;
-        Tue, 10 Jul 2018 07:43:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0oQ+Ev2wwbYIKIy5D8rbZN/PmDh1tYW7eK5mubi1swo=;
-        b=GvH2KAGuNnqfRklIkyJOiSnAXxRTAc+55t8w24qxILuTxXNk7yq0FrVP5+tkh/uQHO
-         axtZpCbpeD/TrTQXPBeKM9zookueDEJRD2MUv6Qd8TW7kPIhVjNwJD/wxNzVc/XXN8kM
-         2E6FzQ9sdNpi4uwtL/Zv8XK1FR3ptFxa2Kxs6C77kMF3r9KOp7GyNbyBR3/KorfDX7Rk
-         6xlxSN7xMG+o7Fhryutpwr2Feimi80ILmL+5vgXV+AvJ9pO/feo83igCKXTLcleQ/Ex3
-         uK4Fwf2yM5A2WhQRGbDPlHJ5mSGlxD8zJjC7AC8zFVXRDcE2hkH0vMUyP+XREo1o+9hn
-         /nLQ==
-X-Gm-Message-State: APt69E0+2MpSxxiL624tHn101+Rc44SGHuVcGoUfS34iWHv+aW5wru6s
-        13svG9G7Ugl3ycOXuZm93l0V+FhNzJ0=
-X-Google-Smtp-Source: AAOMgpehut0Mv8QLMX4H89M7AZRcRSlmlJPsrIqTNK2B81bY7ppvZLLMqRXjMINDxTRiR+UCBiSW/w==
-X-Received: by 2002:a50:f609:: with SMTP id c9-v6mr27192826edn.103.1531233795665;
-        Tue, 10 Jul 2018 07:43:15 -0700 (PDT)
-Received: from mail-wm0-f48.google.com (mail-wm0-f48.google.com. [74.125.82.48])
-        by smtp.gmail.com with ESMTPSA id j34-v6sm7460139edb.50.2018.07.10.07.43.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 07:43:15 -0700 (PDT)
-Received: by mail-wm0-f48.google.com with SMTP id s12-v6so24970957wmc.1;
-        Tue, 10 Jul 2018 07:43:15 -0700 (PDT)
-X-Received: by 2002:a1c:3b54:: with SMTP id i81-v6mr15652160wma.143.1531233399913;
- Tue, 10 Jul 2018 07:36:39 -0700 (PDT)
+        Tue, 10 Jul 2018 10:43:32 -0400
+X-Greylist: delayed 1207 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Jul 2018 10:43:32 EDT
+Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
+        by gateway30.websitewelcome.com (Postfix) with ESMTP id 57C1D1BC52
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 09:23:25 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id ctXZfP0QKbXuJctXrfYCaG; Tue, 10 Jul 2018 09:23:25 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=59090 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fctXZ-0028AF-IF; Tue, 10 Jul 2018 09:22:53 -0500
+Date:   Tue, 10 Jul 2018 09:22:52 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Stephan Mueller <smueller@chronox.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] crypto: dh - fix memory leak
+Message-ID: <20180710142252.GA19600@embeddedor.com>
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 07:36:19
- -0700 (PDT)
-In-Reply-To: <20180710080114.31469-5-paul.kocialkowski@bootlin.com>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com> <20180710080114.31469-5-paul.kocialkowski@bootlin.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 10 Jul 2018 22:36:19 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65MO9xmKQz5LuydwqwvVB-_bbM=FeqbsRwJbh-5km9XCQ@mail.gmail.com>
-Message-ID: <CAGb2v65MO9xmKQz5LuydwqwvVB-_bbM=FeqbsRwJbh-5km9XCQ@mail.gmail.com>
-Subject: Re: [PATCH v5 04/22] dt-bindings: sram: sunxi: Add A13, A20, A23 and
- H3 dedicated bindings
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fctXZ-0028AF-IF
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.65.56]:59090
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 4:00 PM, Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
-> This introduces dedicated bindings for the system control blocks found
-> on the A13, A20, A23 and H3 sunxi platforms.
->
-> Since the controllers on the A33 are the very same as those on the A23,
-> no specific compatible is introduced for it.
->
-> These bindings are introduced to allow reflecting the differences that
-> exist between these controllers, that may become significant to driver
-> implementations.
->
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+In case memory resources for *base* were allocated, release them
+before return.
 
-Not sure if there's a difference between A10 and A20, if you don't count
-the NMI that we have a separate node for. But anyway,
+Addresses-Coverity-ID: 1471702 ("Resource leak")
+Fixes: e3fe0ae12962 ("crypto: dh - add public key verification test")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ crypto/dh.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+diff --git a/crypto/dh.c b/crypto/dh.c
+index 8f79269..09a44de 100644
+--- a/crypto/dh.c
++++ b/crypto/dh.c
+@@ -174,7 +174,7 @@ static int dh_compute_value(struct kpp_request *req)
+ 		}
+ 		ret = dh_is_pubkey_valid(ctx, base);
+ 		if (ret)
+-			goto err_free_val;
++			goto err_free_base;
+ 	} else {
+ 		base = ctx->g;
+ 	}
+-- 
+2.7.4
+
