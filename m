@@ -2,172 +2,149 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C346C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0CB7C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC712089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E22F20877
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 09:10:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="KkeQzKnR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DC712089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dsw3A1qV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E22F20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751297AbeGJJGn (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 05:06:43 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:58140 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751182AbeGJJGk (ORCPT
+        id S932172AbeGJJKp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 05:10:45 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46298 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751242AbeGJJKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 05:06:40 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id EC7425C0634;
-        Tue, 10 Jul 2018 11:06:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1531213597;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/Ppx9e/3iESTYls19aT3EcPKSQ5uAmlll3vSYRTOmpg=;
-        b=KkeQzKnRNIfEng83gJ5/TsCf1Ejagkfer7w7q04svTjz1TYaadTc81cm5Xqgfym0XA3zHz
-        0YXIpmYRYkHztJ9HHz7szTjKEuo8JB69AJ9eH8iEuIkKgqJjZK0Yd7KcFBXoNwMJy73Kqp
-        Y2623IF+pGCjiD8rYwEuPSn4d1txv/E=
+        Tue, 10 Jul 2018 05:10:43 -0400
+Received: by mail-lj1-f196.google.com with SMTP id 203-v6so5134173ljj.13;
+        Tue, 10 Jul 2018 02:10:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc:content-transfer-encoding;
+        bh=1J8GtKyRPKpFyeKkRRHVAMbIUHykXlh1jfvtumb++7M=;
+        b=Dsw3A1qVl18iNBuxGvYN3H+dSbiBMR8+oGw6hi6T1X0KaaboikaiGtwKJh0reQ0U0x
+         k7F4MijqBRf32dSAFD//UO3RsADe6jRh+GP4XIwwN5zDfDwVgHBgJ/RBA+llLqdctng5
+         9cVGsnaapJwwGd/AjGR6Lvh1KY9aqgXHpU2RJ9lMJ4wyN/885mShRSNyhbBnxvZBQ5qA
+         RlBld8ZHU2RDuTcf+66N2nGh3ziwvskWvDodI8hiEQr5K/97YLqUG6lJxozjUzlRU7wZ
+         NtiVI4SLIje6/wElGPmOmCA60r65SuA/zXk0zeHI5j+7N1BmW8isuD/oYkc9aALWXkEB
+         nGWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc:content-transfer-encoding;
+        bh=1J8GtKyRPKpFyeKkRRHVAMbIUHykXlh1jfvtumb++7M=;
+        b=r5HpLlMAwhZt23pgr7RTzy62IN828gCgqYPb+OAQVU6eNkzcOactbGgm35swMXaNKt
+         8/V+LhLvTRGm0kMK9k3Lr4huBAYnRo81jWDUw7hPmAXEDrKIZ2KhpHLkbHCDTmM8/tH+
+         VCS6i93PDKqWC/zmUrtpBoRMlX2NfXpIbDPie9D8ru92yz+kWtjQRe2SBXSoHtYspeMe
+         4UtMg17KNWdYZ8Dt9iwTPwLbrSxWf2QY+SSxJ+EONx8em3WHJ9F6Mu4HLeLDDRcx6fMd
+         OUNmLDknbBT3f45eXCRnnz23tU/qW0mntUogmwWThZSVuFRtRxU0ylk9W8/ROfDGiI8q
+         4P2g==
+X-Gm-Message-State: APt69E02KJ+dJCHVRySFIjXP3qIFA9zH3k+84spPniHCKCO2P4ria8RH
+        Btw907RMJ729+1Wtzn9vExrBfMhk0U75iOBa9wA=
+X-Google-Smtp-Source: AAOMgpcIz1pYRqzCYTBSVr8flxoYpNOf90+W4PbBO/RyxhhjPE3cj5YBNN+Zy2pJdv8ZdC5kQi5Oe/RHlM53W3cYfpk=
+X-Received: by 2002:a2e:1bcc:: with SMTP id c73-v6mr14442684ljf.0.1531213841176;
+ Tue, 10 Jul 2018 02:10:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 10 Jul 2018 11:06:36 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>, festevam@gmail.com,
-        marex@denx.de, shawnguo@kernel.org, devicetree@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, marcofrk@gmail.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        dl-linux-imx <linux-imx@nxp.com>, kernel@pengutronix.de,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, l.stach@pengutronix.de
-Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
-In-Reply-To: <6995fa4b-47a9-887b-5e4f-4284ca6a2c79@gmail.com>
-References: <cover.1529091248.git.leonard.crestez@nxp.com>
- <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
- <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
- <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
- <638457fd-85da-8fec-d146-517c43f71813@denx.de>
- <b3fa74c5110b45e5992920485749869ab1f7ebce.camel@nxp.com>
- <6995fa4b-47a9-887b-5e4f-4284ca6a2c79@gmail.com>
-Message-ID: <fd22085f646d97f66cff5b7f22785500@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.36 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[15];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-0.26)[73.58%];
-         ARC_NA(0.00)[]
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 02:10:40
+ -0700 (PDT)
+In-Reply-To: <20180710080538.d7xqpjdvpksfrx6o@sch.bme.hu>
+References: <20180709213537.2748896-1-arnd@arndb.de> <20180710080227.qwh53ahq26j6phhd@sch.bme.hu>
+ <20180710080538.d7xqpjdvpksfrx6o@sch.bme.hu>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 10 Jul 2018 11:10:40 +0200
+X-Google-Sender-Auth: n8ONqyvIbAT9EE9YKSwKApTir7Y
+Message-ID: <CAK8P3a0zYmdoMdWdFDcWprZY_4w2hbMYq4--iZB=JE4x2UiscA@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: NFT_SOCKET don't use NF_SOCKET_IPV6 without NF_TABLES_IPV6
+To:     =?UTF-8?B?TcOhdMOpIEVja2w=?= <ecklm94@gmail.com>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Flavio Leitner <fbl@redhat.com>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.06.2018 01:32, Marek Vasut wrote:
-> On 06/16/2018 12:42 AM, Leonard Crestez wrote:
->> On Fri, 2018-06-15 at 23:36 +0200, Marek Vasut wrote:
->>> On 06/15/2018 10:58 PM, Leonard Crestez wrote:
->>>> On Fri, 2018-06-15 at 16:47 -0300, Fabio Estevam wrote:
->>>>> On Fri, Jun 15, 2018 at 4:43 PM, Leonard Crestez
->>>>> <leonard.crestez@nxp.com> wrote:
+On Tue, Jul 10, 2018 at 10:05 AM, M=C3=A1t=C3=A9 Eckl <ecklm94@gmail.com> w=
+rote:
+> On Tue, Jul 10, 2018 at 10:02:27AM +0200, M=C3=A1t=C3=A9 Eckl wrote:
+>> On Mon, Jul 09, 2018 at 11:35:09PM +0200, Arnd Bergmann wrote:
+>> > It is now possible to build the nft_socket module as built-in when
+>> > NF_TABLES_IPV6 is disabled, and have NF_SOCKET_IPV6=3Dm set manually.
+>> >
+>> > In this case, the NF_SOCKET_IPV6 functionality will be useless accordi=
+ng
+>> > to the explanation in commit 35bf1ccecaaa ("netfilter: Kconfig: Change
+>> > IPv6 select dependencies"), but on top of that it also causes a link
+>> > error:
+>> >
+>> > net/netfilter/nft_socket.o: In function `nft_socket_eval':
+>> > nft_socket.c:(.text+0x162): undefined reference to `nf_sk_lookup_slow_=
+v6'
+>> >
+>> > This changes the compile-time check so we don't attempt to use
+>> > the NF_SOCKET_IPV6 code when it cannot be used, and make it all
+>> > compile again. That may lead to unexpected behavior when a user
+>> > enables NF_SOCKET_IPV6 but cannot use it, but seems to be the
+>> > logical conclusion of the 35bf1ccecaaa change.
+>> >
+>> > Fixes: 35bf1ccecaaa ("netfilter: Kconfig: Change IPv6 select dependenc=
+ies")
+>> > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 >>
->>>>>> The FBDEV driver uses the same name and both can't be registered at the
->>>>>> same time. Fix this by renaming the drm driver to mxsfb-drm
->>>>>
->>>>> Stefan sent the same patch a few days ago:
->>>>
->>>> In that thread there is a proposal for removing the old fbdev/mxsfb
->>>> driver entirely.
->>>>
->>>> That would break old DTBs, isn't this generally considered bad? Also,
->>>> are we sure the removal of fbdev/mxsfb wouldn't lose any features?
->>>>
->>>> What my series does is make both drivers work with the same kernel
->>>> image and turns the choice into a board-level dtb decision. Supporting
->>>> everything at once seems desirable to me and it allows for a very
->>>> smooth upgrade path.
->>>
->>> Having two drivers in the kernel with different set of bugs is always bad.
->>>
->>>> The old driver could be removed later, after all users are converted.
->>>
->>> Both drivers were in for long enough already. And let's be realistic,
->>> how many MX23/MX28 users of old DTs with new kernels are there who
->>> cannot update the DT as well ?
->>
->> Grepping for "display =" in arch/arm/boot/dts/imx* I see that old
->> bindings are also used by 3rd-party boards for imx6/7:
->>  * imx6sx-nitrogen6sx
->>  * imx6ul-geam
->>  * imx6ul-isiot
->>  * imx6ul-opos6uldev
->>  * imx6ul-pico-hobbit
->>  * imx6ul-tx6ul
->>  * imx7d-nitrogen7
-> 
-> Er, yes, a handful of boards which could be updated :)
-> 
->> Converting everything might be quite a bit of work, and explicitly
->> supporting old bindings is also work.
-> 
-> Does adding support for old bindings justify the effort invested ? I
-> doubt so, it only adds more code to maintain.
-> 
->> It is very confusing that there is a whole set of displays for imx6/7
->> which are supported by upstream but only with a non-default config.
->> While it is extremely common in the embedded field to have custom
->> configs the default one in the kernel should try to "just work".
->>
->> Couldn't this patch series be considered a bugfix? It was also
->> surprisingly small.
-> 
-> I think it's just a workaround which allows you to postpone the real
-> fix, and I don't like that.
+>> I think this should be fixed in the Kconfig rather than inside the modul=
+e(s).
 
-This is one of the situation where states quo is kinda the worst
-situation.
+Should we revert your patch then, or do you have a better idea?
 
-Currently imx_v6_v7_defconfig and mxs_defconfig actually still uses
-CONFIG_FB_MXS.
+>> I did some investigation and it turns out that you missed a circumstance=
+. This
+>> link error occures only if NFT_SOCKET=3Dy && NF_SOCKET_IPV6=3Dm && NF_TA=
+BLES_IPV6=3Dy
+>> (cannot be m here if NFT_SOCKET is y).
 
-I understand that you'd rather prefer to move forward. I suggest we do
-it in steps.
+No, if NF_TABLES_IPV6=3Dy the problem cannot happen, since NFT_SOCKET then
+selects NF_SOCKET_IPV6=3Dy as well. Before your patch, it would always sele=
+ct
+NF_SOCKET_IPV6 when it could, so it worked in all configurations.
 
-In 4.19:
+>>  And probably the same with
+>> iptables-related modules. Probably this possibility should be eliminated=
+.
+>
+> NF_TPROXY_IPV6 might be in the same situation.
 
-- Change DRM driver.name to mxsfb-drm so we avoid conflicts for now
-- Remove CONFIG_FB_MXS from imx_v6_v7_defconfig/mxs_defconfig now, and
-only enable CONFIG_DRM_MXSFB=y
-- Add (deprecated) to CONFIG_FB_MXS
+I tried coming up with a combination that is broken for NF_TPROXY_IPV6=3Dm
+but could not. From what I can see with
 
-In 4.19/4.20:
-- Fix the above device trees
+config NETFILTER_XT_TARGET_TPROXY
+       tristate '"TPROXY" target transparent proxying support'
+       depends on IP6_NF_IPTABLES || IP6_NF_IPTABLES=3Dn
+       select NF_TPROXY_IPV6 if IP6_NF_IPTABLES
 
-In 4.20/4.21:
-- Remove FB_MXS
+and
 
-Does that sound reasonable? If yes, I can send the patch set to do step
-1.
+#if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
 
---
-Stefan
+inside of net/netfilter/xt_TPROXY.c, there is no way we can end up with
+xt_TPROXY calling into the nf_tproxy_ipv6 loadable module from
+a built-in context. This is the same approach I used in my patch,
+just with IP6_NF_IPTABLES instead of NF_SOCKET_IPV6, in both
+the Kconfig dependency and the module.
+
+      Arnd
