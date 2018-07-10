@@ -2,180 +2,126 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23755C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:45:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A3A4C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D040020B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:45:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="RqhO1xDF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D040020B6F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id B51F820870
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:46:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B51F820870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389024AbeGJSqJ (ORCPT
+        id S2389053AbeGJSqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:46:09 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51597 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732386AbeGJSqI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:46:08 -0400
-Received: by mail-it0-f67.google.com with SMTP id g4-v6so119852iti.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 11:45:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=771ERV0PGNR2a0rLchz/sT9UbhE7A2XRM0u2JZ5Jy0g=;
-        b=RqhO1xDFbkeS5iJzHAm4O777/1Iv/HWYD3cB5aO7eEe8dEfELs0AWAyr7lFNkC/ssF
-         YOXYOcpO9ADuGs7PE48/RSp+bvcl3jQVEE0/U0Hhfg6aRQjLzTno8/zW2GctZYoNyflS
-         hlSjc8Ek+9W/53tozulASPFa7+OOCG/h1mTP7dRlovPAUJoWmdM3EU35NACj2YQi7321
-         cc/ED6pMp6oAXBqQRtaUoxpLzm/m5NamG6rbcBmvmCsaa5+R9wDYDEWTiredxVh+Rg2f
-         LZ+CBQXhr9P0MCC0df1xez6psAmQyqv1aV3QAtDr8GSe9RP2N+kgbrtusMEL32QfVBMM
-         o/ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=771ERV0PGNR2a0rLchz/sT9UbhE7A2XRM0u2JZ5Jy0g=;
-        b=f/Om24mLgTtiYOlYmcFKBy3uoHaHmH08IS5OchNGI7y+xXIfWv0rIxvXnIVhBQlvsX
-         diU9AoKWQZx8BfXGMWrDlbSM3Cbq/tUh7S7BUmwfQSEb/v7Nf7wCWiJbi3y7onPy6KXm
-         mcyszv+3isDEz0cE33hmGjIiA67MqMi4N6nmRLWa0zfIjaYON9ZFRkTqD0qObxQWT7O3
-         pg1HUWGmhuMKe5jkdQTNfPUzFerEkYGMMf5TMPHqOQZ2aIDZ0VxtAwSXjG6b8h068cYx
-         M9xpDaRK5lXSFWu+Je9h3Wkf79johkFoLxLlIGOSwqTbYssgGeQeXZIDSXsDjr8GHfz8
-         Dq8Q==
-X-Gm-Message-State: APt69E0fH4qyZiptCF/GQdq7oTwwuoP3PFHL/2esGdAja30e58sGPYE3
-        +JQVuNpdNZyUId2JDwHjGr20OA==
-X-Google-Smtp-Source: AAOMgpe0xIlyk49aBifTJcEGqJuDsIYO6CQ5oHM1zXfdPEy6UInQX0ox3jZE4SqDES/5npJTRiwTBA==
-X-Received: by 2002:a02:6a1f:: with SMTP id l31-v6mr22168717jac.7.1531248351123;
-        Tue, 10 Jul 2018 11:45:51 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id s125-v6sm8379693iod.18.2018.07.10.11.45.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 11:45:49 -0700 (PDT)
-Subject: Re: [PATCH 0/2] null_blk: zone support
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "mb@lightnvm.io" <mb@lightnvm.io>,
-        "loberman@redhat.com" <loberman@redhat.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>
-References: <20180706173839.28355-1-mb@lightnvm.io>
- <1530899118.31977.1.camel@redhat.com>
- <296d2d14-0bf6-e0a2-84dc-7d6e819625c1@lightnvm.io>
- <4421a151-85d9-52e4-2233-03ed7f17528a@kernel.dk>
- <8d8ae6c620217db92b95b6561345d7bdf7c7cdfa.camel@wdc.com>
- <229911cb-7eb1-1729-46f1-35aba81d98d1@kernel.dk>
- <a183979f10fda180176f671702f69efe338f56e7.camel@wdc.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9225abd8-35de-641d-2d2b-7ed566fb9956@kernel.dk>
-Date:   Tue, 10 Jul 2018 12:45:47 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Tue, 10 Jul 2018 14:46:22 -0400
+Received: from mga02.intel.com ([134.134.136.20]:49770 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732278AbeGJSqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 14:46:21 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 11:46:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,335,1526367600"; 
+   d="scan'208";a="73722475"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga002.jf.intel.com with ESMTP; 10 Jul 2018 11:46:04 -0700
+Date:   Tue, 10 Jul 2018 11:45:07 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Eduardo Habkost <ehabkost@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [PATCH v2 1/4] x86/split_lock: Enumerate #AC exception for split
+ locked access feature
+Message-ID: <20180710184506.GA37857@romley-ivt3.sc.intel.com>
+References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
+ <1530282807-66555-2-git-send-email-fenghua.yu@intel.com>
+ <b0267bb2-7d1f-c1d6-cff8-addf358009b3@intel.com>
+ <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
+ <20180704200742.GD7451@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <a183979f10fda180176f671702f69efe338f56e7.camel@wdc.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180704200742.GD7451@localhost.localdomain>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/10/18 10:47 AM, Bart Van Assche wrote:
-> On Tue, 2018-07-10 at 08:46 -0600, Jens Axboe wrote:
->> On 7/9/18 6:05 PM, Bart Van Assche wrote:
->>> On Mon, 2018-07-09 at 10:34 -0600, Jens Axboe wrote:
->>>> In the spirit of making some progress on this, I just don't like how
->>>> it's done. For example, it should not be necessary to adjust what
->>>> comes out of the block generator, instead the block generator should
->>>> be told to do what we need on zbc. This is a key concept. The workload
->>>> should be defined as such that it works for zoned devices.
->>>
->>> How would you like to see block generation work? I don't see an
->>> alternative for random I/O other starting from the output of a random
->>> generator and translating that output into something that is
->>> appropriate for a zoned block device. Random reads must happen below
->>> the zone pointer if fio is configured to read below the zone pointer.
->>> Random writes must happen at the write pointer. The only way I see to
->>> implement such an I/O pattern is to start from the output of a random
->>> generator and to adjust the output of that random generator. However,
->>> I don't have a strong opinion whether adjusting the output of a random
->>> generator should happen by the caller of get_next_buflen() or inside
->>> get_next_buflen(). Or is your concern perhaps that the current
->>> approach interferes with fio job options like bs_unaligned?
->>
->> The main issue I have with that approach is that the core of fio is
->> generating the IO patterns, and then you are just changing them as you
->> see fit. This means that the workload definition and the resulting IO
->> operations are no longer matched up, since they now also depend on what
->> you are running on. If I take one workload and run it on a zoned drive,
->> and then run it on a non-zoned drive, I can't compare the results at
->> all. This is a showstopper.
->>
->> There should be no adjusting of the output, rather it should be possible
->> to write zoned friendly job definitions. It should be possible to run
->> the same job on a non-zoned drive, and vice versa, and the resulting IO
->> patterns must be the same.
->>
->> Fio already has some notion of zones. Maybe that could be extended to
->> hard zones, and some control of open zones, and patterns within those
->> zones?
+On Wed, Jul 04, 2018 at 05:07:42PM -0300, Eduardo Habkost wrote:
+> On Fri, Jun 29, 2018 at 06:23:35PM +0200, Thomas Gleixner wrote:
+> > On Fri, 29 Jun 2018, Dave Hansen wrote:
+> > > On 06/29/2018 07:33 AM, Fenghua Yu wrote:
+> > > > +/* Detect feature of #AC for split lock by probing bit 29 in MSR_TEST_CTL. */
+> > > > +void detect_ac_split_lock(void)
+> > > > +{
+> > > > +	u64 val, orig_val;
+> > > > +	int ret;
+> > > > +
+> > > > +	/* Attempt to read the MSR. If the MSR doesn't exist, reading fails. */
+> > > > +	ret = rdmsrl_safe(MSR_TEST_CTL, &val);
+> > > > +	if (ret)
+> > > > +		return;
+> > > 
+> > > This is a bit fast and loose with how the feature is detected, which
+> > > might be OK, but can we call out why we are doing this, please?
+> > > 
+> > > Is this MSR not really model-specific?  Is it OK to go poking at it on
+> > > all x86 variants?  Or, do we at _least_ need a check for Intel cpus in here?
+> > 
+> > That definitely needs a vendor check. Also the whole code needs to be
+> > compiled out if CONFIG_INTEL=n.
+> > 
+> > Aside of that this wants to be enumerated. CPUID or MISC_FEATURES and not
+> > this guess work detection logic. Why do I have to ask for that for every
+> > other new feature thingy?
 > 
-> Hello Jens,
-> 
-> How about adding a job option that makes it possible to use the zoned
-> block device (ZBD) I/O pattern on non-ZBD devices, requiring that the
-> zone size is set explicitly for non-ZBD devices and maintaining a write
-> pointer not only when performing I/O to a ZBD device but also if a
-> ZBD-style I/O pattern is applied to a non-ZBD disk? This should allow to
-> apply exactly the same workload to a non-ZBD disk as to a ZBD disk.
+> Yes, please.  KVM hosts normally expect guests to not touch MSRs
+> unless we explicitly tell them the MSR is available (normally
+> through CPUID).  This is important to ensure live migration
+> between different host kernel versions works reliably.
 
-It just doesn't make any sense to me. The source of truth is the
-generator of the IO, which does exactly what it is told by the job
-definition. You're proposing to mangle that somehow, to fit some
-restrictions that the underlying device has. That very concept is
-foreign, and adding an option to be able to do the same on some other
-device is misleading. The difference between the job file and the
-workload run can be huge. Consider something really basic:
+The problem is the hardware design for the feature is complete. The
+hardware designer cannot change the feature enumeration to CPUID or
+MISC_FEATURES. In the future, the designer will put future model-
+specific feature bits in a processor feature MSR and hopefully we will
+have a nice standard enumeration way for all future model specific
+features. But split lock is too late (or too early) to be in the feature
+MSR.
 
-[randwrites]
-bs=4k
-rw=randwrite
+Considering the current situation, can we do split lock as following?
 
-which would be 100% random 4k writes. If I run this on a zoned device,
-then that'd turn into 100% sequential writes. That makes no sense at
-all. And if I run it on a different devices, I'd get 100% random writes.
-Except if I set some magic option. Sorry, but that concept is just too
-ugly to live, it makes zero sense. Put down your zoned hat for a bit and
-think about it.
+By default, #AC for split lock is not enabled by kernel. It's disabled
+by BIOS by default (bit29=0). Kernel doesn't clear bit 29.
 
-> What I derived from the fio source code is as follows (please correct me
-> if I got anything wrong):
-> * The purpose of the zonesize, zonerange and zoneskip job options is to
->   limit the I/O range to a single zone with size "zonesize". The I/O
->   pattern for zoned block devices is different: I/O happens in multiple
->   zones simultaneously. The number of zones to which I/O happens is
->   called the number of open zones.
+For IOT/real time users, they know the feature is in the processor and
+they know the consequence of enabling the feature (e.g. some apps will
+be killed because of split lock issues). They want to enable #AC for
+split lock by kernel parameter "split_lock_detect=on". Kernel calls
+wrmsr_safe(), which can fail on processor not supporting
+the feature, to enable the feature.
 
-The only difference is that fio currently only has one zone active. When
-it finishes one, it goes to the next. See my above suggestion on adding
-the notion of open zones, which would extend this to more than 1.
+There is no enumeration and no flag in /proc/cpuinfo flag for the feature.
 
-> * The purpose of the random_distribution=zoned{_abs} job option is to
->   allow the user to skew a uniform random distribution. This is another
->   workload pattern than the typical pattern for ZBD drives.
+Is this a right way to go? Please advise.
 
-Fio's zones were never intended to be for zoned devices. Don't get hung
-up on current use cases, think about what kind of definitions would make
-sense for zoned devices.
+Thanks.
 
--- 
-Jens Axboe
-
+-Fenghua
