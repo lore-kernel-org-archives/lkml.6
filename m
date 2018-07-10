@@ -2,165 +2,95 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLACK,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1384CC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54EDCC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D23722083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D23722083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1BF512083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:28:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="b5Htvjnt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF512083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387550AbeGJS2t (ORCPT
+        id S2387566AbeGJS2v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:28:49 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45154 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387507AbeGJS2t (ORCPT
+        Tue, 10 Jul 2018 14:28:51 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:46761 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732920AbeGJS2u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:28:49 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8A9E5DB4;
-        Tue, 10 Jul 2018 18:28:37 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tokunori Ikegami <ikegami@allied-telesis.co.jp>,
-        Joakim Tjernlund <Joakim.Tjernlund@infinera.com>,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH 4.4 45/47] mtd: cfi_cmdset_0002: Change erase functions to check chip good only
-Date:   Tue, 10 Jul 2018 20:25:09 +0200
-Message-Id: <20180710182339.097592905@linuxfoundation.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180710182337.047502999@linuxfoundation.org>
-References: <20180710182337.047502999@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Tue, 10 Jul 2018 14:28:50 -0400
+Received: by mail-io0-f196.google.com with SMTP id i18-v6so5533367ioj.13
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 11:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=YCJcwzgHg6b2PtZeCSrpNDW98r4gxMxNyeAT1AE0FRo=;
+        b=b5HtvjntOac2U2JwmL4Om7jNGr+TXjRRF+PqQD5alWq0SCjFaYcOXHdhaXOPKLQsUk
+         Z8NbCsRrrgD2ssHv0oQRxQIkZdzv+EtSI0AESZCZUEZp2irlT/LS5QOR3MWmQptzb4io
+         CtYRpMXIoTQadPqCV7fDMH9uSGS4hKKtYBq2fuwkfSBjLygrSmJRSGJ6+LYa+cI3t+3Q
+         Mae+e3IQn507OApBDeOjk3FcEvuM2hliugCU3cLfqzuwQsqU1WLDLDjMNU+U4jUGCVv9
+         53PiU9sULT8CiOm46Z/4QwGAs45mjvdvxRIBj+QVUhKxKy4Fo2MSZKU3w/RBUjw1WdoM
+         5TVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=YCJcwzgHg6b2PtZeCSrpNDW98r4gxMxNyeAT1AE0FRo=;
+        b=D+TmjGaoia3ivNqYDzzxvob7WHZyYBVz1EkCjpRLL1u3SEiVQQvRvhlON4rT02gvS+
+         Leuzs1Wc6fvXIn1x6A02LyiDddY92SZnAepL7uTD4mObi3KIx+npVpzD+28AC7LRlsbm
+         AUYapsjarAFV3ESdqo1SLGf6XfxaM5jE0txvqZw9DP5TmDigEwaIpe25IkKnGpGug09A
+         +/qu+X8NlnDy1ue4CkW/Qsdz33+FLUArJCxaM0RJKRNouQyDr8wP8LvnrLabiq9GgyBZ
+         /QkkSywjqX5hCuShOYTEjK784nWQp170A9N0L1KEMM/afPuHPY/K6/v/K+Nm0bEMOGM5
+         M8Qw==
+X-Gm-Message-State: AOUpUlEK6zo9AJ8qt/njuQO1qpuXpRUGqdYVtsRLVS4NCo2vxGwV7oBb
+        GEe1voLWFgFbYOzkJdOkZbPyRpQaALQ=
+X-Google-Smtp-Source: AAOMgpfo98Opq0peapICQaW7xZGkNnMNB99/JS8NG4CuiyMz9kPRxpObanrA8orLibmGO4kkEl2R+w==
+X-Received: by 2002:a5e:dc41:: with SMTP id s1-v6mr6074000iop.200.1531247318820;
+        Tue, 10 Jul 2018 11:28:38 -0700 (PDT)
+Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
+        by smtp.gmail.com with ESMTPSA id n124-v6sm5040itg.7.2018.07.10.11.28.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 11:28:25 -0700 (PDT)
+Subject: Re: [PATCH] block: iolatency: avoid 64-bit division
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Tejun Heo <tj@kernel.org>, Josef Bacik <jbacik@fb.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180710152146.2371336-1-arnd@arndb.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d9014b7b-2eca-97ba-7e04-4f7f99e88c9b@kernel.dk>
+Date:   Tue, 10 Jul 2018 12:28:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180710152146.2371336-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On 7/10/18 9:21 AM, Arnd Bergmann wrote:
+> On 32-bit architectures, dividing a 64-bit number needs to use the
+> do_div() function or something like it to avoid a link failure:
+> 
+> block/blk-iolatency.o: In function `iolatency_prfill_limit':
+> blk-iolatency.c:(.text+0x8cc): undefined reference to `__aeabi_uldivmod'
+> 
+> Using div_u64() gives us the best output and avoids the need for an
+> explicit cast.
 
-------------------
+Applied, thanks Arnd.
 
-From: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-
-commit 79ca484b613041ca223f74b34608bb6f5221724b upstream.
-
-Currently the functions use to check both chip ready and good.
-But the chip ready is not enough to check the operation status.
-So change this to check the chip good instead of this.
-About the retry functions to make sure the error handling remain it.
-
-Signed-off-by: Tokunori Ikegami <ikegami@allied-telesis.co.jp>
-Reviewed-by: Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>
-Cc: Brian Norris <computersforpeace@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Cc: Richard Weinberger <richard@nod.at>
-Cc: Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>
-Cc: linux-mtd@lists.infradead.org
-Cc: stable@vger.kernel.org
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
----
- drivers/mtd/chips/cfi_cmdset_0002.c |   22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
---- a/drivers/mtd/chips/cfi_cmdset_0002.c
-+++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-@@ -2294,12 +2294,13 @@ static int __xipram do_erase_chip(struct
- 			chip->erase_suspended = 0;
- 		}
- 
--		if (chip_ready(map, adr))
-+		if (chip_good(map, adr, map_word_ff(map)))
- 			break;
- 
- 		if (time_after(jiffies, timeo)) {
- 			printk(KERN_WARNING "MTD %s(): software timeout\n",
- 				__func__ );
-+			ret = -EIO;
- 			break;
- 		}
- 
-@@ -2307,15 +2308,15 @@ static int __xipram do_erase_chip(struct
- 		UDELAY(map, chip, adr, 1000000/HZ);
- 	}
- 	/* Did we succeed? */
--	if (!chip_good(map, adr, map_word_ff(map))) {
-+	if (ret) {
- 		/* reset on all failures. */
- 		map_write( map, CMD(0xF0), chip->start );
- 		/* FIXME - should have reset delay before continuing */
- 
--		if (++retry_cnt <= MAX_RETRIES)
-+		if (++retry_cnt <= MAX_RETRIES) {
-+			ret = 0;
- 			goto retry;
--
--		ret = -EIO;
-+		}
- 	}
- 
- 	chip->state = FL_READY;
-@@ -2389,7 +2390,7 @@ static int __xipram do_erase_oneblock(st
- 			chip->erase_suspended = 0;
- 		}
- 
--		if (chip_ready(map, adr)) {
-+		if (chip_good(map, adr, map_word_ff(map))) {
- 			xip_enable(map, chip, adr);
- 			break;
- 		}
-@@ -2398,6 +2399,7 @@ static int __xipram do_erase_oneblock(st
- 			xip_enable(map, chip, adr);
- 			printk(KERN_WARNING "MTD %s(): software timeout\n",
- 				__func__ );
-+			ret = -EIO;
- 			break;
- 		}
- 
-@@ -2405,15 +2407,15 @@ static int __xipram do_erase_oneblock(st
- 		UDELAY(map, chip, adr, 1000000/HZ);
- 	}
- 	/* Did we succeed? */
--	if (!chip_good(map, adr, map_word_ff(map))) {
-+	if (ret) {
- 		/* reset on all failures. */
- 		map_write( map, CMD(0xF0), chip->start );
- 		/* FIXME - should have reset delay before continuing */
- 
--		if (++retry_cnt <= MAX_RETRIES)
-+		if (++retry_cnt <= MAX_RETRIES) {
-+			ret = 0;
- 			goto retry;
--
--		ret = -EIO;
-+		}
- 	}
- 
- 	chip->state = FL_READY;
-
+-- 
+Jens Axboe
 
