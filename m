@@ -6,117 +6,104 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5019C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD98C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E0A2089B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:03:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E0A2089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id A2CD4208E3
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 14:07:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2CD4208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=diehl.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933710AbeGJODF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 10:03:05 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46404 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933336AbeGJODC (ORCPT
+        id S933447AbeGJOHt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 10:07:49 -0400
+Received: from enterprise02.smtp.diehl.com ([193.201.238.220]:35592 "EHLO
+        enterprise02.smtp.diehl.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933248AbeGJOHr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 10:03:02 -0400
-Received: by mail-ed1-f66.google.com with SMTP id r17-v6so16662526edo.13;
-        Tue, 10 Jul 2018 07:03:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=b3vV+TUVrE1ilt0oMPUwI6CukcaygokUbmukKN4xWD0=;
-        b=bfIhuM/+Rw3znN9OIC0Utuwhk8mLVqCiPw8OeG1OjrX85WTjeHxp0ytxX5zVRhGA6W
-         AqLxeonOlJgOd7xLENefNSojuzIxTy4b0fUs4sViF04Ph1Ch7L4d4qHkgvtrSWaO9mRR
-         d+Faiw5RDxhuxpFZeW8jNzQpMdFqzRnOSWt/QiDWhyXu0jbZyJZVENB5twqRPIxyk6Gq
-         6uB5uCkYGGWxeLmAVQ65jLeNZPfBgKpVMBqEy6oJYprUJ+Q+Xs88L6BdxGHZlwoX2Bmk
-         /qvphpW/jLECxGNwsgrk/ssrjbOfLg1vTk1daqlwVqPodQuP0Iv/I0JU5g/jLDf09p/H
-         padg==
-X-Gm-Message-State: APt69E36SYCvL6KfNr6ah/fDRoxtcTVpJHFQ26iOHkce5xlSZdNeXaRp
-        GSNTfbdOixAzef2chBGXTtd4AJOdpnw=
-X-Google-Smtp-Source: AAOMgpfy3p212SoC/yKwv6yaXfmRQNHBTBjOxkuHJWjJ8TrlfujB7yC4RhIiO0fF7rXHMJQQ0Ed+9w==
-X-Received: by 2002:aa7:d9d7:: with SMTP id v23-v6mr26796871eds.300.1531231380745;
-        Tue, 10 Jul 2018 07:03:00 -0700 (PDT)
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com. [209.85.221.44])
-        by smtp.gmail.com with ESMTPSA id r25-v6sm1519454edb.45.2018.07.10.07.02.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 10 Jul 2018 07:03:00 -0700 (PDT)
-Received: by mail-wr1-f44.google.com with SMTP id a3-v6so5521207wrt.2;
-        Tue, 10 Jul 2018 07:02:59 -0700 (PDT)
-X-Received: by 2002:adf:a541:: with SMTP id j1-v6mr20102434wrb.155.1531231379696;
- Tue, 10 Jul 2018 07:02:59 -0700 (PDT)
+        Tue, 10 Jul 2018 10:07:47 -0400
+X-$ESA-Groupmapping: true
+X-IronPort-AV: E=Sophos;i="5.51,334,1526335200"; 
+   d="scan'";a="34027571"
+From:   Denis OSTERLAND <denis.osterland@diehl.com>
+To:     "lkp@intel.com" <lkp@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "kbuild-all@01.org" <kbuild-all@01.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH v4 2/5] rtc: isl1208: add support for isl1219 with tamper
+ detection
+Thread-Topic: [PATCH v4 2/5] rtc: isl1208: add support for isl1219 with tamper
+ detection
+Thread-Index: AQHUGDKQWWI1tXLeOU6HiRfwsL9pvqSIT4MAgAANFgA=
+Date:   Tue, 10 Jul 2018 14:06:57 +0000
+Message-ID: <1531231616.7366.2.camel@diehl.com>
+References: <20180710090710.9066-3-Denis.Osterland@diehl.com>
+         <201807102100.7IWfwFfW%fengguang.wu@intel.com>
+In-Reply-To: <201807102100.7IWfwFfW%fengguang.wu@intel.com>
+Accept-Language: de-DE, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.18.5.2-0ubuntu3.2 
 MIME-Version: 1.0
-Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 07:02:39
- -0700 (PDT)
-In-Reply-To: <20180710080114.31469-4-paul.kocialkowski@bootlin.com>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com> <20180710080114.31469-4-paul.kocialkowski@bootlin.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 10 Jul 2018 22:02:39 +0800
-X-Gmail-Original-Message-ID: <CAGb2v661JHS7r=6LE1em18owSUwk8VXbAGCAVez7=2u5P2R4Jg@mail.gmail.com>
-Message-ID: <CAGb2v661JHS7r=6LE1em18owSUwk8VXbAGCAVez7=2u5P2R4Jg@mail.gmail.com>
-Subject: Re: [PATCH v5 03/22] dt-bindings: sram: sunxi: Introduce new A10
- binding for system-control
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        =?UTF-8?Q?Niklas_S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Content-Type: text/plain; charset="UTF-8"
+X-TrailerSkip: 1
+X-GBS-PROC: 415AWy8o668fDtCxszluzzk90jytLqG5wVLAY6WnVDNNBAa63Oo/QlRqTebX2d+c
+X-TNEFEvaluated: 1
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-ID: <E3167535FD5AFB41B9C55D2C3830842C@diehl.internal>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 4:00 PM, Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
-> Following-up on the introduction of a new binding for the A64, this
-> introduces a system-control binding for the A10 as a replacement of
-> the sram-controller binding.
->
-> This change is motivated by consistency with the Allwinner literature,
-> that mentions system control over SRAM controller. Moreover, the system
-> control block is sometimes used for more than SRAM (e.g. for muxing
-> related to the ethernet PHY).
->
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+SGksDQoNCnNlZW1zIDIvNSB3YXMgYXBwbGllZCBiZWZvcmUgMS81Lg0KMS81IGludHJvZHVj
+ZXMgcnRjX2FkZF9ncm91cC4NCg0KUmVnYXJkcyBEZW5pcw0KDQpBbSBEaWVuc3RhZywgZGVu
+IDEwLjA3LjIwMTgsIDIxOjIwICswODAwIHNjaHJpZWIga2J1aWxkIHRlc3Qgcm9ib3Q6DQo+
+IEhpIE1pY2hhZWwsDQo+IA0KPiBJIGxvdmUgeW91ciBwYXRjaCEgWWV0IHNvbWV0aGluZyB0
+byBpbXByb3ZlOg0KPiANCj4gW2F1dG8gYnVpbGQgdGVzdCBFUlJPUiBvbiBhYmVsbG9uaS9y
+dGMtbmV4dF0NCj4gW2Fsc28gYnVpbGQgdGVzdCBFUlJPUiBvbiB2NC4xOC1yYzQgbmV4dC0y
+MDE4MDcwOV0NCj4gW2lmIHlvdXIgcGF0Y2ggaXMgYXBwbGllZCB0byB0aGUgd3JvbmcgZ2l0
+IHRyZWUsIHBsZWFzZSBkcm9wIHVzIGEgbm90ZSB0byBoZWxwIGltcHJvdmUgdGhlIHN5c3Rl
+bV0NCj4gDQo+IHVybDrCoMKgwqDCoGh0dHBzOi8vZ2l0aHViLmNvbS8wZGF5LWNpL2xpbnV4
+L2NvbW1pdHMvRGVuaXMtT1NURVJMQU5EL3J0Yy1pc2wxMjA4LWZpeGVzLWRvY3VtZW50YXRp
+b24tYW5kLWlzbDEyMTktc3VwcG9ydC8yMDE4MDcxMC0xODE3MDkNCj4gYmFzZTrCoMKgwqBo
+dHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dpdC9hYmVsbG9u
+aS9saW51eC5naXQgcnRjLW5leHQNCj4gY29uZmlnOiB4ODZfNjQtcmFuZGNvbmZpZy1zNC0w
+NzEwMTg1NyAoYXR0YWNoZWQgYXMgLmNvbmZpZykNCj4gY29tcGlsZXI6IGdjYy03IChEZWJp
+YW4gNy4zLjAtMTYpIDcuMy4wDQo+IHJlcHJvZHVjZToNCj4gwqDCoMKgwqDCoMKgwqDCoCMg
+c2F2ZSB0aGUgYXR0YWNoZWQgLmNvbmZpZyB0byBsaW51eCBidWlsZCB0cmVlDQo+IMKgwqDC
+oMKgwqDCoMKgwqBtYWtlIEFSQ0g9eDg2XzY0wqANCj4gDQo+IEFsbCBlcnJvcnMgKG5ldyBv
+bmVzIHByZWZpeGVkIGJ5ID4+KToNCj4gDQo+ID4gDQo+ID4gPiANCj4gPiA+IEVSUk9SOiAi
+cnRjX2FkZF9ncm91cCIgW2RyaXZlcnMvcnRjL3J0Yy1pc2wxMjA4LmtvXSB1bmRlZmluZWQh
+DQo+IC0tLQ0KPiAwLURBWSBrZXJuZWwgdGVzdCBpbmZyYXN0cnVjdHVyZcKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50ZXINCj4g
+aHR0cHM6Ly9saXN0cy4wMS5vcmcvcGlwZXJtYWlsL2tidWlsZC1hbGzCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoEludGVsIENvcnBvcmF0aW9uDQoNCkRpZWhsIENv
+bm5lY3Rpdml0eSBTb2x1dGlvbnMgR21iSA0KR2VzY2jDpGZ0c2bDvGhydW5nOiBIb3JzdCBM
+ZW9uYmVyZ2VyDQpTaXR6IGRlciBHZXNlbGxzY2hhZnQ6IE7DvHJuYmVyZyAtIFJlZ2lzdGVy
+Z2VyaWNodDogQW10c2dlcmljaHQNCk7DvHJuYmVyZzogSFJCIDMyMzE1DQpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCg0KRGVyIEluaGFsdCBkZXIg
+dm9yc3RlaGVuZGVuIEUtTWFpbCBpc3QgbmljaHQgcmVjaHRsaWNoIGJpbmRlbmQuIERpZXNl
+IEUtTWFpbCBlbnRoYWVsdCB2ZXJ0cmF1bGljaGUgdW5kL29kZXIgcmVjaHRsaWNoIGdlc2No
+dWV0enRlIEluZm9ybWF0aW9uZW4uDQpJbmZvcm1pZXJlbiBTaWUgdW5zIGJpdHRlLCB3ZW5u
+IFNpZSBkaWVzZSBFLU1haWwgZmFlbHNjaGxpY2hlcndlaXNlIGVyaGFsdGVuIGhhYmVuLiBC
+aXR0ZSBsb2VzY2hlbiBTaWUgaW4gZGllc2VtIEZhbGwgZGllIE5hY2hyaWNodC4NCkplZGUg
+dW5lcmxhdWJ0ZSBGb3JtIGRlciBSZXByb2R1a3Rpb24sIEJla2FubnRnYWJlLCBBZW5kZXJ1
+bmcsIFZlcnRlaWx1bmcgdW5kL29kZXIgUHVibGlrYXRpb24gZGllc2VyIEUtTWFpbCBpc3Qg
+c3RyZW5nc3RlbnMgdW50ZXJzYWd0Lg0KVGhlIGNvbnRlbnRzIG9mIHRoZSBhYm92ZSBtZW50
+aW9uZWQgZS1tYWlsIGlzIG5vdCBsZWdhbGx5IGJpbmRpbmcuIFRoaXMgZS1tYWlsIGNvbnRh
+aW5zIGNvbmZpZGVudGlhbCBhbmQvb3IgbGVnYWxseSBwcm90ZWN0ZWQgaW5mb3JtYXRpb24u
+IFBsZWFzZSBpbmZvcm0gdXMgaWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhpcyBlLW1haWwgYnkN
+Cm1pc3Rha2UgYW5kIGRlbGV0ZSBpdCBpbiBzdWNoIGEgY2FzZS4gRWFjaCB1bmF1dGhvcml6
+ZWQgcmVwcm9kdWN0aW9uLCBkaXNjbG9zdXJlLCBhbHRlcmF0aW9uLCBkaXN0cmlidXRpb24g
+YW5kL29yIHB1YmxpY2F0aW9uIG9mIHRoaXMgZS1tYWlsIGlzIHN0cmljdGx5IHByb2hpYml0
+ZWQuIA0K
