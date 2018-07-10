@@ -6,167 +6,123 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A37C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F39BC3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E29C208E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:54:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E29C208E4
+	by mail.kernel.org (Postfix) with ESMTP id EF49C2089B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 13:56:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF49C2089B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933399AbeGJNyv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 09:54:51 -0400
-Received: from mga02.intel.com ([134.134.136.20]:30109 "EHLO mga02.intel.com"
+        id S933427AbeGJN4d (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 09:56:33 -0400
+Received: from mga06.intel.com ([134.134.136.31]:55191 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933330AbeGJNyt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 09:54:49 -0400
+        id S933255AbeGJN4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 09:56:31 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 06:54:49 -0700
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 06:56:30 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,334,1526367600"; 
-   d="scan'208";a="71555789"
-Received: from precciox-mobl.amr.corp.intel.com (HELO [10.254.107.89]) ([10.254.107.89])
-  by orsmga001.jf.intel.com with ESMTP; 10 Jul 2018 06:54:24 -0700
-Subject: Re: [PATCH -mm -v4 04/21] mm, THP, swap: Support PMD swap mapping in
- swapcache_free_cluster()
-To:     "Huang, Ying" <ying.huang@intel.com>
-References: <20180622035151.6676-1-ying.huang@intel.com>
- <20180622035151.6676-5-ying.huang@intel.com>
- <dd7b3dd7-9e10-4b9f-b931-915298bfd627@linux.intel.com>
- <874lh7intc.fsf@yhuang-dev.intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <444d0718-8b89-5ef1-15c8-1bbbc6cb1bf3@linux.intel.com>
-Date:   Tue, 10 Jul 2018 06:54:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <874lh7intc.fsf@yhuang-dev.intel.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+   d="scan'208";a="55780622"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga008.jf.intel.com with ESMTP; 10 Jul 2018 06:56:28 -0700
+Message-ID: <ee2443ab6b413e9d7f0148e8916b0bd0d4924375.camel@linux.intel.com>
+Subject: Re: [PATCH v4 2/3] serial: 8250: export serial8250_do_set_divisor()
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org
+Date:   Tue, 10 Jul 2018 16:56:28 +0300
+In-Reply-To: <20180710111327.072584c0@xhacker.debian>
+References: <20180710110942.5b0a016e@xhacker.debian>
+         <20180710111327.072584c0@xhacker.debian>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/2018 11:53 PM, Huang, Ying wrote:
-> Dave Hansen <dave.hansen@linux.intel.com> writes:
->>> +#ifdef CONFIG_THP_SWAP
->>> +static inline int cluster_swapcount(struct swap_cluster_info *ci)
->>> +{
->>> +	if (!ci || !cluster_is_huge(ci))
->>> +		return 0;
->>> +
->>> +	return cluster_count(ci) - SWAPFILE_CLUSTER;
->>> +}
->>> +#else
->>> +#define cluster_swapcount(ci)			0
->>> +#endif
->>
->> Dumb questions, round 2:  On a CONFIG_THP_SWAP=n build, presumably,
->> cluster_is_huge()=0 always, so cluster_swapout() always returns 0.  Right?
->>
->> So, why the #ifdef?
+On Tue, 2018-07-10 at 11:13 +0800, Jisheng Zhang wrote:
+> Some drivers could call serial8250_do_set_divisor() to complete its
+> own set_divisor routine. Export this symbol for code reusing.
 > 
-> #ifdef here is to reduce the code size for !CONFIG_THP_SWAP.
 
-I'd just remove the !CONFIG_THP_SWAP version entirely.
+I dunno Greg's preferences here, but it could be merged with patch 1.
 
->>> @@ -1288,24 +1301,30 @@ static void swapcache_free_cluster(swp_entry_t entry)
->>>  
->>>  	ci = lock_cluster(si, offset);
->>>  	VM_BUG_ON(!cluster_is_huge(ci));
->>> +	VM_BUG_ON(!is_cluster_offset(offset));
->>> +	VM_BUG_ON(cluster_count(ci) < SWAPFILE_CLUSTER);
->>>  	map = si->swap_map + offset;
->>> -	for (i = 0; i < SWAPFILE_CLUSTER; i++) {
->>> -		val = map[i];
->>> -		VM_BUG_ON(!(val & SWAP_HAS_CACHE));
->>> -		if (val == SWAP_HAS_CACHE)
->>> -			free_entries++;
->>> +	if (!cluster_swapcount(ci)) {
->>> +		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
->>> +			val = map[i];
->>> +			VM_BUG_ON(!(val & SWAP_HAS_CACHE));
->>> +			if (val == SWAP_HAS_CACHE)
->>> +				free_entries++;
->>> +		}
->>> +		if (free_entries != SWAPFILE_CLUSTER)
->>> +			cluster_clear_huge(ci);
->>>  	}
->>
->> Also, I'll point out that cluster_swapcount() continues the horrific
->> naming of cluster_couunt(), not saying what the count is *of*.  The
->> return value doesn't help much:
->>
->> 	return cluster_count(ci) - SWAPFILE_CLUSTER;
+In any case,
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+for this part.
+
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> ---
+>  drivers/tty/serial/8250/8250_port.c | 5 +++--
+>  include/linux/serial_8250.h         | 3 +++
+>  2 files changed, 6 insertions(+), 2 deletions(-)
 > 
-> We have page_swapcount() for page, swp_swapcount() for swap entry.
-> cluster_swapcount() tries to mimic them for swap cluster.  But I am not
-> good at naming in general.  What's your suggestion?
+> diff --git a/drivers/tty/serial/8250/8250_port.c
+> b/drivers/tty/serial/8250/8250_port.c
+> index ce0dc17f18ee..945f8dc2d50f 100644
+> --- a/drivers/tty/serial/8250/8250_port.c
+> +++ b/drivers/tty/serial/8250/8250_port.c
+> @@ -2580,8 +2580,8 @@ static unsigned char
+> serial8250_compute_lcr(struct uart_8250_port *up,
+>  	return cval;
+>  }
+>  
+> -static void serial8250_do_set_divisor(struct uart_port *port,
+> unsigned int baud,
+> -			    unsigned int quot, unsigned int
+> quot_frac)
+> +void serial8250_do_set_divisor(struct uart_port *port, unsigned int
+> baud,
+> +			       unsigned int quot, unsigned int
+> quot_frac)
+>  {
+>  	struct uart_8250_port *up = up_to_u8250p(port);
+>  
+> @@ -2612,6 +2612,7 @@ static void serial8250_do_set_divisor(struct
+> uart_port *port, unsigned int baud,
+>  		serial_port_out(port, 0x2, quot_frac);
+>  	}
+>  }
+> +EXPORT_SYMBOL_GPL(serial8250_do_set_divisor);
+>  
+>  static void serial8250_set_divisor(struct uart_port *port, unsigned
+> int baud,
+>  				   unsigned int quot, unsigned int
+> quot_frac)
+> diff --git a/include/linux/serial_8250.h b/include/linux/serial_8250.h
+> index 76b9db71e489..18e21427bce4 100644
+> --- a/include/linux/serial_8250.h
+> +++ b/include/linux/serial_8250.h
+> @@ -160,6 +160,9 @@ extern void serial8250_do_shutdown(struct
+> uart_port *port);
+>  extern void serial8250_do_pm(struct uart_port *port, unsigned int
+> state,
+>  			     unsigned int oldstate);
+>  extern void serial8250_do_set_mctrl(struct uart_port *port, unsigned
+> int mctrl);
+> +extern void serial8250_do_set_divisor(struct uart_port *port,
+> unsigned int baud,
+> +				      unsigned int quot,
+> +				      unsigned int quot_frac);
+>  extern int fsl8250_handle_irq(struct uart_port *port);
+>  int serial8250_handle_irq(struct uart_port *port, unsigned int iir);
+>  unsigned char serial8250_rx_chars(struct uart_8250_port *up, unsigned
+> char lsr);
 
-I don't have a suggestion because I haven't the foggiest idea what it is
-doing. :)
-
-Is it the number of instantiated swap cache pages that are referring to
-this cluster?  Is it just huge pages?  Huge and small?  One refcount per
-huge page, or 512?
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
