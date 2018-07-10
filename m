@@ -2,220 +2,258 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70929C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E7EC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27C85208F7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:57:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27C85208F7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id C66FA20881
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 16:57:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Vk3VU34b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C66FA20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933425AbeGJQ5o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 12:57:44 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:56697 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754260AbeGJQ5n (ORCPT
+        id S933468AbeGJQ5u (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 10 Jul 2018 12:57:50 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37194 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754280AbeGJQ5q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 12:57:43 -0400
-Received: from 79.184.255.246.ipv4.supernova.orange.pl (79.184.255.246) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id 42297a56297982eb; Tue, 10 Jul 2018 18:57:41 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Jeremy Linton <jeremy.linton@arm.com>
-Cc:     "Schmauss, Erik" <erik.schmauss@intel.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: 4.18rc3 TX2 boot failure with "ACPICA: AML parser: attempt to continue loading table after error"
-Date:   Tue, 10 Jul 2018 18:56:09 +0200
-Message-ID: <24702482.jSiYyYTB4u@aspire.rjw.lan>
-In-Reply-To: <dc4c68bb-089c-6c99-31df-e8d3587b6029@arm.com>
-References: <c49a3666-7d23-6a05-703c-1273d79a00cd@arm.com> <2264016.O8iB3BUh2s@aspire.rjw.lan> <dc4c68bb-089c-6c99-31df-e8d3587b6029@arm.com>
+        Tue, 10 Jul 2018 12:57:46 -0400
+Received: by mail-pf0-f193.google.com with SMTP id x10-v6so6635551pfm.4
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 09:57:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8PV/RswBVqqk3wyxX7HBEZHFlzepdAnLP5yAvq+00ts=;
+        b=Vk3VU34bdoGqh4R+YHo+31XCQRqbfQOcK+j+QFKws0XVducoAVkoG8G+CYi6PQ8N98
+         xhCv1nT1v5xLRaxhe9WxWa5NDd4v6Clmr0J146V+ckAwMMuCJPmLrmVsJ1j/IxUKD2Js
+         R4mjqcIc/cWJEkRpiZysu3MM2asWnkZUES01apwwXpt7cF3aVd6xA2eifczHDE1Bf94L
+         XJbLLq314rRFlEZb822BRBiimttuYQJysq3rltoaPy/UbW5QssyiQESGcEH9vlGNedq6
+         wc2WFwwtLTu0jGpGTmDTtq2IgbYT1riY7f3YcqgXE+7r+n9b+EXvjWry9QwcRqbEKWOf
+         2UgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8PV/RswBVqqk3wyxX7HBEZHFlzepdAnLP5yAvq+00ts=;
+        b=Lh/AnEg+YLqU4AgV6dktF0Zm3tPKU2rWRw0sPFFp9lfRdeOmJqhgp9/FkwbF5Sd7kY
+         AFF97MQaBZh6wPTp0kJ07p1ZTf1nOS5VXhI5H7RpecjyGOEjl3ClnrK126gwrjcS9PD0
+         Wo3BhHy/rOJ4rBuE7WF932rdbVnro50jh0FbXQRv2tDGg3uUFzusmQGQztLDwLSlNL/5
+         NR2BCrdOH1JaXzEd9IWdpJZcy8WkJ78YUQoIWqUYl6eJi4VVOttL/jxgGeuDw648xWuP
+         R8bUXi0oYr1HnSrjy4IybYQzIobtHFjNoxvJ5ulk+sN1pSBdN1lXBDxB1mc8WchWrlKU
+         fOEw==
+X-Gm-Message-State: APt69E1QoE1xBh6uiG2blZiGIKT6odCDIVxrAnTWnWt0NhzD1P9F/oR5
+        NRP/1oORI0DetncqZk5e+IOQqQ==
+X-Google-Smtp-Source: AAOMgpfjUxlMD2VWIeLez7g+VV+8CXEX02qnMD158oLxMAi76numq1pb+RVvyf2F+VjvKQJdAQUd7A==
+X-Received: by 2002:a62:1314:: with SMTP id b20-v6mr1637800pfj.230.1531241865727;
+        Tue, 10 Jul 2018 09:57:45 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id h132-v6sm28583772pfc.100.2018.07.10.09.57.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 10 Jul 2018 09:57:44 -0700 (PDT)
+Date:   Tue, 10 Jul 2018 09:57:44 -0700
+From:   Joel Fernandes <joelaf@google.com>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Alexei Starovoitov <ast@fb.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>, fengc@google.com
+Subject: Re: [RFC] Add BPF_SYNCHRONIZE bpf(2) command
+Message-ID: <20180710165744.GA99146@joelaf.mtv.corp.google.com>
+References: <20180707015616.25988-1-dancol@google.com>
+ <20180707025426.ssxipi7hsehoiuyo@ast-mbp.dhcp.thefacebook.com>
+ <20180707203340.GA74719@joelaf.mtv.corp.google.com>
+ <951478560.1636.1531083278064.JavaMail.zimbra@efficios.com>
+ <20180710051347.GA180724@joelaf.mtv.corp.google.com>
+ <20180710164212.GY3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180710164212.GY3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, July 10, 2018 5:04:21 PM CEST Jeremy Linton wrote:
-> Hi,
+On Tue, Jul 10, 2018 at 09:42:12AM -0700, Paul E. McKenney wrote:
+> On Mon, Jul 09, 2018 at 10:13:47PM -0700, Joel Fernandes wrote:
+> > On Sun, Jul 08, 2018 at 04:54:38PM -0400, Mathieu Desnoyers wrote:
+> > > ----- On Jul 7, 2018, at 4:33 PM, Joel Fernandes joelaf@google.com wrote:
+> > > 
+> > > > On Fri, Jul 06, 2018 at 07:54:28PM -0700, Alexei Starovoitov wrote:
+> > > >> On Fri, Jul 06, 2018 at 06:56:16PM -0700, Daniel Colascione wrote:
+> > > >> > BPF_SYNCHRONIZE waits for any BPF programs active at the time of
+> > > >> > BPF_SYNCHRONIZE to complete, allowing userspace to ensure atomicity of
+> > > >> > RCU data structure operations with respect to active programs. For
+> > > >> > example, userspace can update a map->map entry to point to a new map,
+> > > >> > use BPF_SYNCHRONIZE to wait for any BPF programs using the old map to
+> > > >> > complete, and then drain the old map without fear that BPF programs
+> > > >> > may still be updating it.
+> > > >> > 
+> > > >> > Signed-off-by: Daniel Colascione <dancol@google.com>
+> > > >> > ---
+> > > >> >  include/uapi/linux/bpf.h |  1 +
+> > > >> >  kernel/bpf/syscall.c     | 14 ++++++++++++++
+> > > >> >  2 files changed, 15 insertions(+)
+> > > >> > 
+> > > >> > diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
+> > > >> > index b7db3261c62d..4365c50e8055 100644
+> > > >> > --- a/include/uapi/linux/bpf.h
+> > > >> > +++ b/include/uapi/linux/bpf.h
+> > > >> > @@ -98,6 +98,7 @@ enum bpf_cmd {
+> > > >> >  	BPF_BTF_LOAD,
+> > > >> >  	BPF_BTF_GET_FD_BY_ID,
+> > > >> >  	BPF_TASK_FD_QUERY,
+> > > >> > +	BPF_SYNCHRONIZE,
+> > > >> >  };
+> > > >> >  
+> > > >> >  enum bpf_map_type {
+> > > >> > diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> > > >> > index d10ecd78105f..60ec7811846e 100644
+> > > >> > --- a/kernel/bpf/syscall.c
+> > > >> > +++ b/kernel/bpf/syscall.c
+> > > >> > @@ -2272,6 +2272,20 @@ SYSCALL_DEFINE3(bpf, int, cmd, union bpf_attr __user *,
+> > > >> > uattr, unsigned int, siz
+> > > >> >  	if (sysctl_unprivileged_bpf_disabled && !capable(CAP_SYS_ADMIN))
+> > > >> >  		return -EPERM;
+> > > >> >  
+> > > >> > +	if (cmd == BPF_SYNCHRONIZE) {
+> > > >> > +		if (uattr != NULL || size != 0)
+> > > >> > +			return -EINVAL;
+> > > >> > +		err = security_bpf(cmd, NULL, 0);
+> > > >> > +		if (err < 0)
+> > > >> > +			return err;
+> > > >> > +		/* BPF programs are run with preempt disabled, so
+> > > >> > +		 * synchronize_sched is sufficient even with
+> > > >> > +		 * RCU_PREEMPT.
+> > > >> > +		 */
+> > > >> > +		synchronize_sched();
+> > > >> > +		return 0;
+> > > >> 
+> > > >> I don't think it's necessary. sys_membarrier() can do this already
+> > > >> and some folks use it exactly for this use case.
+> > > > 
+> > > > Alexei, the use of sys_membarrier for this purpose seems kind of weird to me
+> > > > though. No where does the manpage say membarrier should be implemented this
+> > > > way so what happens if the implementation changes?
+> > > > 
+> > > > Further, membarrier manpage says that a memory barrier should be matched with
+> > > > a matching barrier. In this use case there is no matching barrier, so it
+> > > > makes it weirder.
+> > > > 
+> > > > Lastly, sys_membarrier seems will not work on nohz-full systems, so its a bit
+> > > > fragile to depend on it for this?
+> > > > 
+> > > >        case MEMBARRIER_CMD_GLOBAL:
+> > > >                /* MEMBARRIER_CMD_GLOBAL is not compatible with nohz_full. */
+> > > >                if (tick_nohz_full_enabled())
+> > > >                        return -EINVAL;
+> > > >                if (num_online_cpus() > 1)
+> > > >                        synchronize_sched();
+> > > >                return 0;
+> > > > 
+> > > > 
+> > > > Adding Mathieu as well who I believe is author/maintainer of membarrier.
+> > > 
+> > > See commit 907565337
+> > > "Fix: Disable sys_membarrier when nohz_full is enabled"
+> > > 
+> > > "Userspace applications should be allowed to expect the membarrier system
+> > > call with MEMBARRIER_CMD_SHARED command to issue memory barriers on
+> > > nohz_full CPUs, but synchronize_sched() does not take those into
+> > > account."
+> > > 
+> > > So AFAIU you'd want to re-use membarrier to issue synchronize_sched, and you
+> > > only care about kernel preempt off critical sections.
+> > 
+> > Mathieu, Thanks a lot for your reply. I understand what you said and agree
+> > with you. Slight OT, but I tried to go back to first principles and
+> > understand how membarrier() uses synchronize_sched() for the "slow path" and
+> > it didn't make immediate sense to me. Let me clarify my dillema..
+> > 
+> > My understanding is membarrier's MEMBARRIER_CMD_GLOBAL will employ
+> > synchronize_sched to make sure all other CPUs aren't executing anymore in an
+> > section of usercode that happen to be accessing memory that was written to
+> > before the membarrier call was made. To do this, the system call will use
+> > synchronize_sched to try to guarantee that all user-mode execution that
+> > started before the membarrier call would be completed when the membarrier
+> > call returns. This guarantees that without using a real memory barrier on the
+> > "fast path", things work just fine and everyone wins.
+> > 
+> > But, going through RCU code, I see that a "RCU-sched quiecent state" on a CPU
+> > may be reached when the CPU receives a timer tick while executing in user
+> > mode:
+> > 
+> > void rcu_check_callbacks(int user)
+> > {
+> > 	trace_rcu_utilization(TPS("Start scheduler-tick"));
+> > 	increment_cpu_stall_ticks();
+> > 	if (user || rcu_is_cpu_rrupt_from_idle()) {
+> > [...]
+> > 		rcu_sched_qs();
+> > 		rcu_bh_qs();
+> > 
+> > The problem I see is the CPU could be executing usermode code at the time of
+> > the RCU sched-QS. This IMO is enough reason for synchronize_sched() to
+> > return, because the CPU in question just reported a QS (assuming all other
+> > CPUs also happen to do so if they needed to).
 > 
-> On 07/10/2018 06:25 AM, Rafael J. Wysocki wrote:
-> > On Tuesday, July 10, 2018 1:13:17 PM CEST Rafael J. Wysocki wrote:
-> >> On Tuesday, July 10, 2018 5:44:05 AM CEST Jeremy Linton wrote:
-> >>> Hi,
-> >>>
-> >>> On 07/09/2018 04:28 PM, Rafael J. Wysocki wrote:
-> >>>> On Mon, Jul 9, 2018 at 10:45 PM, Jeremy Linton <jeremy.linton@arm.com> wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> First thanks for the patch..
-> >>>>>
-> >>>>> On 07/08/2018 04:14 AM, Rafael J. Wysocki wrote:
-> >>>>>>
-> >>>>>> On Monday, July 2, 2018 11:41:42 PM CEST Jeremy Linton wrote:
-> >>>>>>>
-> >>>>>>> Hi,
-> >>>>>>>
-> >>>>>>> I'm experiencing two problems with commit 5088814a6e931 which is
-> >>>>>>> "ACPICA: AML parser: attempt to continue loading table after error"
-> >>>>>>>
-> >>>>>>> The first is this boot failure on a thunderX2:
-> >>>>>>>
-> >>>>>>> [   10.770098] ACPI Error: Ignore error and continue table load
-> >>>>>
-> >>>>>
-> >>>>> [trimming]
-> >>>>>
-> >>>>>>> ]---
-> >>>>>>>
-> >>>>>>> Which does appear to be the result of some bad data in the table, but it
-> >>>>>>> was working with 4.17, and reverting this commit solves the problem.
-> >>>>>>
-> >>>>>>
-> >>>>>> Does the patch below make any difference?
-> >>>>>>
-> >>>>>> ---
-> >>>>>>     drivers/acpi/acpica/psobject.c |    3 +++
-> >>>>>>     1 file changed, 3 insertions(+)
-> >>>>>>
-> >>>>>> Index: linux-pm/drivers/acpi/acpica/psobject.c
-> >>>>>> ===================================================================
-> >>>>>> --- linux-pm.orig/drivers/acpi/acpica/psobject.c
-> >>>>>> +++ linux-pm/drivers/acpi/acpica/psobject.c
-> >>>>>> @@ -39,6 +39,9 @@ static acpi_status acpi_ps_get_aml_opcod
-> >>>>>>           ACPI_FUNCTION_TRACE_PTR(ps_get_aml_opcode, walk_state);
-> >>>>>>           walk_state->aml = walk_state->parser_state.aml;
-> >>>>>> +       if (!walk_state->aml)
-> >>>>>> +               return AE_CTRL_PARSE_CONTINUE;
-> >>>>>> +
-> >>>>>
-> >>>>>
-> >>>>> Well this seems to avoid the crash, but now it hangs right after on the
-> >>>>> "Ignore error and continue table load" message.
-> >>>>
-> >>>> Well, maybe we should just abort in that case.
-> >>>>
-> >>>> I'm wondering what happens if you replace the return statement in the
-> >>>> patch above with
-> >>>>
-> >>>> return_ACPI_STATUS(AE_AML_BAD_OPCODE)
-> >>>
-> >>> Yes, that is where I went when I applied the patch but I used
-> >>> AE_CTRL_TERMINATE, which terminates the loop in acpi_ps_parse_loop() and
-> >>> that appears to successfully finish/terminate the initial parsing pass.
-> >>> But, it then crashes in acpi_ns_lookup called via the
-> >>> acpi_walk_resources sequences that goes through ut_evalute_object() due
-> >>> to the path/scope_info->scope.node being ACPI_ROOT_OBJECT (-1) and
-> >>> bypassing the null check. Adding a ACPI_ROOT_OBJECT check as well as the
-> >>> null checks in acpi_ns_lookup results in a successful boot. Tracking
-> >>> down how the terminate (or whatever) is leaving the info->prefix_node
-> >>> (in acpi_ns_evaluate) set to ROOT_OBJECT instead of null, is something I
-> >>> don't yet understand.
-> >>>
-> >>> Anyway, I tried Using BAD_OPCODE rather than TERMINATE and it seems to
-> >>> have the same basic result as PARSE_CONTINUE.
-> >>
-> >> OK, thanks!
-> >>
-> >> I evidently didn't look deep enough.
-> >>
-> >> Can you please check the patch below?
-> >>
-> >> I'm not sure if we can pass this broken state to
-> >> acpi_ps_complete_final_op(), so it may be necessary to return
-> >> an error directly when aml_op_start is NULL.
-> >>
-> >> ---
-> >>   drivers/acpi/acpica/psloop.c |    3 +++
-> >>   1 file changed, 3 insertions(+)
-> >>
-> >> Index: linux-pm/drivers/acpi/acpica/psloop.c
-> >> ===================================================================
-> >> --- linux-pm.orig/drivers/acpi/acpica/psloop.c
-> >> +++ linux-pm/drivers/acpi/acpica/psloop.c
-> >> @@ -493,6 +493,9 @@ acpi_status acpi_ps_parse_loop(struct ac
-> >>   		ASL_CV_CAPTURE_COMMENTS(walk_state);
-> >>   
-> >>   		aml_op_start = parser_state->aml;
-> >> +		if (!aml_op_start)
-> >> +			break;
-> >> +
-> >>   		if (!op) {
-> >>   			status =
-> >>   			    acpi_ps_create_op(walk_state, aml_op_start, &op);
-> >>
-> >> --
-> > 
-> > So maybe something like this:
-> > 
-> > ---
-> >   drivers/acpi/acpica/psloop.c |    3 +++
-> >   1 file changed, 3 insertions(+)
-> > 
-> > Index: linux-pm/drivers/acpi/acpica/psloop.c
-> > ===================================================================
-> > --- linux-pm.orig/drivers/acpi/acpica/psloop.c
-> > +++ linux-pm/drivers/acpi/acpica/psloop.c
-> > @@ -494,6 +494,9 @@ acpi_status acpi_ps_parse_loop(struct ac
-> >   
-> >   		aml_op_start = parser_state->aml;
-> >   		if (!op) {
-> > +			if (!aml_op_start)
-> > +				return_ACPI_STATUS(AE_AML_INTERNAL);
-> > +
-> >   			status =
-> >   			    acpi_ps_create_op(walk_state, aml_op_start, &op);
-> >   			if (ACPI_FAILURE(status)) {
-> > 
-> > 
+> This scenario will have inserted the needed smp_mb() into the userspace
+> instruction execution stream, as is required by the sys_membarrier
+> use cases.
+
+Oh ok, that makes sense!
+
+> > Then I am wondering how does the membarrier call even work, the tick could
+> > very well have interrupted the CPU while it was executing usermode code in
+> > the middle of a set of instructions performing memory accesses. Reporting a
+> > quiescent state at such an inopportune time would cause the membarrier call
+> > to prematurely return, no? Sorry if I missed something.
 > 
-> This gets rid of the infinite loop, but its still has the problem with 
-> acpi_ns_lookup crashing due to -1 in the scope.node.
+> One way to think of sys_membarrier() is as something that promotes a
+> barrier() to an smp_mb().  This barrier then separates the target CPU's
+> accesses that the caller saw before the sys_membarrier() from that same
+> CPU's accesses that the caller will see after the sys_membarrier().
 
-OK, so do you mean that something like the patch below is needed for the
-system to boot?
+Got it!
 
----
- drivers/acpi/acpica/nsaccess.c |    3 ++-
- drivers/acpi/acpica/psloop.c   |    3 +++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+> > The other question I have is about the whole "nohz-full doesn't work" thing.
+> > I didn't fully understand why. RCU is already tracking the state of nohz-full
+> > CPUs because the rcu dynticks code in (kernel/rcu/tree.c) monitors
+> > transitions to and from usermode even if the timer tick is turned off. So why
+> > would it not work?
+> 
+> In the nohz_full case, there is no need for sys_membarrier()'s call to
+> synchronize_sched() to interact directly with the nohz_full CPU.  It
+> can instead look at the target CPU's dyntick-idle state, and that state
+> would potentially have been set in the dim distant past, thus having
+> no effect on the target CPU's current execution.
 
-Index: linux-pm/drivers/acpi/acpica/psloop.c
-===================================================================
---- linux-pm.orig/drivers/acpi/acpica/psloop.c
-+++ linux-pm/drivers/acpi/acpica/psloop.c
-@@ -494,6 +494,9 @@ acpi_status acpi_ps_parse_loop(struct ac
- 
- 		aml_op_start = parser_state->aml;
- 		if (!op) {
-+			if (!aml_op_start)
-+				return_ACPI_STATUS(AE_AML_INTERNAL);
-+
- 			status =
- 			    acpi_ps_create_op(walk_state, aml_op_start, &op);
- 			if (ACPI_FAILURE(status)) {
-Index: linux-pm/drivers/acpi/acpica/nsaccess.c
-===================================================================
---- linux-pm.orig/drivers/acpi/acpica/nsaccess.c
-+++ linux-pm/drivers/acpi/acpica/nsaccess.c
-@@ -286,7 +286,8 @@ acpi_ns_lookup(union acpi_generic_state
- 
- 	/* Get the prefix scope. A null scope means use the root scope */
- 
--	if ((!scope_info) || (!scope_info->scope.node)) {
-+	if ((!scope_info) || (!scope_info->scope.node) ||
-+	    (scope_info->scope.node == ACPI_ROOT_OBJECT)) {
- 		ACPI_DEBUG_PRINT((ACPI_DB_NAMES,
- 				  "Null scope prefix, using root node (%p)\n",
- 				  acpi_gbl_root_node));
+In nohz-idle case though, there's nothing to promote the barrier() to
+smp_mb() if you were to purely look at the dynticks-idle state on the
+nohz-full CPU executing in user mode?
+
+So then it makes sense to me now that nohz-full needs something to IPI that
+CPU inorder to enforce the needed memory barrier and pure synchronize_sched()
+wouldn't work. So then makes me think the expedited versions of
+synchronize_sched should be able to do the job but I could off on a different
+track..
+
+Thanks a lot,
+
+-Joel
+
 
