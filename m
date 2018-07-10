@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF6CC3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F20C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20D420B6F
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20D420B6F
+	by mail.kernel.org (Postfix) with ESMTP id E477F20B6F
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:26:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E477F20B6F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732835AbeGJS0j (ORCPT
+        id S1732849AbeGJS0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:26:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:43790 "EHLO
+        Tue, 10 Jul 2018 14:26:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:43796 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732387AbeGJS0j (ORCPT
+        with ESMTP id S1732387AbeGJS0m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:26:39 -0400
+        Tue, 10 Jul 2018 14:26:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A2ADDE88;
-        Tue, 10 Jul 2018 18:26:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6E9ACD71;
+        Tue, 10 Jul 2018 18:26:31 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 3.18 23/23] netfilter: nf_log: dont hold nf_log_mutex during user access
-Date:   Tue, 10 Jul 2018 20:24:56 +0200
-Message-Id: <20180710182309.864863963@linuxfoundation.org>
+        stable@vger.kernel.org, Ivan Bornyakov <brnkv.i1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 3.18 06/23] atm: zatm: fix memcmp casting
+Date:   Tue, 10 Jul 2018 20:24:39 +0200
+Message-Id: <20180710182309.146798860@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182308.877332304@linuxfoundation.org>
 References: <20180710182308.877332304@linuxfoundation.org>
@@ -50,49 +51,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jann Horn <jannh@google.com>
+From: Ivan Bornyakov <brnkv.i1@gmail.com>
 
-commit ce00bf07cc95a57cd20b208e02b3c2604e532ae8 upstream.
+[ Upstream commit f9c6442a8f0b1dde9e755eb4ff6fa22bcce4eabc ]
 
-The old code would indefinitely block other users of nf_log_mutex if
-a userspace access in proc_dostring() blocked e.g. due to a userfaultfd
-region. Fix it by moving proc_dostring() out of the locked region.
+memcmp() returns int, but eprom_try_esi() cast it to unsigned char. One
+can lose significant bits and get 0 from non-0 value returned by the
+memcmp().
 
-This is a followup to commit 266d07cb1c9a ("netfilter: nf_log: fix
-sleeping function called from invalid context"), which changed this code
-from using rcu_read_lock() to taking nf_log_mutex.
-
-Fixes: 266d07cb1c9a ("netfilter: nf_log: fix sleeping function calle[...]")
-Signed-off-by: Jann Horn <jannh@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/netfilter/nf_log.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/atm/zatm.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/netfilter/nf_log.c
-+++ b/net/netfilter/nf_log.c
-@@ -387,14 +387,17 @@ static int nf_log_proc_dostring(struct c
- 		rcu_assign_pointer(net->nf.nf_loggers[tindex], logger);
- 		mutex_unlock(&nf_log_mutex);
- 	} else {
-+		struct ctl_table tmp = *table;
-+
-+		tmp.data = buf;
- 		mutex_lock(&nf_log_mutex);
- 		logger = nft_log_dereference(net->nf.nf_loggers[tindex]);
- 		if (!logger)
--			table->data = "NONE";
-+			strlcpy(buf, "NONE", sizeof(buf));
- 		else
--			table->data = logger->name;
--		r = proc_dostring(table, write, buffer, lenp, ppos);
-+			strlcpy(buf, logger->name, sizeof(buf));
- 		mutex_unlock(&nf_log_mutex);
-+		r = proc_dostring(&tmp, write, buffer, lenp, ppos);
- 	}
+--- a/drivers/atm/zatm.c
++++ b/drivers/atm/zatm.c
+@@ -1148,8 +1148,8 @@ static void eprom_get_byte(struct zatm_d
+ }
  
- 	return r;
+ 
+-static unsigned char eprom_try_esi(struct atm_dev *dev, unsigned short cmd,
+-				   int offset, int swap)
++static int eprom_try_esi(struct atm_dev *dev, unsigned short cmd, int offset,
++			 int swap)
+ {
+ 	unsigned char buf[ZEPROM_SIZE];
+ 	struct zatm_dev *zatm_dev;
 
 
