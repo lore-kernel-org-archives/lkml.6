@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F77DC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 235A5C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DE6720936
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DE6720936
+	by mail.kernel.org (Postfix) with ESMTP id D5530208E8
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:34:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5530208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389395AbeGJSey (ORCPT
+        id S2389409AbeGJSe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:34:54 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48160 "EHLO
+        Tue, 10 Jul 2018 14:34:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:48170 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388426AbeGJSex (ORCPT
+        with ESMTP id S2388426AbeGJSe4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:34:53 -0400
+        Tue, 10 Jul 2018 14:34:56 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB04DE78;
-        Tue, 10 Jul 2018 18:34:39 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 998C7D0B;
+        Tue, 10 Jul 2018 18:34:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nick Dyer <nick@shmanahar.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>
-Subject: [PATCH 4.17 16/56] ARM: dts: imx51-zii-rdu1: fix touchscreen pinctrl
-Date:   Tue, 10 Jul 2018 20:24:58 +0200
-Message-Id: <20180710182504.366451131@linuxfoundation.org>
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.17 17/56] ARM: dts: omap3: Fix am3517 mdio and emac clock references
+Date:   Tue, 10 Jul 2018 20:24:59 +0200
+Message-Id: <20180710182504.423718870@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182503.544433950@linuxfoundation.org>
 References: <20180710182503.544433950@linuxfoundation.org>
@@ -52,39 +50,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nick Dyer <nick@shmanahar.org>
+From: Adam Ford <aford173@gmail.com>
 
-commit 06d793b114e9d922c03aa077ac6c5c51fdda2722 upstream.
+commit 0144eb204cdcdf09a76794b4a294291388e739bc upstream.
 
-The pinctrl settings were incorrect for the touchscreen interrupt line, causing
-an interrupt storm. This change has been tested with both the atmel_mxt_ts and
-RMI4 drivers on the RDU1 units.
+A previous patch removed OMAP clock aliases that were perceived
+to be unnecessary.  Unfortunately, it broke the ethernet on the
+am3517-evm.  This patch enables the MDIO clock and EMAC clock.
 
-The value 0x4 comes from the value of register IOMUXC_SW_PAD_CTL_PAD_CSI1_D8
-from the old vendor kernel.
+Fixes: 0ed266d7ae5e ("clk: ti: omap3: cleanup unnecessary clock aliases")
+Cc: stable@vger.kernel.org #4.16+
 
-Signed-off-by: Nick Dyer <nick@shmanahar.org>
-Fixes: ceef0396f367 ("ARM: dts: imx: add ZII RDU1 board")
-Cc: <stable@vger.kernel.org> # 4.15+
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
-Tested-by: Chris Healy <cphealy@gmail.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/boot/dts/imx51-zii-rdu1.dts |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/am3517.dtsi |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
-+++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
-@@ -768,7 +768,7 @@
+--- a/arch/arm/boot/dts/am3517.dtsi
++++ b/arch/arm/boot/dts/am3517.dtsi
+@@ -39,6 +39,8 @@
+ 			ti,davinci-ctrl-ram-size = <0x2000>;
+ 			ti,davinci-rmii-en = /bits/ 8 <1>;
+ 			local-mac-address = [ 00 00 00 00 00 00 ];
++			clocks = <&emac_ick>;
++			clock-names = "ick";
+ 		};
  
- 	pinctrl_ts: tsgrp {
- 		fsl,pins = <
--			MX51_PAD_CSI1_D8__GPIO3_12		0x85
-+			MX51_PAD_CSI1_D8__GPIO3_12		0x04
- 			MX51_PAD_CSI1_D9__GPIO3_13		0x85
- 		>;
- 	};
+ 		davinci_mdio: ethernet@5c030000 {
+@@ -49,6 +51,8 @@
+ 			bus_freq = <1000000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
++			clocks = <&emac_fck>;
++			clock-names = "fck";
+ 		};
+ 
+ 		uart4: serial@4809e000 {
 
 
