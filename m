@@ -2,80 +2,107 @@ Return-Path: <SRS0=n7Wc=J2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DE91C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51EB8C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F6320878
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:19:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F6320878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id EAEC120878
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 07:19:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pXgqJAVM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAEC120878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751193AbeGJHTS (ORCPT
+        id S1751328AbeGJHTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 03:19:18 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:49732 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750998AbeGJHTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 03:19:17 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 6488228DD2667;
-        Tue, 10 Jul 2018 15:19:13 +0800 (CST)
-Received: from [127.0.0.1] (10.177.16.168) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.382.0; Tue, 10 Jul 2018
- 15:19:04 +0800
-Subject: Re: [PATCH] net/9p/client.c: add missing '\n' at the end of
- p9_debug()
-To:     piaojun <piaojun@huawei.com>, <akpm@linux-foundation.org>,
-        <ericvh@gmail.com>, <rminnich@sandia.gov>, <lucho@ionkov.net>
-References: <5B44589A.50302@huawei.com>
-CC:     <linux-kernel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>
-From:   jiangyiwen <jiangyiwen@huawei.com>
-Message-ID: <5B445DE7.3070607@huawei.com>
-Date:   Tue, 10 Jul 2018 15:19:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Tue, 10 Jul 2018 03:19:36 -0400
+Received: from mail-wm0-f48.google.com ([74.125.82.48]:33878 "EHLO
+        mail-wm0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751228AbeGJHTe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 03:19:34 -0400
+Received: by mail-wm0-f48.google.com with SMTP id s13-v6so11828114wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 00:19:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Z2tYrbsLnuBADeDHMudGs5/rH24qfZ58NepYhlwmRiU=;
+        b=pXgqJAVM41BYbIhjnqi6JV20t62AYiM4Lr6ZSx8rR769mpO/xHjAr8S8SnVj1fB5Wx
+         eeacUBpbIbZVlWpa2Vj6J9/nEQE9U5l6KasQXZ9Fy4+GI1B5TQRXaGkpdgX4B+KAmt+V
+         QkoIXL00NLUQikP3lscnT/0GAP8nUuH0zdDdAfdZEmBHxSTCKAjfMTAIY8iXszPhuQtB
+         MuHwWamnY06M9FxpcqCTnp6Cti+3RSNpu0ohPigTNz0LQDs9eMKPNtOS4p9WA3hs2PuD
+         gZvj49pXacpe/iXeq6K/aBzgdvwrCgRv5wF9XVUid3O0n5YvuvniZT85IlX0M0OJI0f8
+         reeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Z2tYrbsLnuBADeDHMudGs5/rH24qfZ58NepYhlwmRiU=;
+        b=BTzHP4bK/d5+X7gsc3WQh/rL3+n18eric48mXrNaRbwgV0gAcRGAKzcsit0U5fNwy8
+         7vOv+GhOk2N18vfv2/2wfeO+/tYUF6Rth4trgq9cgay2dzPFqalLsuiXP2ElcJQWngje
+         Owk5sTpXxRwKVK5MphjI0VqBSYpI2A5ERG1QVDmEQwQP0dol8QuwlkTxd54DQLe4XBWp
+         iPbIyhHbZoKDn7WSEt8Ecy40hN8xC6mfsCLARWAqtK0v5hbwDuz81BLnBcS6tDRjbuxO
+         LPYBf9nT09ycimYWcW5/tm2hVb7QZcvmwhKfNzf1LP3mY+BJuC1zZei64ACIFkVMOum2
+         03rg==
+X-Gm-Message-State: APt69E18oQ2YlcsF9J5jpy9T5oa4sp0UHMv5Y7V0rcUzew9k9jeX0qz1
+        FjdiTRXJgSPc6T4uBnfrHLh+p6NqWud9nj5fhOQ=
+X-Google-Smtp-Source: AAOMgpfDBEx8T4vf0Wdjj48u2KviHPUSGKOzfhFE+7P9DhnD3Dd76UTJhx4K3OARLnJHjGnFWiivoRSmGVb8KaZcw4o=
+X-Received: by 2002:a1c:8a04:: with SMTP id m4-v6mr13551984wmd.137.1531207173578;
+ Tue, 10 Jul 2018 00:19:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <5B44589A.50302@huawei.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
+Received: by 2002:a1c:61c1:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 00:19:32
+ -0700 (PDT)
+In-Reply-To: <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com>
+References: <CGME20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29@eucas1p2.samsung.com>
+ <20180709121956.20200-1-m.szyprowski@samsung.com> <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com>
+From:   Joonsoo Kim <js1304@gmail.com>
+Date:   Tue, 10 Jul 2018 16:19:32 +0900
+Message-ID: <CAAmzW4PPNYhUj_MeZox+ddq8MjXqnJs_AJ3xkayf710udD1pSg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm/cma: remove unsupported gfp_mask parameter from cma_alloc()
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        iommu@lists.linux-foundation.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Hellwig <hch@lst.de>, Michal Hocko <mhocko@suse.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Chris Zankel <chris@zankel.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linaro-mm-sig@lists.linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/10 14:56, piaojun wrote:
-> In p9_client_getattr_dotl(), we should add '\n' at the end of printing
-> log.
-> 
-> Signed-off-by: Jun Piao <piaojun@huawei.com>
+Hello, Marek.
 
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+2018-07-09 21:19 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> cma_alloc() function doesn't really support gfp flags other than
+> __GFP_NOWARN, so convert gfp_mask parameter to boolean no_warn parameter.
 
-> ---
->  net/9p/client.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index 5c13431..8bc8b3e 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -1790,7 +1790,7 @@ struct p9_stat_dotl *p9_client_getattr_dotl(struct p9_fid *fid,
->  		"<<< st_mtime_sec=%lld st_mtime_nsec=%lld\n"
->  		"<<< st_ctime_sec=%lld st_ctime_nsec=%lld\n"
->  		"<<< st_btime_sec=%lld st_btime_nsec=%lld\n"
-> -		"<<< st_gen=%lld st_data_version=%lld",
-> +		"<<< st_gen=%lld st_data_version=%lld\n",
->  		ret->st_result_mask, ret->qid.type, ret->qid.path,
->  		ret->qid.version, ret->st_mode, ret->st_nlink,
->  		from_kuid(&init_user_ns, ret->st_uid),
-> 
+Although gfp_mask isn't used in cma_alloc() except no_warn, it can be used
+in alloc_contig_range(). For example, if passed gfp mask has no __GFP_FS,
+compaction(isolation) would work differently. Do you have considered
+such a case?
 
-
+Thanks.
