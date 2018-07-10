@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1A8C3279B
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F111C3279B
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D02F62083E
-	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D02F62083E
+	by mail.kernel.org (Postfix) with ESMTP id 184312083E
+	for <linux-kernel@archiver.kernel.org>; Tue, 10 Jul 2018 18:32:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 184312083E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388673AbeGJScg (ORCPT
+        id S2388687AbeGJSci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 14:32:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47552 "EHLO
+        Tue, 10 Jul 2018 14:32:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47560 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387889AbeGJScf (ORCPT
+        with ESMTP id S2388663AbeGJScg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 14:32:35 -0400
+        Tue, 10 Jul 2018 14:32:36 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0E673E3D;
-        Tue, 10 Jul 2018 18:32:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EDDC7CED;
+        Tue, 10 Jul 2018 18:32:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Changbin Du <changbin.du@intel.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: [PATCH 4.14 03/53] tracing: Fix missing return symbol in function_graph output
-Date:   Tue, 10 Jul 2018 20:24:39 +0200
-Message-Id: <20180710182459.000264182@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>,
+        stable@kernel.org
+Subject: [PATCH 4.14 21/53] ext4: verify the depth of extent tree in ext4_find_extent()
+Date:   Tue, 10 Jul 2018 20:24:57 +0200
+Message-Id: <20180710182500.127743248@linuxfoundation.org>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
 References: <20180710182458.736721865@linuxfoundation.org>
@@ -50,85 +50,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Changbin Du <changbin.du@intel.com>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 1fe4293f4b8de75824935f8d8e9a99c7fc6873da upstream.
+commit bc890a60247171294acc0bd67d211fa4b88d40ba upstream.
 
-The function_graph tracer does not show the interrupt return marker for the
-leaf entry. On leaf entries, we see an unbalanced interrupt marker (the
-interrupt was entered, but nevern left).
+If there is a corupted file system where the claimed depth of the
+extent tree is -1, this can cause a massive buffer overrun leading to
+sadness.
 
-Before:
- 1)               |  SyS_write() {
- 1)               |    __fdget_pos() {
- 1)   0.061 us    |      __fget_light();
- 1)   0.289 us    |    }
- 1)               |    vfs_write() {
- 1)   0.049 us    |      rw_verify_area();
- 1) + 15.424 us   |      __vfs_write();
- 1)   ==========> |
- 1)   6.003 us    |      smp_apic_timer_interrupt();
- 1)   0.055 us    |      __fsnotify_parent();
- 1)   0.073 us    |      fsnotify();
- 1) + 23.665 us   |    }
- 1) + 24.501 us   |  }
+This addresses CVE-2018-10877.
 
-After:
- 0)               |  SyS_write() {
- 0)               |    __fdget_pos() {
- 0)   0.052 us    |      __fget_light();
- 0)   0.328 us    |    }
- 0)               |    vfs_write() {
- 0)   0.057 us    |      rw_verify_area();
- 0)               |      __vfs_write() {
- 0)   ==========> |
- 0)   8.548 us    |      smp_apic_timer_interrupt();
- 0)   <========== |
- 0) + 36.507 us   |      } /* __vfs_write */
- 0)   0.049 us    |      __fsnotify_parent();
- 0)   0.066 us    |      fsnotify();
- 0) + 50.064 us   |    }
- 0) + 50.952 us   |  }
+https://bugzilla.kernel.org/show_bug.cgi?id=199417
 
-Link: http://lkml.kernel.org/r/1517413729-20411-1-git-send-email-changbin.du@intel.com
-
-Cc: stable@vger.kernel.org
-Fixes: f8b755ac8e0cc ("tracing/function-graph-tracer: Output arrows signal on hardirq call/return")
-Signed-off-by: Changbin Du <changbin.du@intel.com>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/trace/trace_functions_graph.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/ext4/ext4_extents.h |    1 +
+ fs/ext4/extents.c      |    6 ++++++
+ 2 files changed, 7 insertions(+)
 
---- a/kernel/trace/trace_functions_graph.c
-+++ b/kernel/trace/trace_functions_graph.c
-@@ -831,6 +831,7 @@ print_graph_entry_leaf(struct trace_iter
- 	struct ftrace_graph_ret *graph_ret;
- 	struct ftrace_graph_ent *call;
- 	unsigned long long duration;
-+	int cpu = iter->cpu;
- 	int i;
+--- a/fs/ext4/ext4_extents.h
++++ b/fs/ext4/ext4_extents.h
+@@ -103,6 +103,7 @@ struct ext4_extent_header {
+ };
  
- 	graph_ret = &ret_entry->ret;
-@@ -839,7 +840,6 @@ print_graph_entry_leaf(struct trace_iter
+ #define EXT4_EXT_MAGIC		cpu_to_le16(0xf30a)
++#define EXT4_MAX_EXTENT_DEPTH 5
  
- 	if (data) {
- 		struct fgraph_cpu_data *cpu_data;
--		int cpu = iter->cpu;
+ #define EXT4_EXTENT_TAIL_OFFSET(hdr) \
+ 	(sizeof(struct ext4_extent_header) + \
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -881,6 +881,12 @@ ext4_find_extent(struct inode *inode, ex
  
- 		cpu_data = per_cpu_ptr(data->cpu_data, cpu);
+ 	eh = ext_inode_hdr(inode);
+ 	depth = ext_depth(inode);
++	if (depth < 0 || depth > EXT4_MAX_EXTENT_DEPTH) {
++		EXT4_ERROR_INODE(inode, "inode has invalid extent depth: %d",
++				 depth);
++		ret = -EFSCORRUPTED;
++		goto err;
++	}
  
-@@ -869,6 +869,9 @@ print_graph_entry_leaf(struct trace_iter
- 
- 	trace_seq_printf(s, "%ps();\n", (void *)call->func);
- 
-+	print_graph_irq(iter, graph_ret->func, TRACE_GRAPH_RET,
-+			cpu, iter->ent->pid, flags);
-+
- 	return trace_handle_return(s);
- }
- 
+ 	if (path) {
+ 		ext4_ext_drop_refs(path);
 
 
