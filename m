@@ -2,134 +2,95 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 238E1C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:06:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A521C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D47A0208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:06:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47A0208E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id D9326208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:08:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9326208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732361AbeGKKJz (ORCPT
+        id S1732378AbeGKKLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:09:55 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:10319 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726460AbeGKKJy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:09:54 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="42115580"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 11 Jul 2018 18:06:19 +0800
-Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
-        by cn.fujitsu.com (Postfix) with ESMTP id 2FA3E4B473E7;
-        Wed, 11 Jul 2018 18:06:20 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.399.0; Wed, 11 Jul 2018 18:06:16 +0800
-Date:   Wed, 11 Jul 2018 18:04:45 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <yasu.isimatu@gmail.com>, <keescook@chromium.org>
-CC:     <indou.takao@jp.fujitsu.com>, <bhe@redhat.com>,
-        <caoj.fnst@cn.fujitsu.com>, <douly.fnst@cn.fujitsu.com>
-Subject: Re: Bug report about KASLR and ZONE_MOVABLE
-Message-ID: <20180711100445.GA6742@localhost.localdomain>
-References: <20180711094244.GA2019@localhost.localdomain>
+        Wed, 11 Jul 2018 06:11:31 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38424 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726368AbeGKKLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 06:11:31 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C667D4071186;
+        Wed, 11 Jul 2018 10:07:57 +0000 (UTC)
+Received: from localhost (ovpn-204-186.brq.redhat.com [10.40.204.186])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6CFC3111AF35;
+        Wed, 11 Jul 2018 10:07:55 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 12:07:53 +0200
+From:   Jiri Benc <jbenc@redhat.com>
+To:     Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc:     syzbot+7b9ed9872dab8c32305d@syzkaller.appspotmail.com,
+        David Miller <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Network Development <netdev@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Subject: Re: KASAN: use-after-free Read in ipv6_gso_pull_exthdrs
+Message-ID: <20180711120753.6940b66d@redhat.com>
+In-Reply-To: <CAF=yD-LcXtF94=5Xt5zeD=AmqHxNHGP+NURazJERigA8ysBuAQ@mail.gmail.com>
+References: <000000000000b0ee7a056eea93a7@google.com>
+        <00000000000033f8440570585207@google.com>
+        <CAF=yD-JgBPy+D2Jm7SN=-bzAfAf__pxE92qAqNWs=9EqfyLmAA@mail.gmail.com>
+        <CAF=yD-LcXtF94=5Xt5zeD=AmqHxNHGP+NURazJERigA8ysBuAQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180711094244.GA2019@localhost.localdomain>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: 2FA3E4B473E7.A9C0B
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 11 Jul 2018 10:07:57 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 11 Jul 2018 10:07:57 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jbenc@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 05:42:44PM +0800, Chao Fan wrote:
->Hi all,
->
->I found there is a BUG about KASLR and ZONE_MOVABLE.
->
->When users use 'kernelcore=' parameter without 'movable_node',
->movable memory is evenly distributed to all nodes. The size of
->ZONE_MOVABLE depends on the kernel parameter 'kernelcore=' and
->'movablecore='.
->But sometiomes, KASLR may put the uncompressed kernel to the
->tail position of a node, which will cause the kernel memory
->set as ZONE_MOVABLE. This region can not be offlined.
->
->Here is a very simple test in my qemu-kvm machine, there is
->only one node:
->
->The command line:
->[root@localhost ~]# cat /proc/cmdline
->BOOT_IMAGE=/vmlinuz-4.18.0-rc3+ root=/dev/mapper/fedora_localhost--live-root
->ro resume=/dev/mapper/fedora_localhost--live-swap
->rd.lvm.lv=fedora_localhost-live/root rd.lvm.lv=fedora_localhost-live/swap
->console=ttyS0 earlyprintk=ttyS0,115200n8 memblock=debug kernelcore=50%
->
->I use 'kernelcore=50%' here.
->
->Here is my early print result, I print the random_addr after KASLR chooses
->physical memory:
->early console in extract_kernel
->input_data: 0x000000000266b3b1
->input_len: 0x00000000007d8802
->output: 0x0000000001000000
->output_len: 0x0000000001e15698
->kernel_total_size: 0x0000000001a8b000
->trampoline_32bit: 0x000000000009d000
->booted via startup_32()
->Physical KASLR using RDRAND RDTSC...
->random_addr: 0x000000012f000000
->Virtual KASLR using RDRAND RDTSC...
->
->The address for kernel is 0x000000012f000000
->
->Here is the log of ZONE:
->[    0.000000] Zone ranges:
->[    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
->[    0.000000]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
->[    0.000000]   Normal   [mem 0x0000000100000000-0x00000001f57fffff]
->[    0.000000]   Device   empty
->[    0.000000] Movable zone start for each node
->[    0.000000]   Node 0: 0x000000011b000000
->[    0.000000] Early memory node ranges
->[    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
->[    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bffd6fff]
->[    0.000000]   node   0: [mem 0x0000000100000000-0x00000001f57fffff]
->[    0.000000] Initmem setup node 0 [mem
->0x0000000000001000-0x00000001f57fffff]
->
->Only one node in my machine, ZONE_MOVABLE begins from 0x000000011b000000,
->which is lower than 0x000000012f000000.
->So KASLR put the kernel to the ZONE_MOVABLE.
->Try to solve this problem, I think there should be a new tactic in function
->find_zone_movable_pfns_for_nodes() of mm/page_alloc.c. If kernel is uncompressed
->in a tail position, then just set the memory after the kernel as ZONE_MOVABLE,
->at the same time, memory in other nodes will be set as ZONE_MOVABLE.
+Sorry for the delayed reply, I'm working through a pile of stuff after
+being off.
 
-Sorry, mistake here. It should be:
-"more memory in other nodes will be set as ZONE_MOVABLE".
+On Sun, 8 Jul 2018 18:58:14 -0400, Willem de Bruijn wrote:
+> Setting skb->mac_len to 0, similar to mpls_gs_segment,
+> is sufficient if the encapsulated packet is not ETH_P_TEB.
+> 
+> If the packet is encapsulated at L2, __skb_pull(skb, vlan_depth)
+> has to pull the inner mac header before passing to l3 handlers like
+> inet_gso_segment.
+> 
+> If that header includes VLAN tags, skb_network_protocol will
+> parse then and update the mac length in vlan_depth. So
+> hardcoding to ETH_HLEN should be fine:
+> 
+> @@ -104,7 +95,7 @@ static struct sk_buff *nsh_gso_segment(struct sk_buff *skb,
+>         __skb_pull(skb, nsh_len);
+> 
+>         skb_reset_mac_header(skb);
+> -       skb_reset_mac_len(skb);
+> +       skb->mac_len = proto == ETH_P_TEB ? ETH_HLEN : 0;
+>         skb->protocol = proto;
+> 
+>         features &= NETIF_F_SG;
 
-Thanks,
-Chao Fan
+I agree. I think my original intention was to set mac_len to 0. Which
+is obviously not done by calling skb_reset_mac_len...
 
->
->If there is something wrong, pleas let me know. And any comments will be welcome.
->
->Thanks,
->Chao Fan
+Strangely, skb_network_protocol does not set *depth to ETH_HLEN if it
+is 0 and the type is ETH_P_TEB, which is something I would expect it to
+do. Thus we indeed have to differentiate between the two cases before
+calling skb_mac_gso_segment.
 
+Willem, will you send the patch formally (with the htons fix)? Thanks a
+lot for the analysis and the patch!
 
+ Jiri
