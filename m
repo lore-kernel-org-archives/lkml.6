@@ -2,91 +2,120 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C81EC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C4EC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54F6720846
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C99020846
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:09:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RwTAzJ1/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F6720846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="HgBgMQGi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C99020846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387460AbeGKNNQ (ORCPT
+        id S2387565AbeGKNNb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:13:16 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:38130 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbeGKNNQ (ORCPT
+        Wed, 11 Jul 2018 09:13:31 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33237 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732966AbeGKNN3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:13:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZUltF0npA//UKgQtzhT8p2kjr6/3movVZVA23/V/nSI=; b=RwTAzJ1/4oq3FaSbbxRvvNG/E
-        2Wpomiy/Fc+9ANekliG0j9ft6fv7IYXOiPGvGrQq+Rjn1LAE8rrk0vA5e1emJf2h5NkEzBoL9jtkT
-        zyF5Nw7cExT4WHGeYqh87u55agkekZSGWzRQmckiHSIJEStp6sAeuPXYB5wfnBIw2zVf7/Mm49pGx
-        YPKyFOeo+2aVbE8D4ujXz8XAi0qXaYdoWagRMw24OLoFrIwFmqxo/sRObennJGapEN7tWWOhgDqCS
-        nmANxPeR92C+4+F2jxRpkKBIRtncvq3AC4BujMBCZOW0yW9KZWulCFoxPeh33O/xlxzTrQ/3IFhxW
-        1MLYehNag==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdErX-0002h9-Ix; Wed, 11 Jul 2018 13:08:55 +0000
-Date:   Wed, 11 Jul 2018 06:08:54 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     v9fs-developer@lists.sourceforge.net,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ron Minnich <rminnich@sandia.gov>
-Subject: Re: [V9fs-developer] [PATCH 2/6] 9p: Replace the fidlist with an IDR
-Message-ID: <20180711130854.GB23640@bombadil.infradead.org>
-References: <20180628132629.3148-1-willy@infradead.org>
- <20180628132629.3148-3-willy@infradead.org>
- <20180711124038.GB835@nautica>
- <20180711125219.GA23640@bombadil.infradead.org>
- <20180711125812.GA9691@nautica>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711125812.GA9691@nautica>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 11 Jul 2018 09:13:29 -0400
+Received: by mail-wm0-f67.google.com with SMTP id z6-v6so16111729wma.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 06:09:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=SuV2RgMXtsFDr9YsO5D8IxTRhWziF/ZQhDgwiw6Xee0=;
+        b=HgBgMQGi84YNzvzkjG8SHs8x+mm2d55CGR4kynd6pAs4gIN80lzHGeABdFfPdYf7mL
+         sM5fidzjQTKIDGaN3ONlpntIRjguxIBvjH+VYkyT7Mn7N01ma7+M3HBIIzAx5yErQkx5
+         LEdJtA0VeiwiGypF996C17UTfM8YIPP32YLGM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=SuV2RgMXtsFDr9YsO5D8IxTRhWziF/ZQhDgwiw6Xee0=;
+        b=TbaGYRboun8+6G5ExYh9+l1HL7xYZhlLCPQIbqYPfe1HpTH0sS4YBRb2SgXMtalcR0
+         NaNj8LNRaGzdjk+GwimhXVijwwKFbYS/sWmye0lXOMxohXIcl1/4CuBI8Q0gxicCjTOz
+         PwNUuJ6aluddY746C4MW8DP5XgQ286NsZPmxl8N5MfdJL8cjiiGJUQpFRN77rjer4xMH
+         86stZELPFtwS7Et8B7HtclzDXMS9OhMQo+2T0ZS4eM3fONrzYzcxEEf0mLwoaSiEdgIZ
+         xnO6fH4BpfaUNJvcZm5DIZqE2tYAXZSJMy1psrANFcYa2CLW41ASCbqohzM/4VuOk5Hf
+         ae0A==
+X-Gm-Message-State: APt69E0dCOxl2Y9mDUMEznDOsskEIuCZOwKP+X/PcGOk6kMofRzObmRk
+        AfNAWQsdF0qlobmtsNjx3z6Bmgn8
+X-Google-Smtp-Source: AAOMgpc4JpQ4244sq0m5ElDsZpWzU1Fgcc2kDvpuFZZ3odSzx1TXvE6Vb2W14q1emMDUaTI1OmOvQw==
+X-Received: by 2002:a1c:ae8d:: with SMTP id x135-v6mr16952204wme.20.1531314550627;
+        Wed, 11 Jul 2018 06:09:10 -0700 (PDT)
+Received: from andrea.amarulasolutions.com (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id a13-v6sm2047283wrf.93.2018.07.11.06.09.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 11 Jul 2018 06:09:10 -0700 (PDT)
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH] doc: Replace smp_cond_acquire() with smp_cond_load_acquire()
+Date:   Wed, 11 Jul 2018 15:08:50 +0200
+Message-Id: <1531314530-11624-1-git-send-email-andrea.parri@amarulasolutions.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531216943-6382-1-git-send-email-andrea.parri@amarulasolutions.com>
+References: <1531216943-6382-1-git-send-email-andrea.parri@amarulasolutions.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 02:58:12PM +0200, Dominique Martinet wrote:
-> > I don't understand your assertion that this is a change of behaviour.
-> > The implementation of p9_idpool_get() uses idr_alloc(), not
-> > idr_alloc_cyclic(), so I don't believe I've changed which FID would
-> > be allocated.
-> 
-> Hmm, I just tried mounting something with ganesha and that broke because
-> it received fid=1730858632 in a TATTACH request, so something in the
-> patch series made some big fid happens.
-> 
-> If you say this isn't intented though this needs debugging, I'm glad I
-> brought this up :P
-> 
-> (Note that it really should be fine if it is random within the pool, I
-> have notified the current developpers of the problem)
+Amend commit 1f03e8d2919270 ("locking/barriers: Replace smp_cond_acquire()
+with smp_cond_load_acquire()") by updating the documentation accordingly.
+Also remove some obsolete information related to the implementation.
 
-Heh, unintended protocol fuzzing ;-)
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+Cc: Luc Maranget <luc.maranget@inria.fr>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Akira Yokosawa <akiyks@gmail.com>
+Cc: Daniel Lustig <dlustig@nvidia.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+---
+ Documentation/memory-barriers.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I see the problem; need to initialise fid->fid to 0 before calling
-idr_alloc_u32.  I'd misread:
+diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+index 0d8d7ef131e9a..c1d913944ad8b 100644
+--- a/Documentation/memory-barriers.txt
++++ b/Documentation/memory-barriers.txt
+@@ -471,8 +471,7 @@ And a couple of implicit varieties:
+      operations after the ACQUIRE operation will appear to happen after the
+      ACQUIRE operation with respect to the other components of the system.
+      ACQUIRE operations include LOCK operations and both smp_load_acquire()
+-     and smp_cond_acquire() operations. The later builds the necessary ACQUIRE
+-     semantics from relying on a control dependency and smp_rmb().
++     and smp_cond_load_acquire() operations.
+ 
+      Memory operations that occur before an ACQUIRE operation may appear to
+      happen after it completes.
+-- 
+2.7.4
 
-        memset(&fid->qid, 0, sizeof(struct p9_qid));
-as
-        memset(fid, 0, sizeof(struct p9_fid));
-
-so I thought fid->fid was already 0.  I'll fix that up, thanks!
