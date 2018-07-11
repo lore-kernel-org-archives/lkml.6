@@ -2,94 +2,96 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4078C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B53C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 706A220C0D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:18:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706A220C0D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 53EFF20B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:21:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FXwGrfj1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53EFF20B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732520AbeGKJWN (ORCPT
+        id S1726472AbeGKJYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:22:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54730 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726398AbeGKJWM (ORCPT
+        Wed, 11 Jul 2018 05:24:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45056 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbeGKJYu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:22:12 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 21C97CCC;
-        Wed, 11 Jul 2018 09:18:50 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 11:18:48 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Dave Mielke <Dave@mielke.cc>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-console@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] vt: preserve unicode values corresponding to
- screen characters
-Message-ID: <20180711091848.GA2889@kroah.com>
-References: <20180627035642.8561-1-nicolas.pitre@linaro.org>
- <20180627035642.8561-2-nicolas.pitre@linaro.org>
- <CAGXu5j+KLvJ-n_QRrfq15E8iO_rqfpp+K7PDAZHZMHcemy9y7g@mail.gmail.com>
+        Wed, 11 Jul 2018 05:24:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=H70pVgx2XwMMXmR3NCG1O1+R/QAQuNipe1JTYez1Esk=; b=FXwGrfj1snrBQaYHVYjyAgdOS
+        I33bnxtGqUiYxaO1GZXOmZW6NLFt+t4CCfhC1t9vhmoc1D5tEw7nbYWaBc+WnnMHk3a2zcC7/SDM+
+        LkJZqIPg5jdvwREDD5ol7VVvyCylY/PF+xyjwErQqAon/8uHLdpzJ4AnZ9jqJlLZUP6s6nULRtLxi
+        GzYatCPJnEQBPq/1scaHF7XPdhGJ2j+Dr3VQv4gc0jNO0XOhn7LNPNRoW9YBb8MsQ1i/NWWkPxxro
+        LP0Tk94VGWAdcyCrLl8m4Ayp8y/+hXiPDYagoEcmLwrIP8vl4fbLMKUraXgko+HT0l30MXkL3OFdS
+        dDVnUjv/g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdBJH-0001nL-GB; Wed, 11 Jul 2018 09:21:19 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EC97820291063; Wed, 11 Jul 2018 11:21:17 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 11:21:17 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v2 10/27] x86/mm: Introduce _PAGE_DIRTY_SW
+Message-ID: <20180711092117.GV2476@hirez.programming.kicks-ass.net>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-11-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5j+KLvJ-n_QRrfq15E8iO_rqfpp+K7PDAZHZMHcemy9y7g@mail.gmail.com>
+In-Reply-To: <20180710222639.8241-11-yu-cheng.yu@intel.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 05:52:01PM -0700, Kees Cook wrote:
-> On Tue, Jun 26, 2018 at 8:56 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> > The vt code translates UTF-8 strings into glyph index values and stores
-> > those glyph values directly in the screen buffer. Because there can only
-> > be at most 512 glyphs, it is impossible to represent most unicode
-> > characters, in which case a default glyph (often '?') is displayed
-> > instead. The original unicode value is then lost.
-> >
-> > This patch implements the basic screen buffer handling to preserve unicode
-> > values alongside corresponding display glyphs.  It is not activated by
-> > default, meaning that people not relying on that functionality won't get
-> > the implied overhead.
-> >
-> > Signed-off-by: Nicolas Pitre <nico@linaro.org>
-> > Tested-by: Dave Mielke <Dave@mielke.cc>
-> > Acked-by: Adam Borowski <kilobyte@angband.pl>
-> > ---
-> >  drivers/tty/vt/vt.c            | 220 +++++++++++++++++++++++++++++++--
-> >  include/linux/console_struct.h |   2 +
-> >  2 files changed, 211 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-> > index 1eb1a376a0..7b636638b3 100644
-> > --- a/drivers/tty/vt/vt.c
-> > +++ b/drivers/tty/vt/vt.c
-> > [...]
-> > +static void vc_uniscr_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
-> > +                            enum con_scroll dir, unsigned int nr)
-> > +{
-> > +       struct uni_screen *uniscr = get_vc_uniscr(vc);
-> > +
-> > +       if (uniscr) {
-> > +               unsigned int s, d, rescue, clear;
-> > +               char32_t *save[nr];
-> 
-> Can you adjust this to avoid the VLA here? I've almost gotten all VLAs
-> removed from the kernel[1], and this is introducing a new one. :)
+On Tue, Jul 10, 2018 at 03:26:22PM -0700, Yu-cheng Yu wrote:
+> +static inline bool is_shstk_pte(pte_t pte)
+> +{
+> +	pteval_t val;
+> +
+> +	val = pte_flags(pte) & (_PAGE_RW | _PAGE_DIRTY_HW);
+> +	return (val == _PAGE_DIRTY_HW);
+> +}
 
-This is already in my tree, sorry :(
+That's against naming convention here.
 
-greg k-h
+static inline bool pte_shstk(pte_t pte)
+{
+	return pte_flags(pte) & (_PAGE_RW | _PAGE_DIRTY_HW) == _PAGE_DIRTY_HW;
+}
+
+would be more in style with the rest of this code.
