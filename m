@@ -2,164 +2,129 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AD3C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37366C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8A3D20B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A3D20B6F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id D666A20B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:29:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="WbgbahD0";
+	dkim=pass (1024-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="eCSIkuGG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D666A20B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=flygoat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbeGKKaj (ORCPT
+        id S1726730AbeGKKc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:30:39 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54523 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbeGKKaj (ORCPT
+        Wed, 11 Jul 2018 06:32:59 -0400
+Received: from forward104p.mail.yandex.net ([77.88.28.107]:54260 "EHLO
+        forward104p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726440AbeGKKc7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:30:39 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 4E77E804D8; Wed, 11 Jul 2018 12:26:58 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 12:26:55 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: Re: v4.18-rc2 on droid4: screen turns red
-Message-ID: <20180711102655.GA6864@amd>
-References: <20180630131812.GA549@amd>
+        Wed, 11 Jul 2018 06:32:59 -0400
+X-Greylist: delayed 756 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Jul 2018 06:32:56 EDT
+Received: from mxback1g.mail.yandex.net (mxback1g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:162])
+        by forward104p.mail.yandex.net (Yandex) with ESMTP id B3C52181BC3;
+        Wed, 11 Jul 2018 13:14:57 +0300 (MSK)
+Received: from smtp3p.mail.yandex.net (smtp3p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:8])
+        by mxback1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id QIlY3WS5VM-Eu1G4nPP;
+        Wed, 11 Jul 2018 13:14:57 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1531304097;
+        bh=XCCe7vZc7GQyW/Uk20RcYER7XQFfgxW8goHDS9VObxA=;
+        h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References;
+        b=WbgbahD0+vZJfY3jnRlpGa+xI1+WC81hJZdXBnPchpOduLhpn/jZRvMAZ+8rW8vpI
+         KOxfFiGvAOvK9jE9PkbZQ6A4SsUnLCQRSLyy94R808f93VSpN5JhTiPtoU32YX/9dC
+         9tEgueIFzhdbbd6/DnLpi4KmciYvZ7xscM/3BOHM=
+Received: by smtp3p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id fDNQFekDBA-EmhCeUUh;
+        Wed, 11 Jul 2018 13:14:53 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1531304094;
+        bh=XCCe7vZc7GQyW/Uk20RcYER7XQFfgxW8goHDS9VObxA=;
+        h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References;
+        b=eCSIkuGGxcPhycRObxIrrwZk4lN1sPuTvO3aqvHXxpZvZefNyJllo4kHv+gkw4dh+
+         RWbHVp4cBjBxmrYVpnHRPUW6P7P6Zs1xWkn2pgQKiQWB8D75meSOpG0ByfSFOICrVf
+         XwXcAzmMoqMNG+zMQKj0C/EXrL2VcvzYeHMdgeRY=
+Authentication-Results: smtp3p.mail.yandex.net; dkim=pass header.i=@flygoat.com
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+To:     linux-mips@linux-mips.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        =?utf-8?B?6ZmI5Y2O5omN?= <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        wuzhangjin <wuzhangjin@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2] MIPS: implement smp_cond_load_acquire() for Loongson-3
+Date:   Wed, 11 Jul 2018 18:05:51 +0800
+Message-ID: <5471216.FKXZRxKFUI@flygoat-ry>
+In-Reply-To: <20180710121727.GK2476@hirez.programming.kicks-ass.net>
+References: <1531103198-16764-1-git-send-email-chenhc@lemote.com> <tencent_26F8B9E004D4512B2225FCE1@qq.com> <20180710121727.GK2476@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Content-Disposition: inline
-In-Reply-To: <20180630131812.GA549@amd>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 2018-7-10 Tue at 20:17:27=EF=BC=8CPeter Zijlstra Wrote=EF=BC=9A
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> After longer inactivity, attempt to wake up the screen results in
-> screen being completely red. Not too useful. I can still connect over
-> ssh.
-
-Still there in -rc4 :-(. But happens only once in a few days for me...
-
-When X is shut down, text console works ok.
-      	       	    	     	     	       	    	Pavel
+Hi Peter
+Since Huacai unable to send email via client, I'm going to reply for him=20
+=20
+> Sure.. we all got that far. And no, this isn't the _real_ problem. This
+> is a manifestation of the problem.
 >=20
-> This happens all the time:
+> The problem is that your SFB is broken (per the Linux requirements). We
+> require that stores will become visible. That is, they must not
+> indefinitely (for whatever reason) stay in the store buffer.
 >=20
-> Jun 30 11:34:08 devuan kernel: [  143.605499] ------------[ cut here
-> ]------------
-> Jun 30 11:34:08 devuan kernel: [  143.610168] WARNING: CPU: 1 PID:
-> 2220 at drivers/gpu/drm/omapdrm/
-> dss/hdmi4.c:667 hdmi_audio_stop+0x5c/0x68
-> Jun 30 11:34:08 devuan kernel: [  143.619873] Modules linked in:
-> Jun 30 11:34:08 devuan kernel: [  143.622955] CPU: 1 PID: 2220 Comm:
-> pulseaudio Not tainted 4.18.0-
-> rc2-88315-g3452793-dirty #756
-> Jun 30 11:34:08 devuan kernel: [  143.631591] Hardware name: Generic
-> OMAP4 (Flattened Device Tree)
-> Jun 30 11:34:08 devuan kernel: [  143.637634] [<c010f6cc>]
-> (unwind_backtrace) from [<c010ba50>] (sh
-> ow_stack+0x10/0x14)
-> Jun 30 11:34:08 devuan kernel: [  143.645446] [<c010ba50>]
-> (show_stack) from [<c086d7ec>] (dump_sta
-> ck+0x8c/0xac)
-> Jun 30 11:34:08 devuan kernel: [  143.652740] [<c086d7ec>]
-> (dump_stack) from [<c012d364>] (__warn+0
-> xe8/0x114)
-> Jun 30 11:34:08 devuan kernel: [  143.659729] [<c012d364>] (__warn)
-> from [<c012d3cc>] (warn_slowpath_null+0x3c/0x48)
-> Jun 30 11:34:08 devuan kernel: [  143.667358] [<c012d3cc>]
-> (warn_slowpath_null) from [<c047b7dc>] (hdmi_audio_stop+0x5c/0x68)
-> Jun 30 11:34:08 devuan kernel: [  143.675750] [<c047b7dc>]
-> (hdmi_audio_stop) from [<c06a9824>] (hdmi_dai_trigger+0x6c/0x88)
-> Jun 30 11:34:08 devuan kernel: [  143.683990] [<c06a9824>]
-> (hdmi_dai_trigger) from [<c06990d0>] (soc_pcm_trigger+0xf0/0x130)
-> Jun 30 11:34:08 devuan kernel: [  143.692291] [<c06990d0>]
-> (soc_pcm_trigger) from [<c067a9f4>] (snd_pcm_do_stop+0x54/0x58)
-> Jun 30 11:34:08 devuan kernel: [  143.700439] [<c067a9f4>]
-> (snd_pcm_do_stop) from [<c067a7a4>] (snd_pcm_action_single+0x38/0x78)
-> Jun 30 11:34:08 devuan kernel: [  143.709075] [<c067a7a4>]
-> (snd_pcm_action_single) from [<c067c468>] (snd_pcm_drop+0x48/0x94)
-> Jun 30 11:34:08 devuan kernel: [  143.717468] [<c067c468>]
-> (snd_pcm_drop) from [<c067d508>] (snd_pcm_ioctl+0x870/0x1180)
-> Jun 30 11:34:08 devuan kernel: [  143.725433] [<c067d508>]
-> (snd_pcm_ioctl) from [<c0215944>] (do_vfs_ioctl+0x80/0x960)
-> Jun 30 11:34:08 devuan kernel: [  143.733215] [<c0215944>]
-> (do_vfs_ioctl) from [<c0216280>] (ksys_ioctl+0x5c/0x80)
-> Jun 30 11:34:08 devuan kernel: [  143.740661] [<c0216280>]
-> (ksys_ioctl) from [<c0101000>] (ret_fast_syscall+0x0/0x54)
-> Jun 30 11:34:08 devuan kernel: [  143.748352] Exception
-> stack(0xeb8fffa8 to 0xeb8ffff0)
-> Jun 30 11:34:08 devuan kernel: [  143.753448] ffa0:
-> 005129b0 b1971394 00000015 00004143 00000000 00512960
+> > I don't think this is a hardware bug, in design, SFB will flushed to
+> > L1 cache in three cases:
+> >=20
+> > 1, data in SFB is full (be a complete cache line);
+> > 2, there is a subsequent read access in the same cache line;
+> > 3, a 'sync' instruction is executed.
 >=20
+> And I think this _is_ a hardware bug. You just designed the bug instead
+> of it being by accident.
+Yes, we understood that this hardware feature is not supported by LKML,
+so it should be a hardware bug for LKML.
 >=20
-> This is probably unrelated:
+> It doesn't happen an _any_ other architecture except that dodgy
+> ARM11MPCore part. Linux hard relies on stores to become available
+> _eventually_.
 >=20
-> [13215.125732] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-> [13245.205535] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-> [13252.969940] power_supply battery: driver failed to report
-> `power_now' property: -22
-> [13275.285369] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-> [13291.993652] Charging, 4350000 uV, 532000 uA
-> [13292.001708] Charging, 4350000 uV, 532000 uA
-> [13305.364837] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-> [13335.445037] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-> [13365.524291] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
-> [13372.940093] power_supply battery: driver failed to report
-> `power_now' property: -22
-> [13383.554412] g_ether gadget: packet filter 0e
-> [13383.558715] g_ether gadget: ecm req21.43 v000e i0000 l0
-> [13383.580261] g_ether gadget: notify connect true
-> [13383.612243] g_ether gadget: notify speed 425984000
-> [13387.213256] cpcap_adc cpcap_adc.0: error reading ADC: -110
-> [13387.218780] cpcap_battery cpcap_battery.0:
-> cpcap_battery_get_voltage failed: -110
-> [13387.523254] cpcap_adc cpcap_adc.0: error reading ADC: -110
-> [13387.528778] cpcap_battery cpcap_battery.0:
-> cpcap_battery_get_current failed: -110
->=20
-> Ideas welcome.
->=20
-> Best regards,
-> 							Pavel
->=20
+> Still, even with the rules above, the best work-around is still the very
+> same cpu_relax() hack.
+
+As you say, SFB makes Loongson not fully SMP-coherent.
+However, modify cpu_relax can solve the current problem,
+but not so straight forward. On the other hand, providing a Loongson-specif=
+ic=20
+WRITE_ONCE looks more reasonable, because it the eliminate the "non-cohrenc=
+y".
+So we can solve the bug from the root.
+
+Thanks.
+=2D-
+Jiaxun Yang
 
 
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltF228ACgkQMOfwapXb+vJ7BgCdG2jHqOCtXQUX5WzUX7Sw7t4+
-hxgAn0dDUYuqVSGR3keAGIxmuU00tq4B
-=q3rl
------END PGP SIGNATURE-----
-
---SUOF0GtieIMvvwua--
