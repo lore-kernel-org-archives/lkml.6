@@ -2,109 +2,130 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 855F0C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D242C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C88820854
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:12:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ghTyBpie"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C88820854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3D1CD20878
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:14:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1CD20878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732465AbeGKJQA (ORCPT
+        id S1732472AbeGKJR1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:16:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:36642 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726398AbeGKJQA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:16:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=V70Dcordknmgk0HmEDzEZsFCiABvqy1N1KLguVpmJu0=; b=ghTyBpieehW3H6dhM9eWLkGm4
-        Y5kwyjCkKgajb1nYaNmrSKbLo+KgK173ssnAuRTcMlWE7LOVOuU0099RbDGVw06mtdBX+12hoEDC4
-        LHdh+lJhyU+1cFT7Y64sQZI1nf6MRker7qg20w4PEwhC8SXqhr6TqpgKAsmYBkZxsouqR99qyhdjm
-        rZRs2/bnvUNOz/UcePQDftQcGgUzAMSlWrRueQ/xRAmRy8+xz0xsohCWPNJ+7q99UzJrm/luyxWng
-        5rKlOy2t+tTu7OmmBx62doqfZi0vwJQEuBPyabtSVAuSCXtUsTox2IxEaojgi41iddE9EPnSFU/ag
-        j7Bk/2Ufw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdBAo-0005ex-37; Wed, 11 Jul 2018 09:12:34 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8ABDC20291063; Wed, 11 Jul 2018 11:12:32 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 11:12:32 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Wed, 11 Jul 2018 05:17:27 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42477 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726384AbeGKJR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 05:17:27 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 52C6E20739; Wed, 11 Jul 2018 11:14:06 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2B6BC20732;
+        Wed, 11 Jul 2018 11:14:06 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 11:14:06 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v2 15/27] mm/mprotect: Prevent mprotect from changing
- shadow stack
-Message-ID: <20180711091232.GU2476@hirez.programming.kicks-ass.net>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-16-yu-cheng.yu@intel.com>
- <04800c52-1f86-c485-ba7c-2216d8c4966f@linux.intel.com>
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: Re: [PATCH v5 13/22] ARM: sun8i-a23-a33: Add SRAM controller node
+ and C1 SRAM region
+Message-ID: <20180711091405.mkhzamcmimhofryo@flea>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+ <20180710080114.31469-14-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7gn7zc3tutiqnnqt"
 Content-Disposition: inline
-In-Reply-To: <04800c52-1f86-c485-ba7c-2216d8c4966f@linux.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180710080114.31469-14-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 04:10:08PM -0700, Dave Hansen wrote:
-> On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> 
-> This still needs a changelog, even if you think it's simple.
-> > --- a/mm/mprotect.c
-> > +++ b/mm/mprotect.c
-> > @@ -446,6 +446,15 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
-> >  	error = -ENOMEM;
-> >  	if (!vma)
-> >  		goto out;
-> > +
-> > +	/*
-> > +	 * Do not allow changing shadow stack memory.
-> > +	 */
-> > +	if (vma->vm_flags & VM_SHSTK) {
-> > +		error = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +
-> 
-> I think this is a _bit_ draconian.  Why shouldn't we be able to use
-> protection keys with a shadow stack?  Or, set it to PROT_NONE?
 
-Right, and then there's also madvise() and some of the other accessors.
+--7gn7zc3tutiqnnqt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Why do we need to disallow this? AFAICT the worst that can happen is
-that a process wrecks itself, so what?
+On Tue, Jul 10, 2018 at 10:01:05AM +0200, Paul Kocialkowski wrote:
+> From: Maxime Ripard <maxime.ripard@bootlin.com>
+>=20
+> This adds a SRAM controller node for the A23 and A33, with support for
+> the C1 SRAM region that is shared between the Video Engine and the CPU.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+Fixed the compatible and the commit prefix and applied.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--7gn7zc3tutiqnnqt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFyl0ACgkQ0rTAlCFN
+r3R+Yw/+MJEg67M6HlThebPjS7qiYOcx73WG571ioM0oj9J8iZVduxmHR5kuCVv/
+0CdWEe7KV3Af80YtCKMs7hWBD1+Oly1PsXUIV3WZa6+r7vMBuyBqf9TUh5O41F0L
+G6KeYnNXNGpRaMRFXRp6bxAKEOESSYjlSk0nUKTx70HtS0WPEuRjLyTID19tgGX0
+qG9gDSdbnqHueVQSbx6c4/EuBEO2MdgoqNr8DC/iKMHEsGGVX9pmrRRUu+nil1T7
+6vT3ZVUSku9ElBhnLLLtPX6MWQDJ0h0Ct9u8UFg/ylU7ZYzZ8/l/w4vSwgdYq0t3
+wwV9T4tuEgV8/tS8LVQN5SMaPmmqHygXx3unslxwI8XiOkTapNmCTPITDW+NeSu1
+a3CLyTpHQ+1S5poIpNCbi0dn5Rp70LZkKjn9qCq83yORwk8b0xJL72AOovOLZ2CA
+qYE6d7QJcUVlZebY+zWiLzUgUuJdOI6XOLhq1tx9ch9mVE9QCGBkNtX3oi7dPEwa
+LqC4IxSLYM4IGKyUBXFJuN48nPIsZHsZJnMGCBtAz1ajG4WINkK/IoJI2Dfu9ZbS
+eq/10Uwc/HoqhWYZT6JMC6rL5VSi8ojiSt2dhT11LeEuoow81Mb0U/gXwLBVtyaz
+eXa1vTaL0GdA+YAwXULDx1AbcUTq5mkwYHGA6ucgencLzprFdhM=
+=sk20
+-----END PGP SIGNATURE-----
+
+--7gn7zc3tutiqnnqt--
