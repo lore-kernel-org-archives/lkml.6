@@ -2,102 +2,110 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE5BC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 05:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B813FC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 05:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83DB7208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 05:48:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83DB7208E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 6D229208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 05:49:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D229208E5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726508AbeGKFuc (ORCPT
+        id S1726458AbeGKFwZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 01:50:32 -0400
-Received: from nautica.notk.org ([91.121.71.147]:55094 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725906AbeGKFuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 01:50:32 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id AF7FBC009; Wed, 11 Jul 2018 07:47:55 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 14:47:40 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-Cc:     piaojun <piaojun@huawei.com>, ericvh@gmail.com,
-        rminnich@sandia.gov, lucho@ionkov.net,
-        v9fs-developer@lists.sourceforge.net,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [V9fs-developer] [PATCH] net/9p/client.c: put refcount of
- trans_mod in error case in parse_opts()
-Message-ID: <20180711054740.GA932@nautica>
-References: <5B3F39A0.2030509@huawei.com>
+        Wed, 11 Jul 2018 01:52:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56834 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725818AbeGKFwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 01:52:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFC7580D;
+        Tue, 10 Jul 2018 22:49:50 -0700 (PDT)
+Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 60AF13F318;
+        Tue, 10 Jul 2018 22:49:49 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 06:49:46 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     dsterba@suse.cz, linux-kernel@vger.kernel.org,
+        Will Deacon <will.deacon@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] refcount: always allow checked forms
+Message-ID: <20180711054946.wdkfoou6kt2a2vml@salmiak>
+References: <20180703100102.16615-1-mark.rutland@arm.com>
+ <20180704084641.GL3126@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5B3F39A0.2030509@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180704084641.GL3126@suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew,
-
-there seem to be some renew of interest in 9P lately, so if you'd like I
-can take care of rounding these up and prepare a pull request for 4.19
-(as we're already well into 4.18 release cycle, I believe most of the
-patches can wait)
-
-This patch however I consider important enough to take for 4.18 so could
-you please grab it for now?
-
-I've gathered the Review tags and added my own, feel free to change my
-Reviewed-and-tested-by tag to Signed-off-by if it seems more appropriate
-as I'm actively pushing for this patch.
-
-piaojun wrote on Fri, Jul 06, 2018:
-> >From my test, the second mount will fail after umounting successfully.
-> The reason is that we put refcount of trans_mod in the correct case rather
-> than the error case in parse_opts() at last. That will cause the refcount
-> decrease to -1, and when we try to get trans_mod again in
-> try_module_get(), we could only increase refcount to 0 which will cause
-> failure as follows:
-> parse_opts
->   v9fs_get_trans_by_name
->     try_module_get : return NULL to caller which cause error
+On Wed, Jul 04, 2018 at 10:46:41AM +0200, David Sterba wrote:
+> On Tue, Jul 03, 2018 at 11:01:02AM +0100, Mark Rutland wrote:
+> > In many cases, it would be useful to be able to use the full
+> > sanity-checked refcount helpers regardless of CONFIG_REFCOUNT_FULL, as
+> > this would help to avoid duplicate warnings where callers try to
+> > sanity-check refcount manipulation.
+> > 
+> > This patch refactors things such that the full refcount helpers were
+> > always built, as refcount_${op}_checked(), such that they can be used
+> > regardless of CONFIG_REFCOUNT_FULL. This will allow code which *always*
+> > wants a checked refcount to opt-in, avoiding the need to duplicate the
+> > logic for warnings.
+> > 
+> > There should be no functional change as a result of this patch.
+> > 
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > Cc: David Sterba <dsterba@suse.com>
+> > Cc: Ingo Molnar <mingo@kernel.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Will Deacon <will.deacon@arm.com>
 > 
-> So we should put refcount of trans_mod in error case.
+> I dare to give it my
 > 
-> Fixes: 9421c3e64137ec ("net/9p/client.c: fix potential refcnt problem of trans module")
-> 
-> Signed-off-by: Jun Piao <piaojun@huawei.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Reviewed-by: Greg Kurz <groug@kaod.org>
-Reviewed-and-tested-by: Dominique Martinet <dominique.martinet@cea.fr>
+> Reviewed-by: David Sterba <dsterba@suse.com>
 
-> ---
->  net/9p/client.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Cheers!
+
+> as my POC implementations were crap and Mark's version is much better.
+
+Please don't think that your implementations were bad; I just already had an
+idea as to what this could look like.
+
+> > ---
+> >  include/linux/refcount.h | 27 +++++++++++++++++-------
+> >  lib/refcount.c           | 53 +++++++++++++++++++++++-------------------------
+> >  2 files changed, 45 insertions(+), 35 deletions(-)
+> > 
+> > Dave pointed out that it would be useful to be able to opt-in to full checks
+> > regardless of CONFIG_REFCOUNT_FULL, so that we can simplify callsites where we
+> > always want checks. I've spotted a few of these in code which is still awaiting
+> > conversion.
 > 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index 18c5271..5c13431 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -225,7 +225,8 @@ static int parse_opts(char *opts, struct p9_client *clnt)
->  	}
+> The motivation was code like
 > 
->  free_and_return:
-> -	v9fs_put_trans(clnt->trans_mod);
-> +	if (ret)
-> +		v9fs_put_trans(clnt->trans_mod);
->  	kfree(tmp_options);
->  	return ret;
->  }
+> 	WARN_ON(refcount_read(&ref));
+> 	if (refcount_dec_and_test(&ref)) { ... }
+> 
+> so the warning is redundant for REFCOUNT_FULL, but I'm going to use the
+> _checked versions everywhere the performance of refcounts is not
+> critical.
+
+If you will have conversion patches, do you want to pick this up as the start
+of a series?
 
 Thanks,
--- 
-Dominique Martinet
+Mark.
