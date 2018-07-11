@@ -2,78 +2,95 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7ECC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7A7DC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D74420883
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:31:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D74420883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9296F20883
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:31:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M83ermzm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9296F20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387653AbeGKPf4 (ORCPT
+        id S2388922AbeGKPgP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 11:35:56 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:40789 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732425AbeGKPfz (ORCPT
+        Wed, 11 Jul 2018 11:36:15 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52296 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732425AbeGKPgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 11:35:55 -0400
-Received: by mail-oi0-f67.google.com with SMTP id w126-v6so49986690oie.7;
-        Wed, 11 Jul 2018 08:31:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RoVJAnCBLNo/B3X5hXyvWjTekjcTqj8icjxDXe314nQ=;
-        b=CkwMrGdIndd0R+EwTZINRr/8lx3NyY8wkIAlSqoIgEodG7Qn3AkBRL+/JQyO40+Ccw
-         URK1vzVPT4GSBjIP4L5K56jElpp/C7MDUcvRfUbX02V1DUgMa58Itt9Kk163iV7Bc3Ky
-         61JwfXbeoNfH6Z5K6N/MUcRcyM8JZDNaYvly8uCHTnER5ZncIKR75jsJOtn2dBmWpIpN
-         eXwJ5wEAQLAEsVRqnQnOoO5+vqr4ABtpPYVZZM1lxe5FAIzwt2TbYSGkyhCTO4IDhtdl
-         00tEWUc5q9cGjGxE+VHee7Vk1ZmbXu0uQiatdmvqyzueDXKWvJOhSsP+gB1XGApnLWuX
-         OeGQ==
-X-Gm-Message-State: APt69E38UkMGXm6WjnlkIn6IHGN834rKCDB9JE/F54heGifNw3XgH35y
-        1pp+8kvlaMN58zoztx2G/A==
-X-Google-Smtp-Source: AAOMgpebNx6MkhsLq7nwUpDQahjzaVKDxuBaJkbmNEfVyqhG6rrTu+cya+O1Pmm0y+ukcciVZ2tFGA==
-X-Received: by 2002:aca:b841:: with SMTP id i62-v6mr34339838oif.290.1531323063697;
-        Wed, 11 Jul 2018 08:31:03 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id n84-v6sm18486oif.23.2018.07.11.08.31.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 08:31:03 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 09:31:02 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Rohit kumar <rohitkr@codeaurora.org>
-Cc:     lgirdwood@gmail.com, broonie@kernel.org, mark.rutland@arm.com,
-        plai@codeaurora.org, bgoswami@codeaurora.org, perex@perex.cz,
-        srinivas.kandagatla@linaro.org, tiwai@suse.com,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] ASoC: qcom: dt-bindings: Add sdm845 machine
- bindings
-Message-ID: <20180711153102.GA20357@rob-hp-laptop>
-References: <1530870195-13576-1-git-send-email-rohitkr@codeaurora.org>
- <1530870195-13576-2-git-send-email-rohitkr@codeaurora.org>
+        Wed, 11 Jul 2018 11:36:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=00wyPXl4xTf1IEolDKvFrSPBu+GzAssGPGCBgzCbyEc=; b=M83ermzmqI0y0Iqh/p3tlRlo9z
+        y9UaIXnFJbaJaM/mEnVL6V8cnRV6kDswOXAcd7oslIUuon9kP1D9n7iAZXe11jrVsg+DbKDZPq04y
+        rtw11LaOAbMQEd76ZnsPtxQ628hOXz4lIodeqePIo7VGGPuXCNnP8YzrctaQeyL4BNJIYJj13L2Pw
+        eFN71bFj7rlRFgTjdE5acNClR0f3X8SZzh4BdbJpFJlwXiBlcgAJQQcBEigbwgiUd6pVlSUcV3mv5
+        5OatjyVaV3/4jobJrzvn0HQ+0l9VdMonP4EqLdVhJAUHUmv/6eNpYMIOBjoZSHY1fwLwxnOvd+Nh9
+        +H12pALA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdH4p-0003wY-Bi; Wed, 11 Jul 2018 15:30:47 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id BF58A20297EAB; Wed, 11 Jul 2018 17:30:44 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 17:30:44 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
+Message-ID: <20180711153044.GK2476@hirez.programming.kicks-ass.net>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-19-yu-cheng.yu@intel.com>
+ <20180711094448.GZ2476@hirez.programming.kicks-ass.net>
+ <1531321615.13297.9.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1530870195-13576-2-git-send-email-rohitkr@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531321615.13297.9.camel@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 03:13:11PM +0530, Rohit kumar wrote:
-> Add devicetree bindings documentation file for SDM845 sound card.
-> 
-> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-> ---
->  .../devicetree/bindings/sound/qcom,sdm845.txt      | 80 ++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/qcom,sdm845.txt
+On Wed, Jul 11, 2018 at 08:06:55AM -0700, Yu-cheng Yu wrote:
+> On Wed, 2018-07-11 at 11:44 +0200, Peter Zijlstra wrote:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> > What happened to:
+> > 
+> >   https://lkml.kernel.org/r/1528729376.4526.0.camel@2b52.sc.intel.com
+> 
+> Yes, I put that in once and realized we only need to skip the
+> instruction and return err.  Do you think we still need a handler for
+> that?
+
+I find that other form more readable, but then there's Nadav doing asm
+macros to shrink inline asm thingies so maybe he has another suggestion.
