@@ -2,130 +2,104 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D242C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8997C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D1CD20878
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:14:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1CD20878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E57920878
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:14:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E57920878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732472AbeGKJR1 (ORCPT
+        id S1732492AbeGKJSO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:17:27 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42477 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726384AbeGKJR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:17:27 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 52C6E20739; Wed, 11 Jul 2018 11:14:06 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2B6BC20732;
-        Wed, 11 Jul 2018 11:14:06 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 11:14:06 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Subject: Re: [PATCH v5 13/22] ARM: sun8i-a23-a33: Add SRAM controller node
- and C1 SRAM region
-Message-ID: <20180711091405.mkhzamcmimhofryo@flea>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
- <20180710080114.31469-14-paul.kocialkowski@bootlin.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7gn7zc3tutiqnnqt"
-Content-Disposition: inline
-In-Reply-To: <20180710080114.31469-14-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180622
+        Wed, 11 Jul 2018 05:18:14 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:34731 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeGKJSN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 05:18:13 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0MHpFN-1fe09c0kQ9-003b7L; Wed, 11 Jul 2018 11:14:49 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     adilger.kernel@dilger.ca
+Cc:     arnd@arndb.de, jack@suse.cz, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sirmy15@gmail.com,
+        stable@vger.kernel.org, tgnottingham@gmail.com, tytso@mit.edu,
+        y2038@lists.linaro.org
+Subject: [PATCH v2 2/6] ext4: use 64-bit timestamps for mmp_time
+Date:   Wed, 11 Jul 2018 11:14:10 +0200
+Message-Id: <20180711091414.1494843-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180711091414.1494843-1-arnd@arndb.de>
+References: <20180711091414.1494843-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:9KIdbbQHbE6BmsF9QS6CE0VZGaLOATdivJmOebBq+U+ibEFUsDJ
+ Is1BBABZEJivi6E85kYeXu43lgaCw21XcC2NMi5/FdBXwmx7GJEnEnjTOXTRByt9wxear5s
+ S7Zg/wb972C3ezH6dFdR3UgL/gdK7rJJqxR0h9ctk4z6yMQm2jgTxM60iDvF9g2Ahj/pbQU
+ tFQ+tb+ZBVJjLl4lmYPag==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:bq64pgaBvEc=:uAfBXobQm2ytQkwu68BoFG
+ QZ3nPwDTMoco9xYM7diFqXMlR0NnVfv+5QVSJjlDhrt6Pr0wAzpdAvlwnYmReyMaHj/txRCXK
+ pZwMD4/YnYaklMv3eci9bxOgV6IKXMa/ZuJgADCmxc8NHpMqCPFsmIR0lQ/OpRckDVtbxWxd7
+ 4BAXQCmsgJR/vwc+iTRJ4JzY4Y2F+7hqPQMXu2ud6x/iSbWrGrenLD0ldhLIx/BR+UoaHTTqA
+ DynC8/JjT8G4hfhLafCwIwNwznnOEq59g8HOzovA1Cjpu/Bkl/l6NK5k2EIjuzqSBD3w/nYoS
+ Xs+EvEfJ6hQxDnT8Hoy4VmLEHacntS2H1ohPv8kjd/kOq9y4wLVXC77b9X+CZUC4cOO0dtFy1
+ H8/3ecXG70s/snYXdTT7etChOxTiK8qYqZ408beGQGau0VsM6eFqRV+U2RQsIcmysgduqqcgv
+ Q2Y/SsLp7VFq/2f3np6OM6fWoDqZmHCdQW4lamFsqh7h1TmKZnDaYtWJ+5aHID8Gi4zTa1k30
+ J0uSF/nhEDPYOhtThMuRrS97kWAKNaS0F3bCj4MhNzOTVJUbX2Ywe+DWsly4mcpY1iphz9Gl+
+ dXT6HizkhrPQIcvkrqCTMzcwdLwGS3eY5YzU/Xin5ehI1uwfGqSgdW+epp/BmmSpDpD6pwuYZ
+ 2w36o4+s195WI3Su2mh35Y3uTaQLJpCGofDxfBhlAcUL8KFg7cGqJD3mxEWwH5B3O5XA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The mmp_time field is 64 bits wide, which is good, but calling
+get_seconds() results in a 32-bit value on 32-bit architectures. Using
+ktime_get_real_seconds() instead returns 64 bits everywhere.
 
---7gn7zc3tutiqnnqt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Andreas Dilger <adilger@dilger.ca>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ fs/ext4/mmp.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Tue, Jul 10, 2018 at 10:01:05AM +0200, Paul Kocialkowski wrote:
-> From: Maxime Ripard <maxime.ripard@bootlin.com>
->=20
-> This adds a SRAM controller node for the A23 and A33, with support for
-> the C1 SRAM region that is shared between the Video Engine and the CPU.
->=20
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+diff --git a/fs/ext4/mmp.c b/fs/ext4/mmp.c
+index 27b9a76a0dfa..39da4eb48361 100644
+--- a/fs/ext4/mmp.c
++++ b/fs/ext4/mmp.c
+@@ -147,7 +147,7 @@ static int kmmpd(void *data)
+ 
+ 	mmp_block = le64_to_cpu(es->s_mmp_block);
+ 	mmp = (struct mmp_struct *)(bh->b_data);
+-	mmp->mmp_time = cpu_to_le64(get_seconds());
++	mmp->mmp_time = cpu_to_le64(ktime_get_real_seconds());
+ 	/*
+ 	 * Start with the higher mmp_check_interval and reduce it if
+ 	 * the MMP block is being updated on time.
+@@ -165,7 +165,7 @@ static int kmmpd(void *data)
+ 			seq = 1;
+ 
+ 		mmp->mmp_seq = cpu_to_le32(seq);
+-		mmp->mmp_time = cpu_to_le64(get_seconds());
++		mmp->mmp_time = cpu_to_le64(ktime_get_real_seconds());
+ 		last_update_time = jiffies;
+ 
+ 		retval = write_mmp_block(sb, bh);
+@@ -244,7 +244,7 @@ static int kmmpd(void *data)
+ 	 * Unmount seems to be clean.
+ 	 */
+ 	mmp->mmp_seq = cpu_to_le32(EXT4_MMP_SEQ_CLEAN);
+-	mmp->mmp_time = cpu_to_le64(get_seconds());
++	mmp->mmp_time = cpu_to_le64(ktime_get_real_seconds());
+ 
+ 	retval = write_mmp_block(sb, bh);
+ 
+-- 
+2.9.0
 
-Fixed the compatible and the commit prefix and applied.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---7gn7zc3tutiqnnqt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFyl0ACgkQ0rTAlCFN
-r3R+Yw/+MJEg67M6HlThebPjS7qiYOcx73WG571ioM0oj9J8iZVduxmHR5kuCVv/
-0CdWEe7KV3Af80YtCKMs7hWBD1+Oly1PsXUIV3WZa6+r7vMBuyBqf9TUh5O41F0L
-G6KeYnNXNGpRaMRFXRp6bxAKEOESSYjlSk0nUKTx70HtS0WPEuRjLyTID19tgGX0
-qG9gDSdbnqHueVQSbx6c4/EuBEO2MdgoqNr8DC/iKMHEsGGVX9pmrRRUu+nil1T7
-6vT3ZVUSku9ElBhnLLLtPX6MWQDJ0h0Ct9u8UFg/ylU7ZYzZ8/l/w4vSwgdYq0t3
-wwV9T4tuEgV8/tS8LVQN5SMaPmmqHygXx3unslxwI8XiOkTapNmCTPITDW+NeSu1
-a3CLyTpHQ+1S5poIpNCbi0dn5Rp70LZkKjn9qCq83yORwk8b0xJL72AOovOLZ2CA
-qYE6d7QJcUVlZebY+zWiLzUgUuJdOI6XOLhq1tx9ch9mVE9QCGBkNtX3oi7dPEwa
-LqC4IxSLYM4IGKyUBXFJuN48nPIsZHsZJnMGCBtAz1ajG4WINkK/IoJI2Dfu9ZbS
-eq/10Uwc/HoqhWYZT6JMC6rL5VSi8ojiSt2dhT11LeEuoow81Mb0U/gXwLBVtyaz
-eXa1vTaL0GdA+YAwXULDx1AbcUTq5mkwYHGA6ucgencLzprFdhM=
-=sk20
------END PGP SIGNATURE-----
-
---7gn7zc3tutiqnnqt--
