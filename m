@@ -2,253 +2,115 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FE1C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CFCDC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2200020846
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:32:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKCOJZRl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2200020846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C9EDC20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:32:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9EDC20846
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ab.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389742AbeGKQhF (ORCPT
+        id S2387947AbeGKQhy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:37:05 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41459 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726609AbeGKQhF (ORCPT
+        Wed, 11 Jul 2018 12:37:54 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:59959 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387727AbeGKQhy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:37:05 -0400
-Received: by mail-ed1-f68.google.com with SMTP id s24-v6so3435789edr.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 09:31:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=gDYoENH5AU6WHoMaSZUz/Y7iMW/WbSpq89VE7J2V8bc=;
-        b=GKCOJZRl2BBjdZ1cF0jdxROtZkgLmJluBdzGKFKIFmPaEHw8cdM8ohh8NMYGy2x3J/
-         kp8XpRZQajIgnIRt4F5v/ZwEHNTSAlxPj5NbVvOkWd/TCw4eIv23jW6O3T0fzTW4gAcC
-         f6J966hPnlFiumZ9CKCWxsaqFAe0jwsgjdmDLr3WdYcBZjB/t6JzaW1aVsaw1HA9jt3w
-         WfY2O+cJZsRVGEzxFZQlnZiWhkJ6zes4CeJAA3Wj4tulXD+h0OSjOSfsws+ylPdeJSL+
-         Q5zGIShWpmZb5uOEGZ6nSVhiJwtgL0agg5WbE+5TXOsmljFfkuGHrAlYPCn789YTU4Y7
-         Czhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=gDYoENH5AU6WHoMaSZUz/Y7iMW/WbSpq89VE7J2V8bc=;
-        b=q8frZfPlSaE/f6jEGD74k2KipKVo6z2GAMQGPXAHdDY9ufeYxQXvWziZsvB785eFmr
-         7Fp0UHp+IShP+qeAY9gqsKEOj3yTEAgvWzYUaIW9gK1XZO7rGpqrGVDpxFB3Z7bMCcFG
-         z/n7w5KCquK/Hu2yxgNBYclLrcf51J3neQYMCdN4zYSyR8E3QKCFv0L/MUKohSabvci5
-         9kbmMWPvAqlBERBsm3QvQ+WUs3UhtTESro4RrxQ2KCyaeGDEKsCIvJF7i3iT0efvjOOa
-         ihKm1f91mOOjJGuAFxcpvq/gEBYNkOlunC8ZwbP/RH8q0/nAQB5yWVFuj0QNsqeFJFPp
-         eymQ==
-X-Gm-Message-State: APt69E3U6/giwSxONY8j/Sb17BFn9ZTVugW9Bw67qjuhrepx6EUNDONa
-        90W3vB/4bviyoyJajZqtMCQrrOxNddKeB7j+GvI=
-X-Google-Smtp-Source: AAOMgpcgFxHqstEQjW2NYU576qSMpHPjO3xtEShk67LMRfCxfdy6pgZI6qoU6LXnGiK6WpaCftnuGL7+m+JUy576RhI=
-X-Received: by 2002:a50:e885:: with SMTP id f5-v6mr32066262edn.39.1531326717253;
- Wed, 11 Jul 2018 09:31:57 -0700 (PDT)
+        Wed, 11 Jul 2018 12:37:54 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w6BGWLOX007142
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 12 Jul 2018 01:32:21 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6BGWLJF021870;
+        Thu, 12 Jul 2018 01:32:21 +0900
+Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6BGWLXD002287;
+        Thu, 12 Jul 2018 01:32:21 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.140] [10.38.151.140]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-1905699; Thu, 12 Jul 2018 01:31:16 +0900
+Received: from BPXM09GP.gisp.nec.co.jp ([10.38.151.201]) by
+ BPXC12GP.gisp.nec.co.jp ([10.38.151.140]) with mapi id 14.03.0319.002; Thu,
+ 12 Jul 2018 01:31:15 +0900
+From:   Kazuhito Hagio <k-hagio@ab.jp.nec.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
+        Masaki Tachibana <mas-tachibana@vf.jp.nec.com>,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>
+Subject: RE: [PATCH] uts: Don't randomize "struct uts_namespace".
+Thread-Topic: [PATCH] uts: Don't randomize "struct uts_namespace".
+Thread-Index: AQHUFX6ASnXzCzL8XECr2n/5vacVkaSKO0hA
+Date:   Wed, 11 Jul 2018 16:31:15 +0000
+Message-ID: <4AE2DC15AC0B8543882A74EA0D43DBEC035582C1@BPXM09GP.gisp.nec.co.jp>
+References: <1530871650-3582-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <CA+55aFzK5z4VQEMQAOqVHXpm+o_gd_eg5Vecck07E=WmoO6BFA@mail.gmail.com>
+ <271dcdcd-d622-552c-338a-5eeca5e2b4a0@i-love.sakura.ne.jp>
+In-Reply-To: <271dcdcd-d622-552c-338a-5eeca5e2b4a0@i-love.sakura.ne.jp>
+Accept-Language: ja-JP, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [143.101.133.131]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a50:9f67:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 09:31:56
- -0700 (PDT)
-In-Reply-To: <AM0PR04MB4211AD523CFB8DA99AB05EFC805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1531061817-1980-1-git-send-email-aisheng.dong@nxp.com>
- <1531061817-1980-4-git-send-email-aisheng.dong@nxp.com> <20180710141940.oed3kwhbplnykl36@pengutronix.de>
- <AM0PR04MB42113391A6EA741E2767C74B805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20180711075456.npwfpm6mtpkx7k76@pengutronix.de> <AM0PR04MB42119DAE987CDF871CA8CFC6805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <CABb+yY1kH8mr3=nazsLXrLaNWT0x6j9MizVaE+bZaHmrsKn-Wg@mail.gmail.com> <AM0PR04MB4211AD523CFB8DA99AB05EFC805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Wed, 11 Jul 2018 22:01:56 +0530
-Message-ID: <CABb+yY0SqUFfS0ts9QHnKbqH0YW5-dLw7PxcjVa3eK_c3zrNpA@mail.gmail.com>
-Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
-To:     "A.s. Dong" <aisheng.dong@nxp.com>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "dongas86@gmail.com" <dongas86@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 6:28 PM, A.s. Dong <aisheng.dong@nxp.com> wrote:
-> Hi Jassi,
->
->> -----Original Message-----
->> From: Jassi Brar [mailto:jassisinghbrar@gmail.com]
->> Sent: Wednesday, July 11, 2018 6:44 PM
->> To: A.s. Dong <aisheng.dong@nxp.com>
->> Cc: Sascha Hauer <s.hauer@pengutronix.de>; linux-arm-
->> kernel@lists.infradead.org; dongas86@gmail.com; linux-
->> kernel@vger.kernel.org; Oleksij Rempel <o.rempel@pengutronix.de>; dl-
->> linux-imx <linux-imx@nxp.com>; kernel@pengutronix.de; Fabio Estevam
->> <fabio.estevam@nxp.com>; shawnguo@kernel.org
->> Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
->>
->> On Wed, Jul 11, 2018 at 4:07 PM, A.s. Dong <aisheng.dong@nxp.com> wrote:
->> >
->> > > -----Original Message-----
->> > > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
->> > > Sent: Wednesday, July 11, 2018 3:55 PM
->> > > To: A.s. Dong <aisheng.dong@nxp.com>
->> > > Cc: linux-arm-kernel@lists.infradead.org; dongas86@gmail.com; Jassi
->> > > Brar <jassisinghbrar@gmail.com>; linux-kernel@vger.kernel.org;
->> > > Oleksij Rempel <o.rempel@pengutronix.de>; dl-linux-imx
->> > > <linux-imx@nxp.com>; kernel@pengutronix.de; Fabio Estevam
->> > > <fabio.estevam@nxp.com>; shawnguo@kernel.org
->> > > Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
->> > >
->> > > On Wed, Jul 11, 2018 at 07:29:38AM +0000, A.s. Dong wrote:
->> > > > Hi Sascha,
->> > > >
->> > > > > -----Original Message-----
->> > > > > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
->> > > > > Sent: Tuesday, July 10, 2018 10:20 PM
->> > > > > To: A.s. Dong <aisheng.dong@nxp.com>
->> > > > > Cc: linux-arm-kernel@lists.infradead.org; dongas86@gmail.com;
->> > > > > Jassi Brar <jassisinghbrar@gmail.com>;
->> > > > > linux-kernel@vger.kernel.org; Oleksij Rempel
->> > > > > <o.rempel@pengutronix.de>; dl-linux-imx <linux-imx@nxp.com>;
->> > > > > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
->> > > > > shawnguo@kernel.org
->> > > > > Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
->> > > > >
->> > > > > Hi,
->> > > > >
->> > > > > On Sun, Jul 08, 2018 at 10:56:55PM +0800, Dong Aisheng wrote:
->> > > > > > This is used for i.MX multi core communication.
->> > > > > > e.g. A core to SCU firmware(M core) on MX8.
->> > > > > >
->> > > > > > Tx is using polling mode while Rx is interrupt driven and
->> > > > > > schedule a hrtimer to receive remain words if have more than
->> > > > > > 4 words.
->> > > > >
->> > > > > You told us that using interrupts is not possible due to
->> > > > > miserable performance, we then provided you a way with which you
->> could poll.
->> > > > > Why are you using interrupts now?
->> > > > >
->> > > >
->> > > > Because mailbox framework does not support sync rx now, I think we
->> > > > do not need to wait for that feature done first as it's
->> > > > independent and separate features of framework.
->> > >
->> > > You can wait forever for this feature, nobody will add it for you.
->> > > It's up to you to add support for that feature. Who else should add this
->> feature if not you?
->> > > And when will you add that feature if not now when you actually need it?
->> > > It is common practice that you adjust the frameworks to your needs
->> > > rather than working around them.
->> > >
->> >
->> > I'm willing to add it. Just because you said Jassi already had the
->> > idea on how to Implement it and does not add much complexity. So I just
->> want to see his patches.
->> > But if he did not work on it, I can also help on it.
->> >
->> I am not much aware of the history of this conversation... but it seems you
->> need to make use of mbox_chan_ops.peek_data().
->>
->> If not that, please let me know the requirement.
->>
->
-> Thanks for the suggestion.
-> It looks to me may work.
->
-> From the definition, it seems it's used to pull data from remote side.
-> /**
->  * mbox_client_peek_data - A way for client driver to pull data
->  *                      received from remote by the controller.
->  * @chan: Mailbox channel assigned to this client.
->  *
->  * A poke to controller driver for any received data.
->  * The data is actually passed onto client via the
->  * mbox_chan_received_data()
->  * The call can be made from atomic context, so the controller's
->  * implementation of peek_data() must not sleep.
->  *
->  * Return: True, if controller has, and is going to push after this,
->  *          some data.
->  *         False, if controller doesn't have any data to be read.
->  */
-> bool mbox_client_peek_data(struct mbox_chan *chan)
-> {
->         if (chan->mbox->ops->peek_data)
->                 return chan->mbox->ops->peek_data(chan);
->
->         return false;
-> }
-> EXPORT_SYMBOL_GPL(mbox_client_peek_data);
-> But it seems most users in kernel simply implement it as a data available
-> Checking rather than receiving it.
-> See:
-> drivers/mailbox/ti-msgmgr.c
-> drivers/mailbox/mailbox-altera.c
->
-> Only bcm uses it to receive data.
-> drivers/mailbox/bcm-flexrm-mailbox.c
->
-> For our requirement, we want to implement sync receiving protocol like:
-> Sc_call_rpc()
-> {
->         mbox_send_message(chan, msg)
->         If (!no_resp)
->                 // rx also stored in msg
->                 mbox_receive_msg_in_polling(chan, msg);
->         mbox_client_txdone();
-> }
->
-> If using peek_data, it can be:
-> Sc_call_rpc()
-> {
->         mbox_send_message(chan, msg)
->         If (!no_resp)
->                 // rx also stored in msg
->                 Mbox_client_peek_data(chan);
->
-Yes, and you may want to loop for a certain amount of time if peek
-keeps returning false.
+SGkgVGV0c3VvLA0KDQpUaGFua3MgZm9yIHlvdXIgcmVwb3J0Lg0KDQpPbiBGcmlkYXksIEp1bHkg
+NiwgMjAxOCA3OjEwIFBNLCBUZXRzdW8gSGFuZGEgd3JvdGU6DQo+IEhlbGxvIEtlbidpY2hpLA0K
+PiANCj4gSSBub3RpY2VkIHRoYXQgbWFrZWR1bXBmaWxlICggaHR0cHM6Ly9zb3VyY2Vmb3JnZS5u
+ZXQvcC9tYWtlZHVtcGZpbGUvY29kZS8gKQ0KPiBjYW4gbm8gbG9uZ2VyIGRldGVjdCBrZXJuZWwg
+dmVyc2lvbiBjb3JyZWN0bHkgYmVjYXVzZSAic3RydWN0IHV0c19uYW1lc3BhY2UiDQo+ICh3aGlj
+aCBpcyBleHBvc2VkIHRvIHVzZXJzcGFjZSB2aWEgdm1jb3JlaW5mbykgaXMgc3ViamVjdGVkIHRv
+IHJhbmRvbWl6YXRpb24NCj4gYnkgR0NDX1BMVUdJTl9SQU5EU1RSVUNUIGtlcm5lbCBjb25maWcg
+b3B0aW9uIHNpbmNlIDQuMTMuDQo+IA0KPiBUaGUgY29kZSB3YXMgaW50cm9kdWNlZCBieSBiZWxv
+dyBjb21taXQuDQo+IA0KPiAgIGNvbW1pdCBiZmM4ZmUxODFjODIyYWQwZDg0OTVjZWRhM2M3MTA5
+YTQwNzE5MmYwDQo+ICAgQXV0aG9yOiBrZW4xX29obWljaGkgPGtlbjFfb2htaWNoaT4NCj4gICBE
+YXRlOiAgIEZyaSBEZWMgMjIgMDc6NDE6MTQgMjAwNiArMDAwMA0KPiANCj4gICAgICAgbGludXgt
+Mi42LjE5IHN1cHBvcnQuDQo+ICAgICAgIE9uIGxpbnV4LTIuNi4xOCBvciBmb3JtZXIsIHRoZSBy
+ZWxlYXNlIGluZm9ybWF0aW9uIGNvdWxkIGJlIGdvdHRlbiBmcm9tDQo+ICAgICAgIHRoZSBzeW1i
+b2wgInN5c3RlbV91dHNuYW1lIi4gQnV0IG9uIGxpbnV4LTIuNi4xOSwgaXQgY2FuIGJlIGRvbmUg
+ZnJvbSB0aGUNCj4gICAgICAgc3ltYm9sICJpbml0X3V0c19ucyIuIEEgbmV3IG1ha2VkdW1wZmls
+ZSBjYW4gZ2V0IHRoZSByZWxlYXNlIGluZm9ybWF0aW9uDQo+ICAgICAgIGZyb20gdGhlIGV4aXN0
+aW5nIHN5bWJvbC4NCj4gDQo+IENhbiB5b3UgZGV0ZWN0IGtlcm5lbCB2ZXJzaW9uIHdpdGhvdXQg
+dXNpbmcgInN0cnVjdCB1dHNfbmFtZXNwYWNlIiA/DQoNCm1ha2VkdW1wZmlsZSBuZWVkcyBhIHdo
+b2xlICJzdHJ1Y3QgbmV3X3V0c25hbWUiIGRhdGEgaW4gInN0cnVjdCB1dHNfbmFtZXNwYWNlIg0K
+YmVjYXVzZSBpdCBoYXMgdG8gd3JpdGUgdGhlIGRhdGEgb3V0IHRvIGR1bXAgZmlsZSBoZWFkZXIs
+IHNvIHdlIG5lZWQgdG8gYWRkDQp0aGUgb2Zmc2V0IG9mIHV0c19uYW1lc3BhY2UubmFtZSB0byB2
+bWNvcmVpbmZvIG9yIGdldCBpdCBmcm9tIHZtbGludXguDQpCdXQgSSdtIG5vdCBzdXJlIHdoZXRo
+ZXIgaXQgaXMgYWxsIHRvIGdldCBtYWtlZHVtcGZpbGUgd29ya2luZyB3ZWxsIHdpdGggdGhlDQpy
+YW5kb21pemF0aW9uLCBlLmcuIHNvbWUgYWRkaXRpb25hbCBvZmZzZXQgZXhwb3N1cmVzIG1pZ2h0
+IGJlIG5lZWRlZC4NCg0KQW5kIEkgc2F3IGEgcmVwb3J0IHRvIHRoZSBjcmFzaCB1dGlsaXR5IG1h
+aWxpbmcgbGlzdCB0aGF0IGNyYXNoIGFsc28gY291bGRuJ3QNCndvcmsgd2l0aCB0aGUgcmFuZG9t
+aXphdGlvbiBkdWUgdG8gYSB2bWxpbnV4IGlzc3VlLCBzbyBpZiBpdCBpcyBzdGlsbCBub3QgZml4
+ZWQsDQpldmVuIGlmIG1ha2VkdW1wZmlsZSAoYW5kIGtlcm5lbCkgaXMgZml4ZWQsIHdlIGNhbm5v
+dCB1c2UgY3Jhc2guDQoNCiogW0NyYXNoLXV0aWxpdHldIFVzaW5nIGNyYXNoIHdpdGggc3RydWN0
+dXJlIGxheW91dCByYW5kb21pemVkIGtlcm5lbA0KICBodHRwczovL3d3dy5yZWRoYXQuY29tL2Fy
+Y2hpdmVzL2NyYXNoLXV0aWxpdHkvMjAxOC1KYW51YXJ5L3RocmVhZC5odG1sIzAwMDM1DQoNClRo
+YW5rcywNCkthenUNCg0KPiANCj4gT24gMjAxOC8wNy8wNyAxOjExLCBMaW51cyBUb3J2YWxkcyB3
+cm90ZToNCj4gPiBPbiBGcmksIEp1bCA2LCAyMDE4IGF0IDM6MDcgQU0gVGV0c3VvIEhhbmRhDQo+
+ID4gPHBlbmd1aW4ta2VybmVsQGktbG92ZS5zYWt1cmEubmUuanA+IHdyb3RlOg0KPiA+Pg0KPiA+
+PiBJIG5vdGljZWQgdGhhdCBtYWtlZHVtcGZpbGUgdXRpbGl0eSBpcyBmYWlsaW5nIHRvIGNoZWNr
+IGtlcm5lbCB2ZXJzaW9uLCBmb3INCj4gPj4gaXQgZGVwZW5kcyBvbiBvZmZzZXQgb2YgInN0cnVj
+dCB1dHNfbmFtZXNwYWNlIi0+bmFtZSBiZWluZyBzaXplb2YoaW50KS4NCj4gPg0KPiA+IEZvciBz
+b21ldGhpbmcgbGlrZSB0aGlzLCB3ZSBmaXggbWFrZWR1bXBmaWxlIGluc3RlYWQuIFRoaXMgaXMg
+bm90IGENCj4gPiAidXNlciBwcm9ncmFtIiB1c2luZyBzeXN0ZW0gY2FsbHMgZXRjLCB0aGlzIGlz
+IHNvbWV0aGluZyB0aGF0IGRlbHZlcw0KPiA+IGludG8gdGhlIGtlcm5lbCBkdW1wIGFuZCB0cmll
+cyB0byBtYWtlIHNlbnNlIG9mIGl0Lg0KPiA+DQo+ID4gV2hlcmUgaXMgdGhlIG1ha2VkdW1wZmls
+ZSBzb3VyY2UgY29kZT8gV2hhdCBpcyBpdCB0cnlpbmcgdG8gZG8sIGFuZCB3aHk/DQo+ID4NCj4g
+PiBPbmUgb3B0aW9uIGlzIHRvIGp1c3Qgc2F5ICJoZXksIHlvdSBjYW4ndCBtYWtlIG11Y2ggc2Vu
+c2Ugb2YgYQ0KPiA+IHJhbmRvbWl6ZWQga2VybmVsIGR1bXAgYW55d2F5LCBzbyBkb24ndCBldmVu
+IHRyeSIuDQo+ID4NCj4gPiAgICAgICAgICAgICAgICAgIExpbnVzDQo+ID4NCj4gDQoNCg==
 
->         mbox_client_txdone();
-> }
->
-> And for mu controller driver .peek_data():
-> imx_mu_peek_data(chan)
-> {
->         // get first word and parse data size
->         imx_mu_receive_msg(&mu->chans, 0, mu->msg);
->
->         raw_data = (u8 *)mu->msg;
->         size = raw_data[1];
->
->         // receive rest of them
->         for (i = 1; i < size; i++) {
->                 ret = imx_mu_receive_msg(&mu->chans, i % 4, mu->msg + i);
->                 if (ret)
->                         return false;
->         }
->
->         mbox_chan_received_data(&mu->chans, (void *)mu->msg);
->
-Not sure how your controller works. But the peek() callback only
-_checks_ if there is some data available to be read. Please note that
-peek() can not sleep.
-So if the data fetching doesn't sleep you can do that here, otherwise
-peek has to schedule the actual fetching of data from remote and
-providing to the client via mbox_chan_received_data.
-
--jassi
