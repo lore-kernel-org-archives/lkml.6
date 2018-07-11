@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1754CC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A73E1C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4B6D208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54EC5208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="JB5p3sWl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B6D208FA
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="CBmzUBNp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54EC5208FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733225AbeGKLfO (ORCPT
+        id S1733057AbeGKLeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:35:14 -0400
+        Wed, 11 Jul 2018 07:34:13 -0400
 Received: from 8bytes.org ([81.169.241.247]:37844 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733038AbeGKLeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:34:13 -0400
+        id S1733011AbeGKLeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:34:12 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 8C95CAEE; Wed, 11 Jul 2018 13:30:05 +0200 (CEST)
+        id 9FF7CAB8; Wed, 11 Jul 2018 13:30:06 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308607; bh=3uNGtXKSPN2zX9Iio6S58drmOOdV4IUS2tivFlQ4Kc4=;
+        t=1531308606; bh=Jfm7mY27FLX9BG6L/38y95AXYhceF3pCU1GA56dJNi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JB5p3sWlbUR9dzAOq6qKPg4GF0N21hcwENEtdTqeyHbc3h6IxHmknGARj88Cy1eml
-         nvI/eOc1T5HQsGg85dok1zCr3JUg9rSXOn3nA2pk7PgdrFrJAoSeUCFrsz9RIYoJXy
-         IbpgonbkXsb1PRAqL4RG/dfdy7KyAcBJqcv4C8dNz4Z/+5yWyNPaujIMykhE89LUuJ
-         gUGZZ8hTpvXogmd9vBzSUvHwwxjgz2gdkor4zfFwjiT90pFxV6278FQUVvP5w3urK2
-         iCgtLZL72ByFnsp64S2ctoAWNFXaV1qUmOJvDA3frgFfiHIqPJcmk+EUyi0UyFzaCB
-         S4kefIjM4SJbw==
+        b=CBmzUBNpS8XbkBnDGIXUwcB0sMbWv3rBJ3b5k6zhUpXPjZONI5b9RIOxptq5nz59Z
+         vh9u7KfZjO3IwD6zjBJBZG5lC1Kj77hXSNBjqSrjy+OpbzyWueOB4i5XpFC8/+Y62Q
+         BEDW0t6EeENjohJ/cMo3o4Sv1c5viXyMbQNVnMfGuvQsEd77u6pXYEV1jf26QVrJAz
+         A8MGH8gaJRctnFTANE4lY7iTetrqvUWQeEc7BUBMyMqUpBtBkWxw/4mXyxkTX6zRYs
+         CdTu3121Wx8rHpLBbdxnjKtct668zhDS0fIcgz7f5Ql5kfLWUwVKBMdvyPr1XOM9bK
+         rBfoxeKdWcCnA==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 31/39] x86/mm/dump_pagetables: Define INIT_PGD
-Date:   Wed, 11 Jul 2018 13:29:38 +0200
-Message-Id: <1531308586-29340-32-git-send-email-joro@8bytes.org>
+Subject: [PATCH 33/39] x86/ldt: Reserve address-space range on 32 bit for the LDT
+Date:   Wed, 11 Jul 2018 13:29:40 +0200
+Message-Id: <1531308586-29340-34-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
@@ -72,59 +72,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Define INIT_PGD to point to the correct initial page-table
-for 32 and 64 bit and use it where needed. This fixes the
-build on 32 bit with CONFIG_PAGE_TABLE_ISOLATION enabled.
+Reserve 2MB/4MB of address-space for mapping the LDT to
+user-space on 32 bit PTI kernels.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/mm/dump_pagetables.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/pgtable_32_types.h | 7 +++++--
+ arch/x86/mm/dump_pagetables.c           | 9 +++++++++
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
+diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
+index d9a001a..7297810 100644
+--- a/arch/x86/include/asm/pgtable_32_types.h
++++ b/arch/x86/include/asm/pgtable_32_types.h
+@@ -50,13 +50,16 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
+ 	((FIXADDR_TOT_START - PAGE_SIZE * (CPU_ENTRY_AREA_PAGES + 1))   \
+ 	 & PMD_MASK)
+ 
+-#define PKMAP_BASE		\
++#define LDT_BASE_ADDR		\
+ 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
+ 
++#define PKMAP_BASE		\
++	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
++
+ #ifdef CONFIG_HIGHMEM
+ # define VMALLOC_END	(PKMAP_BASE - 2 * PAGE_SIZE)
+ #else
+-# define VMALLOC_END	(CPU_ENTRY_AREA_BASE - 2 * PAGE_SIZE)
++# define VMALLOC_END	(LDT_BASE_ADDR - 2 * PAGE_SIZE)
+ #endif
+ 
+ #define MODULES_VADDR	VMALLOC_START
 diff --git a/arch/x86/mm/dump_pagetables.c b/arch/x86/mm/dump_pagetables.c
-index 2f3c919..e6fd0cd 100644
+index e6fd0cd..ccd92c4 100644
 --- a/arch/x86/mm/dump_pagetables.c
 +++ b/arch/x86/mm/dump_pagetables.c
-@@ -111,6 +111,8 @@ static struct addr_marker address_markers[] = {
+@@ -123,6 +123,9 @@ enum address_markers_idx {
+ #ifdef CONFIG_HIGHMEM
+ 	PKMAP_BASE_NR,
+ #endif
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++	LDT_NR,
++#endif
+ 	CPU_ENTRY_AREA_NR,
+ 	FIXADDR_START_NR,
+ 	END_OF_SPACE_NR,
+@@ -136,6 +139,9 @@ static struct addr_marker address_markers[] = {
+ #ifdef CONFIG_HIGHMEM
+ 	[PKMAP_BASE_NR]		= { 0UL,		"Persistent kmap() Area" },
+ #endif
++#ifdef CONFIG_MODIFY_LDT_SYSCALL
++	[LDT_NR]		= { 0UL,		"LDT remap" },
++#endif
+ 	[CPU_ENTRY_AREA_NR]	= { 0UL,		"CPU entry area" },
+ 	[FIXADDR_START_NR]	= { 0UL,		"Fixmap area" },
  	[END_OF_SPACE_NR]	= { -1,			NULL }
- };
- 
-+#define INIT_PGD	((pgd_t *) &init_top_pgt)
-+
- #else /* CONFIG_X86_64 */
- 
- enum address_markers_idx {
-@@ -139,6 +141,8 @@ static struct addr_marker address_markers[] = {
- 	[END_OF_SPACE_NR]	= { -1,			NULL }
- };
- 
-+#define INIT_PGD	(swapper_pg_dir)
-+
- #endif /* !CONFIG_X86_64 */
- 
- /* Multipliers for offsets within the PTEs */
-@@ -496,11 +500,7 @@ static inline bool is_hypervisor_range(int idx)
- static void ptdump_walk_pgd_level_core(struct seq_file *m, pgd_t *pgd,
- 				       bool checkwx, bool dmesg)
- {
--#ifdef CONFIG_X86_64
--	pgd_t *start = (pgd_t *) &init_top_pgt;
--#else
--	pgd_t *start = swapper_pg_dir;
--#endif
-+	pgd_t *start = INIT_PGD;
- 	pgprotval_t prot, eff;
- 	int i;
- 	struct pg_state st = {};
-@@ -566,7 +566,7 @@ EXPORT_SYMBOL_GPL(ptdump_walk_pgd_level_debugfs);
- static void ptdump_walk_user_pgd_level_checkwx(void)
- {
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
--	pgd_t *pgd = (pgd_t *) &init_top_pgt;
-+	pgd_t *pgd = INIT_PGD;
- 
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return;
+@@ -609,6 +615,9 @@ static int __init pt_dump_init(void)
+ # endif
+ 	address_markers[FIXADDR_START_NR].start_address = FIXADDR_START;
+ 	address_markers[CPU_ENTRY_AREA_NR].start_address = CPU_ENTRY_AREA_BASE;
++# ifdef CONFIG_MODIFY_LDT_SYSCALL
++	address_markers[LDT_NR].start_address = LDT_BASE_ADDR;
++# endif
+ #endif
+ 	return 0;
+ }
 -- 
 2.7.4
 
