@@ -2,131 +2,147 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30C5FC1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:38:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25972C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D54F520C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:38:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B670820C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:40:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XuzogMug"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D54F520C0E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="JzEUHgNv";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="k8LAQKBz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B670820C0C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389094AbeGKUoC (ORCPT
+        id S1733252AbeGKUqC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:44:02 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:35293 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389957AbeGKUma (ORCPT
+        Wed, 11 Jul 2018 16:46:02 -0400
+Received: from mail-yw0-f196.google.com ([209.85.161.196]:37044 "EHLO
+        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeGKUqC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:42:30 -0400
-Received: by mail-pl0-f68.google.com with SMTP id k1-v6so9649883plt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:36:27 -0700 (PDT)
+        Wed, 11 Jul 2018 16:46:02 -0400
+Received: by mail-yw0-f196.google.com with SMTP id w76-v6so9665640ywg.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=D7ME7LO5E4s3YJ4FFp74Tx+/SAi4RbuIMCZD6XUQqWc=;
+        b=JzEUHgNvOW2smCby/JtyoRdIHzS0WcGOp2HdooFuVRQq5LRhfx7erRjOfsSGzCmwwU
+         tZuAo2pACGi9tqc8MjuPGFlLDjSdPVAI1RCZkYozOcEWyOEJ6Zz9GeKZUQw4Cc1wblEu
+         yX/mszY2rXUlJxqzIGS/f/HVlqwKff8v7AR6a9tWArgHu3UUrRWb/2FoTfsRu45TQ41E
+         hrob/UeWIHKQ9G4v97hfvxYG/7WCbx1HzIR78e8i9HlDWaeTRJq28idqgQOi6VQZmx1K
+         ozLHLU3uoFN3jp26WKPDMqBoDyWx0pylFs5kB/ggdiRDghv0VmR0YLM7dPtE5t+d20lH
+         hv9w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=JBfo1fF2PqSm7e4PfP+/dVxXoai8pEOtQGF0NnToX8o=;
-        b=XuzogMugad7VfntrwqFlAbg699VmL688QYLzpI7JajgNZu4UDGBSKvZLyFV9bolsGE
-         NNY/r6qVOfsEMiMrBrDDSBbSIwycjNIusJrG+eZYWcAuxq7pYpoVUCvJq2iYa4qQL17+
-         rTXz2Y8zGziI6YwoR6J1cyZpgoA1ihpV8VZ2E=
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=D7ME7LO5E4s3YJ4FFp74Tx+/SAi4RbuIMCZD6XUQqWc=;
+        b=k8LAQKBzGqY7qkSE/HhZx3nhElJCMLMJFBXOcUT4T6q0GYQEM9Pfj3be9wjOvmx0xS
+         zxCOUnmKDpLMwgE15CBmEoM7KgQPlKt5hXAbYclwbWiSgtvlEVbXuVvb5c1+r+z+Pxp1
+         al/oz5qOg/pd+VpwmQw2zLKJCXH9zp8pkPwt8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=JBfo1fF2PqSm7e4PfP+/dVxXoai8pEOtQGF0NnToX8o=;
-        b=pmqxZXeJ3fRQ0Pg9YcbyhQTACuh1Mud5/FxdnFuiAiFPO5oaiqSjRopJf8fjSiPkbm
-         3wCaVHNcbnWnCJXSF5sWDTsBCF1vhj0fvfUQXysTP+qpidBWFOP/UF/Pv3yw+zjEesei
-         0w1oVBo862wOyBnFKfRZhU59Z7kLka0QN3tSnTTzv3jfnlJ0WvAehiMnZ5VxQeJw+0HN
-         /4v06fo1ndsJ6OGqoJNCabziP8/KxQsrRUhRhZSjyy8Q3EwWeplJ/LBotYMYY2Eo1QbB
-         eQQiMgXU+TM6y4ARqPTSTTuS+40R11kSj6XSZomq0vHML69sOJTAtrNxcaX9mfnQTYY5
-         q7qQ==
-X-Gm-Message-State: AOUpUlGzIrUIG3heRxu5/gwo0+HCqg592pbYTtnzgseIG7K0++4AYQq2
-        8lqm2u0VTm3TJ8I5pCwkid7z0w==
-X-Google-Smtp-Source: AAOMgpc6crFFXMtTNY+Tvcq/rd5+M87zPS+8kyt5D/1IK8oKZjsv9LEHOcz7AhHEFMzVG0y6iT3umw==
-X-Received: by 2002:a17:902:d218:: with SMTP id t24-v6mr131327ply.63.1531341387061;
-        Wed, 11 Jul 2018 13:36:27 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id f19-v6sm21047568pfd.147.2018.07.11.13.36.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 13:36:23 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=D7ME7LO5E4s3YJ4FFp74Tx+/SAi4RbuIMCZD6XUQqWc=;
+        b=GZySMl8YulZmDKOT7jCYzbu5KrHzzyyv/PA4hFYhDpe6++N3YLBtjVZOuDzrF/AucO
+         c4JtQ5uhHxU7JHjXQEMnWd16tm50gh6dDyEQiYFediPy6kiLNFbB97Q2Uo3QeMgN6061
+         FgMj0uThHEHQtL4HPt/BwqGZD0FtMGliwjJpgtJtASh7cfGjw86C49zeFB2avI60brd9
+         jf2w5VXdBSm0ufI99cPk2kQDEhOVlklwwhdp3v7NWZjI5ryWo/WC8CWhm01PhWN0gb9P
+         p2A94IvEDWs1HwsWZ7yYTx7/UrNVPA90Bp78BgUNfvyb35olqmmZV2mri2f0VKsuet6p
+         fpug==
+X-Gm-Message-State: AOUpUlEY2RRKWj/lezYKiXvgCT4v/YmG3MTzqcc6Ye/9y4/DBElUmkJM
+        RK45LfNnSP8RlfEi4mXI18lX2vii3DGYL9GG41xa6A==
+X-Google-Smtp-Source: AAOMgpcys6oTzXjnFbCPNu2Y+kexUDOmX4O7Ik5pOV+7rHIrPChn1oWspXapiub+d9mvvy1YecttCMq3mzdAA5BgZS0=
+X-Received: by 2002:a81:8742:: with SMTP id x63-v6mr80904ywf.129.1531341596755;
+ Wed, 11 Jul 2018 13:39:56 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 13:39:56
+ -0700 (PDT)
+In-Reply-To: <20180711091848.GA2889@kroah.com>
+References: <20180627035642.8561-1-nicolas.pitre@linaro.org>
+ <20180627035642.8561-2-nicolas.pitre@linaro.org> <CAGXu5j+KLvJ-n_QRrfq15E8iO_rqfpp+K7PDAZHZMHcemy9y7g@mail.gmail.com>
+ <20180711091848.GA2889@kroah.com>
 From:   Kees Cook <keescook@chromium.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     Kees Cook <keescook@chromium.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-crypto@vger.kernel.org, qat-linux@intel.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 01/14] crypto: xcbc: Remove VLA usage
-Date:   Wed, 11 Jul 2018 13:36:06 -0700
-Message-Id: <20180711203619.1020-2-keescook@chromium.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180711203619.1020-1-keescook@chromium.org>
-References: <20180711203619.1020-1-keescook@chromium.org>
+Date:   Wed, 11 Jul 2018 13:39:56 -0700
+X-Google-Sender-Auth: ozn6XTOEqCYMCcYk_76GUSQ_YXE
+Message-ID: <CAGXu5j+3M6go8HZRC0=ZW8v6_qkFKuLE_cQGta7tnG6t+SBnxA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] vt: preserve unicode values corresponding to
+ screen characters
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Dave Mielke <Dave@mielke.cc>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Adam Borowski <kilobyte@angband.pl>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-console@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the quest to remove all stack VLA usage from the kernel[1], this uses
-the maximum blocksize and adds a sanity check. For xcbc, the blocksize
-must always be 16, so use that, since it's already being enforced during
-instantiation.
+On Wed, Jul 11, 2018 at 2:18 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Tue, Jul 10, 2018 at 05:52:01PM -0700, Kees Cook wrote:
+>> On Tue, Jun 26, 2018 at 8:56 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
+>> > The vt code translates UTF-8 strings into glyph index values and stores
+>> > those glyph values directly in the screen buffer. Because there can only
+>> > be at most 512 glyphs, it is impossible to represent most unicode
+>> > characters, in which case a default glyph (often '?') is displayed
+>> > instead. The original unicode value is then lost.
+>> >
+>> > This patch implements the basic screen buffer handling to preserve unicode
+>> > values alongside corresponding display glyphs.  It is not activated by
+>> > default, meaning that people not relying on that functionality won't get
+>> > the implied overhead.
+>> >
+>> > Signed-off-by: Nicolas Pitre <nico@linaro.org>
+>> > Tested-by: Dave Mielke <Dave@mielke.cc>
+>> > Acked-by: Adam Borowski <kilobyte@angband.pl>
+>> > ---
+>> >  drivers/tty/vt/vt.c            | 220 +++++++++++++++++++++++++++++++--
+>> >  include/linux/console_struct.h |   2 +
+>> >  2 files changed, 211 insertions(+), 11 deletions(-)
+>> >
+>> > diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+>> > index 1eb1a376a0..7b636638b3 100644
+>> > --- a/drivers/tty/vt/vt.c
+>> > +++ b/drivers/tty/vt/vt.c
+>> > [...]
+>> > +static void vc_uniscr_scroll(struct vc_data *vc, unsigned int t, unsigned int b,
+>> > +                            enum con_scroll dir, unsigned int nr)
+>> > +{
+>> > +       struct uni_screen *uniscr = get_vc_uniscr(vc);
+>> > +
+>> > +       if (uniscr) {
+>> > +               unsigned int s, d, rescue, clear;
+>> > +               char32_t *save[nr];
+>>
+>> Can you adjust this to avoid the VLA here? I've almost gotten all VLAs
+>> removed from the kernel[1], and this is introducing a new one. :)
+>
+> This is already in my tree, sorry :(
 
-[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
+Yup, that's fine. (It's how I noticed it: linux-next VLA build tests.)
+I'm just hoping it can get solved before the merge window opens. :)
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- crypto/xcbc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+There are still a bunch of VLAs I'm chipping away at, but this was a
+newly added one, so I was hoping Nicolas (when he's back from
+vacation) will have ideas on how to best avoid it.
 
-diff --git a/crypto/xcbc.c b/crypto/xcbc.c
-index 25c75af50d3f..7aa03beed795 100644
---- a/crypto/xcbc.c
-+++ b/crypto/xcbc.c
-@@ -57,6 +57,8 @@ struct xcbc_desc_ctx {
- 	u8 ctx[];
- };
- 
-+#define XCBC_BLOCKSIZE	16
-+
- static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
- 				     const u8 *inkey, unsigned int keylen)
- {
-@@ -65,7 +67,10 @@ static int crypto_xcbc_digest_setkey(struct crypto_shash *parent,
- 	int bs = crypto_shash_blocksize(parent);
- 	u8 *consts = PTR_ALIGN(&ctx->ctx[0], alignmask + 1);
- 	int err = 0;
--	u8 key1[bs];
-+	u8 key1[XCBC_BLOCKSIZE];
-+
-+	if (WARN_ON(bs > sizeof(key1)))
-+		return -EINVAL;
- 
- 	if ((err = crypto_cipher_setkey(ctx->child, inkey, keylen)))
- 		return err;
-@@ -212,7 +217,7 @@ static int xcbc_create(struct crypto_template *tmpl, struct rtattr **tb)
- 		return PTR_ERR(alg);
- 
- 	switch(alg->cra_blocksize) {
--	case 16:
-+	case XCBC_BLOCKSIZE:
- 		break;
- 	default:
- 		goto out_put_alg;
+Thanks!
+
+-Kees
+
 -- 
-2.17.1
-
+Kees Cook
+Pixel Security
