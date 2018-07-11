@@ -2,118 +2,151 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08045C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:04:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 400B9C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:05:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFB8F20C0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:03:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB8F20C0B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 00E9420C03
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:05:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00E9420C03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389320AbeGKQI5 (ORCPT
+        id S2387413AbeGKQK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:08:57 -0400
-Received: from smtprelay0220.hostedemail.com ([216.40.44.220]:36163 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726586AbeGKQI5 (ORCPT
+        Wed, 11 Jul 2018 12:10:26 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:35092 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726586AbeGKQK0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:08:57 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 8319C1801A5F4;
-        Wed, 11 Jul 2018 16:03:56 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: blood24_52d189885c60
-X-Filterd-Recvd-Size: 2499
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 11 Jul 2018 16:03:55 +0000 (UTC)
-Message-ID: <2ebdcea56cc0d8e5cff906c7991c74fc6b01ee76.camel@perches.com>
-Subject: Re: [PATCH 3/6] staging: rtl8723bs: fix indentation
-From:   Joe Perches <joe@perches.com>
-To:     Michael Straube <straube.linux@gmail.com>,
-        gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Date:   Wed, 11 Jul 2018 09:03:53 -0700
-In-Reply-To: <005bbcfc-402d-db85-8f5a-1b64cfe6b612@gmail.com>
-References: <20180708103855.12473-1-straube.linux@gmail.com>
-         <20180708103855.12473-3-straube.linux@gmail.com>
-         <194c5239a1ef9a1f472bad7c5bcc6e3b7675b0ec.camel@perches.com>
-         <b7468cdd-1555-ef61-b475-3d4677aa423a@gmail.com>
-         <005bbcfc-402d-db85-8f5a-1b64cfe6b612@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 11 Jul 2018 12:10:26 -0400
+Received: by mail-oi0-f68.google.com with SMTP id i12-v6so50235629oik.2;
+        Wed, 11 Jul 2018 09:05:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=96BGb03MY9Tnfl/or+RrWuR/kUW1z838Ll98EZioRps=;
+        b=U2uElFMg1EHT3wYKEuVym/yXBohFQ4ZMem6z607ma2xgNVLs883mgcbzMjUeh59PnV
+         Tt+Fk3UndV3r496yjCPiadT/fZIHgtJdhoAGy8x/cw8q3nrj8c6UOSNnuy6VqefRcC9e
+         I/CwDkRA3N59ZGJz77TdcQzE+pdmMAWAQAjPKQOa5eV+6doqSQLpomgdkcKZ2P4OKDRS
+         OdAq/5P54GZqb9j230T4q/qlblhsyyNyTFdtK1Cf1viAlZMVRsA1Jxz11cGWBMXUME5D
+         IlV6NpiP0CQVuzjv05mO4SvGO6Ng0HovAOiANQS7ufedJRtoixIX4ZJiVSKzLJHT0E8R
+         he0g==
+X-Gm-Message-State: APt69E38X70pEuMgydK6UWE9kxMENH/WkkdhQRxUaMaKiA/SSpAYmuez
+        t5s8jNZ8JBzRwJGaZmgbhg==
+X-Google-Smtp-Source: AAOMgpcHQnFfFt16WRXLDFh8Oq+GlZWTbXjjeukztNej7aFle6EcjcPHJT79V+MklkEe/9cKrxpLlg==
+X-Received: by 2002:aca:5c8b:: with SMTP id q133-v6mr31202450oib.223.1531325125191;
+        Wed, 11 Jul 2018 09:05:25 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id i204-v6sm10209792oia.41.2018.07.11.09.05.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 09:05:24 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 10:05:21 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Frieder Schrempf <frieder.schrempf@exceet.de>
+Cc:     linux-mtd@lists.infradead.org, boris.brezillon@bootlin.com,
+        linux-spi@vger.kernel.org, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com, richard@nod.at,
+        miquel.raynal@bootlin.com, broonie@kernel.org, david.wolfe@nxp.com,
+        fabio.estevam@nxp.com, prabhakar.kushwaha@nxp.com,
+        yogeshnarayan.gaur@nxp.com, han.xu@nxp.com, shawnguo@kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 05/12] dt-bindings: spi: Adjust the bindings for the
+ FSL QSPI driver
+Message-ID: <20180711160521.GA16884@rob-hp-laptop>
+References: <1530789310-16254-1-git-send-email-frieder.schrempf@exceet.de>
+ <1530789310-16254-6-git-send-email-frieder.schrempf@exceet.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530789310-16254-6-git-send-email-frieder.schrempf@exceet.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-11 at 15:57 +0200, Michael Straube wrote:
-> On 07/08/18 19:36, Michael Straube wrote:
-> > On 07/08/18 18:46, Joe Perches wrote:
-> > > On Sun, 2018-07-08 at 12:38 +0200, Michael Straube wrote:
-> > > 
-> > > uint rtw_is_cckratesonly_included(u8 *rate)
-> > > {
-> > >     while (*rate) {
-> > >         u8 r = *rate & 0x7f;
-> > > 
-> > >         if (r != 2 && r != 4 && r != 11 && r != 22)
-> > >             return false;
-> > >         rate++;
-> > >     }
-> > > 
-> > >     return true;
-> > > }
-> > > 
-> > 
-> > The patch has been added to staging-testing already.
-> > I will send patches with your suggestions the next days.
+On Thu, Jul 05, 2018 at 01:15:01PM +0200, Frieder Schrempf wrote:
+> Adjust the documentation of the new SPI memory interface based
+> driver to reflect the new drivers settings.
+
+Bindings shouldn't change (other than new properties) due to driver 
+changes.
+
 > 
-> Would it be preferred to declare the variable at the functions beginning,
-> or doesn't it matter regarding coding style?
+> Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
+> ---
+> Changes in v2:
+> ==============
+> * Split the moving and editing of the dt-bindings in two patches
+> 
+>  .../devicetree/bindings/spi/spi-fsl-qspi.txt    | 22 ++++++++++----------
+>  1 file changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+> index 483e9cf..8b4eed7 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+> @@ -3,9 +3,8 @@
+>  Required properties:
+>    - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
+>  		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
+> -		 "fsl,ls1021a-qspi"
+> +		 "fsl,ls1021a-qspi", "fsl,ls2080a-qspi"
+>  		 or
+> -		 "fsl,ls2080a-qspi" followed by "fsl,ls1021a-qspi",
+>  		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
 
-Not really.
+So the 2080a h/w was compatible with the 1021a h/w, but now it is not? 
+How did the h/w change?
 
-It's generally preferred to have declarations in the
-nearest possible open brace to allow the compiler to
-reduce the overall stack space consumed by the function.
+>    - reg : the first contains the register location and length,
+>            the second contains the memory mapping address and length
+> @@ -15,14 +14,15 @@ Required properties:
+>    - clock-names : Should contain the name of the clocks: "qspi_en" and "qspi".
+>  
+>  Optional properties:
+> -  - fsl,qspi-has-second-chip: The controller has two buses, bus A and bus B.
+> -                              Each bus can be connected with two NOR flashes.
+> -			      Most of the time, each bus only has one NOR flash
+> -			      connected, this is the default case.
+> -			      But if there are two NOR flashes connected to the
+> -			      bus, you should enable this property.
+> -			      (Please check the board's schematic.)
 
-For example prefer:
+You can't just remove properties without explanation. Why is this no 
+longer needed? What about backwards compatibility with existing dtbs?
 
-int some_function(int arg, void *pointer)
-{
-	if (arg == 1} {
-		struct foo a = *(struct foo *)pointer;
-		...
-	} else if (arg == 2) {
-		struct bar b = *(struct bar *)pointer;
-		...
-	}
-}
+> -  - big-endian : That means the IP register is big endian
+> +  - big-endian : That means the IP registers format is big endian
 
-over
+This is a standard property so it doesn't really need to be redefined 
+here, but just reference the definition.
 
-int some_function(int arg, void *pointer)
-{
-	struct foo a;
-	s
-truct bar b;
-
-	if (arg == 1} {
-		a = *(struct foo *)pointer;
-		...
-	} else if (arg == 2) {
-		b = *(struct bar *)pointer;
-		...
-	}
-}
-
-as a and b could use the same stack in the
-first example but not the second.
+> +
+> +Required SPI slave node properties:
+> +  - reg: There are two buses (A and B) with two chip selects each.
+> +	 This encodes to which bus and CS the flash is connected:
+> +		<0>: Bus A, CS 0
+> +		<1>: Bus A, CS 1
+> +		<2>: Bus B, CS 0
+> +		<3>: Bus B, CS 1
+>  
+>  Example:
+>  
+> @@ -40,7 +40,7 @@ qspi0: quadspi@40044000 {
+>  	};
+>  };
+>  
+> -Example showing the usage of two SPI NOR devices:
+> +Example showing the usage of two SPI NOR devices on bus A:
+>  
+>  &qspi2 {
+>  	pinctrl-names = "default";
+> -- 
+> 2.7.4
+> 
