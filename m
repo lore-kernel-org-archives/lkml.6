@@ -6,101 +6,159 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25690C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965ABC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC7420C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:43:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC7420C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 5856E20C0D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:44:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5856E20C0D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389340AbeGKPss convert rfc822-to-8bit (ORCPT
+        id S2389352AbeGKPtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 11:48:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60550 "EHLO mail.kernel.org"
+        Wed, 11 Jul 2018 11:49:18 -0400
+Received: from mga04.intel.com ([192.55.52.120]:8554 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726722AbeGKPss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 11:48:48 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21E1C20C03;
-        Wed, 11 Jul 2018 15:43:52 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 11:43:50 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Joe Korty <joe.korty@concurrent-rt.com>,
-        Julia Cartwright <julia@ni.com>, tglx@linutronix.de,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH RT v2] sched/migrate_disable: fallback to
- preempt_disable() instead barrier()
-Message-ID: <20180711114350.3e43613f@gandalf.local.home>
-In-Reply-To: <20180711153952.2fcniletg62hy7xf@linutronix.de>
-References: <20180704173519.GA24614@zipoli.concurrent-rt.com>
-        <20180705155034.s6q2lsqc3o7srzwp@linutronix.de>
-        <20180705161807.GA5800@zipoli.concurrent-rt.com>
-        <20180705165937.5orx3md3krg4akaz@linutronix.de>
-        <20180706105857.5tgi5irdxdryet64@linutronix.de>
-        <20180711153952.2fcniletg62hy7xf@linutronix.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1732819AbeGKPtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 11:49:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 08:44:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="56861618"
+Received: from 2b52.sc.intel.com ([143.183.136.52])
+  by orsmga006.jf.intel.com with ESMTP; 11 Jul 2018 08:44:16 -0700
+Message-ID: <1531323638.13297.24.camel@intel.com>
+Subject: Re: [RFC PATCH v2 25/27] x86/cet: Add PTRACE interface for CET
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Wed, 11 Jul 2018 08:40:38 -0700
+In-Reply-To: <20180711102035.GB8574@gmail.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+         <20180710222639.8241-26-yu-cheng.yu@intel.com>
+         <20180711102035.GB8574@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Jul 2018 17:39:52 +0200
-Sebastian Andrzej Siewior <bigeasy@linutronix.de> wrote:
-
-> On 2018-07-06 12:58:57 [+0200], To Joe Korty wrote:
-> > On SMP + !RT migrate_disable() is still around. It is not part of spin_lock()
-> > anymore so it has almost no users. However the futex code has a workaround for
-> > the !in_atomic() part of migrate disable which fails because the matching
-> > migrade_disable() is no longer part of spin_lock().
-> > 
-> > On !SMP + !RT migrate_disable() is reduced to barrier(). This is not optimal
-> > because we few spots where a "preempt_disable()" statement was replaced with
-> > "migrate_disable()".
-> > 
-> > We also used the migration_disable counter to figure out if a sleeping lock is
-> > acquired so RCU does not complain about schedule() during rcu_read_lock() while
-> > a sleeping lock is held. This changed, we no longer use it, we have now a
-> > sleeping_lock counter for the RCU purpose.
-> > 
-> > This means we can now:
-> > - for SMP + RT_BASE
-> >   full migration program, nothing changes here
-> > 
-> > - for !SMP + RT_BASE
-> >   the migration counting is no longer required. It used to ensure that the task
-> >   is not migrated to another CPU and that this CPU remains online. !SMP ensures
-> >   that already.
-> >   Move it to CONFIG_SCHED_DEBUG so the counting is done for debugging purpose
-> >   only.
-> > 
-> > - for all other cases including !RT
-> >   fallback to preempt_disable(). The only remaining users of migrate_disable()
-> >   are those which were converted from preempt_disable() and the futex
-> >   workaround which is already in the preempt_disable() section due to the
-> >   spin_lock that is held.
-> > 
-> > Cc: stable-rt@vger.kernel.org
-> > Reported-by: joe.korty@concurrent-rt.com
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > ---
-> > v1…v2: limit migrate_disable to RT only. Use preempt_disable() for !RT
-> >        if migrate_disable() is used.  
+On Wed, 2018-07-11 at 12:20 +0200, Ingo Molnar wrote:
+> * Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
 > 
-> If there are no objections I would pick this up for next v4.16.
->
+> > 
+> > Add PTRACE interface for CET MSRs.
+> Please *always* describe new ABIs in the changelog, in a precise,
+> well-documented 
+> way.
 
-I still rather have migrate_disable() be a nop (barrier at most)
-when !RT, to keep it from being used, and just fix the places that are
-of issue. But we can discuss this when we push this to mainline. I'm
-fine with adding it to -rt if it fixes a real bug now.
+Ok!
 
--- Steve
+> > 
+> > diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+> > index e2ee403865eb..ac2bc3a18427 100644
+> > --- a/arch/x86/kernel/ptrace.c
+> > +++ b/arch/x86/kernel/ptrace.c
+> > @@ -49,7 +49,9 @@ enum x86_regset {
+> >  	REGSET_IOPERM64 = REGSET_XFP,
+> >  	REGSET_XSTATE,
+> >  	REGSET_TLS,
+> > +	REGSET_CET64 = REGSET_TLS,
+> >  	REGSET_IOPERM32,
+> > +	REGSET_CET32,
+> >  };
+> Why does REGSET_CET64 alias on REGSET_TLS?
+
+In x86_64_regsets[], there is no [REGSET_TLS].  The core dump code
+cannot handle holes in the array.
+
+> 
+> > 
+> >  struct pt_regs_offset {
+> > @@ -1276,6 +1278,13 @@ static struct user_regset x86_64_regsets[]
+> > __ro_after_init = {
+> >  		.size = sizeof(long), .align = sizeof(long),
+> >  		.active = ioperm_active, .get = ioperm_get
+> >  	},
+> > +	[REGSET_CET64] = {
+> > +		.core_note_type = NT_X86_CET,
+> > +		.n = sizeof(struct cet_user_state) / sizeof(u64),
+> > +		.size = sizeof(u64), .align = sizeof(u64),
+> > +		.active = cetregs_active, .get = cetregs_get,
+> > +		.set = cetregs_set
+> > +	},
+> Ok, could we first please make this part of the regset code more
+> readable and 
+> start the series with a standalone clean-up patch that changes these
+> initializers 
+> to something more readable:
+> 
+> 	[REGSET_CET64] = {
+> 		.core_note_type	= NT_X86_CET,
+> 		.n		= sizeof(struct cet_user_state) /
+> sizeof(u64),
+> 		.size		= sizeof(u64),
+> 		.align		= sizeof(u64),
+> 		.active		= cetregs_active,
+> 		.get		= cetregs_get,
+> 		.set		= cetregs_set
+> 	},
+> 
+> ? (I'm demonstrating the cleanup based on REGSET_CET64, but this
+> should be done on 
+> every other entry first.)
+> 
+
+I will fix it.
+
+> 
+> > 
+> > --- a/include/uapi/linux/elf.h
+> > +++ b/include/uapi/linux/elf.h
+> > @@ -401,6 +401,7 @@ typedef struct elf64_shdr {
+> >  #define NT_386_TLS	0x200		/* i386 TLS slots
+> > (struct user_desc) */
+> >  #define NT_386_IOPERM	0x201		/* x86 io
+> > permission bitmap (1=deny) */
+> >  #define NT_X86_XSTATE	0x202		/* x86 extended
+> > state using xsave */
+> > +#define NT_X86_CET	0x203		/* x86 cet state */
+> Acronyms in comments should be in capital letters.
+> 
+> Also, I think I asked this before: why does "Control Flow
+> Enforcement" abbreviate 
+> to "CET" (which is a well-known acronym for "Central European Time"),
+> not to CFE?
+> 
+
+I don't know if I can change that, will find out.
+
+Thanks,
+Yu-cheng
+
