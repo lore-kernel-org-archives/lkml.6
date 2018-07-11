@@ -2,124 +2,124 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E55C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A16BFC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3A2420877
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:08:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jg3iRu7t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3A2420877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6224C20877
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:08:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6224C20877
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732753AbeGKMMW (ORCPT
+        id S1732783AbeGKMMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:12:22 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46580 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeGKMMV (ORCPT
+        Wed, 11 Jul 2018 08:12:32 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:59334 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeGKMMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:12:21 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 203-v6so8164196ljj.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:08:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=O2QvhBX+cdCH6CWnt0fnByer0ff07oNziAgpIghCMPs=;
-        b=jg3iRu7t9bTPMubCQhj8pwF9AuOD0qV6TMr4kfd0AHOmzmuW3+gq6pw7auBPaBZ00X
-         pvC9TCay3cAlfHjremAgM+BbysFlU4DF/DVdBqF1XSH3mp6Rouv12uNFLqcAnmw4ykE7
-         m1CiWX9BJOpsMovyru6jJ1knpSkRB6uX6f8JY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=O2QvhBX+cdCH6CWnt0fnByer0ff07oNziAgpIghCMPs=;
-        b=qe2doJ1AJj05IK0RqlJnu4xpm/jhFZE3vxnZqgJ1b/fqBr/cqoSnP/yd4kq0mttgBL
-         bsrIYd0aLcnrItJF4BMhLSZLawOH0vruw/+L/JWd0v8cq3O/iFWUFpQEE8dku3RyDSni
-         yl9OgdUgVa724Dy82fNSHo2yIVz2xS2g/p69zq6k7pK73fnBbaedKs8TZz3YsIgr1bIU
-         Aeat0QhJ9bS9wADkMArxIq2S/BdsN5gIFu+mXQxiw6jfxHRiQp8PqTPEsIJk/HDhmH7/
-         1hqyOt1yJfxyKRtcNWIG2LYGeVqGBDLLJECvMRFawo2jrlxc3SHVJEDKCzu/D3fHC9JK
-         B0Hw==
-X-Gm-Message-State: APt69E1Ly3bBxxvplHFNXuxo3goKp1h1KMCGDTUVbsQtR4Y1G/vyzKVa
-        raY3gF1C9B+6XJiogisMfbM30Q==
-X-Google-Smtp-Source: AAOMgpeTR35tL/QrlQZm1/eykzU0Fva6lGBbiEpv6pcvGoAs4JFJUneAhq2GrexxpAYuW9Sz2Kwy7Q==
-X-Received: by 2002:a2e:89c5:: with SMTP id c5-v6mr17949364ljk.19.1531310898087;
-        Wed, 11 Jul 2018 05:08:18 -0700 (PDT)
-Received: from uffe-XPS-13-9360.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id k65-v6sm1627781lje.3.2018.07.11.05.08.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 05:08:17 -0700 (PDT)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v.4.18-rc5
-Date:   Wed, 11 Jul 2018 14:08:16 +0200
-Message-Id: <20180711120816.13767-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Wed, 11 Jul 2018 08:12:31 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MFOee-1fpH821VW0-00EJpZ; Wed, 11 Jul 2018 14:08:26 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ia64: use asm-generic/io.h
+Date:   Wed, 11 Jul 2018 14:08:05 +0200
+Message-Id: <20180711120824.3882108-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:0O5ipnYJOrcVpf3YZJ5qHfPDb9qRq7llKIN1cHiJv0RHNzxs2k+
+ aIfnikcCyeiuX/TFKfUXC468MqA+ykG491GQS2nT9kVxqugrZZrota3OgoGtrBUUPdR4lmC
+ fg9VT3NAaWHsoMDlKDFRZsNUSWZhci6miVjAYwZ6JFdVzpfZQPkmkaGktZet7fizrw22cYh
+ CxqmB8agInPBshtxSzvPw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:LxRVDpJQnzc=:MEVQgcPKAqSrb/BRzFyKtA
+ gXIghciRc4EZz+B8lB6Jn+wm9xW+axDpONu4p/Mb5R55wbbz1q5Ks+6Cy4M1mWkTxJwlotnlU
+ NSV18mp2agctCOXvoiQjE20t+ZQRjXL/JSXMCT86KKeJp5wQze6pwZxatfKpH9mAt9SyeV2mD
+ 34boMdOkgDAijA3/6vaHPoSPvBxg6gGGa0hhYkWeem9R8A/0aq8Ys9Zvzeg/TBzGrJ5S5+bf3
+ 63YqTSNhXQDXvQWa+VSKOEhw3/wmSQsVCBm89a4ATz+cq5kBAnpr0sp5YNK4WRFqNaSqGyZL+
+ K7zEBHHI03r1TieoeiBreFZJI9OVYxJ/RK2TxkrxTaT+tV6mgNQ2q81GceqYx3d0hIldls6IF
+ yeA9diRM2Tmyib1vn+/8yEjc2yU64VFIwhpYiUF3V/XkEBwG+PMeP9S6g7wVaeb+k/hhd8AEa
+ nUCfK6HGoXus0YCb6lgVMtOZ3lATOgSYq4kgi6Eb+MGEOaeD67IwxFXoP+nEUVtUBZBd4K/RD
+ egmFyDrK/ReKRCOmB1TL0QyvlrChF4vG93zY33u/alaHnWg7ZWRbEsMhL0G4wJ3JU5sETDMzx
+ a1eF6HjpKGGsmpYwhNPfCznnE1a5KwwHShJJznV4Eo4UGWuF8C4W6fvAZMPTZ2CTvOjyukJbg
+ Szvl9BwtBPMn/AuEl1xKydfZNbOZQiq3SF9HLq1WL3X0YHpHYrhQYviKVlXded9aiJho=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+asm-generic/io.h provides a generic implementation of all I/O accessors,
+which the architectures can override.
 
-Here's a PR with a couple of MMC fixes intended for v4.18-rc5. Details about the
-highlights are as usual found in the signed tag.
+Since ia64 does not provide readsl/writesl etc, any driver using those
+fails to build, and including asm-generic/io.h will provide the
+missing interfaces, as well as any other future interfaces that get
+added there. We need to #define a couple of symbols to themselves
+in the ia64 to ensure that we use the ia64 specific version of those
+rather than the generic one.
 
-Please pull this in!
+There should be no other effect than adding {read,write}s{b,w,l}()
+as well as {in,out}s{b,w,l}_p(), which were also not provided
+by ia64 but are provided by the generic header for historic reasons.
 
-Kind regards
-Ulf Hansson
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/ia64/include/asm/io.h | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
+diff --git a/arch/ia64/include/asm/io.h b/arch/ia64/include/asm/io.h
+index fb0651961e2c..6f952171abf9 100644
+--- a/arch/ia64/include/asm/io.h
++++ b/arch/ia64/include/asm/io.h
+@@ -83,12 +83,14 @@ virt_to_phys (volatile void *address)
+ {
+ 	return (unsigned long) address - PAGE_OFFSET;
+ }
++#define virt_to_phys virt_to_phys
+ 
+ static inline void*
+ phys_to_virt (unsigned long address)
+ {
+ 	return (void *) (address + PAGE_OFFSET);
+ }
++#define phys_to_virt phys_to_virt
+ 
+ #define ARCH_HAS_VALID_PHYS_ADDR_RANGE
+ extern u64 kern_mem_attribute (unsigned long phys_addr, unsigned long size);
+@@ -433,9 +435,11 @@ static inline void __iomem * ioremap_cache (unsigned long phys_addr, unsigned lo
+ {
+ 	return ioremap(phys_addr, size);
+ }
++#define ioremap ioremap
++#define ioremap_nocache ioremap_nocache
+ #define ioremap_cache ioremap_cache
+ #define ioremap_uc ioremap_nocache
+-
++#define iounmap iounmap
+ 
+ /*
+  * String version of IO memory access ops:
+@@ -444,6 +448,13 @@ extern void memcpy_fromio(void *dst, const volatile void __iomem *src, long n);
+ extern void memcpy_toio(volatile void __iomem *dst, const void *src, long n);
+ extern void memset_io(volatile void __iomem *s, int c, long n);
+ 
++#define memcpy_fromio memcpy_fromio
++#define memcpy_toio memcpy_toio
++#define memset_io memset_io
++#define xlate_dev_kmem_ptr xlate_dev_kmem_ptr
++#define xlate_dev_mem_ptr xlate_dev_mem_ptr
++#include <asm-generic/io.h>
++
+ # endif /* __KERNEL__ */
+ 
+ #endif /* _ASM_IA64_IO_H */
+-- 
+2.9.0
 
-The following changes since commit 021c91791a5e7e85c567452f1be3e4c2c6cb6063:
-
-  Linux 4.18-rc3 (2018-07-01 16:04:53 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v4.18-rc3
-
-for you to fetch changes up to 92748beac07c471d995fbec642b63572dc01b3dc:
-
-  mmc: sdhci-esdhc-imx: allow 1.8V modes without 100/200MHz pinctrl states (2018-07-09 11:17:47 +0200)
-
-----------------------------------------------------------------
-MMC core:
- - Fixup devname in /proc/interrupts for card detect GPIO
-
-MMC host:
- - sdhci-esdhc-imx: Allow 1.8V speed-modes without 100/200MHz pinctrls
- - sunxi: Disable IRQ in low power state to prevent IRQ storm
- - dw_mmc: Fix card threshold control configuration
- - renesas_sdhi_internal_dmac: Fixup DMA error paths
-
-----------------------------------------------------------------
-Anson Huang (1):
-      mmc: core: cd_label must be last entry of mmc_gpio struct
-
-Stefan Agner (1):
-      mmc: sdhci-esdhc-imx: allow 1.8V modes without 100/200MHz pinctrl states
-
-Stefan Mavrodiev (1):
-      mmc: sunxi: Disable irq during pm_suspend
-
-Yoshihiro Shimoda (2):
-      mmc: renesas_sdhi_internal_dmac: Fix missing unmap in error patch
-      mmc: renesas_sdhi_internal_dmac: Cannot clear the RX_IN_USE in abort
-
-x00270170 (1):
-      mmc: dw_mmc: fix card threshold control configuration
-
- drivers/mmc/core/slot-gpio.c                  |  2 +-
- drivers/mmc/host/dw_mmc.c                     |  7 ++++---
- drivers/mmc/host/renesas_sdhi_internal_dmac.c | 15 +++++++--------
- drivers/mmc/host/sdhci-esdhc-imx.c            | 21 +++++++++------------
- drivers/mmc/host/sunxi-mmc.c                  |  7 +++++++
- 5 files changed, 28 insertions(+), 24 deletions(-)
