@@ -2,127 +2,111 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EC4C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF31C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2A06208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:04:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1816F208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:04:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FpKBnu2x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2A06208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlcW5ESS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1816F208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732287AbeGKKHy (ORCPT
+        id S1732328AbeGKKI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:07:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38234 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726269AbeGKKHy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:07:54 -0400
-Received: from mail.kernel.org (host-091-097-006-190.ewe-ip-backbone.de [91.97.6.190])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6C38208E5;
-        Wed, 11 Jul 2018 10:04:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531303461;
-        bh=oAShqgIPIEU7/5IKqIUnURXor5nEos/wZNhkG4KTWp8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FpKBnu2xN1Xws2h1aW8zslT78tgdYV3EBmblkyC4xF7vv+zhJBVEWE1mKLzhGYa/P
-         lD0PgdBMQyqnGQWGZUcuoRhfvr5LJOAMz1xDrVtKO6ETEsInTFaMNVc5HhSDCE9zxn
-         sAjEYDxSsCgwa2huXE9kyOAgpKkRXCS28JE/A4u8=
-Date:   Wed, 11 Jul 2018 12:04:18 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Stefan Popa <stefan.popa@analog.com>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] power: supply: adp5061: Fix a couple off by ones
-Message-ID: <20180711100418.p2t4mfvgyjbzrxwy@earth.universe>
-References: <20180711075808.gpa3362vbins7crx@kili.mountain>
+        Wed, 11 Jul 2018 06:08:27 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34552 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbeGKKI0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 06:08:26 -0400
+Received: by mail-pl0-f67.google.com with SMTP id z9-v6so8943653plo.1;
+        Wed, 11 Jul 2018 03:04:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=imuLUt+k8VCUVCb+R1LYWvu/bASMK/g1Jkrz98iL/pQ=;
+        b=GlcW5ESSbJ3q8PRyq7WBxge8p4N1lc9U08mBWyM5efYokfGgVOK2bQnHjlR6BNJb0o
+         taafswjfAGmViDc7rHpteSRWt/5qTPBE7vpJa8Txf7iTjK4vZXyvDa7V8VP1HFaYdBO+
+         vhu8bcHwtcSm+GZgeDfHY/+cvmox8teVIlU+dzJJhY191Gr+3bYpOi3gMiyK2Yrbe9o6
+         OdqrtXhjMp+RO3ydtlDY81VxX4h30qN647dJjHRcO+e2Men7K774d9rRjQXeYXEaSykg
+         c1upDgLGLMJELKdUV2VBDxGj2sbLPaGAInN8qFzSp7J+Ig/ryu1AGtDglrFGgUrDuVKJ
+         coHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=imuLUt+k8VCUVCb+R1LYWvu/bASMK/g1Jkrz98iL/pQ=;
+        b=jdNE0d8sTe8MY1gqCmMW160JOyUB5saDFvWPLJKn3fDpfjIHfruPNr3nMwexF7HAxb
+         GKww6t4rjA7af0RLLf7odtjVF7fyi2BuEfCKTrCoLLOmhrY8usEC/WfA+LXMguceE2xZ
+         XDeerldUu/MJvBeGgFRyl0tATxTdNuDF11Gsw+2XmqnKeDG40F3/AHRccWKvXxt2fSKW
+         5oG2avtB7er73pNtspnCvYdQV81RJIHB3qsgfHb+OAiL86R5mwFk/7IufvjiHMyaUe3v
+         8SREmXU7Zk/tF97FTime1TtG6Sr3X83nG55uvoq+Tr9RKg+E+z6yPqzEQT9hpAfH1gaf
+         QLaw==
+X-Gm-Message-State: APt69E2hV+rnGrRJeXBbYG0uXAwTT7pkJBvBsQcK4VWfs2T6bctBqD+u
+        luAxcquc+rJ8zMNDB9a4cOzbX5G4
+X-Google-Smtp-Source: AAOMgpcweNKB+u35HgjBsG0Ew8JR7GU2jDvTicuxG+gojP6rg1vnx5EyxwOSfLE4dfqqZoZYcK2O/w==
+X-Received: by 2002:a17:902:7481:: with SMTP id h1-v6mr28726048pll.183.1531303493539;
+        Wed, 11 Jul 2018 03:04:53 -0700 (PDT)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id b65-v6sm33136297pfg.34.2018.07.11.03.04.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 03:04:52 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 15:34:43 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, jonathan@marek.ca,
+        jmaneyrol@invensense.com, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, mkelly@xevo.com, fischerdouglasc@gmail.com,
+        bshah@kde.org, ctatlor97@gmail.com
+Subject: Re: [PATCH 2/3] iio: imu: mpu6050: add support for regulator
+ framework
+Message-ID: <20180711100442.GA30019@himanshu-Vostro-3559>
+References: <20180711010932.20313-1-masneyb@onstation.org>
+ <20180711010932.20313-3-masneyb@onstation.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="2y7tqp2z4gc4cr77"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180711075808.gpa3362vbins7crx@kili.mountain>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <20180711010932.20313-3-masneyb@onstation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Brain,
 
---2y7tqp2z4gc4cr77
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 10, 2018 at 09:09:31PM -0400, Brian Masney wrote:
+> This patch adds support for the regulator framework to the mpu6050
+> driver.
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> ---
+>  }
+>  EXPORT_SYMBOL_GPL(inv_mpu_core_probe);
+>  
+> +int inv_mpu_core_remove(struct inv_mpu6050_state *st)
+> +{
+> +	return regulator_disable(st->vddio_supply);
+> +}
+EXPORT_SYMBOL_GPL(inv_mpu_core_remove); ?
 
-Hi,
+This is causing 0-day test build failure perhaps.
 
-On Wed, Jul 11, 2018 at 10:58:13AM +0300, Dan Carpenter wrote:
-> We end up reading one element beyond the end of the adp5061_vmax[] array
-> here.
->=20
-> Fixes: fe8e81b7e899 ("adp5061: New driver for ADP5061 I2C battery charger=
-")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-
-Thanks, queued.
-
--- Sebastian
-
-> diff --git a/drivers/power/supply/adp5061.c b/drivers/power/supply/adp506=
-1.c
-> index c00a02ef7424..939fd3d8fb1a 100644
-> --- a/drivers/power/supply/adp5061.c
-> +++ b/drivers/power/supply/adp5061.c
-> @@ -266,8 +266,8 @@ static int adp5061_get_max_voltage(struct adp5061_sta=
-te *st,
->  		return ret;
-> =20
->  	regval =3D ((regval & ADP5061_TERM_SET_VTRM_MSK) >> 2) - 0x0F;
-> -	if (regval > ARRAY_SIZE(adp5061_vmax))
-> -		regval =3D ARRAY_SIZE(adp5061_vmax);
-> +	if (regval >=3D ARRAY_SIZE(adp5061_vmax))
-> +		regval =3D ARRAY_SIZE(adp5061_vmax) - 1;
-> =20
->  	val->intval =3D adp5061_vmax[regval] * 1000;
-> =20
-> @@ -344,8 +344,8 @@ static int adp5061_get_const_chg_current(struct adp50=
-61_state *st,
->  		return ret;
-> =20
->  	regval =3D ((regval & ADP5061_CHG_CURR_ICHG_MSK) >> 2);
-> -	if (regval > ARRAY_SIZE(adp5061_const_ichg))
-> -		regval =3D ARRAY_SIZE(adp5061_const_ichg);
-> +	if (regval >=3D ARRAY_SIZE(adp5061_const_ichg))
-> +		regval =3D ARRAY_SIZE(adp5061_const_ichg) - 1;
-> =20
->  	val->intval =3D adp5061_const_ichg[regval] * 1000;
-> =20
-
---2y7tqp2z4gc4cr77
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAltF1h8ACgkQ2O7X88g7
-+pr4dBAAg7979N/X+zW3Pki8PNMR9SSiBEjTVg1Ul27hbS5O326rMBRARiWdabPv
-LnofakYcx0CMDBRhJAAe0HIpzG6gFu+8MN4mY17IwD8GVk3eiHb83DQB0gKhp78+
-jFKMF7DeJwQbRmKkk73nXyw7eliVhwJXD3T4dNTispJhgyYHOHYiQy0bDHX6ZdO/
-Czk9F7vcdZt55glN3O+8wLofNMYpgg/vJTM8u9Lr58jCGnTyeLaQWk6jhKqeAuPe
-95r62972SpdRFiaukBWJ5WV6zvVUmvS9YV3Avia3gcGeNgI90A0EEPYAoPouzNMz
-hK+2eT0480As347XSotFbC9AtBRoIjvPD0XJDnbbVLCc5Xxz3fgX9fB4PLxcSRXt
-hJAp0T8+NEEu6P/JdyCjpUpp+yOoaURWhGkBexFHTxTddcjFASSzYeEXXpiWm5KD
-Dbv/MP+TDFDMx6CP5SoGfjHUnJV7k0CPOOCdG4edYfAEFZM04VnxH8RWhyEd3xWi
-nV8AAb96ReH2l1zNI0VDxzgoMiTZ+MVYtzPd6egdE5WG6Cin3SIZahJ8BaKLLE6O
-bV7whatfzPo4b54S3VP8JVye/aaoMvDD2SwoyNaQVuLx4iTIaxoQm5MR8AS4F20s
-bkYH8Q69zuPAk9FhOb8zxiM2QaoLlBXWfh4SxTyTQaKvZZ/O8xk=
-=xmKy
------END PGP SIGNATURE-----
-
---2y7tqp2z4gc4cr77--
+-- 
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
