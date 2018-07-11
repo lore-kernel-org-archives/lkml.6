@@ -2,343 +2,70 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63FD3C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEAEC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0153E208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:00:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="Uffp1tGj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0153E208EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
+	by mail.kernel.org (Postfix) with ESMTP id B58F22086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:00:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B58F22086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387668AbeGKNEY (ORCPT
+        id S2387675AbeGKNFG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:04:24 -0400
-Received: from onstation.org ([52.200.56.107]:39516 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732544AbeGKNEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:04:23 -0400
-Received: from localhost (c-98-236-77-125.hsd1.wv.comcast.net [98.236.77.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 36DED2F7;
-        Wed, 11 Jul 2018 13:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1531314008;
-        bh=kVjgs9rF1IR31HCeLXpbAfPKMYIPZ4uRi74IAUa+qBg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Uffp1tGj6DNA4FBb4ICU0Esb7HCHW8gJ04qRzdrM7acJKeZ8bs5N7Zu/93IAAyS/1
-         L/saANH4tGCO+75me3byQPMWid8CIbRa2vkglSU7WWXeI081qeECgkDIkL5TkCh4XE
-         8FHIYcJndM4MtgtRgdTy8ieYJxYMghOFm/PB3AZo=
-Date:   Wed, 11 Jul 2018 09:00:07 -0400
-From:   Brian Masney <masneyb@onstation.org>
-To:     Jean-Baptiste Maneyrol <JManeyrol@invensense.com>
-Cc:     "jic23@kernel.org" <jic23@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "andy.gross@linaro.org" <andy.gross@linaro.org>,
-        "david.brown@linaro.org" <david.brown@linaro.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-soc@vger.kernel.org" <linux-soc@vger.kernel.org>,
-        "jonathan@marek.ca" <jonathan@marek.ca>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "mkelly@xevo.com" <mkelly@xevo.com>,
-        "fischerdouglasc@gmail.com" <fischerdouglasc@gmail.com>,
-        "bshah@kde.org" <bshah@kde.org>,
-        "ctatlor97@gmail.com" <ctatlor97@gmail.com>
-Subject: Re: [PATCH 2/3] iio: imu: mpu6050: add support for regulator
- framework
-Message-ID: <20180711130007.jwnie5pr3zaxwsca@d08157822050>
-References: <20180711010932.20313-1-masneyb@onstation.org>
- <20180711010932.20313-3-masneyb@onstation.org>
- <SN1PR12MB2525E8A460DA734A7C6A2692C45A0@SN1PR12MB2525.namprd12.prod.outlook.com>
+        Wed, 11 Jul 2018 09:05:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35300 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732420AbeGKNFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:05:06 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D00D7A9;
+        Wed, 11 Jul 2018 06:00:52 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 413BF3F5AD;
+        Wed, 11 Jul 2018 06:00:50 -0700 (PDT)
+Subject: Re: [PATCH v5 2/7] KVM: arm/arm64: Introduce helpers to manupulate
+ page table entries
+To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
+Cc:     linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
+        will.deacon@arm.com, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>
+References: <20180709143835.28971-1-punit.agrawal@arm.com>
+ <20180709144124.29164-1-punit.agrawal@arm.com>
+ <20180709144124.29164-2-punit.agrawal@arm.com>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <691fcde0-b0a2-d258-ac99-49c6c4794247@arm.com>
+Date:   Wed, 11 Jul 2018 14:00:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SN1PR12MB2525E8A460DA734A7C6A2692C45A0@SN1PR12MB2525.namprd12.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180709144124.29164-2-punit.agrawal@arm.com>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 12:29:33PM +0000, Jean-Baptiste Maneyrol wrote:
-> Hello,
+On 09/07/18 15:41, Punit Agrawal wrote:
+> Introduce helpers to abstract architectural handling of the conversion
+> of pfn to page table entries and marking a PMD page table entry as a
+> block entry.
 > 
-> I really don't like the idea to have regulator handled inside the driver. I know this was done like that before for Nexus 5, but I think now this is something that can be done using dts only.
-> Does anyone know if there is a way with dts to handle regulator automatically and prevent the use in the driver? That would be a good idea to search how this handled for other drivers.
+> The helpers are introduced in preparation for supporting PUD hugepages
+> at stage 2 - which are supported on arm64 but do not exist on arm.
 > 
-> Anyway, you are enforcing regulator use in your code. It doesn't seem the code will work when there is no regulator declared in the dts, which is the case for the majority of configurations. We should at least make it optional.
-> 
-> Thanks for the contribution.
-
-My understanding of devm_regulator_get_optional() is that a stub
-regulator will be returned if one is not configured. See the comment
-above regulator_get_optional() for where I got this information.
-
-https://elixir.bootlin.com/linux/v4.17/source/drivers/regulator/core.c#L1750
-
-I agree that it would be better if this could be handled exclusively in
-dts if possible, although I'm not sure how. I looked at other drivers
-and commits from the last year or so and this appears to be the current
-recommended approach. I'm open to other approaches to doing this.
-
-Brian
-
-
->
-> 
-> From: Brian Masney <masneyb@onstation.org>
-> Sent: Wednesday, July 11, 2018 03:09
-> To: jic23@kernel.org; robh+dt@kernel.org; mark.rutland@arm.com; andy.gross@linaro.org; david.brown@linaro.org; linux-iio@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-msm@vger.kernel.org; linux-soc@vger.kernel.org
-> Cc: jonathan@marek.ca; Jean-Baptiste Maneyrol; knaack.h@gmx.de; lars@metafoo.de; pmeerw@pmeerw.net; mkelly@xevo.com; fischerdouglasc@gmail.com; bshah@kde.org; ctatlor97@gmail.com; masneyb@onstation.org
-> Subject: [PATCH 2/3] iio: imu: mpu6050: add support for regulator framework
->   
-> 
-> CAUTION: This email originated from outside of the organization. Please make sure the sender is who they say they are and do not click links or open attachments unless you recognize the sender and know the content is safe.
-> 
-> 
-> This patch adds support for the regulator framework to the mpu6050
-> driver.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+> Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
 > ---
-> This is a variation of Jonathan Marek's patch from postmarketOS
-> https://gitlab.com/postmarketOS/linux-postmarketos/commit/b8ad1ec1859c8bbcbce94944b3f4dd68f8f9fc37
-> with the following changes:
-> 
-> - Stripped out 6515 variant code. (See my previous patch in this series)
-> - Add the regulator to the mpu core instead of only the i2c variant.
-> - Add error handling.
-> - Release the regulator on suspend, device remove, etc.
-> - Device tree documentation.
-> 
->  .../bindings/iio/imu/inv_mpu6050.txt          |  1 +
->  drivers/iio/imu/inv_mpu6050/inv_mpu_core.c    | 57 +++++++++++++++++--
->  drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c     |  2 +-
->  drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h     |  3 +
->  drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c     |  9 +++
->  5 files changed, 66 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
-> index b7def51c8ad9..d39907b12a46 100644
-> --- a/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
-> +++ b/Documentation/devicetree/bindings/iio/imu/inv_mpu6050.txt
-> @@ -21,6 +21,7 @@ Required properties:
->    bindings.
-> 
->  Optional properties:
-> + - vddio-supply: regulator phandle for VDDIO supply
->   - mount-matrix: an optional 3x3 mounting rotation matrix
->   - i2c-gate node.  These devices also support an auxiliary i2c bus.  This is
->     simple enough to be described using the i2c-gate binding. See
-> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> index 12c1b9507007..ec276b7bcc69 100644
-> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_core.c
-> @@ -23,6 +23,7 @@
->  #include <linux/iio/iio.h>
->  #include <linux/acpi.h>
->  #include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
->  #include "inv_mpu_iio.h"
-> 
->  /*
-> @@ -926,6 +927,19 @@ static int inv_check_and_setup_chip(struct inv_mpu6050_state *st)
->         return result;
->  }
-> 
-> +static int inv_mpu_core_enable_regulator(struct inv_mpu6050_state *st)
-> +{
-> +       int result;
-> +
-> +       result = regulator_enable(st->vddio_supply);
-> +       if (result == 0) {
-> +               /* Give the device a little bit of time to start up. */
-> +               usleep_range(35000, 70000);
-> +       }
-> +
-> +       return result;
-> +}
-> +
->  int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
->                 int (*inv_mpu_bus_setup)(struct iio_dev *), int chip_type)
->  {
-> @@ -990,15 +1004,28 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
->                 return -EINVAL;
->         }
-> 
-> +       st->vddio_supply = devm_regulator_get_optional(dev, "vddio");
-> +       if (IS_ERR(st->vddio_supply)) {
-> +               if (PTR_ERR(st->vddio_supply) != -EPROBE_DEFER)
-> +                       dev_err(dev, "Failed to get vddio regulator %d\n",
-> +                               (int)PTR_ERR(st->vddio_supply));
-> +
-> +               return PTR_ERR(st->vddio_supply);
-> +       }
-> +
-> +       result = inv_mpu_core_enable_regulator(st);
-> +       if (result)
-> +               return result;
-> +
->         /* power is turned on inside check chip type*/
->         result = inv_check_and_setup_chip(st);
->         if (result)
-> -               return result;
-> +               goto out_disable_regulator;
-> 
->         result = inv_mpu6050_init_config(indio_dev);
->         if (result) {
->                 dev_err(dev, "Could not initialize device.\n");
-> -               return result;
-> +               goto out_disable_regulator;
->         }
-> 
->         if (inv_mpu_bus_setup)
-> @@ -1023,24 +1050,34 @@ int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
->                                                  NULL);
->         if (result) {
->                 dev_err(dev, "configure buffer fail %d\n", result);
-> -               return result;
-> +               goto out_disable_regulator;
->         }
->         result = inv_mpu6050_probe_trigger(indio_dev, irq_type);
->         if (result) {
->                 dev_err(dev, "trigger probe fail %d\n", result);
-> -               return result;
-> +               goto out_disable_regulator;
->         }
-> 
->         result = devm_iio_device_register(dev, indio_dev);
->         if (result) {
->                 dev_err(dev, "IIO register fail %d\n", result);
-> -               return result;
-> +               goto out_disable_regulator;
->         }
-> 
->         return 0;
-> +
-> +out_disable_regulator:
-> +       regulator_disable(st->vddio_supply);
-> +       return result;
-> +
->  }
->  EXPORT_SYMBOL_GPL(inv_mpu_core_probe);
-> 
-> +int inv_mpu_core_remove(struct inv_mpu6050_state *st)
-> +{
-> +       return regulator_disable(st->vddio_supply);
-> +}
-> +
->  #ifdef CONFIG_PM_SLEEP
-> 
->  static int inv_mpu_resume(struct device *dev)
-> @@ -1050,6 +1087,11 @@ static int inv_mpu_resume(struct device *dev)
-> 
->         mutex_lock(&st->lock);
->         result = inv_mpu6050_set_power_itg(st, true);
-> +       if (result)
-> +               goto out_unlock;
-> +
-> +       result = inv_mpu_core_enable_regulator(st);
-> +out_unlock:
->         mutex_unlock(&st->lock);
-> 
->         return result;
-> @@ -1062,6 +1104,11 @@ static int inv_mpu_suspend(struct device *dev)
-> 
->         mutex_lock(&st->lock);
->         result = inv_mpu6050_set_power_itg(st, false);
-> +       if (result)
-> +               goto out_unlock;
-> +
-> +       result = regulator_disable(st->vddio_supply);
-> +out_unlock:
->         mutex_unlock(&st->lock);
-> 
->         return result;
-> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c
-> index dd758e3d403d..ce227038c61c 100644
-> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c
-> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_i2c.c
-> @@ -164,7 +164,7 @@ static int inv_mpu_remove(struct i2c_client *client)
->                 i2c_mux_del_adapters(st->muxc);
->         }
-> 
-> -       return 0;
-> +       return inv_mpu_core_remove(st);
->  }
-> 
->  /*
-> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-> index e69a59659dbc..0289615a6135 100644
-> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_iio.h
-> @@ -129,6 +129,7 @@ struct inv_mpu6050_hw {
->   *  @chip_period:      chip internal period estimation (~1kHz).
->   *  @it_timestamp:     timestamp from previous interrupt.
->   *  @data_timestamp:   timestamp for next data sample.
-> + *  @vddio_supply      voltage regulator for the chip.
->   */
->  struct inv_mpu6050_state {
->         struct mutex lock;
-> @@ -149,6 +150,7 @@ struct inv_mpu6050_state {
->         s64 chip_period;
->         s64 it_timestamp;
->         s64 data_timestamp;
-> +       struct regulator *vddio_supply;
->  };
-> 
->  /*register and associated bit definition*/
-> @@ -321,4 +323,5 @@ int inv_mpu_acpi_create_mux_client(struct i2c_client *client);
->  void inv_mpu_acpi_delete_mux_client(struct i2c_client *client);
->  int inv_mpu_core_probe(struct regmap *regmap, int irq, const char *name,
->                 int (*inv_mpu_bus_setup)(struct iio_dev *), int chip_type);
-> +int inv_mpu_core_remove(struct inv_mpu6050_state *st);
->  extern const struct dev_pm_ops inv_mpu_pmops;
-> diff --git a/drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c b/drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c
-> index 227f50afff22..fce935f8f1e4 100644
-> --- a/drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c
-> +++ b/drivers/iio/imu/inv_mpu6050/inv_mpu_spi.c
-> @@ -70,6 +70,14 @@ static int inv_mpu_probe(struct spi_device *spi)
->                                   inv_mpu_i2c_disable, chip_type);
->  }
-> 
-> +static int inv_mpu_remove(struct spi_device *spi)
-> +{
-> +       struct iio_dev *indio_dev = spi_get_drvdata(spi);
-> +       struct inv_mpu6050_state *st = iio_priv(indio_dev);
-> +
-> +       return inv_mpu_core_remove(st);
-> +}
-> +
->  /*
->   * device id table is used to identify what device can be
->   * supported by this driver
-> @@ -94,6 +102,7 @@ MODULE_DEVICE_TABLE(acpi, inv_acpi_match);
-> 
->  static struct spi_driver inv_mpu_driver = {
->         .probe          =       inv_mpu_probe,
-> +       .remove         =       inv_mpu_remove,
->         .id_table       =       inv_mpu_id,
->         .driver = {
->                 .acpi_match_table = ACPI_PTR(inv_acpi_match),
-> --
-> 2.17.1
-> 
->     
+
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
