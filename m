@@ -2,127 +2,101 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D468C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CBCC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0109120652
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:50:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0109120652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 9E4D420652
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:50:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H3UigC5C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E4D420652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732831AbeGKMyP (ORCPT
+        id S1732875AbeGKMya (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:54:15 -0400
-Received: from ozlabs.org ([203.11.71.1]:50399 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeGKMyP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:54:15 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Qf6b58VSzB4MN;
-        Wed, 11 Jul 2018 22:49:59 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
-        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, bhe@redhat.com,
-        pasha.tatashin@oracle.com,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Subject: Boot failures with "mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER" on powerpc (was Re: mmotm 2018-07-10-16-50 uploaded)
-In-Reply-To: <20180710235044.vjlRV%akpm@linux-foundation.org>
-References: <20180710235044.vjlRV%akpm@linux-foundation.org>
-Date:   Wed, 11 Jul 2018 22:49:58 +1000
-Message-ID: <87lgai9bt5.fsf@concordia.ellerman.id.au>
+        Wed, 11 Jul 2018 08:54:30 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37784 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732819AbeGKMya (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:54:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=YcYkRSTSVAd4b9ErqX5u8/04YC28fPw8GcNCHSamuYU=; b=H3UigC5CEUc+ApUqTxWDUl1KF
+        2ibj+B9wBiKUVncylNEr+4r+ztI8aR9+5OBdNQ1Orm4DTzPw7GO5heBH9HVEop8b4w62JE66VN3M1
+        HEfBxvuOK+h8Dt40rFnexonDOoTi8qvJSgXMz/Pd63pl2+yMCR7fr5aOUV7bQJonXOp3bbAzMSIMF
+        q2hDxqQ/gzO80d2l96OPXd4AbAB49wIoXQ/nLA6JGX5MLTCZHaBhcZKld26mVVca8yVB7rXGCBLz+
+        SuZHlOQaR1rBFOAmv5EmC+D6xe0x5Aj3QcjKe4GDEj6TKD4r2Juf20ykUed3bGTU8pOZOr6pu17/k
+        Zy+yqIkgQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdEZB-0008GC-Eg; Wed, 11 Jul 2018 12:49:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id CA62420289CE4; Wed, 11 Jul 2018 14:49:54 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 14:49:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180711124954.GE2476@hirez.programming.kicks-ass.net>
+References: <20180628182149.226164-1-joel@joelfernandes.org>
+ <20180628182149.226164-5-joel@joelfernandes.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628182149.226164-5-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-akpm@linux-foundation.org writes:
-> The mm-of-the-moment snapshot 2018-07-10-16-50 has been uploaded to
->
->    http://www.ozlabs.org/~akpm/mmotm/
-...
+On Thu, Jun 28, 2018 at 11:21:46AM -0700, Joel Fernandes wrote:
+> -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
 
-> * mm-sparse-add-a-static-variable-nr_present_sections.patch
-> * mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
-> * mm-sparsemem-defer-the-ms-section_mem_map-clearing-fix.patch
-> * mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
-> * mm-sparse-optimize-memmap-allocation-during-sparse_init.patch
-> * mm-sparse-optimize-memmap-allocation-during-sparse_init-checkpatch-fixes.patch
+I would convert to rcu_dereference_raw() to appease sparse. The fancy
+stuff below is pointless if you then turn off all checking.
 
-> * mm-sparse-remove-config_sparsemem_alloc_mem_map_together.patch
-
-This seems to be breaking my powerpc pseries qemu boots.
-
-The boot log with some extra debug shows eg:
-
-  $ make pseries_le_defconfig
-  $ qemu-system-ppc64 -nographic -vga none -M pseries -m 2G -kernel vmlinux 
-  ...
-  vmemmap_populate f000000000000000..f000000000004000, node 0
-        * f000000000000000..f000000001000000 allocated at c00000007e000000
-  hash__vmemmap_create_mapping: start 0xf000000000000000 size 0x1000000 phys 0x7e000000
-  vmemmap_populate f000000000000000..f000000000008000, node 0
-        * f000000000000000..f000000001000000 allocated at c00000007d000000
-  hash__vmemmap_create_mapping: start 0xf000000000000000 size 0x1000000 phys 0x7d000000
-  vmemmap_populate f000000000000000..f00000000000c000, node 0
-        * f000000000000000..f000000001000000 allocated at c00000007c000000
-  hash__vmemmap_create_mapping: start 0xf000000000000000 size 0x1000000 phys 0x7c000000
-  vmemmap_populate f000000000000000..f000000000010000, node 0
-        * f000000000000000..f000000001000000 allocated at c00000007b000000
-  hash__vmemmap_create_mapping: start 0xf000000000000000 size 0x1000000 phys 0x7b000000
-  vmemmap_populate f000000000000000..f000000000014000, node 0
-        * f000000000000000..f000000001000000 allocated at c00000007a000000
-  hash__vmemmap_create_mapping: start 0xf000000000000000 size 0x1000000 phys 0x7a000000
-  vmemmap_populate f000000000000000..f000000000018000, node 0
-        * f000000000000000..f000000001000000 allocated at c000000079000000
-  hash__vmemmap_create_mapping: start 0xf000000000000000 size 0x1000000 phys 0x79000000
-  vmemmap_populate f000000000000000..f00000000001c000, node 0
-        * f000000000000000..f000000001000000 allocated at c000000078000000
-  hash__vmemmap_create_mapping: start 0xf000000000000000 size 0x1000000 phys 0x78000000
-  vmemmap_populate f000000000000000..f000000000020000, node 0
-        * f000000000000000..f000000001000000 allocated at c000000077000000
-  hash__vmemmap_create_mapping: start 0xf000000000000000 size 0x1000000 phys 0x77000000
-  vmemmap_populate f000000000000000..f000000000024000, node 0
-        * f000000000000000..f000000001000000 allocated at c000000076000000
-  hash__vmemmap_create_mapping: start 0xf000000000000000 size 0x1000000 phys 0x76000000
-  hash__vmemmap_create_mapping: failed -1
-
-  <repeated many times>
-
-Then there's lots of other warnings about bad page states and eventually
-a NULL deref and we panic().
-
-
-The problem seems to be that we're calling down into
-hash__vmemmap_create_mapping() for every call to vmemmap_populate(),
-whereas previously we would only call hash__vmemmap_create_mapping()
-once because our vmemmap_populated() would return true.
-
-There's actually a comment in sparse_init() that says:
-
-	 * powerpc need to call sparse_init_one_section right after each
-	 * sparse_early_mem_map_alloc, so allocate usemap_map at first.
-
-So changing that behaviour does seem to be the problem.
-
-I assume that comment is talking about the fact that we use pfn_valid()
-in vmemmap_populated().
-
-I'm not clear on how to fix it though.
-
-Any ideas?
-
-cheers
+> +									\
+> +		/*							\
+> +		 * For rcuidle callers, use srcu since sched-rcu	\
+> +		 * doesn't work from the idle path.			\
+> +		 */							\
+> +		if (rcuidle) {						\
+> +			if (in_nmi()) {					\
+> +				WARN_ON_ONCE(1);			\
+> +				return; /* no srcu from nmi */		\
+> +			}						\
+> +									\
+> +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
+> +			it_func_ptr =					\
+> +				srcu_dereference_notrace((tp)->funcs,	\
+> +						&tracepoint_srcu);	\
+> +			/* To keep it consistent with !rcuidle path */	\
+> +			preempt_disable_notrace();			\
+> +		} else {						\
+> +			rcu_read_lock_sched_notrace();			\
+> +			it_func_ptr =					\
+> +				rcu_dereference_sched((tp)->funcs);	\
+> +		}							\
