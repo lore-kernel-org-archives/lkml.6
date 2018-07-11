@@ -2,140 +2,81 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16087C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28931C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C816820C03
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:48:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C816820C03
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DD12B20C03
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:48:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD12B20C03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389486AbeGKPxA (ORCPT
+        id S2389495AbeGKPxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 11:53:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39118 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732935AbeGKPw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 11:52:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0695B7A9;
-        Wed, 11 Jul 2018 08:48:03 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3BD5D3F5B1;
-        Wed, 11 Jul 2018 08:48:01 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 16:47:58 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>
-Cc:     "Yandong.Zhao" <yandong77520@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        zhaoyd@thundersoft.com, zhaoxb@thundersoft.com,
-        fanlc0801@thundersoft.com
-Subject: Re: [PATCH] arm64: neon: Fix function may_use_simd() return error
- status
-Message-ID: <20180711154758.4k2phfrzl2r5m34o@lakrids.cambridge.arm.com>
-References: <1531271399-1768-1-git-send-email-yandong77520@gmail.com>
- <CAKv+Gu-PLsWZLPM-OfXHLGKs7PojRB4jFsyp+X_5OW6ryi7gRQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKv+Gu-PLsWZLPM-OfXHLGKs7PojRB4jFsyp+X_5OW6ryi7gRQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Wed, 11 Jul 2018 11:53:40 -0400
+Received: from mga05.intel.com ([192.55.52.43]:50317 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732935AbeGKPxk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 11:53:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 08:48:43 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="239537221"
+Received: from 2b52.sc.intel.com ([143.183.136.52])
+  by orsmga005.jf.intel.com with ESMTP; 11 Jul 2018 08:48:42 -0700
+Message-ID: <1531323904.13297.26.camel@intel.com>
+Subject: Re: [RFC PATCH v2 17/27] x86/cet/shstk: User-mode shadow stack
+ support
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Wed, 11 Jul 2018 08:45:04 -0700
+In-Reply-To: <20180711093454.GX2476@hirez.programming.kicks-ass.net>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+         <20180710222639.8241-18-yu-cheng.yu@intel.com>
+         <20180711093454.GX2476@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 09:20:03AM +0200, Ard Biesheuvel wrote:
-> On 11 July 2018 at 03:09, Yandong.Zhao <yandong77520@gmail.com> wrote:
-> > From: Yandong Zhao <yandong77520@gmail.com>
-> >
-> > It does not matter if the caller of may_use_simd() migrates to
-> > another cpu after the call, but it is still important that the
-> > kernel_neon_busy percpu instance that is read matches the cpu the
-> > task is running on at the time of the read.
-> >
-> > This means that raw_cpu_read() is not sufficient.  kernel_neon_busy
-> > may appear true if the caller migrates during the execution of
-> > raw_cpu_read() and the next task to be scheduled in on the initial
-> > cpu calls kernel_neon_begin().
-> >
-> > This patch replaces raw_cpu_read() with this_cpu_read() to protect
-> > against this race.
-> >
-> > Signed-off-by: Yandong Zhao <yandong77520@gmail.com>
-> 
-> I had a bit of trouble disentangling the per-cpu spaghetti to decide
-> whether this may trigger warnings when CONFIG_DEBUG_PREEMPT=y, but I
-> don't think so. So assuming this is *not* the case:
+On Wed, 2018-07-11 at 11:34 +0200, Peter Zijlstra wrote:
+> On Tue, Jul 10, 2018 at 03:26:29PM -0700, Yu-cheng Yu wrote:
+> > 
+> > +/* MSR_IA32_U_CET and MSR_IA32_S_CET bits */
+> > +#define MSR_IA32_CET_SHSTK_EN		0x0000000000000001
+> > +#define MSR_IA32_CET_WRSS_EN		0x0000000000000002
+> > +#define MSR_IA32_CET_ENDBR_EN		0x0000000000000004
+> > +#define MSR_IA32_CET_LEG_IW_EN		0x0000000000000008
+> > +#define MSR_IA32_CET_NO_TRACK_EN	0x0000000000000010
+> Do those want a ULL literal suffix?
 
-It shouldn't, since:
-
-* this_cpu_*() are prempt-safe
-
-* __this_cpu_*() are not preempt-safe (and warn when preemptible)
-
-* raw_cpu_*() are not preempt safe (but don't warn when preemptible)
-
-> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> 
-> 
-> > ---
-> >  arch/arm64/include/asm/simd.h | 5 +++--
-> >  1 file changed, 3 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
-> > index fa8b3fe..784a8c2 100644
-> > --- a/arch/arm64/include/asm/simd.h
-> > +++ b/arch/arm64/include/asm/simd.h
-> > @@ -29,7 +29,8 @@
-> >  static __must_check inline bool may_use_simd(void)
-> >  {
-> >         /*
-> > -        * The raw_cpu_read() is racy if called with preemption enabled.
-> > +        * The this_cpu_read() is racy if called with preemption enabled,
-> > +        * since the task may subsequently migrate to another CPU.
-> >          * This is not a bug: kernel_neon_busy is only set when
-> >          * preemption is disabled, so we cannot migrate to another CPU
-> >          * while it is set, nor can we migrate to a CPU where it is set.
-
-It would be nice if we could clarify the "is racy" part here.
-
-How about:
-
-	/*
-	 * kernel_neon_busy is only set while preemption is disabled,
-	 * and is clear whenever preemption is enabled. Since
-	 * this_cpu_read() is atomic w.r.t. preemption, kernel_neon_busy
-	 * cannot change under our feet -- if it's set we cannot be
-	 * migrated, and if it's clear we cannot be migrated to a CPU
-	 * where it is set.
-	 */
-
-With that:
-
-Reviewed-by: Mark Rutland <mark.rutland@arm..com>
-
-Thanks,
-Mark.
-
-> > @@ -42,7 +43,7 @@ static __must_check inline bool may_use_simd(void)
-> >          * false.
-> >          */
-> >         return !in_irq() && !irqs_disabled() && !in_nmi() &&
-> > -               !raw_cpu_read(kernel_neon_busy);
-> > +               !this_cpu_read(kernel_neon_busy);
-> >  }
-> >
-> >  #else /* ! CONFIG_KERNEL_MODE_NEON */
-> > --
-> > 1.9.1
-> >
+I will fix it.
