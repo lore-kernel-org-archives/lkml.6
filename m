@@ -2,98 +2,152 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35B01C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A72C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50E220C0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:05:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50E220C0B
+	by mail.kernel.org (Postfix) with ESMTP id 49B0720C03
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:06:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B0720C03
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387764AbeGKQKs (ORCPT
+        id S2389341AbeGKQLA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:10:48 -0400
-Received: from foss.arm.com ([217.140.101.70]:39444 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726586AbeGKQKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:10:48 -0400
+        Wed, 11 Jul 2018 12:11:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39452 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726586AbeGKQLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:11:00 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFEE17A9;
-        Wed, 11 Jul 2018 09:05:47 -0700 (PDT)
-Received: from e107155-lin (unknown [10.1.210.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3156D3F5B1;
-        Wed, 11 Jul 2018 09:05:46 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 17:05:40 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Srinath Mannam <srinath.mannam@broadcom.com>,
-        wim@linux-watchdog.org, Ray Jui <ray.jui@broadcom.com>,
-        Vladimir Olovyannikov <vladimir.olovyannikov@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-watchdog@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v3] watchdog: sp805: Add clock-frequency property
-Message-ID: <20180711160540.GA12449@e107155-lin>
-References: <1531212279-24953-1-git-send-email-srinath.mannam@broadcom.com>
- <20180710213557.GC27827@roeck-us.net>
- <CABe79T4+S2vxx8RoNkEtY7ncaKGvXVf0n_yqN81gmtHnhgqg9A@mail.gmail.com>
- <3868f0c7-e45e-d3b4-5365-12a6a0646f6f@roeck-us.net>
- <20180711153015.GA10578@e107155-lin>
- <20180711153950.GA19932@roeck-us.net>
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C250315AD;
+        Wed, 11 Jul 2018 09:05:59 -0700 (PDT)
+Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 437263F5B1;
+        Wed, 11 Jul 2018 09:05:59 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 7/7] KVM: arm64: Add support for creating PUD hugepages at stage 2
+References: <20180709143835.28971-1-punit.agrawal@arm.com>
+        <20180709144124.29164-1-punit.agrawal@arm.com>
+        <20180709144124.29164-7-punit.agrawal@arm.com>
+        <bbc3f286-be5b-d0dc-2037-54d5b995a0a5@arm.com>
+Date:   Wed, 11 Jul 2018 17:05:57 +0100
+In-Reply-To: <bbc3f286-be5b-d0dc-2037-54d5b995a0a5@arm.com> (Suzuki
+        K. Poulose's message of "Wed, 11 Jul 2018 14:38:38 +0100")
+Message-ID: <87zhyxoize.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711153950.GA19932@roeck-us.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 08:39:50AM -0700, Guenter Roeck wrote:
-> On Wed, Jul 11, 2018 at 04:30:16PM +0100, Sudeep Holla wrote:
+Suzuki K Poulose <Suzuki.Poulose@arm.com> writes:
+
+> On 09/07/18 15:41, Punit Agrawal wrote:
+>> KVM only supports PMD hugepages at stage 2. Now that the various page
+>> handling routines are updated, extend the stage 2 fault handling to
+>> map in PUD hugepages.
+>>
+>> Addition of PUD hugepage support enables additional page sizes (e.g.,
+>> 1G with 4K granule) which can be useful on cores that support mapping
+>> larger block sizes in the TLB entries.
+>>
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Russell King <linux@armlinux.org.uk>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> ---
+>>   arch/arm/include/asm/kvm_mmu.h         | 19 +++++++
+>>   arch/arm64/include/asm/kvm_mmu.h       | 15 +++++
+>>   arch/arm64/include/asm/pgtable-hwdef.h |  2 +
+>>   arch/arm64/include/asm/pgtable.h       |  2 +
+>>   virt/kvm/arm/mmu.c                     | 78 ++++++++++++++++++++++++--
+>>   5 files changed, 112 insertions(+), 4 deletions(-)
+>>
 
 [...]
 
-> >
-> > Typically new properties needs to registered or discussed in dsd@acpica.org
-> > Though there's almost no activity on that list for more than a year now.
-> > IIRC, the thread[1] gives kind of agreement that was reached after
-> > elaborate discussion on _DSD properties.
-> >
+>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>> index a6d3ac9d7c7a..d8e2497e5353 100644
+>> --- a/virt/kvm/arm/mmu.c
+>> +++ b/virt/kvm/arm/mmu.c
+
+[...]
+
+>> @@ -1100,6 +1139,7 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+>>   			  phys_addr_t addr, const pte_t *new_pte,
+>>   			  unsigned long flags)
+>>   {
+>> +	pud_t *pud;
+>>   	pmd_t *pmd;
+>>   	pte_t *pte, old_pte;
+>>   	bool iomap = flags & KVM_S2PTE_FLAG_IS_IOMAP;
+>> @@ -1108,6 +1148,22 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+>>   	VM_BUG_ON(logging_active && !cache);
+>>     	/* Create stage-2 page table mapping - Levels 0 and 1 */
+>> +	pud = stage2_get_pud(kvm, cache, addr);
+>> +	if (!pud) {
+>> +		/*
+>> +		 * Ignore calls from kvm_set_spte_hva for unallocated
+>> +		 * address ranges.
+>> +		 */
+>> +		return 0;
+>> +	}
+>> +
+>> +	/*
+>> +	 * While dirty page logging - dissolve huge PUD, then continue
+>> +	 * on to allocate page.
 >
-> I think you are saying that there are no real rules or governing body
-> for _DSD properties, that _DSD properties are free for all, subject to no
-> scrutiny, that a database with assigned _DSD properties does not exist,
-> and that therefore there is no means for me to determine if this is an
-> approved property.
+> Punit,
 >
+> We don't seem to allocate a page here for the PUD entry, in case if it is dissolved
+> or empty (i.e, stage2_pud_none(*pud) is true.).
 
-Yes and no. The only intent of the review on dsd@acpica.org to catch
-functional/non-compliance issues with the property. The vendor needs to
-own it and ensure the support is added in the kernel before shipping it.
+I was trying to avoid duplicating the PUD allocation by reusing the
+functionality in stage2_get_pmd().
 
-> What prevents someone else to use a different property name for the same
-> driver and property next week, on a different product using the same
-> hardware ?
+Does the below updated comment help?
+
+	/*
+	 * While dirty page logging - dissolve huge PUD, it'll be
+	 * allocated in stage2_get_pmd().
+	 */
+
+The other option is to duplicate the stage2_pud_none() case from
+stage2_get_pmd() here.
+
+What do you think?
+
+Thanks,
+Punit
+
+>> +	 */
+>> +	if (logging_active)
+>> +		stage2_dissolve_pud(kvm, addr, pud);
+>> +
+>>   	pmd = stage2_get_pmd(kvm, cache, addr);
+>>   	if (!pmd) {
 >
-
-Honestly nothing. But the agreement was vendor needs to proactively get
-it reviewed and add the support. The community can reject if it has
-functional/compliance issues.
-
-There has been elaborate discussions in the past on this and I provided
-the link to the final agreement on that. It's always better to avoid
-using them as first option if possible, else get the review/agreement
-that it's good to use property.
-
---
-Regards,
-Sudeep
+> And once you add an entry, pmd is just the matter of getting stage2_pmd_offset() from your pud.
+> No need to start again from the top-level with stage2_get_pmd().
+>
+> Cheers
+> Suzuki
+>
+> _______________________________________________
+> kvmarm mailing list
+> kvmarm@lists.cs.columbia.edu
+> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
