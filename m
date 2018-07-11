@@ -2,138 +2,95 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A79DC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A91C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:27:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D37D208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:27:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D37D208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 029A9208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:27:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 029A9208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732605AbeGKC3f (ORCPT
+        id S1732685AbeGKC3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 22:29:35 -0400
-Received: from mga11.intel.com ([192.55.52.93]:24665 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732287AbeGKC3e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 22:29:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 19:27:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,336,1526367600"; 
-   d="scan'208";a="71744473"
-Received: from debian.sh.intel.com ([10.67.104.228])
-  by orsmga001.jf.intel.com with ESMTP; 10 Jul 2018 19:27:35 -0700
-From:   Tiwei Bie <tiwei.bie@intel.com>
-To:     mst@redhat.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org
-Cc:     wexu@redhat.com, jfreimann@redhat.com, tiwei.bie@intel.com
-Subject: [PATCH net-next v2 1/5] virtio: add packed ring definitions
-Date:   Wed, 11 Jul 2018 10:27:07 +0800
-Message-Id: <20180711022711.7090-2-tiwei.bie@intel.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180711022711.7090-1-tiwei.bie@intel.com>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
+        Tue, 10 Jul 2018 22:29:37 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9219 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732524AbeGKC3g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 22:29:36 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 3C3F5D0F8AA70;
+        Wed, 11 Jul 2018 10:27:25 +0800 (CST)
+Received: from [127.0.0.1] (10.177.16.168) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Wed, 11 Jul 2018
+ 10:27:25 +0800
+Subject: Re: [V9fs-developer] [PATCH] p9_check_errors() validate PDU length
+To:     Tomas Bortoli <tomasbortoli@gmail.com>, <ericvh@gmail.com>,
+        <rminnich@sandia.gov>, <lucho@ionkov.net>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180709224323.20597-1-tomasbortoli@gmail.com>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <syzkaller@googlegroups.com>,
+        <v9fs-developer@lists.sourceforge.net>, <davem@davemloft.net>
+From:   jiangyiwen <jiangyiwen@huawei.com>
+Message-ID: <5B456B0B.6020301@huawei.com>
+Date:   Wed, 11 Jul 2018 10:27:23 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
+MIME-Version: 1.0
+In-Reply-To: <20180709224323.20597-1-tomasbortoli@gmail.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.16.168]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Tiwei Bie <tiwei.bie@intel.com>
----
- include/uapi/linux/virtio_config.h |  3 +++
- include/uapi/linux/virtio_ring.h   | 43 ++++++++++++++++++++++++++++++
- 2 files changed, 46 insertions(+)
+On 2018/7/10 6:43, Tomas Bortoli wrote:
+> p9_check_errors() does not validate the size of the PDU read
+> in p9_parse_header(). Any size can be passed, provoking out-of-bound reads.
+> 
+> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+> Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
+> ---
+> As suggested by Dominique:
+> https://lkml.org/lkml/2018/7/9/688
+> Such check is not enough as it will prevent to read more than how it has
+> been allocated but it won't prevent to read more than how it has been read
+> So this patch will require some more changes to prevent bad sizes.
+> 
+>  net/9p/client.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 40f7c47f2f74..5b161b576b8a 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -520,10 +520,13 @@ EXPORT_SYMBOL(p9_parse_header);
+>  static int p9_check_errors(struct p9_client *c, struct p9_req_t *req)
+>  {
+>  	int8_t type;
+> +	int32_t size;
+>  	int err;
+>  	int ecode;
+>  
+> -	err = p9_parse_header(req->rc, NULL, &type, NULL, 0);
+> +	err = p9_parse_header(req->rc, &size, &type, NULL, 0);
+> +	if (size > req->rc->capacity)
+> +		return -EINVAL;
 
-diff --git a/include/uapi/linux/virtio_config.h b/include/uapi/linux/virtio_config.h
-index 449132c76b1c..1196e1c1d4f6 100644
---- a/include/uapi/linux/virtio_config.h
-+++ b/include/uapi/linux/virtio_config.h
-@@ -75,6 +75,9 @@
-  */
- #define VIRTIO_F_IOMMU_PLATFORM		33
- 
-+/* This feature indicates support for the packed virtqueue layout. */
-+#define VIRTIO_F_RING_PACKED		34
-+
- /*
-  * Does the device support Single Root I/O Virtualization?
-  */
-diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
-index 6d5d5faa989b..0254a2ba29cf 100644
---- a/include/uapi/linux/virtio_ring.h
-+++ b/include/uapi/linux/virtio_ring.h
-@@ -44,6 +44,10 @@
- /* This means the buffer contains a list of buffer descriptors. */
- #define VRING_DESC_F_INDIRECT	4
- 
-+/* Mark a descriptor as available or used. */
-+#define VRING_DESC_F_AVAIL	(1ul << 7)
-+#define VRING_DESC_F_USED	(1ul << 15)
-+
- /* The Host uses this in used->flags to advise the Guest: don't kick me when
-  * you add a buffer.  It's unreliable, so it's simply an optimization.  Guest
-  * will still kick if it's out of buffers. */
-@@ -53,6 +57,17 @@
-  * optimization.  */
- #define VRING_AVAIL_F_NO_INTERRUPT	1
- 
-+/* Enable events. */
-+#define VRING_EVENT_F_ENABLE	0x0
-+/* Disable events. */
-+#define VRING_EVENT_F_DISABLE	0x1
-+/*
-+ * Enable events for a specific descriptor
-+ * (as specified by Descriptor Ring Change Event Offset/Wrap Counter).
-+ * Only valid if VIRTIO_RING_F_EVENT_IDX has been negotiated.
-+ */
-+#define VRING_EVENT_F_DESC	0x2
-+
- /* We support indirect buffer descriptors */
- #define VIRTIO_RING_F_INDIRECT_DESC	28
- 
-@@ -171,4 +186,32 @@ static inline int vring_need_event(__u16 event_idx, __u16 new_idx, __u16 old)
- 	return (__u16)(new_idx - event_idx - 1) < (__u16)(new_idx - old);
- }
- 
-+struct vring_packed_desc_event {
-+	/* Descriptor Ring Change Event Offset/Wrap Counter. */
-+	__virtio16 off_wrap;
-+	/* Descriptor Ring Change Event Flags. */
-+	__virtio16 flags;
-+};
-+
-+struct vring_packed_desc {
-+	/* Buffer Address. */
-+	__virtio64 addr;
-+	/* Buffer Length. */
-+	__virtio32 len;
-+	/* Buffer ID. */
-+	__virtio16 id;
-+	/* The flags depending on descriptor type. */
-+	__virtio16 flags;
-+};
-+
-+struct vring_packed {
-+	unsigned int num;
-+
-+	struct vring_packed_desc *desc;
-+
-+	struct vring_packed_desc_event *driver;
-+
-+	struct vring_packed_desc_event *device;
-+};
-+
- #endif /* _UAPI_LINUX_VIRTIO_RING_H */
--- 
-2.18.0
+Yes, currently 9p client is lacking of properly check for data from server.
+Maybe we should have a bigger patch to solve this problem.
+
+>  	/*
+>  	 * dump the response from server
+>  	 * This should be after check errors which poplulate pdu_fcall.
+> 
+
 
