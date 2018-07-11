@@ -2,140 +2,161 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B2AC43A1D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:26:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C3DC43A1D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BC262146F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:26:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB53820C0E
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:36:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rkl2UGXH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC262146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fjlrQPUx";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FWPkZf/v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB53820C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390662AbeGKWcr (ORCPT
+        id S2390673AbeGKWmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 18:32:47 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:37075 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732831AbeGKWcr (ORCPT
+        Wed, 11 Jul 2018 18:42:50 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49766 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733175AbeGKWmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 18:32:47 -0400
-Received: by mail-pf0-f195.google.com with SMTP id x10-v6so9423385pfm.4
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 15:26:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=clILQctNZt4NtF6j3C50lr69xqHnPN1h0R9FImelFPc=;
-        b=Rkl2UGXHXikhNsyaemyMz2LxEUDVSzSXBgGwyN7TVTu/tOwZ/KxVKfnTPS1ilPHd+l
-         +ZTQJo+Ue0C3W9yy7LW8qOdluIiGJJmIK1ot1C1ygD7iA59Tp1HJWmTqfAUidOP5YXZO
-         zoID9MFokcf6iAv62K14hfgDH9nwF+6bF6PeXm5k0FwPqt9FoxNVOYp95iD0QqPEEXES
-         gFWSx5vH5PLgFS/euvWbAa7Ry1NCWqDPtxipk8d/pQQGUH+MkBgTyz0ytkvV0GWY6HuY
-         qCddifDK9C6wvQ/c2j/scd0D6S4OT+Epnbj8UsvWdg8ttgCHOpJ8GvZqG47oBhQIcULD
-         z/ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=clILQctNZt4NtF6j3C50lr69xqHnPN1h0R9FImelFPc=;
-        b=OiShK6VyCj97j3cmJN8D/tgFH/wxB/NUO6vzt4ncS/8nEmiYRBHydmqDckudI9HeR/
-         ZtU74BsONS1Tb/vuMey+521s4hGMWQi1zg65QccEBy50lnmrPzvWTIhKzs8CLK6fxv2v
-         bXZNXc2KXcmKT15c1sttHQVoYHt3Uc1+axtYtnIgX3ray2sDnHmya+qmtZlDQ1OIpmET
-         ZvREbHoRdFjJ76tv4IxPLjcadyGHp7kibXegNM1/xrwjGtzroGSAimzONsPDyMetEKsm
-         VD1QclRRIolKP3QScaVh7GG0ZCu4FuDGWULyGiH9FL/D3APN4wUwuhOGQ1No+j4qWpbt
-         RS0g==
-X-Gm-Message-State: AOUpUlEco/3X95O+8IZdZSNgdS0C4jaeFuExhatgORpv6RMZG52Lymn2
-        HaaGOUALoREWngfM+GKaKPo=
-X-Google-Smtp-Source: AAOMgpep852ixWRgSNUahnYOMHFR5/kcTV2OANwPjGVE2OcUXl61b0hQXuWvoJ/4S1BSd7//YmFTCg==
-X-Received: by 2002:a62:15c8:: with SMTP id 191-v6mr433891pfv.194.1531347979713;
-        Wed, 11 Jul 2018 15:26:19 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id r19-v6sm23687830pgg.39.2018.07.11.15.26.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 15:26:18 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 15:26:18 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Baoquan He <bhe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        dave.hansen@intel.com, pagupta@redhat.com,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Oscar Salvador <osalvador@techadventures.net>,
-        linux-mm@kvack.org, kirill.shutemov@linux.intel.com,
-        Michael Ellerman <mpe@ellerman.id.au>
-Subject: Re: [v6,5/5] mm/sparse: Remove
- CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-Message-ID: <20180711222618.GA29869@roeck-us.net>
-References: <20180628062857.29658-6-bhe@redhat.com>
+        Wed, 11 Jul 2018 18:42:49 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 79D7A60795; Wed, 11 Jul 2018 22:36:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531348580;
+        bh=aICReMryhERaMIA/USj5t0bgB28l3Ucs0I3w5I7XW7E=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fjlrQPUxep8OX2tWTzv6T1f0a5KxwxNvPFOfvC0B3AxH6QeCkic7v1iOLPP8ZnL8J
+         mXhYOj/w1R1KRzWbRdV+LkOdMFBBHg3q3FFdQKkHViIMKTj/e0T4wWIkRz8BQAeVVh
+         oRHFTBfVB5e3r2apOcsQ8LcnS8+RdGL9Reb5tacg=
+Received: from [10.46.160.165] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: collinsd@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0F84560250;
+        Wed, 11 Jul 2018 22:36:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531348579;
+        bh=aICReMryhERaMIA/USj5t0bgB28l3Ucs0I3w5I7XW7E=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FWPkZf/vJax7dC/QfCMiCdqXBg9+2oBDwEmgsmsiIIwarraKHqDk8/EB0HQ9IP8mE
+         nWVI+3UffhZoC0tKMoKVNQ/A3gZd6GrG8gAUC6Tiz4ugtv9Ne+EOUi1J4p+mEqh3Tj
+         EaDhCWQXjz2w5iitru69WnvphcaKWbIrmKAkEGFk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F84560250
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: pm8998: Add thermal zone
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+References: <20180628210915.160893-1-mka@chromium.org>
+ <20180628210915.160893-3-mka@chromium.org>
+ <CAD=FV=Wo4wc_QZYr0a2_Ge=B6T4RNJDnOyxAd8r6sT4iZJjCKg@mail.gmail.com>
+ <20180629185102.GV129942@google.com>
+ <3b5054bb-76e4-a06f-54bb-e6ea7bbbcc69@codeaurora.org>
+ <20180629235417.GY129942@google.com>
+ <8144dd3c-6138-7f16-ec17-d75e84fcfb34@codeaurora.org>
+ <CAD=FV=XqoRajjNcW8RyJfrcXQVDihfjAnAsN+O9g+6qDrLHfJw@mail.gmail.com>
+From:   David Collins <collinsd@codeaurora.org>
+Message-ID: <03904a71-c6be-4f93-ad43-7d25631f9a04@codeaurora.org>
+Date:   Wed, 11 Jul 2018 15:36:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180628062857.29658-6-bhe@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAD=FV=XqoRajjNcW8RyJfrcXQVDihfjAnAsN+O9g+6qDrLHfJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello Doug,
 
-On Thu, Jun 28, 2018 at 02:28:57PM +0800, Baoquan He wrote:
-> Pavel pointed out that the behaviour of allocating memmap together
-> for one node should be defaulted for all ARCH-es. It won't break
-> anything because it will drop to the fallback action to allocate
-> imemmap for each section at one time if failed on large chunk of
-> memory.
-> 
-> So remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER and clean up the
-> related codes.
-> 
+> On Tue, Jul 10, 2018 at 10:45 AM, David Collins <collinsd@codeaurora.org> wrote:
+>> On 06/29/2018 04:54 PM, Matthias Kaehlcke wrote:
+>>> On Fri, Jun 29, 2018 at 02:29:55PM -0700, David Collins wrote:
+>> ...
+>>>> The PMIC TEMP_ALARM hardware peripheral will perform an automatic partial
+>>>> PMIC shutdown upon hitting over-temperature stage 2 (125 C).  This turns
+>>>> off peripherals within the PMIC that are expected to draw significant
+>>>> current.  The set of peripherals included varies between PMICs.  This
+>>>> partial shutdown will occur simultaneously with the triggering of an
+>>>> interrupt to the APPS processor that informs the qcom-spmi-temp-alarm
+>>>> driver that an over-temperature threshold has been crossed.
+>>>>
+>>>> The TEMP_ALARM peripheral will perform an automatic full PMIC shutdown
+>>>> upon hitting over-temperature stage 3 (145 C).  Software won't receive an
+>>>> interrupt in this case because all power is cut.
+>>>
+>>> This information is very useful, thanks David!
+>>>
+>>> The (partial) hardware shutdown seems like a good measure of last
+>>> resort, however I suppose we prefer Linux to initiate a shutdown
+>>> before losing part of the peripherals (drivers might not be happy
+>>> about this and probably not revover even when the temperature goes
+>>> down again) or reach a full PMIC shutdown.
+>>>
+>>> Please let me know if there are reasons to prefer to go the hardware
+>>> limits, it's also an option for device makers to overwrite these
+>>> settings if they want different behavior.
+>>
+>> Disabling stage 3 automatic full PMIC shutdown at 145 C is definitely a
+>> bad idea.  This exists as a last resort in order to save the hardware and
+>> ensure end user safety in case of excessive temperature even if software
+>> is locked up.
+>>
+>> Disabling stage 2 automatic partial PMIC shutdown at 125 C is not
+>> recommended as the PMIC is already outside of reasonable operating
+>> conditions and needs to take corrective action quickly.  However, doing so
+>> may be acceptable if software is taking action to shut down the system
+>> immediately upon receiving the stage 2 over-temperature interrupt.
+>> Just to confirm: is it expected that at stage 2 the CPU's on the SoC
+> should continue running even with partial PMIC shutdown enabled?
 
-This patch causes several of my qemu boot tests to fail.
-	powerpc:mac99:ppc64_book3s_defconfig:initrd:nosmp
-	powerpc:mac99:ppc64_book3s_defconfig:initrd:smp4 
-	powerpc:mac99:ppc64_book3s_defconfig:rootfs:smp4 
-	powerpc:pseries:pseries_defconfig:initrd 
-	powerpc:pseries:pseries_defconfig:rootfs 
-	powerpc:powernv:powernv_defconfig:initrd 
+This is not guaranteed.
 
-Bisect points to this patch. Bisect log is attached for reference.
-Reverting the patch fixes the problem.
 
-[ Yes, I am aware that Michael already reported the problem at
-  https://lkml.org/lkml/2018/7/11/480 ]
+> It sounded to me like partial PMIC shutdown was supposed to shut down
+> high-power rails that were not essential to the task of performing an
+> orderly shutdown.
 
-Guenter
+Shutting down high-power peripherals is accurate; however, special care is
+not taken to ensure that an orderly shutdown is possible.  At the very
+least, the HW and SW state will be out of sync for the peripherals that
+are shut down.
 
----
-# bad: [98be45067040799a801e6ce52d8bf4659a153893] Add linux-next specific files for 20180711
-# good: [1e4b044d22517cae7047c99038abb444423243ca] Linux 4.18-rc4
-git bisect start 'HEAD' 'v4.18-rc4'
-# good: [ade30e73739a5174bcaee5860fee76c2365548c5] Merge remote-tracking branch 'crypto/master'
-git bisect good ade30e73739a5174bcaee5860fee76c2365548c5
-# good: [792be221c35d19a1c486789e5b5c91c05279b94d] Merge remote-tracking branch 'tip/auto-latest'
-git bisect good 792be221c35d19a1c486789e5b5c91c05279b94d
-# good: [1d66737ba99400ab9a79c906a25b2090f4cc8b18] Merge remote-tracking branch 'mux/for-next'
-git bisect good 1d66737ba99400ab9a79c906a25b2090f4cc8b18
-# good: [c02d5416bd8504866dd80d2129f4648747166b6f] Merge remote-tracking branch 'kspp/for-next/kspp'
-git bisect good c02d5416bd8504866dd80d2129f4648747166b6f
-# bad: [1e741337a9416010a48c6034855e316ba8057111] ntb: ntb_hw_switchtec: cleanup 64bit IO defines to use the common header
-git bisect bad 1e741337a9416010a48c6034855e316ba8057111
-# good: [205a106bac127145a4defae7d0d35945001fe924] kernel/memremap, kasan: make ZONE_DEVICE with work with KASAN
-git bisect good 205a106bac127145a4defae7d0d35945001fe924
-# bad: [e87ebebf76c9ceeaea21a256341d6765c657e550] mm, oom: remove sleep from under oom_lock
-git bisect bad e87ebebf76c9ceeaea21a256341d6765c657e550
-# good: [9f95e9e87283a578fb676f14fd5e1edd4cb401f7] mm/vmscan.c: iterate only over charged shrinkers during memcg shrink_slab()
-git bisect good 9f95e9e87283a578fb676f14fd5e1edd4cb401f7
-# bad: [0ba29a108979bdbe3f77094e8b5cc06652e2698b] mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-git bisect bad 0ba29a108979bdbe3f77094e8b5cc06652e2698b
-# good: [ca464c7768574c49f58a5be8962330814262820f] mm/sparse.c: add a static variable nr_present_sections
-git bisect good ca464c7768574c49f58a5be8962330814262820f
-# good: [4f02f8533cbad406e004b3bfe75f65e6b791efd5] mm/sparse.c: add a new parameter 'data_unit_size' for alloc_usemap_and_memmap
-git bisect good 4f02f8533cbad406e004b3bfe75f65e6b791efd5
-# good: [110cb339e5d95c77cf83d33de25f6f392d0ca7f6] mm-sparse-optimize-memmap-allocation-during-sparse_init-checkpatch-fixes
-git bisect good 110cb339e5d95c77cf83d33de25f6f392d0ca7f6
-# first bad commit: [0ba29a108979bdbe3f77094e8b5cc06652e2698b] mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+
+> I think Matthias was seeing that when he reached stage 2 and partial
+> PMIC shutdown happened that the system was just falling on the floor.
+> ...maybe we just have things configured incorrectly?
+
+More information about the exact crash steps would be helpful to
+investigate this further.  I'm not sure how much time you want to put into
+it though.  Disabling stage 2 partial shutdown and then using software to
+perform a controlled shutdown at 125 C is probably the best option for you
+at this point.
+
+Take care,
+David
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
