@@ -2,148 +2,125 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EDFDC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B030FC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58EAF20883
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:04:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kDRyNOZf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58EAF20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5A46F20883
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:04:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A46F20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387742AbeGKNIW (ORCPT
+        id S2387752AbeGKNJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:08:22 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:50793 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387729AbeGKNIV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:08:21 -0400
-Received: by mail-it0-f67.google.com with SMTP id w16-v6so3492849ita.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 06:04:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=IR8gHxhJpLPBD4bBTI7qYZwQv5dB7zSSf0yho6+XIb8=;
-        b=kDRyNOZf7ypeQrLK6ZayPqTqcEicu8r3h3+PWNk0hEbgR1CAxUFYBi5l0Fomg4X5ZJ
-         5QSlh2tIONJNUfqZp6NIGLRbO+B/3usVKr6NWl+EG2nmtL21chjngfhUnTt3nuhONg9U
-         TMLhCwiCOhIX+iyEZ3N7jeU94CsxKCAQKyAO4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=IR8gHxhJpLPBD4bBTI7qYZwQv5dB7zSSf0yho6+XIb8=;
-        b=uDdx7CdVIb99sXWkfzIpVYeqiZpSzH+0TGQT95ruiMdzXbeCu+tbJ8DAsKZPpywAxZ
-         krOF0pEJC4S0DynLr0RfiOypbnBD6Xgm0GuzKEday4ua2AmxXuWS6+2722Kk/DXAzJQO
-         kxNtnvAi2JwhgRYzxy5g2WXwlwM3TVayFAHwAwDePPUafIClKHJXK0Bu3aRigfQfkWz5
-         PgfMfHfq6ZHMHuv8EnXIGX0oPIE8UEsUKO1T+yoHgUYMN6fmIY5TN+qTZCNbYBEIU5Kx
-         In5HfIecHmtoot2H+BfOfEhy1dyNf25ORNAm1YUHs103DciXSar8DeX4UJOzvra1inqZ
-         mgjQ==
-X-Gm-Message-State: APt69E3xC++PHgypMAyfjtx871IM8WRxtHSASho0JCDGqAhzhZ4uX3NW
-        Ac4uzXk1kv40+gi3AwwES5C9/M8EUjWqG4hC67YacA==
-X-Google-Smtp-Source: AAOMgpekbcH9YEN1YhgEHMCHwLQI+qPfUS9y+Od8uEmzaV+yK7fs26ZYl44P6UKdhNyyP5m32ejyTPE9IymsuGqswvM=
-X-Received: by 2002:a02:570c:: with SMTP id u12-v6mr24229013jaa.142.1531314246051;
- Wed, 11 Jul 2018 06:04:06 -0700 (PDT)
+        Wed, 11 Jul 2018 09:09:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51594 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732411AbeGKNJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:09:07 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3431120775; Wed, 11 Jul 2018 15:04:50 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D77AA206F3;
+        Wed, 11 Jul 2018 15:04:49 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 15:04:49 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Abhishek Sahu <absahu@codeaurora.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nand: ranw: qcom_nand: stop using phys_to_dma()
+Message-ID: <20180711150449.4152333c@bbrezillon>
+In-Reply-To: <20180711122709.358159-1-arnd@arndb.de>
+References: <20180711122709.358159-1-arnd@arndb.de>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 06:04:05
- -0700 (PDT)
-In-Reply-To: <baf7647f-47e7-dfe0-102c-9f7f48b3a363@intel.com>
-References: <20180705113937.16414-1-stefan@agner.ch> <baf7647f-47e7-dfe0-102c-9f7f48b3a363@intel.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 11 Jul 2018 15:04:05 +0200
-Message-ID: <CAPDyKFqLg-uyK+KXS-2oTrukSjx+WBG9rb0Uj430-47MpVawsw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-esdhc-imx: disable clocks before changing frequency
-To:     Adrian Hunter <adrian.hunter@intel.com>,
-        Stefan Agner <stefan@agner.ch>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
-        Haibo Chen <haibo.chen@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 July 2018 at 14:29, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> On 05/07/18 14:39, Stefan Agner wrote:
->> In the uSDHC case (e.g. i.MX 6) clocks only get disabled if frequency
->> is set to 0. However, it could be that the stack asks for a frequency
->> change while clocks are on. In that case the function clears the
->> divider registers (by clearing ESDHC_CLOCK_MASK) while the clock is
->> enabled! This causes a short period of time where the clock is
->> undivided (on a i.MX 6DL a clock of 196MHz has been measured).
->>
->> For older IP variants the driver disables clock by clearing some bits
->> in ESDHC_SYSTEM_CONTROL.
->>
->> Make sure to disable card clock before chainging frequency for uSDHC
->
-> chainging -> changing
->
->> IP variants too. Also fix indent to make disable/enable clock look
->> alike.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  drivers/mmc/host/sdhci-esdhc-imx.c | 14 +++++++-------
->>  1 file changed, 7 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
->> index 85fd5a8b0b6d..aa48f4b2541a 100644
->> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
->> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
->> @@ -708,14 +708,14 @@ static inline void esdhc_pltfm_set_clock(struct sdhci_host *host,
->>       int div = 1;
->>       u32 temp, val;
->>
->> +     if (esdhc_is_usdhc(imx_data)) {
->> +             val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
->> +             writel(val & ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
->> +                     host->ioaddr + ESDHC_VENDOR_SPEC);
->> +     }
->> +
->>       if (clock == 0) {
->>               host->mmc->actual_clock = 0;
->> -
->> -             if (esdhc_is_usdhc(imx_data)) {
->> -                     val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
->> -                     writel(val & ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
->> -                                     host->ioaddr + ESDHC_VENDOR_SPEC);
->> -             }
->>               return;
->>       }
->>
->> @@ -761,7 +761,7 @@ static inline void esdhc_pltfm_set_clock(struct sdhci_host *host,
->>       if (esdhc_is_usdhc(imx_data)) {
->>               val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
->>               writel(val | ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
->> -             host->ioaddr + ESDHC_VENDOR_SPEC);
->> +                     host->ioaddr + ESDHC_VENDOR_SPEC);
->
-> Ideally each patch does only 1 thing.  Please make white-space fix-up a
-> separate patch.
->
->>       }
->>
->>       mdelay(1);
->>
->
+On Wed, 11 Jul 2018 14:26:58 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-It turned out that I had already applied this one. I am going to
-re-base my next branch next week, so dropping the patch by then.
+> Compile-testing this driver on x86 caused a link error:
+> 
+> ERROR: "__phys_to_dma" [drivers/mtd/nand/raw/qcom_nandc.ko] undefined!
+> 
+> The problem here is that the driver attempts to convert the physical
+> address into the DMA controller as a dma_addr_t and calls phys_to_dma()
+> to do the conversion.
+> 
+> However, there is no generic way to convert a phys_addr_t into a dma_addr_t
+> for anything other than RAM (which should use the dma-mapping API instead).
+> The only correct use of phys_to_dma() instead is inside of the dma-mapping
+> implementation.
 
-Until then, the patch is reverted.
+Should we use dma_map_resource() to do the phys_addr_t to dma_addr_t
+conversion?
 
-Stefan, please send a new version addressing Adrian's comments.
+> 
+> In all other drivers that deal with DMA FIFO addresses, we just pass the
+> physical address directly and have the DMA controller deal with that
+> if necessary, so let's do the same thing here.
+> 
+> Fixes: c76b78d8ec05 ("mtd: nand: Qualcomm NAND controller driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/mtd/nand/raw/qcom_nandc.c | 7 ++-----
+>  1 file changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
+> index 994f980c6d86..f047e2819041 100644
+> --- a/drivers/mtd/nand/raw/qcom_nandc.c
+> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
+> @@ -338,7 +338,6 @@ struct nandc_regs {
+>   * @dev:			parent device
+>   * @base:			MMIO base
+>   * @base_phys:			physical base address of controller registers
+> - * @base_dma:			dma base address of controller registers
+>   * @core_clk:			controller clock
+>   * @aon_clk:			another controller clock
+>   *
+> @@ -372,7 +371,6 @@ struct qcom_nand_controller {
+>  
+>  	void __iomem *base;
+>  	phys_addr_t base_phys;
+> -	dma_addr_t base_dma;
+>  
+>  	struct clk *core_clk;
+>  	struct clk *aon_clk;
+> @@ -935,11 +933,11 @@ static int prep_adm_dma_desc(struct qcom_nand_controller *nandc, bool read,
+>  	slave_conf.device_fc = flow_control;
+>  	if (read) {
+>  		slave_conf.src_maxburst = 16;
+> -		slave_conf.src_addr = nandc->base_dma + reg_off;
+> +		slave_conf.src_addr = (dma_addr_t)nandc->base_phys + reg_off;
+>  		slave_conf.slave_id = nandc->data_crci;
+>  	} else {
+>  		slave_conf.dst_maxburst = 16;
+> -		slave_conf.dst_addr = nandc->base_dma + reg_off;
+> +		slave_conf.dst_addr = (dma_addr_t)nandc->base_phys + reg_off;
+>  		slave_conf.slave_id = nandc->cmd_crci;
+>  	}
+>  
+> @@ -2963,7 +2961,6 @@ static int qcom_nandc_probe(struct platform_device *pdev)
+>  		return PTR_ERR(nandc->base);
+>  
+>  	nandc->base_phys = res->start;
+> -	nandc->base_dma = phys_to_dma(dev, (phys_addr_t)res->start);
+>  
+>  	nandc->core_clk = devm_clk_get(dev, "core");
+>  	if (IS_ERR(nandc->core_clk))
 
-Kind regards
-Uffe
