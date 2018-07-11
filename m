@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3DACC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60982C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80EC4208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80EC4208EC
+	by mail.kernel.org (Postfix) with ESMTP id 24C14208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C14208EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732900AbeGKC1Y (ORCPT
+        id S1732885AbeGKC1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 10 Jul 2018 22:27:24 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45568 "EHLO
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45522 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732383AbeGKCYE (ORCPT
+        with ESMTP id S1732375AbeGKCYE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Jul 2018 22:24:04 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fd4lb-0003Iu-MR; Wed, 11 Jul 2018 02:22:07 +0000
+        id 1fd4lb-0003I9-18; Wed, 11 Jul 2018 02:22:07 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [RFC][PATCH 15/42] lift fput() on late failures into path_openat()
-Date:   Wed, 11 Jul 2018 03:21:39 +0100
-Message-Id: <20180711022206.12571-15-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH 09/42] pass creds to get_empty_filp(), make sure dentry_open() passes the right creds
+Date:   Wed, 11 Jul 2018 03:21:33 +0100
+Message-Id: <20180711022206.12571-9-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
 References: <20180711021136.GN30522@ZenIV.linux.org.uk>
@@ -43,66 +43,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
+... and rename get_empty_filp() to alloc_empty_file().
+
+dentry_open() gets creds as argument, but the only thing that sees those is
+security_file_open() - file->f_cred still ends up with current_cred().  For
+almost all callers it's the same thing, but there are several broken cases.
+
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c | 28 ++++++++++++----------------
- 1 file changed, 12 insertions(+), 16 deletions(-)
+ fs/file_table.c | 5 ++---
+ fs/internal.h   | 2 +-
+ fs/namei.c      | 2 +-
+ fs/open.c       | 2 +-
+ 4 files changed, 5 insertions(+), 6 deletions(-)
 
+diff --git a/fs/file_table.c b/fs/file_table.c
+index eee7cf629e52..d7a03a47b702 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -101,9 +101,8 @@ int proc_nr_files(struct ctl_table *table, int write,
+  * done, you will imbalance int the mount's writer count
+  * and a warning at __fput() time.
+  */
+-struct file *get_empty_filp(void)
++struct file *alloc_empty_file(const struct cred *cred)
+ {
+-	const struct cred *cred = current_cred();
+ 	static long old_max;
+ 	struct file *f;
+ 	int error;
+@@ -161,7 +160,7 @@ struct file *alloc_file(const struct path *path, fmode_t mode,
+ {
+ 	struct file *file;
+ 
+-	file = get_empty_filp();
++	file = alloc_empty_file(current_cred());
+ 	if (IS_ERR(file))
+ 		return file;
+ 
+diff --git a/fs/internal.h b/fs/internal.h
+index 5645b4ebf494..66473bf388e4 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -93,7 +93,7 @@ extern void chroot_fs_refs(const struct path *, const struct path *);
+ /*
+  * file_table.c
+  */
+-extern struct file *get_empty_filp(void);
++extern struct file *alloc_empty_file(const struct cred *);
+ 
+ /*
+  * super.c
 diff --git a/fs/namei.c b/fs/namei.c
-index 3d4e20a1c756..5a79bd170410 100644
+index 734cef54fdf8..af2ec1803f57 100644
 --- a/fs/namei.c
 +++ b/fs/namei.c
-@@ -3407,8 +3407,6 @@ static int do_last(struct nameidata *nd,
- 	if (!error && will_truncate)
- 		error = handle_truncate(file);
- out:
--	if (unlikely(error) && (*opened & FILE_OPENED))
--		fput(file);
- 	if (unlikely(error > 0)) {
- 		WARN_ON(1);
- 		error = -EINVAL;
-@@ -3484,8 +3482,6 @@ static int do_tmpfile(struct nameidata *nd, unsigned flags,
- 	if (error)
- 		goto out2;
- 	error = open_check_o_direct(file);
--	if (error)
--		fput(file);
- out2:
- 	mnt_drop_write(path.mnt);
- out:
-@@ -3547,20 +3543,20 @@ static struct file *path_openat(struct nameidata *nd,
- 	}
- 	terminate_walk(nd);
- out2:
--	if (!(opened & FILE_OPENED)) {
--		BUG_ON(!error);
--		fput(file);
-+	if (likely(!error)) {
-+		if (likely(opened & FILE_OPENED))
-+			return file;
-+		WARN_ON(1);
-+		error = -EINVAL;
- 	}
--	if (unlikely(error)) {
--		if (error == -EOPENSTALE) {
--			if (flags & LOOKUP_RCU)
--				error = -ECHILD;
--			else
--				error = -ESTALE;
--		}
--		file = ERR_PTR(error);
-+	fput(file);
-+	if (error == -EOPENSTALE) {
-+		if (flags & LOOKUP_RCU)
-+			error = -ECHILD;
-+		else
-+			error = -ESTALE;
- 	}
--	return file;
-+	return ERR_PTR(error);
- }
+@@ -3513,7 +3513,7 @@ static struct file *path_openat(struct nameidata *nd,
+ 	int opened = 0;
+ 	int error;
  
- struct file *do_filp_open(int dfd, struct filename *pathname,
+-	file = get_empty_filp();
++	file = alloc_empty_file(current_cred());
+ 	if (IS_ERR(file))
+ 		return file;
+ 
+diff --git a/fs/open.c b/fs/open.c
+index 558802e66e00..c0dbc67c31f1 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -923,7 +923,7 @@ struct file *dentry_open(const struct path *path, int flags,
+ 	/* We must always pass in a valid mount pointer. */
+ 	BUG_ON(!path->mnt);
+ 
+-	f = get_empty_filp();
++	f = alloc_empty_file(cred);
+ 	if (!IS_ERR(f)) {
+ 		f->f_flags = flags;
+ 		error = vfs_open(path, f, cred);
 -- 
 2.11.0
 
