@@ -1,156 +1,80 @@
 Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF179C1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:54:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA958C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:54:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E44A20C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:54:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E44A20C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9478220C0E
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:54:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9478220C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388828AbeGKT7y (ORCPT
+        id S2390100AbeGKUAl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 15:59:54 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:33019 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732535AbeGKT7y (ORCPT
+        Wed, 11 Jul 2018 16:00:41 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:45001 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389922AbeGKUAk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 15:59:54 -0400
-Received: by mail-io0-f198.google.com with SMTP id s14-v6so5843211ioc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:54:01 -0700 (PDT)
+        Wed, 11 Jul 2018 16:00:40 -0400
+Received: by mail-oi0-f66.google.com with SMTP id s198-v6so51483965oih.11;
+        Wed, 11 Jul 2018 12:54:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=f+QLSstwNAB5Be4kGDYyAfk7HDp1SIFVLlQHEwtFbI0=;
-        b=nUune6c7PAt2K6VM1IMRUniSAWmZEzUpL0N6NDXNCM6Y8bQWyZNQKPNJZ557z88fg/
-         5Wws1uRi0U7QdgcfKz8Uwf2noy/2NtuAoH8cPQ8meEDsnKPQbauNXvslaiVgrDb6E6q7
-         tuOitpl3LvqD4fn6qmBzqIa8auBv6sszNDEVmjp8ymmB+jTy57CtSOWgdApQ8t4HFPwI
-         ccYldvQctWgpn6qk+NvxN8xjyozvXOc+XDGLD3BHLSrUMnUSg955mtaGKXlzU7f73qJK
-         wuyWIH8wEONYGMhWXQTTdH/7/JzNE/cz/l/3Q+YeXTqT9z6bl5vGSlky2ezJHXuOWHhW
-         XZdQ==
-X-Gm-Message-State: AOUpUlHVD/IQ8KCuVbGKCE1JFNeeF6oJLJLmBVZkY3/HlO6NTD+AuCZa
-        1nTD5wWskatHPecqjhEeB/cf5EXcHezqSOVz+qPKrqbQQch6
-X-Google-Smtp-Source: AAOMgpeZdtQZYCFpzXIdhfJkt63/S8Xgc5wRP8sFPh/+MqTaVvk81jCYHeY9NUG/vwkJ9wHyt6HJlXmptRSFXiZM08X3rVJh5Oh+
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yxH2qUHbTGEpIjP8Fex5SuU0jpW8Wmvf8y4hrDQOHTs=;
+        b=BXaBL2G/BH2wdbV6ZREbiLjnCT14A6AbDyGSn/hGgllWzOKjYfOTnhv2z0LpPRrO23
+         zLUVeGvidySLWxij2D80d6yjnQ/8Gg0RRktQYofHSPG/09Do2yYoWHiomlRAZHb/d7hJ
+         zieYV8QxVnMJKx6PtzOcP+5jjyfCXffEzo3p8QdJGLje8qCMeSENA7Idl7kRpRX1/hnR
+         zDhmkU7zvv1NQLWGiYBvhsxNMxdGUPU1bOygJEfHNKdTVnSQdyc9B03krhCZKOMbKuGz
+         Q8evyt1t1/Dto+kl0o/C9sj4rNnAoCgGF4AiO9bG7plpuNc2Bn+1w/Jqv4PSV+PP0bsM
+         Wfvw==
+X-Gm-Message-State: AOUpUlGE6Od/XHfKpJHYmwtO5ZcfmZVz/yvTqGCiv+/q8IynfqHgG9u0
+        u5/NNwZN97X5kDMtRwTm+3mM9ss=
+X-Google-Smtp-Source: AAOMgpddrcq01Ji8aXEIpaLQffetXFuuSTFU5UW5LMPaQzxmayKsXDMEqEDKjEJjMmUCwefEd+K6gg==
+X-Received: by 2002:aca:401:: with SMTP id 1-v6mr77657oie.28.1531338887651;
+        Wed, 11 Jul 2018 12:54:47 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id x23-v6sm9731434oie.0.2018.07.11.12.54.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 12:54:47 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 13:54:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Koen Kooi <koen@dominion.thruhere.net>
+Cc:     linux-omap@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        SZ Lin <sz.lin@moxa.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: Add vendor prefix for Sancloud
+Message-ID: <20180711195444.GA17291@rob-hp-laptop>
+References: <1531291992-30512-1-git-send-email-koen@dominion.thruhere.net>
+ <1531291992-30512-2-git-send-email-koen@dominion.thruhere.net>
 MIME-Version: 1.0
-X-Received: by 2002:a02:a68e:: with SMTP id j14-v6mr8868jam.29.1531338841632;
- Wed, 11 Jul 2018 12:54:01 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 12:54:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000afbebb0570be9bf3@google.com>
-Subject: KASAN: use-after-free Read in p9_fd_poll
-From:   syzbot <syzbot+0442e6e2f7e1e33b1037@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, ericvh@gmail.com,
-        linux-kernel@vger.kernel.org, lucho@ionkov.net,
-        netdev@vger.kernel.org, rminnich@sandia.gov,
-        syzkaller-bugs@googlegroups.com,
-        v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531291992-30512-2-git-send-email-koen@dominion.thruhere.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgMzBjMmMzMmQ3ZjcwIE1lcmdlIHRhZyAnZHJtLWZpeGVzLTIwMTgtMDctMTAnIG9m
-IGdpdDovL2Fuby4uDQpnaXQgdHJlZTogICAgICAgdXBzdHJlYW0NCmNvbnNvbGUgb3V0cHV0OiBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xNjYyYzViMjQwMDAwMA0K
-a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
-PTI1ODU2ZmFjNGU1ODBhYTcNCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
-cG90LmNvbS9idWc/ZXh0aWQ9MDQ0MmU2ZTJmN2UxZTMzYjEwMzcNCmNvbXBpbGVyOiAgICAgICBn
-Y2MgKEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCg0KVW5mb3J0dW5hdGVseSwg
-SSBkb24ndCBoYXZlIGFueSByZXByb2R1Y2VyIGZvciB0aGlzIGNyYXNoIHlldC4NCg0KSU1QT1JU
-QU5UOiBpZiB5b3UgZml4IHRoZSBidWcsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8g
-dGhlIGNvbW1pdDoNClJlcG9ydGVkLWJ5OiBzeXpib3QrMDQ0MmU2ZTJmN2UxZTMzYjEwMzdAc3l6
-a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQ0KDQo5cG5ldDogcDlfZXJyc3RyMmVycm5vOiBzZXJ2ZXIg
-cmVwb3J0ZWQgdW5rbm93biBlcnJvciBldHowZSbvv73vv70/77+9ZCQ13LFJFjPvv70eEw0KUUFU
-OiBJbnZhbGlkIGlvY3RsDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT0NCkJVRzogS0FTQU46IHVzZS1hZnRlci1mcmVlIGlu
-IHA5X2ZkX3BvbGwrMHgyODAvMHgyYjAgbmV0LzlwL3RyYW5zX2ZkLmM6MjM4DQpSZWFkIG9mIHNp
-emUgOCBhdCBhZGRyIGZmZmY4ODAxYzY0N2VjODAgYnkgdGFzayBrd29ya2VyLzE6My81MDA1DQoN
-CkNQVTogMSBQSUQ6IDUwMDUgQ29tbToga3dvcmtlci8xOjMgTm90IHRhaW50ZWQgNC4xOC4wLXJj
-NCsgIzE0MA0KSGFyZHdhcmUgbmFtZTogR29vZ2xlIEdvb2dsZSBDb21wdXRlIEVuZ2luZS9Hb29n
-bGUgQ29tcHV0ZSBFbmdpbmUsIEJJT1MgIA0KR29vZ2xlIDAxLzAxLzIwMTENCldvcmtxdWV1ZTog
-ZXZlbnRzIHA5X3BvbGxfd29ya2ZuDQpDYWxsIFRyYWNlOg0KICBfX2R1bXBfc3RhY2sgbGliL2R1
-bXBfc3RhY2suYzo3NyBbaW5saW5lXQ0KICBkdW1wX3N0YWNrKzB4MWM5LzB4MmI0IGxpYi9kdW1w
-X3N0YWNrLmM6MTEzDQogIHByaW50X2FkZHJlc3NfZGVzY3JpcHRpb24rMHg2Yy8weDIwYiBtbS9r
-YXNhbi9yZXBvcnQuYzoyNTYNCiAga2FzYW5fcmVwb3J0X2Vycm9yIG1tL2thc2FuL3JlcG9ydC5j
-OjM1NCBbaW5saW5lXQ0KICBrYXNhbl9yZXBvcnQuY29sZC43KzB4MjQyLzB4MmZlIG1tL2thc2Fu
-L3JlcG9ydC5jOjQxMg0KICBfX2FzYW5fcmVwb3J0X2xvYWQ4X25vYWJvcnQrMHgxNC8weDIwIG1t
-L2thc2FuL3JlcG9ydC5jOjQzMw0KICBwOV9mZF9wb2xsKzB4MjgwLzB4MmIwIG5ldC85cC90cmFu
-c19mZC5jOjIzOA0KICBwOV9wb2xsX211eCBuZXQvOXAvdHJhbnNfZmQuYzo2MTcgW2lubGluZV0N
-CiAgcDlfcG9sbF93b3JrZm4rMHg0NjMvMHg2ZDAgbmV0LzlwL3RyYW5zX2ZkLmM6MTEwNw0KICBw
-cm9jZXNzX29uZV93b3JrKzB4YzczLzB4MWJhMCBrZXJuZWwvd29ya3F1ZXVlLmM6MjE1Mw0KICB3
-b3JrZXJfdGhyZWFkKzB4MTg5LzB4MTNjMCBrZXJuZWwvd29ya3F1ZXVlLmM6MjI5Ng0KICBrdGhy
-ZWFkKzB4MzQ1LzB4NDEwIGtlcm5lbC9rdGhyZWFkLmM6MjQ2DQogIHJldF9mcm9tX2ZvcmsrMHgz
-YS8weDUwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6NDEyDQoNCkFsbG9jYXRlZCBieSB0YXNr
-IDI5MTIxOg0KICBzYXZlX3N0YWNrKzB4NDMvMHhkMCBtbS9rYXNhbi9rYXNhbi5jOjQ0OA0KICBz
-ZXRfdHJhY2sgbW0va2FzYW4va2FzYW4uYzo0NjAgW2lubGluZV0NCiAga2FzYW5fa21hbGxvYysw
-eGM0LzB4ZTAgbW0va2FzYW4va2FzYW4uYzo1NTMNCiAga21lbV9jYWNoZV9hbGxvY190cmFjZSsw
-eDE1Mi8weDc4MCBtbS9zbGFiLmM6MzYyMA0KICBrbWFsbG9jIGluY2x1ZGUvbGludXgvc2xhYi5o
-OjUxMyBbaW5saW5lXQ0KICBremFsbG9jIGluY2x1ZGUvbGludXgvc2xhYi5oOjcwNyBbaW5saW5l
-XQ0KICBwOV9mZF9vcGVuIG5ldC85cC90cmFuc19mZC5jOjc5NiBbaW5saW5lXQ0KICBwOV9mZF9j
-cmVhdGUrMHgxYTcvMHgzZjAgbmV0LzlwL3RyYW5zX2ZkLmM6MTAzNg0KICBwOV9jbGllbnRfY3Jl
-YXRlKzB4OTE1LzB4MTZjOSBuZXQvOXAvY2xpZW50LmM6MTA2Mg0KICB2OWZzX3Nlc3Npb25faW5p
-dCsweDIxYS8weDFhODAgZnMvOXAvdjlmcy5jOjQwMA0KICB2OWZzX21vdW50KzB4N2MvMHg5MDAg
-ZnMvOXAvdmZzX3N1cGVyLmM6MTM1DQogIG1vdW50X2ZzKzB4YWUvMHgzMjggZnMvc3VwZXIuYzox
-Mjc3DQogIHZmc19rZXJuX21vdW50LnBhcnQuMzQrMHhkYy8weDRlMCBmcy9uYW1lc3BhY2UuYzox
-MDM3DQogIHZmc19rZXJuX21vdW50IGZzL25hbWVzcGFjZS5jOjEwMjcgW2lubGluZV0NCiAgZG9f
-bmV3X21vdW50IGZzL25hbWVzcGFjZS5jOjI1MTggW2lubGluZV0NCiAgZG9fbW91bnQrMHg1ODEv
-MHgzMGUwIGZzL25hbWVzcGFjZS5jOjI4NDgNCiAga3N5c19tb3VudCsweDEyZC8weDE0MCBmcy9u
-YW1lc3BhY2UuYzozMDY0DQogIF9fZG9fc3lzX21vdW50IGZzL25hbWVzcGFjZS5jOjMwNzggW2lu
-bGluZV0NCiAgX19zZV9zeXNfbW91bnQgZnMvbmFtZXNwYWNlLmM6MzA3NSBbaW5saW5lXQ0KICBf
-X3g2NF9zeXNfbW91bnQrMHhiZS8weDE1MCBmcy9uYW1lc3BhY2UuYzozMDc1DQogIGRvX3N5c2Nh
-bGxfNjQrMHgxYjkvMHg4MjAgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6MjkwDQogIGVudHJ5X1NZ
-U0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUNCg0KRnJlZWQgYnkgdGFzayAyOTEyMToN
-CiAgc2F2ZV9zdGFjaysweDQzLzB4ZDAgbW0va2FzYW4va2FzYW4uYzo0NDgNCiAgc2V0X3RyYWNr
-IG1tL2thc2FuL2thc2FuLmM6NDYwIFtpbmxpbmVdDQogIF9fa2FzYW5fc2xhYl9mcmVlKzB4MTFh
-LzB4MTcwIG1tL2thc2FuL2thc2FuLmM6NTIxDQogIGthc2FuX3NsYWJfZnJlZSsweGUvMHgxMCBt
-bS9rYXNhbi9rYXNhbi5jOjUyOA0KICBfX2NhY2hlX2ZyZWUgbW0vc2xhYi5jOjM0OTggW2lubGlu
-ZV0NCiAga2ZyZWUrMHhkOS8weDI2MCBtbS9zbGFiLmM6MzgxMw0KICBwOV9mZF9jbG9zZSsweDQx
-Ni8weDViMCBuZXQvOXAvdHJhbnNfZmQuYzo4OTMNCiAgcDlfY2xpZW50X2NyZWF0ZSsweGFjMi8w
-eDE2YzkgbmV0LzlwL2NsaWVudC5jOjEwNzYNCiAgdjlmc19zZXNzaW9uX2luaXQrMHgyMWEvMHgx
-YTgwIGZzLzlwL3Y5ZnMuYzo0MDANCiAgdjlmc19tb3VudCsweDdjLzB4OTAwIGZzLzlwL3Zmc19z
-dXBlci5jOjEzNQ0KICBtb3VudF9mcysweGFlLzB4MzI4IGZzL3N1cGVyLmM6MTI3Nw0KICB2ZnNf
-a2Vybl9tb3VudC5wYXJ0LjM0KzB4ZGMvMHg0ZTAgZnMvbmFtZXNwYWNlLmM6MTAzNw0KICB2ZnNf
-a2Vybl9tb3VudCBmcy9uYW1lc3BhY2UuYzoxMDI3IFtpbmxpbmVdDQogIGRvX25ld19tb3VudCBm
-cy9uYW1lc3BhY2UuYzoyNTE4IFtpbmxpbmVdDQogIGRvX21vdW50KzB4NTgxLzB4MzBlMCBmcy9u
-YW1lc3BhY2UuYzoyODQ4DQogIGtzeXNfbW91bnQrMHgxMmQvMHgxNDAgZnMvbmFtZXNwYWNlLmM6
-MzA2NA0KICBfX2RvX3N5c19tb3VudCBmcy9uYW1lc3BhY2UuYzozMDc4IFtpbmxpbmVdDQogIF9f
-c2Vfc3lzX21vdW50IGZzL25hbWVzcGFjZS5jOjMwNzUgW2lubGluZV0NCiAgX194NjRfc3lzX21v
-dW50KzB4YmUvMHgxNTAgZnMvbmFtZXNwYWNlLmM6MzA3NQ0KICBkb19zeXNjYWxsXzY0KzB4MWI5
-LzB4ODIwIGFyY2gveDg2L2VudHJ5L2NvbW1vbi5jOjI5MA0KICBlbnRyeV9TWVNDQUxMXzY0X2Fm
-dGVyX2h3ZnJhbWUrMHg0OS8weGJlDQoNClRoZSBidWdneSBhZGRyZXNzIGJlbG9uZ3MgdG8gdGhl
-IG9iamVjdCBhdCBmZmZmODgwMWM2NDdlYzgwDQogIHdoaWNoIGJlbG9uZ3MgdG8gdGhlIGNhY2hl
-IGttYWxsb2MtNTEyIG9mIHNpemUgNTEyDQpUaGUgYnVnZ3kgYWRkcmVzcyBpcyBsb2NhdGVkIDAg
-Ynl0ZXMgaW5zaWRlIG9mDQogIDUxMi1ieXRlIHJlZ2lvbiBbZmZmZjg4MDFjNjQ3ZWM4MCwgZmZm
-Zjg4MDFjNjQ3ZWU4MCkNClRoZSBidWdneSBhZGRyZXNzIGJlbG9uZ3MgdG8gdGhlIHBhZ2U6DQpw
-YWdlOmZmZmZlYTAwMDcxOTFmODAgY291bnQ6MSBtYXBjb3VudDowIG1hcHBpbmc6ZmZmZjg4MDFk
-YTgwMDk0MCBpbmRleDoweDANCmZsYWdzOiAweDJmZmZjMDAwMDAwMDEwMChzbGFiKQ0KcmF3OiAw
-MmZmZmMwMDAwMDAwMTAwIGZmZmZlYTAwMDZhOGNjNDggZmZmZmVhMDAwNzRiZTU0OCBmZmZmODgw
-MWRhODAwOTQwDQpyYXc6IDAwMDAwMDAwMDAwMDAwMDAgZmZmZjg4MDFjNjQ3ZTAwMCAwMDAwMDAw
-MTAwMDAwMDA2IDAwMDAwMDAwMDAwMDAwMDANCnBhZ2UgZHVtcGVkIGJlY2F1c2U6IGthc2FuOiBi
-YWQgYWNjZXNzIGRldGVjdGVkDQoNCk1lbW9yeSBzdGF0ZSBhcm91bmQgdGhlIGJ1Z2d5IGFkZHJl
-c3M6DQogIGZmZmY4ODAxYzY0N2ViODA6IGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZj
-IGZjIGZjIGZjIGZjIGZjDQogIGZmZmY4ODAxYzY0N2VjMDA6IGZjIGZjIGZjIGZjIGZjIGZjIGZj
-IGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjDQo+IGZmZmY4ODAxYzY0N2VjODA6IGZiIGZiIGZi
-IGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiDQogICAgICAgICAgICAgICAg
-ICAgIF4NCiAgZmZmZjg4MDFjNjQ3ZWQwMDogZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIg
-ZmIgZmIgZmIgZmIgZmIgZmINCiAgZmZmZjg4MDFjNjQ3ZWQ4MDogZmIgZmIgZmIgZmIgZmIgZmIg
-ZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmINCj09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KDQoNCi0tLQ0KVGhpcyBi
-dWcgaXMgZ2VuZXJhdGVkIGJ5IGEgYm90LiBJdCBtYXkgY29udGFpbiBlcnJvcnMuDQpTZWUgaHR0
-cHM6Ly9nb28uZ2wvdHBzbUVKIGZvciBtb3JlIGluZm9ybWF0aW9uIGFib3V0IHN5emJvdC4NCnN5
-emJvdCBlbmdpbmVlcnMgY2FuIGJlIHJlYWNoZWQgYXQgc3l6a2FsbGVyQGdvb2dsZWdyb3Vwcy5j
-b20uDQoNCnN5emJvdCB3aWxsIGtlZXAgdHJhY2sgb2YgdGhpcyBidWcgcmVwb3J0LiBTZWU6DQpo
-dHRwczovL2dvby5nbC90cHNtRUojYnVnLXN0YXR1cy10cmFja2luZyBmb3IgaG93IHRvIGNvbW11
-bmljYXRlIHdpdGggIA0Kc3l6Ym90Lg0K
+On Wed, Jul 11, 2018 at 08:53:09AM +0200, Koen Kooi wrote:
+> Add vendor prefix for Sancloud Ltd.
+> 
+> Signed-off-by: Koen Kooi <koen@dominion.thruhere.net>
+> ---
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
+
+Acked-by: Rob Herring <robh@kernel.org>
