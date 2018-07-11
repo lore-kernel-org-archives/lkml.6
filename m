@@ -5,56 +5,62 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AE8C43A1D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 23:14:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C81C43A1D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 23:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7619120C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 23:14:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7619120C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 93AF220C0E
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 23:16:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93AF220C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390770AbeGKXVZ (ORCPT
+        id S2390788AbeGKXXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 19:21:25 -0400
-Received: from mga04.intel.com ([192.55.52.120]:29194 "EHLO mga04.intel.com"
+        Wed, 11 Jul 2018 19:23:23 -0400
+Received: from mga06.intel.com ([134.134.136.31]:64463 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732195AbeGKXVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 19:21:25 -0400
+        id S1732195AbeGKXXX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 19:23:23 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 16:14:48 -0700
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 16:16:45 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,339,1526367600"; 
-   d="scan'208";a="56965161"
+   d="scan'208";a="56965656"
 Received: from ray.jf.intel.com (HELO [10.7.201.16]) ([10.7.201.16])
-  by orsmga006.jf.intel.com with ESMTP; 11 Jul 2018 16:14:37 -0700
-Subject: Re: Kernel 4.17.4 lockup
-To:     Andy Lutomirski <luto@amacapital.net>,
-        Dave Jones <davej@codemonkey.org.uk>
-References: <9548e10a-7403-425e-bf1f-b1eb9d055d99@intel.com>
- <CAMe9rOrHowBX06nihdRRmEqhV8v7cs+PwVY7JYQFpUFOnHC71A@mail.gmail.com>
- <f22ee1e2-9a35-697f-50ab-543ac1631c89@intel.com>
- <CAMe9rOpPwtPd-R+D9=iDYgbFtnP+=akWic-QBKwq9wKa7uadEQ@mail.gmail.com>
- <2022d212-62f2-a163-2493-abecfbafa07b@intel.com>
- <CAMe9rOqc0oVw+ZLXCM-nrtPb1OiPFBeHt+Lsx+6K6y=t3HSVhA@mail.gmail.com>
- <cbb38230-9c57-905b-3a11-e2717c5aa615@intel.com>
- <CAMe9rOqh9saaULM_+jNtzfYarbZScm+6KCEyibxxqn7GLvKwzA@mail.gmail.com>
- <CAMe9rOpV89jWhvAZtqOJnc0eXzRYiLF5pLWRcdb7-kKLigj4rQ@mail.gmail.com>
- <067e2d5d-1abf-efd4-cb50-992ba5ca6748@intel.com>
- <20180711183126.yo7eyqpd4ggb5kcr@codemonkey.org.uk>
- <9A6C6EEB-85D8-4F59-95ED-EB4DA5947BCA@amacapital.net>
-Cc:     "H.J. Lu" <hjl.tools@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
+  by orsmga006.jf.intel.com with ESMTP; 11 Jul 2018 16:16:45 -0700
+Subject: Re: [RFC PATCH v2 22/27] x86/cet/ibt: User-mode indirect branch
+ tracking support
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-23-yu-cheng.yu@intel.com>
+ <3a7e9ce4-03c6-cc28-017b-d00108459e94@linux.intel.com>
+ <1531347019.15351.89.camel@intel.com>
+ <f97ce234-52fa-e666-2250-098925cf3c39@linux.intel.com>
+ <1531350028.15351.102.camel@intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
  xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
  oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
  2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
@@ -97,12 +103,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <f3e2ca08-e22d-f16c-1c2e-9fb1985771ef@intel.com>
-Date:   Wed, 11 Jul 2018 16:14:36 -0700
+Message-ID: <25675609-9ea7-55fb-6e73-b4a4c49b6c35@linux.intel.com>
+Date:   Wed, 11 Jul 2018 16:16:44 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <9A6C6EEB-85D8-4F59-95ED-EB4DA5947BCA@amacapital.net>
+In-Reply-To: <1531350028.15351.102.camel@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -111,12 +117,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 04:07 PM, Andy Lutomirski wrote:
-> Could the cause be an overflow of the IRQ stack?  I’ve been meaning
-> to put guard pages on all the special stacks for a while. Let me see
-> if I can do that in the next couple days.
+On 07/11/2018 04:00 PM, Yu-cheng Yu wrote:
+> On Wed, 2018-07-11 at 15:40 -0700, Dave Hansen wrote:
+>> On 07/11/2018 03:10 PM, Yu-cheng Yu wrote:
+>>>
+>>> On Tue, 2018-07-10 at 17:11 -0700, Dave Hansen wrote:
+>>>>
+>>>> Is this feature *integral* to shadow stacks?  Or, should it just
+>>>> be
+>>>> in a
+>>>> different series?
+>>> The whole CET series is mostly about SHSTK and only a minority for
+>>> IBT.
+>>> IBT changes cannot be applied by itself without first applying
+>>> SHSTK
+>>> changes.  Would the titles help, e.g. x86/cet/ibt, x86/cet/shstk,
+>>> etc.?
+>> That doesn't really answer what I asked, though.
+>>
+>> Do shadow stacks *require* IBT?  Or, should we concentrate on merging
+>> shadow stacks themselves first and then do IBT at a later time, in a
+>> different patch series?
+>>
+>> But, yes, better patch titles would help, although I'm not sure
+>> that's
+>> quite the format that Ingo and Thomas prefer.
+> 
+> Shadow stack does not require IBT, but they complement each other.  If
+> we can resolve the legacy bitmap, both features can be merged at the
+> same time.
 
-But what would that overflow into?  Wouldn't it most likely be another
-interrupt stack since they're all allocated together?
+As large as this patch set is, I'd really prefer to see you get shadow
+stacks merged and then move on to IBT.  I say separate them.
 
-This looks more like thread stack corruption.
+> GLIBC does the bitmap setup.  It sets bits in there.
+> I thought you wanted a smaller bitmap?  One way is forcing legacy libs
+> to low address, or not having the bitmap at all, i.e. turn IBT off.
+
+I'm concerned with two things:
+1. the virtual address space consumption, especially the *default* case
+   which will be apps using 4-level address space amounts, but having
+   5-level-sized tables.
+2. the driving a truck-sized hole in the address space limits
+
+You can force legacy libs to low addresses, but you can't stop anyone
+from putting code into a high address *later*, at least with the code we
+have today.
+
+>>>>> +	rdmsrl(MSR_IA32_U_CET, r);
+>>>>> +	r &= ~(MSR_IA32_CET_ENDBR_EN | MSR_IA32_CET_LEG_IW_EN
+>>>>> |
+>>>>> +	       MSR_IA32_CET_NO_TRACK_EN);
+>>>>> +	wrmsrl(MSR_IA32_U_CET, r);
+>>>>> +	current->thread.cet.ibt_enabled = 0;
+>>>>> +}
+>>>> What's the locking for current->thread.cet?
+>>> Now CET is not locked until the application calls ARCH_CET_LOCK.
+>> No, I mean what is the in-kernel locking for the current->thread.cet
+>> data structure?  Is there none because it's only every modified via
+>> current->thread and it's entirely thread-local?
+> 
+> Yes, that is the case.
+
+
