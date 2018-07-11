@@ -2,98 +2,84 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063E5C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32805C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:31:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D19220B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:31:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D43F720BEC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:31:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="YizqwXot"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D19220B6F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eI6woNCQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43F720BEC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726777AbeGKKfK (ORCPT
+        id S1726861AbeGKKfL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 11 Jul 2018 06:35:11 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40018 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbeGKKfK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Jul 2018 06:35:10 -0400
-Received: from onstation.org ([52.200.56.107]:38930 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726504AbeGKKfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:35:10 -0400
-Received: from localhost (c-98-236-77-125.hsd1.wv.comcast.net [98.236.77.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 2E6B02F7;
-        Wed, 11 Jul 2018 10:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1531305090;
-        bh=ey09jrjK0JbUL4vI7nVfUQmEOIrLK3sDknKmC2+LWUQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YizqwXotcr6guub71aOp6Nn+1ytai8HoWqqAOUeY9PRvM8cSaR85guYRMaSWejIh7
-         4bJtCg9v4I5mVk29N5QxPWK0B82d+lckqV+8ksWEUg6rhGzjU1xg8BInL7EkzbSdMk
-         tqhpPTfhT/r3M2AWD32h0ptKXH9PxhTCIpc74znE=
-Date:   Wed, 11 Jul 2018 06:31:29 -0400
-From:   Brian Masney <masneyb@onstation.org>
-To:     Himanshu Jha <himanshujha199640@gmail.com>
-Cc:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, jonathan@marek.ca,
-        jmaneyrol@invensense.com, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, mkelly@xevo.com, fischerdouglasc@gmail.com,
-        bshah@kde.org, ctatlor97@gmail.com
-Subject: Re: [PATCH 2/3] iio: imu: mpu6050: add support for regulator
- framework
-Message-ID: <20180711103129.ql4txni63i2m7m4r@d08157822050>
-References: <20180711010932.20313-1-masneyb@onstation.org>
- <20180711010932.20313-3-masneyb@onstation.org>
- <20180711100442.GA30019@himanshu-Vostro-3559>
+Received: by mail-lf0-f65.google.com with SMTP id y200-v6so20866356lfd.7
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 03:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=XlNCsZsaFCrDJsziMLUu/MnTe4MB8y1FLty9T+2t7UM=;
+        b=eI6woNCQfMuxyOCbppB5C4b5CxwXkhzMfhZWDJgMOXx7WauiPRf2c+gm9iGBBRnC/7
+         btaM9HiVZhRfUeeZTJlb30GOnQHTWKU++nUZzLVuwuDZeGmy18zVRJ5PI7l2pGbrKCP1
+         hGj6Vw8r41DucQy0Ctbam4S3f8iPZEgYlVzNS20k44TDbk34eyKx+AnTA/JVlBOd4DHR
+         rAWs+F5QY8DHLjFHeoFzBYHnmjZfF1JrPcVRba+wfH5zvE8YSEFjRuZ4H11Ge+/JtA4C
+         pfaB19PbRQ0rhONwWj4+61WrB4et45eQ2K7VfW71AlcUkXpULL9v01f2yTNAAzVRBSxg
+         EmGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XlNCsZsaFCrDJsziMLUu/MnTe4MB8y1FLty9T+2t7UM=;
+        b=QU/2kUyxayjJ2ofnl9BSmoMfbTElrgaiY64NvPCXX40G/3Z01d3nr/+Pzided1xD8d
+         kkV37vVA+gboXyLoQkSZkEkJWtIk1cxYmgPHX/bpdfH8bve6ligJblOncLfJpE6XsOFt
+         MA6Pk14yTBWGU71Stwull7+TJGMuW2jjC7e4PXoQPbTBM6q0yofiOa/EbS6DIrczY++b
+         aBkQta8m7fPcRRyyc7rh40dqiRd0kem+CtdmQ7VGEOGc9Ao+rTb/h1VCSyf78TqNesng
+         tvueWAIxZBMHfGF6e4dkCnXrlqjD3EqZ11XFhqxPFsOIewZvN9q4dbNbJc6KhvYUSXIG
+         Sltw==
+X-Gm-Message-State: APt69E1TAlmvZ5YNmYYA5gl+P27thHxeiscmJJQWSLiw78SURv6yuT4q
+        x8FIMTmjFX+sWnew0qC+RUUyPKL5zBkJcNMBW5k=
+X-Google-Smtp-Source: AAOMgpc/wQogZe2Q8Bj9Tx3/i7MyfP19VvMP9AdSLFUiTIpuLir+IOdV98WXGWYtbzs8LbnouXwYJJNWF7fy77OFzwo=
+X-Received: by 2002:a19:5f11:: with SMTP id t17-v6mr5699764lfb.64.1531305090186;
+ Wed, 11 Jul 2018 03:31:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711100442.GA30019@himanshu-Vostro-3559>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <1531217988-33940-1-git-send-email-ufo19890607@gmail.com>
+ <1531217988-33940-2-git-send-email-ufo19890607@gmail.com> <20180710120816.GJ14284@dhcp22.suse.cz>
+ <CAHCio2jQO58+npS269Ufyg17unHUeKDRpVjS4-ggBEV8xFMMqQ@mail.gmail.com> <20180711074933.GA20050@dhcp22.suse.cz>
+In-Reply-To: <20180711074933.GA20050@dhcp22.suse.cz>
+From:   =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
+Date:   Wed, 11 Jul 2018 18:31:18 +0800
+Message-ID: <CAHCio2itfdQ-Tk9x=YhZs6dG6GTZXkct++aND=jFC=8ndXq12w@mail.gmail.com>
+Subject: Re: [PATCH v13 2/2] Add oom victim's memcg to the oom context information
+To:     mhocko@kernel.org
+Cc:     akpm@linux-foundation.org, rientjes@google.com,
+        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
+        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
+        yang.s@alibaba-inc.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Wind Yu <yuzhoujian@didichuxing.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 03:34:43PM +0530, Himanshu Jha wrote:
-> Hi Brain,
-> 
-> On Tue, Jul 10, 2018 at 09:09:31PM -0400, Brian Masney wrote:
-> > This patch adds support for the regulator framework to the mpu6050
-> > driver.
-> > 
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> > ---
-> >  }
-> >  EXPORT_SYMBOL_GPL(inv_mpu_core_probe);
-> >  
-> > +int inv_mpu_core_remove(struct inv_mpu6050_state *st)
-> > +{
-> > +	return regulator_disable(st->vddio_supply);
-> > +}
-> EXPORT_SYMBOL_GPL(inv_mpu_core_remove); ?
-> 
-> This is causing 0-day test build failure perhaps.
+Hi Michal
 
-You are right. It compiles if I have CONFIG_INV_MPU6050_IIO built into
-the kernel, which is what I'm using to boot the board, but fails when
-compiled as a module. Good catch 0-day!
+I think the single line output you want is just like that:
 
-The patch won't apply to Linus's current master branch and I assumed
-that iio/togreg didn't have the required changes as well. Sorry about
-the noise.
+oom-kill:constraint=<constraint>,nodemask=<nodemask>,cpuset=<cpuset>,mems_allowed=<mems_allowed>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
 
-I'll send a v2 before the weekend.
-
-Brian
+Am I right?
