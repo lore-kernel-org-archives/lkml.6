@@ -6,78 +6,85 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B59C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA73C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEF8A20835
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:24:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEF8A20835
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4819020835
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:26:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4819020835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732824AbeGKL2m (ORCPT
+        id S1732749AbeGKLaF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:28:42 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33700 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732586AbeGKL2k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:28:40 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 54B04168F;
-        Wed, 11 Jul 2018 04:24:49 -0700 (PDT)
-Received: from usa.arm.com (unknown [10.1.210.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6A97D3F589;
-        Wed, 11 Jul 2018 04:24:48 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 3/3] clockevents: warn if cpu_all_mask is used for cpumask while registering new device
-Date:   Wed, 11 Jul 2018 12:24:24 +0100
-Message-Id: <1531308264-24220-3-git-send-email-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531308264-24220-1-git-send-email-sudeep.holla@arm.com>
-References: <1531308264-24220-1-git-send-email-sudeep.holla@arm.com>
+        Wed, 11 Jul 2018 07:30:05 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47790 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726644AbeGKLaF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:30:05 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fdDG3-0006Hd-Kr; Wed, 11 Jul 2018 11:26:07 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        speakup@linux-speakup.org, devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: speakup: remove redundant variable l
+Date:   Wed, 11 Jul 2018 12:26:07 +0100
+Message-Id: <20180711112607.31292-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using cpu_all_mask in clockevents cpumask may result in issues while
-comparing multiple clockevent devices to choose the preferred one.
-On one of the platforms with 2 system(i.e. non per-CPU) timers with
-different ratings, having cpu_all_mask for one of the device resulted
-in boot hang with forever loop in clockevents_notify_released as both
-were being selected as preferred.
+From: Colin Ian King <colin.king@canonical.com>
 
-In order to prevent such issues in future, let's warn if any clockevent
-drivers sets cpu_all_mask as it's cpumask and just override it to use
-cpu_possible_mask. All the existing occurrences of cpu_all_mask are
-already replaced with cpu_possible_mask.
+Variable l is being assigned but is never used hence it is redundant
+and can be removed.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Cleans up clang warning:
+warning: variable 'l' set but not used [-Wunused-but-set-variable
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/time/clockevents.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/staging/speakup/varhandlers.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/time/clockevents.c b/kernel/time/clockevents.c
-index 16c027e9cc73..8c0e4092f661 100644
---- a/kernel/time/clockevents.c
-+++ b/kernel/time/clockevents.c
-@@ -463,6 +463,12 @@ void clockevents_register_device(struct clock_event_device *dev)
- 		dev->cpumask = cpumask_of(smp_processor_id());
- 	}
-
-+	if (dev->cpumask == cpu_all_mask) {
-+		WARN(1, "%s cpumask == cpu_all_mask, using cpu_possible_mask instead\n",
-+		     dev->name);
-+		dev->cpumask = cpu_possible_mask;
-+	}
-+
- 	raw_spin_lock_irqsave(&clockevents_lock, flags);
-
- 	list_add(&dev->list, &clockevent_devices);
---
-2.7.4
+diff --git a/drivers/staging/speakup/varhandlers.c b/drivers/staging/speakup/varhandlers.c
+index 54a76b6752ad..1b545152cc49 100644
+--- a/drivers/staging/speakup/varhandlers.c
++++ b/drivers/staging/speakup/varhandlers.c
+@@ -179,7 +179,6 @@ int spk_set_num_var(int input, struct st_var_header *var, int how)
+ {
+ 	int val;
+ 	int *p_val = var->p_val;
+-	int l;
+ 	char buf[32];
+ 	char *cp;
+ 	struct var_t *var_data = var->data;
+@@ -237,9 +236,9 @@ int spk_set_num_var(int input, struct st_var_header *var, int how)
+ 	else
+ 		cp = buf;
+ 	if (!var_data->u.n.out_str)
+-		l = sprintf(cp, var_data->u.n.synth_fmt, (int)val);
++		sprintf(cp, var_data->u.n.synth_fmt, (int)val);
+ 	else
+-		l = sprintf(cp,	var_data->u.n.synth_fmt, var_data->u.n.out_str[val]);
++		sprintf(cp, var_data->u.n.synth_fmt, var_data->u.n.out_str[val]);
+ 	synth_printf("%s", cp);
+ 	return 0;
+ }
+-- 
+2.17.1
 
