@@ -2,103 +2,116 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E03A8C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:54:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB525C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9958D2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:54:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9958D2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id A3262208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:54:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3262208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733191AbeGKM6N (ORCPT
+        id S1733221AbeGKM6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:58:13 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:47673 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733079AbeGKM6M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:58:12 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MNN9N-1fjX5A0QJN-006zWd; Wed, 11 Jul 2018 14:53:41 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Vaibhav Jain <vaibhav@linux.vnet.ibm.com>,
-        Breno Leitao <leitao@debian.org>,
-        Mathieu Malaterre <malat@debian.org>,
-        Yisheng Xie <xieyisheng1@huawei.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [RESEND] powerpc: xmon: use ktime_get_coarse_boottime64
-Date:   Wed, 11 Jul 2018 14:53:23 +0200
-Message-Id: <20180711125338.1365368-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:aQmqlEfX5gIb1xrvZhQLQ0kVYizyBD6g1rPrRJQGIegtv5mX8qX
- 2XlRYslK4bPnVwQw9gwVkflX6ejx9S0zqd+x4VnWQFfUuaeZeJv7EN1e5Ar1sCBj9OzqbnN
- 26rHYxxye48yb3fWpztsLVIf0rkR4fRsOR5GFVXVLcr6SEJmehw5iH9DmYcbrOvrjsW+S6q
- gakmuVFAEhU3jbZpJnIjw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:fASEmwXl75Q=:XMHBxE8Q8exiBAlxqis/iI
- FG/Qgmnp/Csi47C8hg1mtEvU0c2vlw7E/3xqBFvtdcg4Mafas7u/vkiNzh+WB1sd8aivfYWDC
- 1kTLRFkdAQeIGUO2Wqiw98tyOedJ3aVTGeccnmWY4E/a6oaf3PKAN5GxQoJopApelYNKXwKVf
- Eerd/ElitppYypSy5PvSy04Zs+p8wibB9Sn3LjgPZMiEpl5SX3doo0O5T1DwU0ebJT6ntcTR2
- MxPeFfkT9lVyFPVEkwQ/rmoT7kmV1TfR26GhPdpsxmkSI0l8jjOO+B2Qir9eJxBygKLCMoiUp
- F1uYy4bzXb9DuQymYitKsNjLyGueBllBa/axXaTBZ5HEcqmiThlbus7Z8R5mfMh9NvPiOpK7h
- ZZRBkBoVSlVVBkDD+UWBMh5lnx0GeMZFkWzg/pQN+Hw72k0QruWSkJ3nnWJGOLSMthtDHpgI6
- wem1+E+vnx0zjHE+vfGKlV0zAcxag23W6/7Jg5nhp2K7QcR5qYltWhNZ9ixUkIccY33+Jrvvh
- n3NBjLLSxBo0eRFQNXt4Y0Am+ZF216+gIgdb8kRJ7jhYecMk7dR4F6zbpfsdXwMOvAPX0cpTr
- 0Lx0XkelIn0YByWW4b7CWH6DaDotaQ24FVz6QndrJfRfVBj30ag6ie3BcLjn+ZTn9GHA6Y9Ze
- OVlFHcymKXBbHhhDLSOwM7OqQP4pGXudpcHqMjvFl8pP/oim+2r8roD0lDnpKsvmmvFo=
+        Wed, 11 Jul 2018 08:58:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41682 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726632AbeGKM6p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:58:45 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F37672084A;
+        Wed, 11 Jul 2018 12:54:30 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 08:54:29 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Yonghong Song <yhs@fb.com>, Josef Bacik <jbacik@fb.com>,
+        daniel@iogearbox.net, davem@davemloft.net,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] tracing/kprobe: Release kprobe print_fmt properly
+Message-ID: <20180711085429.08437b77@gandalf.local.home>
+In-Reply-To: <20180710090417.21423b1b@gandalf.local.home>
+References: <20180709141906.2390-1-jolsa@kernel.org>
+        <20180710090417.21423b1b@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-get_monotonic_boottime() is deprecated, and may not be safe to call in
-every context, as it has to read a hardware clocksource.
 
-This changes xmon to print the time using ktime_get_coarse_boottime64()
-instead, which avoids the old timespec type and the HW access.
+Masami,
 
-Acked-by: Balbir Singh <bsingharora@gmail.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Originally sent Jun 18, but this hasn't appeared in linux-next yet.
+Can you ack this? If I don't hear from you by tomorrow, I'm going to
+push it to Linus, because I'll be on PTO after that.
 
-Resending to make sure this is still on the radar. Please apply
-to the powerpc git for 4.19
----
- arch/powerpc/xmon/xmon.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks!
 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index 47166ad2a669..45e3d0ec1246 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -918,13 +918,13 @@ static void remove_cpu_bpts(void)
- static void
- show_uptime(void)
- {
--	struct timespec uptime;
-+	struct timespec64 uptime;
- 
- 	if (setjmp(bus_error_jmp) == 0) {
- 		catch_memory_errors = 1;
- 		sync();
- 
--		get_monotonic_boottime(&uptime);
-+		ktime_get_coarse_boottime_ts64(&uptime);
- 		printf("Uptime: %lu.%.2lu seconds\n", (unsigned long)uptime.tv_sec,
- 			((unsigned long)uptime.tv_nsec / (NSEC_PER_SEC/100)));
- 
--- 
-2.9.0
+-- Steve
+
+
+On Tue, 10 Jul 2018 09:04:17 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Mon,  9 Jul 2018 16:19:06 +0200
+> Jiri Olsa <jolsa@kernel.org> wrote:
+> 
+> > We don't release tk->tp.call.print_fmt when destroying
+> > local uprobe. Also there's missing print_fmt kfree in
+> > create_local_trace_kprobe error path.  
+> 
+> OK, I finished testing and I'm all ready to push, but then I noticed
+> that Masami wasn't Cc'd. I like to get his ack before pushing to Linus.
+> 
+> -- Steve
+> 
+> 
+> > 
+> > Fixes: e12f03d7031a ("perf/core: Implement the 'perf_kprobe' PMU")
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  kernel/trace/trace_kprobe.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+> > index daa81571b22a..21f718472942 100644
+> > --- a/kernel/trace/trace_kprobe.c
+> > +++ b/kernel/trace/trace_kprobe.c
+> > @@ -1480,8 +1480,10 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+> >  	}
+> >  
+> >  	ret = __register_trace_kprobe(tk);
+> > -	if (ret < 0)
+> > +	if (ret < 0) {
+> > +		kfree(tk->tp.call.print_fmt);
+> >  		goto error;
+> > +	}
+> >  
+> >  	return &tk->tp.call;
+> >  error:
+> > @@ -1501,6 +1503,8 @@ void destroy_local_trace_kprobe(struct trace_event_call *event_call)
+> >  	}
+> >  
+> >  	__unregister_trace_kprobe(tk);
+> > +
+> > +	kfree(tk->tp.call.print_fmt);
+> >  	free_trace_kprobe(tk);
+> >  }
+> >  #endif /* CONFIG_PERF_EVENTS */  
+> 
 
