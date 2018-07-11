@@ -2,100 +2,308 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 614B4C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:32:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C644CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1762120843
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:32:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="lZDqIgAC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1762120843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FC8520843
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:32:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC8520843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732347AbeGKIfX (ORCPT
+        id S1732385AbeGKIf0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:35:23 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37963 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeGKIfX (ORCPT
+        Wed, 11 Jul 2018 04:35:26 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6719 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbeGKIfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Jul 2018 04:35:23 -0400
-Received: by mail-wm0-f67.google.com with SMTP id 69-v6so1590894wmf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 01:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=myz9PZz0JU4DyqQI42pxLu5+BUUW+GEdx5B8gXjLFPQ=;
-        b=lZDqIgACMmpwyYU+uFxP0K/PZPFxYGVAElN9DPr0kdNPnUkPXmc0QtqS7h8azaC+UO
-         I6TsHyqRLWUhGyBb5FoqaeYF1kQdk9/vbYpAfqAYvEDmm1SeJrX6boV1JZJVudLxM5HZ
-         yfduOsHNS1ARO4XpUHdLizC1wwYDw5E3AckySxbqErVEEYCg8X8HNLcULI+68507O1X6
-         cHa5ZQgEU64IJ4Ul3hTFMU4BN7jnoRlvGbRGRXsKwu+4cBB+5qrt0lpyvV2jNTXh/G3p
-         5A6v+SnoBi2ezItTRA25s7AIQvM6344iF6mEHXTgsZ3Z+7IBCGCeBbDxjkkT6sZbpet6
-         O7og==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=myz9PZz0JU4DyqQI42pxLu5+BUUW+GEdx5B8gXjLFPQ=;
-        b=Zsk3QSeKMpWd0FEeDoYEeEYOYKYjsmSeD8jBQUtsATBZq3E5XfgUsKjkoWd9OFiYD1
-         PbkkzJw4ACYEzPc0Logc2e4L0ddffdg2o1WNYepfnnnNkTVNeCCebtGFHWOeePutcg7/
-         LtwZO1XVWm46gitsh2PH/6GedJvZHE1CiqEDDU9pNTdPJzlPijgSomeY7dM3rmwBAUIN
-         f48jhGHLRN2mhRkdMQjcMjYC70SQ6LR2Maw+gyA4JC/0Px6QbbnjNsypVcwW6qUytWd1
-         QXYS7RP3KotjbawJ15JwVsGy5Gzcgs780i4+zWdpmvuo7a3ecyH20EU/cKzR4uoK1oLM
-         OIuQ==
-X-Gm-Message-State: APt69E3PJS61zSabcygDjqexSfARih2g5460ucyOWY/t1+uQlMfMRFQ3
-        fvRoIqtdW2OOaqqMsV2z+PmiYw==
-X-Google-Smtp-Source: AAOMgperQcssx7kceyEKa9VbqIda93EDdnN6B3Mx0tVWOEXDsRlr9EWowya/TxdVAn+VNERIXbjy0w==
-X-Received: by 2002:a1c:f009:: with SMTP id a9-v6mr17570014wmb.104.1531297932860;
-        Wed, 11 Jul 2018 01:32:12 -0700 (PDT)
-Received: from localhost.localdomain (141.pool85-51-114.dynamic.orange.es. [85.51.114.141])
-        by smtp.gmail.com with ESMTPSA id h5-v6sm8206277wrr.19.2018.07.11.01.32.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 11 Jul 2018 01:32:12 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jramirez@baylibre.com>
-To:     jramirez@baylibre.com, jic23@kernel.org,
-        lorenzo.bianconi@redhat.com
-Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] iio: imu: st_lsm6dsx: irq not handled unless data pushed to buffers
-Date:   Wed, 11 Jul 2018 10:32:08 +0200
-Message-Id: <1531297928-3824-1-git-send-email-jramirez@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b45c08a0000>; Wed, 11 Jul 2018 01:32:10 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 11 Jul 2018 01:32:12 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 11 Jul 2018 01:32:12 -0700
+Received: from [10.21.132.122] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 11 Jul
+ 2018 08:32:10 +0000
+Subject: Re: [PATCH 5/6] dt-bindings: Add Tegra PMC pad configuration bindings
+To:     Aapo Vienamo <avienamo@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+CC:     <devicetree@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1531226879-11802-1-git-send-email-avienamo@nvidia.com>
+ <1531227266-12648-1-git-send-email-avienamo@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <d0d5d100-8cc6-2e8d-06c1-1ec87e1f3f2e@nvidia.com>
+Date:   Wed, 11 Jul 2018 09:32:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1531227266-12648-1-git-send-email-avienamo@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently IRQ_NONE is returned only when there is no data on the fifo.
 
-When there is no data on the fifo the driver can not push to the
-buffers and therefore user space readers polling for data available
-will not be awoken and continue to wait.
+On 10/07/18 13:54, Aapo Vienamo wrote:
+> Document the pinctrl bindings used by the PMC driver for performing pad
+> configuration. Both nvidia,tegra186-pmc.txt and nvidia,tegra20-pmc.txt
+> are modified as they both cover SoC generations for which these bindings
+> apply.
+> 
+> Add a header defining Tegra PMC pad voltage configurations.
+> 
+> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 84 +++++++++++++++++++
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 95 ++++++++++++++++++++++
+>  include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h | 18 ++++
+>  3 files changed, 197 insertions(+)
+>  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> index 5a3bf7c..baa31f7 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+> @@ -34,3 +34,87 @@ Board DTS:
+>  	pmc@c360000 {
+>  		nvidia,invert-interrupt;
+>  	};
+> +
+> +== Pad Control Nodes ==
+> +
+> +The PMC can be used to set pad power state and voltage configuration.
+> +The pad configuration is done via the pinctrl framework. The driver
+> +implements power-source, low-power-enable, and low-power-disable pinconf
+> +pin configuration node properties. Each pinctrl pin corresponds to a
+> +single Tegra PMC pad. Thus, in the following sections of this document
+> +pin refers to the pinctrl frameworks notion of a Tegra PMC pad.
+> +
+> +The pad configuration state nodes are placed under the pmc node and they
+> +are referred to by the pinctrl client device properties. For more
+> +information see the examples presented later and
+> +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> +
+> +The values accepted by power-source property are
+> +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
+> +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
+> +
+> +Following pinctrl pin name strings are present on Tegra186:
+> +csia		csib		dsi		mipi-bias
+> +pex-clk-bias	pex-clk3	pex-clk2	pex-clk1
+> +usb0		usb1		usb2		usb-bias
+> +uart		audio		hsic		dbg
+> +hdmi-dp0	hdmi-dp1	pex-cntrl	sdmmc2-hv
+> +sdmmc4		cam		dsib		dsic
+> +dsid		csic		csid		csie
+> +dsif		spi		ufs		dmic-hv
+> +edp		sdmmc1-hv	sdmmc3-hv	conn
+> +audio-hv
+> +
+> +All of the listed Tegra186 pins support the low-power-enable and
+> +low-power-disable properties. The power-source property is supported
+> +following Tegra210 pins: sdmmc2-hv, dmic-hv, sdmmc1-hv, sdmmc3-hv, and
+> +audio-hv.
+> +
+> +Pad configuration state example:
+> +	pmc: pmc@7000e400 {
+> +		compatible = "nvidia,tegra186-pmc";
+> +		reg = <0 0x0c360000 0 0x10000>,
+> +		      <0 0x0c370000 0 0x10000>,
+> +		      <0 0x0c380000 0 0x10000>,
+> +		      <0 0x0c390000 0 0x10000>;
+> +		reg-names = "pmc", "wake", "aotag", "scratch";
+> +
+> +		...
+> +
+> +		sdmmc1_3v3: sdmmc1-3v3 {
+> +			pins = "sdmmc1-hv";
+> +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> +		};
+> +
+> +		sdmmc1_1v8: sdmmc1-1v8 {
+> +			pins = "sdmmc1-hv";
+> +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> +		};
+> +
+> +		hdmi_off: hdmi-off {
+> +			pins = "hdmi";
+> +			low-power-enable;
+> +		}
+> +
+> +		hdmi_on: hdmi-on {
+> +			pins = "hdmi";
+> +			low-power-disable;
+> +		}
+> +	};
+> +
+> +Pinctrl client example:
+> +	sdmmc1: sdhci@3400000 {
+> +		...
+> +		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> +		pinctrl-0 = <&sdmmc1_3v3>;
+> +		pinctrl-1 = <&sdmmc1_1v8>;
+> +	};
+> +
+> +	...
+> +
+> +	sor0: sor@15540000 {
+> +		...
+> +		pinctrl-0 = <&hdmi_off>;
+> +		pinctrl-1 = <&hdmi_on>;
+> +		pinctrl-names = "hdmi-on", "hdmi-off";
+> +	};
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> index a74b37b..d50a505 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> @@ -195,3 +195,98 @@ Example:
+>  		power-domains = <&pd_audio>;
+>  		...
+>  	};
+> +
+> +== Pad Control Nodes ==
+> +
+> +The PMC can be used to set pad power state and voltage configuration.
+> +This functionality is present on SoCs from Tegra124 onwards. The pad
+> +configuration is done via the pinctrl framework. The driver implements
+> +power-source, low-power-enable, and low-power-disable pinconf pin
+> +configuration node properties. Each pinctrl pin corresponds to a single
+> +Tegra PMC pad. Thus, in the following sections of this document pin
+> +refers to the pinctrl frameworks notion of a Tegra PMC pad.
+> +
+> +The pad configuration state nodes are placed under the pmc node and they
+> +are referred to by the pinctrl client device properties. For more
+> +information see the examples presented later and
+> +Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
+> +
+> +The values accepted by power-source property are
+> +TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
+> +in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
+> +
+> +Following pinctrl pin name strings are present on Tegra124 and Tegra132:
+> +audio		bb		cam		comp
+> +csia		csb		cse		dsi
+> +dsib		dsic		dsid		hdmi
+> +hsic		hv		lvds		mipi-bias
+> +nand		pex-bias	pex-clk1	pex-clk2
+> +pex-cntrl	sdmmc1		sdmmc3		sdmmc4
+> +sys_ddc		uart		usb0		usb1
+> +usb2		usb_bias
+> +
+> +All of the listed Tegra124 and Tegra132 pins support the
+> +low-power-enable and low-power-disable properties. None of the pins
+> +support the power-source property.
+> +
+> +Following pinctrl pin name strings are present on Tegra210:
+> +audio		audio-hv	cam		csia
+> +csib		csic		csid		csie
+> +csif		dbg		debug-nonao	dmic
+> +dp		dsi		dsib		dsic
+> +dsid		emmc		emmc2		gpio
+> +hdmi		hsic		lvds		mipi-bias
+> +pex-bias	pex-clk1	pex-clk2	pex-cntrl
+> +sdmmc1		sdmmc3		spi		spi-hv
+> +uart		usb0		usb1		usb2
+> +usb3		usb-bias
+> +
+> +All of the listed Tegra210 pins except pex-cntrl support the
+> +low-power-enable and low-power-disable properties. The power-source
+> +property is supported following Tegra210 pins: audio, audio-hv, cam,
+> +dbg, dmic, gpio, pex-cntrl, sdmmc1, sdmmc3, spi, spi-hv, and uart.
+> +
+> +Pad configuration state example:
+> +	pmc: pmc@7000e400 {
+> +		compatible = "nvidia,tegra210-pmc";
+> +		reg = <0x0 0x7000e400 0x0 0x400>;
+> +		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+> +		clock-names = "pclk", "clk32k_in";
+> +
+> +		...
+> +
+> +		sdmmc1_3v3: sdmmc1-3v3 {
+> +			pins = "sdmmc1";
+> +			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
+> +		};
+> +
+> +		sdmmc1_1v8: sdmmc1-1v8 {
+> +			pins = "sdmmc1";
+> +			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
+> +		};
+> +
+> +		hdmi_off: hdmi-off {
+> +			pins = "hdmi";
+> +			low-power-enable;
+> +		}
+> +
+> +		hdmi_on: hdmi-on {
+> +			pins = "hdmi";
+> +			low-power-disable;
+> +		}
+> +	};
+> +
+> +Pinctrl client example:
+> +	sdmmc1: sdhci@700b0000 {
+> +		...
+> +		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
+> +		pinctrl-0 = <&sdmmc1_3v3>;
+> +		pinctrl-1 = <&sdmmc1_1v8>;
+> +	};
+> +	...
+> +	sor@54540000 {
+> +		...
+> +		pinctrl-0 = <&hdmi_off>;
+> +		pinctrl-1 = <&hdmi_on>;
+> +		pinctrl-names = "hdmi-on", "hdmi-off";
+> +	};
+> diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> new file mode 100644
+> index 0000000..20f4340
+> --- /dev/null
+> +++ b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+> @@ -0,0 +1,18 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * pinctrl-tegra-io-pad.h: Tegra I/O pad source voltage configuration constants
+> + * pinctrl bindings.
+> + *
+> + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * Author: Aapo Vienamo <avienamo@nvidia.com>
+> + */
+> +
+> +#ifndef _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
+> +#define _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
+> +
+> +/* Voltage levels of the I/O pad's source rail */
+> +#define TEGRA_IO_PAD_VOLTAGE_1V8	0
+> +#define TEGRA_IO_PAD_VOLTAGE_3V3	1
+> +
+> +#endif
 
-This commit just extends the same semantics to fifo read errors.
+Looks good to me.
 
-Signed-off-by: Jorge Ramirez-Ortiz <jramirez@baylibre.com>
----
- drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-index 4994f92..4959923 100644
---- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-+++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-@@ -472,7 +472,7 @@ static irqreturn_t st_lsm6dsx_handler_thread(int irq, void *private)
- 	count = st_lsm6dsx_read_fifo(hw);
- 	mutex_unlock(&hw->fifo_lock);
+Cheers
+Jon
  
--	return !count ? IRQ_NONE : IRQ_HANDLED;
-+	return (!count || count < 0) ? IRQ_NONE : IRQ_HANDLED;
- }
- 
- static int st_lsm6dsx_buffer_preenable(struct iio_dev *iio_dev)
 -- 
-2.7.4
-
+nvpublic
