@@ -2,105 +2,116 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DA8C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F45C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BFC42083C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:56:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SqqaZXAR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BFC42083C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3A23F2083C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:56:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A23F2083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732545AbeGKLAV (ORCPT
+        id S1732565AbeGKLAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:00:21 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:34318 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732376AbeGKLAV (ORCPT
+        Wed, 11 Jul 2018 07:00:33 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55422 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726641AbeGKLAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:00:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fZlr3VHMLyGK9cgREmlen4OCHCy1Zl/a8jZmAiVpPrc=; b=SqqaZXARGvToXpVzhXIBM/KHw
-        WJqCatu2ICC+4UBNl9dtP6ElCe8pfgyNOX22yP/JBvEdsqlcBxhdAVNdS6/q2q9dGesLzwkFn5G44
-        Jb13F0VBVLITGNkxFZLn+jAwwN4nGoF4WxcOSfiK3qP1bUjk8aKr4MnMI6QDD1kmxT+K15pNbNNEb
-        A4tMIbLoL69HTpPaA8DYI1+/oDE9B59/7NHWMoSsboUZTFb/hEMPQSONSQu6DCSqdVXdukQRnBdTh
-        qmBB8ZzyTTkb3siufNKn4xWUhZRXBJNdZmOdaADscbA3QESMngVKTcRt2EXlK+WgXQWbbCo+sfiEt
-        Wr8AICI6w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdCmj-00073q-6Z; Wed, 11 Jul 2018 10:55:49 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 11DB420289CB2; Wed, 11 Jul 2018 12:55:46 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 12:55:46 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     'Paul Burton' <paul.burton@mips.com>,
-        =?utf-8?B?6ZmI5Y2O5omN?= <chenhc@lemote.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        linux-mips <linux-mips@linux-mips.org>,
-        Fuxin Zhang <zhangfx@lemote.com>,
-        wuzhangjin <wuzhangjin@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] MIPS: implement smp_cond_load_acquire() for Loongson-3
-Message-ID: <20180711105546.GB2476@hirez.programming.kicks-ass.net>
-References: <1531103198-16764-1-git-send-email-chenhc@lemote.com>
- <20180709164939.uhqsvcv4a7jlbhvp@pburton-laptop>
- <CAAhV-H7bqhz+dzgPk0_tTAN6y_k_8Ds9heF0p5uPHsHNg0v4Rg@mail.gmail.com>
- <20180710093637.GF2476@hirez.programming.kicks-ass.net>
- <20180710105437.GT2512@hirez.programming.kicks-ass.net>
- <tencent_26F8B9E004D4512B2225FCE1@qq.com>
- <20180710121727.GK2476@hirez.programming.kicks-ass.net>
- <20180710171040.f3gyyh524xlsqv4j@pburton-laptop>
- <1a072b07261b46d88938f0f709f54d42@AcuMS.aculab.com>
+        Wed, 11 Jul 2018 07:00:33 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CEEAFD48;
+        Wed, 11 Jul 2018 10:56:44 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 12:56:42 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB driver fixes for 4.18-rc5
+Message-ID: <20180711105642.GA18037@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1a072b07261b46d88938f0f709f54d42@AcuMS.aculab.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 10:04:52AM +0000, David Laight wrote:
-> I also suspect that 'write starvation' is also common - after all the
-> purpose of the store buffer is to do reads in preference to writes in
-> order to reduce the cpu stalls waiting for the memory bus (probably
-> the cpu to cache interface).
-> 
-> I think your example is just:
-> 	*(volatile int *)xxx = 1;
-> 	while (!*(volatile int *)yyy) continue;
-> running on two cpu with xxx and yyy swapped?
+The following changes since commit 021c91791a5e7e85c567452f1be3e4c2c6cb6063:
 
-Yep. And Linux has been relying on that working for (afaict) basically
-forever.
+  Linux 4.18-rc3 (2018-07-01 16:04:53 -0700)
 
-> You need a stronger bus cycle in there somewhere.
+are available in the Git repository at:
 
-Since all spin-wait loops _should_ have cpu_relax() that is the natural
-place to put it.
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git/ tags/usb-4.18-rc5
 
+for you to fetch changes up to f1e255d60ae66a9f672ff9a207ee6cd8e33d2679:
+
+  USB: yurex: fix out-of-bounds uaccess in read handler (2018-07-06 17:21:34 +0200)
+
+----------------------------------------------------------------
+USB fixes for 4.18-rc5
+
+Here are a number of small USB fixes for 4.18-rc5.
+
+Nothing major here, just the normal set of new device ids, xhci fixes,
+and some typec fixes.  The typec fix required some tiny changes in an
+i2c driver, which that maintainer acked to come through my tree.
+
+All of these have been in linux-next for a while with no reported
+issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Arnd Bergmann (1):
+      usb/gadget: aspeed-vhub: add USB_LIBCOMPOSITE dependency
+
+Dan Carpenter (2):
+      USB: serial: ch341: fix type promotion bug in ch341_control_in()
+      xhci: xhci-mem: off by one in xhci_stream_id_to_ring()
+
+Greg Kroah-Hartman (1):
+      Merge tag 'usb-serial-4.18-rc4' of https://git.kernel.org/.../johan/usb-serial into usb-linus
+
+Hans de Goede (2):
+      typec: tcpm: Correctly report power_supply current and voltage for non pd supply
+      i2c-cht-wc: Fix bq24190 supplier
+
+Jann Horn (1):
+      USB: yurex: fix out-of-bounds uaccess in read handler
+
+Johan Hovold (2):
+      USB: serial: keyspan_pda: fix modem-status error handling
+      USB: serial: mos7840: fix status-register error handling
+
+Kai-Heng Feng (1):
+      usb: xhci: dbc: Don't decrement runtime PM counter if DBC is not started
+
+Laurentiu Tudor (1):
+      docs: kernel-parameters.txt: document xhci-hcd.quirks parameter
+
+Nico Sneck (1):
+      usb: quirks: add delay quirks for Corsair Strafe
+
+Olli Salonen (1):
+      USB: serial: cp210x: add another USB ID for Qivicon ZigBee stick
+
+ Documentation/admin-guide/kernel-parameters.txt |  5 +++++
+ drivers/i2c/busses/i2c-cht-wc.c                 |  3 ++-
+ drivers/usb/core/quirks.c                       |  4 ++++
+ drivers/usb/gadget/udc/aspeed-vhub/Kconfig      |  1 +
+ drivers/usb/host/xhci-dbgcap.c                  | 12 ++++++++----
+ drivers/usb/host/xhci-mem.c                     |  2 +-
+ drivers/usb/misc/yurex.c                        | 23 ++++++-----------------
+ drivers/usb/serial/ch341.c                      |  2 +-
+ drivers/usb/serial/cp210x.c                     |  1 +
+ drivers/usb/serial/keyspan_pda.c                |  4 +++-
+ drivers/usb/serial/mos7840.c                    |  3 +++
+ drivers/usb/typec/tcpm.c                        |  5 +++--
+ 12 files changed, 38 insertions(+), 27 deletions(-)
