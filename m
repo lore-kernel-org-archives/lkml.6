@@ -4,55 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13725C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3107C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC69120862
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D54120862
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:46:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V8lt5oap"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC69120862
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E/m+IA6t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D54120862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726472AbeGKHtL (ORCPT
+        id S1726566AbeGKHtT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 03:49:11 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33365 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbeGKHtK (ORCPT
+        Wed, 11 Jul 2018 03:49:19 -0400
+Received: from mail-pl0-f54.google.com ([209.85.160.54]:43284 "EHLO
+        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeGKHtT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 03:49:10 -0400
-Received: by mail-pf0-f193.google.com with SMTP id b17-v6so17880012pfi.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 00:46:13 -0700 (PDT)
+        Wed, 11 Jul 2018 03:49:19 -0400
+Received: by mail-pl0-f54.google.com with SMTP id c41-v6so8810644plj.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 00:46:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=+eJSGIhaEeunDTeFMdqnAm1Tmh4ORKRMaDAXSv12rXI=;
-        b=V8lt5oapV8uMZpW+uuQOGPTPSPELgstXNzxAZZoEWnTqsqIlZr5AWUsV2EcpwqacYZ
-         zvOpsEvuIHTsPwDDU75Jbxu4PMMLchx59Qc1lHW5vjPSMXzDW3sVPs0wvzY7EsqocCDH
-         T5DQ/OEqHKPRyj7/K9Xuy9oGA/G+J1XwS1yJY=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=vW3cqebjdlydqMs6JbHwBlmxXx9urlbBEoZPw9FFXQA=;
+        b=E/m+IA6tJldpTNUN28KPNYTUMALeXE1c3aisZSeM0vza4oUI2WypgO3EvHbSTMjl7b
+         HE3f7QwSy0Hb4o8mEww6hSct8NA/E3R95vaVTlQqzKJZo4TKoXuzHIj/e4yI6TBXdf1m
+         VUb2bCOaW4mhAEFlXdrMV/M02n7aSt4B7HsDw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+eJSGIhaEeunDTeFMdqnAm1Tmh4ORKRMaDAXSv12rXI=;
-        b=A7qRqUrs+tuQv+wND5JH17U+N8/95VxktBr6yJZUc486Eif9j5cE8gQDiO0bP45uy0
-         MZ1Sv1rnp74JUsxkG6PvvsbiWn6jQnDyv35/J6CHhgXW4TcEec3g0FJOQSDacRgOiV5Q
-         2VoSP7pMiziuoN2y47vomjGVMlxz36SxDNr2iByW7GBRnGjqF+fiR4oSAuMIlk+j7yD4
-         7Xnnd6MVkV/pfWOaTxOjG8F0dqRMHWT1Q5yA+STb/LvT3VnvN25QC81CpqBDij+EEkqU
-         NzUlsQBDwmS4kVcZJ94QVDM86a/uFTc9KZg/4prL2DQMRq3tFUEDN4dxKVi1d+Ek6gp5
-         zYnA==
-X-Gm-Message-State: APt69E0exOJHCMicFYQYkGE9Wfn9Cq6bxnMVNqo3B9p3YnGEB+DwBJ/M
-        148J6o5wp/xpPO8OpNZMLSvZ1g==
-X-Google-Smtp-Source: AAOMgpcCtMf4/Uv2uEzYU29471jQP8VWCjHcm6ZxV5RP6BWsQGtnvvPQpeDrcohCjlVY9prkleYUkA==
-X-Received: by 2002:aa7:82d9:: with SMTP id f25-v6mr28717815pfn.218.1531295172867;
-        Wed, 11 Jul 2018 00:46:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=vW3cqebjdlydqMs6JbHwBlmxXx9urlbBEoZPw9FFXQA=;
+        b=nakq/hyRXtxLit8a+IwYEBUuHgEzgKz2weCZYaVuWPiHuTFkOl6JgjV0GK837dwtWD
+         a21Hpob8MT8A5L3xhq2B0BMv1WlOLO89Ps4ZPPLkeIMGq2/e+AfqHVgqrOK7KB7rfaGC
+         rVU9iOiToF1QHUecMvBJfTsqpOipPutFiWJFa++93XbbCV9OpMwFpRQK7+xYIFKSqZxn
+         4Ua2pUV1ytQT5BNuKU70/2qjXngsknYhvbQ6kBOxYnpZTOXQtmGEXVO1i65ABGZph5Zw
+         c2qXbtxOraG65UZZbF5zG8N+cDRn2J6O6wE/PZ917gbc70qlqEdG4yhTyv/IUuZyJk/I
+         DH7w==
+X-Gm-Message-State: APt69E2dbzOzwyFE2NIJUw0XbfQH6qRez4hTup9uq/p8gdMeUOwDCyVi
+        LYD5LHcVPZ0I/FH3lqyaXDXmEA==
+X-Google-Smtp-Source: AAOMgpd7ooOWVKmayH4LHWEJGZqfPAQk6GNygBeVPG9mNWV4AxUyMulHFQNjpkta4PzKujp5iqYFPg==
+X-Received: by 2002:a17:902:d24:: with SMTP id 33-v6mr28192496plu.22.1531295181150;
+        Wed, 11 Jul 2018 00:46:21 -0700 (PDT)
 Received: from localhost.localdomain (li1192-169.members.linode.com. [45.79.93.169])
-        by smtp.gmail.com with ESMTPSA id 16-v6sm9260374pfp.6.2018.07.11.00.46.08
+        by smtp.gmail.com with ESMTPSA id 16-v6sm9260374pfp.6.2018.07.11.00.46.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 11 Jul 2018 00:46:12 -0700 (PDT)
+        Wed, 11 Jul 2018 00:46:20 -0700 (PDT)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -66,58 +67,61 @@ To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Robert Walker <robert.walker@arm.com>,
         Kim Phillips <kim.phillips@arm.com>
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 0/6] perf cs-etm: Fix tracing packet handling and minor refactoring
-Date:   Wed, 11 Jul 2018 15:45:39 +0800
-Message-Id: <1531295145-596-1-git-send-email-leo.yan@linaro.org>
+Subject: [PATCH v2 1/6] perf cs-etm: Introduce invalid address macro
+Date:   Wed, 11 Jul 2018 15:45:40 +0800
+Message-Id: <1531295145-596-2-git-send-email-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531295145-596-1-git-send-email-leo.yan@linaro.org>
+References: <1531295145-596-1-git-send-email-leo.yan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due the current code is missing to handle cs-etm start tracing packet
-and CS_ETM_TRACE_ON packet, we fail to generate branch sample for them.
+This patch introduces invalid address macro and uses it to replace dummy
+value '0xdeadbeefdeadbeefUL'.
 
-This patch series is to fix cs-etm tracing packet handling:
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+---
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Patch 0001 is to add invalid address macro for readable coding;
-
-Patch 0002 is one minor fixing to return error code for instruction
-sample failure;
-
-Patches 0003~0006 are fixing patches for start tracing packet
-and CS_ETM_TRACE_ON packet.
-
-This patch series is applied to Linus tree on 4.18-rc4 with latest
-commit: 1e09177acae3 ("Merge tag 'mips_fixes_4.18_3' of
-git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux").
-
-This patch series has been verified on Hikey620 platform with below two
-commands:
-perf script --itrace=i10000il128 -F cpu,event,ip,addr,sym -k ./vmlinux
-perf script -F cpu,event,ip,addr,sym -k ./vmlinux
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
-
-Changes from v1:
-* Rebased on Linus mainline kernel 4.18-rc4;
-* Added Mathieu 'reviewed' tags in patches.
-
-
-Leo Yan (6):
-  perf cs-etm: Introduce invalid address macro
-  perf cs-etm: Bail out immediately for instruction sample failure
-  perf cs-etm: Fix start tracing packet handling
-  perf cs-etm: Support dummy address value for CS_ETM_TRACE_ON packet
-  perf cs-etm: Generate branch sample when receiving a CS_ETM_TRACE_ON
-    packet
-  perf cs-etm: Generate branch sample for CS_ETM_TRACE_ON packet
-
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 10 ++--
- tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  1 +
- tools/perf/util/cs-etm.c                        | 71 +++++++++++++++++++++----
- 3 files changed, 68 insertions(+), 14 deletions(-)
-
+diff --git a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+index 4d5fc37..938def6 100644
+--- a/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
++++ b/tools/perf/util/cs-etm-decoder/cs-etm-decoder.c
+@@ -31,6 +31,8 @@
+ #endif
+ #endif
+ 
++#define CS_ETM_INVAL_ADDR	0xdeadbeefdeadbeefUL
++
+ struct cs_etm_decoder {
+ 	void *data;
+ 	void (*packet_printer)(const char *msg);
+@@ -261,8 +263,8 @@ static void cs_etm_decoder__clear_buffer(struct cs_etm_decoder *decoder)
+ 	decoder->tail = 0;
+ 	decoder->packet_count = 0;
+ 	for (i = 0; i < MAX_BUFFER; i++) {
+-		decoder->packet_buffer[i].start_addr = 0xdeadbeefdeadbeefUL;
+-		decoder->packet_buffer[i].end_addr = 0xdeadbeefdeadbeefUL;
++		decoder->packet_buffer[i].start_addr = CS_ETM_INVAL_ADDR;
++		decoder->packet_buffer[i].end_addr = CS_ETM_INVAL_ADDR;
+ 		decoder->packet_buffer[i].last_instr_taken_branch = false;
+ 		decoder->packet_buffer[i].exc = false;
+ 		decoder->packet_buffer[i].exc_ret = false;
+@@ -295,8 +297,8 @@ cs_etm_decoder__buffer_packet(struct cs_etm_decoder *decoder,
+ 	decoder->packet_buffer[et].exc = false;
+ 	decoder->packet_buffer[et].exc_ret = false;
+ 	decoder->packet_buffer[et].cpu = *((int *)inode->priv);
+-	decoder->packet_buffer[et].start_addr = 0xdeadbeefdeadbeefUL;
+-	decoder->packet_buffer[et].end_addr = 0xdeadbeefdeadbeefUL;
++	decoder->packet_buffer[et].start_addr = CS_ETM_INVAL_ADDR;
++	decoder->packet_buffer[et].end_addr = CS_ETM_INVAL_ADDR;
+ 
+ 	if (decoder->packet_count == MAX_BUFFER - 1)
+ 		return OCSD_RESP_WAIT;
 -- 
 2.7.4
 
