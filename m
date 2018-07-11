@@ -2,163 +2,164 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URG_BIZ,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9705FC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D054C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E44E20C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:03:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ENC6a6la"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E44E20C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 455D320C0D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:05:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 455D320C0D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390028AbeGKRJD (ORCPT
+        id S2390035AbeGKRKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 13:09:03 -0400
-Received: from casper.infradead.org ([85.118.1.10]:38938 "EHLO
-        casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388222AbeGKRJD (ORCPT
+        Wed, 11 Jul 2018 13:10:31 -0400
+Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:51374 "EHLO
+        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387415AbeGKRKb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 13:09:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Mime-Version:
-        Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=KVuU+JKR5yOnSuTRMuHFZw2lZ2I1AZ29tdBuFLwX6kc=; b=ENC6a6la6res5zmgZzzkgFZftr
-        OcoC/mOo4FO0dxGpzTofhJUygr420kX8noipp9KFJOORdlKuGaJ1noCmyfkumVPrMg3/uMgnHirry
-        6SUp7UX/cf2FuJg8ySHSHFVT/3953MsLP3JJvlvhalUYSRI4sKrx6sY6F9W6kB05ECWFq941sNkzK
-        6l986/jq4SXPvhJnfS312UEGgs1ri9QkUlX8ObfHQOQuA56SdVjWYWy6fz06U6LEtU6Pg0qkVdXLP
-        Iq12WW5Hl+Y/j5Ytwc+wZtssdNyEIN47bxC0A2f2YApJ4uAotw2R605qrWkMKJtEfb6wu9ZK7j24H
-        XCyCdZBA==;
-Received: from i7.infradead.org ([90.155.92.213])
-        by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdIWm-0008FS-7z; Wed, 11 Jul 2018 17:03:44 +0000
-Message-ID: <e21c6d7666bfbad1e1c8295559a6ddc7e4110105.camel@infradead.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     paulmck@linux.vnet.ibm.com
-Cc:     Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>
-Date:   Wed, 11 Jul 2018 18:03:42 +0100
-In-Reply-To: <20180711164952.GA29994@linux.vnet.ibm.com>
-References: <20180709163432.GV3593@linux.vnet.ibm.com>
-         <1531162254.26547.3.camel@infradead.org>
-         <20180709203441.GE3593@linux.vnet.ibm.com>
-         <1531168538.26547.5.camel@infradead.org>
-         <20180709204248.GF3593@linux.vnet.ibm.com>
-         <1531169145.26547.8.camel@infradead.org>
-         <20180709210532.GH3593@linux.vnet.ibm.com>
-         <20180709220823.GA18045@linux.vnet.ibm.com>
-         <1531319025.8759.57.camel@infradead.org>
-         <20180711144303.GQ3593@linux.vnet.ibm.com>
-         <20180711164952.GA29994@linux.vnet.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 11 Jul 2018 13:10:31 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R671e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07402;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0T4QoNh6_1531328689;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0T4QoNh6_1531328689)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 12 Jul 2018 01:04:52 +0800
+Subject: Re: [RFC v4 0/3] mm: zap pages with read mmap_sem in munmap for large
+ mapping
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     mhocko@kernel.org, willy@infradead.org, ldufour@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1531265649-93433-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20180711111052.hbyukcwetmjjpij2@kshutemo-mobl1>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <3d4c69c9-dd2b-30d2-5bf2-d5b108a76758@linux.alibaba.com>
+Date:   Wed, 11 Jul 2018 10:04:48 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180711111052.hbyukcwetmjjpij2@kshutemo-mobl1>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-11 at 09:49 -0700, Paul E. McKenney wrote:
-> And here is an updated v4.15 patch with Marius's Reported-by and David's
-> fix to my lost exclamation point.
-
-Thanks. Are you sending the original version of that to Linus? It'd be
-useful to have the commit ID so that we can watch for it landing, and
-chase this one up to Greg.
-
-As discussed on IRC, this patch reduces synchronize_sched() latency for
-us from ~4600s to ~160ms, which is nice.
-
-However, it isn't going to be sufficient in the NO_HZ_FULL case. For
-that you want a patch like the one below, which happily reduces the
-latency in our (!NO_HZ_FULL) case still further to ~40ms.
-
-Adding kvm list for better review...
-
-From: David Woodhouse <dwmw@amazon.co.uk>
-Subject: [PATCH] kvm/x86: Inform RCU of quiescent state when entering guest mode
-
-RCU can spend long periods of time waiting for a CPU which is actually in
-KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
-modes, and don't wait for it.
-
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/kvm/x86.c      |  2 ++
- include/linux/rcutree.h |  2 ++
- kernel/rcu/tree.c       | 16 ++++++++++++++++
- 3 files changed, 20 insertions(+)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 0046aa70205a..b0c82f70afa7 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7458,7 +7458,9 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 		vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_RELOAD;
- 	}
- 
-+	rcu_kvm_enter();
- 	kvm_x86_ops->run(vcpu);
-+	rcu_kvm_exit();
- 
- 	/*
- 	 * Do this here before restoring debug registers on the host.  And
-diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
-index 914655848ef6..6d07af5a50fc 100644
---- a/include/linux/rcutree.h
-+++ b/include/linux/rcutree.h
-@@ -82,6 +82,8 @@ void cond_synchronize_sched(unsigned long oldstate);
- 
- void rcu_idle_enter(void);
- void rcu_idle_exit(void);
-+void rcu_kvm_enter(void);
-+void rcu_kvm_exit(void);
- void rcu_irq_enter(void);
- void rcu_irq_exit(void);
- void rcu_irq_enter_irqson(void);
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index aa7cade1b9f3..df7893273939 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1019,6 +1019,22 @@ void rcu_irq_enter_irqson(void)
- 	local_irq_restore(flags);
- }
- 
-+/*
-+ * These are currently identical to the _idle_ versions but let's
-+ * explicitly have separate copies to keep Paul honest in future.
-+ */
-+void rcu_kvm_enter(void)
-+{
-+	rcu_idle_enter();
-+}
-+EXPORT_SYMBOL_GPL(rcu_kvm_enter);
-+
-+void rcu_kvm_exit(void)
-+{
-+	rcu_idle_exit();
-+}
-+EXPORT_SYMBOL_GPL(rcu_kvm_exit);
-+
- /**
-  * rcu_is_watching - see if RCU thinks that the current CPU is idle
-  *
--- 
-2.17.1
 
 
--- 
-dwmw2
+On 7/11/18 4:10 AM, Kirill A. Shutemov wrote:
+> On Wed, Jul 11, 2018 at 07:34:06AM +0800, Yang Shi wrote:
+>> Background:
+>> Recently, when we ran some vm scalability tests on machines with large memory,
+>> we ran into a couple of mmap_sem scalability issues when unmapping large memory
+>> space, please refer to https://lkml.org/lkml/2017/12/14/733 and
+>> https://lkml.org/lkml/2018/2/20/576.
+>>
+>>
+>> History:
+>> Then akpm suggested to unmap large mapping section by section and drop mmap_sem
+>> at a time to mitigate it (see https://lkml.org/lkml/2018/3/6/784).
+>>
+>> V1 patch series was submitted to the mailing list per Andrew's suggestion
+>> (see https://lkml.org/lkml/2018/3/20/786). Then I received a lot great feedback
+>> and suggestions.
+>>
+>> Then this topic was discussed on LSFMM summit 2018. In the summit, Michal Hocko
+>> suggested (also in the v1 patches review) to try "two phases" approach. Zapping
+>> pages with read mmap_sem, then doing via cleanup with write mmap_sem (for
+>> discussion detail, see https://lwn.net/Articles/753269/)
+>>
+>>
+>> Approach:
+>> Zapping pages is the most time consuming part, according to the suggestion from
+>> Michal Hocko [1], zapping pages can be done with holding read mmap_sem, like
+>> what MADV_DONTNEED does. Then re-acquire write mmap_sem to cleanup vmas.
+>>
+>> But, we can't call MADV_DONTNEED directly, since there are two major drawbacks:
+>>    * The unexpected state from PF if it wins the race in the middle of munmap.
+>>      It may return zero page, instead of the content or SIGSEGV.
+>>    * Can’t handle VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe mappings, which
+>>      is a showstopper from akpm
+>>
+>> And, some part may need write mmap_sem, for example, vma splitting. So, the
+>> design is as follows:
+>>          acquire write mmap_sem
+>>          lookup vmas (find and split vmas)
+>>          set VM_DEAD flags
+>>          deal with special mappings
+>>          downgrade_write
+>>
+>>          zap pages
+>>          release mmap_sem
+>>
+>>          retake mmap_sem exclusively
+>>          cleanup vmas
+>>          release mmap_sem
+>>
+>> Define large mapping size thresh as PUD size, just zap pages with read mmap_sem
+>> for mappings which are >= PUD_SIZE. So, unmapping less than PUD_SIZE area still
+>> goes with the regular path.
+>>
+>> All vmas which will be zapped soon will have VM_DEAD flag set. Since PF may race
+>> with munmap, may just return the right content or SIGSEGV before the optimization,
+>> but with the optimization, it may return a zero page. Here use this flag to mark
+>> PF to this area is unstable, will trigger SIGSEGV, in order to prevent from the
+>> unexpected 3rd state.
+>>
+>> If the vma has VM_LOCKED | VM_HUGETLB | VM_PFNMAP or uprobe, they are considered
+>> as special mappings. They will be dealt with before zapping pages with write
+>> mmap_sem held. Basically, just update vm_flags. The actual unmapping is still
+>> done with read mmap_sem.
+>>
+>> And, since they are also manipulated by unmap_single_vma() which is called by
+>> zap_page_range() with read mmap_sem held in this case, to prevent from updating
+>> vm_flags in read critical section and considering the complexity of coding, just
+>> check if VM_DEAD is set, then skip any VM_DEAD area since they should be handled
+>> before.
+>>
+>> When cleaning up vmas, just call do_munmap() without carrying vmas from the above
+>> to avoid race condition, since the address space might be already changed under
+>> our feet after retaking exclusive lock.
+>>
+>> For the time being, just do this in munmap syscall path. Other vm_munmap() or
+>> do_munmap() call sites (i.e mmap, mremap, etc) remain intact for stability reason.
+>> And, make this 64 bit only explicitly per akpm's suggestion.
+> I still see VM_DEAD as unnecessary complication. We should be fine without it.
+> But looks like I'm in the minority :/
+>
+> It's okay. I have another suggestion that also doesn't require VM_DEAD
+> trick too :)
+>
+> 1. Take mmap_sem for write;
+> 2. Adjust VMA layout (split/remove). After the step all memory we try to
+>     unmap is outside any VMA.
+> 3. Downgrade mmap_sem to read.
+> 4. Zap the page range.
+> 5. Drop mmap_sem.
+>
+> I believe it should be safe.
+
+
+Yes, it looks so. But, a further question is all the vmas have been 
+removed, how zap_page_range could do its job? It depends on the vmas.
+
+One approach is to save all the vmas on a separate list, then 
+zap_page_range does unmap with this list.
+
+Yang
+
+>
+> The pages in the range cannot be re-faulted after step 3 as find_vma()
+> will not see the corresponding VMA and deliver SIGSEGV.
+>
+> New VMAs cannot be created in the range before step 5 since we hold the
+> semaphore at least for read the whole time.
+>
+> Do you see problem in this approach?
+>
+
