@@ -2,133 +2,105 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41824C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:53:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED811C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:54:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2FCB208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:53:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2FCB208EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=santannapisa.it
+	by mail.kernel.org (Postfix) with ESMTP id B0D30208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:54:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0D30208EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726835AbeGKI4Z (ORCPT
+        id S1732341AbeGKI51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:56:25 -0400
-Received: from mail.santannapisa.it ([193.205.80.99]:50967 "EHLO
-        mail.santannapisa.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726398AbeGKI4Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:56:25 -0400
-Received: from [10.30.3.150] (account l.abeni@santannapisa.it HELO luca64)
-  by santannapisa.it (CommuniGate Pro SMTP 6.1.11)
-  with ESMTPSA id 131845889; Wed, 11 Jul 2018 10:53:07 +0200
-Date:   Wed, 11 Jul 2018 10:53:03 +0200
-From:   luca abeni <luca.abeni@santannapisa.it>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com,
-        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        claudio@evidence.eu.com, bristot@redhat.com
-Subject: Re: [PATCH] sched/deadline: Fix switched_from_dl
-Message-ID: <20180711105303.05551d59@luca64>
-In-Reply-To: <20180711072948.27061-1-juri.lelli@redhat.com>
-References: <20180711072948.27061-1-juri.lelli@redhat.com>
-Organization: Scuola Superiore S. Anna
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 11 Jul 2018 04:57:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59348 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726384AbeGKI51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 04:57:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B86DAACF3;
+        Wed, 11 Jul 2018 08:54:10 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 10:54:07 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Joonsoo Kim <js1304@gmail.com>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        iommu@lists.linux-foundation.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Chris Zankel <chris@zankel.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 1/2] mm/cma: remove unsupported gfp_mask parameter from
+ cma_alloc()
+Message-ID: <20180711085407.GB20050@dhcp22.suse.cz>
+References: <CGME20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29@eucas1p2.samsung.com>
+ <20180709121956.20200-1-m.szyprowski@samsung.com>
+ <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com>
+ <CAAmzW4PPNYhUj_MeZox+ddq8MjXqnJs_AJ3xkayf710udD1pSg@mail.gmail.com>
+ <20180710095056.GE14284@dhcp22.suse.cz>
+ <CAAmzW4P1m_T77DfQzDD6ysGaOF46++-0gwRaOajmo6ef=VYp=A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAmzW4P1m_T77DfQzDD6ysGaOF46++-0gwRaOajmo6ef=VYp=A@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Jul 2018 09:29:48 +0200
-Juri Lelli <juri.lelli@redhat.com> wrote:
-
-> Mark noticed that syzkaller is able to reliably trigger the following
+On Wed 11-07-18 16:35:28, Joonsoo Kim wrote:
+> 2018-07-10 18:50 GMT+09:00 Michal Hocko <mhocko@kernel.org>:
+> > On Tue 10-07-18 16:19:32, Joonsoo Kim wrote:
+> >> Hello, Marek.
+> >>
+> >> 2018-07-09 21:19 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
+> >> > cma_alloc() function doesn't really support gfp flags other than
+> >> > __GFP_NOWARN, so convert gfp_mask parameter to boolean no_warn parameter.
+> >>
+> >> Although gfp_mask isn't used in cma_alloc() except no_warn, it can be used
+> >> in alloc_contig_range(). For example, if passed gfp mask has no __GFP_FS,
+> >> compaction(isolation) would work differently. Do you have considered
+> >> such a case?
+> >
+> > Does any of cma_alloc users actually care about GFP_NO{FS,IO}?
 > 
->   dl_rq->running_bw > dl_rq->this_bw
->   WARNING: CPU: 1 PID: 153 at kernel/sched/deadline.c:124
-> switched_from_dl+0x454/0x608 Kernel panic - not syncing:
-> panic_on_warn set ...
-> 
->   CPU: 1 PID: 153 Comm: syz-executor253 Not tainted 4.18.0-rc3+ #29
->   Hardware name: linux,dummy-virt (DT)
->   Call trace:
->    dump_backtrace+0x0/0x458
->    show_stack+0x20/0x30
->    dump_stack+0x180/0x250
->    panic+0x2dc/0x4ec
->    __warn_printk+0x0/0x150
->    report_bug+0x228/0x2d8
->    bug_handler+0xa0/0x1a0
->    brk_handler+0x2f0/0x568
->    do_debug_exception+0x1bc/0x5d0
->    el1_dbg+0x18/0x78
->    switched_from_dl+0x454/0x608
->    __sched_setscheduler+0x8cc/0x2018
->    sys_sched_setattr+0x340/0x758
->    el0_svc_naked+0x30/0x34
-> 
-> syzkaller reproducer runs a bunch of threads that constantly switch
-> between DEADLINE and NORMAL classes while interacting through futexes.
-> 
-> The splat above is caused by the fact that if a DEADLINE task is
-> setattr back to NORMAL while in non_contending state (blocked on a
-> futex - inactive timer armed), its contribution to running_bw is not
-> removed before sub_rq_bw() gets called (!task_on_rq_queued() branch)
-> and the latter sees running_bw > this_bw.
-> 
-> Fix it by removing a task contribution from running_bw if the task is
-> not queued and in non_contending state while switched to a different
-> class.
-> 
-> Reported-by: Mark Rutland <mark.rutland@arm.com>
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> ---
->  kernel/sched/deadline.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
+> I don't know. My guess is that cma_alloc() is used for DMA allocation so
+> block device would use it, too. If fs/block subsystem initiates the
+> request for the device,
+> it would be possible that cma_alloc() is called with such a flag.
+> Again, I don't know
+> much about those subsystem so I would be wrong.
 
-Reviewed-by: Luca Abeni <luca.abeni@santannapisa.it>
+The patch converts existing users and none of them really tries to use
+anything other than GFP_KERNEL [|__GFP_NOWARN] so this doesn't seem to
+be the case. Should there be a new user requiring more restricted
+gfp_mask we should carefuly re-evaluate and think how to support it.
 
-And, thanks for taking care of this issue!
-
-
-			Thanks,
-				Luca
-
-
-> 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index fbfc3f1d368a..10c7b51c0d1f 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2290,8 +2290,17 @@ static void switched_from_dl(struct rq *rq,
-> struct task_struct *p) if (task_on_rq_queued(p) && p->dl.dl_runtime)
->  		task_non_contending(p);
->  
-> -	if (!task_on_rq_queued(p))
-> +	if (!task_on_rq_queued(p)) {
-> +		/*
-> +		 * Inactive timer is armed. However, p is leaving
-> DEADLINE and
-> +		 * might migrate away from this rq while continuing
-> to run on
-> +		 * some other class. We need to remove its
-> contribution from
-> +		 * this rq running_bw now, or sub_rq_bw (below) will
-> complain.
-> +		 */
-> +		if (p->dl.dl_non_contending)
-> +			sub_running_bw(&p->dl, &rq->dl);
->  		sub_rq_bw(&p->dl, &rq->dl);
-> +	}
->  
->  	/*
->  	 * We cannot use inactive_task_timer() to invoke
-> sub_running_bw()
-
+Until then I would simply stick with the proposed approach because my
+experience tells me that a wrong gfp mask usage is way too easy so the
+simpler the api is the less likely we will see an abuse.
+-- 
+Michal Hocko
+SUSE Labs
