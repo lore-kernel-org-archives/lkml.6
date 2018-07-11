@@ -2,79 +2,82 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDC1C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C446AC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2239720846
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:48:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2239720846
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 72820208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:49:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72820208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732451AbeGKKwV (ORCPT
+        id S1732472AbeGKKxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:52:21 -0400
-Received: from mga02.intel.com ([134.134.136.20]:31165 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726487AbeGKKwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:52:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 03:48:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
-   d="scan'208";a="239478214"
-Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
-  by orsmga005.jf.intel.com with ESMTP; 11 Jul 2018 03:48:35 -0700
-Message-ID: <5B45E17D.2090205@intel.com>
-Date:   Wed, 11 Jul 2018 18:52:45 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Wed, 11 Jul 2018 06:53:08 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:47281 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726487AbeGKKxI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 06:53:08 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fdCgU-0004bL-2J; Wed, 11 Jul 2018 10:49:22 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Quytelda Kahja <quytelda@tamalin.org>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: gdm724x: redundant variables idProduct and idVendor
+Date:   Wed, 11 Jul 2018 11:49:21 +0100
+Message-Id: <20180711104921.30561-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-To:     Michal Hocko <mhocko@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-CC:     virtio-dev@lists.oasis-open.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com,
-        Rik van Riel <riel@redhat.com>, peterx@redhat.com
-Subject: Re: [PATCH v35 1/5] mm: support to get hints of free page blocks
-References: <1531215067-35472-1-git-send-email-wei.w.wang@intel.com> <1531215067-35472-2-git-send-email-wei.w.wang@intel.com> <CA+55aFz9a=D-kquM=sG5uhV_HrBAw+VAhcJmtPNz+howy4j9ow@mail.gmail.com> <5B455D50.90902@intel.com> <CA+55aFzqj8wxXnHAdUTiOomipgFONVbqKMjL_tfk7e5ar1FziQ@mail.gmail.com> <20180711092152.GE20050@dhcp22.suse.cz>
-In-Reply-To: <20180711092152.GE20050@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 05:21 PM, Michal Hocko wrote:
-> On Tue 10-07-18 18:44:34, Linus Torvalds wrote:
-> [...]
->> That was what I tried to encourage with actually removing the pages
->> form the page list. That would be an _incremental_ interface. You can
->> remove MAX_ORDER-1 pages one by one (or a hundred at a time), and mark
->> them free for ballooning that way. And if you still feel you have tons
->> of free memory, just continue removing more pages from the free list.
-> We already have an interface for that. alloc_pages(GFP_NOWAIT, MAX_ORDER -1).
-> So why do we need any array based interface?
+From: Colin Ian King <colin.king@canonical.com>
 
-Yes, I'm trying to get free pages directly via alloc_pages, so there 
-will be no new mm APIs.
-I plan to let free page allocation stop when the remaining system free 
-memory becomes close to min_free_kbytes (prevent swapping).
+Variable idProduct and idVendor are being assigned but are never used
+hence they are redundant and can be removed.
 
+Cleans up clang warnings:
+warning: variable 'idProduct' set but not used [-Wunused-but-set-variable]
+warning: variable 'idVendor' set but not used [-Wunused-but-set-variable]
 
-Best,
-Wei
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/staging/gdm724x/gdm_usb.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
+diff --git a/drivers/staging/gdm724x/gdm_usb.c b/drivers/staging/gdm724x/gdm_usb.c
+index 0218782d1a08..dc4da66c3695 100644
+--- a/drivers/staging/gdm724x/gdm_usb.c
++++ b/drivers/staging/gdm724x/gdm_usb.c
+@@ -879,14 +879,9 @@ static void gdm_usb_disconnect(struct usb_interface *intf)
+ {
+ 	struct phy_dev *phy_dev;
+ 	struct lte_udev *udev;
+-	u16 idVendor, idProduct;
+ 	struct usb_device *usbdev;
+ 
+ 	usbdev = interface_to_usbdev(intf);
+-
+-	idVendor = __le16_to_cpu(usbdev->descriptor.idVendor);
+-	idProduct = __le16_to_cpu(usbdev->descriptor.idProduct);
+-
+ 	phy_dev = usb_get_intfdata(intf);
+ 
+ 	udev = phy_dev->priv_dev;
+-- 
+2.17.1
 
