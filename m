@@ -2,125 +2,217 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE10C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6CCC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92FD62083C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GnRSApHQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92FD62083C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 058EE20B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 058EE20B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732665AbeGKJoX (ORCPT
+        id S1732761AbeGKJpB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:44:23 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40032 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbeGKJoW (ORCPT
+        Wed, 11 Jul 2018 05:45:01 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:44784 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732376AbeGKJpB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:44:22 -0400
-Received: by mail-wr1-f68.google.com with SMTP id t6-v6so17452709wrn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 02:40:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sA0x4vnqsHOfjf2tc9OZ1sVTXlxbVufq2Bf9Pecho2U=;
-        b=GnRSApHQiDH25jpATv9Hy+YfcdUmFoLZmSkR5RQxzvJvMbWjA3RmDby27bcyBy1RUz
-         Oof0Qm/nHboGrcB+Ntm1+mzwKeIshCj+rPnL9jEvINjnPA+sH0QEo1S6uiAkA9XFMFBZ
-         6nsv0PbzDLsyqQlxlXhS4hl4MgNW/7ekODA5o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=sA0x4vnqsHOfjf2tc9OZ1sVTXlxbVufq2Bf9Pecho2U=;
-        b=ftiLps/lxaR6ImrAPPFCsJGGTTWW5CLd+99sXPOHqLJItRZDDxF3IVPFWoP4tybcT+
-         MQ8DzEJOSFVKMUs9WHzKZsJNF413gEwO9vEHUjO0sRkUcIbE5SABgJipqiHfmdLXvr81
-         ky+K1tLbkSbGBPFPPxO/wKKrkpFscvV5vMduE/1dOuGmuXz3Fga9MmZQRpdtS5LSTsp1
-         aldlb01EfzYzpSoZB1OHq3IZT2AWHMKF3pa04ywGMYas6Wr1RR5/ZAvu5qRbjlMx4Sqh
-         Dw9cJECJnFBJ2F5A1uc/m01XrVe06XZnYbGxTb4zfCoTc4LjL2PkKJmkN9E2QMDVVnF6
-         zS6Q==
-X-Gm-Message-State: APt69E2ZKPo/1oBGeLdkqcwiVmKv9NBhbdn9n2Mq1aaXBqiSua1vy7w/
-        pCX9oE+xgKKK0lHoJtJQUvIbWw==
-X-Google-Smtp-Source: AAOMgpfWpYM/UDe4zIiuaPF96A1RKWOrfYEO33v44bEnxfa8LFkJG8OvgUO5QP2Eyntd723r8wwxJw==
-X-Received: by 2002:adf:b3d4:: with SMTP id x20-v6mr21143810wrd.272.1531302054562;
-        Wed, 11 Jul 2018 02:40:54 -0700 (PDT)
-Received: from localhost.localdomain (33.153.69.91.rev.sfr.net. [91.69.153.33])
-        by smtp.gmail.com with ESMTPSA id t124-v6sm1641311wmt.29.2018.07.11.02.40.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 02:40:53 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/8] efi: cper: avoid using get_seconds()
-Date:   Wed, 11 Jul 2018 11:40:36 +0200
-Message-Id: <20180711094040.12506-5-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
-References: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
+        Wed, 11 Jul 2018 05:45:01 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w6B9dD8d018059;
+        Wed, 11 Jul 2018 11:41:09 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2k5eu1g6u2-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Wed, 11 Jul 2018 11:41:08 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5C70138;
+        Wed, 11 Jul 2018 09:41:08 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3A2972635;
+        Wed, 11 Jul 2018 09:41:08 +0000 (GMT)
+Received: from [10.48.0.237] (10.75.127.47) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 11 Jul
+ 2018 11:41:06 +0200
+Subject: Re: [PATCH 01/19] mmc: mmci: regroup and define dma operations
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Gerald Baeza <gerald.baeza@st.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
+References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com>
+ <1528809280-31116-2-git-send-email-ludovic.Barre@st.com>
+ <CAPDyKFpt5HUeUqaoS9icDodM+r64jB9vQ=zTecO0tuBv=TtOXg@mail.gmail.com>
+From:   Ludovic BARRE <ludovic.barre@st.com>
+Message-ID: <d93e6886-1dee-7915-459f-466a54d0c242@st.com>
+Date:   Wed, 11 Jul 2018 11:41:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAPDyKFpt5HUeUqaoS9icDodM+r64jB9vQ=zTecO0tuBv=TtOXg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.75.127.47]
+X-ClientProxiedBy: SFHDAG3NODE3.st.com (10.75.127.9) To SFHDAG6NODE1.st.com
+ (10.75.127.16)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_01:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-get_seconds() is deprecated because of the 32-bit time overflow
-in y2038/y2106 on 32-bit architectures. The way it is used in
-cper_next_record_id() causes an overflow in 2106 when unsigned UTC
-seconds overflow, even on 64-bit architectures.
 
-This starts using ktime_get_real_seconds() to give us more than 32 bits
-of timestamp on all architectures, and then changes the algorithm to use
-39 bits for the timestamp after the y2038 wrap date, plus an always-1
-bit at the top. This gives us another 127 epochs of 136 years, with
-strictly monotonically increasing sequence numbers across boots.
+On 07/05/2018 05:17 PM, Ulf Hansson wrote:
+> On 12 June 2018 at 15:14, Ludovic Barre <ludovic.Barre@st.com> wrote:
+>> From: Ludovic Barre <ludovic.barre@st.com>
+>>
+>> Prepare mmci driver to manage dma interface by new property.
+>> This patch defines and regroups dma operations for mmci drivers.
+>> mmci_dma_XX prototypes are added to call member of mmci_dma_ops
+>> if not null. Based on legacy need, a mmci dma interface has been
+>> defined with:
+>> -mmci_dma_setup
+>> -mmci_dma_release
+>> -mmci_dma_pre_req
+>> -mmci_dma_start
+>> -mmci_dma_finalize
+>> -mmci_dma_post_req
+>> -mmci_dma_error
+>> -mmci_dma_get_next_data
+> 
+> As I suggested for one of the other patches, I would rather turn core
+> mmci functions into library functions, which can be either invoked
+> from variant callbacks or assigned directly to them.
+> 
+> In other words, I would leave the functions that you move in this
+> patch to stay in mmci.c. Although some needs to be re-factored and we
+> also needs to make some of them available to be called from another
+> file, hence the functions needs to be shared via mmci.h rather than
+> being declared static.
 
-This is almost certainly overkill, but seems better than just extending
-the deadline from 2038 to 2106.
+In previous exchange mail "STM32MP1 SDMMC driver review"
+we are said:
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- drivers/firmware/efi/cper.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ >>> -dma variant à should fit in Qualcomm implementation, reuse (rename)
+ >>> mmci_qcom_dml.c file and integrate ST dma in.
+ >>
+ >> stm32 sdmmc has an internal dma, no need to use dmaengine API;
+ >> So some modifications in mmci (pre/post request, mmci_dma_xx). perhaps
+ >> should be done with an ops or not.
+ >
+ >Yes.
+ >
+ >The Qualcomm variant is also using an internal DMA, hence I thought
+ >there may be something we could re-use, or at least have some new
+ >common ops for.
 
-diff --git a/drivers/firmware/efi/cper.c b/drivers/firmware/efi/cper.c
-index 3bf0dca378a6..b73fc4cab083 100644
---- a/drivers/firmware/efi/cper.c
-+++ b/drivers/firmware/efi/cper.c
-@@ -48,8 +48,21 @@ u64 cper_next_record_id(void)
- {
- 	static atomic64_t seq;
- 
--	if (!atomic64_read(&seq))
--		atomic64_set(&seq, ((u64)get_seconds()) << 32);
-+	if (!atomic64_read(&seq)) {
-+		time64_t time = ktime_get_real_seconds();
-+
-+		/*
-+		 * This code is unlikely to still be needed in year 2106,
-+		 * but just in case, let's use a few more bits for timestamps
-+		 * after y2038 to be sure they keep increasing monotonically
-+		 * for the next few hundred years...
-+		 */
-+		if (time < 0x80000000)
-+			atomic64_set(&seq, (ktime_get_real_seconds()) << 32);
-+		else
-+			atomic64_set(&seq, 0x8000000000000000ull |
-+					   ktime_get_real_seconds() << 24);
-+	}
- 
- 	return atomic64_inc_return(&seq);
- }
--- 
-2.17.1
+It's not crystal clear for me.
+Do you always agree with a dma ops which allow to address different
+DMA transfer:
+-with dmaengine API
+-sdmmc idma, without dmaengine API
+-...
 
+> 
+> Let me take a concrete example on how I would move forward, hopefully
+> that explains it a bit better. Please see below.
+> 
+> [...]
+> 
+>> -/*
+>> - * All the DMA operation mode stuff goes inside this ifdef.
+>> - * This assumes that you have a generic DMA device interface,
+>> - * no custom DMA interfaces are supported.
+>> - */
+>> -#ifdef CONFIG_DMA_ENGINE
+>> -static void mmci_dma_setup(struct mmci_host *host)
+>> -{
+>> -       const char *rxname, *txname;
+>> -       struct variant_data *variant = host->variant;
+>> -
+>> -       host->dma_rx_channel = dma_request_slave_channel(mmc_dev(host->mmc), "rx");
+>> -       host->dma_tx_channel = dma_request_slave_channel(mmc_dev(host->mmc), "tx");
+>> -
+>> -       /* initialize pre request cookie */
+>> -       host->next_data.cookie = 1;
+>> -
+>> -       /*
+>> -        * If only an RX channel is specified, the driver will
+>> -        * attempt to use it bidirectionally, however if it is
+>> -        * is specified but cannot be located, DMA will be disabled.
+>> -        */
+>> -       if (host->dma_rx_channel && !host->dma_tx_channel)
+>> -               host->dma_tx_channel = host->dma_rx_channel;
+>> -
+>> -       if (host->dma_rx_channel)
+>> -               rxname = dma_chan_name(host->dma_rx_channel);
+>> -       else
+>> -               rxname = "none";
+>> -
+>> -       if (host->dma_tx_channel)
+>> -               txname = dma_chan_name(host->dma_tx_channel);
+>> -       else
+>> -               txname = "none";
+>> -
+>> -       dev_info(mmc_dev(host->mmc), "DMA channels RX %s, TX %s\n",
+>> -                rxname, txname);
+>> -
+>> -       /*
+>> -        * Limit the maximum segment size in any SG entry according to
+>> -        * the parameters of the DMA engine device.
+>> -        */
+>> -       if (host->dma_tx_channel) {
+>> -               struct device *dev = host->dma_tx_channel->device->dev;
+>> -               unsigned int max_seg_size = dma_get_max_seg_size(dev);
+>> -
+>> -               if (max_seg_size < host->mmc->max_seg_size)
+>> -                       host->mmc->max_seg_size = max_seg_size;
+>> -       }
+>> -       if (host->dma_rx_channel) {
+>> -               struct device *dev = host->dma_rx_channel->device->dev;
+>> -               unsigned int max_seg_size = dma_get_max_seg_size(dev);
+>> -
+>> -               if (max_seg_size < host->mmc->max_seg_size)
+>> -                       host->mmc->max_seg_size = max_seg_size;
+>> -       }
+> 
+> Everything above shall be left as generic library function,
+> mmci_dma_setup() and I would share it via mmci.h and thus change it
+> from being static.
+> 
+
+each interfaces mmci_dma_XXX have very different needs depending
+dma_ops (legacy, sdmmc idma)
+
+>> -
+>> -       if (variant->qcom_dml && host->dma_rx_channel && host->dma_tx_channel)
+>> -               if (dml_hw_init(host, host->mmc->parent->of_node))
+>> -                       variant->qcom_dml = false;
+> 
+> This piece of code, should be made specific to the qcom variant and
+> managed though a "mmci_host_ops" callback. The corresponding code in
+> that callback would then start by invoking mmci_dma_setup(), before it
+> continues with the qcom specific operations.
+> 
+> For legacy variants, the corresponding callback would be set directly
+> to mmci_dma_setup() and called through the callback from mmci.c when
+> needed. There is no need to have a separate file for DMA for the
+> legacy variants, I think.
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
+> 
