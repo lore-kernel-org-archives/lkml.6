@@ -2,139 +2,133 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E27C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5DDC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A7520878
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:39:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K9U7UJ2C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A7520878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3CB1520878
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:40:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CB1520878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387613AbeGKMnJ (ORCPT
+        id S1726576AbeGKMoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:43:09 -0400
-Received: from mail-io0-f196.google.com ([209.85.223.196]:46752 "EHLO
-        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbeGKMnI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:43:08 -0400
-Received: by mail-io0-f196.google.com with SMTP id i18-v6so7706874ioj.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:39:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=sPwiriw5RMFLe9Dd8rKkkDSc9FciTk4lrfjW6jP3R2E=;
-        b=K9U7UJ2CFHh9AlgdaX9wacaJTuwdpms5k7PzEQzi/L+FkcDKQ+puDcZHLLEZS0Csx+
-         ofsZh7oIqSByCskrlbPjZ5VqsMDhQiIvSAvuYScj/DloFeKID3uzb/Nq4vk2hLxuueVe
-         FbdpMAwCIhju5rQMgtukzDOOSJZkEwgbdLfZU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=sPwiriw5RMFLe9Dd8rKkkDSc9FciTk4lrfjW6jP3R2E=;
-        b=TPa3KnBZvwSK4ZSlKfXjZo6fDYdEPg5oKUENyH/oc8Ir8x5IqH+CwgFgTH6jhkktWg
-         bXy9jBn/WsliYunIaEGQQxmYRlP3mBT6l1SzuI7/V3fBA9DQOSj3CWhmjXje185yVFsZ
-         xEaLjWytTcFLp3vJErUgzcA5Pp4B8fbC954CIZaZVLLB+4piDZAA8Va1DeMgy3Ly4/5J
-         JM7WsPHKhu7ADB/LysJCy0Cl0sHFvzN5PL7aYvDljsNasCMknrJ3pLBhQoJp2cS3aygV
-         YpUHmoJUDlnQCQn46m+Ld5Cfk8Q9Iv+StOYnM1TX9cPB/b464hxnGHmmoQwSFJuyBUXo
-         qrIw==
-X-Gm-Message-State: AOUpUlHVcg9qRHTr/8AjK3HqkXVmqSFdfitXFmxlLtutF4vl5l+34Hrq
-        xmDU6gtN0aUPgj/Zjs65CpbK3eIcbhxKM8+ZPnURjQ==
-X-Google-Smtp-Source: AAOMgpePZ4kOG9po18vBpRZFcRbZ84V6mTZAv0cG0ZHETVFzZH6/aYqahiz/y3B38APWEH54QFtWAa1aQQrYs308KgY=
-X-Received: by 2002:a6b:144c:: with SMTP id 73-v6mr23632050iou.218.1531312740167;
- Wed, 11 Jul 2018 05:39:00 -0700 (PDT)
+        Wed, 11 Jul 2018 08:44:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38468 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726269AbeGKMoX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:44:23 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A96747A7F0;
+        Wed, 11 Jul 2018 12:40:13 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7F1322026D6B;
+        Wed, 11 Jul 2018 12:40:12 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 20:40:08 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>, akpm@linux-foundation.org,
+        linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        yasu.isimatu@gmail.com, keescook@chromium.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
+        douly.fnst@cn.fujitsu.com, mhocko@suse.com, vbabka@suse.cz,
+        mgorman@techsingularity.net
+Subject: Re: Bug report about KASLR and ZONE_MOVABLE
+Message-ID: <20180711124008.GF2070@MiWiFi-R3L-srv>
+References: <20180711094244.GA2019@localhost.localdomain>
+ <20180711104158.GE2070@MiWiFi-R3L-srv>
+ <20180711104944.GG1969@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 05:38:59
- -0700 (PDT)
-In-Reply-To: <973d98c5-b5c7-d1c4-1b20-b6a77500adc3@st.com>
-References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com>
- <1528809280-31116-6-git-send-email-ludovic.Barre@st.com> <CAPDyKFpwVMX9LoC_abHm09UNhLse8MJBUpCCHkR8NnK7fOU5Yg@mail.gmail.com>
- <973d98c5-b5c7-d1c4-1b20-b6a77500adc3@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 11 Jul 2018 14:38:59 +0200
-Message-ID: <CAPDyKFpUbHR4qfm3fDbRi=_=5oyqN9mhubySQ6a-N7msR5uU8w@mail.gmail.com>
-Subject: Re: [PATCH 05/19] mmc: mmci: allow to overwrite clock/power procedure
- to specific variant
-To:     Ludovic BARRE <ludovic.barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711104944.GG1969@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 11 Jul 2018 12:40:13 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 11 Jul 2018 12:40:13 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+Please try this v3 patch:
 
->> 2) The clock register will be written to before the regulator
->> operations have been done. Not sure if that works fine!?
->
->
-> you are right, it's probably better if the clock is done after power.
-> do you agree if I change the order?
+From 9850d3de9c02e570dc7572069a9749a8add4c4c7 Mon Sep 17 00:00:00 2001
+From: Baoquan He <bhe@redhat.com>
+Date: Wed, 11 Jul 2018 20:31:51 +0800
+Subject: [PATCH v3] mm, page_alloc: find movable zone after kernel text
 
-If the new ST variant can cope with the existing order in the current
-code, then let's stick to that to avoid breaking legacy variants.
+In find_zone_movable_pfns_for_nodes(), when try to find the starting
+PFN movable zone begins in each node, kernel text position is not
+considered. KASLR may put kernel after which movable zone begins.
 
->
->>
->> An overall comment, I think we should create a mmci_host_ops structure
->> and put the needed callbacks in there (kept to a minimum of course),
->> rather than putting them as a part of the variant struct. More
->> importantly, also the legacy mmci variants should get a mmci_host_ops
->> structure assigned during probe.
->>
->> The point is, I think it makes the code above (and future wise) more
->> flexible. It should also allow us to better share functions between
->> the variants. In principle, I expect that we end up with a bunch of
->> "library" mmci functions that can be invoked from variant's
->> mmci_host_ops (if not assigned directly).
->
->
-> After "Linaro connect" we have exchanged some emails (subject: "STM32MP1
-> SDMMC driver review") and the start point was
-> "Goal is not to redesign mmci.c like sdhci.c."
-> This it's why I'm surprise by "library" and "mmci_host_ops"
-> and comment of patch 01.
+Fix it by finding movable zone after kernel text on that node.
 
-Sometimes it's easier to look at patches/code, instead of giving
-qualified guesses what is the best solution. Try something, realize
-what is better, then try again...
+Signed-off-by: Baoquan He <bhe@redhat.com>
+---
+ mm/page_alloc.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
 
-The point is, we need callbacks to cope with the variants as we can't
-have quirks for everything, and you are demonstrating that in $subject
-patch.
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 1521100..390eb35 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6547,7 +6547,7 @@ static unsigned long __init early_calculate_totalpages(void)
+ static void __init find_zone_movable_pfns_for_nodes(void)
+ {
+ 	int i, nid;
+-	unsigned long usable_startpfn;
++	unsigned long usable_startpfn, real_startpfn;
+ 	unsigned long kernelcore_node, kernelcore_remaining;
+ 	/* save the state before borrow the nodemask */
+ 	nodemask_t saved_node_state = node_states[N_MEMORY];
+@@ -6681,10 +6681,20 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+ 			if (start_pfn >= end_pfn)
+ 				continue;
+ 
++			/*
++			 * KASLR may put kernel near tail of node memory,
++			 * start after kernel on that node to find PFN
++			 * which zone begins.
++			 */
++			if (pfn_to_nid(PFN_UP(_etext)) == i)
++				real_startpfn = max(usable_startpfn,
++						PFN_UP(_etext))
++			else
++				real_startpfn = usable_startpfn;
+ 			/* Account for what is only usable for kernelcore */
+-			if (start_pfn < usable_startpfn) {
++			if (start_pfn < real_startpfn) {
+ 				unsigned long kernel_pages;
+-				kernel_pages = min(end_pfn, usable_startpfn)
++				kernel_pages = min(end_pfn, real_startpfn)
+ 								- start_pfn;
+ 
+ 				kernelcore_remaining -= min(kernel_pages,
+@@ -6693,7 +6703,7 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+ 							required_kernelcore);
+ 
+ 				/* Continue if range is now fully accounted */
+-				if (end_pfn <= usable_startpfn) {
++				if (end_pfn <= real_startpfn) {
+ 
+ 					/*
+ 					 * Push zone_movable_pfn to the end so
+@@ -6704,7 +6714,7 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+ 					zone_movable_pfn[nid] = end_pfn;
+ 					continue;
+ 				}
+-				start_pfn = usable_startpfn;
++				start_pfn = real_startpfn;
+ 			}
+ 
+ 			/*
+-- 
+2.1.0
 
-Since this is the case, then I think it's better to make it more
-flexible, already from the beginning and thus put the callbacks in a
-new mmci host ops structure instead.
-
->
-> So, it's not clear for me on where we wish to go.
-> Could you clarify the way, if it's with a mmci_ops like sdhci_ops?
-
-Yep, something along those lines. However, we don't want to introduce
-unnecessary callbacks and complexity. We should strive towards sharing
-common functionality through library functions in mmci.c, rather than
-having callbacks for every single difference.
-
-Does it makes sense?
-
-[...]
-
-Kind regards
-Uffe
