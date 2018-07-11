@@ -2,166 +2,148 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0649BC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56290C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:44:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B386D208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:42:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B386D208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0548F208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:44:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tJ3e5D4N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0548F208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732359AbeGKKpr (ORCPT
+        id S1732503AbeGKKry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:45:47 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33972 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726738AbeGKKpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:45:47 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CE43E7C6CA;
-        Wed, 11 Jul 2018 10:42:04 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7747A1C5A6;
-        Wed, 11 Jul 2018 10:42:02 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 18:41:58 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>, akpm@linux-foundation.org,
-        linux-mm@kvack.org
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        yasu.isimatu@gmail.com, keescook@chromium.org,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
-        douly.fnst@cn.fujitsu.com, mhocko@suse.com, vbabka@suse.cz,
-        mgorman@techsingularity.net
-Subject: Re: Bug report about KASLR and ZONE_MOVABLE
-Message-ID: <20180711104158.GE2070@MiWiFi-R3L-srv>
-References: <20180711094244.GA2019@localhost.localdomain>
+        Wed, 11 Jul 2018 06:47:54 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39318 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726843AbeGKKry (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 06:47:54 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w14-v6so18867051eds.6
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 03:44:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=wWXEdSnahduXD2eA2kiAPkv9UCYXOnh0MObnJKZDftY=;
+        b=tJ3e5D4NVEDwb28fa/SrOXb9wCpPBkFPy8G2LS0NG5RrKdpj2ZUiEa3NsEroT0/GTO
+         2d642m5D0desLTQf0ahTy2PVOj3PoYoaNZJ/1SKYWkGDIydu68lsKJp1r5aorBSl8jj3
+         +YJ1yG4Tu5G3A0lFzolf0DGj2sEvU5N6LgHzEKnddXTmU8ZFeu8pd+ZKuRMSbn/o1mjb
+         3CneO3nKSMPP9XvhpHSFf5i9iBTkzX/sCp3NtrSMsqv7pUSdUersWJh2ZpHxX/9yiilJ
+         FHnpmnQ1qRsGPjAyARsaDVBNqxJSn5ZzbKSo7UWRROAjhh9HdfDlGNDM+UR1ByolCLjF
+         Bwrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=wWXEdSnahduXD2eA2kiAPkv9UCYXOnh0MObnJKZDftY=;
+        b=FokOVRtFCL2TBk6qUvXpE0tQBCJq1fkL7fxMfaQoLWhU4OjtSGtGFLaMYzO0Pfic20
+         HcTu2aLytd9snqYQ4DaT3UuAL3eEisFH2vxGToH5Vg4bCZTE4mHU+9Ch/aIR/f4reykc
+         Q3/qVFZieCc6OhfC09EJ5fEi8wbkPpyo026KJroYbHiw5LUkp7o0Mtblk8ff+biz01QV
+         0DbKAXm+Qev6PFno17UAAMhXQwglDYSi1ab3rS4WsGrQSzoEpNsaPi8kArDmeIP2oh1/
+         QuSxhnzj8q2kRCv6x0zeaFbQJrQzmCafSBz4gBqgDyJ+D97qwZOl+TKjjho2yjF3gJDm
+         +Mow==
+X-Gm-Message-State: APt69E3R8r+XXQDB65FD4ou+yuWD3VnrhAK/d2BgC6JE4om2PLZcZkb8
+        lCCUqxOBJhG+2D2fpPbDcKcaP1evvd6axBOzbOs=
+X-Google-Smtp-Source: AAOMgpeb+jQYeCGS5T+qRdzcJI529jvM5J1+riiFlPD49+Kiit+RUFmuoeqCDaIADqggXTauWTdCf5fgom5oONjEP5Y=
+X-Received: by 2002:a50:8921:: with SMTP id e30-v6mr30552313ede.213.1531305850928;
+ Wed, 11 Jul 2018 03:44:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711094244.GA2019@localhost.localdomain>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 11 Jul 2018 10:42:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 11 Jul 2018 10:42:04 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+Received: by 2002:a50:9f67:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 03:44:10
+ -0700 (PDT)
+In-Reply-To: <AM0PR04MB42119DAE987CDF871CA8CFC6805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1531061817-1980-1-git-send-email-aisheng.dong@nxp.com>
+ <1531061817-1980-4-git-send-email-aisheng.dong@nxp.com> <20180710141940.oed3kwhbplnykl36@pengutronix.de>
+ <AM0PR04MB42113391A6EA741E2767C74B805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <20180711075456.npwfpm6mtpkx7k76@pengutronix.de> <AM0PR04MB42119DAE987CDF871CA8CFC6805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From:   Jassi Brar <jassisinghbrar@gmail.com>
+Date:   Wed, 11 Jul 2018 16:14:10 +0530
+Message-ID: <CABb+yY1kH8mr3=nazsLXrLaNWT0x6j9MizVaE+bZaHmrsKn-Wg@mail.gmail.com>
+Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
+To:     "A.s. Dong" <aisheng.dong@nxp.com>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "dongas86@gmail.com" <dongas86@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Oleksij Rempel <o.rempel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/18 at 05:42pm, Chao Fan wrote:
-> Hi all,
-> 
-> I found there is a BUG about KASLR and ZONE_MOVABLE.
-> 
-> When users use 'kernelcore=' parameter without 'movable_node',
-> movable memory is evenly distributed to all nodes. The size of
-> ZONE_MOVABLE depends on the kernel parameter 'kernelcore=' and
-> 'movablecore='.
-> But sometiomes, KASLR may put the uncompressed kernel to the
-> tail position of a node, which will cause the kernel memory
-> set as ZONE_MOVABLE. This region can not be offlined.
-> 
-> Here is a very simple test in my qemu-kvm machine, there is
-> only one node:
-> 
-> The command line:
-> [root@localhost ~]# cat /proc/cmdline
-> BOOT_IMAGE=/vmlinuz-4.18.0-rc3+ root=/dev/mapper/fedora_localhost--live-root
-> ro resume=/dev/mapper/fedora_localhost--live-swap
-> rd.lvm.lv=fedora_localhost-live/root rd.lvm.lv=fedora_localhost-live/swap
-> console=ttyS0 earlyprintk=ttyS0,115200n8 memblock=debug kernelcore=50%
-> 
-> I use 'kernelcore=50%' here.
-> 
-> Here is my early print result, I print the random_addr after KASLR chooses
-> physical memory:
-> early console in extract_kernel
-> input_data: 0x000000000266b3b1
-> input_len: 0x00000000007d8802
-> output: 0x0000000001000000
-> output_len: 0x0000000001e15698
-> kernel_total_size: 0x0000000001a8b000
-> trampoline_32bit: 0x000000000009d000
-> booted via startup_32()
-> Physical KASLR using RDRAND RDTSC...
-> random_addr: 0x000000012f000000
-> Virtual KASLR using RDRAND RDTSC...
-> 
-> The address for kernel is 0x000000012f000000
-> 
-> Here is the log of ZONE:
-> [    0.000000] Zone ranges:
-> [    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
-> [    0.000000]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
-> [    0.000000]   Normal   [mem 0x0000000100000000-0x00000001f57fffff]
-> [    0.000000]   Device   empty
-> [    0.000000] Movable zone start for each node
-> [    0.000000]   Node 0: 0x000000011b000000
-> [    0.000000] Early memory node ranges
-> [    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
-> [    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bffd6fff]
-> [    0.000000]   node   0: [mem 0x0000000100000000-0x00000001f57fffff]
-> [    0.000000] Initmem setup node 0 [mem
-> 0x0000000000001000-0x00000001f57fffff]
-> 
-> Only one node in my machine, ZONE_MOVABLE begins from 0x000000011b000000,
-> which is lower than 0x000000012f000000.
-> So KASLR put the kernel to the ZONE_MOVABLE.
-> Try to solve this problem, I think there should be a new tactic in function
-> find_zone_movable_pfns_for_nodes() of mm/page_alloc.c. If kernel is uncompressed
-> in a tail position, then just set the memory after the kernel as ZONE_MOVABLE,
-> at the same time, memory in other nodes will be set as ZONE_MOVABLE.
+On Wed, Jul 11, 2018 at 4:07 PM, A.s. Dong <aisheng.dong@nxp.com> wrote:
+>
+> > -----Original Message-----
+> > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
+> > Sent: Wednesday, July 11, 2018 3:55 PM
+> > To: A.s. Dong <aisheng.dong@nxp.com>
+> > Cc: linux-arm-kernel@lists.infradead.org; dongas86@gmail.com; Jassi Brar
+> > <jassisinghbrar@gmail.com>; linux-kernel@vger.kernel.org; Oleksij Rempel
+> > <o.rempel@pengutronix.de>; dl-linux-imx <linux-imx@nxp.com>;
+> > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
+> > shawnguo@kernel.org
+> > Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
+> >
+> > On Wed, Jul 11, 2018 at 07:29:38AM +0000, A.s. Dong wrote:
+> > > Hi Sascha,
+> > >
+> > > > -----Original Message-----
+> > > > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
+> > > > Sent: Tuesday, July 10, 2018 10:20 PM
+> > > > To: A.s. Dong <aisheng.dong@nxp.com>
+> > > > Cc: linux-arm-kernel@lists.infradead.org; dongas86@gmail.com; Jassi
+> > > > Brar <jassisinghbrar@gmail.com>; linux-kernel@vger.kernel.org;
+> > > > Oleksij Rempel <o.rempel@pengutronix.de>; dl-linux-imx
+> > > > <linux-imx@nxp.com>; kernel@pengutronix.de; Fabio Estevam
+> > > > <fabio.estevam@nxp.com>; shawnguo@kernel.org
+> > > > Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
+> > > >
+> > > > Hi,
+> > > >
+> > > > On Sun, Jul 08, 2018 at 10:56:55PM +0800, Dong Aisheng wrote:
+> > > > > This is used for i.MX multi core communication.
+> > > > > e.g. A core to SCU firmware(M core) on MX8.
+> > > > >
+> > > > > Tx is using polling mode while Rx is interrupt driven and schedule
+> > > > > a hrtimer to receive remain words if have more than
+> > > > > 4 words.
+> > > >
+> > > > You told us that using interrupts is not possible due to miserable
+> > > > performance, we then provided you a way with which you could poll.
+> > > > Why are you using interrupts now?
+> > > >
+> > >
+> > > Because mailbox framework does not support sync rx now, I think we do
+> > > not need to wait for that feature done first as it's independent and
+> > > separate features of framework.
+> >
+> > You can wait forever for this feature, nobody will add it for you. It's up to you
+> > to add support for that feature. Who else should add this feature if not you?
+> > And when will you add that feature if not now when you actually need it?
+> > It is common practice that you adjust the frameworks to your needs rather
+> > than working around them.
+> >
+>
+> I'm willing to add it. Just because you said Jassi already had the idea on how to
+> Implement it and does not add much complexity. So I just want to see his patches.
+> But if he did not work on it, I can also help on it.
+>
+I am not much aware of the history of this conversation... but it
+seems you need to make use of mbox_chan_ops.peek_data().
 
-Hmm, it's an issue, worth fixing it. Otherwise the size of
-movable area will be smaller than we expect when add "kernel_core="
-or "movable_core=".
+If not that, please let me know the requirement.
 
-Add a check in find_zone_movable_pfns_for_nodes(), and use min() to get
-the starting address of movable area between aligned '_etext'
-and start_pfn. It will go to label 'restart' to calculate the 2nd round
-if not satisfiled. 
-
-Hi Chao,
-
-Could you check if below patch works for you?
-
-
-From ab6e47c6a78d1a4ccb577b995b7b386f3149732f Mon Sep 17 00:00:00 2001
-From: Baoquan He <bhe@redhat.com>
-Date: Wed, 11 Jul 2018 18:30:04 +0800
-Subject: [PATCH] mm, page_alloc: find movable zone after kernel text
-
-In find_zone_movable_pfns_for_nodes(), when try to find the starting
-PFN movable zone begins in each node, kernel text position is not
-considered. KASLR may put kernel after which movable zone begins.
-
-Fix it by finding movable zone after kernel text.
-
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
- mm/page_alloc.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 1521100..fe346b4 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6678,6 +6678,8 @@ static void __init find_zone_movable_pfns_for_nodes(void)
- 			unsigned long size_pages;
- 
- 			start_pfn = max(start_pfn, zone_movable_pfn[nid]);
-+			/* KASLR may put kernel after 'start_pfn', start after kernel */
-+			start_pfn = max(start_pfn, PAGE_ALIGN(_etext));
- 			if (start_pfn >= end_pfn)
- 				continue;
- 
--- 
-2.1.0
-
+Cheers!
