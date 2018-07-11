@@ -2,230 +2,180 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63F45C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:34:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92629C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:35:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82DDF208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:34:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D4C8208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:35:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="H9tdzDSX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82DDF208EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bJ/bMx3l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D4C8208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387412AbeGKMii (ORCPT
+        id S2387484AbeGKMjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:38:38 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40061 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732808AbeGKMii (ORCPT
+        Wed, 11 Jul 2018 08:39:51 -0400
+Received: from twosheds.infradead.org ([90.155.92.209]:60668 "EHLO
+        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732808AbeGKMjv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:38:38 -0400
-Received: by mail-wr1-f68.google.com with SMTP id t6-v6so17998998wrn.7
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:34:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Vy/znrlxEfUXuHHbItneU72QjqNItQdIxpXDzdHF0tk=;
-        b=H9tdzDSXdyTiXzS3ezo7QjsEwRQANAKgVUYFHwwCS2ZXTB/CpLUz7LxtAMRCHameWC
-         RcxEqhYbWPbPe843STBhSQj0Dp2Wf0uQ7cIlE5U7EP3jW8zVAC0akcuZt3qlRDil2EtS
-         N0jvQw4Au1h0opgHtKdFChnQAsbuvE5ny5Iig=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vy/znrlxEfUXuHHbItneU72QjqNItQdIxpXDzdHF0tk=;
-        b=ibCE7JJbmFkxaT1HKQiXo1oHuAXU+B232Awdx9aYSwsm1kcsn+9bqLk8wA0/dUMvYm
-         8DlzYjVfUv3v/C0Bm7Ubuq37rsCoo1nbhlIJVJc5ktrS2ePs+a+f/mm/XGLDJqQIH6jg
-         xFXp9tisWPZ72+ASzK3Ubm5CNU1lN5AEMx8uGkaCirQ3uiZQRJygCw/lor5m3YAH+2vy
-         3AwgXNiTKyLGXTj3Cgtb8104lmIBZE5338spVc5N7wCG+PDkQJeUsHWg4jZCHpl67rcT
-         R8IrFhuRxVququ+8gNzOVJJEBQj8lZFwp2dY9N14nlIQJYiCbcBe8dDDLiVZu+mGlUDx
-         jnsA==
-X-Gm-Message-State: APt69E2NX5fSqjJo5H8+zrePDkbOZupuzqO5BHPFq71hwR53B3pq1m/v
-        I4v2BF9Wz55h2J5yM9UpyCX0TQ==
-X-Google-Smtp-Source: AAOMgpc90ju3wXX/ydcPJBrmXEI5J/kuTHxBHk83+YJrEHWf/pblPGJYINXj3iU4gR370CjxCexH5g==
-X-Received: by 2002:adf:f28c:: with SMTP id k12-v6mr19454699wro.263.1531312468306;
-        Wed, 11 Jul 2018 05:34:28 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id r17-v6sm18961118wrt.44.2018.07.11.05.34.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 05:34:27 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 14:34:21 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Message-ID: <20180711123421.GA9673@andrea>
-References: <Pine.LNX.4.44L0.1807091519180.2462-100000@iolanthe.rowland.org>
- <20180710093821.GA5414@andrea>
- <20180711094310.GA13963@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711094310.GA13963@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Wed, 11 Jul 2018 08:39:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
+        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=V5I0VkByX4lA9UFjFNOMVl2x3fRY+ofkKZfUBnJB6cQ=; b=bJ/bMx3l/zTO5bQ8E//ohp+pE
+        JcG1dVxYW41beIPvKzTgf3i/Pm0sg62jUFIqXeUSQ6tS8Da9sYAqxcNUEQQIntsmV5f29b+WbCnRE
+        Orbwj7dBBhk9xbYNMc/XnBPvZP+9Uz3DbbPqQAjRSK2toqydxbbVTF/JiKqe151qvqUghyfzxcXwm
+        XQISD+wsDNQZs+xsUARhxr7ZEQCLt6Mq/bCyLT3NDwnXJux/XYm2YYxrbrxE7XxjMxzNCqIMIYYQZ
+        RrCbxAVI5gpuqn89X6Six+rNw0Gm62xAqY7OFXzD5GKhAYWNmMTq3TH4YZdnW84QFgtZVlJnpw2s1
+        yMYptb7Ow==;
+Received: from [2001:8b0:10b:1::2fb]
+        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdELM-0006jK-9v; Wed, 11 Jul 2018 12:35:40 +0000
+Message-ID: <1531312540.8759.42.camel@infradead.org>
+Subject: Re: [PATCH RESEND] KVM: Add coalesced PIO support
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Wanpeng Li <kernellwp@gmail.com>, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+In-Reply-To: <1531280729-4236-1-git-send-email-wanpengli@tencent.com>
+References: <1531280729-4236-1-git-send-email-wanpengli@tencent.com>
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-3Pk9iVmkitjoYU+D3SO4"
+Date:   Wed, 11 Jul 2018 13:35:40 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 10:43:11AM +0100, Will Deacon wrote:
-> On Tue, Jul 10, 2018 at 11:38:21AM +0200, Andrea Parri wrote:
-> > On Mon, Jul 09, 2018 at 04:01:57PM -0400, Alan Stern wrote:
-> > > More than one kernel developer has expressed the opinion that the LKMM
-> > > should enforce ordering of writes by locking.  In other words, given
-> > 
-> > I'd like to step back on this point: I still don't have a strong opinion
-> > on this, but all this debating made me curious about others' opinion ;-)
-> > I'd like to see the above argument expanded: what's the rationale behind
-> > that opinion? can we maybe add references to actual code relying on that
-> > ordering? other that I've been missing?
-> > 
-> > I'd extend these same questions to the "ordering of reads" snippet below
-> > (and discussed since so long...).
-> > 
-> > 
-> > > the following code:
-> > > 
-> > > 	WRITE_ONCE(x, 1);
-> > > 	spin_unlock(&s):
-> > > 	spin_lock(&s);
-> > > 	WRITE_ONCE(y, 1);
-> > > 
-> > > the stores to x and y should be propagated in order to all other CPUs,
-> > > even though those other CPUs might not access the lock s.  In terms of
-> > > the memory model, this means expanding the cumul-fence relation.
-> > > 
-> > > Locks should also provide read-read (and read-write) ordering in a
-> > > similar way.  Given:
-> > > 
-> > > 	READ_ONCE(x);
-> > > 	spin_unlock(&s);
-> > > 	spin_lock(&s);
-> > > 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
-> > > 
-> > > the load of x should be executed before the load of (or store to) y.
-> > > The LKMM already provides this ordering, but it provides it even in
-> > > the case where the two accesses are separated by a release/acquire
-> > > pair of fences rather than unlock/lock.  This would prevent
-> > > architectures from using weakly ordered implementations of release and
-> > > acquire, which seems like an unnecessary restriction.  The patch
-> > > therefore removes the ordering requirement from the LKMM for that
-> > > case.
-> > 
-> > IIUC, the same argument could be used to support the removal of the new
-> > unlock-rf-lock-po (we already discussed riscv .aq/.rl, it doesn't seem
-> > hard to imagine an arm64 LDAPR-exclusive, or the adoption of ctrl+isync
-> > on powerpc).  Why are we effectively preventing their adoption?  Again,
-> > I'd like to see more details about the underlying motivations...
-> > 
-> > 
-> > > 
-> > > All the architectures supported by the Linux kernel (including RISC-V)
-> > > do provide this ordering for locks, albeit for varying reasons.
-> > > Therefore this patch changes the model in accordance with the
-> > > developers' wishes.
-> > > 
-> > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> > > 
-> > > ---
-> > > 
-> > > v.2: Restrict the ordering to lock operations, not general release
-> > > and acquire fences.
-> > 
-> > This is another controversial point, and one that makes me shivering ...
-> > 
-> > I have the impression that we're dismissing the suggestion "RMW-acquire
-> > at par with LKR" with a bit of rush.  So, this patch is implying that:
-> > 
-> > 	while (cmpxchg_acquire(&s, 0, 1) != 0)
-> > 		cpu_relax();
-> > 
-> > is _not_ a valid implementation of spin_lock()! or, at least, it is not
-> > when paired with an smp_store_release(). Will was anticipating inserting
-> > arch hooks into the (generic) qspinlock code,  when we know that similar
-> > patterns are spread all over in (q)rwlocks, mutexes, rwsem, ... (please
-> > also notice that the informal documentation is currently treating these
-> > synchronization mechanisms equally as far as "ordering" is concerned...).
-> > 
-> > This distinction between locking operations and "other acquires" appears
-> > to me not only unmotivated but also extremely _fragile (difficult to use
-> > /maintain) when considering the analysis of synchronization mechanisms
-> > such as those mentioned above or their porting for new arch.
-> 
-> The main reason for this is because developers use spinlocks all of the
-> time, including in drivers. It's less common to use explicit atomics and
-> extremely rare to use explicit acquire/release operations. So let's make
-> locks as easy to use as possible, by giving them the strongest semantics
-> that we can whilst remaining a good fit for the instructions that are
-> provided by the architectures we support.
 
-Simplicity is the eye of the beholder.  From my POV (LKMM maintainer), the
-simplest solution would be to get rid of rfi-rel-acq and unlock-rf-lock-po
-(or its analogous in v3) all together:
+--=-3Pk9iVmkitjoYU+D3SO4
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
-index 59b5cbe6b6240..bc413a6839a2d 100644
---- a/tools/memory-model/linux-kernel.cat
-+++ b/tools/memory-model/linux-kernel.cat
-@@ -38,7 +38,6 @@ let strong-fence = mb | gp
- (* Release Acquire *)
- let acq-po = [Acquire] ; po ; [M]
- let po-rel = [M] ; po ; [Release]
--let rfi-rel-acq = [Release] ; rfi ; [Acquire]
- 
- (**********************************)
- (* Fundamental coherence ordering *)
-@@ -60,7 +59,7 @@ let dep = addr | data
- let rwdep = (dep | ctrl) ; [W]
- let overwrite = co | fr
- let to-w = rwdep | (overwrite & int)
--let to-r = addr | (dep ; rfi) | rfi-rel-acq
-+let to-r = addr | (dep ; rfi)
- let fence = strong-fence | wmb | po-rel | rmb | acq-po
- let ppo = to-r | to-w | fence
+On Wed, 2018-07-11 at 11:45 +0800, Wanpeng Li wrote:
+> Thanks to Peng Hao's initial patch.
 
-Among other things, this would immediately:
+I don't know about "thanks to..."; this *is* Peng Hao's initial patch,
+isn't it?=C2=A0https://patchwork.kernel.org/patch/9897723/
 
-  1) Enable RISC-V to use their .aq/.rl annotations _without_ having to
-     "worry" about tso or release/acquire fences; IOW, this will permit
-     a partial revert of:
+You've just stripped the authorship information and his/her
+signed-off-by.... even from Cc!
 
-       0123f4d76ca6 ("riscv/spinlock: Strengthen implementations with fences")
-       5ce6c1f3535f ("riscv/atomic: Strengthen implementations with fences")
-
-  2) Resolve the above mentioned controversy (the inconsistency between
-     - locking operations and atomic RMWs on one side, and their actual
-     implementation in generic code on the other), thus enabling the use
-     of LKMM _and_ its tools for the analysis/reviewing of the latter.
+Don't Do That.
 
 
-> 
-> If you want to extend this to atomic rmws, go for it, but I don't think
-> it's nearly as important and there will still be ways to implement locks
-> with insufficient ordering guarantees if you want to.
+--=-3Pk9iVmkitjoYU+D3SO4
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-I don't want to "implement locks with insufficient ordering guarantees"
-(w.r.t. LKMM).  ;-)
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MTExMjM1NDBaMC8GCSqG
+SIb3DQEJBDEiBCAL/c+G6QoYBjeHxkfwVvBTEFbghouJc6UDDdB8LyplfjCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBADMVtrkiH2hd
+ImS1IrK2SKkGoFzl3XrN80MRfzzbYDujQOPsPQ0do5lKSS/CKW0xSu0dx4UTKITcpV8kJuHCQjcl
+nVbMEOPK9s0BQq15FWPF1OchDY6/o40SwcM9lr8/ZM/25F3b2McB8wQBWdOsj3yuvlF4Tn6aH20+
+7WGds1r6x4O0lCULgJalQh7+yh+f1DFYjPWfZHBwabVTec3Wc2mbqOfYDk96JhTWFU25DzUf3ne9
+Aj/BSjLS1SMOI7cheEs01ow5Oujq4/yQCC1odasTHGaQEDsdvcxuu+SHX3AYZxznKhGLGTeMuRNQ
+Y5taLXb3LNxLWi8EV1esHmr+2yYAAAAAAAA=
 
-  Andrea
 
+--=-3Pk9iVmkitjoYU+D3SO4--
 
-> 
-> Will
