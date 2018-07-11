@@ -2,117 +2,376 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B95BEC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79414C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73F4E20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:06:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nr0hrvmx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73F4E20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 1832C20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:06:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1832C20846
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388452AbeGKOKd (ORCPT
+        id S2388459AbeGKOKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:10:33 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40327 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbeGKOKd (ORCPT
+        Wed, 11 Jul 2018 10:10:48 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5566 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeGKOKs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:10:33 -0400
-Received: by mail-lf0-f66.google.com with SMTP id y200-v6so21392403lfd.7;
-        Wed, 11 Jul 2018 07:06:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=zL30GF0MXWI4OS4bhiSmZ8/z1tJ369mfDNdjNOFt7gs=;
-        b=nr0hrvmxh9dzamCde4WvjOUXShtUcxN9/mg7QhBjP8SPcthGdQA1JdDTanguvzyLXa
-         oM5hGKe3lMvafjp4dk8uKWtWfHg4jdwG/5d+RMsc/ZCXApcat/zw7/DMAfdvbKL73JMq
-         E1x7F2VPTjcDiBCcSlsr5K4J+7RA7j9dctQkLY43pRfHmAy4CRTlXMtEMNbyL3yhytSS
-         WOLSV8yOiyC9qCOq2pJwI6cXM6Sirr+oUGENYphzhiP0rKXx4ZAKpWvfjulCPg85fyjC
-         koFO8j4vkCHjcllHKT1elOXG0G+Uop29fyJMfaSeLwyam7UzaduQ6CCfCUtm30mY5xXe
-         2rLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=zL30GF0MXWI4OS4bhiSmZ8/z1tJ369mfDNdjNOFt7gs=;
-        b=sZil9HGyRCV7ZvE1waIP70gv6tVWjIFV6fwRR3zmRtmYsiSY5/sPjy8dvOfyMfRlYo
-         c3/WBSVG3HnVm6x+rub0KVJYLAIQq96pfH1YEXcOYgSaqH4F+nksz+2JLDf3Zr2/WHlT
-         08LOuJaIg+seG3DYZpAJulUg0Af24rCXMqCN41DlIJWl4NMRTOtOzu3sbhH+as00UlUZ
-         4ka2i8618XH5v96mIZuJYdu08rmOjoC8OcygIb7NsWRpZuWN2h6LGLGlDiMuaPUOCkRv
-         BtUXtoy4NWaAfoYIKyf+sS0fJJ0jPsnEvMxuf4hjTTedIeo8RwgdcumYvm9Sp6CwQu+d
-         hzsw==
-X-Gm-Message-State: APt69E2MVG5iGxWOHWN207/8wreBnYVFbmkeya2TWhQP+26seqyE8K4K
-        U9kSRsrsrA5NhuJLCDJbfEIRuaudkk9zB8vfmNQ=
-X-Google-Smtp-Source: AAOMgpdQIYl14PbDTqubRnZnrKWep6GeEtK18zAX+zhiP85OtcKqkKbDYAHYjt0wS6vyVbG7EbwFHwAR5975YxJDrhg=
-X-Received: by 2002:a19:b2c7:: with SMTP id t68-v6mr5879954lfk.132.1531317959530;
- Wed, 11 Jul 2018 07:05:59 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 07:05:58
- -0700 (PDT)
-In-Reply-To: <20180622104930.32050-2-boris.brezillon@bootlin.com>
-References: <20180622104930.32050-1-boris.brezillon@bootlin.com> <20180622104930.32050-2-boris.brezillon@bootlin.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 11 Jul 2018 16:05:58 +0200
-X-Google-Sender-Auth: VTbqAMoLTzDtDV3Sx63rNBElqqo
-Message-ID: <CAK8P3a2Z_oiAKDsawZn_R=V-HPy1pPYsd6Jquh6bVUEfuQ+Eug@mail.gmail.com>
-Subject: Re: [PATCH v5 01/10] i3c: Add core I3C infrastructure
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
+        Wed, 11 Jul 2018 10:10:48 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b460ed40000>; Wed, 11 Jul 2018 07:06:12 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 11 Jul 2018 07:06:15 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 11 Jul 2018 07:06:15 -0700
+Received: from dhcp-10-21-25-168.Nvidia.com (10.21.25.201) by
+ HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1347.2; Wed, 11 Jul 2018 14:06:12 +0000
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>
+CC:     Aapo Vienamo <avienamo@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 7/7] soc/tegra: pmc: Implement pad configuration via pinctrl
+Date:   Wed, 11 Jul 2018 17:06:07 +0300
+Message-ID: <1531317967-4193-1-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531317693-3520-1-git-send-email-avienamo@nvidia.com>
+References: <1531317693-3520-1-git-send-email-avienamo@nvidia.com>
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 12:49 PM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> Add core infrastructure to support I3C in Linux and document it.
->
-> This infrastructure is not complete yet and will be extended over
-> time.
->
-> There are a few design choices that are worth mentioning because they
-> impact the way I3C device drivers can interact with their devices..
+Register a pinctrl device and implement get and set functions for
+PIN_CONFIG_LOW_POWER_MODE and PIN_CONFIG_POWER_SOURCE parameters.
 
-I just realized I replied to the wrong version when I reviewed v4 of this
-patch. I think most of my comments still apply, so please see
+Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 187 +++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 185 insertions(+), 2 deletions(-)
 
-https://lore.kernel.org/lkml/CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com/T/#u
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 8926831..ff72948 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -33,6 +33,9 @@
+ #include <linux/of_address.h>
+ #include <linux/of_clk.h>
+ #include <linux/of_platform.h>
++#include <linux/pinctrl/pinctrl.h>
++#include <linux/pinctrl/pinconf.h>
++#include <linux/pinctrl/pinconf-generic.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_domain.h>
+ #include <linux/reboot.h>
+@@ -164,6 +167,9 @@ struct tegra_pmc_soc {
+ 	const struct tegra_io_pad_soc *io_pads;
+ 	unsigned int num_io_pads;
+ 
++	const struct pinctrl_pin_desc *pin_descs;
++	unsigned int num_pin_descs;
++
+ 	const struct tegra_pmc_regs *regs;
+ 	void (*init)(struct tegra_pmc *pmc);
+ 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
+@@ -222,6 +228,8 @@ struct tegra_pmc {
+ 	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
+ 
+ 	struct mutex powergates_lock;
++
++	struct pinctrl_dev *pctl_dev;
+ };
+ 
+ static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+@@ -1399,6 +1407,142 @@ static void tegra_pmc_init_tsense_reset(struct tegra_pmc *pmc)
+ 	of_node_put(np);
+ }
+ 
++static int tegra_io_pad_pinctrl_get_groups_count(struct pinctrl_dev *pctl_dev)
++{
++	return pmc->soc->num_io_pads;
++}
++
++static const char *tegra_io_pad_pinctrl_get_group_name(
++		struct pinctrl_dev *pctl, unsigned int group)
++{
++	return pmc->soc->io_pads[group].name;
++}
++
++static int tegra_io_pad_pinctrl_get_group_pins(struct pinctrl_dev *pctl_dev,
++					       unsigned int group,
++					       const unsigned int **pins,
++					       unsigned int *num_pins)
++{
++	*pins = &pmc->soc->io_pads[group].id;
++	*num_pins = 1;
++	return 0;
++}
++
++static const struct pinctrl_ops tegra_io_pad_pinctrl_ops = {
++	.get_groups_count = tegra_io_pad_pinctrl_get_groups_count,
++	.get_group_name = tegra_io_pad_pinctrl_get_group_name,
++	.get_group_pins = tegra_io_pad_pinctrl_get_group_pins,
++	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
++	.dt_free_map = pinconf_generic_dt_free_map,
++};
++
++static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctl_dev,
++				    unsigned int pin, unsigned long *config)
++{
++	const struct tegra_io_pad_soc *pad = tegra_io_pad_find(pmc, pin);
++	enum pin_config_param param = pinconf_to_config_param(*config);
++	int ret;
++	u32 arg;
++
++	if (!pad)
++		return -EINVAL;
++
++	switch (param) {
++	case PIN_CONFIG_POWER_SOURCE:
++		ret = tegra_io_pad_get_voltage(pad->id);
++		if (ret < 0)
++			return ret;
++		arg = ret;
++		break;
++	case PIN_CONFIG_LOW_POWER_MODE:
++		ret = tegra_io_pad_is_powered(pad->id);
++		if (ret < 0)
++			return ret;
++		arg = !ret;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	*config = pinconf_to_config_packed(param, arg);
++
++	return 0;
++}
++
++static int tegra_io_pad_pinconf_set(struct pinctrl_dev *pctl_dev,
++				    unsigned int pin, unsigned long *configs,
++				    unsigned int num_configs)
++{
++	const struct tegra_io_pad_soc *pad = tegra_io_pad_find(pmc, pin);
++	enum pin_config_param param;
++	unsigned int i;
++	int err;
++	u32 arg;
++
++	if (!pad)
++		return -EINVAL;
++
++	for (i = 0; i < num_configs; ++i) {
++		param = pinconf_to_config_param(configs[i]);
++		arg = pinconf_to_config_argument(configs[i]);
++
++		switch (param) {
++		case PIN_CONFIG_LOW_POWER_MODE:
++			if (arg)
++				err = tegra_io_pad_power_disable(pad->id);
++			else
++				err = tegra_io_pad_power_enable(pad->id);
++			if (err)
++				return err;
++			break;
++		case PIN_CONFIG_POWER_SOURCE:
++			if (arg != TEGRA_IO_PAD_VOLTAGE_1V8 &&
++			    arg != TEGRA_IO_PAD_VOLTAGE_3V3)
++				return -EINVAL;
++			err = tegra_io_pad_set_voltage(pad->id, arg);
++			if (err)
++				return err;
++			break;
++		default:
++			return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
++static const struct pinconf_ops tegra_io_pad_pinconf_ops = {
++	.pin_config_get = tegra_io_pad_pinconf_get,
++	.pin_config_set = tegra_io_pad_pinconf_set,
++	.is_generic = true,
++};
++
++static struct pinctrl_desc tegra_pmc_pctl_desc = {
++	.pctlops = &tegra_io_pad_pinctrl_ops,
++	.confops = &tegra_io_pad_pinconf_ops,
++};
++
++static int tegra_pmc_pinctrl_init(struct tegra_pmc *pmc)
++{
++	int err = 0;
++
++	if (!pmc->soc->num_pin_descs)
++		return 0;
++
++	tegra_pmc_pctl_desc.name = dev_name(pmc->dev);
++	tegra_pmc_pctl_desc.pins = pmc->soc->pin_descs;
++	tegra_pmc_pctl_desc.npins = pmc->soc->num_pin_descs;
++
++	pmc->pctl_dev = devm_pinctrl_register(pmc->dev, &tegra_pmc_pctl_desc,
++					      pmc);
++	if (IS_ERR(pmc->pctl_dev)) {
++		err = PTR_ERR(pmc->pctl_dev);
++		dev_err(pmc->dev, "unable to register pinctrl, %d\n", err);
++	}
++
++	return err;
++}
++
+ static int tegra_pmc_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *base;
+@@ -1476,18 +1620,27 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 
+ 	err = register_restart_handler(&tegra_pmc_restart_handler);
+ 	if (err) {
+-		debugfs_remove(pmc->debugfs);
+ 		dev_err(&pdev->dev, "unable to register restart handler, %d\n",
+ 			err);
+-		return err;
++		goto cleanup_debugfs;
+ 	}
+ 
++	err = tegra_pmc_pinctrl_init(pmc);
++	if (err)
++		goto cleanup_restart_handler;
++
+ 	mutex_lock(&pmc->powergates_lock);
+ 	iounmap(pmc->base);
+ 	pmc->base = base;
+ 	mutex_unlock(&pmc->powergates_lock);
+ 
+ 	return 0;
++
++cleanup_restart_handler:
++	unregister_restart_handler(&tegra_pmc_restart_handler);
++cleanup_debugfs:
++	debugfs_remove(pmc->debugfs);
++	return err;
+ }
+ 
+ #if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
+@@ -1577,6 +1730,8 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
+ 	.has_gpu_clamps = false,
+ 	.num_io_pads = 0,
+ 	.io_pads = NULL,
++	.num_pin_descs = 0,
++	.pin_descs = NULL,
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
+@@ -1616,6 +1771,8 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
+ 	.has_impl_33v_pwr = false,
+ 	.num_io_pads = 0,
+ 	.io_pads = NULL,
++	.num_pin_descs = 0,
++	.pin_descs = NULL,
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
+@@ -1659,6 +1816,8 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
+ 	.has_impl_33v_pwr = false,
+ 	.num_io_pads = 0,
+ 	.io_pads = NULL,
++	.num_pin_descs = 0,
++	.pin_descs = NULL,
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
+@@ -1705,6 +1864,12 @@ static const u8 tegra124_cpu_powergates[] = {
+ 		.name	= (_name),			\
+ 	})
+ 
++#define TEGRA_IO_PIN_DESC(_id, _dpd, _voltage, _name)	\
++	((struct pinctrl_pin_desc) {			\
++		.number = (_id),			\
++		.name	= (_name)			\
++	})
++
+ #define TEGRA124_IO_PAD_TABLE(_pad)					\
+ 	/* .id                          .dpd    .voltage  .name	*/	\
+ 	_pad(TEGRA_IO_PAD_AUDIO,	17,	UINT_MAX, "audio"),	\
+@@ -1742,6 +1907,10 @@ static const struct tegra_io_pad_soc tegra124_io_pads[] = {
+ 	TEGRA124_IO_PAD_TABLE(TEGRA_IO_PAD)
+ };
+ 
++static const struct pinctrl_pin_desc tegra124_pin_descs[] = {
++	TEGRA124_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
++};
++
+ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.num_powergates = ARRAY_SIZE(tegra124_powergates),
+ 	.powergates = tegra124_powergates,
+@@ -1752,6 +1921,8 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.has_impl_33v_pwr = false,
+ 	.num_io_pads = ARRAY_SIZE(tegra124_io_pads),
+ 	.io_pads = tegra124_io_pads,
++	.num_pin_descs = ARRAY_SIZE(tegra124_pin_descs),
++	.pin_descs = tegra124_pin_descs,
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
+@@ -1836,6 +2007,10 @@ static const struct tegra_io_pad_soc tegra210_io_pads[] = {
+ 	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PAD)
+ };
+ 
++static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
++	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
++};
++
+ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.num_powergates = ARRAY_SIZE(tegra210_powergates),
+ 	.powergates = tegra210_powergates,
+@@ -1847,6 +2022,8 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.needs_mbist_war = true,
+ 	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+ 	.io_pads = tegra210_io_pads,
++	.num_pin_descs = ARRAY_SIZE(tegra210_pin_descs),
++	.pin_descs = tegra210_pin_descs,
+ 	.regs = &tegra20_pmc_regs,
+ 	.init = tegra20_pmc_init,
+ 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
+@@ -1897,6 +2074,10 @@ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
+ 	TEGRA186_IO_PAD_TABLE(TEGRA_IO_PAD)
+ };
+ 
++static const struct pinctrl_pin_desc tegra186_pin_descs[] = {
++	TEGRA186_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
++};
++
+ static const struct tegra_pmc_regs tegra186_pmc_regs = {
+ 	.scratch0 = 0x2000,
+ 	.dpd_req = 0x74,
+@@ -1950,6 +2131,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
+ 	.has_impl_33v_pwr = true,
+ 	.num_io_pads = ARRAY_SIZE(tegra186_io_pads),
+ 	.io_pads = tegra186_io_pads,
++	.num_pin_descs = ARRAY_SIZE(tegra186_pin_descs),
++	.pin_descs = tegra186_pin_descs,
+ 	.regs = &tegra186_pmc_regs,
+ 	.init = NULL,
+ 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
+-- 
+2.7.4
 
-and ignore anything that has changed in the meantime.
-
-     Arnd
