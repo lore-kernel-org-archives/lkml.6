@@ -2,120 +2,98 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3591C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E137C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B7A620B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:35:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jEilD6dy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7A620B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E1E82086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:36:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E1E82086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbeGKHiY (ORCPT
+        id S1726436AbeGKHjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 03:38:24 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36450 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbeGKHiY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 03:38:24 -0400
-Received: by mail-wr1-f67.google.com with SMTP id h9-v6so17048956wro.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 00:35:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=6U0pn6AhRTwBzPrYrAqCi9EEGjHJd9DpcVhBe07Rf6M=;
-        b=jEilD6dyHTjKhHnFpoQdkQKe0pZ15nbSFQZRAs18W6WZLufKolByMCmIT+vhy1jq5G
-         euOBQvzEgzh3nUf+xIX4/OsFKP6jXLYA/ekC5nwLaMQtJRQiKJF2KrdGuwUfUCxDmAg/
-         GO0xMq4Q95zzGm6lwTgyz+fhu0XN5dQpv0CjwtrdHsNOF2eZXPF4A6QRoFEz4d4eoP3k
-         ittCoMw9lb3lflmL3uUO2DDpyQmWe4c44NqAi0y4Z5Mgxxf/b3fpaPBtsM/ZmLOuJbCh
-         kv/9N4IOnfN70mrI5/xwys1Gk1U+SQIOXlI5Wpcla5VtJpTdTnH3nS9MX3iP2br2uCLi
-         62Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=6U0pn6AhRTwBzPrYrAqCi9EEGjHJd9DpcVhBe07Rf6M=;
-        b=UHGKfYrZrb3ff+KiyRzLUXMeoHdigqGfpIv7CDvcNfs4LIP56JJsFtqFE19wyOE5Aa
-         JDafKr9KGZ1JtwwxZVZGEDL6OQAtb4HAQFA1+dwpKPoFB/4HCHWZ7mfPu3UGKBlc0mt7
-         S+xCQMPobYE9Z3pmAkDMyB+3QfiFES5w8kN+2Kv1gxKspwWj2oPbpVKGbo759h+Wz4ak
-         eXPKGdW9lPS4JzwCSpbrWEWw56rERImiUOdYMya5pigdF96OF0fwflyDggAikW5a9+XK
-         5qXESmRNDGjE8uyvMwsIYgCRkIDgRP/+QFXoTT/8s3O03Fq4rBlU2txTDYGdHVsKJbfa
-         MkkA==
-X-Gm-Message-State: APt69E1BUf/Dr96hFze0SCQ51fKygdtajCiY1gl+AU2uWpdxBdKLubxk
-        eoU7CoSGjxDLFaTqHYO6ZUULLaNAuBSdB2NeLdg=
-X-Google-Smtp-Source: AAOMgpd+CDPYvmJ4ZVSIRloWQ9fvgP+k2mHapVPYAxNAjRBJ8GQ3pd05X8VOdp4n7vtgUqRvExbtFJoYPyf3q6bawnI=
-X-Received: by 2002:a5d:4c4c:: with SMTP id n12-v6mr19189950wrt.71.1531294529013;
- Wed, 11 Jul 2018 00:35:29 -0700 (PDT)
+        Wed, 11 Jul 2018 03:39:36 -0400
+Received: from szxga02-in.huawei.com ([45.249.212.188]:5997 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725808AbeGKHjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 03:39:36 -0400
+Received: from DGGEMA402-HUB.china.huawei.com (unknown [172.30.72.54])
+        by Forcepoint Email with ESMTP id C4510DF2366C7;
+        Wed, 11 Jul 2018 15:36:37 +0800 (CST)
+Received: from DGGEMA525-MBX.china.huawei.com ([169.254.6.69]) by
+ DGGEMA402-HUB.china.huawei.com ([10.3.20.43]) with mapi id 14.03.0382.000;
+ Wed, 11 Jul 2018 15:36:26 +0800
+From:   "Songxiaowei (Kirin_DRV)" <songxiaowei@hisilicon.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Wangbinghui <wangbinghui@hisilicon.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>,
+        Kongfei <kongfei@hisilicon.com>,
+        "chenyao (F)" <chenyao11@huawei.com>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjYgMS8xXSBQQ0k6IGtpcmluOiBBZGQgTVNJIHN1?=
+ =?utf-8?Q?pport?=
+Thread-Topic: [PATCH v6 1/1] PCI: kirin: Add MSI support
+Thread-Index: AQHUGORyMNS4PSIcv0aZRcALGcOeqqSJGDoAgACIgQA=
+Date:   Wed, 11 Jul 2018 07:36:26 +0000
+Message-ID: <99B4C6BADD9E3241B25E52B02BA737C5412D7DD8@dggema525-mbx.china.huawei.com>
+References: <20180711065724.128299-1-songxiaowei@hisilicon.com>
+ <20180711065724.128299-2-songxiaowei@hisilicon.com>
+ <CAHp75VfqGC5KNi4mCc3Q0bD0jXb4bkkdYFSv3LDQw5E=goc2Pg@mail.gmail.com>
+In-Reply-To: <CAHp75VfqGC5KNi4mCc3Q0bD0jXb4bkkdYFSv3LDQw5E=goc2Pg@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.142.52.233]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a1c:61c1:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 00:35:28
- -0700 (PDT)
-In-Reply-To: <20180710095056.GE14284@dhcp22.suse.cz>
-References: <CGME20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29@eucas1p2.samsung.com>
- <20180709121956.20200-1-m.szyprowski@samsung.com> <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com>
- <CAAmzW4PPNYhUj_MeZox+ddq8MjXqnJs_AJ3xkayf710udD1pSg@mail.gmail.com> <20180710095056.GE14284@dhcp22.suse.cz>
-From:   Joonsoo Kim <js1304@gmail.com>
-Date:   Wed, 11 Jul 2018 16:35:28 +0900
-Message-ID: <CAAmzW4P1m_T77DfQzDD6ysGaOF46++-0gwRaOajmo6ef=VYp=A@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mm/cma: remove unsupported gfp_mask parameter from cma_alloc()
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        iommu@lists.linux-foundation.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Chris Zankel <chris@zankel.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        linaro-mm-sig@lists.linaro.org
-Content-Type: text/plain; charset="UTF-8"
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-10 18:50 GMT+09:00 Michal Hocko <mhocko@kernel.org>:
-> On Tue 10-07-18 16:19:32, Joonsoo Kim wrote:
->> Hello, Marek.
->>
->> 2018-07-09 21:19 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
->> > cma_alloc() function doesn't really support gfp flags other than
->> > __GFP_NOWARN, so convert gfp_mask parameter to boolean no_warn parameter.
->>
->> Although gfp_mask isn't used in cma_alloc() except no_warn, it can be used
->> in alloc_contig_range(). For example, if passed gfp mask has no __GFP_FS,
->> compaction(isolation) would work differently. Do you have considered
->> such a case?
->
-> Does any of cma_alloc users actually care about GFP_NO{FS,IO}?
-
-I don't know. My guess is that cma_alloc() is used for DMA allocation so
-block device would use it, too. If fs/block subsystem initiates the
-request for the device,
-it would be possible that cma_alloc() is called with such a flag.
-Again, I don't know
-much about those subsystem so I would be wrong.
-
-Thanks.
+DQoNCj4gLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0KPiDlj5Hku7bkuro6IEFuZHkgU2hldmNoZW5r
+byBbbWFpbHRvOmFuZHkuc2hldmNoZW5rb0BnbWFpbC5jb21dDQo+IOWPkemAgeaXtumXtDogMjAx
+OOW5tDfmnIgxMeaXpSAxNToyMw0KPiDmlLbku7bkuro6IFNvbmd4aWFvd2VpIChLaXJpbl9EUlYp
+IDxzb25neGlhb3dlaUBoaXNpbGljb24uY29tPg0KPiDmioTpgIE6IFdhbmdiaW5naHVpIDx3YW5n
+YmluZ2h1aUBoaXNpbGljb24uY29tPjsgQmpvcm4gSGVsZ2Fhcw0KPiA8YmhlbGdhYXNAZ29vZ2xl
+LmNvbT47IExvcmVuem8gUGllcmFsaXNpIDxsb3JlbnpvLnBpZXJhbGlzaUBhcm0uY29tPjsNCj4g
+Um9iIEhlcnJpbmcgPHJvYmgrZHRAa2VybmVsLm9yZz47IGxpbnV4LXBjaUB2Z2VyLmtlcm5lbC5v
+cmc7IExpbnV4IEtlcm5lbA0KPiBNYWlsaW5nIExpc3QgPGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
+bC5vcmc+OyBTdXpodWFuZ2x1YW4NCj4gPHN1emh1YW5nbHVhbkBoaXNpbGljb24uY29tPjsgS29u
+Z2ZlaSA8a29uZ2ZlaUBoaXNpbGljb24uY29tPjsgY2hlbnlhbw0KPiAoRikgPGNoZW55YW8xMUBo
+dWF3ZWkuY29tPg0KPiDkuLvpopg6IFJlOiBbUEFUQ0ggdjYgMS8xXSBQQ0k6IGtpcmluOiBBZGQg
+TVNJIHN1cHBvcnQNCj4gDQo+IE9uIFdlZCwgSnVsIDExLCAyMDE4IGF0IDk6NTcgQU0sIFhpYW93
+ZWkgU29uZyA8c29uZ3hpYW93ZWlAaGlzaWxpY29uLmNvbT4NCj4gd3JvdGU6DQo+ID4gQWRkIHN1
+cHBvcnQgZm9yIE1TSQ0KPiANCj4gPiArc3RhdGljIGludCBraXJpbl9wY2llX2FkZF9tc2koc3Ry
+dWN0IGR3X3BjaWUgKnBjaSwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpIHsNCj4gPiArICAgICAgIGludCByZXQgPSAwOw0K
+PiA+ICsNCj4gPiArICAgICAgIGlmIChJU19FTkFCTEVEKENPTkZJR19QQ0lfTVNJKSkgew0KPiA+
+ICsgICAgICAgICAgICAgICByZXQgPSBwbGF0Zm9ybV9nZXRfaXJxKHBkZXYsIDApOw0KPiA+ICsg
+ICAgICAgICAgICAgICBpZiAocmV0IDwgMCkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAg
+IGRldl9lcnIoJnBkZXYtPmRldiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICJmYWlsZWQgdG8gZ2V0IE1TSSBJUlEgKCVkKVxuIiwgcmV0KTsNCj4gPiArICAgICAgICAgICAg
+ICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiA+ICsgICAgICAgICAgICAgICB9DQo+ID4gKw0KPiA+
+ICsgICAgICAgICAgICAgICBwY2ktPnBwLm1zaV9pcnEgPSByZXQ7DQo+ID4gKyAgICAgICB9DQo+
+ID4gKw0KPiA+ICsgICAgICAgcmV0dXJuIHJldDsNCj4gPiArfQ0KPiANCj4gTGlrZSBzb21lb25l
+IGFscmVhZHkgbm90aWNlZCwgaXMgaXQgcmVhbGx5IElSUSBudW1iZXIgeW91IHdvdWxkIGxpa2Ug
+dG8NCj4gcmV0dXJuPw0KPiANCj4gSWYgeW91IHJld3JpdGUgbGlrZQ0KPiANCj4gaW50IGlycTsN
+Cj4gDQo+IGlmIChJU19FTkFCTEVEKC4uLikpIHsNCj4gIGlycSA9IC4uLg0KPiAgaWYgKGlycSA8
+IDApDQo+ICAgIHJldHVybiBpcnE7DQo+IA0KPiAuLi4gPSBpcnE7DQo+IA0KPiB9DQo+IA0KPiBy
+ZXR1cm4gMDsNCj4gDQo+IEl0IHdvdWxkIGJlIHNsaWdodGx5IG1vcmUgZXhwbGljaXQgd2hhdCB5
+b3UgZG8gYW5kIHdoYXQgeW91IHJldHVybi4NCj4NCg0KSGkgQW5keQ0KSSB0aGluayBkaWQgbm90
+IGdldCBMb3JlbnpvJ3MgbWVhbmluZyBiZWZvcmUsIHRoYW5rIHlvdSBzbyBtdWNoLCBhbmQgSSds
+bCBtb2RpZnkgdGhlIHBhdGNoIGFzIHNvb24gYXMgcG9zc2libGUuDQpCZXN0IFJlZ2FyZHMsDQpY
+aWFvd2VpIFNvbmcuDQo+IC0tDQo+IFdpdGggQmVzdCBSZWdhcmRzLA0KPiBBbmR5IFNoZXZjaGVu
+a28NCg==
