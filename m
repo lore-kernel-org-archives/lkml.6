@@ -2,36 +2,36 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91310C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEACC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56FE8208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:26:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56FE8208EC
+	by mail.kernel.org (Postfix) with ESMTP id 7F3DB208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:26:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F3DB208EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732602AbeGKC2e (ORCPT
+        id S1732408AbeGKCYE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 22:28:34 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45530 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732378AbeGKCYE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Jul 2018 22:24:04 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45490 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732277AbeGKCYD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 22:24:03 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fd4lb-0003IL-6l; Wed, 11 Jul 2018 02:22:07 +0000
+        id 1fd4la-0003He-Kq; Wed, 11 Jul 2018 02:22:06 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [RFC][PATCH 11/42] security_file_open(): lose cred argument
-Date:   Wed, 11 Jul 2018 03:21:35 +0100
-Message-Id: <20180711022206.12571-11-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH 05/42] fold security_file_free() into file_free()
+Date:   Wed, 11 Jul 2018 03:21:29 +0100
+Message-Id: <20180711022206.12571-5-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
 References: <20180711021136.GN30522@ZenIV.linux.org.uk>
@@ -45,65 +45,41 @@ From: Al Viro <viro@zeniv.linux.org.uk>
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/open.c                | 2 +-
- include/linux/security.h | 5 ++---
- security/security.c      | 4 ++--
- 3 files changed, 5 insertions(+), 6 deletions(-)
+ fs/file_table.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/open.c b/fs/open.c
-index c8fd5126c50e..008a65e82de5 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -779,7 +779,7 @@ static int do_dentry_open(struct file *f,
- 		goto cleanup_all;
+diff --git a/fs/file_table.c b/fs/file_table.c
+index 1f14b80a4e67..eee7cf629e52 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -51,6 +51,7 @@ static void file_free_rcu(struct rcu_head *head)
+ 
+ static inline void file_free(struct file *f)
+ {
++	security_file_free(f);
+ 	percpu_counter_dec(&nr_files);
+ 	call_rcu(&f->f_u.fu_rcuhead, file_free_rcu);
+ }
+@@ -207,7 +208,6 @@ static void __fput(struct file *file)
  	}
+ 	if (file->f_op->release)
+ 		file->f_op->release(inode, file);
+-	security_file_free(file);
+ 	if (unlikely(S_ISCHR(inode->i_mode) && inode->i_cdev != NULL &&
+ 		     !(file->f_mode & FMODE_PATH))) {
+ 		cdev_put(inode->i_cdev);
+@@ -302,10 +302,8 @@ EXPORT_SYMBOL(fput);
  
--	error = security_file_open(f, f->f_cred);
-+	error = security_file_open(f);
- 	if (error)
- 		goto cleanup_all;
- 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 63030c85ee19..88d30fc975e7 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -309,7 +309,7 @@ void security_file_set_fowner(struct file *file);
- int security_file_send_sigiotask(struct task_struct *tsk,
- 				 struct fown_struct *fown, int sig);
- int security_file_receive(struct file *file);
--int security_file_open(struct file *file, const struct cred *cred);
-+int security_file_open(struct file *file);
- int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
- void security_task_free(struct task_struct *task);
- int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
-@@ -858,8 +858,7 @@ static inline int security_file_receive(struct file *file)
- 	return 0;
- }
- 
--static inline int security_file_open(struct file *file,
--				     const struct cred *cred)
-+static inline int security_file_open(struct file *file)
+ void put_filp(struct file *file)
  {
- 	return 0;
- }
-diff --git a/security/security.c b/security/security.c
-index 68f46d849abe..235b35f58a65 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -970,11 +970,11 @@ int security_file_receive(struct file *file)
- 	return call_int_hook(file_receive, 0, file);
+-	if (atomic_long_dec_and_test(&file->f_count)) {
+-		security_file_free(file);
++	if (atomic_long_dec_and_test(&file->f_count))
+ 		file_free(file);
+-	}
  }
  
--int security_file_open(struct file *file, const struct cred *cred)
-+int security_file_open(struct file *file)
- {
- 	int ret;
- 
--	ret = call_int_hook(file_open, 0, file, cred);
-+	ret = call_int_hook(file_open, 0, file, file->f_cred);
- 	if (ret)
- 		return ret;
- 
+ void __init files_init(void)
 -- 
 2.11.0
 
