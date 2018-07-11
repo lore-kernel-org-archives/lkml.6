@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E88C3C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43193C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC7A208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC7A208E3
+	by mail.kernel.org (Postfix) with ESMTP id 06BD3208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06BD3208E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388360AbeGKOBn (ORCPT
+        id S2388374AbeGKOBq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:01:43 -0400
-Received: from foss.arm.com ([217.140.101.70]:36308 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388100AbeGKOBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:01:42 -0400
+        Wed, 11 Jul 2018 10:01:46 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36320 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388100AbeGKOBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:01:45 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 539E815AD;
-        Wed, 11 Jul 2018 06:57:14 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA5E11650;
+        Wed, 11 Jul 2018 06:57:17 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3A22A3F5B1;
-        Wed, 11 Jul 2018 06:57:12 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 99C1A3F5B1;
+        Wed, 11 Jul 2018 06:57:15 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         will.deacon@arm.com
@@ -35,9 +35,9 @@ Cc:     catalin.marinas@arm.com, dave.martin@arm.com, hch@infradead.org,
         james.morse@arm.com, linux@dominikbrodowski.net,
         linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
         mark.rutland@arm.com, viro@zeniv.linux.org.uk
-Subject: [PATCHv5 01/21] arm64: consistently use unsigned long for thread flags
-Date:   Wed, 11 Jul 2018 14:56:36 +0100
-Message-Id: <20180711135656.20670-2-mark.rutland@arm.com>
+Subject: [PATCHv5 02/21] arm64: move SCTLR_EL{1,2} assertions to <asm/sysreg.h>
+Date:   Wed, 11 Jul 2018 14:56:37 +0100
+Message-Id: <20180711135656.20670-3-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180711135656.20670-1-mark.rutland@arm.com>
 References: <20180711135656.20670-1-mark.rutland@arm.com>
@@ -46,36 +46,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In do_notify_resume, we manipulate thread_flags as a 32-bit unsigned
-int, whereas thread_info::flags is a 64-bit unsigned long, and elsewhere
-(e.g. in the entry assembly) we manipulate the flags as a 64-bit
-quantity.
+Currently we assert that the SCTLR_EL{1,2}_{SET,CLEAR} bits are
+self-consistent with an assertion in config_sctlr_el1(). This is a bit
+unusual, since config_sctlr_el1() doesn't make use of these definitions,
+and is far away from the definitions themselves.
 
-For consistency, and to avoid problems if we end up with more than 32
-flags, let's make do_notify_resume take the flags as a 64-bit unsigned
-long.
+We can use the CPP #error directive to have equivalent assertions in
+<asm/sysreg.h>, next to the definitions of the set/clear bits, which is
+a bit clearer and simpler.
+
+At the same time, lets fill in the upper 32 bits for both registers in
+their respective RES0 definitions. This could be a little nicer with
+GENMASK_ULL(63, 32), but this currently lives in <linux/bitops.h>, which
+cannot safely be included from assembly, as <asm/sysreg.h> can.
+
+Note the when the preprocessor evaluates an expression for an #if
+directive, all signed or unsigned values are treated as intmax_t or
+uintmax_t respectively. To avoid ambiguity, we define explicitly define
+the mask of all 64 bits.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
 Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Martin <dave.martin@arm.com>
+Cc: James Morse <james.morse@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/kernel/signal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/include/asm/sysreg.h | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
-index 511af13e8d8f..70287634706e 100644
---- a/arch/arm64/kernel/signal.c
-+++ b/arch/arm64/kernel/signal.c
-@@ -910,7 +910,7 @@ static void do_signal(struct pt_regs *regs)
- }
+diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
+index a8f84812c6e8..fefc17dae8ee 100644
+--- a/arch/arm64/include/asm/sysreg.h
++++ b/arch/arm64/include/asm/sysreg.h
+@@ -436,7 +436,8 @@
+ #define SCTLR_EL2_RES0	((1 << 6)  | (1 << 7)  | (1 << 8)  | (1 << 9)  | \
+ 			 (1 << 10) | (1 << 13) | (1 << 14) | (1 << 15) | \
+ 			 (1 << 17) | (1 << 20) | (1 << 24) | (1 << 26) | \
+-			 (1 << 27) | (1 << 30) | (1 << 31))
++			 (1 << 27) | (1 << 30) | (1 << 31) | \
++			 (0xffffffffUL << 32))
  
- asmlinkage void do_notify_resume(struct pt_regs *regs,
--				 unsigned int thread_flags)
-+				 unsigned long thread_flags)
+ #ifdef CONFIG_CPU_BIG_ENDIAN
+ #define ENDIAN_SET_EL2		SCTLR_ELx_EE
+@@ -452,9 +453,9 @@
+ 			 SCTLR_ELx_SA     | SCTLR_ELx_I    | SCTLR_ELx_WXN | \
+ 			 ENDIAN_CLEAR_EL2 | SCTLR_EL2_RES0)
+ 
+-/* Check all the bits are accounted for */
+-#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
+-
++#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffffffffffff
++#error "Inconsistent SCTLR_EL2 set/clear bits"
++#endif
+ 
+ /* SCTLR_EL1 specific flags. */
+ #define SCTLR_EL1_UCI		(1 << 26)
+@@ -473,7 +474,8 @@
+ #define SCTLR_EL1_RES1	((1 << 11) | (1 << 20) | (1 << 22) | (1 << 28) | \
+ 			 (1 << 29))
+ #define SCTLR_EL1_RES0  ((1 << 6)  | (1 << 10) | (1 << 13) | (1 << 17) | \
+-			 (1 << 27) | (1 << 30) | (1 << 31))
++			 (1 << 27) | (1 << 30) | (1 << 31) | \
++			 (0xffffffffUL << 32))
+ 
+ #ifdef CONFIG_CPU_BIG_ENDIAN
+ #define ENDIAN_SET_EL1		(SCTLR_EL1_E0E | SCTLR_ELx_EE)
+@@ -492,8 +494,9 @@
+ 			 SCTLR_EL1_UMA | SCTLR_ELx_WXN     | ENDIAN_CLEAR_EL1 |\
+ 			 SCTLR_EL1_RES0)
+ 
+-/* Check all the bits are accounted for */
+-#define SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != ~0)
++#if (SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != 0xffffffffffffffff
++#error "Inconsistent SCTLR_EL1 set/clear bits"
++#endif
+ 
+ /* id_aa64isar0 */
+ #define ID_AA64ISAR0_TS_SHIFT		52
+@@ -743,9 +746,6 @@ static inline void config_sctlr_el1(u32 clear, u32 set)
  {
- 	/*
- 	 * The assembly code enters us with IRQs off, but it hasn't
+ 	u32 val;
+ 
+-	SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS;
+-	SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS;
+-
+ 	val = read_sysreg(sctlr_el1);
+ 	val &= ~clear;
+ 	val |= set;
 -- 
 2.11.0
 
