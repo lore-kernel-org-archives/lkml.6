@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8538CC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F23FC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35CED208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55FED208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="NaSDi5tD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35CED208FA
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="kODeHpl7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55FED208FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733088AbeGKLeQ (ORCPT
+        id S1733182AbeGKLeu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:34:16 -0400
-Received: from 8bytes.org ([81.169.241.247]:37802 "EHLO theia.8bytes.org"
+        Wed, 11 Jul 2018 07:34:50 -0400
+Received: from 8bytes.org ([81.169.241.247]:37770 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733074AbeGKLeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:34:15 -0400
+        id S1733050AbeGKLeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:34:13 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 4C9C4309B; Wed, 11 Jul 2018 13:30:07 +0200 (CEST)
+        id CC92B399F; Wed, 11 Jul 2018 13:30:05 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308608; bh=8glzuKAs23d7wHuOZFiXc3kocfypfj5+orC4WHMKs0Y=;
+        t=1531308607; bh=2V0XCeOUnRlODFqALspBJ8CBUOtjUtaImRZ6+JHIei8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NaSDi5tDLQjuoBL8dPwdvWtLH1GtJHWq9bYXBE/YSUFtZmrq5n4R3wu74/67PDTIv
-         tPLrL4/OArbUWCtD4HYxZ77V3+q8OB31mUnlzG9WalXnu5BbVSi/c+DGFZUgJVDQXs
-         mWqw4iBybSItLopyFfynRg2LOlq+hjJoXJe0r+CTKY6sLtT691LuIwNpuM1v6OjHeD
-         3OOHduIZN0OFFZkJlsqBfUcQwV+6TJLdVw3mx+ZRR49hESLUusQT5kvc8nXln3e3nG
-         bFgeQLkOkilYogIYwd7ftsG6Do1vtqQYHzomxC3yHtZsjuqaNIwm5luPk6n5wu44jQ
-         ULdnVaBFABI9A==
+        b=kODeHpl7UsQbPsWyx6FcWfUrNwf2paoUi3eCZ4Ds3yPqUqC9EUpHB8sTofIoQhHfl
+         BolLeB2kYCiq9ko+PWYQIR0J7/vKbmk/yRXNAEJim1yY1Jn+09XQXu338yXpFabV29
+         p/zdSvYZqlrat96Zl1lxiRVO9hqSC9Be+jldy45UbM2CarCJIjjr5WlnUBhTtZmz3P
+         iRxv5FMNsGHX0qGad90XridEHHbvIOu3F0U9GQhrI7qIXueE/VaIIz9BhTYHY6WZPD
+         DXUJ5rztB2FSOv/7r7Cky3li9uhmUuVZtBLqo9Zo5MWAeOwZgFKfbJm05BeiDUjARn
+         YKnv4mhU+Pasw==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 37/39] x86/pti: Allow CONFIG_PAGE_TABLE_ISOLATION for x86_32
-Date:   Wed, 11 Jul 2018 13:29:44 +0200
-Message-Id: <1531308586-29340-38-git-send-email-joro@8bytes.org>
+Subject: [PATCH 30/39] x86/mm/pti: Clone entry-text again in pti_finalize()
+Date:   Wed, 11 Jul 2018 13:29:37 +0200
+Message-Id: <1531308586-29340-31-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
@@ -72,26 +72,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Allow PTI to be compiled on x86_32.
+The mapping for entry-text might have changed in the kernel
+after it was cloned to the user page-table. Clone again
+to update the user page-table to bring the mapping in sync
+with the kernel again.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- security/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/pti.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/security/Kconfig b/security/Kconfig
-index c430206..afa91c6 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -57,7 +57,7 @@ config SECURITY_NETWORK
- config PAGE_TABLE_ISOLATION
- 	bool "Remove the kernel mapping in user mode"
- 	default y
--	depends on X86_64 && !UML
-+	depends on X86 && !UML
- 	help
- 	  This feature reduces the number of hardware side channels by
- 	  ensuring that the majority of kernel addresses are not mapped
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index 1825f30..b879ccd 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -404,7 +404,7 @@ static void __init pti_setup_espfix64(void)
+ /*
+  * Clone the populated PMDs of the entry and irqentry text and force it RO.
+  */
+-static void __init pti_clone_entry_text(void)
++static void pti_clone_entry_text(void)
+ {
+ 	pti_clone_pmds((unsigned long) __entry_text_start,
+ 			(unsigned long) __irqentry_text_end,
+@@ -528,13 +528,18 @@ void __init pti_init(void)
+ }
+ 
+ /*
+- * Finalize the kernel mappings in the userspace page-table.
++ * Finalize the kernel mappings in the userspace page-table. Some of the
++ * mappings for the kernel image might have changed since pti_init()
++ * cloned them. This is because parts of the kernel image have been
++ * mapped RO and/or NX.  These changes need to be cloned again to the
++ * userspace page-table.
+  */
+ void pti_finalize(void)
+ {
+ 	/*
+-	 * Do this after all of the manipulation of the
+-	 * kernel text page tables are complete.
++	 * We need to clone everything (again) that maps parts of the
++	 * kernel image.
+ 	 */
++	pti_clone_entry_text();
+ 	pti_clone_kernel_text();
+ }
 -- 
 2.7.4
 
