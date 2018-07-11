@@ -2,151 +2,472 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B452C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C83C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02DA22083C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 234D020877
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HckFtzuL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02DA22083C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WMGkT3i5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 234D020877
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732751AbeGKJod (ORCPT
+        id S1732678AbeGKJoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:44:33 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:55296 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732628AbeGKJoc (ORCPT
+        Wed, 11 Jul 2018 05:44:23 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37038 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732628AbeGKJoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:44:32 -0400
-Received: by mail-it0-f67.google.com with SMTP id 16-v6so2701186itl.5
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 02:41:05 -0700 (PDT)
+        Wed, 11 Jul 2018 05:44:21 -0400
+Received: by mail-wr1-f65.google.com with SMTP id q10-v6so17452048wrd.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 02:40:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=T74tLX3fExeld/V/O/D5m9jiyqNSKpGgVnttQk58Gnc=;
-        b=HckFtzuLtGCZ8dYAm+oQrNPwL5DnNcACnAcWAUGhORaznLe12dx7z5Srcw/ZJGlvym
-         /M5tnRE61PscLvGTYO26AhzW+PpbWJ5YpqHC+Ue2k5DHYETp+T8aCAoNbyR7DodBpgQp
-         IzUuyj9L+GKokzO6kWGfX/acVhsV8+VOUPjso=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=T/pQ2dXw0S7li09NwH2n2zx6kGdi0vZ92wbsvuy9tB4=;
+        b=WMGkT3i5Ecxd+CLP9yAqlMj4YNerH76u3qOzzf0F9yABhUU6ZWNUxU8UwswFoYwP7k
+         Hl42EVLLpCn8MOXR2Ox2T/EL+DZzss0EBy++3zeBYSoaT3rRkWq37mDVaNG3tkR3g45A
+         g3KPrUcjSL3AnkZwhLD91hP5mu9zzhJpciAhI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=T74tLX3fExeld/V/O/D5m9jiyqNSKpGgVnttQk58Gnc=;
-        b=h4O+49fp1SF+CvMLtnHRbAdZe67A6CQ6dpU9LEfOJlUzcUhR6mxqmBjRvi2VSHl926
-         3PCZzAzr0aeQx/ZLdx/61ujS8ey/k+2ZYsgfvC55f/BfjHyYWE21nS9W4ekx/OAk36UL
-         bu30Th7elqBSNS8ROgoDLZEU3KGGgI0PlUmabqaQgB+GKkhfO7s5gGBMGCncPBpUj8v5
-         7DD6d5wqra35RKh/br/AKMQmG7XiRKXCYSaF9AvGFyOAb/3NNr4klqFtmk+v+9/PiacQ
-         eT0Cpk3sLv13xPIheodmO7pQkV2dWT2uYOQ7urmzU3vy5Tnv13j1ejk29i8CCKPwOhRp
-         4tXA==
-X-Gm-Message-State: APt69E0/dzjZI3j0sDU1fcegCeGminjcsNuzBoelXG1Se5z82T45J9SI
-        +MosHbTVj0H9KGklLNQ79//FiYjwIufuT4xFjMkHYg==
-X-Google-Smtp-Source: AAOMgpd3dxcSRg/9nXzSncWcPzzurBmoo3ut8L27uSMW9gWZfbb9NzejRWv67GwgUMxtNU1BdWUY2vAb6XdJCFdLa80=
-X-Received: by 2002:a02:570c:: with SMTP id u12-v6mr23637336jaa.142.1531302065394;
- Wed, 11 Jul 2018 02:41:05 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 02:41:04
- -0700 (PDT)
-In-Reply-To: <CAL_Jsq+dcwZHKFGy+BGOyV+Yyz0qgmeq8zoT=DkB+c+DsXdApQ@mail.gmail.com>
-References: <20180709154153.15742-1-robh@kernel.org> <20180709154153.15742-7-robh@kernel.org>
- <CAPDyKFoN1=16dGKmkFp6Khgs5zx+BguOs3qOcm+rAZw=b38JVg@mail.gmail.com> <CAL_Jsq+dcwZHKFGy+BGOyV+Yyz0qgmeq8zoT=DkB+c+DsXdApQ@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 11 Jul 2018 11:41:04 +0200
-Message-ID: <CAPDyKFp7qNe6Yp62GyRcfc2TBxqqexMxqQkZ-Hc3YFoy-_7ZLw@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] PM / Domains: Stop deferring probe at the end of initcall
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Architecture Mailman List <boot-architecture@lists.linaro.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=T/pQ2dXw0S7li09NwH2n2zx6kGdi0vZ92wbsvuy9tB4=;
+        b=TS3Whch0TN6Hb8VM2MO94AWkZExSdZGdCa83IHsS3J6CVQz0jlqDAcgNiSM1j6Bs0u
+         oDC+j2q8ZWHzZKYjPt+RmpgjNq3Mcck3MBGxO0ko6vRIiW0MqAGwA34hp7fb6hEmFQ9B
+         nAsMUcKrOsGg2QDzdHr8VdoOYgngGlGkHVOq7BjzLnQ2sE/0n19fDqxBDenY8LgQgHw1
+         kIM6cIHjF2r5XYaQjRtweqD0yHoxL/Zg48ah/xLIP78iIa4YuMRmVu8cnaVrrP5Y54Ih
+         e5BDh07izPQaM5XNKwTJXypm2MZ7aFpRzGXx7IU6t46L6RU6gUzu+Wnbet0qMmzkLUrE
+         WVvQ==
+X-Gm-Message-State: AOUpUlHqT8cap+kr2VGUDfd6pfY8GO2nqaDyZsuUncPovlUGcLkCdLAd
+        TaQGIkd2JHCb9GFJxHikL6Ubdw==
+X-Google-Smtp-Source: AAOMgpc+F2f1rdHFSriq4+Z8j041f2h/ix29R/MoS43BduR4DpRO3VfI2aJ6muRQH111vwUvcSy3ig==
+X-Received: by 2002:adf:e34d:: with SMTP id n13-v6mr12741331wrj.158.1531302053227;
+        Wed, 11 Jul 2018 02:40:53 -0700 (PDT)
+Received: from localhost.localdomain (33.153.69.91.rev.sfr.net. [91.69.153.33])
+        by smtp.gmail.com with ESMTPSA id t124-v6sm1641311wmt.29.2018.07.11.02.40.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 02:40:52 -0700 (PDT)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/8] efi: Use a work queue to invoke EFI Runtime Services
+Date:   Wed, 11 Jul 2018 11:40:35 +0200
+Message-Id: <20180711094040.12506-4-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
+References: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10 July 2018 at 16:25, Rob Herring <robh@kernel.org> wrote:
-> On Mon, Jul 9, 2018 at 4:49 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>
->> On 9 July 2018 at 17:41, Rob Herring <robh@kernel.org> wrote:
->> > All PM domain drivers must be built-in (at least those using DT), so
->> > there is no point deferring probe after initcalls are done. Continuing
->> > to defer probe may prevent booting successfully even if managing PM
->> > domains is not required. This can happen if the user failed to enable
->> > the driver or if power-domains are added to a platform's DT, but there
->> > is not yet a driver (e.g. a new DTB with an old kernel).
->> >
->> > Call the driver core function driver_deferred_probe_check_init_done()
->> > instead of just returning -EPROBE_DEFER to stop deferring probe when
->> > initcalls are done.
->> >
->> > Acked-by: "Rafael J. Wysocki" <rjw@rjwysocki.net>
->> > Cc: Kevin Hilman <khilman@kernel.org>
->> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
->> > Cc: Pavel Machek <pavel@ucw.cz>
->> > Cc: Len Brown <len.brown@intel.com>
->> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> > Cc: linux-pm@vger.kernel.org
->> > Signed-off-by: Rob Herring <robh@kernel.org>
->> > ---
->> > v4:
->> >  - Add Rafael's ack
->> >
->> > v3:
->> >   - Update to new function name
->> >
->> >  drivers/base/power/domain.c | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->> > index 4925af5c4cf0..8c12213875c6 100644
->> > --- a/drivers/base/power/domain.c
->> > +++ b/drivers/base/power/domain.c
->> > @@ -2253,7 +2253,7 @@ static int __genpd_dev_pm_attach(struct device *dev, struct device_node *np,
->> >                 mutex_unlock(&gpd_list_lock);
->> >                 dev_dbg(dev, "%s() failed to find PM domain: %ld\n",
->> >                         __func__, PTR_ERR(pd));
->> > -               return -EPROBE_DEFER;
->> > +               return driver_deferred_probe_check_state(dev);
->> >         }
->>
->> This isn't the only error path where -EPROBE_DEFER may be returned
->> during attach in genpd.
->
-> Yes, but I think this is the only place you can fail to get the PD
-> device from DT. The case we care about is properties exist in the DT,
-> but no driver exists.
+From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
 
-That's correct. Thanks for clarifying!
+Presently, when a user process requests the kernel to execute any
+UEFI runtime service, the kernel temporarily switches to a separate
+set of page tables that describe the virtual mapping of the UEFI
+runtime services regions in memory. Since UEFI runtime services are
+typically invoked with interrupts enabled, any code that may be called
+during this time, will have an incorrect view of the process's address
+space. Although it is unusual for code running in interrupt context to
+make assumptions about the process context it runs in, there are cases
+(such as the perf subsystem taking samples) where this causes problems.
 
->
-> What would cause deferring in the latter cases?
+So let's set up a work queue for calling UEFI runtime services, so that
+the actual calls are made when the work queue items are dispatched by a
+work queue worker running in a separate kernel thread. Such threads are
+not expected to have userland mappings in the first place, and so the
+additional mappings created for the UEFI runtime services can never
+clash with any.
 
-To power on the PM domain for example, which often is required to be
-able to probe the device.
+The ResetSystem() runtime service is not covered by the work queue
+handling, since it is not expected to return, and may be called at a
+time when the kernel is torn down to the point where we cannot expect
+work queues to still be operational.
 
->
-> Rob
+The non-blocking variants of SetVariable() and QueryVariableInfo()
+are also excluded: these are intended to be used from atomic context,
+which obviously rules out waiting for a completion to be signalled by
+another thread. Note that these variants are currently only used for
+UEFI runtime services calls that occur very early in the boot, and
+for ones that occur in critical conditions, e.g., to flush kernel logs
+to UEFI variables via efi-pstore.
 
-Kind regards
-Uffe
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+[ardb: exclude ResetSystem() from the workqueue treatment
+       merge from 2 separate patches and rewrite commit log]
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ drivers/firmware/efi/efi.c              |  14 ++
+ drivers/firmware/efi/runtime-wrappers.c | 202 ++++++++++++++++++++++--
+ include/linux/efi.h                     |   3 +
+ 3 files changed, 204 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
+index 232f4915223b..1379a375dfa8 100644
+--- a/drivers/firmware/efi/efi.c
++++ b/drivers/firmware/efi/efi.c
+@@ -84,6 +84,8 @@ struct mm_struct efi_mm = {
+ 	.mmlist			= LIST_HEAD_INIT(efi_mm.mmlist),
+ };
+ 
++struct workqueue_struct *efi_rts_wq;
++
+ static bool disable_runtime;
+ static int __init setup_noefi(char *arg)
+ {
+@@ -337,6 +339,18 @@ static int __init efisubsys_init(void)
+ 	if (!efi_enabled(EFI_BOOT))
+ 		return 0;
+ 
++	/*
++	 * Since we process only one efi_runtime_service() at a time, an
++	 * ordered workqueue (which creates only one execution context)
++	 * should suffice all our needs.
++	 */
++	efi_rts_wq = alloc_ordered_workqueue("efi_rts_wq", 0);
++	if (!efi_rts_wq) {
++		pr_err("Creating efi_rts_wq failed, EFI runtime services disabled.\n");
++		clear_bit(EFI_RUNTIME_SERVICES, &efi.flags);
++		return 0;
++	}
++
+ 	/* We register the efi directory at /sys/firmware/efi */
+ 	efi_kobj = kobject_create_and_add("efi", firmware_kobj);
+ 	if (!efi_kobj) {
+diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
+index ae54870b2788..aa66cbf23512 100644
+--- a/drivers/firmware/efi/runtime-wrappers.c
++++ b/drivers/firmware/efi/runtime-wrappers.c
+@@ -1,6 +1,15 @@
+ /*
+  * runtime-wrappers.c - Runtime Services function call wrappers
+  *
++ * Implementation summary:
++ * -----------------------
++ * 1. When user/kernel thread requests to execute efi_runtime_service(),
++ * enqueue work to efi_rts_wq.
++ * 2. Caller thread waits for completion until the work is finished
++ * because it's dependent on the return status and execution of
++ * efi_runtime_service().
++ * For instance, get_variable() and get_next_variable().
++ *
+  * Copyright (C) 2014 Linaro Ltd. <ard.biesheuvel@linaro.org>
+  *
+  * Split off from arch/x86/platform/efi/efi.c
+@@ -22,6 +31,9 @@
+ #include <linux/mutex.h>
+ #include <linux/semaphore.h>
+ #include <linux/stringify.h>
++#include <linux/workqueue.h>
++#include <linux/completion.h>
++
+ #include <asm/efi.h>
+ 
+ /*
+@@ -33,6 +45,76 @@
+ #define __efi_call_virt(f, args...) \
+ 	__efi_call_virt_pointer(efi.systab->runtime, f, args)
+ 
++/* efi_runtime_service() function identifiers */
++enum efi_rts_ids {
++	GET_TIME,
++	SET_TIME,
++	GET_WAKEUP_TIME,
++	SET_WAKEUP_TIME,
++	GET_VARIABLE,
++	GET_NEXT_VARIABLE,
++	SET_VARIABLE,
++	QUERY_VARIABLE_INFO,
++	GET_NEXT_HIGH_MONO_COUNT,
++	UPDATE_CAPSULE,
++	QUERY_CAPSULE_CAPS,
++};
++
++/*
++ * efi_runtime_work:	Details of EFI Runtime Service work
++ * @arg<1-5>:		EFI Runtime Service function arguments
++ * @status:		Status of executing EFI Runtime Service
++ * @efi_rts_id:		EFI Runtime Service function identifier
++ * @efi_rts_comp:	Struct used for handling completions
++ */
++struct efi_runtime_work {
++	void *arg1;
++	void *arg2;
++	void *arg3;
++	void *arg4;
++	void *arg5;
++	efi_status_t status;
++	struct work_struct work;
++	enum efi_rts_ids efi_rts_id;
++	struct completion efi_rts_comp;
++};
++
++/*
++ * efi_queue_work:	Queue efi_runtime_service() and wait until it's done
++ * @rts:		efi_runtime_service() function identifier
++ * @rts_arg<1-5>:	efi_runtime_service() function arguments
++ *
++ * Accesses to efi_runtime_services() are serialized by a binary
++ * semaphore (efi_runtime_lock) and caller waits until the work is
++ * finished, hence _only_ one work is queued at a time and the caller
++ * thread waits for completion.
++ */
++#define efi_queue_work(_rts, _arg1, _arg2, _arg3, _arg4, _arg5)		\
++({									\
++	struct efi_runtime_work efi_rts_work;				\
++	efi_rts_work.status = EFI_ABORTED;				\
++									\
++	init_completion(&efi_rts_work.efi_rts_comp);			\
++	INIT_WORK_ONSTACK(&efi_rts_work.work, efi_call_rts);		\
++	efi_rts_work.arg1 = _arg1;					\
++	efi_rts_work.arg2 = _arg2;					\
++	efi_rts_work.arg3 = _arg3;					\
++	efi_rts_work.arg4 = _arg4;					\
++	efi_rts_work.arg5 = _arg5;					\
++	efi_rts_work.efi_rts_id = _rts;					\
++									\
++	/*								\
++	 * queue_work() returns 0 if work was already on queue,         \
++	 * _ideally_ this should never happen.                          \
++	 */								\
++	if (queue_work(efi_rts_wq, &efi_rts_work.work))			\
++		wait_for_completion(&efi_rts_work.efi_rts_comp);	\
++	else								\
++		pr_err("Failed to queue work to efi_rts_wq.\n");	\
++									\
++	efi_rts_work.status;						\
++})
++
+ void efi_call_virt_check_flags(unsigned long flags, const char *call)
+ {
+ 	unsigned long cur_flags, mismatch;
+@@ -90,13 +172,98 @@ void efi_call_virt_check_flags(unsigned long flags, const char *call)
+  */
+ static DEFINE_SEMAPHORE(efi_runtime_lock);
+ 
++/*
++ * Calls the appropriate efi_runtime_service() with the appropriate
++ * arguments.
++ *
++ * Semantics followed by efi_call_rts() to understand efi_runtime_work:
++ * 1. If argument was a pointer, recast it from void pointer to original
++ * pointer type.
++ * 2. If argument was a value, recast it from void pointer to original
++ * pointer type and dereference it.
++ */
++static void efi_call_rts(struct work_struct *work)
++{
++	struct efi_runtime_work *efi_rts_work;
++	void *arg1, *arg2, *arg3, *arg4, *arg5;
++	efi_status_t status = EFI_NOT_FOUND;
++
++	efi_rts_work = container_of(work, struct efi_runtime_work, work);
++	arg1 = efi_rts_work->arg1;
++	arg2 = efi_rts_work->arg2;
++	arg3 = efi_rts_work->arg3;
++	arg4 = efi_rts_work->arg4;
++	arg5 = efi_rts_work->arg5;
++
++	switch (efi_rts_work->efi_rts_id) {
++	case GET_TIME:
++		status = efi_call_virt(get_time, (efi_time_t *)arg1,
++				       (efi_time_cap_t *)arg2);
++		break;
++	case SET_TIME:
++		status = efi_call_virt(set_time, (efi_time_t *)arg1);
++		break;
++	case GET_WAKEUP_TIME:
++		status = efi_call_virt(get_wakeup_time, (efi_bool_t *)arg1,
++				       (efi_bool_t *)arg2, (efi_time_t *)arg3);
++		break;
++	case SET_WAKEUP_TIME:
++		status = efi_call_virt(set_wakeup_time, *(efi_bool_t *)arg1,
++				       (efi_time_t *)arg2);
++		break;
++	case GET_VARIABLE:
++		status = efi_call_virt(get_variable, (efi_char16_t *)arg1,
++				       (efi_guid_t *)arg2, (u32 *)arg3,
++				       (unsigned long *)arg4, (void *)arg5);
++		break;
++	case GET_NEXT_VARIABLE:
++		status = efi_call_virt(get_next_variable, (unsigned long *)arg1,
++				       (efi_char16_t *)arg2,
++				       (efi_guid_t *)arg3);
++		break;
++	case SET_VARIABLE:
++		status = efi_call_virt(set_variable, (efi_char16_t *)arg1,
++				       (efi_guid_t *)arg2, *(u32 *)arg3,
++				       *(unsigned long *)arg4, (void *)arg5);
++		break;
++	case QUERY_VARIABLE_INFO:
++		status = efi_call_virt(query_variable_info, *(u32 *)arg1,
++				       (u64 *)arg2, (u64 *)arg3, (u64 *)arg4);
++		break;
++	case GET_NEXT_HIGH_MONO_COUNT:
++		status = efi_call_virt(get_next_high_mono_count, (u32 *)arg1);
++		break;
++	case UPDATE_CAPSULE:
++		status = efi_call_virt(update_capsule,
++				       (efi_capsule_header_t **)arg1,
++				       *(unsigned long *)arg2,
++				       *(unsigned long *)arg3);
++		break;
++	case QUERY_CAPSULE_CAPS:
++		status = efi_call_virt(query_capsule_caps,
++				       (efi_capsule_header_t **)arg1,
++				       *(unsigned long *)arg2, (u64 *)arg3,
++				       (int *)arg4);
++		break;
++	default:
++		/*
++		 * Ideally, we should never reach here because a caller of this
++		 * function should have put the right efi_runtime_service()
++		 * function identifier into efi_rts_work->efi_rts_id
++		 */
++		pr_err("Requested executing invalid EFI Runtime Service.\n");
++	}
++	efi_rts_work->status = status;
++	complete(&efi_rts_work->efi_rts_comp);
++}
++
+ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
+ {
+ 	efi_status_t status;
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(get_time, tm, tc);
++	status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -107,7 +274,7 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(set_time, tm);
++	status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -120,7 +287,8 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(get_wakeup_time, enabled, pending, tm);
++	status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
++				NULL);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -131,7 +299,8 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(set_wakeup_time, enabled, tm);
++	status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
++				NULL);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -146,8 +315,8 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(get_variable, name, vendor, attr, data_size,
+-			       data);
++	status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
++				data);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -160,7 +329,8 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(get_next_variable, name_size, name, vendor);
++	status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
++				NULL, NULL);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -175,8 +345,8 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(set_variable, name, vendor, attr, data_size,
+-			       data);
++	status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
++				data);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -210,8 +380,8 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(query_variable_info, attr, storage_space,
+-			       remaining_space, max_variable_size);
++	status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
++				remaining_space, max_variable_size, NULL);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -242,7 +412,8 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(get_next_high_mono_count, count);
++	status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
++				NULL, NULL);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -272,7 +443,8 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(update_capsule, capsules, count, sg_list);
++	status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
++				NULL, NULL);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+@@ -289,8 +461,8 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
+ 
+ 	if (down_interruptible(&efi_runtime_lock))
+ 		return EFI_ABORTED;
+-	status = efi_call_virt(query_capsule_caps, capsules, count, max_size,
+-			       reset_type);
++	status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
++				max_size, reset_type, NULL);
+ 	up(&efi_runtime_lock);
+ 	return status;
+ }
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 56add823f190..8ba0cdd244b2 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -1651,4 +1651,7 @@ struct linux_efi_tpm_eventlog {
+ 
+ extern int efi_tpm_eventlog_init(void);
+ 
++/* Workqueue to queue EFI Runtime Services */
++extern struct workqueue_struct *efi_rts_wq;
++
+ #endif /* _LINUX_EFI_H */
+-- 
+2.17.1
+
