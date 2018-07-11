@@ -2,130 +2,102 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D2EC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E408C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC84620C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:34:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5C8920C0D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:34:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SXcIkM1N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC84620C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uC2764N1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C8920C0D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389747AbeGKQj4 (ORCPT
+        id S2389762AbeGKQkA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:39:56 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34416 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388018AbeGKQj4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:39:56 -0400
-Received: by mail-pl0-f67.google.com with SMTP id z9-v6so9386408plo.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 09:34:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sin8EWAzhOYsIykJ3xN4LzPke6ob3fmYaAjtx9DEaHA=;
-        b=SXcIkM1Ne37VsPcD66UZkfJ3Cb1/NDt4NQNK20D+harHG/+jG/vMPl0Jht9V+VadrO
-         GPMcb8q9PT35n4EHUu/kcYHfjbCPjWZibgAYkHJQSmWe/Z2WdUwLeNFvT+pZjLv2RzqJ
-         75CXPpRAIgY5EuDXUrdaD6EI0PffXr4iZ4f8o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sin8EWAzhOYsIykJ3xN4LzPke6ob3fmYaAjtx9DEaHA=;
-        b=BqsDJm5uV5wenYIJaARPmO3rr2ET6qP3nHzy0xk847XQRrEMSX4LLhej3Rciy6jMd3
-         d8hvQh+F0PZ0A3Wb9NyL8s7y619tShSpaoq9xZdO5mfCboajMfazOrr8G1R2mwc8CLvD
-         b1PVuhfJlpNWRVmUlPZCQXNTYCI7Tun6U7cKb0HeItMUfCYMC/vqivKQgwFowGRLxnnP
-         bOqBHWCLABDGR4vbmzXgzQ9mm/aoYbiIWZeEDkOyEYi3PbFtef/7MQn3OL+GdeJzVSI5
-         MD6W4zxdk1pxrhvikJ5X+3X6RBcZdt9PnsQUGHSOSE6/uRwaXzMgffcQNtq7cICQ41sA
-         QhDg==
-X-Gm-Message-State: APt69E1n/d6asX1Z4Qc2cPkcyducRgLLggpbuKpOgptqFxuLXTM8qArl
-        y9ljzxGD7duUJMl3GJ0Y440xcg==
-X-Google-Smtp-Source: AAOMgpfVwaOpCVz+X3kXEocCS9ODKnxijrdn4uHBadUeH2KjasOX9t5No2lSMxrOi7TauZwZqkI5Pg==
-X-Received: by 2002:a17:902:205:: with SMTP id 5-v6mr29092139plc.301.1531326888624;
-        Wed, 11 Jul 2018 09:34:48 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm28053974pgq.35.2018.07.11.09.34.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 09:34:47 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 09:37:29 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, vivek.gautam@codeaurora.org,
-        andy.gross@linaro.org, David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 3/7] dt: qcom: 8996: thermal: Move to DT initialisation
-Message-ID: <20180711163729.GB545@tuxbook-pro>
-References: <cover.1531135999.git.amit.kucheria@linaro.org>
- <ee06e59ae84a9b9013480c58bd4678e44d201a42.1531135999.git.amit.kucheria@linaro.org>
+        Wed, 11 Jul 2018 12:40:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49864 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387957AbeGKQj6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:39:58 -0400
+Received: from localhost (unknown [104.132.1.75])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64D3820870;
+        Wed, 11 Jul 2018 16:34:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531326890;
+        bh=Qvx/k3wtFZRpZTSAiCIq068TIVvfZyaWo01m5g+TToU=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=uC2764N1Q0Rh8arJ7hUsZw2ifsgQAmFDiZ7HiqSh59zxkCH8k8EkIgZs1USPwEzbU
+         IDjgpG1fjpc/JtdJYo181wJh37bw+WvDD9+0rF8DW3itjipzs+gmNUqXVINAsNKmr2
+         Z8wg5SsNgdhV94b+GOO1UHnXD51KHzFt4udeTqMk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ee06e59ae84a9b9013480c58bd4678e44d201a42.1531135999.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: quoted-printable
+To:     Joel Stanley <joel@jms.id.au>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <CACPK8XfxKhT_ywpo3vqXSEaSPGdM+uhkgpn1R+EP9Z3spxAzXg@mail.gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+References: <20180628231540.26633-1-joel@jms.id.au>
+ <153089970720.143105.7005759760140367907@swboyd.mtv.corp.google.com>
+ <CACPK8XfxKhT_ywpo3vqXSEaSPGdM+uhkgpn1R+EP9Z3spxAzXg@mail.gmail.com>
+Message-ID: <153132688979.143105.557909972230566711@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: aspeed: Support HPLL strapping on ast2400
+Date:   Wed, 11 Jul 2018 09:34:49 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09 Jul 04:43 PDT 2018, Amit Kucheria wrote:
+Quoting Joel Stanley (2018-07-10 22:53:52)
+> Hi Stephen,
+> =
 
-> We also split up the regmap address space into two, one for the TM
-> registers, the other for the SROT registers. This was required to deal with
-> different address offsets for the TM and SROT registers across different
-> SoC families.
-> 
-> Since tsens-common.c/init_common() currently only registers one address
-> space, the order is important (TM before SROT). This is OK since the code
-> doesn't really use the SROT functionality yet.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> On 7 July 2018 at 03:55, Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Joel Stanley (2018-06-28 16:15:40)
+> >> The HPLL can be configured through a register (SCU24), however some
+> >> platforms chose to configure it through the strapping settings and do
+> >> not use the register. This was not noticed as the logic for bit 18 in
+> >> SCU24 was confused: set means programmed, but the driver read it as set
+> >> means strapped.
+> >>
+> >> This gives us the correct HPLL value on Palmetto systems, from which
+> >> most of the peripheral clocks are generated.
+> >>
+> >> Fixes: 5eda5d79e4be ("clk: Add clock driver for ASPEED BMC SoCs")
+> >> Cc: stable@vger.kernel.org # v4.15
+> >> Reviewed-by: C=C3=A9dric Le Goater <clg@kaod.org>
+> >> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> >> ---
+> >
+> > Do you want this merged for -rc5? It sounds like on some systems this is
+> > a problem, but I don't know if these systems are supposed to work yet or
+> > not, so priority of this fix is not easy for me to understand.
+> >
+> =
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Sure, some more background:
+> =
 
-Regards,
-Bjorn
+> We did not notice this until we attempted to use the clock for the mtd
+> driver. However, this clock is used for the kernel clocksource, so eg.
+> sleep 1 takes two seconds to complete. This affects all of the systems
+> I have access to.
+> =
 
-> ---
->  arch/arm64/boot/dts/qcom/msm8996.dtsi | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> index 8c7f9ca..6c8a857 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-> @@ -461,7 +461,17 @@
->  
->  		tsens0: thermal-sensor@4a8000 {
->  			compatible = "qcom,msm8996-tsens";
-> -			reg = <0x4a8000 0x2000>;
-> +			reg = <0x4a9000 0x1000>, /* TM */
-> +			      <0x4a8000 0x1000>; /* SROT */
-> +			#qcom,sensors = <13>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
-> +		tsens1: thermal-sensor@4ac000 {
-> +			compatible = "qcom,msm8996-tsens";
-> +			reg = <0x4ad000 0x1000>, /* TM */
-> +			      <0x4ac000 0x1000>; /* SROT */
-> +			#qcom,sensors = <8>;
->  			#thermal-sensor-cells = <1>;
->  		};
->  
-> -- 
-> 2.7.4
-> 
+> I suggest we merge for4.18, and keep the cc: stable so it can be
+> backported to the stable trees.
+> =
+
+
+Ok. Thanks! Applied to clk-fixes.
