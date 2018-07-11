@@ -2,167 +2,164 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE2EC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:26:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AD3C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A1DC20B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:26:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cBvWSiTQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A1DC20B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A8A3D20B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:27:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A3D20B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbeGKKaI (ORCPT
+        id S1726853AbeGKKaj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:30:08 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53144 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726474AbeGKKaH (ORCPT
+        Wed, 11 Jul 2018 06:30:39 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54523 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726440AbeGKKaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:30:07 -0400
-Received: by mail-wm0-f65.google.com with SMTP id w16-v6so1902741wmc.2;
-        Wed, 11 Jul 2018 03:26:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MT/qNtDc+ap+ovYb2pkL5vPiGIOY7MWZSV048PsyGcY=;
-        b=cBvWSiTQ601ABslqKAHKFPN5Qhes0HrkUGvPhrLczeCSlTUlTqGNZlXibyp/lO3KVL
-         uAMpFgJoH7YHBsSvDPg8lZZEtSfIQAF+AjczsjWpCE65zuOA+2mC6y9TrF301CgTbTxE
-         1SA2g5HaGpsyEyB8Q4LAr/s+vT93krfEdfRpoI/HfNN7hcvrdubgxFTzfs/w/noMW7W0
-         P3vt4rjLnR8lijGfQroYnKStBLlFrlVA4lJQW1HCIRI9ygWDBSbsToe0EPUOtyIEKBCu
-         k38FyCWlkoaUNnxdApstXIZ9qI/gCb+rsM5S3G5rxbWT4UlwHztK9bRZ3gJ+0/qB0d6D
-         LJFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:references:from:openpgp
-         :autocrypt:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=MT/qNtDc+ap+ovYb2pkL5vPiGIOY7MWZSV048PsyGcY=;
-        b=gJRpMsDHLGvJhtuz4zFeLJq95fGUgeRIqJdah6+2PU4WKGQW7OsbvyiDJx+HzUVVDg
-         6xUODBKJXD59aqhyEF15zkVai4FIH7Ei44QmJpYUaSgS2q6prVk1VJXCm4NnZhiX08cG
-         Ebzw6pI5Q0zwIYACd1i2y3FWKfRiXZ96AzDubUx6CeFOeugEo+iu862rxRnjMZvVsTQJ
-         n0HkifbFZBaHsQOwoJEhoNeNJXRaPEFQNru+stYBiS780js8lkEt4ltr+I3jDmxxU8NM
-         S4S5QMfuBWaMqvOu5+a+8m59fxIeGt/WEZmQSFMk1D8BrOXha/iJyKY3b4aAlSxG3ua7
-         Q7tA==
-X-Gm-Message-State: APt69E1a8bDKuwMlSVcGg6KEu0yUzdON1ZBawqURrzbroxnLOnlNpkir
-        yZJOkcfz4I43+ryvSkvqm0Gp13Ys
-X-Google-Smtp-Source: AAOMgpeJGaPWRqVdLoe7Te9Fg5ZhYs0/V6BsSkE35Lgon617jBAqpz7prj4zImFywaxkyjTRcjDoNQ==
-X-Received: by 2002:a1c:2142:: with SMTP id h63-v6mr6088271wmh.51.1531304787653;
-        Wed, 11 Jul 2018 03:26:27 -0700 (PDT)
-Received: from [192.168.10.165] (dynamic-adsl-78-12-151-35.clienti.tiscali.it. [78.12.151.35])
-        by smtp.googlemail.com with ESMTPSA id h1-v6sm26029631wri.90.2018.07.11.03.26.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 03:26:26 -0700 (PDT)
-Subject: Re: [PATCH v2 00/12] KVM/X86: Introduce a new guest mapping interface
-To:     "Raslan, KarimAllah" <karahmed@amazon.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "david@redhat.com" <david@redhat.com>
-References: <1523829198-13236-1-git-send-email-karahmed@amazon.de>
- <b390f953-6fe3-1119-15eb-e3b31e609305@redhat.com>
- <1531224393.10099.37.camel@amazon.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; keydata=
- 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
-Message-ID: <15b8718d-f209-1a3c-349e-497ae5f0d191@redhat.com>
-Date:   Wed, 11 Jul 2018 12:26:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 11 Jul 2018 06:30:39 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 4E77E804D8; Wed, 11 Jul 2018 12:26:58 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 12:26:55 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: Re: v4.18-rc2 on droid4: screen turns red
+Message-ID: <20180711102655.GA6864@amd>
+References: <20180630131812.GA549@amd>
 MIME-Version: 1.0
-In-Reply-To: <1531224393.10099.37.camel@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Content-Disposition: inline
+In-Reply-To: <20180630131812.GA549@amd>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/07/2018 14:06, Raslan, KarimAllah wrote:
-> On Mon, 2018-04-16 at 13:10 +0200, Paolo Bonzini wrote:
->> On 15/04/2018 23:53, KarimAllah Ahmed wrote:
->>>
->>> Guest memory can either be directly managed by the kernel (i.e. have a "struct
->>> page") or they can simply live outside kernel control (i.e. do not have a
->>> "struct page"). KVM mostly support these two modes, except in a few places
->>> where the code seems to assume that guest memory must have a "struct page".
->>>
->>> This patchset introduces a new mapping interface to map guest memory into host
->>> kernel memory which also supports PFN-based memory (i.e. memory without 'struct
->>> page'). It also converts all offending code to this interface or simply
->>> read/write directly from guest memory.
->>>
->>> As far as I can see all offending code is now fixed except the APIC-access page
->>> which I will handle in a seperate patch.
->>
->> I assume the caching will also be a separate patch.
->>
->> It looks good except that I'd squash patches 4 and 9 together.  But I'd
->> like a second set of eyes to look at it.
-> 
-> BTW, Why did you want to squash these 2 patches specifically? They are 
-> very unrelated to me. The only common thing is that they switch from 
-> code that supports only "struct page" to code that supports PFN only
-> but this is also common for all other patches.
 
-Probably at the time I was thinking they both affect cmpxchg, but really
-they are gpte and emulator respectively.  Looks like I have 12 more
-patches on my review queue then! *ouch*
+--SUOF0GtieIMvvwua
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Paolo
+Hi!
 
->>
->> Thanks,
->>
->> Paolo
->>
-> Amazon Development Center Germany GmbH
-> Berlin - Dresden - Aachen
-> main office: Krausenstr. 38, 10117 Berlin
-> Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-> Ust-ID: DE289237879
-> Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
-> 
+> After longer inactivity, attempt to wake up the screen results in
+> screen being completely red. Not too useful. I can still connect over
+> ssh.
 
+Still there in -rc4 :-(. But happens only once in a few days for me...
+
+When X is shut down, text console works ok.
+      	       	    	     	     	       	    	Pavel
+>=20
+> This happens all the time:
+>=20
+> Jun 30 11:34:08 devuan kernel: [  143.605499] ------------[ cut here
+> ]------------
+> Jun 30 11:34:08 devuan kernel: [  143.610168] WARNING: CPU: 1 PID:
+> 2220 at drivers/gpu/drm/omapdrm/
+> dss/hdmi4.c:667 hdmi_audio_stop+0x5c/0x68
+> Jun 30 11:34:08 devuan kernel: [  143.619873] Modules linked in:
+> Jun 30 11:34:08 devuan kernel: [  143.622955] CPU: 1 PID: 2220 Comm:
+> pulseaudio Not tainted 4.18.0-
+> rc2-88315-g3452793-dirty #756
+> Jun 30 11:34:08 devuan kernel: [  143.631591] Hardware name: Generic
+> OMAP4 (Flattened Device Tree)
+> Jun 30 11:34:08 devuan kernel: [  143.637634] [<c010f6cc>]
+> (unwind_backtrace) from [<c010ba50>] (sh
+> ow_stack+0x10/0x14)
+> Jun 30 11:34:08 devuan kernel: [  143.645446] [<c010ba50>]
+> (show_stack) from [<c086d7ec>] (dump_sta
+> ck+0x8c/0xac)
+> Jun 30 11:34:08 devuan kernel: [  143.652740] [<c086d7ec>]
+> (dump_stack) from [<c012d364>] (__warn+0
+> xe8/0x114)
+> Jun 30 11:34:08 devuan kernel: [  143.659729] [<c012d364>] (__warn)
+> from [<c012d3cc>] (warn_slowpath_null+0x3c/0x48)
+> Jun 30 11:34:08 devuan kernel: [  143.667358] [<c012d3cc>]
+> (warn_slowpath_null) from [<c047b7dc>] (hdmi_audio_stop+0x5c/0x68)
+> Jun 30 11:34:08 devuan kernel: [  143.675750] [<c047b7dc>]
+> (hdmi_audio_stop) from [<c06a9824>] (hdmi_dai_trigger+0x6c/0x88)
+> Jun 30 11:34:08 devuan kernel: [  143.683990] [<c06a9824>]
+> (hdmi_dai_trigger) from [<c06990d0>] (soc_pcm_trigger+0xf0/0x130)
+> Jun 30 11:34:08 devuan kernel: [  143.692291] [<c06990d0>]
+> (soc_pcm_trigger) from [<c067a9f4>] (snd_pcm_do_stop+0x54/0x58)
+> Jun 30 11:34:08 devuan kernel: [  143.700439] [<c067a9f4>]
+> (snd_pcm_do_stop) from [<c067a7a4>] (snd_pcm_action_single+0x38/0x78)
+> Jun 30 11:34:08 devuan kernel: [  143.709075] [<c067a7a4>]
+> (snd_pcm_action_single) from [<c067c468>] (snd_pcm_drop+0x48/0x94)
+> Jun 30 11:34:08 devuan kernel: [  143.717468] [<c067c468>]
+> (snd_pcm_drop) from [<c067d508>] (snd_pcm_ioctl+0x870/0x1180)
+> Jun 30 11:34:08 devuan kernel: [  143.725433] [<c067d508>]
+> (snd_pcm_ioctl) from [<c0215944>] (do_vfs_ioctl+0x80/0x960)
+> Jun 30 11:34:08 devuan kernel: [  143.733215] [<c0215944>]
+> (do_vfs_ioctl) from [<c0216280>] (ksys_ioctl+0x5c/0x80)
+> Jun 30 11:34:08 devuan kernel: [  143.740661] [<c0216280>]
+> (ksys_ioctl) from [<c0101000>] (ret_fast_syscall+0x0/0x54)
+> Jun 30 11:34:08 devuan kernel: [  143.748352] Exception
+> stack(0xeb8fffa8 to 0xeb8ffff0)
+> Jun 30 11:34:08 devuan kernel: [  143.753448] ffa0:
+> 005129b0 b1971394 00000015 00004143 00000000 00512960
+>=20
+>=20
+> This is probably unrelated:
+>=20
+> [13215.125732] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+> [13245.205535] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+> [13252.969940] power_supply battery: driver failed to report
+> `power_now' property: -22
+> [13275.285369] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+> [13291.993652] Charging, 4350000 uV, 532000 uA
+> [13292.001708] Charging, 4350000 uV, 532000 uA
+> [13305.364837] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+> [13335.445037] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+> [13365.524291] cpcap-usb-phy cpcap-usb-phy.0: connected to USB host
+> [13372.940093] power_supply battery: driver failed to report
+> `power_now' property: -22
+> [13383.554412] g_ether gadget: packet filter 0e
+> [13383.558715] g_ether gadget: ecm req21.43 v000e i0000 l0
+> [13383.580261] g_ether gadget: notify connect true
+> [13383.612243] g_ether gadget: notify speed 425984000
+> [13387.213256] cpcap_adc cpcap_adc.0: error reading ADC: -110
+> [13387.218780] cpcap_battery cpcap_battery.0:
+> cpcap_battery_get_voltage failed: -110
+> [13387.523254] cpcap_adc cpcap_adc.0: error reading ADC: -110
+> [13387.528778] cpcap_battery cpcap_battery.0:
+> cpcap_battery_get_current failed: -110
+>=20
+> Ideas welcome.
+>=20
+> Best regards,
+> 							Pavel
+>=20
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--SUOF0GtieIMvvwua
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAltF228ACgkQMOfwapXb+vJ7BgCdG2jHqOCtXQUX5WzUX7Sw7t4+
+hxgAn0dDUYuqVSGR3keAGIxmuU00tq4B
+=q3rl
+-----END PGP SIGNATURE-----
+
+--SUOF0GtieIMvvwua--
