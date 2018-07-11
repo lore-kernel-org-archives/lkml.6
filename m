@@ -2,185 +2,1466 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE17C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90856C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBDAD2077B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:13:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8DC520864
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:14:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jH48CUvt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBDAD2077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8P614ur"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DC520864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732561AbeGKMR2 (ORCPT
+        id S1732661AbeGKMSM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:17:28 -0400
-Received: from mail-eopbgr50088.outbound.protection.outlook.com ([40.107.5.88]:14816
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732320AbeGKMR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:17:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tjmPFZT0su44VxoW2AwyaqtHo53nOGrhEyfESWCiV1I=;
- b=jH48CUvtICjkhp1Q++YSGbF5BDa4EeXh8oHrBj0hqIhIaFqM4shBkI+XE9etsmlSsGdb39eb9bFo5rHzS5kI6X7ny4dxRMeIixLTVEYrgR/dG1LuehSFFBQKTLhi4CltkSV7Z1XvtOCjk4ERQ69Rf0QrS4HAXQl2NSV3hsIALrE=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-Received: from localhost.localdomain (95.76.156.53) by
- AM6PR04MB4295.eurprd04.prod.outlook.com (2603:10a6:209:4f::33) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.21; Wed, 11 Jul 2018 12:13:15 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, kernel@pengutronix.de
-Subject: [PATCH v3 2/2] ARM: dts: imx6sl: Convert gpc to new bindings
-Date:   Wed, 11 Jul 2018 15:11:17 +0300
-Message-Id: <849ea1c3434c87316f15953089633854e01938d6.1531310547.git.leonard.crestez@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1531310547.git.leonard.crestez@nxp.com>
-References: <cover.1531310547.git.leonard.crestez@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [95.76.156.53]
-X-ClientProxiedBy: AM4PR0202CA0017.eurprd02.prod.outlook.com
- (2603:10a6:200:89::27) To AM6PR04MB4295.eurprd04.prod.outlook.com
- (2603:10a6:209:4f::33)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 398ba0d7-89b1-4d16-0a22-08d5e727aeb8
-X-MS-Office365-Filtering-HT: Tenant
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4295;
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4295;3:InoPbKVbqWyPnfujaTYOCVKzgmJ01YupMrxMxAlLibXfB+veaV2IgDSBlvgglEAJoII9r7XDfwRDufEWVi7nTR07gpoqwY7RPvqztwP7xoKQg3nSIpA/8VBFWYJ4FvwU4IC8M9VBNxzh2g8EP2l1su7IFrhrxvuK1KgBtQndDnJGszIaSD9va2VXScexTTY1cRig3UXEVay6vqI6P6cyKbbkzIyVXp5OmpNTZcHL2mMjwTruxtpLfWqsh0fJ17na;25:KTSPsN8d6UArhfzBl6yrLqkhwfyeEbzGuftv3L9oeD2xjBhYdN+0TQLUFH7UGk0a2aIHfF4OUVq7HDpyfF1AwM7bkdm5jlswBQCRsKFvGi3NPOQfaArRpVLjvsDKm56Ti4prUoxYEVUXGXJyYAOuSUdyieNq4xqgitpAsK8iT9TZkY2eOCsm036LMeXPFroage1sromE75CyA+hxgyXx1Qk4ZJPbvi638d2124TNbOyeq0jmvDYUEDvyR+BoUdRYGGZjgcgHYw+c2aUPdaQnw1j6Chu5edTJy2A7x0UyL/MIBeHq7mtpBw+FmhMjdL+/QF2orIMzTnJzEt7cUe8WEQ==;31:XdR9BNdBVpLIb7hoBzlWE0SoCnjY+S3THx7EtnwvZhsq9ql5KGcb+XALXuUL2DOMGGHMiYT5yj7DlhVTT6tgoM+07KWnyaoIeGeAIg+w7DJ0fWrW+CfYkVvt6CiGjNHDcUxK7HwY8Pu8FxJiEZDavqZPzUpRpmIBI8CvTXN57IA014qRjkz3XG2kg/8ihUkO2A0a7mfBFAMoPynL+xmSDaPS7wBIXYALkfFBjW/UXXs=
-X-MS-TrafficTypeDiagnostic: AM6PR04MB4295:
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4295;20:vfq/bfKWz8n/wBJeaj6jeuELjvciMG6VkO82mMwmpeEKWIMxAm/rhpA9GpeYCIwQcfsynOcAR8Ft0QYMjAQQuj9Kex53Qc4dbXIAHu1raI1S13PX6qmBCvV6xlHaXMdeCIpVnapKtf5nZugByNxFol6yVqyM0+JCX0SobV1dQBP13H+pKRlN+uW35irSB2YVMr6//e1gQKBoyZ0Hcq6LlCgCzGjaAnCr+UNAQrDqeEtUBNeDTP4I4MBGyuMK0ZP0HHyu/Z1Dcq1HPgjRYJ4VMl8uiQc83iViQjIwJd0JbYtuLQXMUhGxSS356uVdwfE4YyUsJcUPTP8x8LOzOzRKvxCNSLHGhv2MRHVS+3/Rf1OSq/V6azvewTCG5axUe9AWgRXqi+xNoejtn9/t+ls8slMdMmwKESKqMnYL/mYkEF5537VVZ3LggJ9efXnv+b6ozYYeLrhs/BdBzUBapwCSZMk8xBe3JaYXHm/K7BrKjiLbb24F8nuOt5Rlev8pALRh;4:+SPGERvXNRT7lg97LwczUOsUWYn7bD2DHmebhzeobYrRTuETLF9r0KPNNlOQMVJ4YyGp3q6CF6ZUq6aLaahG5dcyBWAJm1PWOSM2cUCg9zXIaZavFjMJsLBftJmGCko7GblhUm8WWRJLBrtZnfwubsLv0PDBchsMtRvO7gHlGuhj6Plouavn1TSGOsQw8CmlEJAFOkxL95WUltuZb98o2ZM7AMgeQrW/4c7Xw7JM+h7QM4EeDaEK7BK2XGAXrydVQxqZq0NSjoMAErgOVc6ZLWS6Oo/ee1KIeaLaFQXnG8PTdsVLuFHN0AyUuxdT1WBe
-X-Microsoft-Antispam-PRVS: <AM6PR04MB429554DDDACD27D9B4CFED21EE5A0@AM6PR04MB4295.eurprd04.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(93006095)(93001095)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AM6PR04MB4295;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4295;
-X-Forefront-PRVS: 0730093765
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(6069001)(136003)(39860400002)(346002)(396003)(366004)(376002)(199004)(189003)(316002)(186003)(50466002)(16526019)(26005)(105586002)(53936002)(86362001)(4326008)(25786009)(14444005)(110136005)(51416003)(6506007)(76176011)(16586007)(386003)(6116002)(52116002)(97736004)(3846002)(48376002)(7736002)(47776003)(44832011)(2906002)(11346002)(956004)(2616005)(36756003)(118296001)(6512007)(486006)(476003)(446003)(6486002)(478600001)(68736007)(8936002)(305945005)(106356001)(5660300001)(50226002)(8676002)(66066001)(81156014)(81166006)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4295;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR04MB4295;23:FbkwN+9CPSZEPUvHY+56AL09jVR3bIvXEzdVodSx3?=
- =?us-ascii?Q?/rUxVgtZCrVeLm/+0rAnAuW2SQZpN9IAEmQ+LunfhMuBS6nVbPWO04H3Vs4c?=
- =?us-ascii?Q?aIx7rKHs2LwWqgcpzYenNzMbvtGLoX9nU7ztBGerln2V5vC7A6x2tNk1FvFR?=
- =?us-ascii?Q?OPYS5zBgbtiLvioBj53vnrq6kAnoaDmlqt49QNI+DqU084YU6n+JZ+QzIbwy?=
- =?us-ascii?Q?K7hBHh4RJph73uoqD0cW7SSli0hp7mebP0YtHK4Z1HdjQmGi8A/H+dgxDKt9?=
- =?us-ascii?Q?qVIJKKAYwIcSGwcoCRt0DxUw+zmsOef/P6dUWqJOl8H9BSv0an6vx4YQxwj4?=
- =?us-ascii?Q?3xicUglxpr3FT7XSH1qC5iDq+A2e/plz2iAtSLB2HD0lmW7XoAbpFx1HIdvx?=
- =?us-ascii?Q?t2O0GMSHyObX8nMRYvLNom2haWnWkapUeIvik48r2XGR3MslMbd1hcilKP4R?=
- =?us-ascii?Q?BvIhdW0Bu76G+7ctCv3Mct9pJfOzZ8aeg9K7BbRMZTm0+TLLoBnfC9grOV35?=
- =?us-ascii?Q?N+Ms/0JldghqiT6w5ZY3vUzygnw4ZmBzaT70C+jUKCQJqT5Sf96ncS5D9p2A?=
- =?us-ascii?Q?2Y/zKH0mzT1f1BZ9EjmfvuoJsOMV55C2DDcTS3SiBtbMfNpnVP5F0zkoNNVB?=
- =?us-ascii?Q?pVCIdq3LpSnAW+Rib5MVfbQXFdIzFcVxIFueLcnNELoEXNXrxkF4utt3/BSI?=
- =?us-ascii?Q?qrsqa75dJBVdhPGCKx9WFN/KbOhtdRDTfOEuavLZQ9YsWAyAPhz8sHjrhAB8?=
- =?us-ascii?Q?CU7b8YtxXJ1/MJ8sMxdOfUQbWV4cWefkz0Wj/F5/JAeJys49TiU+keqvieaF?=
- =?us-ascii?Q?d9yg6wFoSbcFvGH1wr3HvvhhWVTockcsDvKDK7/85htGrpxIfiwkAyLd/l78?=
- =?us-ascii?Q?wa6D8in1iISc154HpJ/1NFYsw876X+FZxiki7iSZCrq3ZMxSlXLx48FOfhL5?=
- =?us-ascii?Q?8cTfoTOM1stg7Umibg8x+PB90kDD1JBWm53jU6GESA5Yr8LMR+btNlN98YS5?=
- =?us-ascii?Q?uktsKt4ThFGbcrJMQsuBV2l1EJaU8L7dbglc9luo2ATD/vaHxq3bTlLusm50?=
- =?us-ascii?Q?H6E60G+4k/KQQ30QmI5UsmhMo3J7hDE7OBCglDQYXoFRBfK0zOvBWzoMXYRK?=
- =?us-ascii?Q?PmcBflqZN1N0qLn0X9y/l0QcK4m8OlTRslQVH8NgSZ1hA5/EOQ3UDqdh5WUE?=
- =?us-ascii?Q?IrrAXmgEL0qz+WfZsGlJcrmsXfsB4EI1K8HTCYHLnBSRyQ70hBpVqmtTdwu6?=
- =?us-ascii?Q?aABAQidNE8gLSwHbwA=3D?=
-X-Microsoft-Antispam-Message-Info: dSg3CqPq/dqPJyt+ft6dwNdFNkXpeXFNSERaD0r5oQzBbebnrYFIrgzyydqtHiSOStH3z0rvajTq8wZvWxAeaxvbVOW0Y5PEcvVFp0hW5hgk7b0alaUWhAmTBBTmWHLGxE/OzmcD03sKcBnfvbNz8bTaLcdfZmMKcxcByNfJJBgige26NU3Z9hLV82GDYLmaXApnntN166KeDebhsf8YfqFxq05yJ8afrbCoWiztF93vP/pIZCpbKe6plvQL06Iqi7EDmKiT+1HLU/OC7MtZECcUVbiKvOQf1Xe0vIk436sxvHF8WdJ2JrAOC71giMzkK+UsFFbPJjOLsPx1VmUHbI6TSLYpQiCvpK1nKd7g43E=
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4295;6:wuo7Lysqb5E0sQaR+xUWtOiKxNxXq9fgV7CxBjMDy8BK8U1WCfTlAOy7sgv0RYcBaljr7fWtmqmaoEENILXbu5EZSYmVuY8O6k2aSWm1g5hUlhC21hMQnVu9u0/+F3yKjs7nxcE/4OHwXSU/zBX+Zuz67NANceAZB2QfuFc3T6tcmXHwKDlGrxzI57/YeqILflQe/7gd3yObRMsoTt8Eg+2yeh6pgS/jw2P6h/RotfTTSax/MRmJ0y8mhFYw5FpbIWGS2BEpFJTpOHpFjJIaizO9//UbGEtB4HEfSYfp6LDX3gfrUJugO/bCeJTeG16wiVycWSz177wNXN2BQIJpY9lu4SVcaAYXSiXqqS/Kh2ykR/+tVQtnpMdT2POJgTNmb3n/iXb/dosOj8rR4li7ySAS0d6G8KWproIY1KmQD4AY6JM/ZzwiW5fD5TR3FaZO9IlfQkbJYTUGl3f63sh9dQ==;5:/3k3y7vMXBERF9fBA/ReS+5BjcWZcehjOa+Pprv9+YKk+0lQ9MauZwJy2hfArcsjRVZl1V5j88BnSq6nZcopn3YzYoHID3wM5mhJwKjrP6J+UxJyauS88Zistk8j8D66vwfnHNN2T9jYNe1KO4mZm1l6hMbQqTv1OaeyDPQkOB4=;24:rvQ1DWUNRhDh4zniFs8loYCAxzpAkRtIH9jRkbXX/TggpHqYKbEPOtVd0gSw2/vHDtzR/5kNUmPNve/bQfLeVvh6k4rS8dtUKbqrs3P6pR4=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM6PR04MB4295;7:cemlqLMxKId/J202NZ0XI4tBSjgad2/sFt0lujxjwypHQtFyYz8xRlX1/+695UiRg3SMsvGyxsKBOwYcjlvNND612a8VqaGQyJ78F7oQiC+01DE00Mu6XHR9c6vO2AYwvqfYQ71qOniDm5AJqBDqKswA2e0fOeXUDml9hrXwS26OShK1DCBKdVwMO6VhdR6I/uPz3pQmtQvP1IQS/FL5FZSbxqvGXRcu8LW7yC4G8lO6Yb0d03l4BNMh5vL25lau
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Jul 2018 12:13:15.9077
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 398ba0d7-89b1-4d16-0a22-08d5e727aeb8
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4295
+        Wed, 11 Jul 2018 08:18:12 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38365 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732503AbeGKMSM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:18:12 -0400
+Received: by mail-pg1-f196.google.com with SMTP id k3-v6so2858379pgq.5;
+        Wed, 11 Jul 2018 05:14:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=lR4nKMlIGUI/klBEgdg638hEi1gOFqRI3SNXlNnrB7M=;
+        b=M8P614urFcKJiZAhJdRkjWo6lJhRoQScfr349QgniJHrjfhjD44W6W+Sy/FJTrZS9R
+         CdQMbiPtBbmDzJmVuu/jSD0SjbPbYHkEO8StJ3iUP9Dds5whj8qDHx3j0TSL7xIaDDHR
+         gnxgFpd/psf1RbmrR4lTBf8nW0mDqw8fw/xMmMVe+BmS84pjJ1+8ssQLENSFagnfAru1
+         OhbEav1YPNqhcQ78nnvhfuPSfF4BcEYn15S0FRr5it001fjWRMx99f0B83XOUhGkIQrY
+         My4aiopq7lHZrif3W7A/Ez4JkRRL6ePZu4uwGB+4EaXSH+9mi96kyilHxzpxC6S9FU2c
+         WQWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=lR4nKMlIGUI/klBEgdg638hEi1gOFqRI3SNXlNnrB7M=;
+        b=RFO4ZwLuNUvHsmDhHuAx4U8WgsMnkBSsRPEo76vmTPvOXOgayOOSwIoJfyabEg14Vb
+         kDyrHbwwzukKxFENTfmSfm7W/rdqG5CO+BLJlB2SYg021oUgZo9MkP9WrVBJ0p/ELnow
+         b0aghLj7KtYA4LEnZSR1ygeRIEqXVRieIXMI6/XXrwqMkOG6o9Q9NWvK3dgSdQ+9rTOW
+         4muN/Ey9a7bRDwCVcvr7LZXWSzB9+abKuHK2ZY5x/lrgOeEY8tt/hV5bm6+cgixemRRA
+         7K9I3vgihvTvKTA3NhqQe4NaF3ItHtgVAH8csbehIggjEObv2alYbFEbGvwTQCJRhkjo
+         sQBg==
+X-Gm-Message-State: APt69E2Gp2vBNtbJjfjvsXMHayXR8HyZFT9+WEgutalxi3YvLskYla62
+        lVHNSpCAsTPjovFZ1xBDWT4=
+X-Google-Smtp-Source: AAOMgpdIKCHACFGaOeXbXOpEs4tdo/vcJC6aTrYLOCTmF2irDrrb2R09tQVWRf20d2MVIryaTZ0f1A==
+X-Received: by 2002:a65:6252:: with SMTP id q18-v6mr26864523pgv.106.1531311248361;
+        Wed, 11 Jul 2018 05:14:08 -0700 (PDT)
+Received: from localhost.localdomain ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id j75-v6sm3849908pfj.102.2018.07.11.05.14.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 11 Jul 2018 05:14:07 -0700 (PDT)
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     jic23@kernel.org
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        Himanshu Jha <himanshujha199640@gmail.com>,
+        Daniel Baluta <daniel.baluta@gmail.com>
+Subject: [PATCH v3] iio: chemical: Add support for Bosch BME680 sensor
+Date:   Wed, 11 Jul 2018 17:43:49 +0530
+Message-Id: <1531311229-3586-1-git-send-email-himanshujha199640@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With old bindings imx_gpc_onecell_data always sets num_domains to 2 so
-the DISPMIX domain can't actually be referenced. The pd is still defined
-and pm core shuts it down as "unused" so display can't work.
+Bosch BME680 is a 4-in-1 sensor with temperature, pressure, humidity
+and gas sensing capability. It supports both I2C and SPI communication
+protocol for effective data communication.
 
-Fix this by converting to new gpc bindings by adding pgc nodes and
-referencing the newly-defined &pu_disp domain from &lcdif.
+The device supports two modes:
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+1. Sleep mode
+2. Forced mode
+
+The measurements only takes place when forced mode is triggered and a
+single TPHG cycle is performed by the sensor. The sensor automatically
+goes to sleep after afterwards.
+
+The device has various calibration constants/parameters programmed into
+devices' non-volatile memory(NVM) during production and can't be altered
+by the user. These constants are used in the compensation functions to
+get the required compensated readings along with the raw data. The
+compensation functions/algorithms are provided by Bosch Sensortec GmbH
+via their API[1]. As these don't change during the measurement cycle,
+therefore we read and store them at the probe. The default configs
+supplied by Bosch are also set at probe.
+
+0-day tested with build success.
+
+GSoC-2018: https://summerofcode.withgoogle.com/projects/#6691473790074880
+Mentor: Daniel Baluta
+[1] https://github.com/BoschSensortec/BME680_driver
+Datasheet:
+https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BME680-DS001-00.pdf
+
+Cc: Daniel Baluta <daniel.baluta@gmail.com>
+Signed-off-by: Himanshu Jha <himanshujha199640@gmail.com>
 ---
- arch/arm/boot/dts/imx6sl.dtsi | 35 +++++++++++++++++++++++++++++++----
- 1 file changed, 31 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
-index 102c575a6025..49a56b4fd393 100644
---- a/arch/arm/boot/dts/imx6sl.dtsi
-+++ b/arch/arm/boot/dts/imx6sl.dtsi
-@@ -698,14 +698,40 @@
- 				reg = <0x020dc000 0x4000>;
- 				interrupt-controller;
- 				#interrupt-cells = <3>;
- 				interrupts = <0 89 IRQ_TYPE_LEVEL_HIGH>;
- 				interrupt-parent = <&intc>;
--				pu-supply = <&reg_pu>;
--				clocks = <&clks IMX6SL_CLK_GPU2D_OVG>,
--					 <&clks IMX6SL_CLK_GPU2D_PODF>;
--				#power-domain-cells = <1>;
-+				clocks = <&clks IMX6SL_CLK_IPG>;
-+				clock-names = "ipg";
-+
-+				pgc {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					power-domain@0 {
-+						reg = <0>;
-+						#power-domain-cells = <0>;
-+					};
-+
-+					pd_pu: power-domain@1 {
-+						reg = <1>;
-+						#power-domain-cells = <0>;
-+						power-supply = <&reg_pu>;
-+						clocks = <&clks IMX6SL_CLK_GPU2D_OVG>,
-+						         <&clks IMX6SL_CLK_GPU2D_PODF>;
-+					};
-+
-+					pd_disp: power-domain@2 {
-+						reg = <2>;
-+						#power-domain-cells = <0>;
-+						clocks = <&clks IMX6SL_CLK_LCDIF_AXI>,
-+							 <&clks IMX6SL_CLK_LCDIF_PIX>,
-+							 <&clks IMX6SL_CLK_EPDC_AXI>,
-+							 <&clks IMX6SL_CLK_EPDC_PIX>,
-+							 <&clks IMX6SL_CLK_PXP_AXI>;
-+					};
-+				};
- 			};
+v3:
+   -moved files to chemical directory instead of a dedicated directory.
+   -read calibration parameters serially with endian conversions.
+   -drop some return ret.
+   -removed few unnecessary casts safely.
+   -added 'u' suffix to explicitly specify unsigned for large values
+    and thereby fixing comiler warning.
+   -left aligned all comments.
+   -added a comment explaining heater stability failure.
+
+v2:
+   -Used devm_add_action() to add a generic remove method for
+    both I2C & SPI driver.
+   -Introduction of compensation functions.
+   -chip initialisation routines moved to respective I2C and SPI
+    driver.
+   -Introduction of gas sensing rountines.
+   -Simplified Kconfig to reduce various options.
+
+ drivers/iio/chemical/Kconfig       |  25 +
+ drivers/iio/chemical/Makefile      |   3 +
+ drivers/iio/chemical/bme680.h      |  99 ++++
+ drivers/iio/chemical/bme680_core.c | 946 +++++++++++++++++++++++++++++++++++++
+ drivers/iio/chemical/bme680_i2c.c  |  83 ++++
+ drivers/iio/chemical/bme680_spi.c  | 123 +++++
+ 6 files changed, 1279 insertions(+)
+ create mode 100644 drivers/iio/chemical/bme680.h
+ create mode 100644 drivers/iio/chemical/bme680_core.c
+ create mode 100644 drivers/iio/chemical/bme680_i2c.c
+ create mode 100644 drivers/iio/chemical/bme680_spi.c
+
+diff --git a/drivers/iio/chemical/Kconfig b/drivers/iio/chemical/Kconfig
+index 5cb5be7..24790a8 100644
+--- a/drivers/iio/chemical/Kconfig
++++ b/drivers/iio/chemical/Kconfig
+@@ -21,6 +21,31 @@ config ATLAS_PH_SENSOR
+ 	 To compile this driver as module, choose M here: the
+ 	 module will be called atlas-ph-sensor.
  
- 			gpr: iomuxc-gpr@20e0000 {
- 				compatible = "fsl,imx6sl-iomuxc-gpr",
- 					     "fsl,imx6q-iomuxc-gpr", "syscon";
-@@ -756,10 +782,11 @@
- 				clocks = <&clks IMX6SL_CLK_LCDIF_PIX>,
- 					 <&clks IMX6SL_CLK_LCDIF_AXI>,
- 					 <&clks IMX6SL_CLK_DUMMY>;
- 				clock-names = "pix", "axi", "disp_axi";
- 				status = "disabled";
-+				power-domains = <&pd_disp>;
- 			};
++config BME680
++	tristate "Bosch Sensortec BME680 sensor driver"
++	depends on (I2C || SPI)
++	select REGMAP
++	select BME680_I2C if (I2C)
++	select BME680_SPI if (SPI)
++	help
++	  Say yes here to build support for Bosch Sensortec BME680 sensor with
++	  temperature, pressure, humidity and gas sensing capability.
++
++	  This driver can also be built as a module. If so, the module for I2C
++	  would be called bme680_i2c and bme680_spi for SPI support.
++
++config BME680_I2C
++	tristate
++	depends on BME680
++	depends on I2C
++	select REGMAP_I2C
++
++config BME680_SPI
++	tristate
++	depends on BME680
++	depends on SPI
++	select REGMAP_SPI
++
+ config CCS811
+ 	tristate "AMS CCS811 VOC sensor"
+ 	depends on I2C
+diff --git a/drivers/iio/chemical/Makefile b/drivers/iio/chemical/Makefile
+index a629b29..2f4c4ba 100644
+--- a/drivers/iio/chemical/Makefile
++++ b/drivers/iio/chemical/Makefile
+@@ -4,6 +4,9 @@
  
- 			dcp: dcp@20fc000 {
- 				compatible = "fsl,imx6sl-dcp", "fsl,imx28-dcp";
- 				reg = <0x020fc000 0x4000>;
+ # When adding new entries keep the list in alphabetical order
+ obj-$(CONFIG_ATLAS_PH_SENSOR)	+= atlas-ph-sensor.o
++obj-$(CONFIG_BME680) += bme680_core.o
++obj-$(CONFIG_BME680_I2C) += bme680_i2c.o
++obj-$(CONFIG_BME680_SPI) += bme680_spi.o
+ obj-$(CONFIG_CCS811)		+= ccs811.o
+ obj-$(CONFIG_IAQCORE)		+= ams-iaq-core.o
+ obj-$(CONFIG_VZ89X)		+= vz89x.o
+diff --git a/drivers/iio/chemical/bme680.h b/drivers/iio/chemical/bme680.h
+new file mode 100644
+index 0000000..80c4190
+--- /dev/null
++++ b/drivers/iio/chemical/bme680.h
+@@ -0,0 +1,99 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef BME680_H_
++#define BME680_H_
++
++#define BME680_REG_CHIP_I2C_ID			0xD0
++#define BME680_REG_CHIP_SPI_ID			0x50
++#define BME680_CHIP_ID_VAL			0x61
++#define BME680_REG_SOFT_RESET			0xE0
++#define BME680_CMD_SOFTRESET			0xB6
++#define BME680_REG_STATUS			0x73
++#define   BME680_SPI_MEM_PAGE_BIT		BIT(4)
++#define   BME680_SPI_MEM_PAGE_1_VAL		1
++
++#define BME680_OSRS_TEMP_X(osrs_t)		((osrs_t) << 5)
++#define BME680_OSRS_PRESS_X(osrs_p)		((osrs_p) << 2)
++#define BME680_OSRS_HUMID_X(osrs_h)		((osrs_h) << 0)
++
++#define BME680_REG_TEMP_MSB			0x22
++#define BME680_REG_PRESS_MSB			0x1F
++#define BM6880_REG_HUMIDITY_MSB			0x25
++#define BME680_REG_GAS_MSB			0x2A
++#define BME680_REG_GAS_R_LSB			0x2B
++#define   BME680_GAS_STAB_BIT			BIT(4)
++
++#define BME680_REG_CTRL_HUMIDITY		0x72
++#define   BME680_OSRS_HUMIDITY_MASK		GENMASK(2, 0)
++
++#define BME680_REG_CTRL_MEAS			0x74
++#define   BME680_OSRS_TEMP_MASK			GENMASK(7, 5)
++#define   BME680_OSRS_PRESS_MASK		GENMASK(4, 2)
++#define   BME680_MODE_MASK			GENMASK(1, 0)
++
++#define BME680_MODE_FORCED			BIT(0)
++#define BME680_MODE_SLEEP			0
++
++#define BME680_REG_CONFIG			0x75
++#define   BME680_FILTER_MASK			GENMASK(4, 2)
++#define   BME680_FILTER_COEFF			BIT(1)
++
++/* TEMP/PRESS/HUMID reading skipped */
++#define BME680_MEAS_SKIPPED			0x8000
++
++#define BME680_MAX_OVERFLOW_VAL			0x40000000
++#define BME680_HUM_REG_SHIFT_VAL		4
++#define BME680_BIT_H1_DATA_MSK			0x0F
++
++#define BME680_REG_RES_HEAT_RANGE		0x02
++#define BME680_RHRANGE_MSK			0x30
++#define BME680_REG_RES_HEAT_VAL			0x00
++#define BME680_REG_RANGE_SW_ERR			0x04
++#define BME680_RSERROR_MSK			0xF0
++#define BME680_REG_RES_HEAT_0			0x5A
++#define BME680_REG_GAS_WAIT_0			0x64
++#define BME680_GAS_RANGE_MASK			0x0F
++#define BME680_ADC_GAS_RES_SHIFT		6
++#define BME680_AMB_TEMP				25
++
++#define BME680_REG_CTRL_GAS_1			0x71
++#define   BME680_RUN_GAS_MASK			BIT(4)
++#define   BME680_NB_CONV_MASK			GENMASK(3, 0)
++#define	BME680_RUN_GAS_EN			BIT(4)
++#define BME680_NB_CONV_0			0
++
++#define BME680_REG_MEAS_STAT_0			0x1D
++#define   BME680_GAS_MEAS_BIT			BIT(6)
++
++/* Calibration Parameters */
++#define BME680_T2_LSB_REG	0x8A
++#define BME680_T3_REG		0x8C
++#define BME680_P1_LSB_REG	0x8E
++#define BME680_P2_LSB_REG	0x90
++#define BME680_P3_REG		0x92
++#define BME680_P4_LSB_REG	0x94
++#define BME680_P5_LSB_REG	0x96
++#define BME680_P7_REG		0x98
++#define BME680_P6_REG		0x99
++#define BME680_P8_LSB_REG	0x9C
++#define BME680_P9_LSB_REG	0x9E
++#define BME680_P10_REG		0xA0
++#define BME680_H2_LSB_REG	0xE2
++#define BME680_H2_MSB_REG	0xE1
++#define BME680_H1_MSB_REG	0xE3
++#define BME680_H1_LSB_REG	0xE2
++#define BME680_H3_REG		0xE4
++#define BME680_H4_REG		0xE5
++#define BME680_H5_REG		0xE6
++#define BME680_H6_REG		0xE7
++#define BME680_H7_REG		0xE8
++#define BME680_T1_LSB_REG	0xE9
++#define BME680_GH2_LSB_REG	0xEB
++#define BME680_GH1_REG		0xED
++#define BME680_GH3_REG		0xEE
++
++extern const struct regmap_config bme680_regmap_config;
++
++int bme680_core_probe(struct device *dev, struct regmap *regmap,
++		      const char *name);
++
++#endif  /* BME680_H_ */
+diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+new file mode 100644
+index 0000000..8dd789e
+--- /dev/null
++++ b/drivers/iio/chemical/bme680_core.c
+@@ -0,0 +1,946 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Bosch BME680 - Temperature, Pressure, Humidity & Gas Sensor
++ *
++ * Copyright (C) 2017 - 2018 Bosch Sensortec GmbH
++ * Copyright (C) 2018 Himanshu Jha <himanshujha199640@gmail.com>
++ */
++#include <linux/acpi.h>
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/log2.h>
++#include <linux/regmap.h>
++#include <linux/iio/iio.h>
++#include <linux/iio/sysfs.h>
++
++#include "bme680.h"
++
++struct bme680_calib {
++	u16 par_t1;
++	s16 par_t2;
++	s8  par_t3;
++	u16 par_p1;
++	s16 par_p2;
++	s8  par_p3;
++	s16 par_p4;
++	s16 par_p5;
++	s8  par_p6;
++	s8  par_p7;
++	s16 par_p8;
++	s16 par_p9;
++	u8  par_p10;
++	u16 par_h1;
++	u16 par_h2;
++	s8  par_h3;
++	s8  par_h4;
++	s8  par_h5;
++	s8  par_h6;
++	s8  par_h7;
++	s8  par_gh1;
++	s16 par_gh2;
++	s8  par_gh3;
++	u8  res_heat_range;
++	s8  res_heat_val;
++	s8  range_sw_err;
++};
++
++struct bme680_data {
++	struct regmap *regmap;
++	struct bme680_calib bme680;
++	u8 oversampling_temp;
++	u8 oversampling_press;
++	u8 oversampling_humid;
++	u16 heater_dur;
++	u16 heater_temp;
++	/*
++	 * Carryover value from temperature conversion, used in pressure
++	 * and humidity compensation calculations.
++	 */
++	s32 t_fine;
++};
++
++const struct regmap_config bme680_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++};
++EXPORT_SYMBOL(bme680_regmap_config);
++
++static const struct iio_chan_spec bme680_channels[] = {
++	{
++		.type = IIO_TEMP,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |
++				      BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
++	},
++	{
++		.type = IIO_PRESSURE,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |
++				      BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
++	},
++	{
++		.type = IIO_HUMIDITYRELATIVE,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED) |
++				      BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
++	},
++	{
++		.type = IIO_RESISTANCE,
++		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
++	},
++};
++
++static const int bme680_oversampling_avail[] = { 1, 2, 4, 8, 16 };
++
++static int bme680_read_calib(struct bme680_data *data,
++			     struct bme680_calib *calib)
++{
++	struct device *dev = regmap_get_device(data->regmap);
++	unsigned int tmp, tmp_msb, tmp_lsb;
++	int ret;
++	__le16 buf;
++
++	/* Temperature related coefficients */
++	ret = regmap_bulk_read(data->regmap, BME680_T1_LSB_REG,
++			       (u8 *) &buf, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_T1_LSB_REG\n");
++		return ret;
++	}
++	calib->par_t1 = le16_to_cpu(buf);
++
++	ret = regmap_bulk_read(data->regmap, BME680_T2_LSB_REG,
++			       (u8 *) &buf, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_T2_LSB_REG\n");
++		return ret;
++	}
++	calib->par_t2 = le16_to_cpu(buf);
++
++	ret = regmap_read(data->regmap, BME680_T3_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_T3_REG\n");
++		return ret;
++	}
++	calib->par_t3 = tmp;
++
++	/* Pressure related coefficients */
++	ret = regmap_bulk_read(data->regmap, BME680_P1_LSB_REG,
++			       (u8 *) &buf, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P1_LSB_REG\n");
++		return ret;
++	}
++	calib->par_p1 = le16_to_cpu(buf);
++
++	ret = regmap_bulk_read(data->regmap, BME680_P2_LSB_REG,
++			       (u8 *) &buf, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P2_LSB_REG\n");
++		return ret;
++	}
++	calib->par_p2 = le16_to_cpu(buf);
++
++	ret = regmap_read(data->regmap, BME680_P3_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P3_REG\n");
++		return ret;
++	}
++	calib->par_p3 = tmp;
++
++	ret = regmap_bulk_read(data->regmap, BME680_P4_LSB_REG,
++			       (u8 *) &buf, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P4_LSB_REG\n");
++		return ret;
++	}
++	calib->par_p4 = le16_to_cpu(buf);
++
++	ret = regmap_bulk_read(data->regmap, BME680_P5_LSB_REG,
++			       (u8 *) &buf, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P5_LSB_REG\n");
++		return ret;
++	}
++	calib->par_p5 = le16_to_cpu(buf);
++
++	ret = regmap_read(data->regmap, BME680_P6_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P6_REG\n");
++		return ret;
++	}
++	calib->par_p6 = tmp;
++
++	ret = regmap_read(data->regmap, BME680_P7_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P7_REG\n");
++		return ret;
++	}
++	calib->par_p7 = tmp;
++
++	ret = regmap_bulk_read(data->regmap, BME680_P8_LSB_REG,
++			       (u8 *) &buf, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P8_LSB_REG\n");
++		return ret;
++	}
++	calib->par_p8 = le16_to_cpu(buf);
++
++	ret = regmap_bulk_read(data->regmap, BME680_P9_LSB_REG,
++			       (u8 *) &buf, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P9_LSB_REG\n");
++		return ret;
++	}
++	calib->par_p9 = le16_to_cpu(buf);
++
++	ret = regmap_read(data->regmap, BME680_P10_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_P10_REG\n");
++		return ret;
++	}
++	calib->par_p10 = tmp;
++
++	/* Humidity related coefficients */
++	ret = regmap_read(data->regmap, BME680_H1_MSB_REG, &tmp_msb);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_H1_MSB_REG\n");
++		return ret;
++	}
++
++	ret = regmap_read(data->regmap, BME680_H1_LSB_REG, &tmp_lsb);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_H1_LSB_REG\n");
++		return ret;
++	}
++
++	calib->par_h1 = (tmp_msb << BME680_HUM_REG_SHIFT_VAL) |
++				(tmp_lsb & BME680_BIT_H1_DATA_MSK);
++
++	ret = regmap_read(data->regmap, BME680_H2_MSB_REG, &tmp_msb);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_H2_MSB_REG\n");
++		return ret;
++	}
++
++	ret = regmap_read(data->regmap, BME680_H2_LSB_REG, &tmp_lsb);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_H2_LSB_REG\n");
++		return ret;
++	}
++
++	calib->par_h2 = (tmp_msb << BME680_HUM_REG_SHIFT_VAL) |
++				(tmp_lsb >> BME680_HUM_REG_SHIFT_VAL);
++
++	ret = regmap_read(data->regmap, BME680_H3_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_H3_REG\n");
++		return ret;
++	}
++	calib->par_h3 = tmp;
++
++	ret = regmap_read(data->regmap, BME680_H4_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_H4_REG\n");
++		return ret;
++	}
++	calib->par_h4 = tmp;
++
++	ret = regmap_read(data->regmap, BME680_H5_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_H5_REG\n");
++		return ret;
++	}
++	calib->par_h5 = tmp;
++
++	ret = regmap_read(data->regmap, BME680_H6_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_H6_REG\n");
++		return ret;
++	}
++	calib->par_h6 = tmp;
++
++	ret = regmap_read(data->regmap, BME680_H7_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_H7_REG\n");
++		return ret;
++	}
++	calib->par_h7 = tmp;
++
++	/* Gas heater related coefficients */
++	ret = regmap_read(data->regmap, BME680_GH1_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_GH1_REG\n");
++		return ret;
++	}
++	calib->par_gh1 = tmp;
++
++	ret = regmap_bulk_read(data->regmap, BME680_GH2_LSB_REG,
++			       (u8 *) &buf, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_GH2_LSB_REG\n");
++		return ret;
++	}
++	calib->par_gh2 = le16_to_cpu(buf);
++
++	ret = regmap_read(data->regmap, BME680_GH3_REG, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read BME680_GH3_REG\n");
++		return ret;
++	}
++	calib->par_gh3 = tmp;
++
++	/* Other coefficients */
++	ret = regmap_read(data->regmap, BME680_REG_RES_HEAT_RANGE, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read resistance heat range\n");
++		return ret;
++	}
++	calib->res_heat_range = (tmp & BME680_RHRANGE_MSK) / 16;
++
++	ret = regmap_read(data->regmap, BME680_REG_RES_HEAT_VAL, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read resistance heat value\n");
++		return ret;
++	}
++	calib->res_heat_val = tmp;
++
++	ret = regmap_read(data->regmap, BME680_REG_RANGE_SW_ERR, &tmp);
++	if (ret < 0) {
++		dev_err(dev, "failed to read range software error\n");
++		return ret;
++	}
++	calib->range_sw_err = (tmp & BME680_RSERROR_MSK) / 16;
++
++	return 0;
++}
++
++/* Taken from Bosch BME680 API */
++static s32 bme680_compensate_temp(struct bme680_data *data,
++				  s32 adc_temp)
++{
++	struct bme680_calib *calib = &data->bme680;
++	s64 var1, var2, var3, calc_temp;
++
++	var1 = ((s32) adc_temp >> 3) - ((s32) calib->par_t1 << 1);
++	var2 = (var1 * (s32) calib->par_t2) >> 11;
++	var3 = ((var1 >> 1) * (var1 >> 1)) >> 12;
++	var3 = ((var3) * ((s32) calib->par_t3 << 4)) >> 14;
++	data->t_fine = (s32) (var2 + var3);
++	calc_temp = (s16) (((data->t_fine * 5) + 128) >> 8);
++
++	return calc_temp;
++}
++
++/* Taken from Bosch BME680 API */
++static u32 bme680_compensate_press(struct bme680_data *data,
++				   u32 adc_press)
++{
++	struct bme680_calib *calib = &data->bme680;
++	s32 var1, var2, var3, press_comp;
++
++	var1 = (((s32)data->t_fine) >> 1) - 64000;
++	var2 = ((((var1 >> 2) * (var1 >> 2)) >> 11) * (s32)calib->par_p6) >> 2;
++	var2 = var2 + ((var1 * (s32)calib->par_p5) << 1);
++	var2 = (var2 >> 2) + ((s32)calib->par_p4 << 16);
++	var1 = (((((var1 >> 2) * (var1 >> 2)) >> 13) *
++			((s32)calib->par_p3 << 5)) >> 3) +
++			(((s32)calib->par_p2 * var1) >> 1);
++	var1 = var1 >> 18;
++	var1 = ((32768 + var1) * (s32)calib->par_p1) >> 15;
++	press_comp = 1048576 - adc_press;
++	press_comp = ((press_comp - (var2 >> 12)) * 3125);
++
++	if (press_comp >= BME680_MAX_OVERFLOW_VAL)
++		press_comp = ((press_comp / (u32)var1) << 1);
++	else
++		press_comp = ((press_comp << 1) / (u32)var1);
++
++	var1 = ((s32)calib->par_p9 * (((press_comp >> 3) *
++				     (press_comp >> 3)) >> 13)) >> 12;
++	var2 = ((press_comp >> 2) * (s32)calib->par_p8) >> 13;
++	var3 = ((press_comp >> 8) * (press_comp >> 8) *
++			(press_comp >> 8) * calib->par_p10) >> 17;
++
++	press_comp += ((var1 + var2 + var3 + ((s32)calib->par_p7 << 7)) >> 4);
++
++	return press_comp;
++}
++
++/* Taken from Bosch BME680 API */
++static u32 bme680_compensate_humid(struct bme680_data *data,
++				   u16 adc_humid)
++{
++	struct bme680_calib *calib = &data->bme680;
++	s32 var1, var2, var3, var4, var5, var6, temp_scaled, calc_hum;
++
++	temp_scaled = (((s32) data->t_fine * 5) + 128) >> 8;
++	var1 = (adc_humid - ((s32) ((s32) calib->par_h1 * 16))) -
++			(((temp_scaled * (s32) calib->par_h3) / 100) >> 1);
++	var2 = ((s32) calib->par_h2 * (((temp_scaled * (s32) calib->par_h4) /
++			((s32) 100)) + (((temp_scaled * ((temp_scaled *
++			(s32) calib->par_h5) / 100)) >> 6) / 100) +
++			(s32) (1 << 14))) >> 10;
++	var3 = var1 * var2;
++	var4 = (s32) calib->par_h6 << 7;
++	var4 = (var4 + ((temp_scaled * (s32) calib->par_h7) / 100)) >> 4;
++	var5 = ((var3 >> 14) * (var3 >> 14)) >> 10;
++	var6 = (var4 * var5) >> 1;
++	calc_hum = (((var3 + var6) >> 10) * 1000) >> 12;
++
++	if (calc_hum > 100000) /* Cap at 100%rH */
++		calc_hum = 100000;
++	else if (calc_hum < 0)
++		calc_hum = 0;
++
++	return calc_hum;
++}
++
++/* Taken from Bosch BME680 API */
++static u32 bme680_compensate_gas(struct bme680_data *data, u16 gas_res_adc,
++				 u8 gas_range)
++{
++	struct bme680_calib *calib = &data->bme680;
++	s64 var1;
++	u64 var2;
++	s64 var3;
++	u32 calc_gas_res;
++
++	/* Look up table 1 for the possible gas range values */
++	u32 lookupTable1[16] = {2147483647u, 2147483647u, 2147483647u,
++				2147483647u, 2147483647u, 2126008810u,
++				2147483647u, 2130303777u, 2147483647u,
++				2147483647u, 2143188679u, 2136746228u,
++				2147483647u, 2126008810u, 2147483647u,
++				2147483647u};
++	/* Look up table 2 for the possible gas range values */
++	u32 lookupTable2[16] = {4096000000u, 2048000000u, 1024000000u,
++				512000000u, 255744255u, 127110228u, 64000000u,
++				32258064u, 16016016u, 8000000u, 4000000u,
++				2000000u, 1000000u, 500000u, 250000u, 125000u};
++
++	var1 = ((1340 + (5 * (s64) calib->range_sw_err)) *
++			((s64) lookupTable1[gas_range])) >> 16;
++	var2 = (((s64) ((s64) gas_res_adc << 15) - 16777216) + var1);
++	var3 = (((s64) lookupTable2[gas_range] * (s64) var1) >> 9);
++	calc_gas_res = (u32) ((var3 + ((s64) var2 >> 1)) / (s64) var2);
++
++	return calc_gas_res;
++}
++
++/* Taken from Bosch BME680 API */
++static u8 bme680_calc_heater_res(struct bme680_data *data, u16 temp)
++{
++	struct bme680_calib *calib = &data->bme680;
++	s32 var1, var2, var3, var4, var5, heatr_res_x100;
++	u8 heatr_res;
++
++	if (temp > 400) /* Cap temperature */
++		temp = 400;
++
++	var1 = (((s32) BME680_AMB_TEMP * calib->par_gh3) / 1000) * 256;
++	var2 = (calib->par_gh1 + 784) * (((((calib->par_gh2 + 154009) *
++						temp * 5) / 100)
++						+ 3276800) / 10);
++	var3 = var1 + (var2 / 2);
++	var4 = (var3 / (calib->res_heat_range + 4));
++	var5 = (131 * calib->res_heat_val) + 65536;
++	heatr_res_x100 = ((var4 / var5) - 250) * 34;
++	heatr_res = (heatr_res_x100 + 50) / 100;
++
++	return heatr_res;
++}
++
++/* Taken from Bosch BME680 API */
++static u8 bme680_calc_heater_dur(u16 dur)
++{
++	u8 durval, factor = 0;
++
++	if (dur >= 0xfc0) {
++		durval = 0xff; /* Max duration */
++	} else {
++		while (dur > 0x3F) {
++			dur = dur / 4;
++			factor += 1;
++		}
++		durval = dur + (factor * 64);
++	}
++
++	return durval;
++}
++
++static int bme680_set_mode(struct bme680_data *data, bool mode)
++{
++	struct device *dev = regmap_get_device(data->regmap);
++	int ret;
++
++	if (mode) {
++		ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
++					BME680_MODE_MASK, BME680_MODE_FORCED);
++		if (ret < 0)
++			dev_err(dev, "failed to set forced mode\n");
++
++	} else {
++		ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
++					BME680_MODE_MASK, BME680_MODE_SLEEP);
++		if (ret < 0)
++			dev_err(dev, "failed to set sleep mode\n");
++
++	}
++
++	return ret;
++}
++
++static int bme680_chip_config(struct bme680_data *data)
++{
++	struct device *dev = regmap_get_device(data->regmap);
++	int ret;
++	u8 osrs = BME680_OSRS_HUMID_X(data->oversampling_humid + 1);
++	/*
++	 * Highly recommended to set oversampling of humidity before
++	 * temperature/pressure oversampling.
++	 */
++	ret = regmap_update_bits(data->regmap, BME680_REG_CTRL_HUMIDITY,
++				 BME680_OSRS_HUMIDITY_MASK, osrs);
++	if (ret < 0) {
++		dev_err(dev, "failed to write ctrl_hum register\n");
++		return ret;
++	}
++
++	/* IIR filter settings */
++	ret = regmap_update_bits(data->regmap, BME680_REG_CONFIG,
++				 BME680_FILTER_MASK,
++				 BME680_FILTER_COEFF);
++	if (ret < 0) {
++		dev_err(dev, "failed to write config register\n");
++		return ret;
++	}
++
++	osrs = BME680_OSRS_TEMP_X(data->oversampling_temp + 1) |
++		BME680_OSRS_PRESS_X(data->oversampling_press + 1);
++
++	ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
++				BME680_OSRS_TEMP_MASK |
++				BME680_OSRS_PRESS_MASK,
++				osrs);
++	if (ret < 0)
++		dev_err(dev, "failed to write ctrl_meas register\n");
++
++	return ret;
++}
++
++static int bme680_gas_config(struct bme680_data *data)
++{
++	struct device *dev = regmap_get_device(data->regmap);
++	int ret;
++	u8 heatr_res, heatr_dur;
++
++	heatr_res = bme680_calc_heater_res(data, data->heater_temp);
++
++	/* set target heater temperature */
++	ret = regmap_write(data->regmap, BME680_REG_RES_HEAT_0, heatr_res);
++	if (ret < 0) {
++		dev_err(dev, "failed to write res_heat_0 register\n");
++		return ret;
++	}
++
++	heatr_dur = bme680_calc_heater_dur(data->heater_dur);
++
++	/* set target heating duration */
++	ret = regmap_write(data->regmap, BME680_REG_GAS_WAIT_0, heatr_dur);
++	if (ret < 0) {
++		dev_err(dev, "failted to write gas_wait_0 register\n");
++		return ret;
++	}
++
++	/* Selecting the runGas and NB conversion settings for the sensor */
++	ret = regmap_update_bits(data->regmap, BME680_REG_CTRL_GAS_1,
++				 BME680_RUN_GAS_MASK | BME680_NB_CONV_MASK,
++				 BME680_RUN_GAS_EN | BME680_NB_CONV_0);
++	if (ret < 0)
++		dev_err(dev, "failed to write ctrl_gas_1 register\n");
++
++	return ret;
++}
++
++/* Outputs temperature measurement in degC */
++static int bme680_read_temp(struct bme680_data *data,
++			    int *val, int *val2)
++{
++	struct device *dev = regmap_get_device(data->regmap);
++	int ret = 0;
++	__be32 tmp = 0;
++	s32 adc_temp, comp_temp;
++
++	/* set forced mode to trigger measurement */
++	ret = bme680_set_mode(data, true);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_bulk_read(data->regmap, BME680_REG_TEMP_MSB,
++			       (u8 *) &tmp, 3);
++	if (ret < 0) {
++		dev_err(dev, "failed to read temperature\n");
++		return ret;
++	}
++
++	adc_temp = be32_to_cpu(tmp) >> 12;
++	if (adc_temp == BME680_MEAS_SKIPPED) {
++		/* reading was skipped */
++		dev_err(dev, "reading temperature skipped\n");
++		return -EINVAL;
++	}
++	comp_temp = bme680_compensate_temp(data, adc_temp);
++	/*
++	 * val might be NULL if we're called by the read_press/read_humid
++	 * routine which is callled to get t_fine value used in
++	 * compensate_press/compensate_humid to get compensated
++	 * pressure/humidity readings.
++	 */
++	if (val && val2) {
++		*val = comp_temp;
++		*val2 = 100;
++		return IIO_VAL_FRACTIONAL;
++	}
++
++	return ret;
++}
++
++/* Outputs pressure measurement in hPa */
++static int bme680_read_press(struct bme680_data *data,
++			     int *val, int *val2)
++{
++	struct device *dev = regmap_get_device(data->regmap);
++	int ret;
++	__be32 tmp = 0;
++	s32 adc_press;
++
++	/* Read and compensate temperature to get a reading of t_fine */
++	ret = bme680_read_temp(data, NULL, NULL);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_bulk_read(data->regmap, BME680_REG_PRESS_MSB,
++			       (u8 *) &tmp, 3);
++	if (ret < 0) {
++		dev_err(dev, "failed to read pressure\n");
++		return ret;
++	}
++
++	adc_press = be32_to_cpu(tmp) >> 12;
++	if (adc_press == BME680_MEAS_SKIPPED) {
++		/* reading was skipped */
++		dev_err(dev, "reading pressure skipped\n");
++		return -EINVAL;
++	}
++
++	*val = bme680_compensate_press(data, adc_press);
++	*val2 = 100;
++	return IIO_VAL_FRACTIONAL;
++}
++
++/* Outputs humidity measurement in %r.H */
++static int bme680_read_humid(struct bme680_data *data,
++			     int *val, int *val2)
++{
++	struct device *dev = regmap_get_device(data->regmap);
++	int ret;
++	__be16 tmp = 0;
++	s32 adc_humidity;
++	u32 comp_humidity;
++
++	/* Read and compensate temperature so we get a reading of t_fine */
++	ret = bme680_read_temp(data, NULL, NULL);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_bulk_read(data->regmap, BM6880_REG_HUMIDITY_MSB,
++			       (u8 *) &tmp, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read humidity\n");
++		return ret;
++	}
++
++	adc_humidity = be16_to_cpu(tmp);
++	if (adc_humidity == BME680_MEAS_SKIPPED) {
++		/* reading was skipped */
++		dev_err(dev, "reading humidity skipped\n");
++		return -EINVAL;
++	}
++	comp_humidity = bme680_compensate_humid(data, adc_humidity);
++
++	*val = comp_humidity;
++	*val2 = 1000;
++	return IIO_VAL_FRACTIONAL;
++}
++
++/* Outputs gas measurement in ohm */
++static int bme680_read_gas(struct bme680_data *data,
++			   int *val)
++{
++	struct device *dev = regmap_get_device(data->regmap);
++	int ret;
++	__be16 tmp = 0;
++	unsigned int check;
++	u16 adc_gas_res;
++	u8 gas_range;
++
++	/* Set heater settings */
++	ret = bme680_gas_config(data);
++	if (ret < 0) {
++		dev_err(dev, "failed to set gas config\n");
++		return ret;
++	}
++
++	/* set forced mode to trigger a single measurement */
++	ret = bme680_set_mode(data, true);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_read(data->regmap, BME680_REG_MEAS_STAT_0, &check);
++	if (check & BME680_GAS_MEAS_BIT) {
++		dev_err(dev, "gas measurement incomplete\n");
++		return -EBUSY;
++	}
++
++	ret = regmap_read(data->regmap, BME680_REG_GAS_R_LSB, &check);
++	if (ret < 0) {
++		dev_err(dev, "failed to read gas_r_lsb register\n");
++		return ret;
++	}
++
++	if ((check & BME680_GAS_STAB_BIT) == 0) {
++	/*
++	 * occurs if either the gas heating duration was insuffient
++	 * to reach the target heater temperature or the target
++	 * heater temperature was too high for the heater sink to
++	 * reach.
++	 */
++		dev_err(dev, "heater failed to reach the target temperature\n");
++		return -EINVAL;
++	}
++
++	ret = regmap_bulk_read(data->regmap, BME680_REG_GAS_MSB,
++			       (u8 *) &tmp, 2);
++	if (ret < 0) {
++		dev_err(dev, "failed to read gas resistance\n");
++		return ret;
++	}
++
++	gas_range = check & BME680_GAS_RANGE_MASK;
++	adc_gas_res = be16_to_cpu(tmp) >> BME680_ADC_GAS_RES_SHIFT;
++
++	*val = bme680_compensate_gas(data, adc_gas_res, gas_range);
++	return IIO_VAL_INT;
++}
++
++static int bme680_read_raw(struct iio_dev *indio_dev,
++			   struct iio_chan_spec const *chan,
++			   int *val, int *val2, long mask)
++{
++	struct bme680_data *data = iio_priv(indio_dev);
++
++	switch (mask) {
++	case IIO_CHAN_INFO_PROCESSED:
++		switch (chan->type) {
++		case IIO_TEMP:
++			return bme680_read_temp(data, val, val2);
++		case IIO_PRESSURE:
++			return bme680_read_press(data, val, val2);
++		case IIO_HUMIDITYRELATIVE:
++			return bme680_read_humid(data, val, val2);
++		case IIO_RESISTANCE:
++			return bme680_read_gas(data, val);
++		default:
++			return -EINVAL;
++		}
++	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
++		switch (chan->type) {
++		case IIO_TEMP:
++			*val = 1 << data->oversampling_temp;
++			return IIO_VAL_INT;
++		case IIO_PRESSURE:
++			*val = 1 << data->oversampling_press;
++			return IIO_VAL_INT;
++		case IIO_HUMIDITYRELATIVE:
++			*val = 1 << data->oversampling_humid;
++			return IIO_VAL_INT;
++		default:
++			return -EINVAL;
++		}
++	default:
++		return -EINVAL;
++	}
++
++	return -EINVAL;
++}
++
++static int bme680_write_oversampling_ratio_temp(struct bme680_data *data,
++						int val)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(bme680_oversampling_avail); ++i) {
++		if (bme680_oversampling_avail[i] == val) {
++			data->oversampling_temp = ilog2(val);
++
++			return bme680_chip_config(data);
++		}
++	}
++
++	return -EINVAL;
++}
++
++static int bme680_write_oversampling_ratio_press(struct bme680_data *data,
++						 int val)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(bme680_oversampling_avail); ++i) {
++		if (bme680_oversampling_avail[i] == val) {
++			data->oversampling_press = ilog2(val);
++
++			return bme680_chip_config(data);
++		}
++	}
++
++	return -EINVAL;
++}
++
++static int bme680_write_oversampling_ratio_humid(struct bme680_data *data,
++						 int val)
++{
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(bme680_oversampling_avail); ++i) {
++		if (bme680_oversampling_avail[i] == val) {
++			data->oversampling_humid = ilog2(val);
++
++			return bme680_chip_config(data);
++		}
++	}
++
++	return -EINVAL;
++}
++
++static int bme680_write_raw(struct iio_dev *indio_dev,
++			    struct iio_chan_spec const *chan,
++			    int val, int val2, long mask)
++{
++	struct bme680_data *data = iio_priv(indio_dev);
++
++	switch (mask) {
++	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
++		switch (chan->type) {
++		case IIO_TEMP:
++			return bme680_write_oversampling_ratio_temp(data, val);
++		case IIO_PRESSURE:
++			return bme680_write_oversampling_ratio_press(data, val);
++		case IIO_HUMIDITYRELATIVE:
++			return bme680_write_oversampling_ratio_humid(data, val);
++		default:
++			return -EINVAL;
++		}
++	default:
++		return -EINVAL;
++	}
++
++	return -EINVAL;
++}
++
++static const char bme680_oversampling_ratio_show[] = "1 2 4 8 16";
++
++static IIO_CONST_ATTR(oversampling_ratio_available,
++		      bme680_oversampling_ratio_show);
++
++static struct attribute *bme680_attributes[] = {
++	&iio_const_attr_oversampling_ratio_available.dev_attr.attr,
++	NULL,
++};
++
++static const struct attribute_group bme680_attribute_group = {
++	.attrs = bme680_attributes,
++};
++
++static const struct iio_info bme680_info = {
++	.read_raw = &bme680_read_raw,
++	.write_raw = &bme680_write_raw,
++	.attrs = &bme680_attribute_group,
++};
++
++static const char *bme680_match_acpi_device(struct device *dev)
++{
++	const struct acpi_device_id *id;
++
++	id = acpi_match_device(dev->driver->acpi_match_table, dev);
++	if (!id)
++		return NULL;
++
++	return dev_name(dev);
++}
++
++static void bme680_core_remove(void *arg)
++{
++	iio_device_unregister(arg);
++}
++
++int bme680_core_probe(struct device *dev, struct regmap *regmap,
++		      const char *name)
++{
++	struct iio_dev *indio_dev;
++	struct bme680_data *data;
++	int ret;
++
++	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	ret = devm_add_action(dev, bme680_core_remove, indio_dev);
++	if (ret < 0) {
++		dev_err(dev, "failed to register remove action\n");
++		return ret;
++	}
++
++	if (!name && ACPI_HANDLE(dev))
++		name = bme680_match_acpi_device(dev);
++
++	data = iio_priv(indio_dev);
++	dev_set_drvdata(dev, indio_dev);
++	data->regmap = regmap;
++	indio_dev->dev.parent = dev;
++	indio_dev->name = name;
++	indio_dev->channels = bme680_channels;
++	indio_dev->num_channels = ARRAY_SIZE(bme680_channels);
++	indio_dev->info = &bme680_info;
++	indio_dev->modes = INDIO_DIRECT_MODE;
++
++	/* default values for the sensor */
++	data->oversampling_humid = ilog2(2); /* 2X oversampling rate */
++	data->oversampling_press = ilog2(4); /* 4X oversampling rate */
++	data->oversampling_temp = ilog2(8);  /* 8X oversampling rate */
++	data->heater_temp = 320; /* degree Celsius */
++	data->heater_dur = 150;  /* milliseconds */
++
++	ret = bme680_chip_config(data);
++	if (ret < 0) {
++		dev_err(dev, "failed to set chip_config data\n");
++		return ret;
++	}
++
++	ret = bme680_gas_config(data);
++	if (ret < 0) {
++		dev_err(dev, "failed to set gas config data\n");
++		return ret;
++	}
++
++	ret = bme680_read_calib(data, &data->bme680);
++	if (ret < 0) {
++		dev_err(dev,
++			"failed to read calibration coefficients at probe\n");
++		return ret;
++	}
++
++	return iio_device_register(indio_dev);
++}
++EXPORT_SYMBOL_GPL(bme680_core_probe);
++
++MODULE_AUTHOR("Himanshu Jha <himanshujha199640@gmail.com>");
++MODULE_DESCRIPTION("Bosch BME680 Driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/iio/chemical/bme680_i2c.c b/drivers/iio/chemical/bme680_i2c.c
+new file mode 100644
+index 0000000..a3a77cf
+--- /dev/null
++++ b/drivers/iio/chemical/bme680_i2c.c
+@@ -0,0 +1,83 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * BME680 - I2C Driver
++ *
++ * Copyright (C) 2018 Himanshu Jha <himanshujha199640@gmail.com>
++ *
++ * 7-Bit I2C slave address is:
++ *	- 0x76 if SDO is pulled to GND
++ *	- 0x77 if SDO is pulled to VDDIO
++ *
++ * Note: SDO pin cannot be left floating otherwise I2C address
++ *	 will be undefined.
++ */
++#include <linux/acpi.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++
++#include "bme680.h"
++
++static int bme680_i2c_probe(struct i2c_client *client,
++			    const struct i2c_device_id *id)
++{
++	struct regmap *regmap;
++	const char *name = NULL;
++	unsigned int val;
++	int ret;
++
++	regmap = devm_regmap_init_i2c(client, &bme680_regmap_config);
++	if (IS_ERR(regmap)) {
++		dev_err(&client->dev, "Failed to register i2c regmap %d\n",
++				(int)PTR_ERR(regmap));
++		return PTR_ERR(regmap);
++	}
++
++	ret = regmap_write(regmap, BME680_REG_SOFT_RESET,
++			   BME680_CMD_SOFTRESET);
++	if (ret < 0)
++		return ret;
++
++	ret = regmap_read(regmap, BME680_REG_CHIP_I2C_ID, &val);
++	if (ret < 0) {
++		dev_err(&client->dev, "Error reading I2C chip ID\n");
++		return ret;
++	}
++
++	if (val != BME680_CHIP_ID_VAL) {
++		dev_err(&client->dev, "Wrong chip ID, got %x expected %x\n",
++				val, BME680_CHIP_ID_VAL);
++		return -ENODEV;
++	}
++
++	if (id)
++		name = id->name;
++
++	return bme680_core_probe(&client->dev, regmap, name);
++}
++
++static const struct i2c_device_id bme680_i2c_id[] = {
++	{"bme680", 0},
++	{},
++};
++MODULE_DEVICE_TABLE(i2c, bme680_i2c_id);
++
++static const struct acpi_device_id bme680_acpi_match[] = {
++	{"BME0680", 0},
++	{},
++};
++MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
++
++static struct i2c_driver bme680_i2c_driver = {
++	.driver = {
++		.name			= "bme680_i2c",
++		.acpi_match_table       = ACPI_PTR(bme680_acpi_match),
++	},
++	.probe = bme680_i2c_probe,
++	.id_table = bme680_i2c_id,
++};
++module_i2c_driver(bme680_i2c_driver);
++
++MODULE_AUTHOR("Himanshu Jha <himanshujha199640@gmail.com>");
++MODULE_DESCRIPTION("BME680 I2C driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/drivers/iio/chemical/bme680_spi.c b/drivers/iio/chemical/bme680_spi.c
+new file mode 100644
+index 0000000..1fb3466
+--- /dev/null
++++ b/drivers/iio/chemical/bme680_spi.c
+@@ -0,0 +1,123 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * BME680 - SPI Driver
++ *
++ * Copyright (C) 2018 Himanshu Jha <himanshujha199640@gmail.com>
++ */
++#include <linux/acpi.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <linux/spi/spi.h>
++
++#include "bme680.h"
++
++static int bme680_regmap_spi_write(void *context, const void *data,
++				   size_t count)
++{
++	struct spi_device *spi = context;
++	u8 buf[2];
++
++	memcpy(buf, data, 2);
++	/*
++	 * The SPI register address (= full register address without bit 7)
++	 * and the write command (bit7 = RW = '0')
++	 */
++	buf[0] &= ~0x80;
++
++	return spi_write_then_read(spi, buf, 2, NULL, 0);
++}
++
++static int bme680_regmap_spi_read(void *context, const void *reg,
++				  size_t reg_size, void *val, size_t val_size)
++{
++	struct spi_device *spi = context;
++
++	return spi_write_then_read(spi, reg, reg_size, val, val_size);
++}
++
++static struct regmap_bus bme680_regmap_bus = {
++	.write = bme680_regmap_spi_write,
++	.read = bme680_regmap_spi_read,
++	.reg_format_endian_default = REGMAP_ENDIAN_BIG,
++	.val_format_endian_default = REGMAP_ENDIAN_BIG,
++};
++
++static int bme680_spi_probe(struct spi_device *spi)
++{
++	const struct spi_device_id *id = spi_get_device_id(spi);
++	struct regmap *regmap;
++	unsigned int val;
++	int ret;
++
++	spi->bits_per_word = 8;
++	ret = spi_setup(spi);
++	if (ret < 0) {
++		dev_err(&spi->dev, "spi_setup failed!\n");
++		return ret;
++	}
++
++	regmap = devm_regmap_init(&spi->dev, &bme680_regmap_bus,
++				  &spi->dev, &bme680_regmap_config);
++	if (IS_ERR(regmap)) {
++		dev_err(&spi->dev, "Failed to register spi regmap %d\n",
++				(int)PTR_ERR(regmap));
++		return PTR_ERR(regmap);
++	}
++
++	ret = regmap_write(regmap, BME680_REG_SOFT_RESET,
++			   BME680_CMD_SOFTRESET);
++	if (ret < 0)
++		return ret;
++
++	/* after power-on reset, Page 0(0x80-0xFF) of spi_mem_page is active */
++	ret = regmap_read(regmap, BME680_REG_CHIP_SPI_ID, &val);
++	if (ret < 0) {
++		dev_err(&spi->dev, "Error reading SPI chip ID\n");
++		return ret;
++	}
++
++	if (val != BME680_CHIP_ID_VAL) {
++		dev_err(&spi->dev, "Wrong chip ID, got %x expected %x\n",
++				val, BME680_CHIP_ID_VAL);
++		return -ENODEV;
++	}
++	/*
++	 * select Page 1 of spi_mem_page to enable access to
++	 * to registers from address 0x00 to 0x7F.
++	 */
++	ret = regmap_write_bits(regmap, BME680_REG_STATUS,
++				BME680_SPI_MEM_PAGE_BIT,
++				BME680_SPI_MEM_PAGE_1_VAL);
++	if (ret < 0) {
++		dev_err(&spi->dev, "failed to set page 1 of spi_mem_page\n");
++		return ret;
++	}
++
++	return bme680_core_probe(&spi->dev, regmap, id->name);
++}
++
++static const struct spi_device_id bme680_spi_id[] = {
++	{"bme680", 0},
++	{},
++};
++MODULE_DEVICE_TABLE(spi, bme680_spi_id);
++
++static const struct acpi_device_id bme680_acpi_match[] = {
++	{"BME0680", 0},
++	{},
++};
++MODULE_DEVICE_TABLE(acpi, bme680_acpi_match);
++
++static struct spi_driver bme680_spi_driver = {
++	.driver = {
++		.name			= "bme680_spi",
++		.acpi_match_table	= ACPI_PTR(bme680_acpi_match),
++	},
++	.probe = bme680_spi_probe,
++	.id_table = bme680_spi_id,
++};
++module_spi_driver(bme680_spi_driver);
++
++MODULE_AUTHOR("Himanshu Jha <himanshujha199640@gmail.com>");
++MODULE_DESCRIPTION("Bosch BME680 SPI driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.17.1
+2.7.4
 
