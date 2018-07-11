@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072D5C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 918AFC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC140208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC140208E3
+	by mail.kernel.org (Postfix) with ESMTP id 57408208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57408208E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388419AbeGKOBz (ORCPT
+        id S2388435AbeGKOB6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:01:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36356 "EHLO
+        Wed, 11 Jul 2018 10:01:58 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36362 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388376AbeGKOBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:01:54 -0400
+        id S2388376AbeGKOB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:01:57 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18C591713;
-        Wed, 11 Jul 2018 06:57:26 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D2AB819BF;
+        Wed, 11 Jul 2018 06:57:28 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 074B23F5B1;
-        Wed, 11 Jul 2018 06:57:23 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C2BF33F5B1;
+        Wed, 11 Jul 2018 06:57:26 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         will.deacon@arm.com
@@ -35,9 +35,9 @@ Cc:     catalin.marinas@arm.com, dave.martin@arm.com, hch@infradead.org,
         james.morse@arm.com, linux@dominikbrodowski.net,
         linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
         mark.rutland@arm.com, viro@zeniv.linux.org.uk
-Subject: [PATCHv5 05/21] arm64: move sve_user_{enable,disable} to <asm/fpsimd.h>
-Date:   Wed, 11 Jul 2018 14:56:40 +0100
-Message-Id: <20180711135656.20670-6-mark.rutland@arm.com>
+Subject: [PATCHv5 06/21] arm64: remove sigreturn wrappers
+Date:   Wed, 11 Jul 2018 14:56:41 +0100
+Message-Id: <20180711135656.20670-7-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180711135656.20670-1-mark.rutland@arm.com>
 References: <20180711135656.20670-1-mark.rutland@arm.com>
@@ -46,105 +46,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In subsequent patches, we'll want to make use of sve_user_enable() and
-sve_user_disable() outside of kernel/fpsimd.c. Let's move these to
-<asm/fpsimd.h> where we can make use of them.
+The arm64 sigreturn* syscall handlers are non-standard. Rather than
+taking a number of user parameters in registers as per the AAPCS,
+they expect the pt_regs as their sole argument.
 
-To avoid ifdeffery in sequences like:
+To make this work, we override the syscall definitions to invoke
+wrappers written in assembly, which mov the SP into x0, and branch to
+their respective C functions.
 
-if (system_supports_sve() && some_condition)
-	sve_user_disable();
+On other architectures (such as x86), the sigreturn* functions take no
+argument and instead use current_pt_regs() to acquire the user
+registers. This requires less boilerplate code, and allows for other
+features such as interposing C code in this path.
 
-... empty stubs are provided when support for SVE is not enabled. Note
-that system_supports_sve() contains as IS_ENABLED(CONFIG_ARM64_SVE), so
-the sve_user_disable() call should be optimized away entirely when
-CONFIG_ARM64_SVE is not selected.
-
-To ensure that this is the case, the stub definitions contain a
-BUILD_BUG(), as we do for other stubs for which calls should always be
-optimized away when the relevant config option is not selected.
-
-At the same time, the include list of <asm/fpsimd.h> is sorted while
-adding <asm/sysreg.h>.
+This patch takes the same approach for arm64.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
+Tentatively-reviewed-by: Dave Martin <dave.martin@arm.com>
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/fpsimd.h | 17 ++++++++++++++++-
- arch/arm64/kernel/fpsimd.c      | 10 ----------
- 2 files changed, 16 insertions(+), 11 deletions(-)
+ arch/arm64/include/asm/unistd32.h |  4 ++--
+ arch/arm64/kernel/entry.S         |  8 --------
+ arch/arm64/kernel/entry32.S       | 10 ----------
+ arch/arm64/kernel/signal.c        |  3 ++-
+ arch/arm64/kernel/signal32.c      |  6 ++++--
+ arch/arm64/kernel/sys.c           |  3 +--
+ arch/arm64/kernel/sys32.c         |  4 ++--
+ 7 files changed, 11 insertions(+), 27 deletions(-)
 
-diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
-index fa92747a49c8..dd1ad3950ef5 100644
---- a/arch/arm64/include/asm/fpsimd.h
-+++ b/arch/arm64/include/asm/fpsimd.h
-@@ -16,13 +16,15 @@
- #ifndef __ASM_FP_H
- #define __ASM_FP_H
+diff --git a/arch/arm64/include/asm/unistd32.h b/arch/arm64/include/asm/unistd32.h
+index ef292160748c..ab95554b1734 100644
+--- a/arch/arm64/include/asm/unistd32.h
++++ b/arch/arm64/include/asm/unistd32.h
+@@ -260,7 +260,7 @@ __SYSCALL(117, sys_ni_syscall)
+ #define __NR_fsync 118
+ __SYSCALL(__NR_fsync, sys_fsync)
+ #define __NR_sigreturn 119
+-__SYSCALL(__NR_sigreturn, compat_sys_sigreturn_wrapper)
++__SYSCALL(__NR_sigreturn, compat_sys_sigreturn)
+ #define __NR_clone 120
+ __SYSCALL(__NR_clone, sys_clone)
+ #define __NR_setdomainname 121
+@@ -368,7 +368,7 @@ __SYSCALL(__NR_getresgid, sys_getresgid16)
+ #define __NR_prctl 172
+ __SYSCALL(__NR_prctl, sys_prctl)
+ #define __NR_rt_sigreturn 173
+-__SYSCALL(__NR_rt_sigreturn, compat_sys_rt_sigreturn_wrapper)
++__SYSCALL(__NR_rt_sigreturn, compat_sys_rt_sigreturn)
+ #define __NR_rt_sigaction 174
+ __SYSCALL(__NR_rt_sigaction, compat_sys_rt_sigaction)
+ #define __NR_rt_sigprocmask 175
+diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
+index 28ad8799406f..62f2876f9c63 100644
+--- a/arch/arm64/kernel/entry.S
++++ b/arch/arm64/kernel/entry.S
+@@ -1138,14 +1138,6 @@ __entry_tramp_data_start:
+ #endif /* CONFIG_UNMAP_KERNEL_AT_EL0 */
  
--#include <asm/ptrace.h>
- #include <asm/errno.h>
-+#include <asm/ptrace.h>
- #include <asm/processor.h>
- #include <asm/sigcontext.h>
-+#include <asm/sysreg.h>
- 
- #ifndef __ASSEMBLY__
- 
-+#include <linux/build_bug.h>
- #include <linux/cache.h>
- #include <linux/init.h>
- #include <linux/stddef.h>
-@@ -102,6 +104,16 @@ extern int sve_set_vector_length(struct task_struct *task,
- extern int sve_set_current_vl(unsigned long arg);
- extern int sve_get_current_vl(void);
- 
-+static inline void sve_user_disable(void)
-+{
-+	sysreg_clear_set(cpacr_el1, CPACR_EL1_ZEN_EL0EN, 0);
-+}
-+
-+static inline void sve_user_enable(void)
-+{
-+	sysreg_clear_set(cpacr_el1, 0, CPACR_EL1_ZEN_EL0EN);
-+}
-+
  /*
-  * Probing and setup functions.
-  * Calls to these functions must be serialised with one another.
-@@ -128,6 +140,9 @@ static inline int sve_get_current_vl(void)
- 	return -EINVAL;
+- * Special system call wrappers.
+- */
+-ENTRY(sys_rt_sigreturn_wrapper)
+-	mov	x0, sp
+-	b	sys_rt_sigreturn
+-ENDPROC(sys_rt_sigreturn_wrapper)
+-
+-/*
+  * Register switch for AArch64. The callee-saved registers need to be saved
+  * and restored. On entry:
+  *   x0 = previous task_struct (must be preserved across the switch)
+diff --git a/arch/arm64/kernel/entry32.S b/arch/arm64/kernel/entry32.S
+index f332d5d1f6b4..f9461696dde4 100644
+--- a/arch/arm64/kernel/entry32.S
++++ b/arch/arm64/kernel/entry32.S
+@@ -30,16 +30,6 @@
+  * System call wrappers for the AArch32 compatibility layer.
+  */
+ 
+-ENTRY(compat_sys_sigreturn_wrapper)
+-	mov	x0, sp
+-	b	compat_sys_sigreturn
+-ENDPROC(compat_sys_sigreturn_wrapper)
+-
+-ENTRY(compat_sys_rt_sigreturn_wrapper)
+-	mov	x0, sp
+-	b	compat_sys_rt_sigreturn
+-ENDPROC(compat_sys_rt_sigreturn_wrapper)
+-
+ ENTRY(compat_sys_statfs64_wrapper)
+ 	mov	w3, #84
+ 	cmp	w1, #88
+diff --git a/arch/arm64/kernel/signal.c b/arch/arm64/kernel/signal.c
+index 70287634706e..f03e664f773f 100644
+--- a/arch/arm64/kernel/signal.c
++++ b/arch/arm64/kernel/signal.c
+@@ -539,8 +539,9 @@ static int restore_sigframe(struct pt_regs *regs,
+ 	return err;
  }
  
-+static inline void sve_user_disable(void) { BUILD_BUG(); }
-+static inline void sve_user_enable(void) { BUILD_BUG(); }
-+
- static inline void sve_init_vq_map(void) { }
- static inline void sve_update_vq_map(void) { }
- static inline int sve_verify_vq_map(void) { return 0; }
-diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index a98a7f96aff1..58c53bc96928 100644
---- a/arch/arm64/kernel/fpsimd.c
-+++ b/arch/arm64/kernel/fpsimd.c
-@@ -159,16 +159,6 @@ static void sve_free(struct task_struct *task)
- 	__sve_free(task);
+-asmlinkage long sys_rt_sigreturn(struct pt_regs *regs)
++asmlinkage long sys_rt_sigreturn(void)
+ {
++	struct pt_regs *regs = current_pt_regs();
+ 	struct rt_sigframe __user *frame;
+ 
+ 	/* Always make any pending restarted system calls return -EINTR */
+diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
+index 77b91f478995..cb10588a7cb2 100644
+--- a/arch/arm64/kernel/signal32.c
++++ b/arch/arm64/kernel/signal32.c
+@@ -282,8 +282,9 @@ static int compat_restore_sigframe(struct pt_regs *regs,
+ 	return err;
  }
  
--static void sve_user_disable(void)
--{
--	sysreg_clear_set(cpacr_el1, CPACR_EL1_ZEN_EL0EN, 0);
--}
--
--static void sve_user_enable(void)
--{
--	sysreg_clear_set(cpacr_el1, 0, CPACR_EL1_ZEN_EL0EN);
--}
--
+-asmlinkage int compat_sys_sigreturn(struct pt_regs *regs)
++asmlinkage int compat_sys_sigreturn(void)
+ {
++	struct pt_regs *regs = current_pt_regs();
+ 	struct compat_sigframe __user *frame;
+ 
+ 	/* Always make any pending restarted system calls return -EINTR */
+@@ -312,8 +313,9 @@ asmlinkage int compat_sys_sigreturn(struct pt_regs *regs)
+ 	return 0;
+ }
+ 
+-asmlinkage int compat_sys_rt_sigreturn(struct pt_regs *regs)
++asmlinkage int compat_sys_rt_sigreturn(void)
+ {
++	struct pt_regs *regs = current_pt_regs();
+ 	struct compat_rt_sigframe __user *frame;
+ 
+ 	/* Always make any pending restarted system calls return -EINTR */
+diff --git a/arch/arm64/kernel/sys.c b/arch/arm64/kernel/sys.c
+index 72981bae10eb..31045f3fed92 100644
+--- a/arch/arm64/kernel/sys.c
++++ b/arch/arm64/kernel/sys.c
+@@ -48,8 +48,7 @@ SYSCALL_DEFINE1(arm64_personality, unsigned int, personality)
  /*
-  * TIF_SVE controls whether a task can use SVE without trapping while
-  * in userspace, and also the way a task's FPSIMD/SVE state is stored
+  * Wrappers to pass the pt_regs argument.
+  */
+-asmlinkage long sys_rt_sigreturn_wrapper(void);
+-#define sys_rt_sigreturn	sys_rt_sigreturn_wrapper
++asmlinkage long sys_rt_sigreturn(void);
+ #define sys_personality		sys_arm64_personality
+ 
+ #undef __SYSCALL
+diff --git a/arch/arm64/kernel/sys32.c b/arch/arm64/kernel/sys32.c
+index a40b1343b819..1ef103c95410 100644
+--- a/arch/arm64/kernel/sys32.c
++++ b/arch/arm64/kernel/sys32.c
+@@ -25,8 +25,8 @@
+ #include <linux/compiler.h>
+ #include <linux/syscalls.h>
+ 
+-asmlinkage long compat_sys_sigreturn_wrapper(void);
+-asmlinkage long compat_sys_rt_sigreturn_wrapper(void);
++asmlinkage long compat_sys_sigreturn(void);
++asmlinkage long compat_sys_rt_sigreturn(void);
+ asmlinkage long compat_sys_statfs64_wrapper(void);
+ asmlinkage long compat_sys_fstatfs64_wrapper(void);
+ asmlinkage long compat_sys_pread64_wrapper(void);
 -- 
 2.11.0
 
