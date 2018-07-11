@@ -2,215 +2,113 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3C8C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20273C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:42:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B97D20873
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:38:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B97D20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+	by mail.kernel.org (Postfix) with ESMTP id CCB2020873
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:42:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCB2020873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389768AbeGKToT (ORCPT
+        id S2389790AbeGKTru (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 15:44:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:49944 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389745AbeGKToT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 15:44:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 56A46ACDF;
-        Wed, 11 Jul 2018 19:38:28 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 12:38:23 -0700
-From:   Davidlohr Bueso <dave@stgolabs.net>
-To:     Manfred Spraul <manfred@colorfullife.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH 06/12] ipc: rename ipc_lock() to ipc_lock_idr()
-Message-ID: <20180711193823.o6tb2swhnb2xyv33@linux-r8p5>
-References: <20180709151019.1336-1-manfred@colorfullife.com>
- <20180709151019.1336-7-manfred@colorfullife.com>
+        Wed, 11 Jul 2018 15:47:50 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:37076 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732848AbeGKTru (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 15:47:50 -0400
+Received: by mail-wm0-f65.google.com with SMTP id n17-v6so3716414wmh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:41:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=CgBDlhKEN3Qp0PntAjaHv5cuharSsTUZJ6jV6/ge3cE=;
+        b=nzCTyzY8WQqaRI7RJ28Z17mZ8nyT18+a7jmAvXNFtKP9bJ0oYCdgZ+21b7+uGY3P/F
+         Mc4bN4MhJImcXT1CQFIyRCnMYXTvRLoS1cxfjCfUz/wvQUPXapb9TEuCpPdN73uItLTy
+         k4zOJZ8WErwEOz8hGeK5ePy7eoo4ILJ7vfgfqxn+h6F+OZznXu7pPm++CQlmnVnh4Nc7
+         XrbM3BNjExbogn60BRl15mWTk6mixliJRv05GCMpfREEh/NfB92hbijtYHU1yueWKHFJ
+         b1+I0S+klWkThn0ovreTl1ahRIXJv5vOFEdRPc2XbPA18Blmo5alj/mI9aA+jueWxhg2
+         AHCg==
+X-Gm-Message-State: APt69E2WkJJlv2s6yYTDYUcsJnTjoH+I5h7h12SHeeD2TQ5gYryEsESJ
+        msuZW9zsRxqZsMe/q1xHoTRXUA==
+X-Google-Smtp-Source: AAOMgpeT3FLaQIFU2WNcDf8jX4/jf1W/M1HJoBwYlYTuLSbKJjgXq6XNnynWYYCEtda8Zv7aX5MjpQ==
+X-Received: by 2002:a1c:cbc2:: with SMTP id b185-v6mr19257157wmg.117.1531338119022;
+        Wed, 11 Jul 2018 12:41:59 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id t1-v6sm3491086wmt.40.2018.07.11.12.41.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 12:41:58 -0700 (PDT)
+Subject: Re: [PATCH v5 2/3] fbcon: Call WARN_CONSOLE_UNLOCKED() where
+ applicable
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     Thomas Zimmermann <tzimmermann@suse.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+References: <20180628090351.15581-1-hdegoede@redhat.com>
+ <20180628090351.15581-3-hdegoede@redhat.com>
+ <717e6337-e7a6-7a92-1c1b-8929a25696b5@suse.de>
+ <20180711105255.32803a3c@gandalf.local.home>
+ <7ec11c96-7dd5-ec12-548e-7c1fa9b883e8@suse.de>
+ <d528a539-255c-f019-eb6f-63f0585e0de3@redhat.com>
+ <CAKMK7uG-xiCKkxhujL=J6n9ozYfW+fsioGHEmYRxpszVX=5PDg@mail.gmail.com>
+ <892782ad-4b97-8eda-f5b0-3a893b3a5f84@redhat.com>
+ <CAKMK7uFyPh0sHj7enAU2En4BidODAS+Tis=-UE16xOLQWm8iQA@mail.gmail.com>
+ <2f37f47c-e28e-77fa-2383-96c7d3e77433@redhat.com>
+ <CAKMK7uFuZ6NJOKHG6PRNLUytE4m6ZUdMakwLx9Ns39OwvTneWQ@mail.gmail.com>
+ <20180711151911.2ea40200@gandalf.local.home>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <ec818015-9fc9-f389-dd06-952953f84068@redhat.com>
+Date:   Wed, 11 Jul 2018 21:41:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20180709151019.1336-7-manfred@colorfullife.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180711151911.2ea40200@gandalf.local.home>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 09 Jul 2018, Manfred Spraul wrote:
+Hi,
 
->ipc/util.c contains multiple functions to get the ipc object
->pointer given an id number.
->
->There are two sets of function: One set verifies the sequence
->counter part of the id number, other functions do not check
->the sequence counter.
->
->The standard for function names in ipc/util.c is
->- ..._check() functions verify the sequence counter
->- ..._idr() functions do not verify the sequence counter
->
->ipc_lock() is an exception: It does not verify the sequence
->counter value, but this is not obvious from the function name.
+On 11-07-18 21:19, Steven Rostedt wrote:
+> On Wed, 11 Jul 2018 19:56:02 +0200
+> Daniel Vetter <daniel@ffwll.ch> wrote:
+> 
+>>> Have you seen Steven's suggestion which he send about the same time
+>>> as your mail I'm replying to here ? I personally think that doing
+>>> something like that makes sense (for as long as we have the need
+>>> for the lockless_fb_register debug hack).
+>>>
+>>> Note I've 2 patches ready to go to only fix this in fbcon.c, but I
+>>> think a more thorough fix makes sense.
+>>
+>> Yeah Steven's suggestion looks reasonable to fix this all for good.
+>> The #if 1 predates git history, so no idea why it was added or by whom
+>> :-)
+> 
+> I just sent the patch. If the printk maintainers take it, then you can
+> update the fb driver to set the ignore_console_lock_warning when
+> lockless_fb_register is set.
 
-Agreed.
+Thanks for doing this. I will wait with sending a fbcon / fbdev patch
+till the fate of your patch is clear then.
 
->
->Therefore: Rename the function to ipc_lock_idr(), to make it
->obvious that it does not check the sequence counter.
+Regards,
 
-The rename doesn't make it more obvious either I don't think. Since
-the only user of ipc_lock() is shm, how about we just move the
-logic in there. Sure, we'd now have an 'ipc_unlock()' counter part,
-but that's just ipc_unlock_object + rcu unlock, so leaving it as is
-wouldn't be the end of the world methinks. Unlike the ipc_lock(),
-the unlocking is also used by util.c.
-
-Thanks.
-
-----8<----------------------------------------------------------------
-[PATCH] ipc: drop ipc_lock()
-
-ipc/util.c contains multiple functions to get the ipc object
-pointer given an id number.
-
-There are two sets of function: One set verifies the sequence
-counter part of the id number, other functions do not check
-the sequence counter.
-
-The standard for function names in ipc/util.c is
-- ..._check() functions verify the sequence counter
-- ..._idr() functions do not verify the sequence counter
-
-ipc_lock() is an exception: It does not verify the sequence
-counter value, but this is not obvious from the function name.
-
-Furthermore, shm.c is the only user of this helper. Thus, we
-can simply move the logic into shm_lock() and get rid of the
-function altogether.
-
-[changelog mostly by manfred]
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-
----
- ipc/shm.c  | 29 +++++++++++++++++++++++------
- ipc/util.c | 36 ------------------------------------
- ipc/util.h |  1 -
- 3 files changed, 23 insertions(+), 43 deletions(-)
-
-diff --git a/ipc/shm.c b/ipc/shm.c
-index 051a3e1fb8df..f3b19bce349d 100644
---- a/ipc/shm.c
-+++ b/ipc/shm.c
-@@ -179,16 +179,33 @@ static inline struct shmid_kernel *shm_obtain_object_check(struct ipc_namespace
-  */
- static inline struct shmid_kernel *shm_lock(struct ipc_namespace *ns, int id)
- {
--	struct kern_ipc_perm *ipcp = ipc_lock(&shm_ids(ns), id);
-+	struct kern_ipc_perm *ipcp;
-+
-+	rcu_read_lock();
-+	ipcp = ipc_obtain_object_idr(&shm_ids(ns), id);
-+	if (IS_ERR(ipcp))
-+		goto err;
- 
-+	ipc_lock_object(ipcp);
-+	/*
-+	 * ipc_rmid() may have already freed the ID while ipc_lock_object()
-+	 * was spinning: here verify that the structure is still valid.
-+	 * Upon races with RMID, return -EIDRM, thus indicating that
-+	 * the ID points to a removed identifier.
-+	 */
-+	if (ipc_valid_object(ipcp)) {
-+		/* return a locked ipc object upon success */
-+		return container_of(ipcp, struct shmid_kernel, shm_perm);
-+	}
-+
-+	ipc_unlock_object(ipcp);
-+err:
-+	rcu_read_unlock();
- 	/*
- 	 * Callers of shm_lock() must validate the status of the returned ipc
--	 * object pointer (as returned by ipc_lock()), and error out as
--	 * appropriate.
-+	 * object pointer and error out as appropriate.
- 	 */
--	if (IS_ERR(ipcp))
--		return (void *)ipcp;
--	return container_of(ipcp, struct shmid_kernel, shm_perm);
-+	return (void *)ipcp;
- }
- 
- static inline void shm_lock_by_ptr(struct shmid_kernel *ipcp)
-diff --git a/ipc/util.c b/ipc/util.c
-index 4e81182fa0ac..fe61559cd64b 100644
---- a/ipc/util.c
-+++ b/ipc/util.c
-@@ -576,42 +576,6 @@ struct kern_ipc_perm *ipc_obtain_object_idr(struct ipc_ids *ids, int id)
- 	return out;
- }
- 
--/**
-- * ipc_lock - lock an ipc structure without rwsem held
-- * @ids: ipc identifier set
-- * @id: ipc id to look for
-- *
-- * Look for an id in the ipc ids idr and lock the associated ipc object.
-- *
-- * The ipc object is locked on successful exit.
-- */
--struct kern_ipc_perm *ipc_lock(struct ipc_ids *ids, int id)
--{
--	struct kern_ipc_perm *out;
--
--	rcu_read_lock();
--	out = ipc_obtain_object_idr(ids, id);
--	if (IS_ERR(out))
--		goto err;
--
--	spin_lock(&out->lock);
--
--	/*
--	 * ipc_rmid() may have already freed the ID while ipc_lock()
--	 * was spinning: here verify that the structure is still valid.
--	 * Upon races with RMID, return -EIDRM, thus indicating that
--	 * the ID points to a removed identifier.
--	 */
--	if (ipc_valid_object(out))
--		return out;
--
--	spin_unlock(&out->lock);
--	out = ERR_PTR(-EIDRM);
--err:
--	rcu_read_unlock();
--	return out;
--}
--
- /**
-  * ipc_obtain_object_check
-  * @ids: ipc identifier set
-diff --git a/ipc/util.h b/ipc/util.h
-index 0aba3230d007..cdb9259e05d1 100644
---- a/ipc/util.h
-+++ b/ipc/util.h
-@@ -142,7 +142,6 @@ int ipc_rcu_getref(struct kern_ipc_perm *ptr);
- void ipc_rcu_putref(struct kern_ipc_perm *ptr,
- 			void (*func)(struct rcu_head *head));
- 
--struct kern_ipc_perm *ipc_lock(struct ipc_ids *, int);
- struct kern_ipc_perm *ipc_obtain_object_idr(struct ipc_ids *ids, int id);
- 
- void kernel_to_ipc64_perm(struct kern_ipc_perm *in, struct ipc64_perm *out);
--- 
-2.16.4
-
+Hans
