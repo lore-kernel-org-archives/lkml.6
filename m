@@ -2,152 +2,212 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85A72C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BF6C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:07:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49B0720C03
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:06:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B0720C03
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E4FE20883
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:07:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E4FE20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389341AbeGKQLA (ORCPT
+        id S2389485AbeGKQMR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:11:00 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39452 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726586AbeGKQLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:11:00 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C250315AD;
-        Wed, 11 Jul 2018 09:05:59 -0700 (PDT)
-Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 437263F5B1;
-        Wed, 11 Jul 2018 09:05:59 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 7/7] KVM: arm64: Add support for creating PUD hugepages at stage 2
-References: <20180709143835.28971-1-punit.agrawal@arm.com>
-        <20180709144124.29164-1-punit.agrawal@arm.com>
-        <20180709144124.29164-7-punit.agrawal@arm.com>
-        <bbc3f286-be5b-d0dc-2037-54d5b995a0a5@arm.com>
-Date:   Wed, 11 Jul 2018 17:05:57 +0100
-In-Reply-To: <bbc3f286-be5b-d0dc-2037-54d5b995a0a5@arm.com> (Suzuki
-        K. Poulose's message of "Wed, 11 Jul 2018 14:38:38 +0100")
-Message-ID: <87zhyxoize.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 11 Jul 2018 12:12:17 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44806 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732433AbeGKQMR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:12:17 -0400
+Received: by mail-oi0-f65.google.com with SMTP id s198-v6so50212914oih.11;
+        Wed, 11 Jul 2018 09:07:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hTcOWitApQwEo71NdEHxoZ70HKLinz+1IbNAkKb+r4E=;
+        b=eSm5jJIUroy4CRkJ5h4xB8ZM8ON0lBx82UVhtb56e94wmlK8VO0JWpLT7ypk7sHHJP
+         sINdxmZMDb+heut1PDP7t0sPeuhoSH30hDvvGNZL/lKnJwadPmYitQ5HUyehEJ+05s7a
+         efvE1nCo004zeEo9an75+3IoyA4XsWC2R6+hwSgV+jZI7J9RDcXi9jGOFW79XzFB0+z4
+         Rz+/DLyeADtp/lUPJskCOXAROxGLJCe2v2ivYAATb+/ryNi/hcrMar1j4wDi5/s8TvGt
+         9Iq3fPUCtOLFbt32hXVxG45w/QDb0NKDGBoGs0Caue1dolb85npW4Xq0gYfQr5IsEJDR
+         CZlw==
+X-Gm-Message-State: APt69E3WgjllnPOzpq5mOu8G0Y6ERZKM1l8cWTiXN3UMIlA71koetV+8
+        LjmrbS2rrrTjmaJBrZEH7Q==
+X-Google-Smtp-Source: AAOMgpf7KlgjN/WkJnwQbHSvCbS6TkZjjQryCBQgXMQ56LSkVydVu6ol0wTkVBRplvXtnYJ93TW7Ig==
+X-Received: by 2002:aca:4e50:: with SMTP id c77-v6mr30442230oib.254.1531325235436;
+        Wed, 11 Jul 2018 09:07:15 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id i204-v6sm10216304oia.41.2018.07.11.09.07.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 09:07:14 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 10:07:13 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Todor Tomov <todor.tomov@linaro.org>
+Cc:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
+        hans.verkuil@cisco.com, laurent.pinchart+renesas@ideasonboard.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 08/34] media: camss: Unify the clock names
+Message-ID: <20180711160713.GA29354@rob-hp-laptop>
+References: <1530797585-8555-1-git-send-email-todor.tomov@linaro.org>
+ <1530797585-8555-9-git-send-email-todor.tomov@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530797585-8555-9-git-send-email-todor.tomov@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suzuki K Poulose <Suzuki.Poulose@arm.com> writes:
+On Thu, Jul 05, 2018 at 04:32:39PM +0300, Todor Tomov wrote:
+> Unify the clock names - use names closer to the clock
+> definitions.
 
-> On 09/07/18 15:41, Punit Agrawal wrote:
->> KVM only supports PMD hugepages at stage 2. Now that the various page
->> handling routines are updated, extend the stage 2 fault handling to
->> map in PUD hugepages.
->>
->> Addition of PUD hugepage support enables additional page sizes (e.g.,
->> 1G with 4K granule) which can be useful on cores that support mapping
->> larger block sizes in the TLB entries.
->>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->>   arch/arm/include/asm/kvm_mmu.h         | 19 +++++++
->>   arch/arm64/include/asm/kvm_mmu.h       | 15 +++++
->>   arch/arm64/include/asm/pgtable-hwdef.h |  2 +
->>   arch/arm64/include/asm/pgtable.h       |  2 +
->>   virt/kvm/arm/mmu.c                     | 78 ++++++++++++++++++++++++--
->>   5 files changed, 112 insertions(+), 4 deletions(-)
->>
+Why? You can't just change names. You are breaking an ABI.
 
-[...]
+> 
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: Mark Rutland <mark.rutland@arm.com>
+> CC: devicetree@vger.kernel.org
+> Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
+> ---
+>  .../devicetree/bindings/media/qcom,camss.txt       | 24 +++++++++++-----------
 
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index a6d3ac9d7c7a..d8e2497e5353 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
+Bindings should be a separate patch.
 
-[...]
-
->> @@ -1100,6 +1139,7 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
->>   			  phys_addr_t addr, const pte_t *new_pte,
->>   			  unsigned long flags)
->>   {
->> +	pud_t *pud;
->>   	pmd_t *pmd;
->>   	pte_t *pte, old_pte;
->>   	bool iomap = flags & KVM_S2PTE_FLAG_IS_IOMAP;
->> @@ -1108,6 +1148,22 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
->>   	VM_BUG_ON(logging_active && !cache);
->>     	/* Create stage-2 page table mapping - Levels 0 and 1 */
->> +	pud = stage2_get_pud(kvm, cache, addr);
->> +	if (!pud) {
->> +		/*
->> +		 * Ignore calls from kvm_set_spte_hva for unallocated
->> +		 * address ranges.
->> +		 */
->> +		return 0;
->> +	}
->> +
->> +	/*
->> +	 * While dirty page logging - dissolve huge PUD, then continue
->> +	 * on to allocate page.
->
-> Punit,
->
-> We don't seem to allocate a page here for the PUD entry, in case if it is dissolved
-> or empty (i.e, stage2_pud_none(*pud) is true.).
-
-I was trying to avoid duplicating the PUD allocation by reusing the
-functionality in stage2_get_pmd().
-
-Does the below updated comment help?
-
-	/*
-	 * While dirty page logging - dissolve huge PUD, it'll be
-	 * allocated in stage2_get_pmd().
-	 */
-
-The other option is to duplicate the stage2_pud_none() case from
-stage2_get_pmd() here.
-
-What do you think?
-
-Thanks,
-Punit
-
->> +	 */
->> +	if (logging_active)
->> +		stage2_dissolve_pud(kvm, addr, pud);
->> +
->>   	pmd = stage2_get_pmd(kvm, cache, addr);
->>   	if (!pmd) {
->
-> And once you add an entry, pmd is just the matter of getting stage2_pmd_offset() from your pud.
-> No need to start again from the top-level with stage2_get_pmd().
->
-> Cheers
-> Suzuki
->
-> _______________________________________________
-> kvmarm mailing list
-> kvmarm@lists.cs.columbia.edu
-> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+>  drivers/media/platform/qcom/camss/camss.c          | 20 ++++++++----------
+>  2 files changed, 20 insertions(+), 24 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/qcom,camss.txt b/Documentation/devicetree/bindings/media/qcom,camss.txt
+> index cadeceb..032e8ed 100644
+> --- a/Documentation/devicetree/bindings/media/qcom,camss.txt
+> +++ b/Documentation/devicetree/bindings/media/qcom,camss.txt
+> @@ -53,7 +53,7 @@ Qualcomm Camera Subsystem
+>  	Usage: required
+>  	Value type: <stringlist>
+>  	Definition: Should contain the following entries:
+> -                - "camss_top_ahb"
+> +                - "top_ahb"
+>                  - "ispif_ahb"
+>                  - "csiphy0_timer"
+>                  - "csiphy1_timer"
+> @@ -67,11 +67,11 @@ Qualcomm Camera Subsystem
+>                  - "csi1_phy"
+>                  - "csi1_pix"
+>                  - "csi1_rdi"
+> -                - "camss_ahb"
+> -                - "camss_vfe_vfe"
+> -                - "camss_csi_vfe"
+> -                - "iface"
+> -                - "bus"
+> +                - "ahb"
+> +                - "vfe0"
+> +                - "csi_vfe0"
+> +                - "vfe_ahb"
+> +                - "vfe_axi"
+>  - vdda-supply:
+>  	Usage: required
+>  	Value type: <phandle>
+> @@ -161,7 +161,7 @@ Qualcomm Camera Subsystem
+>  			<&gcc GCC_CAMSS_CSI_VFE0_CLK>,
+>  			<&gcc GCC_CAMSS_VFE_AHB_CLK>,
+>  			<&gcc GCC_CAMSS_VFE_AXI_CLK>;
+> -                clock-names = "camss_top_ahb",
+> +                clock-names = "top_ahb",
+>                          "ispif_ahb",
+>                          "csiphy0_timer",
+>                          "csiphy1_timer",
+> @@ -175,11 +175,11 @@ Qualcomm Camera Subsystem
+>                          "csi1_phy",
+>                          "csi1_pix",
+>                          "csi1_rdi",
+> -                        "camss_ahb",
+> -                        "camss_vfe_vfe",
+> -                        "camss_csi_vfe",
+> -                        "iface",
+> -                        "bus";
+> +                        "ahb",
+> +                        "vfe0",
+> +                        "csi_vfe0",
+> +                        "vfe_ahb",
+> +                        "vfe_axi";
+>  		vdda-supply = <&pm8916_l2>;
+>  		iommus = <&apps_iommu 3>;
+>  		ports {
+> diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
+> index abf6184..0b663e0 100644
+> --- a/drivers/media/platform/qcom/camss/camss.c
+> +++ b/drivers/media/platform/qcom/camss/camss.c
+> @@ -32,8 +32,7 @@ static const struct resources csiphy_res[] = {
+>  	/* CSIPHY0 */
+>  	{
+>  		.regulator = { NULL },
+> -		.clock = { "camss_top_ahb", "ispif_ahb",
+> -			   "camss_ahb", "csiphy0_timer" },
+> +		.clock = { "top_ahb", "ispif_ahb", "ahb", "csiphy0_timer" },
+>  		.clock_rate = { { 0 },
+>  				{ 0 },
+>  				{ 0 },
+> @@ -45,8 +44,7 @@ static const struct resources csiphy_res[] = {
+>  	/* CSIPHY1 */
+>  	{
+>  		.regulator = { NULL },
+> -		.clock = { "camss_top_ahb", "ispif_ahb",
+> -			   "camss_ahb", "csiphy1_timer" },
+> +		.clock = { "top_ahb", "ispif_ahb", "ahb", "csiphy1_timer" },
+>  		.clock_rate = { { 0 },
+>  				{ 0 },
+>  				{ 0 },
+> @@ -60,8 +58,7 @@ static const struct resources csid_res[] = {
+>  	/* CSID0 */
+>  	{
+>  		.regulator = { "vdda" },
+> -		.clock = { "camss_top_ahb", "ispif_ahb",
+> -			   "csi0_ahb", "camss_ahb",
+> +		.clock = { "top_ahb", "ispif_ahb", "csi0_ahb", "ahb",
+>  			   "csi0", "csi0_phy", "csi0_pix", "csi0_rdi" },
+>  		.clock_rate = { { 0 },
+>  				{ 0 },
+> @@ -78,8 +75,7 @@ static const struct resources csid_res[] = {
+>  	/* CSID1 */
+>  	{
+>  		.regulator = { "vdda" },
+> -		.clock = { "camss_top_ahb", "ispif_ahb",
+> -			   "csi1_ahb", "camss_ahb",
+> +		.clock = { "top_ahb", "ispif_ahb", "csi1_ahb", "ahb",
+>  			   "csi1", "csi1_phy", "csi1_pix", "csi1_rdi" },
+>  		.clock_rate = { { 0 },
+>  				{ 0 },
+> @@ -96,10 +92,10 @@ static const struct resources csid_res[] = {
+>  
+>  static const struct resources_ispif ispif_res = {
+>  	/* ISPIF */
+> -	.clock = { "camss_top_ahb", "camss_ahb", "ispif_ahb",
+> +	.clock = { "top_ahb", "ahb", "ispif_ahb",
+>  		   "csi0", "csi0_pix", "csi0_rdi",
+>  		   "csi1", "csi1_pix", "csi1_rdi" },
+> -	.clock_for_reset = { "camss_vfe_vfe", "camss_csi_vfe" },
+> +	.clock_for_reset = { "vfe0", "csi_vfe0" },
+>  	.reg = { "ispif", "csi_clk_mux" },
+>  	.interrupt = "ispif"
+>  
+> @@ -108,8 +104,8 @@ static const struct resources_ispif ispif_res = {
+>  static const struct resources vfe_res = {
+>  	/* VFE0 */
+>  	.regulator = { NULL },
+> -	.clock = { "camss_top_ahb", "camss_vfe_vfe", "camss_csi_vfe",
+> -		   "iface", "bus", "camss_ahb" },
+> +	.clock = { "top_ahb", "vfe0", "csi_vfe0",
+> +		   "vfe_ahb", "vfe_axi", "ahb" },
+>  	.clock_rate = { { 0 },
+>  			{ 50000000, 80000000, 100000000, 160000000,
+>  			  177780000, 200000000, 266670000, 320000000,
+> -- 
+> 2.7.4
+> 
