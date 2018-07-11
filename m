@@ -4,93 +4,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FD6C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41F5FC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E1D720881
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE53220881
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:53:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dominion-thruhere-net.20150623.gappssmtp.com header.i=@dominion-thruhere-net.20150623.gappssmtp.com header.b="nWaL9hDu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E1D720881
+	dkim=pass (2048-bit key) header.d=dominion-thruhere-net.20150623.gappssmtp.com header.i=@dominion-thruhere-net.20150623.gappssmtp.com header.b="WJM6alyY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE53220881
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dominion.thruhere.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeGKG4I (ORCPT
+        id S1726698AbeGKG4M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 02:56:08 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43086 "EHLO
+        Wed, 11 Jul 2018 02:56:12 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35896 "EHLO
         mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726363AbeGKG4I (ORCPT
+        with ESMTP id S1726386AbeGKG4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 02:56:08 -0400
-Received: by mail-ed1-f65.google.com with SMTP id u11-v6so18335987eds.10
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 23:53:22 -0700 (PDT)
+        Wed, 11 Jul 2018 02:56:11 -0400
+Received: by mail-ed1-f65.google.com with SMTP id t3-v6so18336874eds.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 23:53:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dominion-thruhere-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=j58CmjEPdUUebNEmaWOWj1rQ4epJQWgB/y3ZtJIAoAI=;
-        b=nWaL9hDuucIyv/Iix7bPop8bLnKUnsElcws20qWowIbHccx7Il8wQS95ewytubUvel
-         FWCoRKpZNAfUzyGf6gbXd2o6nF+U+yJWxUH69wEKOGhw1dLEsKV/OD/iuVsbsmhIzAeL
-         7wtAABIVeNSq8Twy8s0BBxWEbXrU+EyH4FfSXU5HvDKG39TZWMGpkXw1qdNvP4Z+CdLw
-         GQYzP8ALyTkniH79GUX2K6z8UyPe9cURnC5S3AQZb0OdJqkL9vPYlvzwyxlsFHeUVt4P
-         HbsiztDgINmEiGBMuFNpJVS4A1v5EnbKW8U829y5i3MsCCYENfk8KxNbDhnwYIvmdoNj
-         zx9g==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=lPKLPOYObV03grPgdMoKcfqDokZT1uBH81+Uic57yIU=;
+        b=WJM6alyYPWvjDYOeZhT/X2ZWoBe8KnLUfXCOxxzQm46AunRgu8uxQv/TnWN4rbyPjl
+         Wi0HHfiWF3tRz/tJfYYWAFb+e847jBp70vzmdiTnXVOadu9YSauPdBzVhYsVQB6BSjZS
+         r/qmjnRgU8PL1adHmxmMTxsVxX99dA9NGF3bV4+POXVBZMz5Ytj2Fd6rwbIFEvY+qn+r
+         H72pRtkUKA8O57cpXAGKudFAxJNbX6VQaKwzasDuh13AbGqyZO5V0BEKz1K6nOkmhXAd
+         LlJkEHa6T5HUzKQYvGbbqYwZJ18kFetLNxM672I1kF5NAKrIHsSICB2JfuERyKnMdFeE
+         USPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=j58CmjEPdUUebNEmaWOWj1rQ4epJQWgB/y3ZtJIAoAI=;
-        b=hHlyZBU06BS7PBSKTV1E/zyhjfWqakfvesl3jl1qBxOxbfW7q2WFI7dnx0Y6uaotHv
-         /rL41jC2oF5YIHH7y7Vh2cCYqsOxwJbGdkfQXSOQ7FBMrmfqbhOl6qV2MVcZpt1hy5ev
-         IxHjFn/ZVs6o5PGq0LC2DGKM6B7oWfgImrTAx1cBsYZPDh9/3qAVmNZygMZqvXQSSEbx
-         TuZE1AAeD1gyQ0zO064Eos9Dc85Yyj5ZyvBW6helgxfI9mWpN34pCanBIrDEEuDe/vy8
-         8SWS/tTNeOrEInSpl19mBjM5mWTn59ou1jcx9Q+ne2+EacyjvVuGGtCs1G5+kZm5SRjL
-         31wA==
-X-Gm-Message-State: APt69E0U2Sgs1rynLj1bQZUbQXvIOVTffAExlsekNgyXOLGFycO8fm1p
-        wxaSfkKQtHzMHkwK/VC5XtsBsXOw
-X-Google-Smtp-Source: AAOMgpcTVQMqd+Lnuti7b1Vr3d+tDJ+X9ZjQJgUaIETadfR50NK2FDnPV6C0PL9nyKT3wVzP0t8wmw==
-X-Received: by 2002:aa7:c6c2:: with SMTP id b2-v6mr27063207eds.302.1531292001502;
-        Tue, 10 Jul 2018 23:53:21 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=lPKLPOYObV03grPgdMoKcfqDokZT1uBH81+Uic57yIU=;
+        b=WBlJnqs0LZHgsBvKfFQFhWDsXJ7Z3zK/liJxxn2pnjWLtoFmKcUAl0PpanoHh1gfek
+         bv0ApgPCpXX3cRn4dttaigFVXeYEFUz1FDC7zbybcLV67uCRiZS3cZ7/olEoDTLjQKok
+         XIblvR+duuP3LMBfLcXVDD/pcn2ECmLzv+XlAGVCanZN1Me0NKDJXSuQLZxOx/+HE/XD
+         rv83YsdVvEMnxQnONMCd2AFF1St5adkOit53srlf/Ymg2cRmP3MXjIkblevdoILsf+ok
+         fG/0LTRjmIO1zRvA4lD9cI8fp5brlX90j17F6Uyq5iT8rA0L7p93s/cVsup72yZNwu9q
+         S6gQ==
+X-Gm-Message-State: APt69E3ouVphWND/eow80xosZC2HroY0nWKtLuTpY2Z3b6vzkJQJ72An
+        c/XZGK+R5FMGC862MrpGF9uZvg==
+X-Google-Smtp-Source: AAOMgpdcY4l9j8syeLFQ2X2R8fXDjg7kp3yHNYaqhWZJ33fNOApqTCY8Vkhurzcx6z9e/JxW7qpaZQ==
+X-Received: by 2002:a50:b2a6:: with SMTP id p35-v6mr30144776edd.215.1531292004192;
+        Tue, 10 Jul 2018 23:53:24 -0700 (PDT)
 Received: from localhost ([82.163.40.65])
-        by smtp.gmail.com with ESMTPSA id x40-v6sm13829565ede.23.2018.07.10.23.53.19
+        by smtp.gmail.com with ESMTPSA id n10-v6sm9300128edr.59.2018.07.10.23.53.23
         (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Tue, 10 Jul 2018 23:53:20 -0700 (PDT)
+        Tue, 10 Jul 2018 23:53:23 -0700 (PDT)
 From:   Koen Kooi <koen@dominion.thruhere.net>
 To:     linux-omap@vger.kernel.org
 Cc:     Koen Kooi <koen@dominion.thruhere.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        David Lechner <david@lechnology.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        SZ Lin <sz.lin@moxa.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] ARM: dts: am3355: add support for the Sancloud Beaglebone Enhanced
-Date:   Wed, 11 Jul 2018 08:53:08 +0200
-Message-Id: <1531291992-30512-1-git-send-email-koen@dominion.thruhere.net>
+Subject: [PATCH 1/2] dt-bindings: Add vendor prefix for Sancloud
+Date:   Wed, 11 Jul 2018 08:53:09 +0200
+Message-Id: <1531291992-30512-2-git-send-email-koen@dominion.thruhere.net>
 X-Mailer: git-send-email 2.0.1
+In-Reply-To: <1531291992-30512-1-git-send-email-koen@dominion.thruhere.net>
+References: <1531291992-30512-1-git-send-email-koen@dominion.thruhere.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "Beaglebone Enhanced" by Sancloud is based on the Beaglebone Black,
-but with the following differences:
+Add vendor prefix for Sancloud Ltd.
 
- * Gigabit capable PHY
- * Extra USB hub, optional i2c control
- * lps3331ap barometer connected over i2c
- * MPU6050 6 axis MEMS accelerometer/gyro connected over i2c
- * 1GiB DDR3 RAM
- * RTL8723 Wifi/Bluetooth connected over USB
+Signed-off-by: Koen Kooi <koen@dominion.thruhere.net>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-This series adds the Sancloud vendor prefix as well as the actual dts.
-
-Koen Kooi (2):
-  dt-bindings: Add vendor prefix for Sancloud
-  ARM: dts: am335x: add am335x-sancloud-bbe board support
-
- .../devicetree/bindings/vendor-prefixes.txt        |   1 +
- arch/arm/boot/dts/Makefile                         |   1 +
- arch/arm/boot/dts/am335x-sancloud-bbe.dts          | 146 +++++++++++++++++++++
- 3 files changed, 148 insertions(+)
- create mode 100644 arch/arm/boot/dts/am335x-sancloud-bbe.dts
-
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index 7cad066..c7aaa1f 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -314,6 +314,7 @@ rohm	ROHM Semiconductor Co., Ltd
+ roofull	Shenzhen Roofull Technology Co, Ltd
+ samsung	Samsung Semiconductor
+ samtec	Samtec/Softing company
++sancloud	Sancloud Ltd
+ sandisk	Sandisk Corporation
+ sbs	Smart Battery System
+ schindler	Schindler
 -- 
 2.0.1
 
