@@ -3,84 +3,158 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B91C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 014A6C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F395620C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:18:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F395620C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B2F1C20C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F1C20C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389674AbeGKQXx (ORCPT
+        id S2389684AbeGKQYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:23:53 -0400
-Received: from mga12.intel.com ([192.55.52.136]:42440 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733247AbeGKQXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:23:53 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 09:18:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
-   d="scan'208";a="71471984"
-Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by fmsmga001.fm.intel.com with ESMTP; 11 Jul 2018 09:18:38 -0700
-Message-ID: <1531325701.13297.32.camel@intel.com>
-Subject: Re: [RFC PATCH v2 08/27] mm: Introduce VM_SHSTK for shadow stack
- memory
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Wed, 11 Jul 2018 09:15:01 -0700
-In-Reply-To: <20180711083412.GP2476@hirez.programming.kicks-ass.net>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
-         <20180710222639.8241-9-yu-cheng.yu@intel.com>
-         <20180711083412.GP2476@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 11 Jul 2018 12:24:12 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39796 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733247AbeGKQYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:24:12 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27B097A9;
+        Wed, 11 Jul 2018 09:19:08 -0700 (PDT)
+Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D1C33F589;
+        Wed, 11 Jul 2018 09:19:07 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc:     marc.zyngier@arm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        will.deacon@arm.com, Russell King <linux@armlinux.org.uk>,
+        linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 7/7] KVM: arm64: Add support for creating PUD hugepages at stage 2
+References: <20180709143835.28971-1-punit.agrawal@arm.com>
+        <20180709144124.29164-1-punit.agrawal@arm.com>
+        <20180709144124.29164-7-punit.agrawal@arm.com>
+        <bbc3f286-be5b-d0dc-2037-54d5b995a0a5@arm.com>
+        <87zhyxoize.fsf@e105922-lin.cambridge.arm.com>
+        <fe8b92a1-2584-61ab-39e2-4d3247f92c7c@arm.com>
+Date:   Wed, 11 Jul 2018 17:19:06 +0100
+In-Reply-To: <fe8b92a1-2584-61ab-39e2-4d3247f92c7c@arm.com> (Suzuki
+        K. Poulose's message of "Wed, 11 Jul 2018 17:13:54 +0100")
+Message-ID: <87lgahoidh.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-11 at 10:34 +0200, Peter Zijlstra wrote:
-> On Tue, Jul 10, 2018 at 03:26:20PM -0700, Yu-cheng Yu wrote:
-> > 
-> > VM_SHSTK indicates a shadow stack memory area.
-> > 
-> > A shadow stack PTE must be read-only and dirty.  For non shadow
-> > stack, we use a spare bit of the 64-bit PTE for dirty.  The PTE
-> > changes are in the next patch.
-> This doesn't make any sense.. the $subject and the patch seem
-> completely
-> unrelated to this Changelog.
+Suzuki K Poulose <Suzuki.Poulose@arm.com> writes:
 
-I was trying to say why this is only defined for 64-bit.  I will fix
-it.
+> On 11/07/18 17:05, Punit Agrawal wrote:
+>> Suzuki K Poulose <Suzuki.Poulose@arm.com> writes:
+>>
+>>> On 09/07/18 15:41, Punit Agrawal wrote:
+>>>> KVM only supports PMD hugepages at stage 2. Now that the various page
+>>>> handling routines are updated, extend the stage 2 fault handling to
+>>>> map in PUD hugepages.
+>>>>
+>>>> Addition of PUD hugepage support enables additional page sizes (e.g.,
+>>>> 1G with 4K granule) which can be useful on cores that support mapping
+>>>> larger block sizes in the TLB entries.
+>>>>
+>>>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>>>> Cc: Christoffer Dall <christoffer.dall@arm.com>
+>>>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>>>> Cc: Russell King <linux@armlinux.org.uk>
+>>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>> ---
+>>>>    arch/arm/include/asm/kvm_mmu.h         | 19 +++++++
+>>>>    arch/arm64/include/asm/kvm_mmu.h       | 15 +++++
+>>>>    arch/arm64/include/asm/pgtable-hwdef.h |  2 +
+>>>>    arch/arm64/include/asm/pgtable.h       |  2 +
+>>>>    virt/kvm/arm/mmu.c                     | 78 ++++++++++++++++++++++++--
+>>>>    5 files changed, 112 insertions(+), 4 deletions(-)
+>>>>
+>>
+>> [...]
+>>
+>>>> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
+>>>> index a6d3ac9d7c7a..d8e2497e5353 100644
+>>>> --- a/virt/kvm/arm/mmu.c
+>>>> +++ b/virt/kvm/arm/mmu.c
+>>
+>> [...]
+>>
+>>>> @@ -1100,6 +1139,7 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+>>>>    			  phys_addr_t addr, const pte_t *new_pte,
+>>>>    			  unsigned long flags)
+>>>>    {
+>>>> +	pud_t *pud;
+>>>>    	pmd_t *pmd;
+>>>>    	pte_t *pte, old_pte;
+>>>>    	bool iomap = flags & KVM_S2PTE_FLAG_IS_IOMAP;
+>>>> @@ -1108,6 +1148,22 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
+>>>>    	VM_BUG_ON(logging_active && !cache);
+>>>>      	/* Create stage-2 page table mapping - Levels 0 and 1 */
+>>>> +	pud = stage2_get_pud(kvm, cache, addr);
+>>>> +	if (!pud) {
+>>>> +		/*
+>>>> +		 * Ignore calls from kvm_set_spte_hva for unallocated
+>>>> +		 * address ranges.
+>>>> +		 */
+>>>> +		return 0;
+>>>> +	}
+>>>> +
+>>>> +	/*
+>>>> +	 * While dirty page logging - dissolve huge PUD, then continue
+>>>> +	 * on to allocate page.
+>>>
+>>> Punit,
+>>>
+>>> We don't seem to allocate a page here for the PUD entry, in case if it is dissolved
+>>> or empty (i.e, stage2_pud_none(*pud) is true.).
+>>
+>> I was trying to avoid duplicating the PUD allocation by reusing the
+>> functionality in stage2_get_pmd().
+>>
+>> Does the below updated comment help?
+>>
+>> 	/*
+>> 	 * While dirty page logging - dissolve huge PUD, it'll be
+>> 	 * allocated in stage2_get_pmd().
+>> 	 */
+>>
+>> The other option is to duplicate the stage2_pud_none() case from
+>> stage2_get_pmd() here.
+>
+> I think the explicit check for stage2_pud_none() suits better here.
+> That would make it explicit that we are tearing down the entries
+> from top to bottom. Also, we may be able to short cut for case
+> where we know we just allocated a PUD page and hence we need another
+> PMD level page.
 
-Yu-cheng
+Ok, I'll add the PUD allocation code here.
+
+>
+> Also, you are missing the comment about the assumption that stage2 PUD
+> level always exist with 4k fixed IPA.
+
+Hmm... I'm quite sure I wrote a comment to that effect but can't find it
+now. I'll include it in the next version.
+
+Thanks,
+Punit
+
+>
+> Cheers
+> Suzuki
+> _______________________________________________
+> kvmarm mailing list
+> kvmarm@lists.cs.columbia.edu
+> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
