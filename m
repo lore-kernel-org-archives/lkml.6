@@ -2,280 +2,115 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C2CC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA4EC6778F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C38B7208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="QIxvE8km"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C38B7208FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id 1C965208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C965208FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733042AbeGKLeN (ORCPT
+        id S1733236AbeGKLfZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:34:13 -0400
-Received: from 8bytes.org ([81.169.241.247]:37770 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732995AbeGKLeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:34:12 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id DD90C306E; Wed, 11 Jul 2018 13:30:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308606; bh=Qt4WJIUNKjNS+KFm8L8zxdc5EMEUEsXHmc/2ItzWZCQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QIxvE8kmIwZKahpz8tDIy/ClcqV4f9rI78Cicbh6481JSvkaqmQ0IxSi3zyikHUju
-         GiyDlOmDn05mwCkfGFl2eGTYAQTMNxC7Mdxn7ETGRMCsAdnYl8ibst1VSj4Wu1a2pH
-         fBB2/5Wgkp/J+2rWbISTpMG/u9pGVWM7KnWhvQUbbD58kKFUM77QtDEPphU49xBzf4
-         x0AJtA+aqfbYDpDg/Y8fpOolcEF32LkgxaQvQ0b7KOHnRwpZ7H30w6MGKMkxfjtQTE
-         BVJV9+Uqoj74UbEqegZQlU0qIMQ0J0KLhl8fPF02rOW7fBdOipRK0gp8Xe8DPZncUV
-         Z59uSrQUyeGng==
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 32/39] x86/pgtable/pae: Use separate kernel PMDs for user page-table
-Date:   Wed, 11 Jul 2018 13:29:39 +0200
-Message-Id: <1531308586-29340-33-git-send-email-joro@8bytes.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+        Wed, 11 Jul 2018 07:35:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33966 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733028AbeGKLfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:35:24 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0133B80D;
+        Wed, 11 Jul 2018 04:31:31 -0700 (PDT)
+Received: from red-moon (unknown [10.1.206.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36CE63F589;
+        Wed, 11 Jul 2018 04:31:29 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 12:33:23 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Xiaowei Song <songxiaowei@hisilicon.com>
+Cc:     wangbinghui@hisilicon.com, bhelgaas@google.com, robh+dt@kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        suzhuangluan@hisilicon.com, andy.shevchenko@gmail.com,
+        kongfei@hisilicon.com, chenyao11@huawei.com
+Subject: Re: [PATCH v7 1/1] PCI: kirin: Add MSI support
+Message-ID: <20180711113323.GA17546@red-moon>
+References: <20180711080946.14942-1-songxiaowei@hisilicon.com>
+ <20180711080946.14942-2-songxiaowei@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711080946.14942-2-songxiaowei@hisilicon.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On Wed, Jul 11, 2018 at 04:09:46PM +0800, Xiaowei Song wrote:
+> Add support for MSI
+> 
+> Signed-off-by: Xiaowei Song <songxiaowei@hisilicon.com>
+> Signed-off-by: Yao Chen <chenyao11@huawei.com>
+> ---
+>  drivers/pci/dwc/pcie-kirin.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
 
-We need separate kernel PMDs in the user page-table when PTI
-is enabled to map the per-process LDT for user-space.
+Applied to pci/dwc for v4.19, thanks.
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- arch/x86/mm/pgtable.c | 100 ++++++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 81 insertions(+), 19 deletions(-)
+Lorenzo
 
-diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
-index db6fb77..8e4e63d 100644
---- a/arch/x86/mm/pgtable.c
-+++ b/arch/x86/mm/pgtable.c
-@@ -182,6 +182,14 @@ static void pgd_dtor(pgd_t *pgd)
-  */
- #define PREALLOCATED_PMDS	UNSHARED_PTRS_PER_PGD
- 
-+/*
-+ * We allocate separate PMDs for the kernel part of the user page-table
-+ * when PTI is enabled. We need them to map the per-process LDT into the
-+ * user-space page-table.
-+ */
-+#define PREALLOCATED_USER_PMDS	 (static_cpu_has(X86_FEATURE_PTI) ? \
-+					KERNEL_PGD_PTRS : 0)
-+
- void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
- {
- 	paravirt_alloc_pmd(mm, __pa(pmd) >> PAGE_SHIFT);
-@@ -202,14 +210,14 @@ void pud_populate(struct mm_struct *mm, pud_t *pudp, pmd_t *pmd)
- 
- /* No need to prepopulate any pagetable entries in non-PAE modes. */
- #define PREALLOCATED_PMDS	0
--
-+#define PREALLOCATED_USER_PMDS	 0
- #endif	/* CONFIG_X86_PAE */
- 
--static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
-+static void free_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
- {
- 	int i;
- 
--	for(i = 0; i < PREALLOCATED_PMDS; i++)
-+	for (i = 0; i < count; i++)
- 		if (pmds[i]) {
- 			pgtable_pmd_page_dtor(virt_to_page(pmds[i]));
- 			free_page((unsigned long)pmds[i]);
-@@ -217,7 +225,7 @@ static void free_pmds(struct mm_struct *mm, pmd_t *pmds[])
- 		}
- }
- 
--static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
-+static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[], int count)
- {
- 	int i;
- 	bool failed = false;
-@@ -226,7 +234,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
- 	if (mm == &init_mm)
- 		gfp &= ~__GFP_ACCOUNT;
- 
--	for(i = 0; i < PREALLOCATED_PMDS; i++) {
-+	for (i = 0; i < count; i++) {
- 		pmd_t *pmd = (pmd_t *)__get_free_page(gfp);
- 		if (!pmd)
- 			failed = true;
-@@ -241,7 +249,7 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
- 	}
- 
- 	if (failed) {
--		free_pmds(mm, pmds);
-+		free_pmds(mm, pmds, count);
- 		return -ENOMEM;
- 	}
- 
-@@ -254,23 +262,38 @@ static int preallocate_pmds(struct mm_struct *mm, pmd_t *pmds[])
-  * preallocate which never got a corresponding vma will need to be
-  * freed manually.
-  */
-+static void mop_up_one_pmd(struct mm_struct *mm, pgd_t *pgdp)
-+{
-+	pgd_t pgd = *pgdp;
-+
-+	if (pgd_val(pgd) != 0) {
-+		pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
-+
-+		*pgdp = native_make_pgd(0);
-+
-+		paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
-+		pmd_free(mm, pmd);
-+		mm_dec_nr_pmds(mm);
-+	}
-+}
-+
- static void pgd_mop_up_pmds(struct mm_struct *mm, pgd_t *pgdp)
- {
- 	int i;
- 
--	for(i = 0; i < PREALLOCATED_PMDS; i++) {
--		pgd_t pgd = pgdp[i];
-+	for (i = 0; i < PREALLOCATED_PMDS; i++)
-+		mop_up_one_pmd(mm, &pgdp[i]);
- 
--		if (pgd_val(pgd) != 0) {
--			pmd_t *pmd = (pmd_t *)pgd_page_vaddr(pgd);
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
- 
--			pgdp[i] = native_make_pgd(0);
-+	if (!static_cpu_has(X86_FEATURE_PTI))
-+		return;
- 
--			paravirt_release_pmd(pgd_val(pgd) >> PAGE_SHIFT);
--			pmd_free(mm, pmd);
--			mm_dec_nr_pmds(mm);
--		}
--	}
-+	pgdp = kernel_to_user_pgdp(pgdp);
-+
-+	for (i = 0; i < PREALLOCATED_USER_PMDS; i++)
-+		mop_up_one_pmd(mm, &pgdp[i + KERNEL_PGD_BOUNDARY]);
-+#endif
- }
- 
- static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
-@@ -296,6 +319,38 @@ static void pgd_prepopulate_pmd(struct mm_struct *mm, pgd_t *pgd, pmd_t *pmds[])
- 	}
- }
- 
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
-+				     pgd_t *k_pgd, pmd_t *pmds[])
-+{
-+	pgd_t *s_pgd = kernel_to_user_pgdp(swapper_pg_dir);
-+	pgd_t *u_pgd = kernel_to_user_pgdp(k_pgd);
-+	p4d_t *u_p4d;
-+	pud_t *u_pud;
-+	int i;
-+
-+	u_p4d = p4d_offset(u_pgd, 0);
-+	u_pud = pud_offset(u_p4d, 0);
-+
-+	s_pgd += KERNEL_PGD_BOUNDARY;
-+	u_pud += KERNEL_PGD_BOUNDARY;
-+
-+	for (i = 0; i < PREALLOCATED_USER_PMDS; i++, u_pud++, s_pgd++) {
-+		pmd_t *pmd = pmds[i];
-+
-+		memcpy(pmd, (pmd_t *)pgd_page_vaddr(*s_pgd),
-+		       sizeof(pmd_t) * PTRS_PER_PMD);
-+
-+		pud_populate(mm, u_pud, pmd);
-+	}
-+
-+}
-+#else
-+static void pgd_prepopulate_user_pmd(struct mm_struct *mm,
-+				     pgd_t *k_pgd, pmd_t *pmds[])
-+{
-+}
-+#endif
- /*
-  * Xen paravirt assumes pgd table should be in one page. 64 bit kernel also
-  * assumes that pgd should be in one page.
-@@ -376,6 +431,7 @@ static inline void _pgd_free(pgd_t *pgd)
- pgd_t *pgd_alloc(struct mm_struct *mm)
- {
- 	pgd_t *pgd;
-+	pmd_t *u_pmds[PREALLOCATED_USER_PMDS];
- 	pmd_t *pmds[PREALLOCATED_PMDS];
- 
- 	pgd = _pgd_alloc();
-@@ -385,12 +441,15 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
- 
- 	mm->pgd = pgd;
- 
--	if (preallocate_pmds(mm, pmds) != 0)
-+	if (preallocate_pmds(mm, pmds, PREALLOCATED_PMDS) != 0)
- 		goto out_free_pgd;
- 
--	if (paravirt_pgd_alloc(mm) != 0)
-+	if (preallocate_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS) != 0)
- 		goto out_free_pmds;
- 
-+	if (paravirt_pgd_alloc(mm) != 0)
-+		goto out_free_user_pmds;
-+
- 	/*
- 	 * Make sure that pre-populating the pmds is atomic with
- 	 * respect to anything walking the pgd_list, so that they
-@@ -400,13 +459,16 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
- 
- 	pgd_ctor(mm, pgd);
- 	pgd_prepopulate_pmd(mm, pgd, pmds);
-+	pgd_prepopulate_user_pmd(mm, pgd, u_pmds);
- 
- 	spin_unlock(&pgd_lock);
- 
- 	return pgd;
- 
-+out_free_user_pmds:
-+	free_pmds(mm, u_pmds, PREALLOCATED_USER_PMDS);
- out_free_pmds:
--	free_pmds(mm, pmds);
-+	free_pmds(mm, pmds, PREALLOCATED_PMDS);
- out_free_pgd:
- 	_pgd_free(pgd);
- out:
--- 
-2.7.4
-
+> diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
+> index d2970a009eb5..5352e0c3be82 100644
+> --- a/drivers/pci/dwc/pcie-kirin.c
+> +++ b/drivers/pci/dwc/pcie-kirin.c
+> @@ -430,6 +430,9 @@ static int kirin_pcie_host_init(struct pcie_port *pp)
+>  {
+>  	kirin_pcie_establish_link(pp);
+>  
+> +	if (IS_ENABLED(CONFIG_PCI_MSI))
+> +		dw_pcie_msi_init(pp);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -445,9 +448,34 @@ static const struct dw_pcie_host_ops kirin_pcie_host_ops = {
+>  	.host_init = kirin_pcie_host_init,
+>  };
+>  
+> +static int kirin_pcie_add_msi(struct dw_pcie *pci,
+> +				struct platform_device *pdev)
+> +{
+> +	int irq;
+> +
+> +	if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> +		irq = platform_get_irq(pdev, 0);
+> +		if (irq < 0) {
+> +			dev_err(&pdev->dev,
+> +				"failed to get MSI IRQ (%d)\n", irq);
+> +			return irq;
+> +		}
+> +
+> +		pci->pp.msi_irq = irq;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+>  				      struct platform_device *pdev)
+>  {
+> +	int ret;
+> +
+> +	ret = kirin_pcie_add_msi(pci, pdev);
+> +	if (ret)
+> +		return ret;
+> +
+>  	pci->pp.ops = &kirin_pcie_host_ops;
+>  
+>  	return dw_pcie_host_init(&pci->pp);
+> -- 
+> 2.11.GIT
+> 
