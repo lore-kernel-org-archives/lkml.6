@@ -1,108 +1,161 @@
 Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36D3C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B865C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9813F20843
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:48:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gdJAAms1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9813F20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id C9A4620871
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:49:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A4620871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388000AbeGKQxM (ORCPT
+        id S2388003AbeGKQyN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:53:12 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36219 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387704AbeGKQxM (ORCPT
+        Wed, 11 Jul 2018 12:54:13 -0400
+Received: from mail-io0-f199.google.com ([209.85.223.199]:34355 "EHLO
+        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387789AbeGKQyN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:53:12 -0400
-Received: by mail-pf0-f193.google.com with SMTP id u16-v6so18773042pfh.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 09:48:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oe1OEp+mUmKx93KG7Ohlhk9Jj9BeVzPeaUnmfodeKF4=;
-        b=gdJAAms143g9vxXj9lzkkiJvuthXH7XxOvHT0swD0rFIyggalA+dRZAg6NdvfrEHjr
-         leV/56q2BL3vUQNo9WE8Li8Re02xB2aov2+y6SE+nqcRwpVB+7eHLeKMHtTBNkkGoTK9
-         lSq+NVfTxTmzDV8mRjTHtHBzPZk17Hp1hmngiSUJiM0zaWYLQ/ESMoFjmX+qPzXox86V
-         DXyz7kJwgv8quT91U+jROREqO69LFiyZ52CaRBSoeWfgcDS+fUoioBSWHfi/MI7Lfxwg
-         y32olTBSZBH0njY5Wl/z7hgMCOhXO2H5MaRzByl5teImfDAvGlPGaGCLZ3ffth0+0FYY
-         BToQ==
+        Wed, 11 Jul 2018 12:54:13 -0400
+Received: by mail-io0-f199.google.com with SMTP id w23-v6so22609333ioa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 09:49:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oe1OEp+mUmKx93KG7Ohlhk9Jj9BeVzPeaUnmfodeKF4=;
-        b=g71lqRfT831gOwH+v/92vZtpIxugdsTbT5Du/k8yeT78YnWGsDlTZDCtUlvyAgNiBQ
-         poCdfe6q7S1H/VesUyvtzExRqnJX+GkZ/A1H6rp+S9/tzficoPMifIqqyqcEfZADI5cv
-         uUKpO5HC+3oU72qzvwMV+G8hEi0MWJVIvG7D0ijWwNn1MoqGvfNeZwVtOazRvf5EVBXi
-         evgbywDo3yGpLipxd6OrWtc2bxtitdgTLoW7SP2MkVwFSnLWFuWZrLJ2DOkdPRUEkBbA
-         OAIy4DiG8f3hizhbHCXDJysAerIVb3GgyYmvnmYYQ59AgHM5XtaWdVPAp6a/8nRC/Z7l
-         Rmfw==
-X-Gm-Message-State: APt69E1bXXzcWSwO+KN0cSOUbRvV6EGenneb+2dKtPf7z3KK2PW1bVsa
-        cFoD2JMj1aA1nuFOhIPrSn1fxspxi/OfPKqdZlwaFA==
-X-Google-Smtp-Source: AAOMgpfMSWUZa5B0HRjLkk8GB3oW1j731wtxxHbx8vrPofbVinZlVH3gpPeO8tcoMYqnmvzrrQsjgeLIf0pNjpaQ/bo=
-X-Received: by 2002:a62:b612:: with SMTP id j18-v6mr31025833pff.199.1531327681375;
- Wed, 11 Jul 2018 09:48:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=dG2wiJI+uP3acZnais1MUKHXFCij4UxIKbhK1qCPrE8=;
+        b=gWht3UgilxChjZrIKVxX2g2QTJXLP8sM2H+9egjEreaj4qNAiVeoeXD3WJlgfyE7rN
+         +o7p3P3bDHLdz23tj8dxupve/DDxr9z5mvHENQ46FDDhlMcVYKu4B6u59AhEHdlQ8eVZ
+         uSK407yz9J/OqdTvHlnpEai+g98wYAPty+lTNCE0oOf8+n5cju5i3t/MPxV9JWnAXK9K
+         edrar8dq4xno+bCAoH+ma1DQ7wlkAVAXw3SfuI6SUbERtU6k7b55kV1VEgSJWAbB5FtM
+         cH/Y6/gO1FYqkisJ91eYXB9GZxKnLr/uHdIc3yJR2wv4Pvx1FaTDN7vTXGXm8zE7K1lx
+         wnFg==
+X-Gm-Message-State: APt69E0CgRo1Jr7RDWr6re+548HC0d2u141ZRziyYAleptwAeM/59ZZW
+        kKgLnFQafKGVn7YEZgTCRa28Rnnhn0JuE+pu9tStC8K5Xovo
+X-Google-Smtp-Source: AAOMgpeU6ZwFp40XZmwdziQg+9f7JWiBMbQU0CasBBsbTGmeUX6hcqzNFsmbkC58rIkcyCwBisTQ9fylzah9F2RmEEQTTx5r34gN
 MIME-Version: 1.0
-Received: by 2002:a17:90a:950a:0:0:0:0 with HTTP; Wed, 11 Jul 2018 09:47:40
- -0700 (PDT)
-In-Reply-To: <CA+55aFz1GVHUGiX1SE_5C-e9LdXdx3pBB10zwga1LOy6axk5Ww@mail.gmail.com>
-References: <000000000000c242e90570aa0062@google.com> <CA+55aFyEZR=v2GySzWWF3uh9ZB53CFFv460Wzg4n8DGze8GFfw@mail.gmail.com>
- <CACT4Y+bOJx+SnkMqzDDUTU1iztQ7DpMBG7Z-oV5wArRaSEzh+Q@mail.gmail.com> <CA+55aFz1GVHUGiX1SE_5C-e9LdXdx3pBB10zwga1LOy6axk5Ww@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 11 Jul 2018 18:47:40 +0200
-Message-ID: <CACT4Y+bvGNmjP+3z3uzm=SvnngkbtEx-JeT6iVWg4gwYvoKyLQ@mail.gmail.com>
-Subject: Re: general protection fault in in_aton
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     syzbot+2a831e062bb4aebd8755@syzkaller.appspotmail.com,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Ron Minnich <rminnich@sandia.gov>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Jens Axboe <axboe@kernel.dk>,
-        Bart Van Assche <bart.vanassche@wdc.com>,
-        David Miller <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        kasan-dev <kasan-dev@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:6203:: with SMTP id f3-v6mr13053254iog.48.1531327741477;
+ Wed, 11 Jul 2018 09:49:01 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 09:49:01 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000010c9390570bc0643@google.com>
+Subject: general protection fault in _vm_normal_page
+From:   syzbot <syzbot+120abb1c3f7bfdc523f7@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, jglisse@redhat.com,
+        kirill.shutemov@linux.intel.com, ldufour@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
+        minchan@kernel.org, ross.zwisler@linux.intel.com,
+        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
+        ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 10:15 PM, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Tue, Jul 10, 2018 at 12:57 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->>
->> Is it really hard to get fault address? I know that userspace
->> generally receives fault address in siginfo.
->
-> For an actual page fault it's trivial.
->
-> However, for invalid addresses (aka "non-canonical"), you don't even
-> get a page fault, you get a GP like in this case. And then the actual
-> address is not available.
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    98be45067040 Add linux-next specific files for 20180711
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12496ac2400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3f3b3673fec35d01
+dashboard link: https://syzkaller.appspot.com/bug?extid=120abb1c3f7bfdc523f7
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12a46568400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+120abb1c3f7bfdc523f7@syzkaller.appspotmail.com
+
+R10: 0000000004000812 R11: 0000000000000246 R12: 0000000000000005
+R13: 00000000004c0565 R14: 00000000004cffb0 R15: 0000000000000005
+ion_mmap: failure mapping buffer to userspace
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 0 PID: 4785 Comm: syz-executor0 Not tainted 4.18.0-rc4-next-20180711+  
+#4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:_vm_normal_page+0x1e5/0x330 mm/memory.c:828
+Code: 00 0f 85 3a 01 00 00 48 8b 85 70 ff ff ff 48 ba 00 00 00 00 00 fc ff  
+df 48 8b 80 90 00 00 00 48 8d 78 70 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
+85 17 01 00 00 48 8b 40 70 48 85 c0 48 89 85 60 ff
+RSP: 0018:ffff8801d2d2f050 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: 0000000000198700 RCX: 000000000000000e
+RDX: dffffc0000000000 RSI: ffffffff81abf579 RDI: 0000000000000070
+RBP: ffff8801d2d2f0f0 R08: ffff8801aab72040 R09: ffffed003a591216
+R10: ffffed003a591216 R11: ffff8801d2c890b3 R12: 1ffff1003a5a5e0d
+R13: ffff8801d2d2f0c8 R14: 0000000198700320 R15: 0000000000000200
+FS:  000000000118c940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004e8664 CR3: 00000001cb276000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  zap_pte_range mm/memory.c:1312 [inline]
+  zap_pmd_range mm/memory.c:1443 [inline]
+  zap_pud_range mm/memory.c:1472 [inline]
+  zap_p4d_range mm/memory.c:1493 [inline]
+  unmap_page_range+0xa6f/0x2220 mm/memory.c:1514
+  unmap_single_vma+0x1a0/0x310 mm/memory.c:1559
+  unmap_vmas+0x120/0x1f0 mm/memory.c:1589
+  unmap_region+0x353/0x570 mm/mmap.c:2583
+  mmap_region+0x18cc/0x1da0 mm/mmap.c:1840
+  do_mmap+0xa10/0x1220 mm/mmap.c:1540
+  do_mmap_pgoff include/linux/mm.h:2290 [inline]
+  vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
+  ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1590
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455e29
+Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffdd494a4b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 000000000118c914 RCX: 0000000000455e29
+RDX: 0000000000000000 RSI: 0000000000003060 RDI: 0000000020ffd000
+RBP: 000000000072bea0 R08: 0000000000000004 R09: 0000000000000000
+R10: 0000000004000812 R11: 0000000000000246 R12: 0000000000000005
+R13: 00000000004c0565 R14: 00000000004cffb0 R15: 0000000000000005
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace 161bdc8eda63d641 ]---
+RIP: 0010:_vm_normal_page+0x1e5/0x330 mm/memory.c:828
+Code: 00 0f 85 3a 01 00 00 48 8b 85 70 ff ff ff 48 ba 00 00 00 00 00 fc ff  
+df 48 8b 80 90 00 00 00 48 8d 78 70 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
+85 17 01 00 00 48 8b 40 70 48 85 c0 48 89 85 60 ff
+RSP: 0018:ffff8801d2d2f050 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: 0000000000198700 RCX: 000000000000000e
+RDX: dffffc0000000000 RSI: ffffffff81abf579 RDI: 0000000000000070
+RBP: ffff8801d2d2f0f0 R08: ffff8801aab72040 R09: ffffed003a591216
+R10: ffffed003a591216 R11: ffff8801d2c890b3 R12: 1ffff1003a5a5e0d
+R13: ffff8801d2d2f0c8 R14: 0000000198700320 R15: 0000000000000200
+FS:  000000000118c940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004e8664 CR3: 00000001cb276000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-I see. Then I don't have any great ideas. Running without KASAN would
-result in more, much more cryptic crashes.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-FWIW for these "GPF could be caused by NULL-ptr deref" I first just
-assume that it's in fact a NULL deref. And in this case it all pretty
-quickly forms a consistent picture that it's indeed just a missing a
-NULL pointer check. That dffffc0000000000 in a register also a good
-hint.
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
