@@ -2,206 +2,239 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11480C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E003C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE36120875
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:55:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE36120875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C7F3520875
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:56:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="YiTbUBQj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F3520875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbeGKH57 (ORCPT
+        id S1726518AbeGKH7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 03:57:59 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:57249 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726255AbeGKH56 (ORCPT
+        Wed, 11 Jul 2018 03:59:34 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:52758 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726205AbeGKH7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 03:57:58 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fd9xg-0000NC-Kr; Wed, 11 Jul 2018 09:54:56 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fd9xg-000316-8f; Wed, 11 Jul 2018 09:54:56 +0200
-Date:   Wed, 11 Jul 2018 09:54:56 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     "A.s. Dong" <aisheng.dong@nxp.com>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "dongas86@gmail.com" <dongas86@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
-Message-ID: <20180711075456.npwfpm6mtpkx7k76@pengutronix.de>
-References: <1531061817-1980-1-git-send-email-aisheng.dong@nxp.com>
- <1531061817-1980-4-git-send-email-aisheng.dong@nxp.com>
- <20180710141940.oed3kwhbplnykl36@pengutronix.de>
- <AM0PR04MB42113391A6EA741E2767C74B805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR04MB42113391A6EA741E2767C74B805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 09:35:51 up 28 days, 16:44, 55 users,  load average: 0.29, 0.13,
- 0.10
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 11 Jul 2018 03:59:33 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id D00F424E2595;
+        Wed, 11 Jul 2018 00:56:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1531295793; bh=BE1KhGikEIWXaUopGDw/dayvFU6yv5hFYPKBuxEsbJ8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YiTbUBQjgfAMLgXpUJJDkxmnxvaAUgZMxPDcMD4anvZODg/3JM/P0um1w583f0Yvx
+         1Q/5k60SkRFgSmkpIVQVHt6+WrRUDLmqayHt+6y7Zqi33WhdlfvmzlhIKr2XtWlBFb
+         lCJijFcDew62ytidUXhElWG/Ls9PTehbrwG3fZKAGEhlNFdTMqEPFNYzCXPtoQ0+Lp
+         mtWPFXymTlgk6QatPT04qBFgHQSZo/QQGvK6939JqdbqsL71jbmaLUkKZpbWkwJXgf
+         pJtWSTymhmBjl8AQSPPW3qhaf+0/4MF6mP2H8p9pCKMIiU7OOTkmp/W+pqK/ILBF2Y
+         jN5qxcEAWa5+g==
+Received: from sglab-ubuntu.internal.synopsys.com (unknown [10.144.153.11])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 8047F55CD;
+        Wed, 11 Jul 2018 00:56:31 -0700 (PDT)
+From:   Prabu Thangamuthu <prabu.t@synopsys.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Manjunath M B <Manjunath.MB@synopsys.com>,
+        Prabu T <prabuchml@gmail.com>,
+        Prabu Thangamuthu <prabu.t@synopsys.com>
+Subject: [PATCH v3 1/1] mmc: sdhci-pci-dwc-mshc: synopsys dwc mshc support
+Date:   Wed, 11 Jul 2018 13:26:17 +0530
+Message-Id: <1531295777-9515-1-git-send-email-prabu.t@synopsys.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 07:29:38AM +0000, A.s. Dong wrote:
-> Hi Sascha,
-> 
-> > -----Original Message-----
-> > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
-> > Sent: Tuesday, July 10, 2018 10:20 PM
-> > To: A.s. Dong <aisheng.dong@nxp.com>
-> > Cc: linux-arm-kernel@lists.infradead.org; dongas86@gmail.com; Jassi Brar
-> > <jassisinghbrar@gmail.com>; linux-kernel@vger.kernel.org; Oleksij Rempel
-> > <o.rempel@pengutronix.de>; dl-linux-imx <linux-imx@nxp.com>;
-> > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
-> > shawnguo@kernel.org
-> > Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
-> > 
-> > Hi,
-> > 
-> > On Sun, Jul 08, 2018 at 10:56:55PM +0800, Dong Aisheng wrote:
-> > > This is used for i.MX multi core communication.
-> > > e.g. A core to SCU firmware(M core) on MX8.
-> > >
-> > > Tx is using polling mode while Rx is interrupt driven and schedule a
-> > > hrtimer to receive remain words if have more than
-> > > 4 words.
-> > 
-> > You told us that using interrupts is not possible due to miserable
-> > performance, we then provided you a way with which you could poll.  Why
-> > are you using interrupts now?
-> > 
-> 
-> Because mailbox framework does not support sync rx now, I think we do not
-> need to wait for that feature done first as it's independent and  separate
-> features of framework.
+Synopsys has DWC MSHC controller on HPAS-DX platform connected using PCIe
+interface with SD card slot and eMMC device slots. This patch is to
+enable SD cards connected on this platform. As Clock generation logic
+is implemented using MMCM module of HAPS-DX platform, we have separate
+functions to control the MMCM to generate required clocks with respect
+to speed mode.
 
-You can wait forever for this feature, nobody will add it for you. It's
-up to you to add support for that feature. Who else should add this
-feature if not you? And when will you add that feature if not now when
-you actually need it?
-It is common practice that you adjust the frameworks to your needs
-rather than working around them.
+Signed-off-by: Prabu Thangamuthu <prabu.t@synopsys.com>
+---
+V3 - Updated License.
+Re-sending the patch using git send-email.
+V2 - Removed sdhci-pci-dwc-mshc.h and moved into sdhci-pci-dwc-mshc.c
+Fixed the coding style issue.
+Removed sdhci_snps_set_power and new approach to support eMMC device
+voltages will be submitted after completeing validations.
+V1 - Initial Patch.
 
-> 
-> So for now, we're just using the common way in kernel as arm scpi and ti sci. 
-> When framework supports it, we can easily switch to it.
-> 
-> I optimized the performance a bit by removing the unnecessary memcopy
-> between tx/tx messages. The test result of booting time shows there's no
-> obvious regressions. I'm not sure whether it's due to we're booting a minimum
-> system or the extra cost is very minor to be noticed due to not too much cmds
-> sent during booting.
+ MAINTAINERS                           |  7 +++
+ drivers/mmc/host/Makefile             |  3 +-
+ drivers/mmc/host/sdhci-pci-core.c     |  1 +
+ drivers/mmc/host/sdhci-pci-dwc-mshc.c | 84 +++++++++++++++++++++++++++++++++++
+ drivers/mmc/host/sdhci-pci.h          |  3 ++
+ 5 files changed, 97 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/mmc/host/sdhci-pci-dwc-mshc.c
 
-Your boot time argument seems to be a very weak one. unnecessary memcpys
-of a few bytes only take a fraction of the time interrupt latencies
-introduce.
-
-> (Copy Peng to comments more as he tried and reported that performance drop
-> with vendor tree)
-> 
-> From the time measurement of sc_call_rpc, we can see that most rpc command
-> In polling mode can finish within 10us and very rare ones over 20us.
-> If switched to irq mode, those 10us cmds will change to about 20us. 
-> 
-> But the overall booting time did not increase much. Maybe the irq mode
-> also saves some CPU MIPS to execute other works in parallel?
-> 
-> > We also suggested a way how the SCU mode could be integrated into the
-> > generic MU support driver Oleksij posted and now you send a driver which
-> > uses the same name as Oleksijs driver, but it only and exclusively works in
-> > SCU mode. This doesn't bring us forward.
-> > 
-> 
-> Can Oleksij's patch be implemented against this one?
-> As I remember you said we've still not determined whether Oleksij's approach
-> is the most suitable way and it's still under discussion.
-> (Actually TI's approach looks better which is more simiar as SCU way?)
-> 
-> Furthermore, from this patch, you will notice that Oleksij's patch almost
-> did not work for SCU at all. I have to totally rewrite one for SCU.
-
-You are kidding. You have to rewrite it because you didn't follow my
-suggestion to implement polling in the mailbox framework.
-
-> So I did not write against his patch as it does not help.
-> And Oleksij's patch is quite simple while the SCU one is much complicated
-> than his one. So we probably better get SCU done first.
-> 
-> > We suggested a binding that allows coexisting of the SCU mode and the
-> > generic mode of the MU by putting the mode information into the second
-> > mbox-cell. Why don't you use this?
-> > 
-> 
-> You mean this?
-> +#define IMX_MU_CHANNEL0		0
-> +#define IMX_MU_CHANNEL1		1
-> +#define IMX_MU_CHANNEL2		2
-> +#define IMX_MU_CHANNEL3		3
-> +#define IMX_MU_CHANNEL_IMX8_SCU 4
-
-Yes.
-
-> 
-> It's hard for me to believe it's correct and it's over abstract to HW.
-> So I thought using mbox-cells to distinguish seems to be better.
-
-The MU has four rx registers, four tx registers and four interrupts.
-What else should this be than four channels? The number of channels the
-MU has is obviously defined by the software running at the other end
-of the MU. Yes, the SCU makes one channel from it, in other cases it's
-four channels.
-
-> 
-> > I don't think it's necessary to rewrite Oleksijs driver, instead it should rather
-> > be extended with the code I already provided as an example. With that we
-> > could make both of us happy since we can both have a suitable driver and
-> > even share most of the MU code.
-> 
-> As I said above, I even can't reuse 90%+ code of Oleksijs driver. So I can't
-> see the meaning to demo the code on top of this driver. We can review
-> the SCU implementation directly with this driver which is more easy.
-> Then we can decide how to merge them together.
-
-You can only not share the code because the mailbox framework does not
-support polling. And yes, I even provided some code which implements SCU
-mode ontop of Oleksijs driver.
-
-Honestly, what I expect from you is no rocket science and we would
-already be there if we didn't spend our time discussing this.
-
-Sascha
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index a29d10f..d062f51 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12813,6 +12813,13 @@ S:	Maintained
+ F:	drivers/mmc/host/sdhci*
+ F:	include/linux/mmc/sdhci*
+ 
++SYNOPSYS SDHCI COMPLIANT DWC MSHC DRIVER
++M:	Prabu Thangamuthu <prabu.t@synopsys.com>
++M:	Manjunath M B <manjumb@synopsys.com>
++L:	linux-mmc@vger.kernel.org
++S:	Maintained
++F:	drivers/mmc/host/sdhci-pci-dwc-mshc.c
++
+ SECURE DIGITAL HOST CONTROLLER INTERFACE (SDHCI) SAMSUNG DRIVER
+ M:	Ben Dooks <ben-linux@fluff.org>
+ M:	Jaehoon Chung <jh80.chung@samsung.com>
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index a18fbba..ce8398e 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -11,7 +11,8 @@ obj-$(CONFIG_MMC_MXC)		+= mxcmmc.o
+ obj-$(CONFIG_MMC_MXS)		+= mxs-mmc.o
+ obj-$(CONFIG_MMC_SDHCI)		+= sdhci.o
+ obj-$(CONFIG_MMC_SDHCI_PCI)	+= sdhci-pci.o
+-sdhci-pci-y			+= sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o
++sdhci-pci-y			+= sdhci-pci-core.o sdhci-pci-o2micro.o sdhci-pci-arasan.o \
++				   sdhci-pci-dwc-mshc.o
+ obj-$(subst m,y,$(CONFIG_MMC_SDHCI_PCI))	+= sdhci-pci-data.o
+ obj-$(CONFIG_MMC_SDHCI_ACPI)	+= sdhci-acpi.o
+ obj-$(CONFIG_MMC_SDHCI_PXAV3)	+= sdhci-pxav3.o
+diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
+index 3d36761..7bfd366 100644
+--- a/drivers/mmc/host/sdhci-pci-core.c
++++ b/drivers/mmc/host/sdhci-pci-core.c
+@@ -1513,6 +1513,7 @@ static int amd_probe(struct sdhci_pci_chip *chip)
+ 	SDHCI_PCI_DEVICE(O2, SEABIRD0, o2),
+ 	SDHCI_PCI_DEVICE(O2, SEABIRD1, o2),
+ 	SDHCI_PCI_DEVICE(ARASAN, PHY_EMMC, arasan),
++	SDHCI_PCI_DEVICE(SYNOPSYS, DWC_MSHC, snps),
+ 	SDHCI_PCI_DEVICE_CLASS(AMD, SYSTEM_SDHCI, PCI_CLASS_MASK, amd),
+ 	/* Generic SD host controller */
+ 	{PCI_DEVICE_CLASS(SYSTEM_SDHCI, PCI_CLASS_MASK)},
+diff --git a/drivers/mmc/host/sdhci-pci-dwc-mshc.c b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+new file mode 100644
+index 0000000..f78d654
+--- /dev/null
++++ b/drivers/mmc/host/sdhci-pci-dwc-mshc.c
+@@ -0,0 +1,84 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * SDHCI driver for Synopsys DWC_MSHC controller
++ *
++ * Copyright (C) 2018 Synopsys, Inc. (www.synopsys.com)
++ *
++ * Authors:
++ *	Prabu Thangamuthu <prabu.t@synopsys.com>
++ *	Manjunath M B <manjumb@synopsys.com>
++ */
++
++#include "sdhci.h"
++#include "sdhci-pci.h"
++
++#define SDHCI_VENDOR_PTR_R	0xE8
++
++/* Synopsys vendor specific registers */
++#define SDHC_GPIO_OUT		0x34
++#define SDHC_AT_CTRL_R		0x40
++#define SDHC_SW_TUNE_EN		0x00000010
++
++/* MMCM DRP */
++#define SDHC_MMCM_DIV_REG	0x1020
++#define DIV_REG_100_MHZ		0x1145
++#define DIV_REG_200_MHZ		0x1083
++#define SDHC_MMCM_CLKFBOUT	0x1024
++#define CLKFBOUT_100_MHZ	0x0000
++#define CLKFBOUT_200_MHZ	0x0080
++#define SDHC_CCLK_MMCM_RST	0x00000001
++
++static void sdhci_snps_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++	u16 clk;
++	u32 reg, vendor_ptr;
++
++	vendor_ptr = sdhci_readw(host, SDHCI_VENDOR_PTR_R);
++
++	/* Disable software managed rx tuning */
++	reg = sdhci_readl(host, (SDHC_AT_CTRL_R + vendor_ptr));
++	reg &= ~SDHC_SW_TUNE_EN;
++	sdhci_writel(host, reg, (SDHC_AT_CTRL_R + vendor_ptr));
++
++	if (clock <= 52000000) {
++		sdhci_set_clock(host, clock);
++	} else {
++		/* Assert reset to MMCM */
++		reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
++		reg |= SDHC_CCLK_MMCM_RST;
++		sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
++
++		/* Configure MMCM */
++		if (clock == 100000000) {
++			sdhci_writel(host, DIV_REG_100_MHZ, SDHC_MMCM_DIV_REG);
++			sdhci_writel(host, CLKFBOUT_100_MHZ,
++					SDHC_MMCM_CLKFBOUT);
++		} else {
++			sdhci_writel(host, DIV_REG_200_MHZ, SDHC_MMCM_DIV_REG);
++			sdhci_writel(host, CLKFBOUT_200_MHZ,
++					SDHC_MMCM_CLKFBOUT);
++		}
++
++		/* De-assert reset to MMCM */
++		reg = sdhci_readl(host, (SDHC_GPIO_OUT + vendor_ptr));
++		reg &= ~SDHC_CCLK_MMCM_RST;
++		sdhci_writel(host, reg, (SDHC_GPIO_OUT + vendor_ptr));
++
++		/* Enable clock */
++		clk = SDHCI_PROG_CLOCK_MODE | SDHCI_CLOCK_INT_EN |
++			SDHCI_CLOCK_CARD_EN;
++		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
++	}
++}
++
++static const struct sdhci_ops sdhci_snps_ops = {
++	.set_clock	= sdhci_snps_set_clock,
++	.enable_dma	= sdhci_pci_enable_dma,
++	.set_bus_width	= sdhci_set_bus_width,
++	.reset		= sdhci_reset,
++	.set_uhs_signaling = sdhci_set_uhs_signaling,
++};
++
++const struct sdhci_pci_fixes sdhci_snps = {
++	.ops		= &sdhci_snps_ops,
++};
+diff --git a/drivers/mmc/host/sdhci-pci.h b/drivers/mmc/host/sdhci-pci.h
+index 59af288..2ef0bdc 100644
+--- a/drivers/mmc/host/sdhci-pci.h
++++ b/drivers/mmc/host/sdhci-pci.h
+@@ -61,6 +61,8 @@
+ #define PCI_VENDOR_ID_ARASAN		0x16e6
+ #define PCI_DEVICE_ID_ARASAN_PHY_EMMC	0x0670
+ 
++#define PCI_DEVICE_ID_SYNOPSYS_DWC_MSHC 0xc202
++
+ /*
+  * PCI device class and mask
+  */
+@@ -184,5 +186,6 @@ static inline void *sdhci_pci_priv(struct sdhci_pci_slot *slot)
+ #endif
+ 
+ extern const struct sdhci_pci_fixes sdhci_arasan;
++extern const struct sdhci_pci_fixes sdhci_snps;
+ 
+ #endif /* __SDHCI_PCI_H */
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+1.9.1
+
