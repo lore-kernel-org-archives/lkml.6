@@ -2,108 +2,96 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5C0C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B44C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3840C20C0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:59:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="swTZh0uu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3840C20C0B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E97CC20C03
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E97CC20C03
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732450AbeGKQEn (ORCPT
+        id S2387433AbeGKQHd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:04:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37254 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726429AbeGKQEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:04:42 -0400
-Received: from mail-yw0-f174.google.com (mail-yw0-f174.google.com [209.85.161.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E32D20C0B;
-        Wed, 11 Jul 2018 15:59:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531324783;
-        bh=yuJtATNcTluX0YYvzolm37e7lk3R3Jk4xIGag1bxLyc=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=swTZh0uuPa7OkI7if6b8FtidNNCLEtitjkF/Cegl8+HoLRQ1wBZl16fc3Sh1fnVxW
-         u00udz7pIb/HNdGeqUzkmpZ54zKapd54BYHTai/tPKz5D9TCscLaIgCd+BPWs+Qk9W
-         utZE/A/pb/haFfMneYnPgQx7kTJvVYVO54numuu0=
-Received: by mail-yw0-f174.google.com with SMTP id q129-v6so6520862ywg.8;
-        Wed, 11 Jul 2018 08:59:43 -0700 (PDT)
-X-Gm-Message-State: APt69E1Rtfn4CcPle3vP2dd184pDrhERi75i65R4+TUaQmgo+JL4PC0D
-        Lh05UWoUqiiz4kjs71AseenZJjdh62dlU2adoSg=
-X-Google-Smtp-Source: AAOMgpdlRbHJ5n5oTL+ZIxUQvb/mQKSqSfYiYgBOUUzPh65vbt0TFxYn3CDVzVf06YYHnTbqXI9n+RHf+wFZqQLgEck=
-X-Received: by 2002:a81:a348:: with SMTP id a69-v6mr12202243ywh.142.1531324782340;
- Wed, 11 Jul 2018 08:59:42 -0700 (PDT)
+        Wed, 11 Jul 2018 12:07:33 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39334 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726816AbeGKQHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:07:33 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B937E7A9;
+        Wed, 11 Jul 2018 09:02:33 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8A0BA3F5B1;
+        Wed, 11 Jul 2018 09:02:33 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id A32771AE53EA; Wed, 11 Jul 2018 17:03:15 +0100 (BST)
+Date:   Wed, 11 Jul 2018 17:03:15 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>,
+        "Yandong.Zhao" <yandong77520@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        zhaoyd@thundersoft.com, zhaoxb@thundersoft.com,
+        fanlc0801@thundersoft.com
+Subject: Re: [PATCH] arm64: neon: Fix function may_use_simd() return error
+ status
+Message-ID: <20180711160315.GD18477@arm.com>
+References: <1531271399-1768-1-git-send-email-yandong77520@gmail.com>
+ <CAKv+Gu-PLsWZLPM-OfXHLGKs7PojRB4jFsyp+X_5OW6ryi7gRQ@mail.gmail.com>
+ <20180711154758.4k2phfrzl2r5m34o@lakrids.cambridge.arm.com>
 MIME-Version: 1.0
-Received: by 2002:a25:8182:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 08:59:01
- -0700 (PDT)
-In-Reply-To: <5553262.evi6GU8epL@pcbe13614>
-References: <5553262.evi6GU8epL@pcbe13614>
-From:   Alan Tull <atull@kernel.org>
-Date:   Wed, 11 Jul 2018 10:59:01 -0500
-X-Gmail-Original-Message-ID: <CANk1AXRewvAAxRi=kmCNL3CEki9ODk7LvLS6q8Hd64JRanyfew@mail.gmail.com>
-Message-ID: <CANk1AXRewvAAxRi=kmCNL3CEki9ODk7LvLS6q8Hd64JRanyfew@mail.gmail.com>
-Subject: Re: fpga: fpga_mgr_free usage
-To:     federico.vaga@cern.ch
-Cc:     linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711154758.4k2phfrzl2r5m34o@lakrids.cambridge.arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 7:38 AM, Federico Vaga <federico.vaga@cern.ch> wrote:
+On Wed, Jul 11, 2018 at 04:47:58PM +0100, Mark Rutland wrote:
+> On Wed, Jul 11, 2018 at 09:20:03AM +0200, Ard Biesheuvel wrote:
+> > On 11 July 2018 at 03:09, Yandong.Zhao <yandong77520@gmail.com> wrote:
+> > > diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
+> > > index fa8b3fe..784a8c2 100644
+> > > --- a/arch/arm64/include/asm/simd.h
+> > > +++ b/arch/arm64/include/asm/simd.h
+> > > @@ -29,7 +29,8 @@
+> > >  static __must_check inline bool may_use_simd(void)
+> > >  {
+> > >         /*
+> > > -        * The raw_cpu_read() is racy if called with preemption enabled.
+> > > +        * The this_cpu_read() is racy if called with preemption enabled,
+> > > +        * since the task may subsequently migrate to another CPU.
+> > >          * This is not a bug: kernel_neon_busy is only set when
+> > >          * preemption is disabled, so we cannot migrate to another CPU
+> > >          * while it is set, nor can we migrate to a CPU where it is set.
+> 
+> It would be nice if we could clarify the "is racy" part here.
+> 
+> How about:
+> 
+> 	/*
+> 	 * kernel_neon_busy is only set while preemption is disabled,
+> 	 * and is clear whenever preemption is enabled. Since
+> 	 * this_cpu_read() is atomic w.r.t. preemption, kernel_neon_busy
+> 	 * cannot change under our feet -- if it's set we cannot be
+> 	 * migrated, and if it's clear we cannot be migrated to a CPU
+> 	 * where it is set.
+> 	 */
+> 
+> With that:
+> 
+> Reviewed-by: Mark Rutland <mark.rutland@arm..com>
 
-Hi Federico,
+Thanks. Applied with the updated comment and your tag..
 
-> Hi Alan,
->
-> I have another point that I would like to discuss. It is about the
-> usage of 'fpga_mgr_free()' which does not look like consistent.
->
-> This function, according to the current implementation, can be used by
-> an FPGA manager user and it is used by the FPGA manager itself on
-> device release. This means that the user can only use this function if
-> fpga_mgr_register() fails (to clean up), otherwise the user must NOT
-> use this function, otherwise we most likely get an oops (NULL or
-> invalid pointer). The example here is correct, this is what we should
-> do:
->
-> https://www.kernel.org/doc/html/latest/driver-api/fpga/fpga-mgr.html
->
-> But I suggest to document it better or prevent this type of mistakes
-> from happening. Following a couple of proposals
->
-> ------
-> 1.
-> Document it better. This is easy, in the fpga_mgr_free() kernel-doc
-> comment we explain that the use of this function must be limited to
-> clean up the memory on a registration failure. If an FPGA manager has
-> been successfully registered then it will be freed by the framework
-> itself.
->
-> But still, this does not prevent an oops from happening.
-> ------
-> 2.
-> Remove the fpga_mgr_free() from fpga_mgr_dev_release() and ask the
-> user to free the manager when necessary.
->
-> This makes the usage consistent: the user creates and destroy its own
-> objects. This is also consistent with our other discussion where we
-> said, among the other things, that the module that uses the FPGA
-> manager can the owner of the fpga_manager data structure.
-
-You're not the first to complain about this.  I think I'll err on the
-side of consistency and implement your option 2 here.
-
-Alan
+Will
