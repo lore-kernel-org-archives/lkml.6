@@ -2,169 +2,85 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5907C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:12:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD5BC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B58320B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:12:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B58320B6F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E74020B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:13:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E74020B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732640AbeGKLQc (ORCPT
+        id S1732676AbeGKLQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:16:32 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:47510 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732387AbeGKLQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:16:31 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5366B20775; Wed, 11 Jul 2018 13:12:41 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 236BB207AD;
-        Wed, 11 Jul 2018 13:12:31 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 13:12:30 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Yong <yong.deng@magewell.com>
-Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
+        Wed, 11 Jul 2018 07:16:52 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40474 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732387AbeGKLQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:16:52 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3C46C406DE36;
+        Wed, 11 Jul 2018 11:13:03 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (dhcp-192-212.str.redhat.com [10.33.192.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 95E9120389E0;
+        Wed, 11 Jul 2018 11:12:58 +0000 (UTC)
+Subject: Re: [RFC PATCH v2 20/27] x86/cet/shstk: ELF header parsing of CET
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
         Arnd Bergmann <arnd@arndb.de>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Yannick Fertre <yannick.fertre@st.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v10 2/2] media: V3s: Add support for Allwinner CSI.
-Message-ID: <20180711111230.gpv7ww2nhaha5hou@flea>
-References: <1525417745-37964-1-git-send-email-yong.deng@magewell.com>
- <20180626110821.wkal6fcnoncsze6y@valkosipuli.retiisi.org.uk>
- <20180705154802.03604f156709be11892b19c0@magewell.com>
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-21-yu-cheng.yu@intel.com>
+From:   Florian Weimer <fweimer@redhat.com>
+Message-ID: <10c224e9-933a-20d8-a286-5065a6cb10f1@redhat.com>
+Date:   Wed, 11 Jul 2018 13:12:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="wbnyxjafmaafjrkv"
-Content-Disposition: inline
-In-Reply-To: <20180705154802.03604f156709be11892b19c0@magewell.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <20180710222639.8241-21-yu-cheng.yu@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 11 Jul 2018 11:13:03 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 11 Jul 2018 11:13:03 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/11/2018 12:26 AM, Yu-cheng Yu wrote:
+> +	/*
+> +	 * PT_NOTE segment is small.  Read at most
+> +	 * PAGE_SIZE.
+> +	 */
+> +	if (note_size > PAGE_SIZE)
+> +		note_size = PAGE_SIZE;
 
---wbnyxjafmaafjrkv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+That's not really true.  There are some huge PT_NOTE segments out there.
 
-Hi Sakari,
+Why can't you check the notes after the executable has been mapped?
 
-On Thu, Jul 05, 2018 at 03:48:02PM +0800, Yong wrote:
-> > > +
-> > > +/* -----------------------------------------------------------------=
-------------
-> > > + * Media Operations
-> > > + */
-> > > +static int sun6i_video_formats_init(struct sun6i_video *video,
-> > > +				    const struct media_pad *remote)
-> > > +{
-> > > +	struct v4l2_subdev_mbus_code_enum mbus_code =3D { 0 };
-> > > +	struct sun6i_csi *csi =3D video->csi;
-> > > +	struct v4l2_format format;
-> > > +	struct v4l2_subdev *subdev;
-> > > +	u32 pad;
-> > > +	const u32 *pixformats;
-> > > +	int pixformat_count =3D 0;
-> > > +	u32 subdev_codes[32]; /* subdev format codes, 32 should be enough */
-> > > +	int codes_count =3D 0;
-> > > +	int num_fmts =3D 0;
-> > > +	int i, j;
-> > > +
-> > > +	pad =3D remote->index;
-> > > +	subdev =3D media_entity_to_v4l2_subdev(remote->entity);
-> > > +	if (subdev =3D=3D NULL)
-> > > +		return -ENXIO;
-> > > +
-> > > +	/* Get supported pixformats of CSI */
-> > > +	pixformat_count =3D sun6i_csi_get_supported_pixformats(csi, &pixfor=
-mats);
-> > > +	if (pixformat_count <=3D 0)
-> > > +		return -ENXIO;
-> > > +
-> > > +	/* Get subdev formats codes */
-> > > +	mbus_code.pad =3D pad;
-> > > +	mbus_code.which =3D V4L2_SUBDEV_FORMAT_ACTIVE;
-> > > +	while (!v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL,
-> > > +				 &mbus_code)) {
-> >=20
-> > The formats supported by the external sub-device may depend on horizont=
-al
-> > and vertical flipping. You shouldn't assume any particular configuration
-> > here: instead, bridge drivers generally just need to make sure the form=
-ats
-> > match in link validation when streaming is started. At least the CSI-2
-> > receiver driver and the DMA engine driver (video device) should check t=
-he
-> > configuration is valid. See e.g. the IPU3 driver:
-> > drivers/media/pci/intel/ipu3/ipu3-cio2.c .
->=20
-> Can mbus_code be added dynamically ?
-> The code here only enum the mbus code and get the possible supported
-> pairs of pixformat and mbus by SoC. Not try to check if the formats
-> (width height ...) is valid or not. The formats validation will be=20
-> in link validation when streaming is started as per your advise.=20
-
-Can you reply to this so that Yong has a chance to resubmit his serie
-before the 4.19 merge window starts?
-
-Or alternatively, is this something we can fix later on, once it's
-merged?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---wbnyxjafmaafjrkv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltF5gwACgkQ0rTAlCFN
-r3TWNw/+KtCfTkV+mWO7syASSLV3TlKy+Uac+vNGvjw9EqP+7JKvxvosSriQMs8D
-Q2CFOLZam7c0+oTqMl8t+QXkW0Z2B54akBlcAGa2hSAd01mquQ3nEzI/BJlMx2Sm
-0N9G2QQO4u440h2Nzi2wvEfj30Qc7P6x5dpir8vAlXYU870JRTPnUOIMwGZRn/a8
-ZhBJ6TSxn572FFkyC7IcPWJBuCY8ZaJlGiiriIpF6MKq57WIDqyQ7lIT5zxbtry3
-x68EPuGyRrjSaWcM08RVzjnVNEtNH9C2bN1WvjRldE00PmYJxLiskCOVN+ZHHrLE
-qNbRDGJOG1yMwSaRPEFJxs0bb7/lsmRZgsA7ZUnuTrLZnLIfe7vbfnBdTDcOgCxG
-cO/1kH/ub5l81UqPgGUjg5Q0ZohurUd5BzmUoR/x9EutW21m1rHLaJB/CYYaB37a
-pT+xKktQpFO5GLQDLKK2qsUw0jtv8WiL5PRsi8dnCHfGHUH1YUZ5RiCXZ5BBX4+2
-giIlT91cIWKIcBsRdDfDAS9AMfAXiNS47VdFlb6rcXFBLQ/cK9LItSuLKc7yXVcS
-OJGoQPt8m985lFwIGIpZ8KLzsupee3gbvHy8RCvAdhGM6sdCi6SnZ0O8b1/86pMM
-OZGXDI9bfwI1vU4azLEoKBHe5x6GSkjhF8amdyPMUMrDZLw4Slo=
-=NKp6
------END PGP SIGNATURE-----
-
---wbnyxjafmaafjrkv--
+Thanks,
+Florian
