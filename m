@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D55C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 072D5C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9CD3208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9CD3208E5
+	by mail.kernel.org (Postfix) with ESMTP id BC140208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC140208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388404AbeGKOBw (ORCPT
+        id S2388419AbeGKOBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:01:52 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36346 "EHLO
+        Wed, 11 Jul 2018 10:01:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36356 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388376AbeGKOBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:01:51 -0400
+        id S2388376AbeGKOBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:01:54 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4456C16A3;
-        Wed, 11 Jul 2018 06:57:23 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 18C591713;
+        Wed, 11 Jul 2018 06:57:26 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 343533F5B1;
-        Wed, 11 Jul 2018 06:57:21 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 074B23F5B1;
+        Wed, 11 Jul 2018 06:57:23 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         will.deacon@arm.com
@@ -35,9 +35,9 @@ Cc:     catalin.marinas@arm.com, dave.martin@arm.com, hch@infradead.org,
         james.morse@arm.com, linux@dominikbrodowski.net,
         linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
         mark.rutland@arm.com, viro@zeniv.linux.org.uk
-Subject: [PATCHv5 04/21] arm64: kill change_cpacr()
-Date:   Wed, 11 Jul 2018 14:56:39 +0100
-Message-Id: <20180711135656.20670-5-mark.rutland@arm.com>
+Subject: [PATCHv5 05/21] arm64: move sve_user_{enable,disable} to <asm/fpsimd.h>
+Date:   Wed, 11 Jul 2018 14:56:40 +0100
+Message-Id: <20180711135656.20670-6-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180711135656.20670-1-mark.rutland@arm.com>
 References: <20180711135656.20670-1-mark.rutland@arm.com>
@@ -46,53 +46,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have sysreg_clear_set(), we can use this instead of
-change_cpacr().
+In subsequent patches, we'll want to make use of sve_user_enable() and
+sve_user_disable() outside of kernel/fpsimd.c. Let's move these to
+<asm/fpsimd.h> where we can make use of them.
 
-Note that the order of the set and clear arguments differs between
-change_cpacr() and sysreg_clear_set(), so these are flipped as part of
-the conversion. Also, sve_user_enable() redundantly clears
-CPACR_EL1_ZEN_EL0EN before setting it; this is removed for clarity.
+To avoid ifdeffery in sequences like:
+
+if (system_supports_sve() && some_condition)
+	sve_user_disable();
+
+... empty stubs are provided when support for SVE is not enabled. Note
+that system_supports_sve() contains as IS_ENABLED(CONFIG_ARM64_SVE), so
+the sve_user_disable() call should be optimized away entirely when
+CONFIG_ARM64_SVE is not selected.
+
+To ensure that this is the case, the stub definitions contain a
+BUILD_BUG(), as we do for other stubs for which calls should always be
+optimized away when the relevant config option is not selected.
+
+At the same time, the include list of <asm/fpsimd.h> is sorted while
+adding <asm/sysreg.h>.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Dave Martin <dave.martin@arm.com>
 Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: James Morse <james.morse@arm.com>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/kernel/fpsimd.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ arch/arm64/include/asm/fpsimd.h | 17 ++++++++++++++++-
+ arch/arm64/kernel/fpsimd.c      | 10 ----------
+ 2 files changed, 16 insertions(+), 11 deletions(-)
 
+diff --git a/arch/arm64/include/asm/fpsimd.h b/arch/arm64/include/asm/fpsimd.h
+index fa92747a49c8..dd1ad3950ef5 100644
+--- a/arch/arm64/include/asm/fpsimd.h
++++ b/arch/arm64/include/asm/fpsimd.h
+@@ -16,13 +16,15 @@
+ #ifndef __ASM_FP_H
+ #define __ASM_FP_H
+ 
+-#include <asm/ptrace.h>
+ #include <asm/errno.h>
++#include <asm/ptrace.h>
+ #include <asm/processor.h>
+ #include <asm/sigcontext.h>
++#include <asm/sysreg.h>
+ 
+ #ifndef __ASSEMBLY__
+ 
++#include <linux/build_bug.h>
+ #include <linux/cache.h>
+ #include <linux/init.h>
+ #include <linux/stddef.h>
+@@ -102,6 +104,16 @@ extern int sve_set_vector_length(struct task_struct *task,
+ extern int sve_set_current_vl(unsigned long arg);
+ extern int sve_get_current_vl(void);
+ 
++static inline void sve_user_disable(void)
++{
++	sysreg_clear_set(cpacr_el1, CPACR_EL1_ZEN_EL0EN, 0);
++}
++
++static inline void sve_user_enable(void)
++{
++	sysreg_clear_set(cpacr_el1, 0, CPACR_EL1_ZEN_EL0EN);
++}
++
+ /*
+  * Probing and setup functions.
+  * Calls to these functions must be serialised with one another.
+@@ -128,6 +140,9 @@ static inline int sve_get_current_vl(void)
+ 	return -EINVAL;
+ }
+ 
++static inline void sve_user_disable(void) { BUILD_BUG(); }
++static inline void sve_user_enable(void) { BUILD_BUG(); }
++
+ static inline void sve_init_vq_map(void) { }
+ static inline void sve_update_vq_map(void) { }
+ static inline int sve_verify_vq_map(void) { return 0; }
 diff --git a/arch/arm64/kernel/fpsimd.c b/arch/arm64/kernel/fpsimd.c
-index 84c68b14f1b2..a98a7f96aff1 100644
+index a98a7f96aff1..58c53bc96928 100644
 --- a/arch/arm64/kernel/fpsimd.c
 +++ b/arch/arm64/kernel/fpsimd.c
-@@ -159,23 +159,14 @@ static void sve_free(struct task_struct *task)
+@@ -159,16 +159,6 @@ static void sve_free(struct task_struct *task)
  	__sve_free(task);
  }
  
--static void change_cpacr(u64 val, u64 mask)
+-static void sve_user_disable(void)
 -{
--	u64 cpacr = read_sysreg(CPACR_EL1);
--	u64 new = (cpacr & ~mask) | val;
--
--	if (new != cpacr)
--		write_sysreg(new, CPACR_EL1);
+-	sysreg_clear_set(cpacr_el1, CPACR_EL1_ZEN_EL0EN, 0);
 -}
 -
- static void sve_user_disable(void)
- {
--	change_cpacr(0, CPACR_EL1_ZEN_EL0EN);
-+	sysreg_clear_set(cpacr_el1, CPACR_EL1_ZEN_EL0EN, 0);
- }
- 
- static void sve_user_enable(void)
- {
--	change_cpacr(CPACR_EL1_ZEN_EL0EN, CPACR_EL1_ZEN_EL0EN);
-+	sysreg_clear_set(cpacr_el1, 0, CPACR_EL1_ZEN_EL0EN);
- }
- 
+-static void sve_user_enable(void)
+-{
+-	sysreg_clear_set(cpacr_el1, 0, CPACR_EL1_ZEN_EL0EN);
+-}
+-
  /*
+  * TIF_SVE controls whether a task can use SVE without trapping while
+  * in userspace, and also the way a task's FPSIMD/SVE state is stored
 -- 
 2.11.0
 
