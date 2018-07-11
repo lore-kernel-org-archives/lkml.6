@@ -2,144 +2,108 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D498AC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:47:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB4EC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95B532087C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:47:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95B532087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 321B3208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:48:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uv2fhSVz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 321B3208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeGKIuL (ORCPT
+        id S1726815AbeGKIwF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:50:11 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41145 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726319AbeGKIuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:50:11 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7EA082074F; Wed, 11 Jul 2018 10:46:56 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4E00D206A6;
-        Wed, 11 Jul 2018 10:46:56 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 10:46:56 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
+        Wed, 11 Jul 2018 04:52:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34152 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726398AbeGKIwF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 04:52:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=P4+VFJrW/P2Cuw5bL4OTQdc6VUhjyL2TUYyqkrFBUIQ=; b=uv2fhSVzfbvhgIWTQUia0j1Pl
+        KQAicZXqwWIvD5zyxxxiMgYnW7KkX9a8TcD6XYnAtSfy7jot5AE6ysI9x3iRa4RgQH0ylr/4btv34
+        v8D00WhaIXJu1MrQpR141RWFFRQAXFDOnzsPE5AM3bKdjXT2DUr60fYqU/IgZftr6iWiFoIsy/xmu
+        6fMV60APqp4nYJfvDgoYn2gWkozy/ioozkJjEsJrLkNY2JsrXpwV+X4lV9FIIRLmJC1al6TKLxGEY
+        uIYifAnGOytqCNpFZYkMCyHr8evOjCyXiOqL15o0slAc1cYihczSv5extaKiUsrU0vgFLKff0Uhc8
+        mzkVJS+VA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdAnj-0001B0-Uy; Wed, 11 Jul 2018 08:48:44 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6B4F520291063; Wed, 11 Jul 2018 10:48:42 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 10:48:42 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
         Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Subject: Re: [PATCH v5 04/22] dt-bindings: sram: sunxi: Add A13, A20, A23 and
- H3 dedicated bindings
-Message-ID: <20180711084656.4y3m7maiszewzgsz@flea>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
- <20180710080114.31469-5-paul.kocialkowski@bootlin.com>
- <CAGb2v65MO9xmKQz5LuydwqwvVB-_bbM=FeqbsRwJbh-5km9XCQ@mail.gmail.com>
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v2 11/27] x86/mm: Modify ptep_set_wrprotect and
+ pmdp_set_wrprotect for _PAGE_DIRTY_SW
+Message-ID: <20180711084842.GR2476@hirez.programming.kicks-ass.net>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-12-yu-cheng.yu@intel.com>
+ <fbf45667-5388-44a6-1f22-07bcc03e1804@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7xak3bjnuzaq4fcl"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGb2v65MO9xmKQz5LuydwqwvVB-_bbM=FeqbsRwJbh-5km9XCQ@mail.gmail.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <fbf45667-5388-44a6-1f22-07bcc03e1804@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jul 10, 2018 at 03:44:32PM -0700, Dave Hansen wrote:
+> On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
+> > +	/*
+> > +	 * On platforms before CET, other threads could race to
+> > +	 * create a RO and _PAGE_DIRTY_HW PMD again.  However,
+> > +	 * on CET platforms, this is safe without a TLB flush.
+> > +	 */
+> 
+> If I didn't work for Intel, I'd wonder what the heck CET is and what the
+> heck it has to do with _PAGE_DIRTY_HW.  I think we need a better comment
 
---7xak3bjnuzaq4fcl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+And Changelog, the provided one is abysmal.
 
-On Tue, Jul 10, 2018 at 10:36:19PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Jul 10, 2018 at 4:00 PM, Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
-> > This introduces dedicated bindings for the system control blocks found
-> > on the A13, A20, A23 and H3 sunxi platforms.
-> >
-> > Since the controllers on the A33 are the very same as those on the A23,
-> > no specific compatible is introduced for it.
-> >
-> > These bindings are introduced to allow reflecting the differences that
-> > exist between these controllers, that may become significant to driver
-> > implementations.
-> >
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->=20
-> Not sure if there's a difference between A10 and A20, if you don't count
-> the NMI that we have a separate node for. But anyway,
->=20
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> than this.  How about:
+> 
+> 	Some processors can _start_ a write, but end up seeing
+> 	a read-only PTE by the time they get to getting the
+> 	Dirty bit.  In this case, they will set the Dirty bit,
+> 	leaving a read-only, Dirty PTE which looks like a Shadow
+> 	Stack PTE.
+> 
+> 	However, this behavior has been improved and will *not* occur on
+> 	processors supporting Shadow Stacks.  Without this guarantee, a
+> 	transition to a non-present PTE and flush the TLB would be
+> 	needed.
 
-I've applied it, adding the A10 fallback compatible for the A20.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---7xak3bjnuzaq4fcl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFw/8ACgkQ0rTAlCFN
-r3RG2Q//UY8tKZzpQY3u34hE+DqO8V2dQE8TFa25BgqlqD/R48vYooRoCjQiOMIF
-GPAu5hZjAUxcUfx2G5A8vKXF1eZQRAPLJm8iRHMpdYztcpBCvDsvbpc7Wr2oly3t
-zrS/f9l3t4lMbyx07oLU8b7WsQ1k5CmtNxpjKDbWJr2QfiVa0DoIECpx1LPfSdyM
-jp5KJeDoiH3XwBPaSoojWmWX2GxiMQ4lHWLXwSwf++s8RxLTftZhRej0OJCAuAKK
-Ax/wx60j3BcxvAoMtUy7wPHcvRhNOlmgKYUmynweJjqZwQfRmoh5Lr0Ec3in6hXy
-ZETtN+aEx0yjzZpswRZGlsTwu2+pNwwLUlSmNkGOZscJt0r0/ncBG4Sej80P2nbb
-0jbhr8v9UlJ4Ot8qsjij3ZvUX0uV4UrkK2TlMVa8Qxj5riRKQq4wclKZBqaGbP5D
-C54qSJ30V7pvl3v29PmAtJudst2TMCeIP7ZB5QIhFQrK3g2OJA480hdnMo/MbIIp
-OFRhhbrzEayJqqDYg8QxklpUZXAIMvOrD+8PusQsVIPyNjomwtR8ZG9fE4SFpjmq
-J8Ng5/FwheWHLUYme0EkOKOn5Pmng7Y77XXR9E3VPg63a2/GYwSmLGikUFyePgAc
-jBKhA3VLMsGrB5bjMpxRF4+jo4r/0yZ8qJOD2SzPx3yJi1EmpMY=
-=ooSy
------END PGP SIGNATURE-----
-
---7xak3bjnuzaq4fcl--
+I'm still struggling. I think I get the first paragraph, but then what?
