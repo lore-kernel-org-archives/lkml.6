@@ -2,129 +2,98 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37366C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:29:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 063E5C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:31:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D666A20B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D19220B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:31:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="WbgbahD0";
-	dkim=pass (1024-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="eCSIkuGG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D666A20B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=flygoat.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="YizqwXot"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D19220B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726730AbeGKKc7 (ORCPT
+        id S1726777AbeGKKfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:32:59 -0400
-Received: from forward104p.mail.yandex.net ([77.88.28.107]:54260 "EHLO
-        forward104p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726440AbeGKKc7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:32:59 -0400
-X-Greylist: delayed 756 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Jul 2018 06:32:56 EDT
-Received: from mxback1g.mail.yandex.net (mxback1g.mail.yandex.net [IPv6:2a02:6b8:0:1472:2741:0:8b7:162])
-        by forward104p.mail.yandex.net (Yandex) with ESMTP id B3C52181BC3;
-        Wed, 11 Jul 2018 13:14:57 +0300 (MSK)
-Received: from smtp3p.mail.yandex.net (smtp3p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:8])
-        by mxback1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id QIlY3WS5VM-Eu1G4nPP;
-        Wed, 11 Jul 2018 13:14:57 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1531304097;
-        bh=XCCe7vZc7GQyW/Uk20RcYER7XQFfgxW8goHDS9VObxA=;
-        h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References;
-        b=WbgbahD0+vZJfY3jnRlpGa+xI1+WC81hJZdXBnPchpOduLhpn/jZRvMAZ+8rW8vpI
-         KOxfFiGvAOvK9jE9PkbZQ6A4SsUnLCQRSLyy94R808f93VSpN5JhTiPtoU32YX/9dC
-         9tEgueIFzhdbbd6/DnLpi4KmciYvZ7xscM/3BOHM=
-Received: by smtp3p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id fDNQFekDBA-EmhCeUUh;
-        Wed, 11 Jul 2018 13:14:53 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1531304094;
-        bh=XCCe7vZc7GQyW/Uk20RcYER7XQFfgxW8goHDS9VObxA=;
-        h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References;
-        b=eCSIkuGGxcPhycRObxIrrwZk4lN1sPuTvO3aqvHXxpZvZefNyJllo4kHv+gkw4dh+
-         RWbHVp4cBjBxmrYVpnHRPUW6P7P6Zs1xWkn2pgQKiQWB8D75meSOpG0ByfSFOICrVf
-         XwXcAzmMoqMNG+zMQKj0C/EXrL2VcvzYeHMdgeRY=
-Authentication-Results: smtp3p.mail.yandex.net; dkim=pass header.i=@flygoat.com
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     linux-mips@linux-mips.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        =?utf-8?B?6ZmI5Y2O5omN?= <chenhc@lemote.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Fuxin Zhang <zhangfx@lemote.com>,
-        wuzhangjin <wuzhangjin@gmail.com>,
-        stable <stable@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2] MIPS: implement smp_cond_load_acquire() for Loongson-3
-Date:   Wed, 11 Jul 2018 18:05:51 +0800
-Message-ID: <5471216.FKXZRxKFUI@flygoat-ry>
-In-Reply-To: <20180710121727.GK2476@hirez.programming.kicks-ass.net>
-References: <1531103198-16764-1-git-send-email-chenhc@lemote.com> <tencent_26F8B9E004D4512B2225FCE1@qq.com> <20180710121727.GK2476@hirez.programming.kicks-ass.net>
+        Wed, 11 Jul 2018 06:35:10 -0400
+Received: from onstation.org ([52.200.56.107]:38930 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726504AbeGKKfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 06:35:10 -0400
+Received: from localhost (c-98-236-77-125.hsd1.wv.comcast.net [98.236.77.125])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 2E6B02F7;
+        Wed, 11 Jul 2018 10:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
+        s=default; t=1531305090;
+        bh=ey09jrjK0JbUL4vI7nVfUQmEOIrLK3sDknKmC2+LWUQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YizqwXotcr6guub71aOp6Nn+1ytai8HoWqqAOUeY9PRvM8cSaR85guYRMaSWejIh7
+         4bJtCg9v4I5mVk29N5QxPWK0B82d+lckqV+8ksWEUg6rhGzjU1xg8BInL7EkzbSdMk
+         tqhpPTfhT/r3M2AWD32h0ptKXH9PxhTCIpc74znE=
+Date:   Wed, 11 Jul 2018 06:31:29 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Himanshu Jha <himanshujha199640@gmail.com>
+Cc:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, jonathan@marek.ca,
+        jmaneyrol@invensense.com, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, mkelly@xevo.com, fischerdouglasc@gmail.com,
+        bshah@kde.org, ctatlor97@gmail.com
+Subject: Re: [PATCH 2/3] iio: imu: mpu6050: add support for regulator
+ framework
+Message-ID: <20180711103129.ql4txni63i2m7m4r@d08157822050>
+References: <20180711010932.20313-1-masneyb@onstation.org>
+ <20180711010932.20313-3-masneyb@onstation.org>
+ <20180711100442.GA30019@himanshu-Vostro-3559>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711100442.GA30019@himanshu-Vostro-3559>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-7-10 Tue at 20:17:27=EF=BC=8CPeter Zijlstra Wrote=EF=BC=9A
+On Wed, Jul 11, 2018 at 03:34:43PM +0530, Himanshu Jha wrote:
+> Hi Brain,
+> 
+> On Tue, Jul 10, 2018 at 09:09:31PM -0400, Brian Masney wrote:
+> > This patch adds support for the regulator framework to the mpu6050
+> > driver.
+> > 
+> > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> > ---
+> >  }
+> >  EXPORT_SYMBOL_GPL(inv_mpu_core_probe);
+> >  
+> > +int inv_mpu_core_remove(struct inv_mpu6050_state *st)
+> > +{
+> > +	return regulator_disable(st->vddio_supply);
+> > +}
+> EXPORT_SYMBOL_GPL(inv_mpu_core_remove); ?
+> 
+> This is causing 0-day test build failure perhaps.
 
-Hi Peter
-Since Huacai unable to send email via client, I'm going to reply for him=20
-=20
-> Sure.. we all got that far. And no, this isn't the _real_ problem. This
-> is a manifestation of the problem.
->=20
-> The problem is that your SFB is broken (per the Linux requirements). We
-> require that stores will become visible. That is, they must not
-> indefinitely (for whatever reason) stay in the store buffer.
->=20
-> > I don't think this is a hardware bug, in design, SFB will flushed to
-> > L1 cache in three cases:
-> >=20
-> > 1, data in SFB is full (be a complete cache line);
-> > 2, there is a subsequent read access in the same cache line;
-> > 3, a 'sync' instruction is executed.
->=20
-> And I think this _is_ a hardware bug. You just designed the bug instead
-> of it being by accident.
-Yes, we understood that this hardware feature is not supported by LKML,
-so it should be a hardware bug for LKML.
->=20
-> It doesn't happen an _any_ other architecture except that dodgy
-> ARM11MPCore part. Linux hard relies on stores to become available
-> _eventually_.
->=20
-> Still, even with the rules above, the best work-around is still the very
-> same cpu_relax() hack.
+You are right. It compiles if I have CONFIG_INV_MPU6050_IIO built into
+the kernel, which is what I'm using to boot the board, but fails when
+compiled as a module. Good catch 0-day!
 
-As you say, SFB makes Loongson not fully SMP-coherent.
-However, modify cpu_relax can solve the current problem,
-but not so straight forward. On the other hand, providing a Loongson-specif=
-ic=20
-WRITE_ONCE looks more reasonable, because it the eliminate the "non-cohrenc=
-y".
-So we can solve the bug from the root.
+The patch won't apply to Linus's current master branch and I assumed
+that iio/togreg didn't have the required changes as well. Sorry about
+the noise.
 
-Thanks.
-=2D-
-Jiaxun Yang
+I'll send a v2 before the weekend.
 
-
+Brian
