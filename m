@@ -2,116 +2,319 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74AD0C1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF998C38A24
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E3920C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:40:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PISyeDrO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22E3920C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 74B0220C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:40:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B0220C0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387710AbeGKUqS (ORCPT
+        id S2388036AbeGKUqX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:46:18 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:35467 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbeGKUqR (ORCPT
+        Wed, 11 Jul 2018 16:46:23 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:35434 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbeGKUqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:46:17 -0400
-Received: by mail-lf0-f68.google.com with SMTP id f18-v6so6246170lfc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:40:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=4xcyc7q7iauyr2omfiWzf/M0owoAEG/OfzhQKHllGEc=;
-        b=PISyeDrOZrw0TdTPvHq1o9G4Z//OmBTI7IecZnRW2fVyi+dTriSNcweiawunmdaO4G
-         V9/K/Tvj1UJAOtPpVIISyQ+fxbUTN78PufD4W0cqHDwVJ9StvRTXwtyoXzKhWp2OvOGU
-         v5zW2VGOBTIMni4DcBNxOkvcEl4CuzGjjmeZuZayU1nU/xvVjWQq/5CNCvaDEpUhPhWh
-         +TMPn84De31MXSRU/JTWgozD6XtWRmNiGJYh567KJ57QRiGN5frqyuYb8J53L7YorDf5
-         WQ4eIRu/sEuKbkYwWa3IO+/qQ+HvBnDurfBAesYDhCqTKZo4jSTF7fyV6auaklTnZ0Oy
-         li1w==
+        Wed, 11 Jul 2018 16:46:23 -0400
+Received: by mail-oi0-f65.google.com with SMTP id i12-v6so51748215oik.2;
+        Wed, 11 Jul 2018 13:40:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=4xcyc7q7iauyr2omfiWzf/M0owoAEG/OfzhQKHllGEc=;
-        b=I6pQ9yML74PZ2MuKjOyEeHpUywbAgoLjWfgMDxop5sEe9GDkXdP/ldlFq66laOL0fZ
-         vmLEu0ed1VWIBFrQTiaHjgODhForh6jMXMf47NeO7+JHJ54+90Z6kaRPYHa+aCXupsMi
-         W0GMnQgJH7MvDoY9Vro0vUUsPnUnJ4ZcbsxjoaNAc97jHzJAmku4m9Kz874Ed2Hq/Cj+
-         damHYrBrwpO1brJ0x8Gukad8CLrBwzweunjC+3jj++eGXPjjhjnueFXcZDi/nSweDQvK
-         PBIb8PnzgNNTZEU09hvS4oMqlVzddNBQ1DUyCh4s6ZQr9OpaD2htuNVmAzgxxVUJmToj
-         MNaA==
-X-Gm-Message-State: AOUpUlGh4O8bdox1Wauqokx04bqWQzOVwl5LchYJVY3Mfs39ydjpWMIH
-        HYlWDcNtrr76pqVkvTxxJFo=
-X-Google-Smtp-Source: AAOMgpfk6HAYc+hpHjYR5bpZhBfGGswP3KUFmCPzxf4IpzpJMR3hNP8D/BvGDPCCDSVBLEAp5kgXdQ==
-X-Received: by 2002:a19:a417:: with SMTP id q23-v6mr87366lfc.59.1531341611584;
-        Wed, 11 Jul 2018 13:40:11 -0700 (PDT)
-Received: from linux.local ([5.166.218.73])
-        by smtp.gmail.com with ESMTPSA id q14-v6sm5744746lfq.7.2018.07.11.13.40.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 11 Jul 2018 13:40:10 -0700 (PDT)
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     jdmason@kudzu.us, dave.jiang@intel.com, allenbh@gmail.com
-Cc:     Sergey.Semin@t-platforms.ru, linux-ntb@googlegroups.com,
-        linux-kernel@vger.kernel.org, Serge Semin <fancer.lancer@gmail.com>
-Subject: [PATCH v2] ntb: idt: Set PCIe bus address to BARLIMITx
-Date:   Wed, 11 Jul 2018 23:40:51 +0300
-Message-Id: <20180711204051.26139-1-fancer.lancer@gmail.com>
-X-Mailer: git-send-email 2.12.0
-In-Reply-To: <20180711163224.30892-1-fancer.lancer@gmail.com>
-References: <20180711163224.30892-1-fancer.lancer@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=V2mB8E5x3V1DE3uxWZ84pMrrr9bdUnfxjdeJgMxuKEg=;
+        b=J9wGZ0EsEImKhrixe+BkKBHiZXIbyy6pUzGfJ3MJkos8vLjejz3aSj/ttb4cygG3eM
+         61msF8ewBmXeIKI8GDFXhJXr9ZSWILsjt4/5e8Ehtj88Qspr/hjG4rGNT6PTSLTtYVdm
+         wR9sLugllpzEHUjEx08rZ6srblCs9toxdjz+o4XcExxHPnyWlt/RViPD3P7m/llXHSWw
+         hbYmq1QGK9JiOeeNRTiQVbuVN8t6HDDbK44eJWzDR7MUmH4oHmG6i5518gfXKoozOOJC
+         LMEN4Cy7SpgJo9TxD4mWHcUAH8xnRamEBz3RPeBUpRTHpsAI0XpAewKYrQ7YLdG50SrL
+         D11w==
+X-Gm-Message-State: AOUpUlH4Vz8eEKpgyK2eBdC8R92mFGSbUZU7kAh7OS7vUXu9BncpILK4
+        8KUW6cfAQwuXPTLNMjPQbw==
+X-Google-Smtp-Source: AAOMgpchQ9jV3rUMUB9wq/gcHPBhHLk5iL6U3SJpGZb9wYOAsM00W8hsb9enfKgHP8dVTDyyezvP8A==
+X-Received: by 2002:aca:d9c5:: with SMTP id q188-v6mr172612oig.239.1531341617561;
+        Wed, 11 Jul 2018 13:40:17 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id n6-v6sm15042913oib.27.2018.07.11.13.40.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 13:40:16 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 14:40:15 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     mark.rutland@arm.com, linus.walleij@linaro.org,
+        avifishman70@gmail.com, yuenn@google.com,
+        brendanhiggins@google.com, venture@google.com, joel@jms.id.au,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, openbmc@lists.ozlabs.org
+Subject: Re: [PATCH v1 1/2] dt-binding: pinctrl: Add NPCM7xx pinctrl and GPIO
+ documentation
+Message-ID: <20180711204015.GA28359@rob-hp-laptop>
+References: <20180710125604.14458-1-tmaimon77@gmail.com>
+ <20180710125604.14458-2-tmaimon77@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180710125604.14458-2-tmaimon77@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IDT NTB driver sets the upper limit of actual translation address
-being written to the corresponding memory window setup. It is achieved
-by BARLIMITx register initialization. Needless to say, that the register
-works within PCIe bus address space.
+On Tue, Jul 10, 2018 at 03:56:03PM +0300, Tomer Maimon wrote:
+> Added device tree binding documentation for Nuvoton BMC
+> NPCM750/730/715/705 pinmux and GPIO controller.
+> 
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> ---
+>  .../bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt   | 216 +++++++++++++++++++++
+>  1 file changed, 216 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
+> new file mode 100644
+> index 000000000000..3a8f62ac7619
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm7xx-pinctrl.txt
+> @@ -0,0 +1,216 @@
+> +Nuvoton NPCM7XX Pin Controllers
+> +
+> +The Nuvoton BMC NPCM7XX Pin Controller multi-function routed through
+> +the multiplexing block, Each pin supports GPIO functionality (GPIOx)
+> +and multiple functions that directly connect the pin to different
+> +hardware blocks.
+> +
+> +Required properties:
+> +- #address-cells : should be 1.
+> +- #size-cells	 : should be 1.
+> +- compatible	 : "nuvoton,npcm750-pinctrl" for Poleg NPCM7XX.
+> +- ranges	 : defines mapping ranges between pin controller node (parent)
+> +			to GPIO bank node (children).
+> +
+> +=== GPIO Bank Subnode ===
+> +
+> +The NPCM7XX has 8 GPIO Banks each GPIO bank support 32 GPIO.
 
-In general CPU and PCIe address spaces are different. It means,
-that addresses used for Memory TLPs routine can be different from
-CPU addresses. While in most of cases they are the same, there are
-exceptions when the proper mapping must be performed to have the
-portable driver code. There used to be a virt_to_bus()/bus_to_virt()
-interface for this purpose. But it's deprecated now. It was also a
-mistake to use pci_resource_start() since the return address of the
-method is at the CPU address space. In order to achieve the desired
-purpose we need to use pci_bus_address() helper. This method shall
-return a PCIe bus base address of the corresponding BAR resource.
+s/support/supports/
 
-Signed-off-by: Serge Semin <fancer.lancer@gmail.com>
+> +
+> +Required GPIO Bank subnode-properties:
+> +- reg 			: specifies physical base address and size of the GPIO
+> +				bank registers.
+> +- gpio-controller	: Marks the device node as a GPIO controller.
+> +- #gpio-cells		: Must be <2>. The first cell is the gpio pin number
+> +				and the second cell is used for optional parameters.
+> +- interrupts		: contain the GPIO bank interrupt with flags for falling edge.
+> +- gpio-ranges		: defines the range of pins managed by the GPIO bank controller.
+> +
+> +For example, GPIO bank subnodes like the following:
+> +	gpio0: gpio@f0010000 {
 
----
+Might want to have a compatible string here. Makes it easier to iterate 
+thru gpio nodes if needed.
 
-Changelog v2:
-- Replace pcibios_resource_to_bus() with pci_bus_address() helper.
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		reg = <0x0 0x80>;
+> +		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
+> +		gpio-ranges = <&pinctrl 0 0 32>;
+> +	};
+> +
+> +=== Pin Mux Subnode ===
+> +
+> +- pin: A string containing the name of the pin
+> +	An array of strings, each string containing the name of a pin.
+> +	These pin are used for selecting pin configuration.
+> +
+> +The following are the list of pins available:
+> +	"GPIO0/IOX1DI", "GPIO1/IOX1LD",	"GPIO2/IOX1CK", "GPIO3/IOX1D0",
+> +	"GPIO4/IOX2DI/SMB1DSDA", "GPIO5/IOX2LD/SMB1DSCL", "GPIO6/IOX2CK/SMB2DSDA",
+> +	"GPIO7/IOX2D0/SMB2DSCL", "GPIO8/LKGPO1", "GPIO9/LKGPO2", "GPIO10/IOXHLD",
+> +	"GPIO11/IOXHCK", "GPIO12/GSPICK/SMB5BSCL", "GPIO13/GSPIDO/SMB5BSDA",
+> +	"GPIO14/GSPIDI/SMB5CSCL", "GPIO15/GSPICS/SMB5CSDA", "GPIO16/LKGPO0",
+> +	"GPIO17/PSPI2DI/SMB4DEN","GPIO18/PSPI2D0/SMB4BSDA", "GPIO19/PSPI2CK/SMB4BSCL",
+> +	"GPIO20/SMB4CSDA/SMB15SDA", "GPIO21/SMB4CSCL/SMB15SCL", "GPIO22/SMB4DSDA/SMB14SDA",
+> +	"GPIO23/SMB4DSCL/SMB14SCL", "GPIO24/IOXHDO", "GPIO25/IOXHDI", "GPIO26/SMB5SDA",
+> +	"GPIO27/SMB5SCL", "GPIO28/SMB4SDA", "GPIO29/SMB4SCL", "GPIO30/SMB3SDA",
+> +	"GPIO31/SMB3SCL", "GPIO32/nSPI0CS1","SPI0D2", "SPI0D3", "GPIO37/SMB3CSDA",
+> +	"GPIO38/SMB3CSCL", "GPIO39/SMB3BSDA", "GPIO40/SMB3BSCL", "GPIO41/BSPRXD",
+> +	"GPO42/BSPTXD/STRAP11", "GPIO43/RXD1/JTMS2/BU1RXD", "GPIO44/nCTS1/JTDI2/BU1CTS",
+> +	"GPIO45/nDCD1/JTDO2", "GPIO46/nDSR1/JTCK2", "GPIO47/nRI1/JCP_RDY2",
+> +	"GPIO48/TXD2/BSPTXD", "GPIO49/RXD2/BSPRXD", "GPIO50/nCTS2", "GPO51/nRTS2/STRAP2",
+> +	"GPIO52/nDCD2", "GPO53/nDTR2_BOUT2/STRAP1", "GPIO54/nDSR2", "GPIO55/nRI2",
+> +	"GPIO56/R1RXERR", "GPIO57/R1MDC", "GPIO58/R1MDIO", "GPIO59/SMB3DSDA",
+> +	"GPIO60/SMB3DSCL", "GPO61/nDTR1_BOUT1/STRAP6", "GPO62/nRTST1/STRAP5",
+> +	"GPO63/TXD1/STRAP4", "GPIO64/FANIN0", "GPIO65/FANIN1", "GPIO66/FANIN2",
+> +	"GPIO67/FANIN3", "GPIO68/FANIN4", "GPIO69/FANIN5", "GPIO70/FANIN6", "GPIO71/FANIN7",
+> +	"GPIO72/FANIN8", "GPIO73/FANIN9", "GPIO74/FANIN10", "GPIO75/FANIN11",
+> +	"GPIO76/FANIN12", "GPIO77/FANIN13","GPIO78/FANIN14", "GPIO79/FANIN15",
+> +	"GPIO80/PWM0", "GPIO81/PWM1", "GPIO82/PWM2", "GPIO83/PWM3", "GPIO84/R2TXD0",
+> +	"GPIO85/R2TXD1", "GPIO86/R2TXEN", "GPIO87/R2RXD0", "GPIO88/R2RXD1", "GPIO89/R2CRSDV",
+> +	"GPIO90/R2RXERR", "GPIO91/R2MDC", "GPIO92/R2MDIO", "GPIO93/GA20/SMB5DSCL",
+> +	"GPIO94/nKBRST/SMB5DSDA", "GPIO95/nLRESET/nESPIRST", "GPIO96/RG1TXD0",
+> +	"GPIO97/RG1TXD1", "GPIO98/RG1TXD2", "GPIO99/RG1TXD3","GPIO100/RG1TXC",
+> +	"GPIO101/RG1TXCTL", "GPIO102/RG1RXD0", "GPIO103/RG1RXD1", "GPIO104/RG1RXD2",
+> +	"GPIO105/RG1RXD3", "GPIO106/RG1RXC", "GPIO107/RG1RXCTL", "GPIO108/RG1MDC",
+> +	"GPIO109/RG1MDIO", "GPIO110/RG2TXD0/DDRV0", "GPIO111/RG2TXD1/DDRV1",
+> +	"GPIO112/RG2TXD2/DDRV2", "GPIO113/RG2TXD3/DDRV3", "GPIO114/SMB0SCL",
+> +	"GPIO115/SMB0SDA", "GPIO116/SMB1SCL", "GPIO117/SMB1SDA", "GPIO118/SMB2SCL",
+> +	"GPIO119/SMB2SDA", "GPIO120/SMB2CSDA", "GPIO121/SMB2CSCL", "GPIO122/SMB2BSDA",
+> +	"GPIO123/SMB2BSCL", "GPIO124/SMB1CSDA", "GPIO125/SMB1CSCL","GPIO126/SMB1BSDA",
+> +	"GPIO127/SMB1BSCL", "GPIO128/SMB8SCL", "GPIO129/SMB8SDA", "GPIO130/SMB9SCL",
+> +	"GPIO131/SMB9SDA", "GPIO132/SMB10SCL", "GPIO133/SMB10SDA","GPIO134/SMB11SCL",
+> +	"GPIO135/SMB11SDA", "GPIO136/SD1DT0", "GPIO137/SD1DT1", "GPIO138/SD1DT2",
+> +	"GPIO139/SD1DT3", "GPIO140/SD1CLK", "GPIO141/SD1WP", "GPIO142/SD1CMD",
+> +	"GPIO143/SD1CD/SD1PWR", "GPIO144/PWM4",	"GPIO145/PWM5",	"GPIO146/PWM6",
+> +	"GPIO147/PWM7",	"GPIO148/MMCDT4", "GPIO149/MMCDT5", "GPIO150/MMCDT6",
+> +	"GPIO151/MMCDT7", "GPIO152/MMCCLK", "GPIO153/MMCWP", "GPIO154/MMCCMD",
+> +	"GPIO155/nMMCCD/nMMCRST", "GPIO156/MMCDT0", "GPIO157/MMCDT1", "GPIO158/MMCDT2",
+> +	"GPIO159/MMCDT3", "GPIO160/CLKOUT/RNGOSCOUT", "GPIO161/nLFRAME/nESPICS",
+> +	"GPIO162/SERIRQ", "GPIO163/LCLK/ESPICLK", "GPIO164/LAD0/ESPI_IO0",
+> +	"GPIO165/LAD1/ESPI_IO1", "GPIO166/LAD2/ESPI_IO2", "GPIO167/LAD3/ESPI_IO3",
+> +	"GPIO168/nCLKRUN/nESPIALERT", "GPIO169/nSCIPME", "GPIO170/nSMI", "GPIO171/SMB6SCL",
+> +	"GPIO172/SMB6SDA", "GPIO173/SMB7SCL", "GPIO174/SMB7SDA", "GPIO175/PSPI1CK/FANIN19",
+> +	"GPIO176/PSPI1DO/FANIN18", "GPIO177/PSPI1DI/FANIN17", "GPIO178/R1TXD0",
+> +	"GPIO179/R1TXD1", "GPIO180/R1TXEN", "GPIO181/R1RXD0", "GPIO182/R1RXD1",
+> +	"GPIO183/SPI3CK", "GPO184/SPI3D0/STRAP9", "GPO185/SPI3D1/STRAP10",
+> +	"GPIO186/nSPI3CS0", "GPIO187/nSPI3CS1",	"GPIO188/SPI3D2/nSPI3CS2",
+> +	"GPIO189/SPI3D3/nSPI3CS3", "GPIO190/nPRD_SMI", "GPIO191", "GPIO192", "GPIO193/R1CRSDV",
+> +	"GPIO194/SMB0BSCL", "GPIO195/SMB0BSDA", "GPIO196/SMB0CSCL", "GPIO197/SMB0DEN",
+> +	"GPIO198/SMB0DSDA", "GPIO199/SMB0DSCL", "GPIO200/R2CK", "GPIO201/R1CK",
+> +	"GPIO202/SMB0CSDA", "GPIO203/FANIN16", "GPIO204/DDC2SCL", "GPIO205/DDC2SDA",
+> +	"GPIO206/HSYNC2", "GPIO207/VSYNC2", "GPIO208/RG2TXC/DVCK", "GPIO209/RG2TXCTL/DDRV4",
+> +	"GPIO210/RG2RXD0/DDRV5", "GPIO211/RG2RXD1/DDRV6", "GPIO212/RG2RXD2/DDRV7",
+> +	"GPIO213/RG2RXD3/DDRV8", "GPIO214/RG2RXC/DDRV9", "GPIO215/RG2RXCTL/DDRV10",
+> +	"GPIO216/RG2MDC/DDRV11", "GPIO217/RG2MDIO/DVHSYNC", "GPIO218/nWDO1",
+> +	"GPIO219/nWDO2", "GPIO220/SMB12SCL", "GPIO221/SMB12SDA", "GPIO222/SMB13SCL",
+> +	"GPIO223/SMB13SDA", "GPIO224/SPIXCK", "GPO225/SPIXD0/STRAP12", "GPO226/SPIXD1/STRAP13",
+> +	"GPIO227/nSPIXCS0", "GPIO228/nSPIXCS1",	"GPO229/SPIXD2/STRAP3", "GPIO230/SPIXD3",
+> +	"GPIO231/nCLKREQ", "GPI255/DACOSEL"
+> +
+> +Optional Properties:
+> + bias-disable, bias-pull-down, bias-pull-up, input-enable,
+> + input-disable, output-high, output-low, drive-push-pull,
+> + drive-open-drain, input-debounce, slew-rate, drive-strength
+> +
+> + slew-rate valid arguments are:
+> +				<0> - slow
+> +				<1> - fast
+> + drive-strength valid arguments are:
+> +				<2> - 2mA
+> +				<4> - 4mA
+> +				<8> - 8mA
+> +				<12> - 12mA
+> +				<16> - 16mA
+> +				<24> - 24mA
+> +
+> +For example, pinctrl might have pinmux subnodes like the following:
+> +
+> +	gpio0_iox1d1_pin: gpio0_iox1d1_pin {
+> +		pins = "GPIO0/IOX1DI";
+> +		output-high;
+> +	};
+> +	gpio0_iox1ck_pin: gpio0_iox1ck_pin {
+> +		pins = "GPIO2/IOX1CK";
+> +		output_high;
+> +	};
+> +
+> +=== Pin Group Subnode ===
+> +
+> +Required pin group subnode-properties:
+> +- groups : A string containing the name of the group to mux.
+> +- function: A string containing the name of the function to mux to the
+> +  group.
+> +
+> +The following are the list of the available groups and functions :
+> +	smb0, smb0b, smb0c, smb0d, smb0den, smb1, smb1b, smb1c, smb1d,
+> +	smb2, smb2b, smb2c, smb2d, smb3, smb3b, smb3c, smb3d, smb4, smb4b,
+> +	smb4c, smb4d, smb4den, smb5, smb5b, smb5c, smb5d, ga20kbc, smb6,
+> +	smb7, smb8, smb9, smb10, smb11, smb12, smb13, smb14, smb15, fanin0,
+> +	fanin1, fanin2, fanin3, fanin4, fanin5, fanin6, fanin7, fanin8,
+> +	fanin9, fanin10, fanin11 fanin12 fanin13, fanin14, fanin15, faninx,
+> +	pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, pwm6, pwm7, rg1, rg1mdio, rg2,
+> +	rg2mdio, ddr, uart1, uart2, bmcuart0a, bmcuart0b, bmcuart1, iox1,
+> +	iox2, ioxh, gspi, mmc, mmcwp, mmccd, mmcrst, mmc8, r1, r1err, r1md,
+> +	r2, r2err, r2md, sd1, sd1pwr, wdog1, wdog2, scipme, sci, serirq,
+> +	jtag2, spix, spixcs1, pspi1, pspi2, ddc, clkreq, clkout, spi3, spi3cs1,
+> +	spi3quad, spi3cs2, spi3cs3, spi0cs1, lpc, lpcclk, espi, lkgpo0, lkgpo1,
+> +	lkgpo2, nprd_smi
+> +
+> +For example, pinctrl might have group subnodes like the following:
+> +	r1err_pins: r1err_pins {
+> +		groups = "r1err";
+> +		function = "r1err";
+> +	};
+> +	r1md_pins: r1md_pins {
+> +		groups = "r1md";
+> +		function = "r1md";
+> +	};
+> +	r1_pins: r1_pins {
+> +		groups = "r1";
+> +		function = "r1";
+> +	};
+> +
+> +Examples
+> +========
+> +pinctrl: pinctrl@0 {
 
- drivers/ntb/hw/idt/ntb_hw_idt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+pinctrl@f0010000
 
-diff --git a/drivers/ntb/hw/idt/ntb_hw_idt.c b/drivers/ntb/hw/idt/ntb_hw_idt.c
-index dbe72f116017..fb2c44ac9c69 100644
---- a/drivers/ntb/hw/idt/ntb_hw_idt.c
-+++ b/drivers/ntb/hw/idt/ntb_hw_idt.c
-@@ -1320,7 +1320,7 @@ static int idt_ntb_peer_mw_set_trans(struct ntb_dev *ntb, int pidx, int widx,
- 		idt_nt_write(ndev, bar->ltbase, (u32)addr);
- 		idt_nt_write(ndev, bar->utbase, (u32)(addr >> 32));
- 		/* Set the custom BAR aperture limit */
--		limit = pci_resource_start(ntb->pdev, mw_cfg->bar) + size;
-+		limit = pci_bus_address(ntb->pdev, mw_cfg->bar) + size;
- 		idt_nt_write(ndev, bar->limit, (u32)limit);
- 		if (IS_FLD_SET(BARSETUP_TYPE, data, 64))
- 			idt_nt_write(ndev, (bar + 1)->limit, (limit >> 32));
--- 
-2.12.0
+> +	#address-cells = <1>;
+> +	#size-cells = <1>;
+> +	compatible = "nuvoton,npcm750-pinctrl", "syscon", "simple-mfd";
 
+syscon and simple-mfd aren't documented and shouldn't be needed.
+
+> +	ranges = <0 0xf0010000 0x8000>;
+> +
+> +	gpio0: gpio@f0010000 {
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		reg = <0x0 0x80>;
+> +		interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>;
+> +		gpio-ranges = <&pinctrl 0 0 32>;
+> +	};
+> +
+> +	....
+> +
+> +	gpio7: gpio@f0017000 {
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		reg = <0x7000 0x80>;
+> +		interrupts = <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>;
+> +		gpio-ranges = <&pinctrl 0 224 32>;
+> +	};
+> +
+> +	gpio0_iox1d1_pin: gpio0_iox1d1_pin {
+
+Use '-' rather than '_' in node names.
+
+> +		pins = "GPIO0/IOX1DI";
+> +		output-high;
+> +	};
+> +
+> +	iox1_pins: iox1_pins {
+> +		groups = "iox1";
+> +		function = "iox1";
+> +	};
+> +	iox2_pins: iox2_pins {
+> +		groups = "iox2";
+> +		function = "iox2";
+> +	};
+> +
+> +	....
+> +
+> +	clkreq_pins: clkreq_pins {
+> +		groups = "clkreq";
+> +		function = "clkreq";
+> +	};
+> +};
+> \ No newline at end of file
+
+^^^
