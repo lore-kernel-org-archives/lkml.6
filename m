@@ -2,166 +2,140 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 728D4C43A1D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B2AC43A1D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21B7D21470
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:22:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BC262146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:26:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="HK39ME0f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21B7D21470
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rkl2UGXH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BC262146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390655AbeGKW22 (ORCPT
+        id S2390662AbeGKWcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 18:28:28 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44633 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733146AbeGKW22 (ORCPT
+        Wed, 11 Jul 2018 18:32:47 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37075 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732831AbeGKWcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 18:28:28 -0400
-Received: by mail-pf0-f193.google.com with SMTP id j3-v6so19275053pfh.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 15:22:01 -0700 (PDT)
+        Wed, 11 Jul 2018 18:32:47 -0400
+Received: by mail-pf0-f195.google.com with SMTP id x10-v6so9423385pfm.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 15:26:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=NC5Wll+Ta90LWa7k3YHEONHdQo3lP6YNOAIHcaPq1+E=;
-        b=HK39ME0feC6LgQfKJIWgi4Z6wlPvIKWIpfRp4JSUx3Hzcfi1qult6Fnj8EfGQyewzg
-         QPR9o+s+7yVUBLuRwuglutgvxSZZ40yD6WOLbJUEmPDTwaV29ScSPAvFE++4o5F7NG8n
-         ICQT6Nio9+yK0UiDM7BNLUpAwpV/u9Iea4j/SePB3F+Q8vpdG5PjyKgnPahJ0qbTUX+F
-         k1tcAv6Iv09C896C0N8RxxekS6NkXa7abLHt2kKXcQdKFWVdyaV+WaFRHPAxJUaj6p0U
-         y7LTgYq+dlKCcIvelXicgVmtIXL1S+ykc/1V4D+IF/1aSq1SDKNr8+IXSs7/l2OZ8ZFV
-         Pa0g==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=clILQctNZt4NtF6j3C50lr69xqHnPN1h0R9FImelFPc=;
+        b=Rkl2UGXHXikhNsyaemyMz2LxEUDVSzSXBgGwyN7TVTu/tOwZ/KxVKfnTPS1ilPHd+l
+         +ZTQJo+Ue0C3W9yy7LW8qOdluIiGJJmIK1ot1C1ygD7iA59Tp1HJWmTqfAUidOP5YXZO
+         zoID9MFokcf6iAv62K14hfgDH9nwF+6bF6PeXm5k0FwPqt9FoxNVOYp95iD0QqPEEXES
+         gFWSx5vH5PLgFS/euvWbAa7Ry1NCWqDPtxipk8d/pQQGUH+MkBgTyz0ytkvV0GWY6HuY
+         qCddifDK9C6wvQ/c2j/scd0D6S4OT+Epnbj8UsvWdg8ttgCHOpJ8GvZqG47oBhQIcULD
+         z/ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=NC5Wll+Ta90LWa7k3YHEONHdQo3lP6YNOAIHcaPq1+E=;
-        b=m76+0JQxVboxIqj2254Kg+EquFy2zzfmNXIpjMOfblt4EzBpwWNkMGw38XmOSZn8WU
-         rjVMCb9qhWElEQwS0U77rm1sgbxmXMO5i09Xx8F39SWw2I0+1IEFcqCF1sXbv6wVSRpk
-         b2KWudtBLUNh1eOy9VpIn2apOcu9N1bJ5caGr6vEytYOYb1mJbOCeA5c3hgsLhTVDIhu
-         cHSGUn7FwMEPUdSYKjcCxKPD5osMCAIW5zdRuFcyqtKRmYXbH5drFC+rSH4NKU/3UQqq
-         XlJlnZxVNBoetHSse/0svNFbQSMqDKt9fGDlbXPxUomvKTPjyszfTKZzUFTYkKpn6nYK
-         p5dw==
-X-Gm-Message-State: AOUpUlE2WnSbBguXW3R1BoRa5zhW9PKEeay3K/Ybp+isPb7mhumv2eKd
-        49eVRoG0P1VU+RQdlGGLQLWAqw==
-X-Google-Smtp-Source: AAOMgpfaX5+MrPU/Sam4qzUAlWGk9zylnt2U7i7gAQ6gi0Uk4P6PR30RAl/2gg2ZPApc6aNXauezrw==
-X-Received: by 2002:a62:8a4f:: with SMTP id y76-v6mr396246pfd.233.1531347720835;
-        Wed, 11 Jul 2018 15:22:00 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b052:968:4f0:92ce:1385:5f3d? ([2600:1010:b052:968:4f0:92ce:1385:5f3d])
-        by smtp.gmail.com with ESMTPSA id a15-v6sm20060710pfe.32.2018.07.11.15.21.59
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=clILQctNZt4NtF6j3C50lr69xqHnPN1h0R9FImelFPc=;
+        b=OiShK6VyCj97j3cmJN8D/tgFH/wxB/NUO6vzt4ncS/8nEmiYRBHydmqDckudI9HeR/
+         ZtU74BsONS1Tb/vuMey+521s4hGMWQi1zg65QccEBy50lnmrPzvWTIhKzs8CLK6fxv2v
+         bXZNXc2KXcmKT15c1sttHQVoYHt3Uc1+axtYtnIgX3ray2sDnHmya+qmtZlDQ1OIpmET
+         ZvREbHoRdFjJ76tv4IxPLjcadyGHp7kibXegNM1/xrwjGtzroGSAimzONsPDyMetEKsm
+         VD1QclRRIolKP3QScaVh7GG0ZCu4FuDGWULyGiH9FL/D3APN4wUwuhOGQ1No+j4qWpbt
+         RS0g==
+X-Gm-Message-State: AOUpUlEco/3X95O+8IZdZSNgdS0C4jaeFuExhatgORpv6RMZG52Lymn2
+        HaaGOUALoREWngfM+GKaKPo=
+X-Google-Smtp-Source: AAOMgpep852ixWRgSNUahnYOMHFR5/kcTV2OANwPjGVE2OcUXl61b0hQXuWvoJ/4S1BSd7//YmFTCg==
+X-Received: by 2002:a62:15c8:: with SMTP id 191-v6mr433891pfv.194.1531347979713;
+        Wed, 11 Jul 2018 15:26:19 -0700 (PDT)
+Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id r19-v6sm23687830pgg.39.2018.07.11.15.26.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 15:21:59 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [RFC PATCH v2 17/27] x86/cet/shstk: User-mode shadow stack support
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <CAG48ez1OwQMmhQfHaauo+vneywsQ_ERKr4uVcQebC=GbdqZWtA@mail.gmail.com>
-Date:   Wed, 11 Jul 2018 15:21:58 -0700
-Cc:     yu-cheng.yu@intel.com, the arch/x86 maintainers <x86@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, bsingharora@gmail.com,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
-        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A034EC34-13E7-4AEF-BB3C-FEF14143B601@amacapital.net>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com> <20180710222639.8241-18-yu-cheng.yu@intel.com> <CAG48ez1ytOfQyNZMNPFp7XqKcpd7_aRai9G5s7rx0V=8ZG+r2A@mail.gmail.com> <6F5FEFFD-0A9A-4181-8D15-5FC323632BA6@amacapital.net> <CAG48ez1OwQMmhQfHaauo+vneywsQ_ERKr4uVcQebC=GbdqZWtA@mail.gmail.com>
-To:     Jann Horn <jannh@google.com>
+        Wed, 11 Jul 2018 15:26:18 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 15:26:18 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        dave.hansen@intel.com, pagupta@redhat.com,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Oscar Salvador <osalvador@techadventures.net>,
+        linux-mm@kvack.org, kirill.shutemov@linux.intel.com,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: Re: [v6,5/5] mm/sparse: Remove
+ CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+Message-ID: <20180711222618.GA29869@roeck-us.net>
+References: <20180628062857.29658-6-bhe@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628062857.29658-6-bhe@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-> On Jul 11, 2018, at 2:51 PM, Jann Horn <jannh@google.com> wrote:
->=20
-> On Wed, Jul 11, 2018 at 2:34 PM Andy Lutomirski <luto@amacapital.net> wrot=
-e:
->>> On Jul 11, 2018, at 2:10 PM, Jann Horn <jannh@google.com> wrote:
->>>=20
->>>> On Tue, Jul 10, 2018 at 3:31 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wro=
-te:
->>>>=20
->>>> This patch adds basic shadow stack enabling/disabling routines.
->>>> A task's shadow stack is allocated from memory with VM_SHSTK
->>>> flag set and read-only protection.  The shadow stack is
->>>> allocated to a fixed size.
->>>>=20
->>>> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
->>> [...]
->>>> diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
->>>> new file mode 100644
->>>> index 000000000000..96bf69db7da7
->>>> --- /dev/null
->>>> +++ b/arch/x86/kernel/cet.c
->>> [...]
->>>> +static unsigned long shstk_mmap(unsigned long addr, unsigned long len)=
+On Thu, Jun 28, 2018 at 02:28:57PM +0800, Baoquan He wrote:
+> Pavel pointed out that the behaviour of allocating memmap together
+> for one node should be defaulted for all ARCH-es. It won't break
+> anything because it will drop to the fallback action to allocate
+> imemmap for each section at one time if failed on large chunk of
+> memory.
+> 
+> So remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER and clean up the
+> related codes.
+> 
 
->>>> +{
->>>> +       struct mm_struct *mm =3D current->mm;
->>>> +       unsigned long populate;
->>>> +
->>>> +       down_write(&mm->mmap_sem);
->>>> +       addr =3D do_mmap(NULL, addr, len, PROT_READ,
->>>> +                      MAP_ANONYMOUS | MAP_PRIVATE, VM_SHSTK,
->>>> +                      0, &populate, NULL);
->>>> +       up_write(&mm->mmap_sem);
->>>> +
->>>> +       if (populate)
->>>> +               mm_populate(addr, populate);
->>>> +
->>>> +       return addr;
->>>> +}
-> [...]
->>> Should the kernel enforce that two shadow stacks must have a guard
->>> page between them so that they can not be directly adjacent, so that
->>> if you have too much recursion, you can't end up corrupting an
->>> adjacent shadow stack?
->>=20
->> I think the answer is a qualified =E2=80=9Cno=E2=80=9D. I would like to i=
-nstead enforce a general guard page on all mmaps that don=E2=80=99t use MAP_=
-FORCE. We *might* need to exempt any mmap with an address hint for compatibi=
-lity.
->=20
-> I like this idea a lot.
->=20
->> My commercial software has been manually adding guard pages on every sing=
-le mmap done by tcmalloc for years, and it has caught a couple bugs and cost=
-s essentially nothing.
->>=20
->> Hmm. Linux should maybe add something like Windows=E2=80=99 =E2=80=9Crese=
-rved=E2=80=9D virtual memory. It=E2=80=99s basically a way to ask for a VA r=
-ange that explicitly contains nothing and can be subsequently be turned into=
- something useful with the equivalent of MAP_FORCE.
->=20
-> What's the benefit over creating an anonymous PROT_NONE region? That
-> the kernel won't have to scan through the corresponding PTEs when
-> tearing down the mapping?
+This patch causes several of my qemu boot tests to fail.
+	powerpc:mac99:ppc64_book3s_defconfig:initrd:nosmp
+	powerpc:mac99:ppc64_book3s_defconfig:initrd:smp4 
+	powerpc:mac99:ppc64_book3s_defconfig:rootfs:smp4 
+	powerpc:pseries:pseries_defconfig:initrd 
+	powerpc:pseries:pseries_defconfig:rootfs 
+	powerpc:powernv:powernv_defconfig:initrd 
 
-Make it more obvious what=E2=80=99s happening and avoid accounting issues?  W=
-hat I=E2=80=99ve actually used is MAP_NORESERVE | PROT_NONE, but I think thi=
-s still counts against the VA rlimit. But maybe that=E2=80=99s actually the d=
-esired behavior.
+Bisect points to this patch. Bisect log is attached for reference.
+Reverting the patch fixes the problem.
 
+[ Yes, I am aware that Michael already reported the problem at
+  https://lkml.org/lkml/2018/7/11/480 ]
 
+Guenter
+
+---
+# bad: [98be45067040799a801e6ce52d8bf4659a153893] Add linux-next specific files for 20180711
+# good: [1e4b044d22517cae7047c99038abb444423243ca] Linux 4.18-rc4
+git bisect start 'HEAD' 'v4.18-rc4'
+# good: [ade30e73739a5174bcaee5860fee76c2365548c5] Merge remote-tracking branch 'crypto/master'
+git bisect good ade30e73739a5174bcaee5860fee76c2365548c5
+# good: [792be221c35d19a1c486789e5b5c91c05279b94d] Merge remote-tracking branch 'tip/auto-latest'
+git bisect good 792be221c35d19a1c486789e5b5c91c05279b94d
+# good: [1d66737ba99400ab9a79c906a25b2090f4cc8b18] Merge remote-tracking branch 'mux/for-next'
+git bisect good 1d66737ba99400ab9a79c906a25b2090f4cc8b18
+# good: [c02d5416bd8504866dd80d2129f4648747166b6f] Merge remote-tracking branch 'kspp/for-next/kspp'
+git bisect good c02d5416bd8504866dd80d2129f4648747166b6f
+# bad: [1e741337a9416010a48c6034855e316ba8057111] ntb: ntb_hw_switchtec: cleanup 64bit IO defines to use the common header
+git bisect bad 1e741337a9416010a48c6034855e316ba8057111
+# good: [205a106bac127145a4defae7d0d35945001fe924] kernel/memremap, kasan: make ZONE_DEVICE with work with KASAN
+git bisect good 205a106bac127145a4defae7d0d35945001fe924
+# bad: [e87ebebf76c9ceeaea21a256341d6765c657e550] mm, oom: remove sleep from under oom_lock
+git bisect bad e87ebebf76c9ceeaea21a256341d6765c657e550
+# good: [9f95e9e87283a578fb676f14fd5e1edd4cb401f7] mm/vmscan.c: iterate only over charged shrinkers during memcg shrink_slab()
+git bisect good 9f95e9e87283a578fb676f14fd5e1edd4cb401f7
+# bad: [0ba29a108979bdbe3f77094e8b5cc06652e2698b] mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+git bisect bad 0ba29a108979bdbe3f77094e8b5cc06652e2698b
+# good: [ca464c7768574c49f58a5be8962330814262820f] mm/sparse.c: add a static variable nr_present_sections
+git bisect good ca464c7768574c49f58a5be8962330814262820f
+# good: [4f02f8533cbad406e004b3bfe75f65e6b791efd5] mm/sparse.c: add a new parameter 'data_unit_size' for alloc_usemap_and_memmap
+git bisect good 4f02f8533cbad406e004b3bfe75f65e6b791efd5
+# good: [110cb339e5d95c77cf83d33de25f6f392d0ca7f6] mm-sparse-optimize-memmap-allocation-during-sparse_init-checkpatch-fixes
+git bisect good 110cb339e5d95c77cf83d33de25f6f392d0ca7f6
+# first bad commit: [0ba29a108979bdbe3f77094e8b5cc06652e2698b] mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
