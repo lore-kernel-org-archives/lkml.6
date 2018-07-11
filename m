@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0502C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7C09C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65564208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65564208E3
+	by mail.kernel.org (Postfix) with ESMTP id 7A017208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A017208E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388521AbeGKOCQ (ORCPT
+        id S2388536AbeGKOCT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:02:16 -0400
-Received: from foss.arm.com ([217.140.101.70]:36418 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388274AbeGKOCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:02:16 -0400
+        Wed, 11 Jul 2018 10:02:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36430 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388274AbeGKOCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:02:18 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2740C1BF7;
-        Wed, 11 Jul 2018 06:57:48 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0DD5322C7;
+        Wed, 11 Jul 2018 06:57:51 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 16E0C3F5B1;
-        Wed, 11 Jul 2018 06:57:45 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F19A23F5B1;
+        Wed, 11 Jul 2018 06:57:48 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         will.deacon@arm.com
@@ -35,9 +35,9 @@ Cc:     catalin.marinas@arm.com, dave.martin@arm.com, hch@infradead.org,
         james.morse@arm.com, linux@dominikbrodowski.net,
         linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
         mark.rutland@arm.com, viro@zeniv.linux.org.uk
-Subject: [PATCHv5 12/21] arm64: don't reload GPRs after apply_ssbd
-Date:   Wed, 11 Jul 2018 14:56:47 +0100
-Message-Id: <20180711135656.20670-13-mark.rutland@arm.com>
+Subject: [PATCHv5 13/21] arm64: zero GPRs upon entry from EL0
+Date:   Wed, 11 Jul 2018 14:56:48 +0100
+Message-Id: <20180711135656.20670-14-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180711135656.20670-1-mark.rutland@arm.com>
 References: <20180711135656.20670-1-mark.rutland@arm.com>
@@ -46,78 +46,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all of the syscall logic works on the saved pt_regs, apply_ssbd
-can safely corrupt x0-x3 in the entry paths, and we no longer need to
-restore them. So let's remove the logic doing so.
+We can zero GPRs x0 - x29 upon entry from EL0 to make it harder for
+userspace to control values consumed by speculative gadgets.
 
-With that logic gone, we can fold the branch target into the macro, so
-that callers need not deal with this. GAS provides \@, which provides a
-unique value per macro invocation, which we can use to create a unique
-label.
+We don't blat x30, since this is stashed much later, and we'll blat it
+before invoking C code.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/kernel/entry.S | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+ arch/arm64/kernel/entry.S | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index c41b84d06644..22b240da949b 100644
+index 22b240da949b..d1440f84668b 100644
 --- a/arch/arm64/kernel/entry.S
 +++ b/arch/arm64/kernel/entry.S
-@@ -130,20 +130,21 @@ alternative_else_nop_endif
- 
- 	// This macro corrupts x0-x3. It is the caller's duty
- 	// to save/restore them if required.
--	.macro	apply_ssbd, state, targ, tmp1, tmp2
-+	.macro	apply_ssbd, state, tmp1, tmp2
- #ifdef CONFIG_ARM64_SSBD
- alternative_cb	arm64_enable_wa2_handling
--	b	\targ
-+	b	.L__asm_ssbd_skip\@
- alternative_cb_end
- 	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
--	cbz	\tmp2, \targ
-+	cbz	\tmp2,	.L__asm_ssbd_skip\@
- 	ldr	\tmp2, [tsk, #TSK_TI_FLAGS]
--	tbnz	\tmp2, #TIF_SSBD, \targ
-+	tbnz	\tmp2, #TIF_SSBD, .L__asm_ssbd_skip\@
- 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
- 	mov	w1, #\state
- alternative_cb	arm64_update_smccc_conduit
- 	nop					// Patched to SMC/HVC #0
- alternative_cb_end
-+.L__asm_ssbd_skip\@:
+@@ -53,6 +53,12 @@
  #endif
  	.endm
  
-@@ -173,13 +174,7 @@ alternative_cb_end
++	.macro	clear_gp_regs
++	.irp	n,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29
++	mov	x\n, xzr
++	.endr
++	.endm
++
+ /*
+  * Bad Abort numbers
+  *-----------------
+@@ -169,6 +175,7 @@ alternative_cb_end
+ 	stp	x28, x29, [sp, #16 * 14]
+ 
+ 	.if	\el == 0
++	clear_gp_regs
+ 	mrs	x21, sp_el0
+ 	ldr_this_cpu	tsk, __entry_task, x20	// Ensure MDSCR_EL1.SS is clear,
  	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
- 	disable_step_tsk x19, x20		// exceptions when scheduling.
+@@ -176,7 +183,6 @@ alternative_cb_end
  
--	apply_ssbd 1, 1f, x22, x23
--
--#ifdef CONFIG_ARM64_SSBD
--	ldp	x0, x1, [sp, #16 * 0]
--	ldp	x2, x3, [sp, #16 * 1]
--#endif
--1:
-+	apply_ssbd 1, x22, x23
+ 	apply_ssbd 1, x22, x23
  
- 	mov	x29, xzr			// fp pointed to user-space
+-	mov	x29, xzr			// fp pointed to user-space
  	.else
-@@ -321,8 +316,7 @@ alternative_if ARM64_WORKAROUND_845719
- alternative_else_nop_endif
- #endif
- 3:
--	apply_ssbd 0, 5f, x0, x1
--5:
-+	apply_ssbd 0, x0, x1
- 	.endif
- 
- 	msr	elr_el1, x21			// set up the return data
+ 	add	x21, sp, #S_FRAME_SIZE
+ 	get_thread_info tsk
 -- 
 2.11.0
 
