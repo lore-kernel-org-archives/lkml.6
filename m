@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D26C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19262C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E8D420871
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:17:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E8D420871
+	by mail.kernel.org (Postfix) with ESMTP id C7221208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:17:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7221208EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388467AbeGKOVc (ORCPT
+        id S2388519AbeGKOVg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:21:32 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36904 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388398AbeGKOVc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:21:32 -0400
+        Wed, 11 Jul 2018 10:21:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:36924 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388477AbeGKOVg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:21:36 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D481E1688;
-        Wed, 11 Jul 2018 07:16:58 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0ECE41713;
+        Wed, 11 Jul 2018 07:17:02 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 80CA03F5B1;
-        Wed, 11 Jul 2018 07:16:57 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AF2D63F5B1;
+        Wed, 11 Jul 2018 07:17:00 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         coresight@lists.linaro.org, robert.walker@arm.com,
         mike.leach@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 3/6] coresight: tmc-etr: Relax collection of trace from sysfs mode
-Date:   Wed, 11 Jul 2018 15:16:36 +0100
-Message-Id: <1531318599-8840-4-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH 5/6] coresight: perf: Remove reset_buffer call back for sinks
+Date:   Wed, 11 Jul 2018 15:16:38 +0100
+Message-Id: <1531318599-8840-6-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531318599-8840-1-git-send-email-suzuki.poulose@arm.com>
 References: <1531318599-8840-1-git-send-email-suzuki.poulose@arm.com>
@@ -44,46 +44,260 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the ETR now uses mode specific buffers, we can reliably
-provide the trace data captured in sysfs mode, even when the ETR
-is operating in PERF mode.
+Right now we issue an update_buffer() and reset_buffer() call backs
+in succession when we stop tracing an event. The update_buffer is
+supposed to check the status of the buffer and make sure the ring buffer
+is updated with the trace data. And we store information about the
+size of the data collected only to be consumed by the reset_buffer
+callback which always follows the update_buffer. This was originally
+designed for handling future IPs which could trigger a buffer overflow
+interrupt. This patch gets rid of the reset_buffer callback altogether
+and performs the actions in update_buffer, making it return the size
+collected. We can always add the support for handling the overflow
+interrupt case later.
+
+This removes some not-so pretty hack (storing the new head in the
+size field for snapshot mode) and cleans it up a little bit.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-tmc-etr.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+ drivers/hwtracing/coresight/coresight-etb10.c    | 56 +++++------------------
+ drivers/hwtracing/coresight/coresight-etm-perf.c |  9 +---
+ drivers/hwtracing/coresight/coresight-tmc-etf.c  | 58 +++++-------------------
+ include/linux/coresight.h                        |  5 +-
+ 4 files changed, 26 insertions(+), 102 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index edbfeaa..e54c8a4 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -1168,19 +1168,17 @@ int tmc_read_prepare_etr(struct tmc_drvdata *drvdata)
- 		goto out;
- 	}
+diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+index 73878a6..a729a7b 100644
+--- a/drivers/hwtracing/coresight/coresight-etb10.c
++++ b/drivers/hwtracing/coresight/coresight-etb10.c
+@@ -315,37 +315,7 @@ static int etb_set_buffer(struct coresight_device *csdev,
+ 	return ret;
+ }
  
--	/* Don't interfere if operated from Perf */
--	if (drvdata->mode == CS_MODE_PERF) {
--		ret = -EINVAL;
--		goto out;
+-static unsigned long etb_reset_buffer(struct coresight_device *csdev,
+-				      struct perf_output_handle *handle,
+-				      void *sink_config)
+-{
+-	unsigned long size = 0;
+-	struct cs_buffers *buf = sink_config;
+-
+-	if (buf) {
+-		/*
+-		 * In snapshot mode ->data_size holds the new address of the
+-		 * ring buffer's head.  The size itself is the whole address
+-		 * range since we want the latest information.
+-		 */
+-		if (buf->snapshot)
+-			handle->head = local_xchg(&buf->data_size,
+-						  buf->nr_pages << PAGE_SHIFT);
+-
+-		/*
+-		 * Tell the tracer PMU how much we got in this run and if
+-		 * something went wrong along the way.  Nobody else can use
+-		 * this cs_buffers instance until we are done.  As such
+-		 * resetting parameters here and squaring off with the ring
+-		 * buffer API in the tracer PMU is fine.
+-		 */
+-		size = local_xchg(&buf->data_size, 0);
 -	}
 -
--	/* If sysfs_buf is NULL the trace data has been read already */
-+	/*
-+	 * We can safely allow reads even if the ETR is operating in PERF mode,
-+	 * since the sysfs session is captured in mode specific data.
-+	 * If drvdata::sysfs_data is NULL the trace data has been read already.
-+	 */
- 	if (!drvdata->sysfs_buf) {
- 		ret = -EINVAL;
- 		goto out;
+-	return size;
+-}
+-
+-static void etb_update_buffer(struct coresight_device *csdev,
++static unsigned long etb_update_buffer(struct coresight_device *csdev,
+ 			      struct perf_output_handle *handle,
+ 			      void *sink_config)
+ {
+@@ -354,13 +324,13 @@ static void etb_update_buffer(struct coresight_device *csdev,
+ 	u8 *buf_ptr;
+ 	const u32 *barrier;
+ 	u32 read_ptr, write_ptr, capacity;
+-	u32 status, read_data, to_read;
+-	unsigned long offset;
++	u32 status, read_data;
++	unsigned long offset, to_read;
+ 	struct cs_buffers *buf = sink_config;
+ 	struct etb_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+ 	if (!buf)
+-		return;
++		return 0;
+ 
+ 	capacity = drvdata->buffer_depth * ETB_FRAME_SIZE_WORDS;
+ 
+@@ -465,18 +435,17 @@ static void etb_update_buffer(struct coresight_device *csdev,
+ 	writel_relaxed(0x0, drvdata->base + ETB_RAM_WRITE_POINTER);
+ 
+ 	/*
+-	 * In snapshot mode all we have to do is communicate to
+-	 * perf_aux_output_end() the address of the current head.  In full
+-	 * trace mode the same function expects a size to move rb->aux_head
+-	 * forward.
++	 * In snapshot mode we have to update the handle->head to point
++	 * to the new location.
+ 	 */
+-	if (buf->snapshot)
+-		local_set(&buf->data_size, (cur * PAGE_SIZE) + offset);
+-	else
+-		local_add(to_read, &buf->data_size);
+-
++	if (buf->snapshot) {
++		handle->head = (cur * PAGE_SIZE) + offset;
++		to_read = buf->nr_pages << PAGE_SHIFT;
++	}
+ 	etb_enable_hw(drvdata);
+ 	CS_LOCK(drvdata->base);
++
++	return to_read;
+ }
+ 
+ static const struct coresight_ops_sink etb_sink_ops = {
+@@ -485,7 +454,6 @@ static const struct coresight_ops_sink etb_sink_ops = {
+ 	.alloc_buffer	= etb_alloc_buffer,
+ 	.free_buffer	= etb_free_buffer,
+ 	.set_buffer	= etb_set_buffer,
+-	.reset_buffer	= etb_reset_buffer,
+ 	.update_buffer	= etb_update_buffer,
+ };
+ 
+diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
+index 6776956..c305228 100644
+--- a/drivers/hwtracing/coresight/coresight-etm-perf.c
++++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+@@ -331,15 +331,8 @@ static void etm_event_stop(struct perf_event *event, int mode)
+ 		if (!sink_ops(sink)->update_buffer)
+ 			return;
+ 
+-		sink_ops(sink)->update_buffer(sink, handle,
++		size = sink_ops(sink)->update_buffer(sink, handle,
+ 					      event_data->snk_config);
+-
+-		if (!sink_ops(sink)->reset_buffer)
+-			return;
+-
+-		size = sink_ops(sink)->reset_buffer(sink, handle,
+-						    event_data->snk_config);
+-
+ 		perf_aux_output_end(handle, size);
  	}
  
--	/* Disable the TMC if we are trying to read from a running session */
-+	/* Disable the TMC if we are trying to read from a running session. */
- 	if (drvdata->mode == CS_MODE_SYSFS)
- 		tmc_etr_disable_hw(drvdata);
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+index 434003a..31a98f9 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+@@ -349,36 +349,7 @@ static int tmc_set_etf_buffer(struct coresight_device *csdev,
+ 	return ret;
+ }
  
+-static unsigned long tmc_reset_etf_buffer(struct coresight_device *csdev,
+-					  struct perf_output_handle *handle,
+-					  void *sink_config)
+-{
+-	long size = 0;
+-	struct cs_buffers *buf = sink_config;
+-
+-	if (buf) {
+-		/*
+-		 * In snapshot mode ->data_size holds the new address of the
+-		 * ring buffer's head.  The size itself is the whole address
+-		 * range since we want the latest information.
+-		 */
+-		if (buf->snapshot)
+-			handle->head = local_xchg(&buf->data_size,
+-						  buf->nr_pages << PAGE_SHIFT);
+-		/*
+-		 * Tell the tracer PMU how much we got in this run and if
+-		 * something went wrong along the way.  Nobody else can use
+-		 * this cs_buffers instance until we are done.  As such
+-		 * resetting parameters here and squaring off with the ring
+-		 * buffer API in the tracer PMU is fine.
+-		 */
+-		size = local_xchg(&buf->data_size, 0);
+-	}
+-
+-	return size;
+-}
+-
+-static void tmc_update_etf_buffer(struct coresight_device *csdev,
++static unsigned long tmc_update_etf_buffer(struct coresight_device *csdev,
+ 				  struct perf_output_handle *handle,
+ 				  void *sink_config)
+ {
+@@ -387,17 +358,17 @@ static void tmc_update_etf_buffer(struct coresight_device *csdev,
+ 	const u32 *barrier;
+ 	u32 *buf_ptr;
+ 	u64 read_ptr, write_ptr;
+-	u32 status, to_read;
+-	unsigned long offset;
++	u32 status;
++	unsigned long offset, to_read;
+ 	struct cs_buffers *buf = sink_config;
+ 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+ 	if (!buf)
+-		return;
++		return 0;
+ 
+ 	/* This shouldn't happen */
+ 	if (WARN_ON_ONCE(drvdata->mode != CS_MODE_PERF))
+-		return;
++		return 0;
+ 
+ 	CS_UNLOCK(drvdata->base);
+ 
+@@ -486,18 +457,14 @@ static void tmc_update_etf_buffer(struct coresight_device *csdev,
+ 		}
+ 	}
+ 
+-	/*
+-	 * In snapshot mode all we have to do is communicate to
+-	 * perf_aux_output_end() the address of the current head.  In full
+-	 * trace mode the same function expects a size to move rb->aux_head
+-	 * forward.
+-	 */
+-	if (buf->snapshot)
+-		local_set(&buf->data_size, (cur * PAGE_SIZE) + offset);
+-	else
+-		local_add(to_read, &buf->data_size);
+-
++	/* In snapshot mode we have to update the head */
++	if (buf->snapshot) {
++		handle->head = (cur * PAGE_SIZE) + offset;
++		to_read = buf->nr_pages << PAGE_SHIFT;
++	}
+ 	CS_LOCK(drvdata->base);
++
++	return to_read;
+ }
+ 
+ static const struct coresight_ops_sink tmc_etf_sink_ops = {
+@@ -506,7 +473,6 @@ static const struct coresight_ops_sink tmc_etf_sink_ops = {
+ 	.alloc_buffer	= tmc_alloc_etf_buffer,
+ 	.free_buffer	= tmc_free_etf_buffer,
+ 	.set_buffer	= tmc_set_etf_buffer,
+-	.reset_buffer	= tmc_reset_etf_buffer,
+ 	.update_buffer	= tmc_update_etf_buffer,
+ };
+ 
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index d828a6e..47bb0ba 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -203,10 +203,7 @@ struct coresight_ops_sink {
+ 	int (*set_buffer)(struct coresight_device *csdev,
+ 			  struct perf_output_handle *handle,
+ 			  void *sink_config);
+-	unsigned long (*reset_buffer)(struct coresight_device *csdev,
+-				      struct perf_output_handle *handle,
+-				      void *sink_config);
+-	void (*update_buffer)(struct coresight_device *csdev,
++	unsigned long (*update_buffer)(struct coresight_device *csdev,
+ 			      struct perf_output_handle *handle,
+ 			      void *sink_config);
+ };
 -- 
 2.7.4
 
