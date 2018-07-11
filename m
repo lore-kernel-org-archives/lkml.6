@@ -2,148 +2,107 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 629CFC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3AEC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1837720BEC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1837720BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 504F620875
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:26:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M+dZ6YOJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 504F620875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388625AbeGKOaJ (ORCPT
+        id S2388637AbeGKObK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:30:09 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53494 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388569AbeGKOaI (ORCPT
+        Wed, 11 Jul 2018 10:31:10 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:33523 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388121AbeGKObK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:30:08 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BENqlP110373
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 10:25:31 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5k41hnfs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 10:25:31 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 11 Jul 2018 10:25:30 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 11 Jul 2018 10:25:25 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BEPPJU9699782
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 11 Jul 2018 14:25:25 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 96DCFB2065;
-        Wed, 11 Jul 2018 10:25:24 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 77A1CB205F;
-        Wed, 11 Jul 2018 10:25:24 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 11 Jul 2018 10:25:24 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0D8BE16C196F; Wed, 11 Jul 2018 07:27:44 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 07:27:44 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
- SRCU
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180628182149.226164-1-joel@joelfernandes.org>
- <20180628182149.226164-5-joel@joelfernandes.org>
- <20180711124954.GE2476@hirez.programming.kicks-ass.net>
- <20180711090003.42596c2b@gandalf.local.home>
+        Wed, 11 Jul 2018 10:31:10 -0400
+Received: by mail-lj1-f195.google.com with SMTP id t21-v6so19546832lji.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 07:26:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=WnVuEeNFIX1rmZRQG2ESbrdp54U0BvrkhXRpC5K7bXo=;
+        b=M+dZ6YOJYSymvNzS9QRDEdYQEqcRfTYEsVmh8t1+QsIYPBRtDawG9eqzUVdg/4xYxD
+         SIbIwl/dOCZMPNeyHpCfPGWaC2Lq0Sh82UQFPQLL5qw10QtDkZv47AWlX2ZCIr6MfqN1
+         mpB+1YyHTsB5nkqTmesyg/TVSoKNg+AfbmX9TyNIWn8M7D+rbCiQ6Q2upFBgMk7G5qv0
+         a29nv0fyCdmiKdMtmDOir0RvRHMqzIcWqkMvAiBFD8CLX2UDjJUUGUqd/dLE63NB2bxC
+         hcG/whDPBab2ZnIZXodmkOeSdQ83d1yHFRlAyDl6wzUHUqYlMaPaaVA+o5TsbmLQ4zZv
+         EvsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=WnVuEeNFIX1rmZRQG2ESbrdp54U0BvrkhXRpC5K7bXo=;
+        b=iOQSpJKr3HcHoW8z49MyxzO7gtzkHKPVYY6CrqK6vDI1uOgExQg/SCIdJO4HSPkFzn
+         Er69Ik4Eh+Ib44Do1RbchskD6F6oZEPYEr015h6L8k08e4EkAU8QOMw0CkRpi4LaghRI
+         VZOuNDyZj81F5MtB5DK53gdYOJZbzpPE/GWdRby3r82OFlwIyjIDXtxP5w6QBZSZ4gI+
+         og94SSFJJvAE1KFYIN6euZhskbfS/LRlvrSFHpv06JNebVDCnZ5IHBCR1Q390KycCZpm
+         RAwNAnB9Rrhip+cR/ADLSo3TZCn4CeKpx+nXw4rv+ixN/zvt/ujD2q9fpXdsVxlvPVF5
+         ufzw==
+X-Gm-Message-State: APt69E0X5+oZdjoyqMBYY8Z8ecVRdCJhdR2gWojWWQ4qg7j3gahKp3uK
+        LT1EKJCoMpK8iKiiZbjEZZTQ+VZECthhu2vHoM4=
+X-Google-Smtp-Source: AAOMgpehT3wDwU/mcoHx8t7BvBkYCrJ5GCjC/74NiL7AxlAYinqzV5cctWz3Soxs8XRtxVFTpy5p82W2QQ0x8Y/obf0=
+X-Received: by 2002:a2e:5bc8:: with SMTP id m69-v6mr19101091lje.115.1531319192523;
+ Wed, 11 Jul 2018 07:26:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711090003.42596c2b@gandalf.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18071114-0068-0000-0000-000003166C5F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009350; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01059814; UDB=6.00543956; IPR=6.00837734;
- MB=3.00022102; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 14:25:29
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071114-0069-0000-0000-000044FE3A1D
-Message-Id: <20180711142744.GN3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=808 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807110156
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 07:26:31
+ -0700 (PDT)
+In-Reply-To: <20180711150449.4152333c@bbrezillon>
+References: <20180711122709.358159-1-arnd@arndb.de> <20180711150449.4152333c@bbrezillon>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 11 Jul 2018 16:26:31 +0200
+X-Google-Sender-Auth: cL03MWSZqc-jq7BYe_pguMFtjF8
+Message-ID: <CAK8P3a1M4v1hMduAX3y39DEjBiT=70xm-+qJ8CPLZHQwKOzJ1g@mail.gmail.com>
+Subject: Re: [PATCH] nand: ranw: qcom_nand: stop using phys_to_dma()
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Abhishek Sahu <absahu@codeaurora.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 09:00:03AM -0400, Steven Rostedt wrote:
-> On Wed, 11 Jul 2018 14:49:54 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
-> 
-> > On Thu, Jun 28, 2018 at 11:21:46AM -0700, Joel Fernandes wrote:
-> > > -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\  
-> > 
-> > I would convert to rcu_dereference_raw() to appease sparse. The fancy
-> > stuff below is pointless if you then turn off all checking.
-> 
-> The problem with doing this is if we use a trace event without the
-> proper _idle() or whatever, we wont get a warning that it is used
-> incorrectly with lockdep. Or does lockdep still check if "rcu is
-> watching" with rcu_dereference_raw()?
+On Wed, Jul 11, 2018 at 3:04 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Wed, 11 Jul 2018 14:26:58 +0200
+> Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>> Compile-testing this driver on x86 caused a link error:
+>>
+>> ERROR: "__phys_to_dma" [drivers/mtd/nand/raw/qcom_nandc.ko] undefined!
+>>
+>> The problem here is that the driver attempts to convert the physical
+>> address into the DMA controller as a dma_addr_t and calls phys_to_dma()
+>> to do the conversion.
+>>
+>> However, there is no generic way to convert a phys_addr_t into a dma_addr_t
+>> for anything other than RAM (which should use the dma-mapping API instead).
+>> The only correct use of phys_to_dma() instead is inside of the dma-mapping
+>> implementation.
+>
+> Should we use dma_map_resource() to do the phys_addr_t to dma_addr_t
+> conversion?
 
-No lockdep checking is done by rcu_dereference_raw().
+I had not seen that interface before, but yes, that does seem like the best
+way to do it here.
 
-							Thanx, Paul
-
-> -- Steve
-> 
-> > 
-> > > +									\
-> > > +		/*							\
-> > > +		 * For rcuidle callers, use srcu since sched-rcu	\
-> > > +		 * doesn't work from the idle path.			\
-> > > +		 */							\
-> > > +		if (rcuidle) {						\
-> > > +			if (in_nmi()) {					\
-> > > +				WARN_ON_ONCE(1);			\
-> > > +				return; /* no srcu from nmi */		\
-> > > +			}						\
-> > > +									\
-> > > +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-> > > +			it_func_ptr =					\
-> > > +				srcu_dereference_notrace((tp)->funcs,	\
-> > > +						&tracepoint_srcu);	\
-> > > +			/* To keep it consistent with !rcuidle path */	\
-> > > +			preempt_disable_notrace();			\
-> > > +		} else {						\
-> > > +			rcu_read_lock_sched_notrace();			\
-> > > +			it_func_ptr =					\
-> > > +				rcu_dereference_sched((tp)->funcs);	\
-> > > +		}							\  
-> 
-
+       Arnd
