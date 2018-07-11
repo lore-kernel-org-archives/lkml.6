@@ -3,208 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB57C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE7DC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DDF220B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:52:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DDF220B6F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+	by mail.kernel.org (Postfix) with ESMTP id EEA1320B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:52:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEA1320B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbeGKJzt (ORCPT
+        id S1726703AbeGKJ4V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:55:49 -0400
-Received: from cloudserver094114.home.pl ([79.96.170.134]:47274 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbeGKJzt (ORCPT
+        Wed, 11 Jul 2018 05:56:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56818 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726388AbeGKJ4V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:55:49 -0400
-Received: from 79.184.255.246.ipv4.supernova.orange.pl (79.184.255.246) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
- id ab3330211bbacccc; Wed, 11 Jul 2018 11:52:15 +0200
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     joro@8bytes.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        robin.murphy@arm.com, will.deacon@arm.com,
-        iommu@lists.linux-foundation.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alex.williamson@redhat.com,
-        robdclark@gmail.com, linux-pm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, sboyd@kernel.org,
-        tfiga@chromium.org, sricharan@codeaurora.org,
-        m.szyprowski@samsung.com, architt@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, jcrouse@codeaurora.org
-Subject: Re: [PATCH v12 1/4] iommu/arm-smmu: Add pm_runtime/sleep ops
-Date:   Wed, 11 Jul 2018 11:50:44 +0200
-Message-ID: <17407514.unFVTGoGrn@aspire.rjw.lan>
-In-Reply-To: <20180708173413.1965-2-vivek.gautam@codeaurora.org>
-References: <20180708173413.1965-1-vivek.gautam@codeaurora.org> <20180708173413.1965-2-vivek.gautam@codeaurora.org>
+        Wed, 11 Jul 2018 05:56:21 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6B9oMv8026404
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:52:50 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5d69x2hq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:52:50 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Wed, 11 Jul 2018 10:52:43 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Jul 2018 10:52:37 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6B9qaOl32833602
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Jul 2018 09:52:36 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7F2B611C052;
+        Wed, 11 Jul 2018 12:52:58 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3E74511C066;
+        Wed, 11 Jul 2018 12:52:55 +0100 (BST)
+Received: from [9.124.31.141] (unknown [9.124.31.141])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Jul 2018 12:52:55 +0100 (BST)
+Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Oleg Nesterov <oleg@redhat.com>, srikar@linux.vnet.ibm.com
+Cc:     rostedt@goodmis.org, mhiramat@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
+        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <20180628052209.13056-1-ravi.bangoria@linux.ibm.com>
+ <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
+ <20180701210935.GA14404@redhat.com>
+ <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
+ <20180702180156.GA31400@redhat.com>
+ <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
+ <20180703163645.GA23144@redhat.com> <20180703172543.GC23144@redhat.com>
+ <f5a39a88-c21e-4606-a04d-11b5f32016b8@linux.ibm.com>
+ <20180710152527.GA3616@redhat.com>
+ <6e3ff60b-267a-d49d-4ebb-c4264f9c034b@linux.ibm.com>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Wed, 11 Jul 2018 15:22:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <6e3ff60b-267a-d49d-4ebb-c4264f9c034b@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18071109-4275-0000-0000-0000029764BB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071109-4276-0000-0000-0000379F03C5
+Message-Id: <62933fa6-542c-6fc1-354c-51597d5523ef@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=727 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807110105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, July 8, 2018 7:34:10 PM CEST Vivek Gautam wrote:
-> From: Sricharan R <sricharan@codeaurora.org>
-> 
-> The smmu needs to be functional only when the respective
-> master's using it are active. The device_link feature
-> helps to track such functional dependencies, so that the
-> iommu gets powered when the master device enables itself
-> using pm_runtime. So by adapting the smmu driver for
-> runtime pm, above said dependency can be addressed.
-> 
-> This patch adds the pm runtime/sleep callbacks to the
-> driver and also the functions to parse the smmu clocks
-> from DT and enable them in resume/suspend.
-> 
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> Signed-off-by: Archit Taneja <architt@codeaurora.org>
-> [vivek: Clock rework to request bulk of clocks]
-> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> ---
-> 
->  - No change since v11.
-> 
->  drivers/iommu/arm-smmu.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 58 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index f7a96bcf94a6..a01d0dde21dd 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -48,6 +48,7 @@
->  #include <linux/of_iommu.h>
->  #include <linux/pci.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_runtime.h>
->  #include <linux/slab.h>
->  #include <linux/spinlock.h>
->  
-> @@ -205,6 +206,8 @@ struct arm_smmu_device {
->  	u32				num_global_irqs;
->  	u32				num_context_irqs;
->  	unsigned int			*irqs;
-> +	struct clk_bulk_data		*clks;
-> +	int				num_clks;
->  
->  	u32				cavium_id_base; /* Specific to Cavium */
->  
-> @@ -1897,10 +1900,12 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
->  struct arm_smmu_match_data {
->  	enum arm_smmu_arch_version version;
->  	enum arm_smmu_implementation model;
-> +	const char * const *clks;
-> +	int num_clks;
->  };
->  
->  #define ARM_SMMU_MATCH_DATA(name, ver, imp)	\
-> -static struct arm_smmu_match_data name = { .version = ver, .model = imp }
-> +static const struct arm_smmu_match_data name = { .version = ver, .model = imp }
->  
->  ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
->  ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
-> @@ -1919,6 +1924,23 @@ static const struct of_device_id arm_smmu_of_match[] = {
->  };
->  MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
->  
-> +static void arm_smmu_fill_clk_data(struct arm_smmu_device *smmu,
-> +				   const char * const *clks)
-> +{
-> +	int i;
-> +
-> +	if (smmu->num_clks < 1)
-> +		return;
-> +
-> +	smmu->clks = devm_kcalloc(smmu->dev, smmu->num_clks,
-> +				  sizeof(*smmu->clks), GFP_KERNEL);
-> +	if (!smmu->clks)
-> +		return;
-> +
-> +	for (i = 0; i < smmu->num_clks; i++)
-> +		smmu->clks[i].id = clks[i];
-> +}
-> +
->  #ifdef CONFIG_ACPI
->  static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
->  {
-> @@ -2001,6 +2023,9 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
->  	data = of_device_get_match_data(dev);
->  	smmu->version = data->version;
->  	smmu->model = data->model;
-> +	smmu->num_clks = data->num_clks;
-> +
-> +	arm_smmu_fill_clk_data(smmu, data->clks);
->  
->  	parse_driver_options(smmu);
->  
-> @@ -2099,6 +2124,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
->  		smmu->irqs[i] = irq;
->  	}
->  
-> +	err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
-> +	if (err)
-> +		return err;
-> +
-> +	err = clk_bulk_prepare(smmu->num_clks, smmu->clks);
-> +	if (err)
-> +		return err;
-> +
->  	err = arm_smmu_device_cfg_probe(smmu);
->  	if (err)
->  		return err;
-> @@ -2181,6 +2214,9 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
->  
->  	/* Turn the thing off */
->  	writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
-> +
-> +	clk_bulk_unprepare(smmu->num_clks, smmu->clks);
-> +
->  	return 0;
->  }
->  
-> @@ -2197,7 +2233,27 @@ static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
->  	return 0;
->  }
->  
-> -static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
-> +static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
-> +{
-> +	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> +
-> +	return clk_bulk_enable(smmu->num_clks, smmu->clks);
-> +}
-> +
-> +static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
-> +{
-> +	struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> +
-> +	clk_bulk_disable(smmu->num_clks, smmu->clks);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct dev_pm_ops arm_smmu_pm_ops = {
-> +	SET_SYSTEM_SLEEP_PM_OPS(NULL, arm_smmu_pm_resume)
+Minor correction:
 
-This is suspicious.
-
-If you need a runtime suspend method, why do you think that it is not necessary
-to suspend the device during system-wide transitions?
-
-> +	SET_RUNTIME_PM_OPS(arm_smmu_runtime_suspend,
-> +			   arm_smmu_runtime_resume, NULL)
-> +};
->  
->  static struct platform_driver arm_smmu_driver = {
->  	.driver	= {
+On 07/11/2018 02:14 PM, Ravi Bangoria wrote:
 > 
+> Third options: How about allowing 0 as a special value for reference
+> counter?
 
+s/reference counter/reference counter offset/
+
+ I mean allow uprobe_register() and uprobe_register_refctr()
+> in parallel but do not allow two uprobe_register_refctr() with two
+> different reference counter.
+
+Ditto.
 
