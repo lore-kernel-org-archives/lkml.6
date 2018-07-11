@@ -3,84 +3,130 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45045C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 01:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B286CC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 01:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F067A208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 01:26:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F067A208EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 656FD208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 01:28:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 656FD208EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732437AbeGKB2X (ORCPT
+        id S1732381AbeGKBaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 21:28:23 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:56861 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732304AbeGKB2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 21:28:23 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D327C8F7A99CE;
-        Wed, 11 Jul 2018 09:26:33 +0800 (CST)
-Received: from [127.0.0.1] (10.177.16.168) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Wed, 11 Jul 2018
- 09:26:20 +0800
-Subject: Re: [V9fs-developer] [PATCH] version pointer uninitialized
-To:     Tomas Bortoli <tomasbortoli@gmail.com>, <ericvh@gmail.com>,
-        <rminnich@sandia.gov>, <lucho@ionkov.net>
-References: <20180709222943.19503-1-tomasbortoli@gmail.com>
-CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <syzkaller@googlegroups.com>,
-        <v9fs-developer@lists.sourceforge.net>, <davem@davemloft.net>
-From:   jiangyiwen <jiangyiwen@huawei.com>
-Message-ID: <5B455CBB.8030501@huawei.com>
-Date:   Wed, 11 Jul 2018 09:26:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Tue, 10 Jul 2018 21:30:17 -0400
+Received: from mga06.intel.com ([134.134.136.31]:38325 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732304AbeGKBaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 21:30:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 18:28:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,336,1526367600"; 
+   d="scan'208";a="56702276"
+Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.118])
+  by orsmga006.jf.intel.com with ESMTP; 10 Jul 2018 18:28:14 -0700
+From:   "Huang\, Ying" <ying.huang@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Shaohua Li" <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH -mm -v4 05/21] mm, THP, swap: Support PMD swap mapping in free_swap_and_cache()/swap_free()
+References: <20180622035151.6676-1-ying.huang@intel.com>
+        <20180622035151.6676-6-ying.huang@intel.com>
+        <49178f48-6635-353c-678d-3db436d3f9c3@linux.intel.com>
+        <87y3ejh8ax.fsf@yhuang-dev.intel.com>
+        <836c95a7-5f03-6d9e-6f0a-839b5fb8ba99@linux.intel.com>
+Date:   Wed, 11 Jul 2018 09:28:13 +0800
+In-Reply-To: <836c95a7-5f03-6d9e-6f0a-839b5fb8ba99@linux.intel.com> (Dave
+        Hansen's message of "Tue, 10 Jul 2018 07:07:39 -0700")
+Message-ID: <87h8l6h87m.fsf@yhuang-dev.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20180709222943.19503-1-tomasbortoli@gmail.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.16.168]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=ascii
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/10 6:29, Tomas Bortoli wrote:
-> The p9_client_version() does not initialize the version
-> pointer. If the call to p9pdu_readf() returns an error and version has not
-> been allocated in p9pdu_readf(), then the program will jump to the "error"
-> label and will try to free the version pointer. If version is not
-> initialized, free() will be called with uninitialized, garbage data and
-> will provoke a crash.
-> 
-> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Dave Hansen <dave.hansen@linux.intel.com> writes:
 
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+> On 07/10/2018 12:13 AM, Huang, Ying wrote:
+>> Dave Hansen <dave.hansen@linux.intel.com> writes:
+>>> The code non-resuse was, and continues to be, IMNHO, one of the largest
+>>> sources of bugs with the original THP implementation.  It might be
+>>> infeasible to do here, but let's at least give it as much of a go as we can.
+>> 
+>> I totally agree that we should unify the code path for huge and normal
+>> page/swap if possible.  One concern is code size for !CONFIG_THP_SWAP.
+>
+> I've honestly never heard that as an argument before.  In general, our
+> .c files implement *full* functionality: the most complex case.  The
+> headers #ifdef that functionality down because of our .config or
+> architecture.
+>
+> The thing that matters here is debugging and reviewing the _complicated_
+> case, IMNHO.
 
-> Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
-> ---
->  net/9p/client.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index 18c5271910dc..40f7c47f2f74 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -957,7 +957,7 @@ static int p9_client_version(struct p9_client *c)
->  {
->  	int err = 0;
->  	struct p9_req_t *req;
-> -	char *version;
-> +	char *version = NULL;
->  	int msize;
->  
->  	p9_debug(P9_DEBUG_9P, ">>> TVERSION msize %d protocol %d\n",
-> 
+I agree with your point here.  I will try it and measure the code size
+change too.
 
+>> The original method is good for that.  The new method may introduce some
+>> huge swap related code that is hard to be eliminated for
+>> !CONFIG_THP_SWAP.  Andrew Morton pointed this out for the patchset of
+>> the first step of the THP swap optimization.
+>> 
+>> This may be mitigated at least partly via,
+>> 
+>> `
+>> #ifdef CONFIG_THP_SWAP
+>> #define nr_swap_entries(nr)          (nr)
+>> #else
+>> #define nr_swap_entries(nr)          1
+>> #endif
+>> 
+>> void do_something(swp_entry_t entry, int __nr_entries)
+>> {
+>>         int i, nr_entries = nr_swap_entries(__nr_entries);
+>> 
+>>         if (nr_entries = SWAPFILE_CLUSTER)
+>>                 ; /* huge swap specific */
+>>         else
+>>                 ; /* normal swap specific */
+>> 
+>>         for (i = 0; i < nr_entries; i++) {
+>>                 ; /* do something for each entry */
+>>         }
+>> 
+>>         /* ... */
+>> }
+>> `
+>
+> While that isn't perfect, it's better than the current state of things.
+>
+> While you are refactoring things, I think you also need to take a good
+> look at roughly chopping this series in half by finding another stopping
+> point.  You've done a great job so far of trickling this functionality
+> in so far, but 21 patches is quite a bit, and the set is only going to
+> get larger.
 
+Yes.  The patchset is too large.  I will try to reduce it if possible.
+At least [21/21] can be separated.  [02/21] may be sent separately
+too.  Other parts are hard, THP swapin and creating/supporting PMD swap
+mapping need to be in one patchset.
+
+Best Regards,
+Huang, Ying
