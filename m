@@ -2,97 +2,121 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4B8EC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDEDC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F89F2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:09:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C0962084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:10:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eywXJhP9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F89F2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XkQUa3jK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C0962084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388358AbeGKOON (ORCPT
+        id S2388405AbeGKOOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:14:13 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:36158 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726639AbeGKOON (ORCPT
+        Wed, 11 Jul 2018 10:14:46 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:46570 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726639AbeGKOOq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:14:13 -0400
-Received: by mail-ed1-f66.google.com with SMTP id t3-v6so19308297eds.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 07:09:40 -0700 (PDT)
+        Wed, 11 Jul 2018 10:14:46 -0400
+Received: by mail-lf0-f67.google.com with SMTP id l16-v6so21392574lfc.13;
+        Wed, 11 Jul 2018 07:10:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6APg3PrnEBIVRJDMdP/Pwih/rIXKFddZwS2g7kQdwVY=;
-        b=eywXJhP9aer0xLTNBNO0e+TP1mXetuiJGGgYGO3wCOVBNNnQPNMjcyTlyzuHT6bkcB
-         5H2hl54xQ83bDnLUqo/Sjv07prvHzDdoiMQtiMOEtpu/NToKyQM6lZDlPAMT1Znv27X1
-         hOlEs+uEz89GU+2dj0oQyh1wG6Y6c4RfIMZlAiPCY/P+DX3VzqxiZvdA7MW53yrG33KV
-         dX5xBI8XdTaz+RZ+lPetNlHfAIXzmKmtPSEtoECFF95WSVrzyIB+tlDLxSDg2ME2b4m3
-         oaXb+JBuNAlxDu9QYN605R8o+GstOiBSw935ROeoX0g/NEl7k80UL3Hab30xlS/Z5BQL
-         zW4A==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=IPv3E6Gn5yp3bZSK+NE2mf5GZIiw9vWcMJ+i+NbbVTo=;
+        b=XkQUa3jK3fK8hGxaYsZsyHbZeB5wN9epqULq4qJ9K9ntugQ+B6xV/A+79qSELy1YZB
+         gFiFfH+NWtIAaZZFJg8FyzKe4/uIyVoX9Shq1kksbO7NnYesvyK85fRKgINQnh6eq12o
+         NhLFB82KB0f6zjQQ4gIA91FpTJTLjUtGbVYaNHUuAyi4DwydlfaNu4lXh/fWbaKfzPJm
+         FqTSRkoqZSjD6hd0NvdOuUEnZa77UUtsM7KaSt95bWI6qSHvT8CKIuak6S7VfE1IR7CH
+         NDNnTvo/TQ8GsyfIEEYwg0NPBtKC2Oe3ZSZieX3SPDw4q0JE6jWY9/579aa8LlbzUNtz
+         xNFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6APg3PrnEBIVRJDMdP/Pwih/rIXKFddZwS2g7kQdwVY=;
-        b=n2QvjxwoXWUJAp75pkP5XvFTnCqzMDVgfVCcDfhmY/IwchwTWXQkg/2myoaFdz/REY
-         90i/q/XDqFGaWto7Pg0NgsUTvgWa+QZN5Ro6p74V9sDvp1pmK6fX9Xbj16uCu36/XNKI
-         KlvFSy2n9a0Sxwoa9psC3YTx0B3UnkiWXSs82BePEhUH2IiIWWKrsF9oxdwXvy1MhswC
-         HmbCmHNTh6MqU73+MV9RZCBPr531mUZMF/YTN6N1+XJCmp6y1UEFeLQKbtNQ+z/TjFQy
-         K9dmeOJmW+1wDrAT7Sc8gc/cWWfaVpTr0IVGzaFPlefCw8RfzcNyH8Mp/hUc4LOkaojY
-         kR6Q==
-X-Gm-Message-State: APt69E1M9tBR0570zmD6hAUHktxwna7hS2VVzAS7R72lE5jTz4GBts06
-        gZuIQOKXhoMuWVB0GRGOEWo=
-X-Google-Smtp-Source: AAOMgpeARgmKppaIA205rG99oIk35BDmLeT7lYOz15MUUyMFt6BADLWfln0CIeIJc287VOIIUA8FAg==
-X-Received: by 2002:a50:b642:: with SMTP id c2-v6mr18128189ede.288.1531318180384;
-        Wed, 11 Jul 2018 07:09:40 -0700 (PDT)
-Received: from xux707-tw ([109.77.228.66])
-        by smtp.gmail.com with ESMTPSA id k2-v6sm13175912edl.30.2018.07.11.07.09.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 07:09:39 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 15:09:37 +0100
-From:   John Whitmore <arigead@gmail.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     John Whitmore <johnfwhitmore@gmail.com>,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        kstewart@linuxfoundation.org, keescook@chromium.org,
-        aastha.gupta4104@gmail.com, pombredanne@nexb.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH v2 3/8] staging:rtl8192u: Correct spacing before and
- after parenthesis - Style
-Message-ID: <20180711140935.GC26416@xux707-tw>
-References: <20180710150523.17384-1-johnfwhitmore@gmail.com>
- <20180710150523.17384-4-johnfwhitmore@gmail.com>
- <20180711111349.GA28836@kroah.com>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=IPv3E6Gn5yp3bZSK+NE2mf5GZIiw9vWcMJ+i+NbbVTo=;
+        b=kquY22zZVtJbIDVtzOp3LTGcbbSBvnZJ5ygTXXnQG78cvNESidKyIYIO/PZXYpcLa5
+         /xIkWGwiMjTWPbDf5IpjoErbOhhaEWwpnUN9i5xCvfRIBjAqt2Woviw3C3QHCZUXY0+A
+         BE7+m3xdFssFGSeSWpbpDMjAyeoUpNV7tr0zo2MNo7/w0L1RRK6cI5UcUMW7JejBlg+p
+         jO98mzKGJE+VlSyClPc3H92SrNcs5TWHfwQWs3UFWcjRDHbrjM8d7dvf8BwX67kYeYmY
+         oRr+NkDwplqolXK3Xt7WIb9uzSfu8GG+36Q0o6DMeB48QKmatq+q7j0heibsrTDIcA74
+         qBWw==
+X-Gm-Message-State: APt69E393+i2IXV1W4zd9vO4iVcjp3byIEnELKMMpE7mDva3pBj6qL0w
+        j30MxBhug+VVK5sEC8IhqtDYKj5Scnbi4Ab9Znc=
+X-Google-Smtp-Source: AAOMgpflz8cdxO/VB7hQZaBV0jmpQUyQDQlAidUk0heaSx6cmat9AWo1abBQOjtZeHnPMbaz1qQptXewZSbG0toQnaQ=
+X-Received: by 2002:a19:b2c7:: with SMTP id t68-v6mr5891425lfk.132.1531318211355;
+ Wed, 11 Jul 2018 07:10:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711111349.GA28836@kroah.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 07:10:10
+ -0700 (PDT)
+In-Reply-To: <20180622104930.32050-5-boris.brezillon@bootlin.com>
+References: <20180622104930.32050-1-boris.brezillon@bootlin.com> <20180622104930.32050-5-boris.brezillon@bootlin.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 11 Jul 2018 16:10:10 +0200
+X-Google-Sender-Auth: 9LnPWSZt9z69qaNh94h1oU4DHPo
+Message-ID: <CAK8P3a1gyvvpKdVV+STOJXd-=BFdiFF638F0agXur0kLYP7ksw@mail.gmail.com>
+Subject: Re: [PATCH v5 04/10] dt-bindings: i3c: Document core bindings
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 01:13:49PM +0200, Greg KH wrote:
-> On Tue, Jul 10, 2018 at 04:05:18PM +0100, John Whitmore wrote:
-> > Corrected coding style issues aroung opening and closed parenthesis. Spaces, or blank line, removed from after '(' or before ')'
-> 
-> Wrap your changelog text at 72 columns like your editor asked you to :(
-> 
-> I'll fix it up this time...
+On Fri, Jun 22, 2018 at 12:49 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> A new I3C subsystem has been added and a generic description has been
+> created to represent the I3C bus and the devices connected on it.
+>
 
-Oops sorry and thanks. I thought the magic number was 75 which I got from:
+> +I2C devices
+> +===========
+> +
+> +Each I2C device connected to the bus should be described in a subnode. All
+> +properties described in Documentation/devicetree/bindings/i2c/i2c.txt are
+> +valid here, but several new properties have been added.
+> +
+> +New constraint on existing properties:
+> +--------------------------------------
+...
+> +  + third cell: should be 0
 
-https://www.kernel.org/doc/html/v4.16/process/submitting-patches.html
+What for? Just to be future-proof, or do you have something specific
+in mind here?
 
-jwhitmore
+      Arnd
