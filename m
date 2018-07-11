@@ -2,67 +2,90 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F29C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3808C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB57620BEC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:22:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB57620BEC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id BA24B20875
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:23:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA24B20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388554AbeGKO13 (ORCPT
+        id S2388566AbeGKO1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:27:29 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44342 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387949AbeGKO13 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:27:29 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05C27C3C;
-        Wed, 11 Jul 2018 14:22:52 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 16:22:50 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     John Whitmore <arigead@gmail.com>
-Cc:     devel@driverdev.osuosl.org, kstewart@linuxfoundation.org,
-        keescook@chromium.org, aastha.gupta4104@gmail.com,
-        linux-kernel@vger.kernel.org,
-        John Whitmore <johnfwhitmore@gmail.com>, pombredanne@nexb.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH v2 3/8] staging:rtl8192u: Correct spacing before and
- after parenthesis - Style
-Message-ID: <20180711142250.GA3907@kroah.com>
-References: <20180710150523.17384-1-johnfwhitmore@gmail.com>
- <20180710150523.17384-4-johnfwhitmore@gmail.com>
- <20180711111349.GA28836@kroah.com>
- <20180711140935.GC26416@xux707-tw>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711140935.GC26416@xux707-tw>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 11 Jul 2018 10:27:53 -0400
+Received: from mga11.intel.com ([192.55.52.93]:33885 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387949AbeGKO1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:27:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 07:23:18 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="73957147"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga002.jf.intel.com with ESMTP; 11 Jul 2018 07:23:15 -0700
+Message-ID: <d2ba8f992c272543d689d87006e99c3bcf343605.camel@linux.intel.com>
+Subject: Re: [PATCH v4 3/3] serial: 8250_dw: add fractional divisor support
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org
+Date:   Wed, 11 Jul 2018 17:23:13 +0300
+In-Reply-To: <20180711144125.7d4e6a73@xhacker.debian>
+References: <20180710110942.5b0a016e@xhacker.debian>
+         <20180710111516.13b8c570@xhacker.debian>
+         <8c5b6bbbde12b0836e1f833c86b805a817596654.camel@linux.intel.com>
+         <20180711144125.7d4e6a73@xhacker.debian>
+Organization: Intel Finland Oy
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 03:09:37PM +0100, John Whitmore wrote:
-> On Wed, Jul 11, 2018 at 01:13:49PM +0200, Greg KH wrote:
-> > On Tue, Jul 10, 2018 at 04:05:18PM +0100, John Whitmore wrote:
-> > > Corrected coding style issues aroung opening and closed parenthesis. Spaces, or blank line, removed from after '(' or before ')'
-> > 
-> > Wrap your changelog text at 72 columns like your editor asked you to :(
-> > 
-> > I'll fix it up this time...
-> 
-> Oops sorry and thanks. I thought the magic number was 75 which I got from:
-> 
-> https://www.kernel.org/doc/html/v4.16/process/submitting-patches.html
+On Wed, 2018-07-11 at 14:41 +0800, Jisheng Zhang wrote:
+> On Tue, 10 Jul 2018 19:19:21 +0300 Andy Shevchenko wrote:
 
-75 works as well :)
+> > > +/*
+> > > + * divisor = div(I) + div(F)
+> > > + * "I" means integer, "F" means fractional
+> > > + * quot = div(I) = clk / (16 * baud)
+> > > + * frac = div(F) * 2^dlf_size
+> > > + *
+> > > + * let rem = clk % (16 * baud)
+> > > + * we have: div(F) * (16 * baud) = rem
+> > > + * so frac = 2^dlf_size * rem / (16 * baud) = (rem << dlf_size) /
+> > > (16
+> > > * baud)
+> > > + */
 
+> > > +	quot = p->uartclk / (16 * baud);
+> > > +	rem = p->uartclk % (16 * baud);
+> > > +	*frac = DIV_ROUND_CLOSEST(rem << d->dlf_size, 16 * baud
+
+> My python coding skill is limited. So I wrote a simple c program to
+> do the check for common clks and baudrate combination. All passed. I
+> paste the code here:
+> 
+
+OK, I wrote test case in Python:
+https://gist.github.com/andy-shev/5e980f1d752617ba814725248556ac19
+
+Looks good to me.
+
+Please, send v6 and assume my Reviewed-by for entire series.
+
+-- 
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
