@@ -1,107 +1,208 @@
 Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A45DFC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68427C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC08208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:13:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 107B520BF2
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:14:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B5BZ2gaW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC08208FA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xmjB3UQl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107B520BF2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732424AbeGKKQn (ORCPT
+        id S1732392AbeGKKS0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:16:43 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37910 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeGKKQm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:16:42 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m1-v6so4845258wrg.5;
-        Wed, 11 Jul 2018 03:13:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oY4nNvXwf2yf48SIhMl+03vqsgHzBxvOTHrNtTHBekQ=;
-        b=B5BZ2gaWZYViVB1qgMPFG4tss0d+bnGjwwNYz2luObDUyFqiLIo46wEkB524yZtYUx
-         C51Kb8eL2yA8Uim1c3wXGRrxq/h+6+AlhyA5UYMCFhZtFO6IUAmbAW7mRafMvzyTMXif
-         afXklImmsXiZHjS45T7V5hC63cl5q9pe4srFisoFRB8AQGuYAl/DSb3aPqscnTtJCZhC
-         b6LYxzmUwopI1Op179W2zwNXWAeS8hxLsvkQX8ZDBYn+NVy2Wam/MgwU7B6JuXfyg46E
-         /cHiPpKCmZl28aD9p+ci7lDKIt8D/GZ9aUVmKEwHSpdd6N63bSY//2PcDJHGNmQAgqsO
-         Kf4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oY4nNvXwf2yf48SIhMl+03vqsgHzBxvOTHrNtTHBekQ=;
-        b=rvbYKip7/WbB9ILYfK1GDcG7X4+aDWrQBLFOBYUhpRpREEmRLY8C3tzoFChtZ5lCLH
-         Y8NUj3uMiec6C5SldW/U7TDPFytd8euabJXfSQFXn4MHmrdLYEE4siyd6VjE5MuRHLx8
-         a3VSxPxsiDUMTuLMSTc4lc3Lml51p84WNUB+jJHynNOQBsU+FtqRMAR7zFnb48h4138R
-         iHbJpxMZzIQk0zrPQzFOJgpH4h+cpxR+2cf7t7ex03sJl2xLD+5sfzU0tx+plnpz/UTX
-         OL5gESEkULFy2f/qpLQSjk96hp6qQmA5yBGwS32nmWjWZ5g8/Br0N5Bj3fG2M1kWejWn
-         6s7A==
-X-Gm-Message-State: APt69E1pRWuRRsnhTBycI1Bl518562JZR/mBUPutLIUKImku422zjPqw
-        0GSITYpttEDvlwTFLM4OhtE=
-X-Google-Smtp-Source: AAOMgpfmq8f3FrCjhS7kNqpfA2QBdQOe+fCUUwgM2+FMRgSJhRb9ZgfAePDC0/EtsUOYnp1RQ8kENQ==
-X-Received: by 2002:adf:c74e:: with SMTP id b14-v6mr19063559wrh.16.1531303986762;
-        Wed, 11 Jul 2018 03:13:06 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id c18-v6sm24291605wrq.17.2018.07.11.03.13.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 03:13:06 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 12:13:03 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>
-Subject: Re: [GIT PULL 0/1] EFI mixed mode fix for v4.18
-Message-ID: <20180711101303.GA8574@gmail.com>
-References: <20180711090235.9327-1-ard.biesheuvel@linaro.org>
+        Wed, 11 Jul 2018 06:18:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39494 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726368AbeGKKSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 06:18:25 -0400
+Received: from localhost (unknown [193.47.165.251])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4503F208FA;
+        Wed, 11 Jul 2018 10:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531304089;
+        bh=Bp+yl/3OlWMuPBIsBBZQv8OYym8i7sttwmB3YyU0u4M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=xmjB3UQl5vBYCOMqPRFz5wFIwNv3DskbuQCDzzKN8037kbjM1b77vSJACAecCgvHr
+         y36Q/B7KkMUGY5/GpYvNIE3S05xPba2OuxMzeAyNl9kT9gMk9AbtAQgcWE6P91Ejtv
+         VMX/JLsouC2/pRsH2iEfsssmorbxTzf2W5jWeNTQ=
+Date:   Wed, 11 Jul 2018 13:14:47 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Sudeep Dutt <sudeep.dutt@intel.com>,
+        Ashutosh Dixit <ashutosh.dixit@intel.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-mm@kvack.org,
+        David Rientjes <rientjes@google.com>,
+        Felix Kuehling <felix.kuehling@amd.com>
+Subject: Re: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
+Message-ID: <20180711101447.GU3014@mtr-leonro.mtl.com>
+References: <20180622150242.16558-1-mhocko@kernel.org>
+ <20180627074421.GF32348@dhcp22.suse.cz>
+ <20180709122908.GJ22049@dhcp22.suse.cz>
+ <20180710134040.GG3014@mtr-leonro.mtl.com>
+ <20180710141410.GP14284@dhcp22.suse.cz>
+ <20180710162020.GJ3014@mtr-leonro.mtl.com>
+ <20180711090353.GD20050@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="bzuizT9vlVVqWfw+"
 Content-Disposition: inline
-In-Reply-To: <20180711090235.9327-1-ard.biesheuvel@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180711090353.GD20050@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+--bzuizT9vlVVqWfw+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> The following changes since commit 1e4b044d22517cae7047c99038abb444423243ca:
-> 
->   Linux 4.18-rc4 (2018-07-08 16:34:02 -0700)
-> 
-> are available in the Git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-urgent
-> 
-> for you to fetch changes up to d7f2e972e702d329fe11d6956df99dfc31211c25:
-> 
->   efi/x86: remove pointless call to PciIo->Attributes() (2018-07-11 10:52:46 +0200)
-> 
-> ----------------------------------------------------------------
-> A single fix for the x86 PCI I/O protocol handling code that got
-> broken for mixed mode (64-bit Linux/x86 on 32-bit UEFI) after a
-> fix was applied in -rc2 to fix it for ordinary 64-bit Linux/x86.
+On Wed, Jul 11, 2018 at 11:03:53AM +0200, Michal Hocko wrote:
+> On Tue 10-07-18 19:20:20, Leon Romanovsky wrote:
+> > On Tue, Jul 10, 2018 at 04:14:10PM +0200, Michal Hocko wrote:
+> > > On Tue 10-07-18 16:40:40, Leon Romanovsky wrote:
+> > > > On Mon, Jul 09, 2018 at 02:29:08PM +0200, Michal Hocko wrote:
+> > > > > On Wed 27-06-18 09:44:21, Michal Hocko wrote:
+> > > > > > This is the v2 of RFC based on the feedback I've received so far. The
+> > > > > > code even compiles as a bonus ;) I haven't runtime tested it yet, mostly
+> > > > > > because I have no idea how.
+> > > > > >
+> > > > > > Any further feedback is highly appreciated of course.
+> > > > >
+> > > > > Any other feedback before I post this as non-RFC?
+> > > >
+> > > > From mlx5 perspective, who is primary user of umem_odp.c your change looks ok.
+> > >
+> > > Can I assume your Acked-by?
+> >
+> > I didn't have a chance to test it because it applies on our rdma-next, but
+> > fails to compile.
+>
+> What is the compilation problem? Is it caused by the patch or some other
+> unrelated changed?
 
-Just curious, because it's unclear from the changelog, what was the symptom, a 
-boot hang, instant reboot, or some other misbehavior? Also, what's the scope of 
-the fix: were all 64-bit on 32-bit UEFI mixed-mode bootups affected, or only a 
-certain subset?
+Thanks for pushing me to take a look on it.
+Your patch needs the following hunk to properly compile at least on my system.
 
-Thanks,
+I'll take it to our regression.
 
-	Ingo
+diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+index 369867501bed..1f364a157097 100644
+--- a/include/linux/mmu_notifier.h
++++ b/include/linux/mmu_notifier.h
+@@ -155,9 +155,9 @@ struct mmu_notifier_ops {
+ 	 * cannot block, mmu_notifier_ops.flags should have
+ 	 * MMU_INVALIDATE_DOES_NOT_BLOCK set.
+ 	 */
+-	void (*invalidate_range_start)(struct mmu_notifier *mn,
++	int (*invalidate_range_start)(struct mmu_notifier *mn,
+ 				       struct mm_struct *mm,
+-				       unsigned long start, unsigned long end);
++				       unsigned long start, unsigned long end, bool blockable);
+ 	void (*invalidate_range_end)(struct mmu_notifier *mn,
+ 				     struct mm_struct *mm,
+ 				     unsigned long start, unsigned long end);
+@@ -229,7 +229,7 @@ extern int __mmu_notifier_test_young(struct mm_struct *mm,
+ 				     unsigned long address);
+ extern void __mmu_notifier_change_pte(struct mm_struct *mm,
+ 				      unsigned long address, pte_t pte);
+-extern void __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
++extern int __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
+ 				  unsigned long start, unsigned long end,
+ 				  bool blockable);
+ extern void __mmu_notifier_invalidate_range_end(struct mm_struct *mm,
+diff --git a/include/linux/oom.h b/include/linux/oom.h
+index 6adac113e96d..92f70e4c6252 100644
+--- a/include/linux/oom.h
++++ b/include/linux/oom.h
+@@ -95,7 +95,7 @@ static inline int check_stable_address_space(struct mm_struct *mm)
+ 	return 0;
+ }
+
+-void __oom_reap_task_mm(struct mm_struct *mm);
++bool __oom_reap_task_mm(struct mm_struct *mm);
+
+ extern unsigned long oom_badness(struct task_struct *p,
+ 		struct mem_cgroup *memcg, const nodemask_t *nodemask,
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index 7e0c6e78ae5c..7c7bd6f3298e 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -1,6 +1,6 @@
+ /*
+  *  linux/mm/oom_kill.c
+- *
++ *
+  *  Copyright (C)  1998,2000  Rik van Riel
+  *	Thanks go out to Claus Fischer for some serious inspiration and
+  *	for goading me into coding this file...
+@@ -569,7 +569,7 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
+ 	if (!__oom_reap_task_mm(mm)) {
+ 		up_read(&mm->mmap_sem);
+ 		ret = false;
+-		goto out_unlock;
++		goto unlock_oom;
+ 	}
+
+ 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+
+Thanks
+
+> --
+> Michal Hocko
+> SUSE Labs
+
+--bzuizT9vlVVqWfw+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJbRdiXAAoJEORje4g2clinNPQP/jvfP8MeILcz9WT7kxNVX7c/
+XpnkJcPys8ZjDS653gbzrRzw+nFz3sfqbSrvKb6MgCGfAGdanoHWjQsNbYz+Ci0m
+jr68xil3AoZsR30dolMGlCjHnsTq3CyJgNPfjm90VkuBV3huxGx52vSLuKBVVYuv
+qp+D/DwaxHKp9iUa4b5y8aXQYNCV++L3sNWgeUCXzaDvFm8WORW5PX/BxJ5a4M3r
+AFyJf0XIHfByd3mBDWJlo4c3mgAxV1hltesZHFCySPs4oLKRuHFiEap1BGNZsn8j
+m61eIRFoH5WVacvq1xHKs/oF9inuoaB9IzQsaeZan4YgOwthfcAibPxcdbcta29p
+IxYQUgjY+e3feJSOiHqFtujW8A3HpsuFUSPC7PHuJFJWqwCIcESxL3qeikBi2goA
+l5HIP6MMdKXv9PgXEsEFlPQJCS+ZsFk52pUOfneLve8t4MBWcuRXZpk0G0qfVLwq
+/2p9ES6m7Lroq7a0RkFZyWMmIdgBk9WjFbxm1ogXkMTWv7cQbmB94t0ut3fF6RCR
+lQfcHf16xm2IM4gNpzahFy4zsXWNWAdj/oVGDQjx3lu5LzvEriYptJZhKOx+lSdO
+lRO+pA/gzHWnbtA32swGX+MaHUNRAuVV8x1lbgRUq/aKwedg8BCpJXokrcpAasTt
++En8/fnNQqxwKFdJw8j+
+=6e5O
+-----END PGP SIGNATURE-----
+
+--bzuizT9vlVVqWfw+--
