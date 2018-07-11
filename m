@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 622BAC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1381BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 116A6208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:59:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3D6420864
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:59:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="lph15ArP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 116A6208FA
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="f+/vvekP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D6420864
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732640AbeGKLCv (ORCPT
+        id S1732569AbeGKLCx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:02:51 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40840 "EHLO
+        Wed, 11 Jul 2018 07:02:53 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40906 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbeGKLCu (ORCPT
+        with ESMTP id S1726641AbeGKLCw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:02:50 -0400
+        Wed, 11 Jul 2018 07:02:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=pHyGx8uqkBp3pG7zuHBpoHKh24wDiUskmqGeh9uzW7A=; b=lph15ArPJ1mT
-        x8FqWKOJWdJGh+GAWabbVsGuNVXi9WCg5JxXsoBy4T3n3vq+S5Y4hN75g3t+JPN2fwesSFWuU3Kbk
-        S2ZmnrFz9UCbXz2H5N33dZGB1CzppqA1sdbsdqv/OCmNu5qOr5ZzcRiKD9cy3CrsaS74PzRsB2wid
-        AeGtE=;
+        List-Archive; bh=PKlV3UmxnyX/+iv455k/YVarVlqE+TO9cHog9f4lEH8=; b=f+/vvekPgUyD
+        FoMxAn5rmbhXeGoRkjcf1eoHRyIapV8rIAtMywWY97044BBUZjirgbOiHM6lcHGFR1HaZ1gYKk+Tq
+        OI/F6Ufepgnd8o3M99nokR56RKZKRQNO9UBOkG9cSdelgCMsqob2vqSM+hN5S9A4n0VBZxtFMfgWX
+        ziQvs=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fdCpr-0002q3-Eo; Wed, 11 Jul 2018 10:59:03 +0000
+        id 1fdCpt-0002qA-VJ; Wed, 11 Jul 2018 10:59:06 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fdCpq-0007wc-I6; Wed, 11 Jul 2018 11:59:02 +0100
+        id 1fdCps-0007xT-OS; Wed, 11 Jul 2018 11:59:04 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: dpcm: add rate merge to the BE stream merge" to the asoc tree
-In-Reply-To:  <20180705101349.7520-3-jbrunet@baylibre.com>
-Message-Id: <E1fdCpq-0007wc-I6@debutante>
-Date:   Wed, 11 Jul 2018 11:59:02 +0100
+Subject: Applied "ASoC: dpcm: rework runtime stream merge" to the asoc tree
+In-Reply-To:  <20180705101349.7520-2-jbrunet@baylibre.com>
+Message-Id: <E1fdCps-0007xT-OS@debutante>
+Date:   Wed, 11 Jul 2018 11:59:04 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: dpcm: add rate merge to the BE stream merge
+   ASoC: dpcm: rework runtime stream merge
 
 has been applied to the asoc tree at
 
@@ -85,113 +85,119 @@ to this mail.
 Thanks,
 Mark
 
-From baacd8d100d571aa713c3c60b1471b9962e6ec8a Mon Sep 17 00:00:00 2001
+From 435ffb76f8b35be108a52bf1c43233a57b3c72b4 Mon Sep 17 00:00:00 2001
 From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 5 Jul 2018 12:13:49 +0200
-Subject: [PATCH] ASoC: dpcm: add rate merge to the BE stream merge
+Date: Thu, 5 Jul 2018 12:13:48 +0200
+Subject: [PATCH] ASoC: dpcm: rework runtime stream merge
 
-As done for format and channels, add the possibility to merge
-the backend rates on the frontend rates.
+The goal of this patch is to simplify a bit dpcm runtime stream merge
+by removing several local variables.
 
-This useful if the backend does not support all rates supported by the
-frontend, or if several backends (cpu and codecs) with different
-capabilities are connected to the same frontend.
+ATM, merge functions return the BE 'filter' values which should then be
+filtered against the FE stream values. This create a lot of local
+variable and unnecessary init of min and max.
+
+Instead of this, we can pass the FE stream values directly and let the
+BE filtering functions perform the merge 'in-place'
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- include/sound/soc.h |  2 ++
- sound/soc/soc-pcm.c | 60 +++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 62 insertions(+)
+ sound/soc/soc-pcm.c | 39 +++++++++++++++------------------------
+ 1 file changed, 15 insertions(+), 24 deletions(-)
 
-diff --git a/include/sound/soc.h b/include/sound/soc.h
-index 870ba6b64817..a4915148f739 100644
---- a/include/sound/soc.h
-+++ b/include/sound/soc.h
-@@ -964,6 +964,8 @@ struct snd_soc_dai_link {
- 	unsigned int dpcm_merged_format:1;
- 	/* DPCM used FE & BE merged channel */
- 	unsigned int dpcm_merged_chan:1;
-+	/* DPCM used FE & BE merged rate */
-+	unsigned int dpcm_merged_rate:1;
- 
- 	/* pmdown_time is ignored at stop */
- 	unsigned int ignore_pmdown_time:1;
 diff --git a/sound/soc/soc-pcm.c b/sound/soc/soc-pcm.c
-index 114e6c060cae..4019bc10897c 100644
+index b7e67b871c0c..114e6c060cae 100644
 --- a/sound/soc/soc-pcm.c
 +++ b/sound/soc/soc-pcm.c
-@@ -1769,6 +1769,64 @@ static void dpcm_runtime_merge_chan(struct snd_pcm_substream *substream,
- 	}
+@@ -1672,29 +1672,28 @@ int dpcm_be_dai_startup(struct snd_soc_pcm_runtime *fe, int stream)
  }
  
-+static void dpcm_runtime_merge_rate(struct snd_pcm_substream *substream,
-+				    unsigned int *rates,
-+				    unsigned int *rate_min,
-+				    unsigned int *rate_max)
-+{
-+	struct snd_soc_pcm_runtime *fe = substream->private_data;
-+	struct snd_soc_dpcm *dpcm;
-+	int stream = substream->stream;
-+
-+	if (!fe->dai_link->dpcm_merged_rate)
-+		return;
-+
-+	/*
-+	 * It returns merged BE codec channel;
-+	 * if FE want to use it (= dpcm_merged_chan)
-+	 */
-+
-+	list_for_each_entry(dpcm, &fe->dpcm[stream].be_clients, list_be) {
-+		struct snd_soc_pcm_runtime *be = dpcm->be;
-+		struct snd_soc_dai_driver *cpu_dai_drv =  be->cpu_dai->driver;
-+		struct snd_soc_dai_driver *codec_dai_drv;
-+		struct snd_soc_pcm_stream *codec_stream;
-+		struct snd_soc_pcm_stream *cpu_stream;
-+		int i;
-+
-+		if (stream == SNDRV_PCM_STREAM_PLAYBACK)
-+			cpu_stream = &cpu_dai_drv->playback;
-+		else
-+			cpu_stream = &cpu_dai_drv->capture;
-+
-+		*rate_min = max(*rate_min, cpu_stream->rate_min);
-+		*rate_max = min_not_zero(*rate_max, cpu_stream->rate_max);
-+		*rates = snd_pcm_rate_mask_intersect(*rates, cpu_stream->rates);
-+
-+		for (i = 0; i < be->num_codecs; i++) {
-+			/*
-+			 * Skip CODECs which don't support the current stream
-+			 * type. See soc_pcm_init_runtime_hw() for more details
-+			 */
-+			if (!snd_soc_dai_stream_valid(be->codec_dais[i],
-+						      stream))
-+				continue;
-+
-+			codec_dai_drv = be->codec_dais[i]->driver;
-+			if (stream == SNDRV_PCM_STREAM_PLAYBACK)
-+				codec_stream = &codec_dai_drv->playback;
-+			else
-+				codec_stream = &codec_dai_drv->capture;
-+
-+			*rate_min = max(*rate_min, codec_stream->rate_min);
-+			*rate_max = min_not_zero(*rate_max,
-+						 codec_stream->rate_max);
-+			*rates = snd_pcm_rate_mask_intersect(*rates,
-+						codec_stream->rates);
-+		}
-+	}
-+}
-+
- static void dpcm_set_fe_runtime(struct snd_pcm_substream *substream)
+ static void dpcm_init_runtime_hw(struct snd_pcm_runtime *runtime,
+-				 struct snd_soc_pcm_stream *stream,
+-				 u64 formats)
++				 struct snd_soc_pcm_stream *stream)
  {
- 	struct snd_pcm_runtime *runtime = substream->runtime;
-@@ -1784,6 +1842,8 @@ static void dpcm_set_fe_runtime(struct snd_pcm_substream *substream)
- 	dpcm_runtime_merge_format(substream, &runtime->hw.formats);
- 	dpcm_runtime_merge_chan(substream, &runtime->hw.channels_min,
- 				&runtime->hw.channels_max);
-+	dpcm_runtime_merge_rate(substream, &runtime->hw.rates,
-+				&runtime->hw.rate_min, &runtime->hw.rate_max);
+ 	runtime->hw.rate_min = stream->rate_min;
+ 	runtime->hw.rate_max = stream->rate_max;
+ 	runtime->hw.channels_min = stream->channels_min;
+ 	runtime->hw.channels_max = stream->channels_max;
+ 	if (runtime->hw.formats)
+-		runtime->hw.formats &= formats & stream->formats;
++		runtime->hw.formats &= stream->formats;
+ 	else
+-		runtime->hw.formats = formats & stream->formats;
++		runtime->hw.formats = stream->formats;
+ 	runtime->hw.rates = stream->rates;
+ }
+ 
+-static u64 dpcm_runtime_base_format(struct snd_pcm_substream *substream)
++static void dpcm_runtime_merge_format(struct snd_pcm_substream *substream,
++				      u64 *formats)
+ {
+ 	struct snd_soc_pcm_runtime *fe = substream->private_data;
+ 	struct snd_soc_dpcm *dpcm;
+-	u64 formats = ULLONG_MAX;
+ 	int stream = substream->stream;
+ 
+ 	if (!fe->dai_link->dpcm_merged_format)
+-		return formats;
++		return;
+ 
+ 	/*
+ 	 * It returns merged BE codec format
+@@ -1714,16 +1713,14 @@ static u64 dpcm_runtime_base_format(struct snd_pcm_substream *substream)
+ 			else
+ 				codec_stream = &codec_dai_drv->capture;
+ 
+-			formats &= codec_stream->formats;
++			*formats &= codec_stream->formats;
+ 		}
+ 	}
+-
+-	return formats;
+ }
+ 
+-static void dpcm_runtime_base_chan(struct snd_pcm_substream *substream,
+-				   unsigned int *channels_min,
+-				   unsigned int *channels_max)
++static void dpcm_runtime_merge_chan(struct snd_pcm_substream *substream,
++				    unsigned int *channels_min,
++				    unsigned int *channels_max)
+ {
+ 	struct snd_soc_pcm_runtime *fe = substream->private_data;
+ 	struct snd_soc_dpcm *dpcm;
+@@ -1732,9 +1729,6 @@ static void dpcm_runtime_base_chan(struct snd_pcm_substream *substream,
+ 	if (!fe->dai_link->dpcm_merged_chan)
+ 		return;
+ 
+-	*channels_min = 0;
+-	*channels_max = UINT_MAX;
+-
+ 	/*
+ 	 * It returns merged BE codec channel;
+ 	 * if FE want to use it (= dpcm_merged_chan)
+@@ -1781,18 +1775,15 @@ static void dpcm_set_fe_runtime(struct snd_pcm_substream *substream)
+ 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+ 	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
+ 	struct snd_soc_dai_driver *cpu_dai_drv = cpu_dai->driver;
+-	u64 format = dpcm_runtime_base_format(substream);
+-	unsigned int channels_min = 0, channels_max = UINT_MAX;
+ 
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
+-		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->playback, format);
++		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->playback);
+ 	else
+-		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->capture, format);
+-
+-	dpcm_runtime_base_chan(substream, &channels_min, &channels_max);
++		dpcm_init_runtime_hw(runtime, &cpu_dai_drv->capture);
+ 
+-	runtime->hw.channels_min = max(channels_min, runtime->hw.channels_min);
+-	runtime->hw.channels_max = min(channels_max, runtime->hw.channels_max);
++	dpcm_runtime_merge_format(substream, &runtime->hw.formats);
++	dpcm_runtime_merge_chan(substream, &runtime->hw.channels_min,
++				&runtime->hw.channels_max);
  }
  
  static int dpcm_fe_dai_do_trigger(struct snd_pcm_substream *substream, int cmd);
