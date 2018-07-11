@@ -2,162 +2,83 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AC51C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:19:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63050C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C51AD2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:19:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OCGIaWeo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C51AD2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 271B62084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:19:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 271B62084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733010AbeGKMXx (ORCPT
+        id S1733041AbeGKMX7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:23:53 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:41071 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbeGKMXx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:23:53 -0400
-Received: by mail-io0-f195.google.com with SMTP id q9-v6so23393854ioj.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3yxh4UZ1E7YAq+UwECAU89cNhmF1PUTdKHGX5L7JUQE=;
-        b=OCGIaWeoaC24voY1wanH/ZgJmtV81dU1ZhNzs03gWiLlyxrUTvSN6lso9ORQYM5J9T
-         hvqwyYZZMzzJNXD2DLbpklH2Hbd5w2jdEwqSW0gdNCex8YatTFj7V0xjEdBw+fYO5C9o
-         preXfujpc8nEQ4rVmMlDtzBpaJmC2Wu2PifG4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3yxh4UZ1E7YAq+UwECAU89cNhmF1PUTdKHGX5L7JUQE=;
-        b=UYH5MDGz+cTNAEe/8r9uaoEWACt5w0Luj4mZ1cdIw0KxUfRTGKIit0gAviJu5U8Jz8
-         oSGl4DNOEHICBIEUg85OX9Js2i37QeVIW+R4ugwIe+Dc9rRATnwGICTGS75ksuZsbdpp
-         9klmstCM56ZKzBZr4pEgs/gwgnPBw0ghO5GJ7He4T/Ll1TNaLU9+doIUFIVFSEh5+aus
-         cdmNRxFmU0cYDyMdJt3ilAvT2JlMraYYS9BQ+Z/PzpZpmd+kIUvgQt0/MFKGV3TCJ9Qr
-         B3z0na5+6b2H5D1uDmtqt1ikW07qAtfkOOjowJ2cciTRBSNs2KrUTCeWYjswCzLp/RJY
-         7p0Q==
-X-Gm-Message-State: AOUpUlHrdLPsg3swV/AkP5hM0O93jan1TlUHTpKjSnXSnL9yy94mKU+D
-        Eurl3tSfiCScqUfNhDGRjTWi7FMg0orx0Qzx+g4vbw==
-X-Google-Smtp-Source: AAOMgpcWatvzvT47k76YodpjkJC23koxmAJ5jJp0H6ulakXG/cj+ZYMW0xVTP5w8/CEKPnlFLMw2pFSKnkLnrPwGyM4=
-X-Received: by 2002:a6b:144c:: with SMTP id 73-v6mr23567458iou.218.1531311588571;
- Wed, 11 Jul 2018 05:19:48 -0700 (PDT)
+        Wed, 11 Jul 2018 08:23:59 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60334 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726587AbeGKMX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:23:58 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E81AC4023820;
+        Wed, 11 Jul 2018 12:19:53 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (dhcp-192-212.str.redhat.com [10.33.192.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7265E10F1BE0;
+        Wed, 11 Jul 2018 12:19:44 +0000 (UTC)
+Subject: Re: [RFC PATCH v2 27/27] x86/cet: Add arch_prctl functions for CET
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-28-yu-cheng.yu@intel.com>
+From:   Florian Weimer <fweimer@redhat.com>
+Message-ID: <bbd9d3d7-a456-d161-6bc6-19e555edcd01@redhat.com>
+Date:   Wed, 11 Jul 2018 14:19:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 05:19:48
- -0700 (PDT)
-In-Reply-To: <d694bc32feb1c9638485700ba53cd6e51bea495c.1531310547.git.leonard.crestez@nxp.com>
-References: <cover.1531310547.git.leonard.crestez@nxp.com> <d694bc32feb1c9638485700ba53cd6e51bea495c.1531310547.git.leonard.crestez@nxp.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 11 Jul 2018 14:19:48 +0200
-Message-ID: <CAPDyKFp6MGXGsa1ToDm86mnxsj1nYqb0pA2ySN242YK3Epp5Fg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] soc: imx: gpc: Disable 6sl display power gating
- for ERR006287
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180710222639.8241-28-yu-cheng.yu@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 11 Jul 2018 12:19:54 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Wed, 11 Jul 2018 12:19:54 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 July 2018 at 14:11, Leonard Crestez <leonard.crestez@nxp.com> wrote:
-> The imx6sl chip errata document describes ERR006287 like this:
->
->> Upon resuming from power gating, the modules in the display power domain
-> (eLCDIF, EPDC, PXP and SPDC) might fail to perform register reads
-> correctly.
->
->> When the modules listed above are used, do not use power gating on the
-> display power domain.
->
-> Link: https://www.nxp.com/docs/en/errata/IMX6SLCE.pdf#page=62
->
-> Handle this in the safest possible way by keeping the DISP domain
-> always-on.
->
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+On 07/11/2018 12:26 AM, Yu-cheng Yu wrote:
+> arch_prctl(ARCH_CET_DISABLE, unsigned long features)
+>      Disable SHSTK and/or IBT specified in 'features'.  Return -EPERM
+>      if CET is locked out.
+> 
+> arch_prctl(ARCH_CET_LOCK)
+>      Lock out CET feature.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Isn't it a “lock in” rather than a “lock out”?
 
-Kind regards
-Uffe
-
-> ---
->  drivers/soc/imx/gpc.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/drivers/soc/imx/gpc.c b/drivers/soc/imx/gpc.c
-> index 526f2d02dc78..f7960f773019 100644
-> --- a/drivers/soc/imx/gpc.c
-> +++ b/drivers/soc/imx/gpc.c
-> @@ -339,30 +339,35 @@ static struct imx_pm_domain imx_gpc_domains[] = {
->  };
->
->  struct imx_gpc_dt_data {
->         int num_domains;
->         bool err009619_present;
-> +       bool err006287_present;
->  };
->
->  static const struct imx_gpc_dt_data imx6q_dt_data = {
->         .num_domains = 2,
->         .err009619_present = false,
-> +       .err006287_present = false,
->  };
->
->  static const struct imx_gpc_dt_data imx6qp_dt_data = {
->         .num_domains = 2,
->         .err009619_present = true,
-> +       .err006287_present = false,
->  };
->
->  static const struct imx_gpc_dt_data imx6sl_dt_data = {
->         .num_domains = 3,
->         .err009619_present = false,
-> +       .err006287_present = true,
->  };
->
->  static const struct imx_gpc_dt_data imx6sx_dt_data = {
->         .num_domains = 4,
->         .err009619_present = false,
-> +       .err006287_present = false,
->  };
->
->  static const struct of_device_id imx_gpc_dt_ids[] = {
->         { .compatible = "fsl,imx6q-gpc", .data = &imx6q_dt_data },
->         { .compatible = "fsl,imx6qp-gpc", .data = &imx6qp_dt_data },
-> @@ -467,10 +472,15 @@ static int imx_gpc_probe(struct platform_device *pdev)
->         /* Disable PU power down in normal operation if ERR009619 is present */
->         if (of_id_data->err009619_present)
->                 imx_gpc_domains[GPC_PGC_DOMAIN_PU].flags |=
->                                 PGC_DOMAIN_FLAG_NO_PD;
->
-> +       /* Keep DISP always on if ERR006287 is present */
-> +       if (of_id_data->err006287_present)
-> +               imx_gpc_domains[GPC_PGC_DOMAIN_DISPLAY].base.flags |=
-> +                               GENPD_FLAG_ALWAYS_ON;
-> +
->         if (!pgc_node) {
->                 ret = imx_gpc_old_dt_init(&pdev->dev, regmap,
->                                           of_id_data->num_domains);
->                 if (ret)
->                         return ret;
-> --
-> 2.17.1
->
+Thanks,
+Florian
