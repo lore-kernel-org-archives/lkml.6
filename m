@@ -1,165 +1,141 @@
 Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C48BDC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CA4C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 887B5204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:14:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 887B5204EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 648D9204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:14:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vd5pxNTx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648D9204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732751AbeGKLSS (ORCPT
+        id S1732774AbeGKLSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:18:18 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:31809 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732387AbeGKLSS (ORCPT
+        Wed, 11 Jul 2018 07:18:23 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35185 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732387AbeGKLSW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:18:18 -0400
-Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6BBDDDT031165;
-        Wed, 11 Jul 2018 20:13:14 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
- Wed, 11 Jul 2018 20:13:13 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6BBDCsS031115
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 11 Jul 2018 20:13:13 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: INFO: task hung in __sb_start_write
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        syzbot <syzbot+7b2866454055e43c21e5@syzkaller.appspotmail.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <000000000000283c37056b4a81a5@google.com>
- <ee29ad1e-8bd0-3eef-f49e-793bfadcbea7@I-love.SAKURA.ne.jp>
- <20180611073038.GK12217@hirez.programming.kicks-ass.net>
- <CACT4Y+Zyf2e_K0oRJ5oRj3WYWpf-t=V=RKHYcdqujF3s9PJL_w@mail.gmail.com>
- <b1b876d9-94e8-fdee-ae12-e05a7467ce5b@i-love.sakura.ne.jp>
- <CACT4Y+ZaUanRCWtq4nFhFVxfDCX=2e6JCW-qkX7vp++QvijWBw@mail.gmail.com>
- <dd849e4f-a30f-e508-d4e9-0f3c6d11c89a@i-love.sakura.ne.jp>
- <f91e1c82-9693-cca3-4ab7-ecd9d9881fb4@i-love.sakura.ne.jp>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <51f1de87-3fbe-48f6-0297-9717d9919772@I-love.SAKURA.ne.jp>
-Date:   Wed, 11 Jul 2018 20:13:16 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 11 Jul 2018 07:18:22 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a3-v6so8527823wrt.2;
+        Wed, 11 Jul 2018 04:14:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=drWDT5TTutYlMF3G7ae7Mxg2LUnWBK25kpWy1q6si1E=;
+        b=vd5pxNTxVu0Hz69DC05oBwcDXVc/zR4Eaane84r7fu5mTYwwoW8l3xjgYpzTPZ7PV5
+         ZWJ2+VCVtNL1iHnD5Bvn3P/ms8pSbRSXKpvF9WNF8skCnBnEG0wj/ignZ1b2EsjLYEgK
+         dWt+JGTmJKqn0TFH4LnqnNHB8paI7TehH51Sj0VbbNjvoMLe3YcTFtxKDuwXbANMljMg
+         2X74gZq+VwJDmR7He/hvO1uqVL8DVVujO43nRwSaeUsZ/V3vwzg3JbAHqGM57sm4WRe7
+         P6NQXS26zOKlKSK7JPAyIvuIsLoMALCnFvc7OnSMPGmgg8zGfzFlJPTPSjdRNWCiZTy2
+         UgWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=drWDT5TTutYlMF3G7ae7Mxg2LUnWBK25kpWy1q6si1E=;
+        b=RkgJWaSarR/CVuSaYz+QgbsuipTfAxd2L0lKDzV9wS7HV8cQlkGuIzgwGLeVSX8kiI
+         +cr3HUHYSNNha026SVks+KfpDkTCBiiX6UZ5SGwQ0CwaKc7i2To4RE4Lmhon2ncfIY5Q
+         8V8OatB6AhfDzoLn9RjNWvVWeHxCznIzsn9rR1uYVgY0xZ46yc+Y01uZrq6UM1atfhOR
+         IruV2hM9vxrXVAZBCs+iem0Vuyc2ohVIgkYEqILxuaJIogQNedq6NDYKnb8EHkT5dh5y
+         EVN15794VSb3+mD73Zfo2kE1D/7JAdT6ABIxZe565+SoXicewoF/oERIrMb+7X01zYgP
+         uPZA==
+X-Gm-Message-State: APt69E33rJ7lCOXrO1oGjlBdH5qBsEbKeAt5DryyBu7YHhu9qpkrUnKh
+        fkJps6eHXA6zRqTi80nE6Qc=
+X-Google-Smtp-Source: AAOMgpfUqx+bz3TGhCpj5nfMwcPkkRf0VW1i13VgnEBFoNneaeeIyN95EacEw/iUj6FB9IF9w42pKw==
+X-Received: by 2002:adf:9485:: with SMTP id 5-v6mr21933944wrr.82.1531307670553;
+        Wed, 11 Jul 2018 04:14:30 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id h12-v6sm17510419wmb.3.2018.07.11.04.14.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 04:14:29 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 13:14:27 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>
+Subject: Re: [GIT PULL 0/1] EFI mixed mode fix for v4.18
+Message-ID: <20180711111427.GA27216@gmail.com>
+References: <20180711090235.9327-1-ard.biesheuvel@linaro.org>
+ <20180711101303.GA8574@gmail.com>
+ <CAKv+Gu8m4UgL0GyYDuu5z+dzEF=N--H4PkqoO_xqwyW2_A+RMA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <f91e1c82-9693-cca3-4ab7-ecd9d9881fb4@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu8m4UgL0GyYDuu5z+dzEF=N--H4PkqoO_xqwyW2_A+RMA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/06/19 20:10, Tetsuo Handa wrote:
-> On 2018/06/16 4:40, Tetsuo Handa wrote:
->> Hmm, there might be other locations calling percpu_rwsem_release() ?
+
+* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+
+> On 11 July 2018 at 12:13, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> >
+> >> The following changes since commit 1e4b044d22517cae7047c99038abb444423243ca:
+> >>
+> >>   Linux 4.18-rc4 (2018-07-08 16:34:02 -0700)
+> >>
+> >> are available in the Git repository at:
+> >>
+> >>   git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-urgent
+> >>
+> >> for you to fetch changes up to d7f2e972e702d329fe11d6956df99dfc31211c25:
+> >>
+> >>   efi/x86: remove pointless call to PciIo->Attributes() (2018-07-11 10:52:46 +0200)
+> >>
+> >> ----------------------------------------------------------------
+> >> A single fix for the x86 PCI I/O protocol handling code that got
+> >> broken for mixed mode (64-bit Linux/x86 on 32-bit UEFI) after a
+> >> fix was applied in -rc2 to fix it for ordinary 64-bit Linux/x86.
+> >
+> > Just curious, because it's unclear from the changelog, what was the symptom, a
+> > boot hang, instant reboot, or some other misbehavior?
 > 
-> There are other locations calling percpu_rwsem_release(), but quite few.
+> Hans reported that his mixed mode tablet would not boot at all any
+> more, but enter a reboot loop without any logs printed by the kernel.
 > 
-> include/linux/fs.h:1494:#define __sb_writers_release(sb, lev)   \
-> include/linux/fs.h-1495-        percpu_rwsem_release(&(sb)->s_writers.rw_sem[(lev)-1], 1, _THIS_IP_)
+> > Also, what's the scope of
+> > the fix: were all 64-bit on 32-bit UEFI mixed-mode bootups affected, or only a
+> > certain subset?
+> >
 > 
-> fs/btrfs/transaction.c:1821:            __sb_writers_release(fs_info->sb, SB_FREEZE_FS);
-> fs/aio.c:1566:                  __sb_writers_release(file_inode(file)->i_sb, SB_FREEZE_WRITE);
-> fs/xfs/xfs_aops.c:211:  __sb_writers_release(ioend->io_inode->i_sb, SB_FREEZE_FS);
-> 
-> 
-> 
-> I'd like to check what atomic_long_read(&sem->rw_sem.count) says
-> when hung task is reported.
-> 
+> Any mixed mode system with PCI is likely to be affected. I have added
+> a QEMU mixed mode config to my boot test environment to catch errors
+> like this one.
 
-syzbot reproduced this problem with the patch applied.
+Ok, I've added this information to the commit - will be useful to backporters,
+to judge the severity of the bug fixed.
 
-percpu_rw_semaphore(00000000082ac9da)
-  ->rw_sem.count=0xfffffffe00000001
-  ->rss.gp_state=2
-  ->rss.gp_count=1
-  ->rss.cb_state=0
-  ->rss.gp_type=1
-  ->readers_block=1
-  ->read_count=0
-  ->list_empty(rw_sem.wait_list)=0
-  ->writer.task=          (null)
+> The unfortunate thing here is that this uncovered a fundamental issue with mixed 
+> mode, i.e., that any UEFI protocol prototype involving 64-bit by-value 
+> parameters needs to be special cased in the stub code, which is rather tedious. 
+> There is one other call that is potentially affected, a file open call in the 
+> initrd handling code, but that specific occurrence happens to work unmodified. 
+> This patch removes the other one. Going forward, we will have to carefully 
+> review UEFI protocol invocations for mixed mode compatibility.
 
-The output says that percpu_down_read() was blocked because
-somebody has called percpu_down_write().
+Yeah. Is there any, more systematic way to detect such problems perhaps at an 
+earlier stage, other than careful review which will often fail to find such bugs? 
+Also, testing is good, but could we perhaps do something on a deeper level - 
+automate the casting, generate a warning on suspicious patterns, etc. etc?
 
-  DEFINE_STATIC_PERCPU_RWSEM(sem);
-  percpu_down_write(&sem);
-  percpu_down_read(&sem);
-  percpu_up_read(&sem);
-  percpu_up_write(&sem);
+Thanks,
 
-The next step is to find who is calling percpu_down_write(). How do we want to do this?
-We don't want to annoy normal linux-next.git testers. Below one?
-
----
- include/linux/percpu-rwsem.h | 4 ++++
- lib/Kconfig.debug            | 6 ++++++
- 2 files changed, 10 insertions(+)
-
-diff --git a/include/linux/percpu-rwsem.h b/include/linux/percpu-rwsem.h
-index 79b99d6..26e87c3 100644
---- a/include/linux/percpu-rwsem.h
-+++ b/include/linux/percpu-rwsem.h
-@@ -130,7 +130,9 @@ extern int __percpu_init_rwsem(struct percpu_rw_semaphore *,
- static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
- 					bool read, unsigned long ip)
- {
-+#ifndef CONFIG_DEBUG_AID_FOR_SYZBOT
- 	lock_release(&sem->rw_sem.dep_map, 1, ip);
-+#endif
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	if (!read)
- 		sem->rw_sem.owner = RWSEM_OWNER_UNKNOWN;
-@@ -140,7 +142,9 @@ static inline void percpu_rwsem_release(struct percpu_rw_semaphore *sem,
- static inline void percpu_rwsem_acquire(struct percpu_rw_semaphore *sem,
- 					bool read, unsigned long ip)
- {
-+#ifndef CONFIG_DEBUG_AID_FOR_SYZBOT
- 	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
-+#endif
- #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
- 	if (!read)
- 		sem->rw_sem.owner = current;
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index c731ff9..f0d02e8 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1181,6 +1181,12 @@ config DEBUG_LOCK_ALLOC
- 	 spin_lock_init()/mutex_init()/etc., or whether there is any lock
- 	 held during task exit.
- 
-+config DEBUG_AID_FOR_SYZBOT
-+       bool "Additional debug options for syzbot"
-+       default n
-+       help
-+	 This option is intended for testing by syzbot.
-+
- config LOCKDEP
- 	bool
- 	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
--- 
-
-Hmm, given that neither xfs nor btrfs is used, is it aio code?
+	Ingo
