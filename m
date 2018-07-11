@@ -2,135 +2,275 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2652C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5F3C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD20720877
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C707220877
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:27:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJVvrpR+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD20720877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y3YWy/kV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C707220877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732391AbeGKI37 (ORCPT
+        id S1732401AbeGKIa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:29:59 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:42472 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732376AbeGKI37 (ORCPT
+        Wed, 11 Jul 2018 04:30:28 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:33185 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726438AbeGKIa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:29:59 -0400
-Received: by mail-lf0-f68.google.com with SMTP id u202-v6so20569896lff.9;
-        Wed, 11 Jul 2018 01:26:50 -0700 (PDT)
+        Wed, 11 Jul 2018 04:30:28 -0400
+Received: by mail-it0-f68.google.com with SMTP id y124-v6so17149630itc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 01:27:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=jQ1VliKAS89519IiVVIeZY/w/9fWgZ3b4QnIXWmxZIQ=;
-        b=PJVvrpR+Pu7iXlzP7TJjHZXT+Nob1u4nJNtP8hw+kiHzWj8j95Vk2kjuHEsP2ieeAA
-         5DUAAsenSOehe15WMvmGc16aIlRCLznS48skbz3vk/pSCKJFfA2q8XITAiOjzMb2yPFj
-         eeULzO9Q1i9n1NM7uDBji+xuboSKYlJq+Dc5M5PjwrT66d8XPs9NyjtwGsSizw+qa/ku
-         T55jH9fhdbiR1C//3ccRZjoyhLM7h5CgXDYKddP40497GHJ0dmKXkSjyByZCCBu3z9wr
-         i4NGIN5nxNCkbp5rxYOrNFF+oOKPac9bu2whBKcvHUsyAV2kIXan/MfsRq4J9oavzlsy
-         YNkQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ik17im91F5KmQ9BwhQwAFv8p9cnR5TafQO88otY/fJ0=;
+        b=Y3YWy/kVgWNLBRMtigMcnp7oqncmJduHyhkfxk8Wn8aSoNwsBJY1d1h4CfaLZRAb19
+         08uY6G5dKsVFUXRHzaIYX2bhJV1AaXf8xBY4xk08PKkCyhWGT+LzU6ubjwjuXnZa7V9q
+         J9jTtYw2M9wsZ88UetObjRrrxkTooKgT+qVpk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jQ1VliKAS89519IiVVIeZY/w/9fWgZ3b4QnIXWmxZIQ=;
-        b=Z3QLx4Nt9uROu07HgNyEc88gVdt51uXWNvg/nRORD15U6Qww/l+fWtRYCn3QhpNIK7
-         IFukiH/oj9Nv1pmSlzFYxx7XtaPmxLax9NKcCOBYRcWDPFGYXt9mqctxyE18kaOfIOAj
-         9HgbZW7Xx4IR95nAq8WCnVPcVBpIkyveh4iRnhVrA9XmNXe6YcSXuxVYjD3AT3tEo24y
-         Ns2YF2KrjeXocmaxzD8aC7H0irJDsm+as0m7O8rTs4z2zO0UUFkDHJOZYUdfRIU9Zpji
-         cyahDmDH3jWb/uiNALqthK1ZtopOc7zwdb0VhSiUquRgONKTxi20YkEGNzMIUyd25yOf
-         yR8g==
-X-Gm-Message-State: APt69E2WPfcQ7P1IaZWSbiL1WMYgCdbLWUTLReuUTCt86F5bYUWqI6th
-        WMr3X6uYoB3p+98P/t0DmYY=
-X-Google-Smtp-Source: AAOMgpcMAX50HmuI+45mNxJXS/SiTKZkBFqhlKycOiZXJfIbiK4vPIqG6Js2V+GTHT6aQYBRPDkM+A==
-X-Received: by 2002:a19:921a:: with SMTP id u26-v6mr5340489lfd.89.1531297609048;
-        Wed, 11 Jul 2018 01:26:49 -0700 (PDT)
-Received: from mobilestation ([5.166.218.73])
-        by smtp.gmail.com with ESMTPSA id g17-v6sm3008495ljg.27.2018.07.11.01.26.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 01:26:47 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 11:27:36 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Paul Burton <paul.burton@mips.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, okaya@codeaurora.org,
-        chenhc@lemote.com, Sergey.Semin@t-platforms.ru,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "# v4 . 11" <stable@vger.kernel.org>
-Subject: Re: [PATCH 2/2] mips: mm: Discard ioremap_uncached_accelerated()
- method
-Message-ID: <20180711082736.GA9387@mobilestation>
-References: <20180709135713.8083-1-fancer.lancer@gmail.com>
- <20180709135713.8083-2-fancer.lancer@gmail.com>
- <CA+7wUsxDfBdiGt5tZ7dxb63oMd=3Ry4s1Xysed8RSHJi35=VxQ@mail.gmail.com>
- <20180710074815.GA30235@mobilestation>
- <20180710175940.rbjmdcpm54gfrael@pburton-laptop>
- <20180710191354.GA32182@mobilestation>
- <20180710210415.4uqstovovdfvxfup@pburton-laptop>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ik17im91F5KmQ9BwhQwAFv8p9cnR5TafQO88otY/fJ0=;
+        b=r2gKIS3mrCVx/O2suehlo8IsWzCUiEFffa0hD8zjRNIgCjMcMI9HQZMei/TsBR4gYW
+         yViPgvRFopTB4YDZmti14Lavi6b7d2UBIkC281yCa8xChcXgoWzV1K4YdZ/1KdPNGXHH
+         h9uvP1dwd4S8DAh2l1pMP35kCkXKwlGYlprMD1b9JgufTT7+uZSKpQ15mwScOOp9wQga
+         fl5r6Y0nLCgaf2FV7+QWLErRqPNLUixIv9gwFzzBIB/UsV8qfQu6FiUqy2AHiAdP4mY+
+         rl6Ow14T3VPOkh+4cEmQA7ZrmkZHWK1Gcl30lkzbg95ZFwBdARRDrCuk01GcemCJ4FXz
+         R+1w==
+X-Gm-Message-State: APt69E313jmR0aCy1ztvwRqVF83tsM0hNAo56c9TPNv5EGESwKsjEMXM
+        bJ84Zi2JJvxXWjHmk+JJEuI1OVoJFoQqQAg1znya6A==
+X-Google-Smtp-Source: AAOMgpc7KaT5yegsGJdq72BfuZH4nIgj04qvTM0Z1DVbII3blSlMazc6MTt+4/MhN3j+7m+zYiq9Vyt05jDI1vNi8g8=
+X-Received: by 2002:a24:d909:: with SMTP id p9-v6mr20978764itg.89.1531297640140;
+ Wed, 11 Jul 2018 01:27:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180710210415.4uqstovovdfvxfup@pburton-laptop>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1530860246-29072-1-git-send-email-vincent.guittot@linaro.org> <20180708140157.GA28878@leoy-ThinkPad-X240s>
+In-Reply-To: <20180708140157.GA28878@leoy-ThinkPad-X240s>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 11 Jul 2018 10:27:09 +0200
+Message-ID: <CAKfTPtBMWCT+sy0WQ7cH8Z-On+NH5NO7u3v7eLkOp0pZ+2gKGg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: hikey960: update idle-states
+To:     Leo Yan <leo.yan@linaro.org>
+Cc:     Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+        LAK <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paul,
+Hi Leo,
 
-On Tue, Jul 10, 2018 at 02:04:15PM -0700, Paul Burton <paul.burton@mips.com> wrote:
-> Hi Serge,
-> 
-> On Tue, Jul 10, 2018 at 10:13:54PM +0300, Serge Semin wrote:
-> > On Tue, Jul 10, 2018 at 10:59:40AM -0700, Paul Burton <paul.burton@mips.com> wrote:
-> > > However FYI for next time - you shouldn't really add someone else's
-> > > Signed-off-by tag anyway. The tag effectively states that a person can
-> > > agree to the Developer's Certificate of Origin for this patch (see
-> > > Documentation/process/submitting-patches.rst), and you can't agree that
-> > > on behalf of someone else. Generally a maintainer should add this tag
-> > > for themselves when they apply a patch.
-> > 
-> > I'm sorry if it seemed like I added Signed-off on your behalf.
-> 
-> That's OK, I didn't think you did it maliciously :)
-> 
-> > I thought the Signed-off also concerns the ones, who participated in
-> > the patch preparation. Since you suggested the design of the change,
-> > I've decided to put your name in the Signed-off tag. What shall I use
-> > in this way then?
-> 
-> In this case Suggested-by might have been a good choice. Reported-by is
-> also commonly used if someone reported a problem which you created a fix
-> for.
-> 
-> Section 13 of Documentation/process/submitting-patches.rst describes
-> these tags along with a couple others.
+On Sun, 8 Jul 2018 at 16:02, <leo.yan@linaro.org> wrote:
+>
+> Hi Vincent,
+>
+> On Fri, Jul 06, 2018 at 08:57:26AM +0200, Vincent Guittot wrote:
+> > Update entry/exit latency and residency time of hikey960 to use more
+> > realistic figures based on unitary tests done on the platform.
+> >
+> > The complete results (in us) :
+> >                   big cluster
+> >                   cluster  CPU
+> > max entry latency     800  400
+> > max exit latency     2900  550
+> > residency  903Mhz    5000 1500
+> > residency 2363Mhz       0 1500
+> >
+> >                   little cluster
+> >                   cluster  CPU
+> > max entry latency     500  400
+> > max exit latency     1600  650
+> > residency  533Mhz    8000 4500
+> > residency 1844Mhz       0 1500
+> >
+> > We can see that the residency time depends of the running OPP which is not
+> > handled for now. Then we also have to take into account the constraint of
+> > a residency time shorter than the tick to get full advantage of idle loop
+> > reordering(tick is stopped if idle duration is higher than tick period).
+> > Finally the selected residency value are :
+> >                  big cluster
+> >                   cluster  CPU
+> > residency            3700 1500
+> >
+> >                   little cluster
+> >                   cluster  CPU
+> > residency            3500 1500
+> >
+> > A simple test with a task waking up every 11,111ms shows improvement:
+>
+> Should s/11,111ms/11.111ms ?
 
-I always thought of these tags as something more like a formality. In fact
-this hasn't been my first patchset sent to the kernel e-mailing list.
-Although all of the previous ones didn't involve someone else participating
-in the changes development, except the reviewers of course. So I do aware
-of all the tags mentioned in the doc. But as it turns out I didn't
-fully understand their meaning. Main rule: most of the tags should not be
-added without the permission, except more or less formal CC and Fixes ones.
-Anyway thanks for the advice. Next time I'll be more careful with it.
+As Daniel explained, I have used the french notation. Will use the
+other one in the next version
 
-Regards,
--Sergey
+>
+> > - 5% a lowest OPP
+> > - 22% at highest OPP
+> >
+> > The period has been chosen:
+> > - to be shorter than old cluster residency time and longer than new
+> > residency time od cluster off C-state
+>
+> Should s/od/of/ ?
 
-> 
-> Thanks,
->     Paul
+Yes
+
+>
+> Except these two minor typos, the patch is very good improvement.
+>
+> Reviewed-by: Leo Yan <leo.yan@linaro.org>
+
+I'm going to send a new version with fix in the commit
+
+Thanks
+>
+> > - to prevent any sync with tick (4ms) when running tests that can add
+> > some variances between tests
+> >
+> > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 45 ++++++++++++++++++-------------
+> >  1 file changed, 27 insertions(+), 18 deletions(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> > index 421d454..890d23e 100644
+> > --- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> > +++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+> > @@ -61,7 +61,7 @@
+> >                       reg = <0x0 0x0>;
+> >                       enable-method = "psci";
+> >                       next-level-cache = <&A53_L2>;
+> > -                     cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
+> > +                     cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
+> >                       capacity-dmips-mhz = <592>;
+> >                       clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
+> >                       operating-points-v2 = <&cluster0_opp>;
+> > @@ -75,7 +75,7 @@
+> >                       reg = <0x0 0x1>;
+> >                       enable-method = "psci";
+> >                       next-level-cache = <&A53_L2>;
+> > -                     cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
+> > +                     cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
+> >                       capacity-dmips-mhz = <592>;
+> >                       clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
+> >                       operating-points-v2 = <&cluster0_opp>;
+> > @@ -87,7 +87,7 @@
+> >                       reg = <0x0 0x2>;
+> >                       enable-method = "psci";
+> >                       next-level-cache = <&A53_L2>;
+> > -                     cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
+> > +                     cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
+> >                       capacity-dmips-mhz = <592>;
+> >                       clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
+> >                       operating-points-v2 = <&cluster0_opp>;
+> > @@ -99,7 +99,7 @@
+> >                       reg = <0x0 0x3>;
+> >                       enable-method = "psci";
+> >                       next-level-cache = <&A53_L2>;
+> > -                     cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
+> > +                     cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
+> >                       capacity-dmips-mhz = <592>;
+> >                       clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
+> >                       operating-points-v2 = <&cluster0_opp>;
+> > @@ -111,7 +111,7 @@
+> >                       reg = <0x0 0x100>;
+> >                       enable-method = "psci";
+> >                       next-level-cache = <&A73_L2>;
+> > -                     cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
+> > +                     cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
+> >                       capacity-dmips-mhz = <1024>;
+> >                       clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
+> >                       operating-points-v2 = <&cluster1_opp>;
+> > @@ -125,7 +125,7 @@
+> >                       reg = <0x0 0x101>;
+> >                       enable-method = "psci";
+> >                       next-level-cache = <&A73_L2>;
+> > -                     cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
+> > +                     cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
+> >                       capacity-dmips-mhz = <1024>;
+> >                       clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
+> >                       operating-points-v2 = <&cluster1_opp>;
+> > @@ -137,7 +137,7 @@
+> >                       reg = <0x0 0x102>;
+> >                       enable-method = "psci";
+> >                       next-level-cache = <&A73_L2>;
+> > -                     cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
+> > +                     cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
+> >                       capacity-dmips-mhz = <1024>;
+> >                       clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
+> >                       operating-points-v2 = <&cluster1_opp>;
+> > @@ -149,7 +149,7 @@
+> >                       reg = <0x0 0x103>;
+> >                       enable-method = "psci";
+> >                       next-level-cache = <&A73_L2>;
+> > -                     cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
+> > +                     cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
+> >                       capacity-dmips-mhz = <1024>;
+> >                       clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
+> >                       operating-points-v2 = <&cluster1_opp>;
+> > @@ -158,31 +158,40 @@
+> >               idle-states {
+> >                       entry-method = "psci";
+> >
+> > -                     CPU_SLEEP: cpu-sleep {
+> > +                     CPU_SLEEP_0: cpu-sleep-0 {
+> >                               compatible = "arm,idle-state";
+> >                               local-timer-stop;
+> >                               arm,psci-suspend-param = <0x0010000>;
+> > -                             entry-latency-us = <40>;
+> > -                             exit-latency-us = <70>;
+> > -                             min-residency-us = <3000>;
+> > +                             entry-latency-us = <400>;
+> > +                             exit-latency-us = <650>;
+> > +                             min-residency-us = <1500>;
+> >                       };
+> > -
+> >                       CLUSTER_SLEEP_0: cluster-sleep-0 {
+> >                               compatible = "arm,idle-state";
+> >                               local-timer-stop;
+> >                               arm,psci-suspend-param = <0x1010000>;
+> >                               entry-latency-us = <500>;
+> > -                             exit-latency-us = <5000>;
+> > -                             min-residency-us = <20000>;
+> > +                             exit-latency-us = <1600>;
+> > +                             min-residency-us = <3500>;
+> > +                     };
+> > +
+> > +
+> > +                     CPU_SLEEP_1: cpu-sleep-1 {
+> > +                             compatible = "arm,idle-state";
+> > +                             local-timer-stop;
+> > +                             arm,psci-suspend-param = <0x0010000>;
+> > +                             entry-latency-us = <400>;
+> > +                             exit-latency-us = <550>;
+> > +                             min-residency-us = <1500>;
+> >                       };
+> >
+> >                       CLUSTER_SLEEP_1: cluster-sleep-1 {
+> >                               compatible = "arm,idle-state";
+> >                               local-timer-stop;
+> >                               arm,psci-suspend-param = <0x1010000>;
+> > -                             entry-latency-us = <1000>;
+> > -                             exit-latency-us = <5000>;
+> > -                             min-residency-us = <20000>;
+> > +                             entry-latency-us = <800>;
+> > +                             exit-latency-us = <2900>;
+> > +                             min-residency-us = <3500>;
+> >                       };
+> >               };
+> >
+> > --
+> > 2.7.4
+> >
