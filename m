@@ -2,204 +2,97 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9B2C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FFBDC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 947AA20881
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:05:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 947AA20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 299AA20881
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:06:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="sP13Cm1Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299AA20881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388894AbeGKPK2 (ORCPT
+        id S1733179AbeGKPK4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 11:10:28 -0400
-Received: from foss.arm.com ([217.140.101.70]:38226 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732705AbeGKPK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 11:10:28 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF30D7A9;
-        Wed, 11 Jul 2018 08:05:42 -0700 (PDT)
-Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 705FB3F5B1;
-        Wed, 11 Jul 2018 08:05:42 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 4/7] KVM: arm64: Support PUD hugepage in stage2_is_exec()
-References: <20180709143835.28971-1-punit.agrawal@arm.com>
-        <20180709144124.29164-1-punit.agrawal@arm.com>
-        <20180709144124.29164-4-punit.agrawal@arm.com>
-        <ccf6c6a1-9df7-25a7-67c9-3b323486b3e5@arm.com>
-Date:   Wed, 11 Jul 2018 16:05:40 +0100
-In-Reply-To: <ccf6c6a1-9df7-25a7-67c9-3b323486b3e5@arm.com> (Suzuki
-        K. Poulose's message of "Wed, 11 Jul 2018 14:41:29 +0100")
-Message-ID: <87a7qxq0cb.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        Wed, 11 Jul 2018 11:10:56 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59920 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726464AbeGKPKz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 11:10:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=j994AZmqUGzilHTm2RG/zqbFQth8J529hGPvEAQVDv8=; b=sP13Cm1ZqG4UP6ukQdRugbmlq
+        AenC+kz1Zy8IX2ab6wUmZ2CyvVTJcl0/gW/NgJ24pblT7AXK3EysicZL/x41vf2T7hxQwXVVATyAP
+        TYRsUSOkTiKZac1pW6fZIGW88IyqBSjeJ/Zes7ocYRvsXivyGyAv3OpKmzb8Lvn464sEU=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fdGgx-0002zh-Ht; Wed, 11 Jul 2018 15:06:07 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fdGgx-0006Lh-41; Wed, 11 Jul 2018 16:06:07 +0100
+Date:   Wed, 11 Jul 2018 16:06:07 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Mikko Perttunen <cyndis@kapsi.fi>
+Cc:     p.paillet@st.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: Boot WARN with patch "regulator: core: Link consumer with
+ regulator driver"
+Message-ID: <20180711150607.GC9651@sirena.org.uk>
+References: <83491a3e-cfed-6673-244e-e720f338db92@kapsi.fi>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="s9fJI615cBHmzTOP"
+Content-Disposition: inline
+In-Reply-To: <83491a3e-cfed-6673-244e-e720f338db92@kapsi.fi>
+X-Cookie: Short people get rained on last.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suzuki K Poulose <Suzuki.Poulose@arm.com> writes:
 
-> On 09/07/18 15:41, Punit Agrawal wrote:
->> In preparation for creating PUD hugepages at stage 2, add support for
->> detecting execute permissions on PUD page table entries. Faults due to
->> lack of execute permissions on page table entries is used to perform
->> i-cache invalidation on first execute.
->>
->> Provide trivial implementations of arm32 helpers to allow sharing of
->> code.
->>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Cc: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->>   arch/arm/include/asm/kvm_mmu.h         |  6 ++++
->>   arch/arm64/include/asm/kvm_mmu.h       |  5 +++
->>   arch/arm64/include/asm/pgtable-hwdef.h |  2 ++
->>   virt/kvm/arm/mmu.c                     | 49 +++++++++++++++++++++++---
->>   4 files changed, 57 insertions(+), 5 deletions(-)
->>
->> diff --git a/arch/arm/include/asm/kvm_mmu.h b/arch/arm/include/asm/kvm_mmu.h
->> index c23722f75d5c..d05c8986e495 100644
->> --- a/arch/arm/include/asm/kvm_mmu.h
->> +++ b/arch/arm/include/asm/kvm_mmu.h
->> @@ -96,6 +96,12 @@ static inline bool kvm_s2pud_readonly(pud_t *pud)
->>   }
->>     +static inline bool kvm_s2pud_exec(pud_t *pud)
->> +{
->> +	BUG();
->> +	return false;
->> +}
->> +
->>   static inline void kvm_set_pmd(pmd_t *pmd, pmd_t new_pmd)
->>   {
->>   	*pmd = new_pmd;
->> diff --git a/arch/arm64/include/asm/kvm_mmu.h b/arch/arm64/include/asm/kvm_mmu.h
->> index 84051930ddfe..15bc1be8f82f 100644
->> --- a/arch/arm64/include/asm/kvm_mmu.h
->> +++ b/arch/arm64/include/asm/kvm_mmu.h
->> @@ -249,6 +249,11 @@ static inline bool kvm_s2pud_readonly(pud_t *pudp)
->>   	return kvm_s2pte_readonly((pte_t *)pudp);
->>   }
->>   +static inline bool kvm_s2pud_exec(pud_t *pudp)
->> +{
->> +	return !(READ_ONCE(pud_val(*pudp)) & PUD_S2_XN);
->> +}
->> +
->>   static inline bool kvm_page_empty(void *ptr)
->>   {
->>   	struct page *ptr_page = virt_to_page(ptr);
->> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
->> index fd208eac9f2a..10ae592b78b8 100644
->> --- a/arch/arm64/include/asm/pgtable-hwdef.h
->> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
->> @@ -193,6 +193,8 @@
->>   #define PMD_S2_RDWR		(_AT(pmdval_t, 3) << 6)   /* HAP[2:1] */
->>   #define PMD_S2_XN		(_AT(pmdval_t, 2) << 53)  /* XN[1:0] */
->>   +#define PUD_S2_XN		(_AT(pudval_t, 2) << 53)  /* XN[1:0]
->> */
->> +
->>   /*
->>    * Memory Attribute override for Stage-2 (MemAttr[3:0])
->>    */
->> diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
->> index ed8f8271c389..e73909a31e02 100644
->> --- a/virt/kvm/arm/mmu.c
->> +++ b/virt/kvm/arm/mmu.c
->> @@ -1038,23 +1038,62 @@ static int stage2_set_pmd_huge(struct kvm *kvm, struct kvm_mmu_memory_cache
->>   	return 0;
->>   }
->>   -static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
->> +/*
->> + * stage2_get_leaf_entry - walk the stage2 VM page tables and return
->> + * true if a valid and present leaf-entry is found. A pointer to the
->> + * leaf-entry is returned in the appropriate level variable - pudpp,
->> + * pmdpp, ptepp.
->> + */
->> +static bool stage2_get_leaf_entry(struct kvm *kvm, phys_addr_t addr,
->> +				  pud_t **pudpp, pmd_t **pmdpp, pte_t **ptepp)
->>   {
->> +	pud_t *pudp;
->>   	pmd_t *pmdp;
->>   	pte_t *ptep;
->
-> nit: As mentioned in the other thread, you may initialize the reference
-> pointers to NULL to make sure we start clean and avoid the initialization
-> everywhere this is called.
+--s9fJI615cBHmzTOP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I took the approach to not touch the pointers unless they are being
-assigned a valid pointer. I'll initialise the incoming pointers (p*dpp)
-before proceeding with the table walk.
+On Wed, Jul 11, 2018 at 01:08:14PM +0300, Mikko Perttunen wrote:
 
-Thanks,
-Punit
+> I'm seeing the following spew during boot with Tegra210 with the patch
+> "regulator: core: Link consumer with regulator driver", recently applied to
+> linux-next:
 
->
->>   -	pmdp = stage2_get_pmd(kvm, NULL, addr);
->> +	pudp = stage2_get_pud(kvm, NULL, addr);
->> +	if (!pudp || pud_none(*pudp) || !pud_present(*pudp))
->> +		return false;
->> +
->> +	if (pud_huge(*pudp)) {
->> +		*pudpp = pudp;
->> +		return true;
->> +	}
->> +
->> +	pmdp = stage2_pmd_offset(pudp, addr);
->>   	if (!pmdp || pmd_none(*pmdp) || !pmd_present(*pmdp))
->>   		return false;
->>   -	if (pmd_thp_or_huge(*pmdp))
->> -		return kvm_s2pmd_exec(pmdp);
->> +	if (pmd_thp_or_huge(*pmdp)) {
->> +		*pmdpp = pmdp;
->> +		return true;
->> +	}
->>     	ptep = pte_offset_kernel(pmdp, addr);
->>   	if (!ptep || pte_none(*ptep) || !pte_present(*ptep))
->>   		return false;
->>   -	return kvm_s2pte_exec(ptep);
->> +	*ptepp = ptep;
->> +	return true;
->> +}
->> +
->> +static bool stage2_is_exec(struct kvm *kvm, phys_addr_t addr)
->> +{
->> +	pud_t *pudp = NULL;
->> +	pmd_t *pmdp = NULL;
->> +	pte_t *ptep = NULL;
->> +	bool found;
->> +
->> +	found = stage2_get_leaf_entry(kvm, addr, &pudp, &pmdp, &ptep);
->> +	if (!found)
->> +		return false;
->> +
->> +	if (pudp)
->> +		return kvm_s2pud_exec(pudp);
->> +	else if (pmdp)
->> +		return kvm_s2pmd_exec(pmdp);
->> +	else
->> +		return kvm_s2pte_exec(ptep);
->>   }
->
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> _______________________________________________
-> kvmarm mailing list
-> kvmarm@lists.cs.columbia.edu
-> https://lists.cs.columbia.edu/mailman/listinfo/kvmarm
+Someone reported this already, it's a limitation of the device link API
+really but we've not seen much of a response from them.
+
+--s9fJI615cBHmzTOP
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltGHN4ACgkQJNaLcl1U
+h9AOmgf/eJykFhEVTVL/i+nXz8/R7N+K5q/MotehXhbssNgNJppfhmIF+zrwMX+I
+jTASG1YCwsX7Y0fGLcgtRYS6QLr09AKgoT8kyA5I3f+f8o6oDhBgCQsPulzZsIkq
+PvjTQuA8FG7Q6ybnwgfABdBVWq8pYbS7h+tiWDBTzH34gaepY6vhIRkJpHEDzC2P
+OTsFvIL/997L+cBViFiyD/4Q4DIe/A4aQsTXsO5uUIB7eqfV+0b8is/WY9uZu9cu
+jiWkUrFtp48uV8tp2owALNlwWnz0LhgGObz+F1c20WbQNzjHa786HsOCfLDgwEg3
+MsQx3eogxJQLOU2+0tx6vNKRB6I0eA==
+=8TN9
+-----END PGP SIGNATURE-----
+
+--s9fJI615cBHmzTOP--
