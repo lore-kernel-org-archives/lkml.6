@@ -2,93 +2,117 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 027A9C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9035C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A977D20B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:09:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A977D20B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 564E620B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:10:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JexySlcP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564E620B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732570AbeGKLNl (ORCPT
+        id S1732602AbeGKLN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:13:41 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51460 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726641AbeGKLNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:13:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BBB00AD9E;
-        Wed, 11 Jul 2018 11:09:51 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 13:09:49 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Wei Wang <wei.w.wang@intel.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        virtio-dev@lists.oasis-open.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
-        quan.xu0@gmail.com, nilal@redhat.com,
-        Rik van Riel <riel@redhat.com>, peterx@redhat.com
-Subject: Re: [PATCH v35 1/5] mm: support to get hints of free page blocks
-Message-ID: <20180711110949.GJ20050@dhcp22.suse.cz>
-References: <1531215067-35472-1-git-send-email-wei.w.wang@intel.com>
- <1531215067-35472-2-git-send-email-wei.w.wang@intel.com>
- <CA+55aFz9a=D-kquM=sG5uhV_HrBAw+VAhcJmtPNz+howy4j9ow@mail.gmail.com>
- <5B455D50.90902@intel.com>
- <CA+55aFzqj8wxXnHAdUTiOomipgFONVbqKMjL_tfk7e5ar1FziQ@mail.gmail.com>
- <20180711092152.GE20050@dhcp22.suse.cz>
- <5B45E17D.2090205@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5B45E17D.2090205@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 11 Jul 2018 07:13:59 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41912 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732529AbeGKLN6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:13:58 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y17-v6so14279777ljy.8
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 04:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=d/6Bhob0E01aCQLv9egKXSvpXRfkiKaDp4MSoGFs+9o=;
+        b=JexySlcPJxGHatbAf55Xr/Q0OYqEOA0yF0Gcwx1TRd4sk7C8OUwhFoErd8zyXVcGD0
+         ExE9lfu3LtEiNpPHEproPKtcBm9s9cOOCt3M7KrzSLVKZaF9u4xxkg0kXz4Dj3Fn7pUQ
+         zy9EgWn/jLZubxubc18Vu481c5tx8WypObJ8hp6VdkUWKgjemprex9ZNwnGXRjcKLEcF
+         t908H4adFLDPauysgLpW4S1EUwHzkhBe0RKWmR/Ulfc6H5d+/JZpcRKDjlrJpbVERC2Z
+         ol3xkmTRI3C+csEJtBC/6dQSnag67+Ci28aFFRwBtFnz8r5AEIsaJXO1AtkLHhZjCJDO
+         XVsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=d/6Bhob0E01aCQLv9egKXSvpXRfkiKaDp4MSoGFs+9o=;
+        b=gQgjaQ2Sbs4zHF2qwFWahJHAms7lNpLXwkx3JijU4fr9CAcMcADSqrqkdoCtNLh/ow
+         p+ql0oPBMhfTOiFdOoOdh+KC90GviYszII2a57qjqDN45GzM1QbtbebPIh9M5ZV2KZhd
+         dcLGhlDFOetyziQweDVFEiIQncM453RCTGP4RYtkWRUTNyuxg+gaCWXcIoBMi3LM2nan
+         5Il/Vd5Job0Pky3uCqgJtlxUZTxdezRjIz2l8ikxQaMA89iHGPDltoYAKEsOjFYrMz46
+         aGcBOcN8zTg8PwXC0MDySHC0+XEoR114TvUQuVM6QyNg58xzExXLGlDICBuzXw2fVA2n
+         GrWw==
+X-Gm-Message-State: APt69E15OBmlfLV9avQ5+92lpTAFcpMLQf8sGJzEAG/D5IHYvGac5eRe
+        QsvCcmiZ+A+n1JDis4WoFjCZMsdZn0E=
+X-Google-Smtp-Source: AAOMgpehhX69g3ixqwAI93TMR6jviAPXp1+A6wZauBJ6sHIsdXtXa5Fwrnz8ly+LInaVQpmMFPFXog==
+X-Received: by 2002:a2e:2b0e:: with SMTP id q14-v6mr17671743lje.147.1531307409199;
+        Wed, 11 Jul 2018 04:10:09 -0700 (PDT)
+Received: from localhost.localdomain ([188.162.64.141])
+        by smtp.gmail.com with ESMTPSA id s5-v6sm2981558ljh.9.2018.07.11.04.10.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 04:10:08 -0700 (PDT)
+From:   Ivan Bornyakov <brnkv.i1@gmail.com>
+To:     devel@driverdev.osuosl.org
+Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        benchan@chromium.org, jnjoseph@google.com, rspringer@google.com,
+        Ivan Bornyakov <brnkv.i1@gmail.com>
+Subject: [PATCH] staging: gasket: fix plain integer as NULL pointer warning
+Date:   Wed, 11 Jul 2018 14:13:34 +0300
+Message-Id: <20180711111334.15423-1-brnkv.i1@gmail.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 11-07-18 18:52:45, Wei Wang wrote:
-> On 07/11/2018 05:21 PM, Michal Hocko wrote:
-> > On Tue 10-07-18 18:44:34, Linus Torvalds wrote:
-> > [...]
-> > > That was what I tried to encourage with actually removing the pages
-> > > form the page list. That would be an _incremental_ interface. You can
-> > > remove MAX_ORDER-1 pages one by one (or a hundred at a time), and mark
-> > > them free for ballooning that way. And if you still feel you have tons
-> > > of free memory, just continue removing more pages from the free list.
-> > We already have an interface for that. alloc_pages(GFP_NOWAIT, MAX_ORDER -1).
-> > So why do we need any array based interface?
-> 
-> Yes, I'm trying to get free pages directly via alloc_pages, so there will be
-> no new mm APIs.
+Trivial fix to remove sparse warnings:
 
-OK. The above was just a rough example. In fact you would need a more
-complex gfp mask. I assume you only want to balloon only memory directly
-usable by the kernel so it will be
-	(GFP_KERNEL | __GFP_NOWARN) & ~__GFP_RECLAIM
+  drivers/staging/gasket/gasket_page_table.c:884:40: warning: Using plain integer as NULL pointer
+  drivers/staging/gasket/gasket_page_table.c:1743:57: warning: Using plain integer as NULL pointer
+  drivers/staging/gasket/gasket_page_table.c:1768:57: warning: Using plain integer as NULL pointer
 
-> I plan to let free page allocation stop when the remaining system free
-> memory becomes close to min_free_kbytes (prevent swapping).
+Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
+---
+ drivers/staging/gasket/gasket_page_table.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-~__GFP_RECLAIM will make sure you are allocate as long as there is any
-memory without reclaim. It will not even poke the kswapd to do the
-background work. So I do not think you would need much more than that.
-
-But let me note that I am not really convinced how this (or previous)
-approach will really work in most workloads. We tend to cache heavily so
-there is rarely any memory free.
-
+diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
+index c5390a860f86..5d3d33cac12f 100644
+--- a/drivers/staging/gasket/gasket_page_table.c
++++ b/drivers/staging/gasket/gasket_page_table.c
+@@ -881,7 +881,7 @@ static int gasket_perform_mapping(
+ 			u64 off =
+ 				(u64)host_addr -
+ 				(u64)pg_tbl->coherent_pages[0].user_virt;
+-			ptes[i].page = 0;
++			ptes[i].page = NULL;
+ 			ptes[i].offset = offset;
+ 			ptes[i].dma_addr = pg_tbl->coherent_pages[0].paddr +
+ 					   off + i * PAGE_SIZE;
+@@ -1740,7 +1740,7 @@ int gasket_free_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
+ 				  gasket_dev->coherent_buffer.virt_base,
+ 				  gasket_dev->coherent_buffer.phys_base);
+ 		gasket_dev->coherent_buffer.length_bytes = 0;
+-		gasket_dev->coherent_buffer.virt_base = 0;
++		gasket_dev->coherent_buffer.virt_base = NULL;
+ 		gasket_dev->coherent_buffer.phys_base = 0;
+ 	}
+ 	return 0;
+@@ -1765,7 +1765,7 @@ void gasket_free_coherent_memory_all(
+ 				  gasket_dev->coherent_buffer.virt_base,
+ 				  gasket_dev->coherent_buffer.phys_base);
+ 		gasket_dev->coherent_buffer.length_bytes = 0;
+-		gasket_dev->coherent_buffer.virt_base = 0;
++		gasket_dev->coherent_buffer.virt_base = NULL;
+ 		gasket_dev->coherent_buffer.phys_base = 0;
+ 	}
+ }
 -- 
-Michal Hocko
-SUSE Labs
+2.16.4
+
