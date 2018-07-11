@@ -2,216 +2,246 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D58C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D5BC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A24420878
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:54:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W3DbY89j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A24420878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id CAC3A20878
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:54:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC3A20878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726593AbeGKJ5u (ORCPT
+        id S1726844AbeGKJ56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:57:50 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44753 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbeGKJ5u (ORCPT
+        Wed, 11 Jul 2018 05:57:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37204 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726269AbeGKJ55 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:57:50 -0400
-Received: by mail-lj1-f195.google.com with SMTP id q127-v6so18308388ljq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 02:54:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=7Myr2lozbjviJOtiRVXMO466rrfKAMlNJOsPXt1mcGk=;
-        b=W3DbY89jF6eecFIpuhjFRo26Pu8oQkr2jLq/tO2kSYjk9+uv/c4yCaMVX0rirXb8ph
-         BqDbt6SMbFqHl8IHX2eps7opO1sgdoFEILQza/HhjfCk9O+ieW6BTjUlnImvRAMCBLWc
-         zOmMORdXHsauyYvLlXad2mMpd7Aj5bWhuyyV1PW/U2pcEkKX2JfFFFSmtwujWlzSs0OP
-         TJQQ5ancCPs2bqRWWKjZHEaoCaen9z3GvON6Vp1ThkPerOggRN1V1COKhQ6/eVrTVZDH
-         5fxX2Wp/P6hGjUPPpo937aPRtABEZwmkXIHXfi6sX1IJehgtRqeaWkBPj9nhYYUbQTnG
-         GETA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=7Myr2lozbjviJOtiRVXMO466rrfKAMlNJOsPXt1mcGk=;
-        b=gzptsIYvDjcFvzYku6Ugoc0ZngtnGRPK3lMRH0vWUiEx4o8GaH9mEeLeJYelngFyau
-         iyL0YU4A/iCvZpjy23G6ajwKXkYL/a0I4kkbFoaf5hfKli2eS3EX4EcZlTxDHTqaKKrL
-         UiSeoDNAXgRP3zwR6YuxjEDwMDUvIFUBrhuf5p1U89HIAOpkYa0XFnj/qterxDTZjQzS
-         +fE/l08bM3IJ9CcDHQmZFhSJ8rkXsQkg5s8LD6JW5k1NN4F7s1tcZiw2gbDLTPzDtwHN
-         RgjsMNHv39kJvlOsAKdxm2TchZw9fwhxMUl+auhrLyel940PHz5V8BbVmhv1ofwve719
-         fYqw==
-X-Gm-Message-State: APt69E2W8MaMlc9JiiFy0kPzO47ghHWo/RBzhIuMIwsuPjVYlUoDAD+n
-        aPKdE1mJLrJWUCMlOnpOm8Kwr9HCLfcdddXide8=
-X-Google-Smtp-Source: AAOMgpfb8aX61QCMtnLNp3nLELDZvvdgKYUQvtricYgFTSULqjB6183Pe1X9fXsi5Ys7KOhGW40YZfwLovrfFEyStuA=
-X-Received: by 2002:a2e:40c6:: with SMTP id r67-v6mr18132105lje.41.1531302857241;
- Wed, 11 Jul 2018 02:54:17 -0700 (PDT)
+        Wed, 11 Jul 2018 05:57:57 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6B9oPGL013705
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:54:26 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5bu6ryfd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:54:26 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ego@linux.vnet.ibm.com>;
+        Wed, 11 Jul 2018 03:54:25 -0600
+Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Jul 2018 03:54:21 -0600
+Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
+        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6B9sKtd56230060
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Jul 2018 02:54:20 -0700
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BBF536E050;
+        Wed, 11 Jul 2018 03:54:20 -0600 (MDT)
+Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 737E06E04C;
+        Wed, 11 Jul 2018 03:54:20 -0600 (MDT)
+Received: from sofia.ibm.com (unknown [9.124.35.39])
+        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Jul 2018 03:54:20 -0600 (MDT)
+Received: by sofia.ibm.com (Postfix, from userid 1000)
+        id 56B7D2E2F51; Wed, 11 Jul 2018 15:24:18 +0530 (IST)
+Date:   Wed, 11 Jul 2018 15:24:18 +0530
+From:   Gautham R Shenoy <ego@linux.vnet.ibm.com>
+To:     Murilo Opsfelder Araujo <muriloo@linux.ibm.com>
+Cc:     "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Vaidyanathan Srinivasan <svaidy@linux.vnet.ibm.com>,
+        Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>,
+        Shilpasri G Bhat <shilpa.bhat@linux.vnet.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] powerpc: Detect the presence of big-cores via
+ "ibm, thread-groups"
+Reply-To: ego@linux.vnet.ibm.com
+References: <cover.1530867876.git.ego@linux.vnet.ibm.com>
+ <abaea3bd2aa89c7c9f284e3a7beabb865d8e1050.1530867876.git.ego@linux.vnet.ibm.com>
+ <20180708160334.GA6947@kermit-br-ibm-com>
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 02:54:16
- -0700 (PDT)
-In-Reply-To: <20180707054247.19802-6-deepa.kernel@gmail.com>
-References: <20180707054247.19802-1-deepa.kernel@gmail.com> <20180707054247.19802-6-deepa.kernel@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 11 Jul 2018 11:54:16 +0200
-X-Google-Sender-Auth: 9_Wh8856tLdoKRrUDH8ZGMXWbY8
-Message-ID: <CAK8P3a2iYKnccdFqd7DsaGvK8Q_pJ1bfJr09uJaO7b=LRX8RaQ@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] time: Add struct __kernel_timex
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180708160334.GA6947@kermit-br-ibm-com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-TM-AS-GCONF: 00
+x-cbid: 18071109-0012-0000-0000-0000168A66B3
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009349; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01059723; UDB=6.00543901; IPR=6.00837644;
+ MB=3.00022101; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 09:54:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071109-0013-0000-0000-000053A1D072
+Message-Id: <20180711095418.GC6591@in.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807110105
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 7, 2018 at 7:42 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> struct timex uses struct timeval internally.
-> struct timeval is not y2038 safe.
-> Introduce a new UAPI type struct __kernel_timex
-> that is y2038 safe.
->
-> struct __kernel_timex uses a timeval type that is
-> similar to struct __kernel_timespec which preserves the
-> same structure size across 32 bit and 64 bit ABIs.
-> struct __kernel_timex also restructures other members of the
-> structure to make the structure the same on 64 bit and 32 bit
-> architectures.
-> Note that struct __kernel_timex is the same as struct timex
-> on a 64 bit architecture.
->
-> The above solution is similar to other new y2038 syscalls
-> that are being introduced: both 32 bit and 64 bit ABIs
-> have a common entry, and the compat entry supports the old 32 bit
-> syscall interface.
->
-> Alternatives considered were:
-> 1. Add new time type to struct timex that makes use of padded
->    bits. This time type could be based on the struct __kernel_timespec.
->    modes will use a flag to notify which time structure should be
->    used internally.
->    This needs some application level changes on both 64 bit and 32 bit
->    architectures. Although 64 bit machines could continue to use the
->    older timeval structure without any changes.
->
-> 2. Add a new u8 type to struct timex that makes use of padded bits. This
->    can be used to save higher order tv_sec bits. modes will use a flag to
->    notify presence of such a type.
->    This will need some application level changes on 32 bit architectures.
->
-> 3. Add a new compat_timex structure that differs in only the size of the
->    time type; keep rest of struct timex the same.
->    This requires extra syscalls to manage all 3 cases on 64 bit
->    architectures. This will not need any application level changes but will
->    add more complexity from kernel side.
+Hello Murilo,
 
-Hi Deepa,
+On Sun, Jul 08, 2018 at 01:03:34PM -0300, Murilo Opsfelder Araujo wrote:
+> On Fri, Jul 06, 2018 at 02:35:48PM +0530, Gautham R. Shenoy wrote:
+> > From: "Gautham R. Shenoy" <ego@linux.vnet.ibm.com>
+> > 
+> > On IBM POWER9, the device tree exposes a property array identifed by
+> > "ibm,thread-groups" which will indicate which groups of threads share a
+> > particular set of resources.
+> > 
+> > As of today we only have one form of grouping identifying the group of
+> > threads in the core that share the L1 cache, translation cache and
+> > instruction data flow.
+> > 
+> > This patch defines the helper function to parse the contents of
+> > "ibm,thread-groups" and a new structure to contain the parsed output.
+> > 
+> > The patch also creates the sysfs file named "small_core_siblings" that
+> > returns the physical ids of the threads in the core that share the L1
+> > cache, translation cache and instruction data flow.
+> > 
+> > Signed-off-by: Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+> > ---
+> >  Documentation/ABI/testing/sysfs-devices-system-cpu |   8 ++
+> >  arch/powerpc/include/asm/cputhreads.h              |  22 +++
+> >  arch/powerpc/kernel/setup-common.c                 | 154 +++++++++++++++++++++
+> >  arch/powerpc/kernel/sysfs.c                        |  35 +++++
+> >  4 files changed, 219 insertions(+)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> > index 9c5e7732..62f24de 100644
+> > --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+> > +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> > @@ -487,3 +487,11 @@ Description:	Information about CPU vulnerabilities
+> >  		"Not affected"	  CPU is not affected by the vulnerability
+> >  		"Vulnerable"	  CPU is affected and no mitigation in effect
+> >  		"Mitigation: $M"  CPU is affected and mitigation $M is in effect
+> > +
+> > +What: 		/sys/devices/system/cpu/cpu[0-9]+/small_core_siblings
+> > +Date:		05-Jul-2018
+> > +KernelVersion:	v4.18.0
+> > +Contact:	Gautham R. Shenoy <ego@linux.vnet.ibm.com>
+> > +Description:	List of Physical ids of CPUs which share the the L1 cache,
+> > +		translation cache and instruction data-flow with this CPU.
+> 
+> What about this?
+> 
+>     Description: List of physical CPU IDs that share a common L1 cache,
+>                  translation cache and instruction data flow with this CPU.
+> 
+> Or perhaps just remove the extra "the".
 
-sorry for taking so long with my reply
+Oops! Will remove the extra "the". Thanks for spotting it.
 
-I've done a similar patch for the itimerval and the rusuage structures
-that have the same basic problem of embedding a timeval, and after
-a lot of back-and-forth on my end, I came to the same conclusion with
-the structure layout: using a single binary layout that is shared between
-32-bit and 64-bit ABIs is better than any of the other approaches that
-one of us tried.
 
-However, I'm still undecided about how to exactly put that in the uapi
-headers.
+> 
+> > +Values:		Comma separated list of decimal integers.
+> > diff --git a/arch/powerpc/include/asm/cputhreads.h b/arch/powerpc/include/asm/cputhreads.h
+> > index d71a909..33226d7 100644
+> > --- a/arch/powerpc/include/asm/cputhreads.h
 
->  #define ADJ_ADJTIME            0x8000  /* switch between adjtime/adjtimex modes */
-> diff --git a/include/uapi/linux/timex.h b/include/uapi/linux/timex.h
-> index 92685d826444..a1c6b73016a5 100644
-> --- a/include/uapi/linux/timex.h
-> +++ b/include/uapi/linux/timex.h
-> @@ -92,6 +92,47 @@ struct timex {
->         int  :32; int  :32; int  :32;
->  };
->
-> +struct __kernel_timex_timeval {
-> +       __kernel_time64_t       tv_sec;
-> +       long long               tv_usec;
-> +};
-> +
-> +#ifndef __kernel_timex
-> +struct __kernel_timex {
-> +       unsigned int modes;     /* mode selector */
-> +       int :32;            /* pad */
-> +       long long offset;       /* time offset (usec) */
-> +       long long freq; /* frequency offset (scaled ppm) */
+[..snip..]
 
-The main disadvantage here is that a a typical ntp daemon that
-includes this header will now call the new system call, but still see
-the old structure definition that no longer matches, unless one
-modifies it to use __kernel_timex.
+> > diff --git a/arch/powerpc/kernel/sysfs.c b/arch/powerpc/kernel/sysfs.c
+> > index 755dc98..f5717de 100644
+> > --- a/arch/powerpc/kernel/sysfs.c
+> > +++ b/arch/powerpc/kernel/sysfs.c
+> > @@ -18,6 +18,7 @@
+> >  #include <asm/smp.h>
+> >  #include <asm/pmc.h>
+> >  #include <asm/firmware.h>
+> > +#include <asm/cputhreads.h>
+> >  
+> >  #include "cacheinfo.h"
+> >  #include "setup.h"
+> > @@ -1025,6 +1026,33 @@ static ssize_t show_physical_id(struct device *dev,
+> >  }
+> >  static DEVICE_ATTR(physical_id, 0444, show_physical_id, NULL);
+> >  
+> > +static ssize_t show_small_core_siblings(struct device *dev,
+> > +					struct device_attribute *attr,
+> > +					char *buf)
+> > +{
+> 
+> Interesting enough, checkpatch.pl warned about this function name:
+> 
+>     WARNING: Consider renaming function(s) 'show_small_core_siblings' to 'small_core_siblings_show'
+>     #354: FILE: arch/powerpc/kernel/sysfs.c:1053:
+>     +}
 
-I checked the most important libc implementations to see how
-they pass this structure to user space:
+Yes I kept it despite the warning, as doing otherwise would introduce
+inconsistency with the way the remaining functions are named in the
+file.
 
-glibc, musl, uclibc:
-   sys/timex.h contains a private version of this structure, the kernel
-   header is not included
+If Michael Ellerman is ok, I can send a file converting all these
+sysfs calls to use DEVICE_ATTR_RO/RW, which will require renaming all
+the other functions to XXX_show().
 
-bionic:
-   sys/timex.h includes linux/timex.h, which is shipped with the libc
-   and generated from kernel headers
 
-klibc:
-   there is no sys/timex.h, but also no adjtimex()/clock_adjtime() syscall
+> 
+> > +	struct cpu *cpu = container_of(dev, struct cpu, dev);
+> > +	struct device_node *dn = of_get_cpu_node(cpu->dev.id, NULL);
+> > +	struct thread_groups tg;
+> > +	int i, j;
+> > +	ssize_t ret = 0;
+> > +
+> > +	if (parse_thread_groups(dn, &tg))
+> > +		return -ENODATA;
+> > +
+> > +	i = get_cpu_thread_group_start(cpu->dev.id, &tg);
+> > +
+> > +	if (i == -1)
+> > +		return -ENODATA;
+> > +
+> > +	for (j = 0; j < tg.threads_per_group - 1; j++)
+> > +		ret += sprintf(buf + ret, "%d,", tg.thread_list[i + j]);
+> > +
+> > +	ret += sprintf(buf + ret, "%d\n", tg.thread_list[i + j]);
+> > +
+> > +	return ret;
+> > +}
+> > +static DEVICE_ATTR(small_core_siblings, 0444, show_small_core_siblings, NULL);
+> > +
+> >  static int __init topology_init(void)
+> >  {
+> >  	int cpu, r;
+> > @@ -1048,6 +1076,13 @@ static int __init topology_init(void)
+> >  			register_cpu(c, cpu);
+> >  
+> >  			device_create_file(&c->dev, &dev_attr_physical_id);
+> > +
+> > +			if (has_big_cores) {
+> > +				const struct device_attribute *attr =
+> > +				       &dev_attr_small_core_siblings;
+> > +
+> > +			       device_create_file(&c->dev, attr);
+> > +			}
+> >  		}
+> >  	}
+> >  	r = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "powerpc/topology:online",
+> > -- 
+> > 1.9.4
+> > 
+> 
+> -- 
+> Murilo
 
-In short, this probably only really matters for bionic, and of course only
-if they choose to even support 64-bit time_t (which in turn requires
-other changes to the libc)
-
-I can see two possible ways to define 'struct timex' in the kernel in a
-way that always matches the respective adjtimex.
-
-a) rename the old timex to __kernel_old_timex, and add a snippet that
-    will #define one of the two to be called 'struct timex' again:
-
-#ifdef __USE_TIME_BITS64
-#define __kernel_old_timex timex
-#define __kernel_old_timex_timeval timeval
-#else
-#define __kernel_timex timex
-#define __kernel_timex_timeval timeval
-#endif
-
-b) use only one definition in the header file, but use configuration
-dependent types, don't rename timex to __kernel_timex, and
-only use compat_timex for the old 32-bit version inside of the
-kernel:
-
-/* for fields that are the same size as time_t */
-#ifdef __KERNEL__
-typedef __s64 timex_long_t;
-#else
-typedef time_t timex_long_t;
-#endif
-
-struct timex {
-        unsigned int modes;             /* mode selector */
-        char __pad1[sizeof(timex_long_t) - sizeof(int);
-       __timex_long_t offset;         /* time offset (usec) */
-        __timex_long_t freq;           /* frequency offset (scaled ppm) */
-        __timex_long_t maxerror;       /* maximum error (usec) */
-        __timex_long_t esterror;       /* estimated error (usec) */
-        int status;                     /* clock command/status */
-        char __pad1[sizeof(timex_long_t) - sizeof(int);
-       __timex_long_t constant;       /* pll time constant */
-       ...
-};
-
-Both a) and b) should work fine with bionic and any application
-that includes linux/timex.h instead of sys/timex.h
-
-        Arnd
