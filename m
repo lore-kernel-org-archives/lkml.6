@@ -2,131 +2,132 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1567EC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 113C8C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBA502084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:17:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBA502084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BF9F82084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:17:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aR3aSXr4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9F82084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732926AbeGKMVl (ORCPT
+        id S1732963AbeGKMVy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:21:41 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:48461 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbeGKMVk (ORCPT
+        Wed, 11 Jul 2018 08:21:54 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33958 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726587AbeGKMVx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:21:40 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1fdE3n-0004SX-Ol; Wed, 11 Jul 2018 14:17:31 +0200
-Message-ID: <1531311451.3163.48.camel@pengutronix.de>
-Subject: Re: [PATCH v3 2/2] ARM: dts: imx6sl: Convert gpc to new bindings
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, kernel@pengutronix.de
-Date:   Wed, 11 Jul 2018 14:17:31 +0200
-In-Reply-To: <849ea1c3434c87316f15953089633854e01938d6.1531310547.git.leonard.crestez@nxp.com>
-References: <cover.1531310547.git.leonard.crestez@nxp.com>
-         <849ea1c3434c87316f15953089633854e01938d6.1531310547.git.leonard.crestez@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 11 Jul 2018 08:21:53 -0400
+Received: by mail-pl0-f66.google.com with SMTP id z9-v6so9084326plo.1;
+        Wed, 11 Jul 2018 05:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iEBvq0TsFT1LQ7yunBbMG0OXuMIdPnqpimYgUOX4jsI=;
+        b=aR3aSXr4ENEYbu8yVfw7yLywRI+o9E05ev1NpnnHSQVmBY5vNw2dytXFA2iYvI/IkE
+         WebKBL/gCqsZ7OH6eU/Q7VgnUqBP+WN64GXYKCCLu3ms4zunB2CitBWn0tqjY5wc+Y36
+         6LoBNNgKQkx66VbvBkvFlvnVZH4dJifPOoIhR1R2xi5FmnEXmXWNuFLZJV2PgI//o7wr
+         srMUPh+tAdv4mmydg/Xqi+QBY0cfZwYDnGD7Z2MyGohNbc2+JePcofShECTthQSN9wY6
+         t2hjZ4DJROa5JDtTLroMxPUagzg2p5ieZZ8dwtTMbXGuQim3u9QZtCVSYODsjQbDY3KD
+         DqGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iEBvq0TsFT1LQ7yunBbMG0OXuMIdPnqpimYgUOX4jsI=;
+        b=NEDaYM3qcPj1xZWIH/QwhNTg2aJvPGUvotEhz6khcIeoU0d8UaARlb5yONMPTUtJWV
+         EyMmZkmUjclM2OpOXOAzJklNpwncQ66vjRY7oYLs59s15pLGlT5TibH24JTscc+2z49V
+         gFAgMefh526TJmxK16jXZ3ZkJr/PVT4s1gKOYpKzy5QwWPzyoM7tOyXKA/Ar7kRWFVMZ
+         xa1EwcFPoWFGx2CHDHh/1ujow1aHwlXn/jKSVnOu1gPLxce+XSZ3lXGI7pdxK5GupfSq
+         JhHKN+3kPTN08tvcB772CMy/9lM/hAynXCz78uTU3RUGzpE+T1HJoa8ATxuJcT0tR2BP
+         ja4Q==
+X-Gm-Message-State: APt69E0ytmBzD1tbU2sRtLkcV1WaPf+io33Qz920LA1wtOdkKtgqr0J+
+        PbN6vi26m+7k32U2dOeH6qJxGPPe
+X-Google-Smtp-Source: AAOMgpfeliZeSfZ5Xipsnj/px0Blwns9WB/FJt3q5mjlssxcZrC0vB4YmWtQFMyCJ1V8mn6q5fzhcA==
+X-Received: by 2002:a17:902:8b8c:: with SMTP id ay12-v6mr28449199plb.74.1531311469613;
+        Wed, 11 Jul 2018 05:17:49 -0700 (PDT)
+Received: from [10.1.10.12] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
+        by smtp.gmail.com with ESMTPSA id r77-v6sm35674881pfr.117.2018.07.11.05.17.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 05:17:48 -0700 (PDT)
+Subject: Re: [PATCH] [RESEND, net-next, v2] tcp: use monotonic timestamps for
+ PAWS
+To:     Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc:     Harsh Jain <harsh@chelsio.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Atul Gupta <atul.gupta@chelsio.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Michael Werner <werner@chelsio.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <20180711101757.3929777-1-arnd@arndb.de>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <ff297506-d0eb-f242-b623-3b158dbabe0c@gmail.com>
+Date:   Wed, 11 Jul 2018 05:17:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <20180711101757.3929777-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 11.07.2018, 15:11 +0300 schrieb Leonard Crestez:
-> With old bindings imx_gpc_onecell_data always sets num_domains to 2 so
-> the DISPMIX domain can't actually be referenced. The pd is still defined
-> and pm core shuts it down as "unused" so display can't work.
-> 
-> Fix this by converting to new gpc bindings by adding pgc nodes and
-> referencing the newly-defined &pu_disp domain from &lcdif.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
+On 07/11/2018 03:16 AM, Arnd Bergmann wrote:
+> Using get_seconds() for timestamps is deprecated since it can lead
+> to overflows on 32-bit systems. While the interface generally doesn't
+> overflow until year 2106, the specific implementation of the TCP PAWS
+> algorithm breaks in 2038 when the intermediate signed 32-bit timestamps
+> overflow.
+> 
+> A related problem is that the local timestamps in CLOCK_REALTIME form
+> lead to unexpected behavior when settimeofday is called to set the system
+> clock backwards or forwards by more than 24 days.
+> 
+> While the first problem could be solved by using an overflow-safe method
+> of comparing the timestamps, a nicer solution is to use a monotonic
+> clocksource with ktime_get_seconds() that simply doesn't overflow (at
+> least not until 136 years after boot) and that doesn't change during
+> settimeofday().
+> 
+> To make 32-bit and 64-bit architectures behave the same way here, and
+> also save a few bytes in the tcp_options_received structure, I'm changing
+> the type to a 32-bit integer, which is now safe on all architectures.
+
+Nit: This is only manipulated under socket lock protection, so it is safe even on 
+32bit kernels.
+
+> 
+> Finally, the ts_recent_stamp field also (confusingly) gets used to store
+> a jiffies value in tcp_synq_overflow()/tcp_synq_no_recent_overflow().
+> This is currently safe, but changing the type to 32-bit requires
+> some small changes there to keep it working.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  arch/arm/boot/dts/imx6sl.dtsi | 35 +++++++++++++++++++++++++++++++----
->  1 file changed, 31 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
-> index 102c575a6025..49a56b4fd393 100644
-> --- a/arch/arm/boot/dts/imx6sl.dtsi
-> +++ b/arch/arm/boot/dts/imx6sl.dtsi
-> @@ -698,14 +698,40 @@
-> >  				reg = <0x020dc000 0x4000>;
-> >  				interrupt-controller;
-> >  				#interrupt-cells = <3>;
-> >  				interrupts = <0 89 IRQ_TYPE_LEVEL_HIGH>;
-> >  				interrupt-parent = <&intc>;
-> > -				pu-supply = <&reg_pu>;
-> > -				clocks = <&clks IMX6SL_CLK_GPU2D_OVG>,
-> > -					 <&clks IMX6SL_CLK_GPU2D_PODF>;
-> > -				#power-domain-cells = <1>;
-> > +				clocks = <&clks IMX6SL_CLK_IPG>;
-> > +				clock-names = "ipg";
-> +
-> > +				pgc {
-> > +					#address-cells = <1>;
-> > +					#size-cells = <0>;
-> +
-> > +					power-domain@0 {
-> > +						reg = <0>;
-> > +						#power-domain-cells = <0>;
-> > +					};
-> +
-> > > +					pd_pu: power-domain@1 {
-> > +						reg = <1>;
-> > +						#power-domain-cells = <0>;
-> > +						power-supply = <&reg_pu>;
-> > +						clocks = <&clks IMX6SL_CLK_GPU2D_OVG>,
-> > +						         <&clks IMX6SL_CLK_GPU2D_PODF>;
-> > +					};
-> +
-> > > +					pd_disp: power-domain@2 {
-> > +						reg = <2>;
-> > +						#power-domain-cells = <0>;
-> > +						clocks = <&clks IMX6SL_CLK_LCDIF_AXI>,
-> > +							 <&clks IMX6SL_CLK_LCDIF_PIX>,
-> > +							 <&clks IMX6SL_CLK_EPDC_AXI>,
-> > +							 <&clks IMX6SL_CLK_EPDC_PIX>,
-> > +							 <&clks IMX6SL_CLK_PXP_AXI>;
-> > +					};
-> > +				};
-> >  			};
->  
-> > >  			gpr: iomuxc-gpr@20e0000 {
-> >  				compatible = "fsl,imx6sl-iomuxc-gpr",
-> >  					     "fsl,imx6q-iomuxc-gpr", "syscon";
-> @@ -756,10 +782,11 @@
-> >  				clocks = <&clks IMX6SL_CLK_LCDIF_PIX>,
-> >  					 <&clks IMX6SL_CLK_LCDIF_AXI>,
-> >  					 <&clks IMX6SL_CLK_DUMMY>;
-> >  				clock-names = "pix", "axi", "disp_axi";
-> >  				status = "disabled";
-> > +				power-domains = <&pd_disp>;
-> >  			};
->  
-> > >  			dcp: dcp@20fc000 {
-> >  				compatible = "fsl,imx6sl-dcp", "fsl,imx28-dcp";
-> >  				reg = <0x020fc000 0x4000>;
+> v2: use time_before32()/time_after32() everywhere as suggested
+>     Eric Dumazet in https://lore.kernel.org/lkml/67ebb94d-c73f-6c9f-493b-00c86f595120@gmail.com/
+
+SGTM, thanks Arnd
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+
