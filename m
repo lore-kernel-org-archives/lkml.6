@@ -2,71 +2,111 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC976C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84B4CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DCF20881
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:56:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jmCpiQAT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96DCF20881
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 3CBC620881
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:57:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CBC620881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeGKG72 (ORCPT
+        id S1726744AbeGKHAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 02:59:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52656 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726361AbeGKG72 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 02:59:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ePsF86RfBm9KlJk6HkO8sqsuPBV7pw/yT5/Pb12gx2Q=; b=jmCpiQATag3E6ZKwnA+yG3XCE
-        qyrZ9/xJ1FUTfJHBlFNmi+HYZIRKx0kVuUZkV0DuhRn1LcBi8ZDAUClcN1Ay/+BKEaYp5BPRFv8AK
-        pdD2vPVtJeI3Xzgdob5x/sESwHaf2MPvTaClEeZQtbyeWitP7rnJiD15Qi02VVoYi/c4uDXhssdB6
-        c/R2fYvuF/CUHKJDMonZPMLXmQU29+nUwgehvHFoXEkrvlLgLipiXs/Owv3rA4UeX9Bh1UOGR4iSq
-        U3AfSe3f7lqAg5rG2a34N2GibwDbJAO8JuO/V359f++5dsmm0Ecqqicj4CNqqprRlXuv3V9QZNwZr
-        IrlQnKtEw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fd939-0007vU-H0; Wed, 11 Jul 2018 06:56:31 +0000
-Date:   Tue, 10 Jul 2018 23:56:31 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Serge Semin <fancer.lancer@gmail.com>
-Cc:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org,
-        okaya@codeaurora.org, chenhc@lemote.com,
-        Sergey.Semin@t-platforms.ru, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH 2/2] mips: mm: Discard ioremap_uncached_accelerated()
- method
-Message-ID: <20180711065631.GA21948@infradead.org>
-References: <20180709135713.8083-1-fancer.lancer@gmail.com>
- <20180709135713.8083-2-fancer.lancer@gmail.com>
+        Wed, 11 Jul 2018 03:00:23 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50435 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726294AbeGKHAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 03:00:23 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EC42CF46028BA;
+        Wed, 11 Jul 2018 14:57:33 +0800 (CST)
+Received: from vm107-55-164.huawei.com (100.107.55.164) by
+ DGGEMS410-HUB.china.huawei.com (10.3.19.210) with Microsoft SMTP Server id
+ 14.3.382.0; Wed, 11 Jul 2018 14:57:24 +0800
+From:   Xiaowei Song <songxiaowei@hisilicon.com>
+To:     <wangbinghui@hisilicon.com>, <bhelgaas@google.com>,
+        <lorenzo.pieralisi@arm.com>, <robh+dt@kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <suzhuangluan@hisilicon.com>, <andy.shevchenko@gmail.com>
+CC:     <kongfei@hisilicon.com>, <chenyao11@huawei.com>,
+        <songxiaowei@hisilicon.com>
+Subject: [PATCH v6 1/1] PCI: kirin: Add MSI support
+Date:   Wed, 11 Jul 2018 14:57:24 +0800
+Message-ID: <20180711065724.128299-2-songxiaowei@hisilicon.com>
+X-Mailer: git-send-email 2.11.GIT
+In-Reply-To: <20180711065724.128299-1-songxiaowei@hisilicon.com>
+References: <20180711065724.128299-1-songxiaowei@hisilicon.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709135713.8083-2-fancer.lancer@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-Originating-IP: [100.107.55.164]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> + * This is a MIPS specific ioremap variant. ioremap_cacheable_cow
-> + * requests a cachable mapping with CWB attribute enabled.
->   */
->  #define ioremap_cacheable_cow(offset, size)				\
->  	__ioremap_mode((offset), (size), _CACHE_CACHABLE_COW)
+Add support for MSI
 
-This isn't actually used anywhere in the kernel tree.  Please remove it
-as well.
+Signed-off-by: Xiaowei Song <songxiaowei@hisilicon.com>
+Signed-off-by: Yao Chen <chenyao11@huawei.com>
+---
+ drivers/pci/dwc/pcie-kirin.c | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+
+diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
+index d2970a009eb5..369bf87d2fff 100644
+--- a/drivers/pci/dwc/pcie-kirin.c
++++ b/drivers/pci/dwc/pcie-kirin.c
+@@ -430,6 +430,9 @@ static int kirin_pcie_host_init(struct pcie_port *pp)
+ {
+ 	kirin_pcie_establish_link(pp);
+ 
++	if (IS_ENABLED(CONFIG_PCI_MSI))
++		dw_pcie_msi_init(pp);
++
+ 	return 0;
+ }
+ 
+@@ -445,9 +448,34 @@ static const struct dw_pcie_host_ops kirin_pcie_host_ops = {
+ 	.host_init = kirin_pcie_host_init,
+ };
+ 
++static int kirin_pcie_add_msi(struct dw_pcie *pci,
++				struct platform_device *pdev)
++{
++	int ret = 0;
++
++	if (IS_ENABLED(CONFIG_PCI_MSI)) {
++		ret = platform_get_irq(pdev, 0);
++		if (ret < 0) {
++			dev_err(&pdev->dev,
++				"failed to get MSI IRQ (%d)\n", ret);
++			return ret;
++		}
++
++		pci->pp.msi_irq = ret;
++	}
++
++	return ret;
++}
++
+ static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+ 				      struct platform_device *pdev)
+ {
++	int ret;
++
++	ret = kirin_pcie_add_msi(pci, pdev);
++	if (ret < 0)
++		return ret;
++
+ 	pci->pp.ops = &kirin_pcie_host_ops;
+ 
+ 	return dw_pcie_host_init(&pci->pp);
+-- 
+2.11.GIT
+
