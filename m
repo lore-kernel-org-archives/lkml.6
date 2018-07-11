@@ -1,151 +1,94 @@
 Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.8 required=3.0 tests=BUG6152_INVALID_DATE_TZ_ABSURD,
+	HEADER_FROM_DIFFERENT_DOMAINS,INVALID_DATE_TZ_ABSURD,L_SPAM_TOOL_13,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB2BC38A24
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F25FDC1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DEDE213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:55:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DEDE213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id ACA6320C0E
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:56:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACA6320C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mageia.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390209AbeGKUA5 (ORCPT
+        id S2389147AbeGKUCL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:00:57 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:51896 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389772AbeGKUA4 (ORCPT
+        Wed, 11 Jul 2018 16:02:11 -0400
+Received: from mx2.yrkesakademin.fi ([85.134.45.195]:7726 "EHLO
+        mx2.yrkesakademin.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726706AbeGKUCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:00:56 -0400
-Received: by mail-it0-f69.google.com with SMTP id b83-v6so2587345itg.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:55:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=/3mMwbjwjrFcThKGhrMu5OTV7OjnIzGREK8TDbF4EOs=;
-        b=WmFQD2A+Otm2aa2yLBdbzntdn0xYUCnLDUk6cVQJLt+BHTeouE3AIsUD/vhcrUs73L
-         vKWOrzFdJG4+xxfFYD/Q9pXK26SJqghH8z73zVMYd03JZMlotTzXG8o3qzwXXYSbWsZ+
-         Ar5E0gxMWbGPkwY5dS8ON+YLvxgadWs6sFICZSBu2/KIHsI6RaecHZN6sdyJ8bwefUhd
-         pP/Qg/Kp8oqzD1PXx26lD4Nk//ztAp5t4R1seaH76tUejE4/314gc/zxPF+nLr6xECUw
-         hJ7nWICd/ZuNnjUJ+PzyjBfzDGD+wh92TzHmW35yHPIE+UXillvfvOCMKumKs5bcF+Bj
-         Fb9g==
-X-Gm-Message-State: AOUpUlGEwwopTUNObArpzTc4JOBtCXjPLmTF776zKlHb1gkT70Og4PMj
-        K/nVBYxroGRlSkS7wwn9dj2UnDaHr0EVFgeHl0D8oz4knnmm
-X-Google-Smtp-Source: AAOMgpdLWVmzJLmN1hzgpmhzkMkUDkMI721nzw0My7tcUCZa/5pnuq93MPUG2Go4mRXNb5UAUy9l+MRARKoy+TNDUrBItZViwjNg
+        Wed, 11 Jul 2018 16:02:11 -0400
+Subject: Re: [PATCH 00/39 v7] PTI support for x86-32
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Joerg Roedel <joro@8bytes.org>
+CC:     Jiri Kosina <jikos@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+ <CA+55aFzrG+GV5ySVUiiod8Va5P0_vmUuh25Pner1r7c_aQgH9g@mail.gmail.com>
+ <nycvar.YFH.7.76.1807111923420.997@cbobk.fhfr.pm>
+From:   Thomas Backlund <tmb@mageia.org>
+Message-ID: <1225b274-534b-cc32-54eb-aba89efba494@mageia.org>
+Date:   Wed, 11 Jul 2018 22:56:18 +0259
 MIME-Version: 1.0
-X-Received: by 2002:a02:c483:: with SMTP id t3-v6mr26980jam.2.1531338902794;
- Wed, 11 Jul 2018 12:55:02 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 12:55:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000054fd6b0570be9fa8@google.com>
-Subject: general protection fault in bpf_tcp_close (2)
-From:   syzbot <syzbot+339037020e772651f1d8@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <nycvar.YFH.7.76.1807111923420.997@cbobk.fhfr.pm>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-WatchGuard-Spam-ID: str=0001.0A0C0201.5B4660E1.0057,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+X-WatchGuard-Spam-Score: 0, clean; 0, virus threat unknown
+X-WatchGuard-Mail-Client-IP: 85.134.45.195
+X-WatchGuard-Mail-From: tmb@mageia.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Den 2018-07-11 kl. 20:28, skrev Jiri Kosina:
+> On Wed, 11 Jul 2018, Linus Torvalds wrote:
+> 
+>> It's the testing that worries me most. Pretty much no developers run
+>> 32-bit any more, and I'd be most worried about the odd interactions that
+>> might be hw-specific. Some crazy EFI mapping setup or the similar odd
+>> case that simply requires a particular configuration or setup.
+>>
+>> But I guess those issues will never be found until we just spring this
+>> all on the unsuspecting public.
+> 
+> FWIW we shipped Joerg's 32bit KAISER kernel out to our 32bit users (on old
+> product where we still support it) on Apr 25th already (and some issues
+> have been identified since then because of that). So it (or its port to
+> 3.0, to be more precise :p) already did receive some crowd-testing.
+> 
 
-syzbot found the following crash on:
-
-HEAD commit:    d90c936fb318 Merge branch 'bpf-nfp-mul-div-support'
-git tree:       bpf-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=175aeefc400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a501a01deaf0fe9
-dashboard link: https://syzkaller.appspot.com/bug?extid=339037020e772651f1d8
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+339037020e772651f1d8@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 8097 Comm: syz-executor2 Not tainted 4.18.0-rc3+ #48
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__hlist_del include/linux/list.h:679 [inline]
-RIP: 0010:hlist_del_rcu include/linux/rculist.h:440 [inline]
-RIP: 0010:bpf_tcp_close+0x94c/0x1050 kernel/bpf/sockmap.c:365
-Code: 85 25 06 00 00 48 8d 95 18 ff ff ff 49 8b 4c 24 18 48 89 d6 48 c1 ee  
-03 c6 04 1e 00 48 89 ce 48 c1 ee 03 48 89 85 18 ff ff ff <80> 3c 1e 00 0f  
-85 bf 05 00 00 48 c1 ea 03 48 85 c0 48 89 01 48 89
-RSP: 0018:ffff8801aa12f950 EFLAGS: 00010a02
-RAX: 0000000000000000 RBX: dffffc0000000000 RCX: dead000000000200
-RDX: ffff8801aa12fa40 RSI: 1bd5a00000000040 RDI: ffff8801cb9df090
-RBP: ffff8801aa12fb28 R08: ffff8801a82be440 R09: ffffed0039b2a6e1
-R10: ffffed0039b2a6e1 R11: ffff8801cd95370b R12: ffff8801cb9df080
-R13: ffff8801ce721340 R14: ffff8801cd953708 R15: ffff8801cb9df098
-FS:  0000000001389940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000625208 CR3: 00000001d910f000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
-Call Trace:
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
-  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:459
-  __sock_release+0xd7/0x260 net/socket.c:599
-  sock_close+0x19/0x20 net/socket.c:1150
-  __fput+0x355/0x8b0 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1ec/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
-  exit_to_usermode_loop+0x313/0x370 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x40ff01
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 19 00 00 c3 48  
-83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffca498c100 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000015 RCX: 000000000040ff01
-RDX: 0000000000000000 RSI: 0000000000731568 RDI: 0000000000000014
-RBP: 0000000000000013 R08: 00007ffca498c080 R09: 0000000000000000
-R10: 0000000000000003 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007ffca498c7b0 R15: 00000000007034c0
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace 9c4e75cd650ecd9f ]---
-RIP: 0010:__hlist_del include/linux/list.h:679 [inline]
-RIP: 0010:hlist_del_rcu include/linux/rculist.h:440 [inline]
-RIP: 0010:bpf_tcp_close+0x94c/0x1050 kernel/bpf/sockmap.c:365
-Code: 85 25 06 00 00 48 8d 95 18 ff ff ff 49 8b 4c 24 18 48 89 d6 48 c1 ee  
-03 c6 04 1e 00 48 89 ce 48 c1 ee 03 48 89 85 18 ff ff ff <80> 3c 1e 00 0f  
-85 bf 05 00 00 48 c1 ea 03 48 85 c0 48 89 01 48 89
-RSP: 0018:ffff8801aa12f950 EFLAGS: 00010a02
-RAX: 0000000000000000 RBX: dffffc0000000000 RCX: dead000000000200
-RDX: ffff8801aa12fa40 RSI: 1bd5a00000000040 RDI: ffff8801cb9df090
-RBP: ffff8801aa12fb28 R08: ffff8801a82be440 R09: ffffed0039b2a6e1
-R10: ffffed0039b2a6e1 R11: ffff8801cd95370b R12: ffff8801cb9df080
-R13: ffff8801ce721340 R14: ffff8801cd953708 R15: ffff8801cb9df098
-FS:  0000000001389940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000625208 CR3: 00000001d910f000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000600
+And Mageia has had v2 since February 13th patched into 4.14 -longterm, 
+then updated to v3 at March 5th, and updated to v4 at March 19th and 
+been running that since then (since v5 is rebased on v4.17 we stayed 
+with v4)
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+So, here is another "lets merge it upstream" vote :)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+
+--
+Thomas
