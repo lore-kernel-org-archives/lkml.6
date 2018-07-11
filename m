@@ -2,92 +2,114 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4F21C1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BCBBC1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63C8320C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:01:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WZW4aIFe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C8320C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 0203820C0E
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:02:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0203820C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389247AbeGKUHI (ORCPT
+        id S2389298AbeGKUIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:07:08 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:36133 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389156AbeGKUHH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:07:07 -0400
-Received: by mail-pl0-f68.google.com with SMTP id a7-v6so9618336plp.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:01:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=UwfGoly37vOCMD2GS3x1U3p435ibCuyuVdvBfvi/Tog=;
-        b=WZW4aIFeM0EXK7S7FsS5OwGx+eZvTSi9c61Ux1+mLAI3HFD1pKqOoX/zKSZwPmqxDi
-         MrUt6y/pNTH0aErhXmhAE9MbYQNetpTeaeXskGIpc+hMiCxpdjTzF3dk1JwevwfGEti9
-         7BUL75njyhATyYLz1Hr5fkR2RVWvn81aLt9nZu6gP3bYZsy6jTlAvZ4fnIS1sL1RQFsE
-         1a98Sxe6loWMR6ZMWXrxCCbsZAp2X+7gxsg9kObduINGHTVETQ1mL9cNPEp1lFnSDyV/
-         S9rtYq/55uDFuXvgFAhDJ3wm4lj+Q1ZSjW/eDVivXikHsb8CB7i9+s7LsTNXDR4L6nqn
-         I+KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=UwfGoly37vOCMD2GS3x1U3p435ibCuyuVdvBfvi/Tog=;
-        b=G0222Rd/UyqYSS9Lh63TB0TNbdwMoufz8dOEPdjKsNbaRboIv4vPc1csgbJmHTlkOD
-         7oMLpPFx0zqxVrlYO03Gw8WuYrE+APFSB6zWdNdbEcxP3vLEFTNW0UVg0JDl+oyl3v3j
-         vs77XpuA833Gzd0HjKSZVzqLImdSpXc30hYBd7OmignZQ9aEdIzMUB/npzlwevjUpNzJ
-         60GfWX+iPk6lls1m98lTuDusjHVbF85ANonwtxpN7lIaFfZYpXVlUIiucM7SkYkNJrnw
-         6SxhvZ+wk5JCILbBo38YQeVG/68KpsQMvlRvit0icPUDXH76GWAJyRuvD/LX06np/aKR
-         mreg==
-X-Gm-Message-State: AOUpUlGe7H+XUmNto0By7QOCy7CoGxsJQJuAtPVaSqjKU3sDXg/D3z+e
-        fMtiR7qGwHdh8Sk5oLgCDY6I2+ZTm3mheN350GPD6XxPilU=
-X-Google-Smtp-Source: AAOMgpckc6WM9p9AWz1Dx8fjem0f9Knbkge7iHAqdTZsnRHh45qUtNW+2vQEB1t9c3qDFq6Bn2EIBeZVrwBGko4ZcV4=
-X-Received: by 2002:a17:902:740b:: with SMTP id g11-v6mr36620pll.85.1531339272629;
- Wed, 11 Jul 2018 13:01:12 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:950a:0:0:0:0 with HTTP; Wed, 11 Jul 2018 13:00:52
- -0700 (PDT)
-In-Reply-To: <20180711195245.7lavjauhy4dclfwm@linux-r8p5>
-References: <20180709151019.1336-1-manfred@colorfullife.com>
- <20180709151019.1336-8-manfred@colorfullife.com> <20180711195245.7lavjauhy4dclfwm@linux-r8p5>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Wed, 11 Jul 2018 22:00:52 +0200
-Message-ID: <CACT4Y+bohJFTUOnZRGks40ZxDwkc2qBRYXi7PMZXoNjj-wXqWQ@mail.gmail.com>
-Subject: Re: [PATCH 07/12] ipc_idr_alloc refactoring
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     Manfred Spraul <manfred@colorfullife.com>,
+        Wed, 11 Jul 2018 16:08:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57434 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387401AbeGKUI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 16:08:29 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6ADB720C0E;
+        Wed, 11 Jul 2018 20:02:33 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 16:02:31 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Ingo Molnar <mingo@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Song Liu <songliubraving@fb.com>
+Subject: [GIT PULL][PATCH] tracing/kprobe: Release kprobe print_fmt properly
+Message-ID: <20180711160231.6282da07@gandalf.local.home>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 9:52 PM, Davidlohr Bueso <dave@stgolabs.net> wrote:
-> On Mon, 09 Jul 2018, Manfred Spraul wrote:
->
->> From: Dmitry Vyukov <dvyukov@google.com>
->>
->> ipc_idr_alloc refactoring
->
-> ENOCHANGELOG
+
+Linus,
+
+This fixes a memory leak in the kprobe code.
 
 
-Manfred, could you please squash this into your commit? This was meant
-to be a code review comment rather than a full-fledged patch.
-As far as I remember, there are now 3 patches that can be squashed:
-your original change, my refactoring on top, and your fix to my
-refactoring.
+Please pull the latest trace-v4.18-rc3-2 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+trace-v4.18-rc3-2
+
+Tag SHA1: 2dc4f4a15fc23494d3fe5af7e1598923825d5da9
+Head SHA1: 0fc8c3581dd42bc8f530314ca86db2d861485731
+
+
+Jiri Olsa (1):
+      tracing/kprobe: Release kprobe print_fmt properly
+
+----
+ kernel/trace/trace_kprobe.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+---------------------------
+commit 0fc8c3581dd42bc8f530314ca86db2d861485731
+Author: Jiri Olsa <jolsa@kernel.org>
+Date:   Mon Jul 9 16:19:06 2018 +0200
+
+    tracing/kprobe: Release kprobe print_fmt properly
+    
+    We don't release tk->tp.call.print_fmt when destroying
+    local uprobe. Also there's missing print_fmt kfree in
+    create_local_trace_kprobe error path.
+    
+    Link: http://lkml.kernel.org/r/20180709141906.2390-1-jolsa@kernel.org
+    
+    Cc: stable@vger.kernel.org
+    Fixes: e12f03d7031a ("perf/core: Implement the 'perf_kprobe' PMU")
+    Acked-by: Song Liu <songliubraving@fb.com>
+    Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+    Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+    Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index daa81571b22a..21f718472942 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -1480,8 +1480,10 @@ create_local_trace_kprobe(char *func, void *addr, unsigned long offs,
+ 	}
+ 
+ 	ret = __register_trace_kprobe(tk);
+-	if (ret < 0)
++	if (ret < 0) {
++		kfree(tk->tp.call.print_fmt);
+ 		goto error;
++	}
+ 
+ 	return &tk->tp.call;
+ error:
+@@ -1501,6 +1503,8 @@ void destroy_local_trace_kprobe(struct trace_event_call *event_call)
+ 	}
+ 
+ 	__unregister_trace_kprobe(tk);
++
++	kfree(tk->tp.call.print_fmt);
+ 	free_trace_kprobe(tk);
+ }
+ #endif /* CONFIG_PERF_EVENTS */
