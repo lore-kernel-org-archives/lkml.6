@@ -2,176 +2,199 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 259B9C43A1D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:53:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B4DC43A1D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 23:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B680520C10
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:53:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kR2HMH7i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B680520C10
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 1DF7C20C10
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 23:05:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DF7C20C10
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390724AbeGKW7n (ORCPT
+        id S2389741AbeGKXK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 18:59:43 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38845 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387885AbeGKW7n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 18:59:43 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k3-v6so3302735pgq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 15:53:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=k4UizP5E8ZkFaLZDeK6cy6CNyLs8GMOvdlRQ/BOX66Q=;
-        b=kR2HMH7iIt7DaesPzHUGyrKbVWzIOjyThRLcpb7RfASxWxlh0EpZk1kFudayeH5LZn
-         2aIN9+driJBfct/jHIyN0FkczMIglR6BhKzxfQw9W4txPkvfqAkFfglfn2/vK7Q76OlM
-         ENObHyY5DdCnwmX71Gc40CbdnQQhhm+WkF2ik=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=k4UizP5E8ZkFaLZDeK6cy6CNyLs8GMOvdlRQ/BOX66Q=;
-        b=DJb9IqtpBhJnxkiK2CV6T0e4Ltfscxo1GRw2kfX+m7VKCAK4exf3eNCKZ8eSf24DZA
-         CCLLbv4JVdDMgOuW+tfavHzlHC7KSlQn5Q768NDFQ2E7VC+aH7zAqizKyYTYFL67e7kR
-         /SDWuxFxmGtwkpWEP80rdU2JYjea5XCWv+z6HfZi6ANSzrWmAw9KqyPxrhKmODiFHuoX
-         ZHVVYXhKjwLLGtWinsE/eTpSBnLYeSGRNHW5XwkSJT6JGU0ygtS/lY29pa4c6wew8IXR
-         9OsxUA+kZR2rC+Jnxyo9WwXfEYh8gj4jKMPZP4+1qd3WBPoL2DA1QXrEjSwDLwcsRsU/
-         Mf1A==
-X-Gm-Message-State: AOUpUlFziTOtRreN+7ZKUciUe7Oi2yCYHB32shJhIQi/lb1AgjmQ1Sc7
-        GFeT/DipkcJUJUFqi379yM2luro+wNQ=
-X-Google-Smtp-Source: AAOMgpd2gi/AnYyakcuH7PdXkhsRuav326hu7m+O7SHocOsHbkehRB/8QqBwkB+4ydhhCG6bGI7+LQ==
-X-Received: by 2002:a65:6258:: with SMTP id q24-v6mr447382pgv.131.1531349589911;
-        Wed, 11 Jul 2018 15:53:09 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id b11-v6sm28616650pgw.79.2018.07.11.15.53.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 15:53:09 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 15:53:08 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     David Collins <collinsd@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: pm8998: Add thermal zone
-Message-ID: <20180711225308.GU129942@google.com>
-References: <20180628210915.160893-1-mka@chromium.org>
- <20180628210915.160893-3-mka@chromium.org>
- <CAD=FV=Wo4wc_QZYr0a2_Ge=B6T4RNJDnOyxAd8r6sT4iZJjCKg@mail.gmail.com>
- <20180629185102.GV129942@google.com>
- <3b5054bb-76e4-a06f-54bb-e6ea7bbbcc69@codeaurora.org>
- <20180629235417.GY129942@google.com>
- <8144dd3c-6138-7f16-ec17-d75e84fcfb34@codeaurora.org>
- <CAD=FV=XqoRajjNcW8RyJfrcXQVDihfjAnAsN+O9g+6qDrLHfJw@mail.gmail.com>
- <03904a71-c6be-4f93-ad43-7d25631f9a04@codeaurora.org>
- <CAD=FV=XbnuNg_B_Uoj8j9hz0t7=ORdcVB16oDmVk1q2iZYGs9A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=XbnuNg_B_Uoj8j9hz0t7=ORdcVB16oDmVk1q2iZYGs9A@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 11 Jul 2018 19:10:57 -0400
+Received: from mga18.intel.com ([134.134.136.126]:3235 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388115AbeGKXK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 19:10:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 16:04:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,339,1526367600"; 
+   d="scan'208";a="72011249"
+Received: from 2b52.sc.intel.com ([143.183.136.52])
+  by orsmga001.jf.intel.com with ESMTP; 11 Jul 2018 16:04:06 -0700
+Message-ID: <1531350028.15351.102.camel@intel.com>
+Subject: Re: [RFC PATCH v2 22/27] x86/cet/ibt: User-mode indirect branch
+ tracking support
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Wed, 11 Jul 2018 16:00:28 -0700
+In-Reply-To: <f97ce234-52fa-e666-2250-098925cf3c39@linux.intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+         <20180710222639.8241-23-yu-cheng.yu@intel.com>
+         <3a7e9ce4-03c6-cc28-017b-d00108459e94@linux.intel.com>
+         <1531347019.15351.89.camel@intel.com>
+         <f97ce234-52fa-e666-2250-098925cf3c39@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 03:43:34PM -0700, Doug Anderson wrote:
-> Hi
+On Wed, 2018-07-11 at 15:40 -0700, Dave Hansen wrote:
+> On 07/11/2018 03:10 PM, Yu-cheng Yu wrote:
+> > 
+> > On Tue, 2018-07-10 at 17:11 -0700, Dave Hansen wrote:
+> > > 
+> > > Is this feature *integral* to shadow stacks?  Or, should it just
+> > > be
+> > > in a
+> > > different series?
+> > The whole CET series is mostly about SHSTK and only a minority for
+> > IBT.
+> > IBT changes cannot be applied by itself without first applying
+> > SHSTK
+> > changes.  Would the titles help, e.g. x86/cet/ibt, x86/cet/shstk,
+> > etc.?
+> That doesn't really answer what I asked, though.
 > 
-> On Wed, Jul 11, 2018 at 3:36 PM, David Collins <collinsd@codeaurora.org> wrote:
-> > Hello Doug,
-> >
-> >> On Tue, Jul 10, 2018 at 10:45 AM, David Collins <collinsd@codeaurora.org> wrote:
-> >>> On 06/29/2018 04:54 PM, Matthias Kaehlcke wrote:
-> >>>> On Fri, Jun 29, 2018 at 02:29:55PM -0700, David Collins wrote:
-> >>> ...
-> >>>>> The PMIC TEMP_ALARM hardware peripheral will perform an automatic partial
-> >>>>> PMIC shutdown upon hitting over-temperature stage 2 (125 C).  This turns
-> >>>>> off peripherals within the PMIC that are expected to draw significant
-> >>>>> current.  The set of peripherals included varies between PMICs.  This
-> >>>>> partial shutdown will occur simultaneously with the triggering of an
-> >>>>> interrupt to the APPS processor that informs the qcom-spmi-temp-alarm
-> >>>>> driver that an over-temperature threshold has been crossed.
-> >>>>>
-> >>>>> The TEMP_ALARM peripheral will perform an automatic full PMIC shutdown
-> >>>>> upon hitting over-temperature stage 3 (145 C).  Software won't receive an
-> >>>>> interrupt in this case because all power is cut.
-> >>>>
-> >>>> This information is very useful, thanks David!
-> >>>>
-> >>>> The (partial) hardware shutdown seems like a good measure of last
-> >>>> resort, however I suppose we prefer Linux to initiate a shutdown
-> >>>> before losing part of the peripherals (drivers might not be happy
-> >>>> about this and probably not revover even when the temperature goes
-> >>>> down again) or reach a full PMIC shutdown.
-> >>>>
-> >>>> Please let me know if there are reasons to prefer to go the hardware
-> >>>> limits, it's also an option for device makers to overwrite these
-> >>>> settings if they want different behavior.
-> >>>
-> >>> Disabling stage 3 automatic full PMIC shutdown at 145 C is definitely a
-> >>> bad idea.  This exists as a last resort in order to save the hardware and
-> >>> ensure end user safety in case of excessive temperature even if software
-> >>> is locked up.
-> >>>
-> >>> Disabling stage 2 automatic partial PMIC shutdown at 125 C is not
-> >>> recommended as the PMIC is already outside of reasonable operating
-> >>> conditions and needs to take corrective action quickly.  However, doing so
-> >>> may be acceptable if software is taking action to shut down the system
-> >>> immediately upon receiving the stage 2 over-temperature interrupt.
-> >>> Just to confirm: is it expected that at stage 2 the CPU's on the SoC
-> >> should continue running even with partial PMIC shutdown enabled?
-> >
-> > This is not guaranteed.
-> >
-> >
-> >> It sounded to me like partial PMIC shutdown was supposed to shut down
-> >> high-power rails that were not essential to the task of performing an
-> >> orderly shutdown.
-> >
-> > Shutting down high-power peripherals is accurate; however, special care is
-> > not taken to ensure that an orderly shutdown is possible.  At the very
-> > least, the HW and SW state will be out of sync for the peripherals that
-> > are shut down.
+> Do shadow stacks *require* IBT?  Or, should we concentrate on merging
+> shadow stacks themselves first and then do IBT at a later time, in a
+> different patch series?
 > 
-> OK, I guess I'm confused now.  Why does partial PMIC shutdown even
-> exist then?  What is the point of leaving some rails alive if software
-> could stop running?  It seems like it would be better to just shut
-> everything down.
-> 
-> Said another way: can you describe what benefit you see for only
-> partially shutting down the PMIC at stage 2 compared to just fully
-> shutting it down at stage 2?
-> 
-> 
-> >> I think Matthias was seeing that when he reached stage 2 and partial
-> >> PMIC shutdown happened that the system was just falling on the floor.
-> >> ...maybe we just have things configured incorrectly?
-> >
-> > More information about the exact crash steps would be helpful to
-> > investigate this further.  I'm not sure how much time you want to put into
-> > it though.
-> 
-> Matthias can add more, but basically he heated the system up and when
-> it reached the stage 2 shutdown it was no longer responsive.
+> But, yes, better patch titles would help, although I'm not sure
+> that's
+> quite the format that Ingo and Thomas prefer.
 
-The system behaved as on a warm reset when reaching stage 2
-temperature, no kernel crash, but messages in /dev/pstore were
-preserved.
+Shadow stack does not require IBT, but they complement each other.  If
+we can resolve the legacy bitmap, both features can be merged at the
+same time.
+
+> 
+> > 
+> > > 
+> > > > 
+> > > > +int cet_setup_ibt_bitmap(void)
+> > > > +{
+> > > > +	u64 r;
+> > > > +	unsigned long bitmap;
+> > > > +	unsigned long size;
+> > > > +
+> > > > +	if (!cpu_feature_enabled(X86_FEATURE_IBT))
+> > > > +		return -EOPNOTSUPP;
+> > > > +
+> > > > +	size = TASK_SIZE_MAX / PAGE_SIZE / BITS_PER_BYTE;
+> > > Just a note: this table is going to be gigantic on 5-level paging
+> > > systems, and userspace won't, by default use any of that extra
+> > > address
+> > > space.  I think it ends up being a 512GB allocation in a 128TB
+> > > address
+> > > space.
+> > > 
+> > > Is that a problem?
+> > > 
+> > > On 5-level paging systems, maybe we should just stick it up in
+> > > the 
+> > > high part of the address space.
+> > We do not know in advance if dlopen() needs to create the bitmap.
+> >  Do
+> > we always reserve high address or force legacy libs to low address?
+> Does it matter?  Does code ever get pointers to this area?  Might
+> they
+> be depending on high address bits for the IBT being clear?
+
+GLIBC does the bitmap setup.  It sets bits in there.
+I thought you wanted a smaller bitmap?  One way is forcing legacy libs
+to low address, or not having the bitmap at all, i.e. turn IBT off.
+
+> 
+> 
+> > 
+> > > 
+> > > > 
+> > > > +	bitmap = ibt_mmap(0, size);
+> > > > +
+> > > > +	if (bitmap >= TASK_SIZE_MAX)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	bitmap &= PAGE_MASK;
+> > > We're page-aligning the result of an mmap()?  Why?
+> > This may not be necessary.  The lower bits of MSR_IA32_U_CET are
+> > settings and not part of the bitmap address.  Is this is safer?
+> No.  If we have mmap() returning non-page-aligned addresses, we have
+> bigger problems.  Worst-case, do
+> 
+> 	WARN_ON_ONCE(bitmap & ~PAGE_MASK);
+> 
+
+Ok.
+
+> > 
+> > > 
+> > > > 
+> > > > +	current->thread.cet.ibt_bitmap_addr = bitmap;
+> > > > +	current->thread.cet.ibt_bitmap_size = size;
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +void cet_disable_ibt(void)
+> > > > +{
+> > > > +	u64 r;
+> > > > +
+> > > > +	if (!cpu_feature_enabled(X86_FEATURE_IBT))
+> > > > +		return;
+> > > Does this need a check for being already disabled?
+> > We need that.  We cannot write to those MSRs if the CPU does not
+> > support it.
+> No, I mean for code doing cet_disable_ibt() twice in a row.
+
+Got it.
+
+> 
+> > 
+> > > 
+> > > > 
+> > > > +	rdmsrl(MSR_IA32_U_CET, r);
+> > > > +	r &= ~(MSR_IA32_CET_ENDBR_EN | MSR_IA32_CET_LEG_IW_EN
+> > > > |
+> > > > +	       MSR_IA32_CET_NO_TRACK_EN);
+> > > > +	wrmsrl(MSR_IA32_U_CET, r);
+> > > > +	current->thread.cet.ibt_enabled = 0;
+> > > > +}
+> > > What's the locking for current->thread.cet?
+> > Now CET is not locked until the application calls ARCH_CET_LOCK.
+> No, I mean what is the in-kernel locking for the current->thread.cet
+> data structure?  Is there none because it's only every modified via
+> current->thread and it's entirely thread-local?
+
+Yes, that is the case.
+
