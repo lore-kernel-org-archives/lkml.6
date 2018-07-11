@@ -2,103 +2,109 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF31DC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90416C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:28:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEF5A205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 496FF2083D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:28:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="cWkJZ7PG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF5A205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dLkTS7pN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 496FF2083D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388112AbeGKQdR (ORCPT
+        id S2388483AbeGKQd5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:33:17 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44728 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732844AbeGKQdR (ORCPT
+        Wed, 11 Jul 2018 12:33:57 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:43831 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbeGKQd5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:33:17 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r16-v6so18801648wrt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 09:28:10 -0700 (PDT)
+        Wed, 11 Jul 2018 12:33:57 -0400
+Received: by mail-io0-f193.google.com with SMTP id y10-v6so9487613ioa.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 09:28:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m5vtscayywnGERg3CvrellircN/BOYBP8Ws4wR1Z7P8=;
-        b=cWkJZ7PGTD6LQsQZwKG51LBRL/0T88sq83y94Ro0BxdBt7TZNvqE8CvnkLYqv6fhWm
-         pxMqMkRecrcxm2wxg4OLVJXJ797fJEswGUrGU6/LAqUHJiGYU1ddOzF2NMj42l3bDUlV
-         ySSCKx3nAUrdGz4Twr2g5mbjVWZIr/ZbVO7HA=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6mAhl+CODAPJ2AgKAbYGX1tJG5WxvwYIDQl2vaEkf8c=;
+        b=dLkTS7pNQqKfVUKOHYsPJavI7YnvQBOQmSJ97n8wYuYkfxRKEkgvVdiF7XOKTXriuN
+         2Id0AzwLzabZ0dcicU8OWY6ra+pY4lO3OLuJdVaIb9PTYIaJyZgec7iLjh3fr1oftOBU
+         rH81C1NEFKljnGNDFlM1WLshZGDDztDXgtZCQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m5vtscayywnGERg3CvrellircN/BOYBP8Ws4wR1Z7P8=;
-        b=W79eU/Q4DPkOT+LeQS4K74wE3L7UnoSQ/ITCiyWNb9P3FHxWCJH/VuagOlvn3Q0hr9
-         0m7Z+xF6pH4a5dAvJA1wZNlGw6hjJMV6daLRyCKRF7iMKkzzt/56dCkzlIyiZOjPV7Cy
-         HYeKjdBxRDQQlAQlTsvlWF1jUV7Sq8GrIQNSSR6gGEzTHrKkVNRKi7zflXyNwFpqtAQl
-         5VAdX1sMy92fOqyR4x6YNATLYpL6frdmkusYG38rG88pIN0BUh+WVaKMs5gG6rUjKmES
-         eatM8yeI959o2ENKM5pHFoAVAh8Rh/9GQ28DRLmHw/TYo04F7Hw7EOrfuU3AeamYAR2r
-         fzww==
-X-Gm-Message-State: APt69E3PPz2R9Tk5NSsp+UqAsGB6BCwQiDJGLwqsEKHLhcV7iZysg4gh
-        Rm+EzaWVa2+f6mExglzOxW47xw==
-X-Google-Smtp-Source: AAOMgpf5jGAfjacK4Y8ixj53sWXmErHcE0Q1a2HmlhVWwSJr03mga/NwvosZcizvsaR0/BnQv8JC3w==
-X-Received: by 2002:adf:c4a7:: with SMTP id m36-v6mr21222305wrf.103.1531326490015;
-        Wed, 11 Jul 2018 09:28:10 -0700 (PDT)
-Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
-        by smtp.gmail.com with ESMTPSA id r140-v6sm3245623wmd.27.2018.07.11.09.28.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 09:28:09 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 18:28:04 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Message-ID: <20180711162804.GA15081@andrea>
-References: <Pine.LNX.4.44L0.1807091519180.2462-100000@iolanthe.rowland.org>
- <20180710093821.GA5414@andrea>
- <20180711094310.GA13963@arm.com>
- <20180711123421.GA9673@andrea>
- <20180711155751.GC18477@arm.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6mAhl+CODAPJ2AgKAbYGX1tJG5WxvwYIDQl2vaEkf8c=;
+        b=NXPZN9kbBlPXQPZ6NskPz7c25kFcSUVfWOnRNxX/N6Ha2L8SMvL4Z9Vherro41ZghJ
+         GEO8CGHY/g+uJUwXVbdUTUSfUqMoV+q7NR4wfVuMEYQt/HYyP1R9YIZLhcyvh+Dd6MET
+         7/JSCbdfBTMo69P3wSE0iqtzf7VHbKcTNTBZgnvkPu5RlEiwETfuXx4MzwNgkrMaUn7l
+         do45KwfKuvbRm+qJ0p0oO5b1kugpvgLQi2alDM8tb5F1y3VfkTyK5/jz1l3b+hURJW3M
+         qEWgtV4/wQ0hF9Dtgc3m+cZyxl8+u6v2FPvwmKm5EPagb26rxy5bPhpbbF+qh0JB3TMo
+         +T/Q==
+X-Gm-Message-State: APt69E2yUkW8B/4/1FCWV7y9l0SVTk4cddNuBtGY169DSMPxYV5Mhqs5
+        HKb1lXW3hiMYFkJ7XS0sf8VaUAkhE+BUu8XXEDI=
+X-Google-Smtp-Source: AAOMgpfJ2zKeo/i3Jb2Dfwv+dXYW5yVA3jsidYIg5OfoN1DAruVmm+MijffnVRcY3U0gGj6/kUkdBgWCEP3VxRzLhhU=
+X-Received: by 2002:a02:2b12:: with SMTP id h18-v6mr22214371jaa.10.1531326530605;
+ Wed, 11 Jul 2018 09:28:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711155751.GC18477@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 11 Jul 2018 09:28:39 -0700
+Message-ID: <CA+55aFzrG+GV5ySVUiiod8Va5P0_vmUuh25Pner1r7c_aQgH9g@mail.gmail.com>
+Subject: Re: [PATCH 00/39 v7] PTI support for x86-32
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Peter Anvin <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> It might be simple to model, but I worry this weakens our locking
-> implementations to a point where they will not be understood by the average
-> kernel developer. As I've said before, I would prefer "full" RCsc locking,
-> but that's not the case with architectures we currently support today, so
-> the next best thing is this "everything apart from W->R in the
-> inter-thread case" ordering, which isn't going to crop up unless you're
-> doing weird stuff anyway afaict.
+On Wed, Jul 11, 2018 at 4:30 AM Joerg Roedel <joro@8bytes.org> wrote:
+>
+> I did the load-testing again with 'perf top', the ldt_gdt
+> self-test and a kernel-compile running in a loop again.
 
-The "average kernel developer" thinks TSO or about, right?  ;-)
+So none of the patches looked scary to me, but then, neither did
+earlier versions.
 
-  Andrea
+It's the testing that worries me most. Pretty much no developers run
+32-bit any more, and I'd be most worried about the odd interactions
+that might be hw-specific. Some crazy EFI mapping setup or the similar
+odd case that simply requires a particular configuration or setup.
 
+But I guess those issues will never be found until we just spring this
+all on the unsuspecting public.
 
-> 
-> Will
+                 Linus
