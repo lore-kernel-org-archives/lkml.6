@@ -6,115 +6,129 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8213DC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C98C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40E6320C0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:20:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40E6320C0B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id DD73720C0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:20:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD73720C0B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389692AbeGKQZR convert rfc822-to-8bit (ORCPT
+        id S2389705AbeGKQZ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:25:17 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:37329 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733247AbeGKQZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:25:17 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id A071F64AFD;
-        Wed, 11 Jul 2018 16:20:03 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 00:19:28 +0800
-In-Reply-To: <20180711161356.GA4685@rob-hp-laptop>
-References: <20180706153805.25842-1-icenowy@aosc.io> <20180706153805.25842-7-icenowy@aosc.io> <20180711161356.GA4685@rob-hp-laptop>
-MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v2 6/9] dt-bindings: phy: add binding for Allwinner USB3 PHY
-To:     Rob Herring <robh@kernel.org>
-CC:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <C01136F1-594C-4459-B9C6-6E0434855234@aosc.io>
+        Wed, 11 Jul 2018 12:25:27 -0400
+Received: from smtprelay0107.hostedemail.com ([216.40.44.107]:48117 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1733247AbeGKQZ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:25:27 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id CD3C552B4;
+        Wed, 11 Jul 2018 16:20:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: cloud99_315070d39231
+X-Filterd-Recvd-Size: 3352
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 11 Jul 2018 16:20:21 +0000 (UTC)
+Message-ID: <cd7a7d241252bbb6588448ed7f27d51811025c63.camel@perches.com>
+Subject: Re: [PATCH v2] checkpatch: Warn if missing author Signed-off-by
+From:   Joe Perches <joe@perches.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Whitcroft <apw@canonical.com>
+Cc:     Jason Gunthorpe <jgg@mellanox.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org
+Date:   Wed, 11 Jul 2018 09:20:19 -0700
+In-Reply-To: <20180711151003.6768-1-geert+renesas@glider.be>
+References: <20180711151003.6768-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 2018-07-11 at 17:10 +0200, Geert Uytterhoeven wrote:
+> Print a warning if none of the Signed-off-by lines cover the patch
+> author.
+> 
+> Non-ASCII quoted printable encoding in From: headers and (lack of)
+> double quotes are handled.
+> Split From: headers are not fully handled: only the first part is
+> compared.
+[]
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+[]
+> +# Check the patch for a From:
+> +		if (decode("MIME-Header", $line) =~ /^From:\s*(.*)/) {
+> +			$author = encode("utf8", $1);
+> +			$author =~ s/"//g;
+> +		}
+> +
+>  # Check the patch for a signoff:
+>  		if ($line =~ /^\s*signed-off-by:/i) {
+>  			$signoff++;
+>  			$in_commit_log = 0;
+> +			if ($author ne '') {
+> +				my $l = $line;
+> +				$l =~ s/"//g;
+> +				if ($l =~ /^\s*signed-off-by: \Q$author\E/i) {
+> +				    $authorsignoff = 1;
+> +				}
+> +			}
+>  		}
 
+I don't see the point of removing the quotes.
 
-于 2018年7月12日 GMT+08:00 上午12:13:56, Rob Herring <robh@kernel.org> 写到:
->On Fri, Jul 06, 2018 at 11:38:02PM +0800, Icenowy Zheng wrote:
->> The new Allwinner H6 SoC contains a USB3 PHY that is wired to the
->> external USB3 pins of the SoC.
->> 
->> Add a device tree binding for the PHY.
->> 
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> ---
->> Splitted from the PHY driver patch in v1.
->> 
->>  .../bindings/phy/sun50i-usb3-phy.txt          | 24
->+++++++++++++++++++
->>  1 file changed, 24 insertions(+)
->>  create mode 100644
->Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt
->> 
->> diff --git
->a/Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt
->b/Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt
->> new file mode 100644
->> index 000000000000..912d55f9f69d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt
->> @@ -0,0 +1,24 @@
->> +Allwinner sun50i USB3 PHY
->> +-----------------------
->> +
->> +Required properties:
->> +- compatible : should be one of
->> +  * allwinner,sun60i-h6-usb3-phy
->> +- reg : a list of offset + length pairs
->> +- #phy-cells : from the generic phy bindings, must be 0
->> +- clocks : phandle + clock specifier for the phy clock
->> +- resets : phandle + reset specifier for the phy reset
->> +
->> +Optional Properties:
->> +- phy-supply : from the generic phy bindings, a phandle to a
->regulator that
->> +	       provides power to VBUS.
->
->Power to the phy or Vbus? If the latter only, then this property should
->
->be elsewhere (like a connector node).
+If the name and email address don't exactly match,
+why shouldn't it be reported?
 
-I don't think there's connector nodes for USB ports now.
+>  # Check if MAINTAINERS is being updated.  If so, there's probably no need to
+> @@ -6487,9 +6503,14 @@ sub process {
+>  		ERROR("NOT_UNIFIED_DIFF",
+>  		      "Does not appear to be a unified-diff format patch\n");
+>  	}
+> -	if ($is_patch && $has_commit_log && $chk_signoff && $signoff == 0) {
+> -		ERROR("MISSING_SIGN_OFF",
+> -		      "Missing Signed-off-by: line(s)\n");
+> +	if ($is_patch && $has_commit_log && $chk_signoff) {
+> +		if ($signoff == 0) {
+> +			ERROR("MISSING_SIGN_OFF",
+> +			      "Missing Signed-off-by: line(s)\n");
+> +		} elsif (!$authorsignoff) {
+> +			WARN("NO_AUTHOR_SIGN_OFF",
+> +			     "Missing Signed-off-by: line by patch author\n");
 
-And by checking existed device trees, use phy-supply on USB
-phy is common. It's seen on Meson GXBB, RK3399 and Hi6220
-in arch/arm64/boot/dts.
+Perhaps better to show the From: line author
 
->
->> +
->> +Example:
->> +	usb3phy: phy@5210000 {
->> +		compatible = "allwinner,sun50i-h6-usb3-phy";
->> +		reg = <0x5210000 0x10000>;
->> +		clocks = <&ccu CLK_USB_PHY1>;
->> +		resets = <&ccu RST_USB_PHY1>;
->> +		#phy-cells = <0>;
->> +		status = "disabled";
->> +	};
->> -- 
->> 2.17.1
->> 
->> --
->> To unsubscribe from this list: send the line "unsubscribe devicetree"
->in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+		"Missing 'Signed-off-by:' from nomimal patch author '$author'\n");
+
+Another somewhat frequent Signed-off-by: defect pattern
+is to have a lower-case name or no name at all used.
+
+Perhaps it'd be useful to add some checks like
+a single word for a name and all lower-case names:
+
+e.g.:
+	Signed-off-by: joe perches <joe@perches.com>
+
+emits
+
+Unusual lower case name: 'joe perches <joe@perches.com>'
+
+and
+	Signed-off-by: root <root@mydomain.net>
+and
+	Signed-off-by: Root <root@mydomain.net>
+and
+	Signed-off-by: root@mydomain.net
+
+all emit that a single or missing name is unusual.
+
