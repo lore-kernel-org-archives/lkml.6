@@ -4,108 +4,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34885C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6647C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDBC520843
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F64520843
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:47:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Z64DtJgR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDBC520843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="06j8vPQV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F64520843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389921AbeGKQv5 (ORCPT
+        id S2389934AbeGKQwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:51:57 -0400
-Received: from mail.efficios.com ([167.114.142.138]:52992 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733026AbeGKQv4 (ORCPT
+        Wed, 11 Jul 2018 12:52:44 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44812 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733026AbeGKQwo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:51:56 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 9524B22F788;
-        Wed, 11 Jul 2018 12:46:45 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id V_EMeT7Bvk-8; Wed, 11 Jul 2018 12:46:45 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id E407522F785;
-        Wed, 11 Jul 2018 12:46:44 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com E407522F785
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1531327604;
-        bh=nCwPnnAcAhfClvqmpDXcn/VKXNULZpqWVY8Yjrc3FGg=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=Z64DtJgRYUcyK8JwdyaKuMxZttIbPxgVa5NpqPMK4rPCGHs6qLOn6XryJwYYOognj
-         JXCh92NgZgPLeIQEDK+3+6WR5Vbwbqmb+HsFz3NrEiWiJQPIk0kc8zfmlqg2CVxywv
-         CWO0hwdc12fJo3O1SaJDNfnVi7F1GsPs5aQ343DYAUBmzeXM00AAQdQKM++xJFv5aX
-         YF2a/E97C3p60vX8LJPBH+2Abfh+PtAdbcjuEQrrrCO3N1VyJ/VeZZhejbzolu8wF2
-         zSzDTUjadfACONKkzG/BKRyloJLuEkTQAuxwx/XByACF8DDtD0ILTeUuxF0dF/ZrxG
-         B3YnY2clJ9ziA==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id mSzE3BOeyYPk; Wed, 11 Jul 2018 12:46:44 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id CD16B22F777;
-        Wed, 11 Jul 2018 12:46:44 -0400 (EDT)
-Date:   Wed, 11 Jul 2018 12:46:44 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     rostedt <rostedt@goodmis.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest <linux-kselftest@vger.kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Message-ID: <395785739.4156.1531327604723.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180711112659.366ec453@gandalf.local.home>
-References: <20180628182149.226164-1-joel@joelfernandes.org> <20180628182149.226164-5-joel@joelfernandes.org> <20180711125647.GG2476@hirez.programming.kicks-ass.net> <20180711090649.68af40f9@gandalf.local.home> <20180711151751.GI2476@hirez.programming.kicks-ass.net> <20180711112659.366ec453@gandalf.local.home>
-Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
- SRCU
+        Wed, 11 Jul 2018 12:52:44 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6BGirVS035843;
+        Wed, 11 Jul 2018 16:47:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=yvvJPtO6xiWM3JjD+Tnmb5/66cfjhiDerlZiJCl1t3M=;
+ b=06j8vPQVd0V/b8oDh/XFSnl/S6vaElWwvjAFOTrzh0ewhQfjbalA7GqdjvaKhZ51gNCC
+ +ojmvrBa4ZIIdFthCXXVZzmJQVy/8/0Mng0aZ/Vdysm3d7YQ2tvhORA9uGZmWbFCsdYD
+ m/yqL1802VGQrqdrbuany9LdeiPnQZDRplXvuTQSmxpcVC5yQSiOI0NIFwG+lqwX8y78
+ yzEjbWdge7t3YFpCwoW+3FL8sUSqRdyV2UfaVbbNkbxJ5egw4rCgZxLTlqI09TukkR1C
+ JvYQIGVR+kjUxOt7nAKXvjqr4+BXl56cepLwO0Ogw7Fk5BC25Z1avUreiSA56GZpiQvP HA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2k2p7673ra-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Jul 2018 16:47:28 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6BGlRMt030356
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Jul 2018 16:47:27 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6BGlQGZ022844;
+        Wed, 11 Jul 2018 16:47:26 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Jul 2018 09:47:26 -0700
+Subject: Re: [PATCH] mm: hugetlb: don't zero 1GiB bootmem pages.
+To:     Michal Hocko <mhocko@kernel.org>,
+        Cannon Matthews <cannonmatthews@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Nadia Yvette Chambers <nyc@holomorphy.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        andreslc@google.com, pfeiner@google.com, dmatlack@google.com,
+        gthelen@google.com
+References: <20180710184903.68239-1-cannonmatthews@google.com>
+ <20180711124711.GA20172@dhcp22.suse.cz>
+ <20180711124801.GO20050@dhcp22.suse.cz>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <3f639e81-f8d2-5010-4a4b-331d198b1ce9@oracle.com>
+Date:   Wed, 11 Jul 2018 09:47:25 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180711124801.GO20050@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: tracepoint: Make rcuidle tracepoint callers use SRCU
-Thread-Index: Pn16iE/TK2xmg6UpWnWUBWMppkV3EA==
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807110179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jul 11, 2018, at 11:26 AM, rostedt rostedt@goodmis.org wrote:
-
-> On Wed, 11 Jul 2018 17:17:51 +0200
-> Peter Zijlstra <peterz@infradead.org> wrote:
+On 07/11/2018 05:48 AM, Michal Hocko wrote:
+> On Wed 11-07-18 14:47:11, Michal Hocko wrote:
+>> On Tue 10-07-18 11:49:03, Cannon Matthews wrote:
+>>> When using 1GiB pages during early boot, use the new
+>>> memblock_virt_alloc_try_nid_raw() function to allocate memory without
+>>> zeroing it.  Zeroing out hundreds or thousands of GiB in a single core
+>>> memset() call is very slow, and can make early boot last upwards of
+>>> 20-30 minutes on multi TiB machines.
+>>>
+>>> To be safe, still zero the first sizeof(struct boomem_huge_page) bytes
+>>> since this is used a temporary storage place for this info until
+>>> gather_bootmem_prealloc() processes them later.
+>>>
+>>> The rest of the memory does not need to be zero'd as the hugetlb pages
+>>> are always zero'd on page fault.
+>>>
+>>> Tested: Booted with ~3800 1G pages, and it booted successfully in
+>>> roughly the same amount of time as with 0, as opposed to the 25+
+>>> minutes it would take before.
+>>
+>> The patch makes perfect sense to me. I wasn't even aware that it
+>> zeroying memblock allocation. Thanks for spotting this and fixing it.
+>>
+>>> Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
+>>
+>> I just do not think we need to to zero huge_bootmem_page portion of it.
+>> It should be sufficient to INIT_LIST_HEAD before list_add. We do
+>> initialize the rest explicitly already.
 > 
->> I just read the comment that goes with that function; the order doesn't
->> matter. All we want to ensure is that the unregistration is visible to
->> either sched or srcu tracepoint users.
-> 
-> Yeah, but I think it is still good to change the order. It doesn't
-> hurt, and in my opinion makes the code a bit more robust.
+> Forgot to mention that after that is addressed you can add
+> Acked-by: Michal Hocko <mhocko@suse.com>
 
-I don't mind. It makes the code more regular. It does not change
-anything wrt robustness here though.
+Cannon,
 
-Thanks,
+How about if you make this change suggested by Michal, and I will submit
+a separate patch to revert the patch which added the phys field to
+huge_bootmem_page structure.
 
-Mathieu
-
+FWIW,
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Mike Kravetz
