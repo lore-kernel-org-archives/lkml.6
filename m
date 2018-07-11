@@ -2,117 +2,100 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DF5C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F255DC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B827720BF2
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:48:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BCCE20B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:50:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eEK1ch0i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B827720BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mTiKccQ7";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QVdRK9M5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BCCE20B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732540AbeGKJvh (ORCPT
+        id S1726476AbeGKJxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:51:37 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:50428 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeGKJvg (ORCPT
+        Wed, 11 Jul 2018 05:53:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53848 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbeGKJxl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:51:36 -0400
-Received: by mail-wm0-f68.google.com with SMTP id v25-v6so1807256wmc.0;
-        Wed, 11 Jul 2018 02:48:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Q7IHJR67uG7EvlDz1uhX/0WNFfGbMV0JriPvf8HvY6M=;
-        b=eEK1ch0iVOYl+DZYCTDs8aNRJiZGKcagl6SpR2I44uIRM09EBj77rl3dFKQ2F/yaw+
-         5PHtQmJ2B/sW7QXkegj/isXW112o+16PyFrXAovvWG+bBbJkRB8icX9LFCq+rQv1oX1d
-         9FpMUr07K76FLnToTnisnugQtCiAjc2OHWx/sOn2yyuqnmmJydvML1rbLYLInLGnz/M7
-         QUrYzhvhiLcrKwHkyZypyJTggAnoNaP8hoUHRlahqjKoFdQfgMd6+1ZrODME6oA8fbSg
-         UGsGNE2er9XXSAwaPuS4tUgbCd4HLKf8IOeQ1UvvKHnjCI0/0M17dLJz3LYLD7l51+sx
-         LzsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Q7IHJR67uG7EvlDz1uhX/0WNFfGbMV0JriPvf8HvY6M=;
-        b=FN9OKNbM/45E4rKrNXQve3Z1JOGR6ZQo4XlBvfSDr3NiE/jdYig9X2q17c+NIm+yAF
-         tTMwbw7D3tcQT/pTJJCWp6KGM5U0nvXS90XaT39LHb7vWQmYj8HngYhtdbvBgITvDPlt
-         7q2XtcY58csQ5U5yxQfKeLOMQWfSsnXvOysS7Gio6ONbeD/iLvdJvTsIuFkOz4dsJ5+y
-         m+fvV/ZG+DoZTfPqXkYhQc9HHSXf0lX5FWLdP504iH1yJIFVW+1I9dqJl5mXDKviAX/G
-         oAJoxQtGnx2W28VU4R97ST2ujG53HOBNuM/rva0fLGrRxiWw3iwSnU1GQlr0zQo2n8No
-         hKCg==
-X-Gm-Message-State: APt69E0jBtuoDNGQfcVchO9Cho1XYrRyc6nXEnGsJ1v7Qic94pyFkGLs
-        6RXnIYK0+i3iFOlTTaQWaqFN6wNp
-X-Google-Smtp-Source: AAOMgpdu2w2/xeo5VP7hTbwJTg/+h50C087nElDQes0+gm4NXs2veuRkoJQSneRnj5XB+fMjGZ7LOQ==
-X-Received: by 2002:a1c:180e:: with SMTP id 14-v6mr17748627wmy.120.1531302484685;
-        Wed, 11 Jul 2018 02:48:04 -0700 (PDT)
-Received: from cox.net ([192.19.248.250])
-        by smtp.gmail.com with ESMTPSA id z14-v6sm1359792wma.11.2018.07.11.02.48.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 02:48:03 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net] net: systemport: Fix CRC forwarding check for SYSTEMPORT Lite
-Date:   Wed, 11 Jul 2018 02:47:58 -0700
-Message-Id: <20180711094758.1670-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.14.1
+        Wed, 11 Jul 2018 05:53:41 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4A84760646; Wed, 11 Jul 2018 09:50:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531302612;
+        bh=xYzMEfG0L1Ma6G3aNz1odg+YFmjXsdXB/tMFht1pSdg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=mTiKccQ7eq54S75FJcqozdn1Fk9x8kDeaTZIBmDby3LGsmr4bnP25hFIjaFD30gGc
+         qTRnJzp9iUsljXBPbSL/TycS3Uhrkk5w2cC7Y5c/YkxBStmqjJ7N9mQKsLzKO75so6
+         pGK4REFWioaDy6VX9MAKO5E5wbRtEhrFUjXxi8ZQ=
+Received: from [10.206.24.162] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7BA586063F;
+        Wed, 11 Jul 2018 09:50:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531302611;
+        bh=xYzMEfG0L1Ma6G3aNz1odg+YFmjXsdXB/tMFht1pSdg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QVdRK9M58LMS3cviqXFXG8KF9C4rfOFOMjhH9QLn4IPOk3N3ptVL9HBfOdPgKIccP
+         W+lxKye7kWAPCLB5urBNo2nZUchd23BVXzSLucACxGAVuboIGPiTDjp0SKUh5IyMz8
+         qsZeLYnXjgwKxDic2Awzei5LijC97kIx4bYPtFa4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7BA586063F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+Subject: Re: [PATCH V5 2/2] scsi: ufs: Add configfs support for ufs
+ provisioning
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
+        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, asutoshd@codeaurora.org,
+        evgreen@chromium.org, riteshh@codeaurora.org,
+        linux-scsi@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+References: <1530858040-13971-1-git-send-email-sayalil@codeaurora.org>
+ <1530858040-13971-3-git-send-email-sayalil@codeaurora.org>
+ <20180708202136.GA1546@infradead.org>
+From:   Sayali Lokhande <sayalil@codeaurora.org>
+Message-ID: <4964583a-d13f-7b92-9838-e4398ec8c682@codeaurora.org>
+Date:   Wed, 11 Jul 2018 15:20:06 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180708202136.GA1546@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SYSTEMPORT Lite reversed the logic compared to SYSTEMPORT, the
-GIB_FCS_STRIP bit is set when the Ethernet FCS is stripped, and that bit
-is not set by default. Fix the logic such that we properly check whether
-that bit is set or not and we don't forward an extra 4 bytes to the
-network stack.
 
-Fixes: 44a4524c54af ("net: systemport: Add support for SYSTEMPORT Lite")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/net/ethernet/broadcom/bcmsysport.c | 4 ++--
- drivers/net/ethernet/broadcom/bcmsysport.h | 3 ++-
- 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
-index d5fca2e5a9bc..a1f60f89e059 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.c
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.c
-@@ -1946,8 +1946,8 @@ static int bcm_sysport_open(struct net_device *dev)
- 	if (!priv->is_lite)
- 		priv->crc_fwd = !!(umac_readl(priv, UMAC_CMD) & CMD_CRC_FWD);
- 	else
--		priv->crc_fwd = !!(gib_readl(priv, GIB_CONTROL) &
--				   GIB_FCS_STRIP);
-+		priv->crc_fwd = !((gib_readl(priv, GIB_CONTROL) &
-+				  GIB_FCS_STRIP) >> GIB_FCS_STRIP_SHIFT);
- 
- 	phydev = of_phy_connect(dev, priv->phy_dn, bcm_sysport_adj_link,
- 				0, priv->phy_interface);
-diff --git a/drivers/net/ethernet/broadcom/bcmsysport.h b/drivers/net/ethernet/broadcom/bcmsysport.h
-index d6e5d0cbf3a3..cf440b91fd04 100644
---- a/drivers/net/ethernet/broadcom/bcmsysport.h
-+++ b/drivers/net/ethernet/broadcom/bcmsysport.h
-@@ -278,7 +278,8 @@ struct bcm_rsb {
- #define  GIB_GTX_CLK_EXT_CLK		(0 << GIB_GTX_CLK_SEL_SHIFT)
- #define  GIB_GTX_CLK_125MHZ		(1 << GIB_GTX_CLK_SEL_SHIFT)
- #define  GIB_GTX_CLK_250MHZ		(2 << GIB_GTX_CLK_SEL_SHIFT)
--#define  GIB_FCS_STRIP			(1 << 6)
-+#define  GIB_FCS_STRIP_SHIFT		6
-+#define  GIB_FCS_STRIP			(1 << GIB_FCS_STRIP_SHIFT)
- #define  GIB_LCL_LOOP_EN		(1 << 7)
- #define  GIB_LCL_LOOP_TXEN		(1 << 8)
- #define  GIB_RMT_LOOP_EN		(1 << 9)
--- 
-2.14.1
-
+On 7/9/2018 1:51 AM, Christoph Hellwig wrote:
+> On Fri, Jul 06, 2018 at 11:50:40AM +0530, Sayali Lokhande wrote:
+>> This patch adds configfs support to provision ufs device at
+>> runtime. This feature can be primarily useful in factory or
+>> assembly line as some devices may be required to be configured
+>> multiple times during initial system development phase.
+>> Configuration Descriptors can be written multiple times until
+>> bConfigDescrLock attribute is zero.
+>>
+>> Configuration descriptor buffer consists of Device and Unit
+>> descriptor configurable parameters which are parsed from vendor
+>> specific provisioning file and then passed via configfs node at
+>> runtime to provision ufs device.
+>> CONFIG_CONFIGFS_FS needs to be enabled for using this feature.
+> As mentioned before:  this absolutely needs to be a separate
+> config option so that the code can be compiled out entirely.
+Agree. Will add separate config for UFS Provision and set it dependent 
+on CONFIGFS_FS
