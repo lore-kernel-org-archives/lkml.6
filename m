@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F05FC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EDF4C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF88320871
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:17:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF88320871
+	by mail.kernel.org (Postfix) with ESMTP id CEB04208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:17:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB04208EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388542AbeGKOVi (ORCPT
+        id S2388493AbeGKOVf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:21:38 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36932 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388477AbeGKOVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:21:37 -0400
+        Wed, 11 Jul 2018 10:21:35 -0400
+Received: from foss.arm.com ([217.140.101.70]:36916 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388398AbeGKOVe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:21:34 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FD5F19BF;
-        Wed, 11 Jul 2018 07:17:03 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7185F16A3;
+        Wed, 11 Jul 2018 07:17:00 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4C5D53F5B1;
-        Wed, 11 Jul 2018 07:17:02 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1DFF33F5B1;
+        Wed, 11 Jul 2018 07:16:58 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
         coresight@lists.linaro.org, robert.walker@arm.com,
         mike.leach@linaro.org, Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 6/6] coresight: etm-perf: Add support for ETR backend
-Date:   Wed, 11 Jul 2018 15:16:39 +0100
-Message-Id: <1531318599-8840-7-git-send-email-suzuki.poulose@arm.com>
+Subject: [PATCH 4/6] coresight: Convert driver messages to dev_dbg
+Date:   Wed, 11 Jul 2018 15:16:37 +0100
+Message-Id: <1531318599-8840-5-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531318599-8840-1-git-send-email-suzuki.poulose@arm.com>
 References: <1531318599-8840-1-git-send-email-suzuki.poulose@arm.com>
@@ -44,334 +44,298 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for using TMC-ETR as backend for ETM perf tracing.
-We use software double buffering at the moment. i.e, the TMC-ETR
-uses a separate buffer than the perf ring buffer. The data is
-copied to the perf ring buffer once a session completes.
-
-The TMC-ETR would try to match the larger of perf ring buffer
-or the ETR buffer size configured via sysfs, scaling down to
-a minimum limit of 1MB.
+Convert component enable/disable messages from dev_info to dev_dbg.
+When used with perf, the components in the paths are enabled/disabled
+during each schedule of the run, which can flood the dmesg with these
+messages. Moreover, they are only useful for debug purposes. So,
+convert such messages to dev_dbg() which can be turned on as
+needed.
 
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-tmc-etr.c | 265 +++++++++++++++++++++++-
- drivers/hwtracing/coresight/coresight-tmc.h     |   2 +
- 2 files changed, 265 insertions(+), 2 deletions(-)
+ drivers/hwtracing/coresight/coresight-dynamic-replicator.c | 4 ++--
+ drivers/hwtracing/coresight/coresight-etb10.c              | 6 +++---
+ drivers/hwtracing/coresight/coresight-etm3x.c              | 4 ++--
+ drivers/hwtracing/coresight/coresight-etm4x.c              | 4 ++--
+ drivers/hwtracing/coresight/coresight-funnel.c             | 4 ++--
+ drivers/hwtracing/coresight/coresight-replicator.c         | 4 ++--
+ drivers/hwtracing/coresight/coresight-stm.c                | 4 ++--
+ drivers/hwtracing/coresight/coresight-tmc-etf.c            | 8 ++++----
+ drivers/hwtracing/coresight/coresight-tmc-etr.c            | 4 ++--
+ drivers/hwtracing/coresight/coresight-tmc.c                | 4 ++--
+ drivers/hwtracing/coresight/coresight-tpiu.c               | 4 ++--
+ 11 files changed, 25 insertions(+), 25 deletions(-)
 
+diff --git a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
+index f6d0571..ebb8043 100644
+--- a/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-dynamic-replicator.c
+@@ -56,7 +56,7 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
+ 
+ 	CS_LOCK(drvdata->base);
+ 
+-	dev_info(drvdata->dev, "REPLICATOR enabled\n");
++	dev_dbg(drvdata->dev, "REPLICATOR enabled\n");
+ 	return 0;
+ }
+ 
+@@ -75,7 +75,7 @@ static void replicator_disable(struct coresight_device *csdev, int inport,
+ 
+ 	CS_LOCK(drvdata->base);
+ 
+-	dev_info(drvdata->dev, "REPLICATOR disabled\n");
++	dev_dbg(drvdata->dev, "REPLICATOR disabled\n");
+ }
+ 
+ static const struct coresight_ops_link replicator_link_ops = {
+diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
+index 306119e..73878a6 100644
+--- a/drivers/hwtracing/coresight/coresight-etb10.c
++++ b/drivers/hwtracing/coresight/coresight-etb10.c
+@@ -156,7 +156,7 @@ static int etb_enable(struct coresight_device *csdev, u32 mode)
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+ 
+ out:
+-	dev_info(drvdata->dev, "ETB enabled\n");
++	dev_dbg(drvdata->dev, "ETB enabled\n");
+ 	return 0;
+ }
+ 
+@@ -262,7 +262,7 @@ static void etb_disable(struct coresight_device *csdev)
+ 
+ 	local_set(&drvdata->mode, CS_MODE_DISABLED);
+ 
+-	dev_info(drvdata->dev, "ETB disabled\n");
++	dev_dbg(drvdata->dev, "ETB disabled\n");
+ }
+ 
+ static void *etb_alloc_buffer(struct coresight_device *csdev, int cpu,
+@@ -505,7 +505,7 @@ static void etb_dump(struct etb_drvdata *drvdata)
+ 	}
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+ 
+-	dev_info(drvdata->dev, "ETB dumped\n");
++	dev_dbg(drvdata->dev, "ETB dumped\n");
+ }
+ 
+ static int etb_open(struct inode *inode, struct file *file)
+diff --git a/drivers/hwtracing/coresight/coresight-etm3x.c b/drivers/hwtracing/coresight/coresight-etm3x.c
+index 7c74263..9ce8fba 100644
+--- a/drivers/hwtracing/coresight/coresight-etm3x.c
++++ b/drivers/hwtracing/coresight/coresight-etm3x.c
+@@ -501,7 +501,7 @@ static int etm_enable_sysfs(struct coresight_device *csdev)
+ 	drvdata->sticky_enable = true;
+ 	spin_unlock(&drvdata->spinlock);
+ 
+-	dev_info(drvdata->dev, "ETM tracing enabled\n");
++	dev_dbg(drvdata->dev, "ETM tracing enabled\n");
+ 	return 0;
+ 
+ err:
+@@ -604,7 +604,7 @@ static void etm_disable_sysfs(struct coresight_device *csdev)
+ 	spin_unlock(&drvdata->spinlock);
+ 	cpus_read_unlock();
+ 
+-	dev_info(drvdata->dev, "ETM tracing disabled\n");
++	dev_dbg(drvdata->dev, "ETM tracing disabled\n");
+ }
+ 
+ static void etm_disable(struct coresight_device *csdev,
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x.c b/drivers/hwtracing/coresight/coresight-etm4x.c
+index 1d94ebe..c1dcc7c 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x.c
+@@ -267,7 +267,7 @@ static int etm4_enable_sysfs(struct coresight_device *csdev)
+ 	drvdata->sticky_enable = true;
+ 	spin_unlock(&drvdata->spinlock);
+ 
+-	dev_info(drvdata->dev, "ETM tracing enabled\n");
++	dev_dbg(drvdata->dev, "ETM tracing enabled\n");
+ 	return 0;
+ 
+ err:
+@@ -380,7 +380,7 @@ static void etm4_disable_sysfs(struct coresight_device *csdev)
+ 	spin_unlock(&drvdata->spinlock);
+ 	cpus_read_unlock();
+ 
+-	dev_info(drvdata->dev, "ETM tracing disabled\n");
++	dev_dbg(drvdata->dev, "ETM tracing disabled\n");
+ }
+ 
+ static void etm4_disable(struct coresight_device *csdev,
+diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
+index 448145a..ee7a30b 100644
+--- a/drivers/hwtracing/coresight/coresight-funnel.c
++++ b/drivers/hwtracing/coresight/coresight-funnel.c
+@@ -65,7 +65,7 @@ static int funnel_enable(struct coresight_device *csdev, int inport,
+ 
+ 	funnel_enable_hw(drvdata, inport);
+ 
+-	dev_info(drvdata->dev, "FUNNEL inport %d enabled\n", inport);
++	dev_dbg(drvdata->dev, "FUNNEL inport %d enabled\n", inport);
+ 	return 0;
+ }
+ 
+@@ -89,7 +89,7 @@ static void funnel_disable(struct coresight_device *csdev, int inport,
+ 
+ 	funnel_disable_hw(drvdata, inport);
+ 
+-	dev_info(drvdata->dev, "FUNNEL inport %d disabled\n", inport);
++	dev_dbg(drvdata->dev, "FUNNEL inport %d disabled\n", inport);
+ }
+ 
+ static const struct coresight_ops_link funnel_link_ops = {
+diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
+index 8d2eaaa..feac983 100644
+--- a/drivers/hwtracing/coresight/coresight-replicator.c
++++ b/drivers/hwtracing/coresight/coresight-replicator.c
+@@ -35,7 +35,7 @@ static int replicator_enable(struct coresight_device *csdev, int inport,
+ {
+ 	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+-	dev_info(drvdata->dev, "REPLICATOR enabled\n");
++	dev_dbg(drvdata->dev, "REPLICATOR enabled\n");
+ 	return 0;
+ }
+ 
+@@ -44,7 +44,7 @@ static void replicator_disable(struct coresight_device *csdev, int inport,
+ {
+ 	struct replicator_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
+ 
+-	dev_info(drvdata->dev, "REPLICATOR disabled\n");
++	dev_dbg(drvdata->dev, "REPLICATOR disabled\n");
+ }
+ 
+ static const struct coresight_ops_link replicator_link_ops = {
+diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
+index c46c70a..35d6f97 100644
+--- a/drivers/hwtracing/coresight/coresight-stm.c
++++ b/drivers/hwtracing/coresight/coresight-stm.c
+@@ -211,7 +211,7 @@ static int stm_enable(struct coresight_device *csdev,
+ 	stm_enable_hw(drvdata);
+ 	spin_unlock(&drvdata->spinlock);
+ 
+-	dev_info(drvdata->dev, "STM tracing enabled\n");
++	dev_dbg(drvdata->dev, "STM tracing enabled\n");
+ 	return 0;
+ }
+ 
+@@ -274,7 +274,7 @@ static void stm_disable(struct coresight_device *csdev,
+ 		pm_runtime_put(drvdata->dev);
+ 
+ 		local_set(&drvdata->mode, CS_MODE_DISABLED);
+-		dev_info(drvdata->dev, "STM tracing disabled\n");
++		dev_dbg(drvdata->dev, "STM tracing disabled\n");
+ 	}
+ }
+ 
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+index 0549249..434003a 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+@@ -233,7 +233,7 @@ static int tmc_enable_etf_sink(struct coresight_device *csdev, u32 mode)
+ 	if (ret)
+ 		return ret;
+ 
+-	dev_info(drvdata->dev, "TMC-ETB/ETF enabled\n");
++	dev_dbg(drvdata->dev, "TMC-ETB/ETF enabled\n");
+ 	return 0;
+ }
+ 
+@@ -256,7 +256,7 @@ static void tmc_disable_etf_sink(struct coresight_device *csdev)
+ 
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+ 
+-	dev_info(drvdata->dev, "TMC-ETB/ETF disabled\n");
++	dev_dbg(drvdata->dev, "TMC-ETB/ETF disabled\n");
+ }
+ 
+ static int tmc_enable_etf_link(struct coresight_device *csdev,
+@@ -275,7 +275,7 @@ static int tmc_enable_etf_link(struct coresight_device *csdev,
+ 	drvdata->mode = CS_MODE_SYSFS;
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+ 
+-	dev_info(drvdata->dev, "TMC-ETF enabled\n");
++	dev_dbg(drvdata->dev, "TMC-ETF enabled\n");
+ 	return 0;
+ }
+ 
+@@ -295,7 +295,7 @@ static void tmc_disable_etf_link(struct coresight_device *csdev,
+ 	drvdata->mode = CS_MODE_DISABLED;
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+ 
+-	dev_info(drvdata->dev, "TMC-ETF disabled\n");
++	dev_dbg(drvdata->dev, "TMC-ETF disabled\n");
+ }
+ 
+ static void *tmc_alloc_etf_buffer(struct coresight_device *csdev, int cpu,
 diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index 20a0beb..af921da 100644
+index e54c8a4..20a0beb 100644
 --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
 +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -21,6 +21,28 @@ struct etr_flat_buf {
- };
+@@ -1098,7 +1098,7 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+ 		tmc_etr_free_sysfs_buf(free_buf);
  
- /*
-+ * etr_perf_buffer - Perf buffer used for ETR
-+ * @etr_buf		- Actual buffer used by the ETR
-+ * @snaphost		- Perf session mode
-+ * @head		- handle->head at the beginning of the session.
-+ * @nr_pages		- Number of pages in the ring buffer.
-+ * @pages		- Array of Pages in the ring buffer.
-+ */
-+struct etr_perf_buffer {
-+	struct etr_buf		*etr_buf;
-+	bool			snapshot;
-+	unsigned long		head;
-+	int			nr_pages;
-+	void			**pages;
-+};
-+
-+/* Convert the perf index to an offset within the ETR buffer */
-+#define PERF_IDX2OFF(idx, buf)	((idx) % ((buf)->nr_pages << PAGE_SHIFT))
-+
-+/* Lower limit for ETR hardware buffer */
-+#define TMC_ETR_PERF_MIN_BUF_SIZE	SZ_1M
-+
-+/*
-  * The TMC ETR SG has a page size of 4K. The SG table contains pointers
-  * to 4KB buffers. However, the OS may use a PAGE_SIZE different from
-  * 4K (i.e, 16KB or 64KB). This implies that a single OS page could
-@@ -1103,10 +1125,245 @@ static int tmc_enable_etr_sink_sysfs(struct coresight_device *csdev)
+ 	if (!ret)
+-		dev_info(drvdata->dev, "TMC-ETR enabled\n");
++		dev_dbg(drvdata->dev, "TMC-ETR enabled\n");
+ 
  	return ret;
  }
+@@ -1141,7 +1141,7 @@ static void tmc_disable_etr_sink(struct coresight_device *csdev)
  
-+/*
-+ * tmc_etr_setup_perf_buf: Allocate ETR buffer for use by perf.
-+ * The size of the hardware buffer is dependent on the size configured
-+ * via sysfs and the perf ring buffer size. We prefer to allocate the
-+ * largest possible size, scaling down the size by half until it
-+ * reaches a minimum limit (1M), beyond which we give up.
-+ */
-+static struct etr_perf_buffer *
-+tmc_etr_setup_perf_buf(struct tmc_drvdata *drvdata, int node, int nr_pages,
-+		       void **pages, bool snapshot)
-+{
-+	struct etr_buf *etr_buf;
-+	struct etr_perf_buffer *etr_perf;
-+	unsigned long size;
-+
-+	etr_perf = kzalloc_node(sizeof(*etr_perf), GFP_KERNEL, node);
-+	if (!etr_perf)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/*
-+	 * Try to match the perf ring buffer size if it is larger
-+	 * than the size requested via sysfs.
-+	 */
-+	if ((nr_pages << PAGE_SHIFT) > drvdata->size) {
-+		etr_buf = tmc_alloc_etr_buf(drvdata, (nr_pages << PAGE_SHIFT),
-+					    0, node, NULL);
-+		if (!IS_ERR(etr_buf))
-+		goto done;
-+	}
-+
-+	/*
-+	 * Else switch to configured size for this ETR
-+	 * and scale down until we hit the minimum limit.
-+	 */
-+	size = drvdata->size;
-+	do {
-+		etr_buf = tmc_alloc_etr_buf(drvdata, size, 0, node, NULL);
-+		if (!IS_ERR(etr_buf))
-+			goto done;
-+		size /= 2;
-+	} while (size >= TMC_ETR_PERF_MIN_BUF_SIZE);
-+
-+	kfree(etr_perf);
-+	return ERR_PTR(-ENOMEM);
-+
-+done:
-+	etr_perf->etr_buf = etr_buf;
-+	return etr_perf;
-+}
-+
-+
-+static void *tmc_etr_alloc_perf_buffer(struct coresight_device *csdev,
-+				       int cpu, void **pages, int nr_pages,
-+				       bool snapshot)
-+{
-+	struct etr_perf_buffer *etr_perf;
-+	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+
-+	if (cpu == -1)
-+		cpu = smp_processor_id();
-+
-+	etr_perf = tmc_etr_setup_perf_buf(drvdata, cpu_to_node(cpu),
-+					  nr_pages, pages, snapshot);
-+	if (IS_ERR(etr_perf)) {
-+		dev_dbg(drvdata->dev, "Unable to allocate ETR buffer\n");
-+		return NULL;
-+	}
-+
-+	etr_perf->snapshot = snapshot;
-+	etr_perf->nr_pages = nr_pages;
-+	etr_perf->pages = pages;
-+
-+	return etr_perf;
-+}
-+
-+static void tmc_etr_free_perf_buffer(void *config)
-+{
-+	struct etr_perf_buffer *etr_perf = config;
-+
-+	if (etr_perf->etr_buf)
-+		tmc_free_etr_buf(etr_perf->etr_buf);
-+	kfree(etr_perf);
-+}
-+
-+static int tmc_etr_set_perf_buffer(struct coresight_device *csdev,
-+				   struct perf_output_handle *handle,
-+				   void *config)
-+{
-+	int rc = 0;
-+	unsigned long flags;
-+	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	struct etr_perf_buffer *etr_perf = config;
-+
-+	etr_perf->head = handle->head;
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	if (WARN_ON(drvdata->perf_data))
-+		rc = -EBUSY;
-+	else
-+		drvdata->perf_data = etr_perf;
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+	return rc;
-+}
-+
-+/*
-+ * tmc_etr_sync_perf_buffer: Copy the actual trace data from the hardware
-+ * buffer to the perf ring buffer.
-+ */
-+static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
-+{
-+	long bytes, to_copy;
-+	long pg_idx, pg_offset, src_offset;
-+	unsigned long head = etr_perf->head;
-+	char **dst_pages, *src_buf;
-+	struct etr_buf *etr_buf = etr_perf->etr_buf;
-+
-+	head = PERF_IDX2OFF(etr_perf->head, etr_perf);
-+	pg_idx = head >> PAGE_SHIFT;
-+	pg_offset = head & (PAGE_SIZE - 1);
-+	dst_pages = (char **)etr_perf->pages;
-+	src_offset = etr_buf->offset;
-+	to_copy = etr_buf->len;
-+
-+	while (to_copy > 0) {
-+		/*
-+		 * We can copy minimum of :
-+		 *  1) what is available in the source buffer,
-+		 *  2) what is available in the source buffer, before it
-+		 *     wraps around.
-+		 *  3) what is available in the destination page.
-+		 * in one iteration.
-+		 */
-+		bytes = tmc_etr_buf_get_data(etr_buf, src_offset, to_copy,
-+					     &src_buf);
-+		if (WARN_ON_ONCE(bytes <= 0))
-+			break;
-+		bytes = min(bytes, (long)(PAGE_SIZE - pg_offset));
-+
-+		memcpy(dst_pages[pg_idx] + pg_offset, src_buf, bytes);
-+
-+		to_copy -= bytes;
-+
-+		/* Move destination pointers */
-+		pg_offset += bytes;
-+		if (pg_offset == PAGE_SIZE) {
-+			pg_offset = 0;
-+			if (++pg_idx == etr_perf->nr_pages)
-+				pg_idx = 0;
-+		}
-+
-+		/* Move source pointers */
-+		src_offset += bytes;
-+		if (src_offset >= etr_buf->size)
-+			src_offset -= etr_buf->size;
-+	}
-+}
-+
-+/*
-+ * tmc_etr_update_perf_buffer : Update the perf ring buffer with the
-+ * available trace data. We use software double buffering at the moment.
-+ *
-+ * TODO: Add support for reusing the perf ring buffer.
-+ */
-+static unsigned long
-+tmc_etr_update_perf_buffer(struct coresight_device *csdev,
-+			   struct perf_output_handle *handle,
-+			   void *config)
-+{
-+	bool lost = false;
-+	unsigned long flags, size = 0;
-+	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+	struct etr_perf_buffer *etr_perf = config;
-+	struct etr_buf *etr_buf = etr_perf->etr_buf;
-+
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	if (WARN_ON(drvdata->perf_data != etr_perf)) {
-+		lost = true;
-+		spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+		goto out;
-+	}
-+
-+	CS_UNLOCK(drvdata->base);
-+
-+	tmc_flush_and_stop(drvdata);
-+	tmc_sync_etr_buf(drvdata);
-+
-+	CS_UNLOCK(drvdata->base);
-+	/* Reset perf specific data */
-+	drvdata->perf_data = NULL;
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+
-+	size = etr_buf->len;
-+	tmc_etr_sync_perf_buffer(etr_perf);
-+
-+	/*
-+	 * Update handle->head in snapshot mode. Also update the size to the
-+	 * hardware buffer size if there was an overflow.
-+	 */
-+	if (etr_perf->snapshot) {
-+		handle->head += size;
-+		if (etr_buf->full)
-+			size = etr_buf->size;
-+	}
-+
-+	lost |= etr_buf->full;
-+out:
-+	if (lost)
-+		perf_aux_output_flag(handle, PERF_AUX_FLAG_TRUNCATED);
-+	return size;
-+}
-+
- static int tmc_enable_etr_sink_perf(struct coresight_device *csdev)
- {
--	/* We don't support perf mode yet ! */
--	return -EINVAL;
-+	int rc = 0;
-+	unsigned long flags;
-+	struct etr_perf_buffer *etr_perf;
-+	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
-+
-+	spin_lock_irqsave(&drvdata->spinlock, flags);
-+	/*
-+	 * There can be only one writer per sink in perf mode. If the sink
-+	 * is already open in SYSFS mode, we can't use it.
-+	 */
-+	if (drvdata->mode != CS_MODE_DISABLED) {
-+		rc = -EBUSY;
-+		goto unlock_out;
-+	}
-+
-+	etr_perf = drvdata->perf_data;
-+	if (WARN_ON(!etr_perf || !etr_perf->etr_buf)) {
-+		rc = -EINVAL;
-+		goto unlock_out;
-+	}
-+
-+	drvdata->mode = CS_MODE_PERF;
-+	tmc_etr_enable_hw(drvdata, etr_perf->etr_buf);
-+
-+unlock_out:
-+	spin_unlock_irqrestore(&drvdata->spinlock, flags);
-+	return rc;
+ 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
+ 
+-	dev_info(drvdata->dev, "TMC-ETR disabled\n");
++	dev_dbg(drvdata->dev, "TMC-ETR disabled\n");
  }
  
- static int tmc_enable_etr_sink(struct coresight_device *csdev, u32 mode)
-@@ -1147,6 +1404,10 @@ static void tmc_disable_etr_sink(struct coresight_device *csdev)
  static const struct coresight_ops_sink tmc_etr_sink_ops = {
- 	.enable		= tmc_enable_etr_sink,
- 	.disable	= tmc_disable_etr_sink,
-+	.alloc_buffer	= tmc_etr_alloc_perf_buffer,
-+	.update_buffer	= tmc_etr_update_perf_buffer,
-+	.set_buffer	= tmc_etr_set_perf_buffer,
-+	.free_buffer	= tmc_etr_free_perf_buffer,
- };
+diff --git a/drivers/hwtracing/coresight/coresight-tmc.c b/drivers/hwtracing/coresight/coresight-tmc.c
+index 1b817ec..ea249f0 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc.c
++++ b/drivers/hwtracing/coresight/coresight-tmc.c
+@@ -81,7 +81,7 @@ static int tmc_read_prepare(struct tmc_drvdata *drvdata)
+ 	}
  
- const struct coresight_ops tmc_etr_cs_ops = {
-diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-index 872f63e..487c537 100644
---- a/drivers/hwtracing/coresight/coresight-tmc.h
-+++ b/drivers/hwtracing/coresight/coresight-tmc.h
-@@ -170,6 +170,7 @@ struct etr_buf {
-  * @trigger_cntr: amount of words to store after a trigger.
-  * @etr_caps:	Bitmask of capabilities of the TMC ETR, inferred from the
-  *		device configuration register (DEVID)
-+ * @perf_data:	PERF buffer for ETR.
-  * @sysfs_data:	SYSFS buffer for ETR.
-  */
- struct tmc_drvdata {
-@@ -191,6 +192,7 @@ struct tmc_drvdata {
- 	u32			trigger_cntr;
- 	u32			etr_caps;
- 	struct etr_buf		*sysfs_buf;
-+	void			*perf_data;
- };
+ 	if (!ret)
+-		dev_info(drvdata->dev, "TMC read start\n");
++		dev_dbg(drvdata->dev, "TMC read start\n");
  
- struct etr_buf_operations {
+ 	return ret;
+ }
+@@ -103,7 +103,7 @@ static int tmc_read_unprepare(struct tmc_drvdata *drvdata)
+ 	}
+ 
+ 	if (!ret)
+-		dev_info(drvdata->dev, "TMC read end\n");
++		dev_dbg(drvdata->dev, "TMC read end\n");
+ 
+ 	return ret;
+ }
+diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
+index 01b7457..7daeb084 100644
+--- a/drivers/hwtracing/coresight/coresight-tpiu.c
++++ b/drivers/hwtracing/coresight/coresight-tpiu.c
+@@ -73,7 +73,7 @@ static int tpiu_enable(struct coresight_device *csdev, u32 mode)
+ 
+ 	tpiu_enable_hw(drvdata);
+ 
+-	dev_info(drvdata->dev, "TPIU enabled\n");
++	dev_dbg(drvdata->dev, "TPIU enabled\n");
+ 	return 0;
+ }
+ 
+@@ -99,7 +99,7 @@ static void tpiu_disable(struct coresight_device *csdev)
+ 
+ 	tpiu_disable_hw(drvdata);
+ 
+-	dev_info(drvdata->dev, "TPIU disabled\n");
++	dev_dbg(drvdata->dev, "TPIU disabled\n");
+ }
+ 
+ static const struct coresight_ops_sink tpiu_sink_ops = {
 -- 
 2.7.4
 
