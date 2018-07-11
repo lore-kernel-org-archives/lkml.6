@@ -2,76 +2,123 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C10A3C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E553C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:06:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AC10208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:06:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fepgWUoB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AC10208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CA6FE20B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:06:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA6FE20B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387554AbeGKNKf (ORCPT
+        id S2387762AbeGKNLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:10:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45026 "EHLO mail.kernel.org"
+        Wed, 11 Jul 2018 09:11:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732420AbeGKNKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:10:34 -0400
-Received: from dragon (unknown [45.56.152.98])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        id S1732420AbeGKNLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:11:08 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE3C520883;
-        Wed, 11 Jul 2018 13:06:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531314379;
-        bh=FKrBwaf1p1HB6lp8gsCNHGiQareVgfRal/+baTn8+Go=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fepgWUoBsh/VjEYmIWZSpOXVdXDBMRKgF9EyMZIrFneAvm4Znd0VAWFhf+077sl7L
-         Egdd7/f41JabaBYYvTv/W0y11Ce0Q9S7PvgubnjeY1Fk9KtqLKg2+tgyrZ9vBUo33Q
-         7FrmLdR1oD3uUtEj3Hd79w1MkeKzVwADTQAnnGkc=
-Date:   Wed, 11 Jul 2018 21:05:44 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Bai Ping <ping.bai@nxp.com>, Anson Huang <Anson.Huang@nxp.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: imx: call imx6sx_cpuidle_init() conditionally for
- 6sll
-Message-ID: <20180711130543.GI6959@dragon>
-References: <20180709155130.2126597-1-arnd@arndb.de>
+        by mail.kernel.org (Postfix) with ESMTPSA id D78082089B;
+        Wed, 11 Jul 2018 13:06:50 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 09:06:49 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180711090649.68af40f9@gandalf.local.home>
+In-Reply-To: <20180711125647.GG2476@hirez.programming.kicks-ass.net>
+References: <20180628182149.226164-1-joel@joelfernandes.org>
+        <20180628182149.226164-5-joel@joelfernandes.org>
+        <20180711125647.GG2476@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180709155130.2126597-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 05:51:17PM +0200, Arnd Bergmann wrote:
-> The imx6sl platform has two different cpuidle implementations,
-> and fails to link if we only want one of the two:
-> 
-> arch/arm/mach-imx/mach-imx6sl.o: In function `imx6sl_init_late':
-> mach-imx6sl.c:(.init.text+0x12): undefined reference to `imx6sx_cpuidle_init'
-> 
-> This makes the call into reference conditional on the configuration.
-> 
-> Fixes: e7fa1fb39b11 ("ARM: imx: add cpu idle support for i.MX6SLL")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I had already sent a related patch earlier, but missed this second
-> problem then.
+On Wed, 11 Jul 2018 14:56:47 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Applied both, thanks.
+> On Thu, Jun 28, 2018 at 11:21:46AM -0700, Joel Fernandes wrote:
+> >  static inline void tracepoint_synchronize_unregister(void)
+> >  {
+> > +	synchronize_srcu(&tracepoint_srcu);
+> >  	synchronize_sched();
+> >  }  
+> 
+> Given you below do call_rcu_sched() and then call_srcu(), isn't the
+> above the wrong way around?
+
+Good catch!
+
+	release_probes()
+		call_rcu_sched()
+			---> rcu_free_old_probes() queued
+
+	tracepoint_synchronize_unregister()
+		synchronize_srcu(&tracepoint_srcu);
+			< finishes right away >
+		synchronize_sched()
+			--> rcu_free_old_probes()
+				--> srcu_free_old_probes() queued
+	
+Here tracepoint_synchronize_unregister() returned before the srcu
+portion ran.
+
+
+> 
+> Also, does the above want to be barrier instead of synchronize, so as to
+> guarantee completion of the callbacks.
+
+Not sure what you mean here.
+
+-- Steve
+
+> 
+> > +static void srcu_free_old_probes(struct rcu_head *head)
+> >  {
+> >  	kfree(container_of(head, struct tp_probes, rcu));
+> >  }
+> >  
+> > +static void rcu_free_old_probes(struct rcu_head *head)
+> > +{
+> > +	call_srcu(&tracepoint_srcu, head, srcu_free_old_probes);
+> > +}
+> > +
+> >  static inline void release_probes(struct tracepoint_func *old)
+> >  {
+> >  	if (old) {
+> >  		struct tp_probes *tp_probes = container_of(old,
+> >  			struct tp_probes, probes[0]);
+> > +		/*
+> > +		 * Tracepoint probes are protected by both sched RCU and SRCU,
+> > +		 * by calling the SRCU callback in the sched RCU callback we
+> > +		 * cover both cases. So let us chain the SRCU and sched RCU
+> > +		 * callbacks to wait for both grace periods.
+> > +		 */
+> >  		call_rcu_sched(&tp_probes->rcu, rcu_free_old_probes);
+> >  	}
+> >  }  
+
