@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A08DC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E146C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5076D208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 03AFA208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="ADc8m9FP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5076D208FA
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="KfJeW5hD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03AFA208FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733245AbeGKLfm (ORCPT
+        id S1732996AbeGKLeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:35:42 -0400
-Received: from 8bytes.org ([81.169.241.247]:37770 "EHLO theia.8bytes.org"
+        Wed, 11 Jul 2018 07:34:09 -0400
+Received: from 8bytes.org ([81.169.241.247]:37802 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732982AbeGKLeK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:34:10 -0400
+        id S1732754AbeGKLeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:34:08 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 103E6AA4; Wed, 11 Jul 2018 13:30:04 +0200 (CEST)
+        id 76D2AA96; Wed, 11 Jul 2018 13:30:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308606; bh=yLmhHW0HJjSKO5FWNE0Mj6MD7/zIRvh/dOclstvAtpE=;
+        t=1531308605; bh=48FBcw49wasOWCwH8N3EK5w1EL7mm104AhYjmxHQeP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ADc8m9FPUU7TC/Tk5YLBsyXYPzqPHCaBPp3E/gImIsWIWsHatJqoGz8igl0/WZsvk
-         6m7u+75J5lB4oZNfd8KDmrnm4fbxtclGJle8uwfRHX2uxpvOyXuYz2P17HW79Fa7Al
-         E1Zktq0zCkrTgGUk+Tc4HeNPa2SXNdyc+Qg+lCEidJdhunHfxZ5AJZUxc4c3D0EEpT
-         x8a5BUFlcXspMVAH9j/HOLznDKPB9s511C1vIZ3G0hDOCulUpOR92lQdADdA3nokNo
-         6qkXM2Mmk1vpp+qwq5VpcX+orq4dHkl7ablq6Y66ETvYVOnckMYDGDwvDMrFOsEo2v
-         dg2NvpsFZ3gjg==
+        b=KfJeW5hDKT7/C0YgavPyjFwVxsz1FtHUIseocuccPONPqhFDNO/07dvP5XgUQJFAF
+         XllvsDt4ExWuliArFKKumHJP9OEdFf7G3E80o0RjAFGurKWdsL2zliZY+bUNTChN6M
+         MeXaucRwEkKGhY9w0bEtNEVjnC0yrBNImR2xziD+wv4iHggWQLRUgexy2qr7z8qeXS
+         XYHoOl33nhFFnLYIsKv70TDv3JfMAEJpfydAGukdI2BiFvxy+Np0Ag4ayQmogsCSyJ
+         CZaw2q2AI92Bht304iTWa0YhFKC0yeTxCxVfUPj81lFHElR047Am/tFLYJsU0F9ph4
+         CoVZiqIwTCW7A==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 27/39] x86/mm/pti: Make pti_clone_kernel_text() compile on 32 bit
-Date:   Wed, 11 Jul 2018 13:29:34 +0200
-Message-Id: <1531308586-29340-28-git-send-email-joro@8bytes.org>
+Subject: [PATCH 26/39] x86/mm/pti: Clone CPU_ENTRY_AREA on PMD level on x86_32
+Date:   Wed, 11 Jul 2018 13:29:33 +0200
+Message-Id: <1531308586-29340-27-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
@@ -72,92 +72,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-The pti_clone_kernel_text() function references
-__end_rodata_hpage_align, which is only present on x86-64.
-This makes sense as the end of the rodata section is not
-huge-page aligned on 32 bit.
-
-Nevertheless we need a symbol for the function that points
-at the right address for both 32 and 64 bit. Introduce
-__end_rodata_aligned for that purpose and use it in
-pti_clone_kernel_text().
+Cloning on the P4D level would clone the complete kernel
+address space into the user-space page-tables for PAE
+kernels. Cloning on PMD level is fine for PAE and legacy
+paging.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/sections.h |  1 +
- arch/x86/kernel/vmlinux.lds.S   | 17 ++++++++++-------
- arch/x86/mm/pti.c               |  2 +-
- 3 files changed, 12 insertions(+), 8 deletions(-)
+ arch/x86/mm/pti.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/arch/x86/include/asm/sections.h b/arch/x86/include/asm/sections.h
-index 5c019d2..4a911a3 100644
---- a/arch/x86/include/asm/sections.h
-+++ b/arch/x86/include/asm/sections.h
-@@ -7,6 +7,7 @@
- 
- extern char __brk_base[], __brk_limit[];
- extern struct exception_table_entry __stop___ex_table[];
-+extern char __end_rodata_aligned[];
- 
- #if defined(CONFIG_X86_64)
- extern char __end_rodata_hpage_align[];
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 5e1458f..8bde0a4 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -55,19 +55,22 @@ jiffies_64 = jiffies;
-  * so we can enable protection checks as well as retain 2MB large page
-  * mappings for kernel text.
-  */
--#define X64_ALIGN_RODATA_BEGIN	. = ALIGN(HPAGE_SIZE);
-+#define X86_ALIGN_RODATA_BEGIN	. = ALIGN(HPAGE_SIZE);
- 
--#define X64_ALIGN_RODATA_END					\
-+#define X86_ALIGN_RODATA_END					\
- 		. = ALIGN(HPAGE_SIZE);				\
--		__end_rodata_hpage_align = .;
-+		__end_rodata_hpage_align = .;			\
-+		__end_rodata_aligned = .;
- 
- #define ALIGN_ENTRY_TEXT_BEGIN	. = ALIGN(PMD_SIZE);
- #define ALIGN_ENTRY_TEXT_END	. = ALIGN(PMD_SIZE);
- 
- #else
- 
--#define X64_ALIGN_RODATA_BEGIN
--#define X64_ALIGN_RODATA_END
-+#define X86_ALIGN_RODATA_BEGIN
-+#define X86_ALIGN_RODATA_END					\
-+		. = ALIGN(PAGE_SIZE);				\
-+		__end_rodata_aligned = .;
- 
- #define ALIGN_ENTRY_TEXT_BEGIN
- #define ALIGN_ENTRY_TEXT_END
-@@ -141,9 +144,9 @@ SECTIONS
- 
- 	/* .text should occupy whole number of pages */
- 	. = ALIGN(PAGE_SIZE);
--	X64_ALIGN_RODATA_BEGIN
-+	X86_ALIGN_RODATA_BEGIN
- 	RO_DATA(PAGE_SIZE)
--	X64_ALIGN_RODATA_END
-+	X86_ALIGN_RODATA_END
- 
- 	/* Data */
- 	.data : AT(ADDR(.data) - LOAD_OFFSET) {
 diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
-index 2eadab0..4f6e933 100644
+index dc02fd4..2eadab0 100644
 --- a/arch/x86/mm/pti.c
 +++ b/arch/x86/mm/pti.c
-@@ -470,7 +470,7 @@ void pti_clone_kernel_text(void)
- 	 * clone the areas past rodata, they might contain secrets.
- 	 */
- 	unsigned long start = PFN_ALIGN(_text);
--	unsigned long end = (unsigned long)__end_rodata_hpage_align;
-+	unsigned long end = (unsigned long)__end_rodata_aligned;
+@@ -348,6 +348,7 @@ pti_clone_pmds(unsigned long start, unsigned long end, pmdval_t clear)
+ 	}
+ }
  
- 	if (!pti_kernel_image_global_ok())
- 		return;
++#ifdef CONFIG_X86_64
+ /*
+  * Clone a single p4d (i.e. a top-level entry on 4-level systems and a
+  * next-level entry on 5-level systems.
+@@ -371,6 +372,25 @@ static void __init pti_clone_user_shared(void)
+ 	pti_clone_p4d(CPU_ENTRY_AREA_BASE);
+ }
+ 
++#else /* CONFIG_X86_64 */
++
++/*
++ * On 32 bit PAE systems with 1GB of Kernel address space there is only
++ * one pgd/p4d for the whole kernel. Cloning that would map the whole
++ * address space into the user page-tables, making PTI useless. So clone
++ * the page-table on the PMD level to prevent that.
++ */
++static void __init pti_clone_user_shared(void)
++{
++	unsigned long start, end;
++
++	start = CPU_ENTRY_AREA_BASE;
++	end   = start + (PAGE_SIZE * CPU_ENTRY_AREA_PAGES);
++
++	pti_clone_pmds(start, end, 0);
++}
++#endif /* CONFIG_X86_64 */
++
+ /*
+  * Clone the ESPFIX P4D into the user space visible page table
+  */
 -- 
 2.7.4
 
