@@ -2,176 +2,208 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URG_BIZ,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8B6C1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:12:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F15C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3057220C0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:12:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dLUES0qX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3057220C0B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 736E620C0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:15:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 736E620C0B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390003AbeGKUSx (ORCPT
+        id S2390028AbeGKUVo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:18:53 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:39640 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389095AbeGKUSx (ORCPT
+        Wed, 11 Jul 2018 16:21:44 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48740 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1733103AbeGKUVo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:18:53 -0400
-Received: by mail-oi0-f65.google.com with SMTP id d189-v6so51563482oib.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:12:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=o2RNXyovajhJYRkkTUKGJHhBx9H2zREocUDLtG2A8qI=;
-        b=dLUES0qXarbU9XK/i+LM8W/2H/9jCKNFZP9MAqmVWDLSwyu4um11wCw36af/1JgnEH
-         eiDnW0HC3epPHmioALa5Q4XPZJxX/1OtcVQTZgIQK7/s6WdSjxfaZqIrjDcHE0i0xBZ+
-         r1yjj+lI+6d7B8wkXmHUzGREQ99JdPXHFP/5A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=o2RNXyovajhJYRkkTUKGJHhBx9H2zREocUDLtG2A8qI=;
-        b=gQbYqrm9tp7nDmjWyklEa+6cHET9o6A6Jv3sHuLbN5xH317jcQRH3ZuG4eRIXwIiZA
-         6TrTCe06Mgj+NbPiZQATcnMW0SlxZHf2SWDO6nvlYictmobpK/EAOxAp3XpF8FnMgW5A
-         Vew9iQseCik7qWJY2oI5VjxqdKcb8wv9mftbzDx7e4XPsaNwGk6mot90GS3LDx09nXI9
-         s25cXYRCQIN2AI0zZK53m9C0pRhp6yrKZ1KjSbw9zdENWPzyCyiQSDbUi3UBPwwYnJHf
-         1lXhbyrDRSoyJztZfYPDQNJ2xczMkEGierXhfY8KmB80fdcLyMLijZtfZ89m67aZxFAi
-         lEIA==
-X-Gm-Message-State: AOUpUlFAo96Q78XhZdcalav5Ihrp0QmyPtm0olSToVBTG3oblUGk7Mgh
-        9imyOfLqpno5a1ZoRAjBv8i6+A==
-X-Google-Smtp-Source: AAOMgpdEJCrMnIzdv88bUzPTfeJ2OBEc7HfYca7XbMwrGgDrCewJcsptSFkhmuQgv8x2oHP9rWFz2g==
-X-Received: by 2002:aca:5003:: with SMTP id e3-v6mr104513oib.89.1531339974218;
-        Wed, 11 Jul 2018 13:12:54 -0700 (PDT)
-Received: from localhost ([2600:3c00::f03c:91ff:fefc:c793])
-        by smtp.gmail.com with ESMTPSA id h9-v6sm18708542oic.1.2018.07.11.13.12.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 13:12:53 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 20:12:52 +0000
-From:   Dan Rue <dan.rue@linaro.org>
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 4.9 00/52] 4.9.112-stable review
-Message-ID: <20180711201252.jhkojtuvscwpqsb2@linode.therub.org>
-References: <20180710182449.285532226@linuxfoundation.org>
- <CA+G9fYuXPJ3v9ua3UiN9ydF=WoxBj7qE2mcxaHZVyooMYk51MA@mail.gmail.com>
+        Wed, 11 Jul 2018 16:21:44 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BK8cRd011265
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 16:15:45 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5mmraa51-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 16:15:45 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 11 Jul 2018 16:15:43 -0400
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Jul 2018 16:15:41 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BKFeh810289482
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Jul 2018 20:15:40 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D9CDCB205F;
+        Wed, 11 Jul 2018 16:15:39 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9902B2068;
+        Wed, 11 Jul 2018 16:15:39 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Jul 2018 16:15:39 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D136116C3B6A; Wed, 11 Jul 2018 13:17:59 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 13:17:59 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1531168538.26547.5.camel@infradead.org>
+ <20180709204248.GF3593@linux.vnet.ibm.com>
+ <1531169145.26547.8.camel@infradead.org>
+ <20180709210532.GH3593@linux.vnet.ibm.com>
+ <20180709220823.GA18045@linux.vnet.ibm.com>
+ <1531319025.8759.57.camel@infradead.org>
+ <20180711144303.GQ3593@linux.vnet.ibm.com>
+ <20180711164952.GA29994@linux.vnet.ibm.com>
+ <e21c6d7666bfbad1e1c8295559a6ddc7e4110105.camel@infradead.org>
+ <9ee4d6fd-02e2-2c73-36a7-36ef4f6413b0@de.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+G9fYuXPJ3v9ua3UiN9ydF=WoxBj7qE2mcxaHZVyooMYk51MA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <9ee4d6fd-02e2-2c73-36a7-36ef4f6413b0@de.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071120-0072-0000-0000-0000037E7BD4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009352; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01059931; UDB=6.00544026; IPR=6.00837851;
+ MB=3.00022106; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 20:15:43
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071120-0073-0000-0000-000048ADD351
+Message-Id: <20180711201759.GB3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807110213
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 04:47:35PM +0530, Naresh Kamboju wrote:
-> On 10 July 2018 at 23:54, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > This is the start of the stable review cycle for the 4.9.112 release.
-> > There are 52 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu Jul 12 18:24:30 UTC 2018.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.112-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Wed, Jul 11, 2018 at 08:31:55PM +0200, Christian Borntraeger wrote:
+> So why is the rcu_virt_note_context_switch(smp_processor_id());
+> in guest_enter_irqoff not good enough? 
 > 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm and x86_64.
+> This was actually supposed to tell rcu that being in the guest
+> is an extended quiescing period (like userspace).
+> 
+> What has changed?
 
-Additionally, I've verified that "ethtool --phy-statistics eth0" no
-longer causes a NULL pointer dereference as a result of patch "net: phy:
-micrel: fix crash when statistic requested for KSZ9031 phy"
+As I understand it, they would like to have their guest run uninterrupted
+for extended times.  Because rcu_virt_note_context_switch() is a
+point-in-time quiescent state, it cannot tell RCU about the extended
+quiescent state.
 
-https://bugs.linaro.org/show_bug.cgi?id=3762
+Should we replace the current calls to rcu_virt_note_context_switch()
+with rcu_kvm_enter() and rcu_kvm_exit()?  Would that be better
+than the below architecture-by-architecture approach?
 
-Dan
+							Thanx, Paul
 
-> 
-> Summary
-> ------------------------------------------------------------------------
-> 
-> kernel: 4.9.112-rc1
-> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> git branch: linux-4.9.y
-> git commit: 74d7eea2e72c5481ba8b578cfa663c117ab7f23b
-> git describe: v4.9.111-53-g74d7eea2e72c
-> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.9-oe/build/v4.9.111-53-g74d7eea2e72c
-> 
-> 
-> No regressions (compared to build v4.9.111-52-g0d73d5427339)
-> 
-> 
-> Ran 16283 total tests in the following environments and test suites.
-> 
-> Environments
-> --------------
-> - dragonboard-410c - arm64
-> - hi6220-hikey - arm64
-> - juno-r2 - arm64
-> - qemu_arm
-> - qemu_arm64
-> - qemu_x86_64
-> - x15 - arm
-> - x86_64
-> 
-> Test Suites
-> -----------
-> * boot
-> * kselftest
-> * libhugetlbfs
-> * ltp-cap_bounds-tests
-> * ltp-containers-tests
-> * ltp-cve-tests
-> * ltp-fcntl-locktests-tests
-> * ltp-filecaps-tests
-> * ltp-fs-tests
-> * ltp-fs_bind-tests
-> * ltp-fs_perms_simple-tests
-> * ltp-fsx-tests
-> * ltp-hugetlb-tests
-> * ltp-io-tests
-> * ltp-ipc-tests
-> * ltp-math-tests
-> * ltp-nptl-tests
-> * ltp-pty-tests
-> * ltp-sched-tests
-> * ltp-securebits-tests
-> * ltp-syscalls-tests
-> * ltp-timers-tests
-> * ltp-open-posix-tests
-> * kselftest-vsyscall-mode-native
-> * kselftest-vsyscall-mode-none
-> 
-> -- 
-> Linaro LKFT
-> https://lkft.linaro.org
+> On 07/11/2018 07:03 PM, David Woodhouse wrote:
+> > On Wed, 2018-07-11 at 09:49 -0700, Paul E. McKenney wrote:
+> >> And here is an updated v4.15 patch with Marius's Reported-by and David's
+> >> fix to my lost exclamation point.
+> > 
+> > Thanks. Are you sending the original version of that to Linus? It'd be
+> > useful to have the commit ID so that we can watch for it landing, and
+> > chase this one up to Greg.
+> > 
+> > As discussed on IRC, this patch reduces synchronize_sched() latency for
+> > us from ~4600s to ~160ms, which is nice.
+> > 
+> > However, it isn't going to be sufficient in the NO_HZ_FULL case. For
+> > that you want a patch like the one below, which happily reduces the
+> > latency in our (!NO_HZ_FULL) case still further to ~40ms.
+> > 
+> > Adding kvm list for better review...
+> > 
+> > From: David Woodhouse <dwmw@amazon.co.uk>
+> > Subject: [PATCH] kvm/x86: Inform RCU of quiescent state when entering guest mode
+> > 
+> > RCU can spend long periods of time waiting for a CPU which is actually in
+> > KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
+> > modes, and don't wait for it.
+> > 
+> > Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> > ---
+> >  arch/x86/kvm/x86.c      |  2 ++
+> >  include/linux/rcutree.h |  2 ++
+> >  kernel/rcu/tree.c       | 16 ++++++++++++++++
+> >  3 files changed, 20 insertions(+)
+> > 
+> > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > index 0046aa70205a..b0c82f70afa7 100644
+> > --- a/arch/x86/kvm/x86.c
+> > +++ b/arch/x86/kvm/x86.c
+> > @@ -7458,7 +7458,9 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+> >  		vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_RELOAD;
+> >  	}
+> > 
+> > +	rcu_kvm_enter();
+> >  	kvm_x86_ops->run(vcpu);
+> > +	rcu_kvm_exit();
+> > 
+> >  	/*
+> >  	 * Do this here before restoring debug registers on the host.  And
+> > diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
+> > index 914655848ef6..6d07af5a50fc 100644
+> > --- a/include/linux/rcutree.h
+> > +++ b/include/linux/rcutree.h
+> > @@ -82,6 +82,8 @@ void cond_synchronize_sched(unsigned long oldstate);
+> > 
+> >  void rcu_idle_enter(void);
+> >  void rcu_idle_exit(void);
+> > +void rcu_kvm_enter(void);
+> > +void rcu_kvm_exit(void);
+> >  void rcu_irq_enter(void);
+> >  void rcu_irq_exit(void);
+> >  void rcu_irq_enter_irqson(void);
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index aa7cade1b9f3..df7893273939 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -1019,6 +1019,22 @@ void rcu_irq_enter_irqson(void)
+> >  	local_irq_restore(flags);
+> >  }
+> > 
+> > +/*
+> > + * These are currently identical to the _idle_ versions but let's
+> > + * explicitly have separate copies to keep Paul honest in future.
+> > + */
+> > +void rcu_kvm_enter(void)
+> > +{
+> > +	rcu_idle_enter();
+> > +}
+> > +EXPORT_SYMBOL_GPL(rcu_kvm_enter);
+> > +
+> > +void rcu_kvm_exit(void)
+> > +{
+> > +	rcu_idle_exit();
+> > +}
+> > +EXPORT_SYMBOL_GPL(rcu_kvm_exit);
+> > +
+> >  /**
+> >   * rcu_is_watching - see if RCU thinks that the current CPU is idle
+> >   *
+> > 
+
