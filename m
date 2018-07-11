@@ -2,101 +2,369 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E938C38A24
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0A7C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F246520C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CE5B2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:43:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="CwmUnUF6";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i6GJDPoD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F246520C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFrT2mfS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CE5B2146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388336AbeGKUqZ (ORCPT
+        id S1733024AbeGKUuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:46:25 -0400
-Received: from mail-yw0-f193.google.com ([209.85.161.193]:39107 "EHLO
-        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388065AbeGKUqY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:46:24 -0400
-Received: by mail-yw0-f193.google.com with SMTP id r184-v6so4292803ywg.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:40:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=ZWoXq84yc8740yqKuwyM4w8PxMWYeQjSfFe+f8Ci3XY=;
-        b=CwmUnUF64zcSw7oWQpP1hgA+fHBcLsFEg4YGXcIMKVRIhPpg8ThelIxaRn3lgfeiC5
-         +xsle5RiBU+pTYphECU/pBBDLL/CDahMjgUEAnzR1dkSNZZbT5B9bkcDbS77uMgPMUAI
-         K1G0YPE/+imhrYm2Fgt8dcyTjNJLIDln85VJ1AwLcEE3v1nUCTWoqTWVOTCyJJ4ci2Ap
-         eVeBDoSvBTBv2/5na/x1jiGtLlW0LEjnZoDNyPJolbHFP7gSnMvcJ0BnMwJBYopwYm9v
-         rXq001xGCLrTHkavn3VsMSl7K+GJbBh+eQCBKAFAHEibmiC9a2ysg6cFQtkHD8cqroGD
-         j9ag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=ZWoXq84yc8740yqKuwyM4w8PxMWYeQjSfFe+f8Ci3XY=;
-        b=i6GJDPoDCNI/MFon+KRh20wpgxJNApXanbnfL+u3nCJLg+1vYSRnUd6kEgbq8xMvvt
-         I5G1K9xR9IUbEG5iH8BUC8bSAFz8Bjyg/tb7F/E4ffXWKxFosSg2Fn5g21uC+r8EnCLM
-         1Ogf9aky3LbFU5Pr8txOBL1+EQ7AOlsbEsvbc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=ZWoXq84yc8740yqKuwyM4w8PxMWYeQjSfFe+f8Ci3XY=;
-        b=Pqg+Xu8ohr+pcvrgEC524ixHQibmqv5WtvDFMw5eo9A7at3C8auoLv0wlB/H/91lyn
-         N6TwxlQcAKGZ3tk/q18BVJ9oJx+3/xtLy6aREPwfQqIrtassXw+7fU9GUTQZJsaJbjSA
-         JX0KuIdzy1alMLO38zC4XW5foHCVZbzPFkIsraHrhcDrmi+klbcf4iT4YgzKh3yALfjw
-         O3tdiPrm8iiREZx8lI/YriBW5xTHeWmNfaR/t1iNxuV5PXPn+csghj4x9wCCUACeqVS9
-         zmx73i7vWPHwTuqaB1e6pUePhlg4F+suubtSQl3U1xGedIYJdQ6SCWqQm/7ifemiegRr
-         yIag==
-X-Gm-Message-State: AOUpUlEMaNkBZyEEZZXfBpZnG2RZYPVJZdmof9/ovWv7ZBCR3kQTNof+
-        PBYnSZjUDQJlSpsZbe1DIBbYg1Mv1VOqyc6xM7PMTQ==
-X-Google-Smtp-Source: AAOMgpe4YkuRFNSVjlZ0uKbFPB7sWbUH7rX+dhzIvhY8is12SCKo8ww35jB/uK9yliXvZuGJ+1L96Zw+qimdqpkvDDM=
-X-Received: by 2002:a81:3b04:: with SMTP id i4-v6mr99601ywa.38.1531341619307;
- Wed, 11 Jul 2018 13:40:19 -0700 (PDT)
+        Wed, 11 Jul 2018 16:50:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37258 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726453AbeGKUuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 16:50:00 -0400
+Received: from jouet.localdomain (unknown [71.46.56.59])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D98020C0C;
+        Wed, 11 Jul 2018 20:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531341833;
+        bh=WTMpQH1Cpkg4uAaiMLdMnxn+Qmzye7K7atnhsCLyOm0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jFrT2mfSN0Smp9hTQx1r7k1XO6BTQ63EXcx720dbSVN79ythf442ObRTGimdTWPaN
+         dr4DxHsvCE7yW85oL6342ffhm5X4pfTKztfrKEvb80J5VLdkkQyAcoqK0NsgQQTBq9
+         234QyvEY3+7lerIY1c5QMjKk58CuZf7XNC0dryIc=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Herton Krzesinski <herton@redhat.com>,
+        Janne Huttunen <janne.huttunen@nokia.com>,
+        Jaroslav Skarvada <jskarvad@redhat.com>,
+        Jeremy Cline <jcline@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [GIT PULL 00/14] perf/urgent fixes
+Date:   Wed, 11 Jul 2018 16:42:51 -0400
+Message-Id: <20180711204305.12924-1-acme@kernel.org>
+X-Mailer: git-send-email 2.14.4
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 13:40:18
- -0700 (PDT)
-In-Reply-To: <79334C7E-6E76-4B5C-9A32-C6DA40D8E88E@linaro.org>
-References: <20180627035642.8561-1-nicolas.pitre@linaro.org>
- <20180627035642.8561-2-nicolas.pitre@linaro.org> <CAGXu5j+KLvJ-n_QRrfq15E8iO_rqfpp+K7PDAZHZMHcemy9y7g@mail.gmail.com>
- <79334C7E-6E76-4B5C-9A32-C6DA40D8E88E@linaro.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 11 Jul 2018 13:40:18 -0700
-X-Google-Sender-Auth: Rhc3jKHvSyD34SSpLSiIiyjYJF8
-Message-ID: <CAGXu5jKfHOmDHAO726KTNP4CY_Q=g7HN3zy2hqUA5ZBZMu=Vhg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] vt: preserve unicode values corresponding to
- screen characters
-To:     Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dave Mielke <Dave@mielke.cc>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-console@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 8:39 PM, Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
-> I am on vacation away from an actual keyboard until next week. Will look at it then.
+Hi Ingo,
 
-Awesome; thanks!
+	Please consider pulling,
 
--Kees
+- Arnaldo
 
--- 
-Kees Cook
-Pixel Security
+Test results at the end of this message, as usual.
+
+The following changes since commit 092150a25cb7bd6a79aa00bb1ad131063f58073d:
+
+  Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid (2018-07-09 17:16:11 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.18-20180711
+
+for you to fetch changes up to 32aa928a7b817140c84987b726d5014911808fa4:
+
+  perf tools: Use python-config --includes rather than --cflags (2018-07-11 09:48:31 -0400)
+
+----------------------------------------------------------------
+perf/urgent fixes:
+
+python interface:
+
+- Make 'perf script -g python' generate scripts that are compatible
+  with both python 2 and 3 (Jeremy Cline)
+
+- Fix python dictionary reference counting (Janne Huttunen)
+
+- Add python3 support for various python scripts (Jeremy Cline)
+
+- Use python-config --includes rather than --cflags, fixing the build
+  on Fedora, where the python 3.7 started adding -flto to what
+
+perf stat:
+
+  - Remove needless extra header line in --interval_clear (Jiri Olsa)
+  python-config --cflags generate, breaking the perf build (Jeremy Cline)
+
+Build:
+
+- Fix compilation errors on gcc8 (Jiri Olsa)
+
+perf llvm-utils:
+
+- Remove bashism from kernel include fetch script (Kim Phillips)
+
+perf test: (Kim Phillips)
+
+- Replace '|&' with '2>&1 |' to work with more shells
+
+- Make perf's inet_pton test more portable
+
+- Prevent temporary editor files from being considered test scripts
+
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+
+----------------------------------------------------------------
+Janne Huttunen (1):
+      perf script python: Fix dict reference counting
+
+Jeremy Cline (7):
+      perf tools: Generate a Python script compatible with Python 2 and 3
+      perf scripts python: Add Python 3 support to Core.py
+      perf scripts python: Add Python 3 support to SchedGui.py
+      perf scripts python: Add Python 3 support to Util.py
+      perf scripts python: Add Python 3 support to sched-migration.py
+      perf scripts python: Add Python 3 support to EventClass.py
+      perf tools: Use python-config --includes rather than --cflags
+
+Jiri Olsa (2):
+      perf tools: Fix compilation errors on gcc8
+      perf stat: Fix --interval_clear option
+
+Kim Phillips (4):
+      perf test shell: Replace '|&' with '2>&1 |' to work with more shells
+      perf test shell: Make perf's inet_pton test more portable
+      perf llvm-utils: Remove bashism from kernel include fetch script
+      perf test shell: Prevent temporary editor files from being considered test scripts
+
+ tools/perf/Makefile.config                         |  3 +-
+ tools/perf/arch/x86/util/perf_regs.c               |  2 +-
+ tools/perf/builtin-stat.c                          |  2 +-
+ tools/perf/jvmti/jvmti_agent.c                     |  3 +-
+ .../python/Perf-Trace-Util/lib/Perf/Trace/Core.py  | 40 +++++++++-------------
+ .../Perf-Trace-Util/lib/Perf/Trace/EventClass.py   |  4 ++-
+ .../Perf-Trace-Util/lib/Perf/Trace/SchedGui.py     |  2 +-
+ .../python/Perf-Trace-Util/lib/Perf/Trace/Util.py  | 11 +++---
+ tools/perf/scripts/python/sched-migration.py       | 14 +++++---
+ tools/perf/tests/builtin-test.c                    |  2 +-
+ .../tests/shell/record+probe_libc_inet_pton.sh     | 37 +++++++++++---------
+ tools/perf/tests/shell/trace+probe_vfs_getname.sh  |  2 +-
+ tools/perf/util/llvm-utils.c                       |  6 ++--
+ .../util/scripting-engines/trace-event-python.c    | 37 +++++++++-----------
+ 14 files changed, 84 insertions(+), 81 deletions(-)
+
+Test results:
+
+The first ones are container (docker) based builds of tools/perf with
+and without libelf support.  Where clang is available, it is also used
+to build perf with/without libelf, and building with LIBCLANGLLVM=1
+(built-in clang) with gcc and clang when clang and its devel libraries
+are installed.
+
+The objtool and samples/bpf/ builds are disabled now that I'm switching from
+using the sources in a local volume to fetching them from a http server to
+build it inside the container, to make it easier to build in a container cluster.
+Those will come back later.
+
+Several are cross builds, the ones with -x-ARCH and the android one, and those
+may not have all the features built, due to lack of multi-arch devel packages,
+available and being used so far on just a few, like
+debian:experimental-x-{arm64,mipsel}.
+
+The 'perf test' one will perform a variety of tests exercising
+tools/perf/util/, tools/lib/{bpf,traceevent,etc}, as well as run perf commands
+with a variety of command line event specifications to then intercept the
+sys_perf_event syscall to check that the perf_event_attr fields are set up as
+expected, among a variety of other unit tests.
+
+Then there is the 'make -C tools/perf build-test' ones, that build tools/perf/
+with a variety of feature sets, exercising the build with an incomplete set of
+features as well as with a complete one. It is planned to have it run on each
+of the containers mentioned above, using some container orchestration
+infrastructure. Get in contact if interested in helping having this in place.
+
+  # dm
+   1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
+   2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
+   3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
+   4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+   5 alpine:edge                   : Ok   gcc (Alpine 6.4.0) 6.4.0
+   6 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-11)
+   7 amazonlinux:2                 : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+   8 android-ndk:r12b-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+   9 android-ndk:r15c-arm          : Ok   arm-linux-androideabi-gcc (GCC) 4.9.x 20150123 (prerelease)
+  10 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+  11 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-18)
+  12 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28)
+  13 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
+  14 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u1) 4.9.2
+  15 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+  16 debian:experimental           : Ok   gcc (Debian 7.3.0-15) 7.3.0
+  17 debian:experimental-x-arm64   : Ok   aarch64-linux-gnu-gcc (Debian 7.3.0-15) 7.3.0
+  18 debian:experimental-x-mips    : Ok   mips-linux-gnu-gcc (Debian 7.3.0-19) 7.3.0
+  19 debian:experimental-x-mips64  : Ok   mips64-linux-gnuabi64-gcc (Debian 7.3.0-18) 7.3.0
+  20 debian:experimental-x-mipsel  : Ok   mipsel-linux-gnu-gcc (Debian 7.3.0-20) 7.3.0
+  21 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
+  22 fedora:21                     : Ok   gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
+  23 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  24 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  25 fedora:24                     : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
+  26 fedora:24-x-ARC-uClibc        : Ok   arc-linux-gcc (ARCompact ISA Linux uClibc toolchain 2017.09-rc2) 7.1.1 20170710
+  27 fedora:25                     : Ok   gcc (GCC) 6.4.1 20170727 (Red Hat 6.4.1-1)
+  28 fedora:26                     : Ok   gcc (GCC) 7.3.1 20180130 (Red Hat 7.3.1-2)
+  29 fedora:27                     : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+  <disneyland NMI>
+
+  # git log --oneline -1
+  32aa928a7b81 (HEAD -> perf/urgent, acme.korg/perf/urgent) perf tools: Use python-config --includes rather than --cflags
+  # perf version --build-options
+  perf version 4.18.rc4.g32aa92
+                   dwarf: [ on  ]  # HAVE_DWARF_SUPPORT
+      dwarf_getlocations: [ on  ]  # HAVE_DWARF_GETLOCATIONS_SUPPORT
+                   glibc: [ on  ]  # HAVE_GLIBC_SUPPORT
+                    gtk2: [ on  ]  # HAVE_GTK2_SUPPORT
+           syscall_table: [ on  ]  # HAVE_SYSCALL_TABLE_SUPPORT
+                  libbfd: [ on  ]  # HAVE_LIBBFD_SUPPORT
+                  libelf: [ on  ]  # HAVE_LIBELF_SUPPORT
+                 libnuma: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+  numa_num_possible_cpus: [ on  ]  # HAVE_LIBNUMA_SUPPORT
+                 libperl: [ on  ]  # HAVE_LIBPERL_SUPPORT
+               libpython: [ on  ]  # HAVE_LIBPYTHON_SUPPORT
+                libslang: [ on  ]  # HAVE_SLANG_SUPPORT
+               libcrypto: [ on  ]  # HAVE_LIBCRYPTO_SUPPORT
+               libunwind: [ on  ]  # HAVE_LIBUNWIND_SUPPORT
+      libdw-dwarf-unwind: [ on  ]  # HAVE_DWARF_SUPPORT
+                    zlib: [ on  ]  # HAVE_ZLIB_SUPPORT
+                    lzma: [ on  ]  # HAVE_LZMA_SUPPORT
+               get_cpuid: [ on  ]  # HAVE_AUXTRACE_SUPPORT
+                     bpf: [ on  ]  # HAVE_LIBBPF_SUPPORT
+  # uname -a
+  Linux jouet 4.18.0-rc4-00054-ga74aa9676c02 #5 SMP Wed Jul 11 14:05:26 EDT 2018 x86_64 x86_64 x86_64 GNU/Linux
+  # perf test
+   1: vmlinux symtab matches kallsyms                       : Ok
+   2: Detect openat syscall event                           : Ok
+   3: Detect openat syscall event on all cpus               : Ok
+   4: Read samples using the mmap interface                 : Ok
+   5: Test data source output                               : Ok
+   6: Parse event definition strings                        : Ok
+   7: Simple expression parser                              : Ok
+   8: PERF_RECORD_* events & perf_sample fields             : Ok
+   9: Parse perf pmu format                                 : Ok
+  10: DSO data read                                         : Ok
+  11: DSO data cache                                        : Ok
+  12: DSO data reopen                                       : Ok
+  13: Roundtrip evsel->name                                 : Ok
+  14: Parse sched tracepoints fields                        : Ok
+  15: syscalls:sys_enter_openat event fields                : Ok
+  16: Setup struct perf_event_attr                          : Ok
+  17: Match and link multiple hists                         : Ok
+  18: 'import perf' in python                               : Ok
+  19: Breakpoint overflow signal handler                    : Ok
+  20: Breakpoint overflow sampling                          : Ok
+  21: Breakpoint accounting                                 : Ok
+  22: Number of exit events of a simple workload            : Ok
+  23: Software clock events period values                   : Ok
+  24: Object code reading                                   : Ok
+  25: Sample parsing                                        : Ok
+  26: Use a dummy software event to keep tracking           : Ok
+  27: Parse with no sample_id_all bit set                   : Ok
+  28: Filter hist entries                                   : Ok
+  29: Lookup mmap thread                                    : Ok
+  30: Share thread mg                                       : Ok
+  31: Sort output of hist entries                           : Ok
+  32: Cumulate child hist entries                           : Ok
+  33: Track with sched_switch                               : Ok
+  34: Filter fds with revents mask in a fdarray             : Ok
+  35: Add fd to a fdarray, making it autogrow               : Ok
+  36: kmod_path__parse                                      : Ok
+  37: Thread map                                            : Ok
+  38: LLVM search and compile                               :
+  38.1: Basic BPF llvm compile                              : Ok
+  38.2: kbuild searching                                    : Ok
+  38.3: Compile source for BPF prologue generation          : Ok
+  38.4: Compile source for BPF relocation                   : Ok
+  39: Session topology                                      : Ok
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : Ok
+  41: Synthesize thread map                                 : Ok
+  42: Remove thread map                                     : Ok
+  43: Synthesize cpu map                                    : Ok
+  44: Synthesize stat config                                : Ok
+  45: Synthesize stat                                       : Ok
+  46: Synthesize stat round                                 : Ok
+  47: Synthesize attr update                                : Ok
+  48: Event times                                           : Ok
+  49: Read backward ring buffer                             : Ok
+  50: Print cpu map                                         : Ok
+  51: Probe SDT events                                      : Ok
+  52: is_printable_array                                    : Ok
+  53: Print bitmap                                          : Ok
+  54: perf hooks                                            : Ok
+  55: builtin clang support                                 : Skip (not compiled in)
+  56: unit_number__scnprintf                                : Ok
+  57: mem2node                                              : Ok
+  58: x86 rdpmc                                             : Ok
+  59: Convert perf time to TSC                              : Ok
+  60: DWARF unwind                                          : Ok
+  61: x86 instruction decoder - new instructions            : Ok
+  62: Use vfs_getname probe to get syscall args filenames   : Ok
+  63: Check open filename arg using perf trace + vfs_getname: Ok
+  64: probe libc's inet_pton & backtrace it with ping       : Ok
+  65: Add vfs_getname probe to get syscall args filenames   : Ok
+  #
+
+  $ make -C tools/perf build-test
+  make: Entering directory '/home/acme/git/perf/tools/perf'
+  - tarpkg: ./tests/perf-targz-src-pkg .
+                  make_no_ui_O: make NO_NEWT=1 NO_SLANG=1 NO_GTK2=1
+              make_clean_all_O: make clean all
+                 make_perf_o_O: make perf.o
+                make_no_gtk2_O: make NO_GTK2=1
+            make_no_demangle_O: make NO_DEMANGLE=1
+                   make_help_O: make help
+                    make_doc_O: make doc
+  make_no_libdw_dwarf_unwind_O: make NO_LIBDW_DWARF_UNWIND=1
+                 make_static_O: make LDFLAGS=-static
+             make_util_map_o_O: make util/map.o
+           make_no_libunwind_O: make NO_LIBUNWIND=1
+                make_minimal_O: make NO_LIBPERL=1 NO_LIBPYTHON=1 NO_NEWT=1 NO_GTK2=1 NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1 NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1 NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1 NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1
+        make_with_babeltrace_O: make LIBBABELTRACE=1
+             make_no_libperl_O: make NO_LIBPERL=1
+       make_util_pmu_bison_o_O: make util/pmu-bison.o
+            make_no_auxtrace_O: make NO_AUXTRACE=1
+           make_no_backtrace_O: make NO_BACKTRACE=1
+           make_no_libpython_O: make NO_LIBPYTHON=1
+                   make_pure_O: make
+            make_no_libaudit_O: make NO_LIBAUDIT=1
+   make_install_prefix_slash_O: make install prefix=/tmp/krava/
+         make_with_clangllvm_O: make LIBCLANGLLVM=1
+             make_no_scripts_O: make NO_LIBPYTHON=1 NO_LIBPERL=1
+           make_no_libbionic_O: make NO_LIBBIONIC=1
+         make_install_prefix_O: make install prefix=/tmp/krava
+                   make_tags_O: make tags
+               make_no_slang_O: make NO_SLANG=1
+                make_install_O: make install
+             make_no_libnuma_O: make NO_LIBNUMA=1
+              make_no_libbpf_O: make NO_LIBBPF=1
+              make_no_libelf_O: make NO_LIBELF=1
+            make_install_bin_O: make install-bin
+                  make_debug_O: make DEBUG=1
+                make_no_newt_O: make NO_NEWT=1
+  OK
+  make: Leaving directory '/home/acme/git/perf/tools/perf'
+  $
