@@ -6,63 +6,62 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89381C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF2DC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E3062083C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:40:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A56912083C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tcv2EhEE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E3062083C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BWjg/fqT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A56912083C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732693AbeGKJoY (ORCPT
+        id S1732708AbeGKJoZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:44:24 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45399 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732649AbeGKJoX (ORCPT
+        Wed, 11 Jul 2018 05:44:25 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35790 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732628AbeGKJoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:44:23 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c4-v6so4782333wrs.12
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 02:40:56 -0700 (PDT)
+        Wed, 11 Jul 2018 05:44:24 -0400
+Received: by mail-wm0-f66.google.com with SMTP id v3-v6so1840740wmh.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 02:40:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZqeNzGml4afcm1ZwxUqSeHEL0c5jVKB8hlqShvm+ZHg=;
-        b=Tcv2EhEEOtrXUYNV09XvwqVSoCBg//nX/8XAtsntwXu2BZ5E53pgKDFOOvodUN+Vz9
-         2NuIHbzOFyrs+i9vTuaSGUqbHHNtOKZgRKPzxhSYO/fpXlvM4emXy7+wvOkUbPXle5Yk
-         92f3gmWOfPyoc8YAcxPJG5Qvwj/ksOzSIKXQU=
+        bh=semFZDZ5nZhcHHAbVFoDCVNYOqmDtPeCRsqInWmd32A=;
+        b=BWjg/fqTgl5cNpg7yim7h3iQMkc7YJV61kg5WOiBg59yZZtM5yxShPo9dWI5gdVMD3
+         2PIpjqvI9zVgj/I4osdj8UDv5ayb9uYhnRhy631Lam2Mlw/9V3SQWlF7R0B4f1E4+iNU
+         a0AxXPVMWUvChd3jRy3/0Tnq3yXEEBFqN/Ui0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZqeNzGml4afcm1ZwxUqSeHEL0c5jVKB8hlqShvm+ZHg=;
-        b=YO3iaIW1qQzs7WLZNRHOVssDQLjqMarJ6iA6xHZn2Xhyab17USfX3yPYK7gCo42vIv
-         sNX3slAEXZCFLF6roHhOe0R6/p01FxqfDjERfJnV0jDP4Nud3zS68q4GjTDazfXByicA
-         u7Myls9+HQHBz64pJlhL8ToFYXWAIj6jxvFl8b0qWMg1v0yFMJZTl/Pt0XlbdNKG4Kko
-         BvWZddheu9uL5E6Bd5ZSvoSZZ6VTABYjgdT+GRqDIvx33QXmnArzUcnxeVqJFFaloPYE
-         EILDYCBX9ddF9RZAxGSdF3dt/FKZrbUrgoN3irdnw0ZHGcZ8S4kBLcYi6CaLBzu2GqGM
-         /e8w==
-X-Gm-Message-State: APt69E0I4NhoX0nb3K2LwhlrFV3LsdKuAme2Gw674T+2sXv5A8Tl815l
-        Db7h+ZQnI2upcxCk8gr2XTMFFg==
-X-Google-Smtp-Source: AAOMgpcix3T3m2Rxv/kztTN1hnToysdho8LMD2P1JF7T6isIC1HUIJRHG+is4/or4PAxZnb56KdMoA==
-X-Received: by 2002:adf:c321:: with SMTP id n30-v6mr19899750wrf.235.1531302055747;
-        Wed, 11 Jul 2018 02:40:55 -0700 (PDT)
+        bh=semFZDZ5nZhcHHAbVFoDCVNYOqmDtPeCRsqInWmd32A=;
+        b=nFYFjxLdvXGcikh6rM7C0QQmGeVTT8OdkppEHSbSqa/iz+A4QqqRRmkMsYnbDzwkd+
+         sM0JrF3lxiYzZSswaYwnd5A/XRV7AH6SmxN9lXs+950yosE3lHCiHkrO9Uf7OmpEQ1Zb
+         t7FVcV1jISz9Z0nAI26Jtz8ReUDdC9kVjzR6MP+NM9VqbeK2wewlFpmuN9aGy91JYUj9
+         SYFoNBaBbMKqIvIgqM79PmHVJAS+adGEs9wc98XXD1vOvPidZln/O6E73Sm2AYKc4zgl
+         dhoC56p9tKrn4kluOwI5Aeojb4LwqmqEqH15T8ZJUPD7Shu2kqmj2bpW4pUhW50qmT/X
+         bCFw==
+X-Gm-Message-State: APt69E3Y7DB/H3LP9y7MR1mW3DGIp1SFSqFjcPA/Flm4zB78rgvX1w7n
+        XiRFFmVdVVilEYNCCWpMvb1ozw==
+X-Google-Smtp-Source: AAOMgpfnfdBlM5yNiNwu4p7issa9/cBTEAczXbFsmq0+dVu6I/45sqD8+4klO/9vQSBwGZZLfuhtaQ==
+X-Received: by 2002:a1c:8d0a:: with SMTP id p10-v6mr17760280wmd.121.1531302056988;
+        Wed, 11 Jul 2018 02:40:56 -0700 (PDT)
 Received: from localhost.localdomain (33.153.69.91.rev.sfr.net. [91.69.153.33])
-        by smtp.gmail.com with ESMTPSA id t124-v6sm1641311wmt.29.2018.07.11.02.40.54
+        by smtp.gmail.com with ESMTPSA id t124-v6sm1641311wmt.29.2018.07.11.02.40.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 02:40:55 -0700 (PDT)
+        Wed, 11 Jul 2018 02:40:56 -0700 (PDT)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 5/8] efi: Remove the declaration of efi_late_init() as the function is unused
-Date:   Wed, 11 Jul 2018 11:40:37 +0200
-Message-Id: <20180711094040.12506-6-ard.biesheuvel@linaro.org>
+Subject: [PATCH 6/8] efi/libstub/arm: add opt-in Kconfig option for the DTB loader
+Date:   Wed, 11 Jul 2018 11:40:38 +0200
+Message-Id: <20180711094040.12506-7-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
 References: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
@@ -71,38 +70,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+There are various ways a platform can provide a device tree binary
+to the kernel, with different levels of sophistication:
+- ideally, the UEFI firmware, which is tightly coupled with the
+  platform, provides a device tree image directly as a UEFI
+  configuration table, and typically permits the contents to be
+  manipulated either via menu options or via UEFI environment
+  variables that specify a replacement image,
+- GRUB for ARM has a 'devicetree' directive which allows a device
+  tree image to be loaded from any location accessible to GRUB, and
+  supersede the one provided by the firmware,
+- the EFI stub implements a dtb= command line option that allows a
+  device tree image to be loaded from a file residing in the same
+  file system as the one the kernel image was loaded from.
 
-Commit 7b0a911478c74 (efi/x86: Move the EFI BGRT init code to early
-init code), removed the implementation and all the references to
-efi_late_init() but the function is still declared at
-include/linux/efi.h. Hence, remove the unnecessary declaration.
+The dtb= command line option was never intended to be more than a
+development feature, to allow the other options to be implemented
+in parallel. So let's make it an opt-in feature that is disabled
+by default, but can be re-enabled at will.
 
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Note that we already disable the dtb= command line option when we
+detect that we are running with UEFI Secure Boot enabled.
+
+Acked-by: Leif Lindholm <leif.lindholm@linaro.org>
+Reviewed-by: Alexander Graf <agraf@suse.de>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- include/linux/efi.h | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/firmware/efi/Kconfig            | 12 ++++++++++++
+ drivers/firmware/efi/libstub/arm-stub.c |  7 ++++---
+ 2 files changed, 16 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 8ba0cdd244b2..e190652f5ef9 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -988,14 +988,12 @@ extern void efi_memmap_walk (efi_freemem_callback_t callback, void *arg);
- extern void efi_gettimeofday (struct timespec64 *ts);
- extern void efi_enter_virtual_mode (void);	/* switch EFI to virtual mode, if possible */
- #ifdef CONFIG_X86
--extern void efi_late_init(void);
- extern void efi_free_boot_services(void);
- extern efi_status_t efi_query_variable_store(u32 attributes,
- 					     unsigned long size,
- 					     bool nonblocking);
- extern void efi_find_mirror(void);
- #else
--static inline void efi_late_init(void) {}
- static inline void efi_free_boot_services(void) {}
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index 781a4a337557..fc1cb2961d5b 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -87,6 +87,18 @@ config EFI_RUNTIME_WRAPPERS
+ config EFI_ARMSTUB
+ 	bool
  
- static inline efi_status_t efi_query_variable_store(u32 attributes,
++config EFI_ARMSTUB_DTB_LOADER
++	bool "Enable the DTB loader"
++	depends on EFI_ARMSTUB
++	help
++	  Select this config option to add support for the dtb= command
++	  line parameter, allowing a device tree blob to be loaded into
++	  memory from the EFI System Partition by the stub.
++
++	  The device tree is typically provided by the platform or by
++	  the bootloader, and so this option is mostly for development
++	  purposes only.
++
+ config EFI_BOOTLOADER_CONTROL
+ 	tristate "EFI Bootloader Control"
+ 	depends on EFI_VARS
+diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
+index 01a9d78ee415..c98b1856fc3d 100644
+--- a/drivers/firmware/efi/libstub/arm-stub.c
++++ b/drivers/firmware/efi/libstub/arm-stub.c
+@@ -202,9 +202,10 @@ unsigned long efi_entry(void *handle, efi_system_table_t *sys_table,
+ 	 * 'dtb=' unless UEFI Secure Boot is disabled.  We assume that secure
+ 	 * boot is enabled if we can't determine its state.
+ 	 */
+-	if (secure_boot != efi_secureboot_mode_disabled &&
+-	    strstr(cmdline_ptr, "dtb=")) {
+-		pr_efi(sys_table, "Ignoring DTB from command line.\n");
++	if (!IS_ENABLED(CONFIG_EFI_ARMSTUB_DTB_LOADER) ||
++	     secure_boot != efi_secureboot_mode_disabled) {
++		if (strstr(cmdline_ptr, "dtb="))
++			pr_efi(sys_table, "Ignoring DTB from command line.\n");
+ 	} else {
+ 		status = handle_cmdline_files(sys_table, image, cmdline_ptr,
+ 					      "dtb=",
 -- 
 2.17.1
 
