@@ -2,106 +2,89 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C43C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9644CC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52FA52083B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:35:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52FA52083B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 51DDC2083B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:35:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="agZY1h8Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51DDC2083B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732341AbeGKJi1 convert rfc822-to-8bit (ORCPT
+        id S1732438AbeGKJim (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:38:27 -0400
-Received: from mailoutvs33.siol.net ([185.57.226.224]:54626 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726398AbeGKJi1 (ORCPT
+        Wed, 11 Jul 2018 05:38:42 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:59842 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726398AbeGKJim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:38:27 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 4219E520FEF;
-        Wed, 11 Jul 2018 11:35:00 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta10.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta10.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id JxrsA1_UPdJZ; Wed, 11 Jul 2018 11:34:59 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id B461752244E;
-        Wed, 11 Jul 2018 11:34:59 +0200 (CEST)
-Received: from jernej-laptop.localnet (unknown [194.152.15.144])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id A0A4D52220D;
-        Wed, 11 Jul 2018 11:34:58 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     linux-sunxi@googlegroups.com, maxime.ripard@bootlin.com
-Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [linux-sunxi] Re: [PATCH v2 00/18] Allwinner R40 HDMI refactoring
-Date:   Wed, 11 Jul 2018 11:34:58 +0200
-Message-ID: <5673885.I9ZBC4zXdg@jernej-laptop>
-In-Reply-To: <20180711093016.bcnsnogbj26azoo7@flea>
-References: <20180710203511.18454-1-jernej.skrabec@siol.net> <2406320.TaIT7vHipu@jernej-laptop> <20180711093016.bcnsnogbj26azoo7@flea>
+        Wed, 11 Jul 2018 05:38:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=utJM/LzBZcFvCZM3dDV5mmkdS8IegMSfa7Oy6S75sZk=; b=agZY1h8Y0E2xDsnyLpUAyq/7F
+        T6zEIQbDfQ83QQvavRckZrFj2L2dzW7CZNN4MuLOUOr+FAYsAo+cDIGHgM8v0SmEfaLvOpMoWMyZL
+        0EQf1ww6oklr6qgZh7yV+8/YusN9dKbTDQA2j0qjbxcDW5hF+j8h1RoK9Us2qN8YH2mLp/Q/KFiQL
+        uvRDtC59Mh/vPs+24+afBsY+Ujy/YYCw21LXYVu5jU4nWGzhyO5l/GApWFgNqVrc55NPL9mbJMs1o
+        kfdLEFGZ1YxiOgtoqLvJfNLEIa8gr8GgkFrAjkZB9Hd3XwTPKoFXh1GmbAOnoMCG7AFWWkiDKe0rm
+        y1pn5U8Iw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdBWS-0006DI-LJ; Wed, 11 Jul 2018 09:34:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1C84F20291063; Wed, 11 Jul 2018 11:34:54 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 11:34:54 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v2 17/27] x86/cet/shstk: User-mode shadow stack
+ support
+Message-ID: <20180711093454.GX2476@hirez.programming.kicks-ass.net>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-18-yu-cheng.yu@intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180710222639.8241-18-yu-cheng.yu@intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne sreda, 11. julij 2018 ob 11:30:16 CEST je Maxime Ripard napisal(a):
-> On Wed, Jul 11, 2018 at 10:41:54AM +0200, Jernej Škrabec wrote:
-> > Dne sreda, 11. julij 2018 ob 10:30:36 CEST je Maxime Ripard napisal(a):
-> > > On Tue, Jul 10, 2018 at 10:34:53PM +0200, Jernej Skrabec wrote:
-> > > > This series fixes several issues found in R40 HDMI patch series after
-> > > > it was applied. Conversation can be found here:
-> > > > http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/586011
-> > > > .htm
-> > > > l
-> > > > 
-> > > > Patches are based on latest linux-next (next-20180710) and are ordered
-> > > > in such way that they don't break R40 HDMI at any time. Because of
-> > > > that
-> > > > I suggest that whole series goes through drm-misc to preserve that
-> > > > order.
-> > > > 
-> > > > I also tested those patches on H3 to make sure it doesn't break other
-> > > > platforms. However, it would be nice to test for regressions also on
-> > > > older SoCs (with DE1).
-> > > > 
-> > > > Best regards,
-> > > > Jernej
-> > > 
-> > > Applied all patches but the patch 10, thanks!
-> > > Maxime
-> > 
-> > Ok, I'll send patch 10 separately. However,  patch 4 needs a fix according
-> > to test build robot:
-> > 
-> > if (IS_ERR_VALUE(index))
-> > should be:
-> > if (index < 0)
-> 
-> Yeah, sorry, I forgot to say it, but I fixed it locally (and the
-> return below as well).
-> 
-> > Additionally, due to Arnds patch merged (drm/sun4i: fix build failure with
-> > CONFIG_DRM_SUN8I_MIXER=m), sun4i_tcon.c needs additional handling if
-> > TCON_TOP driver is not build.
-> 
-> I'll drop it then, I haven't pushed it yet.
+On Tue, Jul 10, 2018 at 03:26:29PM -0700, Yu-cheng Yu wrote:
+> +/* MSR_IA32_U_CET and MSR_IA32_S_CET bits */
+> +#define MSR_IA32_CET_SHSTK_EN		0x0000000000000001
+> +#define MSR_IA32_CET_WRSS_EN		0x0000000000000002
+> +#define MSR_IA32_CET_ENDBR_EN		0x0000000000000004
+> +#define MSR_IA32_CET_LEG_IW_EN		0x0000000000000008
+> +#define MSR_IA32_CET_NO_TRACK_EN	0x0000000000000010
 
-Which one? This series or patch from Arnd?
-
-Best regards,
-Jernej
-
-
-
+Do those want a ULL literal suffix?
