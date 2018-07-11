@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43193C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE62DC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06BD3208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06BD3208E5
+	by mail.kernel.org (Postfix) with ESMTP id 9182B208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9182B208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388374AbeGKOBq (ORCPT
+        id S2388391AbeGKOBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:01:46 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36320 "EHLO
+        Wed, 11 Jul 2018 10:01:49 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36330 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388100AbeGKOBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:01:45 -0400
+        id S2388100AbeGKOBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:01:48 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA5E11650;
-        Wed, 11 Jul 2018 06:57:17 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7D7BF1688;
+        Wed, 11 Jul 2018 06:57:20 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 99C1A3F5B1;
-        Wed, 11 Jul 2018 06:57:15 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6CDB93F5B1;
+        Wed, 11 Jul 2018 06:57:18 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         will.deacon@arm.com
@@ -35,9 +35,9 @@ Cc:     catalin.marinas@arm.com, dave.martin@arm.com, hch@infradead.org,
         james.morse@arm.com, linux@dominikbrodowski.net,
         linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
         mark.rutland@arm.com, viro@zeniv.linux.org.uk
-Subject: [PATCHv5 02/21] arm64: move SCTLR_EL{1,2} assertions to <asm/sysreg.h>
-Date:   Wed, 11 Jul 2018 14:56:37 +0100
-Message-Id: <20180711135656.20670-3-mark.rutland@arm.com>
+Subject: [PATCHv5 03/21] arm64: kill config_sctlr_el1()
+Date:   Wed, 11 Jul 2018 14:56:38 +0100
+Message-Id: <20180711135656.20670-4-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180711135656.20670-1-mark.rutland@arm.com>
 References: <20180711135656.20670-1-mark.rutland@arm.com>
@@ -46,93 +46,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we assert that the SCTLR_EL{1,2}_{SET,CLEAR} bits are
-self-consistent with an assertion in config_sctlr_el1(). This is a bit
-unusual, since config_sctlr_el1() doesn't make use of these definitions,
-and is far away from the definitions themselves.
-
-We can use the CPP #error directive to have equivalent assertions in
-<asm/sysreg.h>, next to the definitions of the set/clear bits, which is
-a bit clearer and simpler.
-
-At the same time, lets fill in the upper 32 bits for both registers in
-their respective RES0 definitions. This could be a little nicer with
-GENMASK_ULL(63, 32), but this currently lives in <linux/bitops.h>, which
-cannot safely be included from assembly, as <asm/sysreg.h> can.
-
-Note the when the preprocessor evaluates an expression for an #if
-directive, all signed or unsigned values are treated as intmax_t or
-uintmax_t respectively. To avoid ambiguity, we define explicitly define
-the mask of all 64 bits.
+Now that we have sysreg_clear_set(), we can consistently use this
+instead of config_sctlr_el1().
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Dave Martin <dave.martin@arm.com>
 Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Dave Martin <dave.martin@arm.com>
 Cc: James Morse <james.morse@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/include/asm/sysreg.h | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ arch/arm64/include/asm/sysreg.h      | 10 ----------
+ arch/arm64/kernel/armv8_deprecated.c |  8 ++++----
+ arch/arm64/kernel/cpu_errata.c       |  3 +--
+ arch/arm64/kernel/traps.c            |  2 +-
+ arch/arm64/mm/fault.c                |  2 +-
+ 5 files changed, 7 insertions(+), 18 deletions(-)
 
 diff --git a/arch/arm64/include/asm/sysreg.h b/arch/arm64/include/asm/sysreg.h
-index a8f84812c6e8..fefc17dae8ee 100644
+index fefc17dae8ee..e205ec8489e9 100644
 --- a/arch/arm64/include/asm/sysreg.h
 +++ b/arch/arm64/include/asm/sysreg.h
-@@ -436,7 +436,8 @@
- #define SCTLR_EL2_RES0	((1 << 6)  | (1 << 7)  | (1 << 8)  | (1 << 9)  | \
- 			 (1 << 10) | (1 << 13) | (1 << 14) | (1 << 15) | \
- 			 (1 << 17) | (1 << 20) | (1 << 24) | (1 << 26) | \
--			 (1 << 27) | (1 << 30) | (1 << 31))
-+			 (1 << 27) | (1 << 30) | (1 << 31) | \
-+			 (0xffffffffUL << 32))
+@@ -742,16 +742,6 @@ asm(
+ 		write_sysreg(__scs_new, sysreg);			\
+ } while (0)
  
- #ifdef CONFIG_CPU_BIG_ENDIAN
- #define ENDIAN_SET_EL2		SCTLR_ELx_EE
-@@ -452,9 +453,9 @@
- 			 SCTLR_ELx_SA     | SCTLR_ELx_I    | SCTLR_ELx_WXN | \
- 			 ENDIAN_CLEAR_EL2 | SCTLR_EL2_RES0)
- 
--/* Check all the bits are accounted for */
--#define SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != ~0)
+-static inline void config_sctlr_el1(u32 clear, u32 set)
+-{
+-	u32 val;
 -
-+#if (SCTLR_EL2_SET ^ SCTLR_EL2_CLEAR) != 0xffffffffffffffff
-+#error "Inconsistent SCTLR_EL2 set/clear bits"
-+#endif
+-	val = read_sysreg(sctlr_el1);
+-	val &= ~clear;
+-	val |= set;
+-	write_sysreg(val, sctlr_el1);
+-}
+-
+ #endif
  
- /* SCTLR_EL1 specific flags. */
- #define SCTLR_EL1_UCI		(1 << 26)
-@@ -473,7 +474,8 @@
- #define SCTLR_EL1_RES1	((1 << 11) | (1 << 20) | (1 << 22) | (1 << 28) | \
- 			 (1 << 29))
- #define SCTLR_EL1_RES0  ((1 << 6)  | (1 << 10) | (1 << 13) | (1 << 17) | \
--			 (1 << 27) | (1 << 30) | (1 << 31))
-+			 (1 << 27) | (1 << 30) | (1 << 31) | \
-+			 (0xffffffffUL << 32))
- 
- #ifdef CONFIG_CPU_BIG_ENDIAN
- #define ENDIAN_SET_EL1		(SCTLR_EL1_E0E | SCTLR_ELx_EE)
-@@ -492,8 +494,9 @@
- 			 SCTLR_EL1_UMA | SCTLR_ELx_WXN     | ENDIAN_CLEAR_EL1 |\
- 			 SCTLR_EL1_RES0)
- 
--/* Check all the bits are accounted for */
--#define SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS	BUILD_BUG_ON((SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != ~0)
-+#if (SCTLR_EL1_SET ^ SCTLR_EL1_CLEAR) != 0xffffffffffffffff
-+#error "Inconsistent SCTLR_EL1 set/clear bits"
-+#endif
- 
- /* id_aa64isar0 */
- #define ID_AA64ISAR0_TS_SHIFT		52
-@@ -743,9 +746,6 @@ static inline void config_sctlr_el1(u32 clear, u32 set)
+ #endif	/* __ASM_SYSREG_H */
+diff --git a/arch/arm64/kernel/armv8_deprecated.c b/arch/arm64/kernel/armv8_deprecated.c
+index d4707abb2f16..d01c7fc0463c 100644
+--- a/arch/arm64/kernel/armv8_deprecated.c
++++ b/arch/arm64/kernel/armv8_deprecated.c
+@@ -511,9 +511,9 @@ static int cp15barrier_handler(struct pt_regs *regs, u32 instr)
+ static int cp15_barrier_set_hw_mode(bool enable)
  {
- 	u32 val;
+ 	if (enable)
+-		config_sctlr_el1(0, SCTLR_EL1_CP15BEN);
++		sysreg_clear_set(sctlr_el1, 0, SCTLR_EL1_CP15BEN);
+ 	else
+-		config_sctlr_el1(SCTLR_EL1_CP15BEN, 0);
++		sysreg_clear_set(sctlr_el1, SCTLR_EL1_CP15BEN, 0);
+ 	return 0;
+ }
  
--	SCTLR_EL2_BUILD_BUG_ON_MISSING_BITS;
--	SCTLR_EL1_BUILD_BUG_ON_MISSING_BITS;
--
- 	val = read_sysreg(sctlr_el1);
- 	val &= ~clear;
- 	val |= set;
+@@ -548,9 +548,9 @@ static int setend_set_hw_mode(bool enable)
+ 		return -EINVAL;
+ 
+ 	if (enable)
+-		config_sctlr_el1(SCTLR_EL1_SED, 0);
++		sysreg_clear_set(sctlr_el1, SCTLR_EL1_SED, 0);
+ 	else
+-		config_sctlr_el1(0, SCTLR_EL1_SED);
++		sysreg_clear_set(sctlr_el1, 0, SCTLR_EL1_SED);
+ 	return 0;
+ }
+ 
+diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
+index 1d2b6d768efe..92128ea53102 100644
+--- a/arch/arm64/kernel/cpu_errata.c
++++ b/arch/arm64/kernel/cpu_errata.c
+@@ -76,8 +76,7 @@ has_mismatched_cache_line_size(const struct arm64_cpu_capabilities *entry,
+ static void
+ cpu_enable_trap_ctr_access(const struct arm64_cpu_capabilities *__unused)
+ {
+-	/* Clear SCTLR_EL1.UCT */
+-	config_sctlr_el1(SCTLR_EL1_UCT, 0);
++	sysreg_clear_set(sctlr_el1, SCTLR_EL1_UCT, 0);
+ }
+ 
+ atomic_t arm64_el2_vector_last_slot = ATOMIC_INIT(-1);
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index d399d459397b..c27292703bd1 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -411,7 +411,7 @@ asmlinkage void __exception do_undefinstr(struct pt_regs *regs)
+ 
+ void cpu_enable_cache_maint_trap(const struct arm64_cpu_capabilities *__unused)
+ {
+-	config_sctlr_el1(SCTLR_EL1_UCI, 0);
++	sysreg_clear_set(sctlr_el1, SCTLR_EL1_UCI, 0);
+ }
+ 
+ #define __user_cache_maint(insn, address, res)			\
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index b8eecc7b9531..ea591c9e5144 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -879,7 +879,7 @@ void cpu_enable_pan(const struct arm64_cpu_capabilities *__unused)
+ 	 */
+ 	WARN_ON_ONCE(in_interrupt());
+ 
+-	config_sctlr_el1(SCTLR_EL1_SPAN, 0);
++	sysreg_clear_set(sctlr_el1, SCTLR_EL1_SPAN, 0);
+ 	asm(SET_PSTATE_PAN(1));
+ }
+ #endif /* CONFIG_ARM64_PAN */
 -- 
 2.11.0
 
