@@ -2,151 +2,135 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 249CFC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:53:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE270C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0D0B20883
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:53:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0D0B20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 5B53D20883
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:56:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbd+kBQw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B53D20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733111AbeGKO5l (ORCPT
+        id S1733120AbeGKPB2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:57:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732321AbeGKO5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:57:40 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4575220C0D;
-        Wed, 11 Jul 2018 14:52:57 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 10:52:55 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] fbcon: Call WARN_CONSOLE_UNLOCKED() where
- applicable
-Message-ID: <20180711105255.32803a3c@gandalf.local.home>
-In-Reply-To: <717e6337-e7a6-7a92-1c1b-8929a25696b5@suse.de>
-References: <20180628090351.15581-1-hdegoede@redhat.com>
-        <20180628090351.15581-3-hdegoede@redhat.com>
-        <717e6337-e7a6-7a92-1c1b-8929a25696b5@suse.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 11 Jul 2018 11:01:28 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:32811 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732901AbeGKPB2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 11:01:28 -0400
+Received: by mail-lj1-f196.google.com with SMTP id t21-v6so19626717lji.0;
+        Wed, 11 Jul 2018 07:56:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=t7AMsOxvDeSre+Tex1LGD/XMykGtGcPi9xH6DhXWpxQ=;
+        b=jbd+kBQw1rI4M6urUsjkUObPcpKbbfLlp+gAbKn83ZjNCAGmROWCna3s2sBFPqrl+H
+         duAlCh9pWxCyH++vLW0ktAu3sA+ql7aTVP2sIRUiCQBcIy8X6spFTHz+hmC9ZBlsj444
+         JGwfwIcoVldZKBFTN9qtEUZbSHPfC46loILl+wZcqDzRyhs/iBQL36mJXUxisEruTHua
+         N0W92vJJBPdoMFhpJL35CjYsoLPC7Inepx1rFwArkzAra6fo0KkOXrqfrwGulrhEZyoS
+         zDqyIskDN52IMpMSWRO9hKuLwud4RL//YtUiQwynS5+Kgx6aNT5QWk93PFNkTbukWu9x
+         hjoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=t7AMsOxvDeSre+Tex1LGD/XMykGtGcPi9xH6DhXWpxQ=;
+        b=Veeka1BkPpbFIdw4pBVZFwY76Qb/ZWmy59i7I4H9+zu6Hr87iYjpYK4eEDjrjFnfXy
+         3eaKMM2ECACPo/yYSZhdXiXW58V3BclQLHnU3KX+ZApSdRhcairi4bJkuuckfaeCImGo
+         KQKuc/n06IsiitvOA7ho0LXqcUOItWY7qgXTqoXFtztTNOAML/evRHpFKp3L5nWm2jBD
+         QUFDp3/qFXtmhipPQTbf80gwNtO6Y98SUwOGmfBNCkujG8jbiPtRRUkKflIASuxtRCfu
+         kSNzUActoDMJAYfcLa6XDEdA+rLEF9PM1A7/9IjfB8RcY7pRtnA7f+haYzJOmPftLqHI
+         d/gg==
+X-Gm-Message-State: APt69E2YIidGe1/NIZCTr0GcMmPLq99woJR6TBAf32tCVdCDW4nheutg
+        rnEin6LU1jdAlAE9fpc9f70L3zTO6GYH45xRKdM=
+X-Google-Smtp-Source: AAOMgpfR//jhMnleVw3oASAi3YaOd90JvSKdaIbc+J5HkvxGCBI1LQPrWqcP/k2GhJ2UDkYYWKIgP6aS2b4feBGUgnw=
+X-Received: by 2002:a2e:118f:: with SMTP id 15-v6mr18111510ljr.38.1531321002834;
+ Wed, 11 Jul 2018 07:56:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 07:56:41
+ -0700 (PDT)
+In-Reply-To: <20180711164529.3388d045@bbrezillon>
+References: <20180622104930.32050-1-boris.brezillon@bootlin.com>
+ <20180622104930.32050-5-boris.brezillon@bootlin.com> <CAK8P3a1gyvvpKdVV+STOJXd-=BFdiFF638F0agXur0kLYP7ksw@mail.gmail.com>
+ <20180711164529.3388d045@bbrezillon>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 11 Jul 2018 16:56:41 +0200
+X-Google-Sender-Auth: elpcySNQZniJv1Ex4LLbpKsyMOo
+Message-ID: <CAK8P3a2VWLnyforyjroywEwmttEq3eaPov8dGWKVw+GQs-MzcQ@mail.gmail.com>
+Subject: Re: [PATCH v5 04/10] dt-bindings: i3c: Document core bindings
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Jul 2018 16:46:11 +0200
-Thomas Zimmermann <tzimmermann@suse.de> wrote:
+On Wed, Jul 11, 2018 at 4:45 PM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Wed, 11 Jul 2018 16:10:10 +0200
+> Arnd Bergmann <arnd@arndb.de> wrote:
+>
+>> On Fri, Jun 22, 2018 at 12:49 PM, Boris Brezillon
+>> <boris.brezillon@bootlin.com> wrote:
+>> > A new I3C subsystem has been added and a generic description has been
+>> > created to represent the I3C bus and the devices connected on it.
+>> >
+>>
+>> > +I2C devices
+>> > +===========
+>> > +
+>> > +Each I2C device connected to the bus should be described in a subnode. All
+>> > +properties described in Documentation/devicetree/bindings/i2c/i2c.txt are
+>> > +valid here, but several new properties have been added.
+>> > +
+>> > +New constraint on existing properties:
+>> > +--------------------------------------
+>> ...
+>> > +  + third cell: should be 0
+>>
+>> What for? Just to be future-proof, or do you have something specific
+>> in mind here?
+>
+> Even if I2C devices only need 1 cell, I3C devices need 3 (1 for the
+> static address and 2 for the PID). Since both type of devices are
+> described under the same bus node, and we can have different
+> #address-cells, I had to put 0-padding in the last cell.
 
-> Hi
-> 
-> Am 28.06.2018 um 11:03 schrieb Hans de Goede:
-> > Replace comments about places where the console lock should be held with
-> > calls to WARN_CONSOLE_UNLOCKED() to assert that it is actually held.  
-> 
-> Debugging fbcon sometimes requires to not take the console lock. This
-> patch breaks the debugging workaround provided by
-> 'fb.lockless_register_fb'. The dmesg is now filled with warnings about
-> the missing lock.
-> 
+Ok, got it.
 
-What if you make lockless_register_fb visible to fbcon, and then we can
-have a macro:
-
-#define WARN_FB_CONSOLE_UNLOCKED() 			\
-	do {						\
-		if (unlikely(!lockless_register_fb))	\
-			WARN_CONSOLE_UNLOCKED();	\
-	} while (0)
-
-And use that instead?
-
--- Steve
-
-
-> Best regards
-> Thomas
-> 
-> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-> > ---
-> > Changes in v3:
-> > -New patch in v3 of this patchset
-> >
-> > Changes in v4:
-> > -Keep the comments about which fbcon functions need locks in place
-> > ---
-> >  drivers/video/fbdev/core/fbcon.c | 11 +++++++++++
-> >  1 file changed, 11 insertions(+)
-> >
-> > diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-> > index c910e74d46ff..cd8d52a967aa 100644
-> > --- a/drivers/video/fbdev/core/fbcon.c
-> > +++ b/drivers/video/fbdev/core/fbcon.c
-> > @@ -828,6 +828,8 @@ static int set_con2fb_map(int unit, int newidx, int user)
-> >  	struct fb_info *oldinfo = NULL;
-> >   	int found, err = 0;
-> >  
-> > +	WARN_CONSOLE_UNLOCKED();
-> > +
-> >  	if (oldidx == newidx)
-> >  		return 0;
-> >  
-> > @@ -3044,6 +3046,8 @@ static int fbcon_fb_unbind(int idx)
-> >  {
-> >  	int i, new_idx = -1, ret = 0;
-> >  
-> > +	WARN_CONSOLE_UNLOCKED();
-> > +
-> >  	if (!fbcon_has_console_bind)
-> >  		return 0;
-> >  
-> > @@ -3094,6 +3098,8 @@ static int fbcon_fb_unregistered(struct fb_info *info)
-> >  {
-> >  	int i, idx;
-> >  
-> > +	WARN_CONSOLE_UNLOCKED();
-> > +
-> >  	idx = info->node;
-> >  	for (i = first_fb_vc; i <= last_fb_vc; i++) {
-> >  		if (con2fb_map[i] == idx)
-> > @@ -3131,6 +3137,9 @@ static int fbcon_fb_unregistered(struct fb_info *info)
-> >  static void fbcon_remap_all(int idx)
-> >  {
-> >  	int i;
-> > +
-> > +	WARN_CONSOLE_UNLOCKED();
-> > +
-> >  	for (i = first_fb_vc; i <= last_fb_vc; i++)
-> >  		set_con2fb_map(i, idx, 0);
-> >  
-> > @@ -3177,6 +3186,8 @@ static int fbcon_fb_registered(struct fb_info *info)
-> >  {
-> >  	int ret = 0, i, idx;
-> >  
-> > +	WARN_CONSOLE_UNLOCKED();
-> > +
-> >  	idx = info->node;
-> >  	fbcon_select_primary(info);
-> >    
-> 
-
+    Arnd
