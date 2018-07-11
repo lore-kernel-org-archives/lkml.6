@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F13C1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CAB8C38A24
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECA0D21470
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:45:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0D4B21476
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:45:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xWEfFC70"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA0D21470
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hveglRoi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0D4B21476
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388370AbeGKUvG (ORCPT
+        id S2388644AbeGKUvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:51:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37660 "EHLO mail.kernel.org"
+        Wed, 11 Jul 2018 16:51:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbeGKUvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:51:06 -0400
+        id S1726453AbeGKUvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 16:51:08 -0400
 Received: from jouet.localdomain (unknown [71.46.56.59])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE7132146F;
-        Wed, 11 Jul 2018 20:44:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CAD720C0E;
+        Wed, 11 Jul 2018 20:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531341899;
-        bh=mhXNdE3TR06Hs+D0AzLGsrQAAPeMAhpvNl6I8zCdylE=;
+        s=default; t=1531341901;
+        bh=ClbCFVkv7Qaj54yhO8ftewHVGRhJ5tIJ6JRPFO1Qc/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xWEfFC70xJdpUyaJ8V+jfDOeNwlhc+yJTi422zlZkSen1/PRgm4q03HcXrPOAjxwG
-         Fa7iQbzEZ/NYysiSCMUfihx6xB0Ds3J8yzH+f437f5Q2HhcXcp9RPqoDy6j7msuC2O
-         W7rW1oAbOuuGYEiiv+vJi+Ay+FSvs2lW+UePeyoM=
+        b=hveglRoiPLU5y073uv4XkLG5EWmiJ9s8m0iKKsImxxunrcHZL+kLREpGLnOQZTphc
+         Qk4/g+RihQo3uGACZutLTrhskcpNRJnf3DMSGohfTPEVW0I5Syu6u1z+FprfhsueP0
+         57IcGYju4snMyId7hDU+uxlVamuPz39OpmrbFH40=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 03/14] perf scripts python: Add Python 3 support to SchedGui.py
-Date:   Wed, 11 Jul 2018 16:42:54 -0400
-Message-Id: <20180711204305.12924-4-acme@kernel.org>
+Subject: [PATCH 04/14] perf scripts python: Add Python 3 support to Util.py
+Date:   Wed, 11 Jul 2018 16:42:55 -0400
+Message-Id: <20180711204305.12924-5-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180711204305.12924-1-acme@kernel.org>
 References: <20180711204305.12924-1-acme@kernel.org>
@@ -59,8 +59,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jeremy Cline <jeremy@jcline.org>
 
-Fix a single syntax error in SchedGui.py to support both Python 2 and
-Python 3. This should have no functional change.
+Support both Python 2 and Python 3 in Util.py. The dict class no longer
+has a ``has_key`` method and print is now a function rather than a
+statement. This should have no functional change.
 
 Signed-off-by: Jeremy Cline <jeremy@jcline.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -68,25 +69,48 @@ Cc: Herton Krzesinski <herton@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/0100016341a72d26-75729663-fe55-4309-8c9b-302e065ed2f1-000000@email.amazonses.com
+Link: http://lkml.kernel.org/r/0100016341a730c6-8db8b9b1-da2d-4ee3-96bf-47e0ae9796bd-000000@email.amazonses.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py     | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py
-index fdd92f699055..cac7b2542ee8 100644
---- a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py
-+++ b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py
-@@ -11,7 +11,7 @@
- try:
- 	import wx
- except ImportError:
--	raise ImportError, "You need to install the wxpython lib for this script"
-+	raise ImportError("You need to install the wxpython lib for this script")
+diff --git a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py
+index f6c84966e4f8..7384dcb628c4 100644
+--- a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py
++++ b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Util.py
+@@ -5,6 +5,7 @@
+ # This software may be distributed under the terms of the GNU General
+ # Public License ("GPL") version 2 as published by the Free Software
+ # Foundation.
++from __future__ import print_function
  
+ import errno, os
  
- class RootFrame(wx.Frame):
+@@ -33,7 +34,7 @@ def nsecs_str(nsecs):
+     return str
+ 
+ def add_stats(dict, key, value):
+-	if not dict.has_key(key):
++	if key not in dict:
+ 		dict[key] = (value, value, value, 1)
+ 	else:
+ 		min, max, avg, count = dict[key]
+@@ -72,10 +73,10 @@ try:
+ except:
+ 	if not audit_package_warned:
+ 		audit_package_warned = True
+-		print "Install the audit-libs-python package to get syscall names.\n" \
+-                    "For example:\n  # apt-get install python-audit (Ubuntu)" \
+-                    "\n  # yum install audit-libs-python (Fedora)" \
+-                    "\n  etc.\n"
++		print("Install the audit-libs-python package to get syscall names.\n"
++                    "For example:\n  # apt-get install python-audit (Ubuntu)"
++                    "\n  # yum install audit-libs-python (Fedora)"
++                    "\n  etc.\n")
+ 
+ def syscall_name(id):
+ 	try:
 -- 
 2.14.4
 
