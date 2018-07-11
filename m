@@ -2,152 +2,148 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2858C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 629CFC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E5AC20BEC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:25:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2mz1p++"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E5AC20BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1837720BEC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:25:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1837720BEC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388563AbeGKOaF (ORCPT
+        id S2388625AbeGKOaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:30:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38732 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387949AbeGKOaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:30:05 -0400
-Received: from mail.kernel.org (host-091-097-006-190.ewe-ip-backbone.de [91.97.6.190])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 071A120875;
-        Wed, 11 Jul 2018 14:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531319128;
-        bh=4Gaj+pgTH0AL4J19JDI5HLx3/Cz7oDfetzt3l0Jvod0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=O2mz1p++Jl4t9SycgWoKIgEGGmVUYAw+tWcfDBLISJ+SUMPegjbh/mlmQKg6bmGAF
-         jzoL2QwqRlXTriaalK9tX5LlrnE/apKksfqODNma6MImK5R8boG0C7QRxw1aG5QffA
-         9yAK0fJRINJfwK3t1jDVIwMlWNb7eVLp/DSvaDK8=
-Date:   Wed, 11 Jul 2018 16:25:26 +0200
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, nekit1000@gmail.com, mpartap@gmx.net,
-        merlijn@wizzup.org
-Subject: Re: Vibrations on Droid 4?
-Message-ID: <20180711142526.dto6iost57zx5t5l@earth.universe>
-References: <20180709081534.GA6799@amd>
- <20180709214910.tes6u4ivxomd3aja@earth.universe>
- <20180709220211.GA7760@amd>
- <20180710101147.lyu65ro4czvrs2da@earth.universe>
- <20180710133040.GA4391@amd>
- <20180710161123.azym6sbboriuj4yc@earth.universe>
- <20180711080218.GA21225@amd>
- <20180711132739.GL99251@atomide.com>
+        Wed, 11 Jul 2018 10:30:09 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53494 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388569AbeGKOaI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:30:08 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BENqlP110373
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 10:25:31 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5k41hnfs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 10:25:31 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 11 Jul 2018 10:25:30 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Jul 2018 10:25:25 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BEPPJU9699782
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Jul 2018 14:25:25 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96DCFB2065;
+        Wed, 11 Jul 2018 10:25:24 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 77A1CB205F;
+        Wed, 11 Jul 2018 10:25:24 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Jul 2018 10:25:24 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 0D8BE16C196F; Wed, 11 Jul 2018 07:27:44 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 07:27:44 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180628182149.226164-1-joel@joelfernandes.org>
+ <20180628182149.226164-5-joel@joelfernandes.org>
+ <20180711124954.GE2476@hirez.programming.kicks-ass.net>
+ <20180711090003.42596c2b@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="nh3alkkyqinnafhb"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180711132739.GL99251@atomide.com>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <20180711090003.42596c2b@gandalf.local.home>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071114-0068-0000-0000-000003166C5F
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009350; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01059814; UDB=6.00543956; IPR=6.00837734;
+ MB=3.00022102; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 14:25:29
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071114-0069-0000-0000-000044FE3A1D
+Message-Id: <20180711142744.GN3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=808 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807110156
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 11, 2018 at 09:00:03AM -0400, Steven Rostedt wrote:
+> On Wed, 11 Jul 2018 14:49:54 +0200
+> Peter Zijlstra <peterz@infradead.org> wrote:
+> 
+> > On Thu, Jun 28, 2018 at 11:21:46AM -0700, Joel Fernandes wrote:
+> > > -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\  
+> > 
+> > I would convert to rcu_dereference_raw() to appease sparse. The fancy
+> > stuff below is pointless if you then turn off all checking.
+> 
+> The problem with doing this is if we use a trace event without the
+> proper _idle() or whatever, we wont get a warning that it is used
+> incorrectly with lockdep. Or does lockdep still check if "rcu is
+> watching" with rcu_dereference_raw()?
 
---nh3alkkyqinnafhb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No lockdep checking is done by rcu_dereference_raw().
 
-Hi,
+							Thanx, Paul
 
-On Wed, Jul 11, 2018 at 06:27:39AM -0700, Tony Lindgren wrote:
-> * Pavel Machek <pavel@ucw.cz> [180711 08:05]:
-> > Hi!
-> >=20
-> > > > Its parent is gpio@4805d000 , and that one seems to be present.
-> > > >=20
-> > > > user@devuan:/sys/bus/platform/devices$ ls 4805d000.gpio
-> > > > driver				       driver_override  gpio
-> > > > gpiochip5  modalias  of_node  power  subsystem  uevent
-> > >=20
-> > > Sorry, something went wrong with merging this. The parent
-> > > of ti,omap-dmtimer-pwm and pwm-vibrator should be / and
-> > > not gpio6.
-> >=20
-> > Ok, got it to probe... after dts fix and adding EPROBE_DEFFER to
-> > driver.
-> ..
-> > --- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
-> > +++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-> > @@ -159,13 +159,7 @@
-> > =20
-> >  		dais =3D <&mcbsp2_port>, <&mcbsp3_port>;
-> >  	};
-> > -};
-> > -
-> > -&dss {
-> > -	status =3D "okay";
-> > -};
-> > =20
-> > -&gpio6 {
-> >  	pwm8: dmtimer-pwm-8 {
-> >  		pinctrl-names =3D "default";
-> >  		pinctrl-0 =3D <&vibrator_direction_pin>;
-> > @@ -192,7 +186,10 @@
-> >  		pwm-names =3D "enable", "direction";
-> >  		direction-duty-cycle-ns =3D <10000000>;
-> >  	};
-> > +};
-> > =20
-> > +&dss {
-> > +	status =3D "okay";
-> >  };
-> > =20
-> >  &dsi1 {
->=20
-> Hmm sorry if I did a mismerge on the above. A note to
-> myself to stop applying patches that apply with fuzz,
-> that is clearly dangerous with dts files with lots
-> of similar named properties.
+> -- Steve
+> 
+> > 
+> > > +									\
+> > > +		/*							\
+> > > +		 * For rcuidle callers, use srcu since sched-rcu	\
+> > > +		 * doesn't work from the idle path.			\
+> > > +		 */							\
+> > > +		if (rcuidle) {						\
+> > > +			if (in_nmi()) {					\
+> > > +				WARN_ON_ONCE(1);			\
+> > > +				return; /* no srcu from nmi */		\
+> > > +			}						\
+> > > +									\
+> > > +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
+> > > +			it_func_ptr =					\
+> > > +				srcu_dereference_notrace((tp)->funcs,	\
+> > > +						&tracepoint_srcu);	\
+> > > +			/* To keep it consistent with !rcuidle path */	\
+> > > +			preempt_disable_notrace();			\
+> > > +		} else {						\
+> > > +			rcu_read_lock_sched_notrace();			\
+> > > +			it_func_ptr =					\
+> > > +				rcu_dereference_sched((tp)->funcs);	\
+> > > +		}							\  
+> 
 
-It might also have been me doing the mismerge before
-sending the patch. Anyways, the patch from Pavel looks
-good to me. As a side-effect dss and dsi references
-come next to each other.
-
--- Sebastian
-
---nh3alkkyqinnafhb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAltGE1IACgkQ2O7X88g7
-+prRQg//TVVAlEp2acCJvfFGnm3G8BHqpenYb/ijA3ili2taxLYGAGKAdkM4CAiZ
-hqRMSUw7s2OhKGnyXxK+7OGVxeTlzDJYA0kEVvW+d7yFgmEpKYovkMYEiGSUZVlV
-5ZOCFdju+QNgo/WBfp/GcWFcFZC02faxbsrniz3kANkIlFA7bAjGMcc+8SjkwgEC
-76BiMYSX/IOst1bxlaMjuM6YWPyDvPfDlweZhmVo9C6+VoukjRZYOd2q/VdxTNFE
-JFh6zKlJcLwjog857V7XzshiZA3ZvfzE+6ioEqRlCdFAx+QP/v7kZRmtGn5y5Zla
-2CNrcw1XSrfrWQqkV249SZFSFFU7Zczv2ik8zgqq7lO4UUxh7Gtqi9xbN60M/upo
-w8pnikOQZHdZIEdozJbLZD9Z96BMiUT6kMlC2E2IwTlYPBCh/nP4gpXaK2lh+lMx
-2JN2WX29d8iuHbZcMO18a8zTSgs6A2V/Z8HxPmB0oN6irWTWk5NCk1phuWK5948r
-HkmZvrsCtV7A7mAapnLIGtUALXMP3oMstUFSCOgw3RLoDg6D3FtzlpWCz4UQ8CT8
-RKJsYymQly04KCxzHGMvYMry1Hg/+ASqZlYWYybzxZG/RniUolg/pdBv1dZJWhnA
-tVeOxE0+FHr1SfFMgUVrprmJbT3cCNq2BnFxiqpk55G/mNBo1DI=
-=0tye
------END PGP SIGNATURE-----
-
---nh3alkkyqinnafhb--
