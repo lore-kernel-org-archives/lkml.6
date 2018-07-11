@@ -1,161 +1,128 @@
 Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B865C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A0D9C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:49:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A4620871
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:49:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A4620871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D3C6120871
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:49:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C6120871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388003AbeGKQyN (ORCPT
+        id S2388105AbeGKQyR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:54:13 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:34355 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387789AbeGKQyN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:54:13 -0400
-Received: by mail-io0-f199.google.com with SMTP id w23-v6so22609333ioa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 09:49:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=dG2wiJI+uP3acZnais1MUKHXFCij4UxIKbhK1qCPrE8=;
-        b=gWht3UgilxChjZrIKVxX2g2QTJXLP8sM2H+9egjEreaj4qNAiVeoeXD3WJlgfyE7rN
-         +o7p3P3bDHLdz23tj8dxupve/DDxr9z5mvHENQ46FDDhlMcVYKu4B6u59AhEHdlQ8eVZ
-         uSK407yz9J/OqdTvHlnpEai+g98wYAPty+lTNCE0oOf8+n5cju5i3t/MPxV9JWnAXK9K
-         edrar8dq4xno+bCAoH+ma1DQ7wlkAVAXw3SfuI6SUbERtU6k7b55kV1VEgSJWAbB5FtM
-         cH/Y6/gO1FYqkisJ91eYXB9GZxKnLr/uHdIc3yJR2wv4Pvx1FaTDN7vTXGXm8zE7K1lx
-         wnFg==
-X-Gm-Message-State: APt69E0CgRo1Jr7RDWr6re+548HC0d2u141ZRziyYAleptwAeM/59ZZW
-        kKgLnFQafKGVn7YEZgTCRa28Rnnhn0JuE+pu9tStC8K5Xovo
-X-Google-Smtp-Source: AAOMgpeU6ZwFp40XZmwdziQg+9f7JWiBMbQU0CasBBsbTGmeUX6hcqzNFsmbkC58rIkcyCwBisTQ9fylzah9F2RmEEQTTx5r34gN
+        Wed, 11 Jul 2018 12:54:17 -0400
+Received: from mga12.intel.com ([192.55.52.136]:43920 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387789AbeGKQyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:54:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 09:49:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="56110932"
+Received: from mgcarrol-mobl1.amr.corp.intel.com (HELO [10.252.202.182]) ([10.252.202.182])
+  by orsmga008.jf.intel.com with ESMTP; 11 Jul 2018 09:49:04 -0700
+Subject: Re: Kernel 4.17.4 lockup
+To:     "H.J. Lu" <hjl.tools@gmail.com>
+References: <CAMe9rOqXsQ4Onv8_-kYE_yVYVfN0Hsg81XM0sq9k2cVYE_LvaQ@mail.gmail.com>
+ <50d6bb50-5fa4-33d1-1f88-3844d0237f16@intel.com>
+ <CAMe9rOoA=OoyaUfOvWuHGTp_ii9-A_ecR5tj8CefBKx_Hmi50g@mail.gmail.com>
+ <7db385ef-0940-8f28-87b0-828921dd2f1d@intel.com>
+ <CAMe9rOoZ=8ROyR6U3-JY+4hib2Bb5LGhBYzY5S_Xp38coj16aQ@mail.gmail.com>
+ <9548e10a-7403-425e-bf1f-b1eb9d055d99@intel.com>
+ <CAMe9rOrHowBX06nihdRRmEqhV8v7cs+PwVY7JYQFpUFOnHC71A@mail.gmail.com>
+ <f22ee1e2-9a35-697f-50ab-543ac1631c89@intel.com>
+ <CAMe9rOpPwtPd-R+D9=iDYgbFtnP+=akWic-QBKwq9wKa7uadEQ@mail.gmail.com>
+ <2022d212-62f2-a163-2493-abecfbafa07b@intel.com>
+ <CAMe9rOqc0oVw+ZLXCM-nrtPb1OiPFBeHt+Lsx+6K6y=t3HSVhA@mail.gmail.com>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <cbb38230-9c57-905b-3a11-e2717c5aa615@intel.com>
+Date:   Wed, 11 Jul 2018 09:49:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:6203:: with SMTP id f3-v6mr13053254iog.48.1531327741477;
- Wed, 11 Jul 2018 09:49:01 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 09:49:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000010c9390570bc0643@google.com>
-Subject: general protection fault in _vm_normal_page
-From:   syzbot <syzbot+120abb1c3f7bfdc523f7@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, jglisse@redhat.com,
-        kirill.shutemov@linux.intel.com, ldufour@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org, mhocko@suse.com,
-        minchan@kernel.org, ross.zwisler@linux.intel.com,
-        sfr@canb.auug.org.au, syzkaller-bugs@googlegroups.com,
-        ying.huang@intel.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <CAMe9rOqc0oVw+ZLXCM-nrtPb1OiPFBeHt+Lsx+6K6y=t3HSVhA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 07/11/2018 09:29 AM, H.J. Lu wrote:
+>>> # It takes about 3 hour to bootstrap x86-64 GCC and 3 hour to run tests,
+>>> TIMEOUT=480
+>>> # Run it every hour,
+>>> 30 * * * * /export/gnu/import/git/gcc-test-x32/gcc-build -mx32
+>>> --with-pic > /dev/null 2>&1
+>> Oh, fun, one of those.
+>>
+>> How long does it take to reproduce?
+> About 5 hours.
 
-syzbot found the following crash on:
+It would be much appreciated if you can get a console of some kind on
+that system and try to get a full KASAN oops out of it.  Serial, usb
+debug, or maybe netconsole would probably work.
 
-HEAD commit:    98be45067040 Add linux-next specific files for 20180711
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12496ac2400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3f3b3673fec35d01
-dashboard link: https://syzkaller.appspot.com/bug?extid=120abb1c3f7bfdc523f7
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12a46568400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+120abb1c3f7bfdc523f7@syzkaller.appspotmail.com
-
-R10: 0000000004000812 R11: 0000000000000246 R12: 0000000000000005
-R13: 00000000004c0565 R14: 00000000004cffb0 R15: 0000000000000005
-ion_mmap: failure mapping buffer to userspace
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 4785 Comm: syz-executor0 Not tainted 4.18.0-rc4-next-20180711+  
-#4
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:_vm_normal_page+0x1e5/0x330 mm/memory.c:828
-Code: 00 0f 85 3a 01 00 00 48 8b 85 70 ff ff ff 48 ba 00 00 00 00 00 fc ff  
-df 48 8b 80 90 00 00 00 48 8d 78 70 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
-85 17 01 00 00 48 8b 40 70 48 85 c0 48 89 85 60 ff
-RSP: 0018:ffff8801d2d2f050 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 0000000000198700 RCX: 000000000000000e
-RDX: dffffc0000000000 RSI: ffffffff81abf579 RDI: 0000000000000070
-RBP: ffff8801d2d2f0f0 R08: ffff8801aab72040 R09: ffffed003a591216
-R10: ffffed003a591216 R11: ffff8801d2c890b3 R12: 1ffff1003a5a5e0d
-R13: ffff8801d2d2f0c8 R14: 0000000198700320 R15: 0000000000000200
-FS:  000000000118c940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004e8664 CR3: 00000001cb276000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  zap_pte_range mm/memory.c:1312 [inline]
-  zap_pmd_range mm/memory.c:1443 [inline]
-  zap_pud_range mm/memory.c:1472 [inline]
-  zap_p4d_range mm/memory.c:1493 [inline]
-  unmap_page_range+0xa6f/0x2220 mm/memory.c:1514
-  unmap_single_vma+0x1a0/0x310 mm/memory.c:1559
-  unmap_vmas+0x120/0x1f0 mm/memory.c:1589
-  unmap_region+0x353/0x570 mm/mmap.c:2583
-  mmap_region+0x18cc/0x1da0 mm/mmap.c:1840
-  do_mmap+0xa10/0x1220 mm/mmap.c:1540
-  do_mmap_pgoff include/linux/mm.h:2290 [inline]
-  vm_mmap_pgoff+0x213/0x2c0 mm/util.c:357
-  ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1590
-  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
-  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
-  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455e29
-Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffdd494a4b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 000000000118c914 RCX: 0000000000455e29
-RDX: 0000000000000000 RSI: 0000000000003060 RDI: 0000000020ffd000
-RBP: 000000000072bea0 R08: 0000000000000004 R09: 0000000000000000
-R10: 0000000004000812 R11: 0000000000000246 R12: 0000000000000005
-R13: 00000000004c0565 R14: 00000000004cffb0 R15: 0000000000000005
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace 161bdc8eda63d641 ]---
-RIP: 0010:_vm_normal_page+0x1e5/0x330 mm/memory.c:828
-Code: 00 0f 85 3a 01 00 00 48 8b 85 70 ff ff ff 48 ba 00 00 00 00 00 fc ff  
-df 48 8b 80 90 00 00 00 48 8d 78 70 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f  
-85 17 01 00 00 48 8b 40 70 48 85 c0 48 89 85 60 ff
-RSP: 0018:ffff8801d2d2f050 EFLAGS: 00010202
-RAX: 0000000000000000 RBX: 0000000000198700 RCX: 000000000000000e
-RDX: dffffc0000000000 RSI: ffffffff81abf579 RDI: 0000000000000070
-RBP: ffff8801d2d2f0f0 R08: ffff8801aab72040 R09: ffffed003a591216
-R10: ffffed003a591216 R11: ffff8801d2c890b3 R12: 1ffff1003a5a5e0d
-R13: ffff8801d2d2f0c8 R14: 0000000198700320 R15: 0000000000000200
-FS:  000000000118c940(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004e8664 CR3: 00000001cb276000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+I'll also try to get it running on a big system and see if it triggers
+faster there.
