@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF539C38A24
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84801C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8371820C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:36:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D1D20C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:36:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KOsg1Kch"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8371820C0C
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tk5u2ZEd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D1D20C0C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390371AbeGKUmm (ORCPT
+        id S2390378AbeGKUnA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:42:42 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:35201 "EHLO
+        Wed, 11 Jul 2018 16:43:00 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:46511 "EHLO
         mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390345AbeGKUml (ORCPT
+        with ESMTP id S2390297AbeGKUmj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:42:41 -0400
-Received: by mail-pf0-f193.google.com with SMTP id q7-v6so18037252pff.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:36:38 -0700 (PDT)
+        Wed, 11 Jul 2018 16:42:39 -0400
+Received: by mail-pf0-f193.google.com with SMTP id l123-v6so19127207pfl.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:36:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Z0UiKUkbaIJ74sZlGjVbsXVX3NSh4Durhbkhjh0YhvQ=;
-        b=KOsg1KchypdBz+ZkFX+knHTEQifNztOQH/N2DO/TnuOQLO1D+ZBfB8A5AnsqXzdWpq
-         4KaQmCiAnRJhbHOzRIU8c67ZEA4fttVXwvD4rA4BfuwflWx4VZieO5OLoIdzP7eVmtHV
-         etEy4qU2eIsQ1WIRLwEBWPTa01HaAhZ1C+Jf8=
+        bh=BYgigRdBSanSiafl9f2cJhj28CjRYh2SZJXlKmlCU5M=;
+        b=Tk5u2ZEdgT4GcB9YKGzNz+e0FdL9GVQD2Nj/usRguJdv8ygdh+eZFFyoPjIDxcUv6L
+         Pd1XCP6n2ehOtIb+bmW0gQFq2x4MzK2QNabtOeFYwliTZQCSUusOiCZPen7L9TfVN4Nw
+         Q3w8iUi9KR62d/WZRx19mNBySN60K5F5Av8VA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Z0UiKUkbaIJ74sZlGjVbsXVX3NSh4Durhbkhjh0YhvQ=;
-        b=P9VIxXKKw22WcA4wNcO6Jn1znbCtssfst5ZsxZA3k2dMCtt3doF3ezgx9zFqYnCgH3
-         vDQeDJBt8lh0D/FFs/l+5amMsfOKoLmMughNbzfuyiVthb4xrKlJId1KrmfgJ/3z4LUo
-         AZY5uA9uSlSsXOq/vJmX2oC8CzljTyuml1/wJkw5JUL9c6JlTAwX60Wvy9Vj99upuQcl
-         DKn8qYyQEqvy0CO3zhtP3gP8vFMJJJQpu3FRA4JReES4XKDTgEz6o+MjUh17cc1xc8I+
-         pOqTkdghEGFe/McHXoIHdLlNAbENmhNf6Pm8b/wDwJTyWpswrhM96Hpu4UvPvwsaM6Iy
-         3WUg==
-X-Gm-Message-State: AOUpUlHy6oeiBiL9vbvA6Fch1rxmGT6qpnu2/fEABdzyKImHDAIYQd2s
-        6WmitYK0lpbkZ7EVJ4VNN9XY8A==
-X-Google-Smtp-Source: AAOMgpd57X0B++JahNWQOiTavlKY07Yiu3g+Z5C+koVVmGeqtWibcBg6uX3DUmJJT0LgwKpcpOJBHA==
-X-Received: by 2002:a63:1063:: with SMTP id 35-v6mr122477pgq.249.1531341398414;
-        Wed, 11 Jul 2018 13:36:38 -0700 (PDT)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id n9-v6sm25574832pfg.21.2018.07.11.13.36.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        bh=BYgigRdBSanSiafl9f2cJhj28CjRYh2SZJXlKmlCU5M=;
+        b=IpUTN5Zu4HDzyAmEIWeamId/zJEBE2YNRGkGIAZ/giKjyOU1HlMSF3Wxs6WdFnMUjz
+         ATTeKVZajHA+SDcV1tyDHOzdxgzHK8qE/GH3OOj/yw3BBT+27D1fOahAjzhSuBlMfNc8
+         9VnW+VG0DqI0NuC6ZfszlCJdfmNfa25fBBToUyVuR8SC2k+AsK2svbdkMxe7jgMNhcO6
+         Xp/WRZ5MDFCQgVobYmMWB/FPouEN2U4a+TddsB6vpVmqFPX7gQ/6cwvP03A60Tx2Jgrw
+         mBOO1YZsl5ROvaBlIm1MKqwMTF/KNv2HWu6s7fB6NVRVH0RVHeW4lv8H6E+6DXlZxdPR
+         Cm+g==
+X-Gm-Message-State: AOUpUlFcfiVt82DJCl8wXPKkMxj0/3an3udUZVs3W/KkSb9E1isYzZHL
+        tGzf7DAJvWMQsQYMSeWPS4rYhg==
+X-Google-Smtp-Source: AAOMgpcbGvyaC0663tHSUhyRcsEeM4uUlf1YQYEu5t8vyT6fhQdQq7iAm77AiuUtI2NIBdE+jK1HMA==
+X-Received: by 2002:a65:5b08:: with SMTP id y8-v6mr113237pgq.297.1531341395065;
         Wed, 11 Jul 2018 13:36:35 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id u17-v6sm71237117pfa.176.2018.07.11.13.36.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 13:36:28 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -70,9 +70,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-crypto@vger.kernel.org, qat-linux@intel.com,
         dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 13/14] rxrpc: Prepare to remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-Date:   Wed, 11 Jul 2018 13:36:18 -0700
-Message-Id: <20180711203619.1020-14-keescook@chromium.org>
+Subject: [PATCH v4 08/14] crypto: qat: Remove VLA usage
+Date:   Wed, 11 Jul 2018 13:36:13 -0700
+Message-Id: <20180711203619.1020-9-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180711203619.1020-1-keescook@chromium.org>
 References: <20180711203619.1020-1-keescook@chromium.org>
@@ -81,30 +81,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two uses of SKCIPHER_REQUEST_ON_STACK() will trigger FRAME_WARN warnings
-(when less than 2048) once the VLA is no longer hidden from the check:
+In the quest to remove all stack VLA usage from the kernel[1], this uses
+the new upper bound for the stack buffer. Also adds a sanity check.
 
-net/rxrpc/rxkad.c:398:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-net/rxrpc/rxkad.c:242:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
-
-This bumps the affected objects by 20% to silence the warnings while
-still providing coverage is anything grows even more.
+[1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- net/rxrpc/Makefile | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/qat/qat_common/qat_algs.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/net/rxrpc/Makefile b/net/rxrpc/Makefile
-index 6ffb7e9887ce..53e1177129e6 100644
---- a/net/rxrpc/Makefile
-+++ b/net/rxrpc/Makefile
-@@ -32,4 +32,5 @@ rxrpc-y := \
+diff --git a/drivers/crypto/qat/qat_common/qat_algs.c b/drivers/crypto/qat/qat_common/qat_algs.c
+index 1138e41d6805..a28edf7b792f 100644
+--- a/drivers/crypto/qat/qat_common/qat_algs.c
++++ b/drivers/crypto/qat/qat_common/qat_algs.c
+@@ -153,8 +153,8 @@ static int qat_alg_do_precomputes(struct icp_qat_hw_auth_algo_blk *hash,
+ 	struct sha512_state sha512;
+ 	int block_size = crypto_shash_blocksize(ctx->hash_tfm);
+ 	int digest_size = crypto_shash_digestsize(ctx->hash_tfm);
+-	char ipad[block_size];
+-	char opad[block_size];
++	char ipad[MAX_ALGAPI_BLOCKSIZE];
++	char opad[MAX_ALGAPI_BLOCKSIZE];
+ 	__be32 *hash_state_out;
+ 	__be64 *hash512_state_out;
+ 	int i, offset;
+@@ -164,6 +164,10 @@ static int qat_alg_do_precomputes(struct icp_qat_hw_auth_algo_blk *hash,
+ 	shash->tfm = ctx->hash_tfm;
+ 	shash->flags = 0x0;
  
- rxrpc-$(CONFIG_PROC_FS) += proc.o
- rxrpc-$(CONFIG_RXKAD) += rxkad.o
-+CFLAGS_rxkad.o += $(FRAME_WARN_BUMP_FLAG)
- rxrpc-$(CONFIG_SYSCTL) += sysctl.o
++	if (WARN_ON(block_size > sizeof(ipad) ||
++		    sizeof(ipad) != sizeof(opad)))
++		return -EINVAL;
++
+ 	if (auth_keylen > block_size) {
+ 		int ret = crypto_shash_digest(shash, auth_key,
+ 					      auth_keylen, ipad);
 -- 
 2.17.1
 
