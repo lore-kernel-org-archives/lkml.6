@@ -2,98 +2,84 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09026C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F332BC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9431208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:33:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9431208FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id AFA32208E8
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:33:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="owxGzm3B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA32208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726490AbeGKGfk (ORCPT
+        id S1726561AbeGKGgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 02:35:40 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:59851 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726223AbeGKGfk (ORCPT
+        Wed, 11 Jul 2018 02:36:08 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:38332 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbeGKGgI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 02:35:40 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fd8gE-0007ti-MF; Wed, 11 Jul 2018 08:32:50 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fd8gC-0007i8-JG; Wed, 11 Jul 2018 08:32:48 +0200
-Date:   Wed, 11 Jul 2018 08:32:48 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     vkoul@kernel.org, dan.j.williams@intel.com, shawnguo@kernel.org,
-        fabio.estevam@nxp.com, linux@armlinux.org.uk,
-        linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com
-Subject: Re: [PATCH v1 2/4] dmaengine: imx-sdma: add check_bd_buswidth() to
- kill the dulicated code
-Message-ID: <20180711063248.pnulmlj3qtcjpsh5@pengutronix.de>
-References: <1531239793-11781-1-git-send-email-yibin.gong@nxp.com>
- <1531239793-11781-3-git-send-email-yibin.gong@nxp.com>
+        Wed, 11 Jul 2018 02:36:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=n9fuoTQCZZ/FwexcXMPwdNHqbnFoiAGACfsbLUzM5E8=; b=owxGzm3BJVvWweIF7A+CuIegu
+        yYQ+8KlQM07lDknvB/XGIWCX7nyN1HPltcjDQ8aSjAiiUnj31IKH9YFLl1FjSDKm9+ALBzVORIk8y
+        gsrSp34bzq675A9DAOpHDJK7urKA8DkFqN8ogpDR9BILvJAv80rXyEcfD2EY7nynrMb249WLQdZtv
+        XpcBFc9KHyV/uBejdKfRqDWtD+u+/Fj5yrg2SfMUgJMufWdT+iXWwLewY6w5MJPe5/LIkw2uPKftI
+        bR4yASqvo5Zo2iIsn1SDcf2mWY/2HSwoDU2D0FIz+d0x9fgSz46kDWuja3YWrLqZ5SgQ+9Rl1d0CY
+        OEnTWeF6Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fd8gV-000618-BI; Wed, 11 Jul 2018 06:33:07 +0000
+Date:   Tue, 10 Jul 2018 23:33:07 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
+        Douglas Gilbert <dgilbert@interlog.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        fujita.tomonori@lab.ntt.co.jp, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        security@kernel.org
+Subject: Re: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in
+ release
+Message-ID: <20180711063307.GA31127@infradead.org>
+References: <20180615152335.208202-1-jannh@google.com>
+ <20180615164009.GD30522@ZenIV.linux.org.uk>
+ <90063ef3-68fa-e983-9b47-838e6076b0f4@interlog.com>
+ <813e817b-bb2f-4a47-6225-9e39f19be278@kernel.dk>
+ <20180621123431.GA558@infradead.org>
+ <36a641db-fb1d-6c4c-7f1b-172f2b1cde32@kernel.dk>
+ <20180708145840.GA22949@infradead.org>
+ <CAG48ez0ahgHZAEYHt_J_MAanRNX+PXN+2MwtR-VM=gm8Ym30kg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1531239793-11781-3-git-send-email-yibin.gong@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 08:27:42 up 28 days, 15:36, 54 users,  load average: 0.05, 0.11,
- 0.10
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <CAG48ez0ahgHZAEYHt_J_MAanRNX+PXN+2MwtR-VM=gm8Ym30kg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 12:23:11AM +0800, Robin Gong wrote:
-> Add check_bd_buswidth() to minimize the code size.
-> 
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-> ---
->  drivers/dma/imx-sdma.c | 64 +++++++++++++++++++++++---------------------------
->  1 file changed, 29 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> index 27ccabf..ed2267d 100644
-> --- a/drivers/dma/imx-sdma.c
-> +++ b/drivers/dma/imx-sdma.c
-> @@ -1326,6 +1326,33 @@ static struct sdma_desc *sdma_transfer_init(struct sdma_channel *sdmac,
->  	return NULL;
->  }
->  
-> +static int check_bd_buswidth(struct sdma_buffer_descriptor *bd,
-> +			     struct sdma_channel *sdmac, int count,
-> +			     dma_addr_t dma_dst, dma_addr_t dma_src)
-> +{
+On Tue, Jul 10, 2018 at 01:53:02PM -0700, Jann Horn wrote:
+> With the error messages like in my sg patch or like with Linus'
+> proposed patch (https://lore.kernel.org/lkml/CA+55aFwg-2GP4ASTdd1pusmZkF7c8AN9febVDCaioDxzYJSLfw@mail.gmail.com/)
+> applied?
 
-Better name this function set_bd_buswidth. I would assume that a
-function named check_foo actually checks something, but doesn't set
-anything.
+I guess we should follows Linus' suggestions.
 
-Sascha
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Note that he also seems to agree with me to just remove the read/write
+interface.  Compared to sg bsg really is unused for the read/write
+interface.  But lets get your fix in first..
