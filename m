@@ -6,66 +6,95 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C42C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A445FC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6D32086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:59:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6D32086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 54D6A208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:00:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54D6A208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387641AbeGKNDz (ORCPT
+        id S2387649AbeGKNEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:03:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35266 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732876AbeGKNDz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:03:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C426C7A9;
-        Wed, 11 Jul 2018 05:59:41 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6282C3F5AD;
-        Wed, 11 Jul 2018 05:59:40 -0700 (PDT)
-Subject: Re: [PATCH v5 1/7] KVM: arm/arm64: Share common code in
- user_mem_abort()
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com
-References: <20180709143835.28971-1-punit.agrawal@arm.com>
- <20180709144124.29164-1-punit.agrawal@arm.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <9470f63a-6e8c-aeb6-7648-ad5fc7f24904@arm.com>
-Date:   Wed, 11 Jul 2018 13:59:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 11 Jul 2018 09:04:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42472 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732544AbeGKNEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:04:20 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D53AF2086B;
+        Wed, 11 Jul 2018 13:00:04 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 09:00:03 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180711090003.42596c2b@gandalf.local.home>
+In-Reply-To: <20180711124954.GE2476@hirez.programming.kicks-ass.net>
+References: <20180628182149.226164-1-joel@joelfernandes.org>
+        <20180628182149.226164-5-joel@joelfernandes.org>
+        <20180711124954.GE2476@hirez.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180709144124.29164-1-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/18 15:41, Punit Agrawal wrote:
-> The code for operations such as marking the pfn as dirty, and
-> dcache/icache maintenance during stage 2 fault handling is duplicated
-> between normal pages and PMD hugepages.
-> 
-> Instead of creating another copy of the operations when we introduce
-> PUD hugepages, let's share them across the different pagesizes.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->   virt/kvm/arm/mmu.c | 67 ++++++++++++++++++++++++++--------------------
->   1 file changed, 38 insertions(+), 29 deletions(-)
-> 
+On Wed, 11 Jul 2018 14:49:54 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> On Thu, Jun 28, 2018 at 11:21:46AM -0700, Joel Fernandes wrote:
+> > -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\  
+> 
+> I would convert to rcu_dereference_raw() to appease sparse. The fancy
+> stuff below is pointless if you then turn off all checking.
+
+The problem with doing this is if we use a trace event without the
+proper _idle() or whatever, we wont get a warning that it is used
+incorrectly with lockdep. Or does lockdep still check if "rcu is
+watching" with rcu_dereference_raw()?
+
+-- Steve
+
+> 
+> > +									\
+> > +		/*							\
+> > +		 * For rcuidle callers, use srcu since sched-rcu	\
+> > +		 * doesn't work from the idle path.			\
+> > +		 */							\
+> > +		if (rcuidle) {						\
+> > +			if (in_nmi()) {					\
+> > +				WARN_ON_ONCE(1);			\
+> > +				return; /* no srcu from nmi */		\
+> > +			}						\
+> > +									\
+> > +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
+> > +			it_func_ptr =					\
+> > +				srcu_dereference_notrace((tp)->funcs,	\
+> > +						&tracepoint_srcu);	\
+> > +			/* To keep it consistent with !rcuidle path */	\
+> > +			preempt_disable_notrace();			\
+> > +		} else {						\
+> > +			rcu_read_lock_sched_notrace();			\
+> > +			it_func_ptr =					\
+> > +				rcu_dereference_sched((tp)->funcs);	\
+> > +		}							\  
 
