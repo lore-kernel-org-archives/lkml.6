@@ -2,111 +2,152 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF31C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 795C5C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1816F208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34851208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:05:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlcW5ESS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1816F208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I3ozVhSi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34851208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732328AbeGKKI1 (ORCPT
+        id S1732350AbeGKKIy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:08:27 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:34552 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726269AbeGKKI0 (ORCPT
+        Wed, 11 Jul 2018 06:08:54 -0400
+Received: from mail-yw0-f193.google.com ([209.85.161.193]:33337 "EHLO
+        mail-yw0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbeGKKIy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:08:26 -0400
-Received: by mail-pl0-f67.google.com with SMTP id z9-v6so8943653plo.1;
-        Wed, 11 Jul 2018 03:04:53 -0700 (PDT)
+        Wed, 11 Jul 2018 06:08:54 -0400
+Received: by mail-yw0-f193.google.com with SMTP id c135-v6so8931984ywa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 03:05:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=imuLUt+k8VCUVCb+R1LYWvu/bASMK/g1Jkrz98iL/pQ=;
-        b=GlcW5ESSbJ3q8PRyq7WBxge8p4N1lc9U08mBWyM5efYokfGgVOK2bQnHjlR6BNJb0o
-         taafswjfAGmViDc7rHpteSRWt/5qTPBE7vpJa8Txf7iTjK4vZXyvDa7V8VP1HFaYdBO+
-         vhu8bcHwtcSm+GZgeDfHY/+cvmox8teVIlU+dzJJhY191Gr+3bYpOi3gMiyK2Yrbe9o6
-         OdqrtXhjMp+RO3ydtlDY81VxX4h30qN647dJjHRcO+e2Men7K774d9rRjQXeYXEaSykg
-         c1upDgLGLMJELKdUV2VBDxGj2sbLPaGAInN8qFzSp7J+Ig/ryu1AGtDglrFGgUrDuVKJ
-         coHw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/uoMqa+qvp1//HrVJ9XZy8u5iIj+bzy/OVoC42PzYT8=;
+        b=I3ozVhSiqgpYIQChkDeoKad6cwkbgRjaI0+h7WW0hkQ4xhhqp37V2rAzvYVP4CchYw
+         jMIgjHeHF/rb6LnRsByi9T6Bf1KgL45Qt8nTkkDRGf3akZlQt8qWw/qX44jumRL7HmJ6
+         zx06LwZgI3NB8pm01YxH/qFj3SOuxPaF/umHs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=imuLUt+k8VCUVCb+R1LYWvu/bASMK/g1Jkrz98iL/pQ=;
-        b=jdNE0d8sTe8MY1gqCmMW160JOyUB5saDFvWPLJKn3fDpfjIHfruPNr3nMwexF7HAxb
-         GKww6t4rjA7af0RLLf7odtjVF7fyi2BuEfCKTrCoLLOmhrY8usEC/WfA+LXMguceE2xZ
-         XDeerldUu/MJvBeGgFRyl0tATxTdNuDF11Gsw+2XmqnKeDG40F3/AHRccWKvXxt2fSKW
-         5oG2avtB7er73pNtspnCvYdQV81RJIHB3qsgfHb+OAiL86R5mwFk/7IufvjiHMyaUe3v
-         8SREmXU7Zk/tF97FTime1TtG6Sr3X83nG55uvoq+Tr9RKg+E+z6yPqzEQT9hpAfH1gaf
-         QLaw==
-X-Gm-Message-State: APt69E2hV+rnGrRJeXBbYG0uXAwTT7pkJBvBsQcK4VWfs2T6bctBqD+u
-        luAxcquc+rJ8zMNDB9a4cOzbX5G4
-X-Google-Smtp-Source: AAOMgpcweNKB+u35HgjBsG0Ew8JR7GU2jDvTicuxG+gojP6rg1vnx5EyxwOSfLE4dfqqZoZYcK2O/w==
-X-Received: by 2002:a17:902:7481:: with SMTP id h1-v6mr28726048pll.183.1531303493539;
-        Wed, 11 Jul 2018 03:04:53 -0700 (PDT)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id b65-v6sm33136297pfg.34.2018.07.11.03.04.46
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/uoMqa+qvp1//HrVJ9XZy8u5iIj+bzy/OVoC42PzYT8=;
+        b=Jl+4Cp9GksIqzqs2Oqq6Sd+adojXCCAF2ptGXoEcllvF0uC6+YTTx/p+1wcYoKEi98
+         89BleUK/xZ+nKDp01wCB3836H8vY4Wjjk4OU+clj0JAHpLeEgeq9Vittzy5AgzNGdsfG
+         yJgd7w8M1ybD6yy+X2CZAg9Qw987ZjDUQ3fgTc2Q/syJPXyaGx43+aYZuOna96Z/1sFC
+         GOFmErZdP3WgSMVi1f8uP2ofIq0r0Tuz6kC+dUUR5E3ElIFNMQb4e3k+qk7SlIPsR9ct
+         dqzSaItWrf2g3aEujKtidMBGuVbTeiNr+w8icZFCj0LEAsF/8KtAzokJyiUKXVU7DSN4
+         NuuQ==
+X-Gm-Message-State: APt69E1Blskm8Z4Xa6pK6stRw0+JEnmn7feMByBKY8AaN3GsL/KIPSnc
+        1hU70UqnkvlBtG7n643fZsiKQf0paqA=
+X-Google-Smtp-Source: AAOMgpeo3c6bUS3uHVBWJbreVZzAl0udLrGwL2QJI78SS7FBHmycmfdoroEJ3+/7b9E9flyz/JtRHw==
+X-Received: by 2002:a81:2881:: with SMTP id o123-v6mr14002509ywo.6.1531303520701;
+        Wed, 11 Jul 2018 03:05:20 -0700 (PDT)
+Received: from mail-yb0-f182.google.com (mail-yb0-f182.google.com. [209.85.213.182])
+        by smtp.gmail.com with ESMTPSA id c74-v6sm12507551ywh.17.2018.07.11.03.05.17
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 03:04:52 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 15:34:43 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, jonathan@marek.ca,
-        jmaneyrol@invensense.com, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, mkelly@xevo.com, fischerdouglasc@gmail.com,
-        bshah@kde.org, ctatlor97@gmail.com
-Subject: Re: [PATCH 2/3] iio: imu: mpu6050: add support for regulator
- framework
-Message-ID: <20180711100442.GA30019@himanshu-Vostro-3559>
-References: <20180711010932.20313-1-masneyb@onstation.org>
- <20180711010932.20313-3-masneyb@onstation.org>
+        Wed, 11 Jul 2018 03:05:18 -0700 (PDT)
+Received: by mail-yb0-f182.google.com with SMTP id r3-v6so9781947ybo.4
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 03:05:17 -0700 (PDT)
+X-Received: by 2002:a25:207:: with SMTP id 7-v6mr14786222ybc.7.1531303517505;
+ Wed, 11 Jul 2018 03:05:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711010932.20313-3-masneyb@onstation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
+ <20180708173413.1965-3-vivek.gautam@codeaurora.org> <1694664.FhRBrgajmF@aspire.rjw.lan>
+In-Reply-To: <1694664.FhRBrgajmF@aspire.rjw.lan>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 11 Jul 2018 19:05:06 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5COVfXRBuq2ofHoOvNb+cMVmAFDaekh5KM4DBB1ZEf5pA@mail.gmail.com>
+Message-ID: <CAAFQd5COVfXRBuq2ofHoOvNb+cMVmAFDaekh5KM4DBB1ZEf5pA@mail.gmail.com>
+Subject: Re: [PATCH v12 2/4] iommu/arm-smmu: Invoke pm_runtime during probe,
+ add/remove device
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>, sboyd@kernel.org,
+        Sricharan R <sricharan@codeaurora.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        jcrouse@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brain,
+Hi Rafael,
 
-On Tue, Jul 10, 2018 at 09:09:31PM -0400, Brian Masney wrote:
-> This patch adds support for the regulator framework to the mpu6050
-> driver.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  }
->  EXPORT_SYMBOL_GPL(inv_mpu_core_probe);
->  
-> +int inv_mpu_core_remove(struct inv_mpu6050_state *st)
-> +{
-> +	return regulator_disable(st->vddio_supply);
-> +}
-EXPORT_SYMBOL_GPL(inv_mpu_core_remove); ?
+Thanks for review.
 
-This is causing 0-day test build failure perhaps.
+On Wed, Jul 11, 2018 at 6:53 PM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>
+> On Sunday, July 8, 2018 7:34:11 PM CEST Vivek Gautam wrote:
+> > From: Sricharan R <sricharan@codeaurora.org>
+> >
+> > The smmu device probe/remove and add/remove master device callbacks
+> > gets called when the smmu is not linked to its master, that is without
+> > the context of the master device. So calling runtime apis in those places
+> > separately.
+> >
+> > Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> > [vivek: Cleanup pm runtime calls]
+> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+> > ---
+> >
+> >  - Change since v11
+> >    * Replaced pm_runtime_disable() with pm_runtime_force_suspend()
+> >      to avoid warning about " Unpreparing enabled clock".
+> >      Full warning text mentioned in cover patch.
+> >
+> >  drivers/iommu/arm-smmu.c | 92 +++++++++++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 84 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> > index a01d0dde21dd..09265e206e2d 100644
+> > --- a/drivers/iommu/arm-smmu.c
+> > +++ b/drivers/iommu/arm-smmu.c
+> > @@ -268,6 +268,20 @@ static struct arm_smmu_option_prop arm_smmu_options[] = {
+> >       { 0, NULL},
+> >  };
+> >
+> > +static inline int arm_smmu_rpm_get(struct arm_smmu_device *smmu)
+> > +{
+> > +     if (pm_runtime_enabled(smmu->dev))
+>
+> Why do you need the pm_runtime_enabled() checks here and below?
+>
+> pm_runtime_get_sync() and pm_runtime_put() should work just fine if
+> runtime PM is not enabled.
 
--- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
+Because pm_runtime_get_sync() acquires a spin lock, even if only for
+the short time of checking if runtime PM is enabled and SMMU driver
+maintainers didn't want any spin locks in certain IOMMU API code paths
+on hardware implementations that don't need runtime PM, while we still
+need to be able to control runtime PM there on hardware
+implementations that need so.
+
+Best regards,
+Tomasz
