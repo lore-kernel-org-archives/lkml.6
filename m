@@ -6,78 +6,132 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 325CFC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F763C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:24:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E638020C0D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:15:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E638020C0D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mev.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 020B420C0F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:24:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 020B420C0F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390139AbeGKRVO (ORCPT
+        id S2390149AbeGKR3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 13:21:14 -0400
-Received: from smtp89.iad3b.emailsrvr.com ([146.20.161.89]:53784 "EHLO
-        smtp89.iad3b.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388712AbeGKRVO (ORCPT
+        Wed, 11 Jul 2018 13:29:45 -0400
+Received: from smtprelay0004.hostedemail.com ([216.40.44.4]:58599 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732594AbeGKR3p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 13:21:14 -0400
-Received: from smtp4.relay.iad3b.emailsrvr.com (localhost [127.0.0.1])
-        by smtp4.relay.iad3b.emailsrvr.com (SMTP Server) with ESMTP id 1D6D720062;
-        Wed, 11 Jul 2018 13:15:57 -0400 (EDT)
-X-Auth-ID: siepeng@mev.co.uk
-Received: by smtp4.relay.iad3b.emailsrvr.com (Authenticated sender: siepeng-AT-mev.co.uk) with ESMTPSA id 61E762007A;
-        Wed, 11 Jul 2018 13:15:56 -0400 (EDT)
-X-Sender-Id: siepeng@mev.co.uk
-Received: from [10.0.0.185] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Wed, 11 Jul 2018 13:15:57 -0400
-Subject: Re: [PATCH] staging: comedi: remove redundant variable segpos
-To:     Colin King <colin.king@canonical.com>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180711103229.30066-1-colin.king@canonical.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <e3dc8042-d3f4-791a-10a4-369bea691c38@mev.co.uk>
-Date:   Wed, 11 Jul 2018 18:15:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180711103229.30066-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+        Wed, 11 Jul 2018 13:29:45 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id 6143A9079;
+        Wed, 11 Jul 2018 17:24:26 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: jam61_7dc216d49445f
+X-Filterd-Recvd-Size: 3813
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 11 Jul 2018 17:24:24 +0000 (UTC)
+Message-ID: <2fe72b18d3a3aa782529e112e07a0eb8d7cf2cc1.camel@perches.com>
+Subject: Re: [PATCH v2] checkpatch: Warn if missing author Signed-off-by
+From:   Joe Perches <joe@perches.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Andy Whitcroft <apw@canonical.com>, jgg@mellanox.com,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Wed, 11 Jul 2018 10:24:22 -0700
+In-Reply-To: <CAMuHMdXJeeaZQHqYp+q+L4FSRNusavDjtN8A_K-koiHGGGEFXw@mail.gmail.com>
+References: <20180711151003.6768-1-geert+renesas@glider.be>
+         <cd7a7d241252bbb6588448ed7f27d51811025c63.camel@perches.com>
+         <CAMuHMdXJeeaZQHqYp+q+L4FSRNusavDjtN8A_K-koiHGGGEFXw@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/07/18 11:32, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable segpos is being assigned but is never used hence it is redundant
-> and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'segpos' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/comedi/drivers/pcl816.c | 4 ++--
->   drivers/staging/comedi/drivers/pcl818.c | 4 ++--
->   2 files changed, 4 insertions(+), 4 deletions(-)
+On Wed, 2018-07-11 at 19:07 +0200, Geert Uytterhoeven wrote:
+> Hi Joe,
 
-Looks good, thanks!
+Rehi Geert.
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+> On Wed, Jul 11, 2018 at 6:20 PM Joe Perches <joe@perches.com> wrote:
+> > On Wed, 2018-07-11 at 17:10 +0200, Geert Uytterhoeven wrote:
+> > > Print a warning if none of the Signed-off-by lines cover the patch
+> > > author.
+> > > 
+> > > Non-ASCII quoted printable encoding in From: headers and (lack of)
+> > > double quotes are handled.
+> > > Split From: headers are not fully handled: only the first part is
+> > > compared.
+> > 
+> > []
+> > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > 
+> > []
+> > > +# Check the patch for a From:
+> > > +             if (decode("MIME-Header", $line) =~ /^From:\s*(.*)/) {
+> > > +                     $author = encode("utf8", $1);
+> > > +                     $author =~ s/"//g;
+> > > +             }
+> > > +
+> > >  # Check the patch for a signoff:
+> > >               if ($line =~ /^\s*signed-off-by:/i) {
+> > >                       $signoff++;
+> > >                       $in_commit_log = 0;
+> > > +                     if ($author ne '') {
+> > > +                             my $l = $line;
+> > > +                             $l =~ s/"//g;
+> > > +                             if ($l =~ /^\s*signed-off-by: \Q$author\E/i) {
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+	if (/^\s*signed-off-by:\s*\Q$author\E/i)
+
+> > > +                                 $authorsignoff = 1;
+> > > +                             }
+> > > +                     }
+> > >               }
+> > 
+> > I don't see the point of removing the quotes.
+> 
+> If the name contains a dot (e.g. "David S. Miller"), it must be protected
+> by double quotes in the From: email header, but that is usually not the case
+> in the Sob line.
+
+Right.
+It seems it's unusual for SOBs to use quotes around names.
+
+> > Another somewhat frequent Signed-off-by: defect pattern
+> > is to have a lower-case name or no name at all used.
+> > 
+> > Perhaps it'd be useful to add some checks like
+> > a single word for a name and all lower-case names:
+> > 
+> > e.g.:
+> >         Signed-off-by: joe perches <joe@perches.com>
+> > 
+> > emits
+> > 
+> > Unusual lower case name: 'joe perches <joe@perches.com>'
+> > 
+> > and
+> >         Signed-off-by: root <root@mydomain.net>
+> > and
+> >         Signed-off-by: Root <root@mydomain.net>
+> > and
+> >         Signed-off-by: root@mydomain.net
+> > 
+> > all emit that a single or missing name is unusual.
+> 
+> Perhaps. But adding email addresses is not the topic of this patch.
+
+Just another possible improvement if you're feeling energetic.
+
+cheers, Joe
