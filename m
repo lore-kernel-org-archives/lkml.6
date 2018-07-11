@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC887C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10D3CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B7AA208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:58:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7AA208E3
+	by mail.kernel.org (Postfix) with ESMTP id CA45C208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:58:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA45C208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388580AbeGKOCa (ORCPT
+        id S2388595AbeGKOCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:02:30 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36452 "EHLO
+        Wed, 11 Jul 2018 10:02:34 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36458 "EHLO
         foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388274AbeGKOCa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:02:30 -0400
+        id S2388274AbeGKOCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:02:33 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 46B1C2379;
-        Wed, 11 Jul 2018 06:58:02 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45DDB237B;
+        Wed, 11 Jul 2018 06:58:05 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3627F3F5B1;
-        Wed, 11 Jul 2018 06:58:00 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2C6463F5B1;
+        Wed, 11 Jul 2018 06:58:03 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         will.deacon@arm.com
@@ -35,9 +35,9 @@ Cc:     catalin.marinas@arm.com, dave.martin@arm.com, hch@infradead.org,
         james.morse@arm.com, linux@dominikbrodowski.net,
         linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
         mark.rutland@arm.com, viro@zeniv.linux.org.uk
-Subject: [PATCHv5 16/21] kernel: add kcompat_sys_{f,}statfs64()
-Date:   Wed, 11 Jul 2018 14:56:51 +0100
-Message-Id: <20180711135656.20670-17-mark.rutland@arm.com>
+Subject: [PATCHv5 17/21] arm64: remove in-kernel call to sys_personality()
+Date:   Wed, 11 Jul 2018 14:56:52 +0100
+Message-Id: <20180711135656.20670-18-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180711135656.20670-1-mark.rutland@arm.com>
 References: <20180711135656.20670-1-mark.rutland@arm.com>
@@ -46,87 +46,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using this helper allows us to avoid the in-kernel calls to the
-compat_sys_{f,}statfs64() sycalls, as are necessary for parameter
-mangling in arm64's compat handling.
-
-Following the example of ksys_* functions, kcompat_sys_* functions are
-intended to be a drop-in replacement for their compat_sys_*
-counterparts, with the same calling convention.
-
-This is necessary to enable conversion of arm64's syscall handling to
-use pt_regs wrappers.
+With pt_regs syscall wrappers, the calling convention for
+sys_personality() will change. Use ksys_personality(), which is
+functionally equivalent.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
 ---
- fs/statfs.c            | 14 ++++++++++++--
- include/linux/compat.h | 11 +++++++++++
- 2 files changed, 23 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/sys.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/statfs.c b/fs/statfs.c
-index 5b2a24f0f263..f0216629621d 100644
---- a/fs/statfs.c
-+++ b/fs/statfs.c
-@@ -335,7 +335,7 @@ static int put_compat_statfs64(struct compat_statfs64 __user *ubuf, struct kstat
- 	return 0;
+diff --git a/arch/arm64/kernel/sys.c b/arch/arm64/kernel/sys.c
+index df8180175515..f4e02f6aceb8 100644
+--- a/arch/arm64/kernel/sys.c
++++ b/arch/arm64/kernel/sys.c
+@@ -44,7 +44,7 @@ SYSCALL_DEFINE1(arm64_personality, unsigned int, personality)
+ 	if (personality(personality) == PER_LINUX32 &&
+ 		!system_supports_32bit_el0())
+ 		return -EINVAL;
+-	return sys_personality(personality);
++	return ksys_personality(personality);
  }
  
--COMPAT_SYSCALL_DEFINE3(statfs64, const char __user *, pathname, compat_size_t, sz, struct compat_statfs64 __user *, buf)
-+int kcompat_sys_statfs64(const char __user * pathname, compat_size_t sz, struct compat_statfs64 __user * buf)
- {
- 	struct kstatfs tmp;
- 	int error;
-@@ -349,7 +349,12 @@ COMPAT_SYSCALL_DEFINE3(statfs64, const char __user *, pathname, compat_size_t, s
- 	return error;
- }
- 
--COMPAT_SYSCALL_DEFINE3(fstatfs64, unsigned int, fd, compat_size_t, sz, struct compat_statfs64 __user *, buf)
-+COMPAT_SYSCALL_DEFINE3(statfs64, const char __user *, pathname, compat_size_t, sz, struct compat_statfs64 __user *, buf)
-+{
-+	return kcompat_sys_statfs64(pathname, sz, buf);
-+}
-+
-+int kcompat_sys_fstatfs64(unsigned int fd, compat_size_t sz, struct compat_statfs64 __user * buf)
- {
- 	struct kstatfs tmp;
- 	int error;
-@@ -363,6 +368,11 @@ COMPAT_SYSCALL_DEFINE3(fstatfs64, unsigned int, fd, compat_size_t, sz, struct co
- 	return error;
- }
- 
-+COMPAT_SYSCALL_DEFINE3(fstatfs64, unsigned int, fd, compat_size_t, sz, struct compat_statfs64 __user *, buf)
-+{
-+	return kcompat_sys_fstatfs64(fd, sz, buf);
-+}
-+
  /*
-  * This is a copy of sys_ustat, just dealing with a structure layout.
-  * Given how simple this syscall is that apporach is more maintainable
-diff --git a/include/linux/compat.h b/include/linux/compat.h
-index c68acc47da57..43f4ed44c5d5 100644
---- a/include/linux/compat.h
-+++ b/include/linux/compat.h
-@@ -1028,6 +1028,17 @@ static inline struct compat_timeval ns_to_compat_timeval(s64 nsec)
- 	return ctv;
- }
- 
-+/*
-+ * Kernel code should not call compat syscalls (i.e., compat_sys_xyzyyz())
-+ * directly.  Instead, use one of the functions which work equivalently, such
-+ * as the kcompat_sys_xyzyyz() functions prototyped below.
-+ */
-+
-+int kcompat_sys_statfs64(const char __user * pathname, compat_size_t sz,
-+		     struct compat_statfs64 __user * buf);
-+int kcompat_sys_fstatfs64(unsigned int fd, compat_size_t sz,
-+			  struct compat_statfs64 __user * buf);
-+
- #else /* !CONFIG_COMPAT */
- 
- #define is_compat_task() (0)
 -- 
 2.11.0
 
