@@ -2,125 +2,161 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B030FC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA618C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A46F20883
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:04:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A46F20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FE1A20C03
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:05:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GpXdmAqR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FE1A20C03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387752AbeGKNJH (ORCPT
+        id S1733248AbeGKNJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:09:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51594 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732411AbeGKNJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:09:07 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3431120775; Wed, 11 Jul 2018 15:04:50 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D77AA206F3;
-        Wed, 11 Jul 2018 15:04:49 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 15:04:49 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Abhishek Sahu <absahu@codeaurora.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nand: ranw: qcom_nand: stop using phys_to_dma()
-Message-ID: <20180711150449.4152333c@bbrezillon>
-In-Reply-To: <20180711122709.358159-1-arnd@arndb.de>
-References: <20180711122709.358159-1-arnd@arndb.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Wed, 11 Jul 2018 09:09:58 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43715 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732411AbeGKNJ6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:09:58 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r13-v6so19321210ljg.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 06:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=S87UHEYg3rpaM6Q0OfiX+QZjdgB+sYU/NdxuLbYDHQo=;
+        b=GpXdmAqRpuyczkFfgpXIdtY2TzCe2xarX8O52zoU2NVLTxzMwpRzTA6i5as+WiMErF
+         V0aF44xYbcoqzQ20zFMYBSE/hHFp5rjZN/S0zG12Omz15lnBxs1RxD3Vv0cPrMRhuYkR
+         IjiQjUwVGdseFcfu032kKso+KvYKPsQeCDbt4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=S87UHEYg3rpaM6Q0OfiX+QZjdgB+sYU/NdxuLbYDHQo=;
+        b=IZZXbI1JT2HCt3JDSAGP6O/oySRnEswKQJ05ZMJ7WQW/u4IOaOC+dhelRavlUjWzRd
+         e5KvT/YeIduSovnkXUu/2L9HaQlSMjLQvRTAN9YrqidJIqABrDHksuzOom9/XASHXIHx
+         QGLEty+aMgXuNYkiTJc4PgCY3iUlxMPy2zQWXPUwDNLftOU1o181j3zk6dUM6jI0hHIW
+         QGrVZ277cwCsgLKg6VTmgYXWtENRFd6Tvqu4H9yBOrGIg4dfDw7aafEYpclTeSQO9AVT
+         dtOgXcBLMsydCfbrOKDCtBXpp2weN7GVeBXB0caMD4q7oRA7sgWdA2m7KFdsLrVJSlC6
+         Fc0g==
+X-Gm-Message-State: APt69E3FNm790rl4qFamh0s/Af2T/9fUo+KKmqlg0eogR7vxZ16+lhah
+        4XswAqhlcjMQSSu5tXAperM7L37jG3aadsbuw8HtcQ==
+X-Google-Smtp-Source: AAOMgpd0TIA9isDotgYEID0rF0jmjhkNFo1FXXCGwpCg70ZIcC4630IynEwsmt6rxzt0TScAz8+JSMtlsr6X5txjTFU=
+X-Received: by 2002:a2e:4186:: with SMTP id d6-v6mr17320181ljf.36.1531314340829;
+ Wed, 11 Jul 2018 06:05:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a19:169b:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 06:05:40
+ -0700 (PDT)
+In-Reply-To: <20180710182458.736721865@linuxfoundation.org>
+References: <20180710182458.736721865@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 11 Jul 2018 18:35:40 +0530
+Message-ID: <CA+G9fYt6nvGyynWRpXEQJnB7+Cu36EgdvLOKtNKezgWYnz3u8w@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/53] 4.14.55-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Jul 2018 14:26:58 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+On 10 July 2018 at 23:54, Greg Kroah-Hartman <gregkh@linuxfoundation.org> w=
+rote:
+> This is the start of the stable review cycle for the 4.14.55 release.
+> There are 53 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu Jul 12 18:24:36 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.14.55-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-> Compile-testing this driver on x86 caused a link error:
-> 
-> ERROR: "__phys_to_dma" [drivers/mtd/nand/raw/qcom_nandc.ko] undefined!
-> 
-> The problem here is that the driver attempts to convert the physical
-> address into the DMA controller as a dma_addr_t and calls phys_to_dma()
-> to do the conversion.
-> 
-> However, there is no generic way to convert a phys_addr_t into a dma_addr_t
-> for anything other than RAM (which should use the dma-mapping API instead).
-> The only correct use of phys_to_dma() instead is inside of the dma-mapping
-> implementation.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-Should we use dma_map_resource() to do the phys_addr_t to dma_addr_t
-conversion?
+Summary
+------------------------------------------------------------------------
 
-> 
-> In all other drivers that deal with DMA FIFO addresses, we just pass the
-> physical address directly and have the DMA controller deal with that
-> if necessary, so let's do the same thing here.
-> 
-> Fixes: c76b78d8ec05 ("mtd: nand: Qualcomm NAND controller driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/mtd/nand/raw/qcom_nandc.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/qcom_nandc.c b/drivers/mtd/nand/raw/qcom_nandc.c
-> index 994f980c6d86..f047e2819041 100644
-> --- a/drivers/mtd/nand/raw/qcom_nandc.c
-> +++ b/drivers/mtd/nand/raw/qcom_nandc.c
-> @@ -338,7 +338,6 @@ struct nandc_regs {
->   * @dev:			parent device
->   * @base:			MMIO base
->   * @base_phys:			physical base address of controller registers
-> - * @base_dma:			dma base address of controller registers
->   * @core_clk:			controller clock
->   * @aon_clk:			another controller clock
->   *
-> @@ -372,7 +371,6 @@ struct qcom_nand_controller {
->  
->  	void __iomem *base;
->  	phys_addr_t base_phys;
-> -	dma_addr_t base_dma;
->  
->  	struct clk *core_clk;
->  	struct clk *aon_clk;
-> @@ -935,11 +933,11 @@ static int prep_adm_dma_desc(struct qcom_nand_controller *nandc, bool read,
->  	slave_conf.device_fc = flow_control;
->  	if (read) {
->  		slave_conf.src_maxburst = 16;
-> -		slave_conf.src_addr = nandc->base_dma + reg_off;
-> +		slave_conf.src_addr = (dma_addr_t)nandc->base_phys + reg_off;
->  		slave_conf.slave_id = nandc->data_crci;
->  	} else {
->  		slave_conf.dst_maxburst = 16;
-> -		slave_conf.dst_addr = nandc->base_dma + reg_off;
-> +		slave_conf.dst_addr = (dma_addr_t)nandc->base_phys + reg_off;
->  		slave_conf.slave_id = nandc->cmd_crci;
->  	}
->  
-> @@ -2963,7 +2961,6 @@ static int qcom_nandc_probe(struct platform_device *pdev)
->  		return PTR_ERR(nandc->base);
->  
->  	nandc->base_phys = res->start;
-> -	nandc->base_dma = phys_to_dma(dev, (phys_addr_t)res->start);
->  
->  	nandc->core_clk = devm_clk_get(dev, "core");
->  	if (IS_ERR(nandc->core_clk))
+kernel: 4.14.55-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.14.y
+git commit: 5c888f221d45895399fe36b2e0c0015a676320eb
+git describe: v4.14.54-54-g5c888f221d45
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild/v4.14.54-54-g5c888f221d45
 
+No regressions (compared to build v4.14.54-51-g0a7132162c00)
+
+
+Ran 16542 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
