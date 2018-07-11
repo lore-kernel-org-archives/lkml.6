@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28A70C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A89C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:32:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2B80208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:32:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C042E208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:32:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="H71NWJ3R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B80208FA
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="VjGPGLwg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C042E208FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733292AbeGKLg0 (ORCPT
+        id S1733300AbeGKLgj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:36:26 -0400
-Received: from 8bytes.org ([81.169.241.247]:37802 "EHLO theia.8bytes.org"
+        Wed, 11 Jul 2018 07:36:39 -0400
+Received: from 8bytes.org ([81.169.241.247]:37618 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732808AbeGKLeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:34:06 -0400
+        id S1732881AbeGKLeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:34:04 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id D6042A21; Wed, 11 Jul 2018 13:30:02 +0200 (CEST)
+        id 0C5688DC; Wed, 11 Jul 2018 13:30:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308603; bh=iEPn9yhr8K3WkTxVGik81NaWC4cuH7/tnosk3392xlQ=;
+        t=1531308603; bh=XKiFWmF22ywv1jWrtPcpb3+8jP+MvcZDECdC4Z3QOuc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H71NWJ3RgeMUV6UFc1T3TwJPaj/ltMHQ87VHoBqOUY8y8R6uMG3ZsJCJsT0+4ihMW
-         O0GBl0bwd9/qPL4tsl3hepz1/sTZ9spudVtM5YYhOwZldKLGz+rfaxG2d2S47lV11w
-         6qU277FpZjdTd8rY+zxofhrJLoH6la5lZ0+4ReH0/OAl8GhUbI0a1NIdB5YoTK1zc+
-         Ucek/sA3LaWftUz1UuAsIbpdGrZBJccJ0DbluJV/5TdPSceLdX/5SOpR25kMpakzUh
-         VxigK92C7XEQoZP+kde7VmOW1zd15XssG8STqtCq3cEimxiA86pqUSyNduhbnLFZ+h
-         RIMAksXwEsHHQ==
+        b=VjGPGLwgHMcapMwrQzU+fcFFZqG1X9R0h46qfRubxT61PSlA9eVZMgfQFouReiaqo
+         hhNTapRqA9H/n1nFEPTJ8gPvbhmy3m286So5wHasVuHeGYl0oEmw0H0W5ojTUF0R1v
+         iWhFywfendDuH06uZG4lU//ayTkSwdzHOdTjQN3oOf0UTeRXimRHcvdpFBG8VxSTw5
+         yLbWCqddZAUJcAq1nm5iq0r1gOEluVUidvciYCiW4Ntmcjjgy4KKbLGVeQiTlisXya
+         lPUzkWoit41bq6gNEVrU41/zYFFxeW9tFqk6prsnVNxBIgXfH9Tey1HxI+91/UUZ28
+         o59vU0ZN3qFsA==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 18/39] x86/pgtable: Move pgdp kernel/user conversion functions to pgtable.h
-Date:   Wed, 11 Jul 2018 13:29:25 +0200
-Message-Id: <1531308586-29340-19-git-send-email-joro@8bytes.org>
+Subject: [PATCH 13/39] x86/entry/32: Add PTI cr3 switch to non-NMI entry/exit points
+Date:   Wed, 11 Jul 2018 13:29:20 +0200
+Message-Id: <1531308586-29340-14-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
@@ -72,134 +72,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Make them available on 32 bit and clone_pgd_range() happy.
+Add unconditional cr3 switches between user and kernel cr3
+to all non-NMI entry and exit points.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable.h    | 49 +++++++++++++++++++++++++++++++++++++++
- arch/x86/include/asm/pgtable_64.h | 49 ---------------------------------------
- 2 files changed, 49 insertions(+), 49 deletions(-)
+ arch/x86/entry/entry_32.S | 83 ++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 79 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgtable.h b/arch/x86/include/asm/pgtable.h
-index 5715647..eb47432 100644
---- a/arch/x86/include/asm/pgtable.h
-+++ b/arch/x86/include/asm/pgtable.h
-@@ -1155,6 +1155,55 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
- }
- #endif
+diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+index 9e06431..311aefa 100644
+--- a/arch/x86/entry/entry_32.S
++++ b/arch/x86/entry/entry_32.S
+@@ -154,6 +154,33 @@
  
-+#ifdef CONFIG_PAGE_TABLE_ISOLATION
-+/*
-+ * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
-+ * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
-+ * the user one is in the last 4k.  To switch between them, you
-+ * just need to flip the 12th bit in their addresses.
-+ */
-+#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
+ #endif /* CONFIG_X86_32_LAZY_GS */
+ 
++/* Unconditionally switch to user cr3 */
++.macro SWITCH_TO_USER_CR3 scratch_reg:req
++	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
++
++	movl	%cr3, \scratch_reg
++	orl	$PTI_SWITCH_MASK, \scratch_reg
++	movl	\scratch_reg, %cr3
++.Lend_\@:
++.endm
 +
 +/*
-+ * This generates better code than the inline assembly in
-+ * __set_bit().
++ * Switch to kernel cr3 if not already loaded and return current cr3 in
++ * \scratch_reg
 + */
-+static inline void *ptr_set_bit(void *ptr, int bit)
-+{
-+	unsigned long __ptr = (unsigned long)ptr;
++.macro SWITCH_TO_KERNEL_CR3 scratch_reg:req
++	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
++	movl	%cr3, \scratch_reg
++	/* Test if we are already on kernel CR3 */
++	testl	$PTI_SWITCH_MASK, \scratch_reg
++	jz	.Lend_\@
++	andl	$(~PTI_SWITCH_MASK), \scratch_reg
++	movl	\scratch_reg, %cr3
++	/* Return original CR3 in \scratch_reg */
++	orl	$PTI_SWITCH_MASK, \scratch_reg
++.Lend_\@:
++.endm
 +
-+	__ptr |= BIT(bit);
-+	return (void *)__ptr;
-+}
-+static inline void *ptr_clear_bit(void *ptr, int bit)
-+{
-+	unsigned long __ptr = (unsigned long)ptr;
-+
-+	__ptr &= ~BIT(bit);
-+	return (void *)__ptr;
-+}
-+
-+static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
-+{
-+	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+
-+static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
-+{
-+	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+
-+static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
-+{
-+	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+
-+static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
-+{
-+	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
-+}
-+#endif /* CONFIG_PAGE_TABLE_ISOLATION */
-+
+ .macro SAVE_ALL pt_regs_ax=%eax switch_stacks=0
+ 	cld
+ 	/* Push segment registers and %eax */
+@@ -288,7 +315,6 @@
+ #endif /* CONFIG_X86_ESPFIX32 */
+ .endm
+ 
+-
  /*
-  * clone_pgd_range(pgd_t *dst, pgd_t *src, int count);
+  * Called with pt_regs fully populated and kernel segments loaded,
+  * so we can access PER_CPU and use the integer registers.
+@@ -301,11 +327,19 @@
+  */
+ 
+ #define CS_FROM_ENTRY_STACK	(1 << 31)
++#define CS_FROM_USER_CR3	(1 << 30)
+ 
+ .macro SWITCH_TO_KERNEL_STACK
+ 
+ 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
+ 
++	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
++
++	/*
++	 * %eax now contains the entry cr3 and we carry it forward in
++	 * that register for the time this macro runs
++	 */
++
+ 	/* Are we on the entry stack? Bail out if not! */
+ 	movl	PER_CPU_VAR(cpu_entry_area), %edi
+ 	addl	$CPU_ENTRY_AREA_entry_stack, %edi
+@@ -374,7 +408,8 @@
+ 	 * but switch back to the entry-stack again when we approach
+ 	 * iret and return to the interrupted code-path. This usually
+ 	 * happens when we hit an exception while restoring user-space
+-	 * segment registers on the way back to user-space.
++	 * segment registers on the way back to user-space or when the
++	 * sysenter handler runs with eflags.tf set.
+ 	 *
+ 	 * When we switch to the task-stack here, we can't trust the
+ 	 * contents of the entry-stack anymore, as the exception handler
+@@ -391,6 +426,7 @@
+ 	 *
+ 	 * %esi: Entry-Stack pointer (same as %esp)
+ 	 * %edi: Top of the task stack
++	 * %eax: CR3 on kernel entry
+ 	 */
+ 
+ 	/* Calculate number of bytes on the entry stack in %ecx */
+@@ -407,6 +443,14 @@
+ 	orl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
+ 
+ 	/*
++	 * Test the cr3 used to enter the kernel and add a marker
++	 * so that we can switch back to it before iret.
++	 */
++	testl	$PTI_SWITCH_MASK, %eax
++	jz	.Lcopy_pt_regs_\@
++	orl	$CS_FROM_USER_CR3, PT_CS(%esp)
++
++	/*
+ 	 * %esi and %edi are unchanged, %ecx contains the number of
+ 	 * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
+ 	 * the stack-frame on task-stack and copy everything over
+@@ -472,7 +516,7 @@
+ 
+ /*
+  * This macro handles the case when we return to kernel-mode on the iret
+- * path and have to switch back to the entry stack.
++ * path and have to switch back to the entry stack and/or user-cr3
   *
-diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-index 9406c4f..4adba19 100644
---- a/arch/x86/include/asm/pgtable_64.h
-+++ b/arch/x86/include/asm/pgtable_64.h
-@@ -132,55 +132,6 @@ static inline pud_t native_pudp_get_and_clear(pud_t *xp)
- #endif
- }
+  * See the comments below the .Lentry_from_kernel_\@ label in the
+  * SWITCH_TO_KERNEL_STACK macro for more details.
+@@ -518,6 +562,18 @@
+ 	/* Safe to switch to entry-stack now */
+ 	movl	%ebx, %esp
  
--#ifdef CONFIG_PAGE_TABLE_ISOLATION
--/*
-- * All top-level PAGE_TABLE_ISOLATION page tables are order-1 pages
-- * (8k-aligned and 8k in size).  The kernel one is at the beginning 4k and
-- * the user one is in the last 4k.  To switch between them, you
-- * just need to flip the 12th bit in their addresses.
-- */
--#define PTI_PGTABLE_SWITCH_BIT	PAGE_SHIFT
--
--/*
-- * This generates better code than the inline assembly in
-- * __set_bit().
-- */
--static inline void *ptr_set_bit(void *ptr, int bit)
--{
--	unsigned long __ptr = (unsigned long)ptr;
--
--	__ptr |= BIT(bit);
--	return (void *)__ptr;
--}
--static inline void *ptr_clear_bit(void *ptr, int bit)
--{
--	unsigned long __ptr = (unsigned long)ptr;
--
--	__ptr &= ~BIT(bit);
--	return (void *)__ptr;
--}
--
--static inline pgd_t *kernel_to_user_pgdp(pgd_t *pgdp)
--{
--	return ptr_set_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
--}
--
--static inline pgd_t *user_to_kernel_pgdp(pgd_t *pgdp)
--{
--	return ptr_clear_bit(pgdp, PTI_PGTABLE_SWITCH_BIT);
--}
--
--static inline p4d_t *kernel_to_user_p4dp(p4d_t *p4dp)
--{
--	return ptr_set_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
--}
--
--static inline p4d_t *user_to_kernel_p4dp(p4d_t *p4dp)
--{
--	return ptr_clear_bit(p4dp, PTI_PGTABLE_SWITCH_BIT);
--}
--#endif /* CONFIG_PAGE_TABLE_ISOLATION */
--
++	/*
++	 * We came from entry-stack and need to check if we also need to
++	 * switch back to user cr3.
++	 */
++	testl	$CS_FROM_USER_CR3, PT_CS(%esp)
++	jz	.Lend_\@
++
++	/* Clear marker from stack-frame */
++	andl	$(~CS_FROM_USER_CR3), PT_CS(%esp)
++
++	SWITCH_TO_USER_CR3 scratch_reg=%eax
++
+ .Lend_\@:
+ .endm
  /*
-  * Page table pages are page-aligned.  The lower half of the top
-  * level is used for userspace and the top half for the kernel.
+@@ -711,6 +767,18 @@ ENTRY(xen_sysenter_target)
+  * 0(%ebp) arg6
+  */
+ ENTRY(entry_SYSENTER_32)
++	/*
++	 * On entry-stack with all userspace-regs live - save and
++	 * restore eflags and %eax to use it as scratch-reg for the cr3
++	 * switch.
++	 */
++	pushfl
++	pushl	%eax
++	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
++	popl	%eax
++	popfl
++
++	/* Stack empty again, switch to task stack */
+ 	movl	TSS_entry_stack(%esp), %esp
+ 
+ .Lsysenter_past_esp:
+@@ -791,6 +859,9 @@ ENTRY(entry_SYSENTER_32)
+ 	/* Switch to entry stack */
+ 	movl	%eax, %esp
+ 
++	/* Now ready to switch the cr3 */
++	SWITCH_TO_USER_CR3 scratch_reg=%eax
++
+ 	/*
+ 	 * Restore all flags except IF. (We restore IF separately because
+ 	 * STI gives a one-instruction window in which we won't be interrupted,
+@@ -871,7 +942,11 @@ restore_all:
+ .Lrestore_all_notrace:
+ 	CHECK_AND_APPLY_ESPFIX
+ .Lrestore_nocheck:
+-	RESTORE_REGS 4				# skip orig_eax/error_code
++	/* Switch back to user CR3 */
++	SWITCH_TO_USER_CR3 scratch_reg=%eax
++
++	/* Restore user state */
++	RESTORE_REGS pop=4			# skip orig_eax/error_code
+ .Lirq_return:
+ 	/*
+ 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on IRET core serialization
 -- 
 2.7.4
 
