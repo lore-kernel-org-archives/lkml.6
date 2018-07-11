@@ -2,106 +2,121 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F40C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F19C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2283420C03
+	by mail.kernel.org (Postfix) with ESMTP id CA4F820C0E
 	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:35:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sxZN4o/5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2283420C03
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qoo67VBb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA4F820C0E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389773AbeGKQk2 (ORCPT
+        id S2389786AbeGKQk3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:40:28 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51338 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388013AbeGKQk2 (ORCPT
+        Wed, 11 Jul 2018 12:40:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52846 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388017AbeGKQk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Jul 2018 12:40:28 -0400
-Received: by mail-wm0-f68.google.com with SMTP id s12-v6so3027737wmc.1;
-        Wed, 11 Jul 2018 09:35:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=0KHZt+ay/U0tE/vnL9dbSRWks2knzUFE0q2HIBH8y1c=;
-        b=sxZN4o/5zzT12C8HQDkZXNg3OwCW1GMvNXX4lVS1U3nx0W56Y6w3tTctfArl3dtKXz
-         1h8jbXaJXBF871b4fwzIuxQFss716O2vclu/Yk/5qTKoIG+1iWrfDmai5+KeYMVhvDtX
-         Mw/OtgaLnD/oAH3uYgeaRUs0VRvGJY9ld7krFhgp4LSBFYVXLpSy4plHfqjjNpTFlIam
-         0ZZ8GJH0LN+wK4AuZDJaI0TuYkkW53QNuLiy+vytTIDwWtfqsJrzJMVimx8twxI/7Mc5
-         3EDZSkEBOa8USWhTYwsI12kzyg0XyCIUQIk2YoZ9YUTdlJR+DTpIwD3lg82a5mU7y4yk
-         yHhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0KHZt+ay/U0tE/vnL9dbSRWks2knzUFE0q2HIBH8y1c=;
-        b=eoDpNuhXAMc/fWBms5ERS6nvxvc8gIjh9Wf4mi35EayurX5DOLtvI8ujGKCsB1w2Jz
-         9+jSEmaXrgG2XUug8AxlEigfFysEzR2TxEJnYzKA7dTJlsCXvGUgO3xGRm+eMeslQydJ
-         gSPKZ3m7PdehfJDoBFlicGP2LY8IMmtyMr4/Mg4Da9dQO9mVyWOO8Oq678Bbc1TBiUBY
-         MCxHxX8M0Khv8MJcpFVC8YVasUMMcnb+oeyPRv9MDlG4AEvZliU7X25Flqge/8PZUZwx
-         vfAVPGpILiJAtQ7OPLwLBblbuCc38QwoaCGr/LFZJ+PX2vI+V5GT+gCEjtn/9Jnp2/PE
-         pbjA==
-X-Gm-Message-State: APt69E0R+ezGlaL3pewWKeTmC4e8Z1A0/DHck2jBeqdOVhOzP5B0tmNi
-        CohFjxwBQUuufZHbYvXwFpo5BBbF6b8HO6BJ77RBGQ==
-X-Google-Smtp-Source: AAOMgpe6LZywWGVnrJjKNA6mVbBnbipJ1M5McC/JrZ12uGsc0ywDF1k9ZmJoU87cCZRv6Pny7ZZd+qrm8Gvk8pAyTYw=
-X-Received: by 2002:a1c:1745:: with SMTP id 66-v6mr17182987wmx.38.1531326918893;
- Wed, 11 Jul 2018 09:35:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BZN3vSzwuk9ehsjZrTfUrc0SUulBrta6AXACSHaNtd0=; b=qoo67VBbHyk6IKDubRCTTNtND
+        onuqIFXZDZtDlzAUf8ifCo3AfFkQT3a3CfrtRsEOUlZbfe/T5iqs2C7zRQcILEAySGWpu6769H5o5
+        uCvwp+H7xkqE483N7YiGMXMM4ERzmn0f3fYo6LiT9KHFTuZH0DE3ng6Y0bDUPp06+VmwNwVv2ZZZY
+        b64/GYterthRw6P+2zdXcikAICpwcWQccf8UaTsKu8BuOwzuHpScpYPGps7E2Aa6lanxnzfZ44n/6
+        /R3iG8fuM3JBIBUXlCJtx3U/F1ajJwQQDyh5cvKkLJRvEa1t2WOovzeafC1127rtu6VXH9zDuKrdK
+        Mcv8qmCCg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdI4x-0005jr-9N; Wed, 11 Jul 2018 16:34:59 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8DC8B20298BAC; Wed, 11 Jul 2018 18:34:56 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 18:34:56 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+Message-ID: <20180711163456.GL2476@hirez.programming.kicks-ass.net>
+References: <20180710162555.GV3593@linux.vnet.ibm.com>
+ <Pine.LNX.4.44L0.1807101416390.1449-100000@iolanthe.rowland.org>
+ <20180711094344.GE13963@arm.com>
 MIME-Version: 1.0
-Received: by 2002:a1c:9c8:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 09:35:17 -0700 (PDT)
-In-Reply-To: <6cf082e4-6fff-21dd-4df5-a6e9e4f2847c@intel.com>
-References: <20180704085356.10888-1-jthumshirn@suse.de> <yq1d0vupjq2.fsf@oracle.com>
- <6cf082e4-6fff-21dd-4df5-a6e9e4f2847c@intel.com>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Thu, 12 Jul 2018 00:35:17 +0800
-Message-ID: <CACVXFVOSssuveZDN185FUYpjX1i0ma59Cn30XBSJ1dAHDKLnLQ@mail.gmail.com>
-Subject: Re: [PATCH] scsi: switch to scsi-mq by default
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Hannes Reinecke <hare@suse.de>,
-        Bart Van Assche <Bart.VanAssche@sandisk.com>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711094344.GE13963@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 4:31 PM, Adrian Hunter <adrian.hunter@intel.com> wrote:
-> On 11/07/18 05:52, Martin K. Petersen wrote:
->>
->> Johannes,
->>
->>> It has been more than one year since we tried to change the default
->>> from legacy to multi queue in SCSI with commit c279bd9e406 ("scsi:
->>> default to scsi-mq"). But due to issues with suspend/resume and
->>> performance problems it had been reverted again with commit
->>> cbe7dfa26eee ("Revert "scsi: default to scsi-mq"").
->>>
->>> In the meantime there have been a substantial amount of performance
->>> improvements and suspend/resume got fixed as well, thus we can
->>> re-enable scsi-mq without a significant performance penalty.
->>
->> Applied to 4.19/scsi-queue, thanks!
->>
->
-> But there is no runtime pm support, is there?  I tried enabling runtime PM
-> for UFS SCSI devices with scsi-mq and it didn't work, which is a regression.
+On Wed, Jul 11, 2018 at 10:43:45AM +0100, Will Deacon wrote:
+> Hi Alan,
+> 
+> On Tue, Jul 10, 2018 at 02:18:13PM -0400, Alan Stern wrote:
+> > More than one kernel developer has expressed the opinion that the LKMM
+> > should enforce ordering of writes by locking.  In other words, given
+> > the following code:
+> > 
+> > 	WRITE_ONCE(x, 1);
+> > 	spin_unlock(&s):
+> > 	spin_lock(&s);
+> > 	WRITE_ONCE(y, 1);
+> > 
+> > the stores to x and y should be propagated in order to all other CPUs,
+> > even though those other CPUs might not access the lock s.  In terms of
+> > the memory model, this means expanding the cumul-fence relation.
+> > 
+> > Locks should also provide read-read (and read-write) ordering in a
+> > similar way.  Given:
+> > 
+> > 	READ_ONCE(x);
+> > 	spin_unlock(&s);
+> > 	spin_lock(&s);
+> > 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
+> > 
+> > the load of x should be executed before the load of (or store to) y.
+> > The LKMM already provides this ordering, but it provides it even in
+> > the case where the two accesses are separated by a release/acquire
+> > pair of fences rather than unlock/lock.  This would prevent
+> > architectures from using weakly ordered implementations of release and
+> > acquire, which seems like an unnecessary restriction.  The patch
+> > therefore removes the ordering requirement from the LKMM for that
+> > case.
+> > 
+> > All the architectures supported by the Linux kernel (including RISC-V)
+> > do provide this ordering for locks, albeit for varying reasons.
+> > Therefore this patch changes the model in accordance with the
+> > developers' wishes.
+> > 
+> > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> 
+> Thanks, I'm happy with this version of the patch:
+> 
+> Reviewed-by: Will Deacon <will.deacon@arm.com>
 
-I just posted one RFC patchset for supporting runtime PM on scsi_mq, and
-looks it works in my test on usb-storage.
+Me too! Thanks Alan.
 
-https://marc.info/?l=linux-block&m=153132657922233&w=2
-
-thanks,
-Ming Lei
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
