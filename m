@@ -2,105 +2,189 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED811C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:54:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E65DC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:55:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0D30208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:54:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0D30208EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F21E8208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:55:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F21E8208FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732341AbeGKI51 (ORCPT
+        id S1732357AbeGKI6g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:57:27 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59348 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726384AbeGKI51 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:57:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B86DAACF3;
-        Wed, 11 Jul 2018 08:54:10 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 10:54:07 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Joonsoo Kim <js1304@gmail.com>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        iommu@lists.linux-foundation.org,
+        Wed, 11 Jul 2018 04:58:36 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41540 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726289AbeGKI6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 04:58:36 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BB73F20733; Wed, 11 Jul 2018 10:55:17 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 93F1F206A6;
+        Wed, 11 Jul 2018 10:55:17 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 10:55:17 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Michal Nazarewicz <mina86@mina86.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Chris Zankel <chris@zankel.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 1/2] mm/cma: remove unsupported gfp_mask parameter from
- cma_alloc()
-Message-ID: <20180711085407.GB20050@dhcp22.suse.cz>
-References: <CGME20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29@eucas1p2.samsung.com>
- <20180709121956.20200-1-m.szyprowski@samsung.com>
- <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com>
- <CAAmzW4PPNYhUj_MeZox+ddq8MjXqnJs_AJ3xkayf710udD1pSg@mail.gmail.com>
- <20180710095056.GE14284@dhcp22.suse.cz>
- <CAAmzW4P1m_T77DfQzDD6ysGaOF46++-0gwRaOajmo6ef=VYp=A@mail.gmail.com>
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: Re: [PATCH v5 05/22] dt-bindings: sram: sunxi: Populate valid
+ sections compatibles
+Message-ID: <20180711085517.myjn5ttiwqiolobz@flea>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+ <20180710080114.31469-6-paul.kocialkowski@bootlin.com>
+ <CAGb2v64Na1Mq0=-z5Haq=sgggRPHNHVZ-6fFczxb3EESAzZ=XA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4x5rkbvkq66mckhl"
 Content-Disposition: inline
-In-Reply-To: <CAAmzW4P1m_T77DfQzDD6ysGaOF46++-0gwRaOajmo6ef=VYp=A@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAGb2v64Na1Mq0=-z5Haq=sgggRPHNHVZ-6fFczxb3EESAzZ=XA@mail.gmail.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 11-07-18 16:35:28, Joonsoo Kim wrote:
-> 2018-07-10 18:50 GMT+09:00 Michal Hocko <mhocko@kernel.org>:
-> > On Tue 10-07-18 16:19:32, Joonsoo Kim wrote:
-> >> Hello, Marek.
-> >>
-> >> 2018-07-09 21:19 GMT+09:00 Marek Szyprowski <m.szyprowski@samsung.com>:
-> >> > cma_alloc() function doesn't really support gfp flags other than
-> >> > __GFP_NOWARN, so convert gfp_mask parameter to boolean no_warn parameter.
-> >>
-> >> Although gfp_mask isn't used in cma_alloc() except no_warn, it can be used
-> >> in alloc_contig_range(). For example, if passed gfp mask has no __GFP_FS,
-> >> compaction(isolation) would work differently. Do you have considered
-> >> such a case?
+
+--4x5rkbvkq66mckhl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 10, 2018 at 10:47:07PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Jul 10, 2018 at 4:00 PM, Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+> > This adds a list of valid SRAM sections compatibles for the A13, A20,
+> > A23 and H3 platforms. Per-platform compatibles are introduced for the
+> > SRAM sections of these platforms, with the A10 compatibles also listed
+> > as valid when applicable.
 > >
-> > Does any of cma_alloc users actually care about GFP_NO{FS,IO}?
-> 
-> I don't know. My guess is that cma_alloc() is used for DMA allocation so
-> block device would use it, too. If fs/block subsystem initiates the
-> request for the device,
-> it would be possible that cma_alloc() is called with such a flag.
-> Again, I don't know
-> much about those subsystem so I would be wrong.
+> > In particular, compatibles for the C1 SRAM section are introduced.
+>=20
+> You should probably mention that this is not an exhaustive list. In
+> particular, the C2 and C3 (sun5i) mappings are still missing.
+>=20
+> >
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  .../devicetree/bindings/sram/sunxi-sram.txt   | 25 +++++++++++++++++++
+> >  1 file changed, 25 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Do=
+cumentation/devicetree/bindings/sram/sunxi-sram.txt
+> > index 156a02ab6b54..07c53c5214a0 100644
+> > --- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+> > +++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+> > @@ -32,8 +32,33 @@ once again the representation described in the mmio-=
+sram binding.
+> >
+> >  The valid sections compatible for A10 are:
+> >      - allwinner,sun4i-a10-sram-a3-a4
+> > +    - allwinner,sun4i-a10-sram-c1
+> >      - allwinner,sun4i-a10-sram-d
+> >
+> > +The valid sections compatible for A13 are:
+> > +    - allwinner,sun5i-a13-sram-a3-a4
+> > +    - allwinner,sun4i-a10-sram-a3-a4
+> > +    - allwinner,sun5i-a13-sram-c1
+> > +    - allwinner,sun4i-a10-sram-c1
+> > +    - allwinner,sun5i-a13-sram-d
+> > +    - allwinner,sun4i-a10-sram-d
+> > +
+> > +The valid sections compatible for A20 are:
+> > +    - allwinner,sun7i-a20-sram-a3-a4
+> > +    - allwinner,sun4i-a10-sram-a3-a4
+> > +    - allwinner,sun7i-a20-sram-c1
+> > +    - allwinner,sun4i-a10-sram-c1
+> > +    - allwinner,sun7i-a20-sram-d
+> > +    - allwinner,sun4i-a10-sram-d
+> > +
+> > +The valid sections compatible for A23/A33 are:
+> > +    - allwinner,sun8i-a23-sram-c1
+> > +    - allwinner,sun4i-a10-sram-c1
+> > +
+> > +The valid sections compatible for H3 are:
+> > +    - allwinner,sun8i-h3-sram-c1
+> > +    - allwinner,sun4i-a10-sram-c1
+>=20
+> I'm not quite sure why we want to list these... I think it makes more sen=
+se
+> to just have the SoC specific compatible. They are tied to the controls
+> after all. Maybe Rob has a different opinion?
 
-The patch converts existing users and none of them really tries to use
-anything other than GFP_KERNEL [|__GFP_NOWARN] so this doesn't seem to
-be the case. Should there be a new user requiring more restricted
-gfp_mask we should carefuly re-evaluate and think how to support it.
+We had that discussion not so long ago, and the outcome was to list
+the SoC specific and the fallback compatibles on the same line. I've
+amended the patch to do so and applied.
 
-Until then I would simply stick with the proposed approach because my
-experience tells me that a wrong gfp mask usage is way too easy so the
-simpler the api is the less likely we will see an abuse.
--- 
-Michal Hocko
-SUSE Labs
+(and added the mention of the C2 and C3 SRAMs as you suggested)
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--4x5rkbvkq66mckhl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFxfQACgkQ0rTAlCFN
+r3Tyig//VvvkaNDStwST2xmuMuiwXX/uMwSgYyvU97azlGWDwVrYmWRPohGw4SHk
+Ctta2Re24CViAK/KWlagk852PcUgpSmGOPWwjKKvkmJ5J6Pce5uCuWsRxOBga7tA
+fHcM5zMCuaPd7SQmaz/J+8sXlD0Z0YHuG/MNjpKvs4Rp1GuXWOAe+XmidtatWvgP
+ZwNHYHkO9ZpVgff+eftm5sXCLBHhqcRP1sWFmmfiu6VJCIv/VcFPWbBBXX7efxDU
+N/KHGsr3jf34gGe3XLo+Xcm9lvwdwHQyB2yRpxAS65AbpsM3YzzcsIrkCdhWTxjo
+x/ZvfMVeUYnUWRFdmyqyvSWLRX+B6TPcuTHgl2IwXaoLMeIHVOw0af6dnHx9PwN4
+17fJp1iFTgEH4+KJRQC3reSSOK528jWp3j3/60Hmbigfgeq21U6QKaQduhHRLimG
+yXnUqIME991dVJfMRsm+H6qIROVllyq7fOFYN0SK+yKnTudj+xVq6FXfwyGMPS5K
+3vluGn1+ZCLRFLVYa1VCHj1GpfHOj7SSpz+9EiyuW+7mx58IR0Ip4Z8fYe/5Yk5b
+4Udj8ZaC8V0kj7d8ZDh8ztb8O1y45vu+m1wiUOTnj+mZoe+JZoh9cg8jGUsyh3it
+hQNtelN3DVQ+HKxriLiGeI5bFqJn/BsdSf4n7KhbRREi38uFK9k=
+=4XM2
+-----END PGP SIGNATURE-----
+
+--4x5rkbvkq66mckhl--
