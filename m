@@ -4,55 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B08C1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:36:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9926FC38A24
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC33720C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:36:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C06220C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:36:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JA5B9Ujw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC33720C0C
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="f6XSLcCZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C06220C0C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390197AbeGKUmc (ORCPT
+        id S2390293AbeGKUmg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:42:32 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:42974 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389955AbeGKUmb (ORCPT
+        Wed, 11 Jul 2018 16:42:36 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:34232 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726429AbeGKUmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:42:31 -0400
-Received: by mail-pf0-f196.google.com with SMTP id l9-v6so7505309pff.9
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:36:28 -0700 (PDT)
+        Wed, 11 Jul 2018 16:42:36 -0400
+Received: by mail-pf0-f193.google.com with SMTP id e10-v6so19141784pfn.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=jj0pkfTBIjWct087fskH5x0QMPDXl7/gpbVHYmY2BxQ=;
-        b=JA5B9UjwK47KRcFfEkfXlTgfcPAJi1Ot399s36UQ1hjXdbEnpwN9Y2QjEtSpYWGu8Z
-         Vq6jQ78EdfMu/g94oRkQr1SwgAZLEWiShfSN46/qoT6AVR/klrLTP0kw99n2ianXxUBf
-         L+FT3qA1rGzxeVhBaDNQhGBz3jmd8GxX8B3ro=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Nat8iTKWvSD4ychV4rEE2eDXAa7pi2+ftb1Ei0FCzN0=;
+        b=f6XSLcCZzFFkl9VmUGai36J/3eribp7AA+EMJa/1Z9AL8S9bJqwdX7dDFjTD9Ehhq3
+         DS7Sjyachtua2DsHkbXqCY73mGKRtPVwdas4hNmcHFf5NJHp0EGecjjvmxUWweDtk8kc
+         WDtgCunxKER70BBOIo6B0tILqYoJubg20KZ30=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=jj0pkfTBIjWct087fskH5x0QMPDXl7/gpbVHYmY2BxQ=;
-        b=hcio3TYiPSqItbtd5hIWeM4J4X8yOx0hoDQAs1ze74gz66hTZULRtJiXImydiqVsS+
-         Wv0GUQcx88rmSkiQSAdksRbq/KV+23dk+Lpy79gMGnipljI0ryGwXboGuKguKt0TbjfN
-         aW6pJYmsp+8fC0tUgb1fApGPebKLUegw9aJeBvL6RVl8qGl1HbsgHG1lTQyCsPTMOW2y
-         F+3GI2bao+wtC/3192D43jqkerbEn/xWYms2QVOa9AAWDbJZuqFl51RCh+IgjydNYVJW
-         ku5P+1awQVut/MVLf/1Trl4hHO2MAF2LIwaq1P+/kLXMTW6ptAksWXs4MXr3AP99lr5C
-         R0sQ==
-X-Gm-Message-State: AOUpUlE5dVoZ31GouUqWp9/mr04+koPmi7tDNr6GikyH24N+o0Kyf8rM
-        q2YcW7t4VdoDg+aBXk7LDF273mnug60=
-X-Google-Smtp-Source: AAOMgpdesdEN21SelZ93VIMvuBX2Tc4TqnnZdyinnzXuk5oPSfLX7cMCRjp9A1iRJ/x7YcIEBD5yXw==
-X-Received: by 2002:a62:5d55:: with SMTP id r82-v6mr164956pfb.150.1531341387945;
-        Wed, 11 Jul 2018 13:36:27 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Nat8iTKWvSD4ychV4rEE2eDXAa7pi2+ftb1Ei0FCzN0=;
+        b=bBC6U5MunSE6kK6bG88nxeAlCetlnkgHLpAU1DCLrm7OCJci7U95LQYFrx1FDBH2Ol
+         MnJH6coMDkSm3E8v4IT/Kmfp1bd2eNxPU95vlu8uN0w5GSCvA/l3kfCI0C9dTKaf1QFR
+         WmGYj7GatWPDlrsvjAVnOQFEuYdjhziG6eJd14bqaa1EXAJrD9PeFeeP+UKuGIZ26jql
+         8Y62kBIJRMgcgKjkXdTai6c6SXR1dQD31OTemG7WcnyObG51Gc6+ZK1uxGZY5DaK3CRN
+         izmEZQX6iCJlICMw6DDLVpTCaIzJEg72+OEDp783DoVR3Pt844Gf6Mv0IM+Rw/DbNWgn
+         oS3g==
+X-Gm-Message-State: AOUpUlEvIYeXISBHhy7i3XlvqgGEblb4ryge8cvBrsKqxcuIuFvNWam3
+        QvmSy0BBNYHNQ8yKlfMR3Chx5A==
+X-Google-Smtp-Source: AAOMgpdNPHZqs+Qc80qSqYJnRfArvvxMggIqsQbRZi4pfhdUB/UAp+gsXzKaqx5vXS6pS4uhXN09ww==
+X-Received: by 2002:a65:6645:: with SMTP id z5-v6mr126268pgv.71.1531341392429;
+        Wed, 11 Jul 2018 13:36:32 -0700 (PDT)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id s144-v6sm6461001pfs.123.2018.07.11.13.36.22
+        by smtp.gmail.com with ESMTPSA id 84-v6sm34234208pfj.33.2018.07.11.13.36.27
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 13:36:23 -0700 (PDT)
+        Wed, 11 Jul 2018 13:36:28 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Herbert Xu <herbert@gondor.apana.org.au>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -69,102 +70,64 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-crypto@vger.kernel.org, qat-linux@intel.com,
         dm-devel@redhat.com, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 00/14] crypto: Remove VLA usage
-Date:   Wed, 11 Jul 2018 13:36:05 -0700
-Message-Id: <20180711203619.1020-1-keescook@chromium.org>
+Subject: [PATCH v4 12/14] crypto: ahash: Remove VLA usage for AHASH_REQUEST_ON_STACK
+Date:   Wed, 11 Jul 2018 13:36:17 -0700
+Message-Id: <20180711203619.1020-13-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180711203619.1020-1-keescook@chromium.org>
+References: <20180711203619.1020-1-keescook@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v4:
-- add back *_REQUEST_ON_STACK patches.
-- programmatically find stack sizes for *_REQUEST_ON_STACK patches.
-- whitelist some code that trips FRAME_WARN on 32-bit builds.
-- fix alignment patches.
+In the quest to remove all stack VLA usage from the kernel[1], this caps
+the ahash request size similar to the other limits and adds a sanity
+check at registration. Unfortunately, these reqsizes can be very large.
+Looking at instrumented tcrypt output, the largest is for sha512:
 
-v3:
-- drop *_REQUEST_ON_STACK patches. The rest of this series is pretty
-  straight-forward, and I'd like to get them tested in -next while
-  we continue to chip away at the *_REQUEST_ON_STACK VLA removal patches
-  separately. "Part 2" will continue with those.
-
-v2:
-- use 512 instead of PAGE_SIZE / 8 to avoid bloat on large-page archs.
-- swtich xcbc to "16" max universally.
-- fix typo in bounds check for dm buffer size.
-- examine actual reqsizes for skcipher and ahash instead of guessing.
-- improve names and comments for alg maxes
-
-
-This is nearly the last of the VLA removals[1], but it's one of the
-largest because crypto gets used in lots of places. After looking
-through code, usage, reading the threads Gustavo started, and comparing
-the use-cases to the other VLA removals that have landed in the kernel,
-I think this series is likely the best way forward to shut the door on
-VLAs forever.
-
-As background, the crypto stack usage is for callers to do an immediate
-bit of work that doesn't allocate new memory. This means that other VLA
-removal techniques (like just using kmalloc) aren't workable, and the
-next common technique is needed: examination of maximum stack usage and
-the addition of sanity checks. This series does that, and in several
-cases, these maximums were already implicit in the code.
-
-This series is intended to land via the crypto tree for 4.19, though
-it touches dm and a few other things as well, since there are dependent
-patches (new crypto #defines being used, kbuild, etc).
-
-Thanks!
-
--Kees
+	crypt: testing sha512
+	crypto_ahash_set_reqsize: 528
+	crypto_ahash_set_reqsize: 728
+	crypto_ahash_set_reqsize: 808
 
 [1] https://lkml.kernel.org/r/CA+55aFzCG-zNmZwX4A2FQpadafLfEzK6CC=qPXydAacU1RqZWA@mail.gmail.com
 
-Kees Cook (14):
-  crypto: xcbc: Remove VLA usage
-  crypto: cbc: Remove VLA usage
-  crypto: shash: Remove VLA usage
-  dm integrity: Remove VLA usage
-  crypto: ahash: Remove VLA usage
-  dm verity fec: Remove VLA usage
-  crypto alg: Introduce generic max blocksize and alignmask
-  crypto: qat: Remove VLA usage
-  crypto: shash: Remove VLA usage in unaligned hashing
-  kbuild: Introduce FRAME_WARN_BUMP_FLAG
-  treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
-  crypto: ahash: Remove VLA usage for AHASH_REQUEST_ON_STACK
-  rxrpc: Prepare to remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-  crypto: skcipher: Remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ include/crypto/hash.h          | 3 ++-
+ include/crypto/internal/hash.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
- Makefile                                    |  6 ++++
- crypto/Makefile                             |  1 +
- crypto/ahash.c                              |  4 +--
- crypto/algapi.c                             |  7 ++++-
- crypto/algif_hash.c                         |  2 +-
- crypto/shash.c                              | 33 ++++++++++++---------
- crypto/xcbc.c                               |  9 ++++--
- drivers/block/drbd/Makefile                 |  2 ++
- drivers/crypto/qat/qat_common/qat_algs.c    |  8 +++--
- drivers/md/Makefile                         |  1 +
- drivers/md/dm-integrity.c                   | 23 ++++++++++----
- drivers/md/dm-verity-fec.c                  |  5 +++-
- drivers/net/ppp/Makefile                    |  1 +
- drivers/staging/rtl8192e/Makefile           |  1 +
- drivers/staging/rtl8192u/Makefile           |  1 +
- drivers/staging/rtl8192u/ieee80211/Makefile |  1 +
- include/crypto/algapi.h                     |  4 ++-
- include/crypto/cbc.h                        |  4 ++-
- include/crypto/hash.h                       | 12 ++++++--
- include/crypto/internal/hash.h              |  1 +
- include/crypto/internal/skcipher.h          |  1 +
- include/crypto/skcipher.h                   |  4 ++-
- include/linux/compiler-gcc.h                |  1 -
- net/rxrpc/Makefile                          |  1 +
- net/wireless/Makefile                       |  1 +
- 25 files changed, 99 insertions(+), 35 deletions(-)
-
+diff --git a/include/crypto/hash.h b/include/crypto/hash.h
+index 4fcd0e2368cd..9290120536cd 100644
+--- a/include/crypto/hash.h
++++ b/include/crypto/hash.h
+@@ -66,10 +66,11 @@ struct ahash_request {
+ 
+ #define AHASH_MAX_DIGESTSIZE	512
+ #define AHASH_MAX_STATESIZE	512
++#define AHASH_MAX_REQSIZE	808
+ 
+ #define AHASH_REQUEST_ON_STACK(name, ahash) \
+ 	char __##name##_desc[sizeof(struct ahash_request) + \
+-		crypto_ahash_reqsize(ahash)] CRYPTO_MINALIGN_ATTR; \
++		AHASH_MAX_REQSIZE] CRYPTO_MINALIGN_ATTR; \
+ 	struct ahash_request *name = (void *)__##name##_desc
+ 
+ /**
+diff --git a/include/crypto/internal/hash.h b/include/crypto/internal/hash.h
+index a0b0ad9d585e..d96ae5f52125 100644
+--- a/include/crypto/internal/hash.h
++++ b/include/crypto/internal/hash.h
+@@ -142,6 +142,7 @@ static inline struct ahash_alg *__crypto_ahash_alg(struct crypto_alg *alg)
+ static inline void crypto_ahash_set_reqsize(struct crypto_ahash *tfm,
+ 					    unsigned int reqsize)
+ {
++	BUG_ON(reqsize > AHASH_MAX_REQSIZE);
+ 	tfm->reqsize = reqsize;
+ }
+ 
 -- 
 2.17.1
 
