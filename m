@@ -2,120 +2,95 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06939C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E9AC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B01C120C03
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:45:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="lcfRTn7H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B01C120C03
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CD2E20C03
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:46:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CD2E20C03
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388145AbeGKNuU (ORCPT
+        id S2388198AbeGKNu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:50:20 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44039 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388012AbeGKNuU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:50:20 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r16-v6so18250007wrt.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 06:45:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=aOFNr9EQACoofPpfltQqWBpn8tJTD9ODeJurkbREViQ=;
-        b=lcfRTn7HoKvFaYlg1AIAAmjy+eg7jEmojHzf6YNakR/0n6dyCSdGd/7PMwQlKjv0dF
-         t03uTd5ygSxCIfKl1kSuidXdRUvWnf0/3mWPviFzw/1W6DVx8jM5wHzs4XnVng4y7Xs2
-         2oSJnwQqKl7XMBkiAfXkUfwkvvzHt5qYYW2EQgmmf8VghKnDZNFN+k/7IGAU7NIeyDrB
-         MNbyZ7XXOtUaM/P9zMp/T4g447gpxuVf4gsuHvy9RmDOIt0VgGGVRGKyyULHclo1uRM5
-         djDrzKtvuZCXn2UsYK9DTcx/W9KzKUnPYcZkYBG6W+2x9aA5KzSPGc1Shp//RgJELvub
-         wE/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=aOFNr9EQACoofPpfltQqWBpn8tJTD9ODeJurkbREViQ=;
-        b=cFE+h6Ab0K9vonocipWGDPmZERilEzjKINOwnujmnpmIfgtJHx0IJu7RZXPZyqXQXy
-         J6ARcEzPPPyJmmCsjhSAyBQJ2miT2wLiOfVMaM3SmkjlYkMqInmc5G3Z4NYlIsBeQI4b
-         FN01HFXWmiUtS3neQCGpWpNwS8VLbDzrd+2mM+I+C8odZ7LBJY/OWos5El+GzWPf02XU
-         mh74GHzIIngZxpo7gDhJLahhAlX1MXIBA6RnIqSnIFdhBqxX749K0mFzYLukCF3EhQ44
-         ymD3x/lAYBmfEMYEeFQfbMZ4r88U569LNlzWecWfC3EIGyXRHKkhKq3JYtDa7+ma2Zqx
-         3YEg==
-X-Gm-Message-State: APt69E3hDA+p/qSvI5rCPh2ciL0gyvYat2S/jOcHFOHyGR8XAnYtwyeH
-        4JBFxZtfc1pwMffcXkuY0cmQBA==
-X-Google-Smtp-Source: AAOMgpe0njoLAgnKR7AYjNTHWr7iPMxy6HNl0o+f/hOKhWnj3Eo0fxYlaNeEps+ePl8LQHpIlbkr6A==
-X-Received: by 2002:a5d:4452:: with SMTP id x18-v6mr22745214wrr.227.1531316754062;
-        Wed, 11 Jul 2018 06:45:54 -0700 (PDT)
-Received: from boomer ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 185-v6sm3490195wmh.22.2018.07.11.06.45.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 06:45:53 -0700 (PDT)
-Message-ID: <1531316752.2708.113.camel@baylibre.com>
-Subject: Re: [PATCH 3/3] clk: meson-g12a: Add EE Clock controller driver
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jian Hu <jian.hu@amlogic.com>, Yixun Lan <yixun.lan@amlogic.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        qianggui.song@amlogic.com, sboyd@kernel.org, khilman@baylibre.com,
-        mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-        bo.yang@amlogic.com, qiufang.dai@amlogic.com,
-        linux-arm-kernel@lists.infradead.org, carlo@caione.org,
-        linux-amlogic@lists.infradead.org, sunny.luo@amlogic.com,
-        linux-clk@vger.kernel.org, xingyu.chen@amlogic.com,
-        Rob Herring <robh@kernel.org>
-Date:   Wed, 11 Jul 2018 15:45:52 +0200
-In-Reply-To: <454887b2-6d29-4fe9-ee34-400363671746@amlogic.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
-         <1531134767-29927-4-git-send-email-jian.hu@amlogic.com>
-         <CAFBinCBB9N_p6S_-dfiV=zDCf-RYnA3C-ir6oNLC7JAfdOqqiw@mail.gmail.com>
-         <ec49c089-bccf-9aac-5d0f-43bc27770ad9@amlogic.com>
-         <1531216472.2708.71.camel@baylibre.com>
-         <454887b2-6d29-4fe9-ee34-400363671746@amlogic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 11 Jul 2018 09:50:26 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:39131 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388020AbeGKNu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:50:26 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id A729D64A13;
+        Wed, 11 Jul 2018 13:45:52 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH 2/2] ARM: sun8i: h3: add SY8113B regulator on Banana Pi M2 Zero board
+Date:   Wed, 11 Jul 2018 21:44:50 +0800
+Message-Id: <20180711134450.43148-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-11 at 21:41 +0800, Jian Hu wrote:
-> > > > > +static struct clk_regmap g12a_mpll0 = {
-> > > > > +       .data = &(struct clk_regmap_gate_data){
-> > > > > +               .offset = HHI_MPLL_CNTL1,
-> > > > > +               .bit_idx = 31,
-> > > > > +       },
-> > > > > +       .hw.init = &(struct clk_init_data){
-> > > > > +               .name = "mpll0",
-> > > > > +               .ops = &clk_regmap_gate_ops,
-> > > > > +               .parent_names = (const char *[]){ "mpll0_div" },
-> > > > > +               .num_parents = 1,
-> > > > > +               .flags = CLK_SET_RATE_PARENT,
-> > > > > +       },
-> > > > > +};
-> > 
-> > The previous had a predivider (1 or 2) in front of these mpll. Even if the
-> > predivider is usually set to be a passthrough, it is better to model the tree
-> > correctly.
-> > 
-> > Is this SoC any different ?
-> > 
-> 
-> I am not sure the difference, I will confirm with IC design guys.
+Banana Pi M2 Zero board has a SY8113B regulator, which is controlled via
+GPIO and capable of outputing 1.1V when the PL1 GPIO is set to output 0
+or 1.1V when the PL6 GPIO is set to input or output 1, and the output is
+the power supply of the ARM cores in H3 SoC.
 
-I suggest that you have a look at the (upstream) axg and gxbb clock driver for
-this
+Add the device tree node of this regulator and set the cpu's cpu-supply
+property to it.
 
-Same goes for the fdiv gates.
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ .../dts/sun8i-h2-plus-bananapi-m2-zero.dts    | 21 +++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Last, please trim your replies a bit. It will make easier to see what you are
-replying to. 
+diff --git a/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts b/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
+index eb61dcf32797..abc8dc750f4b 100644
+--- a/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
++++ b/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
+@@ -59,6 +59,23 @@
+ 		};
+ 	};
+ 
++	reg_vdd_cpux: vdd-cpux-regulator {
++		compatible = "regulator-gpio";
++		regulator-name = "vdd-cpux";
++		regulator-type = "voltage";
++		regulator-boot-on;
++		regulator-always-on;
++		regulator-min-microvolt = <1100000>;
++		regulator-max-microvolt = <1300000>;
++		regulator-ramp-delay = <50>; /* 4ms */
++
++		gpios = <&r_pio 0 1 GPIO_ACTIVE_HIGH>; /* PL1 */
++		enable-active-high;
++		gpios-states = <0x1>;
++		states = <1100000 0x0
++			  1300000 0x1>;
++	};
++
+ 	wifi_pwrseq: wifi_pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		pinctrl-names = "default";
+@@ -66,6 +83,10 @@
+ 	};
+ };
+ 
++&cpu0 {
++	cpu-supply = <&reg_vdd_cpux>;
++};
++
+ &de {
+ 	status = "okay";
+ };
+-- 
+2.17.1
+
