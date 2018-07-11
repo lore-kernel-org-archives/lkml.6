@@ -2,93 +2,140 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B200C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:07:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54016C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F26FA20846
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:07:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="l8BgFBvc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F26FA20846
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=onstation.org
+	by mail.kernel.org (Postfix) with ESMTP id 14F0920854
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:08:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F0920854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732475AbeGKJK1 (ORCPT
+        id S1726689AbeGKJMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:10:27 -0400
-Received: from onstation.org ([52.200.56.107]:38584 "EHLO onstation.org"
+        Wed, 11 Jul 2018 05:12:03 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42175 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbeGKJK0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:10:26 -0400
-Received: from localhost (c-98-236-77-125.hsd1.wv.comcast.net [98.236.77.125])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id ABE1411;
-        Wed, 11 Jul 2018 09:07:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1531300027;
-        bh=3t86zNmKhiDESpFDVD610QUx6egdIxNaRb1msVd8w0A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=l8BgFBvcl2hE/gzwRUCYJZ7u1PIs7y9l0O5GumS2iAl2mPMg0x64jrs2/4wupefL2
-         pjOGNnUC8SjyypDxLLLlI9vXbFS388yM/enW6j3hjbgTVxXyGy+8Eoy8JDNGNmnZKa
-         dVKuHu8EmDhqIod+bwklhIHlGWoV87pnqHlatncg=
-Date:   Wed, 11 Jul 2018 05:07:06 -0400
-From:   Brian Masney <masneyb@onstation.org>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, jic23@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, andy.gross@linaro.org,
-        david.brown@linaro.org, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        jonathan@marek.ca, jmaneyrol@invensense.com, knaack.h@gmx.de,
-        lars@metafoo.de, pmeerw@pmeerw.net, mkelly@xevo.com,
-        fischerdouglasc@gmail.com, bshah@kde.org, ctatlor97@gmail.com
-Subject: Re: [PATCH 2/3] iio: imu: mpu6050: add support for regulator
- framework
-Message-ID: <20180711090706.fqflz4nzpypuwywj@d08157822050>
-References: <20180711010932.20313-3-masneyb@onstation.org>
- <201807111656.iDIpGrc7%fengguang.wu@intel.com>
+        id S1726289AbeGKJMD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 05:12:03 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id BBA1120739; Wed, 11 Jul 2018 11:08:42 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 90CCD20732;
+        Wed, 11 Jul 2018 11:08:42 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 11:08:42 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: Re: [PATCH v5 11/22] ARM: sun5i: Add support for the C1 SRAM region
+ with the SRAM controller
+Message-ID: <20180711090842.q3q3lvnuwj52nnjx@flea>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+ <20180710080114.31469-12-paul.kocialkowski@bootlin.com>
+ <CAGb2v65swXpLwAo3M9X=MJeVmUrjT=FPFZxp=eCzMrfopqHKjA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fvh5gzw54i3rynrk"
 Content-Disposition: inline
-In-Reply-To: <201807111656.iDIpGrc7%fengguang.wu@intel.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAGb2v65swXpLwAo3M9X=MJeVmUrjT=FPFZxp=eCzMrfopqHKjA@mail.gmail.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 04:50:22PM +0800, kbuild test robot wrote:
-> Hi Brian,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on iio/togreg]
-> [also build test ERROR on next-20180710]
-> [cannot apply to v4.18-rc4]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Brian-Masney/iio-imu-mpu6050-add-support-for-6515-variant/20180711-092023
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-> config: x86_64-allmodconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> All errors (new ones prefixed by >>):
-> 
-> >> ERROR: "inv_mpu_core_remove" [drivers/iio/imu/inv_mpu6050/inv-mpu6050-spi.ko] undefined!
-> >> ERROR: "inv_mpu_core_remove" [drivers/iio/imu/inv_mpu6050/inv-mpu6050-i2c.ko] undefined!
 
-This patch applies cleanly against the iio/testing branch.
+--fvh5gzw54i3rynrk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git/log/?h=testing
+On Tue, Jul 10, 2018 at 10:56:23PM +0800, Chen-Yu Tsai wrote:
+> On Tue, Jul 10, 2018 at 4:01 PM, Paul Kocialkowski
+> <paul.kocialkowski@bootlin.com> wrote:
+> > From: Maxime Ripard <maxime.ripard@bootlin.com>
+> >
+> > This adds support for the C1 SRAM region (to be used with the SRAM
+> > controller driver) for sun5i-based platforms. The region is shared
+> > between the Video Engine and the CPU.
+> >
+> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+>=20
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+>=20
+> But again, see discussion about SRAM compatibles.
 
-Brian
+I've fixed the SRAM C size (which is 0xd0000 and not 0x80000) and
+applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--fvh5gzw54i3rynrk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFyRkACgkQ0rTAlCFN
+r3SN8Q/+IbrK/5h4vviNqCywlxuLaonZMSaHbqHRNgnoonzYg4n+VSmeiOyeRE0K
+pVaRh1eTMuBD0DyaiOPO0SMOOI4IWmIwA/5m6qics74qZ7gCD4Up3nKuPlUitdn/
+xST/fJtRtriXqnCruDcTRdXcwwABE5VVrTP7krZeZG0wgjWXTbAUlxbIoOu5wk0H
+jdmJFpVqSmFOTh/Me9hPZdu8NjI3iosYGrlSXZvbDcGKLjKjKPZmjxpoVxfjMEvA
+Lc2o5TBj8xF/jkS89hLqGIG6WkTdA4FE7joPZI6aaGV7GxJjxuV1LalHLJKVWRTd
+VHhaAa0eWjKCIfSQae8W1X0nDItMF1zWzBsJXiMQPwVdcbAmxIANgql7a44d5UIE
+fG+RENeRRTEqT9/pD8HQJd7NdtFK5Si2PDG6aIUDkJG5vpeHEAvM49fMU1fge7PS
+9x8hNJQX2f5neytgLSoE/XbkqXjn6+r3tFUgBxwOlVAUqIIqTOnAr7ndnyAtesl/
+9tJC+o9l3iX9kafwiYUK7JDgCv6a4+5/P4AriOUIa/flcMT+l0mF4dKdKvxgQ66n
+L4LRlN8xjmeamTN/tebJ82psS42GZDStLfjZJRW7tHvF6uHsBAzrggKbewWSBMQR
+Ol+xRbVS0MD+uHuAcLBAlcgKQ9yFL6lmL4mzbg352q2u0KwiZ6M=
+=geDY
+-----END PGP SIGNATURE-----
+
+--fvh5gzw54i3rynrk--
