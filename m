@@ -2,195 +2,139 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F308EC1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5F2C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B82D20C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:59:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B82D20C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BAD9E20C0E
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:59:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD9E20C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733103AbeGKUE5 (ORCPT
+        id S2387598AbeGKUFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:04:57 -0400
-Received: from mail-io0-f200.google.com ([209.85.223.200]:38964 "EHLO
-        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726429AbeGKUE4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:04:56 -0400
-Received: by mail-io0-f200.google.com with SMTP id x14-v6so23036742ioa.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:59:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=R1xbTbhkrPrEoAhZ1Mrou7gqG/7JyZaj681OCWZjjrs=;
-        b=K5x4RbFVg7Np7i20cJ79IZ9/RGcSG0DuYfsIWFfh1IrN/+vRfenNOapQkw/yU5So9A
-         GcvgCog0OEcddDgRl4Z3qxkg0WUiVSgX1I4A4isy62u8Ui9F0Ap0ugG7PZarlJpkVfI3
-         1P/8YcXuZpMTDpqAny20ZtcZFzXdsxZiuFWEeYET3byJC6aWXvbC66I4eVM2Zg3Dmzzl
-         i0MDSLxGFXDhW6jfrAhq2w1f4M51K+TpWXiIRaSctQ/KuAdIFeTAvhnkC60eZV/KxVxe
-         LKMa+n5gyrp3gIMjLlIr4qkKR0b+qGtQ8zD3L9RBbTKHzjN+dfO61nwGaRuuNTDkNi5Y
-         ftTg==
-X-Gm-Message-State: AOUpUlGK/u5Xh+O08pzr42d4ljLb9v+WOHautbAbPSNd0+qmy64ldGA4
-        fuXh0jg+xJldaqpc0Ou+UUVbwX55z+ePz83eaAvdDwg9OJSy
-X-Google-Smtp-Source: AAOMgpeORp1gUAAbql92aeWafGhrzzXpPYHVRrFQm2A0GCMIAW8AVPdFO4WNgQnjILZByGRlRDB7hgSPZ1+cXlJH03Pbsy3W5wdg
+        Wed, 11 Jul 2018 16:05:20 -0400
+Received: from mga18.intel.com ([134.134.136.126]:11256 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726429AbeGKUFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 16:05:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 12:59:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="74036114"
+Received: from ray.jf.intel.com (HELO [10.7.201.16]) ([10.7.201.16])
+  by orsmga002.jf.intel.com with ESMTP; 11 Jul 2018 12:59:25 -0700
+Subject: Re: [PATCH v2 1/4] x86/split_lock: Enumerate #AC exception for split
+ locked access feature
+To:     Thomas Gleixner <tglx@linutronix.de>
+References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
+ <1530282807-66555-2-git-send-email-fenghua.yu@intel.com>
+ <b0267bb2-7d1f-c1d6-cff8-addf358009b3@intel.com>
+ <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
+ <20180704200742.GD7451@localhost.localdomain>
+ <20180710184506.GA37857@romley-ivt3.sc.intel.com>
+ <ea23cde0-f999-0ed8-a3bc-e798511467bd@intel.com>
+ <alpine.DEB.2.21.1807102140050.1588@nanos.tec.linutronix.de>
+Cc:     Fenghua Yu <fenghua.yu@intel.com>,
+        Eduardo Habkost <ehabkost@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rafael Wysocki <rafael.j.wysocki@intel.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        x86 <x86@kernel.org>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <ef07e047-e928-49a8-b08b-cb4c691db16a@intel.com>
+Date:   Wed, 11 Jul 2018 12:59:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:3dd:: with SMTP id e90-v6mr10092ioi.85.1531339142050;
- Wed, 11 Jul 2018 12:59:02 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 12:59:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000097c8ab0570bead4a@google.com>
-Subject: KASAN: invalid-free in fat_fill_super
-From:   syzbot <syzbot+90b8e10515ae88228a92@syzkaller.appspotmail.com>
-To:     hirofumi@mail.parknet.co.jp, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <alpine.DEB.2.21.1807102140050.1588@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 07/10/2018 12:47 PM, Thomas Gleixner wrote:
+> And please tell your hardware people that they should stop creating
+> features which are not enumerated in one way or the other. That's just a
+> pain all over the place. Boot code, kernel, virt, tools ....
 
-syzbot found the following crash on:
+Assuming it's too late to get CPUID or MSR enumeration... (I haven't
+given up on this yet, btw)
 
-HEAD commit:    98be45067040 Add linux-next specific files for 20180711
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=120b1ed0400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3f3b3673fec35d01
-dashboard link: https://syzkaller.appspot.com/bug?extid=90b8e10515ae88228a92
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+How about we #define a Linux-defined X86_FEATURE_SPLIT_LOCK_AC (or
+whatever) for now.  When the hardware that has this bit for real shows
+up, we move the #define to the "correct" place, like if it is a part of
+an existing cpufeature leaf.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+We also do a new setcpuid= boot option that behaves like the existing
+clearcpuid=.  That option is used by the obscure, specialized split lock
+detectino users to set the software cpufeature bit.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+90b8e10515ae88228a92@syzkaller.appspotmail.com
+That way, we can merged this code *with* CPUID detection, and the only
+thing we have to do in the future is move the X86_FEATURE_SPLIT_LOCK_AC
+define to a better place.
 
-RDX: 00007fd0b961ead0 RSI: 0000000020000080 RDI: 00007fd0b961eaf0
-RBP: 0000000020000080 R08: 00007fd0b961eb30 R09: 00007fd0b961ead0
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000015
-R13: 0000000000000000 R14: 00000000004d3fd0 R15: 000000000000004a
-==================================================================
-BUG: KASAN: double-free or invalid-free in fat_fill_super+0xc84/0x4400  
-fs/fat/inode.c:1882
-
-CPU: 1 PID: 31888 Comm: syz-executor6 Not tainted 4.18.0-rc4-next-20180711+  
-#4
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1c9/0x2b4 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_invalid_free+0x64/0xa0 mm/kasan/report.c:336
-  __kasan_slab_free+0x150/0x170 mm/kasan/kasan.c:501
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  fat_fill_super+0xc84/0x4400 fs/fat/inode.c:1882
-  vfat_fill_super+0x31/0x40 fs/fat/namei_vfat.c:1049
-  mount_bdev+0x314/0x3e0 fs/super.c:1344
-  vfat_mount+0x3c/0x50 fs/fat/namei_vfat.c:1056
-  legacy_get_tree+0x118/0x440 fs/fs_context.c:659
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
-  do_new_mount fs/namespace.c:2567 [inline]
-  do_mount+0x6c1/0x1fb0 fs/namespace.c:2889
-  ksys_mount+0x12d/0x140 fs/namespace.c:3105
-  __do_sys_mount fs/namespace.c:3119 [inline]
-  __se_sys_mount fs/namespace.c:3116 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3116
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x45885a
-Code: b8 a6 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 dd 8f fb ff c3 66 2e 0f  
-1f 84 00 00 00 00 00 66 90 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 ba 8f fb ff c3 66 0f 1f 84 00 00 00 00 00
-RSP: 002b:00007fd0b961ea88 EFLAGS: 00000206 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fd0b961eb30 RCX: 000000000045885a
-RDX: 00007fd0b961ead0 RSI: 0000000020000080 RDI: 00007fd0b961eaf0
-RBP: 0000000020000080 R08: 00007fd0b961eb30 R09: 00007fd0b961ead0
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000015
-R13: 0000000000000000 R14: 00000000004d3fd0 R15: 000000000000004a
-
-Allocated by task 31888:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  match_strdup+0x5e/0xa0 lib/parser.c:331
-  parse_options+0xc7d/0x1a10 fs/fat/inode.c:1291
-  fat_fill_super+0x2b3/0x4400 fs/fat/inode.c:1631
-  vfat_fill_super+0x31/0x40 fs/fat/namei_vfat.c:1049
-  mount_bdev+0x314/0x3e0 fs/super.c:1344
-  vfat_mount+0x3c/0x50 fs/fat/namei_vfat.c:1056
-  legacy_get_tree+0x118/0x440 fs/fs_context.c:659
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
-  do_new_mount fs/namespace.c:2567 [inline]
-  do_mount+0x6c1/0x1fb0 fs/namespace.c:2889
-  ksys_mount+0x12d/0x140 fs/namespace.c:3105
-  __do_sys_mount fs/namespace.c:3119 [inline]
-  __se_sys_mount fs/namespace.c:3116 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3116
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 31888:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  parse_options+0xc70/0x1a10 fs/fat/inode.c:1290
-  fat_fill_super+0x2b3/0x4400 fs/fat/inode.c:1631
-  vfat_fill_super+0x31/0x40 fs/fat/namei_vfat.c:1049
-  mount_bdev+0x314/0x3e0 fs/super.c:1344
-  vfat_mount+0x3c/0x50 fs/fat/namei_vfat.c:1056
-  legacy_get_tree+0x118/0x440 fs/fs_context.c:659
-  vfs_get_tree+0x1cb/0x5c0 fs/super.c:1743
-  do_new_mount fs/namespace.c:2567 [inline]
-  do_mount+0x6c1/0x1fb0 fs/namespace.c:2889
-  ksys_mount+0x12d/0x140 fs/namespace.c:3105
-  __do_sys_mount fs/namespace.c:3119 [inline]
-  __se_sys_mount fs/namespace.c:3116 [inline]
-  __x64_sys_mount+0xbe/0x150 fs/namespace.c:3116
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff880190d60c80
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 0 bytes inside of
-  32-byte region [ffff880190d60c80, ffff880190d60ca0)
-The buggy address belongs to the page:
-page:ffffea0006435800 count:1 mapcount:0 mapping:ffff8801da8001c0  
-index:0xffff880190d60fc1
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea00073fe648 ffffea00060af588 ffff8801da8001c0
-raw: ffff880190d60fc1 ffff880190d60000 000000010000000d 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff880190d60b80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff880190d60c00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-> ffff880190d60c80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-                    ^
-  ffff880190d60d00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff880190d60d80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+It might be nice to make the setcpuid= thing use strings instead of
+numbers that _can_ change from kernel-to-kernel, but that's kinda an
+implementation detail.  If we have strings, maybe we can start using
+clearcpuid=pku instead of our endless list of (new) boot parameters like
+nopku, nosmap, nosmep, etc...
