@@ -2,116 +2,133 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38717C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:30:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EBFFC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E122420B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:30:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A4wADGrz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E122420B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 54A762087C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:35:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54A762087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388691AbeGKOeq (ORCPT
+        id S2388696AbeGKOkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:34:46 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:53272 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388075AbeGKOeq (ORCPT
+        Wed, 11 Jul 2018 10:40:18 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46248 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388075AbeGKOkR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:34:46 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6BEO46o155212;
-        Wed, 11 Jul 2018 14:29:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=g5MNdq+e4GJEMm7TyrEc0QqC0pFqYgzZKMuVUkYRpr0=;
- b=A4wADGrzSUiKzJL5UtkTsMLmx27A3oFJS3LcyEpdS7fXwZNoWJjaDe/5rOM4fnCtepLf
- WWDmdD+3T0Mzvmh4i51ATfvYdds7YHQGtfova1273L+QI3y0fSU/SqgHTiE5kv4OzWYO
- KEf6Qzw/2sd34EB0LE6ideVh0YCu585X37ZkL3etAywle90XykykCpURzL8rqeVYTsOb
- MwpBEQn5va8V6GQ9BmSNYDukVwqCiFvsXT2TtBrhah3ZUJja9wIStt4I/qMlop4lNU40
- MnHE7c6QGW84DCYkocv47FGUepPK38zSAkzdUzr9/ky8w4g030NQyB03G45YHQIoizEF Lw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2k2p7dxf13-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Jul 2018 14:29:56 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6BETs0W012128
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Jul 2018 14:29:55 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6BETrru014371;
-        Wed, 11 Jul 2018 14:29:54 GMT
-Received: from mwanda (/41.202.241.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Jul 2018 07:29:53 -0700
-Date:   Wed, 11 Jul 2018 17:29:43 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     John Whitmore <arigead@gmail.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, devel@driverdev.osuosl.org,
-        kstewart@linuxfoundation.org, keescook@chromium.org,
-        aastha.gupta4104@gmail.com, linux-kernel@vger.kernel.org,
-        John Whitmore <johnfwhitmore@gmail.com>, pombredanne@nexb.com,
-        tglx@linutronix.de
-Subject: Re: [PATCH v2 3/8] staging:rtl8192u: Correct spacing before and
- after parenthesis - Style
-Message-ID: <20180711142943.chjedee3m7v6yogh@mwanda>
-References: <20180710150523.17384-1-johnfwhitmore@gmail.com>
- <20180710150523.17384-4-johnfwhitmore@gmail.com>
- <20180711111349.GA28836@kroah.com>
- <20180711140935.GC26416@xux707-tw>
- <20180711142250.GA3907@kroah.com>
- <20180711142710.GA12935@xux707-tw>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711142710.GA12935@xux707-tw>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8950 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=548
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807110156
+        Wed, 11 Jul 2018 10:40:17 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BEXZw7005669
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 10:35:39 -0400
+Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5k851rum-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 10:35:38 -0400
+Received: from localhost
+        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <jejb@linux.vnet.ibm.com>;
+        Wed, 11 Jul 2018 08:35:36 -0600
+Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
+        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Jul 2018 08:35:34 -0600
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BEZY7I11993560
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Jul 2018 07:35:34 -0700
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E7F5B78060;
+        Wed, 11 Jul 2018 08:35:33 -0600 (MDT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6BB347805C;
+        Wed, 11 Jul 2018 08:35:32 -0600 (MDT)
+Received: from [153.66.254.194] (unknown [9.85.180.20])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Jul 2018 08:35:32 -0600 (MDT)
+Subject: Re: [PATCH][scsi-next] scsi: lpfc: fix null pointer dereference on
+ nvmebuf
+From:   James Bottomley <jejb@linux.vnet.ibm.com>
+To:     Colin King <colin.king@canonical.com>,
+        James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Wed, 11 Jul 2018 07:35:30 -0700
+In-Reply-To: <20180711134436.21963-1-colin.king@canonical.com>
+References: <20180711134436.21963-1-colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18071114-0012-0000-0000-0000168A8113
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009350; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01059817; UDB=6.00543958; IPR=6.00837737;
+ MB=3.00022102; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 14:35:36
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071114-0013-0000-0000-000053A26DB3
+Message-Id: <1531319730.3260.1.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807110157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 03:27:11PM +0100, John Whitmore wrote:
-> On Wed, Jul 11, 2018 at 04:22:50PM +0200, Greg KH wrote:
-> > On Wed, Jul 11, 2018 at 03:09:37PM +0100, John Whitmore wrote:
-> > > On Wed, Jul 11, 2018 at 01:13:49PM +0200, Greg KH wrote:
-> > > > On Tue, Jul 10, 2018 at 04:05:18PM +0100, John Whitmore wrote:
-> > > > > Corrected coding style issues aroung opening and closed parenthesis. Spaces, or blank line, removed from after '(' or before ')'
-> > > > 
-> > > > Wrap your changelog text at 72 columns like your editor asked you to :(
-> > > > 
-> > > > I'll fix it up this time...
-> > > 
-> > > Oops sorry and thanks. I thought the magic number was 75 which I got from:
-> > > 
-> > > https://www.kernel.org/doc/html/v4.16/process/submitting-patches.html
-> > 
-> > 75 works as well :)
-> > 
+On Wed, 2018-07-11 at 14:44 +0100, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Well if I went over 75, which I knew about I'm very sorry I messed up. I'll
-> keep an eye out in future. Might be using the wrong editor but let's not go
-> there.
+> The check of nvmebuf suggests that it can be null, however a recent
+> change dereferences it to determine oxid before it is null checked,
+> hence there is a potential null deference on the pointer.  Fix this
+> by performing the null check first.  Also remove the oxid from the
+> debug log message as this is no longer valid.  I considered an early
+> fetch of oxid if nvmebuf was valid, however, what oxid should be set
+> to if nvembuf is null could lead to an ambiguous logging of an
+> invalid
+> oxid, so I thought just removing it from the logging was the least
+> confusion solution.
+> 
+> Detected by CoverityScan, CID#1471753 ("Dereference before null
+> check")
+> 
+> Fixes: 68c9b55deea5 ("scsi: lpfc: Fix abort error path for NVMET")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/scsi/lpfc/lpfc_nvmet.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c
+> b/drivers/scsi/lpfc/lpfc_nvmet.c
+> index 22f8a204b69f..01652d9ac619 100644
+> --- a/drivers/scsi/lpfc/lpfc_nvmet.c
+> +++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+> @@ -1742,12 +1742,9 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba
+> *phba, struct lpfc_sli_ring *pring,
+>  	uint32_t *payload;
+>  	uint32_t size, oxid, sid, rc;
+>  
+> -	fc_hdr = (struct fc_frame_header *)(nvmebuf->hbuf.virt);
+> -	oxid = be16_to_cpu(fc_hdr->fh_ox_id);
+> -
+>  	if (!nvmebuf || !phba->targetport) {
 
-Here is the line:
+The !nvmebuf is a bogus check, isn't it? since nvmebuf is always
+obtained from a container_of, it can never be NULL.  This would mean
+the rest of the contortions are unnecessary.
 
-Corrected coding style issues aroung opening and closed parenthesis. Spaces, or blank line, removed from after '(' or before ')'
-
-It's 128 characters.
-
-regards,
-dan carpenter
+James
 
