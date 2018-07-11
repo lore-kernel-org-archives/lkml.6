@@ -2,245 +2,126 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42844C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:34:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0489C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC6E4208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:34:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iyhP1BzB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC6E4208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 76C98208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:35:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C98208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732479AbeGKIiE (ORCPT
+        id S1732488AbeGKIiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:38:04 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50482 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbeGKIiE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:38:04 -0400
-Received: by mail-wm0-f67.google.com with SMTP id v25-v6so1575340wmc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 01:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=+I6OIg36t95Th5iXvJlAY8Z+H6uQainG1Q9X4MDHbIg=;
-        b=iyhP1BzBSI3Bi7ufQOk/K1lH9Q758088glOdukq1CNuEt8/BX2Lkzaog9l3TpykRL3
-         tUssC8sw2MDRO3dJZ+lQ2u4q1m6n3ESMAeLpkGARj7qgOJ1N2RD9CbNojz187VnmCKn0
-         Lxx6BYYAXlkEH9004bEoeovE4eOoDqI79AqPk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+I6OIg36t95Th5iXvJlAY8Z+H6uQainG1Q9X4MDHbIg=;
-        b=jDlv1qTwaHDSWMZYiUrXn/S86Vq6CCe4SYuODWxNYd6lqjvXeXSTPZeIh8nQ/xx4wK
-         1+nGu5bhinBYjyxHe8nfI1m4zHBjXkpRJBKrP4RMBjcivoSvg3Cd47WZESfMivU/Q16q
-         91Xwq1E1ZHWYBWNB+3H2TpxTZuIlqhUfNZQAm4xMw9G8k5RwmRmoWcHY/kJ4yfxR2DQ5
-         BSsGcWnm4iAT74Sotv5+YWoIdqKKroADTiocU9Hi2HRLqSsi01IjW7PwmmEEDge0eTNW
-         BLy2dC60eqiwI0YeZdn/BwcasOaua5AMdMPn9RfuDmiiXu0PXV7CQL0/kc3BC/HisoFl
-         ACrQ==
-X-Gm-Message-State: APt69E11dFPet/NlMiXo+DK55JtgNzdisVAqQHd0f6s6GepWndbP6ijI
-        J771by3iZPPnj5O3jVf7iNwO9Q==
-X-Google-Smtp-Source: AAOMgpchkFzDVAoRNbMKztxFBaWxc/bfGKocPoMGiYB2OSjdTswR/Rjv/REC/keI8Eu55aXlWMysSA==
-X-Received: by 2002:a1c:e304:: with SMTP id a4-v6mr16443858wmh.0.1531298092495;
-        Wed, 11 Jul 2018 01:34:52 -0700 (PDT)
-Received: from vingu-laptop.home ([2a01:cb14:8227:ec00:b908:2715:da60:7493])
-        by smtp.gmail.com with ESMTPSA id y203-v6sm2234815wme.42.2018.07.11.01.34.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 11 Jul 2018 01:34:51 -0700 (PDT)
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     xuwei5@hisilicon.com, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     leo.yan@linaro.org, daniel.lezcano@linaro.org,
-        Vincent Guittot <vincent.guittot@linaro.org>
-Subject: [PATCH v2] arm64: hikey960: update idle-states
-Date:   Wed, 11 Jul 2018 10:34:46 +0200
-Message-Id: <1531298086-8375-1-git-send-email-vincent.guittot@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Wed, 11 Jul 2018 04:38:20 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40488 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726314AbeGKIiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 04:38:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 563E620739; Wed, 11 Jul 2018 10:35:08 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 30F99206F3;
+        Wed, 11 Jul 2018 10:35:08 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 10:35:08 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: Re: [PATCH v5 06/22] soc: sunxi: sram: Add dt match for the A10
+ system-control compatible
+Message-ID: <20180711083508.je6qfwzabera2lxm@flea>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+ <20180710080114.31469-7-paul.kocialkowski@bootlin.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="6ab5fsrzgygz3dpu"
+Content-Disposition: inline
+In-Reply-To: <20180710080114.31469-7-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update entry/exit latency and residency time of hikey960 to use more
-realistic figures based on unitary tests done on the platform.
 
-The complete results (in us) :
-                  big cluster
-                  cluster  CPU
-max entry latency     800  400
-max exit latency     2900  550
-residency  903Mhz    5000 1500
-residency 2363Mhz       0 1500
+--6ab5fsrzgygz3dpu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-                  little cluster
-                  cluster  CPU
-max entry latency     500  400
-max exit latency     1600  650
-residency  533Mhz    8000 4500
-residency 1844Mhz       0 1500
+On Tue, Jul 10, 2018 at 10:00:58AM +0200, Paul Kocialkowski wrote:
+> This binds the new A10 system-control compatible to the associated
+> driver, with the same driver data as the previous compatible.
+>=20
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-We can see that the residency time depends of the running OPP which is not
-handled for now. Then we also have to take into account the constraint of
-a residency time shorter than the tick to get full advantage of idle loop
-reordering(tick is stopped if idle duration is higher than tick period).
-Finally the selected residency value are :
-                 big cluster
-                  cluster  CPU
-residency            3700 1500
+Applied, thanks!
+Maxime
 
-                  little cluster
-                  cluster  CPU
-residency            3500 1500
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-A simple test with a task waking up every 11.111ms shows improvement:
-- 5% a lowest OPP
-- 22% at highest OPP
+--6ab5fsrzgygz3dpu
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The period has been chosen:
-- to be shorter than old cluster residency time and longer than new
-residency time of cluster off C-state
-- to prevent any sync with tick (4ms) when running tests that can add
-some variances between tests
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 45 ++++++++++++++++++-------------
- 1 file changed, 27 insertions(+), 18 deletions(-)
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFwTsACgkQ0rTAlCFN
+r3SkkQ//VyQZb9qaTxz5pPdfwMiTo34+NGRvoZBuwD5D5gmN1X3k1Eg598krib3a
+4LlUE/ts6T49XQ3BYolAqLSv+xiJUkhxcUnEDc2ezthmdCGUC51FyZEHDh5IVHHs
+BcmXK+KFY3D8+GYHFyTlQ0UJH3xoXTa8U3iAKW/mJPbjiXqlDjr44wFJ0H3/5bDS
+3jXCuTRu7OI5+INxHMmajMuXkv5F7M4peZ6Jzh2sF/Yl3QhBcBKmw04v2Q4On11v
+ASkcxiPsnAFo/S5bN9YTxnWOHJ+ZBDWYD+aMMxQ2dOrrUL/vR/4jJ9RjQpXtUH8I
+Lr3RRhNOM0g1zHqn4glihIlq/+Z4CAC5U6hd+uFi4RVCLUfnGhanQMDngbtuILTd
+3vgb4WlMaYXn+XteGq/wXWKYPOpuVluSEyWhY5QkLWNywpj9R9exFzHlQJuzDgLF
+EvIR4ltjBV9BwbfXKuMQ01wFTCCuV/7eSV13BDg+IG0PWaveVxNbP/qjCF8/W0Js
+NYksi6ZrYCPFdVJAAK1ymyRO551gxTPoEcBQOz0fxExbGsOkDlx0LB4gYN89UTyZ
+6ELZTO1I7+o1FYuDptD3D4gTFSdL409iy221XB64eOm3QnYSt2Gn1WfFO4P7uef1
+jz/fUWgJQUUnIH5Tf0h17r1Tl9TsUahpGrAUAO2EIrRXtj7aaZQ=
+=Mcss
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index 421d454..890d23e 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -61,7 +61,7 @@
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-+			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
- 			operating-points-v2 = <&cluster0_opp>;
-@@ -75,7 +75,7 @@
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-+			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
- 			operating-points-v2 = <&cluster0_opp>;
-@@ -87,7 +87,7 @@
- 			reg = <0x0 0x2>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-+			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
- 			operating-points-v2 = <&cluster0_opp>;
-@@ -99,7 +99,7 @@
- 			reg = <0x0 0x3>;
- 			enable-method = "psci";
- 			next-level-cache = <&A53_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_0>;
-+			cpu-idle-states = <&CPU_SLEEP_0 &CLUSTER_SLEEP_0>;
- 			capacity-dmips-mhz = <592>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
- 			operating-points-v2 = <&cluster0_opp>;
-@@ -111,7 +111,7 @@
- 			reg = <0x0 0x100>;
- 			enable-method = "psci";
- 			next-level-cache = <&A73_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-+			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
- 			operating-points-v2 = <&cluster1_opp>;
-@@ -125,7 +125,7 @@
- 			reg = <0x0 0x101>;
- 			enable-method = "psci";
- 			next-level-cache = <&A73_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-+			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
- 			operating-points-v2 = <&cluster1_opp>;
-@@ -137,7 +137,7 @@
- 			reg = <0x0 0x102>;
- 			enable-method = "psci";
- 			next-level-cache = <&A73_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-+			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
- 			operating-points-v2 = <&cluster1_opp>;
-@@ -149,7 +149,7 @@
- 			reg = <0x0 0x103>;
- 			enable-method = "psci";
- 			next-level-cache = <&A73_L2>;
--			cpu-idle-states = <&CPU_SLEEP &CLUSTER_SLEEP_1>;
-+			cpu-idle-states = <&CPU_SLEEP_1 &CLUSTER_SLEEP_1>;
- 			capacity-dmips-mhz = <1024>;
- 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
- 			operating-points-v2 = <&cluster1_opp>;
-@@ -158,31 +158,40 @@
- 		idle-states {
- 			entry-method = "psci";
- 
--			CPU_SLEEP: cpu-sleep {
-+			CPU_SLEEP_0: cpu-sleep-0 {
- 				compatible = "arm,idle-state";
- 				local-timer-stop;
- 				arm,psci-suspend-param = <0x0010000>;
--				entry-latency-us = <40>;
--				exit-latency-us = <70>;
--				min-residency-us = <3000>;
-+				entry-latency-us = <400>;
-+				exit-latency-us = <650>;
-+				min-residency-us = <1500>;
- 			};
--
- 			CLUSTER_SLEEP_0: cluster-sleep-0 {
- 				compatible = "arm,idle-state";
- 				local-timer-stop;
- 				arm,psci-suspend-param = <0x1010000>;
- 				entry-latency-us = <500>;
--				exit-latency-us = <5000>;
--				min-residency-us = <20000>;
-+				exit-latency-us = <1600>;
-+				min-residency-us = <3500>;
-+			};
-+
-+
-+			CPU_SLEEP_1: cpu-sleep-1 {
-+				compatible = "arm,idle-state";
-+				local-timer-stop;
-+				arm,psci-suspend-param = <0x0010000>;
-+				entry-latency-us = <400>;
-+				exit-latency-us = <550>;
-+				min-residency-us = <1500>;
- 			};
- 
- 			CLUSTER_SLEEP_1: cluster-sleep-1 {
- 				compatible = "arm,idle-state";
- 				local-timer-stop;
- 				arm,psci-suspend-param = <0x1010000>;
--				entry-latency-us = <1000>;
--				exit-latency-us = <5000>;
--				min-residency-us = <20000>;
-+				entry-latency-us = <800>;
-+				exit-latency-us = <2900>;
-+				min-residency-us = <3500>;
- 			};
- 		};
- 
--- 
-2.7.4
-
+--6ab5fsrzgygz3dpu--
