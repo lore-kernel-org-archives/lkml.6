@@ -2,127 +2,171 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7CD6C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96596C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6353520C0D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:01:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WqGspgUP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6353520C0D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 607B920C0D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:01:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 607B920C0D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390175AbeGKSGd (ORCPT
+        id S2390188AbeGKSGh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 14:06:33 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54786 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388829AbeGKSGd (ORCPT
+        Wed, 11 Jul 2018 14:06:37 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56722 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388829AbeGKSGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 14:06:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Sender:References:In-Reply-To:
-        Message-Id:Date:Subject:To:From:Reply-To:Cc:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xU8xnt5z0i0cOwf5Oj2C7sEJ0zxv39qS3yuH5uF96TI=; b=WqGspgUPM3PEnscGmH0xgxfNP
-        CWyyNEL3TwGB17eNZlDKDoyGLD/oG7GBXohC7F/P5wH8jlKpnOnyLPtJ4znEbNV2iyfR+3uf7r1Kl
-        sm4CW1NXb4Vm4cwHnBVL+hQWjpsE+41QhnIM8y4MYP60xeA2dY4TuX9l3UhSG3yuUbZwfoIRX5YrQ
-        NMy/VxRf+a4eNivPYtpjLEBMK/tsVpPTt3m4mv8xwhtB0Noiqhxr2YYTi82YppcRdKfZ+hnOMT/Qt
-        FLG3XK0tF+CMyY4bGFWLb77Fv/ra5kgd7xLqGwyvlfC5ONGEAsA2pDcFgDMKWpI0gJiMzaVIAcomP
-        C+Md08Hzw==;
-Received: from [2001:8b0:10b:1::425] (helo=i7.infradead.org)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdJQF-0005Ga-5z; Wed, 11 Jul 2018 18:01:03 +0000
-Received: from dwoodhou by i7.infradead.org with local (Exim 4.91 #2 (Red Hat Linux))
-        id 1fdJQD-00FZXD-Mg; Wed, 11 Jul 2018 19:01:01 +0100
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     peterz@infradead.org, mhillenb@amazon.de,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        paulmck@linux.vnet.ibm.com
-Subject: [PATCH v2] kvm/x86: Inform RCU of quiescent state when entering guest mode
-Date:   Wed, 11 Jul 2018 19:01:01 +0100
-Message-Id: <20180711180101.3711464-1-dwmw2@infradead.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180711174843.GX3593@linux.vnet.ibm.com>
-References: <20180711174843.GX3593@linux.vnet.ibm.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 11 Jul 2018 14:06:37 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BI037R121254
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 14:01:08 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5khq8m4k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 14:01:08 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 11 Jul 2018 14:01:07 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Jul 2018 14:01:03 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BI12I439780484
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Jul 2018 18:01:02 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 93B31B2068;
+        Wed, 11 Jul 2018 14:01:01 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6316CB2065;
+        Wed, 11 Jul 2018 14:01:01 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Jul 2018 14:01:01 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 52D3D16C3EC3; Wed, 11 Jul 2018 11:03:21 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 11:03:21 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180710162555.GV3593@linux.vnet.ibm.com>
+ <Pine.LNX.4.44L0.1807101416390.1449-100000@iolanthe.rowland.org>
+ <20180711094344.GE13963@arm.com>
+ <20180711154211.GT3593@linux.vnet.ibm.com>
+ <20180711161717.GA14635@andrea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711161717.GA14635@andrea>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071118-0060-0000-0000-0000028AB02E
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009352; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01059886; UDB=6.00543999; IPR=6.00837806;
+ MB=3.00022105; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 18:01:06
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071118-0061-0000-0000-000045C3192F
+Message-Id: <20180711180321.GY3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807110190
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Woodhouse <dwmw@amazon.co.uk>
+On Wed, Jul 11, 2018 at 06:17:17PM +0200, Andrea Parri wrote:
+> On Wed, Jul 11, 2018 at 08:42:11AM -0700, Paul E. McKenney wrote:
+> > On Wed, Jul 11, 2018 at 10:43:45AM +0100, Will Deacon wrote:
+> > > Hi Alan,
+> > > 
+> > > On Tue, Jul 10, 2018 at 02:18:13PM -0400, Alan Stern wrote:
+> > > > More than one kernel developer has expressed the opinion that the LKMM
+> > > > should enforce ordering of writes by locking.  In other words, given
+> > > > the following code:
+> > > > 
+> > > > 	WRITE_ONCE(x, 1);
+> > > > 	spin_unlock(&s):
+> > > > 	spin_lock(&s);
+> > > > 	WRITE_ONCE(y, 1);
+> > > > 
+> > > > the stores to x and y should be propagated in order to all other CPUs,
+> > > > even though those other CPUs might not access the lock s.  In terms of
+> > > > the memory model, this means expanding the cumul-fence relation.
+> > > > 
+> > > > Locks should also provide read-read (and read-write) ordering in a
+> > > > similar way.  Given:
+> > > > 
+> > > > 	READ_ONCE(x);
+> > > > 	spin_unlock(&s);
+> > > > 	spin_lock(&s);
+> > > > 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
+> > > > 
+> > > > the load of x should be executed before the load of (or store to) y.
+> > > > The LKMM already provides this ordering, but it provides it even in
+> > > > the case where the two accesses are separated by a release/acquire
+> > > > pair of fences rather than unlock/lock.  This would prevent
+> > > > architectures from using weakly ordered implementations of release and
+> > > > acquire, which seems like an unnecessary restriction.  The patch
+> > > > therefore removes the ordering requirement from the LKMM for that
+> > > > case.
+> > > > 
+> > > > All the architectures supported by the Linux kernel (including RISC-V)
+> > > > do provide this ordering for locks, albeit for varying reasons.
+> > > > Therefore this patch changes the model in accordance with the
+> > > > developers' wishes.
+> > > > 
+> > > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > > 
+> > > Thanks, I'm happy with this version of the patch:
+> > > 
+> > > Reviewed-by: Will Deacon <will.deacon@arm.com>
+> > 
+> > I have applied your Reviewed-by, and thank you both!
+> > 
+> > Given that this is a non-trivial change and given that I am posting
+> > for -tip acceptance in a few days, I intend to send this one not
+> > to the upcoming merge window, but to the one after that.
+> > 
+> > Please let me know if there is an urgent need for this to go into the
+> > v4.19 merge window.
+> 
+> I raised some concerns in my review to v2; AFAICT, these concerns have
+> not been resolved: so, until then, please feel free to add my NAK. ;-)
 
-RCU can spend long periods of time waiting for a CPU which is actually in
-KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
-modes, and don't wait for it.
+I will be keeping the prototype in my -rcu tree for the time being,
+but I will not be submitting it into the v4.19 merge window.  I expect
+that you all will be able to come to agreement in the couple of months
+until the v4.20/v5.0 merge window.  ;-)
 
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- arch/x86/kvm/x86.c       | 2 ++
- include/linux/rcupdate.h | 7 +++++++
- kernel/rcu/tree.c        | 2 ++
- 3 files changed, 11 insertions(+)
+I will apply Peter's ack and at the same time mark it EXP so that its
+state will be apparent.
 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 0046aa70205a..b0c82f70afa7 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -7458,7 +7458,9 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
- 		vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_RELOAD;
- 	}
- 
-+	rcu_kvm_enter();
- 	kvm_x86_ops->run(vcpu);
-+	rcu_kvm_exit();
- 
- 	/*
- 	 * Do this here before restoring debug registers on the host.  And
-diff --git a/include/linux/rcupdate.h b/include/linux/rcupdate.h
-index 65163aa0bb04..1325f9d9ce00 100644
---- a/include/linux/rcupdate.h
-+++ b/include/linux/rcupdate.h
-@@ -212,6 +212,13 @@ do { \
- #error "Unknown RCU implementation specified to kernel configuration"
- #endif
- 
-+/*
-+ * These are currently identical to the _idle_ versions but let's
-+ * explicitly have separate copies to keep Paul honest in future.
-+ */
-+static inline void rcu_kvm_enter(void) { rcu_idle_enter(); }
-+static inline void rcu_kvm_exit(void) { rcu_idle_exit(); }
-+
- /*
-  * The init_rcu_head_on_stack() and destroy_rcu_head_on_stack() calls
-  * are needed for dynamic initialization and destruction of rcu_head
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index aa7cade1b9f3..d38c381bf4e3 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -760,6 +760,7 @@ void rcu_idle_enter(void)
- 	lockdep_assert_irqs_disabled();
- 	rcu_eqs_enter(false);
- }
-+EXPORT_SYMBOL_GPL(rcu_idle_enter);
- 
- #ifdef CONFIG_NO_HZ_FULL
- /**
-@@ -913,6 +914,7 @@ void rcu_idle_exit(void)
- 	rcu_eqs_exit(false);
- 	local_irq_restore(flags);
- }
-+EXPORT_SYMBOL_GPL(rcu_idle_exit);
- 
- #ifdef CONFIG_NO_HZ_FULL
- /**
--- 
-2.17.1
+							Thanx, Paul
 
