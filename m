@@ -2,183 +2,133 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449F6C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F549C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0E1520C48
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:53:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0E1520C48
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 280DA2084A
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:53:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kVun+o5R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 280DA2084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733025AbeGKM5v (ORCPT
+        id S1733073AbeGKM54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:57:51 -0400
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:35518 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732978AbeGKM5u (ORCPT
+        Wed, 11 Jul 2018 08:57:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41310 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeGKM54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:57:50 -0400
-Received: from [10.28.16.194] (10.28.16.194) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 11 Jul
- 2018 20:53:35 +0800
-Subject: Re: [PATCH 2/3] dt-bindings: clk: meson-g12a: Add G12A EE Clock
- Bindings
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        <qianggui.song@amlogic.com>, <devicetree@vger.kernel.org>,
-        <sboyd@kernel.org>, <khilman@baylibre.com>,
-        <mturquette@baylibre.com>, <yixun.lan@amlogic.com>,
-        <linux-kernel@vger.kernel.org>, <bo.yang@amlogic.com>,
-        <qiufang.dai@amlogic.com>, <linux-arm-kernel@lists.infradead.org>,
-        <carlo@caione.org>, <linux-amlogic@lists.infradead.org>,
-        <sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <xingyu.chen@amlogic.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
- <1531134767-29927-3-git-send-email-jian.hu@amlogic.com>
- <CAFBinCB6LS=PT1cw-j-LZ+vWo-RFe81qVZ6uLeGfWKtKfHz7ag@mail.gmail.com>
- <1531214774.2708.49.camel@baylibre.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <d09961d5-2674-fd8c-ee90-05dd423391f3@amlogic.com>
-Date:   Wed, 11 Jul 2018 20:53:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 11 Jul 2018 08:57:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nLevQ8qfld1UFe+jJVodaBAEfEq1X4zUTwKjy4tLpRQ=; b=kVun+o5RXtZC7BMfvXNOxSZG3
+        sx73HKfd0d8/tYVChXY7b59WPrLMg6cdyq/nxYonDrAcdFdnlA8zVJqpk0p2Bu6H2g4XQ+bK2dcSv
+        YVC3MHVli6cvLmGbXT4gp31vu56HP/djffSuqNvIUkrPQkqTZ5PYWEArhl/zXT17CRalUKMEtBaPy
+        BQr7PbIfsRfIFg4wbOkfGq3+Kg1G6EYyLHlGVW3By4HqCgKsBgdJBznpZSC909PEJ/PDhc9LBheNq
+        PqMJAT9DWzfk4b+gTt3631suENv27AdxjRZ3W7gaF/BEiSaebZ+iZ6k9yRIQVYLl3XBeYenR6L3hE
+        g9zycCn1A==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdEcW-0000EE-FT; Wed, 11 Jul 2018 12:53:24 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id E700420289CE4; Wed, 11 Jul 2018 14:53:22 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 14:53:22 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180711125322.GF2476@hirez.programming.kicks-ass.net>
+References: <20180628182149.226164-1-joel@joelfernandes.org>
+ <20180628182149.226164-5-joel@joelfernandes.org>
 MIME-Version: 1.0
-In-Reply-To: <1531214774.2708.49.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.16.194]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180628182149.226164-5-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jun 28, 2018 at 11:21:46AM -0700, Joel Fernandes wrote:
+> -		rcu_read_lock_sched_notrace();				\
+> -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
+> +									\
+> +		/*							\
+> +		 * For rcuidle callers, use srcu since sched-rcu	\
+> +		 * doesn't work from the idle path.			\
+> +		 */							\
+> +		if (rcuidle) {						\
+> +			if (in_nmi()) {					\
+> +				WARN_ON_ONCE(1);			\
+> +				return; /* no srcu from nmi */		\
+> +			}						\
+> +									\
+> +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
+> +			it_func_ptr =					\
+> +				srcu_dereference_notrace((tp)->funcs,	\
+> +						&tracepoint_srcu);	\
+> +			/* To keep it consistent with !rcuidle path */	\
+> +			preempt_disable_notrace();			\
+> +		} else {						\
+> +			rcu_read_lock_sched_notrace();			\
+> +			it_func_ptr =					\
+> +				rcu_dereference_sched((tp)->funcs);	\
+> +		}							\
+> +									\
+>  		if (it_func_ptr) {					\
+>  			do {						\
+>  				it_func = (it_func_ptr)->func;		\
+> @@ -148,9 +177,13 @@ extern void syscall_unregfunc(void);
+>  				((void(*)(proto))(it_func))(args);	\
+>  			} while ((++it_func_ptr)->func);		\
+>  		}							\
+> -		rcu_read_unlock_sched_notrace();			\
+> -		if (rcucheck)						\
+> -			rcu_irq_exit_irqson();				\
+> +									\
+> +		if (rcuidle) {						\
+> +			preempt_enable_notrace();			\
+> +			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
+> +		} else {						\
+> +			rcu_read_unlock_sched_notrace();		\
+> +		}							\
+>  	} while (0)
 
+In fact, I would write the thing like:
 
-On 2018/7/10 17:26, Jerome Brunet wrote:
-> On Tue, 2018-07-10 at 00:13 +0200, Martin Blumenstingl wrote:
->> On Mon, Jul 9, 2018 at 1:13 PM Jian Hu <jian.hu@amlogic.com> wrote:
->>>
->>> Add dt-bindings headers for the Meson-G12A's Everything-Else
->>> part clock controller.
->>
->> I wonder if this should be folded into patch #1 along with an update
->> to Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt so
->> it's clear which header has to be used for G12A
->>
-> 
-> Yes, please squash patch 1 and 2.
-I have squashed patch 1 and 2.
-> 
->>>
->>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->>> ---
->>>   include/dt-bindings/clock/g12a-clkc.h | 93 +++++++++++++++++++++++++++++++++++
->>>   1 file changed, 93 insertions(+)
->>>   create mode 100644 include/dt-bindings/clock/g12a-clkc.h
->>>
->>> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
->>> new file mode 100644
->>> index 0000000..1473225
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/g12a-clkc.h
->>> @@ -0,0 +1,93 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>> +/*
->>> + * Meson-G12A clock tree IDs
->>> + *
->>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
->>> + */
->>> +
->>> +#ifndef __G12A_CLKC_H
->>> +#define __G12A_CLKC_H
->>> +
->>> +#define CLKID_SYS_PLL                          0
->>> +#define CLKID_FIXED_PLL                                1
->>> +#define CLKID_FCLK_DIV2                                2
->>> +#define CLKID_FCLK_DIV3                                3
->>> +#define CLKID_FCLK_DIV4                                4
->>> +#define CLKID_FCLK_DIV5                                5
->>> +#define CLKID_FCLK_DIV7                                6
->>> +#define CLKID_GP0_PLL                          7
-> 
-> Please fix the alignement.
-> 
->>> +#define CLKID_CLK81                                    10
->>> +#define CLKID_MPLL0                                    11
->>> +#define CLKID_MPLL1                                    12
->>> +#define CLKID_MPLL2                                    13
->>> +#define CLKID_MPLL3                                    14
->>> +#define CLKID_DDR                                      15
->>> +#define CLKID_DOS                                      16
->>> +#define CLKID_AUDIO_LOCKER                     17
->>> +#define CLKID_MIPI_DSI_HOST                    18
->>> +#define CLKID_ETH_PHY                          19
->>> +#define CLKID_ISA                                      20
->>> +#define CLKID_PL301                                    21
->>> +#define CLKID_PERIPHS                          22
->>> +#define CLKID_SPICC0                           23
->>> +#define CLKID_I2C                                      24
->>> +#define CLKID_SANA                                     25
->>> +#define CLKID_SD                                       26
->>> +#define CLKID_RNG0                                     27
->>> +#define CLKID_UART0                                    28
->>> +#define CLKID_SPICC1                           29
->>> +#define CLKID_HIU_IFACE                                30
->>> +#define CLKID_MIPI_DSI_PHY                     31
->>> +#define CLKID_ASSIST_MISC                      32
->>> +#define CLKID_SD_EMMC_A                                33
->>> +#define CLKID_SD_EMMC_B                                34
->>> +#define CLKID_SD_EMMC_C                                35
->>> +#define CLKID_AUDIO_CODEC                      36
->>> +#define CLKID_AUDIO                                    37
->>> +#define CLKID_ETH                                      38
->>> +#define CLKID_DEMUX                                    39
->>> +#define CLKID_AUDIO_IFIFO                      40
->>> +#define CLKID_ADC                                      41
->>> +#define CLKID_UART1                                    42
->>> +#define CLKID_G2D                                      43
->>> +#define CLKID_RESET                                    44
->>> +#define CLKID_PCIE_COMB                                45
->>> +#define CLKID_PARSER                           46
->>> +#define CLKID_USB                                      47
->>> +#define CLKID_PCIE_PHY                         48
->>> +#define CLKID_AHB_ARB0                         49
->>> +#define CLKID_AHB_DATA_BUS                     50
->>> +#define CLKID_AHB_CTRL_BUS                     51
->>> +#define CLKID_HTX_HDCP22                       52
->>> +#define CLKID_HTX_PCLK                         53
->>> +#define CLKID_BT656                                    54
->>> +#define CLKID_USB1_DDR_BRIDGE          55
->>> +#define CLKID_MMC_PCLK                         56
->>> +#define CLKID_UART2                                    57
->>> +#define CLKID_VPU_INTR                         58
->>> +#define CLKID_GIC                                      59
->>> +#define CLKID_SD_EMMC_B_CLK0           60
->>> +#define CLKID_SD_EMMC_C_CLK0           61
->>> +#define CLKID_HIFI_PLL                         71
->>> +
->>
->> is this empty line here on purpose? a comment would be great if
->> there's a reason behind it (there's already a gap in the numbering
->> between CLKID_GP0_PLL and CLKID_CLK81, but there's no empty line there
->> - either way is fine, please just keep it consistent)
-> 
-> Please drop the empty line.
-> Otherwise, looks good.
-> I have dropped it ,and I will push another email later.Thanks.
->>
->>
->> Regards
->> Martin
-> 
-> .
-> 
+		preempt_disable_notrace();
+		if (rcuidle)
+			idx = srcu_read_lock_notrace(&tracepoint_srcu);
+
+		it_func_ptr = rcu_dereference_raw((tp)->funcs);
+
+		/* ... */
+
+		if (rcu_idle)
+			srcu_read_unlock_notrace(&tracepoint_srcu, idx);
+		preempt_enable_notrace();
+
+Much simpler and very much the same.
