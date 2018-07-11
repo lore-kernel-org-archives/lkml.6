@@ -2,103 +2,131 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D4EC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:10:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDF9C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0390520854
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:10:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eSTn1Zy5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0390520854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 7159620854
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:11:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7159620854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732348AbeGKJNt (ORCPT
+        id S1732458AbeGKJOp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:13:49 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60880 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726289AbeGKJNt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:13:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=axBSON5cvs4xwlba/fqyRyd7rPG8BRp78PXGOPrsffs=; b=eSTn1Zy5c/Aun+4usiHSDLp+M
-        wgUUGJcLaFMiOOg2URSQvlxCY5ynPBHcRD1sSnmB9b7tRvnhXPsrDGtqggLQjBwqHBhOtE+qpa78Z
-        D3xMoaMW6WtqxFPk84rnDXcFhehpXAmMxFg5RxtGXcYnB17IDfrQjbX7AayPZ0/GyReFR5oOtmYwj
-        bYESxGDxIMMU8efDlu9egWY48SH5/olLkjJNdA0B0DlQOeQrmLLYNZIlfZ8r7TZvtEqFU/15fmJZP
-        6UUlbqu0g5FUG3Db+CSM5KTe8gEPTeR29TRI5/X4MeEB34OWmmLpBBLgz4RW6uB1gmSifmtT6k2QV
-        mNAIfkiPQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdB8h-0004nw-Q0; Wed, 11 Jul 2018 09:10:23 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4727320291063; Wed, 11 Jul 2018 11:10:22 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 11:10:22 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Wed, 11 Jul 2018 05:14:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:42316 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732319AbeGKJOp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 05:14:45 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DF9AE20733; Wed, 11 Jul 2018 11:11:24 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id AE26A206A6;
+        Wed, 11 Jul 2018 11:11:24 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 11:11:24 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
         Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v2 14/27] mm: Handle THP/HugeTLB shadow stack page
- fault
-Message-ID: <20180711091022.GT2476@hirez.programming.kicks-ass.net>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-15-yu-cheng.yu@intel.com>
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Benoit Parrot <bparrot@ti.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Niklas =?utf-8?Q?S=C3=B6derlund?= 
+        <niklas.soderlund+renesas@ragnatech.se>,
+        linux-sunxi@googlegroups.com,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: Re: [PATCH v5 12/22] ARM: sun7i-a20: Add support for the C1 SRAM
+ region with the SRAM controller
+Message-ID: <20180711091124.v7jl7m7zm7hplxkx@flea>
+References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
+ <20180710080114.31469-13-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rocv2bypgp7ywoj7"
 Content-Disposition: inline
-In-Reply-To: <20180710222639.8241-15-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180710080114.31469-13-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 03:26:26PM -0700, Yu-cheng Yu wrote:
-> diff --git a/mm/memory.c b/mm/memory.c
-> index a2695dbc0418..f7c46d61eaea 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4108,7 +4108,13 @@ static int __handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
->  			if (pmd_protnone(orig_pmd) && vma_is_accessible(vma))
->  				return do_huge_pmd_numa_page(&vmf, orig_pmd);
->  
-> -			if (dirty && !pmd_write(orig_pmd)) {
-> +			/*
-> +			 * Shadow stack trans huge PMDs are copy-on-access,
-> +			 * so wp_huge_pmd() on them no mater if we have a
-> +			 * write fault or not.
-> +			 */
-> +			if (is_shstk_mapping(vma->vm_flags) ||
-> +			    (dirty && !pmd_write(orig_pmd))) {
->  				ret = wp_huge_pmd(&vmf, orig_pmd);
->  				if (!(ret & VM_FAULT_FALLBACK))
->  					return ret;
 
-Can't we do this (and the do_wp_page thing) by setting FAULT_FLAG_WRITE
-in the arch fault handler on shadow stack faults?
+--rocv2bypgp7ywoj7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jul 10, 2018 at 10:01:04AM +0200, Paul Kocialkowski wrote:
+> From: Maxime Ripard <maxime.ripard@bootlin.com>
+>=20
+> This adds support for the C1 SRAM region (to be used with the SRAM
+> controller driver) for the A20 platform. The region is shared
+> between the Video Engine and the CPU.
+>=20
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+
+Fixed the SRAM size and applied.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rocv2bypgp7ywoj7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFybsACgkQ0rTAlCFN
+r3QICQ//elxoP47g2vqdmv5pNOhav+y3/AfO/rdq6mBmCj/uwV9+nhtUYxjuqtuS
+Obd1kdbC1ICtY0Sf6sHIIhPobJ87qQR+sjysjRDCvG6Jzz2sSYgAJOGnqjXdFKSp
+Oo0RJ3Fxgenie6An8x+aDBpXys6X7RN0qofiPlDYrZ5MksjM8pKkVIA0ZuYHuzhK
+5jFnNSW7/GHdtxFalqkdFHxMQJLm+84MhBG+9nHX2CDKtlZ8mEIIqoMwDPB8Ksct
+TDQLIZoskLVqkxi64nqheh0AllW0+2qtPTdn4bYNSwn/d6E91zRxzXZ+JW3PUuYC
+9ATJm2w+2UCA/Dw/19weAPS2anhWAkmOdfBAjbcdzN/t1YGP15EMV/kgtJv5QOvK
+KHVZjG0XfbWveEdmP8AvIy9L9vI6Jlk04Wa/h4QZm65eAEBdMJlaOVPE8ZwLS9FX
+WRqM0JuzbaIpuy97sfPuni2RPEjCvJ6GdLXhIIGmRVCFZJ09UDbxP6rbW8L0lmUG
+SCJQeJvbfz041UWUJKmnMqv52WV1wbogiIoXWCsh6NptiSYZJPvKWPFQG/x14eLi
+DKpLfzh7Bbdi4OwjiLN6+sOdcCrkpIC8uRxNfN6NFPHJoXbwq60QtyrnFFgPunbr
+AB2nWOW1CAzZbi+8tsVmHxxuAzf6tbGrvslW+XaZ5ffdNdNkAeY=
+=3yJU
+-----END PGP SIGNATURE-----
+
+--rocv2bypgp7ywoj7--
