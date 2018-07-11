@@ -2,83 +2,134 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB598C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BEFC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9404E20870
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:25:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9404E20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0FB0B20870
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:26:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="KseB4IjZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FB0B20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387958AbeGKSb1 (ORCPT
+        id S2388226AbeGKSbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 14:31:27 -0400
-Received: from mail-pf0-f170.google.com ([209.85.192.170]:39572 "EHLO
-        mail-pf0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387823AbeGKSb1 (ORCPT
+        Wed, 11 Jul 2018 14:31:40 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:40403 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387833AbeGKSbk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 14:31:27 -0400
-Received: by mail-pf0-f170.google.com with SMTP id s21-v6so18962596pfm.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 11:25:55 -0700 (PDT)
+        Wed, 11 Jul 2018 14:31:40 -0400
+Received: by mail-io0-f196.google.com with SMTP id l14-v6so15070534iob.7
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 11:26:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hNJPR+kq27fj1u6nAjlU7zqqTZl/XuV38TgYLpMVkbw=;
+        b=KseB4IjZMFBFMMhveJpHsZ8eTR/nOOPdI59VSYIb9RJ5VMhBHxSaRqqFf8/sOBSp8k
+         ArHzu1hSDMNVEwzqWlcumP4MELVp2ipgNXCHANu1t+Xt8n2v7YE/hbAugr0c/DA9ZSLm
+         SECGVdEd1SxjHbJztl2Wu8ln47Y3c9iDLFds18syw7sASc16NZcX+Eh+a/E/Drm6lXqq
+         Hrw2qDu0YvW1HJNQGppX3eajUzQ9moxYra5VZz24ZigD2CUY39DK9VP3o4wzde45wKRS
+         6eaaOH00HTnWflCyirnfRhF6cC9NaBrmf4Vzstcx5Dy1VMRtpMmgFaR7zVgPI5+gJRA3
+         epQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dNWOPijWMoJAn8cAcDislrnTD3/Xbfg4rJqcIbdOx8U=;
-        b=b9MP/WMQBSzihdhj271I9GRUm+PuYIzIPMBhAKsVyAWXt+ieSdORS+t3M4chOUdfdZ
-         I9ZueQn20+MDeSP6N3pMjkgaUwW88DBnFkspm31ub8gBj76OByris6tTaPmnOXinmHld
-         i1i+VB1w3MNd4pd/q7y9XhBtKIPE8wnX0A6oMeVZSvFK9knzDP3yKvpazWDe+DGkrgjr
-         CkMA2a3t2hnTnSv9nGfsfxKWB8tSMy4THkwhWdKzsWshwDLtuU/i92oB9kxouRtqHjwT
-         rzz2ovy0zdLF2/RSxE108K01CEXGd6DdcjtikAiuor0vcbwpFO+r6O63lbbpV5SzQsrQ
-         pwKw==
-X-Gm-Message-State: APt69E1LfRKreLIWLMKyQMh7ivD7fHpc9kKFGTKKaLhLdy1ti2emsCfZ
-        7tk2P8WeCJ3PE23Cc8ksvXHHvQ==
-X-Google-Smtp-Source: AAOMgpdgZUNzDk6QX30OdrrOX3JkzKxncqamNSaBn3zYAoiLh0R9B30vZ3uR3ZRFKBILecDvT+kGSQ==
-X-Received: by 2002:a62:b40c:: with SMTP id h12-v6mr18352828pfn.18.1531333554751;
-        Wed, 11 Jul 2018 11:25:54 -0700 (PDT)
-Received: from localhost ([207.114.172.147])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm7977331pfe.151.2018.07.11.11.25.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 11:25:54 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 11:25:53 -0700
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Alan Tull <atull@kernel.org>
-Cc:     federico.vaga@cern.ch, linux-fpga@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: fpga: fpga_mgr_free usage
-Message-ID: <20180711182553.GA5356@archbook>
-References: <5553262.evi6GU8epL@pcbe13614>
- <CANk1AXRewvAAxRi=kmCNL3CEki9ODk7LvLS6q8Hd64JRanyfew@mail.gmail.com>
+        bh=hNJPR+kq27fj1u6nAjlU7zqqTZl/XuV38TgYLpMVkbw=;
+        b=RzS4tF/i8WPWRPxtzSXBV4z0EDviaEfZmcTjupxPS6cj9+iKH8jnrUQHUePUic8pYn
+         MHEaaa0bps9P8krzx1Q5JLqHty3hHp5g1wKiMTmWUz2YVPrwl4pFpNG/Rlj/fEhA+49j
+         TR+hEQJwLpohfz37qei05NdISHWxJzPx9oyUCe7/bKWW5AtV6CGYIA5o4FJRUsFvYe/q
+         RTvEuFoICLwY4IblBM8jVspmpF1yKbKuRhcz4XOzo5wbMgRGC2w6GuiqtgPGaoS/DN8K
+         d5/TOrk53rwwpF4HwJjU3Pj/OMtCpWBxxYEXWgrLNEqHE9x5FNpudeXDdYbl0+t+tgFD
+         GCow==
+X-Gm-Message-State: APt69E01dqRgcwfBZzIALq1mkfOwgxpzoI+9kwCBG8y1Ukmgz2YWQsfx
+        mO76qg2/p2AyBPTrGzPso25OrA==
+X-Google-Smtp-Source: AAOMgpfYeHf8RcEgDZyhNIXRv7fqvNt4v55RqFXmbqZH23AQxXkWtSmWusi7MjziUL20a7MTw6U8LA==
+X-Received: by 2002:a02:4a0a:: with SMTP id k10-v6mr6432231jab.134.1531333567611;
+        Wed, 11 Jul 2018 11:26:07 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id u127-v6sm10731036iod.54.2018.07.11.11.26.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 11:26:07 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fdJoU-0005ww-3m; Wed, 11 Jul 2018 12:26:06 -0600
+Date:   Wed, 11 Jul 2018 12:26:06 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Faisal Latif <faisal.latif@intel.com>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Yuval Shaia <yuval.shaia@oracle.com>,
+        Henry Orosco <henry.orosco@intel.com>,
+        Tatyana Nikolova <tatyana.e.nikolova@intel.com>,
+        Mustafa Ismail <mustafa.ismail@intel.com>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Bart Van Assche <bart.vanassche@wdc.com>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] [v3] infiniband: i40iw, nes: don't use wall time for TCP
+ sequence numbers
+Message-ID: <20180711182606.GA22284@ziepe.ca>
+References: <20180709083523.448587-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANk1AXRewvAAxRi=kmCNL3CEki9ODk7LvLS6q8Hd64JRanyfew@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180709083523.448587-1-arnd@arndb.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alan,
-
-On Wed, Jul 11, 2018 at 10:59:01AM -0500, Alan Tull wrote:
-> On Wed, Jul 11, 2018 at 7:38 AM, Federico Vaga <federico.vaga@cern.ch> wrote:
-
-[..]
-> > This makes the usage consistent: the user creates and destroy its own
-> > objects. This is also consistent with our other discussion where we
-> > said, among the other things, that the module that uses the FPGA
-> > manager can the owner of the fpga_manager data structure.
+On Mon, Jul 09, 2018 at 10:34:43AM +0200, Arnd Bergmann wrote:
+> The nes infiniband driver uses current_kernel_time() to get a nanosecond
+> granunarity timestamp to initialize its tcp sequence counters. This is
+> one of only a few remaining users of that deprecated function, so we
+> should try to get rid of it.
 > 
-> You're not the first to complain about this.  I think I'll err on the
-> side of consistency and implement your option 2 here.
+> Aside from using a deprecated API, there are several problems I see here:
+> 
+> - Using a CLOCK_REALTIME based time source makes it predictable in
+>   case the time base is synchronized.
+> - Using a coarse timestamp means it only gets updated once per jiffie,
+>   making it even more predictable in order to avoid having to access
+>   the hardware clock source
+> - The upper 2 bits are always zero because the nanoseconds are at most
+>   999999999.
+> 
+> For the Linux TCP implementation, we use secure_tcp_seq(), which appears
+> to be appropriate here as well, and solves all the above problems.
+> 
+> i40iw uses a variant of the same code, so I do that same thing there
+> for ipv4. Unlike nes, i40e also supports ipv6, which needs to call
+> secure_tcpv6_seq instead.
+> 
+> Acked-by: Shiraz Saleem <shiraz.saleem@intel.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v2: use secure_tcpv6_seq for IPv6 support as suggested by Shiraz Saleem.
+> v3: add a soft IPv6 dependency to prevent a link error with CONFIG_IPV6=m,
+>     this now forces i40iw to be a module as well, add an IS_ENABLED()
+>     check to avoid calling it when IPV6 is completely disabled.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  drivers/infiniband/hw/i40iw/Kconfig    |  1 +
+>  drivers/infiniband/hw/i40iw/i40iw_cm.c | 26 +++++++++++++++++++++-----
+>  drivers/infiniband/hw/nes/nes_cm.c     |  8 +++++---
+>  net/core/secure_seq.c                  |  1 +
+>  4 files changed, 28 insertions(+), 8 deletions(-)
 
-I agree, that seems like a good approach.
+Applied to for-next thanks
 
-Cheers,
-
-Moritz
+Jason
