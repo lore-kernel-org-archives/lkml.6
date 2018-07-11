@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D46CC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A985C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F18DA20C51
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4BFF212CF
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="crWKVDRD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F18DA20C51
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="RRZhaHst"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4BFF212CF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732844AbeGKLeA (ORCPT
+        id S1732934AbeGKLeE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:34:00 -0400
-Received: from 8bytes.org ([81.169.241.247]:37384 "EHLO theia.8bytes.org"
+        Wed, 11 Jul 2018 07:34:04 -0400
+Received: from 8bytes.org ([81.169.241.247]:37318 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732808AbeGKLd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:33:59 -0400
+        id S1732808AbeGKLeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:34:02 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id EC44F5BB; Wed, 11 Jul 2018 13:29:59 +0200 (CEST)
+        id C310F691; Wed, 11 Jul 2018 13:30:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308599; bh=6bfJ1yD4EqIh0SLTKG6nHvS6Tbjr9DxGgwLNYwVUtAo=;
+        t=1531308600; bh=PVDQwoyxBeMkLq1IdamXn/EKU2x0nMaR+EcALkk2SWU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=crWKVDRD1dei+2h1W2WAT9KuWkYcMVOkqmfM/WxR4G3RJf6+MjjaUH57m5rX2Zzq4
-         X/cIgtQaX+bKm6OqBm1h/r1IJAfgCmwsIn5KRiqITvc/T6QP0ZiOWy+ul/3BXZrRm+
-         L95wcoJHpNakt63x2tRZKxOK6IvbCcI9lTMNApko+rpy9RkTHdsr5gVNc3qv34uHPM
-         sI8JzSpxOPSEwH7hfgIOtajGfBnKPOvCHkDTciKrXV9pUF8QcB2e/Jii0wpX8ntueA
-         9bYV+tBc+Urf2Zj50xpCSf+JvxFTtlkhcQ76Z2sIg3oUCCo1vTBqbdJn90O9luuS/u
-         TDNi2hqHGIphQ==
+        b=RRZhaHstqjCgbkimSnvmJ2NuTC0ub28EshNEruDwJLPTj8wKDu0F+RjLYRTXdcZbT
+         hCJL+hnEa1mrxuY8fCvshOt8NjBeJC+N0h/NgPUPwVxQ4DZLT1YkvSQT7HvJOYnNnM
+         6I7rQetTdrqDR+NhR+gLzmbe39F7lsilmbw6VYYNu+ZQ8Zg5iDMkB7CcnWeV9zUAO6
+         KmLQz9vLxe7ZQDvFt6LQTwcpR4ByC2VMxWke8UA5jeKrlt2zmL//HSLPbPKxokx+Bl
+         IDy96TIG5kiajDQlgmv6X4q/fsr9qOUN0VUyZsGaCZL48hc5KDL8KbUG3wxRA68e4p
+         1cSu7Bfms+W3g==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 04/39] x86/entry/32: Put ESPFIX code into a macro
-Date:   Wed, 11 Jul 2018 13:29:11 +0200
-Message-Id: <1531308586-29340-5-git-send-email-joro@8bytes.org>
+Subject: [PATCH 07/39] x86/entry/32: Enter the kernel via trampoline stack
+Date:   Wed, 11 Jul 2018 13:29:14 +0200
+Message-Id: <1531308586-29340-8-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
@@ -72,135 +72,354 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-This makes it easier to split up the shared iret code path.
+Use the entry-stack as a trampoline to enter the kernel. The
+entry-stack is already in the cpu_entry_area and will be
+mapped to userspace when PTI is enabled.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 97 ++++++++++++++++++++++++-----------------------
- 1 file changed, 49 insertions(+), 48 deletions(-)
+ arch/x86/entry/entry_32.S        | 136 +++++++++++++++++++++++++++++++--------
+ arch/x86/include/asm/switch_to.h |   6 +-
+ arch/x86/kernel/asm-offsets.c    |   1 +
+ arch/x86/kernel/cpu/common.c     |   5 +-
+ arch/x86/kernel/process.c        |   2 -
+ arch/x86/kernel/process_32.c     |  10 +--
+ 6 files changed, 121 insertions(+), 39 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 39fdda3..d35a69a 100644
+index 61303fa..528db7d 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -221,6 +221,54 @@
- 	POP_GS_EX
+@@ -154,25 +154,36 @@
+ 
+ #endif /* CONFIG_X86_32_LAZY_GS */
+ 
+-.macro SAVE_ALL pt_regs_ax=%eax
++.macro SAVE_ALL pt_regs_ax=%eax switch_stacks=0
+ 	cld
++	/* Push segment registers and %eax */
+ 	PUSH_GS
+ 	pushl	%fs
+ 	pushl	%es
+ 	pushl	%ds
+ 	pushl	\pt_regs_ax
++
++	/* Load kernel segments */
++	movl	$(__USER_DS), %eax
++	movl	%eax, %ds
++	movl	%eax, %es
++	movl	$(__KERNEL_PERCPU), %eax
++	movl	%eax, %fs
++	SET_KERNEL_GS %eax
++
++	/* Push integer registers and complete PT_REGS */
+ 	pushl	%ebp
+ 	pushl	%edi
+ 	pushl	%esi
+ 	pushl	%edx
+ 	pushl	%ecx
+ 	pushl	%ebx
+-	movl	$(__USER_DS), %edx
+-	movl	%edx, %ds
+-	movl	%edx, %es
+-	movl	$(__KERNEL_PERCPU), %edx
+-	movl	%edx, %fs
+-	SET_KERNEL_GS %edx
++
++	/* Switch to kernel stack if necessary */
++.if \switch_stacks > 0
++	SWITCH_TO_KERNEL_STACK
++.endif
++
  .endm
  
-+.macro CHECK_AND_APPLY_ESPFIX
-+#ifdef CONFIG_X86_ESPFIX32
-+#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
+ /*
+@@ -269,6 +280,72 @@
+ .Lend_\@:
+ #endif /* CONFIG_X86_ESPFIX32 */
+ .endm
 +
-+	ALTERNATIVE	"jmp .Lend_\@", "", X86_BUG_ESPFIX
 +
-+	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS, SS and CS
-+	/*
-+	 * Warning: PT_OLDSS(%esp) contains the wrong/random values if we
-+	 * are returning to the kernel.
-+	 * See comments in process.c:copy_thread() for details.
-+	 */
-+	movb	PT_OLDSS(%esp), %ah
-+	movb	PT_CS(%esp), %al
-+	andl	$(X86_EFLAGS_VM | (SEGMENT_TI_MASK << 8) | SEGMENT_RPL_MASK), %eax
-+	cmpl	$((SEGMENT_LDT << 8) | USER_RPL), %eax
-+	jne	.Lend_\@	# returning to user-space with LDT SS
++/*
++ * Called with pt_regs fully populated and kernel segments loaded,
++ * so we can access PER_CPU and use the integer registers.
++ *
++ * We need to be very careful here with the %esp switch, because an NMI
++ * can happen everywhere. If the NMI handler finds itself on the
++ * entry-stack, it will overwrite the task-stack and everything we
++ * copied there. So allocate the stack-frame on the task-stack and
++ * switch to it before we do any copying.
++ */
++.macro SWITCH_TO_KERNEL_STACK
++
++	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
++
++	/* Are we on the entry stack? Bail out if not! */
++	movl	PER_CPU_VAR(cpu_entry_area), %edi
++	addl	$CPU_ENTRY_AREA_entry_stack, %edi
++	cmpl	%esp, %edi
++	jae	.Lend_\@
++
++	/* Load stack pointer into %esi and %edi */
++	movl	%esp, %esi
++	movl	%esi, %edi
++
++	/* Move %edi to the top of the entry stack */
++	andl	$(MASK_entry_stack), %edi
++	addl	$(SIZEOF_entry_stack), %edi
++
++	/* Load top of task-stack into %edi */
++	movl	TSS_entry_stack(%edi), %edi
++
++	/* Bytes to copy */
++	movl	$PTREGS_SIZE, %ecx
++
++#ifdef CONFIG_VM86
++	testl	$X86_EFLAGS_VM, PT_EFLAGS(%esi)
++	jz	.Lcopy_pt_regs_\@
 +
 +	/*
-+	 * Setup and switch to ESPFIX stack
-+	 *
-+	 * We're returning to userspace with a 16 bit stack. The CPU will not
-+	 * restore the high word of ESP for us on executing iret... This is an
-+	 * "official" bug of all the x86-compatible CPUs, which we can work
-+	 * around to make dosemu and wine happy. We do this by preloading the
-+	 * high word of ESP with the high word of the userspace ESP while
-+	 * compensating for the offset by changing to the ESPFIX segment with
-+	 * a base address that matches for the difference.
++	 * Stack-frame contains 4 additional segment registers when
++	 * coming from VM86 mode
 +	 */
-+	mov	%esp, %edx			/* load kernel esp */
-+	mov	PT_OLDESP(%esp), %eax		/* load userspace esp */
-+	mov	%dx, %ax			/* eax: new kernel esp */
-+	sub	%eax, %edx			/* offset (low word is 0) */
-+	shr	$16, %edx
-+	mov	%dl, GDT_ESPFIX_SS + 4		/* bits 16..23 */
-+	mov	%dh, GDT_ESPFIX_SS + 7		/* bits 24..31 */
-+	pushl	$__ESPFIX_SS
-+	pushl	%eax				/* new kernel esp */
++	addl	$(4 * 4), %ecx
++
++.Lcopy_pt_regs_\@:
++#endif
++
++	/* Allocate frame on task-stack */
++	subl	%ecx, %edi
++
++	/* Switch to task-stack */
++	movl	%edi, %esp
++
 +	/*
-+	 * Disable interrupts, but do not irqtrace this section: we
-+	 * will soon execute iret and the tracer was already set to
-+	 * the irqstate after the IRET:
++	 * We are now on the task-stack and can safely copy over the
++	 * stack-frame
 +	 */
-+	DISABLE_INTERRUPTS(CLBR_ANY)
-+	lss	(%esp), %esp			/* switch to espfix segment */
++	shrl	$2, %ecx
++	cld
++	rep movsl
++
 +.Lend_\@:
-+#endif /* CONFIG_X86_ESPFIX32 */
 +.endm
++
  /*
   * %eax: prev task
   * %edx: next task
-@@ -547,21 +595,7 @@ ENTRY(entry_INT80_32)
- restore_all:
- 	TRACE_IRQS_IRET
- .Lrestore_all_notrace:
--#ifdef CONFIG_X86_ESPFIX32
--	ALTERNATIVE	"jmp .Lrestore_nocheck", "", X86_BUG_ESPFIX
--
--	movl	PT_EFLAGS(%esp), %eax		# mix EFLAGS, SS and CS
--	/*
--	 * Warning: PT_OLDSS(%esp) contains the wrong/random values if we
--	 * are returning to the kernel.
--	 * See comments in process.c:copy_thread() for details.
--	 */
--	movb	PT_OLDSS(%esp), %ah
--	movb	PT_CS(%esp), %al
--	andl	$(X86_EFLAGS_VM | (SEGMENT_TI_MASK << 8) | SEGMENT_RPL_MASK), %eax
--	cmpl	$((SEGMENT_LDT << 8) | USER_RPL), %eax
--	je .Lldt_ss				# returning to user-space with LDT SS
--#endif
-+	CHECK_AND_APPLY_ESPFIX
- .Lrestore_nocheck:
- 	RESTORE_REGS 4				# skip orig_eax/error_code
- .Lirq_return:
-@@ -579,39 +613,6 @@ ENTRY(iret_exc	)
- 	jmp	common_exception
- .previous
- 	_ASM_EXTABLE(.Lirq_return, iret_exc)
--
--#ifdef CONFIG_X86_ESPFIX32
--.Lldt_ss:
--/*
-- * Setup and switch to ESPFIX stack
-- *
-- * We're returning to userspace with a 16 bit stack. The CPU will not
-- * restore the high word of ESP for us on executing iret... This is an
-- * "official" bug of all the x86-compatible CPUs, which we can work
-- * around to make dosemu and wine happy. We do this by preloading the
-- * high word of ESP with the high word of the userspace ESP while
-- * compensating for the offset by changing to the ESPFIX segment with
-- * a base address that matches for the difference.
-- */
--#define GDT_ESPFIX_SS PER_CPU_VAR(gdt_page) + (GDT_ENTRY_ESPFIX_SS * 8)
--	mov	%esp, %edx			/* load kernel esp */
--	mov	PT_OLDESP(%esp), %eax		/* load userspace esp */
--	mov	%dx, %ax			/* eax: new kernel esp */
--	sub	%eax, %edx			/* offset (low word is 0) */
--	shr	$16, %edx
--	mov	%dl, GDT_ESPFIX_SS + 4		/* bits 16..23 */
--	mov	%dh, GDT_ESPFIX_SS + 7		/* bits 24..31 */
--	pushl	$__ESPFIX_SS
--	pushl	%eax				/* new kernel esp */
--	/*
--	 * Disable interrupts, but do not irqtrace this section: we
--	 * will soon execute iret and the tracer was already set to
--	 * the irqstate after the IRET:
--	 */
--	DISABLE_INTERRUPTS(CLBR_ANY)
--	lss	(%esp), %esp			/* switch to espfix segment */
--	jmp	.Lrestore_nocheck
--#endif
- ENDPROC(entry_INT80_32)
+@@ -461,6 +538,7 @@ ENTRY(xen_sysenter_target)
+  */
+ ENTRY(entry_SYSENTER_32)
+ 	movl	TSS_entry_stack(%esp), %esp
++
+ .Lsysenter_past_esp:
+ 	pushl	$__USER_DS		/* pt_regs->ss */
+ 	pushl	%ebp			/* pt_regs->sp (stashed in bp) */
+@@ -469,7 +547,7 @@ ENTRY(entry_SYSENTER_32)
+ 	pushl	$__USER_CS		/* pt_regs->cs */
+ 	pushl	$0			/* pt_regs->ip = 0 (placeholder) */
+ 	pushl	%eax			/* pt_regs->orig_ax */
+-	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest */
++	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest, stack already switched */
  
- .macro FIXUP_ESPFIX_STACK
+ 	/*
+ 	 * SYSENTER doesn't filter flags, so we need to clear NT, AC
+@@ -580,7 +658,8 @@ ENDPROC(entry_SYSENTER_32)
+ ENTRY(entry_INT80_32)
+ 	ASM_CLAC
+ 	pushl	%eax			/* pt_regs->orig_ax */
+-	SAVE_ALL pt_regs_ax=$-ENOSYS	/* save rest */
++
++	SAVE_ALL pt_regs_ax=$-ENOSYS switch_stacks=1	/* save rest */
+ 
+ 	/*
+ 	 * User mode is traced as though IRQs are on, and the interrupt gate
+@@ -677,7 +756,8 @@ END(irq_entries_start)
+ common_interrupt:
+ 	ASM_CLAC
+ 	addl	$-0x80, (%esp)			/* Adjust vector into the [-256, -1] range */
+-	SAVE_ALL
++
++	SAVE_ALL switch_stacks=1
+ 	ENCODE_FRAME_POINTER
+ 	TRACE_IRQS_OFF
+ 	movl	%esp, %eax
+@@ -685,16 +765,16 @@ common_interrupt:
+ 	jmp	ret_from_intr
+ ENDPROC(common_interrupt)
+ 
+-#define BUILD_INTERRUPT3(name, nr, fn)	\
+-ENTRY(name)				\
+-	ASM_CLAC;			\
+-	pushl	$~(nr);			\
+-	SAVE_ALL;			\
+-	ENCODE_FRAME_POINTER;		\
+-	TRACE_IRQS_OFF			\
+-	movl	%esp, %eax;		\
+-	call	fn;			\
+-	jmp	ret_from_intr;		\
++#define BUILD_INTERRUPT3(name, nr, fn)			\
++ENTRY(name)						\
++	ASM_CLAC;					\
++	pushl	$~(nr);					\
++	SAVE_ALL switch_stacks=1;			\
++	ENCODE_FRAME_POINTER;				\
++	TRACE_IRQS_OFF					\
++	movl	%esp, %eax;				\
++	call	fn;					\
++	jmp	ret_from_intr;				\
+ ENDPROC(name)
+ 
+ #define BUILD_INTERRUPT(name, nr)		\
+@@ -926,16 +1006,20 @@ common_exception:
+ 	pushl	%es
+ 	pushl	%ds
+ 	pushl	%eax
++	movl	$(__USER_DS), %eax
++	movl	%eax, %ds
++	movl	%eax, %es
++	movl	$(__KERNEL_PERCPU), %eax
++	movl	%eax, %fs
+ 	pushl	%ebp
+ 	pushl	%edi
+ 	pushl	%esi
+ 	pushl	%edx
+ 	pushl	%ecx
+ 	pushl	%ebx
++	SWITCH_TO_KERNEL_STACK
+ 	ENCODE_FRAME_POINTER
+ 	cld
+-	movl	$(__KERNEL_PERCPU), %ecx
+-	movl	%ecx, %fs
+ 	UNWIND_ESPFIX_STACK
+ 	GS_TO_REG %ecx
+ 	movl	PT_GS(%esp), %edi		# get the function address
+@@ -943,9 +1027,6 @@ common_exception:
+ 	movl	$-1, PT_ORIG_EAX(%esp)		# no syscall to restart
+ 	REG_TO_PTGS %ecx
+ 	SET_KERNEL_GS %ecx
+-	movl	$(__USER_DS), %ecx
+-	movl	%ecx, %ds
+-	movl	%ecx, %es
+ 	TRACE_IRQS_OFF
+ 	movl	%esp, %eax			# pt_regs pointer
+ 	CALL_NOSPEC %edi
+@@ -964,6 +1045,7 @@ ENTRY(debug)
+ 	 */
+ 	ASM_CLAC
+ 	pushl	$-1				# mark this as an int
++
+ 	SAVE_ALL
+ 	ENCODE_FRAME_POINTER
+ 	xorl	%edx, %edx			# error code 0
+@@ -999,6 +1081,7 @@ END(debug)
+  */
+ ENTRY(nmi)
+ 	ASM_CLAC
++
+ #ifdef CONFIG_X86_ESPFIX32
+ 	pushl	%eax
+ 	movl	%ss, %eax
+@@ -1066,7 +1149,8 @@ END(nmi)
+ ENTRY(int3)
+ 	ASM_CLAC
+ 	pushl	$-1				# mark this as an int
+-	SAVE_ALL
++
++	SAVE_ALL switch_stacks=1
+ 	ENCODE_FRAME_POINTER
+ 	TRACE_IRQS_OFF
+ 	xorl	%edx, %edx			# zero error code
+diff --git a/arch/x86/include/asm/switch_to.h b/arch/x86/include/asm/switch_to.h
+index eb5f799..20e5f7ab 100644
+--- a/arch/x86/include/asm/switch_to.h
++++ b/arch/x86/include/asm/switch_to.h
+@@ -89,13 +89,9 @@ static inline void refresh_sysenter_cs(struct thread_struct *thread)
+ /* This is used when switching tasks or entering/exiting vm86 mode. */
+ static inline void update_sp0(struct task_struct *task)
+ {
+-	/* On x86_64, sp0 always points to the entry trampoline stack, which is constant: */
+-#ifdef CONFIG_X86_32
+-	load_sp0(task->thread.sp0);
+-#else
++	/* sp0 always points to the entry trampoline stack, which is constant: */
+ 	if (static_cpu_has(X86_FEATURE_XENPV))
+ 		load_sp0(task_top_of_stack(task));
+-#endif
+ }
+ 
+ #endif /* _ASM_X86_SWITCH_TO_H */
+diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c
+index a1e1628..01de31d 100644
+--- a/arch/x86/kernel/asm-offsets.c
++++ b/arch/x86/kernel/asm-offsets.c
+@@ -103,6 +103,7 @@ void common(void) {
+ 	OFFSET(CPU_ENTRY_AREA_entry_trampoline, cpu_entry_area, entry_trampoline);
+ 	OFFSET(CPU_ENTRY_AREA_entry_stack, cpu_entry_area, entry_stack_page);
+ 	DEFINE(SIZEOF_entry_stack, sizeof(struct entry_stack));
++	DEFINE(MASK_entry_stack, (~(sizeof(struct entry_stack) - 1)));
+ 
+ 	/* Offset for sp0 and sp1 into the tss_struct */
+ 	OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index eb4cb3e..43a927e 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1804,11 +1804,12 @@ void cpu_init(void)
+ 	enter_lazy_tlb(&init_mm, curr);
+ 
+ 	/*
+-	 * Initialize the TSS.  Don't bother initializing sp0, as the initial
+-	 * task never enters user mode.
++	 * Initialize the TSS.  sp0 points to the entry trampoline stack
++	 * regardless of what task is running.
+ 	 */
+ 	set_tss_desc(cpu, &get_cpu_entry_area(cpu)->tss.x86_tss);
+ 	load_TR_desc();
++	load_sp0((unsigned long)(cpu_entry_stack(cpu) + 1));
+ 
+ 	load_mm_ldt(&init_mm);
+ 
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 30ca2d1..c93fcfd 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -57,14 +57,12 @@ __visible DEFINE_PER_CPU_PAGE_ALIGNED(struct tss_struct, cpu_tss_rw) = {
+ 		 */
+ 		.sp0 = (1UL << (BITS_PER_LONG-1)) + 1,
+ 
+-#ifdef CONFIG_X86_64
+ 		/*
+ 		 * .sp1 is cpu_current_top_of_stack.  The init task never
+ 		 * runs user code, but cpu_current_top_of_stack should still
+ 		 * be well defined before the first context switch.
+ 		 */
+ 		.sp1 = TOP_OF_INIT_STACK,
+-#endif
+ 
+ #ifdef CONFIG_X86_32
+ 		.ss0 = __KERNEL_DS,
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index ec62cc7..04bbf93 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -287,10 +287,12 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	 */
+ 	update_sp0(next_p);
+ 	refresh_sysenter_cs(next);
+-	this_cpu_write(cpu_current_top_of_stack,
+-		       (unsigned long)task_stack_page(next_p) +
+-		       THREAD_SIZE);
+-	/* SYSENTER reads the task-stack from tss.sp1 */
++	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
++	/*
++	 * TODO: Find a way to let cpu_current_top_of_stack point to
++	 * cpu_tss_rw.x86_tss.sp1. Doing so now results in stack corruption with
++	 * iret exceptions.
++	 */
+ 	this_cpu_write(cpu_tss_rw.x86_tss.sp1, next_p->thread.sp0);
+ 
+ 	/*
 -- 
 2.7.4
 
