@@ -2,121 +2,112 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA43DC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31083C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7877F20C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CaCCXtzW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7877F20C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D9FEB20C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9FEB20C0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389566AbeGKQOP (ORCPT
+        id S2389582AbeGKQOa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:14:15 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44051 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732433AbeGKQOO (ORCPT
+        Wed, 11 Jul 2018 12:14:30 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:40565 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732433AbeGKQOa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:14:14 -0400
-Received: by mail-ed1-f66.google.com with SMTP id d17-v6so7514015eds.11;
-        Wed, 11 Jul 2018 09:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0NhwZLGw3nSghX6TewOHRNgOc82cBRt/NzV5Zp080cg=;
-        b=CaCCXtzWCdDal5djEKUOGKyMB3gbmqj4S/hO9mXJbyUjJ+VYlNnxufwNMYpJBgj4wC
-         Wc7MPyjhmoE8I9Vibb+7RV13jBrwC/ZexgmvdBpoKXQpn6hv1VPPNG63hHi90LSg6ywc
-         8JOCfAGqQTH1E6Ro4WOQpLSec8OmdXK4qCSjrAW2PZqW1afy46opfbZ/ocPD51gnK/9X
-         CToSv3iVmFp42t+lY7QPStXhFfAwyVzksUYExlTbuGdzmyUqm0sF6aUzN0slH45drO7u
-         ul3/Cxy/4O83xAIob2jmL3r3V7zSv7yT7BgW4jApveM/hEUEP1KQbDW/hABMjaObzOxN
-         Wuhg==
+        Wed, 11 Jul 2018 12:14:30 -0400
+Received: by mail-oi0-f66.google.com with SMTP id w126-v6so50226314oie.7;
+        Wed, 11 Jul 2018 09:09:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0NhwZLGw3nSghX6TewOHRNgOc82cBRt/NzV5Zp080cg=;
-        b=rTMg0/xkNaQ6S+5ZHUX5zyuXnEUuzI4Pk1wv23vXXUNS5ZZ4xCZBdZQ4nFAgQM1WH7
-         0pBqdqAAdN+eMTetHPZCLa8VgHLfSofhhDBGCDW8aFDzU/4Fry0pAwfeFPU16T3JwMgS
-         98vuigoFbCAYQmuleYy2xOvZJjE4FINgbCx45Z0Khdm4yEf4KOAhq1E0oQ8NQ70dNRIA
-         kXzQxvy2e1UwUg8KnYTwcubGh45Lb2j7uuSdL9kSNsQ0Ms9/c40MM43HEE28fOFWdZYb
-         03CfjIXOhDCyt3Ntd18XLt0host3/JWRKb1cE4qJ/AWP9KT410iJyaW0w3CRo5m10j/t
-         yH2g==
-X-Gm-Message-State: APt69E25zXeaFOMtHSmG2WyGWgL+jtrxNzieo/gqo85Am+VUZYomChtI
-        M4dMVV5P3ocbPEuNK5/7jfg0h3SLDoDsHAQA4Zc=
-X-Google-Smtp-Source: AAOMgpejfM9y+bOKsqVadZW8VzCft1w20q/MPecjqsSbrqdPH7+NnZwXvip5cyNXrELuEL8N6qx54BYplf/+nT5oYx0=
-X-Received: by 2002:aa7:d34d:: with SMTP id m13-v6mr32536284edr.143.1531325352127;
- Wed, 11 Jul 2018 09:09:12 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pFL5J4xLysoe0+DyjjXe3ZzhZ+7SbtznbFjHRHG0Ce4=;
+        b=Xxl2efVEbuKoaTnHa7FKKhPDhaXlMN4nb+ORXWHVfl6Ijx8YwYd85ahmgYMo+iUACo
+         31f6cTfz4P3YTdFkUYZW7+c7N/xnE7vhB9Tbl2RKYNFyddN44noz1Y3fF8RXicWxtrSn
+         eIZhrGoxBxyhxyY5AxgSXgFOg2aVULLI12ocl2dU+IE9QGgtwRgFNQSL/QX811639BZC
+         ljvMa1BPTro6iphaBvzBbgW2i97m7eZG8yYnOczO8mvTq76OXv6VPZ58iNPXheQX349+
+         HNXTEE3A4zNK7cCt0G4MwpkY3ZQLicmfKlCqXpICua4Xo/S5Rheteh7xKpgETrNdUV6r
+         yk2g==
+X-Gm-Message-State: APt69E3/HPgmU9pkIQAB7MpUPLq6kVfUIqVFxQlrqO6xBnx1qYAvWo6Y
+        CRnUwlMRrhzM6a/7m+ZxLA==
+X-Google-Smtp-Source: AAOMgpc2n5KEy8pnTW713vus4ezXgalYY9pUUjPJasDWMs06jLL0Yg8zMpbJaNFK7X2usMqPaEafGA==
+X-Received: by 2002:aca:e6cd:: with SMTP id d196-v6mr31482459oih.94.1531325368635;
+        Wed, 11 Jul 2018 09:09:28 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id n188-v6sm12801070oia.17.2018.07.11.09.09.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 09:09:28 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 10:09:27 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vinod <vkoul@kernel.org>, Guodong Xu <guodong.xu@linaro.org>
+Cc:     mark.rutland@arm.com, dan.j.williams@intel.com,
+        xuwei5@hisilicon.com, catalin.marinas@arm.com, will.deacon@arm.com,
+        liyu65@hisilicon.com, suzhuangluan@hisilicon.com,
+        xuhongtao8@hisilicon.com, zhongkaihua@huawei.com,
+        xuezhiliang@hisilicon.com, xupeng7@huawei.com,
+        sunliang10@huawei.com, fengbaopeng@hisilicon.com,
+        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/4] dt-bindings: k3dma: add optional property
+ hisilicon,dma-min-chan
+Message-ID: <20180711160927.GA31359@rob-hp-laptop>
+References: <20180706035521.13736-1-guodong.xu@linaro.org>
+ <20180706035521.13736-2-guodong.xu@linaro.org>
+ <20180709103438.GC22377@vkoul-mobl>
 MIME-Version: 1.0
-References: <000000000000b0ee7a056eea93a7@google.com> <00000000000033f8440570585207@google.com>
- <CAF=yD-JgBPy+D2Jm7SN=-bzAfAf__pxE92qAqNWs=9EqfyLmAA@mail.gmail.com>
- <CAF=yD-LcXtF94=5Xt5zeD=AmqHxNHGP+NURazJERigA8ysBuAQ@mail.gmail.com> <20180711120753.6940b66d@redhat.com>
-In-Reply-To: <20180711120753.6940b66d@redhat.com>
-From:   Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Date:   Wed, 11 Jul 2018 12:08:35 -0400
-Message-ID: <CAF=yD-+VNTOqAQzOmOr-ReXSy-zOU33gN0AjZso_8jW3htya7g@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in ipv6_gso_pull_exthdrs
-To:     Jiri Benc <jbenc@redhat.com>
-Cc:     syzbot+7b9ed9872dab8c32305d@syzkaller.appspotmail.com,
-        David Miller <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709103438.GC22377@vkoul-mobl>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 6:07 AM Jiri Benc <jbenc@redhat.com> wrote:
->
-> Sorry for the delayed reply, I'm working through a pile of stuff after
-> being off.
->
-> On Sun, 8 Jul 2018 18:58:14 -0400, Willem de Bruijn wrote:
-> > Setting skb->mac_len to 0, similar to mpls_gs_segment,
-> > is sufficient if the encapsulated packet is not ETH_P_TEB.
-> >
-> > If the packet is encapsulated at L2, __skb_pull(skb, vlan_depth)
-> > has to pull the inner mac header before passing to l3 handlers like
-> > inet_gso_segment.
-> >
-> > If that header includes VLAN tags, skb_network_protocol will
-> > parse then and update the mac length in vlan_depth. So
-> > hardcoding to ETH_HLEN should be fine:
-> >
-> > @@ -104,7 +95,7 @@ static struct sk_buff *nsh_gso_segment(struct sk_buff *skb,
-> >         __skb_pull(skb, nsh_len);
-> >
-> >         skb_reset_mac_header(skb);
-> > -       skb_reset_mac_len(skb);
-> > +       skb->mac_len = proto == ETH_P_TEB ? ETH_HLEN : 0;
-> >         skb->protocol = proto;
-> >
-> >         features &= NETIF_F_SG;
->
-> I agree. I think my original intention was to set mac_len to 0. Which
-> is obviously not done by calling skb_reset_mac_len...
->
-> Strangely, skb_network_protocol does not set *depth to ETH_HLEN if it
-> is 0 and the type is ETH_P_TEB, which is something I would expect it to
-> do. Thus we indeed have to differentiate between the two cases before
-> calling skb_mac_gso_segment.
->
-> Willem, will you send the patch formally (with the htons fix)? Thanks a
-> lot for the analysis and the patch!
+On Mon, Jul 09, 2018 at 04:04:38PM +0530, Vinod wrote:
+> On 06-07-18, 11:55, Guodong Xu wrote:
+> > From: Li Yu <liyu65@hisilicon.com>
+> > 
+> > Add optional property hisilicon,dma-min-chan for k3dma.
+> > 
+> > Signed-off-by: Li Yu <liyu65@hisilicon.com>
+> > Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/dma/k3dma.txt | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/dma/k3dma.txt b/Documentation/devicetree/bindings/dma/k3dma.txt
+> > index 4945aeac4dc4..f34202a80f3c 100644
+> > --- a/Documentation/devicetree/bindings/dma/k3dma.txt
+> > +++ b/Documentation/devicetree/bindings/dma/k3dma.txt
+> > @@ -12,6 +12,11 @@ Required properties:
+> >  		have specific request line
+> >  - clocks: clock required
+> >  
+> > +Optional properties:
+> > +- hisilicon,dma-min-chan: the minimum DMA channel number which is usable
+> > +		Default value is 0, but in some platform it is
+> > +		configured 1, like in hi3660 platform
+> > +
+> >  Example:
+> >  
+> >  Controller:
+> > @@ -21,6 +26,7 @@ Controller:
+> >  			#dma-cells = <1>;
+> >  			dma-channels = <16>;
+> >  			dma-requests = <27>;
+> > +			hisilicon,dma-min-chan = <1>;
+> 
+> Am still expecting this to be a mask
 
-Thanks for verifying, Jiri.
+If so calling it 'min' doesn't make sense. And a mask should have 'mask' 
+in the name.
 
-Posted as http://patchwork.ozlabs.org/patch/942588/. I forgot to cc:
-you directly in git send-email, sorry.
+Rob
