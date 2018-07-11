@@ -2,273 +2,169 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7313C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5907C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:12:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7880E20BF2
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:11:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h81iCb+D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7880E20BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7B58320B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:12:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B58320B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732764AbeGKLPC (ORCPT
+        id S1732640AbeGKLQc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:15:02 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:42369 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732738AbeGKLPB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:15:01 -0400
-Received: by mail-oi0-f67.google.com with SMTP id n84-v6so48485577oib.9;
-        Wed, 11 Jul 2018 04:11:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=EKGKHItDX/QI+YCgFQKgtqPERxRU5C+HIIXW7R94pi4=;
-        b=h81iCb+Dek0/9gyQ7P7zmsW2bfKVI+lCXcQ+xgX8xx5nnxRUZjstW4he346V5HtsT4
-         fQbH5rjb5GU15a+GnH9sUClF2jC8gDS9Ja4w5ZE3Qj7lTByfkJJHQwiomScMcUCf70vT
-         E5YBXDn11cptFA+aqtqabWQqP6+A7EecHNLVYmmXdMN1UmlKeT/uUf+YyNVA9P1JLB3B
-         e/pJIMAC60S95qpgpECm0y7dzjOC/FLuN2lfXTJ2wMSCAakqqQ7hcRq6IOlvt/tMBfk3
-         mPPEJ6CpdTie24RqC8Hj4+4a2lwPv9A+pVYbEiNLc6f08FHb6TRbdtcGp7cOiXuD+/4n
-         NqNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=EKGKHItDX/QI+YCgFQKgtqPERxRU5C+HIIXW7R94pi4=;
-        b=dFB14+7rloF/COTfviOCEBvNBZMA4zFR8BFHW541UxALDPo5ucfRr+dAk6WujKrPD/
-         Aqx3pnb9D3FNPCZjbMfcb3DX36Z+FjMd6IoYVz6r1DFgLO4wtjzHv1Br7qLLZ5k/CWE1
-         IQUbv2a+hkFOgmTiXtlaSFsnZKRlF/cAsSoev8IMtvKxR61JksdlmwVCpcC1JGSWawH7
-         HToK/qHapMk/yDLE6duQndMRYugnvLX2RH4rZRsFn80WxLmYl9ia0OZ83CIw1sbN+38L
-         3lnpsL6WqHucvHGZ88RgAdMIHsvfxs7kC9h4TRP+HukVo4XfQUvwIVTVrfp0RkEcy2Dh
-         endw==
-X-Gm-Message-State: APt69E0dZ+MU4Utl1hVBffpEsccxZBjqXKniyn+gx0N+VAqsTo5+GnED
-        s98Q53h7PfA+/gVOu6h6xya+TjcdlNXhVjBh1mM=
-X-Google-Smtp-Source: AAOMgpf0Xe+NL5o5eMVQ3zHA4/0dqOM9JJxGwKXfqS8L0iJ45/SaEpHT+K6PpUBqHc0hx0tKS3Nx25R9uJjMWPuO2ys=
-X-Received: by 2002:aca:adc6:: with SMTP id w189-v6mr33127066oie.174.1531307471861;
- Wed, 11 Jul 2018 04:11:11 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:63d2:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 04:11:11
- -0700 (PDT)
-In-Reply-To: <CAFp+6iHxJucfzJJeEvSToG4p2zADjDb9F0L8h053x-JKAy55mg@mail.gmail.com>
-References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
- <20180708173413.1965-2-vivek.gautam@codeaurora.org> <17407514.unFVTGoGrn@aspire.rjw.lan>
- <CAFp+6iHxJucfzJJeEvSToG4p2zADjDb9F0L8h053x-JKAy55mg@mail.gmail.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Wed, 11 Jul 2018 13:11:11 +0200
-X-Google-Sender-Auth: uhIbX5QXcL3HiJt5cFSs7-Rwsyo
-Message-ID: <CAJZ5v0gbkdkx_+oHYiPz=SFdFCLm38hsi1TmJ2Jdc7j73TNtzg@mail.gmail.com>
-Subject: Re: [PATCH v12 1/4] iommu/arm-smmu: Add pm_runtime/sleep ops
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        "robh+dt" <robh+dt@kernel.org>,
+        Wed, 11 Jul 2018 07:16:32 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:47510 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732387AbeGKLQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:16:31 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5366B20775; Wed, 11 Jul 2018 13:12:41 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 236BB207AD;
+        Wed, 11 Jul 2018 13:12:31 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 13:12:30 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Yong <yong.deng@magewell.com>
+Cc:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+        Chen-Yu Tsai <wens@csie.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Yannick Fertre <yannick.fertre@st.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v10 2/2] media: V3s: Add support for Allwinner CSI.
+Message-ID: <20180711111230.gpv7ww2nhaha5hou@flea>
+References: <1525417745-37964-1-git-send-email-yong.deng@magewell.com>
+ <20180626110821.wkal6fcnoncsze6y@valkosipuli.retiisi.org.uk>
+ <20180705154802.03604f156709be11892b19c0@magewell.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wbnyxjafmaafjrkv"
+Content-Disposition: inline
+In-Reply-To: <20180705154802.03604f156709be11892b19c0@magewell.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 12:55 PM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> Hi Rafael,
->
->
-> On Wed, Jul 11, 2018 at 3:20 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> On Sunday, July 8, 2018 7:34:10 PM CEST Vivek Gautam wrote:
->>> From: Sricharan R <sricharan@codeaurora.org>
->>>
->>> The smmu needs to be functional only when the respective
->>> master's using it are active. The device_link feature
->>> helps to track such functional dependencies, so that the
->>> iommu gets powered when the master device enables itself
->>> using pm_runtime. So by adapting the smmu driver for
->>> runtime pm, above said dependency can be addressed.
->>>
->>> This patch adds the pm runtime/sleep callbacks to the
->>> driver and also the functions to parse the smmu clocks
->>> from DT and enable them in resume/suspend.
->>>
->>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>> Signed-off-by: Archit Taneja <architt@codeaurora.org>
->>> [vivek: Clock rework to request bulk of clocks]
->>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
->>> ---
->>>
->>>  - No change since v11.
->>>
->>>  drivers/iommu/arm-smmu.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++--
->>>  1 file changed, 58 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>> index f7a96bcf94a6..a01d0dde21dd 100644
->>> --- a/drivers/iommu/arm-smmu.c
->>> +++ b/drivers/iommu/arm-smmu.c
->>> @@ -48,6 +48,7 @@
->>>  #include <linux/of_iommu.h>
->>>  #include <linux/pci.h>
->>>  #include <linux/platform_device.h>
->>> +#include <linux/pm_runtime.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/spinlock.h>
->>>
->>> @@ -205,6 +206,8 @@ struct arm_smmu_device {
->>>       u32                             num_global_irqs;
->>>       u32                             num_context_irqs;
->>>       unsigned int                    *irqs;
->>> +     struct clk_bulk_data            *clks;
->>> +     int                             num_clks;
->>>
->>>       u32                             cavium_id_base; /* Specific to Cavium */
->>>
->>> @@ -1897,10 +1900,12 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
->>>  struct arm_smmu_match_data {
->>>       enum arm_smmu_arch_version version;
->>>       enum arm_smmu_implementation model;
->>> +     const char * const *clks;
->>> +     int num_clks;
->>>  };
->>>
->>>  #define ARM_SMMU_MATCH_DATA(name, ver, imp)  \
->>> -static struct arm_smmu_match_data name = { .version = ver, .model = imp }
->>> +static const struct arm_smmu_match_data name = { .version = ver, .model = imp }
->>>
->>>  ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
->>>  ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
->>> @@ -1919,6 +1924,23 @@ static const struct of_device_id arm_smmu_of_match[] = {
->>>  };
->>>  MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
->>>
->>> +static void arm_smmu_fill_clk_data(struct arm_smmu_device *smmu,
->>> +                                const char * const *clks)
->>> +{
->>> +     int i;
->>> +
->>> +     if (smmu->num_clks < 1)
->>> +             return;
->>> +
->>> +     smmu->clks = devm_kcalloc(smmu->dev, smmu->num_clks,
->>> +                               sizeof(*smmu->clks), GFP_KERNEL);
->>> +     if (!smmu->clks)
->>> +             return;
->>> +
->>> +     for (i = 0; i < smmu->num_clks; i++)
->>> +             smmu->clks[i].id = clks[i];
->>> +}
->>> +
->>>  #ifdef CONFIG_ACPI
->>>  static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
->>>  {
->>> @@ -2001,6 +2023,9 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
->>>       data = of_device_get_match_data(dev);
->>>       smmu->version = data->version;
->>>       smmu->model = data->model;
->>> +     smmu->num_clks = data->num_clks;
->>> +
->>> +     arm_smmu_fill_clk_data(smmu, data->clks);
->>>
->>>       parse_driver_options(smmu);
->>>
->>> @@ -2099,6 +2124,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
->>>               smmu->irqs[i] = irq;
->>>       }
->>>
->>> +     err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
->>> +     if (err)
->>> +             return err;
->>> +
->>> +     err = clk_bulk_prepare(smmu->num_clks, smmu->clks);
->>> +     if (err)
->>> +             return err;
->>> +
->>>       err = arm_smmu_device_cfg_probe(smmu);
->>>       if (err)
->>>               return err;
->>> @@ -2181,6 +2214,9 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
->>>
->>>       /* Turn the thing off */
->>>       writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
->>> +
->>> +     clk_bulk_unprepare(smmu->num_clks, smmu->clks);
->>> +
->>>       return 0;
->>>  }
->>>
->>> @@ -2197,7 +2233,27 @@ static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
->>>       return 0;
->>>  }
->>>
->>> -static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
->>> +static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
->>> +{
->>> +     struct arm_smmu_device *smmu = dev_get_drvdata(dev);
->>> +
->>> +     return clk_bulk_enable(smmu->num_clks, smmu->clks);
->>> +}
->>> +
->>> +static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
->>> +{
->>> +     struct arm_smmu_device *smmu = dev_get_drvdata(dev);
->>> +
->>> +     clk_bulk_disable(smmu->num_clks, smmu->clks);
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +static const struct dev_pm_ops arm_smmu_pm_ops = {
->>> +     SET_SYSTEM_SLEEP_PM_OPS(NULL, arm_smmu_pm_resume)
->>
->> This is suspicious.
->>
->> If you need a runtime suspend method, why do you think that it is not necessary
->> to suspend the device during system-wide transitions?
->
-> Okay, so you suggest to put clock disabling in say arm_smmu_pm_suspend()?
-> In that case the clocks have to be enabled in the resume path too.
->
-> I remember Tomasz pointed to that we shouldn't need clock enable in resume
-> path [1].
->
-> [1] https://lkml.org/lkml/2018/3/15/60
 
-Honestly, I just don't know. :-)
+--wbnyxjafmaafjrkv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It just looks odd the way it is done.  I think the clock should be
-gated during system-wide suspend too, because the system can spend
-much more time in a sleep state than in the working state, on average.
+Hi Sakari,
 
-And note that you cannot rely on runtime PM to always do it for you,
-because it may be disabled at a client device or even blocked by user
-space via power/control in sysfs and that shouldn't matter for
-system-wide PM.
+On Thu, Jul 05, 2018 at 03:48:02PM +0800, Yong wrote:
+> > > +
+> > > +/* -----------------------------------------------------------------=
+------------
+> > > + * Media Operations
+> > > + */
+> > > +static int sun6i_video_formats_init(struct sun6i_video *video,
+> > > +				    const struct media_pad *remote)
+> > > +{
+> > > +	struct v4l2_subdev_mbus_code_enum mbus_code =3D { 0 };
+> > > +	struct sun6i_csi *csi =3D video->csi;
+> > > +	struct v4l2_format format;
+> > > +	struct v4l2_subdev *subdev;
+> > > +	u32 pad;
+> > > +	const u32 *pixformats;
+> > > +	int pixformat_count =3D 0;
+> > > +	u32 subdev_codes[32]; /* subdev format codes, 32 should be enough */
+> > > +	int codes_count =3D 0;
+> > > +	int num_fmts =3D 0;
+> > > +	int i, j;
+> > > +
+> > > +	pad =3D remote->index;
+> > > +	subdev =3D media_entity_to_v4l2_subdev(remote->entity);
+> > > +	if (subdev =3D=3D NULL)
+> > > +		return -ENXIO;
+> > > +
+> > > +	/* Get supported pixformats of CSI */
+> > > +	pixformat_count =3D sun6i_csi_get_supported_pixformats(csi, &pixfor=
+mats);
+> > > +	if (pixformat_count <=3D 0)
+> > > +		return -ENXIO;
+> > > +
+> > > +	/* Get subdev formats codes */
+> > > +	mbus_code.pad =3D pad;
+> > > +	mbus_code.which =3D V4L2_SUBDEV_FORMAT_ACTIVE;
+> > > +	while (!v4l2_subdev_call(subdev, pad, enum_mbus_code, NULL,
+> > > +				 &mbus_code)) {
+> >=20
+> > The formats supported by the external sub-device may depend on horizont=
+al
+> > and vertical flipping. You shouldn't assume any particular configuration
+> > here: instead, bridge drivers generally just need to make sure the form=
+ats
+> > match in link validation when streaming is started. At least the CSI-2
+> > receiver driver and the DMA engine driver (video device) should check t=
+he
+> > configuration is valid. See e.g. the IPU3 driver:
+> > drivers/media/pci/intel/ipu3/ipu3-cio2.c .
+>=20
+> Can mbus_code be added dynamically ?
+> The code here only enum the mbus code and get the possible supported
+> pairs of pixformat and mbus by SoC. Not try to check if the formats
+> (width height ...) is valid or not. The formats validation will be=20
+> in link validation when streaming is started as per your advise.=20
 
-Thanks,
-Rafael
+Can you reply to this so that Yong has a chance to resubmit his serie
+before the 4.19 merge window starts?
+
+Or alternatively, is this something we can fix later on, once it's
+merged?
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--wbnyxjafmaafjrkv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltF5gwACgkQ0rTAlCFN
+r3TWNw/+KtCfTkV+mWO7syASSLV3TlKy+Uac+vNGvjw9EqP+7JKvxvosSriQMs8D
+Q2CFOLZam7c0+oTqMl8t+QXkW0Z2B54akBlcAGa2hSAd01mquQ3nEzI/BJlMx2Sm
+0N9G2QQO4u440h2Nzi2wvEfj30Qc7P6x5dpir8vAlXYU870JRTPnUOIMwGZRn/a8
+ZhBJ6TSxn572FFkyC7IcPWJBuCY8ZaJlGiiriIpF6MKq57WIDqyQ7lIT5zxbtry3
+x68EPuGyRrjSaWcM08RVzjnVNEtNH9C2bN1WvjRldE00PmYJxLiskCOVN+ZHHrLE
+qNbRDGJOG1yMwSaRPEFJxs0bb7/lsmRZgsA7ZUnuTrLZnLIfe7vbfnBdTDcOgCxG
+cO/1kH/ub5l81UqPgGUjg5Q0ZohurUd5BzmUoR/x9EutW21m1rHLaJB/CYYaB37a
+pT+xKktQpFO5GLQDLKK2qsUw0jtv8WiL5PRsi8dnCHfGHUH1YUZ5RiCXZ5BBX4+2
+giIlT91cIWKIcBsRdDfDAS9AMfAXiNS47VdFlb6rcXFBLQ/cK9LItSuLKc7yXVcS
+OJGoQPt8m985lFwIGIpZ8KLzsupee3gbvHy8RCvAdhGM6sdCi6SnZ0O8b1/86pMM
+OZGXDI9bfwI1vU4azLEoKBHe5x6GSkjhF8amdyPMUMrDZLw4Slo=
+=NKp6
+-----END PGP SIGNATURE-----
+
+--wbnyxjafmaafjrkv--
