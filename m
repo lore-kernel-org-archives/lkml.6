@@ -2,97 +2,141 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6890C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CFE2C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74C9020873
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:01:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74C9020873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C785420873
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:02:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C785420873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733302AbeGKPGh (ORCPT
+        id S2388783AbeGKPGp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 11:06:37 -0400
-Received: from mga06.intel.com ([134.134.136.31]:42568 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726340AbeGKPGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 11:06:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 08:01:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
-   d="scan'208";a="53602529"
-Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by fmsmga007.fm.intel.com with ESMTP; 11 Jul 2018 08:01:46 -0700
-Message-ID: <1531321089.13297.4.camel@intel.com>
-Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Wed, 11 Jul 2018 07:58:09 -0700
-In-Reply-To: <20180711094549.GA2476@hirez.programming.kicks-ass.net>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
-         <20180710222639.8241-19-yu-cheng.yu@intel.com>
-         <20180711094549.GA2476@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 11 Jul 2018 11:06:45 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:44235 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732752AbeGKPGo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 11:06:44 -0400
+Received: by mail-oi0-f68.google.com with SMTP id s198-v6so49801658oih.11;
+        Wed, 11 Jul 2018 08:02:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Jc6Qckq0piQWHb1bxPBwU7+Y3qMHPySbJAIjJTvKTu4=;
+        b=QCAossxCffx4EtffX8IpFo1Z8VJk4inKGK0umWotAn3xdYoJavC/G6BesIT8++oZlK
+         7cVIKZCIznCVuBjF5veQRmH3tDkslqrD+0wRzXIG8NGHe/bvoAtRVPlTwRB66ueSi1RZ
+         5oNOI5Wm0T0Ny+UKijms4fi0L3jea+OONMKglSLmjeIzcAw6pYOQVH04/DJvtGKOuTQV
+         fIKmX/cwa0Lmk7OtIx2r3EvYIZSTXABSZSTAXsdILDMlmB7e82ZOzGnEyd0Jr2t7Un/b
+         w6RA4FXtBnVvZDLkhgNPhriSU6vhqNTTFgP8Au/RPmcniN0sB3kRiO63B9AsQ75ggjka
+         hEqw==
+X-Gm-Message-State: APt69E3W0OAQ9FbPBUdKujt+NPNH3VBSQA0GiJ17K4raxBfFC1oAmeuP
+        8P9G8wD5RYBzn2kDS7TFjA==
+X-Google-Smtp-Source: AAOMgpfK0f1LOl4u8tImPgZPrUiWigG+tpd6DdBDPA1Rz/EBVHT8eym/I6hzRwIS8BxG2bkxUHt3Gw==
+X-Received: by 2002:aca:a8c7:: with SMTP id r190-v6mr30393659oie.357.1531321319658;
+        Wed, 11 Jul 2018 08:01:59 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id r133-v6sm17355830oia.33.2018.07.11.08.01.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 08:01:58 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 09:01:57 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Daniel Mack <daniel@zonque.org>
+Cc:     zbr@ioremap.net, mark.rutland@arm.com, szabolcs.gyurko@tlt.hu,
+        sre@kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        robert.jarzmik@free.fr
+Subject: Re: [PATCH v4 1/5] dt-bindings: w1: document generic onewire bindings
+Message-ID: <20180711150157.GA18150@rob-hp-laptop>
+References: <20180706053552.11438-1-daniel@zonque.org>
+ <20180706053552.11438-2-daniel@zonque.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706053552.11438-2-daniel@zonque.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-11 at 11:45 +0200, Peter Zijlstra wrote:
-> On Tue, Jul 10, 2018 at 03:26:30PM -0700, Yu-cheng Yu wrote:
-> > 
-> > diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-
-> > opcode-map.txt
-> > index e0b85930dd77..72bb7c48a7df 100644
-> > --- a/arch/x86/lib/x86-opcode-map.txt
-> > +++ b/arch/x86/lib/x86-opcode-map.txt
-> > @@ -789,7 +789,7 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32
-> > Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
-> >  f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32
-> > Gd,Ew (66&F2)
-> >  f2: ANDN Gy,By,Ey (v)
-> >  f3: Grp17 (1A)
-> > -f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey
-> > (F2),(v)
-> > +f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey
-> > (F2),(v) | WRUSS Pq,Qq (66),REX.W
-> >  f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
-> >  f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By
-> > (F3),(v) | SHRX Gy,Ey,By (F2),(v)
-> >  EndTable
-> Where are all the other instructions? ISTR that documentation patch
-> listing a whole bunch of new instructions, not just wuss.
+On Fri, Jul 06, 2018 at 07:35:48AM +0200, Daniel Mack wrote:
+> This patch adds a generic w1 bindings document that describes how w1
+> slave deviceses are grouped under master nodes. It also augments the
+> existing w1-gpio.txt document a bit.
+> 
+> Signed-off-by: Daniel Mack <daniel@zonque.org>
+> ---
+>  .../devicetree/bindings/w1/w1-gpio.txt        | 11 +++++---
+>  Documentation/devicetree/bindings/w1/w1.txt   | 25 +++++++++++++++++++
+>  2 files changed, 33 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/w1/w1.txt
 
-Currently we only use WRUSS in the kernel code.  Do we want to add all
-instructions here?
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Yu-cheng
+Note that this will conflict with a unit-address fix that I have queued 
+up for 4.18 (will send this week).
+
+> 
+> diff --git a/Documentation/devicetree/bindings/w1/w1-gpio.txt b/Documentation/devicetree/bindings/w1/w1-gpio.txt
+> index 6e09c35d9f1a..3d6554eac240 100644
+> --- a/Documentation/devicetree/bindings/w1/w1-gpio.txt
+> +++ b/Documentation/devicetree/bindings/w1/w1-gpio.txt
+> @@ -13,10 +13,15 @@ Optional properties:
+>   - linux,open-drain: if specified, the data pin is considered in
+>  		     open-drain mode.
+>  
+> +Also refer to the generic w1.txt document.
+> +
+>  Examples:
+>  
+> -	onewire@0 {
+> +	onewire {
+>  		compatible = "w1-gpio";
+> -		gpios = <&gpio 126 0>, <&gpio 105 0>;
+> -	};
+> +		gpios = <&gpio 0 GPIO_ACTIVE_HIGH>;
+>  
+> +		battery {
+> +			// ...
+> +		};
+> +	};
+> diff --git a/Documentation/devicetree/bindings/w1/w1.txt b/Documentation/devicetree/bindings/w1/w1.txt
+> new file mode 100644
+> index 000000000000..05f26b27d898
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/w1/w1.txt
+> @@ -0,0 +1,25 @@
+> +Generic devicetree bindings for onewire (w1) busses
+> +===================================================
+> +
+> +Onewire busses are described through nodes of their master bus controller.
+> +Slave devices are listed as sub-nodes of such master devices. For now, only
+> +one slave is allowed per bus master.
+> +
+> +
+> +Example:
+> +
+> +	charger: charger {
+> +		compatible = "gpio-charger";
+> +		charger-type = "mains";
+> +		gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
+> +	};
+> +
+> +	onewire {
+> +		compatible = "w1-gpio";
+> +		gpios = <&gpio 100 0>, <&gpio 101 0>;
+> +
+> +		battery {
+> +			compatible = "maxim,ds2760";
+> +			power-supplies = <&charger>;
+> +		};
+> +	};
+> -- 
+> 2.17.1
+> 
