@@ -2,122 +2,122 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97AF5C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E5DC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B1B220877
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:05:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B1B220877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9205220B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:06:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="umAubXu7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9205220B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732600AbeGKLJD (ORCPT
+        id S1732543AbeGKLKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:09:03 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:39576 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbeGKLJC (ORCPT
+        Wed, 11 Jul 2018 07:10:43 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:41740 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726641AbeGKLKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:09:02 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1fdCvp-0004eH-E0; Wed, 11 Jul 2018 13:05:13 +0200
-Date:   Wed, 11 Jul 2018 13:05:13 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] cgroup: use irqsave in cgroup_rstat_flush_locked()
-Message-ID: <20180711110513.7gqhlf6odqoxnext@linutronix.de>
-References: <20180703164544.25268-1-bigeasy@linutronix.de>
- <20180703202424.GB72677@devbig577.frc2.facebook.com>
- <20180703213539.i3mozfuhi7j7xefm@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180703213539.i3mozfuhi7j7xefm@linutronix.de>
-User-Agent: NeoMutt/20180622
+        Wed, 11 Jul 2018 07:10:43 -0400
+Received: by mail-pl0-f66.google.com with SMTP id w8-v6so9020257ply.8
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 04:06:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Oaa0Ov0L/ZOvGS6M06Oh93oXejBQk3s1MXECgTWSd64=;
+        b=umAubXu7+7XELtC7012+5jqa7JyFASIynVxhQUMwWyYywhFhurUB/m/5iUdkBVM1iQ
+         U0tz8D0bGU1Odyj19ARMB+LiZ7hnbxLWzv4KC7vStAxUIlX6p3xmSrWmKvGmeVzq+7DV
+         6oaWe2dyqtRAk3njrY9PbRQteLySbl/dTH3FSqKz/PFXCB39IJAFCUyH17ulSbY857MB
+         S78AIx/z05g2Lpp2dOvd32PdopzqW0831KZsZ7gv5oYVYTb6U6ZQqdlzydVAI0Esvg+4
+         ZY11u1qSU+6wq5FZtk+Z7bZmPO8/m0e4NUHyNZOuM2ae2GP7x8ANraFk2JkSwObdsJzR
+         zBpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Oaa0Ov0L/ZOvGS6M06Oh93oXejBQk3s1MXECgTWSd64=;
+        b=JTKuZqSvnYnpm5gAteo/wkJqIS3fIR7zvQv/jM6V6r/6wfY4J/AO51YIAvcMEEGeDh
+         kdXlqcqYaJ+5RMaWBdejJjKnqaUUe6jg9reJFMqZt1VPUtgEzZvQLp7gqmcl4OG0cWPl
+         uAcS4ZS51Cg3odwNolvq7XkPZMcP0rCQZDTDfX7VkKJFZzuP3KxfLJxHgyPcZoVooytF
+         nNE4DoyQb6FgaQWRElXVG0En+edy51M3m7uNxckthAA+P/5Zit3lYTHFexPuPojHmUk8
+         f0sVms0ezKwo8cR0+Ui+Tj2o+Ns9zIuJuFAi7HPWSdqO+3Z7b8oeoSxaV3aNuYJWcAla
+         xnOA==
+X-Gm-Message-State: APt69E21hnYFLWzl7U4I4OD0IZ2jWrt1Cxnk3EPI4WH1A09FgHuRy05j
+        VKHLasKJsSKM5yG8dx6SgUiypCVz
+X-Google-Smtp-Source: AAOMgpeOJrKYA6aEA5jBgvNekcY0fz3enED+tRP7Qi1KLo25pY5ZbiZkBRo6K/mzOUGCasQraehLRA==
+X-Received: by 2002:a17:902:42a3:: with SMTP id h32-v6mr27983134pld.72.1531307216143;
+        Wed, 11 Jul 2018 04:06:56 -0700 (PDT)
+Received: from bj03003pcul8.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id l25-v6sm3767701pff.8.2018.07.11.04.06.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 11 Jul 2018 04:06:55 -0700 (PDT)
+From:   "Yandong.Zhao" <yandong77520@gmail.com>
+To:     Dave.Martin@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ard.biesheuvel@linaro.org, will.deacon@arm.com,
+        catalin.marinas@arm.com, zhaoyd@thundersoft.com,
+        zhaoxb@thundersoft.com, fanlc0801@thundersoft.com,
+        Yandong Zhao <yandong77520@gmail.com>
+Subject: [PATCH] arm64: neon: Fix function may_use_simd() return error status
+Date:   Wed, 11 Jul 2018 19:06:28 +0800
+Message-Id: <1531307188-12032-1-git-send-email-yandong77520@gmail.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-03 23:35:39 [+0200], To Tejun Heo wrote:
-> On 2018-07-03 13:24:24 [-0700], Tejun Heo wrote:
-> > (cc'ing Peter and Ingo for lockdep)
-> > 
-> > Hello, Sebastian.
-> Hi Tejun,
-> 
-> > On Tue, Jul 03, 2018 at 06:45:44PM +0200, Sebastian Andrzej Siewior wrote:
-> > > All callers of cgroup_rstat_flush_locked() acquire cgroup_rstat_lock
-> > > either with spin_lock_irq() or spin_lock_irqsave().
-> > 
-> > So, irq is always disabled in cgroup_rstat_flush_locked().
-> 
-> on not RT enabled kernels. On RT enabled kernels spin_lock_irq.*() is
-> turned into a sleeping spinlock which do not disable interrupts.
-> 
-> > > cgroup_rstat_flush_locked() itself acquires cgroup_rstat_cpu_lock which
-> > > is a raw_spin_lock. This lock is also acquired in cgroup_rstat_updated()
-> > > in IRQ context and therefore requires _irqsave() locking suffix in
-> > > cgroup_rstat_flush_locked().
-> > 
-> > Yes, the cpu locks should be irqsafe too; however, as irq is always
-> > disabled in that function, save/restore is redundant, no?
-> 
-> as I pointed out above only the raw_spin_lock_t really disables
-> interrupts on -RT. That is the difference between those two.
-> 
-> > > Since there is no difference between spin_lock_t and raw_spin_lock_t
-> > > on !RT lockdep does not complain here. On RT lockdep complains because
-> > > the interrupts were not disabled here and a deadlock is possible.
-> > 
-> > We at least used to do this in the kernel - manipulating irqsafe locks
-> > with spin_lock/unlock() if the irq state is known, whether enabled or
-> > disabled, and ISTR lockdep being smart enough to track actual irq
-> > state to determine irq safety.  Am I misremembering or is this
-> > different on RT kernels?
-> 
-> No, this is correct. So on !RT kernels the spin_lock_irq() disables
-> interrupts and the raw_spin_lock() has the interrupts already disabled,
-> everything is good. On RT kernels the spin_lock_irq() does not disable
-> interrupts and the raw_spin_lock() acquires the lock with enabled
-> interrupts and lockdep complains properly.
-> lockdep sees the hardirq path via:
-> 
->  {IN-HARDIRQ-W} state was registered at:
->    lock_acquire+0x9e/0x250
->    _raw_spin_lock_irqsave+0x38/0x50
->    cgroup_rstat_updated+0x57/0x100
->    cgroup_base_stat_cputime_account_end.isra.6+0x17/0x60
->    __cgroup_account_cputime_field+0x49/0x60
->    account_system_index_time+0xdb/0x1f0
->    account_system_time+0x3f/0x70
->    account_process_tick+0x59/0x80
->    update_process_times+0x1d/0x50
->    tick_sched_handle+0x20/0x60
->    tick_sched_timer+0x37/0x80
->    __hrtimer_run_queues+0x12c/0x6d0
->    hrtimer_interrupt+0xed/0x240
->    smp_apic_timer_interrupt+0x89/0x3c0
->    apic_timer_interrupt+0xf/0x20
->    pin_current_cpu+0xa/0x120
->    migrate_disable+0x9a/0x200
->    rt_spin_lock+0x1d/0x60
->    put_unused_fd+0x2c/0x50
->    do_sys_open+0x23a/0x250
->    __x64_sys_openat+0x1b/0x20
->    do_syscall_64+0x50/0x190
->    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> > Thanks.
+From: Yandong Zhao <yandong77520@gmail.com>
 
-ping.
+It does not matter if the caller of may_use_simd() migrates to
+another cpu after the call, but it is still important that the
+kernel_neon_busy percpu instance that is read matches the cpu the
+task is running on at the time of the read.
 
-Sebastian
+This means that raw_cpu_read() is not sufficient.  kernel_neon_busy
+may appear true if the caller migrates during the execution of
+raw_cpu_read() and the next task to be scheduled in on the initial
+cpu calls kernel_neon_begin().
+
+This patch replaces raw_cpu_read() with this_cpu_read() to protect
+against this race.
+
+Fixes: cb84d11e1625 ("arm64: neon: Remove support for nested or hardirq kernel-mode NEON")
+Reviewed-by: Dave Martin <Dave.Martin@arm.com>
+Signed-off-by: Yandong Zhao <yandong77520@gmail.com>
+---
+ arch/arm64/include/asm/simd.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
+index fa8b3fe..784a8c2 100644
+--- a/arch/arm64/include/asm/simd.h
++++ b/arch/arm64/include/asm/simd.h
+@@ -29,7 +29,8 @@
+ static __must_check inline bool may_use_simd(void)
+ {
+ 	/*
+-	 * The raw_cpu_read() is racy if called with preemption enabled.
++	 * The this_cpu_read() is racy if called with preemption enabled,
++	 * since the task may subsequently migrate to another CPU.
+ 	 * This is not a bug: kernel_neon_busy is only set when
+ 	 * preemption is disabled, so we cannot migrate to another CPU
+ 	 * while it is set, nor can we migrate to a CPU where it is set.
+@@ -42,7 +43,7 @@ static __must_check inline bool may_use_simd(void)
+ 	 * false.
+ 	 */
+ 	return !in_irq() && !irqs_disabled() && !in_nmi() &&
+-		!raw_cpu_read(kernel_neon_busy);
++		!this_cpu_read(kernel_neon_busy);
+ }
+ 
+ #else /* ! CONFIG_KERNEL_MODE_NEON */
+-- 
+1.9.1
+
