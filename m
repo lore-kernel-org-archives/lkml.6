@@ -2,189 +2,96 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E65DC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D61C3C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:57:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F21E8208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F21E8208FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D5A520B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:57:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D5A520B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732357AbeGKI6g (ORCPT
+        id S1726812AbeGKJAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:58:36 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41540 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbeGKI6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:58:36 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id BB73F20733; Wed, 11 Jul 2018 10:55:17 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 93F1F206A6;
-        Wed, 11 Jul 2018 10:55:17 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 10:55:17 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Subject: Re: [PATCH v5 05/22] dt-bindings: sram: sunxi: Populate valid
- sections compatibles
-Message-ID: <20180711085517.myjn5ttiwqiolobz@flea>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
- <20180710080114.31469-6-paul.kocialkowski@bootlin.com>
- <CAGb2v64Na1Mq0=-z5Haq=sgggRPHNHVZ-6fFczxb3EESAzZ=XA@mail.gmail.com>
+        Wed, 11 Jul 2018 05:00:42 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45499 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbeGKJAm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 05:00:42 -0400
+Received: from 1.general.ikepanhc.us.vpn ([10.172.69.54])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <ike.pan@canonical.com>)
+        id 1fdAw7-0007ca-Tf; Wed, 11 Jul 2018 08:57:24 +0000
+Subject: Re: [Bisect] ext4_validate_inode_bitmap:98: comm stress-ng: Corrupt
+ inode bitmap
+To:     dann frazier <dann.frazier@canonical.com>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yanaijie@huawei.com,
+        colin.king@canonical.com, kamal.mostafa@canonical.com
+References: <20180706174324.GA3049@xps13.dannf>
+ <20180707041018.GB3546@thunk.org> <20180710165143.GA20459@xps13.dannf>
+ <20180710204329.GB20459@xps13.dannf>
+From:   Ike Panhc <ike.pan@canonical.com>
+Message-ID: <b39169ad-2237-0a4f-e3d1-afc51ac10fa5@canonical.com>
+Date:   Wed, 11 Jul 2018 16:57:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4x5rkbvkq66mckhl"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v64Na1Mq0=-z5Haq=sgggRPHNHVZ-6fFczxb3EESAzZ=XA@mail.gmail.com>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <20180710204329.GB20459@xps13.dannf>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/11/2018 04:43 AM, dann frazier wrote:
+> On Tue, Jul 10, 2018 at 10:51:43AM -0600, dann frazier wrote:
+>> On Sat, Jul 07, 2018 at 12:10:18AM -0400, Theodore Y. Ts'o wrote:
+>>> On Fri, Jul 06, 2018 at 11:43:24AM -0600, dann frazier wrote:
+>>>> Hi,
+>>>>   We're seeing a regression triggered by the stress-ng[*] "chdir" test
+>>>> that I've bisected to:
+>>>>
+>>>> 044e6e3d74a3 ext4: don't update checksum of new initialized bitmaps
+>>>>
+>>>> So far we've only seen failures on servers based on HiSilicon's family
+>>>> of ARM64 SoCs (D05/Hi1616 SoC, D06/Hi1620 SoC). On these systems it is
+>>>> very reproducible.
+>>>
+>>> Thanks for the report.  Can you verify whether or not this patch fixes
+>>> things for you?
+>>
+>> hey Ted,
+>>   Sorry for the delayed response - was afk for a long weekend.
+>> Your patch does seem to fix the issue for me - after applying the
+>> patch, I was able to survive 20 iterations (and counting), where
+>> previously it would always fail the first time.
+>>
+>> However, I've received a conflicting report from a colleague who
+>> appears to still be seeing errors. I'll get back to you ASAP once I am
+>> able to (in-?)validate that observation.
+> 
+> OK - I believe I found an explanation for my colleague's continued
+> test failures after applying the patch. The filesystem being used may
+> have already been corrupted from a previous run, and the test w/ your
+> patch just tripped over it. Details are here starting in comment #9 if
+> you'd like to look them over:
+> 
+>   https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780137
+> 
+>   -dann
+> 
 
---4x5rkbvkq66mckhl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Review console log and on each run I have filesystem rebuild. The problem
+is that mke2fs I am using is 1.44.3-rc2. I am now reseting the environment
+and re-test.
 
-On Tue, Jul 10, 2018 at 10:47:07PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Jul 10, 2018 at 4:00 PM, Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
-> > This adds a list of valid SRAM sections compatibles for the A13, A20,
-> > A23 and H3 platforms. Per-platform compatibles are introduced for the
-> > SRAM sections of these platforms, with the A10 compatibles also listed
-> > as valid when applicable.
-> >
-> > In particular, compatibles for the C1 SRAM section are introduced.
->=20
-> You should probably mention that this is not an exhaustive list. In
-> particular, the C2 and C3 (sun5i) mappings are still missing.
->=20
-> >
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
-> >  .../devicetree/bindings/sram/sunxi-sram.txt   | 25 +++++++++++++++++++
-> >  1 file changed, 25 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Do=
-cumentation/devicetree/bindings/sram/sunxi-sram.txt
-> > index 156a02ab6b54..07c53c5214a0 100644
-> > --- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-> > +++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-> > @@ -32,8 +32,33 @@ once again the representation described in the mmio-=
-sram binding.
-> >
-> >  The valid sections compatible for A10 are:
-> >      - allwinner,sun4i-a10-sram-a3-a4
-> > +    - allwinner,sun4i-a10-sram-c1
-> >      - allwinner,sun4i-a10-sram-d
-> >
-> > +The valid sections compatible for A13 are:
-> > +    - allwinner,sun5i-a13-sram-a3-a4
-> > +    - allwinner,sun4i-a10-sram-a3-a4
-> > +    - allwinner,sun5i-a13-sram-c1
-> > +    - allwinner,sun4i-a10-sram-c1
-> > +    - allwinner,sun5i-a13-sram-d
-> > +    - allwinner,sun4i-a10-sram-d
-> > +
-> > +The valid sections compatible for A20 are:
-> > +    - allwinner,sun7i-a20-sram-a3-a4
-> > +    - allwinner,sun4i-a10-sram-a3-a4
-> > +    - allwinner,sun7i-a20-sram-c1
-> > +    - allwinner,sun4i-a10-sram-c1
-> > +    - allwinner,sun7i-a20-sram-d
-> > +    - allwinner,sun4i-a10-sram-d
-> > +
-> > +The valid sections compatible for A23/A33 are:
-> > +    - allwinner,sun8i-a23-sram-c1
-> > +    - allwinner,sun4i-a10-sram-c1
-> > +
-> > +The valid sections compatible for H3 are:
-> > +    - allwinner,sun8i-h3-sram-c1
-> > +    - allwinner,sun4i-a10-sram-c1
->=20
-> I'm not quite sure why we want to list these... I think it makes more sen=
-se
-> to just have the SoC specific compatible. They are tied to the controls
-> after all. Maybe Rob has a different opinion?
-
-We had that discussion not so long ago, and the outcome was to list
-the SoC specific and the fallback compatibles on the same line. I've
-amended the patch to do so and applied.
-
-(and added the mention of the C2 and C3 SRAMs as you suggested)
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---4x5rkbvkq66mckhl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFxfQACgkQ0rTAlCFN
-r3Tyig//VvvkaNDStwST2xmuMuiwXX/uMwSgYyvU97azlGWDwVrYmWRPohGw4SHk
-Ctta2Re24CViAK/KWlagk852PcUgpSmGOPWwjKKvkmJ5J6Pce5uCuWsRxOBga7tA
-fHcM5zMCuaPd7SQmaz/J+8sXlD0Z0YHuG/MNjpKvs4Rp1GuXWOAe+XmidtatWvgP
-ZwNHYHkO9ZpVgff+eftm5sXCLBHhqcRP1sWFmmfiu6VJCIv/VcFPWbBBXX7efxDU
-N/KHGsr3jf34gGe3XLo+Xcm9lvwdwHQyB2yRpxAS65AbpsM3YzzcsIrkCdhWTxjo
-x/ZvfMVeUYnUWRFdmyqyvSWLRX+B6TPcuTHgl2IwXaoLMeIHVOw0af6dnHx9PwN4
-17fJp1iFTgEH4+KJRQC3reSSOK528jWp3j3/60Hmbigfgeq21U6QKaQduhHRLimG
-yXnUqIME991dVJfMRsm+H6qIROVllyq7fOFYN0SK+yKnTudj+xVq6FXfwyGMPS5K
-3vluGn1+ZCLRFLVYa1VCHj1GpfHOj7SSpz+9EiyuW+7mx58IR0Ip4Z8fYe/5Yk5b
-4Udj8ZaC8V0kj7d8ZDh8ztb8O1y45vu+m1wiUOTnj+mZoe+JZoh9cg8jGUsyh3it
-hQNtelN3DVQ+HKxriLiGeI5bFqJn/BsdSf4n7KhbRREi38uFK9k=
-=4XM2
------END PGP SIGNATURE-----
-
---4x5rkbvkq66mckhl--
+-- Ike
