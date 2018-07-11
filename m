@@ -3,114 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6069AC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D8CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A20820C03
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:44:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A20820C03
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 002DC20C03
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:44:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 002DC20C03
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388169AbeGKNsm (ORCPT
+        id S2388185AbeGKNtF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:48:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:53408 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388138AbeGKNsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:48:42 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DE7C620775; Wed, 11 Jul 2018 15:44:15 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AC4CE20737;
-        Wed, 11 Jul 2018 15:44:05 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 15:44:05 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Liu <net147@gmail.com>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] [v2] drm/sun4i: fix build failure with
- CONFIG_DRM_SUN8I_MIXER=m
-Message-ID: <20180711134405.yh4c5g3ckmqyldmo@flea>
-References: <20180709160615.2686055-1-arnd@arndb.de>
+        Wed, 11 Jul 2018 09:49:05 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50018 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388040AbeGKNtF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:49:05 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fdFQ4-0004Xr-Co; Wed, 11 Jul 2018 13:44:36 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     James Smart <james.smart@broadcom.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][scsi-next] scsi: lpfc: fix null pointer dereference on nvmebuf
+Date:   Wed, 11 Jul 2018 14:44:36 +0100
+Message-Id: <20180711134436.21963-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lvfyoyhj5kxqjbuu"
-Content-Disposition: inline
-In-Reply-To: <20180709160615.2686055-1-arnd@arndb.de>
-User-Agent: NeoMutt/20180622
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
---lvfyoyhj5kxqjbuu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The check of nvmebuf suggests that it can be null, however a recent
+change dereferences it to determine oxid before it is null checked,
+hence there is a potential null deference on the pointer.  Fix this
+by performing the null check first.  Also remove the oxid from the
+debug log message as this is no longer valid.  I considered an early
+fetch of oxid if nvmebuf was valid, however, what oxid should be set
+to if nvembuf is null could lead to an ambiguous logging of an invalid
+oxid, so I thought just removing it from the logging was the least
+confusion solution.
 
-On Mon, Jul 09, 2018 at 06:05:55PM +0200, Arnd Bergmann wrote:
-> Having DRM_SUN4I built-in but DRM_SUN8I_MIXER as a loadable module result=
-s in
-> a link error, as we try to access a symbol from the sun8i_tcon_top.ko mod=
-ule:
->=20
-> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun8i-drm-hdmi.ko=
-] undefined!
-> ERROR: "sun8i_tcon_top_of_table" [drivers/gpu/drm/sun4i/sun4i-drm.ko] und=
-efined!
->=20
-> This solves the problem by adding a silent symbol for the tcon_top module,
-> building it as a separate module in exactly the cases that we need it,
-> but in a way that it is reachable by the other modules.
->=20
-> Fixes: 57e23de02f48 ("drm/sun4i: DW HDMI: Expand algorithm for possible c=
-rtcs")
-> Fixes: ef0cf6441fbb ("drm/sun4i: Add support for traversing graph with TC=
-ON TOP")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Detected by CoverityScan, CID#1471753 ("Dereference before null check")
 
-Actually, this was conflicting with some rework I merged at the time,
-can you rebase and resend?
+Fixes: 68c9b55deea5 ("scsi: lpfc: Fix abort error path for NVMET")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/scsi/lpfc/lpfc_nvmet.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks! (and sorry)
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index 22f8a204b69f..01652d9ac619 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -1742,12 +1742,9 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
+ 	uint32_t *payload;
+ 	uint32_t size, oxid, sid, rc;
+ 
+-	fc_hdr = (struct fc_frame_header *)(nvmebuf->hbuf.virt);
+-	oxid = be16_to_cpu(fc_hdr->fh_ox_id);
+-
+ 	if (!nvmebuf || !phba->targetport) {
+ 		lpfc_printf_log(phba, KERN_ERR, LOG_NVME_IOERR,
+-				"6154 LS Drop IO x%x\n", oxid);
++				"6154 LS Drop IO\n");
+ 		oxid = 0;
+ 		size = 0;
+ 		sid = 0;
+@@ -1755,6 +1752,9 @@ lpfc_nvmet_unsol_ls_buffer(struct lpfc_hba *phba, struct lpfc_sli_ring *pring,
+ 		goto dropit;
+ 	}
+ 
++	fc_hdr = (struct fc_frame_header *)(nvmebuf->hbuf.virt);
++	oxid = be16_to_cpu(fc_hdr->fh_ox_id);
++
+ 	tgtp = (struct lpfc_nvmet_tgtport *)phba->targetport->private;
+ 	payload = (uint32_t *)(nvmebuf->dbuf.virt);
+ 	size = bf_get(lpfc_rcqe_length,  &nvmebuf->cq_event.cqe.rcqe_cmpl);
+-- 
+2.17.1
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---lvfyoyhj5kxqjbuu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltGCaQACgkQ0rTAlCFN
-r3RQRw//XcMPa+wzaLsQpVmZR2R9XwpuZMjZS7Oxmu1htlCyRI2Yr/j3Zn7nSivl
-FJqiEUjWFh8QsgnR0cP20b9JCJ2wBoTK8GCL9+nrYJovKCR+IVIZ6PDhLG0kmWqJ
-ZVbXhk5UD3fKojPEsrLRPK+tQrT1DpaSffoKSVEozDNgPvEoLeFJ3pYV5BahGwVj
-ECCAFB/4Duqza+cLx/JgNRkX4WFvBa/yXSPCIT75pxcvYmL/ZdfN/nGbOgtTQRZN
-lwg9WZEF6XO/TWgbYj6+mbcWgMlt7Tpzdg9+Au4pL7WLngMOTJRM4DdRVC/yzxq+
-ZNr+E4MtemQfKYrZkgPJ5oML3fB5eMpu6eXH9f+UuS6nJlkCBxOjME7Ydkt2ZuBJ
-8Dlpn5ZDYT8YnLQTMdnmin4hM7GByQHWrH3eHX4OxgYtpYTyWBVvSFrU0I0UxXuz
-i3f5RUzHJN0+NFVkHS1yhx48EDk9e+/Ak2e5+qky8Lsx6XTiIufA7pVuSprZq+Kq
-t4UZxoiIYIbyyfjKW6qYvggQ4BGI+CICa4UtsYkUTb/1UOmABphdo/42DdeOfliX
-dlAXtJs70cz8gkxAWPBVbfo8sug5PI0rwQ1rAbyNRPVr3+lfn9vRJBvapauwbDPD
-anL7PeZM5jZfDgkTJUkBQ00WPtUe0O7rvoTMirRL7jwttFP6gNw=
-=FAco
------END PGP SIGNATURE-----
-
---lvfyoyhj5kxqjbuu--
