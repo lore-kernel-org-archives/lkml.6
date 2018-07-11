@@ -2,118 +2,172 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCE6C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:05:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6B6C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDB5F20878
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:05:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDB5F20878
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1930B20862
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 06:24:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IvSAO/dT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1930B20862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726436AbeGKGI2 (ORCPT
+        id S1726397AbeGKG1X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 02:08:28 -0400
-Received: from mga09.intel.com ([134.134.136.24]:32125 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726146AbeGKGI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 02:08:28 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 23:05:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,337,1526367600"; 
-   d="scan'208";a="54152713"
-Received: from yexl-desktop.sh.intel.com (HELO localhost) ([10.239.159.124])
-  by fmsmga008.fm.intel.com with ESMTP; 10 Jul 2018 23:05:46 -0700
-Date:   Wed, 11 Jul 2018 14:01:54 +0800
-From:   Ye Xiaolong <xiaolong.ye@intel.com>
-To:     Denis OSTERLAND <denis.osterland@diehl.com>
-Cc:     "lkp@intel.com" <lkp@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "m.grzeschik@pengutronix.de" <m.grzeschik@pengutronix.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "kbuild-all@01.org" <kbuild-all@01.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-Subject: Re: [PATCH v4 2/5] rtc: isl1208: add support for isl1219 with tamper
- detection
-Message-ID: <20180711060154.GD7170@yexl-desktop>
-References: <20180710090710.9066-3-Denis.Osterland@diehl.com>
- <201807102100.7IWfwFfW%fengguang.wu@intel.com>
- <1531231616.7366.2.camel@diehl.com>
+        Wed, 11 Jul 2018 02:27:23 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:38516 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbeGKG1X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 02:27:23 -0400
+Received: by mail-it0-f68.google.com with SMTP id v71-v6so1974438itb.3
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 23:24:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WpODbmqD6x0AMIlDyMMFrJ+zlbMj8yNKwzjGeguQl00=;
+        b=IvSAO/dTt1csAI2JuhRpn3hsV7t41N8UKiQlxf31GoAjLUjbVn016fPgVL41f9YMNp
+         +JM0t8JRBQRggOd0y6DSC4Fem1/X8Df0Q7O+dWHDnKNhSeRSmG1Ne4OmBHTdiRXXWNM6
+         W/tDHdOspXRXez75vD8k0ZnJnh0WaAmtxU8/U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WpODbmqD6x0AMIlDyMMFrJ+zlbMj8yNKwzjGeguQl00=;
+        b=Wjwn4UxCFa01Nygz8WN3XP8FQq2o8p9gHN4u3vCjznWHtve0MXLMVUFZdWLxJ+9qtk
+         PjrvEIOJLORwN2UoDOx9KlGiX6l4m1AoE1y8lk/JcwvPYSFpHYhbxaHzRiOzo7MMmqmF
+         mlAgF2k6VxrHirXPIlusGw8vq2TPLWn9IXKttrE6vv+IPJqybo8qf5AoKJG51aK8F3/J
+         5rrF4VVwesvOzRKn3E9BuGPntx1zsPXssyAeLD7X8nhKE2DWc9k3xJN2Rx4FlFLUgu13
+         C/JIy0W2GFqMQgsEFu03Gp+AwPI+Tk04YqC+JbQOe8xYXVxernXkSd03wiP7czeqJga1
+         LHDw==
+X-Gm-Message-State: APt69E1lkssrVGRQsEmZ22kssxjoQeAHwD0KPTi699MyqY550Iw3hop1
+        usIE3keN0fusTNkPLhsR185m6GZeZ++qvGklNKzWMw==
+X-Google-Smtp-Source: AAOMgpdFXebcC3epuB3lJH2am/Zie342bAiSHk9rSKK6ZNbfTYpQee1cpOviD85jUEI+AeEn6gAcp6c1Zyxz88+QvBs=
+X-Received: by 2002:a24:6196:: with SMTP id s144-v6mr21911973itc.68.1531290281867;
+ Tue, 10 Jul 2018 23:24:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1531231616.7366.2.camel@diehl.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 23:24:41
+ -0700 (PDT)
+In-Reply-To: <20180710191951.GF1731@minitux>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
+ <CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
+ <1531165294.3332.40.camel@linux.ibm.com> <CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
+ <CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com> <20180710191951.GF1731@minitux>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Wed, 11 Jul 2018 08:24:41 +0200
+Message-ID: <CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
+Subject: Re: [PATCH v5 7/8] ima: based on policy warn about loading firmware
+ (pre-allocated buffer)
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Denis
+On 10 July 2018 at 21:19, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+> On Mon 09 Jul 23:56 PDT 2018, Ard Biesheuvel wrote:
+>
+>> On 10 July 2018 at 08:51, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>> > On 9 July 2018 at 21:41, Mimi Zohar <zohar@linux.ibm.com> wrote:
+>> >> On Mon, 2018-07-02 at 17:30 +0200, Ard Biesheuvel wrote:
+>> >>> On 2 July 2018 at 16:38, Mimi Zohar <zohar@linux.vnet.ibm.com> wrote:
+> [..]
+>> > So to summarize again: in my opinion, using a single buffer is not a
+>> > problem as long as the validation completes before the DMA map is
+>> > performed. This will provide the expected guarantees on systems with
+>> > IOMMUs, and will not complicate matters on systems where there is no
+>> > point in obsessing about this anyway given that devices can access all
+>> > of memory whenever they want to.
+>> >
+>> > As for the Qualcomm case: dma_alloc_coherent() is not needed here but
+>> > simply ends up being used because it was already wired up in the
+>> > qualcomm specific secure world API, which amounts to doing syscalls
+>> > into a higher privilege level than the one the kernel itself runs at.
+>
+> As I said before, the dma_alloc_coherent() referred to in this
+> discussion holds parameters for the Trustzone call, i.e. it will hold
+> the address to the buffer that the firmware was loaded into - it won't
+> hold any data that comes from the actual firmware.
+>
 
-The patch was applied in correct sequence as you can see in the github link.
+Ah yes, I forgot that detail. Thanks for reminding me.
 
-I think the question here is rtc-isl1208 can be built as a built-in module,
-but it would fail if it was built as a ko.
+>> > So again, reasoning about whether the secure world will look at your
+>> > data before you checked the sig is rather pointless, and adding
+>> > special cases to the IMA api to cater for this use case seems like a
+>> > waste of engineering and review effort to me.
+>
+> Forgive me if I'm missing something in the implementation here, but
+> aren't the IMA checks done before request_firmware*() returns?
+>
 
-Thanks,
-Xiaolong
+The issue under discussion is whether calling request_firmware() to
+load firmware into a buffer that may be readable by the device while
+the IMA checks are in progress constitutes a security hazard.
 
-On 07/10, Denis OSTERLAND wrote:
->Hi,
+>> > If we have to do
+>> > something to tie up this loose end, let's try switching it to the
+>> > streaming DMA api instead.
+>> >
+>>
+>> Forgot to mention: the Qualcomm case is about passing data to the CPU
+>> running at another privilege level, so IOMMU vs !IOMMU is not a factor
+>> here.
 >
->seems 2/5 was applied before 1/5.
->1/5 introduces rtc_add_group.
+> Further more, all scenarios we've look at so far is completely
+> sequential, so if the firmware request fails we won't invoke the
+> Trustzone operation that would consume the memory or we won't turn on
+> the power to the CPU that would execute the firmware.
 >
->Regards Denis
 >
->Am Dienstag, den 10.07.2018, 21:20 +0800 schrieb kbuild test robot:
->> Hi Michael,
->> 
->> I love your patch! Yet something to improve:
->> 
->> [auto build test ERROR on abelloni/rtc-next]
->> [also build test ERROR on v4.18-rc4 next-20180709]
->> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
->> 
->> url:    https://github.com/0day-ci/linux/commits/Denis-OSTERLAND/rtc-isl1208-fixes-documentation-and-isl1219-support/20180710-181709
->> base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git rtc-next
->> config: x86_64-randconfig-s4-07101857 (attached as .config)
->> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
->> reproduce:
->>         # save the attached .config to linux build tree
->>         make ARCH=x86_64 
->> 
->> All errors (new ones prefixed by >>):
->> 
->> > 
->> > > 
->> > > ERROR: "rtc_add_group" [drivers/rtc/rtc-isl1208.ko] undefined!
->> ---
->> 0-DAY kernel test infrastructure                Open Source Technology Center
->> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> Tbh the only case I can think of where there would be a "race condition"
+> here is if we have a device that is polling the last byte of a
+> predefined firmware memory area for the firmware loader to read some
+> specific data into it. In cases where the firmware request is followed
+> by some explicit signalling to the device (or a power on sequence) I'm
+> unable to see the issue discussed here.
 >
->Diehl Connectivity Solutions GmbH
->Geschäftsführung: Horst Leonberger
->Sitz der Gesellschaft: Nürnberg - Registergericht: Amtsgericht
->Nürnberg: HRB 32315
->___________________________________________________________________________________________________
->
->Der Inhalt der vorstehenden E-Mail ist nicht rechtlich bindend. Diese E-Mail enthaelt vertrauliche und/oder rechtlich geschuetzte Informationen.
->Informieren Sie uns bitte, wenn Sie diese E-Mail faelschlicherweise erhalten haben. Bitte loeschen Sie in diesem Fall die Nachricht.
->Jede unerlaubte Form der Reproduktion, Bekanntgabe, Aenderung, Verteilung und/oder Publikation dieser E-Mail ist strengstens untersagt.
->The contents of the above mentioned e-mail is not legally binding. This e-mail contains confidential and/or legally protected information. Please inform us if you have received this e-mail by
->mistake and delete it in such a case. Each unauthorized reproduction, disclosure, alteration, distribution and/or publication of this e-mail is strictly prohibited. 
+
+I agree. But the latter part is platform specific, and so it requires
+some degree of trust in the driver author on the part of the IMA
+routines that request_firmware() is called at an appropriate time.
+
+The point I am trying to make in this thread is that there are cases
+where it makes no sense for the kernel to reason about these things,
+given that higher privilege levels such as the TrustZone secure world
+own the kernel's execution context entirely already, and given that
+masters that are not behind an IOMMU can read and write all of memory
+all of the time anyway.
+
+The bottom line is that reality does not respect the layering that IMA
+assumes, and so the only meaningful way to treat some of the use cases
+is simply to ignore them entirely. So we should still perform all the
+checks, but we will have to live with the limited utility of doing so
+in some scenarios (and not print nasty warnings to the kernel log for
+such cases)
+
+-- 
+Ard.
