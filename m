@@ -2,102 +2,121 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4146CC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE8BC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95DA208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:21:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QGCC6tke"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E95DA208FA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E368208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:22:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E368208FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732358AbeGKCXK (ORCPT
+        id S1732584AbeGKCYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 22:23:10 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:48496 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732284AbeGKCXK (ORCPT
+        Tue, 10 Jul 2018 22:24:07 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45664 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732379AbeGKCYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 22:23:10 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6B2LApU004865;
-        Tue, 10 Jul 2018 21:21:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531275670;
-        bh=G49KSl4cLNUc6Q/nDqaLV+YjcSvE9F1jKhjkjOeOHSQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=QGCC6tkeHJI6Fig3mVCSyf3rKkzw6po1T2zpLyFYS5ARc0cQ+rIK3ppjEcmBoyxEe
-         FjXzlX2eGB+rOGLPx4L14FQOKbuVZadkU7j34aoVMadKBH+5hAYPBBibLe6CO2Jfbr
-         EUD6HrWJQ5DvGvAdKbbndb8wwa9fgaZbIAoJm4CY=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6B2LAxl001207;
-        Tue, 10 Jul 2018 21:21:10 -0500
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 10
- Jul 2018 21:21:10 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 10 Jul 2018 21:21:09 -0500
-Received: from [172.22.218.21] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6B2L6CQ012816;
-        Tue, 10 Jul 2018 21:21:07 -0500
-Subject: Re: [PATCH 02/14] thermal: ti-soc-thermal: fix comment in
- omap5xxx-bandgap.h
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Eduardo Valentin <edubezval@gmail.com>
-CC:     Zhang Rui <rui.zhang@intel.com>, <linux-pm@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
- <CGME20180514114308epcas2p3bba580c5500889f22d50549994b227db@epcas2p3.samsung.com>
- <1526298141-14045-3-git-send-email-b.zolnierkie@samsung.com>
-From:   "J, KEERTHY" <j-keerthy@ti.com>
-Message-ID: <65f3e868-976d-7568-f452-e28af691df17@ti.com>
-Date:   Wed, 11 Jul 2018 07:51:06 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1526298141-14045-3-git-send-email-b.zolnierkie@samsung.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 10 Jul 2018 22:24:06 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fd4ld-0003Kd-Cn; Wed, 11 Jul 2018 02:22:09 +0000
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>
+Subject: [RFC][PATCH 30/42] ... and switch shmem_file_setup() to alloc_file_pseudo()
+Date:   Wed, 11 Jul 2018 03:21:54 +0100
+Message-Id: <20180711022206.12571-30-viro@ZenIV.linux.org.uk>
+X-Mailer: git-send-email 2.9.5
+In-Reply-To: <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
+References: <20180711021136.GN30522@ZenIV.linux.org.uk>
+ <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Al Viro <viro@zeniv.linux.org.uk>
 
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ mm/shmem.c | 39 ++++++++-------------------------------
+ 1 file changed, 8 insertions(+), 31 deletions(-)
 
-On 5/14/2018 5:12 PM, Bartlomiej Zolnierkiewicz wrote:
-> The comment for OMAP5430.CORE register offsets is incorrect. Fix it.
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 1146a48926bc..fd21df189f32 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3896,18 +3896,11 @@ EXPORT_SYMBOL_GPL(shmem_truncate_range);
+ 
+ /* common code */
+ 
+-static const struct dentry_operations anon_ops = {
+-	.d_dname = simple_dname
+-};
+-
+ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, loff_t size,
+ 				       unsigned long flags, unsigned int i_flags)
+ {
+-	struct file *res;
+ 	struct inode *inode;
+-	struct path path;
+-	struct super_block *sb;
+-	struct qstr this;
++	struct file *res;
+ 
+ 	if (IS_ERR(mnt))
+ 		return ERR_CAST(mnt);
+@@ -3918,8 +3911,8 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, l
+ 	if (shmem_acct_size(flags, size))
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	sb = mnt->mnt_sb;
+-	inode = shmem_get_inode(sb, NULL, S_IFREG | S_IRWXUGO, 0, flags);
++	inode = shmem_get_inode(mnt->mnt_sb, NULL, S_IFREG | S_IRWXUGO, 0,
++				flags);
+ 	if (unlikely(!inode)) {
+ 		shmem_unacct_size(flags, size);
+ 		return ERR_PTR(-ENOSPC);
+@@ -3928,28 +3921,12 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, l
+ 	inode->i_size = size;
+ 	clear_nlink(inode);	/* It is unlinked */
+ 	res = ERR_PTR(ramfs_nommu_expand_for_mapping(inode, size));
+-	if (IS_ERR(res)) {
+-		iput(inode);
+-		return res;
+-	}
+-
+-	this.name = name;
+-	this.len = strlen(name);
+-	this.hash = 0; /* will go */
+-	path.mnt = mntget(mnt);
+-	path.dentry = d_alloc_pseudo(sb, &this);
+-	if (!path.dentry) {
+-		iput(inode);
+-		return ERR_PTR(-ENOMEM);
+-	}
+-	d_set_d_op(path.dentry, &anon_ops);
+-
+-	d_instantiate(path.dentry, inode);
+-
+-	res = alloc_file(&path, FMODE_WRITE | FMODE_READ,
+-		  &shmem_file_operations);
++	if (!IS_ERR(res))
++		res = alloc_file_pseudo(inode, mnt, name,
++				FMODE_WRITE | FMODE_READ,
++				&shmem_file_operations);
+ 	if (IS_ERR(res))
+-		path_put(&path);
++		iput(inode);
+ 	return res;
+ }
+ 
+-- 
+2.11.0
 
-Acked-by: Keerthy <j-keerthy@ti.com>
-
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->   drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-> index 9096403..dcbf903 100644
-> --- a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-> +++ b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
-> @@ -55,7 +55,7 @@
->   #define OMAP5430_BGAP_DTEMP_MPU_1_OFFSET		0x1E4
->   #define OMAP5430_BGAP_DTEMP_MPU_2_OFFSET		0x1E8
->   
-> -/* OMAP5430.MPU register offsets */
-> +/* OMAP5430.CORE register offsets */
->   #define OMAP5430_FUSE_OPP_BGAP_CORE			0x8
->   #define OMAP5430_TEMP_SENSOR_CORE_OFFSET		0x154
->   #define OMAP5430_BGAP_THRESHOLD_CORE_OFFSET		0x1AC
-> 
