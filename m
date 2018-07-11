@@ -2,105 +2,107 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE62C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F36C7C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D34D20BEC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:23:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CmqkEFMP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D34D20BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id BA49B20B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:23:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA49B20B6F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732392AbeGKK0e (ORCPT
+        id S1732359AbeGKK1N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:26:34 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52877 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbeGKK0d (ORCPT
+        Wed, 11 Jul 2018 06:27:13 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33827 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbeGKK1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:26:33 -0400
-Received: by mail-wm0-f68.google.com with SMTP id w16-v6so1892941wmc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 03:22:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=JbTJrwC5rqHIw+uLTouZ2T09vFohtXcwEOVbo4tHubY=;
-        b=CmqkEFMPfKaD5l6ZCjdPzlvc3tFJ0OdXGmrXJqtA2AjcTIVkltbOrmvp57yuf267Bb
-         juCwfZVczOQtQrCMLzfQa7NLOmZ27Ya8sdKBLUY9sXhJ4vlDI0tyQC2Z9ihmgOlIMY5F
-         R5PSXDWXdzkPQAwcmabkOxffE0/FA7+Cbf7OE=
+        Wed, 11 Jul 2018 06:27:12 -0400
+Received: by mail-ed1-f66.google.com with SMTP id d3-v6so18841982edi.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 03:23:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=JbTJrwC5rqHIw+uLTouZ2T09vFohtXcwEOVbo4tHubY=;
-        b=q79kge+sfW0L7MaGJ27qZn8Vb5/QWjNyu21xpogpGhHVN1ioSRwIpsuhGIZiwfv1D5
-         quki4ViA/yblTumlzULxgMFYnrZsiOE48GPu4MXdZuRLGxmQZAoKeUmENWqsC6Jk+Rkd
-         qMrppgSCLHmeCM1ToFvPCQzRtw58pUHDGsxsiJUeysyfidQRuyhAgBZgGQEW0HSygHKZ
-         BuOz/+Z2XfWZt9Nk8vpG+UbZRWWHX5snWO3TsBJOlCVAVzrdOSnBbJIBWsEjPCxtxVMQ
-         BL0HsopuLOXUSKhRqPOFOWSSAjb34NbmKDQEDJNwjO8mh2sHgPawdJxXVOLZKPsoiYdz
-         b19g==
-X-Gm-Message-State: APt69E1jbzIEE7vO173Jqt2jHOYziSLePP/pNRLYaUxnJMJuhy/9LrXx
-        CMnZkxS20tj/xERXX9yRHdFCFQ==
-X-Google-Smtp-Source: AAOMgpd3NIcJedxbI6f71G3prIq+5PhVA3tUWdzWeVbhKJosH43Jb8zrxa5rW8CJlzEdlVsJ0C33FQ==
-X-Received: by 2002:a1c:8952:: with SMTP id l79-v6mr16153189wmd.7.1531304575590;
-        Wed, 11 Jul 2018 03:22:55 -0700 (PDT)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id 73-v6sm2462032wmu.37.2018.07.11.03.22.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 11 Jul 2018 03:22:54 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, srinivas.kandagatla@linaro.org,
-        Anson Huang <Anson.Huang@nxp.com>
-Subject: [PATCH 3/4] dt-bindings: nvmem: imx-ocotp: add compatible string for imx6sll
-Date:   Wed, 11 Jul 2018 11:20:42 +0100
-Message-Id: <20180711102043.24079-4-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
-In-Reply-To: <20180711102043.24079-1-srinivas.kandagatla@linaro.org>
-References: <20180711102043.24079-1-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0J2M2J+Ego8ut9eI+mocF4GFnm7KcNEYsdnUuQ0Gaws=;
+        b=drDTS3pe9KaklPDiHBUwpQIrxBG1pK/KqcKG36wVhjOdHIAQiWBYq6/SzvR9uUtZVR
+         uharGsKlDSMYWHR8DTfw/P/1BfZsnlYIklTIV/tgU7Njv3r94LrJvTX7X6KwTDSFcGdX
+         w9CgDdttq64ZJMUMrXsZl3p7kOPIvudHpJ6mp1KbGAuTK5Xc6TsHOwR5sFFYiIuyoZof
+         pbfaRqulRVNlA8RRsmLMBriSZODRrMiMAQuYNCXr1cJh53zK/ca04mAsFxP2dmrCjGZv
+         DYQ/5PX91ZsUkFRZKVku2M+Pld96HzWxyOKcX00/Yc4uuRJGjKTLEiFWQZdoCIUQ5U1/
+         7eBw==
+X-Gm-Message-State: APt69E07YaYs1oPpbXfwu0+yGYsxoLHaFBAmXbrLBorjdYFSS+lWWjL5
+        qgCVYLEv0IIeX8La51t+c41gAg==
+X-Google-Smtp-Source: AAOMgpeSRGXc5xu4WlrxhkRtqJWWjVb3o0CVMehuY8x6e9fXAmcreHf+QqXeeu7GQAmMMCInoVwBaw==
+X-Received: by 2002:a50:af45:: with SMTP id g63-v6mr31719305edd.30.1531304614373;
+        Wed, 11 Jul 2018 03:23:34 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id q2-v6sm11564729edl.42.2018.07.11.03.23.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 03:23:33 -0700 (PDT)
+Subject: Re: [GIT PULL 0/1] EFI mixed mode fix for v4.18
+To:     Ingo Molnar <mingo@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>
+References: <20180711090235.9327-1-ard.biesheuvel@linaro.org>
+ <20180711101303.GA8574@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <d857fa53-6c9b-3ebc-25f1-890255b90264@redhat.com>
+Date:   Wed, 11 Jul 2018 12:23:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180711101303.GA8574@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+Hi,
 
-Add new compatible string for i.MX6SLL SOC.
+On 11-07-18 12:13, Ingo Molnar wrote:
+> 
+> * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> 
+>> The following changes since commit 1e4b044d22517cae7047c99038abb444423243ca:
+>>
+>>    Linux 4.18-rc4 (2018-07-08 16:34:02 -0700)
+>>
+>> are available in the Git repository at:
+>>
+>>    git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-urgent
+>>
+>> for you to fetch changes up to d7f2e972e702d329fe11d6956df99dfc31211c25:
+>>
+>>    efi/x86: remove pointless call to PciIo->Attributes() (2018-07-11 10:52:46 +0200)
+>>
+>> ----------------------------------------------------------------
+>> A single fix for the x86 PCI I/O protocol handling code that got
+>> broken for mixed mode (64-bit Linux/x86 on 32-bit UEFI) after a
+>> fix was applied in -rc2 to fix it for ordinary 64-bit Linux/x86.
+> 
+> Just curious, because it's unclear from the changelog, what was the symptom, a
+> boot hang, instant reboot, or some other misbehavior? Also, what's the scope of
+> the fix: were all 64-bit on 32-bit UEFI mixed-mode bootups affected, or only a
+> certain subset?
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- Documentation/devicetree/bindings/nvmem/imx-ocotp.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+The problem was a reboot (resulting in a boot loop). I may have tested this
+on multiple Bay Trail based devices, I don't remember but it was an issue on
+Bay Trail devices, which typically use a 32 bit UEFI even though they have a
+64 bit capable CPU. There are some rare Bay Trail devices with a 64 bit UEFI
+but they are the exception.
 
-diff --git a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-index 729f6747813b..792bc5fafeb9 100644
---- a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-+++ b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-@@ -1,7 +1,7 @@
- Freescale i.MX6 On-Chip OTP Controller (OCOTP) device tree bindings
- 
- This binding represents the on-chip eFuse OTP controller found on
--i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX and i.MX6UL SoCs.
-+i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL and i.MX6SLL SoCs.
- 
- Required properties:
- - compatible: should be one of
-@@ -10,6 +10,7 @@ Required properties:
- 	"fsl,imx6sx-ocotp" (i.MX6SX),
- 	"fsl,imx6ul-ocotp" (i.MX6UL),
- 	"fsl,imx7d-ocotp" (i.MX7D/S),
-+	"fsl,imx6sll-ocotp" (i.MX6SLL),
- 	followed by "syscon".
- - #address-cells : Should be 1
- - #size-cells : Should be 1
--- 
-2.16.2
+Regards,
 
+Hans
