@@ -2,149 +2,118 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC54C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D959C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69F1A208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F1A208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 53B9F208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YSEzX9gm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53B9F208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388331AbeGKOBe (ORCPT
+        id S2388344AbeGKOBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:01:34 -0400
-Received: from foss.arm.com ([217.140.101.70]:36288 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388248AbeGKOBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:01:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 756297A9;
-        Wed, 11 Jul 2018 06:57:05 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 63FDE3F5B1;
-        Wed, 11 Jul 2018 06:57:03 -0700 (PDT)
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com
-Cc:     catalin.marinas@arm.com, dave.martin@arm.com, hch@infradead.org,
-        james.morse@arm.com, linux@dominikbrodowski.net,
-        linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, viro@zeniv.linux.org.uk
-Subject: [PATCHv5 00/21] arm64: invoke syscalls with pt_regs
-Date:   Wed, 11 Jul 2018 14:56:35 +0100
-Message-Id: <20180711135656.20670-1-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
+        Wed, 11 Jul 2018 10:01:40 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36064 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388100AbeGKOBk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:01:40 -0400
+Received: by mail-ed1-f65.google.com with SMTP id t3-v6so19277189eds.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 06:57:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5ppfIWV42iPf32sidEqVaV6HHF2yz5imJelvpaNiIIw=;
+        b=YSEzX9gm40HWzhFy0nMYmhopPs9q6iQ6GydOmJU+IMqBS45gw19iISU78kGHY3XXOk
+         VyhfvhPKNTDGYCpPWoMFelI2pHx5W6HY5VnjGk9juVIlxQo9oUAUmGG2cobUcsfuOZjv
+         /UShz+D39pBN6qzOwlzkEGbi8Q0BD4ppTmkfCfBswyTo5k8u5sGOwjzMNqP+to9hsneM
+         R1+ntPpuDvKcQDjg8fGYHGhJkBenxTb5VN1dP35MW8PHSbW8dFcVrJxAwR1Mrktsxj5d
+         C1TizbGwhsGvorAsgB0NAPLwA0f8Y4YzqyfotkcjC/3fCJUIgmInMvfrcNIeCp7FTtDi
+         g3zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5ppfIWV42iPf32sidEqVaV6HHF2yz5imJelvpaNiIIw=;
+        b=S+3HyCyGW5ZrEu0vl6tVf4cxZofSz/e2/XHLT8Hd5y0fEBZDnpALc5MsQExcABnb5g
+         GBLb/rQsTlEmbIyK6wzdRAFwVzJWx5ijRiVaQ94Z5glhbQZKS6rRDoCJ9tyQZFn0HcGz
+         GlkHArIT0syEJr69AK3oJABnlBmHlw+1SFIDAiO4C3pB6+miuz95IdXXLFW4uHhhTJRi
+         F23IsE3hIRE2g3hf0n5I1bi/zhMtH5wJUv3fA+ravQuu4IAGc9/5NdGzTgUsLGHjGHGb
+         1QGRoVRKfoEoGTZX3ZLU1Ltx/sU5/FEsxUKBR17WJ38A0H+RztPSejLiuSKJSB3TULst
+         l2Gg==
+X-Gm-Message-State: APt69E10l9sFSvOEIOqNVKMg0M0BoeBT4Y+bgD5FQOooL8uQ3fyzPxvB
+        kZi2tIlSZCuO8uttW45WE93TpNWW
+X-Google-Smtp-Source: AAOMgpdl3ida1M2oI4AVUSdQVK4Lxzsebwfz+/itJd7g8nyKqNFAAy2nl7nzDR/kHFzGSve03awDJg==
+X-Received: by 2002:a50:a93c:: with SMTP id l57-v6mr27618727edc.229.1531317431198;
+        Wed, 11 Jul 2018 06:57:11 -0700 (PDT)
+Received: from [192.168.1.4] (x4db0e292.dyn.telefonica.de. [77.176.226.146])
+        by smtp.gmail.com with ESMTPSA id f3-v6sm5322209eds.92.2018.07.11.06.57.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 06:57:10 -0700 (PDT)
+Subject: Re: [PATCH 3/6] staging: rtl8723bs: fix indentation
+From:   Michael Straube <straube.linux@gmail.com>
+To:     Joe Perches <joe@perches.com>, gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <20180708103855.12473-1-straube.linux@gmail.com>
+ <20180708103855.12473-3-straube.linux@gmail.com>
+ <194c5239a1ef9a1f472bad7c5bcc6e3b7675b0ec.camel@perches.com>
+ <b7468cdd-1555-ef61-b475-3d4677aa423a@gmail.com>
+Message-ID: <005bbcfc-402d-db85-8f5a-1b64cfe6b612@gmail.com>
+Date:   Wed, 11 Jul 2018 15:57:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <b7468cdd-1555-ef61-b475-3d4677aa423a@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series reworks arm64's syscall handling to minimize the propagation
-of user-controlled register values into speculated code paths. As with
-x86 [1], a wrapper is generated for each syscall, which extracts the
-argument from a struct pt_regs. During kernel entry from userspace,
-registers are zeroed.
+On 07/08/18 19:36, Michael Straube wrote:
+> On 07/08/18 18:46, Joe Perches wrote:
+>> On Sun, 2018-07-08 at 12:38 +0200, Michael Straube wrote:
+>>
+>> uint rtw_is_cckratesonly_included(u8 *rate)
+>> {
+>>     while (*rate) {
+>>         u8 r = *rate & 0x7f;
+>>
+>>         if (r != 2 && r != 4 && r != 11 && r != 22)
+>>             return false;
+>>         rate++;
+>>     }
+>>
+>>     return true;
+>> }
+>>
+> 
+> The patch has been added to staging-testing already.
+> I will send patches with your suggestions the next days.
 
-The arm64 kernel code directly invokes some syscalls which the x86 code
-doesn't, so I've added ksys_* wrappers for these, following the x86
-example. The rest of the series is arm64-specific.
+Would it be preferred to declare the variable at the functions beginning,
+or doesn't it matter regarding coding style?
 
-I've pushed the series out to my arm64/syscall-regs branch [2] on
-kernel.org.
+uint rtw_is_cckratesonly_included(u8 *rate)
+{
+         u8 r;
 
-Since v1 [3]:
-* Rebase atop of arm64 for-next/core (for SSBD conflicts)
-* Move ksys_personality logic into <linux/syscalls.h>
-* Move kcompat_sys_* wrappers to <linux/compat.h>
-* Fix scno bounds check to use unsigned comparison
-* Fix sve_user_reset() call in el0_svc_handler()
-* Add BUILD_BUG() to the !CONFIG_ARM64_SVE stubs
-* Accumulate acked-by / reviewed-by tags
+         while (*rate) {
+                 r = *rate & 0x7f;
+         ...
 
-Since v2 [4]:
-* Rebase to v4.18-rc1
-* Take upper 32 RES0 bits of SCTLR_ELx into account
-* Accumulate acks
-
-Since v3 [5]:
-* Rebase to v4.18-rc3 to avoid conflict with FPSIMD/SVE fixes
-* Accumulate acks / reviewed-by tags
-* Rework __invoke_syscall() for consistency with do_ni_syscall()
-* Rename sve_user_reset() to sve_user_discard()
-* Tidied up comment placement
-* Typo fixes
-
-Since v4 [6]:
-* Rework label names in apply_ssbd
-* Clean up {compat_,}sys_call_table types
-* Made syscall_fn_t[] arguments const
-* Drop {compat_,}sys_call_table alignment
-
-Thanks,
-Mark.
-
-[1] https://lkml.kernel.org/r/20180330093720.6780-1-linux@dominikbrodowski.net
-[2] git://git.kernel.org/pub/scm/linux/kernel/git/mark/linux.git
-[3] https://lkml.kernel.org/r/20180514094640.27569-1-mark.rutland@arm.com
-[4] https://lkml.kernel.org/r/20180601112441.37810-1-mark.rutland@arm.com
-[5] https://lkml.kernel.org/r/20180618120310.39527-1-mark.rutland@arm.com
-[6] https://lkml.kernel.org/r/20180702110415.10465-1-mark.rutland@arm.com
-
-Mark Rutland (21):
-  arm64: consistently use unsigned long for thread flags
-  arm64: move SCTLR_EL{1,2} assertions to <asm/sysreg.h>
-  arm64: kill config_sctlr_el1()
-  arm64: kill change_cpacr()
-  arm64: move sve_user_{enable,disable} to <asm/fpsimd.h>
-  arm64: remove sigreturn wrappers
-  arm64: introduce syscall_fn_t
-  arm64: convert raw syscall invocation to C
-  arm64: convert syscall trace logic to C
-  arm64: convert native/compat syscall entry to C
-  arm64: don't restore GPRs when context tracking
-  arm64: don't reload GPRs after apply_ssbd
-  arm64: zero GPRs upon entry from EL0
-  arm64: drop alignment from syscall tables
-  kernel: add ksys_personality()
-  kernel: add kcompat_sys_{f,}statfs64()
-  arm64: remove in-kernel call to sys_personality()
-  arm64: use {COMPAT,}SYSCALL_DEFINE0 for sigreturn
-  arm64: use SYSCALL_DEFINE6() for mmap
-  arm64: convert compat wrappers to C
-  arm64: implement syscall wrappers
-
- arch/arm64/Kconfig                       |   1 +
- arch/arm64/include/asm/fpsimd.h          |  17 +++-
- arch/arm64/include/asm/syscall.h         |   8 +-
- arch/arm64/include/asm/syscall_wrapper.h |  80 ++++++++++++++++
- arch/arm64/include/asm/sysreg.h          |  30 ++----
- arch/arm64/include/asm/unistd32.h        |  26 ++---
- arch/arm64/kernel/Makefile               |   5 +-
- arch/arm64/kernel/armv8_deprecated.c     |   8 +-
- arch/arm64/kernel/cpu_errata.c           |   3 +-
- arch/arm64/kernel/entry.S                | 157 ++++---------------------------
- arch/arm64/kernel/entry32.S              | 121 ------------------------
- arch/arm64/kernel/fpsimd.c               |  19 ----
- arch/arm64/kernel/signal.c               |   5 +-
- arch/arm64/kernel/signal32.c             |   6 +-
- arch/arm64/kernel/sys.c                  |  29 +++---
- arch/arm64/kernel/sys32.c                | 135 ++++++++++++++++++++++----
- arch/arm64/kernel/syscall.c              | 132 ++++++++++++++++++++++++++
- arch/arm64/kernel/traps.c                |  18 +---
- arch/arm64/mm/fault.c                    |   2 +-
- fs/statfs.c                              |  14 ++-
- include/linux/compat.h                   |  11 +++
- include/linux/syscalls.h                 |  11 +++
- 22 files changed, 462 insertions(+), 376 deletions(-)
- create mode 100644 arch/arm64/include/asm/syscall_wrapper.h
- delete mode 100644 arch/arm64/kernel/entry32.S
- create mode 100644 arch/arm64/kernel/syscall.c
-
--- 
-2.11.0
+Best,
+Michael
 
