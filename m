@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2688C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96026C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D2BE208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:24:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D2BE208EC
+	by mail.kernel.org (Postfix) with ESMTP id 4AD34208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:24:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AD34208EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732549AbeGKCYG (ORCPT
+        id S1732804AbeGKC0K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 22:24:06 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45594 "EHLO
+        Tue, 10 Jul 2018 22:26:10 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45634 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732412AbeGKCYF (ORCPT
+        with ESMTP id S1732482AbeGKCYG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 22:24:05 -0400
+        Tue, 10 Jul 2018 22:24:06 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fd4lc-0003JL-2T; Wed, 11 Jul 2018 02:22:08 +0000
+        id 1fd4lc-0003K4-SI; Wed, 11 Jul 2018 02:22:08 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [RFC][PATCH 19/42] IMA: don't propagate opened through the entire thing
-Date:   Wed, 11 Jul 2018 03:21:43 +0100
-Message-Id: <20180711022206.12571-19-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH 25/42] document ->atomic_open() changes
+Date:   Wed, 11 Jul 2018 03:21:49 +0100
+Message-Id: <20180711022206.12571-25-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
 References: <20180711021136.GN30522@ZenIV.linux.org.uk>
@@ -43,184 +43,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-just check ->f_mode in ima_appraise_measurement()
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/namei.c                            |  3 +--
- fs/nfsd/vfs.c                         |  2 +-
- include/linux/ima.h                   |  4 ++--
- security/integrity/ima/ima.h          |  4 ++--
- security/integrity/ima/ima_appraise.c |  4 ++--
- security/integrity/ima/ima_main.c     | 16 ++++++++--------
- 6 files changed, 16 insertions(+), 17 deletions(-)
+ Documentation/filesystems/Locking |  2 +-
+ Documentation/filesystems/porting |  8 ++++++++
+ Documentation/filesystems/vfs.txt | 18 ++++++++++--------
+ 3 files changed, 19 insertions(+), 9 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 33f92918e051..3abb91e23718 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3400,8 +3400,7 @@ static int do_last(struct nameidata *nd,
- 	if (error)
- 		goto out;
- opened:
--	error = ima_file_check(file, op->acc_mode,
--				file->f_mode & FMODE_CREATED ? FILE_CREATED : 0);
-+	error = ima_file_check(file, op->acc_mode);
- 	if (!error && will_truncate)
- 		error = handle_truncate(file);
- out:
-diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
-index b0555d7d8200..55a099e47ba2 100644
---- a/fs/nfsd/vfs.c
-+++ b/fs/nfsd/vfs.c
-@@ -763,7 +763,7 @@ nfsd_open(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type,
- 		goto out_nfserr;
- 	}
+diff --git a/Documentation/filesystems/Locking b/Documentation/filesystems/Locking
+index 2c391338c675..04c867981375 100644
+--- a/Documentation/filesystems/Locking
++++ b/Documentation/filesystems/Locking
+@@ -64,7 +64,7 @@ prototypes:
+ 	void (*update_time)(struct inode *, struct timespec *, int);
+ 	int (*atomic_open)(struct inode *, struct dentry *,
+ 				struct file *, unsigned open_flag,
+-				umode_t create_mode, int *opened);
++				umode_t create_mode);
+ 	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
  
--	host_err = ima_file_check(file, may_flags, 0);
-+	host_err = ima_file_check(file, may_flags);
- 	if (host_err) {
- 		fput(file);
- 		goto out_nfserr;
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 0e4647e0eb60..d9ba3fc363b7 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -16,7 +16,7 @@ struct linux_binprm;
+ locking rules:
+diff --git a/Documentation/filesystems/porting b/Documentation/filesystems/porting
+index 17bb4dc28fae..c68ea9294b5f 100644
+--- a/Documentation/filesystems/porting
++++ b/Documentation/filesystems/porting
+@@ -602,3 +602,11 @@ in your dentry operations instead.
+ 	dentry separately, and it now has request_mask and query_flags arguments
+ 	to specify the fields and sync type requested by statx.  Filesystems not
+ 	supporting any statx-specific features may ignore the new arguments.
++--
++[mandatory]
++	->atomic_open() calling conventions have changed.  Gone is int *opened,
++	along with FILE_OPENED/FILE_CREATED.  In place of those we have
++	FMODE_OPENED/FMODE_CREATED, set in file->f_mode.  Additionally, return
++	value for 'called finish_no_open(), open it yourself' case has become
++	0, not 1.  Since finish_no_open() itself is returning 0 now, that part
++	does not need any changes in ->atomic_open() instances.
+diff --git a/Documentation/filesystems/vfs.txt b/Documentation/filesystems/vfs.txt
+index 829a7b7857a4..d564cc44397e 100644
+--- a/Documentation/filesystems/vfs.txt
++++ b/Documentation/filesystems/vfs.txt
+@@ -386,7 +386,7 @@ struct inode_operations {
+ 	ssize_t (*listxattr) (struct dentry *, char *, size_t);
+ 	void (*update_time)(struct inode *, struct timespec *, int);
+ 	int (*atomic_open)(struct inode *, struct dentry *, struct file *,
+-			unsigned open_flag, umode_t create_mode, int *opened);
++			unsigned open_flag, umode_t create_mode);
+ 	int (*tmpfile) (struct inode *, struct dentry *, umode_t);
+ };
  
- #ifdef CONFIG_IMA
- extern int ima_bprm_check(struct linux_binprm *bprm);
--extern int ima_file_check(struct file *file, int mask, int opened);
-+extern int ima_file_check(struct file *file, int mask);
- extern void ima_file_free(struct file *file);
- extern int ima_file_mmap(struct file *file, unsigned long prot);
- extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
-@@ -34,7 +34,7 @@ static inline int ima_bprm_check(struct linux_binprm *bprm)
- 	return 0;
- }
+@@ -496,13 +496,15 @@ otherwise noted.
  
--static inline int ima_file_check(struct file *file, int mask, int opened)
-+static inline int ima_file_check(struct file *file, int mask)
- {
- 	return 0;
- }
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 354bb5716ce3..e4c1a236976c 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -238,7 +238,7 @@ int ima_appraise_measurement(enum ima_hooks func,
- 			     struct integrity_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, int opened);
-+			     int xattr_len);
- int ima_must_appraise(struct inode *inode, int mask, enum ima_hooks func);
- void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file);
- enum integrity_status ima_get_cache_status(struct integrity_iint_cache *iint,
-@@ -254,7 +254,7 @@ static inline int ima_appraise_measurement(enum ima_hooks func,
- 					   struct file *file,
- 					   const unsigned char *filename,
- 					   struct evm_ima_xattr_data *xattr_value,
--					   int xattr_len, int opened)
-+					   int xattr_len)
- {
- 	return INTEGRITY_UNKNOWN;
- }
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 8bd7a0733e51..deec1804a00a 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -212,7 +212,7 @@ int ima_appraise_measurement(enum ima_hooks func,
- 			     struct integrity_iint_cache *iint,
- 			     struct file *file, const unsigned char *filename,
- 			     struct evm_ima_xattr_data *xattr_value,
--			     int xattr_len, int opened)
-+			     int xattr_len)
- {
- 	static const char op[] = "appraise_data";
- 	const char *cause = "unknown";
-@@ -231,7 +231,7 @@ int ima_appraise_measurement(enum ima_hooks func,
- 		cause = iint->flags & IMA_DIGSIG_REQUIRED ?
- 				"IMA-signature-required" : "missing-hash";
- 		status = INTEGRITY_NOLABEL;
--		if (opened & FILE_CREATED)
-+		if (file->f_mode & FMODE_CREATED)
- 			iint->flags |= IMA_NEW_FILE;
- 		if ((iint->flags & IMA_NEW_FILE) &&
- 		    (!(iint->flags & IMA_DIGSIG_REQUIRED) ||
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index dca44cf7838e..b286f37712d5 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -168,7 +168,7 @@ void ima_file_free(struct file *file)
+   atomic_open: called on the last component of an open.  Using this optional
+   	method the filesystem can look up, possibly create and open the file in
+-  	one atomic operation.  If it cannot perform this (e.g. the file type
+-  	turned out to be wrong) it may signal this by returning 1 instead of
+-	usual 0 or -ve .  This method is only called if the last component is
+-	negative or needs lookup.  Cached positive dentries are still handled by
+-	f_op->open().  If the file was created, the FILE_CREATED flag should be
+-	set in "opened".  In case of O_EXCL the method must only succeed if the
+-	file didn't exist and hence FILE_CREATED shall always be set on success.
++	one atomic operation.  If it wants to leave actual opening to the
++	caller (e.g. if the file turned out to be a symlink, device, or just
++	something filesystem won't do atomic open for), it may signal this by
++	returning finish_no_open(file, dentry).  This method is only called if
++	the last component is negative or needs lookup.  Cached positive dentries
++	are still handled by f_op->open().  If the file was created,
++	FMODE_CREATED flag should be set in file->f_mode.  In case of O_EXCL
++	the method must only succeed if the file didn't exist and hence FMODE_CREATED
++	shall always be set on success.
  
- static int process_measurement(struct file *file, const struct cred *cred,
- 			       u32 secid, char *buf, loff_t size, int mask,
--			       enum ima_hooks func, int opened)
-+			       enum ima_hooks func)
- {
- 	struct inode *inode = file_inode(file);
- 	struct integrity_iint_cache *iint = NULL;
-@@ -294,7 +294,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	if (rc == 0 && (action & IMA_APPRAISE_SUBMASK)) {
- 		inode_lock(inode);
- 		rc = ima_appraise_measurement(func, iint, file, pathname,
--					      xattr_value, xattr_len, opened);
-+					      xattr_value, xattr_len);
- 		inode_unlock(inode);
- 	}
- 	if (action & IMA_AUDIT)
-@@ -338,7 +338,7 @@ int ima_file_mmap(struct file *file, unsigned long prot)
- 	if (file && (prot & PROT_EXEC)) {
- 		security_task_getsecid(current, &secid);
- 		return process_measurement(file, current_cred(), secid, NULL,
--					   0, MAY_EXEC, MMAP_CHECK, 0);
-+					   0, MAY_EXEC, MMAP_CHECK);
- 	}
- 
- 	return 0;
-@@ -364,13 +364,13 @@ int ima_bprm_check(struct linux_binprm *bprm)
- 
- 	security_task_getsecid(current, &secid);
- 	ret = process_measurement(bprm->file, current_cred(), secid, NULL, 0,
--				  MAY_EXEC, BPRM_CHECK, 0);
-+				  MAY_EXEC, BPRM_CHECK);
- 	if (ret)
- 		return ret;
- 
- 	security_cred_getsecid(bprm->cred, &secid);
- 	return process_measurement(bprm->file, bprm->cred, secid, NULL, 0,
--				   MAY_EXEC, CREDS_CHECK, 0);
-+				   MAY_EXEC, CREDS_CHECK);
- }
- 
- /**
-@@ -383,14 +383,14 @@ int ima_bprm_check(struct linux_binprm *bprm)
-  * On success return 0.  On integrity appraisal error, assuming the file
-  * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-  */
--int ima_file_check(struct file *file, int mask, int opened)
-+int ima_file_check(struct file *file, int mask)
- {
- 	u32 secid;
- 
- 	security_task_getsecid(current, &secid);
- 	return process_measurement(file, current_cred(), secid, NULL, 0,
- 				   mask & (MAY_READ | MAY_WRITE | MAY_EXEC |
--					   MAY_APPEND), FILE_CHECK, opened);
-+					   MAY_APPEND), FILE_CHECK);
- }
- EXPORT_SYMBOL_GPL(ima_file_check);
- 
-@@ -493,7 +493,7 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 	func = read_idmap[read_id] ?: FILE_CHECK;
- 	security_task_getsecid(current, &secid);
- 	return process_measurement(file, current_cred(), secid, buf, size,
--				   MAY_READ, func, 0);
-+				   MAY_READ, func);
- }
- 
- static int __init init_ima(void)
+   tmpfile: called in the end of O_TMPFILE open().  Optional, equivalent to
+ 	atomically creating, opening and unlinking a file in given directory.
 -- 
 2.11.0
 
