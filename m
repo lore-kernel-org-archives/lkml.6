@@ -2,149 +2,152 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 505B8C43A1D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C3AC43A1D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8833213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:51:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDD272146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:51:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EnVJO1e3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8833213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Kv24bkNG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDD272146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390569AbeGKV5w (ORCPT
+        id S2390585AbeGKV6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 17:57:52 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41754 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733155AbeGKV5w (ORCPT
+        Wed, 11 Jul 2018 17:58:09 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:40985 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390571AbeGKV6J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 17:57:52 -0400
-Received: by mail-pg1-f196.google.com with SMTP id z8-v6so1794420pgu.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 14:51:31 -0700 (PDT)
+        Wed, 11 Jul 2018 17:58:09 -0400
+Received: by mail-oi0-f68.google.com with SMTP id k12-v6so52034861oiw.8
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 14:51:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=s2qgXwJBcwULc0BI0Bi1FAnDb0cW6a+ak7h5AZJe0+A=;
-        b=EnVJO1e3DCF1BwcgZT8vr2mnb2MZ/BaGif5g2cVMxPaSQN81D7fI7vK+oHBKmWyybM
-         bG/xmes1PN7fdNFberEpcUVft7E1Pnbk7qNHvThYgy7HAKQvY7KncoUmUuIjjDHZBFP5
-         z8ETEZaUX28aUQtaIaI1itEPiQsQOrrrcieAE=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TVRNTmRWO2wQytdTDFngybIz4dJcoC9eCZgev1fFilQ=;
+        b=Kv24bkNGejoTFY6SOcx+SfP4MLgqa0d46z+gTLmMVdcvzEAApGa8/oaNamlpLZipXy
+         CNPfGGsYQpaVRlQwcTrX3IO6cfTFEeaqZB/kgqIXUFnzhVt2kh+iKfrb3U/DWkQzpdHe
+         PjtjIOzMd8PiIqEmMkbSxDH116Yupsqs1RIe5Z3ntQMtJXQeSNAFaJLRmRbjGPWWTgMA
+         WKHfX/3a+gS1JjWrnxOvoXSRe3fGpxefL2fRyqqrl8qnkjSVZIQfKOOlVAg8SbAMd6dU
+         zFMrg7AEVOpRRF2CM6mWxSPT7D0vG5xqPobrxLMDtO4kjOK60lsMTQclpjknzTSQBbj8
+         nskQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=s2qgXwJBcwULc0BI0Bi1FAnDb0cW6a+ak7h5AZJe0+A=;
-        b=bhfIuZHno72KAGTwe1Bj1b56f45wmj3RikpR45TY9b3lIf9WhyvdlKJ2AyO3R7g5PZ
-         0yfaXzNxMgVuTYvMFxZTHtWVpXkVwjteFQZxCgmDYoSvVOYBbXL2NVvDLm1b3zEONQfm
-         qsRpjYM291Yv5pCznE2dV0G4qbmuUIrGwi+1o3n1KlBYavBp2v3QUq1NSOss3lW9ZXBZ
-         /WQeiE68KBQAJz0NVm8nZ46hMtgAsxA6Xm2tf8awqV6QWjziig0b0PG1WxwLda12gqud
-         0mJXDs8hYUpqnYPGuhkG0OmFYOT/yZsue/FqqZT3kxUnB07EoZVq9MEZ/QTxw6qSHRCM
-         dKDQ==
-X-Gm-Message-State: AOUpUlE4Y+UvaKO87U7B+da/arxsm7FBzALEmBoXlec8AI6i4zXt9pqi
-        NvxDsGiD0QjVRgEH9xZJWSCbZg==
-X-Google-Smtp-Source: AAOMgpc2tkep/9BEYn1kroFjQst4Tfz1JFAcM9ZrHFBcOahZZkTDv2L+FPaHME9Bk+hpiafdiuVHTQ==
-X-Received: by 2002:a63:5c10:: with SMTP id q16-v6mr308381pgb.452.1531345891220;
-        Wed, 11 Jul 2018 14:51:31 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id b66-v6sm4372367pgc.15.2018.07.11.14.51.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 14:51:30 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 14:51:29 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        smohanad@codeaurora.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6 7/7] arm64: dts: sdm845: Add tsens nodes
-Message-ID: <20180711215129.GT129942@google.com>
-References: <cover.1531135999.git.amit.kucheria@linaro.org>
- <65c39c405076627bd43ec94c211c6998191b9f16.1531136000.git.amit.kucheria@linaro.org>
- <CAD=FV=XpfJyd8hUT45+J=EVY1Bs28Mk7m2TBJy8J=HO63n2_qw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TVRNTmRWO2wQytdTDFngybIz4dJcoC9eCZgev1fFilQ=;
+        b=L8eq1Rgm36a2slT4vEqjEL8CcVFD2UYIuW15tCVj5BYujPDKF27A8b+1KXj7ctV6wf
+         7hv5kv3PUVjca0sRWMkZwNDijta7I/oF6jAAM+r1OxNjt6w8bkKxUBNZ/F8o0G8+RkKb
+         dusuDSGSLNwp0myMUX6VuFS3oX2Ot/jTVP+0A59TDunR2FWCigbnKXIAOia/faxZNM3T
+         mvzrZ6BeJjQtmIaeFWNCf6r9vgjTWUCWVWFTixR34mqDTaGZjnrIaCZZhMKDVkKvY7q3
+         KUnAnBph9PiSnQzZg2Bl69kCuuwuGpLJpAYB8+MpaNs6zR0wfs2qA1iF1VSVkWQLaAGz
+         MaCA==
+X-Gm-Message-State: AOUpUlFO7DhAQr61SfFshTxrrvSickvV8uRWioWP2uZyAWVjNsvwFk0S
+        amgeGm2FOSjiH7RoQ7Lg3Ml5IK5K4ipC0iCjeDeneg==
+X-Google-Smtp-Source: AAOMgpct/wgsduIHdVvpsAMLLAyrlQx7dqJJnZG3h/O/IJj0EImGRMYdzmhvpnJdodEaH/Q9o7+UZYeVW11aB4XH4x8=
+X-Received: by 2002:aca:d015:: with SMTP id h21-v6mr511553oig.142.1531345907484;
+ Wed, 11 Jul 2018 14:51:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=XpfJyd8hUT45+J=EVY1Bs28Mk7m2TBJy8J=HO63n2_qw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com> <20180710222639.8241-18-yu-cheng.yu@intel.com>
+ <CAG48ez1ytOfQyNZMNPFp7XqKcpd7_aRai9G5s7rx0V=8ZG+r2A@mail.gmail.com> <6F5FEFFD-0A9A-4181-8D15-5FC323632BA6@amacapital.net>
+In-Reply-To: <6F5FEFFD-0A9A-4181-8D15-5FC323632BA6@amacapital.net>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 11 Jul 2018 14:51:21 -0700
+Message-ID: <CAG48ez1OwQMmhQfHaauo+vneywsQ_ERKr4uVcQebC=GbdqZWtA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 17/27] x86/cet/shstk: User-mode shadow stack support
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     yu-cheng.yu@intel.com, "the arch/x86 maintainers" <x86@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-doc@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, bsingharora@gmail.com,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>, hjl.tools@gmail.com,
+        Jonathan Corbet <corbet@lwn.net>, keescook@chromiun.org,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        ravi.v.shankar@intel.com, vedvyas.shanbhogue@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 11:44:13AM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Mon, Jul 9, 2018 at 4:43 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> > SDM845 has two tsens blocks, one with 13 sensors and the other with 8
-> > sensors. It uses version 2 of the TSENS IP, so use the fallback property to
-> > allow more common code.
+On Wed, Jul 11, 2018 at 2:34 PM Andy Lutomirski <luto@amacapital.net> wrote=
+:
+> > On Jul 11, 2018, at 2:10 PM, Jann Horn <jannh@google.com> wrote:
 > >
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > index cdaabeb..ba2899c 100644
-> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> > @@ -221,6 +221,22 @@
-> >                         #interrupt-cells = <2>;
-> >                 };
-> >
-> > +               tsens0: tsens@c263000 {
-> 
-> As per my comments in the bindings, nit that this should probably be
-> "thermal-sensor" not "tsens", AKA:
-> 
-> tsens0: thermal-sensor@c263000 {
-> 
-> > +                       compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
-> > +                       reg = <0xc263000 0x1ff>, /* TM */
-> > +                             <0xc222000 0x1ff>; /* SROT */
-> > +                       #qcom,sensors = <13>;
-> 
-> As per my comment in the bindings and the code, I'm confused about the
-> whole "#qcom,sensors" bit.  It's not documented and doesn't seem
-> hooked up in the code either.
-> 
-> ...but if people have tested this, perhaps I'm confused.  How can
-> things work if num_sensors is 0???
+> >> On Tue, Jul 10, 2018 at 3:31 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wr=
+ote:
+> >>
+> >> This patch adds basic shadow stack enabling/disabling routines.
+> >> A task's shadow stack is allocated from memory with VM_SHSTK
+> >> flag set and read-only protection.  The shadow stack is
+> >> allocated to a fixed size.
+> >>
+> >> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > [...]
+> >> diff --git a/arch/x86/kernel/cet.c b/arch/x86/kernel/cet.c
+> >> new file mode 100644
+> >> index 000000000000..96bf69db7da7
+> >> --- /dev/null
+> >> +++ b/arch/x86/kernel/cet.c
+> > [...]
+> >> +static unsigned long shstk_mmap(unsigned long addr, unsigned long len=
+)
+> >> +{
+> >> +       struct mm_struct *mm =3D current->mm;
+> >> +       unsigned long populate;
+> >> +
+> >> +       down_write(&mm->mmap_sem);
+> >> +       addr =3D do_mmap(NULL, addr, len, PROT_READ,
+> >> +                      MAP_ANONYMOUS | MAP_PRIVATE, VM_SHSTK,
+> >> +                      0, &populate, NULL);
+> >> +       up_write(&mm->mmap_sem);
+> >> +
+> >> +       if (populate)
+> >> +               mm_populate(addr, populate);
+> >> +
+> >> +       return addr;
+> >> +}
+[...]
+> > Should the kernel enforce that two shadow stacks must have a guard
+> > page between them so that they can not be directly adjacent, so that
+> > if you have too much recursion, you can't end up corrupting an
+> > adjacent shadow stack?
+>
+> I think the answer is a qualified =E2=80=9Cno=E2=80=9D. I would like to i=
+nstead enforce a general guard page on all mmaps that don=E2=80=99t use MAP=
+_FORCE. We *might* need to exempt any mmap with an address hint for compati=
+bility.
 
-The mystery is resolved by:
+I like this idea a lot.
 
-commit 6d7c70d1cd6526dc79e3d3b3faae1c40c1681168
-Author: Bjorn Andersson <bjorn.andersson@linaro.org>
-Date:   Mon May 7 16:53:39 2018 -0700
+> My commercial software has been manually adding guard pages on every sing=
+le mmap done by tcmalloc for years, and it has caught a couple bugs and cos=
+ts essentially nothing.
+>
+> Hmm. Linux should maybe add something like Windows=E2=80=99 =E2=80=9Crese=
+rved=E2=80=9D virtual memory. It=E2=80=99s basically a way to ask for a VA =
+range that explicitly contains nothing and can be subsequently be turned in=
+to something useful with the equivalent of MAP_FORCE.
 
-    thermal: qcom: tsens: Allow number of sensors to come from DT
-
-    For platforms that has multiple copies of the TSENS hardware block it's
-    necessary to be able to specify the number of sensors per block in DeviceTree.
-
-    Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-    Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
-    Reviewed-by: Rob Herring <robh@kernel.org>
-    Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-
-
-I bumped into this during testing ;-)
+What's the benefit over creating an anonymous PROT_NONE region? That
+the kernel won't have to scan through the corresponding PTEs when
+tearing down the mapping?
