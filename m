@@ -2,111 +2,114 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A9F4C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87578C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:42:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D9AC20877
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:41:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NxGCGonp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D9AC20877
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 48C9E2083C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:42:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C9E2083C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hisilicon.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732631AbeGKJoU (ORCPT
+        id S1732769AbeGKJpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:44:20 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:38573 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726477AbeGKJoU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:44:20 -0400
-Received: by mail-wm0-f68.google.com with SMTP id 69-v6so1814093wmf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 02:40:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/q/sznLHl7/eGa0nIgn7Rl1zB0oOPHdHKcT0/DG3mmI=;
-        b=NxGCGonpLZkmEeIDuPLeFHFtG5j80zMXTsEdiu3XivE5TKiuVWSIUI1ib2zjAkHu8d
-         o+UZKoVk7w28ELVveptunwB0A2QHj7W4En5PRKSdi+ZY4VcPdxrnKPliS2KPYKfxcTZQ
-         /LAGI59Nup92sQrs/86h4c7DbjHbT35EBHPUA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/q/sznLHl7/eGa0nIgn7Rl1zB0oOPHdHKcT0/DG3mmI=;
-        b=YcGv02nAA/rvAvQttJP00RHSPQo4ZWWlUie/k2dOIJ0lkgRMIk+6AP78T4MiChrQaF
-         vSJj5NFN5BoE2pEDOwBzlSeVWsgBo/uiUC23NpaXY0F5zGkUwwKEWJruaU5TduouU+E/
-         N6d68WpgrmQdQr5XS3+XHpGoOI9bUrWzHheqUcmqpPpSsvzdeplQcE0u/DlWE16DDpIS
-         9CGfc39rE2g3OfyC572l1ixoO9RRCcPbcIB2gSOIOtcYcEkGWKMSArH6X3U9C18O9ejt
-         1/9Pk0vP+N61lumkOhZgPXZxgi7lYm9G7Njj9PdSlmmBFVLUiZW6TI0deIwEYrtINVPD
-         wpMg==
-X-Gm-Message-State: APt69E3EA6+IFo66GdyseJk+yre8Wg8t9a4RP9tvo8tzimgrSkKPBUTf
-        T8wRvTg8MbZQa3TyC3NRBb1a8aMbpOQ=
-X-Google-Smtp-Source: AAOMgpcwkv+ijTbI35cW8UOvK0DgrdgOQifAXA2tMmuVGKuHw2N1eESh8UdnoY54bhUzlNwnf9L6Cw==
-X-Received: by 2002:a1c:c14:: with SMTP id 20-v6mr18591887wmm.117.1531302051627;
-        Wed, 11 Jul 2018 02:40:51 -0700 (PDT)
-Received: from localhost.localdomain (33.153.69.91.rev.sfr.net. [91.69.153.33])
-        by smtp.gmail.com with ESMTPSA id t124-v6sm1641311wmt.29.2018.07.11.02.40.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 02:40:50 -0700 (PDT)
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] efi/x86: Use non-blocking SetVariable() for efi_delete_dummy_variable()
-Date:   Wed, 11 Jul 2018 11:40:34 +0200
-Message-Id: <20180711094040.12506-3-ard.biesheuvel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
-References: <20180711094040.12506-1-ard.biesheuvel@linaro.org>
+        Wed, 11 Jul 2018 05:45:46 -0400
+Received: from szxga08-in.huawei.com ([45.249.212.255]:33599 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726812AbeGKJpp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 05:45:45 -0400
+Received: from DGGEMA404-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id EAB7C9FF6F0A2;
+        Wed, 11 Jul 2018 17:42:11 +0800 (CST)
+Received: from DGGEMA525-MBX.china.huawei.com ([169.254.6.69]) by
+ DGGEMA404-HUB.china.huawei.com ([10.3.20.45]) with mapi id 14.03.0382.000;
+ Wed, 11 Jul 2018 17:42:02 +0800
+From:   "Songxiaowei (Kirin_DRV)" <songxiaowei@hisilicon.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Wangbinghui <wangbinghui@hisilicon.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>,
+        Kongfei <kongfei@hisilicon.com>,
+        "chenyao (F)" <chenyao11@huawei.com>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjcgMS8xXSBQQ0k6IGtpcmluOiBBZGQgTVNJIHN1?=
+ =?utf-8?Q?pport?=
+Thread-Topic: [PATCH v7 1/1] PCI: kirin: Add MSI support
+Thread-Index: AQHUGO6PA45Gy6FIEku6EeNhdo92bKSJO5mAgACJJuA=
+Date:   Wed, 11 Jul 2018 09:42:01 +0000
+Message-ID: <99B4C6BADD9E3241B25E52B02BA737C5412D7FFB@dggema525-mbx.china.huawei.com>
+References: <20180711080946.14942-1-songxiaowei@hisilicon.com>
+ <20180711080946.14942-2-songxiaowei@hisilicon.com>
+ <CAHp75VccZtHqpoeWhVa=D=tc_Dj5cX8SXg=vYowWJ_RAiKdiCQ@mail.gmail.com>
+In-Reply-To: <CAHp75VccZtHqpoeWhVa=D=tc_Dj5cX8SXg=vYowWJ_RAiKdiCQ@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.142.52.233]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
-
-Presently, efi_delete_dummy_variable() uses set_variable() which might
-block and hence kernel prints stack trace with a warning "bad:
-scheduling from the idle thread!". So, make efi_delete_dummy_variable()
-use set_variable_nonblocking(), which, as the name suggests doesn't
-block.
-
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- arch/x86/platform/efi/quirks.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 36c1f8b9f7e0..6af39dc40325 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -105,12 +105,11 @@ early_param("efi_no_storage_paranoia", setup_storage_paranoia);
- */
- void efi_delete_dummy_variable(void)
- {
--	efi.set_variable((efi_char16_t *)efi_dummy_name,
--			 &EFI_DUMMY_GUID,
--			 EFI_VARIABLE_NON_VOLATILE |
--			 EFI_VARIABLE_BOOTSERVICE_ACCESS |
--			 EFI_VARIABLE_RUNTIME_ACCESS,
--			 0, NULL);
-+	efi.set_variable_nonblocking((efi_char16_t *)efi_dummy_name,
-+				     &EFI_DUMMY_GUID,
-+				     EFI_VARIABLE_NON_VOLATILE |
-+				     EFI_VARIABLE_BOOTSERVICE_ACCESS |
-+				     EFI_VARIABLE_RUNTIME_ACCESS, 0, NULL);
- }
- 
- /*
--- 
-2.17.1
-
+SGkgQW5keSwNCg0KVGhhbmsgeW91IGEgbG90Lg0KDQpCZXN0IFJlZ2FyZHMsDQpYaWFvd2VpLg0K
+DQo+IC0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCj4g5Y+R5Lu25Lq6OiBBbmR5IFNoZXZjaGVua28g
+W21haWx0bzphbmR5LnNoZXZjaGVua29AZ21haWwuY29tXQ0KPiDlj5HpgIHml7bpl7Q6IDIwMTjl
+ubQ35pyIMTHml6UgMTc6MzANCj4g5pS25Lu25Lq6OiBTb25neGlhb3dlaSAoS2lyaW5fRFJWKSA8
+c29uZ3hpYW93ZWlAaGlzaWxpY29uLmNvbT4NCj4g5oqE6YCBOiBXYW5nYmluZ2h1aSA8d2FuZ2Jp
+bmdodWlAaGlzaWxpY29uLmNvbT47IEJqb3JuIEhlbGdhYXMNCj4gPGJoZWxnYWFzQGdvb2dsZS5j
+b20+OyBMb3JlbnpvIFBpZXJhbGlzaSA8bG9yZW56by5waWVyYWxpc2lAYXJtLmNvbT47DQo+IFJv
+YiBIZXJyaW5nIDxyb2JoK2R0QGtlcm5lbC5vcmc+OyBsaW51eC1wY2lAdmdlci5rZXJuZWwub3Jn
+OyBMaW51eCBLZXJuZWwNCj4gTWFpbGluZyBMaXN0IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwu
+b3JnPjsgU3V6aHVhbmdsdWFuDQo+IDxzdXpodWFuZ2x1YW5AaGlzaWxpY29uLmNvbT47IEtvbmdm
+ZWkgPGtvbmdmZWlAaGlzaWxpY29uLmNvbT47IGNoZW55YW8NCj4gKEYpIDxjaGVueWFvMTFAaHVh
+d2VpLmNvbT4NCj4g5Li76aKYOiBSZTogW1BBVENIIHY3IDEvMV0gUENJOiBraXJpbjogQWRkIE1T
+SSBzdXBwb3J0DQo+IA0KPiBPbiBXZWQsIEp1bCAxMSwgMjAxOCBhdCAxMTowOSBBTSwgWGlhb3dl
+aSBTb25nDQo+IDxzb25neGlhb3dlaUBoaXNpbGljb24uY29tPiB3cm90ZToNCj4gPiBBZGQgc3Vw
+cG9ydCBmb3IgTVNJDQo+ID4NCj4gDQo+IEZXSVcsDQo+IFJldmlld2VkLWJ5OiBBbmR5IFNoZXZj
+aGVua28gPGFuZHkuc2hldmNoZW5rb0BnbWFpbC5jb20+DQo+IA0KPiA+IFNpZ25lZC1vZmYtYnk6
+IFhpYW93ZWkgU29uZyA8c29uZ3hpYW93ZWlAaGlzaWxpY29uLmNvbT4NCj4gPiBTaWduZWQtb2Zm
+LWJ5OiBZYW8gQ2hlbiA8Y2hlbnlhbzExQGh1YXdlaS5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZl
+cnMvcGNpL2R3Yy9wY2llLWtpcmluLmMgfCAyOCArKysrKysrKysrKysrKysrKysrKysrKysrKysr
+DQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspDQo+ID4NCj4gPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9wY2kvZHdjL3BjaWUta2lyaW4uYw0KPiA+IGIvZHJpdmVycy9wY2kvZHdj
+L3BjaWUta2lyaW4uYyBpbmRleCBkMjk3MGEwMDllYjUuLjUzNTJlMGMzYmU4Mg0KPiAxMDA2NDQN
+Cj4gPiAtLS0gYS9kcml2ZXJzL3BjaS9kd2MvcGNpZS1raXJpbi5jDQo+ID4gKysrIGIvZHJpdmVy
+cy9wY2kvZHdjL3BjaWUta2lyaW4uYw0KPiA+IEBAIC00MzAsNiArNDMwLDkgQEAgc3RhdGljIGlu
+dCBraXJpbl9wY2llX2hvc3RfaW5pdChzdHJ1Y3QgcGNpZV9wb3J0DQo+ID4gKnBwKSAgew0KPiA+
+ICAgICAgICAga2lyaW5fcGNpZV9lc3RhYmxpc2hfbGluayhwcCk7DQo+ID4NCj4gPiArICAgICAg
+IGlmIChJU19FTkFCTEVEKENPTkZJR19QQ0lfTVNJKSkNCj4gPiArICAgICAgICAgICAgICAgZHdf
+cGNpZV9tc2lfaW5pdChwcCk7DQo+ID4gKw0KPiA+ICAgICAgICAgcmV0dXJuIDA7DQo+ID4gIH0N
+Cj4gPg0KPiA+IEBAIC00NDUsOSArNDQ4LDM0IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHdfcGNp
+ZV9ob3N0X29wcw0KPiBraXJpbl9wY2llX2hvc3Rfb3BzID0gew0KPiA+ICAgICAgICAgLmhvc3Rf
+aW5pdCA9IGtpcmluX3BjaWVfaG9zdF9pbml0LCAgfTsNCj4gPg0KPiA+ICtzdGF0aWMgaW50IGtp
+cmluX3BjaWVfYWRkX21zaShzdHJ1Y3QgZHdfcGNpZSAqcGNpLA0KPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikgew0KPiA+ICsg
+ICAgICAgaW50IGlycTsNCj4gPiArDQo+ID4gKyAgICAgICBpZiAoSVNfRU5BQkxFRChDT05GSUdf
+UENJX01TSSkpIHsNCj4gPiArICAgICAgICAgICAgICAgaXJxID0gcGxhdGZvcm1fZ2V0X2lycShw
+ZGV2LCAwKTsNCj4gPiArICAgICAgICAgICAgICAgaWYgKGlycSA8IDApIHsNCj4gPiArICAgICAg
+ICAgICAgICAgICAgICAgICBkZXZfZXJyKCZwZGV2LT5kZXYsDQo+ID4gKyAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAiZmFpbGVkIHRvIGdldCBNU0kgSVJRICglZClcbiIsIGlycSk7DQo+
+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIGlycTsNCj4gPiArICAgICAgICAgICAg
+ICAgfQ0KPiA+ICsNCj4gPiArICAgICAgICAgICAgICAgcGNpLT5wcC5tc2lfaXJxID0gaXJxOw0K
+PiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiAwOw0KPiA+ICt9DQo+ID4g
+Kw0KPiA+ICBzdGF0aWMgaW50IF9faW5pdCBraXJpbl9hZGRfcGNpZV9wb3J0KHN0cnVjdCBkd19w
+Y2llICpwY2ksDQo+ID4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1
+Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiB7DQo+ID4gKyAgICAgICBpbnQgcmV0Ow0KPiA+
+ICsNCj4gPiArICAgICAgIHJldCA9IGtpcmluX3BjaWVfYWRkX21zaShwY2ksIHBkZXYpOw0KPiA+
+ICsgICAgICAgaWYgKHJldCkNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiAr
+DQo+ID4gICAgICAgICBwY2ktPnBwLm9wcyA9ICZraXJpbl9wY2llX2hvc3Rfb3BzOw0KPiA+DQo+
+ID4gICAgICAgICByZXR1cm4gZHdfcGNpZV9ob3N0X2luaXQoJnBjaS0+cHApOw0KPiA+IC0tDQo+
+ID4gMi4xMS5HSVQNCj4gPg0KPiANCj4gDQo+IA0KPiAtLQ0KPiBXaXRoIEJlc3QgUmVnYXJkcywN
+Cj4gQW5keSBTaGV2Y2hlbmtvDQo=
