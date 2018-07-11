@@ -2,161 +2,129 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8193DC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F8EAC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27BA620849
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:08:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0+13FjZO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27BA620849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C4D92077B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:09:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C4D92077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732803AbeGKMMu (ORCPT
+        id S1732830AbeGKMNA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:12:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57782 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeGKMMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:12:50 -0400
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B55D2077B;
-        Wed, 11 Jul 2018 12:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531310928;
-        bh=YIs3IWxq03oCvSTSSU26mQ1+W92YyEKP7mOsyOYTDR0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0+13FjZOVhQ6c4/+jQ61djGGVN4Vb7+35oIrbrf05TPWjdz2qO9xgmVqlwLOAw2a4
-         LrznAnQsQFToQHFATqtJCf8IpAFtfM2tjIYzhoGK9q/AXg3qRbMfizeQeGRYiHIr4I
-         YepfRTHIVclC1rLceN6WHoPK41m4fr6rTb2jH598=
-Date:   Wed, 11 Jul 2018 15:08:45 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-mm@kvack.org,
-        David Rientjes <rientjes@google.com>,
-        Felix Kuehling <felix.kuehling@amd.com>
-Subject: Re: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Message-ID: <20180711120845.GA7750@mtr-leonro.mtl.com>
-References: <20180622150242.16558-1-mhocko@kernel.org>
- <20180627074421.GF32348@dhcp22.suse.cz>
- <20180709122908.GJ22049@dhcp22.suse.cz>
- <20180710134040.GG3014@mtr-leonro.mtl.com>
- <20180710141410.GP14284@dhcp22.suse.cz>
- <20180710162020.GJ3014@mtr-leonro.mtl.com>
- <20180711090353.GD20050@dhcp22.suse.cz>
- <20180711101447.GU3014@mtr-leonro.mtl.com>
- <20180711111318.GL20050@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
-Content-Disposition: inline
-In-Reply-To: <20180711111318.GL20050@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Wed, 11 Jul 2018 08:13:00 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:44452 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeGKMM7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:12:59 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0M7nzI-1fyzzx1Ihc-00vSfd; Wed, 11 Jul 2018 14:08:53 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     "David S. Miller" <davem@davemloft.net>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] sparc64: add reads{b,w,l}/writes{b,w,l}
+Date:   Wed, 11 Jul 2018 14:08:06 +0200
+Message-Id: <20180711120824.3882108-2-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180711120824.3882108-1-arnd@arndb.de>
+References: <20180711120824.3882108-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:wkkgXftNy6ebXNUe1Td0Auor9Sdh11vLJ6ZgqhxeXn4FovZjF05
+ 6XDZDJF4tjIRhK9MQh5T596MZLuhHyuvS/pKoV/J+lEjHONRn6/QmRUVlP47x/+MOfBzfqu
+ ox47Fj6UYQNdSeLQD/SejRwlhkzWIl6gvV+yF4+H8hyiXarrIPwkTEaZZKNKfOy29RDseiz
+ Og9z3NpucMaEKQiOd/2Ig==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:67xNIxIBSzk=:ocslP4G0Bwp2Kgvc6pyyta
+ a+Lgpu5TXbDml3DJtx2nIDp1EVuyg+FZ33JBUjcbVQ+BmceBbFs/m3ZcR7mYsGNXGh53ipTtL
+ Gy4A3Wiy999mRSp2G7SUPRjxVZH7b/SniztRTnwEe9HnYkxDhKVzjHjmlVp0Pm7HyozPD6BP3
+ 0ebBXkF8j7cyDpMDRljjkiD87+yDIJwAT2v95VVYp6BYsWZwmSv53d38qsKEtgHgjb8rNjuMj
+ Hjhb9mL2G+FwerOY1RdgIvwvc+XUo2BrH5/KQT9SmExIaeyZvX3SIMitMeR7wtkpgYCtI2fPx
+ 5kaAdJiy8uAi3ftGtaiofZH+OS/1lB03Cpu5/u/i9y69LWSbcv9MJrbT8qshjvTA7IVRoMv+M
+ 3jyV9A+BWCq+cRww63fUJKcZoAul2QxqqMAQZ0T1bBYtOPqxWgKbv5V75MCBE+Soh++0QrJDX
+ u2hofn+Yp4Qo5wv1nZGqSO0FbTHe9PGQU9wj5fK/zSnEl7aQv9jSUk0/7WBX3JeAqzoM7SQam
+ qLmaoB7iaLfyigIbVVzD8fFPPVihlTU/EeJbsJ/960fxQ4yynhUkSEWQZdthth3L/piWdcxV/
+ JiVFRmrhAIOMGClSH7u11NozFSPQW7OawqDvIWQY9MP5RaFHTURxyqe7st0YEEXuO1u2D6fNJ
+ GxrVA6uvq93RoVD4C3O/o/VOQZXYXeJDOdLiInLErwtjmgo/mVWa+8z9VaRpe4WmNZ8M=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Some drivers need these for compile-testing. On most architectures
+they come from asm-generic/io.h, but not on sparc64, which has its
+own definitions.
 
---SLDf9lqlvOQaIe6s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Since we already have ioread*_rep()/iowrite*_rep() that have the
+same behavior on sparc64 (i.e. all PCI I/O space is memory mapped),
+we can rename the existing helpers and add macros to define them
+to the same implementation.
 
-On Wed, Jul 11, 2018 at 01:13:18PM +0200, Michal Hocko wrote:
-> On Wed 11-07-18 13:14:47, Leon Romanovsky wrote:
-> > On Wed, Jul 11, 2018 at 11:03:53AM +0200, Michal Hocko wrote:
-> > > On Tue 10-07-18 19:20:20, Leon Romanovsky wrote:
-> > > > On Tue, Jul 10, 2018 at 04:14:10PM +0200, Michal Hocko wrote:
-> > > > > On Tue 10-07-18 16:40:40, Leon Romanovsky wrote:
-> > > > > > On Mon, Jul 09, 2018 at 02:29:08PM +0200, Michal Hocko wrote:
-> > > > > > > On Wed 27-06-18 09:44:21, Michal Hocko wrote:
-> > > > > > > > This is the v2 of RFC based on the feedback I've received so far. The
-> > > > > > > > code even compiles as a bonus ;) I haven't runtime tested it yet, mostly
-> > > > > > > > because I have no idea how.
-> > > > > > > >
-> > > > > > > > Any further feedback is highly appreciated of course.
-> > > > > > >
-> > > > > > > Any other feedback before I post this as non-RFC?
-> > > > > >
-> > > > > > From mlx5 perspective, who is primary user of umem_odp.c your change looks ok.
-> > > > >
-> > > > > Can I assume your Acked-by?
-> > > >
-> > > > I didn't have a chance to test it because it applies on our rdma-next, but
-> > > > fails to compile.
-> > >
-> > > What is the compilation problem? Is it caused by the patch or some other
-> > > unrelated changed?
-> >
-> > Thanks for pushing me to take a look on it.
-> > Your patch needs the following hunk to properly compile at least on my system.
->
-> I suspect you were trying the original version. I've posted an updated
-> patch here http://lkml.kernel.org/r/20180627074421.GF32348@dhcp22.suse.cz
-> and all these issues should be fixed there. Including many other fixes.
->
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/sparc/include/asm/io_64.h | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-Ohh, you used --reply-to, IMHO it is best way to make sure that the
-patch will be lost :)
+diff --git a/arch/sparc/include/asm/io_64.h b/arch/sparc/include/asm/io_64.h
+index 9a1e9cbc7e6d..b162c23ae8c2 100644
+--- a/arch/sparc/include/asm/io_64.h
++++ b/arch/sparc/include/asm/io_64.h
+@@ -243,35 +243,42 @@ void insb(unsigned long, void *, unsigned long);
+ void insw(unsigned long, void *, unsigned long);
+ void insl(unsigned long, void *, unsigned long);
+ 
+-static inline void ioread8_rep(void __iomem *port, void *buf, unsigned long count)
++static inline void readsb(void __iomem *port, void *buf, unsigned long count)
+ {
+ 	insb((unsigned long __force)port, buf, count);
+ }
+-static inline void ioread16_rep(void __iomem *port, void *buf, unsigned long count)
++static inline void readsw(void __iomem *port, void *buf, unsigned long count)
+ {
+ 	insw((unsigned long __force)port, buf, count);
+ }
+ 
+-static inline void ioread32_rep(void __iomem *port, void *buf, unsigned long count)
++static inline void readsl(void __iomem *port, void *buf, unsigned long count)
+ {
+ 	insl((unsigned long __force)port, buf, count);
+ }
+ 
+-static inline void iowrite8_rep(void __iomem *port, const void *buf, unsigned long count)
++static inline void writesb(void __iomem *port, const void *buf, unsigned long count)
+ {
+ 	outsb((unsigned long __force)port, buf, count);
+ }
+ 
+-static inline void iowrite16_rep(void __iomem *port, const void *buf, unsigned long count)
++static inline void writesw(void __iomem *port, const void *buf, unsigned long count)
+ {
+ 	outsw((unsigned long __force)port, buf, count);
+ }
+ 
+-static inline void iowrite32_rep(void __iomem *port, const void *buf, unsigned long count)
++static inline void writesl(void __iomem *port, const void *buf, unsigned long count)
+ {
+ 	outsl((unsigned long __force)port, buf, count);
+ }
+ 
++#define ioread8_rep(p,d,l)	readsb(p,d,l)
++#define ioread16_rep(p,d,l)	readsw(p,d,l)
++#define ioread32_rep(p,d,l)	readsl(p,d,l)
++#define iowrite8_rep(p,d,l)	writesb(p,d,l)
++#define iowrite16_rep(p,d,l)	writesw(p,d,l)
++#define iowrite32_rep(p,d,l)	writesl(p,d,l)
++
+ /* Valid I/O Space regions are anywhere, because each PCI bus supported
+  * can live in an arbitrary area of the physical address range.
+  */
+-- 
+2.9.0
 
-> Could you have a look at that one please?
-
-I grabbed it, the results will be overnight only.
-
-Thanks
-
-> --
-> Michal Hocko
-> SUSE Labs
-
---SLDf9lqlvOQaIe6s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbRfNNAAoJEORje4g2clinlVwP+gOTolhbvb7Z7rdf1A/MW8q6
-SOrUeHuzbfpi3QwcJOQv9305fjVWOQ8Sgqv9xbYw19ISxlIY+B/tm+XgbUEcMHMC
-P0TYVuLz2SGJCRoovqICZ49NzestzlGyn3Nv5AGoKG2JAzWXphtHROIkGt3SNraX
-O1B+izek2DrruThuLEtQbNHx+gI9QP7YZhdz7ClbNO2VwxIGQZcCvhjc2fG1v6ab
-dkXKZ3QS05bm5rQO2+VFV3WhAFtkUwocqyjrGrbvn6IgDWYPmXmXhbjhSbLs4V+w
-ggj4kwUQd0R/QQY126lOtkvZKQk/EZu+GmumNpLqeTY0AF+vX4SOMrsZreekaQIw
-4ZzouQ0yFyBGIYO/i+zQaAyAgwJBf0b1nyWl+OZyY8E03e2COp0GF2sdiTMo5K+N
-G9msVCQhavJsWawiL+1RyzgfLHipcnp4dYCFDqpqbZR/3Kx7ld1OBWT0JzbhuqZW
-x4uelzSwBAzeZW2Hj2TYfMNuaRlHBiJi7Bqct8b2avsftTvGvUdQKbtxxxXzd1SI
-J1OgzS/WFi/Ao+UW0yFVXWKtitaIMzCVhZroYZs4BUoKJq8fLjGSaXxEPfUfLQmT
-SjbLYA8IVUQLJs3yx/2TJrRxu2ti8zUhnv+jJfcG0T7LT5CjL9Qe7Yx8lMy+u4eR
-ngUiQqGK0WJWIaQq3r19
-=g6/F
------END PGP SIGNATURE-----
-
---SLDf9lqlvOQaIe6s--
