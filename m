@@ -6,85 +6,146 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA73C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:26:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B95C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4819020835
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:26:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4819020835
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id BC8CA20835
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:27:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC8CA20835
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732749AbeGKLaF (ORCPT
+        id S1732789AbeGKLbJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:30:05 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:47790 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726644AbeGKLaF (ORCPT
+        Wed, 11 Jul 2018 07:31:09 -0400
+Received: from mailoutvs18.siol.net ([185.57.226.209]:51284 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726644AbeGKLbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:30:05 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1fdDG3-0006Hd-Kr; Wed, 11 Jul 2018 11:26:07 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        speakup@linux-speakup.org, devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: speakup: remove redundant variable l
-Date:   Wed, 11 Jul 2018 12:26:07 +0100
-Message-Id: <20180711112607.31292-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Wed, 11 Jul 2018 07:31:09 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTP id 4C3EF521C58;
+        Wed, 11 Jul 2018 13:27:14 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id kD47YakUJmhU; Wed, 11 Jul 2018 13:27:13 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTPS id 9F7AD52199C;
+        Wed, 11 Jul 2018 13:27:13 +0200 (CEST)
+Received: from localhost.localdomain (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Zimbra) with ESMTPSA id A448152115D;
+        Wed, 11 Jul 2018 13:27:11 +0200 (CEST)
+From:   Jernej Skrabec <jernej.skrabec@siol.net>
+To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
+Cc:     airlied@linux.ie, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: [PATCH v3] drm/sun4i: mixer: Read id from DT
+Date:   Wed, 11 Jul 2018 13:27:06 +0200
+Message-Id: <20180711112706.30222-1-jernej.skrabec@siol.net>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Currently, TCON supports 2 ways to match TCON with engine (mixer in this
+case). Old way is to just traverse of graph backwards and compare node
+pointer. New way is to match TCON and engine by their respective ids.
+All SoCs with DE2 enabled till now used the old way, which means mixer
+id was never used and thus never implemented.
 
-Variable l is being assigned but is never used hence it is redundant
-and can be removed.
+However, for R40, only the new way will be used. To prepare for that,
+implement mixer id fetching from DT.
 
-Cleans up clang warning:
-warning: variable 'l' set but not used [-Wunused-but-set-variable
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/staging/speakup/varhandlers.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+Hi all,
 
-diff --git a/drivers/staging/speakup/varhandlers.c b/drivers/staging/speakup/varhandlers.c
-index 54a76b6752ad..1b545152cc49 100644
---- a/drivers/staging/speakup/varhandlers.c
-+++ b/drivers/staging/speakup/varhandlers.c
-@@ -179,7 +179,6 @@ int spk_set_num_var(int input, struct st_var_header *var, int how)
+since all other patches were already applied, I'm sending this without
+cover letter. Change from previous version is that I added comment why
+there is no error handling when reading mixer id.
+
+ drivers/gpu/drm/sun4i/sun8i_mixer.c | 49 +++++++++++++++++++++++++++--
+ 1 file changed, 47 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+index aa81b9838ae8..da34fc394902 100644
+--- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
++++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+@@ -22,6 +22,7 @@
+ #include <linux/component.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/of_device.h>
++#include <linux/of_graph.h>
+ #include <linux/reset.h>
+ 
+ #include "sun4i_drv.h"
+@@ -322,6 +323,42 @@ static struct regmap_config sun8i_mixer_regmap_config = {
+ 	.max_register	= 0xbfffc, /* guessed */
+ };
+ 
++static int sun8i_mixer_of_get_id(struct device_node *node)
++{
++	struct device_node *port, *ep;
++	int ret = -EINVAL;
++
++	/* output is port 1 */
++	port = of_graph_get_port_by_id(node, 1);
++	if (!port)
++		return -EINVAL;
++
++	/* try to find downstream endpoint */
++	for_each_available_child_of_node(port, ep) {
++		struct device_node *remote;
++		u32 reg;
++
++		remote = of_graph_get_remote_endpoint(ep);
++		if (!remote)
++			continue;
++
++		ret = of_property_read_u32(remote, "reg", &reg);
++		if (!ret) {
++			of_node_put(remote);
++			of_node_put(ep);
++			of_node_put(port);
++
++			return reg;
++		}
++
++		of_node_put(remote);
++	}
++
++	of_node_put(port);
++
++	return ret;
++}
++
+ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+ 			      void *data)
  {
- 	int val;
- 	int *p_val = var->p_val;
--	int l;
- 	char buf[32];
- 	char *cp;
- 	struct var_t *var_data = var->data;
-@@ -237,9 +236,9 @@ int spk_set_num_var(int input, struct st_var_header *var, int how)
- 	else
- 		cp = buf;
- 	if (!var_data->u.n.out_str)
--		l = sprintf(cp, var_data->u.n.synth_fmt, (int)val);
-+		sprintf(cp, var_data->u.n.synth_fmt, (int)val);
- 	else
--		l = sprintf(cp,	var_data->u.n.synth_fmt, var_data->u.n.out_str[val]);
-+		sprintf(cp, var_data->u.n.synth_fmt, var_data->u.n.out_str[val]);
- 	synth_printf("%s", cp);
- 	return 0;
- }
+@@ -353,8 +390,16 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+ 	dev_set_drvdata(dev, mixer);
+ 	mixer->engine.ops = &sun8i_engine_ops;
+ 	mixer->engine.node = dev->of_node;
+-	/* The ID of the mixer currently doesn't matter */
+-	mixer->engine.id = -1;
++
++	/*
++	 * While this function can fail, we shouldn't do anything
++	 * if this happens. Some early DE2 DT entries don't provide
++	 * mixer id but work nevertheless because matching between
++	 * TCON and mixer is done by comparing node pointers (old
++	 * way) instead comparing ids. If this function fails and
++	 * id is needed, it will fail during id matching anyway.
++	 */
++	mixer->engine.id = sun8i_mixer_of_get_id(dev->of_node);
+ 
+ 	mixer->cfg = of_device_get_match_data(dev);
+ 	if (!mixer->cfg)
 -- 
-2.17.1
+2.18.0
 
