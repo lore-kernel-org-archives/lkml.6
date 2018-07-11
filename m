@@ -2,120 +2,105 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 727C4C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:41:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8573C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3926D20875
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:41:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3926D20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A10A20C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:41:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A10A20C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387452AbeGKPqJ (ORCPT
+        id S2389280AbeGKPqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 11:46:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:38958 "EHLO foss.arm.com"
+        Wed, 11 Jul 2018 11:46:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59794 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732452AbeGKPqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 11:46:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0D3287A9;
-        Wed, 11 Jul 2018 08:41:15 -0700 (PDT)
-Received: from e107155-lin (unknown [10.1.210.28])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 653213F5B1;
-        Wed, 11 Jul 2018 08:41:13 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 16:41:10 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] misc: vexpress: Fix potential NULL dereference in
- vexpress_syscfg_probe()
-Message-ID: <20180711154110.GB10578@e107155-lin>
-References: <1531315058-183762-1-git-send-email-weiyongjun1@huawei.com>
+        id S1732637AbeGKPqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 11:46:21 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D08320875;
+        Wed, 11 Jul 2018 15:41:26 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 11:41:24 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH v5 2/3] fbcon: Call WARN_CONSOLE_UNLOCKED() where
+ applicable
+Message-ID: <20180711114124.3eb23fca@gandalf.local.home>
+In-Reply-To: <892782ad-4b97-8eda-f5b0-3a893b3a5f84@redhat.com>
+References: <20180628090351.15581-1-hdegoede@redhat.com>
+        <20180628090351.15581-3-hdegoede@redhat.com>
+        <717e6337-e7a6-7a92-1c1b-8929a25696b5@suse.de>
+        <20180711105255.32803a3c@gandalf.local.home>
+        <7ec11c96-7dd5-ec12-548e-7c1fa9b883e8@suse.de>
+        <d528a539-255c-f019-eb6f-63f0585e0de3@redhat.com>
+        <CAKMK7uG-xiCKkxhujL=J6n9ozYfW+fsioGHEmYRxpszVX=5PDg@mail.gmail.com>
+        <892782ad-4b97-8eda-f5b0-3a893b3a5f84@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531315058-183762-1-git-send-email-weiyongjun1@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 01:17:38PM +0000, Wei Yongjun wrote:
-> platform_get_resource() may fail and return NULL, so we should
-> better check it's return value to avoid a NULL pointer dereference
-> a bit later in the code.
+On Wed, 11 Jul 2018 17:35:10 +0200
+Hans de Goede <hdegoede@redhat.com> wrote:
+
+> OK, so if we don't remove it, we should probably make it so that it
+> can be used without triggering any WARN_ONs, which would require changing
+> the existing WARN_CONSOLE_UNLOCKED() so that the calls from drivers/tty/vt/vt.c
+> also do not trigger it ?
 > 
-> This is detected by Coccinelle semantic patch.
-> 
-> @@
-> expression pdev, res, n, t, e, e1, e2;
-> @@
-> 
-> res = platform_get_resource(pdev, t, n);
-> + if (!res)
-> +   return -EINVAL;
-> ... when != res == NULL
-> e = devm_ioremap(e1, res->start, e2);
+> I guess one can just ignore the oopses when debugging, but debugging surely
+> would be easier if there are just no oopses ?
 
-Instead of adding unnecessary check here, I would go with replacing it
-with devm_ioremap_resource as it's designed to deal with that (patch inline)
+What about adding this patch (untested, not even compiled), and then
+set it from the fb module.
 
-Regards,
-Sudeep
+-- Steve
 
--->8
-From a6de466984e657dad24dcbe87e5dde2d21cb8d35 Mon Sep 17 00:00:00 2001
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Wed, 11 Jul 2018 16:17:39 +0100
-Subject: [PATCH] misc: vexpress/syscfg: Use devm_ioremap_resource() to map
- memory
-
-Instead of checking the return value of platform_get_resource(), we can
-use devm_ioremap_resource() which has the NULL pointer check and the
-memory region requesting. devm_ioremap_resource is designed to replace
-calls to devm_request_mem_region followed by devm_ioremap, so let's use
-the same.
-
-Cc: Liviu Dudau <liviu.dudau@arm.com>
-Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/misc/vexpress-syscfg.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/misc/vexpress-syscfg.c b/drivers/misc/vexpress-syscfg.c
-index 80a6f199077c..6c3591cdf855 100644
---- a/drivers/misc/vexpress-syscfg.c
-+++ b/drivers/misc/vexpress-syscfg.c
-@@ -258,13 +258,9 @@ static int vexpress_syscfg_probe(struct platform_device *pdev)
- 	INIT_LIST_HEAD(&syscfg->funcs);
+diff --git a/include/linux/console.h b/include/linux/console.h
+index dfd6b0e97855..11cd4956a57f 100644
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -200,8 +200,10 @@ void vcs_make_sysfs(int index);
+ void vcs_remove_sysfs(int index);
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (!devm_request_mem_region(&pdev->dev, res->start,
--			resource_size(res), pdev->name))
--		return -EBUSY;
--
--	syscfg->base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
--	if (!syscfg->base)
--		return -EFAULT;
-+	syscfg->base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(syscfg->base))
-+		return PTR_ERR(syscfg->base);
+ /* Some debug stub to catch some of the obvious races in the VT code */
++extern bool ignore_console_lock_warning;
+ #if 1
+-#define WARN_CONSOLE_UNLOCKED()	WARN_ON(!is_console_locked() && !oops_in_progress)
++#define WARN_CONSOLE_UNLOCKED()						\
++	WARN_ON(!ignore_console_lock_warning && !is_console_locked() && !oops_in_progress)
+ #else
+ #define WARN_CONSOLE_UNLOCKED()
+ #endif
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 247808333ba4..fa15d7ddf0c4 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -66,6 +66,9 @@ int console_printk[4] = {
+ 	CONSOLE_LOGLEVEL_DEFAULT,	/* default_console_loglevel */
+ };
  
- 	/* Must use dev.parent (MFD), as that's where DT phandle points at... */
- 	bridge = vexpress_config_bridge_register(pdev->dev.parent,
--- 
-2.7.4
-
++bool ignore_console_lock_warning;
++EXPORT_SYMBOL(ignore_console_lock_warning);
++
+ /*
+  * Low level drivers may need that to know if they can schedule in
+  * their unblank() callback or not. So let's export it.
