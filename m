@@ -2,93 +2,249 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFD8C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E31CC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ADE32146E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:38:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rlOF4E7w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ADE32146E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id B46A22146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:39:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B46A22146E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390473AbeGKVod (ORCPT
+        id S2390490AbeGKVph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 17:44:33 -0400
-Received: from ozlabs.org ([203.11.71.1]:40105 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732706AbeGKVod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 17:44:33 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Qsr351tzz9s01;
-        Thu, 12 Jul 2018 07:38:09 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531345092;
-        bh=K8xi2EQrH7eMy3cA8SOgV3HAhqoNj4bBIv5OxmQBsAc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rlOF4E7wiIUy6PM9itYap9TXrZfcRCmIBpwa4cGDrydLy4+oYujrF+tXeXqYwJUEq
-         6t+v9y4NH4oKMN8Ar/dVPl5BCq9m9ejjqDnzY3prf1iQKlBikaxtY5iwGQSDRjI05L
-         u44mVao3zNGkGYnr0bpp7bkXYQ7FXfLTVF7vyQyGl9xzqcVYSd6v1bppP6EupZcMM4
-         xYgn+594rODdtuYSc1xEYSfHbdCL4nPl1hLCOwn9lMcdotXRVzl5WFCriPVe8dWHpV
-         KSJBr1HCtCaNEF9VTLVpMOUJi2lWFHeBm7JBqlf7NSopsRmtXmwmzwvNo+fcwRfaaL
-         0Jl8y0Z6HYe4Q==
-Date:   Thu, 12 Jul 2018 07:38:03 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Russell King <rmk@armlinux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Subject: linux-next: Signed-off-by missing for commit in the arm-current
- tree
-Message-ID: <20180712073803.7bfbbf1a@canb.auug.org.au>
+        Wed, 11 Jul 2018 17:45:37 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57904 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732706AbeGKVpg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 17:45:36 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BLcRRj060311
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 17:39:16 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k5qy04nc7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 17:39:16 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Wed, 11 Jul 2018 22:39:14 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Jul 2018 22:39:12 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BLdB3134406402
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Jul 2018 21:39:11 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A533411C050;
+        Thu, 12 Jul 2018 00:39:32 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D13111C04C;
+        Thu, 12 Jul 2018 00:39:32 +0100 (BST)
+Received: from oc7330422307.ibm.com (unknown [9.145.4.7])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Jul 2018 00:39:32 +0100 (BST)
+Subject: Re: [PATCH v2] kvm/x86: Inform RCU of quiescent state when entering
+ guest mode
+To:     paulmck@linux.vnet.ibm.com
+Cc:     David Woodhouse <dwmw2@infradead.org>, peterz@infradead.org,
+        mhillenb@amazon.de, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <20180711174843.GX3593@linux.vnet.ibm.com>
+ <20180711180101.3711464-1-dwmw2@infradead.org>
+ <20180711182053.GA3593@linux.vnet.ibm.com>
+ <20180711183645.GA23820@linux.vnet.ibm.com>
+ <62e945ee-a58e-f9b3-279c-74cd0f5809da@de.ibm.com>
+ <20180711202752.GC3593@linux.vnet.ibm.com>
+ <2f7ba67e-0442-13cc-628c-2dca56520c21@de.ibm.com>
+ <20180711213259.GF3593@linux.vnet.ibm.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Wed, 11 Jul 2018 23:39:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/S18ASbJq5AhJJQY+gXEoyhf"; protocol="application/pgp-signature"
+In-Reply-To: <20180711213259.GF3593@linux.vnet.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18071121-0012-0000-0000-000002892C47
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071121-0013-0000-0000-000020BAD093
+Message-Id: <18288874-e778-4f7f-2fd5-f03624717e9c@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807110229
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/S18ASbJq5AhJJQY+gXEoyhf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Russell,
 
-Commit
+On 07/11/2018 11:32 PM, Paul E. McKenney wrote:
+> On Wed, Jul 11, 2018 at 11:11:19PM +0200, Christian Borntraeger wrote:
+>>
+>>
+>> On 07/11/2018 10:27 PM, Paul E. McKenney wrote:
+>>> On Wed, Jul 11, 2018 at 08:39:36PM +0200, Christian Borntraeger wrote:
+>>>>
+>>>>
+>>>> On 07/11/2018 08:36 PM, Paul E. McKenney wrote:
+>>>>> On Wed, Jul 11, 2018 at 11:20:53AM -0700, Paul E. McKenney wrote:
+>>>>>> On Wed, Jul 11, 2018 at 07:01:01PM +0100, David Woodhouse wrote:
+>>>>>>> From: David Woodhouse <dwmw@amazon.co.uk>
+>>>>>>>
+>>>>>>> RCU can spend long periods of time waiting for a CPU which is actually in
+>>>>>>> KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
+>>>>>>> modes, and don't wait for it.
+>>>>>>>
+>>>>>>> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+>>>>>>
+>>>>>> And idiot here forgot about some of the debugging code in RCU's dyntick-idle
+>>>>>> code.  I will reply with a fixed patch.
+>>>>>>
+>>>>>> The code below works just fine as long as you don't enable CONFIG_RCU_EQS_DEBUG,
+>>>>>> so should be OK for testing, just not for mainline.
+>>>>>
+>>>>> And here is the updated code that allegedly avoids splatting when run with
+>>>>> CONFIG_RCU_EQS_DEBUG.
+>>>>>
+>>>>> Thoughts?
+>>>>>
+>>>>> 							Thanx, Paul
+>>>>>
+>>>>> ------------------------------------------------------------------------
+>>>>>
+>>>>> commit 12cd59e49cf734f907f44b696e2c6e4b46a291c3
+>>>>> Author: David Woodhouse <dwmw@amazon.co.uk>
+>>>>> Date:   Wed Jul 11 19:01:01 2018 +0100
+>>>>>
+>>>>>     kvm/x86: Inform RCU of quiescent state when entering guest mode
+>>>>>     
+>>>>>     RCU can spend long periods of time waiting for a CPU which is actually in
+>>>>>     KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
+>>>>>     modes, and don't wait for it.
+>>>>>     
+>>>>>     Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+>>>>>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>>>>>     [ paulmck: Adjust to avoid bad advice I gave to dwmw, avoid WARN_ON()s. ]
+>>>>>
+>>>>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>>>>> index 0046aa70205a..b0c82f70afa7 100644
+>>>>> --- a/arch/x86/kvm/x86.c
+>>>>> +++ b/arch/x86/kvm/x86.c
+>>>>> @@ -7458,7 +7458,9 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>>>>>  		vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_RELOAD;
+>>>>>  	}
+>>>>>
+>>>>> +	rcu_kvm_enter();
+>>>>>  	kvm_x86_ops->run(vcpu);
+>>>>> +	rcu_kvm_exit();
+>>>>
+>>>> As indicated in my other mail. This is supposed to be handled in the guest_enter|exit_ calls around
+>>>> the run function. This would also handle other architectures. So if the guest_enter_irqoff code is
+>>>> not good enough, we should rather fix that instead of adding another rcu hint.
+>>>
+>>> Something like this, on top of the earlier patch?  I am not at all
+>>> confident of this patch because there might be other entry/exit
+>>> paths I am missing.  Plus there might be RCU uses on the arch-specific
+>>> patch to and from the guest OS.
+>>>
+>>> Thoughts?
+>>>
+>>
+>> If you instrment guest_enter/exit, you should cover all cases and all architectures as far
+>> as I can tell. FWIW, we did this rcu_note thing back then actually handling this particular
+>> case of long running guests blocking rcu for many seconds. And I am pretty sure that
+>> this did help back then.
+> 
+> And my second patch on the email you replied to replaced the only call
+> to rcu_virt_note_context_switch().  So maybe it covers what it needs to,
+> but yes, there might well be things I missed.  Let's see what David
+> comes up with.
+> 
+> What changed was RCU's reactions to longish grace periods.  It used to
+> be very aggressive about forcing the scheduler to do otherwise-unneeded
+> context switches, which became a problem somewhere between v4.9 and v4.15.
+> I therefore reduced the number of such context switches, which in turn
+> caused KVM to tell RCU about quiescent states way too infrequently.
 
-  6ef09e48c2bc ("ARM: 8780/1: ftrace: Only set kernel memory back to read-o=
-nly after boot")
+You talk about 
+commit bcbfdd01dce5556a952fae84ef16fd0f12525e7b
+    rcu: Make non-preemptive schedule be Tasks RCU quiescent state
 
-is missing a Signed-off-by from its author.
+correct? In fact, then whatever (properly sent) patch comes up should contain
+a fixes tag.
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/S18ASbJq5AhJJQY+gXEoyhf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+> 
+> The advantage of the rcu_kvm_enter()/rcu_kvm_exit() approach is that
+> it tells RCU of an extended duration in the guest, which means that
+> RCU can ignore the corresponding CPU, which in turn allows the guest
+> to proceed without any RCU-induced interruptions.
+> 
+> Does that make sense, or am I missing something?  I freely admit to
+> much ignorance of both kvm and s390!  ;-)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltGeLsACgkQAVBC80lX
-0Gwb0gf8C53qWdofWVadKuo/2cgMEfk/tnIB0yNrBRJiRBSSmQ5F2j19ShOE4jxo
-XwOnAzaRA/mD8eBS1p1HluuFalBogBW6KpdjwOcSxVNIBcugOefIfO94aLIC/R/t
-JfiKhZjqjJEu7DHINqN7gg+FSm0IwvGVP0Qsl/lA3E3JRWfewxARXYeKbG9sM4xB
-n9TujU4KHoF8gQshHEn8Xy/DhxOoQr6nS/roS35uNNvqO3E13FBKFwW1hkJVJ4Dh
-hFARUvHx372+A/RDIZdj3gWMyOLWbJ6VLnVvXotB6h4JgOmSaHmvwzUW6iSv8pvD
-gDxFudq4E1MTjsHvWm18CJiH9CXmHg==
-=+dcl
------END PGP SIGNATURE-----
+WIth that explanation it makes perfect sense to replace 
+rcu_virt_note_context_switch with rcu_kvm_enter/exit from an rcu performance
+perspective. I assume that rcu_kvm_enter is not much slower than 
+rcu_virt_note_context_switch? Because we do call it on every guest entry/exit
+which we might have plenty for ping pong I/O workload.
 
---Sig_/S18ASbJq5AhJJQY+gXEoyhf--
