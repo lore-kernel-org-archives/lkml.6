@@ -2,132 +2,100 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 113C8C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 487FBC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF9F82084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:17:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1E3020C51
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:18:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aR3aSXr4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF9F82084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2RtrHlIQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1E3020C51
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732963AbeGKMVy (ORCPT
+        id S1732993AbeGKMWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:21:54 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33958 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbeGKMVx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:21:53 -0400
-Received: by mail-pl0-f66.google.com with SMTP id z9-v6so9084326plo.1;
-        Wed, 11 Jul 2018 05:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iEBvq0TsFT1LQ7yunBbMG0OXuMIdPnqpimYgUOX4jsI=;
-        b=aR3aSXr4ENEYbu8yVfw7yLywRI+o9E05ev1NpnnHSQVmBY5vNw2dytXFA2iYvI/IkE
-         WebKBL/gCqsZ7OH6eU/Q7VgnUqBP+WN64GXYKCCLu3ms4zunB2CitBWn0tqjY5wc+Y36
-         6LoBNNgKQkx66VbvBkvFlvnVZH4dJifPOoIhR1R2xi5FmnEXmXWNuFLZJV2PgI//o7wr
-         srMUPh+tAdv4mmydg/Xqi+QBY0cfZwYDnGD7Z2MyGohNbc2+JePcofShECTthQSN9wY6
-         t2hjZ4DJROa5JDtTLroMxPUagzg2p5ieZZ8dwtTMbXGuQim3u9QZtCVSYODsjQbDY3KD
-         DqGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iEBvq0TsFT1LQ7yunBbMG0OXuMIdPnqpimYgUOX4jsI=;
-        b=NEDaYM3qcPj1xZWIH/QwhNTg2aJvPGUvotEhz6khcIeoU0d8UaARlb5yONMPTUtJWV
-         EyMmZkmUjclM2OpOXOAzJklNpwncQ66vjRY7oYLs59s15pLGlT5TibH24JTscc+2z49V
-         gFAgMefh526TJmxK16jXZ3ZkJr/PVT4s1gKOYpKzy5QwWPzyoM7tOyXKA/Ar7kRWFVMZ
-         xa1EwcFPoWFGx2CHDHh/1ujow1aHwlXn/jKSVnOu1gPLxce+XSZ3lXGI7pdxK5GupfSq
-         JhHKN+3kPTN08tvcB772CMy/9lM/hAynXCz78uTU3RUGzpE+T1HJoa8ATxuJcT0tR2BP
-         ja4Q==
-X-Gm-Message-State: APt69E0ytmBzD1tbU2sRtLkcV1WaPf+io33Qz920LA1wtOdkKtgqr0J+
-        PbN6vi26m+7k32U2dOeH6qJxGPPe
-X-Google-Smtp-Source: AAOMgpfeliZeSfZ5Xipsnj/px0Blwns9WB/FJt3q5mjlssxcZrC0vB4YmWtQFMyCJ1V8mn6q5fzhcA==
-X-Received: by 2002:a17:902:8b8c:: with SMTP id ay12-v6mr28449199plb.74.1531311469613;
-        Wed, 11 Jul 2018 05:17:49 -0700 (PDT)
-Received: from [10.1.10.12] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id r77-v6sm35674881pfr.117.2018.07.11.05.17.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 05:17:48 -0700 (PDT)
-Subject: Re: [PATCH] [RESEND, net-next, v2] tcp: use monotonic timestamps for
- PAWS
-To:     Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
-Cc:     Harsh Jain <harsh@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Atul Gupta <atul.gupta@chelsio.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Michael Werner <werner@chelsio.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <20180711101757.3929777-1-arnd@arndb.de>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <ff297506-d0eb-f242-b623-3b158dbabe0c@gmail.com>
-Date:   Wed, 11 Jul 2018 05:17:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Wed, 11 Jul 2018 08:22:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726587AbeGKMWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:22:30 -0400
+Received: from localhost (unknown [106.200.243.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFEDD2084A;
+        Wed, 11 Jul 2018 12:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531311506;
+        bh=FDUAlOIMOa2dsSB42iRjaXYLF9vMgJtEJfqna1/YIA4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2RtrHlIQvTWeHfqczJ1ZPjrfRJCoMtbNcmexRo3kkJ9zTiQXP/Scfz02XYhSrbxZt
+         dKThm4pMadj8GEeZL3RWxKa+mEwF4ydaIDu4BfECzClbCsOKV5krFdx+JTPNFDmkOY
+         RFBC0fd9nnoxi+BypFI41ZhQ14t4GRzQ340VL8V0=
+Date:   Wed, 11 Jul 2018 17:48:18 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH 06/14] dmaengine: dma-jz4780: Add support for the JZ4725B
+ SoC
+Message-ID: <20180711121818.GT3219@vkoul-mobl>
+References: <20180703123214.23090-1-paul@crapouillou.net>
+ <20180703123214.23090-7-paul@crapouillou.net>
+ <20180709171458.GL22377@vkoul-mobl>
+ <1531237502.17118.3@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <20180711101757.3929777-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531237502.17118.3@crapouillou.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/11/2018 03:16 AM, Arnd Bergmann wrote:
-> Using get_seconds() for timestamps is deprecated since it can lead
-> to overflows on 32-bit systems. While the interface generally doesn't
-> overflow until year 2106, the specific implementation of the TCP PAWS
-> algorithm breaks in 2038 when the intermediate signed 32-bit timestamps
-> overflow.
+On 10-07-18, 17:45, Paul Cercueil wrote:
 > 
-> A related problem is that the local timestamps in CLOCK_REALTIME form
-> lead to unexpected behavior when settimeofday is called to set the system
-> clock backwards or forwards by more than 24 days.
 > 
-> While the first problem could be solved by using an overflow-safe method
-> of comparing the timestamps, a nicer solution is to use a monotonic
-> clocksource with ktime_get_seconds() that simply doesn't overflow (at
-> least not until 136 years after boot) and that doesn't change during
-> settimeofday().
+> Le lun. 9 juil. 2018 à 19:14, Vinod <vkoul@kernel.org> a écrit :
+> > On 03-07-18, 14:32, Paul Cercueil wrote:
+> > >  The JZ4725B has one DMA core starring six DMA channels.
+> > >  As for the JZ4770, each DMA channel's clock can be enabled with
+> > >  a register write, the difference here being that once started, it
+> > >  is not possible to turn it off.
+> > 
+> > ok so disable for this, right..
+> > 
+> > >  @@ -204,6 +205,8 @@ static inline void
+> > > jz4780_dma_chan_enable(struct jz4780_dma_dev *jzdma,
+> > >   {
+> > >   	if (jzdma->version == ID_JZ4770)
+> > >   		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKES, BIT(chn));
+> > >  +	else if (jzdma->version == ID_JZ4725B)
+> > >  +		jz4780_dma_ctrl_writel(jzdma, JZ_DMA_REG_DCKE, BIT(chn));
+> > 
+> > but you are writing to a different register here..
 > 
-> To make 32-bit and 64-bit architectures behave the same way here, and
-> also save a few bytes in the tcp_options_received structure, I'm changing
-> the type to a 32-bit integer, which is now safe on all architectures.
+> Yes. SoCs >= JZ4770 have the DCKE read-only register, and DCKES/DCKEC to
+> set/clear bits in DCKE.
+> On JZ4725B, DCKE is read/write, but the zeros written are ignored (at least
+> that's what the
+> documentation says).
 
-Nit: This is only manipulated under socket lock protection, so it is safe even on 
-32bit kernels.
+and that was not documented in the log... so i though it maybe a typo.
 
-> 
-> Finally, the ts_recent_stamp field also (confusingly) gets used to store
-> a jiffies value in tcp_synq_overflow()/tcp_synq_no_recent_overflow().
-> This is currently safe, but changing the type to 32-bit requires
-> some small changes there to keep it working.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: use time_before32()/time_after32() everywhere as suggested
->     Eric Dumazet in https://lore.kernel.org/lkml/67ebb94d-c73f-6c9f-493b-00c86f595120@gmail.com/
-
-SGTM, thanks Arnd
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-
+-- 
+~Vinod
