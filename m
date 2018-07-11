@@ -2,107 +2,100 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4157DC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:28:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C150C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D970220C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:28:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTBE7TeC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D970220C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1F79420C0E
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:31:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F79420C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390168AbeGKReL (ORCPT
+        id S1733012AbeGKRhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 13:34:11 -0400
-Received: from mail-yb0-f196.google.com ([209.85.213.196]:41782 "EHLO
-        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeGKReL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 13:34:11 -0400
-Received: by mail-yb0-f196.google.com with SMTP id s8-v6so10324707ybe.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 10:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sSali/o/AcG5to4gY3V1TuvA/3y1XMLyE6wn98yA4pI=;
-        b=iTBE7TeC/viOlWHHhvW9lyeqDH11zdfC+eOdBbUhooLrJCjiTJN4/6s5m+pEHHq5YH
-         7L7/zCrqFSDHG7o9iW2zwcFi0ujE6+wSGnO/W5FYVht8F1GzeOLkHsJW4D9JGNRQ6oMs
-         NASaBhMUWr6s4L8zmQ7RgNL+0Jdt8srKve4zvKozl2bF2pwC1UEKZBHSS1xGRuA8PEiH
-         SBAeiKz8LQOS7rLj5EDF66OBDgEx0FVKSmNMhcfXVu2OkAq7VOSInS3YN1cwm1A1O/17
-         Dn6achesqdJPitKxdJU84KhIGfrz+muHcNd2+YFhfVsp7cX6QUYBx8tqNM9vJpgmCZiA
-         d0Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sSali/o/AcG5to4gY3V1TuvA/3y1XMLyE6wn98yA4pI=;
-        b=TXhgZGAkbmd3q1slklSPo4KqCQVENHtfuyRoxOxNDisPD2uYTFoOg1bCqQsIeFkxtg
-         4BJ7T2QWhTZkWg2870j6lx335VwZfet4yNPILiIo8vOuw8xeuQsIfxR3klETNMlcU3J5
-         QDJY21Di4O05xwlgQWXzR4VjwGBQY0mAbrWcs1lUTvIxFgYxVAn/uHX/x9+/WphdhQcB
-         lHdkqLNag5i1H5P/wNlgbNPzcvG/dCDRHkfbJTdVgqoZdl7oRwjqnlVzv/W07MehVqcC
-         aYb7wMofJzOkc2bk6o9EJKij+yWvF7VZtiC3pSMakPEicOomre5dFSLSYR+6w+qNEBR/
-         mJxA==
-X-Gm-Message-State: APt69E0Ds7UVSPJ1UQVQAoBoU8tGXIOW5gYlzOdnof39BTUY8NfskGyB
-        nnnyR6GGiGNB1FSlzkI/Q3I=
-X-Google-Smtp-Source: AAOMgpe4rNCkCNf/QJBag6q75HbC07gE9RtraTX+xOI5aIGnh2ovE+BuGUuUIpe28k25mkeeQMOTvA==
-X-Received: by 2002:a25:23d3:: with SMTP id j202-v6mr16435026ybj.350.1531330130891;
-        Wed, 11 Jul 2018 10:28:50 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:7350])
-        by smtp.gmail.com with ESMTPSA id h145-v6sm4663026ywc.3.2018.07.11.10.28.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 10:28:50 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 10:28:48 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Wed, 11 Jul 2018 13:37:17 -0400
+Received: from mga03.intel.com ([134.134.136.65]:20438 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732677AbeGKRhR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 13:37:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 10:31:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="74003160"
+Received: from 2b52.sc.intel.com ([143.183.136.52])
+  by orsmga002.jf.intel.com with ESMTP; 11 Jul 2018 10:31:53 -0700
+Message-ID: <1531330096.15351.10.camel@intel.com>
+Subject: Re: [RFC PATCH v2 12/27] x86/mm: Shadow stack page fault error
+ checking
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Subject: Re: [PATCH] cgroup: use irqsave in cgroup_rstat_flush_locked()
-Message-ID: <20180711172848.GF72677@devbig577.frc2.facebook.com>
-References: <20180703164544.25268-1-bigeasy@linutronix.de>
- <20180703202424.GB72677@devbig577.frc2.facebook.com>
- <20180703213539.i3mozfuhi7j7xefm@linutronix.de>
- <20180711110513.7gqhlf6odqoxnext@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711110513.7gqhlf6odqoxnext@linutronix.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Wed, 11 Jul 2018 10:28:16 -0700
+In-Reply-To: <61793360-f37c-ec19-c390-abe3c76a5f5c@linux.intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+         <20180710222639.8241-13-yu-cheng.yu@intel.com>
+         <61793360-f37c-ec19-c390-abe3c76a5f5c@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Sebastian.
-
-On Wed, Jul 11, 2018 at 01:05:13PM +0200, Sebastian Andrzej Siewior wrote:
-> > > We at least used to do this in the kernel - manipulating irqsafe locks
-> > > with spin_lock/unlock() if the irq state is known, whether enabled or
-> > > disabled, and ISTR lockdep being smart enough to track actual irq
-> > > state to determine irq safety.  Am I misremembering or is this
-> > > different on RT kernels?
+On Tue, 2018-07-10 at 15:52 -0700, Dave Hansen wrote:
+> On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
 > > 
-> > No, this is correct. So on !RT kernels the spin_lock_irq() disables
-> > interrupts and the raw_spin_lock() has the interrupts already disabled,
-> > everything is good. On RT kernels the spin_lock_irq() does not disable
-> > interrupts and the raw_spin_lock() acquires the lock with enabled
-> > interrupts and lockdep complains properly.
-> > lockdep sees the hardirq path via:
+> > +++ b/arch/x86/include/asm/traps.h
+> > @@ -157,6 +157,7 @@ enum {
+> >   *   bit 3 ==				1: use of reserved
+> > bit detected
+> >   *   bit 4 ==				1: fault was an
+> > instruction fetch
+> >   *   bit 5 ==				1: protection keys
+> > block access
+> > + *   bit 6 ==				1: shadow stack
+> > access fault
+> >   */
+> Could we document this bit better?
+> 
+> Is this a fault where the *processor* thought it should be a shadow
+> stack fault?  Or is it also set on faults to valid shadow stack PTEs
+> that just happen to fault for other reasons, say protection keys?
 
-I feel weary about applying a patch which isn't needed in mainline,
-especially without annotations or at least comments.  I suppose it may
-not be too common but this can't be the only place which needs this
-and using irqsave/restore spuriously in all those sites doesn't sound
-like a good solution.  Is there any other way of handling this?
+Thanks Vedvyas for explaining this to me.
+I will add this to comments:
 
-Thanks.
+This flag is 1 if (1) CR4.CET = 1; and (2) the access causing the page-
+fault exception was a shadow-stack data access.
 
--- 
-tejun
+So this bit does not report the reason for the fault. It reports the
+type of access; i.e. it was a shadow-stack-load or a shadow-stack-store 
+that took the page fault. The fault could have been caused by any
+variety of reasons including protection keys.
+
