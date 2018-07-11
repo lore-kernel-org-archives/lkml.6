@@ -2,104 +2,118 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FF8C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B41C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C6A20C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:11:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C6A20C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 16A9F20C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:12:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16A9F20C0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389618AbeGKQQd (ORCPT
+        id S2387597AbeGKQRM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:16:33 -0400
-Received: from mga06.intel.com ([134.134.136.31]:45856 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeGKQQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:16:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 09:11:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
-   d="scan'208";a="66141725"
-Received: from 2b52.sc.intel.com ([143.183.136.52])
-  by orsmga003.jf.intel.com with ESMTP; 11 Jul 2018 09:11:29 -0700
-Message-ID: <1531325272.13297.27.camel@intel.com>
-Subject: Re: [RFC PATCH v2 15/27] mm/mprotect: Prevent mprotect from
- changing shadow stack
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Date:   Wed, 11 Jul 2018 09:07:52 -0700
-In-Reply-To: <20180711091232.GU2476@hirez.programming.kicks-ass.net>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
-         <20180710222639.8241-16-yu-cheng.yu@intel.com>
-         <04800c52-1f86-c485-ba7c-2216d8c4966f@linux.intel.com>
-         <20180711091232.GU2476@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 11 Jul 2018 12:17:12 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:46256 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeGKQRL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:17:11 -0400
+Received: by mail-oi0-f68.google.com with SMTP id y207-v6so50245569oie.13;
+        Wed, 11 Jul 2018 09:12:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sFmqhv4JezXb19lxbI7UxOzIBdY3+24cmbvqJ6IvEa0=;
+        b=WeFgS0F+NZhnKwmlDyDrLplTODUNVzwqK02HUxIwEu7ijEzFcHNuiAMnymo1lQReqs
+         iGefgCSTXsDKWIt4yhwnZ6p6s9BnVqQEqvNZ4D+rwWLPm3N+rmRvYJpxdCkIef4tqhAr
+         jXwKkC/qJvMd5vjQgeFQofx2a5eIWIy0uPZFWNJWNu1hh1yULBOnc2WEEL67EIbWp8cP
+         281dPKOtjExaXi8oEIck9+cUSzeKu8DGAJVuMjzKrZXD1LyERAcNtudXOGbw10tnnLfk
+         U/WXO4HK99vGQXATVgs0+wmWEMSXAGrDnreRcm9vp1x4hxyaQTsKwE8TRvlcYDcAjgH6
+         z9jA==
+X-Gm-Message-State: APt69E1N5uOaXLIY/6Iv/AXlK+EUS/YYpwqxYSK1X+Cf0UscsHmUeV4C
+        pvvf3T9QF/+IQg3ZrADDFA==
+X-Google-Smtp-Source: AAOMgpcy+3TAvqoO6J1Uv1o2MAQX/X1MlTwE7yS0cNcBcxIO/5cTdAomtRLsQ1QTeFaeP7MxFCo3cQ==
+X-Received: by 2002:aca:cd41:: with SMTP id d62-v6mr29983145oig.207.1531325529102;
+        Wed, 11 Jul 2018 09:12:09 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id y85-v6sm11281773oie.25.2018.07.11.09.12.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 09:12:07 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 10:12:06 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Manjunath M B <Manjunath.MB@synopsys.com>,
+        Prabu Thangamuthu <Prabu.T@synopsys.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] dt: bindings: Add bindings for SDHCI Synopsys DWC
+ MSHC
+Message-ID: <20180711161206.GA1558@rob-hp-laptop>
+References: <20180706151930.78b3024b@xhacker.debian>
+ <20180706152047.0b0a4944@xhacker.debian>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180706152047.0b0a4944@xhacker.debian>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-11 at 11:12 +0200, Peter Zijlstra wrote:
-> On Tue, Jul 10, 2018 at 04:10:08PM -0700, Dave Hansen wrote:
-> > 
-> > On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
-> > > 
-> > > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > This still needs a changelog, even if you think it's simple.
-> > > 
-> > > --- a/mm/mprotect.c
-> > > +++ b/mm/mprotect.c
-> > > @@ -446,6 +446,15 @@ static int do_mprotect_pkey(unsigned long
-> > > start, size_t len,
-> > >  	error = -ENOMEM;
-> > >  	if (!vma)
-> > >  		goto out;
-> > > +
-> > > +	/*
-> > > +	 * Do not allow changing shadow stack memory.
-> > > +	 */
-> > > +	if (vma->vm_flags & VM_SHSTK) {
-> > > +		error = -EINVAL;
-> > > +		goto out;
-> > > +	}
-> > > +
-> > I think this is a _bit_ draconian.  Why shouldn't we be able to use
-> > protection keys with a shadow stack?  Or, set it to PROT_NONE?
-> Right, and then there's also madvise() and some of the other
-> accessors.
+On Fri, Jul 06, 2018 at 03:20:47PM +0800, Jisheng Zhang wrote:
+> Synopsys SDHCI compatible DesignWare Cores Mobile Storage Host
+> Controller can support eMMC/SD/SDIO. Add the bindings.
 > 
-> Why do we need to disallow this? AFAICT the worst that can happen is
-> that a process wrecks itself, so what?
+> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> ---
+>  .../bindings/mmc/sdhci-of-dwcmshc.txt         | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt b/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
+> new file mode 100644
+> index 000000000000..ee4253b33be2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/sdhci-of-dwcmshc.txt
+> @@ -0,0 +1,20 @@
+> +* Synopsys DesignWare Cores Mobile Storage Host Controller
+> +
+> +Required properties:
+> +- compatible: should be one of the following:
+> +    "snps,dwcmshc-sdhci"
 
-Agree.  I will remove the patch.
+Needs to note that there must also be an SoC specific compatible.
+
+> +- reg: offset and length of the register set for the device.
+> +- interrupts: a single interrupt specifier.
+> +- clocks: Array of clocks required for SDHCI; requires at least one for
+> +    core clock.
+> +- clock-names: Array of names corresponding to clocks property; shall be
+> +    "core" for core clock and "bus" for optional bus clock.
+> +
+> +Example:
+> +	sdhci2: sdhci@aa0000 {
+> +		compatible = "snps,dwcmshc-sdhci";
+> +		reg = <0xaa0000 0x1000>;
+> +		interrupts = <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&emmcclk>;
+> +		bus-width = <8>;
+> +	}
+> -- 
+> 2.18.0
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
