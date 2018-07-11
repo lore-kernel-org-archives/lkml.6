@@ -2,129 +2,130 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C96C7C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D3B4C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86888208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:56:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86888208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C41B8208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:56:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="lKmnqqec"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41B8208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388299AbeGKOA3 convert rfc822-to-8bit (ORCPT
+        id S2388320AbeGKOAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:00:29 -0400
-Received: from mga09.intel.com ([134.134.136.24]:41672 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387708AbeGKOA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:00:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 06:56:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
-   d="scan'208";a="215154780"
-Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
-  by orsmga004.jf.intel.com with ESMTP; 11 Jul 2018 06:55:18 -0700
-Received: from shsmsx152.ccr.corp.intel.com (10.239.6.52) by
- FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 11 Jul 2018 06:55:17 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.57]) by
- SHSMSX152.ccr.corp.intel.com ([169.254.6.173]) with mapi id 14.03.0319.002;
- Wed, 11 Jul 2018 21:55:15 +0800
-From:   "Wang, Wei W" <wei.w.wang@intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        virtualization <virtualization@lists.linux-foundation.org>,
-        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        Rik van Riel <riel@redhat.com>,
-        "peterx@redhat.com" <peterx@redhat.com>
-Subject: RE: [PATCH v35 1/5] mm: support to get hints of free page blocks
-Thread-Topic: [PATCH v35 1/5] mm: support to get hints of free page blocks
-Thread-Index: AQHUGDRRNGdK3F5na0yhzVOAicw6EaSIMZwAgAELAwD//35MAIAAf8QAgACfgYD//36ogIAApDlw
-Date:   Wed, 11 Jul 2018 13:55:15 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F7396EEFD8@SHSMSX101.ccr.corp.intel.com>
-References: <1531215067-35472-1-git-send-email-wei.w.wang@intel.com>
- <1531215067-35472-2-git-send-email-wei.w.wang@intel.com>
- <CA+55aFz9a=D-kquM=sG5uhV_HrBAw+VAhcJmtPNz+howy4j9ow@mail.gmail.com>
- <5B455D50.90902@intel.com>
- <CA+55aFzqj8wxXnHAdUTiOomipgFONVbqKMjL_tfk7e5ar1FziQ@mail.gmail.com>
- <20180711092152.GE20050@dhcp22.suse.cz> <5B45E17D.2090205@intel.com>
- <20180711110949.GJ20050@dhcp22.suse.cz>
-In-Reply-To: <20180711110949.GJ20050@dhcp22.suse.cz>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDQ1YzUyZmQtMTIzYy00N2IyLTlhYzUtM2VlZjJkNWZjMWE2IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicytjMm5ZZ1BjRmc2b1k2MUtveHhYNURMc3J6QjhqRjM5SXAxT2Vnc3N3U3hNRVNLYkNJWlhMMG1MMlVGNWRuTSJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.200.100
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 11 Jul 2018 10:00:31 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:53948 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387708AbeGKOAa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:00:30 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6BDrnVb130780;
+        Wed, 11 Jul 2018 13:56:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=K7Ipe/zCpuDyneBa1oOY3POXWGgBowTI6HGp12byqNQ=;
+ b=lKmnqqecFdh1cv6o4+xUbb6f8yePKi50761vB5EywoVGydWQOojFpv71BIqjDJxRfVeC
+ 4MnagtVAGdDvoBgHDb2Kge0MNTKQGhhQTWEPnRDo1K6DjBivtHNsxOhWmAYUMaR462BT
+ yxSFOAmP+IJ2575QgYtZA1zrTfZE0d03K7nIO1g2dKOryVsVJrlsZ3WQYEEUnnKxh/D+
+ IjAdxevPzaWnw/dXyVeWalu7ZkEqBPjWOF2kEdsG/Vpc1Hevh7w1EelL1dZPMs4BUTIR
+ 8aHGH1IyokZ32Z/5mAxvlx5KK+MVyAyv1nYVOqqXOqUDOHW+QK2BhSR3VzaHShD9ES/m 4g== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2k2p7dxa34-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Jul 2018 13:56:01 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6BDu0nP003916
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Jul 2018 13:56:00 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6BDtxOl000471;
+        Wed, 11 Jul 2018 13:55:59 GMT
+Received: from mail-oi0-f53.google.com (/209.85.218.53)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Jul 2018 06:55:59 -0700
+Received: by mail-oi0-f53.google.com with SMTP id s198-v6so49372713oih.11;
+        Wed, 11 Jul 2018 06:55:59 -0700 (PDT)
+X-Gm-Message-State: APt69E2cn2zcUnlq7dkEez9aT7Vb9Ogv/GajWH7UhUZjGuaUOkg+1eqn
+        jp+527wrbLdYIlPjrAcCCmjP2CZ25U8oDzmzK2E=
+X-Google-Smtp-Source: AAOMgpdqEu1rBscDLOI3GNBghnsmaZCZbitAh4U5NEa+OZxneoadA8cl1mmK/qe+AXnzDWTjaWu2GQk8yRQHFLMruTk=
+X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr34302786oia.229.1531317359180;
+ Wed, 11 Jul 2018 06:55:59 -0700 (PDT)
 MIME-Version: 1.0
+References: <20180710235044.vjlRV%akpm@linux-foundation.org>
+ <87lgai9bt5.fsf@concordia.ellerman.id.au> <20180711133737.GA29573@techadventures.net>
+In-Reply-To: <20180711133737.GA29573@techadventures.net>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Wed, 11 Jul 2018 09:55:59 -0400
+X-Gmail-Original-Message-ID: <CAGM2reYsSi5kDGtnTQASnp1v49T8Y+9o_pNxmSq-+m68QhF2Tg@mail.gmail.com>
+Message-ID: <CAGM2reYsSi5kDGtnTQASnp1v49T8Y+9o_pNxmSq-+m68QhF2Tg@mail.gmail.com>
+Subject: Re: Boot failures with "mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER"
+ on powerpc (was Re: mmotm 2018-07-10-16-50 uploaded)
+To:     osalvador@techadventures.net
+Cc:     mpe@ellerman.id.au, Andrew Morton <akpm@linux-foundation.org>,
+        broonie@kernel.org, mhocko@suse.cz,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, mm-commits@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, bhe@redhat.com,
+        aneesh.kumar@linux.ibm.com, khandual@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8950 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807110150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, July 11, 2018 7:10 PM, Michal Hocko wrote:
-> On Wed 11-07-18 18:52:45, Wei Wang wrote:
-> > On 07/11/2018 05:21 PM, Michal Hocko wrote:
-> > > On Tue 10-07-18 18:44:34, Linus Torvalds wrote:
-> > > [...]
-> > > > That was what I tried to encourage with actually removing the
-> > > > pages form the page list. That would be an _incremental_
-> > > > interface. You can remove MAX_ORDER-1 pages one by one (or a
-> > > > hundred at a time), and mark them free for ballooning that way.
-> > > > And if you still feel you have tons of free memory, just continue
-> removing more pages from the free list.
-> > > We already have an interface for that. alloc_pages(GFP_NOWAIT,
-> MAX_ORDER -1).
-> > > So why do we need any array based interface?
+I am OK, if this patch is removed from Baoquan's series. But, I would
+still like to get rid of CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER, I
+can work on this in my sparse_init re-write series. ppc64 should
+really fallback safely to small chunks allocs, and if it does not
+there is some existing bug. Michael please send the config that you
+used.
+
+Thank you,
+Pavel
+On Wed, Jul 11, 2018 at 9:37 AM Oscar Salvador
+<osalvador@techadventures.net> wrote:
+>
+> On Wed, Jul 11, 2018 at 10:49:58PM +1000, Michael Ellerman wrote:
+> > akpm@linux-foundation.org writes:
+> > > The mm-of-the-moment snapshot 2018-07-10-16-50 has been uploaded to
+> > >
+> > >    http://www.ozlabs.org/~akpm/mmotm/
+> > ...
 > >
-> > Yes, I'm trying to get free pages directly via alloc_pages, so there
-> > will be no new mm APIs.
-> 
-> OK. The above was just a rough example. In fact you would need a more
-> complex gfp mask. I assume you only want to balloon only memory directly
-> usable by the kernel so it will be
-> 	(GFP_KERNEL | __GFP_NOWARN) & ~__GFP_RECLAIM
-
-Sounds good to me, thanks.
-
-> 
-> > I plan to let free page allocation stop when the remaining system free
-> > memory becomes close to min_free_kbytes (prevent swapping).
-> 
-> ~__GFP_RECLAIM will make sure you are allocate as long as there is any
-> memory without reclaim. It will not even poke the kswapd to do the
-> background work. So I do not think you would need much more than that.
-
-"close to min_free_kbytes" - I meant when doing the allocations, we intentionally reserve some small amount of memory, e.g. 2 free page blocks of "MAX_ORDER - 1". So when other applications happen to do some allocation, they may easily get some from the reserved memory left on the free list. Without that reserved memory, other allocation may cause the system free memory below the WMARK[MIN], and kswapd would start to do swapping. This is actually just a small optimization to reduce the probability of causing swapping (nice to have, but not mandatary because we will allocate free page blocks one by one).
-
- > But let me note that I am not really convinced how this (or previous)
-> approach will really work in most workloads. We tend to cache heavily so
-> there is rarely any memory free.
-
-With less free memory, the improvement becomes less, but should be nicer than no optimization. For example, the Linux build workload would cause 4~5 GB (out of 8GB) memory to be used as page cache at the final stage, there is still ~44% live migration time reduction.
-
-Since we have many cloud customers interested in this feature, I think we can let them test the usefulness.
-
-Best,
-Wei
+> > > * mm-sparse-add-a-static-variable-nr_present_sections.patch
+> > > * mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+> > > * mm-sparsemem-defer-the-ms-section_mem_map-clearing-fix.patch
+> > > * mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+> > > * mm-sparse-optimize-memmap-allocation-during-sparse_init.patch
+> > > * mm-sparse-optimize-memmap-allocation-during-sparse_init-checkpatch-fixes.patch
+> >
+> > > * mm-sparse-remove-config_sparsemem_alloc_mem_map_together.patch
+> >
+> > This seems to be breaking my powerpc pseries qemu boots.
+> >
+> > The boot log with some extra debug shows eg:
+> >
+> >   $ make pseries_le_defconfig
+>
+> Could you please share the config?
+> I was not able to find such config in the kernel tree.
+> --
+> Oscar Salvador
+> SUSE L3
+>
