@@ -2,167 +2,82 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56290C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E916CC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B16320C0D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B16320C0D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A05A120C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:10:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05A120C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389597AbeGKQOo (ORCPT
+        id S2389611AbeGKQPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:14:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55982 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732433AbeGKQOo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:14:44 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BG8l0U175684
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:09:42 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k5mcwj7e3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:09:42 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 11 Jul 2018 12:09:41 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 11 Jul 2018 12:09:37 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BG9bb27209414
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 11 Jul 2018 16:09:37 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E5B97B2064;
-        Wed, 11 Jul 2018 12:09:35 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B44EBB205F;
-        Wed, 11 Jul 2018 12:09:35 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 11 Jul 2018 12:09:35 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 7443E16C3B68; Wed, 11 Jul 2018 09:11:55 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 09:11:55 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-doc@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] doc: Replace smp_cond_acquire() with
- smp_cond_load_acquire()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1531216943-6382-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1531314530-11624-1-git-send-email-andrea.parri@amarulasolutions.com>
- <20180711153840.GS3593@linux.vnet.ibm.com>
- <20180711154830.GA14348@andrea>
+        Wed, 11 Jul 2018 12:15:55 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39542 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387728AbeGKQPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:15:55 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8483B7A9;
+        Wed, 11 Jul 2018 09:10:53 -0700 (PDT)
+Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2879B3F589;
+        Wed, 11 Jul 2018 09:10:53 -0700 (PDT)
+From:   Punit Agrawal <punit.agrawal@arm.com>
+To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
+        linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 2/7] KVM: arm/arm64: Introduce helpers to manupulate page table entries
+References: <20180709143835.28971-1-punit.agrawal@arm.com>
+        <20180709144124.29164-1-punit.agrawal@arm.com>
+        <20180709144124.29164-2-punit.agrawal@arm.com>
+        <691fcde0-b0a2-d258-ac99-49c6c4794247@arm.com>
+Date:   Wed, 11 Jul 2018 17:10:51 +0100
+In-Reply-To: <691fcde0-b0a2-d258-ac99-49c6c4794247@arm.com> (Suzuki
+        K. Poulose's message of "Wed, 11 Jul 2018 14:00:48 +0100")
+Message-ID: <87va9loir8.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711154830.GA14348@andrea>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18071116-0040-0000-0000-0000044D3547
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009351; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01059848; UDB=6.00543977; IPR=6.00837769;
- MB=3.00022105; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 16:09:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071116-0041-0000-0000-000008535AAB
-Message-Id: <20180711161155.GU3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=700 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807110172
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 05:53:55PM +0200, Andrea Parri wrote:
-> On Wed, Jul 11, 2018 at 08:38:40AM -0700, Paul E. McKenney wrote:
-> > On Wed, Jul 11, 2018 at 03:08:50PM +0200, Andrea Parri wrote:
-> > > Amend commit 1f03e8d2919270 ("locking/barriers: Replace smp_cond_acquire()
-> > > with smp_cond_load_acquire()") by updating the documentation accordingly.
-> > > Also remove some obsolete information related to the implementation.
-> > > 
-> > > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> > > Cc: Alan Stern <stern@rowland.harvard.edu>
-> > > Cc: Will Deacon <will.deacon@arm.com>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Boqun Feng <boqun.feng@gmail.com>
-> > > Cc: Nicholas Piggin <npiggin@gmail.com>
-> > > Cc: David Howells <dhowells@redhat.com>
-> > > Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> > > Cc: Luc Maranget <luc.maranget@inria.fr>
-> > > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> > > Cc: Akira Yokosawa <akiyks@gmail.com>
-> > > Cc: Daniel Lustig <dlustig@nvidia.com>
-> > > Cc: Jonathan Corbet <corbet@lwn.net>
-> > > ---
-> > >  Documentation/memory-barriers.txt | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > I have queued this for further review, thank you!  Just to confirm,
-> > the reason that the old passage was obsolete is because ARMv8 implements
-> > smp_cond_load_acquire() as a straight acquire load, correct?
-> 
-> Thanks.  Yes; the generic code builds on a control dependency and an
-> smp_acquire__after_ctrl_dep() (which defaults to smp_rmb()); but the
-> required ordering on arm64 is given by (its) smp_load_acquire().
-> 
-> I thought that entering this level of details (and keeping it up-to-
-> date ;) wasn't really worth/needed for this high-level doc.
+Suzuki K Poulose <Suzuki.Poulose@arm.com> writes:
 
-Agreed!
+> On 09/07/18 15:41, Punit Agrawal wrote:
+>> Introduce helpers to abstract architectural handling of the conversion
+>> of pfn to page table entries and marking a PMD page table entry as a
+>> block entry.
+>>
+>> The helpers are introduced in preparation for supporting PUD hugepages
+>> at stage 2 - which are supported on arm64 but do not exist on arm.
+>>
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+>> Cc: Marc Zyngier <marc.zyngier@arm.com>
+>> Cc: Russell King <linux@armlinux.org.uk>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will.deacon@arm.com>
+>> ---
+>
+> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-							Thanx, Paul
+Other than the query on Patch 7 I've incorporated all your suggestions
+locally.
 
->   Andrea
-> 
-> 
-> > 
-> > 							Thanx, Paul
-> > 
-> > > diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-> > > index 0d8d7ef131e9a..c1d913944ad8b 100644
-> > > --- a/Documentation/memory-barriers.txt
-> > > +++ b/Documentation/memory-barriers.txt
-> > > @@ -471,8 +471,7 @@ And a couple of implicit varieties:
-> > >       operations after the ACQUIRE operation will appear to happen after the
-> > >       ACQUIRE operation with respect to the other components of the system.
-> > >       ACQUIRE operations include LOCK operations and both smp_load_acquire()
-> > > -     and smp_cond_acquire() operations. The later builds the necessary ACQUIRE
-> > > -     semantics from relying on a control dependency and smp_rmb().
-> > > +     and smp_cond_load_acquire() operations.
-> > > 
-> > >       Memory operations that occur before an ACQUIRE operation may appear to
-> > >       happen after it completes.
-> > > -- 
-> > > 2.7.4
-> > > 
-> > 
-> 
+Thanks a lot for reviewing the patches.
 
+Punit
+
+ps: Just noticed the typo (manupulate) in the subject. I've fixed it up
+locally.
