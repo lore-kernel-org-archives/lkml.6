@@ -6,40 +6,53 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5461C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D02C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D28D20C0F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:18:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D28D20C0F
+	by mail.kernel.org (Postfix) with ESMTP id 2FF3420871
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:19:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF3420871
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389592AbeGKTXl (ORCPT
+        id S2389624AbeGKTY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 15:23:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49254 "EHLO mail.kernel.org"
+        Wed, 11 Jul 2018 15:24:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeGKTXl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 15:23:41 -0400
+        id S2387848AbeGKTY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 15:24:57 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26B2A2064D;
-        Wed, 11 Jul 2018 19:17:57 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 15:17:55 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id CE1F420871;
+        Wed, 11 Jul 2018 19:19:12 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 15:19:11 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
         Thomas Zimmermann <tzimmermann@suse.de>,
+        Petr Mladek <pmladek@suse.com>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] console: Replace #if 1 with a bool to ignore
- WARN_CONSOLE_UNLOCKED()
-Message-ID: <20180711151755.613eba3c@gandalf.local.home>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [PATCH v5 2/3] fbcon: Call WARN_CONSOLE_UNLOCKED() where
+ applicable
+Message-ID: <20180711151911.2ea40200@gandalf.local.home>
+In-Reply-To: <CAKMK7uFuZ6NJOKHG6PRNLUytE4m6ZUdMakwLx9Ns39OwvTneWQ@mail.gmail.com>
+References: <20180628090351.15581-1-hdegoede@redhat.com>
+        <20180628090351.15581-3-hdegoede@redhat.com>
+        <717e6337-e7a6-7a92-1c1b-8929a25696b5@suse.de>
+        <20180711105255.32803a3c@gandalf.local.home>
+        <7ec11c96-7dd5-ec12-548e-7c1fa9b883e8@suse.de>
+        <d528a539-255c-f019-eb6f-63f0585e0de3@redhat.com>
+        <CAKMK7uG-xiCKkxhujL=J6n9ozYfW+fsioGHEmYRxpszVX=5PDg@mail.gmail.com>
+        <892782ad-4b97-8eda-f5b0-3a893b3a5f84@redhat.com>
+        <CAKMK7uFyPh0sHj7enAU2En4BidODAS+Tis=-UE16xOLQWm8iQA@mail.gmail.com>
+        <2f37f47c-e28e-77fa-2383-96c7d3e77433@redhat.com>
+        <CAKMK7uFuZ6NJOKHG6PRNLUytE4m6ZUdMakwLx9Ns39OwvTneWQ@mail.gmail.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -49,56 +62,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 11 Jul 2018 19:56:02 +0200
+Daniel Vetter <daniel@ffwll.ch> wrote:
 
-From: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > Have you seen Steven's suggestion which he send about the same time
+> > as your mail I'm replying to here ? I personally think that doing
+> > something like that makes sense (for as long as we have the need
+> > for the lockless_fb_register debug hack).
+> >
+> > Note I've 2 patches ready to go to only fix this in fbcon.c, but I
+> > think a more thorough fix makes sense.  
+> 
+> Yeah Steven's suggestion looks reasonable to fix this all for good.
+> The #if 1 predates git history, so no idea why it was added or by whom
+> :-)
 
-There's been discussion on the fb list about the addition of
-WARN_CONSOLE_UNLOCKED() inside the fb code. The complaint is that when
-the fb module is loaded with lockless_register_fb the console lock is
-not taken for debugging reasons. With the addition of
-WARN_CONSOLE_UNLOCK() within the fb code, this causes the console to
-fill up with warnings when trying to debug the fb driver.
+I just sent the patch. If the printk maintainers take it, then you can
+update the fb driver to set the ignore_console_lock_warning when
+lockless_fb_register is set.
 
-There's also a #if 1 that enables the warning which was added before
-git history, and we look down on constant #if's in the kernel nowadays
-anyway.
-
-Remove the #if 1 and add a ignore_console_lock_warning boolean that can
-be set by drivers to ignore the warning in order to do debugging.
-
-Link: http://lkml.kernel.org/r/717e6337-e7a6-7a92-1c1b-8929a25696b5@suse.de
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
----
-diff --git a/include/linux/console.h b/include/linux/console.h
-index dfd6b0e97855..9d4a6b985154 100644
---- a/include/linux/console.h
-+++ b/include/linux/console.h
-@@ -200,11 +200,9 @@ void vcs_make_sysfs(int index);
- void vcs_remove_sysfs(int index);
- 
- /* Some debug stub to catch some of the obvious races in the VT code */
--#if 1
--#define WARN_CONSOLE_UNLOCKED()	WARN_ON(!is_console_locked() && !oops_in_progress)
--#else
--#define WARN_CONSOLE_UNLOCKED()
--#endif
-+extern bool ignore_console_lock_warning;
-+#define WARN_CONSOLE_UNLOCKED()						\
-+	WARN_ON(!ignore_console_lock_warning && !is_console_locked() && !oops_in_progress)
- 
- /* VESA Blanking Levels */
- #define VESA_NO_BLANKING        0
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 247808333ba4..d9056efc3739 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -66,6 +66,9 @@ int console_printk[4] = {
- 	CONSOLE_LOGLEVEL_DEFAULT,	/* default_console_loglevel */
- };
- 
-+bool ignore_console_lock_warning __read_mostly;
-+EXPORT_SYMBOL(ignore_console_lock_warning);
-+
- /*
-  * Low level drivers may need that to know if they can schedule in
-  * their unblank() callback or not. So let's export it.
+-- Steve
