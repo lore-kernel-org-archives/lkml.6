@@ -2,134 +2,170 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C569CC43A1D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C4EC43A1D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787EE213A2
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CAAE213A2
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 22:00:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZXkXgmkm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787EE213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="XY89ZD2o";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HKbr3KXO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CAAE213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390645AbeGKWD0 (ORCPT
+        id S2389438AbeGKWHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 18:03:26 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:47896 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389475AbeGKWD0 (ORCPT
+        Wed, 11 Jul 2018 18:07:21 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:44726 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387457AbeGKWHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 18:03:26 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6BLrSaQ095363;
-        Wed, 11 Jul 2018 21:56:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=72JwC1o0eJ/EFcoAeisDQIQI80euNhKG7S32svp5iGk=;
- b=ZXkXgmkmvZjp2WXG1eYWrMYDkljt9ZNV5UBm4u3lT1//oj9YREmuxI5eWkx/mjXDBX6p
- I51GJFTM+7nwxSKrmi/17+tfuvWgzVFlZUPjkOpLYfZPFGqvpzE9/owk9vRTixb6D9yH
- B5Q2yeb9Adcah0nm0KEPS/2Rv5YjSeHB2OxKTRmuTqkjWUq3jpgcJCdfX3s5xDJcI0jp
- uIWr9q5EsH+cen3FQYWLCY1mIPM0b1TZyVDoS6VIo13lcTg0gJpsm3XWsZXCjA1mJ026
- Th1bllG29REw4M05JMHlwvMPI0+SNGYZwwcO7AOulDlaGo3MdSaTRJGFBaVjGcU7z5Ol 5w== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2k2p7601pt-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Jul 2018 21:56:57 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6BLuvnj022423
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Jul 2018 21:56:57 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6BLutR3020699;
-        Wed, 11 Jul 2018 21:56:56 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Jul 2018 14:56:55 -0700
-Subject: Re: [PATCH v2] mm: hugetlb: don't zero 1GiB bootmem pages.
-To:     Cannon Matthews <cannonmatthews@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nadia Yvette Chambers <nyc@holomorphy.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        andreslc@google.com, pfeiner@google.com, dmatlack@google.com,
-        gthelen@google.com, mhocko@kernel.org
-References: <20180711213313.92481-1-cannonmatthews@google.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <e04f64c8-37d3-bf81-29d2-c495844dd3a5@oracle.com>
-Date:   Wed, 11 Jul 2018 14:56:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 11 Jul 2018 18:07:20 -0400
+Received: by mail-vk0-f65.google.com with SMTP id 125-v6so15275514vke.11
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 15:00:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=5k/k+uPKwa9Palxh0LzQfvkzZ+n3MsPFuH6dwwTGtFw=;
+        b=XY89ZD2obVOEaFkS6X9moL061+LkTeIBesfSpmWv00Ya0unEHgFfNnKipOut4VIou2
+         OHmMV3vvqOZzO1s/6OL3ODgAXezTGeRAg6OrccJseJmpoL9hwAyhnk1uDIJtyZtiAcdi
+         9IQvIq/01y+11NMkkPTYGZdkW/n3NaJLmStD2n/bk+v9Yr6mgii0QJngctDuWu1zepSg
+         iZsSbBlrcghTGaRdM7c+mXpdKDjwDKIVB8aFmYcxZvHHGoe+o2pY6RiMjYsELT4YhISg
+         xh6eGP+c3LF5nAbbn4GJ6dhUqnlCcDbjwuVEIZmNWbWSy/HT0StmiFdnhc+nE273nNYg
+         yyUg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=5k/k+uPKwa9Palxh0LzQfvkzZ+n3MsPFuH6dwwTGtFw=;
+        b=HKbr3KXO1xntrsMSMvUNNkQa568tGEmJRCrjLt7weAmwRS9AsN7smRhe19awGLaGUc
+         +za1z2g3baKWSGu/ZqqXvH14CAYd5nXBwciISEqLQ2cP2XaSrremo76A84c9vtjr3Ccv
+         jvKvyjDyuA9ynKVgOzhVArjPmbQftoP2dM9Mc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=5k/k+uPKwa9Palxh0LzQfvkzZ+n3MsPFuH6dwwTGtFw=;
+        b=rnsENJz/q5JJKONGmbbubfokDPPdGA/YE7kw/WlTXOsSVyL9DIKXVsHpbO54ZJ9ymU
+         P86BYUGuKf3qIZy1jxc0h2hdbRvVHDj+IVtmwtY8OdP57vZxCTcZ7OFBFSLtluDRmM6w
+         p72F9ksKg35d1rIcMjGOcvkNhFO9CukPpQK26zHnvmSA0j+Kv5lChlC29ww1prLq7/0h
+         STfRtW7s3OnzyIksEpySua3+QPFucNRdWYed+ma7+GYxD8u/+GPzUnw3MNKMi8Wzd7e1
+         BvM5TSPMI5IBFPhrMq1+Wg+WhYBklskmIimRDVBejXDFUH03PZsAdTrDFYX3QYv406+c
+         jUkA==
+X-Gm-Message-State: AOUpUlEPaB22ZN1cpIV8XePTr5+Fk5fhdBt+gbs3Vo8TUf+2ZjOHZ+C4
+        zz7IEBTYiS9U5pT9yE5hJhGmL2Gz02VoNv1/ADVeOQ==
+X-Google-Smtp-Source: AAOMgpcdJmOXTSYIsW9mjiGIZCebGXc+IE0A9y7wlghLStN/9ZfQv5qKR6Cbc6JliuE4TvP1Ve4A0RoIcLN9DTaDDr4=
+X-Received: by 2002:a1f:c014:: with SMTP id q20-v6mr276665vkf.144.1531346456488;
+ Wed, 11 Jul 2018 15:00:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180711213313.92481-1-cannonmatthews@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807110231
+Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 15:00:55
+ -0700 (PDT)
+In-Reply-To: <20180711215129.GT129942@google.com>
+References: <cover.1531135999.git.amit.kucheria@linaro.org>
+ <65c39c405076627bd43ec94c211c6998191b9f16.1531136000.git.amit.kucheria@linaro.org>
+ <CAD=FV=XpfJyd8hUT45+J=EVY1Bs28Mk7m2TBJy8J=HO63n2_qw@mail.gmail.com> <20180711215129.GT129942@google.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 11 Jul 2018 15:00:55 -0700
+X-Google-Sender-Auth: yHGzjhP7j5I82uF1VPnxrC42L3A
+Message-ID: <CAD=FV=VCxpaF1t5Q-5Vv+9VH1igWoER59OMJmXZdEj3V6fOZwQ@mail.gmail.com>
+Subject: Re: [PATCH v6 7/7] arm64: dts: sdm845: Add tsens nodes
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        smohanad@codeaurora.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 02:33 PM, Cannon Matthews wrote:
-> When using 1GiB pages during early boot, use the new
-> memblock_virt_alloc_try_nid_raw() function to allocate memory without
-> zeroing it.  Zeroing out hundreds or thousands of GiB in a single core
-> memset() call is very slow, and can make early boot last upwards of
-> 20-30 minutes on multi TiB machines.
-> 
-> The memory does not need to be zero'd as the hugetlb pages are always
-> zero'd on page fault.
-> 
-> Tested: Booted with ~3800 1G pages, and it booted successfully in
-> roughly the same amount of time as with 0, as opposed to the 25+
-> minutes it would take before.
-> 
-> Signed-off-by: Cannon Matthews <cannonmatthews@google.com>
+Hi Matthias,
 
-Thanks,
+On Wed, Jul 11, 2018 at 2:51 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
+> On Wed, Jul 11, 2018 at 11:44:13AM -0700, Doug Anderson wrote:
+>> Hi,
+>>
+>> On Mon, Jul 9, 2018 at 4:43 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
+>> > SDM845 has two tsens blocks, one with 13 sensors and the other with 8
+>> > sensors. It uses version 2 of the TSENS IP, so use the fallback property to
+>> > allow more common code.
+>> >
+>> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+>> > ---
+>> >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++++++++++
+>> >  1 file changed, 16 insertions(+)
+>> >
+>> > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> > index cdaabeb..ba2899c 100644
+>> > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> > @@ -221,6 +221,22 @@
+>> >                         #interrupt-cells = <2>;
+>> >                 };
+>> >
+>> > +               tsens0: tsens@c263000 {
+>>
+>> As per my comments in the bindings, nit that this should probably be
+>> "thermal-sensor" not "tsens", AKA:
+>>
+>> tsens0: thermal-sensor@c263000 {
+>>
+>> > +                       compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
+>> > +                       reg = <0xc263000 0x1ff>, /* TM */
+>> > +                             <0xc222000 0x1ff>; /* SROT */
+>> > +                       #qcom,sensors = <13>;
+>>
+>> As per my comment in the bindings and the code, I'm confused about the
+>> whole "#qcom,sensors" bit.  It's not documented and doesn't seem
+>> hooked up in the code either.
+>>
+>> ...but if people have tested this, perhaps I'm confused.  How can
+>> things work if num_sensors is 0???
+>
+> The mystery is resolved by:
+>
+> commit 6d7c70d1cd6526dc79e3d3b3faae1c40c1681168
+> Author: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Date:   Mon May 7 16:53:39 2018 -0700
+>
+>     thermal: qcom: tsens: Allow number of sensors to come from DT
+>
+>     For platforms that has multiple copies of the TSENS hardware block it's
+>     necessary to be able to specify the number of sensors per block in DeviceTree.
+>
+>     Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+>     Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+>     Reviewed-by: Rob Herring <robh@kernel.org>
+>     Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+>
+>
+> I bumped into this during testing ;-)
 
-Acked-by: Mike Kravetz <mike.kravetz@oracle.com>
+Ah, now it makes sense to me!  Serves me right for assuming it would
+be in the same series and not checking if it was something that had
+already landed.  Thanks.  Please ignore the parts of my comments
+related to the "#qcom,sensors" property.  I guess Rob must have
+thought that the "#" in the name was fine and he's the one in charge
+not me.
 
--- 
-Mike Kravetz
-
-> ---
-> v2: removed the memset of the huge_bootmem_page area and added
-> INIT_LIST_HEAD instead.
-> 
->  mm/hugetlb.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 3612fbb32e9d..488330f23f04 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -2101,7 +2101,7 @@ int __alloc_bootmem_huge_page(struct hstate *h)
->  	for_each_node_mask_to_alloc(h, nr_nodes, node, &node_states[N_MEMORY]) {
->  		void *addr;
-> 
-> -		addr = memblock_virt_alloc_try_nid_nopanic(
-> +		addr = memblock_virt_alloc_try_nid_raw(
->  				huge_page_size(h), huge_page_size(h),
->  				0, BOOTMEM_ALLOC_ACCESSIBLE, node);
->  		if (addr) {
-> @@ -2119,6 +2119,7 @@ int __alloc_bootmem_huge_page(struct hstate *h)
->  found:
->  	BUG_ON(!IS_ALIGNED(virt_to_phys(m), huge_page_size(h)));
->  	/* Put them into a private list first because mem_map is not up yet */
-> +	INIT_LIST_HEAD(&m->list);
->  	list_add(&m->list, &huge_boot_pages);
->  	m->hstate = h;
->  	return 1;
-> --
-> 2.18.0.203.gfac676dfb9-goog
-> 
+-Doug
