@@ -2,106 +2,101 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9764FC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8827CC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DE15208AD
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:29:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HtsfW29a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE15208AD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3FF8820843
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:30:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF8820843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732321AbeGKIcM (ORCPT
+        id S1732198AbeGKIdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:32:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49182 "EHLO mail.kernel.org"
+        Wed, 11 Jul 2018 04:33:46 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:40221 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726280AbeGKIcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:32:12 -0400
-Received: from dragon (unknown [45.56.152.98])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6662520843;
-        Wed, 11 Jul 2018 08:29:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531297743;
-        bh=378a5hp45OC4u2H3yZBiIolFvVAkSR3Zlunnh+uqCZA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HtsfW29a+Rd3H3PISzYWfasf0+TykIA+uOGlDLwINbpDtTibfyAw/P+fc61Mq3828
-         CJafpuCHIidZifbfdIjpq8vyBmC51Q5LOynl3l0tbcutOviu2orrmRdYmOApOUAluC
-         zX/ROhqXD3rftoQ9Y8uo09fNCBOFmBAC6K6o4Rt4=
-Date:   Wed, 11 Jul 2018 16:28:28 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "michael@amarulasolutions.com" <michael@amarulasolutions.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
-Message-ID: <20180711082827.GA6959@dragon>
-References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
- <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
- <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <20180628005217.GC22683@dragon>
- <153029757874.143105.17774476792947607999@swboyd.mtv.corp.google.com>
- <20180701021947.GA4348@dragon>
- <153089733418.143105.7025289108790540252@swboyd.mtv.corp.google.com>
+        id S1726280AbeGKIdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 04:33:46 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CF91720730; Wed, 11 Jul 2018 10:30:36 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9F358206F3;
+        Wed, 11 Jul 2018 10:30:36 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 10:30:36 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 00/18] Allwinner R40 HDMI refactoring
+Message-ID: <20180711083036.7attjq4hm5ay5gmn@flea>
+References: <20180710203511.18454-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yshce36do3zzws6q"
 Content-Disposition: inline
-In-Reply-To: <153089733418.143105.7025289108790540252@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20180710203511.18454-1-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 06, 2018 at 10:15:34AM -0700, Stephen Boyd wrote:
-> Quoting Shawn Guo (2018-06-30 19:19:49)
-> > On Fri, Jun 29, 2018 at 11:39:38AM -0700, Stephen Boyd wrote:
-> > > Quoting Shawn Guo (2018-06-27 17:52:18)
-> > > > On Mon, Jun 25, 2018 at 03:14:39AM +0000, Anson Huang wrote:
-> > > > > Gentle Ping...
-> > > > 
-> > > > I cannot apply this dts patch until the clock patch is landed on
-> > > > mainline, because it has a dependency on new clock ID IMX6UL_CLK_GPIO1
-> > > > created by clock patch.
-> > > > 
-> > > 
-> > > Does it matter if that clk ID changes across branches? Or is everything
-> > > good if it just exists as some number?
-> > 
-> > We use macro IMX6UL_CLK_GPIO1 instead of hard-coded number in DTS.  So
-> > it doesn't matter if IMX6UL_CLK_GPIO1 changes.
-> > 
-> > > The patch adding the define
-> > > conflicts with another patch to fix the numbering scheme to be
-> > > incremental instead of changing IMX6UL and IMX6ULL which is annoying.
-> > > I'll probably make a topic branch just for the fix and merge it into
-> > > clk-fixes and this branch so you can pick it up from there if you like.
-> > 
-> > It will be good if you can have a topic branch.  Otherwise, we are also
-> > fine to wait till the clock patches lands on mainline.
-> > 
-> 
-> Ok. The topic branch is out there as clk-imx-gpio-gates
 
-Thanks.  I applied dts patch now.
+--yshce36do3zzws6q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Shawn
+On Tue, Jul 10, 2018 at 10:34:53PM +0200, Jernej Skrabec wrote:
+> This series fixes several issues found in R40 HDMI patch series after
+> it was applied. Conversation can be found here:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/586011.ht=
+ml
+>=20
+> Patches are based on latest linux-next (next-20180710) and are ordered
+> in such way that they don't break R40 HDMI at any time. Because of that
+> I suggest that whole series goes through drm-misc to preserve that order.
+>=20
+> I also tested those patches on H3 to make sure it doesn't break other
+> platforms. However, it would be nice to test for regressions also on
+> older SoCs (with DE1).
+>=20
+> Best regards,
+> Jernej
+
+Applied all patches but the patch 10, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--yshce36do3zzws6q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFwCsACgkQ0rTAlCFN
+r3Q4sxAAkIOSDcrUdytnfHPJ0n99IJRimkUTwMFyKEGTrYoyr6ODMxuVnO200zQ2
+eudqI2vuHRhxkkDXeSq5LCyYqhI2aYEF6Efyg5k/nX6C1ySgCME2ExXSwCVfDn+u
+MHBQn04IXTERwHeZT5RzBOd9Ys33YaYeDBNdzW9EL1sbAz55+wNT6Y7zxyOCeZV0
+KDZpbExJY9Sc/FB7gu9XEvEuzsVpzNkaLlupqnTFHSbu8US5eRnRhqhXBFpWrJYH
+I1SgzObx1/w7N5427O4QdmA4snjTQzozbWjgU0nnTeCYYAPbWS6uOk/oAGAcCY9c
+B1G0s0fLp6EjyFQWj12iubS/6reDhz3Zg2Yov3/YK3SyYv83E91MFg+gg1RLm940
+RcYoImg/n0JEHICYhduLKESrT2biwdAlLdUkOTXRckh2tADVByU/9q5cKcoP72KP
+rGmMOICBJ3POaKiUcdk2Q8e+1Dy087d3XgbyoHke62Tfe8UUPOLOrttrCEt0J78+
+vkCpF/n4stglxAQvXvlBXO3vx1WLHHuGs8R9QLAGV/9bM1cHo1doBirCaRr1i7pK
+vTXLhJOarfDK9u6IVBZRY8fv1nREf+F7qBA6wdZOqqCadvtuQFJL9/NbSg8FmPQD
+p5G+cfAUnKhENiHqzJy+O36sbIUqJTyejC5ZemhGyKNfLmwpxuM=
+=Os8I
+-----END PGP SIGNATURE-----
+
+--yshce36do3zzws6q--
