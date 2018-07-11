@@ -2,129 +2,123 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18217C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B69CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C26D020870
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:38:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA1C220871
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:38:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FGeip17K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26D020870
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f0Ozc4K6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1C220871
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389815AbeGKQno (ORCPT
+        id S2389828AbeGKQnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:43:44 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:42670 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388256AbeGKQnn (ORCPT
+        Wed, 11 Jul 2018 12:43:45 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41317 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389802AbeGKQno (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:43:43 -0400
-Received: by mail-pl0-f68.google.com with SMTP id f4-v6so5201722plb.9
+        Wed, 11 Jul 2018 12:43:44 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j5-v6so12304140wrr.8
         for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 09:38:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bCbumMildgd7jmmHFkA0002n0ukBdAZCR7GbymlfnyU=;
-        b=FGeip17KqaO3KCDGr7JgofkDkp0K5bVeHAbB8htDP0hRRyZib6JD0U1KJEiY+aEKzM
-         gb9AgZNwkotWvYgTvOkePzUpfpM7NSkU2LzvtBJCJGxcxeme1kXdaAFUS95jnPad8u76
-         ry+QB6D4CdVeh2C75+A3cLSp3d5KVNyGQh0JA=
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=3SdATeP30n2V0jNC44caM3P41JjZ0DgAt5rUkZgkeVM=;
+        b=f0Ozc4K6YasvN6A1McLsSDad4tYijWKFps2YC3Icm4XAP6ieHKQbQpD9Bp3TCUxeLg
+         +ZQidSJKu16jOoY8jBed09AupjOmRbfjBfiNC1EDaAHEECQUIolSOksAlGTc/R5xzTSa
+         eFAPC+KNv1sguv209RclIPcXC9TGmq9kovKx8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bCbumMildgd7jmmHFkA0002n0ukBdAZCR7GbymlfnyU=;
-        b=qnOyui5j3uWZKea3C8kjzOb1AksymCm2z0KDCgxeq3gETJM+sTlJ63rzdqBIkMUeJQ
-         VYmNM25zj+z0nYqw+d0HjNWpBWaBOnmclRjIGViOhklXeGx5GDdlxPY/i2e8Ct2NatAh
-         mfOxZjLUM3Vk65SR/sU+iNByyml2fCIML+z8o0bc42luhaOX/B0bLVg0ufsysLiBwAlo
-         2DMRcb3r0TY5LOzbGydtZEAupWNaAePuVok52sTYJRdY8igLztzbddxCa2qnpBsvpiF0
-         5daV4lMatgQgFmRSJaj+hENrZyKZ99VOI4w6GtsAqxiRF7++29tfQqeZSphx0QLchyTc
-         qwfQ==
-X-Gm-Message-State: APt69E1AN07NmVkyCf4p8hnPiu3OV7EQIfDNCTnaZg6lP7f7JPlxpXlm
-        ve4aVFBHiRmVAOjiJ8mA6JC53Q==
-X-Google-Smtp-Source: AAOMgpcW9AQ+r8OtdP9dxgTT++vd1q2WEfkfnLK4ssDiBvK1vEdj5IkfAC699PVpHzw4A1CTlnX92A==
-X-Received: by 2002:a17:902:a24:: with SMTP id 33-v6mr29335728plo.88.1531327115012;
-        Wed, 11 Jul 2018 09:38:35 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id j190-v6sm2929850pgc.75.2018.07.11.09.38.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=3SdATeP30n2V0jNC44caM3P41JjZ0DgAt5rUkZgkeVM=;
+        b=XcO5KwxpI1vDDrOVDIEfL1pIeER8++XlvPGfHGi7CyGKpK4pYRpP75xTN6xQX8vX4j
+         EohAYChNmLKU7IhdFi9XUozZyZSm1TG3/WV8n+WQe9eO49vOXNlh8oMLegqBuU2PDFn1
+         vyxR8BL4VCnkpTwuTvoqCYo+QLJR/qXihjfENOUY5kR9VdvXmZ5jqQyYo+Wx4nrWaZTY
+         PrXSkyjog3Q2+4UaOZWEfe0otEBvnj1Mfgql/54acbk5Z5+0ExrEQtKZjOOeQFZ2HaSW
+         d8/d08jcy16OvofcFKUARIeuUBlMQ7iO/6yuN7V6M6pYCn2Z4gWTx/SglK2WdnkVAQMu
+         1bHA==
+X-Gm-Message-State: APt69E1nkWdKFzBwDWT9y/8zBGpCVyaPywW75u5x33Ro67VSBAwnlXKH
+        XvW9diXXUKpGpZ5V4k2NtlURIuQn9Zs=
+X-Google-Smtp-Source: AAOMgper9vzPjzUieKpRUECBE7F+q6kZtRLKm1kJ1buKTuOL3iAA2AmS6v5X4YxI9GgjUFwKkBXeDg==
+X-Received: by 2002:adf:9345:: with SMTP id 63-v6mr22485430wro.60.1531327114824;
         Wed, 11 Jul 2018 09:38:34 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 09:41:15 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, edubezval@gmail.com,
-        smohanad@codeaurora.org, vivek.gautam@codeaurora.org,
-        andy.gross@linaro.org, David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 7/7] arm64: dts: sdm845: Add tsens nodes
-Message-ID: <20180711164115.GE545@tuxbook-pro>
-References: <cover.1531135999.git.amit.kucheria@linaro.org>
- <65c39c405076627bd43ec94c211c6998191b9f16.1531136000.git.amit.kucheria@linaro.org>
+Received: from [192.168.8.101] ([37.173.205.99])
+        by smtp.googlemail.com with ESMTPSA id 131-v6sm4332062wmm.31.2018.07.11.09.38.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 09:38:34 -0700 (PDT)
+Subject: Re: [PATCH 1/3] clocksource: drivers: set clockevent device cpumask
+ to cpu_possible_mask
+To:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+References: <1531308264-24220-1-git-send-email-sudeep.holla@arm.com>
+ <2009eeb1-e925-fe5c-ac4a-9f3e41945127@linaro.org>
+ <229f0ac1-16b5-3fcf-3d0d-60ad59ea40f8@arm.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <f58d0930-19fc-bb5f-960f-56aa48ced79a@linaro.org>
+Date:   Wed, 11 Jul 2018 18:38:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <65c39c405076627bd43ec94c211c6998191b9f16.1531136000.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <229f0ac1-16b5-3fcf-3d0d-60ad59ea40f8@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 09 Jul 04:43 PDT 2018, Amit Kucheria wrote:
-
-> SDM845 has two tsens blocks, one with 13 sensors and the other with 8
-> sensors. It uses version 2 of the TSENS IP, so use the fallback property to
-> allow more common code.
+On 11/07/2018 15:42, Sudeep Holla wrote:
+> Hi Daniel,
 > 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> On 11/07/18 12:36, Daniel Lezcano wrote:
+>> On 11/07/2018 13:24, Sudeep Holla wrote:
+>>> Currently, quite a few clockevent devices have cpumask set to
+>>> cpu_all_mask which should be fine. However, cpu_possible_mask is more
+>>> accurate and if there are any other clockevent devices in the system
+>>> which have cpumask set to cpu_possible_mask, then having cpu_all_mask
+>>> may result in issues (mostly boot hang with forever loops in
+>>> clockevents_notify_released).
+>>>
+>>> So, lets replace all the clockevent device cpu_all_mask to
+>>> cpu_possible_mask in order to prevent above mentioned possible issue.
+>>>
+>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Cc: Thierry Reding <thierry.reding@gmail.com>
+>>> Cc: Jonathan Hunter <jonathanh@nvidia.com>
+>>> Cc: Santosh Shilimkar <ssantosh@kernel.org>
+>>> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+>>> ---
+>>
+>> Applied, thanks for the fix.
+>>
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index cdaabeb..ba2899c 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -221,6 +221,22 @@
->  			#interrupt-cells = <2>;
->  		};
->  
-> +		tsens0: tsens@c263000 {
-> +			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
-> +			reg = <0xc263000 0x1ff>, /* TM */
-> +			      <0xc222000 0x1ff>; /* SROT */
-> +			#qcom,sensors = <13>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
-> +		tsens1: tsens@c265000 {
-> +			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
-> +			reg = <0xc265000 0x1ff>, /* TM */
-> +			      <0xc223000 0x1ff>; /* SROT */
-> +			#qcom,sensors = <8>;
-> +			#thermal-sensor-cells = <1>;
-> +		};
-> +
->  		spmi_bus: spmi@c440000 {
->  			compatible = "qcom,spmi-pmic-arb";
->  			reg = <0xc440000 0x1100>,
-> -- 
-> 2.7.4
-> 
+> Thomas was planning to take this, see [1]
+
+Thomas ?
+
+Do you want to take all the series ? Or shall I take this one ?
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
