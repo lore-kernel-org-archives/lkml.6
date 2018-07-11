@@ -2,107 +2,81 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0035EC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:10:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13146C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:14:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE2C2075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:10:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADE2C2075E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id BA18520883
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:14:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA18520883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732284AbeGKINY (ORCPT
+        id S1726714AbeGKIRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:13:24 -0400
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:16072 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbeGKINY (ORCPT
+        Wed, 11 Jul 2018 04:17:11 -0400
+Received: from lgeamrelo11.lge.com ([156.147.23.51]:44233 "EHLO
+        lgeamrelo11.lge.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbeGKIRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:13:24 -0400
-Received: from [10.28.16.194] (10.28.16.194) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 11 Jul
- 2018 16:10:18 +0800
-Subject: Re: [PATCH 1/3] dt-bindings: clk: g12a: New binding for Meson-G12A
- SoC
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <robh@kernel.org>
-CC:     <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>,
-        <qianggui.song@amlogic.com>, <devicetree@vger.kernel.org>,
-        <sboyd@kernel.org>, <khilman@baylibre.com>,
-        <mturquette@baylibre.com>, <yixun.lan@amlogic.com>,
-        <linux-kernel@vger.kernel.org>, <bo.yang@amlogic.com>,
-        <qiufang.dai@amlogic.com>, <linux-arm-kernel@lists.infradead.org>,
-        <carlo@caione.org>, <linux-amlogic@lists.infradead.org>,
-        <sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <xingyu.chen@amlogic.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
- <1531134767-29927-2-git-send-email-jian.hu@amlogic.com>
- <CAFBinCBJp1xzo-CNW1HU-Odhrug31yQ7c3khB+XwvsNXp5-gTA@mail.gmail.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <024e6d89-b60d-ba85-4d62-c3358e2cab6c@amlogic.com>
-Date:   Wed, 11 Jul 2018 16:10:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 11 Jul 2018 04:17:10 -0400
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.51 with ESMTP; 11 Jul 2018 17:14:04 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: namhyung@kernel.org
+Received: from unknown (HELO sejong) (10.177.227.17)
+        by 156.147.1.151 with ESMTP; 11 Jul 2018 17:14:03 +0900
+X-Original-SENDERIP: 10.177.227.17
+X-Original-MAILFROM: namhyung@kernel.org
+Date:   Wed, 11 Jul 2018 17:14:01 +0900
+From:   Namhyung Kim <namhyung@kernel.org>
+To:     Janne Huttunen <janne.huttunen@nokia.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jaroslav =?utf-8?B?xaBrYXJ2YWRh?= <jskarvad@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>, kernel-team@lge.com
+Subject: Re: [PATCH v2] perf script python: Fix dict reference counting
+Message-ID: <20180711081401.GA25373@sejong>
+References: <20180709094159.GA7615@krava>
+ <1531133990-17485-1-git-send-email-janne.huttunen@nokia.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCBJp1xzo-CNW1HU-Odhrug31yQ7c3khB+XwvsNXp5-gTA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.16.194]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1531133990-17485-1-git-send-email-janne.huttunen@nokia.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hell,
 
+On Mon, Jul 09, 2018 at 01:59:50PM +0300, Janne Huttunen wrote:
+> The dictionaries are attached to the parameter tuple that steals
+> the references and takes care of releasing them when appropriate.
+> The code should not decrement the reference counts explicitly.
+> E.g. if libpython has been built with reference debugging enabled,
+> the superfluous DECREFs will trigger this error when running perf
+> script:
+> 
+>   Fatal Python error: Objects/tupleobject.c:238 object at
+>   0x7f10f2041b40 has negative ref count -1
+>   Aborted (core dumped)
+> 
+> If the reference debugging is not enabled, the superfluous DECREFs
+> might cause the dict objects to be silently released while they are
+> still in use. This may trigger various other assertions or just
+> cause perf crashes and/or weird and unexpected data changes in the
+> stored Python objects.
+> 
+> Signed-off-by: Janne Huttunen <janne.huttunen@nokia.com>
 
-On 2018/7/10 5:57, Martin Blumenstingl wrote:
-> adding Rob Herring so it doesn't get lost on the devicetree mailing list
-> 
-> On Mon, Jul 9, 2018 at 1:13 PM Jian Hu <jian.hu@amlogic.com> wrote:
->>
->> Add new binding for Meson-G12A SoC Everything-Else part
->>
->> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> ---
->>   Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
->> index e950599..0833006 100644
->> --- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
->> +++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
->> @@ -9,6 +9,7 @@ Required Properties:
->>                  "amlogic,gxbb-clkc" for GXBB SoC,
->>                  "amlogic,gxl-clkc" for GXL and GXM SoC,
->>                  "amlogic,axg-clkc" for AXG SoC.
->> +               "amlogic,g12a-clkc" for G12A SoC.
-> should this be "amlogic,meson-g12a-clkc" instead?
-> that would make it consistent with virtually all other bindings which
-> use the schema "amlogic,meson<chip>-<ip-block>" (where chip is 8, 8b,
-> 8m2, -gxbb, -gxl, ...)
-> 
-> see also: $ grep -R "amlogic," Documentation/devicetree/bindings/
-> 
-Which type should we choose,have a discussion?
-.compatible = "amlogic,g12a-clkc or
-.compatible = "amlogic,meson-g12a-clkc
->>
->>   - #clock-cells: should be 1.
->>
->> --
->> 1.9.1
->>
->>
->> _______________________________________________
->> linux-amlogic mailing list
->> linux-amlogic@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-> 
-> .
-> 
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+
+Thanks,
+Namhyung
