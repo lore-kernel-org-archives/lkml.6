@@ -2,184 +2,161 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC75C1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5FF8C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E6420C0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:54:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92C0A20C0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:56:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hPQoLgQl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47E6420C0B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="yparj+AL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92C0A20C0B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388623AbeGKVBF (ORCPT
+        id S2388672AbeGKVCu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 17:01:05 -0400
-Received: from twosheds.infradead.org ([90.155.92.209]:42390 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbeGKVBF (ORCPT
+        Wed, 11 Jul 2018 17:02:50 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35820 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbeGKVCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 17:01:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
-        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LsAS5E9j3FZrKRAZXZeEWJzx0iofVYQQIf9LaS4YuPA=; b=hPQoLgQlCdu/3qUXVRFQ7miHB
-        uYKiBLLh7zECeAFXL9c+gtMxXVwzvCmou/32BNrXnj1PPd6cIROtRB2lhpG3L1+wAlhGWd3GXI0xx
-        CV+hY2YmvTRWxHdtstjQmBpS7I+eW4vmfmd6ZQBC7WKqoc6BNOk9yKwVW6TGCHuASuRS4WesbB8y5
-        vpV8gfmr1TKvrDBE7PLFZ8vpADY/Qhp5U98u+BUAVXcR2d4O7Xd1Ao48ZcvIi0/zhvbwYi91SR++I
-        qV0fKAoU8WBQ8zRUZpIrloTgxxFWQvAa7kj5JCkqB3FNcDfq6DMK1OAbTPo+37d2JG8UIbvkS48tO
-        FDFrM5cJA==;
-Received: from [2001:8b0:10b:1::2fb]
-        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdM8T-0001y3-2z; Wed, 11 Jul 2018 20:54:53 +0000
-Message-ID: <1531342492.8759.90.camel@infradead.org>
-Subject: Re: [PATCH v2] kvm/x86: Inform RCU of quiescent state when
- entering guest mode
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     paulmck@linux.vnet.ibm.com,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Cc:     peterz@infradead.org, mhillenb@amazon.de,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-In-Reply-To: <20180711202752.GC3593@linux.vnet.ibm.com>
-References: <20180711174843.GX3593@linux.vnet.ibm.com>
-         <20180711180101.3711464-1-dwmw2@infradead.org>
-         <20180711182053.GA3593@linux.vnet.ibm.com>
-         <20180711183645.GA23820@linux.vnet.ibm.com>
-         <62e945ee-a58e-f9b3-279c-74cd0f5809da@de.ibm.com>
-         <20180711202752.GC3593@linux.vnet.ibm.com>
-Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-/JjbVhVKF9PJz6OzH1ML"
-Date:   Wed, 11 Jul 2018 21:54:52 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Wed, 11 Jul 2018 17:02:50 -0400
+Received: by mail-pf0-f193.google.com with SMTP id q7-v6so18064977pff.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 13:56:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sE2x50FFLciyvqRDFi5ub6kyQefdc0KUgqaTHlYnASY=;
+        b=yparj+ALmTAHDRN5S3JtbbZh6JW4g5colb0AvqKLSSLqpK4iAQQ2Sx3iq9vM80R+Mo
+         PZmBg71oQlwQmnfTRCEqnGUpd5376vKgmzKDciKQ2PVPITaM+taHbuzzYjR/UgmhiO9x
+         Zn90Feyt4Z1xPsGS5BMsILox1AHD3DiM2mdLw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sE2x50FFLciyvqRDFi5ub6kyQefdc0KUgqaTHlYnASY=;
+        b=epOYySVOMCww4O1tqxSsadhWRfSfjbfdM+9r0yUvyiN1NRzEPHzF50pD0G2ZlI3vzE
+         pUdWjXWKy0xdMt5UNhCC9sjVaQtedKg8z3xdRi44ZWQ88B4iSNQ62COp0mcnhr29oXS7
+         FIMOCLLj4D+KlYHdvNhj4glJhqn2tqK9htnPFJmHX7xfNrfi729QJKnE/FGItdi+3WcO
+         FWzkLBKuXv6hGCzm+t6uTCdUCJIbz+KWR8PBuP5nWwxp7aWYHXJJeG1fETeL6CytyU+j
+         nBtwAwzYbSFEGv10RY1y/RYIdHWlF8GuLHDPaIw9NDpTydjLO6dmmbL1anZRU4ya/WZ5
+         q9jA==
+X-Gm-Message-State: AOUpUlHOImcCoEytZqRMpDX2zHoc7QUhsWzFovFZOX8WnmsLUuhHDfMm
+        eurAAeVAEzQc8QL8pmtnwl2YgQ==
+X-Google-Smtp-Source: AAOMgpf0tIuLAvY2GuXylme172GnVrQVvL1xX7ud33o0cmf4aYRmUcugYy0ssKFInTJfCGfKDOIOVA==
+X-Received: by 2002:a63:1403:: with SMTP id u3-v6mr174570pgl.13.1531342600720;
+        Wed, 11 Jul 2018 13:56:40 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id e81-v6sm49976930pfb.62.2018.07.11.13.56.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 13:56:40 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 13:56:39 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180711205639.GB32091@joelaf.mtv.corp.google.com>
+References: <20180628182149.226164-1-joel@joelfernandes.org>
+ <20180628182149.226164-5-joel@joelfernandes.org>
+ <20180711124954.GE2476@hirez.programming.kicks-ass.net>
+ <20180711090003.42596c2b@gandalf.local.home>
+ <20180711142744.GN3593@linux.vnet.ibm.com>
+ <20180711104618.05dc4b46@gandalf.local.home>
+ <20180711151559.GR3593@linux.vnet.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711151559.GR3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 11, 2018 at 08:15:59AM -0700, Paul E. McKenney wrote:
+> On Wed, Jul 11, 2018 at 10:46:18AM -0400, Steven Rostedt wrote:
+> > On Wed, 11 Jul 2018 07:27:44 -0700
+> > "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> wrote:
+> > 
+> > > On Wed, Jul 11, 2018 at 09:00:03AM -0400, Steven Rostedt wrote:
+> > > > On Wed, 11 Jul 2018 14:49:54 +0200
+> > > > Peter Zijlstra <peterz@infradead.org> wrote:
+> > > >   
+> > > > > On Thu, Jun 28, 2018 at 11:21:46AM -0700, Joel Fernandes wrote:  
+> > > > > > -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\    
+> > > > > 
+> > > > > I would convert to rcu_dereference_raw() to appease sparse. The fancy
+> > > > > stuff below is pointless if you then turn off all checking.  
+> > > > 
+> > > > The problem with doing this is if we use a trace event without the
+> > > > proper _idle() or whatever, we wont get a warning that it is used
+> > > > incorrectly with lockdep. Or does lockdep still check if "rcu is
+> > > > watching" with rcu_dereference_raw()?  
+> > > 
+> > > No lockdep checking is done by rcu_dereference_raw().
+> > 
+> > Correct, but I think we can do this regardless. So Joel please resend
+> > with Peter's suggestion.
+> > 
+> > The reason being is because of this:
+> > 
+> > 
+> > #define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
+> > 	extern struct tracepoint __tracepoint_##name;			\
+> > 	static inline void trace_##name(proto)				\
+> > 	{								\
+> > 		if (static_key_false(&__tracepoint_##name.key))		\
+> > 			__DO_TRACE(&__tracepoint_##name,		\
+> > 				TP_PROTO(data_proto),			\
+> > 				TP_ARGS(data_args),			\
+> > 				TP_CONDITION(cond), 0);			\
+> > 		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
+> > 			rcu_read_lock_sched_notrace();			\
+> > 			rcu_dereference_sched(__tracepoint_##name.funcs);\
+> > 			rcu_read_unlock_sched_notrace();		\
+> > 		}							\
+> > 	}
+> > 
+> > Because lockdep would only trigger warnings when the tracepoint was
+> > enabled and used in a place it shouldn't be, we added the above
+> > IS_ENABLED(CONFIG_LOCKDEP) part to test regardless if the the
+> > tracepoint was enabled or not. Because we do this, we don't need to
+> > have the test in the __DO_TRACE() code itself. That means we can clean
+> > up the code as per Peter's suggestion.
+> 
+> Indeed, the rcu_dereference_sched() would catch it in that case, so
+> agreed, Peter's suggestion isn't losing any debuggability.
 
---=-/JjbVhVKF9PJz6OzH1ML
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hmm, but if we are doing the check later anyway, then why not do it in
+__DO_TRACE itself?
 
-On Wed, 2018-07-11 at 13:27 -0700, Paul E. McKenney wrote:
->=20
-> Something like this, on top of the earlier patch?=C2=A0 I am not at all
-> confident of this patch because there might be other entry/exit
-> paths I am missing.=C2=A0 Plus there might be RCU uses on the arch-
-> specific patch to and from the guest OS.
+Also I guess we are discussing about changing the rcu_dereference_sched which
+I think should go into a separate patch since my patch isn't touching how the
+rcuidle==0 paths use the RCU API. So I think this is an existing issue
+independent of this series.
 
-That was going to be my starting point, yes. With some additional
-manual review and testing to cover the "not at all confident" part. :)
+thanks!
 
-Thanks.
---=-/JjbVhVKF9PJz6OzH1ML
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MTEyMDU0NTJaMC8GCSqG
-SIb3DQEJBDEiBCD2K/9U4O9yL9mHP7MeTquhuFa4DDe6LGjPBT6SrBBN/zCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAMSPphhz/WLO
-gphuHrWS6NYUKyeu9nH6+orNgDyWNtoyPzu8vH8kDGD7t11dDkUWghy8upPFS+Hh5nbtH9ZapBGC
-AK/ECGFV1Idqihw1fnkVOzC08o68o2WBp87S6cb2eN4m/9HEWWx0bas+PHxgCN2PwLpvAOTZ7CYN
-rHiKiYU8A7vUXgPcnZFc8LsrQvMPY/DfWICdAK/Sj9T+RQaMmnZavOrmd/PdquzLTK0PtveiTxSi
-bIbHYGVGq2cY2UaJAzlOkWDa4c4tWIgvXwQ0A32jbrfa7aRTnN98Eayusy/Kyfj8NRIl3IrQm8qF
-GOOKdqXfIhyayf+0XTF4l3JwiugAAAAAAAA=
+- Joel
 
 
---=-/JjbVhVKF9PJz6OzH1ML--
+
+
 
