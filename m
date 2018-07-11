@@ -3,91 +3,115 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD7EC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CC2C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D6C720C0D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:10:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6C720C0D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F77920C48
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:10:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F77920C48
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390086AbeGKRPX (ORCPT
+        id S2390098AbeGKRP5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 13:15:23 -0400
-Received: from smtprelay0098.hostedemail.com ([216.40.44.98]:56969 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390017AbeGKRPX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 13:15:23 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id EA1D31802A37A;
-        Wed, 11 Jul 2018 17:10:06 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: duck95_a486b15c84c
-X-Filterd-Recvd-Size: 2624
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf07.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 11 Jul 2018 17:10:04 +0000 (UTC)
-Message-ID: <c13fc12e859f7bdb300f08ad805cdf6d7ec09f52.camel@perches.com>
-Subject: Re: [PATCH] i2c: aspeed: Add newline characters into message
- printings.
-From:   Joe Perches <joe@perches.com>
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jarkko.nikula@linux.intel.com, james.feist@linux.intel.com,
-        vernon.mauery@linux.intel.com
-Date:   Wed, 11 Jul 2018 10:10:03 -0700
-In-Reply-To: <2d2f2b2b-394a-506f-c870-33520335250b@linux.intel.com>
-References: <20180702211359.30585-1-jae.hyun.yoo@linux.intel.com>
-         <CAFd5g443wTQJ+0hrprOV949Sr_nRnBGpNo3Wd01xFN4GW4K2Ng@mail.gmail.com>
-         <2d2f2b2b-394a-506f-c870-33520335250b@linux.intel.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-X-Mailer: Evolution 3.28.1-2 
+        Wed, 11 Jul 2018 13:15:57 -0400
+Received: from mga11.intel.com ([192.55.52.93]:42644 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388700AbeGKRP5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 13:15:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 10:10:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="56885705"
+Received: from 2b52.sc.intel.com ([143.183.136.52])
+  by orsmga006.jf.intel.com with ESMTP; 11 Jul 2018 10:09:08 -0700
+Message-ID: <1531328731.15351.3.camel@intel.com>
+Subject: Re: [RFC PATCH v2 16/27] mm: Modify can_follow_write_pte/pmd for
+ shadow stack
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Wed, 11 Jul 2018 10:05:31 -0700
+In-Reply-To: <de510df6-7ea9-edc6-9c49-2f80f16472b4@linux.intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+         <20180710222639.8241-17-yu-cheng.yu@intel.com>
+         <de510df6-7ea9-edc6-9c49-2f80f16472b4@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
 Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-11 at 09:53 -0700, Jae Hyun Yoo wrote:
-> On 7/10/2018 10:42 PM, Brendan Higgins wrote:
-> > On Mon, Jul 2, 2018 at 2:14 PM Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
-> > > There are some log printing without a newline character. This
-> > > patch adds the missing newline characters.
-[]
-> > > diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-[]
-> > > @@ -431,7 +431,7 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
-> > >           */
-> > >          if (bus->master_state == ASPEED_I2C_MASTER_START) {
-> > >                  if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
-> > > -                       pr_devel("no slave present at %02x", msg->addr);
-> > > +                       pr_devel("no slave present at %02x\n", msg->addr);
+On Tue, 2018-07-10 at 16:37 -0700, Dave Hansen wrote:
+> On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
 > > 
-> > Unless something changed in the last couple versions of the kernel, this is the
-> > only line that actually changes anything. dev_* inserts a newline for every
-> > call.
+> > There are three possible shadow stack PTE settings:
+> > 
+> >   Normal SHSTK PTE: (R/O + DIRTY_HW)
+> >   SHSTK PTE COW'ed: (R/O + DIRTY_HW)
+> >   SHSTK PTE shared as R/O data: (R/O + DIRTY_SW)
+> > 
+> > Update can_follow_write_pte/pmd for the shadow stack.
+> First of all, thanks for the excellent patch headers.  It's nice to
+> have
+> that reference every time even though it's repeated.
+> 
+> > 
+> > -static inline bool can_follow_write_pte(pte_t pte, unsigned int
+> > flags)
+> > +static inline bool can_follow_write_pte(pte_t pte, unsigned int
+> > flags,
+> > +					bool shstk)
+> >  {
+> > +	bool pte_cowed = shstk ? is_shstk_pte(pte):pte_dirty(pte);
+> > +
+> >  	return pte_write(pte) ||
+> > -		((flags & FOLL_FORCE) && (flags & FOLL_COW) &&
+> > pte_dirty(pte));
+> > +		((flags & FOLL_FORCE) && (flags & FOLL_COW) &&
+> > pte_cowed);
+> >  }
+> Can we just pass the VMA in here?  This use is OK-ish, but I
+> generally
+> detest true/false function arguments because you can't tell what they
+> are when they show up without a named variable.
+> 
+> But...  Why does this even matter?  Your own example showed that all
+> shadowstack PTEs have either DIRTY_HW or DIRTY_SW set, and
+> pte_dirty()
+> checks both.
+> 
+> That makes this check seem a bit superfluous.
 
-Not true.
+My understanding is that we don't want to follow write pte if the page
+is shared as read-only.  For a SHSTK page, that is (R/O + DIRTY_SW),
+which means the SHSTK page has not been COW'ed.  Is that right?
 
-Any printk without KERN_CONT inserts a newline
-if the last character
-emitted is not a newline.
-
-dev_<level> uses can also be followed by pr_cont.
-
-So this patch does reduce the possibility of
-interleaved messages from multiple processes.
+Thanks,
+Yu-cheng
