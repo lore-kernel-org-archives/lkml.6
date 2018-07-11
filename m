@@ -2,156 +2,126 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FD1C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:40:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2033AC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ADFF20875
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:40:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ADFF20875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CB51F20875
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:41:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cdez+S81"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB51F20875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389243AbeGKPox (ORCPT
+        id S1733072AbeGKPpw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 11:44:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55234 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389203AbeGKPox (ORCPT
+        Wed, 11 Jul 2018 11:45:52 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:46814 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732452AbeGKPpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 11:44:53 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BFdamk088759
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 11:39:58 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5md98ve3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 11:39:58 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 11 Jul 2018 11:39:57 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 11 Jul 2018 11:39:53 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BFdrK827787502
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 11 Jul 2018 15:39:53 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 030F3B205F;
-        Wed, 11 Jul 2018 11:39:52 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D7A6DB2065;
-        Wed, 11 Jul 2018 11:39:51 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 11 Jul 2018 11:39:51 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9149D16C3B6D; Wed, 11 Jul 2018 08:42:11 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 08:42:11 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <20180710162555.GV3593@linux.vnet.ibm.com>
- <Pine.LNX.4.44L0.1807101416390.1449-100000@iolanthe.rowland.org>
- <20180711094344.GE13963@arm.com>
+        Wed, 11 Jul 2018 11:45:52 -0400
+Received: by mail-oi0-f68.google.com with SMTP id y207-v6so50052479oie.13
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 08:40:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=cFaIxKiRkLdZoOsCRxHiV+OQRxSfXPA7u7YEMeQ0qkY=;
+        b=Cdez+S81Fd7Yw7bXeglzWnBoDb9GA4lj8ovEzMkLaRBdpOGp2fCxdaFN5GXcYnqTiK
+         tSyKI6XXtOpYCBWEWyczOcAnd5L77C9ZV8kbTejjr9H0q/2lMwsZuXMdgsPOK26qC1YG
+         RWHDMfRsTxqKwim2pKWqRxWKa8IFT6BwVDO7jZyk4e1/UNuHrXY0keZN+yjtE0KjPCY8
+         rrOj+jKmfygNLAVBczpyq051NZALJRqHnlDVsSqQqJn6aM1TC2oa+0fo9HA9upBiHIp1
+         bvckImaeaH1tTwFSQHtiElIjme4PPEjtauvIOvyQjAgoRCoOIXouUy+ml8Dd3c8p0tg4
+         jwrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=cFaIxKiRkLdZoOsCRxHiV+OQRxSfXPA7u7YEMeQ0qkY=;
+        b=UVf/cBswaGa3eDn834yfRLqOHPz+rPI9x98M4GojSveP/BxmFwAwnOs+RmRwhRV6xS
+         jKQhTgYUnG6mmUyob20KtvRKFZ/DEeHDABpLjOqa7zNjF+jNTMwDdkD/RSen5e/TNghF
+         4D58DOT8LFjtETEdodMYn6kV9nGzzirunkDzzv2qt1WyorC5pj4JBnhqaBTux41S1oNP
+         EPfIvyMbb7dax0Auwg2KeryO1NUd7WnbPY82zw72rnFv60JuLdQoEcKb4DuyQyX3SX4l
+         ssAEMTyd8rIzkytQJD++f4cLTPNuyHgTpeWGFUEym3taw6ycof381hDbDDHC4Egf9nFG
+         gBkw==
+X-Gm-Message-State: APt69E1yUkPfUDdFPvWw1oRy+L+3Dm+aHwjQqioYWbEf1EJ5dD28/A9D
+        j5lf3fPbfAroq/538AUL+WD3JRMXXxSJj0rqQO8=
+X-Google-Smtp-Source: AAOMgpecB3S8UT1U0QitWt1X95anS07jwP8G2um6+M5KSa70iiQXoV24VgwDSS+cYrUZWHAwbJFswU/3x6zGnupY3qE=
+X-Received: by 2002:aca:e6d4:: with SMTP id d203-v6mr31219305oih.311.1531323657363;
+ Wed, 11 Jul 2018 08:40:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711094344.GE13963@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18071115-0072-0000-0000-0000037E5685
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009351; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01059839; UDB=6.00543970; IPR=6.00837759;
- MB=3.00022104; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 15:39:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071115-0073-0000-0000-000048AD2F7F
-Message-Id: <20180711154211.GT3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807110167
+Received: by 2002:a4a:c984:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 08:40:56
+ -0700 (PDT)
+In-Reply-To: <f22ee1e2-9a35-697f-50ab-543ac1631c89@intel.com>
+References: <CAMe9rOqXsQ4Onv8_-kYE_yVYVfN0Hsg81XM0sq9k2cVYE_LvaQ@mail.gmail.com>
+ <50d6bb50-5fa4-33d1-1f88-3844d0237f16@intel.com> <CAMe9rOoA=OoyaUfOvWuHGTp_ii9-A_ecR5tj8CefBKx_Hmi50g@mail.gmail.com>
+ <7db385ef-0940-8f28-87b0-828921dd2f1d@intel.com> <CAMe9rOoZ=8ROyR6U3-JY+4hib2Bb5LGhBYzY5S_Xp38coj16aQ@mail.gmail.com>
+ <9548e10a-7403-425e-bf1f-b1eb9d055d99@intel.com> <CAMe9rOrHowBX06nihdRRmEqhV8v7cs+PwVY7JYQFpUFOnHC71A@mail.gmail.com>
+ <f22ee1e2-9a35-697f-50ab-543ac1631c89@intel.com>
+From:   "H.J. Lu" <hjl.tools@gmail.com>
+Date:   Wed, 11 Jul 2018 08:40:56 -0700
+Message-ID: <CAMe9rOpPwtPd-R+D9=iDYgbFtnP+=akWic-QBKwq9wKa7uadEQ@mail.gmail.com>
+Subject: Re: Kernel 4.17.4 lockup
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        Minchan Kim <minchan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 10:43:45AM +0100, Will Deacon wrote:
-> Hi Alan,
-> 
-> On Tue, Jul 10, 2018 at 02:18:13PM -0400, Alan Stern wrote:
-> > More than one kernel developer has expressed the opinion that the LKMM
-> > should enforce ordering of writes by locking.  In other words, given
-> > the following code:
-> > 
-> > 	WRITE_ONCE(x, 1);
-> > 	spin_unlock(&s):
-> > 	spin_lock(&s);
-> > 	WRITE_ONCE(y, 1);
-> > 
-> > the stores to x and y should be propagated in order to all other CPUs,
-> > even though those other CPUs might not access the lock s.  In terms of
-> > the memory model, this means expanding the cumul-fence relation.
-> > 
-> > Locks should also provide read-read (and read-write) ordering in a
-> > similar way.  Given:
-> > 
-> > 	READ_ONCE(x);
-> > 	spin_unlock(&s);
-> > 	spin_lock(&s);
-> > 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
-> > 
-> > the load of x should be executed before the load of (or store to) y.
-> > The LKMM already provides this ordering, but it provides it even in
-> > the case where the two accesses are separated by a release/acquire
-> > pair of fences rather than unlock/lock.  This would prevent
-> > architectures from using weakly ordered implementations of release and
-> > acquire, which seems like an unnecessary restriction.  The patch
-> > therefore removes the ordering requirement from the LKMM for that
-> > case.
-> > 
-> > All the architectures supported by the Linux kernel (including RISC-V)
-> > do provide this ordering for locks, albeit for varying reasons.
-> > Therefore this patch changes the model in accordance with the
-> > developers' wishes.
-> > 
-> > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-> 
-> Thanks, I'm happy with this version of the patch:
-> 
-> Reviewed-by: Will Deacon <will.deacon@arm.com>
+On Wed, Jul 11, 2018 at 8:13 AM, Dave Hansen <dave.hansen@intel.com> wrote:
+> On 07/11/2018 07:56 AM, H.J. Lu wrote:
+>> On Mon, Jul 9, 2018 at 8:47 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+>>> On 07/09/2018 07:14 PM, H.J. Lu wrote:
+>>>>> I'd really want to see this reproduced without KASLR to make the oops
+>>>>> easier to read.  It would also be handy to try your workload with all
+>>>>> the pedantic debugging: KASAN, slab debugging, DEBUG_PAGE_ALLOC, etc...
+>>>>> and see if it still triggers.
+>>>> How can I turn them on at boot time?
+>>> The only thing you can add at boot time is slab debugging, and it's
+>>> probably the most useless of the three that I listed since you're not
+>>> actually seeing any slab corruption.
+>>>
+>>> The rest are compile-time options.
+>> I enabled KASAN, slab debugging, DEBUG_PAGE_ALLOC and disabled
+>> KASLR.  Machine locked up.  Here is the last kernel message before locking
+>> up.
+>
+> KASAN looks to have caught it, although it scrolled off the screen.  I
+> can certainly imagine the oops you saw earlier being caused by stack
+> corruption.
+>
+> Sounds like we need to reproduce this in an environment that can
+> actually capture a real oops.  Can you share more about your workload?
+> I'll see if I can get it to reproduce in a VM.
 
-I have applied your Reviewed-by, and thank you both!
+This is a quad-core machine with HT and 6 GB RAM.  The workload is
+x32 GCC build and test with "make -j8".  The bug is triggered during GCC
+test after a couple hours.  I have a script to set up my workload:
 
-Given that this is a non-trivial change and given that I am posting
-for -tip acceptance in a few days, I intend to send this one not
-to the upcoming merge window, but to the one after that.
+https://github.com/hjl-tools/gcc-regression
 
-Please let me know if there is an urgent need for this to go into the
-v4.19 merge window.
+with a cron job
 
-							Thanx, Paul
+# It takes about 3 hour to bootstrap x86-64 GCC and 3 hour to run tests,
+TIMEOUT=480
+# Run it every hour,
+30 * * * * /export/gnu/import/git/gcc-test-x32/gcc-build -mx32
+--with-pic > /dev/null 2>&1
 
+
+-- 
+H.J.
