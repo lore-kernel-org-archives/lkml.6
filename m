@@ -6,74 +6,73 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A388CC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25004C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AC7820C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C624520854
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:44:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="usGy0SxV";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JgFoejrY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AC7820C0E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="gaETRTM8";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jkgCFQEa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C624520854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388236AbeGKSr6 (ORCPT
+        id S2389139AbeGKStw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 14:47:58 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:43978 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732527AbeGKSr5 (ORCPT
+        Wed, 11 Jul 2018 14:49:52 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:38371 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387535AbeGKStw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 14:47:57 -0400
-Received: by mail-ua0-f195.google.com with SMTP id x24-v6so16832415ual.10
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 11:42:21 -0700 (PDT)
+        Wed, 11 Jul 2018 14:49:52 -0400
+Received: by mail-vk0-f67.google.com with SMTP id b77-v6so14979132vkb.5
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 11:44:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=QDCedcDfTXtzAQugp9IF0RrqYebpPAG5ciG6SMiGIPo=;
-        b=usGy0SxVcOoP6tD2c8zaOKwbVX5IIvwS/pJ7gdYzcURhaakbKyOFXUJ24B/EkseBtC
-         k6geLXFrLtNLts1ArynHpltn6gsH+kXKewv1Af6/uQsTQ6xFQUyhYV4y0o3VGFoWK1x4
-         OCqLIuwqfmzrHUtG7610TFQpADi5M0GlXvsnuPROvZLqpQ6lLpgI55ireCKntxP1CiGo
-         Yp0krNAtyerzMQ7ZlyithZc2dAmzkJ0XyMQl34gWHa2majTzQLiWGZsWQ7Rie6cM0jDl
-         rWCM1VPYhLDl3JuYNjVYRBv4ycIrpXFyMBz1Olh7NdkKkV8gj2wCDMqKg/3qcg3k+FZz
-         m5qQ==
+        bh=94fXCpSd45c8Fbyjuqut8tXExDuTQIPRyjvQWKlxufI=;
+        b=gaETRTM83aQN6gxWum18XROI1gtUc2wlx+DvZsY0shkm7WWSJQvZz9cyTIzY1D92RV
+         gQ1avVcPMPHMaSPcP0f/nRyVLT3NZCWmXd/KSWs5qfPvZWuyS2lunq1ybKS3N4TeDMOm
+         L+p7I8RQ0oGrUy4w9WfwBlSPtfz+Fy41KduY+w9kiinxs1GnFdoXroF9ne4dwgLRz7o/
+         iJZgbSsQDFC1QTv6LdwS2/zIybClY0q1Yiv9FaLJejv7oyBaIy2FKzEuRc/2etvmK3eT
+         w3wgKQ+Bhsne4qNB97nTsT0nza2sjEpXfhNPCe3YUbn05avDjej3CRzFKK4pWH2iQKMm
+         b9AQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=QDCedcDfTXtzAQugp9IF0RrqYebpPAG5ciG6SMiGIPo=;
-        b=JgFoejrY3NVzCDtZYdb9L4lVNUoDw9v/EhID0pQG/USd5fWszOutYcMjxCu0IM3Uqt
-         WGrPpRI3Ha4g4zjjuji30W3EKjw244dtv4Lr3MS6zBcKmaQfD0zuN1YisqgjKHyWyqDD
-         nG/wXhYS2xAsG46/qeB2QAfKGPZLnH8bitOmo=
+        bh=94fXCpSd45c8Fbyjuqut8tXExDuTQIPRyjvQWKlxufI=;
+        b=jkgCFQEa9Upw9+MyIbd1KEuaAe1CCKaeiYhFd0S37EdcaRETq+4fDWAaE7oq6Pm/7Q
+         BeSAYUSFGQlu9XvmK2WTti+rxXxzUnzYWIOrBgjKC9dLm/iZPCEx8/haHktsSeyRrNur
+         LItOQmFUABIMbaUecTplNaOxa364lmPnfgOdU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=QDCedcDfTXtzAQugp9IF0RrqYebpPAG5ciG6SMiGIPo=;
-        b=TXfS1nxhq4P60ZVCqIKMgEIw2wKlYNxZo2ehahVvSRI+kBLqbH5iE2tQryozBN/mHk
-         9TON6mTistrChDLQiWDiGboq/hcVCSiPI8cPeIhiKVWlKyPOkNp9VgE9iwIPCXrCYTh8
-         x1tXgpTbivDvqAjbROqtavMcgtN/8oWq8Tl4qLymhAVoCLU341OHOtIqcgclGlrY7NAP
-         s11EtN7CVNPDMOBEhO9YwTjFBfVf0iTiBSZWFtAFU2scgqzf3fVosktXW6eeBjsPQtOl
-         GptlR7faIlNJQaNuDqy/OgSqKCVUinYdc3z7ZTuajKbWcpVrXihdtST7osHBYGz2kji+
-         qhTg==
-X-Gm-Message-State: APt69E3s0S+NoQSN9/O6KcdEcsG9eSLgwrbyfiIoEjHlhCQZAJb7yc/z
-        292RhEDyYJcUUhvq+HrbQj5fhmNuevDoN/8kJlfdqy2BERI=
-X-Google-Smtp-Source: AAOMgpdu/1aHvGszboJNS/wFnelMEfxmNDezqdT9UPoZaZj0cllqImoueMheVo44ol8u0U4fiEq4y8Z5tia67+DHD6M=
-X-Received: by 2002:ab0:3308:: with SMTP id r8-v6mr17732915uao.121.1531334540568;
- Wed, 11 Jul 2018 11:42:20 -0700 (PDT)
+        bh=94fXCpSd45c8Fbyjuqut8tXExDuTQIPRyjvQWKlxufI=;
+        b=mZSaUIl7tVdU9hKQaCWKMv2bVLv/rSDfQIk83H2TXoCsjWx4a/oYOv2vi4qvRFzynq
+         Y0oikh5X2cSUr13bsFY0U6b6fTYYMLBrp+/mw11MdJmjC8glFabiYbImskvRMwjo52MW
+         n1zI9jxaLlWvlcCdyDCWlH9qGL5rwLy6QSFMPIoT2pej3iDB0kSqDLjTruRnYFQASqCl
+         ezexnRYGZ02hNi2j4jMU6tvA1zAqzfgLCRUyZD7tkMntbJ91HTZKEQJ1tR+f6RVdcPG3
+         c4apPARmF0CxKevB59R7pARdJUbHdefgc/nVu5WqDQdAWO33Sllor0qVIVCqYfM8jPhG
+         1RXQ==
+X-Gm-Message-State: APt69E2yJCnVFQgVF1yci/sowCrK0Uyfmxo8RECaBIFTlvZi5fu/PafO
+        odPOn3WUCGC3+3rK8hYUz1rQRD3GICKR2cceusOvVQ==
+X-Google-Smtp-Source: AAOMgpeWWNbBETQJhoP3I/NRzXlI70+S0mcMdQTR8ASH+GPu2/BfCPIUXRJgw0Uo2YK+MAb1LAqXD47V6ivqsh6SsGQ=
+X-Received: by 2002:a1f:c014:: with SMTP id q20-v6mr14221242vkf.144.1531334654793;
+ Wed, 11 Jul 2018 11:44:14 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 11:42:19
+Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 11:44:13
  -0700 (PDT)
-In-Reply-To: <bf1147fa417314b2fbf5c0cfb682445587fe39bb.1531136000.git.amit.kucheria@linaro.org>
-References: <cover.1531135999.git.amit.kucheria@linaro.org> <bf1147fa417314b2fbf5c0cfb682445587fe39bb.1531136000.git.amit.kucheria@linaro.org>
+In-Reply-To: <65c39c405076627bd43ec94c211c6998191b9f16.1531136000.git.amit.kucheria@linaro.org>
+References: <cover.1531135999.git.amit.kucheria@linaro.org> <65c39c405076627bd43ec94c211c6998191b9f16.1531136000.git.amit.kucheria@linaro.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 11 Jul 2018 11:42:19 -0700
-X-Google-Sender-Auth: 5XCq0PnEXTrX03fF6ai-mW2HBHg
-Message-ID: <CAD=FV=W-snhM9L9Ez-ypAJwn2NhNJ1X=s5wDvu-gbQvmLZY9Qg@mail.gmail.com>
-Subject: Re: [PATCH v6 6/7] dt: thermal: tsens: Document the fallback DT
- property for v2 of TSENS IP
+Date:   Wed, 11 Jul 2018 11:44:13 -0700
+X-Google-Sender-Auth: GBd09JCXNS-vrhpA83iLVAtZlzA
+Message-ID: <CAD=FV=XpfJyd8hUT45+J=EVY1Bs28Mk7m2TBJy8J=HO63n2_qw@mail.gmail.com>
+Subject: Re: [PATCH v6 7/7] arm64: dts: sdm845: Add tsens nodes
 To:     Amit Kucheria <amit.kucheria@linaro.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -83,10 +82,14 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         smohanad@codeaurora.org,
         Vivek Gautam <vivek.gautam@codeaurora.org>,
         Andy Gross <andy.gross@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
+        David Brown <david.brown@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -96,92 +99,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi,
 
 On Mon, Jul 9, 2018 at 4:43 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> We want to create common code for v2 of the TSENS IP block that is used in
-> a large number of Qualcomm SoCs. "qcom,tsens-v2" should be able to handle
-> most of the common functionality start with a common get_temp() function.
+> SDM845 has two tsens blocks, one with 13 sensors and the other with 8
+> sensors. It uses version 2 of the TSENS IP, so use the fallback property to
+> allow more common code.
 >
-> It is also necessary to split out the memory regions for the TM and SROT
-> register banks because their offsets are not constant across SoC families.
-
-nit that bindings should be earlier in the patch series than the code
-implementing the bindings.
-
-
 > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 > ---
->  .../devicetree/bindings/thermal/qcom-tsens.txt     | 25 +++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> index 06195e8..8f963b1 100644
-> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> @@ -1,10 +1,16 @@
->  * QCOM SoC Temperature Sensor (TSENS)
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index cdaabeb..ba2899c 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -221,6 +221,22 @@
+>                         #interrupt-cells = <2>;
+>                 };
 >
->  Required properties:
-> -- compatible :
-> - - "qcom,msm8916-tsens" : For 8916 Family of SoCs
-> - - "qcom,msm8974-tsens" : For 8974 Family of SoCs
-> - - "qcom,msm8996-tsens" : For 8996 Family of SoCs
-> +- compatible:
-> +  Must be one of the following:
-> +    - "qcom,msm8916-tsens" (MSM8916)
-> +    - "qcom,msm8974-tsens" (MSM8974)
-> +    - "qcom,msm8996-tsens" (MSM8996)
-> +    - "qcom,msm8998-tsens", "qcom,tsens-v2" (MSM8998)
-> +    - "qcom,sdm845-tsens", "qcom,tsens-v2" (SDM845)
-> +  The generic "qcom,tsens-v2" property must be used as a fallback for any SoC with
-> +  version 2 of the TSENS IP. MSM8996 is the only exception beacause the generic
-> +  property did not exist when support was added.
->
->  - reg: Address range of the thermal registers
+> +               tsens0: tsens@c263000 {
 
-You need to document that for old SoCs where TM / SROT were 0x1000
-apart (SROT first) that one "reg" field was OK.  ...and that for new
-SoCs you specify two reg ranges: the first for TM and the second for
-SROT.
-
-
->  - #thermal-sensor-cells : Should be 1. See ./thermal.txt for a description.
-> @@ -12,7 +18,7 @@ Required properties:
->  - Refer to Documentation/devicetree/bindings/nvmem/nvmem.txt to know how to specify
->  nvmem cells
->
-> -Example:
-> +Example 1 (legacy support before a fallback tsens-v2 propoerty was introduced):
->  tsens: thermal-sensor@900000 {
->                 compatible = "qcom,msm8916-tsens";
->                 reg = <0x4a8000 0x2000>;
-> @@ -20,3 +26,12 @@ tsens: thermal-sensor@900000 {
->                 nvmem-cell-names = "caldata", "calsel";
->                 #thermal-sensor-cells = <1>;
->         };
-> +
-> +Example 2 (for any platform containing v2 of the TSENS IP):
-> +tsens0: tsens@c222000 {
-
-A) Use a generic name for the node, not a specific one.  Thus the node
-should be "thermal-sensor", not "tsens".
-
-B) This unit address needs to match the _first_ reg address listed.
-Give your reg below, this should be @c263000
-
-Thus your node name should be:
+As per my comments in the bindings, nit that this should probably be
+"thermal-sensor" not "tsens", AKA:
 
 tsens0: thermal-sensor@c263000 {
 
-> +               compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
-> +               reg = <0xc263000 0x1ff>, /* TM */
-> +                       <0xc222000 0x1ff>; /* SROT */
-> +               #qcom,sensors = <13>;
+> +                       compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
+> +                       reg = <0xc263000 0x1ff>, /* TM */
+> +                             <0xc222000 0x1ff>; /* SROT */
+> +                       #qcom,sensors = <13>;
 
-The "#qcom,sensors" property seems wrong in a few ways:
+As per my comment in the bindings and the code, I'm confused about the
+whole "#qcom,sensors" bit.  It's not documented and doesn't seem
+hooked up in the code either.
 
-A) I wouldn't have expected it to start with a "#".  I only expect to
-see that on things specifying sizes / lengths.  Rob can feel free to
-override me, though.
+...but if people have tested this, perhaps I'm confused.  How can
+things work if num_sensors is 0???
 
-B) It's not documented above.  Just putting something in an example
-doesn't document it--it needs to be listed in the "Optional
-properties".
+-Doug
