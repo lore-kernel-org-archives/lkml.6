@@ -2,96 +2,125 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B4AC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5639C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58FB220B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:46:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZZr2C2Ap"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58FB220B6F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 82D6120BEC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:46:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D6120BEC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbeGKJt1 (ORCPT
+        id S1726796AbeGKJtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:49:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42344 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbeGKJt1 (ORCPT
+        Wed, 11 Jul 2018 05:49:46 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:50304 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726500AbeGKJtq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:49:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N2rYnDKqX16dd7jbsToq7+7bpNYCe0msjO+pDvIueuA=; b=ZZr2C2Apz3vvu+c2vMgRssQu7
-        BcST1VLcHWqnvqizRkx8uBV0TXbm5sbQtkKbllXiYNb4Odf1axIJc2SNJnmSvle8sL1kIH58eD/S0
-        QuoW8xHD5JOgGX6GwtiUe+0yyXmgJpPsnVvs0P+i43MZhcjy1yzy8YyzVxPQSgQV/fQwNvXPisQA1
-        vVUtAI4hqQMC4O9q0MUbQsRhMDGOYVKETFm9UjjLIuiy5DZ3l0PCsquDz1l+hp6dzjsa1wt7RdAy8
-        KGss8Z88kDEz7XVMXljO+1ja97Tel4yQWdOFRTqklA50tcMTT03fSUJGFVazuvQd51x9hMgid6bQv
-        r3is8T8xQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdBh0-0002BZ-W8; Wed, 11 Jul 2018 09:45:51 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 131F220291063; Wed, 11 Jul 2018 11:45:49 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 11:45:49 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
-Message-ID: <20180711094549.GA2476@hirez.programming.kicks-ass.net>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-19-yu-cheng.yu@intel.com>
+        Wed, 11 Jul 2018 05:49:46 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42114445"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 11 Jul 2018 17:44:20 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id B4D774B473EC;
+        Wed, 11 Jul 2018 17:44:17 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Wed, 11 Jul 2018 17:44:15 +0800
+Date:   Wed, 11 Jul 2018 17:42:44 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <yasu.isimatu@gmail.com>, <keescook@chromium.org>
+CC:     <indou.takao@jp.fujitsu.com>, <bhe@redhat.com>,
+        <caoj.fnst@cn.fujitsu.com>, <douly.fnst@cn.fujitsu.com>,
+        <fanc.fnst@cn.fujitsu.com>
+Subject: Bug report about KASLR and ZONE_MOVABLE
+Message-ID: <20180711094244.GA2019@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20180710222639.8241-19-yu-cheng.yu@intel.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: B4D774B473EC.AB32E
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 03:26:30PM -0700, Yu-cheng Yu wrote:
-> diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
-> index e0b85930dd77..72bb7c48a7df 100644
-> --- a/arch/x86/lib/x86-opcode-map.txt
-> +++ b/arch/x86/lib/x86-opcode-map.txt
-> @@ -789,7 +789,7 @@ f0: MOVBE Gy,My | MOVBE Gw,Mw (66) | CRC32 Gd,Eb (F2) | CRC32 Gd,Eb (66&F2)
->  f1: MOVBE My,Gy | MOVBE Mw,Gw (66) | CRC32 Gd,Ey (F2) | CRC32 Gd,Ew (66&F2)
->  f2: ANDN Gy,By,Ey (v)
->  f3: Grp17 (1A)
-> -f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v)
-> +f5: BZHI Gy,Ey,By (v) | PEXT Gy,By,Ey (F3),(v) | PDEP Gy,By,Ey (F2),(v) | WRUSS Pq,Qq (66),REX.W
->  f6: ADCX Gy,Ey (66) | ADOX Gy,Ey (F3) | MULX By,Gy,rDX,Ey (F2),(v)
->  f7: BEXTR Gy,Ey,By (v) | SHLX Gy,Ey,By (66),(v) | SARX Gy,Ey,By (F3),(v) | SHRX Gy,Ey,By (F2),(v)
->  EndTable
+Hi all,
 
-Where are all the other instructions? ISTR that documentation patch
-listing a whole bunch of new instructions, not just wuss.
+I found there is a BUG about KASLR and ZONE_MOVABLE.
+
+When users use 'kernelcore=' parameter without 'movable_node',
+movable memory is evenly distributed to all nodes. The size of
+ZONE_MOVABLE depends on the kernel parameter 'kernelcore=' and
+'movablecore='.
+But sometiomes, KASLR may put the uncompressed kernel to the
+tail position of a node, which will cause the kernel memory
+set as ZONE_MOVABLE. This region can not be offlined.
+
+Here is a very simple test in my qemu-kvm machine, there is
+only one node:
+
+The command line:
+[root@localhost ~]# cat /proc/cmdline
+BOOT_IMAGE=/vmlinuz-4.18.0-rc3+ root=/dev/mapper/fedora_localhost--live-root
+ro resume=/dev/mapper/fedora_localhost--live-swap
+rd.lvm.lv=fedora_localhost-live/root rd.lvm.lv=fedora_localhost-live/swap
+console=ttyS0 earlyprintk=ttyS0,115200n8 memblock=debug kernelcore=50%
+
+I use 'kernelcore=50%' here.
+
+Here is my early print result, I print the random_addr after KASLR chooses
+physical memory:
+early console in extract_kernel
+input_data: 0x000000000266b3b1
+input_len: 0x00000000007d8802
+output: 0x0000000001000000
+output_len: 0x0000000001e15698
+kernel_total_size: 0x0000000001a8b000
+trampoline_32bit: 0x000000000009d000
+booted via startup_32()
+Physical KASLR using RDRAND RDTSC...
+random_addr: 0x000000012f000000
+Virtual KASLR using RDRAND RDTSC...
+
+The address for kernel is 0x000000012f000000
+
+Here is the log of ZONE:
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000000001000-0x0000000000ffffff]
+[    0.000000]   DMA32    [mem 0x0000000001000000-0x00000000ffffffff]
+[    0.000000]   Normal   [mem 0x0000000100000000-0x00000001f57fffff]
+[    0.000000]   Device   empty
+[    0.000000] Movable zone start for each node
+[    0.000000]   Node 0: 0x000000011b000000
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000000001000-0x000000000009efff]
+[    0.000000]   node   0: [mem 0x0000000000100000-0x00000000bffd6fff]
+[    0.000000]   node   0: [mem 0x0000000100000000-0x00000001f57fffff]
+[    0.000000] Initmem setup node 0 [mem
+0x0000000000001000-0x00000001f57fffff]
+
+Only one node in my machine, ZONE_MOVABLE begins from 0x000000011b000000,
+which is lower than 0x000000012f000000.
+So KASLR put the kernel to the ZONE_MOVABLE.
+Try to solve this problem, I think there should be a new tactic in function
+find_zone_movable_pfns_for_nodes() of mm/page_alloc.c. If kernel is uncompressed
+in a tail position, then just set the memory after the kernel as ZONE_MOVABLE,
+at the same time, memory in other nodes will be set as ZONE_MOVABLE.
+
+If there is something wrong, pleas let me know. And any comments will be welcome.
+
+Thanks,
+Chao Fan
+
+
