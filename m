@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BBCBC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E169C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E3D020862
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:46:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC07920862
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fi9O/5uZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E3D020862
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h7Xtv+YT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC07920862
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732289AbeGKHtt (ORCPT
+        id S1732331AbeGKHtz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 03:49:49 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39547 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbeGKHtt (ORCPT
+        Wed, 11 Jul 2018 03:49:55 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33665 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732303AbeGKHtz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 03:49:49 -0400
-Received: by mail-pl0-f67.google.com with SMTP id s24-v6so8809570plq.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 00:46:51 -0700 (PDT)
+        Wed, 11 Jul 2018 03:49:55 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r5-v6so2648475pgv.0
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 00:46:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=XMQ9y3sIKTBhWg+aMmgR4c+8RQ5KqVUSz/E0xmozD0A=;
-        b=fi9O/5uZlfCqJZApmRCZlROkMwiUzTJ1HpFl6g0HkcGHrOWzAgQwd+uu9Y2C7X8Fdl
-         ZwQAS6BFAPmsRYEJYr5sXFmZkZQy9akfL1WEwvpIiqUULeRtv+tspKwjtXmLMN49pB3L
-         uqH+BYc7dsPSFAwENwLBOxIc2z5fxaQUymIrk=
+        bh=q2cz7hS4ymUe508HKlZEdy7VtTg+KDUjwdA1vqoP2wM=;
+        b=h7Xtv+YTPIWuCzsvcxgE0fOLvKn7EC/Vst3Nvg1vSZHKr1BAsymKCEM5YMpsPQyibq
+         adk44DUmKMhhVqhkgH0OWps1Y6/XAzaCp2jz6Xte+YcjC5U6Xa/ki1cjpNyEPzQxcv35
+         UqHMOUAuWx58WGjqhUwwAsfoXANPK+OeJ+ZKo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=XMQ9y3sIKTBhWg+aMmgR4c+8RQ5KqVUSz/E0xmozD0A=;
-        b=PfcWwvri3cUx9Pr6OBkTfzsV5vWmem7N91pAHLRrRK7sY+YrnnQ/xyJoAqhuyesnqg
-         DTtT3N7/iqpaGllcD6YNcDHUg4aAtHsOaaFlxJ+9Bv2tVGSHyhlO0u/Z1L3Vga/YSc1c
-         FokRrZXNGd+fFuxG4Y0By4lUAa9vsWKF/uGcLlEAZjbiG5asjscWbPMKRGa42tx8VRz2
-         5LzEKedQcLsaVKBUhXDT6CCkR8yk+Nlld4gGRiuUL5SAmFKFkEWdigB++vjRf5Uia3T0
-         y2ppbOv4lTinV2/yvvMrACT0M95fejHysTCzrQDIls6VAXS6uhv7A7hIQiOJyBWHaS6c
-         rGWQ==
-X-Gm-Message-State: APt69E1ANCJA09ejiCl74A6+G3t/+VWWjvoNlTlAsFeoVwU9X0VeT560
-        hbICFg0Ez407Eb3ibbFbj4LU6WholDU=
-X-Google-Smtp-Source: AAOMgpdXYB6DxUVhXNgVEJTzoSj3DhMtztLyM1oSE7BcRLQs5UaSc/7z/EL7kanWvzOU6uxCMHFh6Q==
-X-Received: by 2002:a17:902:600d:: with SMTP id r13-v6mr27952646plj.70.1531295211467;
-        Wed, 11 Jul 2018 00:46:51 -0700 (PDT)
+        bh=q2cz7hS4ymUe508HKlZEdy7VtTg+KDUjwdA1vqoP2wM=;
+        b=SbvOG1vaW7KNUXZ4M2900zLSpiJCR0bg4kWhkfOYJ+0SVRY+1GgVNIfWSZTMoSe46p
+         5h/A4pLKSglm0z9ly0cYL+CmEgD/fNNx53JRfWRO64HV4BtpvrslWDquNnaeAoRKUhMX
+         6QfCra/5O3qUCvHAxdHi5X2HOO3d+74Pas/8erh9xZfFH+bUdJCMxqkgOs/A2fbOJcPu
+         4wgYwDYLp3C+y7i46COZGs80iFR/YVNuVL/4+UMVqYxRjx5/wEs31/nXSzSraK4g6cY3
+         8hT7A8UwQ4m3rEC3BVmU5lfJUn7p09FcjWxln+Q4YL3xlpprAchstZ7N1JzvSqh6qozS
+         aSgA==
+X-Gm-Message-State: APt69E1EQjV0Ap5mkrqfkB8n62dOb5aY86VkSaV+xuowpGLVSsZL3+Rt
+        mkptmKRAUW0pdEeqcW7woqVu1A==
+X-Google-Smtp-Source: AAOMgpei/rWfaXIETLY5spsdIOJRUT9yXSxS3P7KiVJNsZtb79NpG7Lu1vEvuIKJiykVClo1T2CLhA==
+X-Received: by 2002:a65:64cf:: with SMTP id t15-v6mr25393915pgv.79.1531295216858;
+        Wed, 11 Jul 2018 00:46:56 -0700 (PDT)
 Received: from localhost.localdomain (li1192-169.members.linode.com. [45.79.93.169])
-        by smtp.gmail.com with ESMTPSA id 16-v6sm9260374pfp.6.2018.07.11.00.46.44
+        by smtp.gmail.com with ESMTPSA id 16-v6sm9260374pfp.6.2018.07.11.00.46.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 11 Jul 2018 00:46:50 -0700 (PDT)
+        Wed, 11 Jul 2018 00:46:56 -0700 (PDT)
 From:   Leo Yan <leo.yan@linaro.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
@@ -67,9 +67,9 @@ To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
         Robert Walker <robert.walker@arm.com>,
         Kim Phillips <kim.phillips@arm.com>
 Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v2 5/6] perf cs-etm: Generate branch sample when receiving a CS_ETM_TRACE_ON packet
-Date:   Wed, 11 Jul 2018 15:45:44 +0800
-Message-Id: <1531295145-596-6-git-send-email-leo.yan@linaro.org>
+Subject: [PATCH v2 6/6] perf cs-etm: Generate branch sample for CS_ETM_TRACE_ON packet
+Date:   Wed, 11 Jul 2018 15:45:45 +0800
+Message-Id: <1531295145-596-7-git-send-email-leo.yan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531295145-596-1-git-send-email-leo.yan@linaro.org>
 References: <1531295145-596-1-git-send-email-leo.yan@linaro.org>
@@ -78,45 +78,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If one CS_ETM_TRACE_ON packet is inserted, we miss to generate branch
-sample for the previous CS_ETM_RANGE packet.
-
-This patch is to generate branch sample when receiving a CS_ETM_TRACE_ON
-packet, so this can save complete info for the previous CS_ETM_RANGE
-packet just before CS_ETM_TRACE_ON packet.
+CS_ETM_TRACE_ON packet itself can give the info that there have a
+discontinuity in the trace, this patch is to add branch sample for
+CS_ETM_TRACE_ON packet if it is inserted in the middle of CS_ETM_RANGE
+packets; as result we can have hint for the trace discontinuity.
 
 Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Leo Yan <leo.yan@linaro.org>
 ---
- tools/perf/util/cs-etm.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/perf/util/cs-etm.c | 24 +++++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
 diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 976db84..d3b7942 100644
+index d3b7942..2ae6402 100644
 --- a/tools/perf/util/cs-etm.c
 +++ b/tools/perf/util/cs-etm.c
-@@ -935,6 +935,7 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
- static int cs_etm__flush(struct cs_etm_queue *etmq)
- {
- 	int err = 0;
-+	struct cs_etm_auxtrace *etm = etmq->etm;
- 	struct cs_etm_packet *tmp;
- 
- 	if (!etmq->prev_packet)
-@@ -965,6 +966,13 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
- 
+@@ -910,13 +910,23 @@ static int cs_etm__sample(struct cs_etm_queue *etmq)
+ 		etmq->period_instructions = instrs_over;
  	}
  
-+	if (etm->sample_branches &&
-+	    etmq->prev_packet->sample_type == CS_ETM_RANGE) {
-+		err = cs_etm__synth_branch_sample(etmq);
-+		if (err)
-+			return err;
-+	}
+-	if (etm->sample_branches &&
+-	    etmq->prev_packet &&
+-	    etmq->prev_packet->sample_type == CS_ETM_RANGE &&
+-	    etmq->prev_packet->last_instr_taken_branch) {
+-		ret = cs_etm__synth_branch_sample(etmq);
+-		if (ret)
+-			return ret;
++	if (etm->sample_branches && etmq->prev_packet) {
++		bool generate_sample = false;
 +
- swap_packet:
- 	if (etmq->etm->synth_opts.last_branch) {
- 		/*
++		/* Generate sample for tracing on packet */
++		if (etmq->prev_packet->sample_type == CS_ETM_TRACE_ON)
++			generate_sample = true;
++
++		/* Generate sample for branch taken packet */
++		if (etmq->prev_packet->sample_type == CS_ETM_RANGE &&
++		    etmq->prev_packet->last_instr_taken_branch)
++			generate_sample = true;
++
++		if (generate_sample) {
++			ret = cs_etm__synth_branch_sample(etmq);
++			if (ret)
++				return ret;
++		}
+ 	}
+ 
+ 	if (etm->sample_branches || etm->synth_opts.last_branch) {
 -- 
 2.7.4
 
