@@ -2,317 +2,239 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84C26C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F0BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A9D520849
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:26:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A9D520849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6636620849
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:27:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cy1EXlxU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6636620849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbeGKH31 (ORCPT
+        id S1727100AbeGKHaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 03:29:27 -0400
-Received: from mga07.intel.com ([134.134.136.100]:10664 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbeGKH31 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 03:29:27 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 00:26:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,337,1526367600"; 
-   d="scan'208";a="66038387"
-Received: from blu2-desk2.ccr.corp.intel.com (HELO [10.0.2.15]) ([10.239.13.1])
-  by orsmga003.jf.intel.com with ESMTP; 11 Jul 2018 00:26:27 -0700
-Subject: Re: [PATCH v4 6/9] iommu/vt-d: Per PCI device pasid table interfaces
-To:     Peter Xu <peterx@redhat.com>
-References: <1531113778-28238-1-git-send-email-baolu.lu@linux.intel.com>
- <1531113778-28238-7-git-send-email-baolu.lu@linux.intel.com>
- <20180711021826.GA2359@xz-mi>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
-        sanjay.k.kumar@intel.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, yi.y.sun@intel.com,
-        jacob.jun.pan@intel.com
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <5B45B11D.1080405@linux.intel.com>
-Date:   Wed, 11 Jul 2018 15:26:21 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Wed, 11 Jul 2018 03:30:07 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:35358 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726803AbeGKHaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 03:30:06 -0400
+Received: by mail-pl0-f66.google.com with SMTP id k1-v6so8783499plt.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 00:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uTrMysqOYxwsUdEJrMHjWIkDMUQGt2E7Em3DklBFaRY=;
+        b=Cy1EXlxUbeUQ1eg5B2E7VbS8XPBTARDL5XN+7VzazndWqW7/cZaGuIED5Kmngf8JJa
+         f64gGadpoBJ/SuYwsZqUmN9ETUfS25kXZFEiiS7iQO+MaGGtkZLl4SKXSx4PK6VwHc6F
+         55g92EtFXvrYY30STMq17varQdI4Fdn1EgvFJXvW15yzoiEG1eL/dq9f353zzdVQ3/Tu
+         ybZb0S/yY6LB3/c+nNR3tEIrarTo80e7EZ7L9ivIiAEydQHGoJ6soNZGAO2baMshHeuH
+         +YWYatDjhESpIv0T39y+89EjWkE4vWumGry1FVdEm43C9DE4cfOweBcblus3mUQHhZ0E
+         u4sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uTrMysqOYxwsUdEJrMHjWIkDMUQGt2E7Em3DklBFaRY=;
+        b=QDvcXeUdlsV5U30sEd9JaMxf1SoKuqJtAvE9fz3T1j+KdzTesglrvWE3XMwQMIdpDJ
+         DjWpzVPYu7ylRGsApiAJUfPem2bFLEXUsOUNDawuousyzaJ0yZR0eSuB9lkV99NFMwFE
+         +pUci2hSQmyaVhb7qEpAX6iNOUvdmH1cHOWaVhh+at6k+csM3VqXBzXLjUa085A2/XX8
+         5vxzlpxelmnj+1WCfUU0BGrVIid3lC/ANTlR9s9k4WhymZmfiJP/oRDFBHzcEDFkEV9u
+         hILgx/xEtU9j48Qk4FWcHoOhz1ZUHZ5cpzAZaI0WTTkvQSGpt36LswBKWUg+n/IZg7H2
+         PDDw==
+X-Gm-Message-State: APt69E0pm0lzUCWwOeKwCayqI69ktOCrN+R19LZtYn5JsmD4D2XKTH9W
+        g0a9WYZFdxgmL+ZLVgAvIHE=
+X-Google-Smtp-Source: AAOMgpf1MKgM5mO6Zzl8ZWkQqRlwfX7Gre6UwDKny0EwJnAqs+4dC8QlQqLxnNzCnHunwW/rQbN/bg==
+X-Received: by 2002:a17:902:1101:: with SMTP id d1-v6mr27158743pla.147.1531294033986;
+        Wed, 11 Jul 2018 00:27:13 -0700 (PDT)
+Received: from localhost ([175.223.23.177])
+        by smtp.gmail.com with ESMTPSA id y16-v6sm9717494pgc.73.2018.07.11.00.27.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 00:27:12 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 16:27:09 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Tejun Heo <tj@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: printk() from NMI backtrace can delay a lot
+Message-ID: <20180711072709.GA663@jagdpanzerIV>
+References: <bf037670-c647-b34a-486b-53ec3661b48e@i-love.sakura.ne.jp>
+ <20180703043021.GA547@jagdpanzerIV>
+ <20180703152944.GQ533219@devbig577.frc2.facebook.com>
+ <20180703163145.GB391@tigerII.localdomain>
+ <20180710115036.parj36owujllwr2i@pathway.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20180711021826.GA2359@xz-mi>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180710115036.parj36owujllwr2i@pathway.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Cc-ng Alan, Greg, Jiri
+A lockdep report: https://lore.kernel.org/lkml/20180703043021.GA547@jagdpanzerIV/T/#u
 
-On 07/11/2018 10:18 AM, Peter Xu wrote:
-> On Mon, Jul 09, 2018 at 01:22:55PM +0800, Lu Baolu wrote:
->> This patch adds the interfaces for per PCI device pasid
->> table management. Currently we allocate one pasid table
->> for all PCI devices under the scope of an IOMMU. It's
->> insecure in some cases where multiple devices under one
->> single IOMMU unit support PASID features. With per PCI
->> device pasid table, we can achieve finer protection and
->> isolation granularity.
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Liu Yi L <yi.l.liu@intel.com>
->> Suggested-by: Ashok Raj <ashok.raj@intel.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> Reviewed-by: Liu Yi L <yi.l.liu@intel.com>
->> ---
->>  drivers/iommu/intel-iommu.c |   1 +
->>  drivers/iommu/intel-pasid.c | 178 ++++++++++++++++++++++++++++++++++++++++++++
->>  drivers/iommu/intel-pasid.h |  18 +++++
->>  drivers/iommu/intel-svm.c   |   4 -
->>  include/linux/intel-iommu.h |   2 +
->>  5 files changed, 199 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
->> index 3d802c5..a930918 100644
->> --- a/drivers/iommu/intel-iommu.c
->> +++ b/drivers/iommu/intel-iommu.c
->> @@ -2450,6 +2450,7 @@ static struct dmar_domain *dmar_insert_one_dev_info(struct intel_iommu *iommu,
->>  	info->dev = dev;
->>  	info->domain = domain;
->>  	info->iommu = iommu;
->> +	info->pasid_table = NULL;
->>  
->>  	if (dev && dev_is_pci(dev)) {
->>  		struct pci_dev *pdev = to_pci_dev(info->dev);
->> diff --git a/drivers/iommu/intel-pasid.c b/drivers/iommu/intel-pasid.c
->> index e918fe0..1b61942 100644
->> --- a/drivers/iommu/intel-pasid.c
->> +++ b/drivers/iommu/intel-pasid.c
->> @@ -13,6 +13,8 @@
->>  #include <linux/intel-iommu.h>
->>  #include <linux/iommu.h>
->>  #include <linux/memory.h>
->> +#include <linux/pci.h>
->> +#include <linux/pci-ats.h>
->>  #include <linux/spinlock.h>
->>  
->>  #include "intel-pasid.h"
->> @@ -58,3 +60,179 @@ void *intel_pasid_lookup_id(int pasid)
->>  
->>  	return p;
->>  }
->> +
->> +/*
->> + * Per device pasid table management:
->> + */
->> +static inline void
->> +device_attach_pasid_table(struct device_domain_info *info,
->> +			  struct pasid_table *pasid_table)
->> +{
->> +	info->pasid_table = pasid_table;
->> +	list_add(&info->table, &pasid_table->dev);
->> +}
->> +
->> +static inline void
->> +device_detach_pasid_table(struct device_domain_info *info,
->> +			  struct pasid_table *pasid_table)
->> +{
->> +	info->pasid_table = NULL;
->> +	list_del(&info->table);
->> +}
->> +
->> +struct pasid_table_opaque {
->> +	struct pasid_table	**pasid_table;
->> +	int			segment;
->> +	int			bus;
->> +	int			devfn;
->> +};
->> +
->> +static int search_pasid_table(struct device_domain_info *info, void *opaque)
->> +{
->> +	struct pasid_table_opaque *data = opaque;
->> +
->> +	if (info->iommu->segment == data->segment &&
->> +	    info->bus == data->bus &&
->> +	    info->devfn == data->devfn &&
->> +	    info->pasid_table) {
->> +		*data->pasid_table = info->pasid_table;
->> +		return 1;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int get_alias_pasid_table(struct pci_dev *pdev, u16 alias, void *opaque)
->> +{
->> +	struct pasid_table_opaque *data = opaque;
->> +
->> +	data->segment = pci_domain_nr(pdev->bus);
->> +	data->bus = PCI_BUS_NUM(alias);
->> +	data->devfn = alias & 0xff;
->> +
->> +	return for_each_device_domain(&search_pasid_table, data);
->> +}
->> +
->> +int intel_pasid_alloc_table(struct device *dev)
->> +{
->> +	struct device_domain_info *info;
->> +	struct pasid_table *pasid_table;
->> +	struct pasid_table_opaque data;
->> +	struct page *pages;
->> +	size_t size, count;
->> +	int ret, order;
->> +
->> +	info = dev->archdata.iommu;
->> +	if (WARN_ON(!info || !dev_is_pci(dev) ||
->> +		    !info->pasid_supported || info->pasid_table))
->> +		return -EINVAL;
->> +
->> +	/* DMA alias device already has a pasid table, use it: */
->> +	data.pasid_table = &pasid_table;
->> +	ret = pci_for_each_dma_alias(to_pci_dev(dev),
->> +				     &get_alias_pasid_table, &data);
->> +	if (ret)
->> +		goto attach_out;
->> +
->> +	pasid_table = kzalloc(sizeof(*pasid_table), GFP_ATOMIC);
-> Do we need to take some lock here (e.g., the pasid lock)?  Otherwise
-> what if two devices (that are sharing the same DMA alias) call the
-> function intel_pasid_alloc_table() concurrently, then could it
-> possible that we create one table for each of the device while AFAIU
-> we should let them share a single pasid table?
+On (07/10/18 13:50), Petr Mladek wrote:
+> > 
+> > Another option *possibly* could be...
+> > 
+> > ... maybe we can brake another lock dependency. I don't quite understand,
+> > and surely I'm missing something here, why serial driver call
+> > tty_flip_buffer_push() under uart_port->lock. E.g.
+> > 
+> > 	serial_driver_handle_irq()
+> > 	{
+> > 		spin_lock(uart_port->lock);
+> > 
+> > 		.. TX() / RX()
+> > 
+> > 		tty_flip_buffer_push(uart_port->tty_port);
+> > 		spin_unlock(uart_port->lock);
+> > 	}
+> > 
+> > it might be the case that we can do
+> > 
+> > 	serial_driver_handle_irq()
+> > 	{
+> > 		spin_loc(uart_port->lock);
+> > 
+> > 		.. TX / RX
+> > 
+> > 		spin_unlock(uart_port->lock);
+> > 
+> > 		tty_flip_buffer_push(uart_port->tty_port);
+> 
+> Hmm, this looks racy. For example, I see the following in
+> serial_lpc32xx_interrupt():
+> 
+> 		tty_insert_flip_char(tport, 0, TTY_OVERRUN);
+> 		tty_schedule_flip(tport);
+> 
+> where tty_insert_flip_char() manipulates flag/char/used:
+> 
+> 			*flag_buf_ptr(tb, tb->used) = flag;
+> 		*char_buf_ptr(tb, tb->used++) = ch;
+> 
+> and tty_schedule_flip() copies "used" -> "commit":
+> 
+> 	smp_store_release(&buf->tail->commit, buf->tail->used);
+> 	queue_work(system_unbound_wq, &buf->work);
 
-The only place where this function is called is in a single-thread context
-(protected by a spinlock of device_domain_lock with local interrupt disabled).
+I'm lacking some ["a lot of", actually] knowledge here.
 
-So we don't need an extra lock here. But anyway, I should put a comment
-here.
+Alan, Jiri could you help us?
 
->
->> +	if (!pasid_table)
->> +		return -ENOMEM;
->> +	INIT_LIST_HEAD(&pasid_table->dev);
->> +
->> +	size = sizeof(struct pasid_entry);
->> +	count = min_t(int, pci_max_pasids(to_pci_dev(dev)), intel_pasid_max_id);
->> +	order = get_order(size * count);
->> +	pages = alloc_pages_node(info->iommu->node,
->> +				 GFP_ATOMIC | __GFP_ZERO,
->> +				 order);
->> +	if (!pages)
->> +		return -ENOMEM;
->> +
->> +	pasid_table->table = page_address(pages);
->> +	pasid_table->order = order;
->> +	pasid_table->max_pasid = count;
->> +
->> +attach_out:
->> +	device_attach_pasid_table(info, pasid_table);
->> +
->> +	return 0;
->> +}
->> +
->> +void intel_pasid_free_table(struct device *dev)
->> +{
->> +	struct device_domain_info *info;
->> +	struct pasid_table *pasid_table;
->> +
->> +	info = dev->archdata.iommu;
->> +	if (!info || !dev_is_pci(dev) ||
->> +	    !info->pasid_supported || !info->pasid_table)
->> +		return;
->> +
->> +	pasid_table = info->pasid_table;
->> +	device_detach_pasid_table(info, pasid_table);
->> +
->> +	if (!list_empty(&pasid_table->dev))
->> +		return;
-> Same question to here: do we need a lock?
+Correct me if I'm wrong. I thought that flip buffers are used to "cache"
+received chars/commands from the device before device "sends" (flushes)
+them to ldisc. So chars are added to flip buffers by the device itself - RX
+function, which is most commonly called from the device's IRQ handler.
+That's why we see things like
 
-Same reason as above.
+	foo_irq_handler()
+	{
+	...	spin_lock(uart_port->lock);
 
->
->> +
->> +	free_pages((unsigned long)pasid_table->table, pasid_table->order);
->> +	kfree(pasid_table);
->> +}
->> +
->> +struct pasid_table *intel_pasid_get_table(struct device *dev)
->> +{
->> +	struct device_domain_info *info;
->> +
->> +	info = dev->archdata.iommu;
->> +	if (!info)
->> +		return NULL;
->> +
->> +	return info->pasid_table;
->> +}
->> +
->> +int intel_pasid_get_dev_max_id(struct device *dev)
->> +{
->> +	struct device_domain_info *info;
->> +
->> +	info = dev->archdata.iommu;
->> +	if (!info || !info->pasid_table)
->> +		return 0;
->> +
->> +	return info->pasid_table->max_pasid;
->> +}
->> +
->> +struct pasid_entry *intel_pasid_get_entry(struct device *dev, int pasid)
->> +{
->> +	struct pasid_table *pasid_table;
->> +	struct pasid_entry *entries;
->> +
->> +	pasid_table = intel_pasid_get_table(dev);
->> +	if (WARN_ON(!pasid_table || pasid < 0 ||
->> +		    pasid >= intel_pasid_get_dev_max_id(dev)))
->> +		return NULL;
->> +
->> +	entries = pasid_table->table;
->> +
->> +	return &entries[pasid];
->> +}
->> +
->> +/*
->> + * Interfaces for PASID table entry manipulation:
->> + */
->> +static void sm_pasid_clear_entry(struct pasid_entry *pe)
->> +{
->> +	memset(pe, 0, sizeof(struct pasid_entry));
-> [1]
->
->> +}
->> +
->> +void intel_pasid_clear_entry(struct device *dev, int pasid)
->> +{
->> +	struct pasid_entry *pe;
->> +
->> +	pe = intel_pasid_get_entry(dev, pasid);
->> +	if (WARN_ON(!pe))
->> +		return;
->> +
->> +	sm_pasid_clear_entry(pe);
->> +
->> +	/* Make sure the entry update is visible before translation. */
->> +	wmb();
-> Pure question: AFAIU wmb only orders write operation, then do we
-> really need it here?  Instead from the comment I feel like what we
-> really need is a WRITE_ONCE() at [1].  Am I wrong somewhere?
+		foo_TX_chars();
+		tty_flip_buffer_push();  // tty_schedule_flip()
+	...
+		spin_unlock(uart_port->lock);
+	}
 
-I reconsidered this. Yes, you are right. I *need* a WRITE_ONCE() at [1].
+or
 
-Good catch! Thank you!
+	foo_irq_handler()
+	{
+	...	spin_lock(uart_port->lock);
 
-Best regards,
-Lu Baolu
+		foo_TX_chars()
+		{
+			...
+			tty_insert_flip_char();
+			tty_schedule_flip();
+		}
+	...
+		spin_unlock(uart_port->lock);
+	}
+
+So it seems that flip buffers are for RX routines. Is this right?
+
+Thus, if foo_irq_handler()->tty_flip_buffer_push() raced with something, then
+it must have been another IRQ that appended data to the same uart_port flip
+buffer. Which, probably, should not happen. There should be no other race
+conditions. Correct?
+
+So I'm still wondering if we can safely change this
+
+	foo_irq_handler()
+	{
+	...	spin_lock(uart_port->lock);
+
+		foo_TX_chars();
+		tty_flip_buffer_push();  // tty_schedule_flip()
+	...
+		spin_unlock(uart_port->lock);
+	}
+
+to this
+
+	foo_irq_handler()
+	{
+	...	spin_lock(uart_port->lock);
+
+		foo_TX_chars();
+	...
+		spin_unlock(uart_port->lock);
+
+		tty_flip_buffer_push();  // tty_schedule_flip()
+	}
+
+Alan, Jiri, can we do this?
+
+> So far, the best (and realistic?) idea seems to be switching to
+> printk_deferred() context when port->lock is taken. It would
+> be a well defined pattern that people might get used to.
+
+Hmm. Not sure, maybe I'm missing something. In this particular case we
+don't call printk() under port->lock, so it doesn't matter if we are in
+"normal" printk mode or in some "safe" printk mode. What we have is:
+
+	UART port->lock --> WQ pool->lock
+
+Which is OK, and port->lock is sort of "innocent".
+
+It's the stuff that we do under WQ pool->lock that hurts (deadlock).
+
+	WQ pool->lock -> printk -> UART port->lock
+
+If we want printk_deferred() / printk_safe() to help us here, then
+we need to switch to printk_deferred() / printk_safe() every time
+we take WQ pool->lock. Which is, basically, what I have already
+suggested.
+
+But I'd rather try to move tty_flip_buffer_push() out of uart_port->lock
+scope [if possible], so we would break the
+		uart_port->lock -> WQ pool->lock
+dependency.
+
+	-ss
