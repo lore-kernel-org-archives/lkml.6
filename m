@@ -2,122 +2,116 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CC5FC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B55F1C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 115CC20C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:02:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 474FA20C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:03:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7O01kLV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 115CC20C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="G0aCK6V/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 474FA20C0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390001AbeGKRHp (ORCPT
+        id S2390013AbeGKRIV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 13:07:45 -0400
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:35720 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726460AbeGKRHp (ORCPT
+        Wed, 11 Jul 2018 13:08:21 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:39105 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbeGKRIV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 13:07:45 -0400
-Received: by mail-pf0-f169.google.com with SMTP id q7-v6so17708116pff.2;
-        Wed, 11 Jul 2018 10:02:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=38CRE1CTP3NqrPzqPPVnkNeKIc+5NJNTkJvnrJedePE=;
-        b=N7O01kLVE+UzJq+O9UR4xAjZXftrr4R2nJVMkFYWYR6y6aVUfMaHTwT8SwIONv2fc8
-         WieX7fs/umPa6t6t8sly6n/AHw/3VMsuEm/EJSQagbEUCmBeSYWvRp07Rggs8Bdib3e2
-         oIMcbdUOmKiS107UWPviE369ZqSNX1+43q4stI7SGWFKZQKxjv+GDIrkpTANSLJyp7lO
-         fmVlT02JoP8UGH56pMrKO/VCTV/81gk12+/IiQfco/gbLmlQuSJsB+2yI3GPvAG05l30
-         UNEs4D6Tc6Q+5VO9JFvzd2gQnAh+NUqZSHMKFjSQdPAHXCwHUM4iQcy83HFLEGPc86s/
-         heEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=38CRE1CTP3NqrPzqPPVnkNeKIc+5NJNTkJvnrJedePE=;
-        b=GYQWss0v6kzhs8w+g538QO/WoQ7BI2WQ9mHic6TPTYNYTg3Dc3hO/Slw3k+lOYl6Z5
-         HXWbSB73RKHYkDvLRqNtUM0wM8xJ9SBIGiVafulJyASOmx5Rx0C3/2THxxW0cVNkWfYa
-         VdSH3AloUsdncVKDz35kn6Ai5pLO494IehkKmOcAt2+NFM/uU+Yie15b6xw2cRwAPlX0
-         emXif0YGJiI2bo6EfWWmKh9ZYyIU+gwphokVa5QeORk0ZNNYV7F4rs3gqf32TCrurUQJ
-         VSa2eA0Bz5bS8FqeQFU2AtgP7Xcsd1pkcjE6T+pgwcr+hLTlcapQGfSB5RlL9Z8L01jL
-         H1MQ==
-X-Gm-Message-State: APt69E0sxWUsH4dm23FldtItDtSaIdxesyDox1Z9PlcLXfpN3l4vsJrw
-        vtdIhssWGm8Oihev9sK5w7r6nG+39/7woqr3CT753A==
-X-Google-Smtp-Source: AAOMgpfNQ9YuG+4VFUbAaO/f1H/cqAaRaK+fVVogaXUPzWLPE9sDc4MjPkQ/WVIIily1jIWxq/l1MTD+vdVMT4GqsmM=
-X-Received: by 2002:a65:62ce:: with SMTP id m14-v6mr27335719pgv.407.1531328550930;
- Wed, 11 Jul 2018 10:02:30 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:1789:0:0:0:0 with HTTP; Wed, 11 Jul 2018 10:02:30
- -0700 (PDT)
-In-Reply-To: <20180710055847epcms1p2eed3f89ae0220a06051faa83cc8b21ed@epcms1p2>
-References: <CAES_P+_k=fz3yMnVZni2hEnfSujctnT33zoN9-KsBLBeQaG_sA@mail.gmail.com>
- <CGME20180709213456epcas4p17e5753d1b59856a0df3790d7faef8d73@epcms1p2>
- <CAES_P+_GTRcFya=N20+b+U=HOpv9gcpYkfJW_gU_i_2pH2hmMA@mail.gmail.com> <20180710055847epcms1p2eed3f89ae0220a06051faa83cc8b21ed@epcms1p2>
-From:   noman pouigt <variksla@gmail.com>
-Date:   Wed, 11 Jul 2018 10:02:30 -0700
-Message-ID: <CAES_P+-=iictJKgHFGN2Mypp_+GMyTOVmZVQw=bSfHbyZMY4QA@mail.gmail.com>
-Subject: Re: Re: devfreq relation with pm qos
-To:     myungjoo.ham@samsung.com
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 11 Jul 2018 13:08:21 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 4442124E022E;
+        Wed, 11 Jul 2018 10:03:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1531328587; bh=GwwtFcHroGyHpuG0I0BLw9EgBPE606DZVAZg0W+tIxo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=G0aCK6V/SyY4hjJLK5dsnsLqKVXlWfyGNFdxdXWRABi4oDmdTxAuaxYqFgoxXUfaF
+         Bf0XWZvuD26rdq20r0J9qrcId0IpLYU49vuGXAtzJUgzg/Vuo8hNOGq8V2egCS31jz
+         IIseEkz3zRHNDvhHR5q5z9E31ZufcG5KlhEVxd7GHXO2huv7pt+8uW7WmUeoUbpDrS
+         zl5sP2jBnv3gM0P/LU3QEsfSCAbjzeoB/yqqeo+aiJ4UQQsuEq4OQvRPm2QpFTyrYu
+         Kouj+GZpZ1MJV5i34lcpf8Vor4itiaTd9FgTa6LNCX7q110ISYmH/fViIPemdWFRZa
+         faGFUvB9S0y/w==
+Received: from abrodkin-7480l.internal.synopsys.com (abrodkin-7480l.internal.synopsys.com [10.121.3.42])
+        by mailhost.synopsys.com (Postfix) with ESMTP id E56913B73;
+        Wed, 11 Jul 2018 10:03:05 -0700 (PDT)
+From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>
+Subject: [PATCH] ARC: Enable FUSE_FS on devboards
+Date:   Wed, 11 Jul 2018 20:02:58 +0300
+Message-Id: <20180711170258.30165-1-abrodkin@synopsys.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 9, 2018 at 10:58 PM, MyungJoo Ham <myungjoo.ham@samsung.com> wr=
-ote:
->> + dev freq maintainters.
->>
->> On Mon, Jul 9, 2018 at 3:37 AM, noman pouigt <variksla@gmail.com> wrote:
->> > folks,
->> >
->> > I am trying to figure out the relationship between PM QOS
->> > with devfreq framework. I see this thread[1] where MyungJoo
->> > talks about QOS and devfreq but that control is through
->> > sysfs but I don't see any relation of pm qos (kernel/power/qos.c)
->> > with devfreq directly as devfreq is not calling any of the QOS
->> > api's. Is this intended?
->> >
->> > Isn't QOS value update using pm_qos_update_request has a
->> > direct relation with devfreq drivers i.e. setting the value to
->> > high or low selects the corresponding voltage and frequency
->> > setting in devfreq framework? I went through the devfreq
->> > drivers and couldn't find that relationship. Is this by design or
->> > I am missing something very obvious?
->> >
->> > [1] https://lwn.net/Articles/484161/
->
-> Hello,
->
-> Unfortunately, the suggested concept in the referred article was not ever
-> accepted in the mainline.
+This allows to use FUSE file-systems such as SSHFS.
 
-MyungJo, I am trying to understand the relationship of PM QOS with
-devfreq drivers. I don't see any relation of PM QOS api's with devfreq driv=
-ers
-directly as there are no QOS apis used in the devfreq framework.
+Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+---
+ arch/arc/configs/axs101_defconfig     | 1 +
+ arch/arc/configs/axs103_defconfig     | 1 +
+ arch/arc/configs/axs103_smp_defconfig | 1 +
+ arch/arc/configs/hsdk_defconfig       | 1 +
+ 4 files changed, 4 insertions(+)
 
-The only explanation I have is that PM QOS has direct relationship
-with CPUFREQ driver and as CPUFREQ driver works with CPU
-frequency and that CPU frequency directly affects DEVFREQ drivers
-as devfreq driver maps CPU frequency to device frequency and
-that is why PM QOS doesn=E2=80=99t have direct relation with PM QOS.
+diff --git a/arch/arc/configs/axs101_defconfig b/arch/arc/configs/axs101_defconfig
+index 09f85154c5a4..13500399ea86 100644
+--- a/arch/arc/configs/axs101_defconfig
++++ b/arch/arc/configs/axs101_defconfig
+@@ -94,6 +94,7 @@ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_DW=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_EXT3_FS=y
++CONFIG_FUSE_FS=y
+ CONFIG_MSDOS_FS=y
+ CONFIG_VFAT_FS=y
+ CONFIG_NTFS_FS=y
+diff --git a/arch/arc/configs/axs103_defconfig b/arch/arc/configs/axs103_defconfig
+index 09fed3ef22b6..a0576308cccd 100644
+--- a/arch/arc/configs/axs103_defconfig
++++ b/arch/arc/configs/axs103_defconfig
+@@ -93,6 +93,7 @@ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_DW=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_EXT3_FS=y
++CONFIG_FUSE_FS=y
+ CONFIG_MSDOS_FS=y
+ CONFIG_VFAT_FS=y
+ CONFIG_NTFS_FS=y
+diff --git a/arch/arc/configs/axs103_smp_defconfig b/arch/arc/configs/axs103_smp_defconfig
+index ea2f6d817d1a..9bd590c22620 100644
+--- a/arch/arc/configs/axs103_smp_defconfig
++++ b/arch/arc/configs/axs103_smp_defconfig
+@@ -96,6 +96,7 @@ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_DW=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_EXT3_FS=y
++CONFIG_FUSE_FS=y
+ CONFIG_MSDOS_FS=y
+ CONFIG_VFAT_FS=y
+ CONFIG_NTFS_FS=y
+diff --git a/arch/arc/configs/hsdk_defconfig b/arch/arc/configs/hsdk_defconfig
+index 1b54c72f4296..ba101d12515f 100644
+--- a/arch/arc/configs/hsdk_defconfig
++++ b/arch/arc/configs/hsdk_defconfig
+@@ -64,6 +64,7 @@ CONFIG_MMC_SDHCI_PLTFM=y
+ CONFIG_MMC_DW=y
+ # CONFIG_IOMMU_SUPPORT is not set
+ CONFIG_EXT3_FS=y
++CONFIG_FUSE_FS=y
+ CONFIG_VFAT_FS=y
+ CONFIG_TMPFS=y
+ CONFIG_NFS_FS=y
+-- 
+2.17.1
 
-Is my understanding right?
-
->
-> Cheers,
-> MyungJo
