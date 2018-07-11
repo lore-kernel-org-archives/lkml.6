@@ -2,143 +2,126 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0847C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:16:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280DBC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6483F2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:16:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6483F2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 9D85420852
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:17:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQ0REPas"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D85420852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732879AbeGKMUm (ORCPT
+        id S1732906AbeGKMVI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:20:42 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55027 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726587AbeGKMUm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:20:42 -0400
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1fdE2r-0004M3-J6; Wed, 11 Jul 2018 14:16:33 +0200
-Message-ID: <1531311392.3163.47.camel@pengutronix.de>
-Subject: Re: [PATCH v3 1/2] soc: imx: gpc: Disable 6sl display power gating
- for ERR006287
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, kernel@pengutronix.de
-Date:   Wed, 11 Jul 2018 14:16:32 +0200
-In-Reply-To: <d694bc32feb1c9638485700ba53cd6e51bea495c.1531310547.git.leonard.crestez@nxp.com>
-References: <cover.1531310547.git.leonard.crestez@nxp.com>
-         <d694bc32feb1c9638485700ba53cd6e51bea495c.1531310547.git.leonard.crestez@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 11 Jul 2018 08:21:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58596 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726587AbeGKMVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:21:07 -0400
+Received: from localhost (unknown [106.200.243.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DFB72084A;
+        Wed, 11 Jul 2018 12:17:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531311424;
+        bh=7MPLgS8jcq32VU6ZOl+aL6zKzSYkVQuVD8gwoppUNW0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kQ0REPasqeQ6hjZSrqYY4mTMwfHtAXyuhNc3dtssPMClTTRZnlrxD0VEIdWJurI/a
+         4qZI8tD1eQRNsOSnUgnNbpMz5e2Gh4cf34v7V5ZW+azYG7PpW4NtNRrUcBWlWsQVee
+         dWOz/5r49HY+PVbQDOGAQ6p205q8CI0TuXYMUDKw=
+Date:   Wed, 11 Jul 2018 17:46:55 +0530
+From:   Vinod <vkoul@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Zubair Lutfullah Kakakhel <Zubair.Kakakhel@imgtec.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        Daniel Silsby <dansilsby@gmail.com>, dmaengine@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mips@linux-mips.org
+Subject: Re: [PATCH 02/14] dmaengine: dma-jz4780: Separate chan/ctrl registers
+Message-ID: <20180711121655.GS3219@vkoul-mobl>
+References: <20180703123214.23090-1-paul@crapouillou.net>
+ <20180703123214.23090-3-paul@crapouillou.net>
+ <20180709170359.GI22377@vkoul-mobl>
+ <1531237019.17118.1@crapouillou.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531237019.17118.1@crapouillou.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, den 11.07.2018, 15:11 +0300 schrieb Leonard Crestez:
-> The imx6sl chip errata document describes ERR006287 like this:
-> 
-> > Upon resuming from power gating, the modules in the display power domain
-> 
-> (eLCDIF, EPDC, PXP and SPDC) might fail to perform register reads
-> correctly.
-> 
-> > When the modules listed above are used, do not use power gating on the
-> 
-> display power domain.
-> 
-> Link: https://www.nxp.com/docs/en/errata/IMX6SLCE.pdf#page=62
-> 
-> Handle this in the safest possible way by keeping the DISP domain
-> always-on.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+On 10-07-18, 17:36, Paul Cercueil wrote:
 
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-
-Can you send a follow on patch to switch the i.MX6QP errata workaround
-to use GENPD_FLAG_ALWAYS_ON and remove the -EBUSY stuff in the power
-down path?
-
-Regards,
-Lucas
-
-> ---
->  drivers/soc/imx/gpc.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+> > >  @@ -3,7 +3,8 @@
+> > >   Required properties:
+> > > 
+> > >   - compatible: Should be "ingenic,jz4780-dma"
+> > >  -- reg: Should contain the DMA controller registers location and
+> > > length.
+> > >  +- reg: Should contain the DMA channel registers location and
+> > > length, followed
+> > >  +  by the DMA controller registers location and length.
+> > >   - interrupts: Should contain the interrupt specifier of the DMA
+> > > controller.
+> > >   - interrupt-parent: Should be the phandle of the interrupt
+> > > controller that
+> > >   - clocks: Should contain a clock specifier for the JZ4780 PDMA
+> > > clock.
+> > >  @@ -22,7 +23,8 @@ Example:
+> > > 
+> > >   dma: dma@13420000 {
+> > >   	compatible = "ingenic,jz4780-dma";
+> > >  -	reg = <0x13420000 0x10000>;
+> > >  +	reg = <0x13420000 0x400
+> > >  +	       0x13421000 0x40>;
+> > 
+> > Second should be optional or we break platform which may not have
+> > updated DT..
 > 
-> diff --git a/drivers/soc/imx/gpc.c b/drivers/soc/imx/gpc.c
-> index 526f2d02dc78..f7960f773019 100644
-> --- a/drivers/soc/imx/gpc.c
-> +++ b/drivers/soc/imx/gpc.c
-> @@ -339,30 +339,35 @@ static struct imx_pm_domain imx_gpc_domains[] = {
->  };
->  
->  struct imx_gpc_dt_data {
-> >  	int num_domains;
-> >  	bool err009619_present;
-> > +	bool err006287_present;
->  };
->  
->  static const struct imx_gpc_dt_data imx6q_dt_data = {
-> >  	.num_domains = 2,
-> >  	.err009619_present = false,
-> > +	.err006287_present = false,
->  };
->  
->  static const struct imx_gpc_dt_data imx6qp_dt_data = {
-> >  	.num_domains = 2,
-> >  	.err009619_present = true,
-> > +	.err006287_present = false,
->  };
->  
->  static const struct imx_gpc_dt_data imx6sl_dt_data = {
-> >  	.num_domains = 3,
-> >  	.err009619_present = false,
-> > +	.err006287_present = true,
->  };
->  
->  static const struct imx_gpc_dt_data imx6sx_dt_data = {
-> >  	.num_domains = 4,
-> >  	.err009619_present = false,
-> > +	.err006287_present = false,
->  };
->  
->  static const struct of_device_id imx_gpc_dt_ids[] = {
-> >  	{ .compatible = "fsl,imx6q-gpc", .data = &imx6q_dt_data },
-> >  	{ .compatible = "fsl,imx6qp-gpc", .data = &imx6qp_dt_data },
-> @@ -467,10 +472,15 @@ static int imx_gpc_probe(struct platform_device *pdev)
-> >  	/* Disable PU power down in normal operation if ERR009619 is present */
-> >  	if (of_id_data->err009619_present)
-> >  		imx_gpc_domains[GPC_PGC_DOMAIN_PU].flags |=
-> >  				PGC_DOMAIN_FLAG_NO_PD;
->  
-> > +	/* Keep DISP always on if ERR006287 is present */
-> > +	if (of_id_data->err006287_present)
-> > +		imx_gpc_domains[GPC_PGC_DOMAIN_DISPLAY].base.flags |=
-> > +				GENPD_FLAG_ALWAYS_ON;
-> +
-> >  	if (!pgc_node) {
-> >  		ret = imx_gpc_old_dt_init(&pdev->dev, regmap,
-> >  					  of_id_data->num_domains);
-> >  		if (ret)
-> >  			return ret;
+> See comment below.
+> 
+> > >  -	jzdma->base = devm_ioremap_resource(dev, res);
+> > >  -	if (IS_ERR(jzdma->base))
+> > >  -		return PTR_ERR(jzdma->base);
+> > >  +	jzdma->chn_base = devm_ioremap_resource(dev, res);
+> > >  +	if (IS_ERR(jzdma->chn_base))
+> > >  +		return PTR_ERR(jzdma->chn_base);
+> > >  +
+> > >  +	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> > >  +	if (!res) {
+> > >  +		dev_err(dev, "failed to get I/O memory\n");
+> > >  +		return -EINVAL;
+> > >  +	}
+> > 
+> > okay and this breaks if you happen to get probed on older DT. I think DT
+> > is treated as ABI so you need to continue support older method while
+> > finding if DT has split resources
+> 
+> See my response to PrasannaKumar. All the Ingenic-based boards do compile
+> the devicetree within the kernel, so I think it's still fine to add breaking
+> changes. I'll wait on @Rob to give his point of view on this, though.
+> 
+> (It's not something hard to change, but I'd like to know what's the policy
+> in that case. I have other DT-breaking patches to submit)
+
+The policy is that DT is an ABI and should not break :)
+
+Who maintains Ingenic arch. MAINTAINERS doesn't tell me.
+
+-- 
+~Vinod
