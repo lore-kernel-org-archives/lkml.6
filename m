@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20792C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79182C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C819820BEC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9C2D208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="OKrtijFd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C819820BEC
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="dcjsN+fd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C2D208FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733102AbeGKLeQ (ORCPT
+        id S1733116AbeGKLeR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:34:16 -0400
+        Wed, 11 Jul 2018 07:34:17 -0400
 Received: from 8bytes.org ([81.169.241.247]:38806 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733027AbeGKLeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:34:15 -0400
+        id S1733079AbeGKLeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:34:16 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id E8BFD2420; Wed, 11 Jul 2018 13:30:06 +0200 (CEST)
+        id 96B1D30A1; Wed, 11 Jul 2018 13:30:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308607; bh=mDYOiNc4qhumS/zaIILgLYcqAgOrdsgG0V0cjiaHnEg=;
+        t=1531308608; bh=q4CDuLWy3KUGtyRWaR7mKNryqS8EfWnYZUNiGDPgwws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OKrtijFdedXgVYTa8QnMSSSzWuqBwtNa0ylFh/Quvxwpy5Pstpqq+Efzcnx5VbuRn
-         5+KqPNQCzaoddKPoMfHGnODx13q6nMwCmqs9Kh2rbi8kBNDfLMinBkL5lhSuUJqy24
-         56QVdT3IFdV0kgJ8Add9pl9PdniS1wy9dVxD1Y0W9nzipf1ao6UecpD17Gz/rvryaJ
-         5t++x4X7HNIsJoIXfV9R1Hbu2uTS7DOn5uYnQ9ylo9Aznrxyyy02jKhEJl+xcPYG52
-         ZHhlzXFoIDw3bepC97t5HzKmOXW5LT6VDDudnmZUCQ42rHDQ5pGLMSBsRnVTAyriE8
-         VcaSZIiXzMzDA==
+        b=dcjsN+fdyD/eABUYXNehLSTwSiZ+fVn4PluV5xFnfAA7Q/JToPEJe+krzna9AUhgn
+         Kk5cPin97S2GAu+wPSU/g+dtH1cXIDpOcs8X8D9ksoIwFMFjfuk91PXG2YErwNDHdW
+         bZxq0FInJYteOFuQHlktk0uadFZs0yj1K40uNXYt1ihHA+/IEjIaSuEqplspa9Hk6l
+         K4oedkC7rFWx8GRUBrPFMMIH6nYOKHXEhDQei7uVruKMVXMjj5Gu3mEPK4POwwMBfH
+         cM58DtMuvLADy0ajIIGt4590qdqWqhmh9xIfEyB1zfMjVnxTNCRTffLFdp8+TSOmFc
+         WTZ1AJEm5Nzkg==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 34/39] x86/ldt: Define LDT_END_ADDR
-Date:   Wed, 11 Jul 2018 13:29:41 +0200
-Message-Id: <1531308586-29340-35-git-send-email-joro@8bytes.org>
+Subject: [PATCH 38/39] x86/mm/pti: Add Warning when booting on a PCID capable CPU
+Date:   Wed, 11 Jul 2018 13:29:45 +0200
+Message-Id: <1531308586-29340-39-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
@@ -72,55 +72,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-It marks the end of the address-space range reserved for the
-LDT. The LDT-code will use it when unmapping the LDT for
-user-space.
+Warn the user in case the performance can be significantly
+improved by switching to a 64-bit kernel.
 
+Suggested-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/pgtable_32_types.h | 2 ++
- arch/x86/include/asm/pgtable_64_types.h | 1 +
- arch/x86/kernel/ldt.c                   | 2 +-
- 3 files changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/mm/pti.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/arch/x86/include/asm/pgtable_32_types.h b/arch/x86/include/asm/pgtable_32_types.h
-index 7297810..b0bc0ff 100644
---- a/arch/x86/include/asm/pgtable_32_types.h
-+++ b/arch/x86/include/asm/pgtable_32_types.h
-@@ -53,6 +53,8 @@ extern bool __vmalloc_start_set; /* set once high_memory is set */
- #define LDT_BASE_ADDR		\
- 	((CPU_ENTRY_AREA_BASE - PAGE_SIZE) & PMD_MASK)
+diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+index b879ccd..e20283fa 100644
+--- a/arch/x86/mm/pti.c
++++ b/arch/x86/mm/pti.c
+@@ -517,6 +517,22 @@ void __init pti_init(void)
  
-+#define LDT_END_ADDR		(LDT_BASE_ADDR + PMD_SIZE)
+ 	pr_info("enabled\n");
+ 
++#ifdef CONFIG_X86_32
++	if (boot_cpu_has(X86_FEATURE_PCID)) {
++		/* Use printk to work around pr_fmt() */
++		printk(KERN_WARNING "\n");
++		printk(KERN_WARNING "************************************************************\n");
++		printk(KERN_WARNING "** WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!  **\n");
++		printk(KERN_WARNING "**                                                        **\n");
++		printk(KERN_WARNING "** You are using 32-bit PTI on a 64-bit PCID-capable CPU. **\n");
++		printk(KERN_WARNING "** Your performance will increase dramatically if you     **\n");
++		printk(KERN_WARNING "** switch to a 64-bit kernel!                             **\n");
++		printk(KERN_WARNING "**                                                        **\n");
++		printk(KERN_WARNING "** WARNING! WARNING! WARNING! WARNING! WARNING! WARNING!  **\n");
++		printk(KERN_WARNING "************************************************************\n");
++	}
++#endif
 +
- #define PKMAP_BASE		\
- 	((LDT_BASE_ADDR - PAGE_SIZE) & PMD_MASK)
+ 	pti_clone_user_shared();
  
-diff --git a/arch/x86/include/asm/pgtable_64_types.h b/arch/x86/include/asm/pgtable_64_types.h
-index 066e0ab..04edd2d 100644
---- a/arch/x86/include/asm/pgtable_64_types.h
-+++ b/arch/x86/include/asm/pgtable_64_types.h
-@@ -115,6 +115,7 @@ extern unsigned int ptrs_per_p4d;
- #define LDT_PGD_ENTRY_L5	-112UL
- #define LDT_PGD_ENTRY		(pgtable_l5_enabled() ? LDT_PGD_ENTRY_L5 : LDT_PGD_ENTRY_L4)
- #define LDT_BASE_ADDR		(LDT_PGD_ENTRY << PGDIR_SHIFT)
-+#define LDT_END_ADDR		(LDT_BASE_ADDR + PGDIR_SIZE)
- 
- #define __VMALLOC_BASE_L4	0xffffc90000000000UL
- #define __VMALLOC_BASE_L5 	0xffa0000000000000UL
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index c9b1402..e921b3d 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -206,7 +206,7 @@ static void free_ldt_pgtables(struct mm_struct *mm)
- #ifdef CONFIG_PAGE_TABLE_ISOLATION
- 	struct mmu_gather tlb;
- 	unsigned long start = LDT_BASE_ADDR;
--	unsigned long end = start + (1UL << PGDIR_SHIFT);
-+	unsigned long end = LDT_END_ADDR;
- 
- 	if (!static_cpu_has(X86_FEATURE_PTI))
- 		return;
+ 	/* Undo all global bits from the init pagetables in head_64.S: */
 -- 
 2.7.4
 
