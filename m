@@ -2,114 +2,156 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E842C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B57C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9F4D20C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:10:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="IAX5mQ9J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9F4D20C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
+	by mail.kernel.org (Postfix) with ESMTP id 0742520C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:12:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0742520C0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389483AbeGKTQY (ORCPT
+        id S2389499AbeGKTSh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 15:16:24 -0400
-Received: from mail-eopbgr10084.outbound.protection.outlook.com ([40.107.1.84]:14256
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726457AbeGKTQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 15:16:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=eTXhXtKzZdRQgR7+tLsqwIN6jpymc7vE6c9N5UWX88U=;
- b=IAX5mQ9J38C2oyG0HCyp0VuLnh0sqPeieVH497ujse/aW2fnzDIZ2MV2fLOdKT5PkRQWqFfADKJvl+GwrKFyuc1R2ETeWUtGa6qydu2O8cJSG9iAqoDvCsi8YbMz09fq8EmJ1shN/6IfjxJBoQ/cK3EMD52RTVCJEFHegniNl4M=
-Received: from DB6PR0502MB2901.eurprd05.prod.outlook.com (10.172.249.140) by
- DB6PR0502MB2902.eurprd05.prod.outlook.com (10.172.249.141) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.19; Wed, 11 Jul 2018 19:10:38 +0000
-Received: from DB6PR0502MB2901.eurprd05.prod.outlook.com
- ([fe80::68db:4d69:9ef5:f7e0]) by DB6PR0502MB2901.eurprd05.prod.outlook.com
- ([fe80::68db:4d69:9ef5:f7e0%2]) with mapi id 15.20.0952.017; Wed, 11 Jul 2018
- 19:10:38 +0000
-From:   Saeed Mahameed <saeedm@mellanox.com>
-To:     "jannh@google.com" <jannh@google.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "leon@kernel.org" <leon@kernel.org>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>
-Subject: Re: [PATCH net v2] net/mlx5: fix uaccess beyond "count" in debugfs
- read/write handlers
-Thread-Topic: [PATCH net v2] net/mlx5: fix uaccess beyond "count" in debugfs
- read/write handlers
-Thread-Index: AQHUFWZ9EShNbOvOz0qKYfq8Ca06e6SKauUA
-Date:   Wed, 11 Jul 2018 19:10:38 +0000
-Message-ID: <063e455ca5fc8af9f888eb9afd03f24f4320db25.camel@mellanox.com>
-References: <20180706201809.105152-1-jannh@google.com>
-In-Reply-To: <20180706201809.105152-1-jannh@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=saeedm@mellanox.com; 
-x-originating-ip: [209.116.155.178]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB6PR0502MB2902;7:SgX0PVUN1dJjqrr2RhLlm6jbHi6GkjGoiuuw6sFjUpM+xDS8ztEzC969l3yZ+Kr19dbN+rD7esBXuHMrz8ymEoP+68tS56SGo7hWYAIPzkCRBPLIeWaEl9HcAu9C1dZz/0Yd8xjqXwB/HsLhK52P0Y9Ru82IswF8/tCHd1RpHvjBZiNJEMC1hm9sLLl7rCKsRSNobb9UXMTZ627pWBXdjOYV9RErveP7InM7GMomFwVYP0sKDHMCDqwOZMb5tuut
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 39c08413-4c1d-42e5-319e-08d5e761fcee
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DB6PR0502MB2902;
-x-ms-traffictypediagnostic: DB6PR0502MB2902:
-x-microsoft-antispam-prvs: <DB6PR0502MB29027C90706F1AEB02E1E8BABE5A0@DB6PR0502MB2902.eurprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(192374486261705)(211936372134217)(153496737603132)(17755550239193);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:DB6PR0502MB2902;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0502MB2902;
-x-forefront-prvs: 0730093765
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(136003)(376002)(366004)(199004)(189003)(6246003)(256004)(476003)(3846002)(186003)(118296001)(106356001)(14444005)(2900100001)(105586002)(54906003)(14454004)(446003)(2616005)(6116002)(110136005)(11346002)(2906002)(25786009)(6506007)(305945005)(66066001)(76176011)(6486002)(36756003)(26005)(50226002)(2501003)(4326008)(99286004)(7736002)(6436002)(229853002)(102836004)(5250100002)(81166006)(2201001)(8676002)(8936002)(5660300001)(478600001)(97736004)(6512007)(53936002)(486006)(81156014)(316002)(86362001)(68736007)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0502MB2902;H:DB6PR0502MB2901.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:3;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: AU8lL4Ejp1wg3Uzf0dm4H31VKttamXSTNdy1f6cwzI1tR7o3kLti9KQx7bgmJpPTQ9YuSLLaMyT0dkYEjuJUG1eq5eB2jzm2jDOP6l5HYFCrYjww0EmXksLN1OyiaupGq5e0oNesGupHh1iY1SciZ6r0t4BnL0W/ggddokQ1EXQIkDR873N9DPa45scKRpt+i03ESa5nyJLEjAcWExbZ5W+N3PbaHP0z35w3T2zkuRxBu5sQtPa3MibCltRRYnrZwyTOytaLoQ7CDAboa48tVm8i7ApXHqYyHL5P5WaWImr7LT3XZG1UYo/jmSfEnIaNL3S657BS/u/XqVAwZgpG0NqjfWuCcxPQW5Rr0BVDm24=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <72918A0A00DFAC49B498D4A7054AE0BC@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 11 Jul 2018 15:18:37 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:38329 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeGKTSh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 15:18:37 -0400
+Received: by mail-oi0-f67.google.com with SMTP id v8-v6so51293289oie.5;
+        Wed, 11 Jul 2018 12:12:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Av7JzrQgvGRWv7NkW+wupltSBoY4alLAH3kyeY4PdAc=;
+        b=sBtPZMjtXBLVWrTgUR2xJdESJLbEX2cQ34jcipMV1hZGL62csCExakalpuo5o/X8N6
+         5HO311OIy1AX3Z+3hqwbAQEYw5LOV4qhVfjMtTHdPK05qpbh1BnHyE9BRX0PyAfwVjeK
+         igZoUwy83PeL3FOHLElSowtq60VJOViUj8mz7QKYkCJ3LRMaMrzcnAPUF0ouxF1LTQUT
+         izQxAsmhgnhK7ektrW4R3iQ9alKzuT1NScWgRfLetxWUMzlnAB9z9DscHfCfX2WonsQ0
+         VxKuGjXHTCr1SXH2Nu2C+oTDkw5T7TjB58s16GQTlfPECK0IPE1W6ztNQVjJ7NCtUV4i
+         F4kw==
+X-Gm-Message-State: AOUpUlHJN7iLcLBwB8f+kfMikI9IcnCrzHPI8qL7C+PTYHTbStJMaoKB
+        rYH3ZLg4EPh2GFayKVaAukwZur4=
+X-Google-Smtp-Source: AAOMgpc6XmnU6Q4Y44aBN87QSDxBhabTIfpUmpduR6mVWlcYiQhnIAZmSQIwpj/Ujiu4hYGRja5hCg==
+X-Received: by 2002:aca:5249:: with SMTP id g70-v6mr605613oib.351.1531336374209;
+        Wed, 11 Jul 2018 12:12:54 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id m3-v6sm13724365oif.26.2018.07.11.12.12.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 12:12:53 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 13:12:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     linux@armlinux.org.uk, mark.rutland@arm.com,
+        maxime.ripard@free-electrons.com, tj@kernel.org, wens@csie.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, icenowy@aosc.io
+Subject: Re: [PATCH v2 1/4] dt-bindings: add binding for Allwinner R40 SATA
+ AHCI controller
+Message-ID: <20180711191252.GA2289@rob-hp-laptop>
+References: <1531149658-27030-1-git-send-email-clabbe@baylibre.com>
+ <1531149658-27030-2-git-send-email-clabbe@baylibre.com>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39c08413-4c1d-42e5-319e-08d5e761fcee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2018 19:10:38.2764
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0502MB2902
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531149658-27030-2-git-send-email-clabbe@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gRnJpLCAyMDE4LTA3LTA2IGF0IDIyOjE4ICswMjAwLCBKYW5uIEhvcm4gd3JvdGU6DQo+IElu
-IGdlbmVyYWwsIGFjY2Vzc2luZyB1c2Vyc3BhY2UgbWVtb3J5IGJleW9uZCB0aGUgbGVuZ3RoIG9m
-IHRoZQ0KPiBzdXBwbGllZA0KPiBidWZmZXIgaW4gVkZTIHJlYWQvd3JpdGUgaGFuZGxlcnMgY2Fu
-IGxlYWQgdG8gYm90aCBrZXJuZWwgbWVtb3J5DQo+IGNvcnJ1cHRpb24NCj4gKHZpYSBrZXJuZWxf
-cmVhZCgpL2tlcm5lbF93cml0ZSgpLCB3aGljaCBjYW4gZS5nLiBiZSB0cmlnZ2VyZWQgdmlhDQo+
-IHN5c19zcGxpY2UoKSkgYW5kIHByaXZpbGVnZSBlc2NhbGF0aW9uIGluc2lkZSB1c2Vyc3BhY2Uu
-DQo+IA0KPiBJbiB0aGlzIGNhc2UsIHRoZSBhZmZlY3RlZCBmaWxlcyBhcmUgaW4gZGVidWdmcyAo
-YW5kIHNob3VsZCB0aGVyZWZvcmUNCj4gb25seQ0KPiBiZSBhY2Nlc3NpYmxlIHRvIHJvb3QpIGFu
-ZCBjaGVjayB0aGF0ICpwb3MgaXMgemVybyAod2hpY2ggcHJldmVudHMNCj4gdGhlDQo+IHN5c19z
-cGxpY2UoKSB0cmljaykuIFRoZXJlZm9yZSwgdGhpcyBpcyBub3QgYSBzZWN1cml0eSBmaXgsIGJ1
-dA0KPiByYXRoZXIgYQ0KPiBzbWFsbCBjbGVhbnVwLg0KPiANCj4gRm9yIHRoZSByZWFkIGhhbmRs
-ZXJzLCBmaXggaXQgYnkgdXNpbmcgc2ltcGxlX3JlYWRfZnJvbV9idWZmZXIoKQ0KPiBpbnN0ZWFk
-IG9mDQo+IGN1c3RvbSBsb2dpYy4NCj4gRm9yIHRoZSB3cml0ZSBoYW5kbGVyLCBhZGQgYSBjaGVj
-ay4NCj4gDQo+IGNoYW5nZWQgaW4gdjI6DQo+ICAtIGFsc28gZml4IGRiZ193cml0ZSgpDQo+IA0K
-PiBGaXhlczogZTEyNmJhOTdkYmE5ICgibWx4NTogQWRkIGRyaXZlciBmb3IgTWVsbGFub3ggQ29u
-bmVjdC1JQg0KPiBhZGFwdGVycyIpDQo+IFNpZ25lZC1vZmYtYnk6IEphbm4gSG9ybiA8amFubmhA
-Z29vZ2xlLmNvbT4NCj4gDQoNCkFwcGxpZWQgdG8gbWx4NS1uZXh0LCBUaGFua3MhIQ0K
+On Mon, Jul 09, 2018 at 03:20:55PM +0000, Corentin Labbe wrote:
+> From: Icenowy Zheng <icenowy@aosc.io>
+> 
+> The Allwinner R40 SoC contains a SATA AHCI controller like the one in
+> A10/A20 SoCs, however a reset control and two power supplies are added
+> to it.
+> 
+> Add a binding document for it.
+> 
+> As a dedicated binding document is needed now for the A10/A20/R40 AHCI
+> controller, drop the A10 compatible line from generic platform AHCI
+> controller binding document.
+> 
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+> ---
+>  .../devicetree/bindings/ata/ahci-platform.txt      |  1 -
+>  .../bindings/ata/allwinner,sun4i-a10-ahci.txt      | 40 ++++++++++++++++++++++
+>  2 files changed, 40 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/ata/allwinner,sun4i-a10-ahci.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/ata/ahci-platform.txt b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+> index c760ecb81381..1bea4b5ef9fd 100644
+> --- a/Documentation/devicetree/bindings/ata/ahci-platform.txt
+> +++ b/Documentation/devicetree/bindings/ata/ahci-platform.txt
+> @@ -9,7 +9,6 @@ PHYs.
+>  
+>  Required properties:
+>  - compatible        : compatible string, one of:
+> -  - "allwinner,sun4i-a10-ahci"
+>    - "brcm,iproc-ahci"
+>    - "hisilicon,hisi-ahci"
+>    - "cavium,octeon-7130-ahci"
+> diff --git a/Documentation/devicetree/bindings/ata/allwinner,sun4i-a10-ahci.txt b/Documentation/devicetree/bindings/ata/allwinner,sun4i-a10-ahci.txt
+> new file mode 100644
+> index 000000000000..0eea78c14ad3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/ata/allwinner,sun4i-a10-ahci.txt
+> @@ -0,0 +1,40 @@
+> +Allwinner A10/A20/R40 SoC SATA AHCI Controller
+> +
+> +Required properties:
+> +- compatible        : compatible string, one of:
+> +  - "allwinner,sun4i-a10-ahci"
+> +  - "allwinner,sun8i-r40-ahci"
+> +- interrupts        : the SATA IRQ
+> +- reg               : the register mapping
+> +- clocks            : the clocks needed by SATA controller, usually contains
+> +		      an AHB clock and a mod clock
+
+usually?
+
+Need to specify the order. The examples look reversed of what you have 
+here.
+
+> +
+> +Optional properties:
+> +- target-supply     : regulator for SATA target power
+> +
+> +Required properties for the following compatibles:
+> +  - "allwinner,sun8i-r40-ahci"
+> +- resets            : the reset control needed by SATA controller
+> +- vdd1v2-supply     : regulator for SATA controller's 1.2V VDD
+> +- vdd2v5-supply     : regulator for SATA controller's 2.5V VDD
+> +
+> +
+> +Examples for A10:
+> +	ahci: sata@1c18000 {
+> +		compatible = "allwinner,sun4i-a10-ahci";
+> +		reg = <0x01c18000 0x1000>;
+> +		interrupts = <56>;
+> +		clocks = <&pll6 0>, <&ahb_gates 25>;
+> +		target-supply = <&reg_ahci_5v>;
+> +	};
+> +
+> +Examples for R40:
+> +	ahci: sata@1c18000 {
+> +		compatible = "allwinner,sun8i-r40-ahci";
+> +		reg = <0x01c18000 0x1000>;
+> +		interrupts = <GIC_SPI 56 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&ccu CLK_SATA>, <&ccu CLK_BUS_SATA>;
+> +		resets = <&ccu RST_BUS_SATA>;
+> +		vdd1v2-supply = <&reg_eldo3>;
+> +		vdd2v5-supply = <&reg_dldo4>;
+> +	};
+> -- 
+> 2.16.4
+> 
