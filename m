@@ -2,95 +2,80 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0D5C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916D0C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F0C320C0A
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:19:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F0C320C0A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 4B14620BF2
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:20:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B14620BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732974AbeGKNYG (ORCPT
+        id S2387427AbeGKNYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:24:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48368 "EHLO mail.kernel.org"
+        Wed, 11 Jul 2018 09:24:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:35648 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732562AbeGKNYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:24:05 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 870FB20BF2;
-        Wed, 11 Jul 2018 13:19:45 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 09:19:44 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v9 5/7] tracing: Centralize preemptirq tracepoints and
- unify their usage
-Message-ID: <20180711091944.4d8e78ef@gandalf.local.home>
-In-Reply-To: <20180711131256.GH2476@hirez.programming.kicks-ass.net>
-References: <20180628182149.226164-1-joel@joelfernandes.org>
-        <20180628182149.226164-6-joel@joelfernandes.org>
-        <20180711131256.GH2476@hirez.programming.kicks-ass.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1733078AbeGKNYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:24:16 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A14667A9;
+        Wed, 11 Jul 2018 06:19:57 -0700 (PDT)
+Received: from melchizedek.cambridge.arm.com (melchizedek.cambridge.arm.com [10.1.206.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 66A013F5AD;
+        Wed, 11 Jul 2018 06:19:56 -0700 (PDT)
+From:   James Morse <james.morse@arm.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>, james.morse@arm.com,
+        Omar Sandoval <osandov@fb.com>
+Subject: [PATCH] proc/kcore: Use __pa_symbol() for KCORE_TEXT list entries
+Date:   Wed, 11 Jul 2018 14:19:44 +0100
+Message-Id: <20180711131944.15252-1-james.morse@arm.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Jul 2018 15:12:56 +0200
-Peter Zijlstra <peterz@infradead.org> wrote:
+elf_kcore_store_hdr() uses __pa() to find the physical address
+of KCORE_RAM or KCORE_TEXT entries exported as program headers.
 
-> On Thu, Jun 28, 2018 at 11:21:47AM -0700, Joel Fernandes wrote:
-> > One note, I have to check for lockdep recursion in the code that calls
-> > the trace events API and bail out if we're in lockdep recursion  
-> 
-> I'm not seeing any new lockdep_recursion checks...
+This trips CONFIG_DEBUG_VIRTUAL's checks, as the KCORE_TEXT
+entries are not in the linear map.
 
-I believe he's talking about this part:
+Handle these two cases separately, using __pa_symbol() for the
+KCORE_TEXT entries.
 
-+void trace_hardirqs_on(void)
-+{
-+	if (lockdep_recursing(current) || !this_cpu_read(tracing_irq_cpu))
-+		return;
-+
+Signed-off-by: James Morse <james.morse@arm.com>
+---
+This will clash with a series from Omar:
+https://lkml.org/lkml/2018/7/6/868
 
-[etc]
+ fs/proc/kcore.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-> 
-> > protection to prevent something like the following case: a spin_lock is
-> > taken. Then lockdep_acquired is called.  That does a raw_local_irq_save
-> > and then sets lockdep_recursion, and then calls __lockdep_acquired. In
-> > this function, a call to get_lock_stats happens which calls
-> > preempt_disable, which calls trace IRQS off somewhere which enters my
-> > tracepoint code and sets the tracing_irq_cpu flag to prevent recursion.
-> > This flag is then never cleared causing lockdep paths to never be
-> > entered and thus causing splats and other bad things.  
-> 
-> Would it not be much easier to avoid that entirely, afaict all
-> get/put_lock_stats() callers already have IRQs disabled, so that
-> (traced) preempt fiddling is entirely superfluous.
+diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
+index e64ecb9f2720..66c373230e60 100644
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -384,8 +384,10 @@ static void elf_kcore_store_hdr(char *bufp, int nphdr, int dataoff)
+ 		phdr->p_flags	= PF_R|PF_W|PF_X;
+ 		phdr->p_offset	= kc_vaddr_to_offset(m->addr) + dataoff;
+ 		phdr->p_vaddr	= (size_t)m->addr;
+-		if (m->type == KCORE_RAM || m->type == KCORE_TEXT)
++		if (m->type == KCORE_RAM)
+ 			phdr->p_paddr	= __pa(m->addr);
++		else if (m->type == KCORE_TEXT)
++			phdr->p_paddr	= __pa_symbol(m->addr);
+ 		else
+ 			phdr->p_paddr	= (elf_addr_t)-1;
+ 		phdr->p_filesz	= phdr->p_memsz	= m->size;
+-- 
+2.18.0
 
-Agreed. Looks like a good clean up.
-
--- Steve
