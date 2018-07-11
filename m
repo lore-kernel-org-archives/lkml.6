@@ -2,65 +2,65 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 534BFC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3587AC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1607F2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:01:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1607F2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E0938208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:02:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6CE1KmY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0938208EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387686AbeGKNFv (ORCPT
+        id S2387702AbeGKNGQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:05:51 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:51427 "EHLO mail.bootlin.com"
+        Wed, 11 Jul 2018 09:06:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732420AbeGKNFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:05:51 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9290F20775; Wed, 11 Jul 2018 15:01:35 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 68B6A206ED;
-        Wed, 11 Jul 2018 15:01:35 +0200 (CEST)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH] pinctrl: ocelot: fix gpio4 twi function
-Date:   Wed, 11 Jul 2018 15:01:26 +0200
-Message-Id: <20180711130126.4090-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.18.0
+        id S1732420AbeGKNGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:06:16 -0400
+Received: from dragon (unknown [45.56.152.98])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B9342086B;
+        Wed, 11 Jul 2018 13:01:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531314121;
+        bh=ZhgiBeAosw2bRn8dGNbY70j7bCe48wtd4D1a3UTZFg4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f6CE1KmYNdt6rnzHYTL8/VAOQCXkLXBnDOEQe5jKYD864sICbc9RDvDadYBAeOtyn
+         dAbAcVTuy1NsmjIZb5Jc4GugIDAXg+81xSHNIPOMBuBkpL9LrsxU3re/ThctSIeygK
+         V4mD+WJfMt6ulTBCiq696mczWBGan0+OxSXCGhK0=
+Date:   Wed, 11 Jul 2018 21:01:24 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de,
+        fabio.estevam@nxp.com, linux-imx@nxp.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, marcel.ziswiler@toradex.com,
+        max.krummenacher@toradex.com, maitysanchayan@gmail.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/8] ARM: dts: imx6q-apalis: add chosen node
+Message-ID: <20180711130123.GH6959@dragon>
+References: <20180709154848.5401-1-stefan@agner.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709154848.5401-1-stefan@agner.ch>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-the TWI function on GPIO4 is actually a multiplexed SCL, not an original
-TWI SDA or SCL. Fix it.
+On Mon, Jul 09, 2018 at 05:48:41PM +0200, Stefan Agner wrote:
+> Add Apalis UART1 as default serial console.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/pinctrl/pinctrl-ocelot.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index 15bb1cb8729b..e93669f4d1c8 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -132,7 +132,7 @@ OCELOT_P(0,  SG0,       NONE,      NONE);
- OCELOT_P(1,  SG0,       NONE,      NONE);
- OCELOT_P(2,  SG0,       NONE,      NONE);
- OCELOT_P(3,  SG0,       NONE,      NONE);
--OCELOT_P(4,  IRQ0_IN,   IRQ0_OUT,  TWI);
-+OCELOT_P(4,  IRQ0_IN,   IRQ0_OUT,  TWI_SCL_M);
- OCELOT_P(5,  IRQ1_IN,   IRQ1_OUT,  PCI_WAKE);
- OCELOT_P(6,  UART,      TWI_SCL_M, NONE);
- OCELOT_P(7,  UART,      TWI_SCL_M, NONE);
--- 
-2.18.0
-
+Applied all, thanks.
