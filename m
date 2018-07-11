@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C280EC1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:44:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F13C1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75A9B20C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:44:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECA0D21470
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 20:45:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mMIwKWpc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75A9B20C0E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xWEfFC70"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECA0D21470
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388065AbeGKUuy (ORCPT
+        id S2388370AbeGKUvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:50:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37608 "EHLO mail.kernel.org"
+        Wed, 11 Jul 2018 16:51:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbeGKUuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:50:54 -0400
+        id S1726453AbeGKUvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 16:51:06 -0400
 Received: from jouet.localdomain (unknown [71.46.56.59])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D13CA20C0C;
-        Wed, 11 Jul 2018 20:44:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE7132146F;
+        Wed, 11 Jul 2018 20:44:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531341888;
-        bh=s7o3yWcs0XsAxJH+bgNrC8wtHB6H2nh7dlPYRjCo7uE=;
+        s=default; t=1531341899;
+        bh=mhXNdE3TR06Hs+D0AzLGsrQAAPeMAhpvNl6I8zCdylE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mMIwKWpcQSgi0dDzlFCc/P75CCEQNV9bSLUb1A8h/LzJo5yKGn3t5GMHjnLhI/cMM
-         pBlbbrc/5o18uOuNTpb1pJl4nHaGPyJcSQfmtw/lvCQFUKac6vteTwKcDcJiVJ9foO
-         SQJuycprHRqsQfjbt2Fks2jwfGap05SzTQrce1+g=
+        b=xWEfFC70xJdpUyaJ8V+jfDOeNwlhc+yJTi422zlZkSen1/PRgm4q03HcXrPOAjxwG
+         Fa7iQbzEZ/NYysiSCMUfihx6xB0Ds3J8yzH+f437f5Q2HhcXcp9RPqoDy6j7msuC2O
+         W7rW1oAbOuuGYEiiv+vJi+Ay+FSvs2lW+UePeyoM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -46,9 +46,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Namhyung Kim <namhyung@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 02/14] perf scripts python: Add Python 3 support to Core.py
-Date:   Wed, 11 Jul 2018 16:42:53 -0400
-Message-Id: <20180711204305.12924-3-acme@kernel.org>
+Subject: [PATCH 03/14] perf scripts python: Add Python 3 support to SchedGui.py
+Date:   Wed, 11 Jul 2018 16:42:54 -0400
+Message-Id: <20180711204305.12924-4-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180711204305.12924-1-acme@kernel.org>
 References: <20180711204305.12924-1-acme@kernel.org>
@@ -59,8 +59,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jeremy Cline <jeremy@jcline.org>
 
-Support both Python 2 and Python 3 in Core.py. This should have no
-functional change.
+Fix a single syntax error in SchedGui.py to support both Python 2 and
+Python 3. This should have no functional change.
 
 Signed-off-by: Jeremy Cline <jeremy@jcline.org>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
@@ -68,79 +68,25 @@ Cc: Herton Krzesinski <herton@redhat.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/0100016341a72ebe-e572899e-f445-4765-98f0-c314935727f9-000000@email.amazonses.com
+Link: http://lkml.kernel.org/r/0100016341a72d26-75729663-fe55-4309-8c9b-302e065ed2f1-000000@email.amazonses.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../python/Perf-Trace-Util/lib/Perf/Trace/Core.py  | 40 +++++++++-------------
- 1 file changed, 17 insertions(+), 23 deletions(-)
+ tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Core.py b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Core.py
-index 38dfb720fb6f..54ace2f6bc36 100644
---- a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Core.py
-+++ b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/Core.py
-@@ -31,10 +31,8 @@ def flag_str(event_name, field_name, value):
-     string = ""
+diff --git a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py
+index fdd92f699055..cac7b2542ee8 100644
+--- a/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py
++++ b/tools/perf/scripts/python/Perf-Trace-Util/lib/Perf/Trace/SchedGui.py
+@@ -11,7 +11,7 @@
+ try:
+ 	import wx
+ except ImportError:
+-	raise ImportError, "You need to install the wxpython lib for this script"
++	raise ImportError("You need to install the wxpython lib for this script")
  
-     if flag_fields[event_name][field_name]:
--	print_delim = 0
--        keys = flag_fields[event_name][field_name]['values'].keys()
--        keys.sort()
--        for idx in keys:
-+        print_delim = 0
-+        for idx in sorted(flag_fields[event_name][field_name]['values']):
-             if not value and not idx:
-                 string += flag_fields[event_name][field_name]['values'][idx]
-                 break
-@@ -51,14 +49,12 @@ def symbol_str(event_name, field_name, value):
-     string = ""
  
-     if symbolic_fields[event_name][field_name]:
--        keys = symbolic_fields[event_name][field_name]['values'].keys()
--        keys.sort()
--        for idx in keys:
-+        for idx in sorted(symbolic_fields[event_name][field_name]['values']):
-             if not value and not idx:
--		string = symbolic_fields[event_name][field_name]['values'][idx]
-+                string = symbolic_fields[event_name][field_name]['values'][idx]
-                 break
--	    if (value == idx):
--		string = symbolic_fields[event_name][field_name]['values'][idx]
-+            if (value == idx):
-+                string = symbolic_fields[event_name][field_name]['values'][idx]
-                 break
- 
-     return string
-@@ -74,19 +70,17 @@ def trace_flag_str(value):
-     string = ""
-     print_delim = 0
- 
--    keys = trace_flags.keys()
--
--    for idx in keys:
--	if not value and not idx:
--	    string += "NONE"
--	    break
--
--	if idx and (value & idx) == idx:
--	    if print_delim:
--		string += " | ";
--	    string += trace_flags[idx]
--	    print_delim = 1
--	    value &= ~idx
-+    for idx in trace_flags:
-+        if not value and not idx:
-+            string += "NONE"
-+            break
-+
-+        if idx and (value & idx) == idx:
-+            if print_delim:
-+                string += " | ";
-+            string += trace_flags[idx]
-+            print_delim = 1
-+            value &= ~idx
- 
-     return string
- 
+ class RootFrame(wx.Frame):
 -- 
 2.14.4
 
