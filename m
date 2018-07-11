@@ -2,78 +2,179 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B2BC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BCDC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3983C20BEC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:04:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3983C20BEC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8944C20BF2
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:05:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8944C20BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732626AbeGKMIi (ORCPT
+        id S1732661AbeGKMJR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:08:38 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34272 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeGKMIi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:08:38 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBB3480D;
-        Wed, 11 Jul 2018 05:04:37 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 9AAFD3F589;
-        Wed, 11 Jul 2018 05:04:37 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 99F8F1AE3828; Wed, 11 Jul 2018 13:05:19 +0100 (BST)
-Date:   Wed, 11 Jul 2018 13:05:19 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     "Yandong.Zhao" <yandong77520@gmail.com>
-Cc:     Dave.Martin@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
-        catalin.marinas@arm.com, zhaoyd@thundersoft.com,
-        zhaoxb@thundersoft.com, fanlc0801@thundersoft.com
-Subject: Re: [PATCH] arm64: neon: Fix function may_use_simd() return error
- status
-Message-ID: <20180711120519.GC15725@arm.com>
-References: <1531307188-12032-1-git-send-email-yandong77520@gmail.com>
+        Wed, 11 Jul 2018 08:09:17 -0400
+Received: from mx.socionext.com ([202.248.49.38]:23374 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726457AbeGKMJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:09:17 -0400
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 11 Jul 2018 21:05:15 +0900
+Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id E1A7560034;
+        Wed, 11 Jul 2018 21:05:15 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 11 Jul 2018 21:05:15 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id 8358340220;
+        Wed, 11 Jul 2018 21:05:15 +0900 (JST)
+Received: from [127.0.0.1] (unknown [10.213.132.48])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 504C5120423;
+        Wed, 11 Jul 2018 21:05:15 +0900 (JST)
+Date:   Wed, 11 Jul 2018 21:05:14 +0900
+From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 2/4] phy: socionext: add USB3 PHY driver for UniPhier SoC
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+In-Reply-To: <20180709202319.1091.4A936039@socionext.com>
+References: <4b436a46-9046-25ad-ee6d-ad2cdb16e2ca@ti.com> <20180709202319.1091.4A936039@socionext.com>
+Message-Id: <20180711210514.BB32.4A936039@socionext.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531307188-12032-1-git-send-email-yandong77520@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Becky! ver. 2.70 [ja]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 07:06:28PM +0800, Yandong.Zhao wrote:
-> From: Yandong Zhao <yandong77520@gmail.com>
-> 
-> It does not matter if the caller of may_use_simd() migrates to
-> another cpu after the call, but it is still important that the
-> kernel_neon_busy percpu instance that is read matches the cpu the
-> task is running on at the time of the read.
-> 
-> This means that raw_cpu_read() is not sufficient.  kernel_neon_busy
-> may appear true if the caller migrates during the execution of
-> raw_cpu_read() and the next task to be scheduled in on the initial
-> cpu calls kernel_neon_begin().
-> 
-> This patch replaces raw_cpu_read() with this_cpu_read() to protect
-> against this race.
-> 
-> Fixes: cb84d11e1625 ("arm64: neon: Remove support for nested or hardirq kernel-mode NEON")
-> Reviewed-by: Dave Martin <Dave.Martin@arm.com>
-> Signed-off-by: Yandong Zhao <yandong77520@gmail.com>
-> ---
->  arch/arm64/include/asm/simd.h | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+On Mon, 9 Jul 2018 20:23:19 +0900 <hayashi.kunihiko@socionext.com> wrote:
 
-Does this need to go to stable?
+> Hi Kishon,
+> Thank you for your comments.
+> 
+> On Mon, 9 Jul 2018 10:49:50 +0530 <kishon@ti.com> wrote:
+> 
+> > Hi,
+> > 
+> > On Friday 29 June 2018 02:08 PM, Kunihiko Hayashi wrote:
+> > > Add a driver for PHY interface built into USB3 controller
+> > > implemented in UniPhier SoCs.
+> > > This driver supports High-Speed PHY and Super-Speed PHY.
+> > > 
+> > > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> > > Signed-off-by: Motoya Tanigawa <tanigawa.motoya@socionext.com>
+> > > Signed-off-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
+> > > ---
+> > >  drivers/phy/Kconfig                         |   1 +
+> > >  drivers/phy/Makefile                        |   1 +
+> > >  drivers/phy/socionext/Kconfig               |  12 +
+> > >  drivers/phy/socionext/Makefile              |   6 +
+> > >  drivers/phy/socionext/phy-uniphier-usb3hs.c | 422 ++++++++++++++++++++++++++++
+> > >  drivers/phy/socionext/phy-uniphier-usb3ss.c | 369 ++++++++++++++++++++++++
+> > >  6 files changed, 811 insertions(+)
+> > >  create mode 100644 drivers/phy/socionext/Kconfig
+> > >  create mode 100644 drivers/phy/socionext/Makefile
+> > >  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
+> > >  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
+> 
+> (snip...)
+> 
+> > > --- /dev/null
+> > > +++ b/drivers/phy/socionext/phy-uniphier-usb3hs.c
+> > > @@ -0,0 +1,422 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * phy-uniphier-usb3hs.c - HS-PHY driver for Socionext UniPhier USB3 controller
+> > > + * Copyright 2015-2018 Socionext Inc.
+> > > + * Author:
+> > > + *	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> > > + * Contributors:
+> > > + *      Motoya Tanigawa <tanigawa.motoya@socionext.com>
+> > > + *      Masami Hiramatsu <masami.hiramatsu@linaro.org>
+> > > + */
+> > > +
+> > > +#include <linux/bitfield.h>
+> > > +#include <linux/bitops.h>
+> > > +#include <linux/clk.h>
+> > > +#include <linux/io.h>
+> > > +#include <linux/mfd/syscon.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/nvmem-consumer.h>
+> > > +#include <linux/of.h>
+> > > +#include <linux/of_platform.h>
+> > > +#include <linux/phy/phy.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/reset.h>
+> > > +#include <linux/slab.h>
+> > > +
+> > > +#define HSPHY_CFG0		0x0
+> > > +#define HSPHY_CFG0_HS_I_MASK	GENMASK(31, 28)
+> > > +#define HSPHY_CFG0_HSDISC_MASK	GENMASK(27, 26)
+> > > +#define HSPHY_CFG0_SWING_MASK	GENMASK(17, 16)
+> > > +#define HSPHY_CFG0_SEL_T_MASK	GENMASK(15, 12)
+> > > +#define HSPHY_CFG0_RTERM_MASK	GENMASK(7, 6)
+> > > +#define HSPHY_CFG0_TRIMMASK	(HSPHY_CFG0_HS_I_MASK \
+> > > +				 | HSPHY_CFG0_SEL_T_MASK \
+> > > +				 | HSPHY_CFG0_RTERM_MASK)
+> > > +
+> > > +#define HSPHY_CFG1		0x4
+> > > +#define HSPHY_CFG1_DAT_EN	BIT(29)
+> > > +#define HSPHY_CFG1_ADR_EN	BIT(28)
+> > > +#define HSPHY_CFG1_ADR_MASK	GENMASK(27, 16)
+> > > +#define HSPHY_CFG1_DAT_MASK	GENMASK(23, 16)
+> > > +
+> > > +#define MAX_CLKS	3
+> > > +#define MAX_RSTS	2
+> > > +#define MAX_PHY_PARAMS	1
+> > > +
+> > > +struct uniphier_u3hsphy_param {
+> > > +	u32 addr;
+> > > +	u32 mask;
+> > > +	u32 val;
+> > > +};
+> > 
+> > I'd like to avoid configure the PHY this way, since it's impossible to know
+> > which register is being configured.
+> 
 
-Will
+This way might be misunderstood.
+These HS-PHY and SS-PHY have "internal" registers, which are not memory-mapped.
+
+And to access these internal registers, we need to specify the number
+corresponding to the register.
+
+The "addr" in "uniphier_u3hsphy_param" is just the number of the register.
+The "mask" shows a bitfield of the register, that means one of PHY parameters.
+The "value" shows a parameter value to set to the bitfield.
+
+
+> I see. 
+> In order to know which register is set, I'll add definitions for address
+> and mask.
+> And I think the driver might have functions for each SoC to configure
+> the registers instead of uniphier_u3hsphy_param.
+
+Then, I think it's sufficient to define a macro with a meaningful label for
+each bitfield, and PHY parameters are expressed like that.
+
+  { 10, FOO_BAR_MODE, 0x2 }, /* set 2 to FOO_BAR_MODE in register 10 */
+
+In this case, we need to shift "value" according to "mask".
+
+Thank you,
+
+---
+Best Regards,
+Kunihiko Hayashi
+
+
