@@ -2,141 +2,90 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E01EC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C94DC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:32:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFFE42087C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:31:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="J3Xd7adH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFFE42087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 4B3EE2087C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:32:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B3EE2087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388112AbeGKThn (ORCPT
+        id S2388188AbeGKThz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 15:37:43 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:42249 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387634AbeGKThn (ORCPT
+        Wed, 11 Jul 2018 15:37:55 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:43807 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733104AbeGKThz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 15:37:43 -0400
-Received: by mail-io0-f194.google.com with SMTP id r24-v6so25331612ioh.9
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:31:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QaIu+f1W8/f3ynU92NOByujVhXMGp/qH+2Yv84P4M5g=;
-        b=J3Xd7adH5w/1d0byk8CvDSIFy1WE7EBxvoSKYl43lpMVHVz21R5RkXmKLtQYp8EVxY
-         0LMwWJWgOzX5S57LlObklJocnR7iDV7jG1K0LYED5x0QhB7689u89WrfDhs8AKG9hq/W
-         cfoZFEPV+kxrjVeYMyk25rFhXmNFeNA/rYZwvOUtGwhkiwMFsD1AMXEfQSysNCxfM7sb
-         raCuWIM4Jloi40f2qiKm3V9ju4z4jUXKmwBLxOEqK68mDxjZ2MI5/A3g9SM/98y59syH
-         k+RGLr7Emn9BqW9WsMfwcufdmQQezgZU09W5xfHsuskGq3KPf6AF8SXedUqQWjqn+kXP
-         eZxw==
+        Wed, 11 Jul 2018 15:37:55 -0400
+Received: by mail-oi0-f68.google.com with SMTP id b15-v6so51334455oib.10;
+        Wed, 11 Jul 2018 12:32:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QaIu+f1W8/f3ynU92NOByujVhXMGp/qH+2Yv84P4M5g=;
-        b=ZpiBLPEVCoNQyc9+CZmH+oL3A+A8xV8IUwdbgJ3wt+twX25cp7Vp8BXIoEu/yncnY8
-         3gVK4uqziHEyj8QzbNP/rtUW3BhFPnSTLmxeRMdUK8ZvWmxt3dIuO4bvQ5xo+hbEpC6H
-         5gIW+uhI+j698YpMHdf2QAl6R/0efzrOVx75rsfmxrEbvm/4hF2YVMysd/57D3hZIDox
-         7OmpSmw/O+Ylciycf+CBOzJd2C7nYWKCxLiepA1Rs+/bnNVfRgs295PR/2f5BX/yGOky
-         8XeKcrtnz0jIV1kXIQpcP3Wwwd4OJDxLhUnocIzFnGuZK1bmm6cezB0wj0CCLhtcatFO
-         u4UA==
-X-Gm-Message-State: APt69E2pdI7jA72iTXbstkG8fjpeZ8vfXwE8iCZ5RWjveUz846Nan8Aq
-        YrsLHW3fBRG7Jwn002ztGk3wSA==
-X-Google-Smtp-Source: AAOMgpea1Lfbr/8Jp/yvy8vDWQv1M9Mb7sFszCdLlmwuqpmY4u++IQSRDevst/O7TDiiIt4WMSEiUQ==
-X-Received: by 2002:a6b:c693:: with SMTP id w141-v6mr25293813iof.79.1531337515307;
-        Wed, 11 Jul 2018 12:31:55 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id 134-v6sm1336554itw.23.2018.07.11.12.31.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 12:31:53 -0700 (PDT)
-Subject: Re: [PATCH 02/12] blk: use for_each_if
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Tejun Heo <tj@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Shaohua Li <shli@fb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
- <20180709083650.23549-2-daniel.vetter@ffwll.ch>
- <20180711164058.GC72677@devbig577.frc2.facebook.com>
- <20180711164536.GD72677@devbig577.frc2.facebook.com>
- <965184f9-e5ed-3c8b-bfd7-a033a252371b@kernel.dk>
- <CAKMK7uE5aJq-1wd0ZOhwFaTy3iKMAZsfdAf=Tw+eGxtCmfcVQg@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <85df8c40-dac9-5f97-f81a-6de061cfdfa8@kernel.dk>
-Date:   Wed, 11 Jul 2018 13:31:51 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zSmpsd9nRID/A5Z7fJawTwfPQ/nOudxteXpMaw9mj08=;
+        b=bfLgKQIKTErai6uFrUKOBBsPm8q2PL2htpVBwd6crSF0BKnqYJjgOAcRJyalLrPMly
+         Tb5i2ev1e8fMF5PZNDZrPV3Qmo408uW55xrHQZRrzUF+89ZDZxeE2OyVS+kPba35gQEQ
+         0PbuSixwTTdRrUsPThJ60RwlpYyN+I+t77PSBCa3+lxkGdPTC6e+HoMBvazssFUtltaB
+         qGrCf2xJ2zznQRDIwRcKPiMEWo1lUKruSjzETELMo4V/EsdEdtclduvN3/wTYRm0CgBR
+         XxoW8A+tIfc+NXQI3XB/i3g89EFx5CWIf33WTjPUxlynpYLZstVzwaEJP2sNv/Q+Txr+
+         061g==
+X-Gm-Message-State: AOUpUlEGAVTbRd2eIU5CBapJ/ANdY8ViOyyL1KaS85HkmRdUTPej2N00
+        EKOs0edDLxeu4ikpSBmLCw==
+X-Google-Smtp-Source: AAOMgpf7Qe7JrgPaB9Jg+veaiQwHkWkmpMWrbjCNfuhXbA1YR3zYZj9jp5MXjtikXgOV3QB3f7ZI3A==
+X-Received: by 2002:aca:e30b:: with SMTP id a11-v6mr622966oih.303.1531337527465;
+        Wed, 11 Jul 2018 12:32:07 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id w8-v6sm8668773oiw.10.2018.07.11.12.32.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 12:32:06 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 13:32:06 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sujeev Dias <sdias@codeaurora.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Tony Truong <truong@codeaurora.org>,
+        Siddartha Mohanadoss <smohanad@codeaurora.org>
+Subject: Re: [PATCH v2 5/7] mhi_bus: core: add support to get external modem
+ time
+Message-ID: <20180711193206.GB8659@rob-hp-laptop>
+References: <1524795811-21399-1-git-send-email-sdias@codeaurora.org>
+ <1531166894-30984-1-git-send-email-sdias@codeaurora.org>
+ <1531166894-30984-6-git-send-email-sdias@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAKMK7uE5aJq-1wd0ZOhwFaTy3iKMAZsfdAf=Tw+eGxtCmfcVQg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531166894-30984-6-git-send-email-sdias@codeaurora.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/11/18 12:50 PM, Daniel Vetter wrote:
-> On Wed, Jul 11, 2018 at 8:30 PM, Jens Axboe <axboe@kernel.dk> wrote:
->> On 7/11/18 10:45 AM, Tejun Heo wrote:
->>> On Wed, Jul 11, 2018 at 09:40:58AM -0700, Tejun Heo wrote:
->>>> On Mon, Jul 09, 2018 at 10:36:40AM +0200, Daniel Vetter wrote:
->>>>> Makes the macros resilient against if {} else {} blocks right
->>>>> afterwards.
->>>>>
->>>>> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
->>>>> Cc: Tejun Heo <tj@kernel.org>
->>>>> Cc: Jens Axboe <axboe@kernel.dk>
->>>>> Cc: Shaohua Li <shli@fb.com>
->>>>> Cc: Kate Stewart <kstewart@linuxfoundation.org>
->>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
->>>>> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
->>>>> Cc: Arnd Bergmann <arnd@arndb.de>
->>>>
->>>> Acked-by: Tejun Heo <tj@kernel.org>
->>>>
->>>> Jens, it'd probably be best to route this through block tree.
->>>
->>> Oops, this requires an earlier patch to move the for_each_if def to a
->>> common header and should be routed together.
->>
->> Yeah, this is a problem with the submission.
->>
->> Always (ALWAYS) CC folks on at least the cover letter and generic
->> earlier patches. Getting just one patch sent like this is mostly
->> useless, and causes more harm than good.
+On Mon, Jul 09, 2018 at 01:08:12PM -0700, Sujeev Dias wrote:
+> For accurate synchronizations between external modem and
+> host processor, mhi host will capture modem time relative
+> to host time. Client may use time measurements for adjusting
+> any drift between host and modem.
 > 
-> Ime sending a patch with more than 20 or so recipients means it gets
-> stuck everywhere in moderation queues. Or outright spam filters. I
-> thought the correct way to do this is to cc: mailing lists (lkml has
-> them all), but apparently that's not how it's done. Despite that all
-> the patch series I get never have the cover letter addressed to me
-> either.
-> 
-> So what's the magic way to make this possible?
+> Signed-off-by: Sujeev Dias <sdias@codeaurora.org>
+> Reviewed-by: Tony Truong <truong@codeaurora.org>
+> Signed-off-by: Siddartha Mohanadoss <smohanad@codeaurora.org>
+> ---
+>  Documentation/devicetree/bindings/bus/mhi.txt |   7 +
 
-I don't think there's a git easy way of sending it out outside of
-just ensuring that everybody is CC'ed on everything. I don't mind
-that at all. I don't subscribe to lkml, and the patches weren't
-sent to linux-block. Hence all I see is this stand-alone patch,
-and logic would dictate that it's stand-alone (but it isn't).
-
--- 
-Jens Axboe
-
+Put all the binding in one patch.
+ 
+>  Documentation/mhi.txt                         |  41 ++++
+>  drivers/bus/mhi/core/mhi_init.c               | 111 +++++++++++
+>  drivers/bus/mhi/core/mhi_internal.h           |  57 +++++-
+>  drivers/bus/mhi/core/mhi_main.c               | 263 +++++++++++++++++++++++++-
+>  drivers/bus/mhi/core/mhi_pm.c                 |   7 +
+>  include/linux/mhi.h                           |   7 +
+>  7 files changed, 486 insertions(+), 7 deletions(-)
