@@ -2,179 +2,109 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BCDC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:05:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B357BC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8944C20BF2
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:05:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8944C20BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 649C120877
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:08:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 649C120877
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732661AbeGKMJR (ORCPT
+        id S1732710AbeGKMMS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 08:09:17 -0400
-Received: from mx.socionext.com ([202.248.49.38]:23374 "EHLO mx.socionext.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeGKMJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 08:09:17 -0400
-Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
-  by mx.socionext.com with ESMTP; 11 Jul 2018 21:05:15 +0900
-Received: from mail.mfilter.local (m-filter-2 [10.213.24.62])
-        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id E1A7560034;
-        Wed, 11 Jul 2018 21:05:15 +0900 (JST)
-Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Wed, 11 Jul 2018 21:05:15 +0900
-Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
-        by iyokan.css.socionext.com (Postfix) with ESMTP id 8358340220;
-        Wed, 11 Jul 2018 21:05:15 +0900 (JST)
-Received: from [127.0.0.1] (unknown [10.213.132.48])
-        by yuzu.css.socionext.com (Postfix) with ESMTP id 504C5120423;
-        Wed, 11 Jul 2018 21:05:15 +0900 (JST)
-Date:   Wed, 11 Jul 2018 21:05:14 +0900
-From:   Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 2/4] phy: socionext: add USB3 PHY driver for UniPhier SoC
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-In-Reply-To: <20180709202319.1091.4A936039@socionext.com>
-References: <4b436a46-9046-25ad-ee6d-ad2cdb16e2ca@ti.com> <20180709202319.1091.4A936039@socionext.com>
-Message-Id: <20180711210514.BB32.4A936039@socionext.com>
+        Wed, 11 Jul 2018 08:12:18 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37138 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726457AbeGKMMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 08:12:18 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C355A7C6CA;
+        Wed, 11 Jul 2018 12:08:16 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0407E2026D6B;
+        Wed, 11 Jul 2018 12:08:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 11 Jul 2018 14:08:16 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 14:08:15 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Bug 200447] infinite loop in fork syscall
+Message-ID: <20180711120815.GC4567@redhat.com>
+References: <87h8l9p7bg.fsf@xmission.com>
+ <20180709104158.GA23796@redhat.com>
+ <87sh4so5jv.fsf@xmission.com>
+ <20180709145726.GA26149@redhat.com>
+ <877em4nxo0.fsf@xmission.com>
+ <CA+55aFwq90_KeRUesktap7L_4Hp3gatKZ28RYw1jXBYeOqUoeA@mail.gmail.com>
+ <87lgakm4ol.fsf@xmission.com>
+ <CA+55aFz1XFvOgJySKVNQD9VS4hys0J7rozxqd3s5ND0z80tfVw@mail.gmail.com>
+ <20180710134639.GA2453@redhat.com>
+ <878t6jkrm0.fsf@xmission.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Becky! ver. 2.70 [ja]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878t6jkrm0.fsf@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 11 Jul 2018 12:08:16 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 11 Jul 2018 12:08:16 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 9 Jul 2018 20:23:19 +0900 <hayashi.kunihiko@socionext.com> wrote:
+On 07/10, Eric W. Biederman wrote:
+>
+> > 2. To simplify, lets suppose we add the new PF_INFORK flag. Yes, this is bad,
+> >    we can do better. I think we can simply add "struct hlist_head forking_threads"
+> >    into signal_struct, so complete_signal() can just do hlist_for_each_entry()
+> >    rather than for_each_thread() + PF_INFORK check. We don't even need a new
+> >    member in task_struct.
+>
+> We still need the distinction between multi-process signals and single
+> process signals (which is the hard part).  For good performance of
+> signal delivery to multi-threaded tasks we still need a new member in
+> signal_struct.  Plus it is a bit more work to update the list or even
+> walk the list than a sequence counter.
+>
+> So I think adding a sequence counter to let us know about multiprocess
+> signals is the local optimum.
 
-> Hi Kishon,
-> Thank you for your comments.
-> 
-> On Mon, 9 Jul 2018 10:49:50 +0530 <kishon@ti.com> wrote:
-> 
-> > Hi,
-> > 
-> > On Friday 29 June 2018 02:08 PM, Kunihiko Hayashi wrote:
-> > > Add a driver for PHY interface built into USB3 controller
-> > > implemented in UniPhier SoCs.
-> > > This driver supports High-Speed PHY and Super-Speed PHY.
-> > > 
-> > > Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > > Signed-off-by: Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> > > Signed-off-by: Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> > > ---
-> > >  drivers/phy/Kconfig                         |   1 +
-> > >  drivers/phy/Makefile                        |   1 +
-> > >  drivers/phy/socionext/Kconfig               |  12 +
-> > >  drivers/phy/socionext/Makefile              |   6 +
-> > >  drivers/phy/socionext/phy-uniphier-usb3hs.c | 422 ++++++++++++++++++++++++++++
-> > >  drivers/phy/socionext/phy-uniphier-usb3ss.c | 369 ++++++++++++++++++++++++
-> > >  6 files changed, 811 insertions(+)
-> > >  create mode 100644 drivers/phy/socionext/Kconfig
-> > >  create mode 100644 drivers/phy/socionext/Makefile
-> > >  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3hs.c
-> > >  create mode 100644 drivers/phy/socionext/phy-uniphier-usb3ss.c
-> 
-> (snip...)
-> 
-> > > --- /dev/null
-> > > +++ b/drivers/phy/socionext/phy-uniphier-usb3hs.c
-> > > @@ -0,0 +1,422 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +/*
-> > > + * phy-uniphier-usb3hs.c - HS-PHY driver for Socionext UniPhier USB3 controller
-> > > + * Copyright 2015-2018 Socionext Inc.
-> > > + * Author:
-> > > + *	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> > > + * Contributors:
-> > > + *      Motoya Tanigawa <tanigawa.motoya@socionext.com>
-> > > + *      Masami Hiramatsu <masami.hiramatsu@linaro.org>
-> > > + */
-> > > +
-> > > +#include <linux/bitfield.h>
-> > > +#include <linux/bitops.h>
-> > > +#include <linux/clk.h>
-> > > +#include <linux/io.h>
-> > > +#include <linux/mfd/syscon.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/nvmem-consumer.h>
-> > > +#include <linux/of.h>
-> > > +#include <linux/of_platform.h>
-> > > +#include <linux/phy/phy.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/reset.h>
-> > > +#include <linux/slab.h>
-> > > +
-> > > +#define HSPHY_CFG0		0x0
-> > > +#define HSPHY_CFG0_HS_I_MASK	GENMASK(31, 28)
-> > > +#define HSPHY_CFG0_HSDISC_MASK	GENMASK(27, 26)
-> > > +#define HSPHY_CFG0_SWING_MASK	GENMASK(17, 16)
-> > > +#define HSPHY_CFG0_SEL_T_MASK	GENMASK(15, 12)
-> > > +#define HSPHY_CFG0_RTERM_MASK	GENMASK(7, 6)
-> > > +#define HSPHY_CFG0_TRIMMASK	(HSPHY_CFG0_HS_I_MASK \
-> > > +				 | HSPHY_CFG0_SEL_T_MASK \
-> > > +				 | HSPHY_CFG0_RTERM_MASK)
-> > > +
-> > > +#define HSPHY_CFG1		0x4
-> > > +#define HSPHY_CFG1_DAT_EN	BIT(29)
-> > > +#define HSPHY_CFG1_ADR_EN	BIT(28)
-> > > +#define HSPHY_CFG1_ADR_MASK	GENMASK(27, 16)
-> > > +#define HSPHY_CFG1_DAT_MASK	GENMASK(23, 16)
-> > > +
-> > > +#define MAX_CLKS	3
-> > > +#define MAX_RSTS	2
-> > > +#define MAX_PHY_PARAMS	1
-> > > +
-> > > +struct uniphier_u3hsphy_param {
-> > > +	u32 addr;
-> > > +	u32 mask;
-> > > +	u32 val;
-> > > +};
-> > 
-> > I'd like to avoid configure the PHY this way, since it's impossible to know
-> > which register is being configured.
-> 
+But we can not rely on on a sequence counter, there are other reasons why
+fork() should fail even if fatal_signal_pending() == F and the counter was
+not changed (no multi-process signals).
 
-This way might be misunderstood.
-These HS-PHY and SS-PHY have "internal" registers, which are not memory-mapped.
+> > 3. copy_process() can simply block/unblock all signals (except KILL/STOP), see
+> >    the "patch" below.
+>
+> All signals are effectively blocked for the duration of the fork for the
+> calling task.    Where we get into trouble and where we need a fix for
+> correctness is that another thread can dequeue the signal.   Blocking
+> signals of the forking task does not change that.
 
-And to access these internal registers, we need to specify the number
-corresponding to the register.
+See my reply to Linus. Please look at the change in complete_signal().
 
-The "addr" in "uniphier_u3hsphy_param" is just the number of the register.
-The "mask" shows a bitfield of the register, that means one of PHY parameters.
-The "value" shows a parameter value to set to the bitfield.
+> I think that reveals another bug in our current logic.  For blocked
+> multi-process signals we don't ensure they get delivered to both the
+> parent and the child if the signal logically comes in after the fork.
 
+I thougth thought this too. I simply do not know if this is right or not.
 
-> I see. 
-> In order to know which register is set, I'll add definitions for address
-> and mask.
-> And I think the driver might have functions for each SoC to configure
-> the registers instead of uniphier_u3hsphy_param.
+For now I assume that this is correct and by design, iow if fork() is called
+with (say) SIGTERM blocked, then we do not care if kill_pgrp(SIGTERM) misses
+the new child.
 
-Then, I think it's sufficient to define a macro with a meaningful label for
-each bitfield, and PHY parameters are expressed like that.
+If we want to change this, I think this needs another discussion.
 
-  { 10, FOO_BAR_MODE, 0x2 }, /* set 2 to FOO_BAR_MODE in register 10 */
-
-In this case, we need to shift "value" according to "mask".
-
-Thank you,
-
----
-Best Regards,
-Kunihiko Hayashi
-
+Oleg.
 
