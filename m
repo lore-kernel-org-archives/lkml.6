@@ -1,106 +1,104 @@
-Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E36C2C43A1D
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 23:47:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7F82C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:03:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF6C20C10
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 23:47:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55EAA208E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:03:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kLwQk2zI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF6C20C10
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tVzpQO+n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55EAA208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390894AbeGKXyg (ORCPT
+        id S2403752AbeGLAKM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 19:54:36 -0400
-Received: from ozlabs.org ([203.11.71.1]:35573 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388425AbeGKXyg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 19:54:36 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41Qwjf1Vmmz9rxs;
-        Thu, 12 Jul 2018 09:47:50 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531352870;
-        bh=X277FGwoIJLaNCFyDfdp0Qi2wzT+O03VasZeJmJYqsU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kLwQk2zIno1P9SNw1ZIdm1JLT+eFnHrKwKUKZe1KOGRZoSWuepbBpFlIqDzeizUo0
-         fHLdgJqO7hcgNnW86/eev+e3cH4K20bhkdyrt7qmkdotBrnW1xZx7CJI31cuTvCttO
-         7pC+bbhMLzmxwD4OvW0nkvErhGMSPqvLb9hnIgsKT7e5kuOHbGW35uCd+7xZEm5dDv
-         IJPdSpZ4AcyRehy67rlKU7xIRhpHbdBE4WWr1EOgJMKsS0llVqGCIeoiSIpdV4kqYN
-         zE5TUOvZMsI/rPq79P4OY49Zmy8iVHrV/a4Ipo6LGP2fdQM27+z2ynt/mYu15XLKwc
-         nZbJf+jRejf1w==
-Date:   Thu, 12 Jul 2018 09:47:29 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Pavel Tatashin <pasha.tatashin@oracle.com>,
-        osalvador@techadventures.net, mpe@ellerman.id.au,
-        broonie@kernel.org, mhocko@suse.cz, linux-next@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, mm-commits@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, bhe@redhat.com,
-        aneesh.kumar@linux.ibm.com, khandual@linux.vnet.ibm.com
-Subject: Re: Boot failures with "mm/sparse: Remove
- CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER" on powerpc (was Re: mmotm
- 2018-07-10-16-50 uploaded)
-Message-ID: <20180712094729.1112f290@canb.auug.org.au>
-In-Reply-To: <20180711141344.10eb6d22b0ee1423cc94faf8@linux-foundation.org>
-References: <20180710235044.vjlRV%akpm@linux-foundation.org>
-        <87lgai9bt5.fsf@concordia.ellerman.id.au>
-        <20180711133737.GA29573@techadventures.net>
-        <CAGM2reYsSi5kDGtnTQASnp1v49T8Y+9o_pNxmSq-+m68QhF2Tg@mail.gmail.com>
-        <20180711141344.10eb6d22b0ee1423cc94faf8@linux-foundation.org>
+        Wed, 11 Jul 2018 20:10:12 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:46208 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388425AbeGLAKM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 20:10:12 -0400
+Received: by mail-pf0-f194.google.com with SMTP id l123-v6so19409632pfl.13;
+        Wed, 11 Jul 2018 17:03:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sowhJEIHKT/l4lfxWfpzrrtqYE355WpiopVwEDAv5EI=;
+        b=tVzpQO+n6lAzisGuORwar45JH2m3drfg9pDqCRsT/33MpYUFPGgxEKIDOBwfTDcrfR
+         yQqp8+FFFKK7J6Dp5t7SEAWTfkuq39ZmOlfxeLdjBConhxTsRY37/1ezqSUs5dOGNnWi
+         jqGj+OKglFS+2R8X4/qOE9rUgyAix4vLIjaWICJTDnlTF409PspyaA4PrPKO2wXqhqN0
+         Emvaa97jhMvPwvo9Fa1YtompnF2KH4/eVN22vyBpABIIQ0OBvNtI0TBj95ApA7xaq+1U
+         lKETqAtVahaBjoeEZiA2TOSZbXIKO3YiuxuY2OkIKsr4NKGS1Py/QrGkbO/u7W+BZEfI
+         /FhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sowhJEIHKT/l4lfxWfpzrrtqYE355WpiopVwEDAv5EI=;
+        b=f+bfEpLuOCVD5iyRtjnYtnUz+NXWPuov6dTY3+6+OgtZgWexxT57i3xmBNp1AWobYV
+         1y4Q36hFVXYQkzZIpOjsMcNXyaZiEoY0ZVJGQYjTxHB68N9vUGCzm1ofSpbd/jtd9Xhb
+         NJDBsLUsG8BR1QH/9SUAl59yJzVwwaX+5tdgzTTQmkLCc9iiPLfiucEtjEf2JpencBmF
+         Ly8d4cBqblC5curPZKY6LUeB/dLCZ/WlnQ9YzXimmqCVnueqXIy30U8j9vmvKne/JZkl
+         6b0wRMLI7siHKO4+pX8GaPTcn5nOINHL39T+lS/BP/MUTXHnWemz+jm6aCPokQ5Jufr0
+         3DHg==
+X-Gm-Message-State: AOUpUlHZLeM4GFcWmIDSuSTb6ZF6Zc/+9m44Jj3bkwhdtyJ34rQYONYP
+        2xTINEc8nAbWUQj5+U0vl84=
+X-Google-Smtp-Source: AAOMgpcbyQNj6kpK89FQF3x2XoFhjTJYimrScY23L7J/rrisZC2PvcADOLesFzSP78JW9POjRjkONQ==
+X-Received: by 2002:a63:e742:: with SMTP id j2-v6mr11728pgk.114.1531353807054;
+        Wed, 11 Jul 2018 17:03:27 -0700 (PDT)
+Received: from localhost ([175.223.26.85])
+        by smtp.gmail.com with ESMTPSA id h10-v6sm10959204pfj.78.2018.07.11.17.03.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 17:03:25 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 08:59:56 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-fbdev@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] fbcon: Call WARN_CONSOLE_UNLOCKED() where
+ applicable
+Message-ID: <20180711235956.GA4829@jagdpanzerIV>
+References: <20180628090351.15581-1-hdegoede@redhat.com>
+ <20180628090351.15581-3-hdegoede@redhat.com>
+ <717e6337-e7a6-7a92-1c1b-8929a25696b5@suse.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EYBWYqRmT+9CpTkc3L=Ei9_"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <717e6337-e7a6-7a92-1c1b-8929a25696b5@suse.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/EYBWYqRmT+9CpTkc3L=Ei9_
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Andrew,
+On (07/11/18 16:46), Thomas Zimmermann wrote:
+> Am 28.06.2018 um 11:03 schrieb Hans de Goede:
+> > Replace comments about places where the console lock should be held with
+> > calls to WARN_CONSOLE_UNLOCKED() to assert that it is actually held.
+> 
+> Debugging fbcon sometimes requires to not take the console lock. This
+> patch breaks the debugging workaround provided by
+> 'fb.lockless_register_fb'. The dmesg is now filled with warnings about
+> the missing lock.
 
-On Wed, 11 Jul 2018 14:13:44 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
->
-> OK, I shall drop
-> mm-sparse-remove-config_sparsemem_alloc_mem_map_together.patch for now.
+Hmm. I once dealt with WARN_CONSOLE_UNLOCKED(), and back then, IIRC,
+I really wanted to turn it into WARN_ONCE_CONSOLE_UNLOCKED(), which
+would WARN_ON_ONCE() instead of WARN_ON(). It's just a bit too noisy
+and verbose and a single backtrace was already enough.
 
-I have dropped it from linux-next today (in case you don't get time).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/EYBWYqRmT+9CpTkc3L=Ei9_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltGlxEACgkQAVBC80lX
-0GwoUwf/bx0m01nkKzrGDRN2EbV745BfGn4LcFCUqgnVbtIwvCgd21+BSMQKZeBQ
-hXceLO2LFHU5+BQxG8CsGyLob2rijmXu35ie3boJKXPjMPdng8QaCCtSDyUkjTuu
-XkiNYUspbTMVZWlnHX3tFV0Urm4SI7xHOG5lrE/c58rLoJnTOqL9ssC2cdiN0j2w
-glkgPVXLSljiB5RwUmF/cXf3Q6knDeHF2f3XikAlUjKv5NIa+JR3wz1H/pzzIw7K
-kSVxPcRjwRBaAmqxPMep92ZpthSBZ9sJfTxQajHFyTKfgpSfWB6aP8FuavEL8zuC
-xHM1AI0ggVguLGhN2yKqtxRw77KLmQ==
-=c4bd
------END PGP SIGNATURE-----
-
---Sig_/EYBWYqRmT+9CpTkc3L=Ei9_--
+	-ss
