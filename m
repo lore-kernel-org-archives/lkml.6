@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A3AC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E67C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A80AE2083C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:57:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A80AE2083C
+	by mail.kernel.org (Postfix) with ESMTP id 6553D2083C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:57:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6553D2083C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732582AbeGKLAv (ORCPT
+        id S1732598AbeGKLBK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:00:51 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55624 "EHLO
+        Wed, 11 Jul 2018 07:01:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55852 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726641AbeGKLAu (ORCPT
+        with ESMTP id S1732517AbeGKLBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:00:50 -0400
+        Wed, 11 Jul 2018 07:01:10 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C9AE8D91;
-        Wed, 11 Jul 2018 10:57:04 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 12:57:02 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B4FB3D48;
+        Wed, 11 Jul 2018 10:57:24 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 12:57:22 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-kernel@vger.kernel.org, devel@linuxdriverproject.org
-Subject: [GIT PULL] Staging driver fixes for 4.18-rc5
-Message-ID: <20180711105702.GA18092@kroah.com>
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Char/Misc driver fixes for 4.18-rc5
+Message-ID: <20180711105722.GA18131@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -43,38 +43,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 021c91791a5e7e85c567452f1be3e4c2c6cb6063:
+The following changes since commit 7daf201d7fe8334e2d2364d4e8ed3394ec9af819:
 
-  Linux 4.18-rc3 (2018-07-01 16:04:53 -0700)
+  Linux 4.18-rc2 (2018-06-24 20:54:29 +0800)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/ tags/staging-4.18-rc5
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git/ tags/char-misc-4.18-rc5
 
-for you to fetch changes up to d59d2f9995d28974877750f429e821324bd603c7:
+for you to fetch changes up to 87ed1405ef09d29a14df43295f7b6a93b63bfe6e:
 
-  staging: r8822be: Fix RTL8822be can't find any wireless AP (2018-07-06 17:44:35 +0200)
+  nvmem: Don't let a NULL cell_id for nvmem_cell_get() crash us (2018-07-07 17:30:25 +0200)
 
 ----------------------------------------------------------------
-Staging fixes for 4.18-rc5
+Char/Misc fixes for 4.18-rc5
 
-Here are two tiny staging driver fixes for reported issues for 4.18-rc5.
+Here are a few char/misc driver fixes for 4.18-rc5.
 
-One fixes the r8822be driver to properly work on lots of new laptops,
-the other is for the rtl8723bs driver to fix an underflow error.
+The "largest" stuff here is fixes for the UIO changes in 4.18-rc1 that
+caused breakages for some people.  Thanks to Xiubo Li for fixing them
+quickly.  Other than that, minor fixes for thunderbolt, vmw_balloon,
+nvmem, mei, ibmasm, and mei drivers.  There's also a MAINTAINERS update
+where Rafael is offering to help out with reviewing driver core patches.
 
-Both have been in linux-next for a while with no reported issues.
+All of these have been in linux-next with no reported issues.
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Murray McAllister (1):
-      staging: rtl8723bs: Prevent an underflow in rtw_check_beacon_data().
+Alexander Usyskin (1):
+      mei: discard messages from not connected client during power down.
 
-Ping-Ke Shih (1):
-      staging: r8822be: Fix RTL8822be can't find any wireless AP
+Christophe Jaillet (1):
+      fpga: altera-cvp: Fix an error handling path in 'altera_cvp_probe()'
 
- drivers/staging/rtl8723bs/core/rtw_ap.c | 2 +-
- drivers/staging/rtlwifi/rtl8822be/hw.c  | 2 +-
- drivers/staging/rtlwifi/wifi.h          | 1 +
- 3 files changed, 3 insertions(+), 2 deletions(-)
+Douglas Anderson (1):
+      nvmem: Don't let a NULL cell_id for nvmem_cell_get() crash us
+
+Jann Horn (1):
+      ibmasm: don't write out of bounds in read handler
+
+Mika Westerberg (1):
+      thunderbolt: Notify userspace when boot_acl is changed
+
+Nadav Amit (1):
+      vmw_balloon: fix inflation with batching
+
+Rafael J. Wysocki (1):
+      MAINTAINERS: Add myself as driver core changes reviewer
+
+Xiubo Li (3):
+      uio: use request_threaded_irq instead
+      uio: change to use the mutex lock instead of the spin lock
+      uio: fix crash after the device is unregistered
+
+ MAINTAINERS                    |   1 +
+ drivers/fpga/altera-cvp.c      |   6 +-
+ drivers/misc/ibmasm/ibmasmfs.c |  27 +-------
+ drivers/misc/mei/interrupt.c   |   5 +-
+ drivers/misc/vmw_balloon.c     |   4 +-
+ drivers/nvmem/core.c           |   4 ++
+ drivers/thunderbolt/domain.c   |   4 ++
+ drivers/uio/uio.c              | 139 ++++++++++++++++++++++++++++++-----------
+ include/linux/uio_driver.h     |   2 +-
+ 9 files changed, 126 insertions(+), 66 deletions(-)
