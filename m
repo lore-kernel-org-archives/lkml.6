@@ -2,119 +2,173 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8352C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 914FBC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:44:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C8072086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:43:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C8072086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 54E622086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 17:44:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ifIC6Zmw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E622086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388886AbeGKRtF (ORCPT
+        id S2388919AbeGKRtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 13:49:05 -0400
-Received: from mga09.intel.com ([134.134.136.24]:53371 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbeGKRtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 13:49:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 10:43:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
-   d="scan'208";a="66161785"
-Received: from ray.jf.intel.com (HELO [10.7.201.16]) ([10.7.201.16])
-  by orsmga003.jf.intel.com with ESMTP; 11 Jul 2018 10:43:41 -0700
-Subject: Re: Kernel 4.17.4 lockup
-To:     "H.J. Lu" <hjl.tools@gmail.com>
-References: <CAMe9rOqXsQ4Onv8_-kYE_yVYVfN0Hsg81XM0sq9k2cVYE_LvaQ@mail.gmail.com>
- <50d6bb50-5fa4-33d1-1f88-3844d0237f16@intel.com>
- <CAMe9rOoA=OoyaUfOvWuHGTp_ii9-A_ecR5tj8CefBKx_Hmi50g@mail.gmail.com>
- <7db385ef-0940-8f28-87b0-828921dd2f1d@intel.com>
- <CAMe9rOoZ=8ROyR6U3-JY+4hib2Bb5LGhBYzY5S_Xp38coj16aQ@mail.gmail.com>
- <9548e10a-7403-425e-bf1f-b1eb9d055d99@intel.com>
- <CAMe9rOrHowBX06nihdRRmEqhV8v7cs+PwVY7JYQFpUFOnHC71A@mail.gmail.com>
- <f22ee1e2-9a35-697f-50ab-543ac1631c89@intel.com>
- <CAMe9rOpPwtPd-R+D9=iDYgbFtnP+=akWic-QBKwq9wKa7uadEQ@mail.gmail.com>
- <2022d212-62f2-a163-2493-abecfbafa07b@intel.com>
- <CAMe9rOqc0oVw+ZLXCM-nrtPb1OiPFBeHt+Lsx+6K6y=t3HSVhA@mail.gmail.com>
- <cbb38230-9c57-905b-3a11-e2717c5aa615@intel.com>
- <CAMe9rOqh9saaULM_+jNtzfYarbZScm+6KCEyibxxqn7GLvKwzA@mail.gmail.com>
- <CAMe9rOpV89jWhvAZtqOJnc0eXzRYiLF5pLWRcdb7-kKLigj4rQ@mail.gmail.com>
-Cc:     "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Mel Gorman <mgorman@suse.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rik van Riel <riel@surriel.com>,
-        Minchan Kim <minchan@kernel.org>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <35f0b060-b3c0-528e-ee96-811f55b62635@intel.com>
-Date:   Wed, 11 Jul 2018 10:43:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 11 Jul 2018 13:49:49 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:43780 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbeGKRtt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 13:49:49 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6BHiBs2080547;
+        Wed, 11 Jul 2018 17:44:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=KjEmsj8n+Qyf48zhleVbDeTKFPcPE/4n3ug8GbUYyI8=;
+ b=ifIC6ZmwqgYjANeSvIJrbhxmZ/xgJUDGvoXW24pCJvDh/FtOGsF3oXQVbXz9OIUzeX+d
+ YXJABXHzzwkZHeLT8kRn+mEgyj/6ij8EH6PGw1yvmOfM/1gH9m6AQCxd+rRuWUY1zm7G
+ RJqJQ9FanQtZhFDrmKRpt2frXPp0HDeOlZc4eGBVfLCS38Xrl9Bn3s0NtJ9LfNO5FqJq
+ fbEOI3ngfp1dHl/7P/sYsRpNznyEqltyfNijHGfgnMTiqIhyOOKXoBbZiLdswJbpo7bL
+ g9QwXhD83mx2wdt8oiIiROsxi+45w8U5EgaaofYObblNDtkZJT4+NMi8bfWCq9TEsVEo SQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2k2p767a0m-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Jul 2018 17:44:14 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6BHiDZp022156
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Jul 2018 17:44:13 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6BHiCqK026034;
+        Wed, 11 Jul 2018 17:44:13 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Jul 2018 10:44:12 -0700
+Date:   Wed, 11 Jul 2018 10:44:11 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] xfs_bmap_util: use swap macro
+Message-ID: <20180711174411.GG32415@magnolia>
+References: <20180709210259.GA18992@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMe9rOpV89jWhvAZtqOJnc0eXzRYiLF5pLWRcdb7-kKLigj4rQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180709210259.GA18992@embeddedor.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807110189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 10:29 AM, H.J. Lu wrote:
->> I have seen it on machines with various amounts of cores and RAMs.
->> It triggers the fastest on 8 cores with 6GB RAM reliably.
-> Here is the first kernel message.
+On Mon, Jul 09, 2018 at 04:02:59PM -0500, Gustavo A. R. Silva wrote:
+> Make use of the swap macro and remove some unnecessary variables.
+> This makes the code easier to read and maintain. Also, reduces the
+> stack usage.
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Does it trigger better with more RAM or less?
+Looks ok, will test...
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+
+--D
+
+> ---
+> Changes in v2
+>  - Use swap in a couple more of places.
+> 
+>  fs/xfs/xfs_bmap_util.c | 28 +++++-----------------------
+>  1 file changed, 5 insertions(+), 23 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
+> index 83b1e8c..a657d0a 100644
+> --- a/fs/xfs/xfs_bmap_util.c
+> +++ b/fs/xfs/xfs_bmap_util.c
+> @@ -1691,7 +1691,6 @@ xfs_swap_extent_forks(
+>  	int			*src_log_flags,
+>  	int			*target_log_flags)
+>  {
+> -	struct xfs_ifork	tempifp, *ifp, *tifp;
+>  	xfs_filblks_t		aforkblks = 0;
+>  	xfs_filblks_t		taforkblks = 0;
+>  	xfs_extnum_t		junk;
+> @@ -1733,11 +1732,7 @@ xfs_swap_extent_forks(
+>  	/*
+>  	 * Swap the data forks of the inodes
+>  	 */
+> -	ifp = &ip->i_df;
+> -	tifp = &tip->i_df;
+> -	tempifp = *ifp;		/* struct copy */
+> -	*ifp = *tifp;		/* struct copy */
+> -	*tifp = tempifp;	/* struct copy */
+> +	swap(ip->i_df, tip->i_df);
+>  
+>  	/*
+>  	 * Fix the on-disk inode values
+> @@ -1746,13 +1741,8 @@ xfs_swap_extent_forks(
+>  	ip->i_d.di_nblocks = tip->i_d.di_nblocks - taforkblks + aforkblks;
+>  	tip->i_d.di_nblocks = tmp + taforkblks - aforkblks;
+>  
+> -	tmp = (uint64_t) ip->i_d.di_nextents;
+> -	ip->i_d.di_nextents = tip->i_d.di_nextents;
+> -	tip->i_d.di_nextents = tmp;
+> -
+> -	tmp = (uint64_t) ip->i_d.di_format;
+> -	ip->i_d.di_format = tip->i_d.di_format;
+> -	tip->i_d.di_format = tmp;
+> +	swap(ip->i_d.di_nextents, tip->i_d.di_nextents);
+> +	swap(ip->i_d.di_format, tip->i_d.di_format);
+>  
+>  	/*
+>  	 * The extents in the source inode could still contain speculative
+> @@ -1846,7 +1836,6 @@ xfs_swap_extents(
+>  	int			src_log_flags, target_log_flags;
+>  	int			error = 0;
+>  	int			lock_flags;
+> -	struct xfs_ifork	*cowfp;
+>  	uint64_t		f;
+>  	int			resblks = 0;
+>  
+> @@ -1987,18 +1976,11 @@ xfs_swap_extents(
+>  
+>  	/* Swap the cow forks. */
+>  	if (xfs_sb_version_hasreflink(&mp->m_sb)) {
+> -		xfs_extnum_t	extnum;
+> -
+>  		ASSERT(ip->i_cformat == XFS_DINODE_FMT_EXTENTS);
+>  		ASSERT(tip->i_cformat == XFS_DINODE_FMT_EXTENTS);
+>  
+> -		extnum = ip->i_cnextents;
+> -		ip->i_cnextents = tip->i_cnextents;
+> -		tip->i_cnextents = extnum;
+> -
+> -		cowfp = ip->i_cowfp;
+> -		ip->i_cowfp = tip->i_cowfp;
+> -		tip->i_cowfp = cowfp;
+> +		swap(ip->i_cnextents, tip->i_cnextents);
+> +		swap(ip->i_cowfp, tip->i_cowfp);
+>  
+>  		if (ip->i_cowfp && ip->i_cowfp->if_bytes)
+>  			xfs_inode_set_cowblocks_tag(ip);
+> -- 
+> 2.7.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-xfs" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
