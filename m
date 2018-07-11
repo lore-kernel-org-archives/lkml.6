@@ -2,96 +2,151 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1758C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 852B2C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D31020883
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:30:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ABAD20883
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:30:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Stc7DE4q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D31020883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izq3EdOy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ABAD20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbeGKJdY (ORCPT
+        id S1732289AbeGKJdr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:33:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51608 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726368AbeGKJdY (ORCPT
+        Wed, 11 Jul 2018 05:33:47 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:38304 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbeGKJdr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:33:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HNfZeAyOUk6CW6jcqB/Fxzu6JdX1Qdcn48KtH6knTyA=; b=Stc7DE4qm7DUgMExJifJ6g72m
-        XRgpSoJ3tR8xnZSiD/MA19wKq1as9PGJlZgRMdgbh6Aa5A41PJ9Bpa1tuq8+sF2x5RcizJv4qzBlc
-        Qeb5RtPLCdq61vOAD4Zd/OyBPfDtEbpXx9iv/hvQ4IJB1gtDqflOMzAUtIb92QBOh0JDQVzJxR9T7
-        VTh82WrAgibyqXydHugtAuZB2poqrHr+2UpnaSAOmw9QoVDF68nFoxpSUKMMHTw+8oAzEEwBKgsYa
-        I29JIkNLAXIxrnW/RFkjiaEjg+gkEZ/ze42j8X6bW1xO1LWXYHKPYdPK+d4GaO0gHBkTYtLvhb6z2
-        KsKwToA1g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdBRZ-0004eh-67; Wed, 11 Jul 2018 09:29:53 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 4F2F820291063; Wed, 11 Jul 2018 11:29:51 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 11:29:51 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v2 16/27] mm: Modify can_follow_write_pte/pmd for
- shadow stack
-Message-ID: <20180711092951.GW2476@hirez.programming.kicks-ass.net>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-17-yu-cheng.yu@intel.com>
+        Wed, 11 Jul 2018 05:33:47 -0400
+Received: by mail-ua0-f196.google.com with SMTP id o11-v6so2172952uak.5;
+        Wed, 11 Jul 2018 02:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=17xYwj2h7YOILVec0d8EmoPBsAaCW7i1nNwINyp1uhA=;
+        b=izq3EdOymGS29/Lti6bwsx0o7eGLN0tqOvOgToiHBUizPKPz9c9fB6GlsSiFD41hB/
+         tUx2gfVrn1rJQpYuCXwbsJy8zb7DVmIZXpKRCpZ5I65inmzBpDLjO47lOp6cr/uWSr0/
+         vVMbp0RSlC3h0z99vFewbb3rNLrsVqJO57v+WycDspyDdHdje1CntFRPcJntcpeuSCTx
+         vdaR1wYYklocr9wNs1xDhhe7IL8yjvXK7CNQBcf79/ov9m3EBl7a9X/e0P1nI5PcHWsI
+         fZl9+n4cX/x4Qu+dn8EEFxByr785+F9P/mSEKdEMAqsraEA63cD/R68fEq9ZSYZXc8O7
+         m68Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=17xYwj2h7YOILVec0d8EmoPBsAaCW7i1nNwINyp1uhA=;
+        b=Otu8Yb0muxmfduwBN2NRihqojX4DRkgooUo15ljWcFyMrY82zI0mY5V3xpw+tqTgSe
+         AndCJ/v20sV08s4I9yBDuQCd5QrnxrTR1BQpfSN9WnRHHFSM2t4oTg96SxHL8qWnWaF5
+         lHm/3Wq/60nH4/YEz+va1nXTXk3bCOwhMLNrxQ+coFu/9RGfYO9QmZXV46DBK83ASRZ9
+         r7q8M6Gs7EnqS/Pe04HCND6wqeZCZQze1IAd/Kk0mUtHbkCFwM4F2gFVFumTYLkwmsiu
+         FTw+5VcSruBDhx9uKvYFT9aN/U0+6EbkoXXRb4WmyII0o5DjUeaekaqSkmawO1FEQrgZ
+         wN1g==
+X-Gm-Message-State: APt69E10dFEDP2W7n5eS/ecE4mCH7S3CRi5C3fcygkGEsl7PAcJWaOv/
+        pp/TsyJs/rrsR0Exn1qurdvlq+oI+q1BFKuFRWo=
+X-Google-Smtp-Source: AAOMgpfPSJv06WcZ6bF6ONyoA0nOcv2xKAx7wB7iWPchDgKVYpZCiRAsQnQybcSFMl24FQwygIk1TAfp21j7hRFfnQ8=
+X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr5444612ual.141.1531301422256;
+ Wed, 11 Jul 2018 02:30:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180710222639.8241-17-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 02:30:21
+ -0700 (PDT)
+In-Reply-To: <20180711080946.14942-2-songxiaowei@hisilicon.com>
+References: <20180711080946.14942-1-songxiaowei@hisilicon.com> <20180711080946.14942-2-songxiaowei@hisilicon.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 11 Jul 2018 12:30:21 +0300
+Message-ID: <CAHp75VccZtHqpoeWhVa=D=tc_Dj5cX8SXg=vYowWJ_RAiKdiCQ@mail.gmail.com>
+Subject: Re: [PATCH v7 1/1] PCI: kirin: Add MSI support
+To:     Xiaowei Song <songxiaowei@hisilicon.com>
+Cc:     Wangbinghui <wangbinghui@hisilicon.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>,
+        Kongfei <kongfei@hisilicon.com>, Yao Chen <chenyao11@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 03:26:28PM -0700, Yu-cheng Yu wrote:
-> There are three possible shadow stack PTE settings:
-> 
->   Normal SHSTK PTE: (R/O + DIRTY_HW)
->   SHSTK PTE COW'ed: (R/O + DIRTY_HW)
->   SHSTK PTE shared as R/O data: (R/O + DIRTY_SW)
+On Wed, Jul 11, 2018 at 11:09 AM, Xiaowei Song
+<songxiaowei@hisilicon.com> wrote:
+> Add support for MSI
+>
 
-I count _2_ distinct states there.
+FWIW,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-> Update can_follow_write_pte/pmd for the shadow stack.
+> Signed-off-by: Xiaowei Song <songxiaowei@hisilicon.com>
+> Signed-off-by: Yao Chen <chenyao11@huawei.com>
+> ---
+>  drivers/pci/dwc/pcie-kirin.c | 28 ++++++++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+>
+> diff --git a/drivers/pci/dwc/pcie-kirin.c b/drivers/pci/dwc/pcie-kirin.c
+> index d2970a009eb5..5352e0c3be82 100644
+> --- a/drivers/pci/dwc/pcie-kirin.c
+> +++ b/drivers/pci/dwc/pcie-kirin.c
+> @@ -430,6 +430,9 @@ static int kirin_pcie_host_init(struct pcie_port *pp)
+>  {
+>         kirin_pcie_establish_link(pp);
+>
+> +       if (IS_ENABLED(CONFIG_PCI_MSI))
+> +               dw_pcie_msi_init(pp);
+> +
+>         return 0;
+>  }
+>
+> @@ -445,9 +448,34 @@ static const struct dw_pcie_host_ops kirin_pcie_host_ops = {
+>         .host_init = kirin_pcie_host_init,
+>  };
+>
+> +static int kirin_pcie_add_msi(struct dw_pcie *pci,
+> +                               struct platform_device *pdev)
+> +{
+> +       int irq;
+> +
+> +       if (IS_ENABLED(CONFIG_PCI_MSI)) {
+> +               irq = platform_get_irq(pdev, 0);
+> +               if (irq < 0) {
+> +                       dev_err(&pdev->dev,
+> +                               "failed to get MSI IRQ (%d)\n", irq);
+> +                       return irq;
+> +               }
+> +
+> +               pci->pp.msi_irq = irq;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+>  static int __init kirin_add_pcie_port(struct dw_pcie *pci,
+>                                       struct platform_device *pdev)
+>  {
+> +       int ret;
+> +
+> +       ret = kirin_pcie_add_msi(pci, pdev);
+> +       if (ret)
+> +               return ret;
+> +
+>         pci->pp.ops = &kirin_pcie_host_ops;
+>
+>         return dw_pcie_host_init(&pci->pp);
+> --
+> 2.11.GIT
+>
 
-So the below disallows can_follow_write when shstk && _PAGE_DIRTY_SW,
-but this here Changelog doesn't explain why. Doesn't even get close.
 
-Also, the code is a right mess :/ Can't we try harder to not let this
-shadow stack stuff escape arch code.
+
+-- 
+With Best Regards,
+Andy Shevchenko
