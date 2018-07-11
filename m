@@ -2,125 +2,106 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6A1C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9764FC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BA1B20877
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:27:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BA1B20877
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 4DE15208AD
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:29:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HtsfW29a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DE15208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732432AbeGKIax (ORCPT
+        id S1732321AbeGKIcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:30:53 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:51674 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726280AbeGKIaw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:30:52 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id E00FA804B7; Wed, 11 Jul 2018 10:27:42 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 10:27:39 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [RFC PATCH v2 05/27] Documentation/x86: Add CET description
-Message-ID: <20180711082739.GA18919@amd>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-6-yu-cheng.yu@intel.com>
+        Wed, 11 Jul 2018 04:32:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726280AbeGKIcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 04:32:12 -0400
+Received: from dragon (unknown [45.56.152.98])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6662520843;
+        Wed, 11 Jul 2018 08:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531297743;
+        bh=378a5hp45OC4u2H3yZBiIolFvVAkSR3Zlunnh+uqCZA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HtsfW29a+Rd3H3PISzYWfasf0+TykIA+uOGlDLwINbpDtTibfyAw/P+fc61Mq3828
+         CJafpuCHIidZifbfdIjpq8vyBmC51Q5LOynl3l0tbcutOviu2orrmRdYmOApOUAluC
+         zX/ROhqXD3rftoQ9Y8uo09fNCBOFmBAC6K6o4Rt4=
+Date:   Wed, 11 Jul 2018 16:28:28 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "matteo.lisi@engicam.com" <matteo.lisi@engicam.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "michael@amarulasolutions.com" <michael@amarulasolutions.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH V2 2/2] ARM: dts: imx6ul: add GPIO clocks
+Message-ID: <20180711082827.GA6959@dragon>
+References: <1527990245-13619-1-git-send-email-Anson.Huang@nxp.com>
+ <1527990245-13619-2-git-send-email-Anson.Huang@nxp.com>
+ <AM3PR04MB1315D8B57E1A5D47BECBDCD3F54A0@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <20180628005217.GC22683@dragon>
+ <153029757874.143105.17774476792947607999@swboyd.mtv.corp.google.com>
+ <20180701021947.GA4348@dragon>
+ <153089733418.143105.7025289108790540252@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180710222639.8241-6-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <153089733418.143105.7025289108790540252@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jul 06, 2018 at 10:15:34AM -0700, Stephen Boyd wrote:
+> Quoting Shawn Guo (2018-06-30 19:19:49)
+> > On Fri, Jun 29, 2018 at 11:39:38AM -0700, Stephen Boyd wrote:
+> > > Quoting Shawn Guo (2018-06-27 17:52:18)
+> > > > On Mon, Jun 25, 2018 at 03:14:39AM +0000, Anson Huang wrote:
+> > > > > Gentle Ping...
+> > > > 
+> > > > I cannot apply this dts patch until the clock patch is landed on
+> > > > mainline, because it has a dependency on new clock ID IMX6UL_CLK_GPIO1
+> > > > created by clock patch.
+> > > > 
+> > > 
+> > > Does it matter if that clk ID changes across branches? Or is everything
+> > > good if it just exists as some number?
+> > 
+> > We use macro IMX6UL_CLK_GPIO1 instead of hard-coded number in DTS.  So
+> > it doesn't matter if IMX6UL_CLK_GPIO1 changes.
+> > 
+> > > The patch adding the define
+> > > conflicts with another patch to fix the numbering scheme to be
+> > > incremental instead of changing IMX6UL and IMX6ULL which is annoying.
+> > > I'll probably make a topic branch just for the fix and merge it into
+> > > clk-fixes and this branch so you can pick it up from there if you like.
+> > 
+> > It will be good if you can have a topic branch.  Otherwise, we are also
+> > fine to wait till the clock patches lands on mainline.
+> > 
+> 
+> Ok. The topic branch is out there as clk-imx-gpio-gates
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks.  I applied dts patch now.
 
-On Tue 2018-07-10 15:26:17, Yu-cheng Yu wrote:
-> Explain how CET works and the no_cet_shstk/no_cet_ibt kernel
-> parameters.
->=20
-
-> --- /dev/null
-> +++ b/Documentation/x86/intel_cet.txt
-> @@ -0,0 +1,250 @@
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Control Flow Enforcement Technology (CET)
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-We normally use .rst for this kind of formatted text.
-
-
-> +[6] The implementation of the SHSTK
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +SHSTK size
-> +----------
-> +
-> +A task's SHSTK is allocated from memory to a fixed size that can
-> +support 32 KB nested function calls; that is 256 KB for a 64-bit
-> +application and 128 KB for a 32-bit application.  The system admin
-> +can change the default size.
-
-How does admin change that? We already have ulimit for stack size,
-should those be somehow tied together?
-
-$ ulimit -a
-=2E..
-stack size              (kbytes, -s) 8192
-
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAltFv3sACgkQMOfwapXb+vJCUwCfRHq9+RCMp+u2Y1KcEeEwRWQo
-uw4AoKTNBubkPzJE8R3PcwGC3r8tTOI2
-=YfD9
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+Shawn
