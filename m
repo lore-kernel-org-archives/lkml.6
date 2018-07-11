@@ -2,134 +2,92 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0C9C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B86C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2072E20020
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:02:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2072E20020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0D8C720020
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 09:02:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XoHnV4gg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D8C720020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732227AbeGKJFQ (ORCPT
+        id S1732380AbeGKJGE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 05:05:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41871 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726289AbeGKJFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 05:05:16 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id DCD1E20733; Wed, 11 Jul 2018 11:01:57 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AF66F206A6;
-        Wed, 11 Jul 2018 11:01:57 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 11:01:57 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Niklas =?utf-8?Q?S=C3=B6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Subject: Re: [linux-sunxi] [PATCH v5 09/22] ARM: dts: sun5i: Use
- most-qualified system control compatibles
-Message-ID: <20180711090157.bs435c4k6knb6bqv@flea>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
- <20180710080114.31469-10-paul.kocialkowski@bootlin.com>
- <CAGb2v64HbpvJhy5KQOepc61nU7NECaWMPvhZ16dk5hJXiPBHxA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4xdjxhmgjufzuifr"
-Content-Disposition: inline
-In-Reply-To: <CAGb2v64HbpvJhy5KQOepc61nU7NECaWMPvhZ16dk5hJXiPBHxA@mail.gmail.com>
-User-Agent: NeoMutt/20180622
+        Wed, 11 Jul 2018 05:06:04 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35375 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726289AbeGKJGE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 05:06:04 -0400
+Received: by mail-wr1-f67.google.com with SMTP id a3-v6so8098064wrt.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 02:02:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=AE8DquSxSrfN59LzXIrU+mScQxkz4fnFbV1vDzzUgPc=;
+        b=XoHnV4ggwicVdCbZJdk0wKrdZeXEWqah9FwfOwYHY6HoD0zzZymSPEn3ORnadpinzx
+         POStaMyBrXCDDCBAkIDOnHh7w/rmoOG5zMc4X//PfFL9GhrQ7kpkEeY86ebjCVXoguIu
+         LCR2Z6dbLmdfaRh8a4m5ru/0KYGKNfCsxh2XQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=AE8DquSxSrfN59LzXIrU+mScQxkz4fnFbV1vDzzUgPc=;
+        b=F8l8TmQZavlPtHyjN/kEpPSkLi0VPPDPRgTdIjoS/G/oAAcVVjgmoEQMHm4lUjzAp/
+         B8opVQ83mK4MX3sIlb2KXnxOzphULF4Xwoc6swzSavE0mYcMi/3Kjwhi/MuyGPdXmHfJ
+         kiAKLXdXzq9aGd06T8Pp6D5Po8CeIaGjA7BbhoWxjUtR1m8EBTODCIwc0p5SYnUo4C1b
+         Q3+xeKTClYbLZbd7PyN26hKjptxX5IiCCbup2ZFJmUGJOPz03j/0+9eUte+sWjFco4Qt
+         9tIIrJPr+EyxG2aHVPafbdox7fCdifq6ZfPMAwUFIJ4DOZmBRyeU+gVB0NyOq9YI/Efd
+         aNPw==
+X-Gm-Message-State: APt69E3fnLn0obC2+n/WqcoOq65U4aSWultpQSZzpgx+SuZkc2Lqw2NK
+        PmQjG84LXHVO/GkOQbsyWS7Wew==
+X-Google-Smtp-Source: AAOMgpdO0uq/jPudxsM542u4+Ts3mNHBSy9nFnc+ZMrgOp6UXFLC2qgXxHykTYGsecxpJCz3cBQvrg==
+X-Received: by 2002:adf:eb0c:: with SMTP id s12-v6mr21558624wrn.174.1531299766070;
+        Wed, 11 Jul 2018 02:02:46 -0700 (PDT)
+Received: from localhost.localdomain (33.153.69.91.rev.sfr.net. [91.69.153.33])
+        by smtp.gmail.com with ESMTPSA id y203-v6sm2327953wme.42.2018.07.11.02.02.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 02:02:45 -0700 (PDT)
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-kernel@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>
+Subject: [GIT PULL 0/1] EFI mixed mode fix for v4.18
+Date:   Wed, 11 Jul 2018 11:02:34 +0200
+Message-Id: <20180711090235.9327-1-ard.biesheuvel@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The following changes since commit 1e4b044d22517cae7047c99038abb444423243ca:
 
---4xdjxhmgjufzuifr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+  Linux 4.18-rc4 (2018-07-08 16:34:02 -0700)
 
-On Tue, Jul 10, 2018 at 10:53:44PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Jul 10, 2018 at 4:01 PM, Paul Kocialkowski
-> <paul.kocialkowski@bootlin.com> wrote:
-> > This switches the sun5i dtsi to use the most qualified compatibles for
-> > the system-control block (previously named SRAM controller) as well as
-> > the SRAM blocks. The sun4i-a10 compatibles are kept since these hardware
-> > blocks are backward-compatible.
->=20
-> Not quite sure why they are backward-compatible. The A13 has less SRAM
-> mapping controls than the A10.
+are available in the Git repository at:
 
-I've applied this patch, and removed that compatible (and its mention
-in the commit log).
+  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-urgent
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+for you to fetch changes up to d7f2e972e702d329fe11d6956df99dfc31211c25:
 
---4xdjxhmgjufzuifr
-Content-Type: application/pgp-signature; name="signature.asc"
+  efi/x86: remove pointless call to PciIo->Attributes() (2018-07-11 10:52:46 +0200)
 
------BEGIN PGP SIGNATURE-----
+----------------------------------------------------------------
+A single fix for the x86 PCI I/O protocol handling code that got
+broken for mixed mode (64-bit Linux/x86 on 32-bit UEFI) after a
+fix was applied in -rc2 to fix it for ordinary 64-bit Linux/x86.
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFx4QACgkQ0rTAlCFN
-r3T5hw/+LrwtplgQOGWsmip+88WJ28Kyyjgcza8XqQa4MXn75qKAhuqdHSlPLJ8b
-stcNMEWB81LhHzEqabOjltriCEz6sYOLoCZB7deZfV0VO2QuNYBir6scl770b+c3
-Pv1HqpZe4vZv8tnY7U/jUI3b35H7bXl+zFlAxu8O7TGTwtOjL4Bt01EM5h5Ox9ut
-lTRPX5WUphSgUMkMJzo0BrO7FNHZXb6LhIzmOE3bYvJf62jRLkSF7pwhcqPI8ZtA
-jSAp0YlbDcUgb4Q1nkDZmpsvtXFMQdIoDtBUhwGBGbLlUNuY7N9WdK0NehTCB5jA
-oSL6XBBiOg8/i5VqXUglSLHaaxE3OMzr5A4QGxrxXCWilV2chbvAfaOpFH7GPOsQ
-ijibhtej60bZ7Nii0cL9afzWNVbgRjS7ox78i4MEkMd3V5+3tWodZdED3lcg53RJ
-m4fb3m1DyMEZWj3EERFD9khsvb76yIA2/jvq8jzRI4yV4nBgE0bD83XEcKL5x1Pz
-i+UYbNPo9JO78q2/gSatoJzVyxZ9CR/j/LTZ+XA2APBqeUEegvK4bXpD0nrC4P+C
-j+gqFwLa/AltYU2Tsfh/xVaLYVOfOezAjetht3TfJHecDRc+VXus/AJOftAE2Sfc
-1GK5Q6PCU4SYUpj7JtHBaUNFr+Yie+c5YtzJDcdIH/w3TzRXt44=
-=MV4R
------END PGP SIGNATURE-----
+----------------------------------------------------------------
+Ard Biesheuvel (1):
+      efi/x86: remove pointless call to PciIo->Attributes()
 
---4xdjxhmgjufzuifr--
+ arch/x86/boot/compressed/eboot.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
