@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1C2C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57152C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86AD72075E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:05:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86AD72075E
+	by mail.kernel.org (Postfix) with ESMTP id 1A8EE20846
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:05:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8EE20846
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388402AbeGKOJw (ORCPT
+        id S2388409AbeGKOKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:09:52 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:5516 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387934AbeGKOJw (ORCPT
+        Wed, 11 Jul 2018 10:10:19 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:15269 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbeGKOKS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:09:52 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b460e9e0000>; Wed, 11 Jul 2018 07:05:18 -0700
+        Wed, 11 Jul 2018 10:10:18 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b460eb50001>; Wed, 11 Jul 2018 07:05:41 -0700
 Received: from HQMAIL101.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 11 Jul 2018 07:05:21 -0700
+  Wed, 11 Jul 2018 07:05:46 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 11 Jul 2018 07:05:21 -0700
+        by hqpgpgate101.nvidia.com on Wed, 11 Jul 2018 07:05:46 -0700
 Received: from dhcp-10-21-25-168.Nvidia.com (10.21.25.201) by
  HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
- 15.0.1347.2; Wed, 11 Jul 2018 14:05:18 +0000
+ 15.0.1347.2; Wed, 11 Jul 2018 14:05:43 +0000
 From:   Aapo Vienamo <avienamo@nvidia.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -41,9 +41,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         Mikko Perttunen <mperttunen@nvidia.com>
 CC:     Aapo Vienamo <avienamo@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 5/7] dt-bindings: Add Tegra PMC pad configuration bindings
-Date:   Wed, 11 Jul 2018 17:05:00 +0300
-Message-ID: <1531317900-3978-1-git-send-email-avienamo@nvidia.com>
+Subject: [PATCH v2 6/7] soc/tegra: pmc: Remove public pad voltage APIs
+Date:   Wed, 11 Jul 2018 17:05:38 +0300
+Message-ID: <1531317938-4099-1-git-send-email-avienamo@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531317693-3520-1-git-send-email-avienamo@nvidia.com>
 References: <1531317693-3520-1-git-send-email-avienamo@nvidia.com>
@@ -51,248 +51,124 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.21.25.201]
-X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
  (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the pinctrl bindings used by the PMC driver for performing pad
-configuration. Both nvidia,tegra186-pmc.txt and nvidia,tegra20-pmc.txt
-are modified as they both cover SoC generations for which these bindings
-apply.
+Make tegra_io_pad_set_voltage() and tegra_io_pad_get_voltage() static
+and remove the prototypes from pmc.h. Remove enum tegra_io_pad_voltage
+and use the defines from <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+instead.
 
-Add a header defining Tegra PMC pad voltage configurations.
+These functions aren't used outside of the pmc driver and new use cases
+should use the pinctrl interface instead.
 
 Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 84 +++++++++++++++++++
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 95 ++++++++++++++++++++++
- include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h | 18 ++++
- 3 files changed, 197 insertions(+)
- create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+ drivers/soc/tegra/pmc.c | 17 ++++++++---------
+ include/soc/tegra/pmc.h | 13 -------------
+ 2 files changed, 8 insertions(+), 22 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-index 5a3bf7c..9528f41 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-@@ -34,3 +34,87 @@ Board DTS:
- 	pmc@c360000 {
- 		nvidia,invert-interrupt;
- 	};
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index f68dbfa..8926831 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -45,6 +45,8 @@
+ #include <soc/tegra/fuse.h>
+ #include <soc/tegra/pmc.h>
+ 
++#include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
 +
-+== Pad Control Nodes ==
-+
-+The PMC can be used to set pad power state and voltage configuration.
-+The pad configuration is done via the pinctrl framework. The driver
-+implements power-source, low-power-enable, and low-power-disable pinconf
-+pin configuration node properties. Each pinctrl pin corresponds to a
-+single Tegra PMC pad. Thus, in the following sections of this document
-+pin refers to the pinctrl frameworks notion of a Tegra PMC pad.
-+
-+The pad configuration state nodes are placed under the pmc node and they
-+are referred to by the pinctrl client device properties. For more
-+information see the examples presented later and
-+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
-+
-+The values accepted by power-source property are
-+TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
-+in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
-+
-+Following pinctrl pin name strings are present on Tegra186:
-+csia		csib		dsi		mipi-bias
-+pex-clk-bias	pex-clk3	pex-clk2	pex-clk1
-+usb0		usb1		usb2		usb-bias
-+uart		audio		hsic		dbg
-+hdmi-dp0	hdmi-dp1	pex-cntrl	sdmmc2-hv
-+sdmmc4		cam		dsib		dsic
-+dsid		csic		csid		csie
-+dsif		spi		ufs		dmic-hv
-+edp		sdmmc1-hv	sdmmc3-hv	conn
-+audio-hv	ao-hv
-+
-+All of the listed Tegra186 pins except ao-hv support the
-+low-power-enable and low-power-disable properties. The power-source
-+property is supported following Tegra210 pins: sdmmc2-hv, dmic-hv,
-+sdmmc1-hv, sdmmc3-hv, audio-hv, ao-hv.
-+
-+Pad configuration state example:
-+	pmc: pmc@7000e400 {
-+		compatible = "nvidia,tegra186-pmc";
-+		reg = <0 0x0c360000 0 0x10000>,
-+		      <0 0x0c370000 0 0x10000>,
-+		      <0 0x0c380000 0 0x10000>,
-+		      <0 0x0c390000 0 0x10000>;
-+		reg-names = "pmc", "wake", "aotag", "scratch";
-+
-+		...
-+
-+		sdmmc1_3v3: sdmmc1-3v3 {
-+			pins = "sdmmc1-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-+		};
-+
-+		sdmmc1_1v8: sdmmc1-1v8 {
-+			pins = "sdmmc1-hv";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-+		};
-+
-+		hdmi_off: hdmi-off {
-+			pins = "hdmi";
-+			low-power-enable;
-+		}
-+
-+		hdmi_on: hdmi-on {
-+			pins = "hdmi";
-+			low-power-disable;
-+		}
-+	};
-+
-+Pinctrl client example:
-+	sdmmc1: sdhci@3400000 {
-+		...
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-0 = <&sdmmc1_3v3>;
-+		pinctrl-1 = <&sdmmc1_1v8>;
-+	};
-+
-+	...
-+
-+	sor0: sor@15540000 {
-+		...
-+		pinctrl-0 = <&hdmi_off>;
-+		pinctrl-1 = <&hdmi_on>;
-+		pinctrl-names = "hdmi-on", "hdmi-off";
-+	};
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-index a74b37b..d50a505 100644
---- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-@@ -195,3 +195,98 @@ Example:
- 		power-domains = <&pd_audio>;
- 		...
- 	};
-+
-+== Pad Control Nodes ==
-+
-+The PMC can be used to set pad power state and voltage configuration.
-+This functionality is present on SoCs from Tegra124 onwards. The pad
-+configuration is done via the pinctrl framework. The driver implements
-+power-source, low-power-enable, and low-power-disable pinconf pin
-+configuration node properties. Each pinctrl pin corresponds to a single
-+Tegra PMC pad. Thus, in the following sections of this document pin
-+refers to the pinctrl frameworks notion of a Tegra PMC pad.
-+
-+The pad configuration state nodes are placed under the pmc node and they
-+are referred to by the pinctrl client device properties. For more
-+information see the examples presented later and
-+Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt.
-+
-+The values accepted by power-source property are
-+TEGRA_IO_PAD_VOLTAGE_1V8 and TEGRA_IO_PAD_VOLTAGE_3V3, which are defined
-+in dt-bindings/pinctrl/pinctrl-tegra-io-pad.h.
-+
-+Following pinctrl pin name strings are present on Tegra124 and Tegra132:
-+audio		bb		cam		comp
-+csia		csb		cse		dsi
-+dsib		dsic		dsid		hdmi
-+hsic		hv		lvds		mipi-bias
-+nand		pex-bias	pex-clk1	pex-clk2
-+pex-cntrl	sdmmc1		sdmmc3		sdmmc4
-+sys_ddc		uart		usb0		usb1
-+usb2		usb_bias
-+
-+All of the listed Tegra124 and Tegra132 pins support the
-+low-power-enable and low-power-disable properties. None of the pins
-+support the power-source property.
-+
-+Following pinctrl pin name strings are present on Tegra210:
-+audio		audio-hv	cam		csia
-+csib		csic		csid		csie
-+csif		dbg		debug-nonao	dmic
-+dp		dsi		dsib		dsic
-+dsid		emmc		emmc2		gpio
-+hdmi		hsic		lvds		mipi-bias
-+pex-bias	pex-clk1	pex-clk2	pex-cntrl
-+sdmmc1		sdmmc3		spi		spi-hv
-+uart		usb0		usb1		usb2
-+usb3		usb-bias
-+
-+All of the listed Tegra210 pins except pex-cntrl support the
-+low-power-enable and low-power-disable properties. The power-source
-+property is supported following Tegra210 pins: audio, audio-hv, cam,
-+dbg, dmic, gpio, pex-cntrl, sdmmc1, sdmmc3, spi, spi-hv, and uart.
-+
-+Pad configuration state example:
-+	pmc: pmc@7000e400 {
-+		compatible = "nvidia,tegra210-pmc";
-+		reg = <0x0 0x7000e400 0x0 0x400>;
-+		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
-+		clock-names = "pclk", "clk32k_in";
-+
-+		...
-+
-+		sdmmc1_3v3: sdmmc1-3v3 {
-+			pins = "sdmmc1";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_3V3>;
-+		};
-+
-+		sdmmc1_1v8: sdmmc1-1v8 {
-+			pins = "sdmmc1";
-+			power-source = <TEGRA_IO_PAD_VOLTAGE_1V8>;
-+		};
-+
-+		hdmi_off: hdmi-off {
-+			pins = "hdmi";
-+			low-power-enable;
-+		}
-+
-+		hdmi_on: hdmi-on {
-+			pins = "hdmi";
-+			low-power-disable;
-+		}
-+	};
-+
-+Pinctrl client example:
-+	sdmmc1: sdhci@700b0000 {
-+		...
-+		pinctrl-names = "sdmmc-3v3", "sdmmc-1v8";
-+		pinctrl-0 = <&sdmmc1_3v3>;
-+		pinctrl-1 = <&sdmmc1_1v8>;
-+	};
-+	...
-+	sor@54540000 {
-+		...
-+		pinctrl-0 = <&hdmi_off>;
-+		pinctrl-1 = <&hdmi_on>;
-+		pinctrl-names = "hdmi-on", "hdmi-off";
-+	};
-diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-new file mode 100644
-index 0000000..20f4340
---- /dev/null
-+++ b/include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * pinctrl-tegra-io-pad.h: Tegra I/O pad source voltage configuration constants
-+ * pinctrl bindings.
-+ *
-+ * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * Author: Aapo Vienamo <avienamo@nvidia.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
-+#define _DT_BINDINGS_PINCTRL_TEGRA_IO_PAD_H
-+
-+/* Voltage levels of the I/O pad's source rail */
-+#define TEGRA_IO_PAD_VOLTAGE_1V8	0
-+#define TEGRA_IO_PAD_VOLTAGE_3V3	1
-+
-+#endif
+ #define PMC_CNTRL			0x0
+ #define  PMC_CNTRL_INTR_POLARITY	BIT(17) /* inverts INTR polarity */
+ #define  PMC_CNTRL_CPU_PWRREQ_OE	BIT(16) /* CPU pwr req enable */
+@@ -1093,8 +1095,7 @@ int tegra_io_pad_is_powered(enum tegra_io_pad id)
+ }
+ EXPORT_SYMBOL(tegra_io_pad_is_powered);
+ 
+-int tegra_io_pad_set_voltage(enum tegra_io_pad id,
+-			     enum tegra_io_pad_voltage voltage)
++static int tegra_io_pad_set_voltage(enum tegra_io_pad id, int voltage)
+ {
+ 	const struct tegra_io_pad_soc *pad;
+ 	u32 value;
+@@ -1110,7 +1111,7 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
+ 
+ 	if (pmc->soc->has_impl_33v_pwr) {
+ 		value = tegra_pmc_readl(PMC_IMPL_E_33V_PWR);
+-		if (voltage == TEGRA_IO_PAD_1800000UV)
++		if (voltage == TEGRA_IO_PAD_VOLTAGE_1V8)
+ 			value &= ~BIT(pad->voltage);
+ 		else
+ 			value |= BIT(pad->voltage);
+@@ -1124,7 +1125,7 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
+ 		/* update I/O voltage */
+ 		value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
+ 
+-		if (voltage == TEGRA_IO_PAD_1800000UV)
++		if (voltage == TEGRA_IO_PAD_VOLTAGE_3V3)
+ 			value &= ~BIT(pad->voltage);
+ 		else
+ 			value |= BIT(pad->voltage);
+@@ -1138,9 +1139,8 @@ int tegra_io_pad_set_voltage(enum tegra_io_pad id,
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL(tegra_io_pad_set_voltage);
+ 
+-int tegra_io_pad_get_voltage(enum tegra_io_pad id)
++static int tegra_io_pad_get_voltage(enum tegra_io_pad id)
+ {
+ 	const struct tegra_io_pad_soc *pad;
+ 	u32 value;
+@@ -1158,11 +1158,10 @@ int tegra_io_pad_get_voltage(enum tegra_io_pad id)
+ 		value = tegra_pmc_readl(PMC_PWR_DET_VALUE);
+ 
+ 	if ((value & BIT(pad->voltage)) == 0)
+-		return TEGRA_IO_PAD_1800000UV;
++		return TEGRA_IO_PAD_VOLTAGE_1V8;
+ 
+-	return TEGRA_IO_PAD_3300000UV;
++	return TEGRA_IO_PAD_VOLTAGE_3V3;
+ }
+-EXPORT_SYMBOL(tegra_io_pad_get_voltage);
+ 
+ /**
+  * tegra_io_rail_power_on() - enable power to I/O rail
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index 14206e8..b6294f6 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -141,16 +141,6 @@ enum tegra_io_pad {
+ #define TEGRA_IO_RAIL_HDMI	TEGRA_IO_PAD_HDMI
+ #define TEGRA_IO_RAIL_LVDS	TEGRA_IO_PAD_LVDS
+ 
+-/**
+- * enum tegra_io_pad_voltage - voltage level of the I/O pad's source rail
+- * @TEGRA_IO_PAD_1800000UV: 1.8 V
+- * @TEGRA_IO_PAD_3300000UV: 3.3 V
+- */
+-enum tegra_io_pad_voltage {
+-	TEGRA_IO_PAD_1800000UV,
+-	TEGRA_IO_PAD_3300000UV,
+-};
+-
+ #ifdef CONFIG_SOC_TEGRA_PMC
+ int tegra_powergate_is_powered(unsigned int id);
+ int tegra_powergate_power_on(unsigned int id);
+@@ -164,9 +154,6 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+ int tegra_io_pad_power_enable(enum tegra_io_pad id);
+ int tegra_io_pad_power_disable(enum tegra_io_pad id);
+ int tegra_io_pad_is_powered(enum tegra_io_pad id);
+-int tegra_io_pad_set_voltage(enum tegra_io_pad id,
+-			     enum tegra_io_pad_voltage voltage);
+-int tegra_io_pad_get_voltage(enum tegra_io_pad id);
+ 
+ /* deprecated, use tegra_io_pad_power_{enable,disable}() instead */
+ int tegra_io_rail_power_on(unsigned int id);
 -- 
 2.7.4
 
