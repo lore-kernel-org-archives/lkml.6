@@ -2,132 +2,258 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5193FC38A24
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:49:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BFEC38A24
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E15F208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:49:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E15F208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 39B58208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:49:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39B58208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389948AbeGKTy5 (ORCPT
+        id S2389966AbeGKTzC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 15:54:57 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:45109 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733093AbeGKTy4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 15:54:56 -0400
-Received: by mail-io0-f198.google.com with SMTP id i18-v6so22946038iog.12
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:49:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=OzML1U98M7CAu5qi8OkUxq+t04cIaTK/kgvWPrwJZJc=;
-        b=jvnipxK2xYAuImiMTd81GIJc/cgFwDH/A0PqrXONI+0hf3p1b60/YBewyX42Cy53P/
-         l3taIbMpuB8uE2jWtZcceCmjecpfCAE0T4tg3Yhbwy+59pbMw2hZ5lyxaC4xvplMuzzt
-         0wiFxZkkaTcOiNhhe+wy3kYX5t4uzigeJg5LO0YUrcsAXqv/QbfqqwSde3W/skIBhHnM
-         Vnf1BhywLiu1ZdD7ACdh0Vw2v4D7xCxarYmBpTAhiBqR1+l7PMepciHpcTT2JMMfrAP7
-         kBmNjNKmgM2nDC0AUCRCKWQT3h/tlDpz2S0SQxXrZiW8o9WTb5pMcnwPz+Do131uLB5l
-         4HOQ==
-X-Gm-Message-State: AOUpUlGCHp8mRuZZ0De3C7X+X86yIz1wlcwZz3YNC8DdFhNOPzhkWFNr
-        aVpvd5onKeSUXCgGXyEDqr22N2qaqDCgXlwj0nqyXmhvVskX
-X-Google-Smtp-Source: AAOMgpdgkwvNJrBY8yYRHCdErGNxBg3jIL7QK5NGecp/6LHMvc9MruSNrH+hcqnjKAf4bjmciAwe6ruhAn2ZOrGcumfod7tH1z/i
+        Wed, 11 Jul 2018 15:55:02 -0400
+Received: from h2.hallyn.com ([78.46.35.8]:60424 "EHLO mail.hallyn.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732921AbeGKTzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 15:55:01 -0400
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+        id E2943120D7B; Wed, 11 Jul 2018 14:49:08 -0500 (CDT)
+Date:   Wed, 11 Jul 2018 14:49:08 -0500
+From:   "Serge E. Hallyn" <serge@hallyn.com>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH v4] uart: fix race between uart_put_char() and
+ uart_shutdown()
+Message-ID: <20180711194908.GA27217@mail.hallyn.com>
+References: <20180706212220.GC3583@cisco.lan>
+ <20180711160744.32074-1-tycho@tycho.ws>
 MIME-Version: 1.0
-X-Received: by 2002:a02:2244:: with SMTP id o65-v6mr9817jao.56.1531338543954;
- Wed, 11 Jul 2018 12:49:03 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 12:49:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f183880570be89ba@google.com>
-Subject: general protection fault in kernel_accept
-From:   syzbot <syzbot+e3132895630f957306bc@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180711160744.32074-1-tycho@tycho.ws>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Quoting Tycho Andersen (tycho@tycho.ws):
+> We have reports of the following crash:
+> 
+>     PID: 7 TASK: ffff88085c6d61c0 CPU: 1 COMMAND: "kworker/u25:0"
+>     #0 [ffff88085c6db710] machine_kexec at ffffffff81046239
+>     #1 [ffff88085c6db760] crash_kexec at ffffffff810fc248
+>     #2 [ffff88085c6db830] oops_end at ffffffff81008ae7
+>     #3 [ffff88085c6db860] no_context at ffffffff81050b8f
+>     #4 [ffff88085c6db8b0] __bad_area_nosemaphore at ffffffff81050d75
+>     #5 [ffff88085c6db900] bad_area_nosemaphore at ffffffff81050e83
+>     #6 [ffff88085c6db910] __do_page_fault at ffffffff8105132e
+>     #7 [ffff88085c6db9b0] do_page_fault at ffffffff8105152c
+>     #8 [ffff88085c6db9c0] page_fault at ffffffff81a3f122
+>     [exception RIP: uart_put_char+149]
+>     RIP: ffffffff814b67b5 RSP: ffff88085c6dba78 RFLAGS: 00010006
+>     RAX: 0000000000000292 RBX: ffffffff827c5120 RCX: 0000000000000081
+>     RDX: 0000000000000000 RSI: 000000000000005f RDI: ffffffff827c5120
+>     RBP: ffff88085c6dba98 R8: 000000000000012c R9: ffffffff822ea320
+>     R10: ffff88085fe4db04 R11: 0000000000000001 R12: ffff881059f9c000
+>     R13: 0000000000000001 R14: 000000000000005f R15: 0000000000000fba
+>     ORIG_RAX: ffffffffffffffff CS: 0010 SS: 0018
+>     #9 [ffff88085c6dbaa0] tty_put_char at ffffffff81497544
+>     #10 [ffff88085c6dbac0] do_output_char at ffffffff8149c91c
+>     #11 [ffff88085c6dbae0] __process_echoes at ffffffff8149cb8b
+>     #12 [ffff88085c6dbb30] commit_echoes at ffffffff8149cdc2
+>     #13 [ffff88085c6dbb60] n_tty_receive_buf_fast at ffffffff8149e49b
+>     #14 [ffff88085c6dbbc0] __receive_buf at ffffffff8149ef5a
+>     #15 [ffff88085c6dbc20] n_tty_receive_buf_common at ffffffff8149f016
+>     #16 [ffff88085c6dbca0] n_tty_receive_buf2 at ffffffff8149f194
+>     #17 [ffff88085c6dbcb0] flush_to_ldisc at ffffffff814a238a
+>     #18 [ffff88085c6dbd50] process_one_work at ffffffff81090be2
+>     #19 [ffff88085c6dbe20] worker_thread at ffffffff81091b4d
+>     #20 [ffff88085c6dbeb0] kthread at ffffffff81096384
+>     #21 [ffff88085c6dbf50] ret_from_fork at ffffffff81a3d69f​
+> 
+> after slogging through some dissasembly:
+> 
+> ffffffff814b6720 <uart_put_char>:
+> ffffffff814b6720:	55                   	push   %rbp
+> ffffffff814b6721:	48 89 e5             	mov    %rsp,%rbp
+> ffffffff814b6724:	48 83 ec 20          	sub    $0x20,%rsp
+> ffffffff814b6728:	48 89 1c 24          	mov    %rbx,(%rsp)
+> ffffffff814b672c:	4c 89 64 24 08       	mov    %r12,0x8(%rsp)
+> ffffffff814b6731:	4c 89 6c 24 10       	mov    %r13,0x10(%rsp)
+> ffffffff814b6736:	4c 89 74 24 18       	mov    %r14,0x18(%rsp)
+> ffffffff814b673b:	e8 b0 8e 58 00       	callq  ffffffff81a3f5f0 <mcount>
+> ffffffff814b6740:	4c 8b a7 88 02 00 00 	mov    0x288(%rdi),%r12
+> ffffffff814b6747:	45 31 ed             	xor    %r13d,%r13d
+> ffffffff814b674a:	41 89 f6             	mov    %esi,%r14d
+> ffffffff814b674d:	49 83 bc 24 70 01 00 	cmpq   $0x0,0x170(%r12)
+> ffffffff814b6754:	00 00
+> ffffffff814b6756:	49 8b 9c 24 80 01 00 	mov    0x180(%r12),%rbx
+> ffffffff814b675d:	00
+> ffffffff814b675e:	74 2f                	je     ffffffff814b678f <uart_put_char+0x6f>
+> ffffffff814b6760:	48 89 df             	mov    %rbx,%rdi
+> ffffffff814b6763:	e8 a8 67 58 00       	callq  ffffffff81a3cf10 <_raw_spin_lock_irqsave>
+> ffffffff814b6768:	41 8b 8c 24 78 01 00 	mov    0x178(%r12),%ecx
+> ffffffff814b676f:	00
+> ffffffff814b6770:	89 ca                	mov    %ecx,%edx
+> ffffffff814b6772:	f7 d2                	not    %edx
+> ffffffff814b6774:	41 03 94 24 7c 01 00 	add    0x17c(%r12),%edx
+> ffffffff814b677b:	00
+> ffffffff814b677c:	81 e2 ff 0f 00 00    	and    $0xfff,%edx
+> ffffffff814b6782:	75 23                	jne    ffffffff814b67a7 <uart_put_char+0x87>
+> ffffffff814b6784:	48 89 c6             	mov    %rax,%rsi
+> ffffffff814b6787:	48 89 df             	mov    %rbx,%rdi
+> ffffffff814b678a:	e8 e1 64 58 00       	callq  ffffffff81a3cc70 <_raw_spin_unlock_irqrestore>
+> ffffffff814b678f:	44 89 e8             	mov    %r13d,%eax
+> ffffffff814b6792:	48 8b 1c 24          	mov    (%rsp),%rbx
+> ffffffff814b6796:	4c 8b 64 24 08       	mov    0x8(%rsp),%r12
+> ffffffff814b679b:	4c 8b 6c 24 10       	mov    0x10(%rsp),%r13
+> ffffffff814b67a0:	4c 8b 74 24 18       	mov    0x18(%rsp),%r14
+> ffffffff814b67a5:	c9                   	leaveq
+> ffffffff814b67a6:	c3                   	retq
+> ffffffff814b67a7:	49 8b 94 24 70 01 00 	mov    0x170(%r12),%rdx
+> ffffffff814b67ae:	00
+> ffffffff814b67af:	48 63 c9             	movslq %ecx,%rcx
+> ffffffff814b67b2:	41 b5 01             	mov    $0x1,%r13b
+> ffffffff814b67b5:	44 88 34 0a          	mov    %r14b,(%rdx,%rcx,1)
+> ffffffff814b67b9:	41 8b 94 24 78 01 00 	mov    0x178(%r12),%edx
+> ffffffff814b67c0:	00
+> ffffffff814b67c1:	83 c2 01             	add    $0x1,%edx
+> ffffffff814b67c4:	81 e2 ff 0f 00 00    	and    $0xfff,%edx
+> ffffffff814b67ca:	41 89 94 24 78 01 00 	mov    %edx,0x178(%r12)
+> ffffffff814b67d1:	00
+> ffffffff814b67d2:	eb b0                	jmp    ffffffff814b6784 <uart_put_char+0x64>
+> ffffffff814b67d4:	66 66 66 2e 0f 1f 84 	data32 data32 nopw %cs:0x0(%rax,%rax,1)
+> ffffffff814b67db:	00 00 00 00 00
+> 
+> for our build, this is crashing at:
+> 
+>     circ->buf[circ->head] = c;
+> 
+> Looking in uart_port_startup(), it seems that circ->buf (state->xmit.buf)
+> protected by the "per-port mutex", which based on uart_port_check() is
+> state->port.mutex. Indeed, the lock acquired in uart_put_char() is
+> uport->lock, i.e. not the same lock.
+> 
+> Anyway, since the lock is not acquired, if uart_shutdown() is called, the
+> last chunk of that function may release state->xmit.buf before its assigned
+> to null, and cause the race above.
+> 
+> To fix it, let's lock uport->lock when allocating/deallocating
+> state->xmit.buf in addition to the per-port mutex.
+> 
+> v2: switch to locking uport->lock on allocation/deallocation instead of
+>     locking the per-port mutex in uart_put_char. Note that since
+>     uport->lock is a spin lock, we have to switch the allocation to
+>     GFP_ATOMIC.
+> v3: move the allocation outside the lock, so we can switch back to
+>     GFP_KERNEL
+> v4: * switch to positive condition of state->xmit.buf in
+>       uart_port_startup()
+>     * declare `flags` on its own line
+>     * use the result of uart_port_lock() in uart_shutdown() to avoid
+>       uninitialized warning
+>     * don't use the uart_port_lock/unlock macros in uart_port_startup,
+>       instead test against uport directly; the compiler can't seem to "see"
+>       through the macros/ref/unref calls to not warn about uninitialized
+>       flags. We don't need to do a ref here since we hold the per-port
+>       mutex anyway.
+> 
+> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
 
-syzbot found the following crash on:
+One question: would it be worth doing:
 
-HEAD commit:    0026129c8629 rhashtable: add restart routine in rhashtable..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=105660c8400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b88de6eac8694da6
-dashboard link: https://syzkaller.appspot.com/bug?extid=e3132895630f957306bc
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16f58ac2400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11023efc400000
+> ---
+>  drivers/tty/serial/serial_core.c | 19 ++++++++++++++-----
+>  1 file changed, 14 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+> index 9c14a453f73c..406e8382d3de 100644
+> --- a/drivers/tty/serial/serial_core.c
+> +++ b/drivers/tty/serial/serial_core.c
+> @@ -182,6 +182,7 @@ static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
+>  {
+>  	struct uart_port *uport = uart_port_check(state);
+>  	unsigned long page;
+> +	unsigned long flags;
+>  	int retval = 0;
+>  
+>  	if (uport->type == PORT_UNKNOWN)
+> @@ -196,15 +197,20 @@ static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
+>  	 * Initialise and allocate the transmit and temporary
+>  	 * buffer.
+>  	 */
+> -	if (!state->xmit.buf) {
+> -		/* This is protected by the per port mutex */
+> -		page = get_zeroed_page(GFP_KERNEL);
+> -		if (!page)
+> -			return -ENOMEM;
+> +	page = get_zeroed_page(GFP_KERNEL);
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+e3132895630f957306bc@syzkaller.appspotmail.com
+ignoring the alloc failure here.  (leave a comment for worried
+future reviewers)  Then,
 
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 1 PID: 7406 Comm: kworker/1:106 Not tainted 4.18.0-rc3+ #5
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: events smc_tcp_listen_work
-RIP: 0010:kernel_accept+0x34/0x310 net/socket.c:3243
-Code: d6 41 55 49 89 fd 41 54 49 89 f4 53 48 83 ec 08 e8 21 51 8e fb 49 8d  
-7d 20 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 4a 02 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b
-RSP: 0018:ffff8801b6aaf5a8 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: ffff8801ac82d0c0 RCX: 0000000000000000
-RDX: 0000000000000004 RSI: ffffffff85edbaaf RDI: 0000000000000020
-RBP: ffff8801b6aaf5d8 R08: ffff8801af0fc8b8 R09: 0000000000000006
-R10: ffff8801af0fc080 R11: 0000000000000000 R12: ffff8801b6aaf688
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff8801b6aaf708
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cf138 CR3: 00000001abf14000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  smc_clcsock_accept net/smc/af_smc.c:701 [inline]
-  smc_tcp_listen_work+0x222/0xef0 net/smc/af_smc.c:1114
-  process_one_work+0xc73/0x1ba0 kernel/workqueue.c:2153
-  worker_thread+0x189/0x13c0 kernel/workqueue.c:2296
-  kthread+0x345/0x410 kernel/kthread.c:240
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace b294fcf0c2e6ce5f ]---
-RIP: 0010:kernel_accept+0x34/0x310 net/socket.c:3243
-Code: d6 41 55 49 89 fd 41 54 49 89 f4 53 48 83 ec 08 e8 21 51 8e fb 49 8d  
-7d 20 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f  
-85 4a 02 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b
-RSP: 0018:ffff8801b6aaf5a8 EFLAGS: 00010202
-RAX: dffffc0000000000 RBX: ffff8801ac82d0c0 RCX: 0000000000000000
-RDX: 0000000000000004 RSI: ffffffff85edbaaf RDI: 0000000000000020
-RBP: ffff8801b6aaf5d8 R08: ffff8801af0fc8b8 R09: 0000000000000006
-R10: ffff8801af0fc080 R11: 0000000000000000 R12: ffff8801b6aaf688
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff8801b6aaf708
-FS:  0000000000000000(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cf138 CR3: 0000000008e6a000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> +	if (!page)
+> +		return -ENOMEM;
+>  
+> +	if (uport)
+> +		spin_lock_irqsave(&uport->lock, flags);
+> +	if (state->xmit.buf) {
+> +		free_page(page);
+> +	} else {
 
+here if page is NULL (unlock and) return ENOMEM.
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Since it looks like this fn is called on every device open, that
+would seem to minimize getting lots of needless ENOMEMs.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Another alternative is to just wait to do the alloc until we
+get here, and drop the spinlock here if we need to alloc.  Then
+retake the lock, re-check state->xmit.buf;  If that is now not
+null then free_page(page), or if it is still NULL and page alloc
+failed, then return ENOEMEM). That is uglier code, but is
+probably the best behavior.
+
+Still the original patch fixes the real bug so I'm fine with it
+as well.
+
+>  		state->xmit.buf = (unsigned char *) page;
+>  		uart_circ_clear(&state->xmit);
+>  	}
+> +	if (uport)
+> +		spin_unlock_irqrestore(&uport->lock, flags);
+>  
+>  	retval = uport->ops->startup(uport);
+>  	if (retval == 0) {
+> @@ -263,6 +269,7 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+>  {
+>  	struct uart_port *uport = uart_port_check(state);
+>  	struct tty_port *port = &state->port;
+> +	unsigned long flags;
+>  
+>  	/*
+>  	 * Set the TTY IO error marker
+> @@ -295,10 +302,12 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
+>  	/*
+>  	 * Free the transmit buffer page.
+>  	 */
+> +	uport = uart_port_lock(state, flags);
+>  	if (state->xmit.buf) {
+>  		free_page((unsigned long)state->xmit.buf);
+>  		state->xmit.buf = NULL;
+>  	}
+> +	uart_port_unlock(uport, flags);
+>  }
+>  
+>  /**
+> -- 
+> 2.17.1
