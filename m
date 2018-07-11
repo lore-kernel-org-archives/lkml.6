@@ -2,148 +2,153 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56290C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA81DC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0548F208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:44:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tJ3e5D4N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0548F208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 81259208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:47:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81259208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732503AbeGKKry (ORCPT
+        id S1732309AbeGKKus (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:47:54 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:39318 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbeGKKry (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:47:54 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w14-v6so18867051eds.6
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 03:44:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=wWXEdSnahduXD2eA2kiAPkv9UCYXOnh0MObnJKZDftY=;
-        b=tJ3e5D4NVEDwb28fa/SrOXb9wCpPBkFPy8G2LS0NG5RrKdpj2ZUiEa3NsEroT0/GTO
-         2d642m5D0desLTQf0ahTy2PVOj3PoYoaNZJ/1SKYWkGDIydu68lsKJp1r5aorBSl8jj3
-         +YJ1yG4Tu5G3A0lFzolf0DGj2sEvU5N6LgHzEKnddXTmU8ZFeu8pd+ZKuRMSbn/o1mjb
-         3CneO3nKSMPP9XvhpHSFf5i9iBTkzX/sCp3NtrSMsqv7pUSdUersWJh2ZpHxX/9yiilJ
-         FHnpmnQ1qRsGPjAyARsaDVBNqxJSn5ZzbKSo7UWRROAjhh9HdfDlGNDM+UR1ByolCLjF
-         Bwrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=wWXEdSnahduXD2eA2kiAPkv9UCYXOnh0MObnJKZDftY=;
-        b=FokOVRtFCL2TBk6qUvXpE0tQBCJq1fkL7fxMfaQoLWhU4OjtSGtGFLaMYzO0Pfic20
-         HcTu2aLytd9snqYQ4DaT3UuAL3eEisFH2vxGToH5Vg4bCZTE4mHU+9Ch/aIR/f4reykc
-         Q3/qVFZieCc6OhfC09EJ5fEi8wbkPpyo026KJroYbHiw5LUkp7o0Mtblk8ff+biz01QV
-         0DbKAXm+Qev6PFno17UAAMhXQwglDYSi1ab3rS4WsGrQSzoEpNsaPi8kArDmeIP2oh1/
-         QuSxhnzj8q2kRCv6x0zeaFbQJrQzmCafSBz4gBqgDyJ+D97qwZOl+TKjjho2yjF3gJDm
-         +Mow==
-X-Gm-Message-State: APt69E3R8r+XXQDB65FD4ou+yuWD3VnrhAK/d2BgC6JE4om2PLZcZkb8
-        lCCUqxOBJhG+2D2fpPbDcKcaP1evvd6axBOzbOs=
-X-Google-Smtp-Source: AAOMgpeb+jQYeCGS5T+qRdzcJI529jvM5J1+riiFlPD49+Kiit+RUFmuoeqCDaIADqggXTauWTdCf5fgom5oONjEP5Y=
-X-Received: by 2002:a50:8921:: with SMTP id e30-v6mr30552313ede.213.1531305850928;
- Wed, 11 Jul 2018 03:44:10 -0700 (PDT)
+        Wed, 11 Jul 2018 06:50:48 -0400
+Received: from mga12.intel.com ([192.55.52.136]:51998 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726557AbeGKKur (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 06:50:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 03:47:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="215117973"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga004.jf.intel.com with ESMTP; 11 Jul 2018 03:46:56 -0700
+Subject: Re: [PATCH v1 2/9] scsi: Allow auto suspend override by low-level
+ driver
+To:     Asutosh Das <asutoshd@codeaurora.org>, subhashj@codeaurora.org,
+        cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org
+Cc:     Sujit Reddy Thumma <sthumma@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>
+References: <cover.1530880006.git.asutoshd@codeaurora.org>
+ <8135b00502f7e089478c9b988806ed40b7d5d40b.1530880006.git.asutoshd@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <3890d040-b282-70b5-9e1b-fa7fcd84b716@intel.com>
+Date:   Wed, 11 Jul 2018 13:45:24 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Received: by 2002:a50:9f67:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 03:44:10
- -0700 (PDT)
-In-Reply-To: <AM0PR04MB42119DAE987CDF871CA8CFC6805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <1531061817-1980-1-git-send-email-aisheng.dong@nxp.com>
- <1531061817-1980-4-git-send-email-aisheng.dong@nxp.com> <20180710141940.oed3kwhbplnykl36@pengutronix.de>
- <AM0PR04MB42113391A6EA741E2767C74B805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20180711075456.npwfpm6mtpkx7k76@pengutronix.de> <AM0PR04MB42119DAE987CDF871CA8CFC6805A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From:   Jassi Brar <jassisinghbrar@gmail.com>
-Date:   Wed, 11 Jul 2018 16:14:10 +0530
-Message-ID: <CABb+yY1kH8mr3=nazsLXrLaNWT0x6j9MizVaE+bZaHmrsKn-Wg@mail.gmail.com>
-Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
-To:     "A.s. Dong" <aisheng.dong@nxp.com>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "dongas86@gmail.com" <dongas86@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleksij Rempel <o.rempel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8135b00502f7e089478c9b988806ed40b7d5d40b.1530880006.git.asutoshd@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 4:07 PM, A.s. Dong <aisheng.dong@nxp.com> wrote:
->
-> > -----Original Message-----
-> > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
-> > Sent: Wednesday, July 11, 2018 3:55 PM
-> > To: A.s. Dong <aisheng.dong@nxp.com>
-> > Cc: linux-arm-kernel@lists.infradead.org; dongas86@gmail.com; Jassi Brar
-> > <jassisinghbrar@gmail.com>; linux-kernel@vger.kernel.org; Oleksij Rempel
-> > <o.rempel@pengutronix.de>; dl-linux-imx <linux-imx@nxp.com>;
-> > kernel@pengutronix.de; Fabio Estevam <fabio.estevam@nxp.com>;
-> > shawnguo@kernel.org
-> > Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
-> >
-> > On Wed, Jul 11, 2018 at 07:29:38AM +0000, A.s. Dong wrote:
-> > > Hi Sascha,
-> > >
-> > > > -----Original Message-----
-> > > > From: Sascha Hauer [mailto:s.hauer@pengutronix.de]
-> > > > Sent: Tuesday, July 10, 2018 10:20 PM
-> > > > To: A.s. Dong <aisheng.dong@nxp.com>
-> > > > Cc: linux-arm-kernel@lists.infradead.org; dongas86@gmail.com; Jassi
-> > > > Brar <jassisinghbrar@gmail.com>; linux-kernel@vger.kernel.org;
-> > > > Oleksij Rempel <o.rempel@pengutronix.de>; dl-linux-imx
-> > > > <linux-imx@nxp.com>; kernel@pengutronix.de; Fabio Estevam
-> > > > <fabio.estevam@nxp.com>; shawnguo@kernel.org
-> > > > Subject: Re: [PATCH V4 3/5] mailbox: imx: add imx mu support
-> > > >
-> > > > Hi,
-> > > >
-> > > > On Sun, Jul 08, 2018 at 10:56:55PM +0800, Dong Aisheng wrote:
-> > > > > This is used for i.MX multi core communication.
-> > > > > e.g. A core to SCU firmware(M core) on MX8.
-> > > > >
-> > > > > Tx is using polling mode while Rx is interrupt driven and schedule
-> > > > > a hrtimer to receive remain words if have more than
-> > > > > 4 words.
-> > > >
-> > > > You told us that using interrupts is not possible due to miserable
-> > > > performance, we then provided you a way with which you could poll.
-> > > > Why are you using interrupts now?
-> > > >
-> > >
-> > > Because mailbox framework does not support sync rx now, I think we do
-> > > not need to wait for that feature done first as it's independent and
-> > > separate features of framework.
-> >
-> > You can wait forever for this feature, nobody will add it for you. It's up to you
-> > to add support for that feature. Who else should add this feature if not you?
-> > And when will you add that feature if not now when you actually need it?
-> > It is common practice that you adjust the frameworks to your needs rather
-> > than working around them.
-> >
->
-> I'm willing to add it. Just because you said Jassi already had the idea on how to
-> Implement it and does not add much complexity. So I just want to see his patches.
-> But if he did not work on it, I can also help on it.
->
-I am not much aware of the history of this conversation... but it
-seems you need to make use of mbox_chan_ops.peek_data().
+On 06/07/18 15:30, Asutosh Das wrote:
+> From: Sujit Reddy Thumma <sthumma@codeaurora.org>
+> 
+> Until now the scsi mid-layer forbids runtime suspend till userspace
+> enables it. This is mainly to quarantine some disks with broken
+> runtime power management or have high latencies executing suspend
+> resume callbacks. If the userspace doesn't enable the runtime suspend
+> the underlying hardware will be always on even when it is not doing
+> any useful work and thus wasting power.
+> 
+> Some low-level drivers for the controllers can efficiently use runtime
+> power management to reduce power consumption and improve battery life.
+> Allow runtime suspend parameters override within the LLD itself
+> instead of waiting for userspace to control the power management.
+> 
+> Signed-off-by: Sujit Reddy Thumma <sthumma@codeaurora.org>
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
 
-If not that, please let me know the requirement.
+Notwithstanding one minor comment below:
 
-Cheers!
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/scsi/scsi_scan.c   | 4 ++++
+>  drivers/scsi/scsi_sysfs.c  | 3 ++-
+>  drivers/scsi/sd.c          | 2 ++
+>  include/scsi/scsi_device.h | 3 +++
+>  4 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
+> index 0880d97..5b7232a 100644
+> --- a/drivers/scsi/scsi_scan.c
+> +++ b/drivers/scsi/scsi_scan.c
+> @@ -969,6 +969,10 @@ static int scsi_add_lun(struct scsi_device *sdev, unsigned char *inq_result,
+>  
+>  	transport_configure_device(&sdev->sdev_gendev);
+>  
+> +	/* The LLD can override auto suspend tunables in ->slave_configure() */
+> +	sdev->use_rpm_auto = 0;
+> +	sdev->autosuspend_delay = SCSI_DEFAULT_AUTOSUSPEND_DELAY;
+> +
+>  	if (sdev->host->hostt->slave_configure) {
+>  		ret = sdev->host->hostt->slave_configure(sdev);
+>  		if (ret) {
+> diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+> index 7943b76..706e778 100644
+> --- a/drivers/scsi/scsi_sysfs.c
+> +++ b/drivers/scsi/scsi_sysfs.c
+> @@ -1266,7 +1266,8 @@ int scsi_sysfs_add_sdev(struct scsi_device *sdev)
+>  	device_enable_async_suspend(&sdev->sdev_gendev);
+>  	scsi_autopm_get_target(starget);
+>  	pm_runtime_set_active(&sdev->sdev_gendev);
+> -	pm_runtime_forbid(&sdev->sdev_gendev);
+> +	if (!sdev->use_rpm_auto)
+> +		pm_runtime_forbid(&sdev->sdev_gendev);
+>  	pm_runtime_enable(&sdev->sdev_gendev);
+>  	scsi_autopm_put_target(starget);
+>  
+> diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+> index a6201e6..205624f 100644
+> --- a/drivers/scsi/sd.c
+> +++ b/drivers/scsi/sd.c
+> @@ -3269,6 +3269,8 @@ static void sd_probe_async(void *data, async_cookie_t cookie)
+>  	}
+>  
+>  	blk_pm_runtime_init(sdp->request_queue, dev);
+> +	if (sdp->autosuspend_delay >= 0)
+> +		pm_runtime_set_autosuspend_delay(dev, sdp->autosuspend_delay);
+
+Wouldn't it be nicer to pass the autosuspend_delay into blk_pm_runtime_init()?
+
+>  	device_add_disk(dev, gd);
+>  	if (sdkp->capacity)
+>  		sd_dif_config_host(sdkp);
+> diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+> index 4c36af6..1d5ae90 100644
+> --- a/include/scsi/scsi_device.h
+> +++ b/include/scsi/scsi_device.h
+> @@ -197,7 +197,10 @@ struct scsi_device {
+>  	unsigned broken_fua:1;		/* Don't set FUA bit */
+>  	unsigned lun_in_cdb:1;		/* Store LUN bits in CDB[1] */
+>  	unsigned unmap_limit_for_ws:1;	/* Use the UNMAP limit for WRITE SAME */
+> +	unsigned use_rpm_auto:1; /* Enable runtime PM auto suspend */
+>  
+> +#define SCSI_DEFAULT_AUTOSUSPEND_DELAY  -1
+> +	int autosuspend_delay;
+>  	atomic_t disk_events_disable_depth; /* disable depth for disk events */
+>  
+>  	DECLARE_BITMAP(supported_events, SDEV_EVT_MAXBITS); /* supported events */
+> 
+
