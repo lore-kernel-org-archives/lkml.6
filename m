@@ -6,78 +6,100 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E916CC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FF8C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A05A120C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:10:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05A120C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 56C6A20C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56C6A20C0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389611AbeGKQPz (ORCPT
+        id S2389618AbeGKQQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:15:55 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39542 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387728AbeGKQPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:15:55 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8483B7A9;
-        Wed, 11 Jul 2018 09:10:53 -0700 (PDT)
-Received: from localhost (e105922-lin.cambridge.arm.com [10.1.206.33])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2879B3F589;
-        Wed, 11 Jul 2018 09:10:53 -0700 (PDT)
-From:   Punit Agrawal <punit.agrawal@arm.com>
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc:     kvmarm@lists.cs.columbia.edu, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 2/7] KVM: arm/arm64: Introduce helpers to manupulate page table entries
-References: <20180709143835.28971-1-punit.agrawal@arm.com>
-        <20180709144124.29164-1-punit.agrawal@arm.com>
-        <20180709144124.29164-2-punit.agrawal@arm.com>
-        <691fcde0-b0a2-d258-ac99-49c6c4794247@arm.com>
-Date:   Wed, 11 Jul 2018 17:10:51 +0100
-In-Reply-To: <691fcde0-b0a2-d258-ac99-49c6c4794247@arm.com> (Suzuki
-        K. Poulose's message of "Wed, 11 Jul 2018 14:00:48 +0100")
-Message-ID: <87va9loir8.fsf@e105922-lin.cambridge.arm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 11 Jul 2018 12:16:33 -0400
+Received: from mga06.intel.com ([134.134.136.31]:45856 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726457AbeGKQQc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 12:16:32 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 09:11:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="66141725"
+Received: from 2b52.sc.intel.com ([143.183.136.52])
+  by orsmga003.jf.intel.com with ESMTP; 11 Jul 2018 09:11:29 -0700
+Message-ID: <1531325272.13297.27.camel@intel.com>
+Subject: Re: [RFC PATCH v2 15/27] mm/mprotect: Prevent mprotect from
+ changing shadow stack
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Wed, 11 Jul 2018 09:07:52 -0700
+In-Reply-To: <20180711091232.GU2476@hirez.programming.kicks-ass.net>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+         <20180710222639.8241-16-yu-cheng.yu@intel.com>
+         <04800c52-1f86-c485-ba7c-2216d8c4966f@linux.intel.com>
+         <20180711091232.GU2476@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Suzuki K Poulose <Suzuki.Poulose@arm.com> writes:
+On Wed, 2018-07-11 at 11:12 +0200, Peter Zijlstra wrote:
+> On Tue, Jul 10, 2018 at 04:10:08PM -0700, Dave Hansen wrote:
+> > 
+> > On 07/10/2018 03:26 PM, Yu-cheng Yu wrote:
+> > > 
+> > > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > This still needs a changelog, even if you think it's simple.
+> > > 
+> > > --- a/mm/mprotect.c
+> > > +++ b/mm/mprotect.c
+> > > @@ -446,6 +446,15 @@ static int do_mprotect_pkey(unsigned long
+> > > start, size_t len,
+> > >  	error = -ENOMEM;
+> > >  	if (!vma)
+> > >  		goto out;
+> > > +
+> > > +	/*
+> > > +	 * Do not allow changing shadow stack memory.
+> > > +	 */
+> > > +	if (vma->vm_flags & VM_SHSTK) {
+> > > +		error = -EINVAL;
+> > > +		goto out;
+> > > +	}
+> > > +
+> > I think this is a _bit_ draconian.  Why shouldn't we be able to use
+> > protection keys with a shadow stack?  Or, set it to PROT_NONE?
+> Right, and then there's also madvise() and some of the other
+> accessors.
+> 
+> Why do we need to disallow this? AFAICT the worst that can happen is
+> that a process wrecks itself, so what?
 
-> On 09/07/18 15:41, Punit Agrawal wrote:
->> Introduce helpers to abstract architectural handling of the conversion
->> of pfn to page table entries and marking a PMD page table entry as a
->> block entry.
->>
->> The helpers are introduced in preparation for supporting PUD hugepages
->> at stage 2 - which are supported on arm64 but do not exist on arm.
->>
->> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
->> Acked-by: Christoffer Dall <christoffer.dall@arm.com>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> Cc: Russell King <linux@armlinux.org.uk>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> Cc: Will Deacon <will.deacon@arm.com>
->> ---
->
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-
-Other than the query on Patch 7 I've incorporated all your suggestions
-locally.
-
-Thanks a lot for reviewing the patches.
-
-Punit
-
-ps: Just noticed the typo (manupulate) in the subject. I've fixed it up
-locally.
+Agree.  I will remove the patch.
