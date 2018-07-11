@@ -4,430 +4,141 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1222AC3279B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 03:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 740AEC3279B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 03:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAE6720849
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 03:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2363A20873
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 03:38:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Eopn7oUO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAE6720849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gdfKLjiE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2363A20873
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732439AbeGKDbI (ORCPT
+        id S1732425AbeGKDkv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 23:31:08 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:38924 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732361AbeGKDbI (ORCPT
+        Tue, 10 Jul 2018 23:40:51 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53550 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732337AbeGKDkv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 23:31:08 -0400
-Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6B3P1vU004534
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 20:28:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=message-id : date : from
- : to : cc : subject : references : mime-version : content-type;
- s=facebook; bh=+vyVn1B1LHAJhtZUdW5s44PMoA1HXDKjX2pCgTORUgU=;
- b=Eopn7oUOPrIWhFkzHarX1GLc9rCPmt2BIbQtj8k3ULU/3WyKq2dZpN2sjrKRQv9+DMka
- ygMkH8zeVyN1zoAzPZrBOH45bVwlUYPKpkFPHV+agzDuHFYINwEvUeQqrc/DPtVE0BoL
- UWjI1WJEAPfq91UqKivaVcjeC62E5cm4HpY= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2k599k02kb-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Jul 2018 20:28:57 -0700
-Received: from PRN-CHUB02.TheFacebook.com (2620:10d:c081:35::11) by
- PRN-CHUB13.TheFacebook.com (2620:10d:c081:35::22) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Tue, 10 Jul 2018 20:28:56 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.12) with Microsoft SMTP Server (TLS) id 14.3.361.1; Tue, 10 Jul
- 2018 20:28:55 -0700
-Received: by dev026.lla1.facebook.com (Postfix, from userid 152872)     id
- 06FD58A46B3; Tue, 10 Jul 2018 20:25:57 -0700 (PDT)
-Message-ID: <20180711032557.869819837@fb.com>
-User-Agent: quilt/0.63-1
-Date:   Tue, 10 Jul 2018 20:21:11 -0700
-Smtp-Origin-Hostprefix: dev
-From:   Okash Khawaja <osk@fb.com>
-Smtp-Origin-Hostname: dev026.lla1.facebook.com
-To:     Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Yonghong Song <yhs@fb.com>,
-        "Quentin Monnet" <quentin.monnet@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>, <kernel-team@fb.com>,
-        <linux-kernel@vger.kernel.org>
-Smtp-Origin-Cluster: lla1c22
-Subject: [PATCH bpf-next v4 3/3] bpf: btf: print map dump and lookup with btf info
-References: <20180711032108.631367556@fb.com>
+        Tue, 10 Jul 2018 23:40:51 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6B3cXQn017968;
+        Tue, 10 Jul 2018 22:38:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531280313;
+        bh=lWiNtcL97o5HgbEctPciLtIdjYerpMO/Vn3XlZyNc1Y=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=gdfKLjiE6CK7m+/zf/exQ20aCW/9twL5JdMmJnSWt6HzqdxR7m0WahJb9M7bKimey
+         MzdY60DrfLsclkjUV1e4u5vmPt8cJx9ZWdftk+WaG8Qq1taRg5rAnrnPiof1UcAVVN
+         lrTdTWeBM3Xa2CYIe9XDz//PSziphsD/yeiLKpuY=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6B3cXQL000841;
+        Tue, 10 Jul 2018 22:38:33 -0500
+Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 10
+ Jul 2018 22:38:33 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 10 Jul 2018 22:38:33 -0500
+Received: from [172.22.218.21] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6B3cTUN003212;
+        Tue, 10 Jul 2018 22:38:30 -0500
+Subject: Re: [PATCH 04/14] thermal: ti-soc-thermal: cleanup COUNTER feature
+ handling for OMAP5
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Eduardo Valentin <edubezval@gmail.com>
+CC:     Zhang Rui <rui.zhang@intel.com>, <linux-pm@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1526298141-14045-1-git-send-email-b.zolnierkie@samsung.com>
+ <CGME20180514114319epcas1p1921a83c1baaaf1e6f94283f462022dc5@epcas1p1.samsung.com>
+ <1526298141-14045-5-git-send-email-b.zolnierkie@samsung.com>
+From:   "J, KEERTHY" <j-keerthy@ti.com>
+Message-ID: <51799355-1a39-7f2f-6a20-a1718b9e0a64@ti.com>
+Date:   Wed, 11 Jul 2018 09:08:29 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline; filename="03-json-print-btf-info-for-map"
-X-FB-Internal: Safe
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-10_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <1526298141-14045-5-git-send-email-b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch augments the output of bpftool's map dump and map lookup
-commands to print data along side btf info, if the correspondin btf
-info is available. The outputs for each of  map dump and map lookup
-commands are augmented in two ways:
 
-1. when neither of -j and -p are supplied, btf-ful map data is printed
-whose aim is human readability. This means no commitments for json- or
-backward- compatibility.
 
-2. when either -j or -p are supplied, a new json object named
-"formatted" is added for each key-value pair. This object contains the
-same data as the key-value pair, but with btf info. "formatted" object
-promises json- and backward- compatibility. Below is a sample output.
+On 5/14/2018 5:12 PM, Bartlomiej Zolnierkiewicz wrote:
+> OMAP5 sensors don't claim COUNTER feature support (they use
+> COUNTER_DELAY feature instead) so there is no need to set fields
+> of struct temp_sensor_registers which are only used for COUNTER
+> feature.
+> 
+> There should be no functional changes caused by this patch.
 
-$ bpftool map dump -p id 8
-[{
-        "key": ["0x0f","0x00","0x00","0x00"
-        ],
-        "value": ["0x03", "0x00", "0x00", "0x00", ...
-        ],
-        "formatted": {
-                "key": 15,
-                "value": {
-                        "int_field":  3,
-                        ...
-                }
-        }
-}
-]
+Acked-by: Keerthy <j-keerthy@ti.com>
 
-This patch calls btf_dumper introduced in previous patch to accomplish
-the above. Indeed, btf-ful info is only displayed if btf data for the
-given map is available. Otherwise existing output is displayed as-is.
-
-Signed-off-by: Okash Khawaja <osk@fb.com>
-
----
- tools/bpf/bpftool/map.c |  217 ++++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 201 insertions(+), 16 deletions(-)
-
---- a/tools/bpf/bpftool/map.c
-+++ b/tools/bpf/bpftool/map.c
-@@ -34,6 +34,7 @@
- #include <assert.h>
- #include <errno.h>
- #include <fcntl.h>
-+#include <linux/err.h>
- #include <stdbool.h>
- #include <stdio.h>
- #include <stdlib.h>
-@@ -44,6 +45,8 @@
- 
- #include <bpf.h>
- 
-+#include "btf.h"
-+#include "json_writer.h"
- #include "main.h"
- 
- static const char * const map_type_name[] = {
-@@ -148,8 +151,109 @@ int map_parse_fd_and_info(int *argc, cha
- 	return fd;
- }
- 
-+static int do_dump_btf(const struct btf_dumper *d,
-+		       struct bpf_map_info *map_info, void *key,
-+		       void *value)
-+{
-+	int ret;
-+
-+	/* start of key-value pair */
-+	jsonw_start_object(d->jw);
-+
-+	jsonw_name(d->jw, "key");
-+
-+	ret = btf_dumper_type(d, map_info->btf_key_type_id, key);
-+	if (ret)
-+		goto err_end_obj;
-+
-+	jsonw_name(d->jw, "value");
-+
-+	ret = btf_dumper_type(d, map_info->btf_value_type_id, value);
-+
-+err_end_obj:
-+	/* end of key-value pair */
-+	jsonw_end_object(d->jw);
-+
-+	return ret;
-+}
-+
-+static int get_btf(struct bpf_map_info *map_info, struct btf **btf)
-+{
-+	struct bpf_btf_info btf_info = { 0 };
-+	__u32 len = sizeof(btf_info);
-+	__u32 last_size;
-+	int btf_fd;
-+	void *ptr;
-+	int err;
-+
-+	err = 0;
-+	*btf = NULL;
-+	btf_fd = bpf_btf_get_fd_by_id(map_info->btf_id);
-+	if (btf_fd < 0)
-+		return 0;
-+
-+	/* we won't know btf_size until we call bpf_obj_get_info_by_fd(). so
-+	 * let's start with a sane default - 4KiB here - and resize it only if
-+	 * bpf_obj_get_info_by_fd() needs a bigger buffer.
-+	 */
-+	btf_info.btf_size = 4096;
-+	last_size = btf_info.btf_size;
-+	ptr = malloc(last_size);
-+	if (!ptr) {
-+		err = -ENOMEM;
-+		goto exit_free;
-+	}
-+
-+	bzero(ptr, last_size);
-+	btf_info.btf = ptr_to_u64(ptr);
-+	err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
-+
-+	if (!err && btf_info.btf_size > last_size) {
-+		void *temp_ptr;
-+
-+		last_size = btf_info.btf_size;
-+		temp_ptr = realloc(ptr, last_size);
-+		if (!temp_ptr) {
-+			err = -ENOMEM;
-+			goto exit_free;
-+		}
-+		ptr = temp_ptr;
-+		bzero(ptr, last_size);
-+		btf_info.btf = ptr_to_u64(ptr);
-+		err = bpf_obj_get_info_by_fd(btf_fd, &btf_info, &len);
-+	}
-+
-+	if (err || btf_info.btf_size > last_size) {
-+		err = errno;
-+		goto exit_free;
-+	}
-+
-+	*btf = btf__new((__u8 *)btf_info.btf, btf_info.btf_size, NULL);
-+	if (IS_ERR(*btf)) {
-+		err = PTR_ERR(btf);
-+		*btf = NULL;
-+	}
-+
-+exit_free:
-+	close(btf_fd);
-+	free(ptr);
-+
-+	return err;
-+}
-+
-+static json_writer_t *get_btf_writer(void)
-+{
-+	json_writer_t *jw = jsonw_new(stdout);
-+
-+	if (!jw)
-+		return NULL;
-+	jsonw_pretty(jw, true);
-+
-+	return jw;
-+}
-+
- static void print_entry_json(struct bpf_map_info *info, unsigned char *key,
--			     unsigned char *value)
-+			     unsigned char *value, struct btf *btf)
- {
- 	jsonw_start_object(json_wtr);
- 
-@@ -158,6 +262,16 @@ static void print_entry_json(struct bpf_
- 		print_hex_data_json(key, info->key_size);
- 		jsonw_name(json_wtr, "value");
- 		print_hex_data_json(value, info->value_size);
-+		if (btf) {
-+			struct btf_dumper d = {
-+				.btf = btf,
-+				.jw = json_wtr,
-+				.is_plain_text = false,
-+			};
-+
-+			jsonw_name(json_wtr, "formatted");
-+			do_dump_btf(&d, info, key, value);
-+		}
- 	} else {
- 		unsigned int i, n;
- 
-@@ -508,10 +622,12 @@ static int do_show(int argc, char **argv
- 
- static int do_dump(int argc, char **argv)
- {
-+	struct bpf_map_info info = {};
- 	void *key, *value, *prev_key;
- 	unsigned int num_elems = 0;
--	struct bpf_map_info info = {};
- 	__u32 len = sizeof(info);
-+	json_writer_t *btf_wtr;
-+	struct btf *btf = NULL;
- 	int err;
- 	int fd;
- 
-@@ -537,8 +653,27 @@ static int do_dump(int argc, char **argv
- 	}
- 
- 	prev_key = NULL;
-+
-+	err = get_btf(&info, &btf);
-+	if (err) {
-+		p_err("failed to get btf");
-+		goto exit_free;
-+	}
-+
- 	if (json_output)
- 		jsonw_start_array(json_wtr);
-+	else
-+		if (btf) {
-+			btf_wtr = get_btf_writer();
-+			if (!btf_wtr) {
-+				p_info("failed to create json writer for btf. falling back to plain output");
-+				btf__free(btf);
-+				btf = NULL;
-+			} else {
-+				jsonw_start_array(btf_wtr);
-+			}
-+		}
-+
- 	while (true) {
- 		err = bpf_map_get_next_key(fd, prev_key, key);
- 		if (err) {
-@@ -549,9 +684,19 @@ static int do_dump(int argc, char **argv
- 
- 		if (!bpf_map_lookup_elem(fd, key, value)) {
- 			if (json_output)
--				print_entry_json(&info, key, value);
-+				print_entry_json(&info, key, value, btf);
- 			else
--				print_entry_plain(&info, key, value);
-+				if (btf) {
-+					struct btf_dumper d = {
-+						.btf = btf,
-+						.jw = btf_wtr,
-+						.is_plain_text = true,
-+					};
-+
-+					do_dump_btf(&d, &info, key, value);
-+				} else {
-+					print_entry_plain(&info, key, value);
-+				}
- 		} else {
- 			if (json_output) {
- 				jsonw_name(json_wtr, "key");
-@@ -574,14 +719,19 @@ static int do_dump(int argc, char **argv
- 
- 	if (json_output)
- 		jsonw_end_array(json_wtr);
--	else
-+	else if (btf) {
-+		jsonw_end_array(btf_wtr);
-+		jsonw_destroy(&btf_wtr);
-+	} else {
- 		printf("Found %u element%s\n", num_elems,
- 		       num_elems != 1 ? "s" : "");
-+	}
- 
- exit_free:
- 	free(key);
- 	free(value);
- 	close(fd);
-+	btf__free(btf);
- 
- 	return err;
- }
-@@ -637,6 +787,8 @@ static int do_lookup(int argc, char **ar
- {
- 	struct bpf_map_info info = {};
- 	__u32 len = sizeof(info);
-+	json_writer_t *btf_wtr;
-+	struct btf *btf = NULL;
- 	void *key, *value;
- 	int err;
- 	int fd;
-@@ -661,27 +813,60 @@ static int do_lookup(int argc, char **ar
- 		goto exit_free;
- 
- 	err = bpf_map_lookup_elem(fd, key, value);
--	if (!err) {
--		if (json_output)
--			print_entry_json(&info, key, value);
--		else
-+	if (err) {
-+		if (errno == ENOENT) {
-+			if (json_output) {
-+				jsonw_null(json_wtr);
-+			} else {
-+				printf("key:\n");
-+				fprint_hex(stdout, key, info.key_size, " ");
-+				printf("\n\nNot found\n");
-+			}
-+		} else {
-+			p_err("lookup failed: %s", strerror(errno));
-+		}
-+
-+		goto exit_free;
-+	}
-+
-+	/* here means bpf_map_lookup_elem() succeeded */
-+	err = get_btf(&info, &btf);
-+	if (err) {
-+		p_err("failed to get btf");
-+		goto exit_free;
-+	}
-+
-+	if (json_output) {
-+		print_entry_json(&info, key, value, btf);
-+	} else if (btf) {
-+		/* if here json_wtr wouldn't have been initialised,
-+		 * so let's create separate writer for btf
-+		 */
-+		btf_wtr = get_btf_writer();
-+		if (!btf_wtr) {
-+			p_info("failed to create json writer for btf. falling back to plain output");
-+			btf__free(btf);
-+			btf = NULL;
- 			print_entry_plain(&info, key, value);
--	} else if (errno == ENOENT) {
--		if (json_output) {
--			jsonw_null(json_wtr);
- 		} else {
--			printf("key:\n");
--			fprint_hex(stdout, key, info.key_size, " ");
--			printf("\n\nNot found\n");
-+			struct btf_dumper d = {
-+				.btf = btf,
-+				.jw = btf_wtr,
-+				.is_plain_text = true,
-+			};
-+
-+			do_dump_btf(&d, &info, key, value);
-+			jsonw_destroy(&btf_wtr);
- 		}
- 	} else {
--		p_err("lookup failed: %s", strerror(errno));
-+		print_entry_plain(&info, key, value);
- 	}
- 
- exit_free:
- 	free(key);
- 	free(value);
- 	close(fd);
-+	btf__free(btf);
- 
- 	return err;
- }
-
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>   drivers/thermal/ti-soc-thermal/omap5-thermal-data.c | 9 ---------
+>   drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h   | 3 ---
+>   2 files changed, 12 deletions(-)
+> 
+> diff --git a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
+> index 8191bae..e384be1 100644
+> --- a/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
+> +++ b/drivers/thermal/ti-soc-thermal/omap5-thermal-data.c
+> @@ -41,9 +41,6 @@
+>   	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
+>   	.mask_freeze_mask = OMAP5430_MASK_FREEZE_MPU_MASK,
+>   
+> -	.bgap_counter = OMAP5430_BGAP_CTRL_OFFSET,
+> -	.counter_mask = OMAP5430_COUNTER_MASK,
+> -
+>   	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_MPU_OFFSET,
+>   	.threshold_thot_mask = OMAP5430_T_HOT_MASK,
+>   	.threshold_tcold_mask = OMAP5430_T_COLD_MASK,
+> @@ -77,9 +74,6 @@
+>   	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
+>   	.mask_freeze_mask = OMAP5430_MASK_FREEZE_GPU_MASK,
+>   
+> -	.bgap_counter = OMAP5430_BGAP_CTRL_OFFSET,
+> -	.counter_mask = OMAP5430_COUNTER_MASK,
+> -
+>   	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_GPU_OFFSET,
+>   	.threshold_thot_mask = OMAP5430_T_HOT_MASK,
+>   	.threshold_tcold_mask = OMAP5430_T_COLD_MASK,
+> @@ -114,9 +108,6 @@
+>   	.mask_counter_delay_mask = OMAP5430_MASK_COUNTER_DELAY_MASK,
+>   	.mask_freeze_mask = OMAP5430_MASK_FREEZE_CORE_MASK,
+>   
+> -	.bgap_counter = OMAP5430_BGAP_CTRL_OFFSET,
+> -	.counter_mask = OMAP5430_COUNTER_MASK,
+> -
+>   	.bgap_threshold = OMAP5430_BGAP_THRESHOLD_CORE_OFFSET,
+>   	.threshold_thot_mask = OMAP5430_T_HOT_MASK,
+>   	.threshold_tcold_mask = OMAP5430_T_COLD_MASK,
+> diff --git a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
+> index dcbf903..223c7a8 100644
+> --- a/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
+> +++ b/drivers/thermal/ti-soc-thermal/omap5xxx-bandgap.h
+> @@ -93,9 +93,6 @@
+>   #define OMAP5430_MASK_HOT_MPU_MASK			BIT(1)
+>   #define OMAP5430_MASK_COLD_MPU_MASK			BIT(0)
+>   
+> -/* OMAP5430.BANDGAP_COUNTER */
+> -#define OMAP5430_COUNTER_MASK				(0xffffff << 0)
+> -
+>   /* OMAP5430.BANDGAP_THRESHOLD */
+>   #define OMAP5430_T_HOT_MASK				(0x3ff << 16)
+>   #define OMAP5430_T_COLD_MASK				(0x3ff << 0)
+> 
