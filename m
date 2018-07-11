@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83884C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46CD4C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:33:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F3AB208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E44BD208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:33:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="aW3Vlc7O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F3AB208FA
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="TyzSjYqU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E44BD208FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387409AbeGKLhT (ORCPT
+        id S1732879AbeGKLeD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:37:19 -0400
-Received: from 8bytes.org ([81.169.241.247]:37802 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727019AbeGKLeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Jul 2018 07:34:03 -0400
+Received: from 8bytes.org ([81.169.241.247]:37618 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732847AbeGKLeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:34:02 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 700188BE; Wed, 11 Jul 2018 13:30:01 +0200 (CEST)
+        id 25FA57B4; Wed, 11 Jul 2018 13:30:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308602; bh=n3+7XfnmMMT/GDfMbmx6Bsj6M5vPUt9hNhxRV/Xb5t0=;
+        t=1531308601; bh=oDMxF3o058bjpJa4HrDdMIfZpi53bUCauxD68r1Y9K4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aW3Vlc7On1NcpP8IOj1gbRcfzgT1RyQiKKVxkKTbJg7RyTOtmLgILsQS7i3cBYL83
-         zceAOg/3jE3YHMXOKexGqESzItkBh1RCVvP9iW2iq18CnFsQ1oAhZVsjRA/P2NK1Qv
-         FDxacXYtbZ1ctNfEcF8ikTJJG0u6KxMUc8BBaoon0F7eYqipWUIr7XHEIfpEGn3D6K
-         jleH52tRJFpPsEMutA6RYIsBPaFRUuLgRV/ACHHMkBR6ksyvqEgbT/NuO8qNNoElNi
-         Zvghl5D10HWnLs7ZCuaSyyU1l+0t2ikd5jfX3GJA3V7BtspoDsfuhTsgWPUTBJkvMv
-         jH7Wa9uwOsSrg==
+        b=TyzSjYqUxtz81dSIk8lAWsCYRvAaSzZ8BBCnXcvJ2ETfpak3XlRdLUzWIRjhl/4Gy
+         SAQyhYHDsAcpxtEMDiut94nSwJvogRNwL2fbucrljHxQOo2cHMc29Un9qBDrxsRlD6
+         wyX6Mqj0cO/J/FLIV4quWWGPOHPm9Db8gyt2gygwplS+4vXs40Sl+eWgnTu7S5iePF
+         S5rfw3f/BwS69/Rd+Is56FHKD+LUZLYLFEKilefVFSle8RLgrKJPIrnzd+o9ciVvcx
+         MyvQb9G5FOjp1+yih/NFPm8ID2fRsc9K7WDEAtiQvpAVMisldIMALOEq7wahV5YJcv
+         p65fbIjTEnpvg==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 10/39] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
-Date:   Wed, 11 Jul 2018 13:29:17 +0200
-Message-Id: <1531308586-29340-11-git-send-email-joro@8bytes.org>
+Subject: [PATCH 06/39] x86/entry/32: Split off return-to-kernel path
+Date:   Wed, 11 Jul 2018 13:29:13 +0200
+Message-Id: <1531308586-29340-7-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
@@ -72,201 +72,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-It can happen that we enter the kernel from kernel-mode and
-on the entry-stack. The most common way this happens is when
-we get an exception while loading the user-space segment
-registers on the kernel-to-userspace exit path.
-
-The segment loading needs to be done after the entry-stack
-switch, because the stack-switch needs kernel %fs for
-per_cpu access.
-
-When this happens, we need to make sure that we leave the
-kernel with the entry-stack again, so that the interrupted
-code-path runs on the right stack when switching to the
-user-cr3.
-
-We do this by detecting this condition on kernel-entry by
-checking CS.RPL and %esp, and if it happens, we copy over
-the complete content of the entry stack to the task-stack.
-This needs to be done because once we enter the exception
-handlers we might be scheduled out or even migrated to a
-different CPU, so that we can't rely on the entry-stack
-contents. We also leave a marker in the stack-frame to
-detect this condition on the exit path.
-
-On the exit path the copy is reversed, we copy all of the
-remaining task-stack back to the entry-stack and switch
-to it.
+Use a separate return path when we know we are returning to
+the kernel. This allows us to put the PTI cr3-switch and the
+switch to the entry-stack into the return-to-user path
+without further checking.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 116 +++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 115 insertions(+), 1 deletion(-)
+ arch/x86/entry/entry_32.S | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
 diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 3d1a114..b3af76e 100644
+index 571209e..61303fa 100644
 --- a/arch/x86/entry/entry_32.S
 +++ b/arch/x86/entry/entry_32.S
-@@ -299,6 +299,9 @@
-  * copied there. So allocate the stack-frame on the task-stack and
-  * switch to it before we do any copying.
-  */
-+
-+#define CS_FROM_ENTRY_STACK	(1 << 31)
-+
- .macro SWITCH_TO_KERNEL_STACK
- 
- 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-@@ -320,6 +323,16 @@
- 	/* Load top of task-stack into %edi */
- 	movl	TSS_entry_stack(%edi), %edi
- 
-+	/*
-+	 * Clear upper bits of the CS slot in pt_regs in case hardware
-+	 * didn't clear it for us
-+	 */
-+	andl	$(0x0000ffff), PT_CS(%esp)
-+
-+	/* Special case - entry from kernel mode via entry stack */
-+	testl	$SEGMENT_RPL_MASK, PT_CS(%esp)
-+	jz	.Lentry_from_kernel_\@
-+
- 	/* Bytes to copy */
- 	movl	$PTREGS_SIZE, %ecx
- 
-@@ -333,8 +346,8 @@
- 	 */
- 	addl	$(4 * 4), %ecx
- 
--.Lcopy_pt_regs_\@:
+@@ -65,7 +65,7 @@
+ # define preempt_stop(clobbers)	DISABLE_INTERRUPTS(clobbers); TRACE_IRQS_OFF
+ #else
+ # define preempt_stop(clobbers)
+-# define resume_kernel		restore_all
++# define resume_kernel		restore_all_kernel
  #endif
-+.Lcopy_pt_regs_\@:
  
- 	/* Allocate frame on task-stack */
- 	subl	%ecx, %edi
-@@ -350,6 +363,56 @@
- 	cld
- 	rep movsl
+ .macro TRACE_IRQS_IRET
+@@ -399,9 +399,9 @@ ENTRY(resume_kernel)
+ 	DISABLE_INTERRUPTS(CLBR_ANY)
+ .Lneed_resched:
+ 	cmpl	$0, PER_CPU_VAR(__preempt_count)
+-	jnz	restore_all
++	jnz	restore_all_kernel
+ 	testl	$X86_EFLAGS_IF, PT_EFLAGS(%esp)	# interrupts off (exception path) ?
+-	jz	restore_all
++	jz	restore_all_kernel
+ 	call	preempt_schedule_irq
+ 	jmp	.Lneed_resched
+ END(resume_kernel)
+@@ -606,6 +606,11 @@ restore_all:
+ 	 */
+ 	INTERRUPT_RETURN
  
-+	jmp .Lend_\@
++restore_all_kernel:
++	TRACE_IRQS_IRET
++	RESTORE_REGS 4
++	jmp	.Lirq_return
 +
-+.Lentry_from_kernel_\@:
-+
-+	/*
-+	 * This handles the case when we enter the kernel from
-+	 * kernel-mode and %esp points to the entry-stack. When this
-+	 * happens we need to switch to the task-stack to run C code,
-+	 * but switch back to the entry-stack again when we approach
-+	 * iret and return to the interrupted code-path. This usually
-+	 * happens when we hit an exception while restoring user-space
-+	 * segment registers on the way back to user-space.
-+	 *
-+	 * When we switch to the task-stack here, we can't trust the
-+	 * contents of the entry-stack anymore, as the exception handler
-+	 * might be scheduled out or moved to another CPU. Therefore we
-+	 * copy the complete entry-stack to the task-stack and set a
-+	 * marker in the iret-frame (bit 31 of the CS dword) to detect
-+	 * what we've done on the iret path.
-+	 *
-+	 * On the iret path we copy everything back and switch to the
-+	 * entry-stack, so that the interrupted kernel code-path
-+	 * continues on the same stack it was interrupted with.
-+	 *
-+	 * Be aware that an NMI can happen anytime in this code.
-+	 *
-+	 * %esi: Entry-Stack pointer (same as %esp)
-+	 * %edi: Top of the task stack
-+	 */
-+
-+	/* Calculate number of bytes on the entry stack in %ecx */
-+	movl	%esi, %ecx
-+
-+	/* %ecx to the top of entry-stack */
-+	andl	$(MASK_entry_stack), %ecx
-+	addl	$(SIZEOF_entry_stack), %ecx
-+
-+	/* Number of bytes on the entry stack to %ecx */
-+	sub	%esi, %ecx
-+
-+	/* Mark stackframe as coming from entry stack */
-+	orl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
-+
-+	/*
-+	 * %esi and %edi are unchanged, %ecx contains the number of
-+	 * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
-+	 * the stack-frame on task-stack and copy everything over
-+	 */
-+	jmp .Lcopy_pt_regs_\@
-+
- .Lend_\@:
- .endm
- 
-@@ -408,6 +471,56 @@
- .endm
- 
- /*
-+ * This macro handles the case when we return to kernel-mode on the iret
-+ * path and have to switch back to the entry stack.
-+ *
-+ * See the comments below the .Lentry_from_kernel_\@ label in the
-+ * SWITCH_TO_KERNEL_STACK macro for more details.
-+ */
-+.macro PARANOID_EXIT_TO_KERNEL_MODE
-+
-+	/*
-+	 * Test if we entered the kernel with the entry-stack. Most
-+	 * likely we did not, because this code only runs on the
-+	 * return-to-kernel path.
-+	 */
-+	testl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
-+	jz	.Lend_\@
-+
-+	/* Unlikely slow-path */
-+
-+	/* Clear marker from stack-frame */
-+	andl	$(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
-+
-+	/* Copy the remaining task-stack contents to entry-stack */
-+	movl	%esp, %esi
-+	movl	PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
-+
-+	/* Bytes on the task-stack to ecx */
-+	movl	PER_CPU_VAR(cpu_current_top_of_stack), %ecx
-+	subl	%esi, %ecx
-+
-+	/* Allocate stack-frame on entry-stack */
-+	subl	%ecx, %edi
-+
-+	/*
-+	 * Save future stack-pointer, we must not switch until the
-+	 * copy is done, otherwise the NMI handler could destroy the
-+	 * contents of the task-stack we are about to copy.
-+	 */
-+	movl	%edi, %ebx
-+
-+	/* Do the copy */
-+	shrl	$2, %ecx
-+	cld
-+	rep movsl
-+
-+	/* Safe to switch to entry-stack now */
-+	movl	%ebx, %esp
-+
-+.Lend_\@:
-+.endm
-+/*
-  * %eax: prev task
-  * %edx: next task
-  */
-@@ -769,6 +882,7 @@ restore_all:
- 
- restore_all_kernel:
- 	TRACE_IRQS_IRET
-+	PARANOID_EXIT_TO_KERNEL_MODE
- 	RESTORE_REGS 4
- 	jmp	.Lirq_return
- 
+ .section .fixup, "ax"
+ ENTRY(iret_exc	)
+ 	pushl	$0				# no error code
 -- 
 2.7.4
 
