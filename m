@@ -2,96 +2,104 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 247B8C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 451AAC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB294208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:47:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB294208E5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 00C56208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:47:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00C56208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732368AbeGKKvH (ORCPT
+        id S1732431AbeGKKvd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:51:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33074 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726557AbeGKKvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:51:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B8EAA80D;
-        Wed, 11 Jul 2018 03:47:24 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAAA63F589;
-        Wed, 11 Jul 2018 03:47:22 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 11:47:20 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        catalin.marinas@arm.com, dave.martin@arm.com, hch@infradead.org,
-        james.morse@arm.com, linux@dominikbrodowski.net,
-        linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
-        viro@zeniv.linux.org.uk
-Subject: Re: [PATCHv4 00/19] arm64: invoke syscalls with pt_regs
-Message-ID: <20180711104720.3h65gkbsphaugqht@lakrids.cambridge.arm.com>
-References: <20180702110415.10465-1-mark.rutland@arm.com>
- <20180710103901.GA31318@arm.com>
+        Wed, 11 Jul 2018 06:51:33 -0400
+Received: from mga07.intel.com ([134.134.136.100]:18717 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726557AbeGKKvd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 06:51:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 03:47:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
+   d="scan'208";a="215118191"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga004.jf.intel.com with ESMTP; 11 Jul 2018 03:47:46 -0700
+Subject: Re: [PATCH v1 3/9] scsi: ufs: Override auto suspend tunables for ufs
+To:     Asutosh Das <asutoshd@codeaurora.org>, subhashj@codeaurora.org,
+        cang@codeaurora.org, vivek.gautam@codeaurora.org,
+        rnayak@codeaurora.org, vinholikatti@gmail.com,
+        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com,
+        linux-scsi@vger.kernel.org
+Cc:     Sujit Reddy Thumma <sthumma@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        Gilad Broner <gbroner@codeaurora.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <cover.1530880006.git.asutoshd@codeaurora.org>
+ <6981189193244970a912c8b3f390a00bc37ed14a.1530880006.git.asutoshd@codeaurora.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <c68abdb3-a32c-6309-8992-66267b6e392f@intel.com>
+Date:   Wed, 11 Jul 2018 13:46:14 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180710103901.GA31318@arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <6981189193244970a912c8b3f390a00bc37ed14a.1530880006.git.asutoshd@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jul 10, 2018 at 11:39:02AM +0100, Will Deacon wrote:
-> On Mon, Jul 02, 2018 at 12:03:56PM +0100, Mark Rutland wrote:
-> > This series reworks arm64's syscall handling to minimize the propagation
-> > of user-controlled register values into speculated code paths. As with
-> > x86 [1], a wrapper is generated for each syscall, which extracts the
-> > argument from a struct pt_regs. During kernel entry from userspace,
-> > registers are zeroed.
-> > 
-> > The arm64 kernel code directly invokes some syscalls which the x86 code
-> > doesn't, so I've added ksys_* wrappers for these, following the x86
-> > example. The rest of the series is arm64-specific.
-> > 
-> > I've pushed the series out to my arm64/syscall-regs branch [2] on
-> > kernel.org.
+On 06/07/18 15:30, Asutosh Das wrote:
+> From: Sujit Reddy Thumma <sthumma@codeaurora.org>
 > 
-> One thing I noticed with this series applied is that our sys_call_table
-> declarations all get a bit muddled:
+> Override auto suspend tunables for UFS device LUNs during
+> initialization so as to efficiently manage background operations
+> and the power consumption.
 > 
-> arm64/kernel/sys.c:		void * const sys_call_table[]
-> arm64/kernel/sys32.c:		void * const compat_sys_call_table[]
-> arm64/kernel/syscall.c:		extern syscall_fn_t sys_call_table[];
-> 				extern syscall_fn_t compat_sys_call_table[];
-> arm64/include/asm/syscall.h:	extern const void *sys_call_table[];
+> Signed-off-by: Sujit Reddy Thumma <sthumma@codeaurora.org>
+> Signed-off-by: Gilad Broner <gbroner@codeaurora.org>
+> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+
+> ---
+>  drivers/scsi/ufs/ufshcd.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> Can we tidy this up so that syscall.h provides a declaration using
-> syscall_fn_t, allowing us to drop the additional externs?
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index 77e2b3e..b03f3ea 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -89,6 +89,9 @@
+>  /* Interrupt aggregation default timeout, unit: 40us */
+>  #define INT_AGGR_DEF_TO	0x02
+>  
+> +/* default value of auto suspend is 3 seconds */
+> +#define UFSHCD_AUTO_SUSPEND_DELAY_MS 3000 /* millisecs */
+> +
+>  #define ufshcd_toggle_vreg(_dev, _vreg, _on)				\
+>  	({                                                              \
+>  		int _ret;                                               \
+> @@ -4528,6 +4531,9 @@ static int ufshcd_slave_configure(struct scsi_device *sdev)
+>  	blk_queue_update_dma_pad(q, PRDT_DATA_BYTE_COUNT_PAD - 1);
+>  	blk_queue_max_segment_size(q, PRDT_DATA_BYTE_COUNT_MAX);
+>  
+> +	sdev->autosuspend_delay = UFSHCD_AUTO_SUSPEND_DELAY_MS;
+> +	sdev->use_rpm_auto = 1;
+> +
+>  	return 0;
+>  }
+>  
+> 
 
-Sure; done.
-
-As a result, I've had to fold a few more consts into function prototypes
-in subsequent patches, but that's probably a good thing.
-
-This also makes me realise that once the generation of the table address
-is converted to C, we can drop the alignment on the tables. That was
-solely to simplify the asm invoking the syscall, allowing it to generate
-the address with an adrp. The C code never relied on this, since the
-alignment was not in the declaration of the tables.
-
-I've spun an additional patch for that, too.
-
-I've pushed hte result out to my arm64/syscall-regs branch. I guess I'll
-post a v5 once that's seen some testing.
-
-Thanks,
-Mark.
