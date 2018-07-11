@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A89C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:32:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0B4CC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C042E208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:32:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D877208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:32:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="VjGPGLwg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C042E208FA
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="D10ARwIb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D877208FA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733300AbeGKLgj (ORCPT
+        id S1733310AbeGKLgq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:36:39 -0400
-Received: from 8bytes.org ([81.169.241.247]:37618 "EHLO theia.8bytes.org"
+        Wed, 11 Jul 2018 07:36:46 -0400
+Received: from 8bytes.org ([81.169.241.247]:37666 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732881AbeGKLeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1732849AbeGKLeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Jul 2018 07:34:04 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 0C5688DC; Wed, 11 Jul 2018 13:30:01 +0200 (CEST)
+        id 5432B8C0; Wed, 11 Jul 2018 13:30:02 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308603; bh=XKiFWmF22ywv1jWrtPcpb3+8jP+MvcZDECdC4Z3QOuc=;
+        t=1531308603; bh=qYlJ2zsyHaAhXUQt0Hazi8E1heNgKD3G46Knr4YajHM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VjGPGLwgHMcapMwrQzU+fcFFZqG1X9R0h46qfRubxT61PSlA9eVZMgfQFouReiaqo
-         hhNTapRqA9H/n1nFEPTJ8gPvbhmy3m286So5wHasVuHeGYl0oEmw0H0W5ojTUF0R1v
-         iWhFywfendDuH06uZG4lU//ayTkSwdzHOdTjQN3oOf0UTeRXimRHcvdpFBG8VxSTw5
-         yLbWCqddZAUJcAq1nm5iq0r1gOEluVUidvciYCiW4Ntmcjjgy4KKbLGVeQiTlisXya
-         lPUzkWoit41bq6gNEVrU41/zYFFxeW9tFqk6prsnVNxBIgXfH9Tey1HxI+91/UUZ28
-         o59vU0ZN3qFsA==
+        b=D10ARwIbKulSGO3F3WCH/Mm5raDVe+fmAZlPNY7owe3froqAYyA9nA7fOAx9Pr0jb
+         tPmwJF+FIhnqr5N/z36o1okE/OFdV13r9lIDXJ4PStPx7K3ReVg1aiLT2KIFlZkqm4
+         cWSztOk3vBUiIJ5TeSjIgRuP92ZW+zcODhLNQIlwRumoW9jwPdhHrtLNIsRq3H7ELZ
+         keyDwWD6Rv8QOANBY6gURq98qUVNsWAK5jlhSR0/Xfbl2z5m0uBnoKVxw4Y+UQ4j9C
+         9f+eA+jr/+rE7W+4vDwvpFJyPxaYlQNsZITINKf0VTWdCqxoKzXLhmQtuOFoRgi3hG
+         VohqNqz0kafDA==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 13/39] x86/entry/32: Add PTI cr3 switch to non-NMI entry/exit points
-Date:   Wed, 11 Jul 2018 13:29:20 +0200
-Message-Id: <1531308586-29340-14-git-send-email-joro@8bytes.org>
+Subject: [PATCH 16/39] x86/pgtable/pae: Unshare kernel PMDs when PTI is enabled
+Date:   Wed, 11 Jul 2018 13:29:23 +0200
+Message-Id: <1531308586-29340-17-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
@@ -72,183 +72,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Add unconditional cr3 switches between user and kernel cr3
-to all non-NMI entry and exit points.
+With PTI we need to map the per-process LDT into the kernel
+address-space for each process, so we need separate kernel
+PMDs per PGD.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 83 ++++++++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 79 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/pgtable-3level_types.h | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 9e06431..311aefa 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -154,6 +154,33 @@
+diff --git a/arch/x86/include/asm/pgtable-3level_types.h b/arch/x86/include/asm/pgtable-3level_types.h
+index 6a59a6d..78038e0 100644
+--- a/arch/x86/include/asm/pgtable-3level_types.h
++++ b/arch/x86/include/asm/pgtable-3level_types.h
+@@ -21,9 +21,10 @@ typedef union {
+ #endif	/* !__ASSEMBLY__ */
  
- #endif /* CONFIG_X86_32_LAZY_GS */
- 
-+/* Unconditionally switch to user cr3 */
-+.macro SWITCH_TO_USER_CR3 scratch_reg:req
-+	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
-+
-+	movl	%cr3, \scratch_reg
-+	orl	$PTI_SWITCH_MASK, \scratch_reg
-+	movl	\scratch_reg, %cr3
-+.Lend_\@:
-+.endm
-+
-+/*
-+ * Switch to kernel cr3 if not already loaded and return current cr3 in
-+ * \scratch_reg
-+ */
-+.macro SWITCH_TO_KERNEL_CR3 scratch_reg:req
-+	ALTERNATIVE "jmp .Lend_\@", "", X86_FEATURE_PTI
-+	movl	%cr3, \scratch_reg
-+	/* Test if we are already on kernel CR3 */
-+	testl	$PTI_SWITCH_MASK, \scratch_reg
-+	jz	.Lend_\@
-+	andl	$(~PTI_SWITCH_MASK), \scratch_reg
-+	movl	\scratch_reg, %cr3
-+	/* Return original CR3 in \scratch_reg */
-+	orl	$PTI_SWITCH_MASK, \scratch_reg
-+.Lend_\@:
-+.endm
-+
- .macro SAVE_ALL pt_regs_ax=%eax switch_stacks=0
- 	cld
- 	/* Push segment registers and %eax */
-@@ -288,7 +315,6 @@
- #endif /* CONFIG_X86_ESPFIX32 */
- .endm
- 
--
- /*
-  * Called with pt_regs fully populated and kernel segments loaded,
-  * so we can access PER_CPU and use the integer registers.
-@@ -301,11 +327,19 @@
-  */
- 
- #define CS_FROM_ENTRY_STACK	(1 << 31)
-+#define CS_FROM_USER_CR3	(1 << 30)
- 
- .macro SWITCH_TO_KERNEL_STACK
- 
- 	ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
- 
-+	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
-+
-+	/*
-+	 * %eax now contains the entry cr3 and we carry it forward in
-+	 * that register for the time this macro runs
-+	 */
-+
- 	/* Are we on the entry stack? Bail out if not! */
- 	movl	PER_CPU_VAR(cpu_entry_area), %edi
- 	addl	$CPU_ENTRY_AREA_entry_stack, %edi
-@@ -374,7 +408,8 @@
- 	 * but switch back to the entry-stack again when we approach
- 	 * iret and return to the interrupted code-path. This usually
- 	 * happens when we hit an exception while restoring user-space
--	 * segment registers on the way back to user-space.
-+	 * segment registers on the way back to user-space or when the
-+	 * sysenter handler runs with eflags.tf set.
- 	 *
- 	 * When we switch to the task-stack here, we can't trust the
- 	 * contents of the entry-stack anymore, as the exception handler
-@@ -391,6 +426,7 @@
- 	 *
- 	 * %esi: Entry-Stack pointer (same as %esp)
- 	 * %edi: Top of the task stack
-+	 * %eax: CR3 on kernel entry
- 	 */
- 
- 	/* Calculate number of bytes on the entry stack in %ecx */
-@@ -407,6 +443,14 @@
- 	orl	$CS_FROM_ENTRY_STACK, PT_CS(%esp)
- 
- 	/*
-+	 * Test the cr3 used to enter the kernel and add a marker
-+	 * so that we can switch back to it before iret.
-+	 */
-+	testl	$PTI_SWITCH_MASK, %eax
-+	jz	.Lcopy_pt_regs_\@
-+	orl	$CS_FROM_USER_CR3, PT_CS(%esp)
-+
-+	/*
- 	 * %esi and %edi are unchanged, %ecx contains the number of
- 	 * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
- 	 * the stack-frame on task-stack and copy everything over
-@@ -472,7 +516,7 @@
+ #ifdef CONFIG_PARAVIRT
+-#define SHARED_KERNEL_PMD	(pv_info.shared_kernel_pmd)
++#define SHARED_KERNEL_PMD	((!static_cpu_has(X86_FEATURE_PTI) &&	\
++				 (pv_info.shared_kernel_pmd)))
+ #else
+-#define SHARED_KERNEL_PMD	1
++#define SHARED_KERNEL_PMD	(!static_cpu_has(X86_FEATURE_PTI))
+ #endif
  
  /*
-  * This macro handles the case when we return to kernel-mode on the iret
-- * path and have to switch back to the entry stack.
-+ * path and have to switch back to the entry stack and/or user-cr3
-  *
-  * See the comments below the .Lentry_from_kernel_\@ label in the
-  * SWITCH_TO_KERNEL_STACK macro for more details.
-@@ -518,6 +562,18 @@
- 	/* Safe to switch to entry-stack now */
- 	movl	%ebx, %esp
- 
-+	/*
-+	 * We came from entry-stack and need to check if we also need to
-+	 * switch back to user cr3.
-+	 */
-+	testl	$CS_FROM_USER_CR3, PT_CS(%esp)
-+	jz	.Lend_\@
-+
-+	/* Clear marker from stack-frame */
-+	andl	$(~CS_FROM_USER_CR3), PT_CS(%esp)
-+
-+	SWITCH_TO_USER_CR3 scratch_reg=%eax
-+
- .Lend_\@:
- .endm
- /*
-@@ -711,6 +767,18 @@ ENTRY(xen_sysenter_target)
-  * 0(%ebp) arg6
-  */
- ENTRY(entry_SYSENTER_32)
-+	/*
-+	 * On entry-stack with all userspace-regs live - save and
-+	 * restore eflags and %eax to use it as scratch-reg for the cr3
-+	 * switch.
-+	 */
-+	pushfl
-+	pushl	%eax
-+	SWITCH_TO_KERNEL_CR3 scratch_reg=%eax
-+	popl	%eax
-+	popfl
-+
-+	/* Stack empty again, switch to task stack */
- 	movl	TSS_entry_stack(%esp), %esp
- 
- .Lsysenter_past_esp:
-@@ -791,6 +859,9 @@ ENTRY(entry_SYSENTER_32)
- 	/* Switch to entry stack */
- 	movl	%eax, %esp
- 
-+	/* Now ready to switch the cr3 */
-+	SWITCH_TO_USER_CR3 scratch_reg=%eax
-+
- 	/*
- 	 * Restore all flags except IF. (We restore IF separately because
- 	 * STI gives a one-instruction window in which we won't be interrupted,
-@@ -871,7 +942,11 @@ restore_all:
- .Lrestore_all_notrace:
- 	CHECK_AND_APPLY_ESPFIX
- .Lrestore_nocheck:
--	RESTORE_REGS 4				# skip orig_eax/error_code
-+	/* Switch back to user CR3 */
-+	SWITCH_TO_USER_CR3 scratch_reg=%eax
-+
-+	/* Restore user state */
-+	RESTORE_REGS pop=4			# skip orig_eax/error_code
- .Lirq_return:
- 	/*
- 	 * ARCH_HAS_MEMBARRIER_SYNC_CORE rely on IRET core serialization
 -- 
 2.7.4
 
