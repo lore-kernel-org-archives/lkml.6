@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44363C6778F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C307C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8025F2120B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25FDF20BEC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:30:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="LgiJZBxZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8025F2120B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="Wn+CJu39"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25FDF20BEC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732949AbeGKLeF (ORCPT
+        id S1732979AbeGKLeI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:34:05 -0400
-Received: from 8bytes.org ([81.169.241.247]:37318 "EHLO theia.8bytes.org"
+        Wed, 11 Jul 2018 07:34:08 -0400
+Received: from 8bytes.org ([81.169.241.247]:37618 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732871AbeGKLeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:34:04 -0400
+        id S1732962AbeGKLeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 07:34:07 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id D57C28EB; Wed, 11 Jul 2018 13:30:01 +0200 (CEST)
+        id E48569DB; Wed, 11 Jul 2018 13:30:03 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531308602; bh=JKbLaug3RNyDfvH2yfAePqSaHIh069+G0E3eJSS/Rlc=;
+        t=1531308604; bh=DSRqcm2/h0MeJA2B6bB5atAwDqT3xDCIA/VjkOUJHKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LgiJZBxZMlHKvRElzT/5InVNkummgbuCYIvdGwWxmqxI2NRc7WmbFPkyx9u4HvfLt
-         gwh5woopcKx4TyQhwdINvfeLO7+Z/Vs9Y4r+XNvhmtgGINo5iSqgmrv3LPC+QvcLW5
-         NPsh5CxiKv3MWlDkd+wFGguOV9EvIYH1R4wEQfho1WfjpglKy3IO6gnmXI/DVyJM1V
-         f1ocq3qs/sai+snh3NP/G2zD0riq24KbMFgbyasP92CVIbkHdBFbv+y5VJIiYJAALx
-         fdxB0QisG9VADs581T3cxlPxfYvkyU75Glhf18DynPTreBl4IvqGV7zoBj4Nip0FPh
-         DyRtsL4xQ570w==
+        b=Wn+CJu39w8N4OE2sRBKUdViOJK23vEWNB1sbYkKdKhvGjO7Ljqx3QKGNgw/rzQeA4
+         6rN55tsJbVuHkTdCzk4atgEdQLBy1VuhrgpXTB21d9PjkcDCN2Mhuzh+He2PfrkuUX
+         90e3seXfSUCA81Ai+6+wSta5KTc48479mN4Tml3Cq1SfPRc6ellngKWZJWfgK00Nq0
+         q88hPRGqvnDN3/V32lb/skULJdtDcx8TqoESRLdZwGA1ov9uBBWi9+hZ8/aSQdRyIO
+         CsfMhXIurk3/WStqpm81NPAp6C2C5J1vwuscArE4NUri2j6yb8ngJu1UomVHb9ME8K
+         ty0Qk/gRyRXOQ==
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -59,9 +59,9 @@ Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
         jroedel@suse.de, joro@8bytes.org
-Subject: [PATCH 14/39] x86/entry/32: Add PTI cr3 switches to NMI handler code
-Date:   Wed, 11 Jul 2018 13:29:21 +0200
-Message-Id: <1531308586-29340-15-git-send-email-joro@8bytes.org>
+Subject: [PATCH 22/39] x86/mm/pae: Populate the user page-table with user pgd's
+Date:   Wed, 11 Jul 2018 13:29:29 +0200
+Message-Id: <1531308586-29340-23-git-send-email-joro@8bytes.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531308586-29340-1-git-send-email-joro@8bytes.org>
 References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
@@ -72,108 +72,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-The NMI handler is special, as it needs to leave with the
-same cr3 as it was entered with. We need to do this because
-we could enter the NMI handler from kernel code with
-user-cr3 already loaded.
+When we populate a PGD entry, make sure we populate it in
+the user page-table too.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/entry/entry_32.S | 41 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 35 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/pgtable-3level.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index 311aefa..a368583 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -77,6 +77,8 @@
- #endif
- .endm
+diff --git a/arch/x86/include/asm/pgtable-3level.h b/arch/x86/include/asm/pgtable-3level.h
+index f24df59..f2ca313 100644
+--- a/arch/x86/include/asm/pgtable-3level.h
++++ b/arch/x86/include/asm/pgtable-3level.h
+@@ -98,6 +98,9 @@ static inline void native_set_pmd(pmd_t *pmdp, pmd_t pmd)
  
-+#define PTI_SWITCH_MASK         (1 << PAGE_SHIFT)
+ static inline void native_set_pud(pud_t *pudp, pud_t pud)
+ {
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++	pud.p4d.pgd = pti_set_user_pgtbl(&pudp->p4d.pgd, pud.p4d.pgd);
++#endif
+ 	set_64bit((unsigned long long *)(pudp), native_pud_val(pud));
+ }
+ 
+@@ -229,6 +232,10 @@ static inline pud_t native_pudp_get_and_clear(pud_t *pudp)
+ {
+ 	union split_pud res, *orig = (union split_pud *)pudp;
+ 
++#ifdef CONFIG_PAGE_TABLE_ISOLATION
++	pti_set_user_pgtbl(&pudp->p4d.pgd, __pgd(0));
++#endif
 +
- /*
-  * User gs save/restore
-  *
-@@ -213,8 +215,19 @@
- 
- .endm
- 
--.macro SAVE_ALL_NMI
-+.macro SAVE_ALL_NMI cr3_reg:req
- 	SAVE_ALL
-+
-+	/*
-+	 * Now switch the CR3 when PTI is enabled.
-+	 *
-+	 * We can enter with either user or kernel cr3, the code will
-+	 * store the old cr3 in \cr3_reg and switches to the kernel cr3
-+	 * if necessary.
-+	 */
-+	SWITCH_TO_KERNEL_CR3 scratch_reg=\cr3_reg
-+
-+.Lend_\@:
- .endm
- /*
-  * This is a sneaky trick to help the unwinder find pt_regs on the stack.  The
-@@ -262,7 +275,23 @@
- 	POP_GS_EX
- .endm
- 
--.macro RESTORE_ALL_NMI pop=0
-+.macro RESTORE_ALL_NMI cr3_reg:req pop=0
-+	/*
-+	 * Now switch the CR3 when PTI is enabled.
-+	 *
-+	 * We enter with kernel cr3 and switch the cr3 to the value
-+	 * stored on \cr3_reg, which is either a user or a kernel cr3.
-+	 */
-+	ALTERNATIVE "jmp .Lswitched_\@", "", X86_FEATURE_PTI
-+
-+	testl	$PTI_SWITCH_MASK, \cr3_reg
-+	jz	.Lswitched_\@
-+
-+	/* User cr3 in \cr3_reg - write it to hardware cr3 */
-+	movl	\cr3_reg, %cr3
-+
-+.Lswitched_\@:
-+
- 	RESTORE_REGS pop=\pop
- .endm
- 
-@@ -1333,7 +1362,7 @@ ENTRY(nmi)
- #endif
- 
- 	pushl	%eax				# pt_regs->orig_ax
--	SAVE_ALL_NMI
-+	SAVE_ALL_NMI cr3_reg=%edi
- 	ENCODE_FRAME_POINTER
- 	xorl	%edx, %edx			# zero error code
- 	movl	%esp, %eax			# pt_regs pointer
-@@ -1361,7 +1390,7 @@ ENTRY(nmi)
- 
- .Lnmi_return:
- 	CHECK_AND_APPLY_ESPFIX
--	RESTORE_ALL_NMI pop=4
-+	RESTORE_ALL_NMI cr3_reg=%edi pop=4
- 	jmp	.Lirq_return
- 
- #ifdef CONFIG_X86_ESPFIX32
-@@ -1377,12 +1406,12 @@ ENTRY(nmi)
- 	pushl	16(%esp)
- 	.endr
- 	pushl	%eax
--	SAVE_ALL_NMI
-+	SAVE_ALL_NMI cr3_reg=%edi
- 	ENCODE_FRAME_POINTER
- 	FIXUP_ESPFIX_STACK			# %eax == %esp
- 	xorl	%edx, %edx			# zero error code
- 	call	do_nmi
--	RESTORE_ALL_NMI
-+	RESTORE_ALL_NMI cr3_reg=%edi
- 	lss	12+4(%esp), %esp		# back to espfix stack
- 	jmp	.Lirq_return
- #endif
+ 	/* xchg acts as a barrier before setting of the high bits */
+ 	res.pud_low = xchg(&orig->pud_low, 0);
+ 	res.pud_high = orig->pud_high;
 -- 
 2.7.4
 
