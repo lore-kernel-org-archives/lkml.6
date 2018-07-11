@@ -2,134 +2,151 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FE9C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C379BC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDCF820C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC7C20C0C
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:17:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="KrjHZL0g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDCF820C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="bySd643V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FC7C20C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389627AbeGKQWK (ORCPT
+        id S2389638AbeGKQW2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:22:10 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:59588 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733263AbeGKQWJ (ORCPT
+        Wed, 11 Jul 2018 12:22:28 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42341 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733263AbeGKQW2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:22:09 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6BGGk66033905;
-        Wed, 11 Jul 2018 11:16:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1531325806;
-        bh=mf9muP2rk8Ql/2uli2xR1x6064iV0j4mTELd+3Affmo=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=KrjHZL0ghtT8L6bhgRs6dxXVLfiKkAVAhCYgqCbaZ5bnmQGL2CRQ9E5lWXWQc+Gd7
-         6Z23WqVd4gMmVgL6qagCoIrvPESIbKA5eLb2qFtCrzxBwGprrqtEZvjYn6B89jrBLa
-         igLypl9gWRKEN2Cjm5oa/MM5rjOTmq3P0lewl654=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6BGGkRQ000809;
-        Wed, 11 Jul 2018 11:16:46 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 11
- Jul 2018 11:16:45 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 11 Jul 2018 11:16:45 -0500
-Received: from [172.22.219.115] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6BGGgN1023131;
-        Wed, 11 Jul 2018 11:16:43 -0500
-Subject: Re: [PATCH v3 1/4] rtc: omap: Cut down the shutdown time from 2
- seconds to 1 sec
-To:     Johan Hovold <johan@kernel.org>
-CC:     <a.zummo@towertech.it>, <alexandre.belloni@bootlin.com>,
-        <t-kristo@ti.com>, <linux-rtc@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1531205452-6086-1-git-send-email-j-keerthy@ti.com>
- <1531205452-6086-2-git-send-email-j-keerthy@ti.com>
- <20180711135444.GC12517@localhost>
-From:   "J, KEERTHY" <j-keerthy@ti.com>
-Message-ID: <cf50def4-9ff8-a921-521a-c568b4987b89@ti.com>
-Date:   Wed, 11 Jul 2018 21:46:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 11 Jul 2018 12:22:28 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p1-v6so18762583wrs.9
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 09:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cvxQwc8CGh8Y6dzq1i6hAVLrUPeugDRu3vUfcZIcsxw=;
+        b=bySd643Vj/t54Z9kgKGQi5KgQEjh1/s3ENv7O5YaIcvhYqQh0dWlRghhlcfqZF6+GS
+         AmGshn/cZhHS0sCEPH8cVTg5TPlevQtA2ibPa+6q7Y4PnVJSw+C1u/ixGz08z0Uw8HKv
+         yhtBPgyImbGILy5K2VyTqRAbfEXSRKbld+tdo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cvxQwc8CGh8Y6dzq1i6hAVLrUPeugDRu3vUfcZIcsxw=;
+        b=d1VXCI9Szbf5z33I/O/WVBOtphtMYsHY8IWGX30FwAqOITIGFMgslnMlC68X8eXlYA
+         4C7bHWxcGWVFs7CS7xbgnydB71nLG/23o7DR+Vf+Wj09p7LOU2ZS6RrrPPXYHtfqHAx2
+         uel9yK1XEY1TAkLBB3WnVYHHH9P0+bJnr7yGf87TTZFkxc3v7g6Ijy7/xRDC3jU79SPn
+         PF3dzD3tGMWwJW4AwHFa9X+p/BSci4QZot1RtG06QKBQAjl60RKbMYKWVoHQXh5rHCLa
+         hks7Dp6k/UIu1Vfj5A5bVd13mU48sExihdD9Vg79+RNg/abQEQkTPWgd7lu1BwCMvcWo
+         Xelw==
+X-Gm-Message-State: APt69E0dWcIMW1f1euiScB2csL+/77bUhzLNKg13aL9VezfYjyYEXrh1
+        HhVHcwn3uUINx3PCpuAKQVE/WA==
+X-Google-Smtp-Source: AAOMgpeYUPfXcwhebtSdEwfnQlA9wCRdkBeRlPyc06d58+ZdRJXduXZcth82fd1eFs7pYz0rGoCp3g==
+X-Received: by 2002:adf:f50e:: with SMTP id q14-v6mr19814384wro.241.1531325844023;
+        Wed, 11 Jul 2018 09:17:24 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id 6-v6sm3335106wmi.26.2018.07.11.09.17.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Jul 2018 09:17:23 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 18:17:17 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+Message-ID: <20180711161717.GA14635@andrea>
+References: <20180710162555.GV3593@linux.vnet.ibm.com>
+ <Pine.LNX.4.44L0.1807101416390.1449-100000@iolanthe.rowland.org>
+ <20180711094344.GE13963@arm.com>
+ <20180711154211.GT3593@linux.vnet.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20180711135444.GC12517@localhost>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711154211.GT3593@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 7/11/2018 7:24 PM, Johan Hovold wrote:
-> On Tue, Jul 10, 2018 at 12:20:49PM +0530, Keerthy wrote:
->> Cut down the shutdown time from 2 seconds to 1 sec. In case of roll
->> over try again.
->>
->> Signed-off-by: Keerthy <j-keerthy@ti.com>
->> ---
->>   drivers/rtc/rtc-omap.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/rtc/rtc-omap.c b/drivers/rtc/rtc-omap.c
->> index 323ff55..14f2241 100644
->> --- a/drivers/rtc/rtc-omap.c
->> +++ b/drivers/rtc/rtc-omap.c
->> @@ -441,11 +441,12 @@ static void omap_rtc_power_off(void)
->>   	val = rtc_readl(rtc, OMAP_RTC_PMIC_REG);
->>   	rtc_writel(rtc, OMAP_RTC_PMIC_REG, val | OMAP_RTC_PMIC_POWER_EN_EN);
->>   
->> -	/* set alarm two seconds from now */
->> +again:
->> +	/* set alarm one second from now */
->>   	omap_rtc_read_time_raw(rtc, &tm);
->>   	bcd2tm(&tm);
->>   	rtc_tm_to_time(&tm, &now);
->> -	rtc_time_to_tm(now + 2, &tm);
->> +	rtc_time_to_tm(now + 1, &tm);
->>   
->>   	if (tm2bcd(&tm) < 0) {
->>   		dev_err(&rtc->rtc->dev, "power off failed\n");
->> @@ -455,6 +456,10 @@ static void omap_rtc_power_off(void)
->>   
->>   	rtc_wait_not_busy(rtc);
->>   
->> +	/* Our calculations started right before the rollover, try again */
->> +	if (seconds != rtc_read(omap_rtc_power_off_rtc, OMAP_RTC_SECONDS_REG))
->> +		goto again;
+On Wed, Jul 11, 2018 at 08:42:11AM -0700, Paul E. McKenney wrote:
+> On Wed, Jul 11, 2018 at 10:43:45AM +0100, Will Deacon wrote:
+> > Hi Alan,
+> > 
+> > On Tue, Jul 10, 2018 at 02:18:13PM -0400, Alan Stern wrote:
+> > > More than one kernel developer has expressed the opinion that the LKMM
+> > > should enforce ordering of writes by locking.  In other words, given
+> > > the following code:
+> > > 
+> > > 	WRITE_ONCE(x, 1);
+> > > 	spin_unlock(&s):
+> > > 	spin_lock(&s);
+> > > 	WRITE_ONCE(y, 1);
+> > > 
+> > > the stores to x and y should be propagated in order to all other CPUs,
+> > > even though those other CPUs might not access the lock s.  In terms of
+> > > the memory model, this means expanding the cumul-fence relation.
+> > > 
+> > > Locks should also provide read-read (and read-write) ordering in a
+> > > similar way.  Given:
+> > > 
+> > > 	READ_ONCE(x);
+> > > 	spin_unlock(&s);
+> > > 	spin_lock(&s);
+> > > 	READ_ONCE(y);		// or WRITE_ONCE(y, 1);
+> > > 
+> > > the load of x should be executed before the load of (or store to) y.
+> > > The LKMM already provides this ordering, but it provides it even in
+> > > the case where the two accesses are separated by a release/acquire
+> > > pair of fences rather than unlock/lock.  This would prevent
+> > > architectures from using weakly ordered implementations of release and
+> > > acquire, which seems like an unnecessary restriction.  The patch
+> > > therefore removes the ordering requirement from the LKMM for that
+> > > case.
+> > > 
+> > > All the architectures supported by the Linux kernel (including RISC-V)
+> > > do provide this ordering for locks, albeit for varying reasons.
+> > > Therefore this patch changes the model in accordance with the
+> > > developers' wishes.
+> > > 
+> > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > 
+> > Thanks, I'm happy with this version of the patch:
+> > 
+> > Reviewed-by: Will Deacon <will.deacon@arm.com>
 > 
-> First, this doesn't even compile.
+> I have applied your Reviewed-by, and thank you both!
+> 
+> Given that this is a non-trivial change and given that I am posting
+> for -tip acceptance in a few days, I intend to send this one not
+> to the upcoming merge window, but to the one after that.
+> 
+> Please let me know if there is an urgent need for this to go into the
+> v4.19 merge window.
 
-My bad. seconds got introduced in patch 2 and i did not compile test 
-this one individually. Apologies for that.
+I raised some concerns in my review to v2; AFAICT, these concerns have
+not been resolved: so, until then, please feel free to add my NAK. ;-)
+
+  Andrea
+
 
 > 
-> Second, nothing is preventing the rollover from happening here after the
-> check.
-
-Okay. That window cannot be ignored. So 'now + 2' will surely solve 
-that. I will stick to that.
-
-> 
->> +
->>   	rtc_write(rtc, OMAP_RTC_ALARM2_SECONDS_REG, tm.tm_sec);
->>   	rtc_write(rtc, OMAP_RTC_ALARM2_MINUTES_REG, tm.tm_min);
->>   	rtc_write(rtc, OMAP_RTC_ALARM2_HOURS_REG, tm.tm_hour);
-> 
-> Johan
+> 							Thanx, Paul
 > 
