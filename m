@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE04C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:24:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D992C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ADEC20936
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:24:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5ADEC20936
+	by mail.kernel.org (Postfix) with ESMTP id 4FF41208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF41208EC
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732840AbeGKC0x (ORCPT
+        id S1732500AbeGKCYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 22:26:53 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45586 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732389AbeGKCYF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 10 Jul 2018 22:24:05 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45516 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732364AbeGKCYD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 22:24:03 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fd4lb-0003JE-VD; Wed, 11 Jul 2018 02:22:07 +0000
+        id 1fd4la-0003Hi-Np; Wed, 11 Jul 2018 02:22:06 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [RFC][PATCH 18/42] introduce FMODE_CREATED and switch to it
-Date:   Wed, 11 Jul 2018 03:21:42 +0100
-Message-Id: <20180711022206.12571-18-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH 06/42] turn filp_clone_open() into inline wrapper for dentry_open()
+Date:   Wed, 11 Jul 2018 03:21:30 +0100
+Message-Id: <20180711022206.12571-6-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
 References: <20180711021136.GN30522@ZenIV.linux.org.uk>
@@ -43,237 +43,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-Parallel to FILE_CREATED, goes into ->f_mode instead of *opened.
-NFS is a bit of a wart here - it doesn't have file at the point
-where FILE_CREATED used to be set, so we need to propagate it
-there (for now).  IMA is another one (here and everywhere)...
+it's exactly the same thing as
+	dentry_open(&file->f_path, file->f_flags, file->f_cred)
 
-Note that this needs do_dentry_open() to leave old bits in ->f_mode
-alone - we want it to preserve FMODE_CREATED if it had been already
-set (no other bit can be there).
+... and rename it to file_clone_open(), while we are at it.
+'filp' naming convention is bogus; sure, it's "file pointer",
+but we generally don't do that kind of Hungarian notation.
+Some of the instances have too many callers to touch, but this
+one has only two, so let's sanitize it while we can...
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/9p/vfs_inode.c      |  2 +-
- fs/9p/vfs_inode_dotl.c |  2 +-
- fs/ceph/file.c         |  2 +-
- fs/cifs/dir.c          |  2 +-
- fs/fuse/dir.c          |  2 +-
- fs/gfs2/inode.c        |  2 +-
- fs/namei.c             | 15 ++++++++-------
- fs/nfs/dir.c           |  5 ++++-
- fs/nfs/nfs4proc.c      |  2 +-
- fs/open.c              |  2 +-
- include/linux/fs.h     |  1 +
- 11 files changed, 21 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/drm_lease.c |  2 +-
+ fs/binfmt_misc.c            |  2 +-
+ fs/open.c                   | 20 --------------------
+ include/linux/fs.h          |  5 ++++-
+ 4 files changed, 6 insertions(+), 23 deletions(-)
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 42e102e2e74a..566929792480 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -925,7 +925,7 @@ v9fs_vfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
- 		v9fs_cache_inode_set_cookie(d_inode(dentry), file);
+diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
+index d638c0fb3418..b54fb78a283c 100644
+--- a/drivers/gpu/drm/drm_lease.c
++++ b/drivers/gpu/drm/drm_lease.c
+@@ -553,7 +553,7 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
  
--	*opened |= FILE_CREATED;
-+	file->f_mode |= FMODE_CREATED;
- out:
- 	dput(res);
- 	return err;
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 7f6ae21a27b3..ee65db5c7eb0 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -358,7 +358,7 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
- 	file->private_data = ofid;
- 	if (v9ses->cache == CACHE_LOOSE || v9ses->cache == CACHE_FSCACHE)
- 		v9fs_cache_inode_set_cookie(inode, file);
--	*opened |= FILE_CREATED;
-+	file->f_mode |= FMODE_CREATED;
- out:
- 	v9fs_put_acl(dacl, pacl);
- 	dput(res);
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index ad0bed99b1d5..38a63fff7903 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -507,7 +507,7 @@ int ceph_atomic_open(struct inode *dir, struct dentry *dentry,
- 		dout("atomic_open finish_open on dn %p\n", dn);
- 		if (req->r_op == CEPH_MDS_OP_CREATE && req->r_reply_info.has_create_ino) {
- 			ceph_init_inode_acls(d_inode(dentry), &acls);
--			*opened |= FILE_CREATED;
-+			file->f_mode |= FMODE_CREATED;
- 		}
- 		err = finish_open(file, dentry, ceph_open, opened);
- 	}
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index ddae52bd1993..21d7e393900e 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -539,7 +539,7 @@ cifs_atomic_open(struct inode *inode, struct dentry *direntry,
- 	}
+ 	/* Clone the lessor file to create a new file for us */
+ 	DRM_DEBUG_LEASE("Allocating lease file\n");
+-	lessee_file = filp_clone_open(lessor_file);
++	lessee_file = file_clone_open(lessor_file);
+ 	if (IS_ERR(lessee_file)) {
+ 		ret = PTR_ERR(lessee_file);
+ 		goto out_lessee;
+diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
+index 4b5fff31ef27..aa4a7a23ff99 100644
+--- a/fs/binfmt_misc.c
++++ b/fs/binfmt_misc.c
+@@ -205,7 +205,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
+ 		goto error;
  
- 	if ((oflags & (O_CREAT | O_EXCL)) == (O_CREAT | O_EXCL))
--		*opened |= FILE_CREATED;
-+		file->f_mode |= FMODE_CREATED;
- 
- 	rc = finish_open(file, direntry, generic_file_open, opened);
- 	if (rc) {
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 56231b31f806..d4bdcf51e6cb 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -508,7 +508,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 		goto no_open;
- 
- 	/* Only creates */
--	*opened |= FILE_CREATED;
-+	file->f_mode |= FMODE_CREATED;
- 
- 	if (fc->no_create)
- 		goto mknod;
-diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
-index 67c588edf8d8..4aba00a6004b 100644
---- a/fs/gfs2/inode.c
-+++ b/fs/gfs2/inode.c
-@@ -767,7 +767,7 @@ static int gfs2_create_inode(struct inode *dir, struct dentry *dentry,
- 	mark_inode_dirty(inode);
- 	d_instantiate(dentry, inode);
- 	if (file) {
--		*opened |= FILE_CREATED;
-+		file->f_mode |= FMODE_CREATED;
- 		error = finish_open(file, dentry, gfs2_open_common, opened);
- 	}
- 	gfs2_glock_dq_uninit(ghs);
-diff --git a/fs/namei.c b/fs/namei.c
-index ad8d53c3243c..33f92918e051 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3061,7 +3061,7 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
- 		 * permission here.
- 		 */
- 		int acc_mode = op->acc_mode;
--		if (*opened & FILE_CREATED) {
-+		if (file->f_mode & FMODE_CREATED) {
- 			WARN_ON(!(open_flag & O_CREAT));
- 			fsnotify_create(dir, dentry);
- 			acc_mode = 0;
-@@ -3077,7 +3077,7 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
- 				dput(dentry);
- 				dentry = file->f_path.dentry;
- 			}
--			if (*opened & FILE_CREATED)
-+			if (file->f_mode & FMODE_CREATED)
- 				fsnotify_create(dir, dentry);
- 			if (unlikely(d_is_negative(dentry))) {
- 				error = -ENOENT;
-@@ -3126,7 +3126,7 @@ static int lookup_open(struct nameidata *nd, struct path *path,
- 	if (unlikely(IS_DEADDIR(dir_inode)))
- 		return -ENOENT;
- 
--	*opened &= ~FILE_CREATED;
-+	file->f_mode &= ~FMODE_CREATED;
- 	dentry = d_lookup(dir, &nd->last);
- 	for (;;) {
- 		if (!dentry) {
-@@ -3211,7 +3211,7 @@ static int lookup_open(struct nameidata *nd, struct path *path,
- 
- 	/* Negative dentry, just create the file */
- 	if (!dentry->d_inode && (open_flag & O_CREAT)) {
--		*opened |= FILE_CREATED;
-+		file->f_mode |= FMODE_CREATED;
- 		audit_inode_child(dir_inode, dentry, AUDIT_TYPE_CHILD_CREATE);
- 		if (!dir_inode->i_op->create) {
- 			error = -EACCES;
-@@ -3318,7 +3318,7 @@ static int do_last(struct nameidata *nd,
- 		if (error)
- 			goto out;
- 
--		if ((*opened & FILE_CREATED) ||
-+		if ((file->f_mode & FMODE_CREATED) ||
- 		    !S_ISREG(file_inode(file)->i_mode))
- 			will_truncate = false;
- 
-@@ -3326,7 +3326,7 @@ static int do_last(struct nameidata *nd,
- 		goto opened;
- 	}
- 
--	if (*opened & FILE_CREATED) {
-+	if (file->f_mode & FMODE_CREATED) {
- 		/* Don't check for write permission, don't truncate */
- 		open_flag &= ~O_TRUNC;
- 		will_truncate = false;
-@@ -3400,7 +3400,8 @@ static int do_last(struct nameidata *nd,
- 	if (error)
- 		goto out;
- opened:
--	error = ima_file_check(file, op->acc_mode, *opened);
-+	error = ima_file_check(file, op->acc_mode,
-+				file->f_mode & FMODE_CREATED ? FILE_CREATED : 0);
- 	if (!error && will_truncate)
- 		error = handle_truncate(file);
- out:
-diff --git a/fs/nfs/dir.c b/fs/nfs/dir.c
-index 7a9c14426855..0ac50983fc4e 100644
---- a/fs/nfs/dir.c
-+++ b/fs/nfs/dir.c
-@@ -1461,6 +1461,7 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 	struct inode *inode;
- 	unsigned int lookup_flags = 0;
- 	bool switched = false;
-+	int created = 0;
- 	int err;
- 
- 	/* Expect a negative dentry */
-@@ -1521,7 +1522,9 @@ int nfs_atomic_open(struct inode *dir, struct dentry *dentry,
- 		goto out;
- 
- 	trace_nfs_atomic_open_enter(dir, ctx, open_flags);
--	inode = NFS_PROTO(dir)->open_context(dir, ctx, open_flags, &attr, opened);
-+	inode = NFS_PROTO(dir)->open_context(dir, ctx, open_flags, &attr, &created);
-+	if (created)
-+		file->f_mode |= FMODE_CREATED;
- 	if (IS_ERR(inode)) {
- 		err = PTR_ERR(inode);
- 		trace_nfs_atomic_open_exit(dir, ctx, open_flags, err);
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index ed45090e4df6..2c4df0ffbca1 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -2951,7 +2951,7 @@ static int _nfs4_do_open(struct inode *dir,
- 		}
- 	}
- 	if (opened && opendata->file_created)
--		*opened |= FILE_CREATED;
-+		*opened = 1;
- 
- 	if (pnfs_use_threshold(ctx_th, opendata->f_attr.mdsthreshold, server)) {
- 		*ctx_th = opendata->f_attr.mdsthreshold;
+ 	if (fmt->flags & MISC_FMT_OPEN_FILE) {
+-		interp_file = filp_clone_open(fmt->interp_file);
++		interp_file = file_clone_open(fmt->interp_file);
+ 		if (!IS_ERR(interp_file))
+ 			deny_write_access(interp_file);
+ 	} else {
 diff --git a/fs/open.c b/fs/open.c
-index 1f379656feab..e8ae46a740b6 100644
+index d0e955b558ad..76c56966e297 100644
 --- a/fs/open.c
 +++ b/fs/open.c
-@@ -731,7 +731,7 @@ static int do_dentry_open(struct file *f,
- 	static const struct file_operations empty_fops = {};
- 	int error;
+@@ -1063,26 +1063,6 @@ struct file *file_open_root(struct dentry *dentry, struct vfsmount *mnt,
+ }
+ EXPORT_SYMBOL(file_open_root);
  
--	f->f_mode = OPEN_FMODE(f->f_flags) | FMODE_LSEEK |
-+	f->f_mode |= OPEN_FMODE(f->f_flags) | FMODE_LSEEK |
- 				FMODE_PREAD | FMODE_PWRITE;
- 
- 	path_get(&f->f_path);
+-struct file *filp_clone_open(struct file *oldfile)
+-{
+-	struct file *file;
+-	int retval;
+-
+-	file = get_empty_filp();
+-	if (IS_ERR(file))
+-		return file;
+-
+-	file->f_flags = oldfile->f_flags;
+-	retval = vfs_open(&oldfile->f_path, file, oldfile->f_cred);
+-	if (retval) {
+-		put_filp(file);
+-		return ERR_PTR(retval);
+-	}
+-
+-	return file;
+-}
+-EXPORT_SYMBOL(filp_clone_open);
+-
+ long do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
+ {
+ 	struct open_flags op;
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 05f34726e29c..ca668c7e48a7 100644
+index aa9b4c169ed2..c4ca4c9c1130 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -149,6 +149,7 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
- #define FMODE_CAN_WRITE         ((__force fmode_t)0x40000)
+@@ -2422,7 +2422,10 @@ extern struct file *filp_open(const char *, int, umode_t);
+ extern struct file *file_open_root(struct dentry *, struct vfsmount *,
+ 				   const char *, int, umode_t);
+ extern struct file * dentry_open(const struct path *, int, const struct cred *);
+-extern struct file *filp_clone_open(struct file *);
++static inline struct file *file_clone_open(struct file *file)
++{
++	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
++}
+ extern int filp_close(struct file *, fl_owner_t id);
  
- #define FMODE_OPENED		((__force fmode_t)0x80000)
-+#define FMODE_CREATED		((__force fmode_t)0x100000)
- 
- /* File was opened by fanotify and shouldn't generate fanotify events */
- #define FMODE_NONOTIFY		((__force fmode_t)0x4000000)
+ extern struct filename *getname_flags(const char __user *, int, int *);
 -- 
 2.11.0
 
