@@ -2,189 +2,148 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55DEEC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F31E7C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0179220C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:39:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0179220C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id AB59220C0E
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 18:40:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="ZXrRUSVK";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vkp97IJC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB59220C0E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387401AbeGKSpT (ORCPT
+        id S2389319AbeGKSpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 14:45:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48696 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726429AbeGKSpS (ORCPT
+        Wed, 11 Jul 2018 14:45:33 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:44541 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbeGKSpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 14:45:18 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BId1sW074493
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 14:39:42 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k5nu5krk6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 14:39:42 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Wed, 11 Jul 2018 19:39:40 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 11 Jul 2018 19:39:37 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BIdbCD37093562
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 11 Jul 2018 18:39:37 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AC011A405E;
-        Wed, 11 Jul 2018 21:39:58 +0100 (BST)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E924A4055;
-        Wed, 11 Jul 2018 21:39:58 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.145.165.185])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 11 Jul 2018 21:39:58 +0100 (BST)
-Subject: Re: [PATCH v2] kvm/x86: Inform RCU of quiescent state when entering
- guest mode
-To:     paulmck@linux.vnet.ibm.com, David Woodhouse <dwmw2@infradead.org>
-Cc:     peterz@infradead.org, mhillenb@amazon.de,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20180711174843.GX3593@linux.vnet.ibm.com>
- <20180711180101.3711464-1-dwmw2@infradead.org>
- <20180711182053.GA3593@linux.vnet.ibm.com>
- <20180711183645.GA23820@linux.vnet.ibm.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Wed, 11 Jul 2018 20:39:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 11 Jul 2018 14:45:33 -0400
+Received: by mail-ua0-f195.google.com with SMTP id k25-v6so7888743uao.11
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 11:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ly5UeIMmbBAWL4anmPaLeDPYCXhfwXSmsgADmnHUP+U=;
+        b=ZXrRUSVK8zKg8W+gOuoQp01SBf1ic5/oouFyE+NtSqFXydiR+7shfqCan6U+k0iWSw
+         Fgktx3LpCEQS0sj4FrGaHvJgb3R15H36osooxbAU3y/P3HK+/y4G7IiUHWvqw4S41DZx
+         CYgMJPLaiKrKX0H5OTJvhL0PKlZYaEiJvI5bHAwocok0sX0IPOzK3r4/MqHLlA5y5kpd
+         0SEUN7+X4aLwSwQQbfDNARDj+wpyLCbitrW9Y7qmeaR6g5PglaDX7/riJy0D4bL5nHEO
+         15JqZvC/b9yhpIBOhjOgnPdfyzPIyQqtcTVR+LMzN0lvmAETRS0fNYOoh42o1qPeQVEa
+         nVTw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ly5UeIMmbBAWL4anmPaLeDPYCXhfwXSmsgADmnHUP+U=;
+        b=Vkp97IJCF4mKdScALYUegysTTsk/sLUtWRKxgRpRA/uxYiuLXKASM3o9PLpg5vLanw
+         qq0HA/EKINzxvjZWkXUG4JbVjSOi89pcJkXcRtk7RNz2FdJgnS4lgp6sLlex0KIN0FbQ
+         so6krHPY47EEqA/znRrzifE4gdJvHJmGLERzU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=ly5UeIMmbBAWL4anmPaLeDPYCXhfwXSmsgADmnHUP+U=;
+        b=YyVdND5uUkRtfl4J+KqcaP1IoOrbzYnu5KpSrWI3lT7oc5wuZZlhZSgJzYJDmXXvfp
+         bpfQhiPlauIgmn/KaR11Ax3bQUrTvYsoljpt2fc4uTHK6GYawTaGnOHiyri/eA1WeyN9
+         Bdr0irxR2pS804zMYtYRtG4sFnbLyDc6YbqJhQJr+SCGCpXTFK8AogMt9eb9HWDb9hZc
+         5y9xkuku3eS1gXw1966d9pwd4JL3slGLNzfcDmxNLjvQEPu5yRB21pSFK2cdiDa5nG6c
+         xv9k2sS1gVF6UBXJjIveqdFijzPkLf+vXIZBn7KdhOWqqpTngVvgOjshaoQz1EUT05SD
+         HJQA==
+X-Gm-Message-State: APt69E28u+uAtkcjgv04Kuc1AogpSIIeRYxGoZOxqxZGTkjtCVnW1KEq
+        MSRCgi+Yk5jwK3WmKBQSDXlfByG6ULlcXp3oK32yZM16DI8=
+X-Google-Smtp-Source: AAOMgpeariJbuxlUEb0YK062H2KsCUAyyLMyM6+xUR0RxczrnOHsbdRGJkpvyY4Xmb+7d0K9KboU7H8QzYqMdu8OedI=
+X-Received: by 2002:ab0:1163:: with SMTP id g35-v6mr18979732uac.135.1531334396615;
+ Wed, 11 Jul 2018 11:39:56 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180711183645.GA23820@linux.vnet.ibm.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18071118-0020-0000-0000-000002A57B01
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071118-0021-0000-0000-000020F1C314
-Message-Id: <62e945ee-a58e-f9b3-279c-74cd0f5809da@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807110197
+Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 11:39:23
+ -0700 (PDT)
+In-Reply-To: <ee06e59ae84a9b9013480c58bd4678e44d201a42.1531135999.git.amit.kucheria@linaro.org>
+References: <cover.1531135999.git.amit.kucheria@linaro.org> <ee06e59ae84a9b9013480c58bd4678e44d201a42.1531135999.git.amit.kucheria@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 11 Jul 2018 11:39:23 -0700
+X-Google-Sender-Auth: 03KLdnzSjN1a92BRg_mfBv1v8U4
+Message-ID: <CAD=FV=X3B3wKv3jNLM8f9YvdRNkp6CNF1JmE+bMTBnR4CMvyww@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] dt: qcom: 8996: thermal: Move to DT initialisation
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        smohanad@codeaurora.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+On Mon, Jul 9, 2018 at 4:43 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
+> We also split up the regmap address space into two, one for the TM
+> registers, the other for the SROT registers. This was required to deal with
+> different address offsets for the TM and SROT registers across different
+> SoC families.
+
+The splitting into two regions is actually optional and that should
+probably be mentioned in the commit message.
 
 
-On 07/11/2018 08:36 PM, Paul E. McKenney wrote:
-> On Wed, Jul 11, 2018 at 11:20:53AM -0700, Paul E. McKenney wrote:
->> On Wed, Jul 11, 2018 at 07:01:01PM +0100, David Woodhouse wrote:
->>> From: David Woodhouse <dwmw@amazon.co.uk>
->>>
->>> RCU can spend long periods of time waiting for a CPU which is actually in
->>> KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
->>> modes, and don't wait for it.
->>>
->>> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
->>
->> And idiot here forgot about some of the debugging code in RCU's dyntick-idle
->> code.  I will reply with a fixed patch.
->>
->> The code below works just fine as long as you don't enable CONFIG_RCU_EQS_DEBUG,
->> so should be OK for testing, just not for mainline.
-> 
-> And here is the updated code that allegedly avoids splatting when run with
-> CONFIG_RCU_EQS_DEBUG.
-> 
-> Thoughts?
-> 
-> 							Thanx, Paul
-> 
-> ------------------------------------------------------------------------
-> 
-> commit 12cd59e49cf734f907f44b696e2c6e4b46a291c3
-> Author: David Woodhouse <dwmw@amazon.co.uk>
-> Date:   Wed Jul 11 19:01:01 2018 +0100
-> 
->     kvm/x86: Inform RCU of quiescent state when entering guest mode
->     
->     RCU can spend long periods of time waiting for a CPU which is actually in
->     KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
->     modes, and don't wait for it.
->     
->     Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
->     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->     [ paulmck: Adjust to avoid bad advice I gave to dwmw, avoid WARN_ON()s. ]
-> 
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 0046aa70205a..b0c82f70afa7 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -7458,7 +7458,9 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
->  		vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_RELOAD;
->  	}
-> 
-> +	rcu_kvm_enter();
->  	kvm_x86_ops->run(vcpu);
-> +	rcu_kvm_exit();
+> Since tsens-common.c/init_common() currently only registers one address
+> space, the order is important (TM before SROT). This is OK since the code
+> doesn't really use the SROT functionality yet.
 
-As indicated in my other mail. This is supposed to be handled in the guest_enter|exit_ calls around
-the run function. This would also handle other architectures. So if the guest_enter_irqoff code is
-not good enough, we should rather fix that instead of adding another rcu hint.
+Nowhere in the commit message does this say you're also adding a 2nd
+block of thermal sensors.  It seems like you should say that
+somewhere.
 
+...and it should also be obvious in ${SUBJECT}.
+
+
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 8c7f9ca..6c8a857 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -461,7 +461,17 @@
+>
+>                 tsens0: thermal-sensor@4a8000 {
+>                         compatible = "qcom,msm8996-tsens";
+> -                       reg = <0x4a8000 0x2000>;
+> +                       reg = <0x4a9000 0x1000>, /* TM */
+> +                             <0x4a8000 0x1000>; /* SROT */
+
+Note that the unit address is supposed to match the first "reg"
+address, so either these should be reversed or you should update your
+node name.  AKA your node name should be this now:
+
+tsens0: thermal-sensor@4a9000
+
+
+> +                       #qcom,sensors = <13>;
+
+As per my responses to other patches, " #qcom,sensors" is undocumented
+and doesn't appear to be read by the driver.
