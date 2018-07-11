@@ -2,172 +2,82 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8A5C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D15C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B830D2089B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:22:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B830D2089B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 29CA4208AD
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:23:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29CA4208AD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbeGKIZq (ORCPT
+        id S1732286AbeGKI04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:25:46 -0400
-Received: from mail-sz2.amlogic.com ([211.162.65.114]:22440 "EHLO
-        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726671AbeGKIZp (ORCPT
+        Wed, 11 Jul 2018 04:26:56 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:44984 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726337AbeGKI04 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:25:45 -0400
-X-Greylist: delayed 740 seconds by postgrey-1.27 at vger.kernel.org; Wed, 11 Jul 2018 04:25:42 EDT
-Received: from [10.28.16.194] (10.28.16.194) by mail-sz2.amlogic.com
- (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 11 Jul
- 2018 16:22:34 +0800
-Subject: Re: [PATCH 2/3] dt-bindings: clk: meson-g12a: Add G12A EE Clock
- Bindings
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     <jbrunet@baylibre.com>, Neil Armstrong <narmstrong@baylibre.com>,
-        <qianggui.song@amlogic.com>, <devicetree@vger.kernel.org>,
-        <sboyd@kernel.org>, <khilman@baylibre.com>,
-        <mturquette@baylibre.com>, <yixun.lan@amlogic.com>,
-        <linux-kernel@vger.kernel.org>, <bo.yang@amlogic.com>,
-        <qiufang.dai@amlogic.com>, <linux-arm-kernel@lists.infradead.org>,
-        <carlo@caione.org>, <linux-amlogic@lists.infradead.org>,
-        <sunny.luo@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <xingyu.chen@amlogic.com>
-References: <1531134767-29927-1-git-send-email-jian.hu@amlogic.com>
- <1531134767-29927-3-git-send-email-jian.hu@amlogic.com>
- <CAFBinCB6LS=PT1cw-j-LZ+vWo-RFe81qVZ6uLeGfWKtKfHz7ag@mail.gmail.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <e4d9b2ae-45ce-59d1-3caa-b9b3f84975cf@amlogic.com>
-Date:   Wed, 11 Jul 2018 16:22:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 11 Jul 2018 04:26:56 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fdAPa-0005fC-UZ; Wed, 11 Jul 2018 08:23:47 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Matt Porter <mporter@kernel.crashing.org>,
+        Alexandre Bounine <alex.bou9@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org
+Subject: [PATCH] rapidio: remove redundant pointer md
+Date:   Wed, 11 Jul 2018 09:23:46 +0100
+Message-Id: <20180711082346.5223-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCB6LS=PT1cw-j-LZ+vWo-RFe81qVZ6uLeGfWKtKfHz7ag@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.16.194]
-X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
- (10.28.11.6)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Colin Ian King <colin.king@canonical.com>
 
+Pointer md is being assigned but is never used hence it is redundant
+and can be removed.
 
-On 2018/7/10 6:13, Martin Blumenstingl wrote:
-> On Mon, Jul 9, 2018 at 1:13 PM Jian Hu <jian.hu@amlogic.com> wrote:
->>
->> Add dt-bindings headers for the Meson-G12A's Everything-Else
->> part clock controller.
-> I wonder if this should be folded into patch #1 along with an update
-> to Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt so
-> it's clear which header has to be used for G12A
-> 
-As your suggestions, I will squash patch 1 and 2.
+Cleans up clang warning:
+warning: variable 'md' set but not used [-Wunused-but-set-variable]
 
->>
->> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> ---
->>   include/dt-bindings/clock/g12a-clkc.h | 93 +++++++++++++++++++++++++++++++++++
->>   1 file changed, 93 insertions(+)
->>   create mode 100644 include/dt-bindings/clock/g12a-clkc.h
->>
->> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
->> new file mode 100644
->> index 0000000..1473225
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/g12a-clkc.h
->> @@ -0,0 +1,93 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Meson-G12A clock tree IDs
->> + *
->> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
->> + */
->> +
->> +#ifndef __G12A_CLKC_H
->> +#define __G12A_CLKC_H
->> +
->> +#define CLKID_SYS_PLL                          0
->> +#define CLKID_FIXED_PLL                                1
->> +#define CLKID_FCLK_DIV2                                2
->> +#define CLKID_FCLK_DIV3                                3
->> +#define CLKID_FCLK_DIV4                                4
->> +#define CLKID_FCLK_DIV5                                5
->> +#define CLKID_FCLK_DIV7                                6
->> +#define CLKID_GP0_PLL                          7
->> +#define CLKID_CLK81                                    10
->> +#define CLKID_MPLL0                                    11
->> +#define CLKID_MPLL1                                    12
->> +#define CLKID_MPLL2                                    13
->> +#define CLKID_MPLL3                                    14
->> +#define CLKID_DDR                                      15
->> +#define CLKID_DOS                                      16
->> +#define CLKID_AUDIO_LOCKER                     17
->> +#define CLKID_MIPI_DSI_HOST                    18
->> +#define CLKID_ETH_PHY                          19
->> +#define CLKID_ISA                                      20
->> +#define CLKID_PL301                                    21
->> +#define CLKID_PERIPHS                          22
->> +#define CLKID_SPICC0                           23
->> +#define CLKID_I2C                                      24
->> +#define CLKID_SANA                                     25
->> +#define CLKID_SD                                       26
->> +#define CLKID_RNG0                                     27
->> +#define CLKID_UART0                                    28
->> +#define CLKID_SPICC1                           29
->> +#define CLKID_HIU_IFACE                                30
->> +#define CLKID_MIPI_DSI_PHY                     31
->> +#define CLKID_ASSIST_MISC                      32
->> +#define CLKID_SD_EMMC_A                                33
->> +#define CLKID_SD_EMMC_B                                34
->> +#define CLKID_SD_EMMC_C                                35
->> +#define CLKID_AUDIO_CODEC                      36
->> +#define CLKID_AUDIO                                    37
->> +#define CLKID_ETH                                      38
->> +#define CLKID_DEMUX                                    39
->> +#define CLKID_AUDIO_IFIFO                      40
->> +#define CLKID_ADC                                      41
->> +#define CLKID_UART1                                    42
->> +#define CLKID_G2D                                      43
->> +#define CLKID_RESET                                    44
->> +#define CLKID_PCIE_COMB                                45
->> +#define CLKID_PARSER                           46
->> +#define CLKID_USB                                      47
->> +#define CLKID_PCIE_PHY                         48
->> +#define CLKID_AHB_ARB0                         49
->> +#define CLKID_AHB_DATA_BUS                     50
->> +#define CLKID_AHB_CTRL_BUS                     51
->> +#define CLKID_HTX_HDCP22                       52
->> +#define CLKID_HTX_PCLK                         53
->> +#define CLKID_BT656                                    54
->> +#define CLKID_USB1_DDR_BRIDGE          55
->> +#define CLKID_MMC_PCLK                         56
->> +#define CLKID_UART2                                    57
->> +#define CLKID_VPU_INTR                         58
->> +#define CLKID_GIC                                      59
->> +#define CLKID_SD_EMMC_B_CLK0           60
->> +#define CLKID_SD_EMMC_C_CLK0           61
->> +#define CLKID_HIFI_PLL                         71
->> +
-> is this empty line here on purpose? a comment would be great if
-> there's a reason behind it (there's already a gap in the numbering
-> between CLKID_GP0_PLL and CLKID_CLK81, but there's no empty line there
-> - either way is fine, please just keep it consistent)
-> 
-I will drop the empty line, The gaps have define in 
-drivers/clk/meson/g12a.h file.
-> 
-> Regards
-> Martin
-> 
-> .
-> 
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/rapidio/devices/rio_mport_cdev.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/rapidio/devices/rio_mport_cdev.c b/drivers/rapidio/devices/rio_mport_cdev.c
+index a8cb8d2f2abb..cbe467ff1aba 100644
+--- a/drivers/rapidio/devices/rio_mport_cdev.c
++++ b/drivers/rapidio/devices/rio_mport_cdev.c
+@@ -1006,7 +1006,6 @@ static int rio_mport_transfer_ioctl(struct file *filp, void __user *arg)
+ static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
+ {
+ 	struct mport_cdev_priv *priv;
+-	struct mport_dev *md;
+ 	struct rio_async_tx_wait w_param;
+ 	struct mport_dma_req *req;
+ 	dma_cookie_t cookie;
+@@ -1016,7 +1015,6 @@ static int rio_mport_wait_for_async_dma(struct file *filp, void __user *arg)
+ 	int ret;
+ 
+ 	priv = (struct mport_cdev_priv *)filp->private_data;
+-	md = priv->md;
+ 
+ 	if (unlikely(copy_from_user(&w_param, arg, sizeof(w_param))))
+ 		return -EFAULT;
+-- 
+2.17.1
+
