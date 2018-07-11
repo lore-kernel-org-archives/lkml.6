@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1568BC1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B644C38A24
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE53520C0B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C052420C0B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 21:03:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Oki2hAGh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE53520C0B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CLdHXgiO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C052420C0B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390470AbeGKVJV (ORCPT
+        id S2389082AbeGKVJV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 11 Jul 2018 17:09:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47004 "EHLO
+Received: from bombadil.infradead.org ([198.137.202.133]:47000 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387727AbeGKVIw (ORCPT
+        with ESMTP id S2390322AbeGKVIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Jul 2018 17:08:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -31,14 +31,14 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Hs8EMjkyEQxDuSEGOg8/90rPeegDKI9TpdBvQ+/5ZKs=; b=Oki2hAGhnigvrsSCMU42laeUO
-        2FQk3D1pUp+7fwZ9H5MPMjoBTkwvASdpHy92HMvbq8C+EZpdSSng/M52YutBwJmRH1TEJhsSFSQ9L
-        AW4uJ4ymm5khh2LUD9skkEyYcx3vj6ddgfRe5arwQQoHGJnxuIO8XStKAuNFYi3Eu5c8IZ8s8LjaH
-        ILZxiOJ0cDoA6NZiWs8S91yU4CN6op00VgSKogAp8cwGZ8iesJ32b2eP7Yi6+5TyX1tq3oH88D2vd
-        BjDA2JrYVtLjsSuyL0tyXWZQhrFIFatOCVImQiTVF4rwuKTV4gYQl2fwc8rd0KtoYgvDpkxgyQ8IB
-        dbB3DMcug==;
+         bh=Txkf7OXUzf6Cil7wD8wvzP02ZAJG4PjMRBP7TzEU6YM=; b=CLdHXgiO2FwShk6hu++SOAUev
+        C5RpkmfX5o++OQ/OWYOJSCqCHWZSWQj5nDb7yhexN7ve4D9tEiTy4kvbfGocX5jPF0HWoQQeC7kb5
+        JJf1R0tcHvRQzW3wd2Yw0ItRG0+oAvOO9xKW6vhTUo1u3aZvWf47ngB+Ich+33ABUBCtiHsEwzcX1
+        +ccfDYJpbiN+1mBe5P6xThL34QzZxO98OsMD5PKovJwZk5u1IJPEhk1B9QSnGyFw4HhcnZnyEOCgm
+        wZLOBUE/4ViC0mVxVUVpYBspYAM7NXYPFDI9ZgCi/D5hxNGYBnNi8Ezgq9x1hWflA4rBxbxRQp9gR
+        tkC8EliLg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdMFq-0005AK-Ay; Wed, 11 Jul 2018 21:02:30 +0000
+        id 1fdMFq-0005AF-5x; Wed, 11 Jul 2018 21:02:30 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     Dominique Martinet <asmadeus@codewreck.org>
 Cc:     Matthew Wilcox <willy@infradead.org>,
@@ -47,9 +47,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>,
         Eric Van Hensbergen <ericvh@gmail.com>,
         Ron Minnich <rminnich@sandia.gov>,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 4/6] 9p: Embed wait_queue_head into p9_req_t
-Date:   Wed, 11 Jul 2018 14:02:23 -0700
-Message-Id: <20180711210225.19730-5-willy@infradead.org>
+Subject: [PATCH v2 3/6] 9p: Replace the fidlist with an IDR
+Date:   Wed, 11 Jul 2018 14:02:22 -0700
+Message-Id: <20180711210225.19730-4-willy@infradead.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20180711210225.19730-1-willy@infradead.org>
 References: <20180711210225.19730-1-willy@infradead.org>
@@ -58,109 +58,185 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On a 64-bit system, the wait_queue_head_t is 24 bytes while the pointer
-to it is 8 bytes.  Growing the p9_req_t by 16 bytes is better than
-performing a 24-byte memory allocation.
+The p9_idpool being used to allocate the IDs uses an IDR to allocate
+the IDs ... which we then keep in a doubly-linked list, rather than in
+the IDR which allocated them.  We can use an IDR directly which saves
+two pointers per p9_fid, and a tiny memory allocation per p9_client.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- include/net/9p/client.h |  2 +-
- net/9p/client.c         | 19 +++++--------------
- net/9p/trans_virtio.c   |  2 +-
- 3 files changed, 7 insertions(+), 16 deletions(-)
+ include/net/9p/client.h |  9 +++------
+ net/9p/client.c         | 44 +++++++++++++++--------------------------
+ 2 files changed, 19 insertions(+), 34 deletions(-)
 
 diff --git a/include/net/9p/client.h b/include/net/9p/client.h
-index e405729cd1c7..0fa0fbab33b0 100644
+index 7af9d769b97d..e405729cd1c7 100644
 --- a/include/net/9p/client.h
 +++ b/include/net/9p/client.h
-@@ -113,7 +113,7 @@ enum p9_req_status_t {
- struct p9_req_t {
- 	int status;
- 	int t_err;
--	wait_queue_head_t *wq;
-+	wait_queue_head_t wq;
- 	struct p9_fcall *tc;
- 	struct p9_fcall *rc;
- 	void *aux;
+@@ -27,6 +27,7 @@
+ #define NET_9P_CLIENT_H
+ 
+ #include <linux/utsname.h>
++#include <linux/idr.h>
+ 
+ /* Number of requests per row */
+ #define P9_ROW_MAXTAG 255
+@@ -128,8 +129,7 @@ struct p9_req_t {
+  * @proto_version: 9P protocol version to use
+  * @trans_mod: module API instantiated with this client
+  * @trans: tranport instance state and API
+- * @fidpool: fid handle accounting for session
+- * @fidlist: List of active fid handles
++ * @fids: All active FID handles
+  * @tagpool - transaction id accounting for session
+  * @reqs - 2D array of requests
+  * @max_tag - current maximum tag id allocated
+@@ -169,8 +169,7 @@ struct p9_client {
+ 		} tcp;
+ 	} trans_opts;
+ 
+-	struct p9_idpool *fidpool;
+-	struct list_head fidlist;
++	struct idr fids;
+ 
+ 	struct p9_idpool *tagpool;
+ 	struct p9_req_t *reqs[P9_ROW_MAXTAG];
+@@ -188,7 +187,6 @@ struct p9_client {
+  * @iounit: the server reported maximum transaction size for this file
+  * @uid: the numeric uid of the local user who owns this handle
+  * @rdir: readdir accounting structure (allocated on demand)
+- * @flist: per-client-instance fid tracking
+  * @dlist: per-dentry fid tracking
+  *
+  * TODO: This needs lots of explanation.
+@@ -204,7 +202,6 @@ struct p9_fid {
+ 
+ 	void *rdir;
+ 
+-	struct list_head flist;
+ 	struct hlist_node dlist;	/* list of all fids attached to a dentry */
+ };
+ 
 diff --git a/net/9p/client.c b/net/9p/client.c
-index b89c7298267c..bc8aba6b5ce0 100644
+index 389a2904b7b3..b89c7298267c 100644
 --- a/net/9p/client.c
 +++ b/net/9p/client.c
-@@ -282,8 +282,9 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
- 				return ERR_PTR(-ENOMEM);
- 			}
- 			for (col = 0; col < P9_ROW_MAXTAG; col++) {
--				c->reqs[row][col].status = REQ_STATUS_IDLE;
--				c->reqs[row][col].tc = NULL;
-+				req = &c->reqs[row][col];
-+				req->status = REQ_STATUS_IDLE;
-+				init_waitqueue_head(&req->wq);
- 			}
- 			c->max_tag += P9_ROW_MAXTAG;
- 		}
-@@ -293,13 +294,6 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
- 	col = tag % P9_ROW_MAXTAG;
+@@ -908,30 +908,29 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
+ {
+ 	int ret;
+ 	struct p9_fid *fid;
+-	unsigned long flags;
  
- 	req = &c->reqs[row][col];
--	if (!req->wq) {
--		req->wq = kmalloc(sizeof(wait_queue_head_t), GFP_NOFS);
--		if (!req->wq)
--			goto grow_failed;
--		init_waitqueue_head(req->wq);
+ 	p9_debug(P9_DEBUG_FID, "clnt %p\n", clnt);
+ 	fid = kmalloc(sizeof(struct p9_fid), GFP_KERNEL);
+ 	if (!fid)
+ 		return NULL;
+ 
+-	ret = p9_idpool_get(clnt->fidpool);
+-	if (ret < 0)
+-		goto error;
+-	fid->fid = ret;
+-
+ 	memset(&fid->qid, 0, sizeof(struct p9_qid));
+ 	fid->mode = -1;
+ 	fid->uid = current_fsuid();
+ 	fid->clnt = clnt;
+ 	fid->rdir = NULL;
+-	spin_lock_irqsave(&clnt->lock, flags);
+-	list_add(&fid->flist, &clnt->fidlist);
+-	spin_unlock_irqrestore(&clnt->lock, flags);
++	fid->fid = 0;
+ 
+-	return fid;
++	idr_preload(GFP_KERNEL);
++	spin_lock_irq(&clnt->lock);
++	ret = idr_alloc_u32(&clnt->fids, fid, &fid->fid, P9_NOFID - 1,
++			GFP_NOWAIT);
++	spin_unlock_irq(&clnt->lock);
++	idr_preload_end();
++
++	if (!ret)
++		return fid;
+ 
+-error:
+ 	kfree(fid);
+ 	return NULL;
+ }
+@@ -943,9 +942,8 @@ static void p9_fid_destroy(struct p9_fid *fid)
+ 
+ 	p9_debug(P9_DEBUG_FID, "fid %d\n", fid->fid);
+ 	clnt = fid->clnt;
+-	p9_idpool_put(fid->fid, clnt->fidpool);
+ 	spin_lock_irqsave(&clnt->lock, flags);
+-	list_del(&fid->flist);
++	idr_remove(&clnt->fids, fid->fid);
+ 	spin_unlock_irqrestore(&clnt->lock, flags);
+ 	kfree(fid->rdir);
+ 	kfree(fid);
+@@ -1028,7 +1026,7 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 	memcpy(clnt->name, client_id, strlen(client_id) + 1);
+ 
+ 	spin_lock_init(&clnt->lock);
+-	INIT_LIST_HEAD(&clnt->fidlist);
++	idr_init(&clnt->fids);
+ 
+ 	err = p9_tag_init(clnt);
+ 	if (err < 0)
+@@ -1048,18 +1046,12 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 		goto destroy_tagpool;
+ 	}
+ 
+-	clnt->fidpool = p9_idpool_create();
+-	if (IS_ERR(clnt->fidpool)) {
+-		err = PTR_ERR(clnt->fidpool);
+-		goto put_trans;
 -	}
 -
- 	if (!req->tc)
- 		req->tc = p9_fcall_alloc(alloc_msize);
- 	if (!req->rc)
-@@ -319,9 +313,7 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
- 	pr_err("Couldn't grow tag array\n");
- 	kfree(req->tc);
- 	kfree(req->rc);
--	kfree(req->wq);
- 	req->tc = req->rc = NULL;
--	req->wq = NULL;
- 	return ERR_PTR(-ENOMEM);
- }
+ 	p9_debug(P9_DEBUG_MUX, "clnt %p trans %p msize %d protocol %d\n",
+ 		 clnt, clnt->trans_mod, clnt->msize, clnt->proto_version);
  
-@@ -409,7 +401,6 @@ static void p9_tag_cleanup(struct p9_client *c)
- 	/* free requests associated with tags */
- 	for (row = 0; row < (c->max_tag/P9_ROW_MAXTAG); row++) {
- 		for (col = 0; col < P9_ROW_MAXTAG; col++) {
--			kfree(c->reqs[row][col].wq);
- 			kfree(c->reqs[row][col].tc);
- 			kfree(c->reqs[row][col].rc);
- 		}
-@@ -452,7 +443,7 @@ void p9_client_cb(struct p9_client *c, struct p9_req_t *req, int status)
- 	smp_wmb();
- 	req->status = status;
+ 	err = clnt->trans_mod->create(clnt, dev_name, options);
+ 	if (err)
+-		goto destroy_fidpool;
++		goto put_trans;
  
--	wake_up(req->wq);
-+	wake_up(&req->wq);
- 	p9_debug(P9_DEBUG_MUX, "wakeup: %d\n", req->tc->tag);
- }
- EXPORT_SYMBOL(p9_client_cb);
-@@ -773,7 +764,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
+ 	if (clnt->msize > clnt->trans_mod->maxsize)
+ 		clnt->msize = clnt->trans_mod->maxsize;
+@@ -1072,8 +1064,6 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 
+ close_trans:
+ 	clnt->trans_mod->close(clnt);
+-destroy_fidpool:
+-	p9_idpool_destroy(clnt->fidpool);
+ put_trans:
+ 	v9fs_put_trans(clnt->trans_mod);
+ destroy_tagpool:
+@@ -1086,7 +1076,8 @@ EXPORT_SYMBOL(p9_client_create);
+ 
+ void p9_client_destroy(struct p9_client *clnt)
+ {
+-	struct p9_fid *fid, *fidptr;
++	struct p9_fid *fid;
++	int id;
+ 
+ 	p9_debug(P9_DEBUG_MUX, "clnt %p\n", clnt);
+ 
+@@ -1095,14 +1086,11 @@ void p9_client_destroy(struct p9_client *clnt)
+ 
+ 	v9fs_put_trans(clnt->trans_mod);
+ 
+-	list_for_each_entry_safe(fid, fidptr, &clnt->fidlist, flist) {
++	idr_for_each_entry(&clnt->fids, fid, id) {
+ 		pr_info("Found fid %d not clunked\n", fid->fid);
+ 		p9_fid_destroy(fid);
  	}
- again:
- 	/* Wait for the response */
--	err = wait_event_killable(*req->wq, req->status >= REQ_STATUS_RCVD);
-+	err = wait_event_killable(req->wq, req->status >= REQ_STATUS_RCVD);
  
- 	/*
- 	 * Make sure our req is coherent with regard to updates in other
-diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-index 05006cbb3361..3e096c98313c 100644
---- a/net/9p/trans_virtio.c
-+++ b/net/9p/trans_virtio.c
-@@ -490,7 +490,7 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
- 	virtqueue_kick(chan->vq);
- 	spin_unlock_irqrestore(&chan->lock, flags);
- 	p9_debug(P9_DEBUG_TRANS, "virtio request kicked\n");
--	err = wait_event_killable(*req->wq, req->status >= REQ_STATUS_RCVD);
-+	err = wait_event_killable(req->wq, req->status >= REQ_STATUS_RCVD);
- 	/*
- 	 * Non kernel buffers are pinned, unpin them
- 	 */
+-	if (clnt->fidpool)
+-		p9_idpool_destroy(clnt->fidpool);
+-
+ 	p9_tag_cleanup(clnt);
+ 
+ 	kfree(clnt);
 -- 
 2.18.0
 
