@@ -2,106 +2,224 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2093BC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC991C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDF2620875
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:58:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EjPs9WzR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDF2620875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 8CE4020875
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:00:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE4020875
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726597AbeGKIB1 (ORCPT
+        id S1726423AbeGKID2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:01:27 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46336 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726205AbeGKIB0 (ORCPT
+        Wed, 11 Jul 2018 04:03:28 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:16896 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeGKID2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:01:26 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6B7ruRp019217;
-        Wed, 11 Jul 2018 07:58:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=RUY1f+0uwYpchTsH7lrZCAyAjkveni0kcG0DBDQBjv0=;
- b=EjPs9WzRdHNi8fm5zDp4ohar9H3MVcmBTASSlopOxCzqI0AHObo9dDRgNLg4+04PFo9J
- iyLR9SJS1DU8r+pfqHXiYG6uLscprg/7ptrReUtdcZQriOL0OMqwBnmq5+06HmZFjk94
- erIeuCoiZf6IwVS+dXFsOMA5hczB0MeyTxaA90pHXvBoy0Ydyw/6Dqr9bLMEVRDDfGtx
- KTkQWn/z+nD2wSfWZ51WhCPUlxotaSd/cz0wcPFEgk0aqMzPfXV0E7uoy9gLGM4cxHuX
- OqlJpdMgCZclnSxl59bi2V49IQ7J7OA6X09ivVnTzYqIkjxtG5Hki9v+RF95EsaInMfW 8Q== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2k2p7652rh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Jul 2018 07:58:22 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6B7wLMu025915
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 11 Jul 2018 07:58:21 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6B7wLll001129;
-        Wed, 11 Jul 2018 07:58:21 GMT
-Received: from kili.mountain (/197.157.34.168)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Jul 2018 00:58:20 -0700
-Date:   Wed, 11 Jul 2018 10:58:13 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] power: supply: adp5061: Fix a couple off by ones
-Message-ID: <20180711075808.gpa3362vbins7crx@kili.mountain>
+        Wed, 11 Jul 2018 04:03:28 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b45b9150000>; Wed, 11 Jul 2018 01:00:21 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 11 Jul 2018 01:00:23 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 11 Jul 2018 01:00:23 -0700
+Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
+ HQMAIL101.nvidia.com (172.20.187.10) with Microsoft SMTP Server (TLS) id
+ 15.0.1347.2; Wed, 11 Jul 2018 08:00:25 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1002)
+        id 8A9A8F8009D; Wed, 11 Jul 2018 11:00:22 +0300 (EEST)
+Date:   Wed, 11 Jul 2018 11:00:22 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Jon Hunter <jonathanh@nvidia.com>
+CC:     Aapo Vienamo <avienamo@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH v4 2/4] clk: tegra: refactor 7.1 div calculation
+Message-ID: <20180711080022.GB1636@tbergstrom-lnx.Nvidia.com>
+References: <1531154338-3998-1-git-send-email-avienamo@nvidia.com>
+ <1531154338-3998-3-git-send-email-avienamo@nvidia.com>
+ <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8950 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=610
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807110085
+In-Reply-To: <5805047f-4099-db34-0759-42e4a9e11629@nvidia.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We end up reading one element beyond the end of the adp5061_vmax[] array
-here.
+On Tue, Jul 10, 2018 at 05:17:05PM +0100, Jon Hunter wrote:
+> 
+> On 09/07/18 17:38, Aapo Vienamo wrote:
+> > From: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > 
+> > Move this to a separate file so it can be used to calculate the sdmmc
+> > clock dividers.
+> 
+> Sorry for not commenting sooner, but what is the motivation for moving
+> this to its own file? I don't see why we need to do this in order to use
+> elsewhere. Furthermore, the original file is quite aptly named 'clk-divider.c'
+> and now we have a div71.c which seems quite specific.
 
-Fixes: fe8e81b7e899 ("adp5061: New driver for ADP5061 I2C battery charger")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+How else would you do it?
 
-diff --git a/drivers/power/supply/adp5061.c b/drivers/power/supply/adp5061.c
-index c00a02ef7424..939fd3d8fb1a 100644
---- a/drivers/power/supply/adp5061.c
-+++ b/drivers/power/supply/adp5061.c
-@@ -266,8 +266,8 @@ static int adp5061_get_max_voltage(struct adp5061_state *st,
- 		return ret;
- 
- 	regval = ((regval & ADP5061_TERM_SET_VTRM_MSK) >> 2) - 0x0F;
--	if (regval > ARRAY_SIZE(adp5061_vmax))
--		regval = ARRAY_SIZE(adp5061_vmax);
-+	if (regval >= ARRAY_SIZE(adp5061_vmax))
-+		regval = ARRAY_SIZE(adp5061_vmax) - 1;
- 
- 	val->intval = adp5061_vmax[regval] * 1000;
- 
-@@ -344,8 +344,8 @@ static int adp5061_get_const_chg_current(struct adp5061_state *st,
- 		return ret;
- 
- 	regval = ((regval & ADP5061_CHG_CURR_ICHG_MSK) >> 2);
--	if (regval > ARRAY_SIZE(adp5061_const_ichg))
--		regval = ARRAY_SIZE(adp5061_const_ichg);
-+	if (regval >= ARRAY_SIZE(adp5061_const_ichg))
-+		regval = ARRAY_SIZE(adp5061_const_ichg) - 1;
- 
- 	val->intval = adp5061_const_ichg[regval] * 1000;
- 
+Peter.
+
+> > Signed-off-by: Peter De-Schrijver <pdeschrijver@nvidia.com>
+> > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
+> > Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> > ---
+> >  drivers/clk/tegra/Makefile      |  1 +
+> >  drivers/clk/tegra/clk-divider.c | 30 +++++-----------------------
+> >  drivers/clk/tegra/clk.h         |  3 +++
+> >  drivers/clk/tegra/div71.c       | 43 +++++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 52 insertions(+), 25 deletions(-)
+> >  create mode 100644 drivers/clk/tegra/div71.c
+> > 
+> > diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+> > index b716923..6d4f563 100644
+> > --- a/drivers/clk/tegra/Makefile
+> > +++ b/drivers/clk/tegra/Makefile
+> > @@ -24,3 +24,4 @@ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+> >  obj-y					+= cvb.o
+> >  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
+> >  obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
+> > +obj-y					+= div71.o
+> > diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> > index 16e0aee..ad87858 100644
+> > --- a/drivers/clk/tegra/clk-divider.c
+> > +++ b/drivers/clk/tegra/clk-divider.c
+> > @@ -32,35 +32,15 @@
+> >  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
+> >  		   unsigned long parent_rate)
+> >  {
+> > -	u64 divider_ux1 = parent_rate;
+> > -	u8 flags = divider->flags;
+> > -	int mul;
+> > -
+> > -	if (!rate)
+> > -		return 0;
+> > -
+> > -	mul = get_mul(divider);
+> > -
+> > -	if (!(flags & TEGRA_DIVIDER_INT))
+> > -		divider_ux1 *= mul;
+> > -
+> > -	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> > -		divider_ux1 += rate - 1;
+> > -
+> > -	do_div(divider_ux1, rate);
+> > -
+> > -	if (flags & TEGRA_DIVIDER_INT)
+> > -		divider_ux1 *= mul;
+> > +	int div;
+> >  
+> > -	divider_ux1 -= mul;
+> > +	div = div71_get(rate, parent_rate, divider->width, divider->frac_width,
+> > +			divider->flags);
+> >  
+> > -	if ((s64)divider_ux1 < 0)
+> > +	if (div < 0)
+> >  		return 0;
+> >  
+> > -	if (divider_ux1 > get_max_div(divider))
+> > -		return get_max_div(divider);
+> > -
+> > -	return divider_ux1;
+> > +	return div;
+> >  }
+> >  
+> >  static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+> > diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> > index e3b9c22..149cc70 100644
+> > --- a/drivers/clk/tegra/clk.h
+> > +++ b/drivers/clk/tegra/clk.h
+> > @@ -812,6 +812,9 @@ extern tegra_clk_apply_init_table_func tegra_clk_apply_init_table;
+> >  int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll);
+> >  u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+> >  int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+> > +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> > +	      u8 frac_width, u8 flags);
+> > +
+> >  
+> >  /* Combined read fence with delay */
+> >  #define fence_udelay(delay, reg)	\
+> > diff --git a/drivers/clk/tegra/div71.c b/drivers/clk/tegra/div71.c
+> > new file mode 100644
+> > index 0000000..1eecc84
+> > --- /dev/null
+> > +++ b/drivers/clk/tegra/div71.c
+> > @@ -0,0 +1,43 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
+> > + */
+> > +
+> > +#include <asm/div64.h>
+> > +
+> > +#include "clk.h"
+> > +
+> > +#define div_mask(w) ((1 << (w)) - 1)
+> > +
+> > +int div71_get(unsigned long rate, unsigned parent_rate, u8 width,
+> > +	      u8 frac_width, u8 flags)
+> > +{
+> > +	u64 divider_ux1 = parent_rate;
+> > +	int mul;
+> > +
+> > +	if (!rate)
+> > +		return 0;
+> > +
+> > +	mul = 1 << frac_width;
+> > +
+> > +	if (!(flags & TEGRA_DIVIDER_INT))
+> > +		divider_ux1 *= mul;
+> > +
+> > +	if (flags & TEGRA_DIVIDER_ROUND_UP)
+> > +		divider_ux1 += rate - 1;
+> > +
+> > +	do_div(divider_ux1, rate);
+> > +
+> > +	if (flags & TEGRA_DIVIDER_INT)
+> > +		divider_ux1 *= mul;
+> > +
+> > +	if (divider_ux1 < mul)
+> > +		return 0;
+> > +
+> > +	divider_ux1 -= mul;
+> > +
+> > +	if (divider_ux1 > div_mask(width))
+> > +		return div_mask(width);
+> > +
+> > +	return divider_ux1;
+> > +}
+> 
+> I don't see anything in the above that makes this 7.1? It seems that the
+> fractional width is being passed meaning it could be m.n unless I am missing
+> something.
+> 
+> Cheers
+> Jon
+> 
+> -- 
+> nvpublic
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
