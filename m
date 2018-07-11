@@ -2,112 +2,167 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31083C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56290C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9FEB20C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9FEB20C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B16320C0D
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 16:09:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B16320C0D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389582AbeGKQOa (ORCPT
+        id S2389597AbeGKQOo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 12:14:30 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:40565 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732433AbeGKQOa (ORCPT
+        Wed, 11 Jul 2018 12:14:44 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55982 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732433AbeGKQOo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 12:14:30 -0400
-Received: by mail-oi0-f66.google.com with SMTP id w126-v6so50226314oie.7;
-        Wed, 11 Jul 2018 09:09:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pFL5J4xLysoe0+DyjjXe3ZzhZ+7SbtznbFjHRHG0Ce4=;
-        b=Xxl2efVEbuKoaTnHa7FKKhPDhaXlMN4nb+ORXWHVfl6Ijx8YwYd85ahmgYMo+iUACo
-         31f6cTfz4P3YTdFkUYZW7+c7N/xnE7vhB9Tbl2RKYNFyddN44noz1Y3fF8RXicWxtrSn
-         eIZhrGoxBxyhxyY5AxgSXgFOg2aVULLI12ocl2dU+IE9QGgtwRgFNQSL/QX811639BZC
-         ljvMa1BPTro6iphaBvzBbgW2i97m7eZG8yYnOczO8mvTq76OXv6VPZ58iNPXheQX349+
-         HNXTEE3A4zNK7cCt0G4MwpkY3ZQLicmfKlCqXpICua4Xo/S5Rheteh7xKpgETrNdUV6r
-         yk2g==
-X-Gm-Message-State: APt69E3/HPgmU9pkIQAB7MpUPLq6kVfUIqVFxQlrqO6xBnx1qYAvWo6Y
-        CRnUwlMRrhzM6a/7m+ZxLA==
-X-Google-Smtp-Source: AAOMgpc2n5KEy8pnTW713vus4ezXgalYY9pUUjPJasDWMs06jLL0Yg8zMpbJaNFK7X2usMqPaEafGA==
-X-Received: by 2002:aca:e6cd:: with SMTP id d196-v6mr31482459oih.94.1531325368635;
-        Wed, 11 Jul 2018 09:09:28 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id n188-v6sm12801070oia.17.2018.07.11.09.09.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 09:09:28 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 10:09:27 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Vinod <vkoul@kernel.org>, Guodong Xu <guodong.xu@linaro.org>
-Cc:     mark.rutland@arm.com, dan.j.williams@intel.com,
-        xuwei5@hisilicon.com, catalin.marinas@arm.com, will.deacon@arm.com,
-        liyu65@hisilicon.com, suzhuangluan@hisilicon.com,
-        xuhongtao8@hisilicon.com, zhongkaihua@huawei.com,
-        xuezhiliang@hisilicon.com, xupeng7@huawei.com,
-        sunliang10@huawei.com, fengbaopeng@hisilicon.com,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: k3dma: add optional property
- hisilicon,dma-min-chan
-Message-ID: <20180711160927.GA31359@rob-hp-laptop>
-References: <20180706035521.13736-1-guodong.xu@linaro.org>
- <20180706035521.13736-2-guodong.xu@linaro.org>
- <20180709103438.GC22377@vkoul-mobl>
+        Wed, 11 Jul 2018 12:14:44 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BG8l0U175684
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:09:42 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k5mcwj7e3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:09:42 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 11 Jul 2018 12:09:41 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Jul 2018 12:09:37 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BG9bb27209414
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 11 Jul 2018 16:09:37 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E5B97B2064;
+        Wed, 11 Jul 2018 12:09:35 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B44EBB205F;
+        Wed, 11 Jul 2018 12:09:35 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Jul 2018 12:09:35 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 7443E16C3B68; Wed, 11 Jul 2018 09:11:55 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 09:11:55 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-doc@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] doc: Replace smp_cond_acquire() with
+ smp_cond_load_acquire()
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <1531216943-6382-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <1531314530-11624-1-git-send-email-andrea.parri@amarulasolutions.com>
+ <20180711153840.GS3593@linux.vnet.ibm.com>
+ <20180711154830.GA14348@andrea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180709103438.GC22377@vkoul-mobl>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20180711154830.GA14348@andrea>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071116-0040-0000-0000-0000044D3547
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009351; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01059848; UDB=6.00543977; IPR=6.00837769;
+ MB=3.00022105; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 16:09:41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071116-0041-0000-0000-000008535AAB
+Message-Id: <20180711161155.GU3593@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=700 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807110172
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 09, 2018 at 04:04:38PM +0530, Vinod wrote:
-> On 06-07-18, 11:55, Guodong Xu wrote:
-> > From: Li Yu <liyu65@hisilicon.com>
+On Wed, Jul 11, 2018 at 05:53:55PM +0200, Andrea Parri wrote:
+> On Wed, Jul 11, 2018 at 08:38:40AM -0700, Paul E. McKenney wrote:
+> > On Wed, Jul 11, 2018 at 03:08:50PM +0200, Andrea Parri wrote:
+> > > Amend commit 1f03e8d2919270 ("locking/barriers: Replace smp_cond_acquire()
+> > > with smp_cond_load_acquire()") by updating the documentation accordingly.
+> > > Also remove some obsolete information related to the implementation.
+> > > 
+> > > Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+> > > Cc: Alan Stern <stern@rowland.harvard.edu>
+> > > Cc: Will Deacon <will.deacon@arm.com>
+> > > Cc: Peter Zijlstra <peterz@infradead.org>
+> > > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > > Cc: Nicholas Piggin <npiggin@gmail.com>
+> > > Cc: David Howells <dhowells@redhat.com>
+> > > Cc: Jade Alglave <j.alglave@ucl.ac.uk>
+> > > Cc: Luc Maranget <luc.maranget@inria.fr>
+> > > Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> > > Cc: Akira Yokosawa <akiyks@gmail.com>
+> > > Cc: Daniel Lustig <dlustig@nvidia.com>
+> > > Cc: Jonathan Corbet <corbet@lwn.net>
+> > > ---
+> > >  Documentation/memory-barriers.txt | 3 +--
+> > >  1 file changed, 1 insertion(+), 2 deletions(-)
 > > 
-> > Add optional property hisilicon,dma-min-chan for k3dma.
-> > 
-> > Signed-off-by: Li Yu <liyu65@hisilicon.com>
-> > Signed-off-by: Guodong Xu <guodong.xu@linaro.org>
-> > ---
-> >  Documentation/devicetree/bindings/dma/k3dma.txt | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/dma/k3dma.txt b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > index 4945aeac4dc4..f34202a80f3c 100644
-> > --- a/Documentation/devicetree/bindings/dma/k3dma.txt
-> > +++ b/Documentation/devicetree/bindings/dma/k3dma.txt
-> > @@ -12,6 +12,11 @@ Required properties:
-> >  		have specific request line
-> >  - clocks: clock required
-> >  
-> > +Optional properties:
-> > +- hisilicon,dma-min-chan: the minimum DMA channel number which is usable
-> > +		Default value is 0, but in some platform it is
-> > +		configured 1, like in hi3660 platform
-> > +
-> >  Example:
-> >  
-> >  Controller:
-> > @@ -21,6 +26,7 @@ Controller:
-> >  			#dma-cells = <1>;
-> >  			dma-channels = <16>;
-> >  			dma-requests = <27>;
-> > +			hisilicon,dma-min-chan = <1>;
+> > I have queued this for further review, thank you!  Just to confirm,
+> > the reason that the old passage was obsolete is because ARMv8 implements
+> > smp_cond_load_acquire() as a straight acquire load, correct?
 > 
-> Am still expecting this to be a mask
+> Thanks.  Yes; the generic code builds on a control dependency and an
+> smp_acquire__after_ctrl_dep() (which defaults to smp_rmb()); but the
+> required ordering on arm64 is given by (its) smp_load_acquire().
+> 
+> I thought that entering this level of details (and keeping it up-to-
+> date ;) wasn't really worth/needed for this high-level doc.
 
-If so calling it 'min' doesn't make sense. And a mask should have 'mask' 
-in the name.
+Agreed!
 
-Rob
+							Thanx, Paul
+
+>   Andrea
+> 
+> 
+> > 
+> > 							Thanx, Paul
+> > 
+> > > diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
+> > > index 0d8d7ef131e9a..c1d913944ad8b 100644
+> > > --- a/Documentation/memory-barriers.txt
+> > > +++ b/Documentation/memory-barriers.txt
+> > > @@ -471,8 +471,7 @@ And a couple of implicit varieties:
+> > >       operations after the ACQUIRE operation will appear to happen after the
+> > >       ACQUIRE operation with respect to the other components of the system.
+> > >       ACQUIRE operations include LOCK operations and both smp_load_acquire()
+> > > -     and smp_cond_acquire() operations. The later builds the necessary ACQUIRE
+> > > -     semantics from relying on a control dependency and smp_rmb().
+> > > +     and smp_cond_load_acquire() operations.
+> > > 
+> > >       Memory operations that occur before an ACQUIRE operation may appear to
+> > >       happen after it completes.
+> > > -- 
+> > > 2.7.4
+> > > 
+> > 
+> 
+
