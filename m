@@ -6,33 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27CF2C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C209C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1A3208E5
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:09:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1A3208E5
+	by mail.kernel.org (Postfix) with ESMTP id 5B537208E5
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:10:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B537208E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733189AbeGKPOd (ORCPT
+        id S2388723AbeGKPOw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 11:14:33 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:49680 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbeGKPOd (ORCPT
+        Wed, 11 Jul 2018 11:14:52 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:46820 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726684AbeGKPOw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 11:14:33 -0400
+        Wed, 11 Jul 2018 11:14:52 -0400
 Received: from ayla.of.borg ([84.194.111.163])
-        by xavier.telenet-ops.be with bizsmtp
-        id 9T9l1y00S3XaVaC01T9lf9; Wed, 11 Jul 2018 17:09:46 +0200
+        by laurent.telenet-ops.be with bizsmtp
+        id 9TA41y0073XaVaC01TA4ya; Wed, 11 Jul 2018 17:10:05 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ayla.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fdGkT-0001WC-Fg; Wed, 11 Jul 2018 17:09:45 +0200
+        id 1fdGkm-0001Wz-4C; Wed, 11 Jul 2018 17:10:04 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1fdGkT-0001kk-DO; Wed, 11 Jul 2018 17:09:45 +0200
+        id 1fdGkm-0001lt-2V; Wed, 11 Jul 2018 17:10:04 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>
 Cc:     Jason Gunthorpe <jgg@mellanox.com>,
@@ -41,9 +41,9 @@ Cc:     Jason Gunthorpe <jgg@mellanox.com>,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
         Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] checkpatch: Warn if missing author Signed-off-by
-Date:   Wed, 11 Jul 2018 17:09:44 +0200
-Message-Id: <20180711150944.6694-1-geert+renesas@glider.be>
+Subject: [PATCH v2] checkpatch: Warn if missing author Signed-off-by
+Date:   Wed, 11 Jul 2018 17:10:03 +0200
+Message-Id: <20180711151003.6768-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
