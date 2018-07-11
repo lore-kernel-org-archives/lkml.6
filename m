@@ -6,88 +6,84 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A55A5C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 05:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E89AC5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 05:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EBFD20883
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 05:25:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EBFD20883
+	by mail.kernel.org (Postfix) with ESMTP id 063F620883
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 05:25:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 063F620883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbeGKF1r (ORCPT
+        id S1726587AbeGKF2J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 01:27:47 -0400
-Received: from mga11.intel.com ([192.55.52.93]:15724 "EHLO mga11.intel.com"
+        Wed, 11 Jul 2018 01:28:09 -0400
+Received: from mga18.intel.com ([134.134.136.126]:21597 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726466AbeGKF1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 01:27:47 -0400
+        id S1726466AbeGKF2I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 01:28:08 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 22:25:17 -0700
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Jul 2018 22:25:39 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,337,1526367600"; 
-   d="scan'208";a="70379255"
+   d="scan'208";a="66016508"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga004.fm.intel.com with ESMTP; 10 Jul 2018 22:25:17 -0700
-Subject: [PATCH v4 8/8] mm: Fix exports that inadvertently make put_page()
- EXPORT_SYMBOL_GPL
+  by orsmga003.jf.intel.com with ESMTP; 10 Jul 2018 22:24:40 -0700
+Subject: [PATCH v4 1/8] mm,
+ devm_memremap_pages: Mark devm_memremap_pages() EXPORT_SYMBOL_GPL
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     akpm@linux-foundation.org
-Cc:     Joe Gorse <jhgorse@gmail.com>, John Hubbard <jhubbard@nvidia.com>,
-        Joe Gorse <jhgorse@gmail.com>,
-        John Hubbard <jhubbard@nvidia.com>, hch@lst.de,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Date:   Tue, 10 Jul 2018 22:15:19 -0700
-Message-ID: <153128611970.2928.11310692420711601254.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc:     Michal Hocko <mhocko@suse.com>,
+        =?utf-8?b?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 10 Jul 2018 22:14:42 -0700
+Message-ID: <153128608284.2928.17076051301321355622.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <153128607743.2928.4465435789810433432.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <153128607743.2928.4465435789810433432.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that all producers of dev_pagemap instances in the kernel are
-properly converted to EXPORT_SYMBOL_GPL, fix up implicit consumers that
-interact with dev_pagemap owners via put_page(). To reiterate,
-dev_pagemap producers are EXPORT_SYMBOL_GPL because they adopt and
-modify core memory management interfaces such that the dev_pagemap owner
-can interact with all other kernel infrastructure and sub-systems
-(drivers, filesystems, etc...) that consume page structures.
+The devm_memremap_pages() facility is tightly integrated with the
+kernel's memory hotplug functionality. It injects an altmap argument
+deep into the architecture specific vmemmap implementation to allow
+allocating from specific reserved pages, and it has Linux specific
+assumptions about page structure reference counting relative to
+get_user_pages() and get_user_pages_fast(). It was an oversight that
+this was not marked EXPORT_SYMBOL_GPL from the outset.
 
-Fixes: e76384884344 ("mm: introduce MEMORY_DEVICE_FS_DAX and CONFIG_DEV_PAGEMAP_OPS")
-Reported-by: Joe Gorse <jhgorse@gmail.com>
-Reported-by: John Hubbard <jhubbard@nvidia.com>
-Tested-by: Joe Gorse <jhgorse@gmail.com>
-Tested-by: John Hubbard <jhubbard@nvidia.com>
+It exposes and relies upon core kernel internal assumptions and will
+continue to evolve as memory hotplug and support for new memory types
+and topologies is required. Only an in kernel GPL-only driver is
+expected to keep up with this ongoing evolution.
+
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- kernel/memremap.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/memremap.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/kernel/memremap.c b/kernel/memremap.c
-index 16141b608b63..ecee37b44aa1 100644
+index 5857267a4af5..4478e4688bb7 100644
 --- a/kernel/memremap.c
 +++ b/kernel/memremap.c
-@@ -330,7 +330,7 @@ EXPORT_SYMBOL_GPL(get_dev_pagemap);
- 
- #ifdef CONFIG_DEV_PAGEMAP_OPS
- DEFINE_STATIC_KEY_FALSE(devmap_managed_key);
--EXPORT_SYMBOL_GPL(devmap_managed_key);
-+EXPORT_SYMBOL(devmap_managed_key);
- static atomic_t devmap_enable;
- 
- /*
-@@ -371,5 +371,5 @@ void __put_devmap_managed_page(struct page *page)
- 	} else if (!count)
- 		__put_page(page);
+@@ -257,7 +257,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
+ 	pgmap_radix_release(res, pgoff);
+ 	return ERR_PTR(error);
  }
--EXPORT_SYMBOL_GPL(__put_devmap_managed_page);
-+EXPORT_SYMBOL(__put_devmap_managed_page);
- #endif /* CONFIG_DEV_PAGEMAP_OPS */
+-EXPORT_SYMBOL(devm_memremap_pages);
++EXPORT_SYMBOL_GPL(devm_memremap_pages);
+ 
+ unsigned long vmem_altmap_offset(struct vmem_altmap *altmap)
+ {
 
