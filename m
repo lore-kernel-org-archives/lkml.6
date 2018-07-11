@@ -2,227 +2,357 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53AEC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58754C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:20:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 549E2208FA
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:20:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 549E2208FA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 91C37208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:20:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C37208FA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732465AbeGKKXi (ORCPT
+        id S1732484AbeGKKXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:23:38 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:54235 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbeGKKXi (ORCPT
+        Wed, 11 Jul 2018 06:23:41 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:40725 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbeGKKXl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:23:38 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MSmNI-1fTGac3xZM-00RdNd; Wed, 11 Jul 2018 12:19:47 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Steffen Klassert <steffen.klassert@secunet.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Florian Westphal <fw@strlen.de>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] [RESEND, net-next] xfrm: use time64_t for in-kernel timestamps
-Date:   Wed, 11 Jul 2018 12:19:13 +0200
-Message-Id: <20180711101941.4039411-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:eDumljfDIEgHVihgCRbl9UVrxtg59JBdT0VLc0Ob8CtDSEf/hf4
- 0BN3jxW5YxWEec1341SDa9cl2klFVSSgSYuuYo8jihvqqj9VuxnxrJ8zs3XozBdrp4E3h3e
- QcyWuXz/pKyDvDqrw1hNeSixNwjREna8gU09GIEM3iCGLOJGWfiEmiwmMy6U6cJH2AtjKq4
- Ua3y8oIvg6NxfU7AsGUWg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:kj5RcVlUw28=:mIcs7d2odMq/VxSBLsiOvr
- 6JwCHasJeR1geWlq7+pcob9cIPn3OGH2a4fcdeRhIb8Hpp/vcD0NaF/XXE+OJoOeU4b4pwYlY
- j1mLi0n5W2PzmBNzH+6SdPaI7Ucnv9fA21LG8UkjBsz67p27POmw7jmR02536pY1Ux4KT/wFH
- r18HqTtAopKpltgK+Za/kMQFQUf5gwJxsuzrb++CgiqHfFpCKymUOXhbASxxR5dnCezQ5OcTR
- OFfnw8c1/+dhpJVBSsQbEeNue8Xfl+ZALsDuz3bwOY2doTmT4eXrCbsOhj1wrTsRF13kRJlyN
- SD65Z8dsRl9dAamBtIT64MRKQWe9Wx9DoGS3c4RmyDg51iV2oo2R7puorRvv/84Y2UfOMY61H
- dRA6k9ZsZbQMLdBxmjff3r7zWioSMb6+l/scVCjftpEOObv2/nUBIPbPkXPFnRerZoIIEF3qM
- fDjmEH9q0kb+rVLTjr9nYFYZEuaCyowDuMqqXVtOsCst839xUct5CHqJ4bVtgGEW2Nc1Rkxio
- zlFqM7urZ/WJgwmBXGC05PPrieW7R87qs2jtMXqWYihhY+yU07P2mLqZsJAvUm5Bkd7KYp+t2
- wh8lxh6inMLE5NKoINK38U2yqUh1C+CaAAll49YIXQSTxzQ/8S1VUcDqsHkXudw8hOwOdvcXN
- z9wktGXKugmIfMcY7rp3VJ3uRZdchN9CvYCEwsfXz7FcnmhrU7EVrGMxwpBxc3j4cMf0=
+        Wed, 11 Jul 2018 06:23:41 -0400
+Received: from fsav403.sakura.ne.jp (fsav403.sakura.ne.jp [133.242.250.102])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w6BAJtRr010327;
+        Wed, 11 Jul 2018 19:19:55 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav403.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp);
+ Wed, 11 Jul 2018 19:19:54 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav403.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w6BAJntU010282
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 11 Jul 2018 19:19:54 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: INFO: task hung in iterate_supers
+To:     viro@zeniv.linux.org.uk
+Cc:     syzbot <syzbot+2349f5067b1772c1d8a5@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <000000000000da8a9b0570a29c01@google.com>
+ <0145d376-7ef8-3e17-5a24-94de946a01e5@I-love.SAKURA.ne.jp>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <7dc64116-f43d-3739-7b35-4eef7a80e343@I-love.SAKURA.ne.jp>
+Date:   Wed, 11 Jul 2018 19:19:54 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <0145d376-7ef8-3e17-5a24-94de946a01e5@I-love.SAKURA.ne.jp>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The lifetime managment uses '__u64' timestamps on the user space
-interface, but 'unsigned long' for reading the current time in the kernel
-with get_seconds().
+On 2018/07/10 19:34, Tetsuo Handa wrote:
+> It turned out that, although the reason of stalling v9fs_mount() is currently
+> unknown, the reason of many processes stuck at iterate_supers() is that
+> they are unable to take s->s_umount object due to down_write_nested() below.
+> 
+> 	/*
+> 	 * sget() can have s_umount recursion.
+> 	 *
+> 	 * When it cannot find a suitable sb, it allocates a new
+> 	 * one (this one), and tries again to find a suitable old
+> 	 * one.
+> 	 *
+> 	 * In case that succeeds, it will acquire the s_umount
+> 	 * lock of the old one. Since these are clearly distrinct
+> 	 * locks, and this object isn't exposed yet, there's no
+> 	 * risk of deadlocks.
+> 	 *
+> 	 * Annotate this by putting this lock in a different
+> 	 * subclass.
+> 	 */
+> 	down_write_nested(&s->s_umount, SINGLE_DEPTH_NESTING);
+> 
 
-While this is probably safe beyond y2038, it will still overflow in 2106,
-and the get_seconds() call is deprecated because fo that.
+Guessing from commit dabe0dc194d5d56d ("vfs: fix the rest of sget() races"),
+this is an overlooked sget() race.
 
-This changes the xfrm time handling to use time64_t consistently, along
-with reading the time using the safer ktime_get_real_seconds(). It still
-suffers from problems that can happen from a concurrent settimeofday()
-call or (to a lesser degree) a leap second update, but since the time
-stamps are part of the user API, there is nothing we can do to prevent
-that.
+iterate_supers() is calling down_read(&sb_s_umount) on all superblocks found by
+traversing super_blocks list. But sget_userns() adds "newly created superblock
+to super_blocks list with ->s_umount held by alloc_super() for write" before
+"mount_fs() sets SB_BORN flag after returning from type->mount()".
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Therefore, if type->mount() (e.g. v9fs_mount()) took long after sget() for
+some reason, processes will be blocked on a superblock on SB_BORN not yet set.
+Doing the test (which is done after ->s_umount is held) before holding ->s_umount
+(patch shown below) works for me. Although there seems to be many bugs in v9fs
+code, I think that making sure that other threads won't try to wait for superblock
+with SB_BORN not yet set is better.
+
 ---
- net/xfrm/xfrm_policy.c | 24 ++++++++++++------------
- net/xfrm/xfrm_state.c  | 10 +++++-----
- 2 files changed, 17 insertions(+), 17 deletions(-)
+ fs/super.c | 31 ++++++++++++++++++++++---------
+ 1 file changed, 22 insertions(+), 9 deletions(-)
 
-diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
-index 7338610d7b8f..9dbbb0d3771b 100644
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -189,8 +189,8 @@ static inline unsigned long make_jiffies(long secs)
- static void xfrm_policy_timer(struct timer_list *t)
+diff --git a/fs/super.c b/fs/super.c
+index 50728d9..03c3b3f 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -37,6 +37,11 @@
+ #include <linux/user_namespace.h>
+ #include "internal.h"
+ 
++static inline bool sb_is_alive(struct super_block *sb)
++{
++	return sb->s_root && (sb->s_flags & SB_BORN);
++}
++
+ static int thaw_super_locked(struct super_block *sb);
+ 
+ static LIST_HEAD(super_blocks);
+@@ -407,8 +412,7 @@ static int grab_super(struct super_block *s) __releases(sb_lock)
+ bool trylock_super(struct super_block *sb)
  {
- 	struct xfrm_policy *xp = from_timer(xp, t, timer);
--	unsigned long now = get_seconds();
--	long next = LONG_MAX;
-+	time64_t now = ktime_get_real_seconds();
-+	time64_t next = TIME64_MAX;
- 	int warn = 0;
- 	int dir;
- 
-@@ -202,7 +202,7 @@ static void xfrm_policy_timer(struct timer_list *t)
- 	dir = xfrm_policy_id2dir(xp->index);
- 
- 	if (xp->lft.hard_add_expires_seconds) {
--		long tmo = xp->lft.hard_add_expires_seconds +
-+		time64_t tmo = xp->lft.hard_add_expires_seconds +
- 			xp->curlft.add_time - now;
- 		if (tmo <= 0)
- 			goto expired;
-@@ -210,7 +210,7 @@ static void xfrm_policy_timer(struct timer_list *t)
- 			next = tmo;
+ 	if (down_read_trylock(&sb->s_umount)) {
+-		if (!hlist_unhashed(&sb->s_instances) &&
+-		    sb->s_root && (sb->s_flags & SB_BORN))
++		if (!hlist_unhashed(&sb->s_instances) && sb_is_alive(sb))
+ 			return true;
+ 		up_read(&sb->s_umount);
  	}
- 	if (xp->lft.hard_use_expires_seconds) {
--		long tmo = xp->lft.hard_use_expires_seconds +
-+		time64_t tmo = xp->lft.hard_use_expires_seconds +
- 			(xp->curlft.use_time ? : xp->curlft.add_time) - now;
- 		if (tmo <= 0)
- 			goto expired;
-@@ -218,7 +218,7 @@ static void xfrm_policy_timer(struct timer_list *t)
- 			next = tmo;
- 	}
- 	if (xp->lft.soft_add_expires_seconds) {
--		long tmo = xp->lft.soft_add_expires_seconds +
-+		time64_t tmo = xp->lft.soft_add_expires_seconds +
- 			xp->curlft.add_time - now;
- 		if (tmo <= 0) {
- 			warn = 1;
-@@ -228,7 +228,7 @@ static void xfrm_policy_timer(struct timer_list *t)
- 			next = tmo;
- 	}
- 	if (xp->lft.soft_use_expires_seconds) {
--		long tmo = xp->lft.soft_use_expires_seconds +
-+		time64_t tmo = xp->lft.soft_use_expires_seconds +
- 			(xp->curlft.use_time ? : xp->curlft.add_time) - now;
- 		if (tmo <= 0) {
- 			warn = 1;
-@@ -240,7 +240,7 @@ static void xfrm_policy_timer(struct timer_list *t)
+@@ -590,6 +594,8 @@ static void __iterate_supers(void (*f)(struct super_block *))
  
- 	if (warn)
- 		km_policy_expired(xp, dir, 0, 0);
--	if (next != LONG_MAX &&
-+	if (next != TIME64_MAX &&
- 	    !mod_timer(&xp->timer, jiffies + make_jiffies(next)))
- 		xfrm_pol_hold(xp);
+ 	spin_lock(&sb_lock);
+ 	list_for_each_entry(sb, &super_blocks, s_list) {
++		if (!sb_is_alive(sb))
++			continue;
+ 		if (hlist_unhashed(&sb->s_instances))
+ 			continue;
+ 		sb->s_count++;
+@@ -620,13 +626,15 @@ void iterate_supers(void (*f)(struct super_block *, void *), void *arg)
  
-@@ -791,7 +791,7 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
- 	}
- 	policy->index = delpol ? delpol->index : xfrm_gen_index(net, dir, policy->index);
- 	hlist_add_head(&policy->byidx, net->xfrm.policy_byidx+idx_hash(net, policy->index));
--	policy->curlft.add_time = get_seconds();
-+	policy->curlft.add_time = ktime_get_real_seconds();
- 	policy->curlft.use_time = 0;
- 	if (!mod_timer(&policy->timer, jiffies + HZ))
- 		xfrm_pol_hold(policy);
-@@ -1282,7 +1282,7 @@ int xfrm_sk_policy_insert(struct sock *sk, int dir, struct xfrm_policy *pol)
- 	old_pol = rcu_dereference_protected(sk->sk_policy[dir],
- 				lockdep_is_held(&net->xfrm.xfrm_policy_lock));
- 	if (pol) {
--		pol->curlft.add_time = get_seconds();
-+		pol->curlft.add_time = ktime_get_real_seconds();
- 		pol->index = xfrm_gen_index(net, XFRM_POLICY_MAX+dir, 0);
- 		xfrm_sk_policy_link(pol, dir);
- 	}
-@@ -2132,7 +2132,7 @@ struct dst_entry *xfrm_lookup(struct net *net, struct dst_entry *dst_orig,
- 	}
+ 	spin_lock(&sb_lock);
+ 	list_for_each_entry(sb, &super_blocks, s_list) {
++		if (!sb_is_alive(sb))
++			continue;
+ 		if (hlist_unhashed(&sb->s_instances))
+ 			continue;
+ 		sb->s_count++;
+ 		spin_unlock(&sb_lock);
  
- 	for (i = 0; i < num_pols; i++)
--		pols[i]->curlft.use_time = get_seconds();
-+		pols[i]->curlft.use_time = ktime_get_real_seconds();
+ 		down_read(&sb->s_umount);
+-		if (sb->s_root && (sb->s_flags & SB_BORN))
++		if (sb_is_alive(sb))
+ 			f(sb, arg);
+ 		up_read(&sb->s_umount);
  
- 	if (num_xfrms < 0) {
- 		/* Prohibit the flow */
-@@ -2355,7 +2355,7 @@ int __xfrm_policy_check(struct sock *sk, int dir, struct sk_buff *skb,
- 		return 1;
- 	}
+@@ -656,11 +664,13 @@ void iterate_supers_type(struct file_system_type *type,
  
--	pol->curlft.use_time = get_seconds();
-+	pol->curlft.use_time = ktime_get_real_seconds();
+ 	spin_lock(&sb_lock);
+ 	hlist_for_each_entry(sb, &type->fs_supers, s_instances) {
++		if (!sb_is_alive(sb))
++			continue;
+ 		sb->s_count++;
+ 		spin_unlock(&sb_lock);
  
- 	pols[0] = pol;
- 	npols++;
-@@ -2369,7 +2369,7 @@ int __xfrm_policy_check(struct sock *sk, int dir, struct sk_buff *skb,
- 				XFRM_INC_STATS(net, LINUX_MIB_XFRMINPOLERROR);
- 				return 0;
- 			}
--			pols[1]->curlft.use_time = get_seconds();
-+			pols[1]->curlft.use_time = ktime_get_real_seconds();
- 			npols++;
- 		}
- 	}
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index e04a510ec992..7efc299fba56 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -475,8 +475,8 @@ static enum hrtimer_restart xfrm_timer_handler(struct hrtimer *me)
+ 		down_read(&sb->s_umount);
+-		if (sb->s_root && (sb->s_flags & SB_BORN))
++		if (sb_is_alive(sb))
+ 			f(sb, arg);
+ 		up_read(&sb->s_umount);
+ 
+@@ -689,6 +699,8 @@ static struct super_block *__get_super(struct block_device *bdev, bool excl)
+ 		if (hlist_unhashed(&sb->s_instances))
+ 			continue;
+ 		if (sb->s_bdev == bdev) {
++			if (!sb_is_alive(sb))
++				continue;
+ 			sb->s_count++;
+ 			spin_unlock(&sb_lock);
+ 			if (!excl)
+@@ -696,7 +708,7 @@ static struct super_block *__get_super(struct block_device *bdev, bool excl)
+ 			else
+ 				down_write(&sb->s_umount);
+ 			/* still alive? */
+-			if (sb->s_root && (sb->s_flags & SB_BORN))
++			if (sb_is_alive(sb))
+ 				return sb;
+ 			if (!excl)
+ 				up_read(&sb->s_umount);
+@@ -813,11 +825,13 @@ struct super_block *user_get_super(dev_t dev)
+ 		if (hlist_unhashed(&sb->s_instances))
+ 			continue;
+ 		if (sb->s_dev ==  dev) {
++			if (!sb_is_alive(sb))
++				continue;
+ 			sb->s_count++;
+ 			spin_unlock(&sb_lock);
+ 			down_read(&sb->s_umount);
+ 			/* still alive? */
+-			if (sb->s_root && (sb->s_flags & SB_BORN))
++			if (sb_is_alive(sb))
+ 				return sb;
+ 			up_read(&sb->s_umount);
+ 			/* nope, got unmounted */
+@@ -916,8 +930,7 @@ int do_remount_sb(struct super_block *sb, int sb_flags, void *data, int force)
+ static void do_emergency_remount_callback(struct super_block *sb)
  {
- 	struct tasklet_hrtimer *thr = container_of(me, struct tasklet_hrtimer, timer);
- 	struct xfrm_state *x = container_of(thr, struct xfrm_state, mtimer);
--	unsigned long now = get_seconds();
--	long next = LONG_MAX;
-+	time64_t now = ktime_get_real_seconds();
-+	time64_t next = TIME64_MAX;
- 	int warn = 0;
- 	int err = 0;
- 
-@@ -537,7 +537,7 @@ static enum hrtimer_restart xfrm_timer_handler(struct hrtimer *me)
- 	if (warn)
- 		km_state_expired(x, 0, 0);
- resched:
--	if (next != LONG_MAX) {
-+	if (next != TIME64_MAX) {
- 		tasklet_hrtimer_start(&x->mtimer, ktime_set(next, 0), HRTIMER_MODE_REL);
- 	}
- 
-@@ -577,7 +577,7 @@ struct xfrm_state *xfrm_state_alloc(struct net *net)
- 		tasklet_hrtimer_init(&x->mtimer, xfrm_timer_handler,
- 					CLOCK_BOOTTIME, HRTIMER_MODE_ABS);
- 		timer_setup(&x->rtimer, xfrm_replay_timer_handler, 0);
--		x->curlft.add_time = get_seconds();
-+		x->curlft.add_time = ktime_get_real_seconds();
- 		x->lft.soft_byte_limit = XFRM_INF;
- 		x->lft.soft_packet_limit = XFRM_INF;
- 		x->lft.hard_byte_limit = XFRM_INF;
-@@ -1579,7 +1579,7 @@ EXPORT_SYMBOL(xfrm_state_update);
- int xfrm_state_check_expire(struct xfrm_state *x)
+ 	down_write(&sb->s_umount);
+-	if (sb->s_root && sb->s_bdev && (sb->s_flags & SB_BORN) &&
+-	    !sb_rdonly(sb)) {
++	if (sb_is_alive(sb) && sb->s_bdev && !sb_rdonly(sb)) {
+ 		/*
+ 		 * What lock protects sb->s_flags??
+ 		 */
+@@ -947,7 +960,7 @@ void emergency_remount(void)
+ static void do_thaw_all_callback(struct super_block *sb)
  {
- 	if (!x->curlft.use_time)
--		x->curlft.use_time = get_seconds();
-+		x->curlft.use_time = ktime_get_real_seconds();
- 
- 	if (x->curlft.bytes >= x->lft.hard_byte_limit ||
- 	    x->curlft.packets >= x->lft.hard_packet_limit) {
+ 	down_write(&sb->s_umount);
+-	if (sb->s_root && sb->s_flags & SB_BORN) {
++	if (sb_is_alive(sb)) {
+ 		emergency_thaw_bdev(sb);
+ 		thaw_super_locked(sb);
+ 	} else {
 -- 
-2.9.0
+1.8.3.1
 
+
+
+----------------------------------------
+// autogenerated by syzkaller (http://github.com/google/syzkaller)
+
+#define _GNU_SOURCE
+#include <fcntl.h>
+#include <linux/futex.h>
+#include <pthread.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/syscall.h>
+#include <unistd.h>
+#include <sys/mount.h>
+#include <signal.h>
+
+struct thread_t {
+	int created, running, call;
+	pthread_t th;
+};
+
+static struct thread_t threads[16];
+static void execute_call(int call);
+static int running;
+
+static void* thr(void* arg)
+{
+	struct thread_t* th = (struct thread_t*)arg;
+	for (;;) {
+		while (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE))
+			syscall(SYS_futex, &th->running, FUTEX_WAIT, 0, 0);
+		execute_call(th->call);
+		__atomic_fetch_sub(&running, 1, __ATOMIC_RELAXED);
+		__atomic_store_n(&th->running, 0, __ATOMIC_RELEASE);
+		syscall(SYS_futex, &th->running, FUTEX_WAKE);
+	}
+	return 0;
+}
+
+static void execute(int num_calls)
+{
+	int call, thread;
+	running = 0;
+	for (call = 0; call < num_calls; call++) {
+		for (thread = 0; thread < sizeof(threads) / sizeof(threads[0]); thread++) {
+			struct thread_t* th = &threads[thread];
+			if (!th->created) {
+				th->created = 1;
+				pthread_attr_t attr;
+				pthread_attr_init(&attr);
+				pthread_attr_setstacksize(&attr, 128 << 10);
+				pthread_create(&th->th, &attr, thr, th);
+			}
+			if (!__atomic_load_n(&th->running, __ATOMIC_ACQUIRE)) {
+				th->call = call;
+				__atomic_fetch_add(&running, 1, __ATOMIC_RELAXED);
+				__atomic_store_n(&th->running, 1, __ATOMIC_RELEASE);
+				syscall(SYS_futex, &th->running, FUTEX_WAKE);
+				struct timespec ts;
+				ts.tv_sec = 0;
+				ts.tv_nsec = 20 * 1000 * 1000;
+				syscall(SYS_futex, &th->running, FUTEX_WAIT, 1, &ts);
+				if (__atomic_load_n(&running, __ATOMIC_RELAXED))
+					usleep((call == num_calls - 1) ? 10000 : 1000);
+				break;
+			}
+		}
+	}
+}
+
+static void execute_call(int call)
+{
+	static int fd[2] = { EOF, EOF };
+	static char buffer[128] = { };
+	switch (call) {
+	case 4:
+		sync();
+		break;
+	case 6:
+		if (pipe(fd) == EOF)
+			kill(0, SIGKILL);
+		break;
+	case 7:
+		mkdir("./file0", 0);
+		break;
+	case 8:
+		snprintf(buffer, sizeof(buffer) - 1, "trans=fd,rfdno=0x%x,wfdno=0x%x,version=9p2000.u,", fd[0], fd[1]);
+		mount(NULL, "./file0", "9p", 0, buffer);
+		break;
+	case 9:
+		write(fd[1], "\x79\x04\x00\x00\x7d\x01\x00\x05\x00\x58\x00\x00\x00\x00\x00\x00"
+		      "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+		      "\x00\x00\x00\x00\x00\x00\x00\x00\x23\x00\x00\x00\x00\x39\x00\x00"
+		      "\x00\x00\x00\x10\x00\x76\x65\x72\x73\x69\x6f\x6e\x3d\x39\x70\x32"
+		      "\x30\x30\x30\x2e\x75\x0d\x00\x77\x6c\x61\x6e\x31\x76\x62\x6f\x78"
+		      "\x6e\x65\x74\x30\x03\x00\x39\x70\x00\x05\x00\x72\x66\x64\x6e\x6f"
+		      "\x0c\x00\x76\x9a\xae\x6d\x5f\xff\xf0\x68\xa6\xbe\x6b\x2c\xc3\xfd"
+		      "\x62\x6f\x78\x6e\x65\x74\x31\x28\x7d\x25\x24\x00\x00\x00\x00\x00"
+		      "\x00\x00\x00\x00\x00\x00\x00", 135);
+		break;
+	}
+}
+
+int main(int argc, char *argv[])
+{
+	int procid;
+	for (procid = 0; procid < 8; procid++)
+		if (fork() == 0)
+			while (1)
+				execute(10);
+	sleep(1000000);
+	return 0;
+}
+----------------------------------------
+
+
+
+By the way, iterate_supers_type() was introduced in v3.1 for fs/ubifs/debug.c
+
+        /*
+         * TODO: this is racy - the file-system might have already been
+         * unmounted and we'd oops in this case. The plan is to fix it with
+         * help of 'iterate_supers_type()' which we should have in v3.0: when
+         * a debugfs opened, we rember FS's UUID in file->private_data. Then
+         * whenever we access the FS via a debugfs file, we iterate all UBIFS
+         * superblocks and fine the one with the same UUID, and take the
+         * locking right.
+         *
+         * The other way to go suggested by Al Viro is to create a separate
+         * 'ubifs-debug' file-system instead.
+         */
+
+but is still not called. Do we want to remove iterate_supers_type() ?
