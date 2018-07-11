@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A540FC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0502C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 568C1208E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 568C1208E3
+	by mail.kernel.org (Postfix) with ESMTP id 65564208E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:57:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65564208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388467AbeGKOCE (ORCPT
+        id S2388521AbeGKOCQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:02:04 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36380 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388376AbeGKOCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:02:02 -0400
+        Wed, 11 Jul 2018 10:02:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:36418 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388274AbeGKOCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:02:16 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A80511AC1;
-        Wed, 11 Jul 2018 06:57:34 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2740C1BF7;
+        Wed, 11 Jul 2018 06:57:48 -0700 (PDT)
 Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 97D763F5B1;
-        Wed, 11 Jul 2018 06:57:32 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 16E0C3F5B1;
+        Wed, 11 Jul 2018 06:57:45 -0700 (PDT)
 From:   Mark Rutland <mark.rutland@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         will.deacon@arm.com
@@ -35,9 +35,9 @@ Cc:     catalin.marinas@arm.com, dave.martin@arm.com, hch@infradead.org,
         james.morse@arm.com, linux@dominikbrodowski.net,
         linux-fsdevel@vger.kernel.org, marc.zyngier@arm.com,
         mark.rutland@arm.com, viro@zeniv.linux.org.uk
-Subject: [PATCHv5 08/21] arm64: convert raw syscall invocation to C
-Date:   Wed, 11 Jul 2018 14:56:43 +0100
-Message-Id: <20180711135656.20670-9-mark.rutland@arm.com>
+Subject: [PATCHv5 12/21] arm64: don't reload GPRs after apply_ssbd
+Date:   Wed, 11 Jul 2018 14:56:47 +0100
+Message-Id: <20180711135656.20670-13-mark.rutland@arm.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180711135656.20670-1-mark.rutland@arm.com>
 References: <20180711135656.20670-1-mark.rutland@arm.com>
@@ -46,195 +46,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a first step towards invoking syscalls with a pt_regs argument,
-convert the raw syscall invocation logic to C. We end up with a bit more
-register shuffling, but the unified invocation logic means we can unify
-the tracing paths, too.
+Now that all of the syscall logic works on the saved pt_regs, apply_ssbd
+can safely corrupt x0-x3 in the entry paths, and we no longer need to
+restore them. So let's remove the logic doing so.
 
-Previously, assembly had to open-code calls to ni_sys() when the system
-call number was out-of-bounds for the relevant syscall table. This case
-is now handled by invoke_syscall(), and the assembly no longer need to
-handle this case explicitly. This allows the tracing paths to be
-simplified and unified, as we no longer need the __ni_sys_trace path and
-the __sys_trace_return label.
-
-This only converts the invocation of the syscall. The rest of the
-syscall triage and tracing is left in assembly for now, and will be
-converted in subsequent patches.
+With that logic gone, we can fold the branch target into the macro, so
+that callers need not deal with this. GAS provides \@, which provides a
+unique value per macro invocation, which we can use to create a unique
+label.
 
 Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 ---
- arch/arm64/kernel/Makefile  |  3 ++-
- arch/arm64/kernel/entry.S   | 36 ++++++++++------------------------
- arch/arm64/kernel/syscall.c | 47 +++++++++++++++++++++++++++++++++++++++++++++
- arch/arm64/kernel/traps.c   | 16 ---------------
- 4 files changed, 59 insertions(+), 43 deletions(-)
- create mode 100644 arch/arm64/kernel/syscall.c
+ arch/arm64/kernel/entry.S | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 0025f8691046..4e24d2244bd1 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -18,7 +18,8 @@ arm64-obj-y		:= debug-monitors.o entry.o irq.o fpsimd.o		\
- 			   hyp-stub.o psci.o cpu_ops.o insn.o	\
- 			   return_address.o cpuinfo.o cpu_errata.o		\
- 			   cpufeature.o alternative.o cacheinfo.o		\
--			   smp.o smp_spin_table.o topology.o smccc-call.o
-+			   smp.o smp_spin_table.o topology.o smccc-call.o	\
-+			   syscall.o
- 
- extra-$(CONFIG_EFI)			:= efi-entry.o
- 
 diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-index 62f2876f9c63..c0392f78e392 100644
+index c41b84d06644..22b240da949b 100644
 --- a/arch/arm64/kernel/entry.S
 +++ b/arch/arm64/kernel/entry.S
-@@ -903,7 +903,6 @@ ENDPROC(el0_error)
-  */
- ret_fast_syscall:
- 	disable_daif
--	str	x0, [sp, #S_X0]			// returned x0
- 	ldr	x1, [tsk, #TSK_TI_FLAGS]	// re-check for syscall tracing
- 	and	x2, x1, #_TIF_SYSCALL_WORK
- 	cbnz	x2, ret_fast_syscall_trace
-@@ -976,15 +975,11 @@ el0_svc_naked:					// compat entry point
+@@ -130,20 +130,21 @@ alternative_else_nop_endif
  
- 	tst	x16, #_TIF_SYSCALL_WORK		// check for syscall hooks
- 	b.ne	__sys_trace
--	cmp     wscno, wsc_nr			// check upper syscall limit
--	b.hs	ni_sys
--	mask_nospec64 xscno, xsc_nr, x19	// enforce bounds for syscall number
--	ldr	x16, [stbl, xscno, lsl #3]	// address in the syscall table
--	blr	x16				// call sys_* routine
--	b	ret_fast_syscall
--ni_sys:
- 	mov	x0, sp
--	bl	do_ni_syscall
-+	mov	w1, wscno
-+	mov	w2, wsc_nr
-+	mov	x3, stbl
-+	bl	invoke_syscall
- 	b	ret_fast_syscall
- ENDPROC(el0_svc)
+ 	// This macro corrupts x0-x3. It is the caller's duty
+ 	// to save/restore them if required.
+-	.macro	apply_ssbd, state, targ, tmp1, tmp2
++	.macro	apply_ssbd, state, tmp1, tmp2
+ #ifdef CONFIG_ARM64_SSBD
+ alternative_cb	arm64_enable_wa2_handling
+-	b	\targ
++	b	.L__asm_ssbd_skip\@
+ alternative_cb_end
+ 	ldr_this_cpu	\tmp2, arm64_ssbd_callback_required, \tmp1
+-	cbz	\tmp2, \targ
++	cbz	\tmp2,	.L__asm_ssbd_skip\@
+ 	ldr	\tmp2, [tsk, #TSK_TI_FLAGS]
+-	tbnz	\tmp2, #TIF_SSBD, \targ
++	tbnz	\tmp2, #TIF_SSBD, .L__asm_ssbd_skip\@
+ 	mov	w0, #ARM_SMCCC_ARCH_WORKAROUND_2
+ 	mov	w1, #\state
+ alternative_cb	arm64_update_smccc_conduit
+ 	nop					// Patched to SMC/HVC #0
+ alternative_cb_end
++.L__asm_ssbd_skip\@:
+ #endif
+ 	.endm
  
-@@ -1001,29 +996,18 @@ __sys_trace:
- 	bl	syscall_trace_enter
- 	cmp	w0, #NO_SYSCALL			// skip the syscall?
- 	b.eq	__sys_trace_return_skipped
--	mov	wscno, w0			// syscall number (possibly new)
--	mov	x1, sp				// pointer to regs
--	cmp	wscno, wsc_nr			// check upper syscall limit
--	b.hs	__ni_sys_trace
--	ldp	x0, x1, [sp]			// restore the syscall args
--	ldp	x2, x3, [sp, #S_X2]
--	ldp	x4, x5, [sp, #S_X4]
--	ldp	x6, x7, [sp, #S_X6]
--	ldr	x16, [stbl, xscno, lsl #3]	// address in the syscall table
--	blr	x16				// call sys_* routine
+@@ -173,13 +174,7 @@ alternative_cb_end
+ 	ldr	x19, [tsk, #TSK_TI_FLAGS]	// since we can unmask debug
+ 	disable_step_tsk x19, x20		// exceptions when scheduling.
  
--__sys_trace_return:
--	str	x0, [sp, #S_X0]			// save returned x0
-+	mov	x0, sp
-+	mov	w1, wscno
-+	mov	w2, wsc_nr
-+	mov	x3, stbl
-+	bl	invoke_syscall
-+
- __sys_trace_return_skipped:
- 	mov	x0, sp
- 	bl	syscall_trace_exit
- 	b	ret_to_user
- 
--__ni_sys_trace:
--	mov	x0, sp
--	bl	do_ni_syscall
--	b	__sys_trace_return
+-	apply_ssbd 1, 1f, x22, x23
 -
- 	.popsection				// .entry.text
- 
- #ifdef CONFIG_UNMAP_KERNEL_AT_EL0
-diff --git a/arch/arm64/kernel/syscall.c b/arch/arm64/kernel/syscall.c
-new file mode 100644
-index 000000000000..93d36f22647e
---- /dev/null
-+++ b/arch/arm64/kernel/syscall.c
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/errno.h>
-+#include <linux/nospec.h>
-+#include <linux/ptrace.h>
-+#include <linux/syscalls.h>
-+
-+#include <asm/syscall.h>
-+
-+long compat_arm_syscall(struct pt_regs *regs);
-+
-+asmlinkage long do_ni_syscall(struct pt_regs *regs)
-+{
-+#ifdef CONFIG_COMPAT
-+	long ret;
-+	if (is_compat_task()) {
-+		ret = compat_arm_syscall(regs);
-+		if (ret != -ENOSYS)
-+			return ret;
-+	}
-+#endif
-+
-+	return sys_ni_syscall();
-+}
-+
-+static long __invoke_syscall(struct pt_regs *regs, syscall_fn_t syscall_fn)
-+{
-+	return syscall_fn(regs->regs[0], regs->regs[1], regs->regs[2],
-+			  regs->regs[3], regs->regs[4], regs->regs[5]);
-+}
-+
-+asmlinkage void invoke_syscall(struct pt_regs *regs, unsigned int scno,
-+			       unsigned int sc_nr,
-+			       const syscall_fn_t syscall_table[])
-+{
-+	long ret;
-+
-+	if (scno < sc_nr) {
-+		syscall_fn_t syscall_fn;
-+		syscall_fn = syscall_table[array_index_nospec(scno, sc_nr)];
-+		ret = __invoke_syscall(regs, syscall_fn);
-+	} else {
-+		ret = do_ni_syscall(regs);
-+	}
-+
-+	regs->regs[0] = ret;
-+}
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index c27292703bd1..039e9ff379cc 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -547,22 +547,6 @@ asmlinkage void __exception do_sysinstr(unsigned int esr, struct pt_regs *regs)
- 	do_undefinstr(regs);
- }
- 
--long compat_arm_syscall(struct pt_regs *regs);
--
--asmlinkage long do_ni_syscall(struct pt_regs *regs)
--{
--#ifdef CONFIG_COMPAT
--	long ret;
--	if (is_compat_task()) {
--		ret = compat_arm_syscall(regs);
--		if (ret != -ENOSYS)
--			return ret;
--	}
+-#ifdef CONFIG_ARM64_SSBD
+-	ldp	x0, x1, [sp, #16 * 0]
+-	ldp	x2, x3, [sp, #16 * 1]
 -#endif
--
--	return sys_ni_syscall();
--}
--
- static const char *esr_class_str[] = {
- 	[0 ... ESR_ELx_EC_MAX]		= "UNRECOGNIZED EC",
- 	[ESR_ELx_EC_UNKNOWN]		= "Unknown/Uncategorized",
+-1:
++	apply_ssbd 1, x22, x23
+ 
+ 	mov	x29, xzr			// fp pointed to user-space
+ 	.else
+@@ -321,8 +316,7 @@ alternative_if ARM64_WORKAROUND_845719
+ alternative_else_nop_endif
+ #endif
+ 3:
+-	apply_ssbd 0, 5f, x0, x1
+-5:
++	apply_ssbd 0, x0, x1
+ 	.endif
+ 
+ 	msr	elr_el1, x21			// set up the return data
 -- 
 2.11.0
 
