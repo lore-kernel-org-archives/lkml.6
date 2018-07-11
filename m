@@ -2,117 +2,113 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9035C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:10:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5ACC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 564E620B6F
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:10:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98F6D20B6F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 11:10:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JexySlcP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564E620B6F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UQCd5mF4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F6D20B6F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732602AbeGKLN7 (ORCPT
+        id S1732627AbeGKLOF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 07:13:59 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41912 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732529AbeGKLN6 (ORCPT
+        Wed, 11 Jul 2018 07:14:05 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:34856 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732606AbeGKLOE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 07:13:58 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y17-v6so14279777ljy.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 04:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=d/6Bhob0E01aCQLv9egKXSvpXRfkiKaDp4MSoGFs+9o=;
-        b=JexySlcPJxGHatbAf55Xr/Q0OYqEOA0yF0Gcwx1TRd4sk7C8OUwhFoErd8zyXVcGD0
-         ExE9lfu3LtEiNpPHEproPKtcBm9s9cOOCt3M7KrzSLVKZaF9u4xxkg0kXz4Dj3Fn7pUQ
-         zy9EgWn/jLZubxubc18Vu481c5tx8WypObJ8hp6VdkUWKgjemprex9ZNwnGXRjcKLEcF
-         t908H4adFLDPauysgLpW4S1EUwHzkhBe0RKWmR/Ulfc6H5d+/JZpcRKDjlrJpbVERC2Z
-         ol3xkmTRI3C+csEJtBC/6dQSnag67+Ci28aFFRwBtFnz8r5AEIsaJXO1AtkLHhZjCJDO
-         XVsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=d/6Bhob0E01aCQLv9egKXSvpXRfkiKaDp4MSoGFs+9o=;
-        b=gQgjaQ2Sbs4zHF2qwFWahJHAms7lNpLXwkx3JijU4fr9CAcMcADSqrqkdoCtNLh/ow
-         p+ql0oPBMhfTOiFdOoOdh+KC90GviYszII2a57qjqDN45GzM1QbtbebPIh9M5ZV2KZhd
-         dcLGhlDFOetyziQweDVFEiIQncM453RCTGP4RYtkWRUTNyuxg+gaCWXcIoBMi3LM2nan
-         5Il/Vd5Job0Pky3uCqgJtlxUZTxdezRjIz2l8ikxQaMA89iHGPDltoYAKEsOjFYrMz46
-         aGcBOcN8zTg8PwXC0MDySHC0+XEoR114TvUQuVM6QyNg58xzExXLGlDICBuzXw2fVA2n
-         GrWw==
-X-Gm-Message-State: APt69E15OBmlfLV9avQ5+92lpTAFcpMLQf8sGJzEAG/D5IHYvGac5eRe
-        QsvCcmiZ+A+n1JDis4WoFjCZMsdZn0E=
-X-Google-Smtp-Source: AAOMgpehhX69g3ixqwAI93TMR6jviAPXp1+A6wZauBJ6sHIsdXtXa5Fwrnz8ly+LInaVQpmMFPFXog==
-X-Received: by 2002:a2e:2b0e:: with SMTP id q14-v6mr17671743lje.147.1531307409199;
-        Wed, 11 Jul 2018 04:10:09 -0700 (PDT)
-Received: from localhost.localdomain ([188.162.64.141])
-        by smtp.gmail.com with ESMTPSA id s5-v6sm2981558ljh.9.2018.07.11.04.10.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 04:10:08 -0700 (PDT)
-From:   Ivan Bornyakov <brnkv.i1@gmail.com>
-To:     devel@driverdev.osuosl.org
-Cc:     linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
-        benchan@chromium.org, jnjoseph@google.com, rspringer@google.com,
-        Ivan Bornyakov <brnkv.i1@gmail.com>
-Subject: [PATCH] staging: gasket: fix plain integer as NULL pointer warning
-Date:   Wed, 11 Jul 2018 14:13:34 +0300
-Message-Id: <20180711111334.15423-1-brnkv.i1@gmail.com>
-X-Mailer: git-send-email 2.16.4
+        Wed, 11 Jul 2018 07:14:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dAuCZZJoWD4NjzZ2cdhm7v1L5BsGI2qcbVsgK7bWiXY=; b=UQCd5mF4Xx1PRok2IwVGTe3dVV
+        8bGmTGE0j530pWZfYxTbApW6dwSWrFT3UtSDFgmlfNpShjR8fnBqflg4ruXv8tuHoS2ZURr7/mtcl
+        I17mz2r+HOaKyzW+x7eFFU6ZtQpYW0raoOdotsB750Dtsi6tYsj+DScM96SRKLZHYslSyjcLQHXLb
+        zy76FP8I+YXRLLbs2cRQfZ1E4Ms8UmMIuYenrcufB20Gw0otYrCtgCX9Crb+3cBaDKDOxaFVKOTon
+        meUxYBU36JjupCoOpbz5XsUm3K2T4ZHycox/kU/Px48b5B2g99pK0ak+jYNDTC4tNEqjXB432tavF
+        teWbhhww==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdD0M-0007DG-Ay; Wed, 11 Jul 2018 11:09:54 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id EB40320289CB2; Wed, 11 Jul 2018 13:09:52 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 13:09:52 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@linux-mips.org,
+        =?utf-8?B?6ZmI5Y2O5omN?= <chenhc@lemote.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Fuxin Zhang <zhangfx@lemote.com>,
+        wuzhangjin <wuzhangjin@gmail.com>,
+        stable <stable@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2] MIPS: implement smp_cond_load_acquire() for Loongson-3
+Message-ID: <20180711110952.GC2476@hirez.programming.kicks-ass.net>
+References: <1531103198-16764-1-git-send-email-chenhc@lemote.com>
+ <tencent_26F8B9E004D4512B2225FCE1@qq.com>
+ <20180710121727.GK2476@hirez.programming.kicks-ass.net>
+ <5471216.FKXZRxKFUI@flygoat-ry>
+ <20180711102106.GG13963@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180711102106.GG13963@arm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Trivial fix to remove sparse warnings:
+On Wed, Jul 11, 2018 at 11:21:06AM +0100, Will Deacon wrote:
+> On Wed, Jul 11, 2018 at 06:05:51PM +0800, Jiaxun Yang wrote:
+> > On 2018-7-10 Tue at 20:17:27，Peter Zijlstra Wrote：
 
-  drivers/staging/gasket/gasket_page_table.c:884:40: warning: Using plain integer as NULL pointer
-  drivers/staging/gasket/gasket_page_table.c:1743:57: warning: Using plain integer as NULL pointer
-  drivers/staging/gasket/gasket_page_table.c:1768:57: warning: Using plain integer as NULL pointer
+> > > Still, even with the rules above, the best work-around is still the very
+> > > same cpu_relax() hack.
+> > 
+> > As you say, SFB makes Loongson not fully SMP-coherent.
+> > However, modify cpu_relax can solve the current problem,
+> > but not so straight forward. On the other hand, providing a Loongson-specific 
+> > WRITE_ONCE looks more reasonable, because it the eliminate the "non-cohrency".
+> > So we can solve the bug from the root.
+> 
+> Curious, but why is it not straight-forward to hack cpu_relax()? If you try
+> to hack WRITE_ONCE, you also need to hack atomic_set, atomic64_set and all
+> the places that should be using WRITE_ONCE but aren't ;~)
 
-Signed-off-by: Ivan Bornyakov <brnkv.i1@gmail.com>
----
- drivers/staging/gasket/gasket_page_table.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Right.
 
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index c5390a860f86..5d3d33cac12f 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -881,7 +881,7 @@ static int gasket_perform_mapping(
- 			u64 off =
- 				(u64)host_addr -
- 				(u64)pg_tbl->coherent_pages[0].user_virt;
--			ptes[i].page = 0;
-+			ptes[i].page = NULL;
- 			ptes[i].offset = offset;
- 			ptes[i].dma_addr = pg_tbl->coherent_pages[0].paddr +
- 					   off + i * PAGE_SIZE;
-@@ -1740,7 +1740,7 @@ int gasket_free_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
- 				  gasket_dev->coherent_buffer.virt_base,
- 				  gasket_dev->coherent_buffer.phys_base);
- 		gasket_dev->coherent_buffer.length_bytes = 0;
--		gasket_dev->coherent_buffer.virt_base = 0;
-+		gasket_dev->coherent_buffer.virt_base = NULL;
- 		gasket_dev->coherent_buffer.phys_base = 0;
- 	}
- 	return 0;
-@@ -1765,7 +1765,7 @@ void gasket_free_coherent_memory_all(
- 				  gasket_dev->coherent_buffer.virt_base,
- 				  gasket_dev->coherent_buffer.phys_base);
- 		gasket_dev->coherent_buffer.length_bytes = 0;
--		gasket_dev->coherent_buffer.virt_base = 0;
-+		gasket_dev->coherent_buffer.virt_base = NULL;
- 		gasket_dev->coherent_buffer.phys_base = 0;
- 	}
- }
--- 
-2.16.4
+The problem isn't stores pre-se, normal progress should contain enough
+stores to flush out 'old' bits in the natural order of things. But the
+problem is spin-wait loops that inhibit normal progress (and thereby
+store-buffer flushing).
 
+And all spin-wait loops should be having cpu_relax() in them. So
+cpu_relax() is the natural place to fix this.
+
+Adding SYNC to WRITE_ONCE()/atomic* will hurt performance lots and will
+ultimately not guarantee anything more; and as Will said, keep you
+chasing dragons where people forgot to use WRITE_ONCE() where they maybe
+should've.
