@@ -2,139 +2,129 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5F2C1B0E3
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D003AC1B0E3
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAD9E20C0E
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:59:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAD9E20C0E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8223F2146F
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:59:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="alWxyPZo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8223F2146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387598AbeGKUFU (ORCPT
+        id S2388274AbeGKUFn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 16:05:20 -0400
-Received: from mga18.intel.com ([134.134.136.126]:11256 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726429AbeGKUFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 16:05:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 12:59:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,338,1526367600"; 
-   d="scan'208";a="74036114"
-Received: from ray.jf.intel.com (HELO [10.7.201.16]) ([10.7.201.16])
-  by orsmga002.jf.intel.com with ESMTP; 11 Jul 2018 12:59:25 -0700
-Subject: Re: [PATCH v2 1/4] x86/split_lock: Enumerate #AC exception for split
- locked access feature
-To:     Thomas Gleixner <tglx@linutronix.de>
-References: <1530282807-66555-1-git-send-email-fenghua.yu@intel.com>
- <1530282807-66555-2-git-send-email-fenghua.yu@intel.com>
- <b0267bb2-7d1f-c1d6-cff8-addf358009b3@intel.com>
- <alpine.DEB.2.21.1806291813570.1595@nanos.tec.linutronix.de>
- <20180704200742.GD7451@localhost.localdomain>
- <20180710184506.GA37857@romley-ivt3.sc.intel.com>
- <ea23cde0-f999-0ed8-a3bc-e798511467bd@intel.com>
- <alpine.DEB.2.21.1807102140050.1588@nanos.tec.linutronix.de>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Eduardo Habkost <ehabkost@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        x86 <x86@kernel.org>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <ef07e047-e928-49a8-b08b-cb4c691db16a@intel.com>
-Date:   Wed, 11 Jul 2018 12:59:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1807102140050.1588@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 11 Jul 2018 16:05:43 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:48662 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732979AbeGKUFn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 16:05:43 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6BJsElc018749;
+        Wed, 11 Jul 2018 19:59:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=tP+V3Borxh0U/KXDOHt/QpWaHV3pNZI43ehZ4rhT/GA=;
+ b=alWxyPZoDL+G0cqV3fgTPd1uVu/tIBW40DFAO0WEO0JT+lhsdQ6mb3hSXbbTmUzuw2Zq
+ rU+KZR025NbjIXDO0Hs+khH3gUfpuROSZ2L8qyhVqMxbqKhLiiGXsgQnjs6KdLD8Jk6z
+ M25yx+s5r32hiiTy8Cty9bl36JbVbYyETLpt5LEcxGZoy+dR18AOxzi2LIpUwS3n9Avo
+ eyuGmiUI4JCjAZnsjAvarTX2YhmtSVdyu3uQJk1guJPQ/NZaOs3Foi5JHbY8plEwMT3R
+ ZpV1rcgEM1Tsn1enFP7SMBddrffbfof2Y1C8R/4uQY7LB6l926XZ4CdjIUYGONZbSfvK aA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2k2p7dyqbs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Jul 2018 19:59:38 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6BJxXvL007447
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 11 Jul 2018 19:59:36 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6BJxUFk008044;
+        Wed, 11 Jul 2018 19:59:30 GMT
+Received: from monkey.oracle.com (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Jul 2018 12:59:30 -0700
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Cannon Matthews <cannonmatthews@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH] mm/hugetlb: remove gigantic page support for HIGHMEM
+Date:   Wed, 11 Jul 2018 12:59:13 -0700
+Message-Id: <20180711195913.1294-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.17.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807110211
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10/2018 12:47 PM, Thomas Gleixner wrote:
-> And please tell your hardware people that they should stop creating
-> features which are not enumerated in one way or the other. That's just a
-> pain all over the place. Boot code, kernel, virt, tools ....
+This reverts commit ee8f248d266e ("hugetlb: add phys addr to struct
+huge_bootmem_page")
 
-Assuming it's too late to get CPUID or MSR enumeration... (I haven't
-given up on this yet, btw)
+At one time powerpc used this field and supporting code. However that
+was removed with commit 79cc38ded1e1 ("powerpc/mm/hugetlb: Add support
+for reserving gigantic huge pages via kernel command line").
 
-How about we #define a Linux-defined X86_FEATURE_SPLIT_LOCK_AC (or
-whatever) for now.  When the hardware that has this bit for real shows
-up, we move the #define to the "correct" place, like if it is a part of
-an existing cpufeature leaf.
+There are no users of this field and supporting code, so remove it.
 
-We also do a new setcpuid= boot option that behaves like the existing
-clearcpuid=.  That option is used by the obscure, specialized split lock
-detectino users to set the software cpufeature bit.
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
+---
+ include/linux/hugetlb.h | 3 ---
+ mm/hugetlb.c            | 9 +--------
+ 2 files changed, 1 insertion(+), 11 deletions(-)
 
-That way, we can merged this code *with* CPUID detection, and the only
-thing we have to do in the future is move the X86_FEATURE_SPLIT_LOCK_AC
-define to a better place.
+diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+index 36fa6a2a82e3..c39d9170a8a0 100644
+--- a/include/linux/hugetlb.h
++++ b/include/linux/hugetlb.h
+@@ -348,9 +348,6 @@ struct hstate {
+ struct huge_bootmem_page {
+ 	struct list_head list;
+ 	struct hstate *hstate;
+-#ifdef CONFIG_HIGHMEM
+-	phys_addr_t phys;
+-#endif
+ };
+ 
+ struct page *alloc_huge_page(struct vm_area_struct *vma,
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 430be42b6ca1..e39593df050b 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -2139,16 +2139,9 @@ static void __init gather_bootmem_prealloc(void)
+ 	struct huge_bootmem_page *m;
+ 
+ 	list_for_each_entry(m, &huge_boot_pages, list) {
++		struct page *page = virt_to_page(m);
+ 		struct hstate *h = m->hstate;
+-		struct page *page;
+ 
+-#ifdef CONFIG_HIGHMEM
+-		page = pfn_to_page(m->phys >> PAGE_SHIFT);
+-		memblock_free_late(__pa(m),
+-				   sizeof(struct huge_bootmem_page));
+-#else
+-		page = virt_to_page(m);
+-#endif
+ 		WARN_ON(page_count(page) != 1);
+ 		prep_compound_huge_page(page, h->order);
+ 		WARN_ON(PageReserved(page));
+-- 
+2.17.1
 
-It might be nice to make the setcpuid= thing use strings instead of
-numbers that _can_ change from kernel-to-kernel, but that's kinda an
-implementation detail.  If we have strings, maybe we can start using
-clearcpuid=pku instead of our endless list of (new) boot parameters like
-nopku, nosmap, nosmep, etc...
