@@ -2,70 +2,65 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEAEC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 534BFC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B58F22086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:00:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B58F22086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1607F2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 13:01:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1607F2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387675AbeGKNFG (ORCPT
+        id S2387686AbeGKNFv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:05:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35300 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732420AbeGKNFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:05:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D00D7A9;
-        Wed, 11 Jul 2018 06:00:52 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 413BF3F5AD;
-        Wed, 11 Jul 2018 06:00:50 -0700 (PDT)
-Subject: Re: [PATCH v5 2/7] KVM: arm/arm64: Introduce helpers to manupulate
- page table entries
-To:     Punit Agrawal <punit.agrawal@arm.com>, kvmarm@lists.cs.columbia.edu
-Cc:     linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, linux-kernel@vger.kernel.org,
-        will.deacon@arm.com, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>
-References: <20180709143835.28971-1-punit.agrawal@arm.com>
- <20180709144124.29164-1-punit.agrawal@arm.com>
- <20180709144124.29164-2-punit.agrawal@arm.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <691fcde0-b0a2-d258-ac99-49c6c4794247@arm.com>
-Date:   Wed, 11 Jul 2018 14:00:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180709144124.29164-2-punit.agrawal@arm.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 11 Jul 2018 09:05:51 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51427 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732420AbeGKNFv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 09:05:51 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9290F20775; Wed, 11 Jul 2018 15:01:35 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 68B6A206ED;
+        Wed, 11 Jul 2018 15:01:35 +0200 (CEST)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] pinctrl: ocelot: fix gpio4 twi function
+Date:   Wed, 11 Jul 2018 15:01:26 +0200
+Message-Id: <20180711130126.4090-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/07/18 15:41, Punit Agrawal wrote:
-> Introduce helpers to abstract architectural handling of the conversion
-> of pfn to page table entries and marking a PMD page table entry as a
-> block entry.
-> 
-> The helpers are introduced in preparation for supporting PUD hugepages
-> at stage 2 - which are supported on arm64 but do not exist on arm.
-> 
-> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
-> Acked-by: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
+the TWI function on GPIO4 is actually a multiplexed SCL, not an original
+TWI SDA or SCL. Fix it.
 
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/pinctrl/pinctrl-ocelot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
+index 15bb1cb8729b..e93669f4d1c8 100644
+--- a/drivers/pinctrl/pinctrl-ocelot.c
++++ b/drivers/pinctrl/pinctrl-ocelot.c
+@@ -132,7 +132,7 @@ OCELOT_P(0,  SG0,       NONE,      NONE);
+ OCELOT_P(1,  SG0,       NONE,      NONE);
+ OCELOT_P(2,  SG0,       NONE,      NONE);
+ OCELOT_P(3,  SG0,       NONE,      NONE);
+-OCELOT_P(4,  IRQ0_IN,   IRQ0_OUT,  TWI);
++OCELOT_P(4,  IRQ0_IN,   IRQ0_OUT,  TWI_SCL_M);
+ OCELOT_P(5,  IRQ1_IN,   IRQ1_OUT,  PCI_WAKE);
+ OCELOT_P(6,  UART,      TWI_SCL_M, NONE);
+ OCELOT_P(7,  UART,      TWI_SCL_M, NONE);
+-- 
+2.18.0
+
