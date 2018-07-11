@@ -2,128 +2,99 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD800C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84025C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 715232086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:30:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715232086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1070D2086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 07:32:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=dominion-thruhere-net.20150623.gappssmtp.com header.i=@dominion-thruhere-net.20150623.gappssmtp.com header.b="KrpyvOmv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1070D2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dominion.thruhere.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726360AbeGKHdG (ORCPT
+        id S1726342AbeGKHfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 03:33:06 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34231 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbeGKHdG (ORCPT
+        Wed, 11 Jul 2018 03:35:40 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:35149 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725866AbeGKHfk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 03:33:06 -0400
-Received: by mail-wr1-f66.google.com with SMTP id c13-v6so16995155wrt.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 00:30:12 -0700 (PDT)
+        Wed, 11 Jul 2018 03:35:40 -0400
+Received: by mail-ed1-f66.google.com with SMTP id b10-v6so18417181edi.2
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 00:32:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dominion-thruhere-net.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=6Z0ElU+NTVckRWzNqDFJ+ng40UeBtYoFGoQG9i2w+Ps=;
+        b=KrpyvOmv8HFnkGymo0MfawoVD/HLebIi/LVhRtezDAS+CEzz0//UnbTssAhqnMo3iy
+         acSxRRUEFIZGCsntS+Tnhe4sOeRlDJ6wqhc7sHWA+wVIan5zJCerWlMNrtHxKPyopfbU
+         HgGLBj37vuSr408gm8LudZ1vdcmbnkKlGQFKc0KZUNTeTouorihBnKgDjupLkkITXm0l
+         sp2xmyWb3t/MkPCw9rq+YMN6ELQ78Xlysi5CkGApvxY3h+J4x/XB7ffDZIB1XOrkvUFi
+         sFiI9E6wH0YRK8FT7m5Cy1MkWGEQmuJpGCtIJHiYpAMiho3Kywbfln/uvdCobYWKkc/Z
+         LGSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=fxRiu7oKmVq6ke/lQ/gq1h8dclx9MILloQReYHWplVE=;
-        b=qvfl9kM5EHXhCceIOgaPJv9tjbXUZr7HcTIDmGzeCVbeXj8Tqq3I1vXvz8jD0CmbAI
-         iFEYfe3P9uLVskKpcYIEyXP0F2Mthz/TAru1NtXgZOgqUUpF/l2bISwTqa4WMvwQmC9b
-         g7PpyEtHyw9rmY8L678KoqJgNVpUmSIKAMfcuMVNenNQKh/nB16YCkkiBB8yu3hWQ7iE
-         dHaTVQjQUE8ZED8cI+ALu2rkkcwAzHYBFCgw/fDGyLB3SR+ShrNTRuw15Xi7mt+5LAXw
-         dve/SXL78BWz+SVQ8BMpHjWGi5HgmbL5tefTm8i20VCHLs2DJitrkxwxYS4PWuIfUbHo
-         /aKA==
-X-Gm-Message-State: AOUpUlEzgyfhmkTtJRL1tGAqXyXfauUAGQzL9jwbpmvYegxacioS21hz
-        NGW7WuxSo9iQ+C2RSwixPH7Ywg==
-X-Google-Smtp-Source: AAOMgpdXxflAZ2JRbgOKEX7ty5I8yCU4eyzbOaIL/2ph7jJ7IQyS0oJhwD8lblBtyevgNXgZ8WalOA==
-X-Received: by 2002:a5d:5088:: with SMTP id a8-v6mr14452722wrt.37.1531294211778;
-        Wed, 11 Jul 2018 00:30:11 -0700 (PDT)
-Received: from localhost.localdomain.com ([151.15.255.159])
-        by smtp.gmail.com with ESMTPSA id j11-v6sm19595529wrr.37.2018.07.11.00.30.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 00:30:11 -0700 (PDT)
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     peterz@infradead.org, mingo@redhat.com, mark.rutland@arm.com
-Cc:     rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
-        bristot@redhat.com, Juri Lelli <juri.lelli@redhat.com>
-Subject: [PATCH] sched/deadline: Fix switched_from_dl
-Date:   Wed, 11 Jul 2018 09:29:48 +0200
-Message-Id: <20180711072948.27061-1-juri.lelli@redhat.com>
-X-Mailer: git-send-email 2.14.4
+        bh=6Z0ElU+NTVckRWzNqDFJ+ng40UeBtYoFGoQG9i2w+Ps=;
+        b=hVtr0Ohm6RDKZ7jIEA24XdP2GhrKbYc1fgLAInuC9WclDhTA+6DD+kc6qcPZWDe4+W
+         R/5aEak2/BAyz1pD/H5+rN20AYphvtZiBTaVExHRrBh6cEMfL4dsOIm6zrA0CxUhEKsa
+         H4hCgJuDa0eNqjYqUlVx5NYHnqXc3qLyvU9GHHgaK6zB69JS+Cj92Xly3HY6fp7viTpR
+         kS/KxUYly7VD/evXWxSgvVgPzgH9yBxf+cmOYPsheZKDkDKXuSyWsAtmAGuztntbzqF5
+         LXB8SCrVpI1sjl9I+sNeHXt6RyDrMdDwjU1xEWXnPcNiaXf23hepxc8blvjAdh6uK1CR
+         jTFQ==
+X-Gm-Message-State: APt69E110P1k102TmTV3sJUkW+csEALq4bmwAzlSOW10rnurZl8hvGil
+        t6zWL0Wn7sfNdRnnaaohbobErw==
+X-Google-Smtp-Source: AAOMgpdZhcRMrAhN3BhSqYFbXLVBGOWQ0ECmP4M9LkPpmHqE3aidbekQArG3szRHI3GIrsIcV3XbXA==
+X-Received: by 2002:a50:86f6:: with SMTP id 51-v6mr29323980edu.312.1531294365537;
+        Wed, 11 Jul 2018 00:32:45 -0700 (PDT)
+Received: from localhost ([82.163.40.65])
+        by smtp.gmail.com with ESMTPSA id i89-v6sm8958816edi.10.2018.07.11.00.32.44
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Wed, 11 Jul 2018 00:32:44 -0700 (PDT)
+From:   Koen Kooi <koen@dominion.thruhere.net>
+To:     linux-omap@vger.kernel.org
+Cc:     Koen Kooi <koen@dominion.thruhere.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] ARM: dts: am3355: add support for the Sancloud Beaglebone Enhanced
+Date:   Wed, 11 Jul 2018 09:32:27 +0200
+Message-Id: <1531294352-27385-1-git-send-email-koen@dominion.thruhere.net>
+X-Mailer: git-send-email 2.0.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark noticed that syzkaller is able to reliably trigger the following
+The "Beaglebone Enhanced" by Sancloud is based on the Beaglebone Black,
+but with the following differences:
 
-  dl_rq->running_bw > dl_rq->this_bw
-  WARNING: CPU: 1 PID: 153 at kernel/sched/deadline.c:124 switched_from_dl+0x454/0x608
-  Kernel panic - not syncing: panic_on_warn set ...
+ * Gigabit capable PHY
+ * Extra USB hub, optional i2c control
+ * lps3331ap barometer connected over i2c
+ * MPU6050 6 axis MEMS accelerometer/gyro connected over i2c
+ * 1GiB DDR3 RAM
+ * RTL8723 Wifi/Bluetooth connected over USB
 
-  CPU: 1 PID: 153 Comm: syz-executor253 Not tainted 4.18.0-rc3+ #29
-  Hardware name: linux,dummy-virt (DT)
-  Call trace:
-   dump_backtrace+0x0/0x458
-   show_stack+0x20/0x30
-   dump_stack+0x180/0x250
-   panic+0x2dc/0x4ec
-   __warn_printk+0x0/0x150
-   report_bug+0x228/0x2d8
-   bug_handler+0xa0/0x1a0
-   brk_handler+0x2f0/0x568
-   do_debug_exception+0x1bc/0x5d0
-   el1_dbg+0x18/0x78
-   switched_from_dl+0x454/0x608
-   __sched_setscheduler+0x8cc/0x2018
-   sys_sched_setattr+0x340/0x758
-   el0_svc_naked+0x30/0x34
+This series adds the Sancloud vendor prefix as well as the actual dts.
 
-syzkaller reproducer runs a bunch of threads that constantly switch
-between DEADLINE and NORMAL classes while interacting through futexes.
+v2: * Add missing #include <dt-bindings/interrupt-controller/irq.h>
+    * Fix barometer compatible string
+v1: Initial submission, not the dts actually tested :/
 
-The splat above is caused by the fact that if a DEADLINE task is setattr
-back to NORMAL while in non_contending state (blocked on a futex -
-inactive timer armed), its contribution to running_bw is not removed
-before sub_rq_bw() gets called (!task_on_rq_queued() branch) and the
-latter sees running_bw > this_bw.
+Koen Kooi (2):
+  dt-bindings: Add vendor prefix for Sancloud
+  ARM: dts: am335x: add am335x-sancloud-bbe board support
 
-Fix it by removing a task contribution from running_bw if the task is
-not queued and in non_contending state while switched to a different
-class.
+ .../devicetree/bindings/vendor-prefixes.txt        |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/am335x-sancloud-bbe.dts          | 146 +++++++++++++++++++++
+ 3 files changed, 148 insertions(+)
+ create mode 100644 arch/arm/boot/dts/am335x-sancloud-bbe.dts
 
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
----
- kernel/sched/deadline.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index fbfc3f1d368a..10c7b51c0d1f 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2290,8 +2290,17 @@ static void switched_from_dl(struct rq *rq, struct task_struct *p)
- 	if (task_on_rq_queued(p) && p->dl.dl_runtime)
- 		task_non_contending(p);
- 
--	if (!task_on_rq_queued(p))
-+	if (!task_on_rq_queued(p)) {
-+		/*
-+		 * Inactive timer is armed. However, p is leaving DEADLINE and
-+		 * might migrate away from this rq while continuing to run on
-+		 * some other class. We need to remove its contribution from
-+		 * this rq running_bw now, or sub_rq_bw (below) will complain.
-+		 */
-+		if (p->dl.dl_non_contending)
-+			sub_running_bw(&p->dl, &rq->dl);
- 		sub_rq_bw(&p->dl, &rq->dl);
-+	}
- 
- 	/*
- 	 * We cannot use inactive_task_timer() to invoke sub_running_bw()
 -- 
-2.14.4
+2.0.1
 
