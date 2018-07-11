@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D3BAC5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:22:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91F47C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:22:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24C9320CA9
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:22:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4697520CA9
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 19:22:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nsbLqo9e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24C9320CA9
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l///wr9o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4697520CA9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390235AbeGKT2T (ORCPT
+        id S2390247AbeGKT2V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 15:28:19 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44157 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390199AbeGKT2P (ORCPT
+        Wed, 11 Jul 2018 15:28:21 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43962 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390199AbeGKT2U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 15:28:15 -0400
-Received: by mail-ed1-f68.google.com with SMTP id d17-v6so7924763eds.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:22:31 -0700 (PDT)
+        Wed, 11 Jul 2018 15:28:20 -0400
+Received: by mail-ed1-f67.google.com with SMTP id u11-v6so20004533eds.10
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 12:22:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Co0BXNQukNkvbnsHzB0g1f6+X4dZg1c4RYb3fO6ByPQ=;
-        b=nsbLqo9expUkyBW2jvi8AYz1jjFI2HeTcZO+mYxVQkfbbMZoLhqLQqBsUWaIdCULpJ
-         5Fbs5eRvcx48WsISetCTehLTR7CjYgUW3naF3Lt/GTUiXuknSeO12oKfwQAo0ULxjJbw
-         7jWPaa+Z0fUNRtuq1NXbdJEmEmUxNYUNDsN+MLPZ7Wt0xNLISsg6w8w+thO1QIbHlhUO
-         wEeoDMJVnPHzgZpoK0jnuNZtMHGixCwisbbz6V097EWIqYm+0faI2850wK101zECkgr7
-         R/RYk+YY6rhhtU+4ECSSIW5A9QPtJXKp0bWBd0ThXSUtAVUKt4C7ddxbPesxL90FekXm
-         y8cg==
+        bh=zFnY/CHU9+J0A+1VHugOhtsNwWYubSIr94scRW1ezB4=;
+        b=l///wr9oiCM77WesOw0uttU6MHq//CbuNih1Ghq2yU7Xv0cG5QcHegVPIdJU56BP1t
+         gAtZnkoH/caPTzZoYhJ4LZL5TMoXYQIEmdbcYtnL2k8hJy8GDFsJZ2OcrgL1D4dn0MWF
+         05cnF8BEPpKBNqC94ETlDf2Rk8uYZ2Dw7kspSUGKFJtUFZVw4QhGRoMR6Pb2G6yw7VU8
+         BpL6s/p26L43frYRmlOk16cAehrmCj35HIUQyt/WSJ33muCNMeVvSnjP/I4VCNOBC/1q
+         p/8CAKvV/B1f6h0waAvEsrtuLlc6gyjKbcmfOTA/G8ZOUlbMD3NpFl3aL/DrF2PMUCa6
+         qoiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Co0BXNQukNkvbnsHzB0g1f6+X4dZg1c4RYb3fO6ByPQ=;
-        b=WPtasSH+TQQEpUwJbWmJdhhJycFTkFrDRqdssCw9nfZceAvrA9oTHpH16RC8VaRv9z
-         f5rBxKxVRKV2bKKJXYzfAocTshAn8m9vahvXAjeaYhXOiXb7v0mgAlqfjCpwmku7zpWV
-         Y0FOV5GBWEPAskPzrRSULHo8OuxdSno9dtWqT6/z//QVjH/c7gEbzlhjpZcY4rbh/9+m
-         Ul63IaREJwRR3MwxZMC1fRbvY63vzF7pPh8qYXx+L5G/5/Lz9JsnUyYANBMHbTc3aaQV
-         vBAsrgzhM+nTWxSWroNyVaf1joNlDrfmReV7MdWCnQ3wsNsZlx6DdB64zffOIX16EUmo
-         IA3A==
-X-Gm-Message-State: APt69E2p7di1j3CPUJ0btTISGCMQItmS/H6u2Gz6Rk1LtQGCA8WJ13zB
-        pPvIbnnwcMCR+o/T56ZfOhew0Uvk
-X-Google-Smtp-Source: AAOMgpc9HQTKi1IUHQOufqPimd3+FLHUMwe8cSYSEE2XDxqutOxSg354dnzgbZ9dB028HaZ4wVm7bg==
-X-Received: by 2002:a50:9aa4:: with SMTP id p33-v6mr33179415edb.218.1531336950171;
-        Wed, 11 Jul 2018 12:22:30 -0700 (PDT)
+        bh=zFnY/CHU9+J0A+1VHugOhtsNwWYubSIr94scRW1ezB4=;
+        b=ZTUyh9Q3psafql786UmNBcmpIMU/NnDONIttWUKR+22+59IC/uZN5p/5Q01/vaP+wl
+         UFt2pAAoRLqwfQLT1jrBBe7BbkNqZo5/Zj3ki7E4WK/fdAuH8YOIvXhfg+KRrCYlAd3b
+         R96FaPdVtv2NhfJPOvqL+9M/P2pJn8Dm3nRHi1JDG43WbjDWvjSnXiOCSS/rfADHqCjp
+         GRzCb8jhGX2JWC6g7nYf5ZE5BG6R2XNu+ehSc9C24yII1t9RKwmfy/f9hIyz2A3yKveA
+         NYM6ImHh9tSsWqzWAYMjv7xo0JMJFff5DwzAfaxpTd7IS3bht7OLDX0FMAoKXa9aLKdj
+         22fQ==
+X-Gm-Message-State: APt69E0RwJmQxraxvGCeWxf6jA3HprokQO9slU7L0/qzreN8Rk2VBc/H
+        65zuEeeL8MKdWpb6wE/5Mxx+V3v3
+X-Google-Smtp-Source: AAOMgpc1Z5OHhiR9ltp09y7j5O25ZydCUGdPVl+X+7SbEdThAEoM+y79uonWyXtWd74nrJ5aUaNsaw==
+X-Received: by 2002:a50:8921:: with SMTP id e30-v6mr32358010ede.213.1531336955050;
+        Wed, 11 Jul 2018 12:22:35 -0700 (PDT)
 Received: from localhost.localdomain ([109.77.228.66])
-        by smtp.gmail.com with ESMTPSA id e9-v6sm7107787edc.37.2018.07.11.12.22.28
+        by smtp.gmail.com with ESMTPSA id e9-v6sm7107787edc.37.2018.07.11.12.22.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 12:22:29 -0700 (PDT)
+        Wed, 11 Jul 2018 12:22:34 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         aastha.gupta4104@gmail.com, keescook@chromium.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 05/10] staging:rtl8192u: typedef struct tx_desc_cmd_819x_usb remove typedef
-Date:   Wed, 11 Jul 2018 20:21:44 +0100
-Message-Id: <20180711192149.21621-6-johnfwhitmore@gmail.com>
+Subject: [PATCH 08/10] staging:rtl8192u: Remove struct rx_desc_819x_usb_aggr_subframe
+Date:   Wed, 11 Jul 2018 20:21:47 +0100
+Message-Id: <20180711192149.21621-9-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180711192149.21621-1-johnfwhitmore@gmail.com>
 References: <20180711192149.21621-1-johnfwhitmore@gmail.com>
@@ -75,52 +75,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change structure tx_desc_cmd_819x_usb from being typedef to being a simple
-structure, without the typedef.
-
-checkpatch warns about defining new types in the code.
+Removal of structure rx_desc_819x_usb_aggr_subframe from local header file,
+which is not used outside the header file.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r8192U.h      | 4 ++--
- drivers/staging/rtl8192u/r8192U_core.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8192u/r8192U.h | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
 diff --git a/drivers/staging/rtl8192u/r8192U.h b/drivers/staging/rtl8192u/r8192U.h
-index 86cf3ef3a970..7dd99612620a 100644
+index d7f090c1bb44..c8a23a831d51 100644
 --- a/drivers/staging/rtl8192u/r8192U.h
 +++ b/drivers/staging/rtl8192u/r8192U.h
-@@ -213,7 +213,7 @@ struct tx_desc_819x_usb {
- 	u32	Reserved7;
+@@ -294,24 +294,6 @@ struct rx_desc_819x_usb {
+ 	u32                 Reserved2;
  };
  
--typedef struct _tx_desc_cmd_819x_usb {
-+struct tx_desc_cmd_819x_usb {
+-#ifdef USB_RX_AGGREGATION_SUPPORT
+-typedef struct _rx_desc_819x_usb_aggr_subframe {
+-	/* DOWRD 0 */
+-	u16			Length:14;
+-	u16			CRC32:1;
+-	u16			ICV:1;
+-	u8			Offset;
+-	u8			RxDrvInfoSize;
+-	/* DOWRD 1 */
+-	u8			Shift:2;
+-	u8			PHYStatus:1;
+-	u8			SWDec:1;
+-	u8			Reserved1:4;
+-	u8			Reserved2;
+-	u16			Reserved3;
+-} rx_desc_819x_usb_aggr_subframe, *prx_desc_819x_usb_aggr_subframe;
+-#endif
+-
+ typedef struct rx_drvinfo_819x_usb {
  	/* DWORD 0 */
- 	u16	Reserved0;
- 	u8	Reserved1;
-@@ -238,7 +238,7 @@ typedef struct _tx_desc_cmd_819x_usb {
- 	u32	Reserved6;
- 	u32	Reserved7;
- 	u32	Reserved8;
--} tx_desc_cmd_819x_usb, *ptx_desc_cmd_819x_usb;
-+};
- 
- typedef struct _tx_fwinfo_819x_usb {
- 	/* DOWRD 0 */
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index a2a107521450..d7fa7ece62fb 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -1242,7 +1242,7 @@ short rtl819xU_tx_cmd(struct net_device *dev, struct sk_buff *skb)
- 	int			status;
- 	struct urb		*tx_urb;
- 	unsigned int		idx_pipe;
--	tx_desc_cmd_819x_usb *pdesc = (tx_desc_cmd_819x_usb *)skb->data;
-+	struct tx_desc_cmd_819x_usb *pdesc = (struct tx_desc_cmd_819x_usb *)skb->data;
- 	struct cb_desc *tcb_desc = (struct cb_desc *)(skb->cb + MAX_DEV_ADDR_SIZE);
- 	u8 queue_index = tcb_desc->queue_index;
- 
+ 	u16                 Reserved1:12;
 -- 
 2.18.0
 
