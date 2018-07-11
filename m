@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D992C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C38C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF41208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF41208EC
+	by mail.kernel.org (Postfix) with ESMTP id A0C8120936
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 02:25:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0C8120936
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732500AbeGKCYF (ORCPT
+        id S1732856AbeGKC1G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 22:24:05 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:45516 "EHLO
+        Tue, 10 Jul 2018 22:27:06 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:45582 "EHLO
         ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732364AbeGKCYD (ORCPT
+        with ESMTP id S1732387AbeGKCYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 22:24:03 -0400
+        Tue, 10 Jul 2018 22:24:05 -0400
 Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fd4la-0003Hi-Np; Wed, 11 Jul 2018 02:22:06 +0000
+        id 1fd4lb-0003J7-Sq; Wed, 11 Jul 2018 02:22:07 +0000
 From:   Al Viro <viro@ZenIV.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [RFC][PATCH 06/42] turn filp_clone_open() into inline wrapper for dentry_open()
-Date:   Wed, 11 Jul 2018 03:21:30 +0100
-Message-Id: <20180711022206.12571-6-viro@ZenIV.linux.org.uk>
+Subject: [RFC][PATCH 17/42] switch all remaining checks for FILE_OPENED to FMODE_OPENED
+Date:   Wed, 11 Jul 2018 03:21:41 +0100
+Message-Id: <20180711022206.12571-17-viro@ZenIV.linux.org.uk>
 X-Mailer: git-send-email 2.9.5
 In-Reply-To: <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
 References: <20180711021136.GN30522@ZenIV.linux.org.uk>
@@ -43,96 +43,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Al Viro <viro@zeniv.linux.org.uk>
 
-it's exactly the same thing as
-	dentry_open(&file->f_path, file->f_flags, file->f_cred)
-
-... and rename it to file_clone_open(), while we are at it.
-'filp' naming convention is bogus; sure, it's "file pointer",
-but we generally don't do that kind of Hungarian notation.
-Some of the instances have too many callers to touch, but this
-one has only two, so let's sanitize it while we can...
+... and don't bother with setting FILE_OPENED at all.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/gpu/drm/drm_lease.c |  2 +-
- fs/binfmt_misc.c            |  2 +-
- fs/open.c                   | 20 --------------------
- include/linux/fs.h          |  5 ++++-
- 4 files changed, 6 insertions(+), 23 deletions(-)
+ fs/gfs2/inode.c | 2 +-
+ fs/namei.c      | 7 ++-----
+ fs/open.c       | 9 ++-------
+ 3 files changed, 5 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
-index d638c0fb3418..b54fb78a283c 100644
---- a/drivers/gpu/drm/drm_lease.c
-+++ b/drivers/gpu/drm/drm_lease.c
-@@ -553,7 +553,7 @@ int drm_mode_create_lease_ioctl(struct drm_device *dev,
+diff --git a/fs/gfs2/inode.c b/fs/gfs2/inode.c
+index feda55f67050..67c588edf8d8 100644
+--- a/fs/gfs2/inode.c
++++ b/fs/gfs2/inode.c
+@@ -1250,7 +1250,7 @@ static int gfs2_atomic_open(struct inode *dir, struct dentry *dentry,
+ 	if (d != NULL)
+ 		dentry = d;
+ 	if (d_really_is_positive(dentry)) {
+-		if (!(*opened & FILE_OPENED))
++		if (!(file->f_mode & FMODE_OPENED))
+ 			return finish_no_open(file, d);
+ 		dput(d);
+ 		return 0;
+diff --git a/fs/namei.c b/fs/namei.c
+index 39b5da70d6f5..ad8d53c3243c 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3395,11 +3395,10 @@ static int do_last(struct nameidata *nd,
+ 	error = may_open(&nd->path, acc_mode, open_flag);
+ 	if (error)
+ 		goto out;
+-	BUG_ON(*opened & FILE_OPENED); /* once it's opened, it's opened */
++	BUG_ON(file->f_mode & FMODE_OPENED); /* once it's opened, it's opened */
+ 	error = vfs_open(&nd->path, file);
+ 	if (error)
+ 		goto out;
+-	*opened |= FILE_OPENED;
+ opened:
+ 	error = ima_file_check(file, op->acc_mode, *opened);
+ 	if (!error && will_truncate)
+@@ -3517,8 +3516,6 @@ static struct file *path_openat(struct nameidata *nd,
  
- 	/* Clone the lessor file to create a new file for us */
- 	DRM_DEBUG_LEASE("Allocating lease file\n");
--	lessee_file = filp_clone_open(lessor_file);
-+	lessee_file = file_clone_open(lessor_file);
- 	if (IS_ERR(lessee_file)) {
- 		ret = PTR_ERR(lessee_file);
- 		goto out_lessee;
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index 4b5fff31ef27..aa4a7a23ff99 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -205,7 +205,7 @@ static int load_misc_binary(struct linux_binprm *bprm)
- 		goto error;
+ 	if (unlikely(file->f_flags & O_PATH)) {
+ 		error = do_o_path(nd, flags, file);
+-		if (!error)
+-			opened |= FILE_OPENED;
+ 		goto out2;
+ 	}
  
- 	if (fmt->flags & MISC_FMT_OPEN_FILE) {
--		interp_file = filp_clone_open(fmt->interp_file);
-+		interp_file = file_clone_open(fmt->interp_file);
- 		if (!IS_ERR(interp_file))
- 			deny_write_access(interp_file);
- 	} else {
+@@ -3539,7 +3536,7 @@ static struct file *path_openat(struct nameidata *nd,
+ 	terminate_walk(nd);
+ out2:
+ 	if (likely(!error)) {
+-		if (likely(opened & FILE_OPENED))
++		if (likely(file->f_mode & FMODE_OPENED))
+ 			return file;
+ 		WARN_ON(1);
+ 		error = -EINVAL;
 diff --git a/fs/open.c b/fs/open.c
-index d0e955b558ad..76c56966e297 100644
+index 2aa3dc03e2fd..1f379656feab 100644
 --- a/fs/open.c
 +++ b/fs/open.c
-@@ -1063,26 +1063,6 @@ struct file *file_open_root(struct dentry *dentry, struct vfsmount *mnt,
- }
- EXPORT_SYMBOL(file_open_root);
- 
--struct file *filp_clone_open(struct file *oldfile)
--{
--	struct file *file;
--	int retval;
--
--	file = get_empty_filp();
--	if (IS_ERR(file))
--		return file;
--
--	file->f_flags = oldfile->f_flags;
--	retval = vfs_open(&oldfile->f_path, file, oldfile->f_cred);
--	if (retval) {
--		put_filp(file);
--		return ERR_PTR(retval);
--	}
--
--	return file;
--}
--EXPORT_SYMBOL(filp_clone_open);
--
- long do_sys_open(int dfd, const char __user *filename, int flags, umode_t mode)
+@@ -849,15 +849,10 @@ int finish_open(struct file *file, struct dentry *dentry,
+ 		int (*open)(struct inode *, struct file *),
+ 		int *opened)
  {
- 	struct open_flags op;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index aa9b4c169ed2..c4ca4c9c1130 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2422,7 +2422,10 @@ extern struct file *filp_open(const char *, int, umode_t);
- extern struct file *file_open_root(struct dentry *, struct vfsmount *,
- 				   const char *, int, umode_t);
- extern struct file * dentry_open(const struct path *, int, const struct cred *);
--extern struct file *filp_clone_open(struct file *);
-+static inline struct file *file_clone_open(struct file *file)
-+{
-+	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
-+}
- extern int filp_close(struct file *, fl_owner_t id);
+-	int error;
+-	BUG_ON(*opened & FILE_OPENED); /* once it's opened, it's opened */
++	BUG_ON(file->f_mode & FMODE_OPENED); /* once it's opened, it's opened */
  
- extern struct filename *getname_flags(const char __user *, int, int *);
+ 	file->f_path.dentry = dentry;
+-	error = do_dentry_open(file, d_backing_inode(dentry), open);
+-	if (!error)
+-		*opened |= FILE_OPENED;
+-
+-	return error;
++	return do_dentry_open(file, d_backing_inode(dentry), open);
+ }
+ EXPORT_SYMBOL(finish_open);
+ 
 -- 
 2.11.0
 
