@@ -2,207 +2,109 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68427C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BB7C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 107B520BF2
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:14:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76D73208FA
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 10:17:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xmjB3UQl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107B520BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="MkC9Di71"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D73208FA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732392AbeGKKS0 (ORCPT
+        id S1732436AbeGKKUt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 06:18:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39494 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbeGKKSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 06:18:25 -0400
-Received: from localhost (unknown [193.47.165.251])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4503F208FA;
-        Wed, 11 Jul 2018 10:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531304089;
-        bh=Bp+yl/3OlWMuPBIsBBZQv8OYym8i7sttwmB3YyU0u4M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=xmjB3UQl5vBYCOMqPRFz5wFIwNv3DskbuQCDzzKN8037kbjM1b77vSJACAecCgvHr
-         y36Q/B7KkMUGY5/GpYvNIE3S05xPba2OuxMzeAyNl9kT9gMk9AbtAQgcWE6P91Ejtv
-         VMX/JLsouC2/pRsH2iEfsssmorbxTzf2W5jWeNTQ=
-Date:   Wed, 11 Jul 2018 13:14:47 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Sudeep Dutt <sudeep.dutt@intel.com>,
-        Ashutosh Dixit <ashutosh.dixit@intel.com>,
-        Dimitri Sivanich <sivanich@sgi.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>, kvm@vger.kernel.org,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        intel-gfx@lists.freedesktop.org, linux-rdma@vger.kernel.org,
-        xen-devel@lists.xenproject.org, linux-mm@kvack.org,
-        David Rientjes <rientjes@google.com>,
-        Felix Kuehling <felix.kuehling@amd.com>
-Subject: Re: [RFC PATCH] mm, oom: distinguish blockable mode for mmu notifiers
-Message-ID: <20180711101447.GU3014@mtr-leonro.mtl.com>
-References: <20180622150242.16558-1-mhocko@kernel.org>
- <20180627074421.GF32348@dhcp22.suse.cz>
- <20180709122908.GJ22049@dhcp22.suse.cz>
- <20180710134040.GG3014@mtr-leonro.mtl.com>
- <20180710141410.GP14284@dhcp22.suse.cz>
- <20180710162020.GJ3014@mtr-leonro.mtl.com>
- <20180711090353.GD20050@dhcp22.suse.cz>
+        Wed, 11 Jul 2018 06:20:49 -0400
+Received: from mail-he1eur01on0072.outbound.protection.outlook.com ([104.47.0.72]:52704
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726368AbeGKKUt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 06:20:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=i0bA0DFRughGSDpCGyl/byRUS/AuYk9YwmCoHN8E/nk=;
+ b=MkC9Di71M3z6xOhTKc7+IyHZ2FKYhRPXxSphDSl8gXzSw5UBOo6IAEu1DI1Klhe6XMzp77jfnZVPO+SSo96QV3lH/U0dK5TlaDJdEdgyA3cDc6voCqC7p76gK8MdvFV3616/FQJW1O5s+L94Ouohyt6GhnCIdqo3JdwNXOkdYh8=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB5009.eurprd04.prod.outlook.com (20.177.40.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.930.21; Wed, 11 Jul 2018 10:17:11 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::547e:1694:4925:dcf4]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::547e:1694:4925:dcf4%2]) with mapi id 15.20.0930.022; Wed, 11 Jul 2018
+ 10:17:10 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "mperttunen@nvidia.com" <mperttunen@nvidia.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "cyndis@kapsi.fi" <cyndis@kapsi.fi>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: core: Potentially free connection id
+Thread-Topic: [PATCH] clk: core: Potentially free connection id
+Thread-Index: AQHUGPAtJXuJo+2v2Ui4sqqrL4HxSKSJzscA
+Date:   Wed, 11 Jul 2018 10:17:10 +0000
+Message-ID: <4b809427e9b922ba41efafb20a97e0698e9cd3d0.camel@nxp.com>
+References: <20180711082104.27955-1-mperttunen@nvidia.com>
+In-Reply-To: <20180711082104.27955-1-mperttunen@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.1-2 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.156.53]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5009;7:j2nKMsHVHVUHvYGCm0E2B/KX3Yh5Id8oj/F1rX8+S9oA+th0SSVQAmz4mkqhjE5mf4TDAOLMj3sRRLGGTgCjE4HqSllYDOtxiHDA7KEe3oVT3/eVYngSV/AUWhgVr7UPPt8VuY0JSkZWMiZSWyQOvt06BZ2BZ69il5Q2iptvV44GOOo6JWo1A4/1qm7xfD4jghvqXUtpNYyddA7HX3s9VEW80GAA79l7JNORMp5WjADsM9dAL1Pk2+7t6seZ9Fil
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 59716cd2-af98-4dbe-406b-08d5e7177705
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5009;
+x-ms-traffictypediagnostic: AM0PR04MB5009:
+x-microsoft-antispam-prvs: <AM0PR04MB5009D1430B40BA5FBEC05F03EE5A0@AM0PR04MB5009.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197)(18589796830644);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB5009;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5009;
+x-forefront-prvs: 0730093765
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(136003)(366004)(346002)(199004)(189003)(6506007)(68736007)(50226002)(118296001)(186003)(6246003)(76176011)(5250100002)(8936002)(102836004)(478600001)(5660300001)(2501003)(26005)(86362001)(2900100001)(229853002)(8676002)(6486002)(316002)(6116002)(6512007)(3846002)(105586002)(99286004)(53936002)(106356001)(2201001)(6436002)(110136005)(25786009)(36756003)(305945005)(14454004)(97736004)(66066001)(54906003)(4326008)(7736002)(44832011)(486006)(256004)(81156014)(81166006)(2906002)(11346002)(446003)(476003)(2616005)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5009;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: C6/Gh9d6plwzIBVBSUGZ2GSdZYQi96dZyvMTnFvNvOKyQfOjL/eAgBySrW2ArVLKj03Afh4x1U54wbFQIsO5L6DvIpuuey1+/cT3PvGGKVOtXPLAvRcRXvjj2OwEkbgmYMbk6GiGxTddjsQSxtoHAzXm9ubjhdmlKTXmoqqWO4ZBGHAIZH2+J+OVljoN8Yb3UitKFNrUfnhmryaIf2JoBhOXio7WCSRgsa6hZdREvjGCLQ7xsVMK8hLaqQfAJzQ2H97xOhHU0yRo+X1sVeUaVGPE9QuNuyxq+gRuQPEcmBiNztkUWBhXdEH6CxduwXhAaHKeeiFQZusSXpR9IYrBaKcOl2OBemAnRe345W2mBOw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <F5355474DE6AD9418ACA85E2D3AB4072@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="bzuizT9vlVVqWfw+"
-Content-Disposition: inline
-In-Reply-To: <20180711090353.GD20050@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59716cd2-af98-4dbe-406b-08d5e7177705
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Jul 2018 10:17:10.8952
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5009
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---bzuizT9vlVVqWfw+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Jul 11, 2018 at 11:03:53AM +0200, Michal Hocko wrote:
-> On Tue 10-07-18 19:20:20, Leon Romanovsky wrote:
-> > On Tue, Jul 10, 2018 at 04:14:10PM +0200, Michal Hocko wrote:
-> > > On Tue 10-07-18 16:40:40, Leon Romanovsky wrote:
-> > > > On Mon, Jul 09, 2018 at 02:29:08PM +0200, Michal Hocko wrote:
-> > > > > On Wed 27-06-18 09:44:21, Michal Hocko wrote:
-> > > > > > This is the v2 of RFC based on the feedback I've received so far. The
-> > > > > > code even compiles as a bonus ;) I haven't runtime tested it yet, mostly
-> > > > > > because I have no idea how.
-> > > > > >
-> > > > > > Any further feedback is highly appreciated of course.
-> > > > >
-> > > > > Any other feedback before I post this as non-RFC?
-> > > >
-> > > > From mlx5 perspective, who is primary user of umem_odp.c your change looks ok.
-> > >
-> > > Can I assume your Acked-by?
-> >
-> > I didn't have a chance to test it because it applies on our rdma-next, but
-> > fails to compile.
->
-> What is the compilation problem? Is it caused by the patch or some other
-> unrelated changed?
-
-Thanks for pushing me to take a look on it.
-Your patch needs the following hunk to properly compile at least on my system.
-
-I'll take it to our regression.
-
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index 369867501bed..1f364a157097 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -155,9 +155,9 @@ struct mmu_notifier_ops {
- 	 * cannot block, mmu_notifier_ops.flags should have
- 	 * MMU_INVALIDATE_DOES_NOT_BLOCK set.
- 	 */
--	void (*invalidate_range_start)(struct mmu_notifier *mn,
-+	int (*invalidate_range_start)(struct mmu_notifier *mn,
- 				       struct mm_struct *mm,
--				       unsigned long start, unsigned long end);
-+				       unsigned long start, unsigned long end, bool blockable);
- 	void (*invalidate_range_end)(struct mmu_notifier *mn,
- 				     struct mm_struct *mm,
- 				     unsigned long start, unsigned long end);
-@@ -229,7 +229,7 @@ extern int __mmu_notifier_test_young(struct mm_struct *mm,
- 				     unsigned long address);
- extern void __mmu_notifier_change_pte(struct mm_struct *mm,
- 				      unsigned long address, pte_t pte);
--extern void __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
-+extern int __mmu_notifier_invalidate_range_start(struct mm_struct *mm,
- 				  unsigned long start, unsigned long end,
- 				  bool blockable);
- extern void __mmu_notifier_invalidate_range_end(struct mm_struct *mm,
-diff --git a/include/linux/oom.h b/include/linux/oom.h
-index 6adac113e96d..92f70e4c6252 100644
---- a/include/linux/oom.h
-+++ b/include/linux/oom.h
-@@ -95,7 +95,7 @@ static inline int check_stable_address_space(struct mm_struct *mm)
- 	return 0;
- }
-
--void __oom_reap_task_mm(struct mm_struct *mm);
-+bool __oom_reap_task_mm(struct mm_struct *mm);
-
- extern unsigned long oom_badness(struct task_struct *p,
- 		struct mem_cgroup *memcg, const nodemask_t *nodemask,
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 7e0c6e78ae5c..7c7bd6f3298e 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -1,6 +1,6 @@
- /*
-  *  linux/mm/oom_kill.c
-- *
-+ *
-  *  Copyright (C)  1998,2000  Rik van Riel
-  *	Thanks go out to Claus Fischer for some serious inspiration and
-  *	for goading me into coding this file...
-@@ -569,7 +569,7 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 	if (!__oom_reap_task_mm(mm)) {
- 		up_read(&mm->mmap_sem);
- 		ret = false;
--		goto out_unlock;
-+		goto unlock_oom;
- 	}
-
- 	pr_info("oom_reaper: reaped process %d (%s), now anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
-
-Thanks
-
-> --
-> Michal Hocko
-> SUSE Labs
-
---bzuizT9vlVVqWfw+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbRdiXAAoJEORje4g2clinNPQP/jvfP8MeILcz9WT7kxNVX7c/
-XpnkJcPys8ZjDS653gbzrRzw+nFz3sfqbSrvKb6MgCGfAGdanoHWjQsNbYz+Ci0m
-jr68xil3AoZsR30dolMGlCjHnsTq3CyJgNPfjm90VkuBV3huxGx52vSLuKBVVYuv
-qp+D/DwaxHKp9iUa4b5y8aXQYNCV++L3sNWgeUCXzaDvFm8WORW5PX/BxJ5a4M3r
-AFyJf0XIHfByd3mBDWJlo4c3mgAxV1hltesZHFCySPs4oLKRuHFiEap1BGNZsn8j
-m61eIRFoH5WVacvq1xHKs/oF9inuoaB9IzQsaeZan4YgOwthfcAibPxcdbcta29p
-IxYQUgjY+e3feJSOiHqFtujW8A3HpsuFUSPC7PHuJFJWqwCIcESxL3qeikBi2goA
-l5HIP6MMdKXv9PgXEsEFlPQJCS+ZsFk52pUOfneLve8t4MBWcuRXZpk0G0qfVLwq
-/2p9ES6m7Lroq7a0RkFZyWMmIdgBk9WjFbxm1ogXkMTWv7cQbmB94t0ut3fF6RCR
-lQfcHf16xm2IM4gNpzahFy4zsXWNWAdj/oVGDQjx3lu5LzvEriYptJZhKOx+lSdO
-lRO+pA/gzHWnbtA32swGX+MaHUNRAuVV8x1lbgRUq/aKwedg8BCpJXokrcpAasTt
-+En8/fnNQqxwKFdJw8j+
-=6e5O
------END PGP SIGNATURE-----
-
---bzuizT9vlVVqWfw+--
+T24gV2VkLCAyMDE4LTA3LTExIGF0IDExOjIxICswMzAwLCBNaWtrbyBQZXJ0dHVuZW4gd3JvdGU6
+DQo+IFBhdGNoICJjbGs6IGNvcmU6IENvcHkgY29ubmVjdGlvbiBpZCIgbWFkZSBpdCBzbyB0aGF0
+IHRoZSBjb25uZWN0b3INCj4gaWQgKGNvbl9pZCkgaXMga3N0cmR1cF9jb25zdCdlZCB0byBjYXRl
+ciB0byBkcml2ZXJzIHRoYXQgcGFzcyBub24tDQo+IGNvbnN0YW50IGNvbm5lY3Rpb24gaWRzLiBU
+aGUgcGF0Y2ggYWRkZWQgdGhlIGNvcnJlc3BvbmRpbmcNCj4ga2ZyZWVfY29uc3QNCj4gdG8gX19j
+bGtfZnJlZV9jbGssIGJ1dCBzdHJ1Y3QgY2xrJ3MgY2FuIGJlIGZyZWVkIGFsc28gdmlhIF9fY2xr
+X3B1dC4NCj4gQWRkIHRoZSBrZnJlZV9jb25zdCBjYWxsIHRvIF9fY2xrX3B1dCBhbmQgYWRkIGNv
+bW1lbnRzIHRvIGJvdGgNCj4gZnVuY3Rpb25zIHRvIHJlbWluZCB0aGF0IHRoZSBsb2dpYyBpbiB0
+aGVtIHNob3VsZCBiZSBrZXB0IGluIHN5bmMuDQo+IA0KPiBGaXhlczogMjUzMTYwYThhZDA2ICgi
+Y2xrOiBjb3JlOiBDb3B5IGNvbm5lY3Rpb24gaWQiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBNaWtrbyBQ
+ZXJ0dHVuZW4gPG1wZXJ0dHVuZW5AbnZpZGlhLmNvbT4NCg0KWWVzLCBzb3JyeSBJIG1pc3NlZCB0
+aGlzLg0KDQpSZXZpZXdlZC1ieTogTGVvbmFyZCBDcmVzdGV6IDxsZW9uYXJkLmNyZXN0ZXpAbnhw
+LmNvbT4NCg0KTWF5YmUgYSBzdGF0aWMgX19jbGtfZnJlZV9tZW0gZnVuY3Rpb24gY291bGQgYmUg
+Y3JlYXRlZCBpbnN0ZWFkIG9mDQpjb21tZW50cyBhc2tpbmcgdG8ga2VlcCB0aGluZ3MgaW4gc3lu
+Yz8gQnV0IHRoZXJlIGFyZSBvbmx5IDIgbGluZXMgc28NCml0J3MgZmluZS4=
