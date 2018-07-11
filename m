@@ -1,147 +1,148 @@
 Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E687C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C806CC5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D451D20C0C
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:36:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D451D20C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E1C520881
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 15:37:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qVBmdlrh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E1C520881
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389216AbeGKPlY (ORCPT
+        id S2389229AbeGKPmf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 11:41:24 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52444 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387803AbeGKPlY (ORCPT
+        Wed, 11 Jul 2018 11:42:35 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40647 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732637AbeGKPme (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 11:41:24 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6BFY4UP061112
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 11:36:30 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5k85490h-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 11:36:30 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 11 Jul 2018 11:36:27 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 11 Jul 2018 11:36:22 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6BFaLDS18743728
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 11 Jul 2018 15:36:21 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0E02B2068;
-        Wed, 11 Jul 2018 11:36:20 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 81413B205F;
-        Wed, 11 Jul 2018 11:36:20 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 11 Jul 2018 11:36:20 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 30CF216C3B6B; Wed, 11 Jul 2018 08:38:40 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 08:38:40 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Andrea Parri <andrea.parri@amarulasolutions.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-doc@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] doc: Replace smp_cond_acquire() with
- smp_cond_load_acquire()
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <1531216943-6382-1-git-send-email-andrea.parri@amarulasolutions.com>
- <1531314530-11624-1-git-send-email-andrea.parri@amarulasolutions.com>
+        Wed, 11 Jul 2018 11:42:34 -0400
+Received: by mail-wr1-f65.google.com with SMTP id t6-v6so18632811wrn.7;
+        Wed, 11 Jul 2018 08:37:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6KaHoyRfapWfv24HPjm98LVoPSFIMB1vsxt03M8b8Ck=;
+        b=qVBmdlrho6fWsNgxRoU0wb9Xerog+HXJER6GP2X8axp5AbqLYWHC3RpBjqoPNTlfLp
+         +uQwgDM7UETjcrVgEKbd21a/O/l7fl5AeouE/rcRC8L9FJVtiYaUBkYdEaaypf80tVUZ
+         zH7ucFiLA+pRR0jmtVSaNvwlp+7bpwFtT651+WwLQvYTbWEAOL1K8mYgBD9WjYACKIEw
+         B2wcZfaaY8KfkszdS8+AL4UmZk200b0wQJyszTCR2chE06QEAA5uCmJi+ZTIreLyEfta
+         QhyMZzUioMAZX3Gkn3LkefgxMwnjm60Edlakj+wEqqNJ/3UzZBrRsTVv+vWWkx3pyp2X
+         E/uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6KaHoyRfapWfv24HPjm98LVoPSFIMB1vsxt03M8b8Ck=;
+        b=EhxOGRXJ2Bp1+43L3/n3HRYPT7Nt3bTtbRYWMzRGy7+X6fWdksap3/OsCYIYybI+p/
+         2rxfufAgjDtsmRsrTyTgsCfaMPPBJpjapiJdKJMpYS3Q0jOoBAemuzj8Z8g2QTjHkWD4
+         AzFV6FjQsHkihigHoHgfK3TRBPcTh0f78U5X+ziRnYFpTiTYraF7qEynB+KBqqGr8kGw
+         g1DrWbpVgqhcnWe+5go+0O1CW/gRvTpYI69NlAj2la98LqJ2TNHr9Wji0IYALjxYFNP4
+         HZMEf2LBsv3Bghn5kWNzknPMwgQiC4VoyUMfjL4QQzUA6HPrlDVGBuGViT50QqKAVleJ
+         gFdQ==
+X-Gm-Message-State: AOUpUlEH2iMdAP793TB6QLnpwF5tXr4R61Xpu58TAsMPuJoafZLh5q8l
+        8zIN3BVtpmhPpEvPyWNzzAEvaA==
+X-Google-Smtp-Source: AAOMgpfDEbMiFD3tRxsf9bLsSfEaheZo9c9XJFTqFlaeCDheLCyM2/gAbnwImj8b2zuRo94m/sfcSg==
+X-Received: by 2002:adf:ed8e:: with SMTP id c14-v6mr13450316wro.264.1531323459699;
+        Wed, 11 Jul 2018 08:37:39 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id s10-v6sm3727088wmb.12.2018.07.11.08.37.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 11 Jul 2018 08:37:39 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 17:37:37 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Wilfried Klaebe <linux-kernel@lebenslange-mailadresse.de>
+Subject: Re: [GIT PULL 0/1] EFI mixed mode fix for v4.18
+Message-ID: <20180711153736.GA4500@gmail.com>
+References: <20180711090235.9327-1-ard.biesheuvel@linaro.org>
+ <20180711101303.GA8574@gmail.com>
+ <CAKv+Gu8m4UgL0GyYDuu5z+dzEF=N--H4PkqoO_xqwyW2_A+RMA@mail.gmail.com>
+ <20180711111427.GA27216@gmail.com>
+ <CAKv+Gu_LJEu11NV5CVTPV9ieZ=XKkgW2qdkFJ+1iWk+F2jNPww@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1531314530-11624-1-git-send-email-andrea.parri@amarulasolutions.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18071115-0072-0000-0000-0000037E5634
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009351; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01059838; UDB=6.00543970; IPR=6.00837758;
- MB=3.00022104; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-11 15:36:26
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071115-0073-0000-0000-000048AD2DE1
-Message-Id: <20180711153840.GS3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=872 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807110166
+In-Reply-To: <CAKv+Gu_LJEu11NV5CVTPV9ieZ=XKkgW2qdkFJ+1iWk+F2jNPww@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 03:08:50PM +0200, Andrea Parri wrote:
-> Amend commit 1f03e8d2919270 ("locking/barriers: Replace smp_cond_acquire()
-> with smp_cond_load_acquire()") by updating the documentation accordingly.
-> Also remove some obsolete information related to the implementation.
+
+* Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+
+> On 11 July 2018 at 13:14, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> >
+> >> On 11 July 2018 at 12:13, Ingo Molnar <mingo@kernel.org> wrote:
+> >> >
+> >> > * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> >> >
+> >> >> The following changes since commit 1e4b044d22517cae7047c99038abb444423243ca:
+> >> >>
+> >> >>   Linux 4.18-rc4 (2018-07-08 16:34:02 -0700)
+> >> >>
+> >> >> are available in the Git repository at:
+> >> >>
+> >> >>   git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-urgent
+> >> >>
+> >> >> for you to fetch changes up to d7f2e972e702d329fe11d6956df99dfc31211c25:
+> >> >>
+> >> >>   efi/x86: remove pointless call to PciIo->Attributes() (2018-07-11 10:52:46 +0200)
+> >> >>
+> >> >> ----------------------------------------------------------------
+> >> >> A single fix for the x86 PCI I/O protocol handling code that got
+> >> >> broken for mixed mode (64-bit Linux/x86 on 32-bit UEFI) after a
+> >> >> fix was applied in -rc2 to fix it for ordinary 64-bit Linux/x86.
+> >> >
+> >> > Just curious, because it's unclear from the changelog, what was the symptom, a
+> >> > boot hang, instant reboot, or some other misbehavior?
+> >>
+> >> Hans reported that his mixed mode tablet would not boot at all any
+> >> more, but enter a reboot loop without any logs printed by the kernel.
+> >>
+> >> > Also, what's the scope of
+> >> > the fix: were all 64-bit on 32-bit UEFI mixed-mode bootups affected, or only a
+> >> > certain subset?
+> >> >
+> >>
+> >> Any mixed mode system with PCI is likely to be affected. I have added
+> >> a QEMU mixed mode config to my boot test environment to catch errors
+> >> like this one.
+> >
+> > Ok, I've added this information to the commit - will be useful to backporters,
+> > to judge the severity of the bug fixed.
+> >
 > 
-> Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-> Cc: Alan Stern <stern@rowland.harvard.edu>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Boqun Feng <boqun.feng@gmail.com>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: David Howells <dhowells@redhat.com>
-> Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-> Cc: Luc Maranget <luc.maranget@inria.fr>
-> Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> Cc: Akira Yokosawa <akiyks@gmail.com>
-> Cc: Daniel Lustig <dlustig@nvidia.com>
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> ---
->  Documentation/memory-barriers.txt | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> Perhaps it wasn't clear from the commit log that only v4.18-rc2 and
+> later is affected by the mixed mode issue, since that is when a fix
+> for ordinary 64-bit x86 was applied that affected v4.18-rc1.
 
-I have queued this for further review, thank you!  Just to confirm,
-the reason that the old passage was obsolete is because ARMv8 implements
-smp_cond_load_acquire() as a straight acquire load, correct?
+Ah, ok. Still, if for whatever reason the commit that introduced the problem is 
+backported, this one will be too. The chain of sha1's seemed rather long, so 
+there's a chance for that.
 
-							Thanx, Paul
+> However, the EFI stub code is not expected to expand that much, and so for the 
+> time being, I'm fine with a combination of review and rigorous testing
 
-> diff --git a/Documentation/memory-barriers.txt b/Documentation/memory-barriers.txt
-> index 0d8d7ef131e9a..c1d913944ad8b 100644
-> --- a/Documentation/memory-barriers.txt
-> +++ b/Documentation/memory-barriers.txt
-> @@ -471,8 +471,7 @@ And a couple of implicit varieties:
->       operations after the ACQUIRE operation will appear to happen after the
->       ACQUIRE operation with respect to the other components of the system.
->       ACQUIRE operations include LOCK operations and both smp_load_acquire()
-> -     and smp_cond_acquire() operations. The later builds the necessary ACQUIRE
-> -     semantics from relying on a control dependency and smp_rmb().
-> +     and smp_cond_load_acquire() operations.
-> 
->       Memory operations that occur before an ACQUIRE operation may appear to
->       happen after it completes.
-> -- 
-> 2.7.4
-> 
+Fair enough!
 
+Thanks,
+
+	Ingo
