@@ -2,111 +2,84 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB5B4C3279B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 03:14:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42885C3279B
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 03:15:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA6D208EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 03:14:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NSt5uu5N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA6D208EC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 05AA1208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 03:15:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05AA1208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732494AbeGKDRB (ORCPT
+        id S1732546AbeGKDSB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 10 Jul 2018 23:17:01 -0400
-Received: from ozlabs.org ([203.11.71.1]:53089 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732361AbeGKDRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 10 Jul 2018 23:17:01 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41QPLw0G36z9rxs;
-        Wed, 11 Jul 2018 13:14:46 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531278891;
-        bh=FvU7G6yO+5rESc2PPkwR1MDwUFD+9aWM+kFtdRIYfGY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=NSt5uu5NyNPK93O7ogWs/frH4MLF9ncGe8SdymDdxiRQYTWLGNuFzu5LPVLiIzTDt
-         E4Ke744q3f4uo89e+OafB9lj6M/wy2LCwC+vI7S6wOOIjEYyJtfhR+cLZG+Xkv2de5
-         iH6iXiRUSvswQ1XV1aRr6ZCLDGjiNjez/SiV2fMPreGIaHr4r21+uNGxgGYuSSLHlC
-         2t5i8zcOkcd1QwfsFa+YBhLWCpT1BnI3X0ZL5E/AiuxryRYVeGUeQK/7oo+ypvVudP
-         UKZICIeKv8x0Dy5MAvl6pGXEiRtvlp8EvmlIzHi7zxGOeu21idjR/ssUxByGYuX1xT
-         b1LqWBNX5fsrw==
-Date:   Wed, 11 Jul 2018 13:14:45 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>, Joerg Roedel <jroedel@suse.de>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Magnus Damm <damm+renesas@opensource.se>
-Subject: linux-next: manual merge of the driver-core tree with the iommu
- tree
-Message-ID: <20180711131445.7e1e211b@canb.auug.org.au>
+        Tue, 10 Jul 2018 23:18:01 -0400
+Received: from mail-ed1-f42.google.com ([209.85.208.42]:42313 "EHLO
+        mail-ed1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732361AbeGKDSB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 10 Jul 2018 23:18:01 -0400
+Received: by mail-ed1-f42.google.com with SMTP id g12-v6so18005640edi.9;
+        Tue, 10 Jul 2018 20:15:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=qs4WRZ4P/OmprYevA1O/RpZloAJir/OFtGeBwdjo51I=;
+        b=Ti1Th1AIrZ7TxV25PocaYfe6rR5/vBHJuuQGGAPGnAXswg9xGYkEb185zqN32QPYBQ
+         lATcyXQYboZqTrak/d4t6hfLiYZaCMxcSF461B29lQl9NTyOTGd+HIRPFUNxG02+HnXZ
+         wbMqv94w1vDQFGSHa8NI/Q12mOoC8Xm4csOLPW/ls7e46+th+LbZltAT8iLrgCv2tfX0
+         JRinwO/Ias9vJl0ZdzyrbcR39OkGXQydlryTzjoKtP8h18sUkrWZAszOgpEvYM/Ge/J/
+         H8LSOSARgDn+S+UDPbYZ+vAeHoIgZkDMHOcGZHlRuEEqWBD0NgunhIRdstithLyGj37o
+         saPA==
+X-Gm-Message-State: APt69E0jIplaAVDb0tXRx7nBbEf5UYyYLCwu0cQOuBJfW7zd9uqkae7c
+        dZ4tkIxuFS2A11rKlpdUTX4uBGhi
+X-Google-Smtp-Source: AAOMgpegYVkD0C11WKar/5wUbKT+o0CRGFM+dzQzhGPIKAyz0aeA/3Lbza7k2XwIPCUP57C/+e+DDg==
+X-Received: by 2002:a50:c082:: with SMTP id k2-v6mr19925592edf.294.1531278951262;
+        Tue, 10 Jul 2018 20:15:51 -0700 (PDT)
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com. [209.85.221.48])
+        by smtp.gmail.com with ESMTPSA id y6-v6sm97011edo.46.2018.07.10.20.15.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Jul 2018 20:15:50 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id b15-v6so16577803wrv.10;
+        Tue, 10 Jul 2018 20:15:50 -0700 (PDT)
+X-Received: by 2002:adf:a541:: with SMTP id j1-v6mr21796690wrb.155.1531278950202;
+ Tue, 10 Jul 2018 20:15:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ZB_EV=/VOo4LV+5uIju_jPU"; protocol="application/pgp-signature"
+Received: by 2002:adf:a15a:0:0:0:0:0 with HTTP; Tue, 10 Jul 2018 20:15:29
+ -0700 (PDT)
+In-Reply-To: <20180710203511.18454-18-jernej.skrabec@siol.net>
+References: <20180710203511.18454-1-jernej.skrabec@siol.net> <20180710203511.18454-18-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 11 Jul 2018 11:15:29 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66nDZqN86Rxr3CoUXkeeiSD2DdF7diuxo9rJEK6ypOsWA@mail.gmail.com>
+Message-ID: <CAGb2v66nDZqN86Rxr3CoUXkeeiSD2DdF7diuxo9rJEK6ypOsWA@mail.gmail.com>
+Subject: Re: [PATCH v2 17/18] drm/sun4i: tcon-top: Remove mux configuration at
+ probe time
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ZB_EV=/VOo4LV+5uIju_jPU
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 11, 2018 at 4:35 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> Now that R40 TCON migrated to runtime mux configuration, old code can be
+> removed.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Hi all,
-
-Today's linux-next merge of the driver-core tree got a conflict in:
-
-  drivers/iommu/ipmmu-vmsa.c
-
-between commits:
-
-  0b8ac1409641 ("iommu/ipmmu-vmsa: Hook up r8a7796 DT matching code")
-  3701c123e1c1 ("iommu/ipmmu-vmsa: Hook up r8a779(70|95) DT matching code")
-  98dbffd39a65 ("iommu/ipmmu-vmsa: Hook up R8A77965 DT matching code")
-
-from the iommu tree and commit:
-
-  ac6bbf0cdf42 ("iommu: Remove IOMMU_OF_DECLARE")
-
-from the driver-core tree.
-
-I fixed it up (I removed the new IOMMU_OF_DECLARE() lines) and can
-carry the fix as necessary. This is now fixed as far as linux-next is
-concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the
-conflicting tree to minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ZB_EV=/VOo4LV+5uIju_jPU
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltFdiUACgkQAVBC80lX
-0GwyGQgAgumIwKcl83UyqhQ47y1sbnT5VKpE+SMWaoYqmGtSzDmA2daouViyoBA/
-8ZGxSoqGqNA28k/RUJ7AQ+NI5H+DIG1Lp2+YniSRKUDDTMSFg35IeYaQwRhloPUL
-EQ+O+poHFFjVrB2kkm5zOIwN82c1t09E/8GMavPrs3Fiod5mcs9HDtOr1DZxNH0o
-MygnAOvqWc+P7ygyojBWkMWlaDVi2O3xmWULiGiE5Ri2NVMwnZmtnA8/cFrCfAVP
-hfTAVtj11eEomuFxTWRjWfS9hoh333G6hAuf/7oy8Xah/46t0kOTiFYkdmo3nOFo
-EwbtFi4tNJ9ubJl6YMh475DsQGVfRA==
-=PPHf
------END PGP SIGNATURE-----
-
---Sig_/ZB_EV=/VOo4LV+5uIju_jPU--
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
