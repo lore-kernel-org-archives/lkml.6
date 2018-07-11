@@ -2,289 +2,183 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D95C1C5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEC6C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87FBA2086B
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:59:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47B48208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 12:59:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cuOYaHut"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87FBA2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mQybejB1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47B48208EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387601AbeGKNDa (ORCPT
+        id S2387626AbeGKNDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 09:03:30 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:47088 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732544AbeGKNDa (ORCPT
+        Wed, 11 Jul 2018 09:03:37 -0400
+Received: from twosheds.infradead.org ([90.155.92.209]:34200 "EHLO
+        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732544AbeGKNDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 09:03:30 -0400
-Received: by mail-yw0-f196.google.com with SMTP id e23-v6so8581436ywe.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:59:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SDLeo/868n8Rwo3UbTW1G8tdmWnKLZnbd2H1n9G1yQA=;
-        b=cuOYaHutfm+MS4zKflr6ijokGsoA1kEMsezZEkye5LitrefdeK1tnV3vZmGaP9ftBM
-         21eCApKSGuZEvoxIF31buQX5fXCQZnoelAK9jup+3/Ygnfd6Unm1M+0y1Q3UYVLKWLkj
-         qHurnkde0AXoeKWtYduJ6sIwVf3XlZqeDyCow=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SDLeo/868n8Rwo3UbTW1G8tdmWnKLZnbd2H1n9G1yQA=;
-        b=ovizCFOtXJLbocEasrZYioNAzeXnF3HR/h466045+u+QwyvqyYhMK40BUCMYBbNb7t
-         8VmGGnWmydLSEKT1YJmZpW4GASGKoRI2I7c2y2T4iEmeQhrzjTnOZm930J/nYy3m5wEq
-         g56sUttm9SUTbkiMlxTlGBgFjW2gfeXq4QYzCRx0SzSVaIIf+o+X7rb3++5EZ8TCUjxj
-         R9/rXRN6TOVn5NUYHiLyY6srQu/n+q2V6mg9NFU0KQKDCjce+Ncpdc/GnEtpIovWOQdL
-         TUJlHCE7UHHq9apUwv2A4TNKK5zfwwpo+ReHyxiP+CCFQmW4EtfykpTwpKDua2+cLsmW
-         s1oA==
-X-Gm-Message-State: APt69E2d921i26wDG3L/x/VPTYQVXbHCpqtPu6DtLKyBNnwXaFHBkc1C
-        80pQKEjmOcGbNqua7tnt5YC5/oQDIEc=
-X-Google-Smtp-Source: AAOMgpdCB3HDEnVbrS1xpWAjy7W7uG7zBew2HH+iaZq9bPCT3YtC8ktOQX/cNb7+u0wkUYQyuAYHJw==
-X-Received: by 2002:a81:5ac6:: with SMTP id o189-v6mr13798589ywb.444.1531313955362;
-        Wed, 11 Jul 2018 05:59:15 -0700 (PDT)
-Received: from mail-yb0-f173.google.com (mail-yb0-f173.google.com. [209.85.213.173])
-        by smtp.gmail.com with ESMTPSA id q12-v6sm1385714ywl.26.2018.07.11.05.59.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 05:59:15 -0700 (PDT)
-Received: by mail-yb0-f173.google.com with SMTP id c10-v6so8208723ybf.9
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 05:59:15 -0700 (PDT)
-X-Received: by 2002:a25:7146:: with SMTP id m67-v6mr12450695ybc.226.1531313510809;
- Wed, 11 Jul 2018 05:51:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
- <20180708173413.1965-2-vivek.gautam@codeaurora.org> <17407514.unFVTGoGrn@aspire.rjw.lan>
- <CAFp+6iHxJucfzJJeEvSToG4p2zADjDb9F0L8h053x-JKAy55mg@mail.gmail.com> <CAJZ5v0gbkdkx_+oHYiPz=SFdFCLm38hsi1TmJ2Jdc7j73TNtzg@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gbkdkx_+oHYiPz=SFdFCLm38hsi1TmJ2Jdc7j73TNtzg@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 11 Jul 2018 21:51:39 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Cqd=J+_nqRc_sx=sq2ayxwSRMgygvffuHH9nC5R_LjdA@mail.gmail.com>
-Message-ID: <CAAFQd5Cqd=J+_nqRc_sx=sq2ayxwSRMgygvffuHH9nC5R_LjdA@mail.gmail.com>
-Subject: Re: [PATCH v12 1/4] iommu/arm-smmu: Add pm_runtime/sleep ops
-To:     rafael@kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>, sboyd@kernel.org,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        jcrouse@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 11 Jul 2018 09:03:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
+        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=nLrNJ/9LDDAh5A4RXE3Bu1KKYv+NDjax5vY+Ynpqr/w=; b=mQybejB1qK6LqM28KdeV3VwIv
+        OalUQMPnKi7HYJWpV5VAlGC/nmv3tgy2aG2IxZSlMBs8/V+tj1V0qT29Mu6/zv9lH/jSdoBGVDuxk
+        LI4MXgaxm4gMFBwMx5sXmdid4lHhmgT51J2vy7NKNqQ0ksA81BOqYsjR31PlmT+KphqlNIKemmHK6
+        2nt0909splRgNa1w5Cabu+OZohIjA0qvmh2JocvUvNKiYAHjxHHisTjEun4xJQ1iH3popUgCj1ZRM
+        ZRqRJTluakIAdTDqblRu4CIECFg5loeKDldMhvsLWLPeuY21OMlmEIsBQYpqyecruP0QMmPx+FPI2
+        opGuIwETQ==;
+Received: from [2001:8b0:10b:1::2fb]
+        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdEiH-0007Kf-44; Wed, 11 Jul 2018 12:59:21 +0000
+Message-ID: <1531313960.8759.50.camel@infradead.org>
+Subject: Re: [PATCH RESEND] KVM: Add coalesced PIO support
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     Wanpeng Li <wanpeng.li@hotmail.com>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        Peng Hao <peng.hao2@zte.com.cn>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Eduardo Habkost <ehabkost@redhat.com>
+In-Reply-To: <SG2PR02MB1312C2AECCEC8F7FC0D784C2805A0@SG2PR02MB1312.apcprd02.prod.outlook.com>
+References: <1531280729-4236-1-git-send-email-wanpengli@tencent.com>
+         ,<1531312540.8759.42.camel@infradead.org>
+         <SG2PR02MB1312C2AECCEC8F7FC0D784C2805A0@SG2PR02MB1312.apcprd02.prod.outlook.com>
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-qmy7dlT61kday/ZHpyDX"
+Date:   Wed, 11 Jul 2018 13:59:20 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 8:11 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Wed, Jul 11, 2018 at 12:55 PM, Vivek Gautam
-> <vivek.gautam@codeaurora.org> wrote:
-> > Hi Rafael,
-> >
-> >
-> > On Wed, Jul 11, 2018 at 3:20 PM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> >> On Sunday, July 8, 2018 7:34:10 PM CEST Vivek Gautam wrote:
-> >>> From: Sricharan R <sricharan@codeaurora.org>
-> >>>
-> >>> The smmu needs to be functional only when the respective
-> >>> master's using it are active. The device_link feature
-> >>> helps to track such functional dependencies, so that the
-> >>> iommu gets powered when the master device enables itself
-> >>> using pm_runtime. So by adapting the smmu driver for
-> >>> runtime pm, above said dependency can be addressed.
-> >>>
-> >>> This patch adds the pm runtime/sleep callbacks to the
-> >>> driver and also the functions to parse the smmu clocks
-> >>> from DT and enable them in resume/suspend.
-> >>>
-> >>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> >>> Signed-off-by: Archit Taneja <architt@codeaurora.org>
-> >>> [vivek: Clock rework to request bulk of clocks]
-> >>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> >>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-> >>> ---
-> >>>
-> >>>  - No change since v11.
-> >>>
-> >>>  drivers/iommu/arm-smmu.c | 60 ++++++++++++++++++++++++++++++++++++++++++++++--
-> >>>  1 file changed, 58 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> >>> index f7a96bcf94a6..a01d0dde21dd 100644
-> >>> --- a/drivers/iommu/arm-smmu.c
-> >>> +++ b/drivers/iommu/arm-smmu.c
-> >>> @@ -48,6 +48,7 @@
-> >>>  #include <linux/of_iommu.h>
-> >>>  #include <linux/pci.h>
-> >>>  #include <linux/platform_device.h>
-> >>> +#include <linux/pm_runtime.h>
-> >>>  #include <linux/slab.h>
-> >>>  #include <linux/spinlock.h>
-> >>>
-> >>> @@ -205,6 +206,8 @@ struct arm_smmu_device {
-> >>>       u32                             num_global_irqs;
-> >>>       u32                             num_context_irqs;
-> >>>       unsigned int                    *irqs;
-> >>> +     struct clk_bulk_data            *clks;
-> >>> +     int                             num_clks;
-> >>>
-> >>>       u32                             cavium_id_base; /* Specific to Cavium */
-> >>>
-> >>> @@ -1897,10 +1900,12 @@ static int arm_smmu_device_cfg_probe(struct arm_smmu_device *smmu)
-> >>>  struct arm_smmu_match_data {
-> >>>       enum arm_smmu_arch_version version;
-> >>>       enum arm_smmu_implementation model;
-> >>> +     const char * const *clks;
-> >>> +     int num_clks;
-> >>>  };
-> >>>
-> >>>  #define ARM_SMMU_MATCH_DATA(name, ver, imp)  \
-> >>> -static struct arm_smmu_match_data name = { .version = ver, .model = imp }
-> >>> +static const struct arm_smmu_match_data name = { .version = ver, .model = imp }
-> >>>
-> >>>  ARM_SMMU_MATCH_DATA(smmu_generic_v1, ARM_SMMU_V1, GENERIC_SMMU);
-> >>>  ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
-> >>> @@ -1919,6 +1924,23 @@ static const struct of_device_id arm_smmu_of_match[] = {
-> >>>  };
-> >>>  MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
-> >>>
-> >>> +static void arm_smmu_fill_clk_data(struct arm_smmu_device *smmu,
-> >>> +                                const char * const *clks)
-> >>> +{
-> >>> +     int i;
-> >>> +
-> >>> +     if (smmu->num_clks < 1)
-> >>> +             return;
-> >>> +
-> >>> +     smmu->clks = devm_kcalloc(smmu->dev, smmu->num_clks,
-> >>> +                               sizeof(*smmu->clks), GFP_KERNEL);
-> >>> +     if (!smmu->clks)
-> >>> +             return;
-> >>> +
-> >>> +     for (i = 0; i < smmu->num_clks; i++)
-> >>> +             smmu->clks[i].id = clks[i];
-> >>> +}
-> >>> +
-> >>>  #ifdef CONFIG_ACPI
-> >>>  static int acpi_smmu_get_data(u32 model, struct arm_smmu_device *smmu)
-> >>>  {
-> >>> @@ -2001,6 +2023,9 @@ static int arm_smmu_device_dt_probe(struct platform_device *pdev,
-> >>>       data = of_device_get_match_data(dev);
-> >>>       smmu->version = data->version;
-> >>>       smmu->model = data->model;
-> >>> +     smmu->num_clks = data->num_clks;
-> >>> +
-> >>> +     arm_smmu_fill_clk_data(smmu, data->clks);
-> >>>
-> >>>       parse_driver_options(smmu);
-> >>>
-> >>> @@ -2099,6 +2124,14 @@ static int arm_smmu_device_probe(struct platform_device *pdev)
-> >>>               smmu->irqs[i] = irq;
-> >>>       }
-> >>>
-> >>> +     err = devm_clk_bulk_get(smmu->dev, smmu->num_clks, smmu->clks);
-> >>> +     if (err)
-> >>> +             return err;
-> >>> +
-> >>> +     err = clk_bulk_prepare(smmu->num_clks, smmu->clks);
-> >>> +     if (err)
-> >>> +             return err;
-> >>> +
-> >>>       err = arm_smmu_device_cfg_probe(smmu);
-> >>>       if (err)
-> >>>               return err;
-> >>> @@ -2181,6 +2214,9 @@ static int arm_smmu_device_remove(struct platform_device *pdev)
-> >>>
-> >>>       /* Turn the thing off */
-> >>>       writel(sCR0_CLIENTPD, ARM_SMMU_GR0_NS(smmu) + ARM_SMMU_GR0_sCR0);
-> >>> +
-> >>> +     clk_bulk_unprepare(smmu->num_clks, smmu->clks);
-> >>> +
-> >>>       return 0;
-> >>>  }
-> >>>
-> >>> @@ -2197,7 +2233,27 @@ static int __maybe_unused arm_smmu_pm_resume(struct device *dev)
-> >>>       return 0;
-> >>>  }
-> >>>
-> >>> -static SIMPLE_DEV_PM_OPS(arm_smmu_pm_ops, NULL, arm_smmu_pm_resume);
-> >>> +static int __maybe_unused arm_smmu_runtime_resume(struct device *dev)
-> >>> +{
-> >>> +     struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> >>> +
-> >>> +     return clk_bulk_enable(smmu->num_clks, smmu->clks);
-> >>> +}
-> >>> +
-> >>> +static int __maybe_unused arm_smmu_runtime_suspend(struct device *dev)
-> >>> +{
-> >>> +     struct arm_smmu_device *smmu = dev_get_drvdata(dev);
-> >>> +
-> >>> +     clk_bulk_disable(smmu->num_clks, smmu->clks);
-> >>> +
-> >>> +     return 0;
-> >>> +}
-> >>> +
-> >>> +static const struct dev_pm_ops arm_smmu_pm_ops = {
-> >>> +     SET_SYSTEM_SLEEP_PM_OPS(NULL, arm_smmu_pm_resume)
-> >>
-> >> This is suspicious.
-> >>
-> >> If you need a runtime suspend method, why do you think that it is not necessary
-> >> to suspend the device during system-wide transitions?
-> >
-> > Okay, so you suggest to put clock disabling in say arm_smmu_pm_suspend()?
-> > In that case the clocks have to be enabled in the resume path too.
-> >
-> > I remember Tomasz pointed to that we shouldn't need clock enable in resume
-> > path [1].
-> >
-> > [1] https://lkml.org/lkml/2018/3/15/60
 
-That was an answer for a different question. I don't remember
-suggesting having no suspend function. Although, given the PM
-subsystem internals, the suspend function wouldn't be called on SMMU
-implementation needed power control (since they would have runtime PM
-enabled) and on others, it would be called but do nothing (since no
-clocks).
+--=-qmy7dlT61kday/ZHpyDX
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 2018-07-11 at 12:51 +0000, Wanpeng Li wrote:
+> >=20
+> > You've just stripped the authorship information and his/her
+> > signed-off-by.... even from Cc!
 >
-> Honestly, I just don't know. :-)
->
-> It just looks odd the way it is done.  I think the clock should be
-> gated during system-wide suspend too, because the system can spend
-> much more time in a sleep state than in the working state, on average.
->
-> And note that you cannot rely on runtime PM to always do it for you,
-> because it may be disabled at a client device or even blocked by user
-> space via power/control in sysfs and that shouldn't matter for
-> system-wide PM.
+> Will do in next version, I just help to make progress.=C2=A0
 
-User space blocking runtime PM through sysfs is a good point. I'm not
-100% sure how the PM subsystem deals with that in case of system-wide
-suspend. I guess for consistency and safety, we should have the
-suspend callback.
+If you must do this, please make very sure that you keep a leading
+'From:' line in the body of your emails to indicate the authorship, and
+preserve the correct Signed-off-by: too.
+--=-qmy7dlT61kday/ZHpyDX
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Best regards,
-Tomasz
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MTExMjU5MjBaMC8GCSqG
+SIb3DQEJBDEiBCD/+N+h/Ux0Qb7KAof+TkKmfJPegmlfkxiZzUuIy1SR+zCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAKZjC8j8Eaav
+M08ofu4PFcYD6N2cOA3F6MIjoRP4/WdJvezttt6KbF/F6wGg+ZylcsEoT3TpPwocCRZhrTkDqNXw
+K1ioPl5Tq08Zca+RrVQSXtZFHWu6DI1qp0L4I3OkUAZIVT/vU4na9VxxgS6Q+QSifZaWKyVJJatO
+36APCAq8BncOYwkSqsp9rl68wtKaNA8ZGF1B4jQ26TYLm0qIQRePxzovhp5UU9b7md2onj3RcEZ5
+WjP6BqQI8VQxT11L9PbrRIdXBF8KBENGIu1fd9loX9lHHNGQIkmmb3Aa141CIi902IMimHcs0f//
+FHHcmEYViiA2eowPMsTSalTbVI0AAAAAAAA=
+
+
+--=-qmy7dlT61kday/ZHpyDX--
+
