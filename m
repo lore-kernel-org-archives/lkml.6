@@ -2,150 +2,115 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E29C5C5CFE7
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3411C5CFEB
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D3BF20871
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:14:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uTXRxoxD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D3BF20871
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 7CC4A208EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 14:15:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC4A208EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388010AbeGKOTN (ORCPT
+        id S2388145AbeGKOTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 10:19:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50108 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726639AbeGKOTN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 10:19:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Y6u97+/sQjuzhzy5/ZkJdItnZDX3We5CPROIWF5G+dw=; b=uTXRxoxD2Fr5dx9hRUxBZBFOH
-        hdWAAQhKN3ooTXkreIf09+up/49+FpA9cNO6SMh+7S80QfRNKzAte20UqllkqUWovTZEHykxpi4Z6
-        gQXwX7/108LglGlBDn7ley0oSt4jhlfVSK4/B3kB9MXvJ+BciIwWxzeNpxGJOHA4XFZswfWg86zoC
-        rBqAn9lCN7STVxQYn/drTCOHvr5YJpE9M+Gk4rnn38i01jBw9Ycwv4ogrsP/rDzHeEFXhfL/6OnUX
-        Cy0WtVnNWWGJKmIm8A5Y6Yi/NzqIx+jXXgMtdi5r4ari78VLg6xHhbgUiGL6/SALwRBmA8tTZR2Ot
-        GvRkpV8EQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdFs2-0006kV-BC; Wed, 11 Jul 2018 14:14:21 +0000
-Date:   Wed, 11 Jul 2018 07:13:29 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     v9fs-developer@lists.sourceforge.net,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ron Minnich <rminnich@sandia.gov>
-Subject: Re: [V9fs-developer] [PATCH 5/6] 9p: Use a slab for allocating
- requests
-Message-ID: <20180711141256.GC23640@bombadil.infradead.org>
-References: <20180628132629.3148-1-willy@infradead.org>
- <20180628132629.3148-6-willy@infradead.org>
- <20180711133313.GC835@nautica>
+        Wed, 11 Jul 2018 10:19:33 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39656 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726639AbeGKOTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 10:19:33 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D55E980D2F6B;
+        Wed, 11 Jul 2018 14:14:58 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 482792026D6B;
+        Wed, 11 Jul 2018 14:14:57 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 11 Jul 2018 16:14:58 +0200 (CEST)
+Date:   Wed, 11 Jul 2018 16:14:56 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        majiang <ma.jiang@zte.com.cn>
+Subject: Re: [RFC][PATCH 11/11] signal: Ignore all but multi-process signals
+ that come in during fork.
+Message-ID: <20180711141456.GA6636@redhat.com>
+References: <877em2jxyr.fsf_-_@xmission.com>
+ <20180711024459.10654-11-ebiederm@xmission.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180711133313.GC835@nautica>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180711024459.10654-11-ebiederm@xmission.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 11 Jul 2018 14:14:58 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Wed, 11 Jul 2018 14:14:58 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'oleg@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 03:33:13PM +0200, Dominique Martinet wrote:
-> Matthew Wilcox wrote on Thu, Jun 28, 2018:
-> >  /**
-> >   * struct p9_client - per client instance state
-> > - * @lock: protect @fidlist
-> > + * @lock: protect @fids and @reqs
-> >   * @msize: maximum data size negotiated by protocol
-> > - * @dotu: extension flags negotiated by protocol
-> >   * @proto_version: 9P protocol version to use
-> >   * @trans_mod: module API instantiated with this client
-> > + * @status: XXX
-> 
-> Let's give this a proper comment; something like 'connection state
-> machine' ? (this contains Connected/BeginDisconnect/Disconnected/Hung)
+On 07/10, Eric W. Biederman wrote:
+>
+> @@ -1602,6 +1603,20 @@ static __latent_entropy struct task_struct *copy_process(
+>  {
+>  	int retval;
+>  	struct task_struct *p;
+> +	unsigned seq;
+> +
+> +	/*
+> +	 * Signals that are delivered to multiple processes need to be
+> +	 * delivered to just the parent before the fork or both the
+> +	 * parent and the child after the fork.  Cache the multiple
+> +	 * process signal sequence number so we can detect any of
+> +	 * these signals that happen during the fork.  In the unlikely
+> +	 * event a signal comes in while fork is starting and restart
+> +	 * fork to handle the signal.
+> +	 */
+> +	seq = read_seqcount_begin(&current->signal->multi_process_seq);
+> +	if (signal_pending(current))
+> +		return ERR_PTR(-ERESTARTNOINTR);
+>
+>  	/*
+>  	 * Don't allow sharing the root directory with processes in a different
+> @@ -1930,8 +1945,8 @@ static __latent_entropy struct task_struct *copy_process(
+>  	 * A fatal signal pending means that current will exit, so the new
+>  	 * thread can't slip out of an OOM kill (or normal SIGKILL).
+>  	*/
+> -	recalc_sigpending();
+> -	if (signal_pending(current)) {
+> +	if (read_seqcount_retry(&current->signal->multi_process_seq, seq) ||
+> +	    fatal_signal_pending(current)) {
+>  		retval = -ERESTARTNOINTR;
+>  		goto bad_fork_cancel_cgroup;
 
-Sure!  Will add.
+So once again, I think this is not right, see the discussion on bugzilla.
 
-> >  /**
-> > - * p9_tag_alloc - lookup/allocate a request by tag
-> > - * @c: client session to lookup tag within
-> > - * @tag: numeric id for transaction
-> > - *
-> > - * this is a simple array lookup, but will grow the
-> > - * request_slots as necessary to accommodate transaction
-> > - * ids which did not previously have a slot.
-> > - *
-> > - * this code relies on the client spinlock to manage locks, its
-> > - * possible we should switch to something else, but I'd rather
-> > - * stick with something low-overhead for the common case.
-> > + * p9_req_alloc - Allocate a new request.
-> > + * @c: Client session.
-> > + * @type: Transaction type.
-> > + * @max_size: Maximum packet size for this request.
-> >   *
-> > + * Context: Process context.  What mutex might we be holding that
-> > + * requires GFP_NOFS?
-> 
-> Good question, but p9_tag_alloc happens on every single client request
-> so the fs/9p functions might be trying to do something and the alloc
-> request here comes in and could try to destroy the inode that is
-> currently used in the request -- I'm not sure how likely this is, but
-> I'd rather not tempt fate :p
+If signal_pending() == T we simply can't know if copy_process() can succeed or not.
+I have already mentioned the races with stop/freeze, but I think there are more.
 
-Fair.  I'll remove the question.
+And in fact I think that the fact that signal_wake_up() helps to avoid the races
+with fork() is useful. Say, we could add signal_wake_up() into syscall_regfunc()
+and kill syscall_tracepoint_update(). Not that I think this particular change makes
+any sense, but it can work.
 
-> > +	INIT_LIST_HEAD(&req->req_list);
-> > +
-> > +	idr_preload(GFP_NOFS);
-> > +	spin_lock_irq(&c->lock);
-> > +	if (type == P9_TVERSION)
-> > +		tag = idr_alloc(&c->reqs, req, P9_NOTAG, P9_NOTAG + 1,
-> > +				GFP_NOWAIT);
-> 
-> Well this appears to work but P9_NOTAG being '(u16)(~0)' I'm not too
-> confident with P9_NOTAG + 1. . . it doesn't look like it's overflowing
-> before the cast on my laptop but is that guaranteed?
 
-By my understanding of n1256.pdf ... this falls under 6.3.1.8 ("Usual
-arithmetic conversions").  We have a u16 and an int.  Therefore this
-rule applies:
 
-    Otherwise, if the type of the operand with signed integer type can
-    represent all of the values of the type of the operand with unsigned
-    integer type, then the operand with unsigned integer type is converted
-    to the type of the operand with signed integer type.
+That is why I tried to sugest another approach. copy_process() should always fail
+if signal_pending() == T, just the "real" signal should not disturb the forking
+thread unless the signal is fatal or multi-process.
 
-> > [..]
-> > @@ -1012,14 +940,11 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
-> >  
-> >  	spin_lock_init(&clnt->lock);
-> >  	idr_init(&clnt->fids);
-> > -
-> > -	err = p9_tag_init(clnt);
-> > -	if (err < 0)
-> > -		goto free_client;
-> > +	idr_init(&clnt->reqs);
-> 
-> I do not see any call to idr_destroy, is that OK?
+This also makes another difference in multi-threaded case, a signal with a handler
+sent to a forking process will be re-targeted to another thread which can handle it;
+with your patch this signal will be "blocked" until fork() finishes or until another
+thread gets TIF_SIGPENDING. Not that I think this is that important, but still.
 
-Yes, that's fine.  It used to be (back in 2013) that one had to call
-idr_destroy() in order to free the preallocated idr data structures.
-Now it's a no-op if called on an empty IDR, and I would expect that both
-IDRs are empty at the time that it comes to unloading the module (and if
-they aren't, we probably have bigger problems than a small memory leak).
-Some users like to assert that the IDR is empty; most do not go to that
-extent of defensive programming.
+Oleg.
+
