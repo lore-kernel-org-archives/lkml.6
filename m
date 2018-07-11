@@ -2,101 +2,100 @@ Return-Path: <SRS0=RpQd=J3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8827CC5CFEB
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 614B4C5CFE7
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FF8820843
-	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:30:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF8820843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1762120843
+	for <linux-kernel@archiver.kernel.org>; Wed, 11 Jul 2018 08:32:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="lZDqIgAC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1762120843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732198AbeGKIdq (ORCPT
+        id S1732347AbeGKIfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 04:33:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40221 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726280AbeGKIdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 04:33:46 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CF91720730; Wed, 11 Jul 2018 10:30:36 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9F358206F3;
-        Wed, 11 Jul 2018 10:30:36 +0200 (CEST)
-Date:   Wed, 11 Jul 2018 10:30:36 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 00/18] Allwinner R40 HDMI refactoring
-Message-ID: <20180711083036.7attjq4hm5ay5gmn@flea>
-References: <20180710203511.18454-1-jernej.skrabec@siol.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yshce36do3zzws6q"
-Content-Disposition: inline
-In-Reply-To: <20180710203511.18454-1-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180622
+        Wed, 11 Jul 2018 04:35:23 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37963 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeGKIfX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 04:35:23 -0400
+Received: by mail-wm0-f67.google.com with SMTP id 69-v6so1590894wmf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 01:32:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=myz9PZz0JU4DyqQI42pxLu5+BUUW+GEdx5B8gXjLFPQ=;
+        b=lZDqIgACMmpwyYU+uFxP0K/PZPFxYGVAElN9DPr0kdNPnUkPXmc0QtqS7h8azaC+UO
+         I6TsHyqRLWUhGyBb5FoqaeYF1kQdk9/vbYpAfqAYvEDmm1SeJrX6boV1JZJVudLxM5HZ
+         yfduOsHNS1ARO4XpUHdLizC1wwYDw5E3AckySxbqErVEEYCg8X8HNLcULI+68507O1X6
+         cHa5ZQgEU64IJ4Ul3hTFMU4BN7jnoRlvGbRGRXsKwu+4cBB+5qrt0lpyvV2jNTXh/G3p
+         5A6v+SnoBi2ezItTRA25s7AIQvM6344iF6mEHXTgsZ3Z+7IBCGCeBbDxjkkT6sZbpet6
+         O7og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=myz9PZz0JU4DyqQI42pxLu5+BUUW+GEdx5B8gXjLFPQ=;
+        b=Zsk3QSeKMpWd0FEeDoYEeEYOYKYjsmSeD8jBQUtsATBZq3E5XfgUsKjkoWd9OFiYD1
+         PbkkzJw4ACYEzPc0Logc2e4L0ddffdg2o1WNYepfnnnNkTVNeCCebtGFHWOeePutcg7/
+         LtwZO1XVWm46gitsh2PH/6GedJvZHE1CiqEDDU9pNTdPJzlPijgSomeY7dM3rmwBAUIN
+         f48jhGHLRN2mhRkdMQjcMjYC70SQ6LR2Maw+gyA4JC/0Px6QbbnjNsypVcwW6qUytWd1
+         QXYS7RP3KotjbawJ15JwVsGy5Gzcgs780i4+zWdpmvuo7a3ecyH20EU/cKzR4uoK1oLM
+         OIuQ==
+X-Gm-Message-State: APt69E3PJS61zSabcygDjqexSfARih2g5460ucyOWY/t1+uQlMfMRFQ3
+        fvRoIqtdW2OOaqqMsV2z+PmiYw==
+X-Google-Smtp-Source: AAOMgperQcssx7kceyEKa9VbqIda93EDdnN6B3Mx0tVWOEXDsRlr9EWowya/TxdVAn+VNERIXbjy0w==
+X-Received: by 2002:a1c:f009:: with SMTP id a9-v6mr17570014wmb.104.1531297932860;
+        Wed, 11 Jul 2018 01:32:12 -0700 (PDT)
+Received: from localhost.localdomain (141.pool85-51-114.dynamic.orange.es. [85.51.114.141])
+        by smtp.gmail.com with ESMTPSA id h5-v6sm8206277wrr.19.2018.07.11.01.32.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 11 Jul 2018 01:32:12 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jramirez@baylibre.com>
+To:     jramirez@baylibre.com, jic23@kernel.org,
+        lorenzo.bianconi@redhat.com
+Cc:     knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] iio: imu: st_lsm6dsx: irq not handled unless data pushed to buffers
+Date:   Wed, 11 Jul 2018 10:32:08 +0200
+Message-Id: <1531297928-3824-1-git-send-email-jramirez@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently IRQ_NONE is returned only when there is no data on the fifo.
 
---yshce36do3zzws6q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When there is no data on the fifo the driver can not push to the
+buffers and therefore user space readers polling for data available
+will not be awoken and continue to wait.
 
-On Tue, Jul 10, 2018 at 10:34:53PM +0200, Jernej Skrabec wrote:
-> This series fixes several issues found in R40 HDMI patch series after
-> it was applied. Conversation can be found here:
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2018-June/586011.ht=
-ml
->=20
-> Patches are based on latest linux-next (next-20180710) and are ordered
-> in such way that they don't break R40 HDMI at any time. Because of that
-> I suggest that whole series goes through drm-misc to preserve that order.
->=20
-> I also tested those patches on H3 to make sure it doesn't break other
-> platforms. However, it would be nice to test for regressions also on
-> older SoCs (with DE1).
->=20
-> Best regards,
-> Jernej
+This commit just extends the same semantics to fifo read errors.
 
-Applied all patches but the patch 10, thanks!
-Maxime
+Signed-off-by: Jorge Ramirez-Ortiz <jramirez@baylibre.com>
+---
+ drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+index 4994f92..4959923 100644
+--- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
++++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+@@ -472,7 +472,7 @@ static irqreturn_t st_lsm6dsx_handler_thread(int irq, void *private)
+ 	count = st_lsm6dsx_read_fifo(hw);
+ 	mutex_unlock(&hw->fifo_lock);
+ 
+-	return !count ? IRQ_NONE : IRQ_HANDLED;
++	return (!count || count < 0) ? IRQ_NONE : IRQ_HANDLED;
+ }
+ 
+ static int st_lsm6dsx_buffer_preenable(struct iio_dev *iio_dev)
+-- 
+2.7.4
 
---yshce36do3zzws6q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltFwCsACgkQ0rTAlCFN
-r3Q4sxAAkIOSDcrUdytnfHPJ0n99IJRimkUTwMFyKEGTrYoyr6ODMxuVnO200zQ2
-eudqI2vuHRhxkkDXeSq5LCyYqhI2aYEF6Efyg5k/nX6C1ySgCME2ExXSwCVfDn+u
-MHBQn04IXTERwHeZT5RzBOd9Ys33YaYeDBNdzW9EL1sbAz55+wNT6Y7zxyOCeZV0
-KDZpbExJY9Sc/FB7gu9XEvEuzsVpzNkaLlupqnTFHSbu8US5eRnRhqhXBFpWrJYH
-I1SgzObx1/w7N5427O4QdmA4snjTQzozbWjgU0nnTeCYYAPbWS6uOk/oAGAcCY9c
-B1G0s0fLp6EjyFQWj12iubS/6reDhz3Zg2Yov3/YK3SyYv83E91MFg+gg1RLm940
-RcYoImg/n0JEHICYhduLKESrT2biwdAlLdUkOTXRckh2tADVByU/9q5cKcoP72KP
-rGmMOICBJ3POaKiUcdk2Q8e+1Dy087d3XgbyoHke62Tfe8UUPOLOrttrCEt0J78+
-vkCpF/n4stglxAQvXvlBXO3vx1WLHHuGs8R9QLAGV/9bM1cHo1doBirCaRr1i7pK
-vTXLhJOarfDK9u6IVBZRY8fv1nREf+F7qBA6wdZOqqCadvtuQFJL9/NbSg8FmPQD
-p5G+cfAUnKhENiHqzJy+O36sbIUqJTyejC5ZemhGyKNfLmwpxuM=
-=Os8I
------END PGP SIGNATURE-----
-
---yshce36do3zzws6q--
