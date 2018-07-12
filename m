@@ -2,158 +2,148 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC77AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C51ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80B82124D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79A112124D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:53:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mWHvmBV0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80B82124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKrLjoXI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79A112124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732403AbeGLUDx (ORCPT
+        id S1732457AbeGLUEP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 16:03:53 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41883 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732217AbeGLUDw (ORCPT
+        Thu, 12 Jul 2018 16:04:15 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:40548 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732204AbeGLUEP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:03:52 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j5-v6so16337151wrr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 12:52:49 -0700 (PDT)
+        Thu, 12 Jul 2018 16:04:15 -0400
+Received: by mail-oi0-f66.google.com with SMTP id w126-v6so58027920oie.7;
+        Thu, 12 Jul 2018 12:53:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2NChlkRFqlHNcvXB2DgHuwLzXuFBRT3gcaEXutBFnTE=;
-        b=mWHvmBV0b1OYD+f6VEwwTk6YuPhenAtSXiO/KY5/ZKBKfiAeVqneh/6Fs2/Qh/Egs8
-         X9lcfbBHTn2wLru7VyvJnVWA+qoxC0foHt9uHtGj+z1mfte32K8ZO2NOqy3GmvpbOr21
-         uwIx+j4nyErTgAerK2zqg4X0aSLp4jpjH9Q6w=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=rFH8P876Vl2E94mklJe34lGBbiVYKqYfk0DpwQ0FUK0=;
+        b=JKrLjoXI0tbP+SQX/D9NcBYGdkyqVOxyIomy9yvtcSbVyeNbr+bAG9RLoATno8rkfS
+         YV/9+lo6wG9AMjI296zN/uy9z8s3GL/jfczF6YclDcpArgOQ3tqVHs8bHygzVhq+VQDy
+         bj8yaDOwwIYVwGhpKiIywyTEwfznCC+vtfeUz96F9Y/PeSrt2jtVu6UZF12j9VO+Nync
+         ShYgDa/vORnhaVEHtHED2bBISwpfb6ReJBYtD6Q0zW/8vlv2WixLb0/o9v4KgKs44FoD
+         yXkWbAyjJJIIyvy+iwI19qBNpx4P5MpYdNJ4R/Cok7q1YhfUrt7Pr82fbsyZKvz2Whbe
+         Kj+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2NChlkRFqlHNcvXB2DgHuwLzXuFBRT3gcaEXutBFnTE=;
-        b=HJgk3xvE8rT5UB7P0ihKDklJhrizwmw+uVhM3heZVrF9D+wm7BHWLXbNNAtB80O4WZ
-         /Gseo/MnNnsaw8GHk+l/f/U5NPGi/RU9EEr5p3Lst7ZSZ52NsqehRfcjq823Bxp6IYOA
-         sIkogU/ghWz0oskaebg1sDWpvqAL4jQrntwuX7s25fJRKe9gjE5aUef3fiIo/HPQz4iM
-         A9N6SGF2vlV8j0HgdbGwkqJUDUWt//gYpal/OF9xSrksAPXuhyFrfLDmCpj7x3GlhdtC
-         tRVNP/1GHbW1i8CWygHFZJS3sIDrwTATWp/1vBNGEg/CDjNR/wQEFqxiHcaqcHUNfkLr
-         QCEQ==
-X-Gm-Message-State: AOUpUlEbvxet2LPojpJH+MOH437dyJ7f1mAWNHCRHkeLkcvG5BxI8awd
-        CVmcDOBkHPJlgU1/7fTMbz+9SQ==
-X-Google-Smtp-Source: AAOMgpfA/MFPoqcd9Vh/x1u+PKrhCPDDIhoZIZAHFSLvglZWgsWvTU+2UrGwLAlP+pwi2xWkMgaycw==
-X-Received: by 2002:adf:8b01:: with SMTP id n1-v6mr2876648wra.282.1531425169048;
-        Thu, 12 Jul 2018 12:52:49 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id i9-v6sm18486053wrs.92.2018.07.12.12.52.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 12:52:48 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 21:52:42 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nick Piggin <npiggin@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Message-ID: <20180712195242.GA4170@andrea>
-References: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
- <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org>
- <20180712172838.GU3593@linux.vnet.ibm.com>
- <20180712180511.GP2476@hirez.programming.kicks-ass.net>
- <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=rFH8P876Vl2E94mklJe34lGBbiVYKqYfk0DpwQ0FUK0=;
+        b=AMMZo0TtgrKrjDv2I8xKD/bXUS/p0MFM2ULcvaEQyrb69ubBqMqIo93ffk+1EI8sqC
+         3TzCpocYnNdrBlnpt7XxY7bpmH1vaCBQcOYuREXO0trgj4laLewBtshiNsESIl+N/+PU
+         OFNmas4wk485+3gvzYf97KZdonu6nqWfZkSjcFh4u2RRKA8JEYWztYQZu/BplUlLjv69
+         gu4XkNRqX9f61ykI8ljCm2J9Vm7C39FRhm+pZEgdTB4kLqfZnL/upMPpkZGmCPnTF4Z6
+         yRH+1RncSdTnsVgloYRZP2dF2HBQW/uACWXxSUV7b4jHl4MgbjS3jX+lNGJblVObLUUa
+         IiZg==
+X-Gm-Message-State: AOUpUlFSx9dpPPYNrq1BOpoe2TUMknCt6NQfWqIGbTOWTiZeWmW/0HwZ
+        MqA630bGc06/NY6IvQtl88CkCX7BktOoDJSMlAY=
+X-Google-Smtp-Source: AAOMgpcf0DTWbJP4wZXMlpjHY0oG8Pp/hBgvCt3IpuoFgZDSbMeHt8TebBd/HA1g6p4+OTuy4nj6ieuBiLHnEHlZrRM=
+X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr4047569oia.229.1531425192244;
+ Thu, 12 Jul 2018 12:53:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a9d:5e0c:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 12:53:11
+ -0700 (PDT)
+In-Reply-To: <20180712145849.GB15265@redhat.com>
+References: <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
+ <20180701210935.GA14404@redhat.com> <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
+ <20180702180156.GA31400@redhat.com> <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
+ <20180703163645.GA23144@redhat.com> <20180703172543.GC23144@redhat.com>
+ <f5a39a88-c21e-4606-a04d-11b5f32016b8@linux.ibm.com> <20180710152527.GA3616@redhat.com>
+ <6e3ff60b-267a-d49d-4ebb-c4264f9c034b@linux.ibm.com> <20180712145849.GB15265@redhat.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Thu, 12 Jul 2018 12:53:11 -0700
+Message-ID: <CAPhsuW6kCtn-tWSj5eKf+kGt8ZEjVwJKLxj9C6zdaqMZByRytg@mail.gmail.com>
+Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
+ count (semaphore)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
+        mhiramat@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+        mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
+        namhyung@kernel.org, open list <linux-kernel@vger.kernel.org>,
+        corbet@lwn.net, linux-doc@vger.kernel.org,
+        ananth@linux.vnet.ibm.com, alexis.berlemont@gmail.com,
+        naveen.n.rao@linux.vnet.ibm.com,
+        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
+        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 11:10:58AM -0700, Linus Torvalds wrote:
-> On Thu, Jul 12, 2018 at 11:05 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > The locking pattern is fairly simple and shows where RCpc comes apart
-> > from expectation real nice.
-> 
-> So who does RCpc right now for the unlock-lock sequence? Somebody
-> mentioned powerpc. Anybody else?
+I guess I got to the party late. I found this thread after I started developing
+the same feature...
 
-powerpc have RCtso (and RCpc) but not RCsc unlock-lock, according to the
-following indeed original terminology:
+On Thu, Jul 12, 2018 at 7:58 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+> On 07/11, Ravi Bangoria wrote:
+>>
+>> > However, I still think it would be better to avoid uprobe exporting and modifying
+>> > set_swbp/set_orig_insn. May be we can simply kill both set_swbp() and set_orig_insn(),
+>> > I'll re-check...
+>>
+>> Good that you bring this up. Actually, we can implement same logic
+>> without exporting uprobe. We can do "uprobe = container_of(arch_uprobe)"
+>> in uprobe_write_opcode(). No need to export struct uprobe outside,
+>> no need to change set_swbp() / set_orig_insn() syntax. Just that we
+>> need to pass arch_uprobe object to uprobe_write_opcode().
+>
+> Yes, but you still need to modify set_swbp/set_orig_insn to pass the new
+> arg to uprobe_write_opcode(). OK, this is fine.
+>
+>
+>> But, I wanted to discuss about making ref_ctr_offset a uprobe property
+>> or a consumer property, before posting v6:
+>>
+>> If we make it a consumer property, the design becomes flexible for
+>> user. User will have an option to either depend on kernel to handle
+>> reference counter or he can create normal uprobe and manipulate
+>> reference counter on his own. This will not require any changes to
+>> existing tools. With this approach we need to increment / decrement
+>> reference counter for each consumer. But, because of the fact that our
+>> install_breakpoint() / remove_breakpoint() are not balanced, we have
+>> to keep track of which reference counter have been updated in which
+>> mm, for which uprobe and for which consumer. I.e. Maintain a list of
+>> {uprobe, consumer, mm}.
 
- - RCsc unlock-lock MUST ORDER:
+Is it possible to maintain balanced refcount by modifying callers of
+install_breakpoint() and remove_breakpoint()? I am actually working
+toward this direction. And I found some imbalance between
+     register_for_each_vma(uprobe, uc)
+and
+     register_for_each_vma(uprobe, NULL)
 
-  a) the WRITE and the READ below:
-
-      WRITE x=1
-      UNLOCK s
-      LOCK s
-      READ y
-
-      as in a store-buffering test;
-
-  b) the two WRITEs below:
-
-      WRITE x=1
-      UNLOCK s
-      LOCK s
-      WRITE y=1
-
-      as in a message-passing test;
-
-  c) the two READs below:
-
-      READ x
-      UNLOCK s
-      LOCK s
-      READ y
-
-      as in a message-passing test;
-
-  d) the READ and the WRITE below:
-
-      READ x
-      UNLOCK s
-      LOCK s
-      WRITE y
-
-      as in a load-buffering test;
-
- - RCtso unlock-lock MUST ORDER b), c), d) above.
-
- - RCpc unlock-lock MUST ORDER none of the above.
-
-AFAICT, all arch _in_ the current implementation have RCtso unlock-lock.
+From reading the thread, I think there are other sources of imbalance.
+But I think it is still possible to fix it? Please let me know if this is not
+realistic...
 
 
-> 
-> How nasty would be be to make powerpc conform? I will always advocate
-> tighter locking and ordering rules over looser ones..
+About race conditions, I think both install_breakpoint() and remove_breakpoint()
+are called with
 
-A simple answer is right above (place a sync somewhere in the sequence);
-for benchmark results, I must defer...
-
-  Andrea
+   down_write(&mm->mmap_sem);
 
 
-> 
->            Linus
+As long as we do the same when modifying the reference counter,
+it should be fine, right?
+
+Wait... sometimes we only down_read(). Is this by design?
+
+Thanks,
+Song
