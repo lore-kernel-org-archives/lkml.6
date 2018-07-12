@@ -6,75 +6,76 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA48BC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC24FC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EC5920875
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:50:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 718C720875
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:50:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="NDB5nsah"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EC5920875
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="qqqnERSS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718C720875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732458AbeGLF6c (ORCPT
+        id S1732426AbeGLF6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 01:58:32 -0400
-Received: from mail-eopbgr680054.outbound.protection.outlook.com ([40.107.68.54]:28992
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        Thu, 12 Jul 2018 01:58:52 -0400
+Received: from mail-eopbgr700052.outbound.protection.outlook.com ([40.107.70.52]:15360
+        "EHLO NAM04-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727019AbeGLFz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 01:55:59 -0400
+        id S1726906AbeGLFz6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 01:55:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GjDHqjztvU0lNlHf9U6H5Xq3PbsD7Y9cE4mczzQcOss=;
- b=NDB5nsahD/eN7B31pEJaogNBgm1EKcNZ+5RmCK0UKLu+3+o3h7lEs5HNZuxg8fKDG8QvetbVQtTq3IqgyeawRs9OH7Xoc7VKZJz/xxIs2/aM2dyfGeEq4bDU4CGpQ9oHu60P97skoYJovJMMZTu1uNOS0MnPutTFRJiNcNjpuc4=
-Received: from CO2PR07CA0051.namprd07.prod.outlook.com (2603:10b6:100::19) by
- BYAPR07MB4711.namprd07.prod.outlook.com (2603:10b6:a02:f0::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.952.17; Thu, 12 Jul 2018 05:47:59 +0000
-Received: from BY2NAM05FT038.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e52::204) by CO2PR07CA0051.outlook.office365.com
- (2603:10b6:100::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.952.17 via Frontend
- Transport; Thu, 12 Jul 2018 05:47:58 +0000
+ bh=zXW+Yqy7MNmDuQbhZtinzm4QfetHz+/RM+4ivx8og88=;
+ b=qqqnERSSqrPawEq8zEuafGqK8+3uemOq0JvCVg7FMUqbyvaCoWQhQYyLenBCMMRzjxnBFL0Pijkgf2Bqbd4HXdrBw+3XDMJonlc0uNP/u33j/aAEV46tA38qqO85PqOIyDcYErzrVGhsLRSHVeYvgMxUYFD2D5zip6viJUmgTiQ=
+Received: from SN1PR0701CA0070.namprd07.prod.outlook.com
+ (2a01:111:e400:52fd::38) by SN6PR07MB4720.namprd07.prod.outlook.com
+ (2603:10b6:805:3b::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.930.22; Thu, 12 Jul
+ 2018 05:47:58 +0000
+Received: from BY2NAM05FT039.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e52::204) by SN1PR0701CA0070.outlook.office365.com
+ (2a01:111:e400:52fd::38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.952.18 via Frontend
+ Transport; Thu, 12 Jul 2018 05:47:52 +0000
 Authentication-Results: spf=softfail (sender IP is 158.140.1.28)
  smtp.mailfrom=cadence.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none
  header.from=cadence.com;
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
-Received: from sjmaillnx2.cadence.com (158.140.1.28) by
- BY2NAM05FT038.mail.protection.outlook.com (10.152.100.175) with Microsoft
+Received: from sjmaillnx1.cadence.com (158.140.1.28) by
+ BY2NAM05FT039.mail.protection.outlook.com (10.152.100.176) with Microsoft
  SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.20.973.9 via
- Frontend Transport; Thu, 12 Jul 2018 05:47:58 +0000
+ Frontend Transport; Thu, 12 Jul 2018 05:47:51 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id w6C5luUQ017906
+        by sjmaillnx1.cadence.com (8.14.4/8.14.4) with ESMTP id w6C5lkvw032054
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 11 Jul 2018 22:47:57 -0700
+        Wed, 11 Jul 2018 22:47:51 -0700
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Thu, 12 Jul 2018 07:48:05 +0200
+ 15.0.1367.3; Thu, 12 Jul 2018 07:48:02 +0200
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 12 Jul 2018 07:48:04 +0200
+ 15.0.1367.3 via Frontend Transport; Thu, 12 Jul 2018 07:48:02 +0200
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w6C5lme4029648;
-        Thu, 12 Jul 2018 06:47:48 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w6C5lkcm029515;
+        Thu, 12 Jul 2018 06:47:46 +0100
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w6C5lm6C029647;
-        Thu, 12 Jul 2018 06:47:48 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w6C5lkCK029502;
+        Thu, 12 Jul 2018 06:47:46 +0100
 From:   Pawel Laszczak <pawell@cadence.com>
 CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
         <linux-kernel@vger.kernel.org>, <ltyrala@cadence.com>,
         <adouglas@cadence.com>, <pawell@cadence.com>
-Subject: [PATCH 12/31] usb: usbssp: added functions for queuing commands.
-Date:   Thu, 12 Jul 2018 06:47:09 +0100
-Message-ID: <1531374448-26532-13-git-send-email-pawell@cadence.com>
+Subject: [PATCH 04/31] usb: usbssp: Added USBSSP platform driver
+Date:   Thu, 12 Jul 2018 06:47:01 +0100
+Message-ID: <1531374448-26532-5-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1531374448-26532-1-git-send-email-pawell@cadence.com>
 References: <1531374448-26532-1-git-send-email-pawell@cadence.com>
@@ -82,661 +83,513 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(39860400002)(396003)(2980300002)(189003)(199004)(36092001)(42186006)(54906003)(575784001)(86362001)(26005)(486006)(4720700003)(186003)(126002)(2906002)(316002)(36756003)(16586007)(446003)(336012)(4326008)(11346002)(476003)(76176011)(2616005)(51416003)(426003)(246002)(50466002)(5660300001)(107886003)(109986005)(8936002)(7636002)(50226002)(8676002)(356003)(47776003)(1671002)(106466001)(87636003)(105596002)(478600001)(26826003)(48376002)(14444005)(305945005)(6666003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB4711;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT038;1:WrhTUDpTJ2L5nekTTmqe166bHZBnJl3v0WLs7OlZlq9k/rk4D0QLrXIaUlwLs0742fNxDcIfZ4tCk5lthTY7+TxzuadLmkUf1klGL0AB6Q+TwEav/XaemqT0NexSX1Js
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(376002)(346002)(396003)(39860400002)(136003)(2980300002)(36092001)(199004)(189003)(8936002)(47776003)(26005)(26826003)(51416003)(76176011)(305945005)(14444005)(356003)(8676002)(476003)(486006)(246002)(11346002)(446003)(7636002)(126002)(2616005)(106466001)(105596002)(50226002)(4720700003)(478600001)(87636003)(5660300001)(6666003)(50466002)(86362001)(36756003)(2906002)(109986005)(107886003)(42186006)(54906003)(336012)(4326008)(48376002)(1671002)(316002)(16586007)(186003)(426003)(266003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4720;H:sjmaillnx1.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM05FT039;1:L7uFxU44K5zeoWFO492+hYJcZM6/9mFkIHTlaAFAnvAjMaYlA2/oEqsbtMX+1FNYrCFpskDXZVQ3xxuWbb1dj1bb5Opsi++xWeFMkiMj9nUkAhaoUmrNkQf28wdOGI5J
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 03d95338-9e4f-4672-db49-08d5e7bb05ef
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:BYAPR07MB4711;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4711;3:OClX4uLUtguzwa5oAl0jQ9BPOeN2cSGBhok48SOTR0k1w5247qe+H38fb3skZ5n2eymFzQReX55iqrNIDUW31vglcNRuo5mRBqoRn8EGRHpP4d1KrPQQEVOm4RHJm3/poN6nNs3lDSe23L702P+du/EBTH20+w0ks279NTi7EDW6QYXnlm+rtDIdinqMDjw6oA05elCd6x/U7LOz50jaPcAAXjtuCDTTx0ApX/1okVk5Ub36/zvfaDOSpDtG9Z0CJhMTKqbCcZJOV03PnXpFAvv7Bf0HkjogpJKYEC98SW335YVj8cg459lI+Mfc16JGkpiEd51BMZimKqyb5YZDNSMppTu2AaVlhykmI9q2gRQ=;25:88fUE2sjt1aTkjwbQxZw2dlxOCI0DwNZr8JdNelziyuS9/arev5ooqosbxqW7pzLs7HCQCNiTU5sXRfDNQq0Pnp4Phvxm+1xX7t3NKdR3vI0okx2HwTX63WcpFPuO8LNEazVkWZJO+hFcqNP27ZebUP+N/x4Scp69mW1iDTEPmWBVMpb8bW6aWxxJ/UP/t2eHrpVgkw0Xwo0tFn78dhzGoFet5Q8RP68LvRqs+uX1L4H+K3rkvSo5tHBrdvMAVsr5LgJM/gTs57rY4Gh1an/Nw6OkpLw9GhjDmURW24IjsIEWruJhWkTqipy59E024pTB+8tM0AD5vBNx/O9BgBMHg==
-X-MS-TrafficTypeDiagnostic: BYAPR07MB4711:
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4711;31:pQL+ZUcR52mOBuT7xDR+tJ1j+NpfOmYSUkTVyppb+iPE0IjNFKmLfASUN2F5eFGeQOrwXCZpKFESy280XswO7IkrWLOXJt8PSjn1fvCQuIpla25KPjTwpjLYAhP7kkt7klO6imu4YQw/5PRqZvXWL3R+D0fAiV+AZU2fMnDkr6+R5yvq5vcwpbLwl2421RBtRRkL2908Pq0N92rOm4wyZAfx3oKD1rSxhwD3Svx+ddo=;20:dXbQLkibz5UkQhLcdbK5rbWw0pVWrElTWwKBFN7XdeR2b6HRUNlAO/94ZvOqggrHzppzc/Oo+bkK+jCMGdYVcFREQ0H7dP9U8OlH9d7jXQnP0LV7/4H7lnGvFyuEDPeUIZB82G+zO4O5bKWlcg7LPu/ovx08w5NkFaMtAjPHtLIKduHjFcuiBGbI2IMlGauZi5mOUnplcbfmmnwfh3ZG0e7F44a3ULdmLGKFtMrQAHpKxT3GWn2j8VFwL+VbVe2vDgQuooljCAzXXyOcPJpR9k9YN8tuhhonejJvF/nwY5WFZt5ZWsCzbyLC0+CpL0U5W1uN88PubwxLekBO3roX3BCCm/qAiOXKHwXh2z4P3tBFG+UPUgPyBYRbYkXrV7LNWudcznqbrIkU1MEP6UxilHpcN/ORCreYj4/h7zdSPqBl58/I5/gHBder+d651krqsm7qEqg3iOFnALTVfls6DyG0cDnhhA75PnroTFLXBFa3Cidw0iH2bNPJOqrefmnD
-X-Microsoft-Antispam-PRVS: <BYAPR07MB4711D27A6F35303D2AD92FCADD590@BYAPR07MB4711.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 94188419-9fdd-4397-d663-08d5e7bb01f1
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:SN6PR07MB4720;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4720;3:XfYx/1M1g6UJwA3hOou0k42WmMtWsWJYmKlnCSp1CS4naNWdzhdPQsXOkwq4qT3nGPjzZgC0djQLLiTFBoP22eWJRz11vGftZigvl2JnK4d3XcBSo+NHV2UOt4iWRmc9e+qme3Xq1tyBaPmkSmbZcV6zjBrHbWP4oRQbcD0vVVgIJoqxIFK9lW35M40eiEVupJJWWNF9zR0i4GZi7Qn3LE51itQzEXcmkf8bwzbv/LV+5IS2mIBBWZy/MT9mxlIKDgpAp84X6VpQRTfXz0x8D3cpSzr4mQGI/dVUP8LqrSyToDhvkYtr+//Nxh3VWLKo0b69l4hPo/JKuX2LZCgBeM+elhQMoXD/j1CrIJqD9iQ=;25:wKwnVhLZeYUKHryO9CBAg9KZeRhhFK4w4Sdyle6qzGWLeS1dzex8YTlEhBXEcSDL16Bg9Li+5yAhqN/9lb1c5yqFK6eNia4T1oWxI2CGA8mOhmEgCl+iZ02Ksv8sPvW4j9kfiVhot8D2yPF0OMPMwiftZhWpq1LH9z0iNAhMKju0SAWWCr/F2/Oti5FPjmRFk09wqWd/xX03aS/iYZSNCL41tgg6SPy00I6avTKA7hiW6maLfChwLbfw1S+vGJKtS2n4mKbrMyYsegnKWy7mJf7b/pyUsKCsBvyj6x8at/D7LTxCZeyqpUNhaMZcq9Pt/mCF8rafKe4s4xISHVQQkQ==
+X-MS-TrafficTypeDiagnostic: SN6PR07MB4720:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4720;31:Es9uCwnU9Yznu7TAF4jdNGHJfS/DSArzXRPA/ycDQVqNeJ8ItYbp7efPAIC4W/AFl50M7Yq4JlZdrrhQgHyesI2ENDDG5xhBM54ebhS2+cXjbCdKW+WQ3L8II36QXWmmtumz9b+PiVWy09oPI0gXnE7yFMMh1JCF89RJUfpTXb5byinntpKwtMXg/V3RsCla5AESVcUSNGhsO0xfv/oNjJKllI6f/fUwvFPlQ/1qRu4=;20:yiZ7dIo6udPDXs/4ihliC2xq9zWzgTxTFMOCK5+uvaKYvE9AeZ4i3RObjRoGGNSPOPDNJICEnaiKOZC4MAyMTV7q3Tef53HWi2wkqZ+AM5C6PWuyT1Xxo2M3cCuyeLj7lhX3ZsVRSUTpeOpRUUJeeHPONh8GVHSgPcGjYKcABTkN4E8RA1cwvneguMFe68KtL/il1i4cYIKgX/SjYr9D2Rh3sMIl1sf3qxg8gsW2sWUg3BFhWvYmHLE9cv2Vo5tKJPdBA/dlAduKL1KReNshb/UuC+/fB8K8nModtkepQLxeBWxLUK/h5mYGiDxl7oFE8y53sLvYIayoO+TwnA+yPTeE4U5X+xIxDcfVggY84vVngNTAwz9WAUrie4myd3KJLp95dWT1tqu+fmi+p8fsXe9SmX/CV5WGMYIM1ycDsfhy0sMzWkIPIdnAVEuUysIWK+vtcIWCWtDNfjKVxzZkvHmrGcekouG+FnQGzWv+K6E2pT6sVo97tYTaByI4ghmZ
+X-Microsoft-Antispam-PRVS: <SN6PR07MB47209164A896FE16C2A9D712DD590@SN6PR07MB4720.namprd07.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3002001)(10201501046)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BYAPR07MB4711;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB4711;
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4711;4:3uC9THwq9LiGMwq4/5ycox4LxJGLC7dxu71a8uX+kFhHK25lKv8O3lM4FR+tj3IlIVgU/hnEPlsb0RFJ8un8gskmGqyGL+m182SH3bnxyxtU/J6oSuBgaJ4OoJT0/vaO4K9LJuLwCZ1o0Y/Qv1HSF2jAfF8zrbC5o65P3IZuLx4vpGiXUHQHtIr1vYW4PosZS7wgfBP7R8PcUAhJrMOZzetLSC5XZdKYOaPq+MfnLWpKWNMcXKs7fBC38B8rN/FTiLkGyX8INS/BzYuJGVxJZdOpsMPTyZwokeMx6ad470L9HxOrDViNTMKmVjRek4Vc
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(93006095)(93003095)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:SN6PR07MB4720;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4720;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4720;4:Ma+it2rNTCjfMLRQtj/ULLZ6ttNpNfY8ooicKnFDLHnJZzRginjH5seBrX4/foQAXTIlyKsz9fa62e0bByzDfDjD54YgTL5dWEpn3eAttnf9tr5GvgHfMNDGU5jUZMSL/dt1zJjH8SrZpJZGe+fc4FzXYvxG6p33D+Th5YTJ2y++fy/f6y7HkCP+ph2K7BgxTuPcRcdd8tcfj28RGG4blGhZfnqaB4/k9v6Akf314HFgF1ZUnFzxPRLp1bxPVnOQRN8+k2DzMgboUuqBIVc1axSXlMKkrYxePhl/7GQlpPf40VPKUxQyr90suuoIs6Ej
 X-Forefront-PRVS: 0731AA2DE6
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BYAPR07MB4711;23:YgcqCxCJv8t4lk50zhJbqzbqjfwHcJ8wspp1kmYuW?=
- =?us-ascii?Q?R0Pn3Y67rE2yS8hPdLFeCadPdeDWxfY0iOE+N9vG8MA+PC/Qbp38b2L5vmAy?=
- =?us-ascii?Q?dZ5PiqaKYWcerDQn6aOW7ESXn3FMIq7Sbvlwtkk8x53GHV+73gjh/B4CNU/L?=
- =?us-ascii?Q?11LM5G1fQptwam0wkOwqohoTf+pb6uI1PND1KSswKq4mGlTW8kQqk6mNaPxZ?=
- =?us-ascii?Q?OpAeV7kVJidrgZCXRYvvRXocgK6aT/7mfMvOmPJ5lIKCT4XSKhCywAcym9jy?=
- =?us-ascii?Q?nDynEgy6ZeumP+lamM9OyMV2dFsROp4mcbdulizQ5ZsKayyfLJp85HrOjbe2?=
- =?us-ascii?Q?+f4RxwfSALWAfbzOb/ozSW1NHFn1wlq5eudm+v+nbetwoJg8Q+ADD3amZ56P?=
- =?us-ascii?Q?ww+WS9MlHYMNo05c6L4lR9Imuz3sopfJMkaTzuCx5hIIjxkU6t1n4xpQqh9K?=
- =?us-ascii?Q?PguNoWHlNvZ91c1NrxRMAky3RiXeGVRRb141NxPHYI6qbTN/xVNmKWSQLhye?=
- =?us-ascii?Q?fgZ+vutPCsbK8Je78SOB8QgTLZut2lW1GDvAkckhnDMZ8LMmw34/O4PFZo48?=
- =?us-ascii?Q?K3B7BcLPsTFV7YhxRURe4zp8P94iy9ok2m6DtQ5Fwy2NTAdNHn+T+p5D9jHZ?=
- =?us-ascii?Q?rBfAlCghl9ogHQihZoqYO2FmsyQqE7Op2DVUJVVJx+BN5cxdYsN71gImHcPM?=
- =?us-ascii?Q?hT59PzjJ/eNNTLxpW4eyUklLSAn7OUWWATkSNU1OP6eDwV/V7PuI8mV2FKZ0?=
- =?us-ascii?Q?inDMXy8e/hfzaq/qrFUMP8L//e0jJ3R5EzxF9cJcIA4aRvT1mf0Ko8u2pZjg?=
- =?us-ascii?Q?b4G/ld79bxYv34Gm+vt0gXVRdTeFh/PVTSo4U8jBpTRxABugMko8G8SY5NiR?=
- =?us-ascii?Q?a8b36+jvl0lfhfiJIm+fTBNO8mJCSohG1IwKyXlLvHYH2/fuvX/ixvFdMHqC?=
- =?us-ascii?Q?0HDBJuigVn4btjtRLskmeP3rfApf8cuDDUfFbC9MOu6R47nqbYjiJaDVb6NQ?=
- =?us-ascii?Q?qjwxEuKfhidcLMUjc3U186qSDxFCZKPGJfgHgfhl8tMYPZrajInFfG4TTyvL?=
- =?us-ascii?Q?5lEhVGvv4wAIbzMbOc5GUBP0mn8lCkkKXuYb0w2v96g5aN0mh2FpgzNSoR+1?=
- =?us-ascii?Q?RlXIeSevQF1zS23cjWaMDICm7xouFAXeDZ08K1wGvHkLQJ4AS/n0y2abOxeb?=
- =?us-ascii?Q?BtSxPG2qZZiBzs=3D?=
-X-Microsoft-Antispam-Message-Info: AdpC18hUJIOrWX+9giQkJRd4yJkxpYrvn6ePU8R7hytSJU7XKIku3/7rLP760eQUimhCzpyzy0ZUpXwmP2tG9aGsC0NThT2UI3Mycpd0w7V/528O2Z5ckmiMUH+pt26v11+GXoH7VmuFFSgPNmqv4Q0zpwdBRhNNbX+bUx+8Rluan/kMUrNsec0cDppuywCukOoa6p0TI9F5Gv0rELJGi1s19AlcQAQIqdXg7LbvjVJJrtSgfvZIWRwZe+0KmImbVoTq6FXEIZAwObzzHVzzrMMoU5N+2AmnZ/NQWJxu/u2bChlFEzbo8Q6jMQ9ijZxNIJUDYiWYU4T/ATENPOzQu0NoVUW8vy7YzQIaffDYAPSqVynNrMvzUxLRCnsFdH0M9fHoO1CgtdtVo5+Ht8s4fg==
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4711;6:He17egDXVLncO7TiGoj7mR3nUkdgKyepZJQnThAHd5efxtZqypBCslwMsWw9CyBq19cSFi6Z8LCwUsNLltTQqaQgoSQUcZ/D3HVDkqwwjGj2j58SHgPxCAS39xc/cOrD0EvHo45EhgSLu8xyTtQ1wZaZZ2/v3ErpwoX3zXjK3188lvgUPKEEMaeZtbH3PVSN/GFx1NYzCaPYPqCf3vnBmyR7jpPVzIdau12dahjZlz6bIDJmkNysTOQYW7chwy9DPdaj+Vgz2m2aipPyWcZw3x6sNGg2hFfwbMPzcryxzl+2VQMKa2w23ZcZ3MyB4vlUVPW3NOzRxbnXnc3WdAJ2VDbaYg6JvUP4HbPtnmgykf2HdK2ShQbrt0XkbN3ni3J7rcCsiDsAAqyBC5UkwF54ItnDc44WS61PI0c6gWTAp5xIhvbnvjctcBVwP8sg3T+bcJPXlaWKyFUx2vlcFrLKwg==;5:0CIT5/l7ZF3DNXl/kq/Q6gDE2oBTReIWtV21VAgNijMegYDzxZaiKN+2IL90hyiqytikjMMWW01n2SLZPDrzcIJr/flyUSYv7GLd3BqQNBDMHcq20En0bW+f7PDlRv7FuF2Pp9UEaltrAv9g1j9svi0MWtTlX5FTuSsOsVSI0FE=;24:4JHXdq8ZyMB+CBPCxEt3gO2FkD/zSS76jE3jFAT2e57Y11obzFOUuI9P16sdu0e1zDbFigd/34UJhAMJGwgp0BAzYTQeynhhefKZY6Wfs1M=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR07MB4720;23:+t58AntnuVFVjnMu9FKkUid7/ZZpsYNOoF6LMZbbX?=
+ =?us-ascii?Q?HMhqU1xGNU9kdFJTcj3GiRx8Mx20jxaFjkNzugmT2DF1r+9n8SU0ZkKMjv6T?=
+ =?us-ascii?Q?XKSY7ugIv31RlsRVAcHxbJccugDMzM/TSBecfw15ujODg5By4Its15lv5HuR?=
+ =?us-ascii?Q?X9Kb/CG4ax+lJneZLTv1sXr+EB+kF3zTk+gaBEnZuc8noaFfHRY0GITA/m35?=
+ =?us-ascii?Q?yNK1pa6jUHMhDexFkgJCmOzhOAsgp0NrsPK0LVF9nhsKxn0J493B2JBriiwU?=
+ =?us-ascii?Q?n54bJPeUcmXPWq8EG4oE2LFfEzxTjQpkAPtDTYY5Axq3tin+DyRl/r1KkOBt?=
+ =?us-ascii?Q?7qvtHxWylF4hPdj1iTdydVJ4lk6nUkyQypGv2G5lQt1+TQ5kuYeQDsWed5i6?=
+ =?us-ascii?Q?Bb+/DwL+BuInZJdrUzZvvUk2IXS0g1eIEpJNZFeg/izjg+205N5teBP4QfKe?=
+ =?us-ascii?Q?Iq1+tjzYV5Akf7/aSQrt6XrOb63cGpZyqsSX87LMif2svF1rrtEz2cZhF/Ug?=
+ =?us-ascii?Q?vqpqEqHE6FnRw32Puxbjd3odwzICM+SIRt76/T3QRUpn4TPpAXbNkE2LH3Hk?=
+ =?us-ascii?Q?v25neRYCMFEHu+x4x9B9WHjm9JOxqx/G/bmonzyJ7iZD8XE4Q+3Ahkh9kxTb?=
+ =?us-ascii?Q?gq0dbvjhw8STgHM3o+xO9DIDa4KxZzA8eSsHn0W8KLr2NrkHOMlBPm3MB04N?=
+ =?us-ascii?Q?22nFCb533TebUwQDNFfD7Dp/TmkKREpDPiJc7v83ALpH4NYzx5KV4ihrbU8t?=
+ =?us-ascii?Q?SVLziPftoimyqMnGlLw1qz5edDCAlCVtTK9HxIuDQ6fF/42WxhaFakdrvnfv?=
+ =?us-ascii?Q?SCIgNvsRa2V5D2DfnzfajR8a0C0G0g4/c46QezFsInPU//5jyhqwWXoF7Pbu?=
+ =?us-ascii?Q?LEM9nQRQcdkG7mxundcI8FgvYSFRAUkk0Nvi68EsJ2vLdoMvU/twUEe9nKpA?=
+ =?us-ascii?Q?xg0+a+8CdlQJTy/xupUtqch41HuTe7qPykYzle1xql032G8D8mfVfGsxKq2V?=
+ =?us-ascii?Q?na+3aMrVlBTzjZ2Ep+BTRYcY9Kjv/1ASMUrZk1MDll6xBeSsrFJB+bxFtbtN?=
+ =?us-ascii?Q?EvafPtNzw609ZZiEhpwUp6uEc+9yGPJ/hFPXswQpcPodmCB2jL8gUwhtI2nG?=
+ =?us-ascii?Q?MpILC5CGyNCTljwVce9/GM+CknB9wuSN5DSPueBLbZp/kHmynkr+Mh9HOIVP?=
+ =?us-ascii?Q?VqpX7eOcAnojNGQmLLNrKttwGSOGzpIOubuyh+dpSDfWYgNls4169kcMwb3R?=
+ =?us-ascii?Q?terX1P8QmUHYjP1G98=3D?=
+X-Microsoft-Antispam-Message-Info: xUlgRBNnkwhs9CPpFoNqhBKU/w200IJE/0l00H61iK938OiI3spMW5voN7wejY9BytXij3E4ZqvS+rWhtKZe0IR5FibKPHWA8DtjF0ilgC5p589qByinaEGP2Ic/XUqOqjIn2fNeigYB9hTW7dAmrEKScStI5GNa5cZntc3wJnH9ZGqahQk2w4MpCFHF2ibK4HXc/nDUw0rDDjeGo7iklzosBjYnESxjX4XHF6+90+ZaiFZ/cjUjM3116PG92JsIFHB4hbs3W5F4RYZ7xe7p8oUcsb8zVYFGs8m1cedcbGgVuKZ1mBKv/1wc92uFkMHb50ksHTkKqg9FnJ74VUKFPgBRhqhzZaJfJkYHiV9xJJpKu5eElya4OLFp6iyjoHVy5h3F5M6m2u9WJiS6fAix1A==
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4720;6:/DzUMrqK/hWUs9NISJQbhhSbjFmSvf8RndZceV7KRUz46cr0NL1P3aJDo4ODzQFzjNtSBnXYw20FmXEvz6L3PERteznLG0Zh8SFlpjFOV52YQSWxXMccd2datl7e/GBFQNPYA8TSe9ZskYNnNMabLby7404232+21vgH0YSygMz4HFlutvoudjT9IHExTVYqqLlTaNB41lB2tp2t4Z72xhdiDndoBk5X1mNn3pG7Vv2Tc76PqGVxgFYuHdMB3KSvr59e7ez8oza3CgxBasB4rWD6EFswQ6G1Lti10o6HYkn4Wdlh2/4U36EZQr8ArIiuGwVsiX8WnmK1ax59mUPulo+JThHgQJoPAx21yFofPE//YsLHGA3uHuX8zYcF4y3GlyT4d59s12Q5IBc/YmKSrnxEF78l8KGxU5HvIhz9LRJ9lrMtfmcGLqzK6TQkZENuAZOxQjgmAruxeDahii1p+w==;5:q5YjMeLjgaIPsVysoOBfvNA/mus6kY/rL91CjAFnBoj0LNAvfZb9H4pZfVZlY/o9yvfVjdzPqNsZwLRkPtRA5VDD/tH3QhWuBFvS4/LMOZRgp+DRCNokAMXNx6LOceA+7GQLBOzGA1dy8sktgqSSzAHg6PCijWkauPixHojA1LQ=;24:7FxGDTcYLd+PD5XBzx+14FD8Trbp3sc94FTtaDCDKEMuIc76zPUK8f+c/fiSLncaWojzyLivSPKNgnc0OjXHvU7QVRMN/nO4LX1PnBeCJLU=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BYAPR07MB4711;7:PrpxzA/U2KEekXq2eK+YdP8dqJSnq74rdgDZSiL620ALd7lymNRnT1p5iJK7QLEoHR5eUf9Al+JGy6XxCY2PoIWfArFCStFBQrUWVi35pY+VL6nJUft3LB/dWtb/vOnSpeKqtG6sxwGm57I7Nfr2vMQoF1XgYXXk/4ZKQ6xa08wjJ/qkf+y/9G0XYvUKM349mAUpg09oMD1wI/No9T/gJdDID+EPsoRNf1YDH6t1D5l9lrcjqxMGgRMiGZgtWE2b;20:R4O+XVwljH2+681T9KfIWB533R+KeQ5U57GrueKKWl2vRxTrwnLIbl4ojyPJ2jN7WTfqSJjX0J8Skjr/BBAWIJj5OZ3mutt8pyMicmcmiwwfiHE+mxpdVD4u2l3BM7+A3sxgJPC2EGHN7ZyFJB0I/o3tFoyDGLGSNxmpkYtSuaYFd3jEoxMPU5rPfm+xvDrxAl28fDHHChvFOs54z02ZcdRgFNRx5W8nCBrPIPuyL6ok7RhnlpDLZT/WnX3GCLK4
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4720;7:gOzzIPGAt/mptkipKGrR6nQkomwJX3iQOOaQ+PcCnisqFZAAR61jxs0BdPi67Roe54C+e3RkJ4eT7MQwgqjgr5izngu3w/9sCsNU9j+q78LTXlmZ1cd7VLVTuggdDKDI2GXpjL6Z4+ceOCF31EAuquLE6Y01lQsnbUy9pSX2dgMkeeumedpVlRxi7lMk/4iDTSw9oV17LEaq66ghTmVnGL+XVan0zGn1kgIuootm5m0niakGyrkVNqUsS4sBpHhQ;20:UP1WB+v5OSxmIViX+eosTqiCUUfGp6tz2a8xyUt1FXCpMnrUZUqdaduphwWVFCn0cxxkx2teEzOg4G4FERpMkro5fJEo7aCQ7sYGKWnCICRQAMBfuGwT8E9wXM8l4/g4gxyikDWXlC8KIJW1RQGCNzG+fRhyI2uigubWXesDRr/CfxD3J+PChkxwKq5POna24XdK/pziNDyz5iukBhn8QrPZ2LpSm7iavTdZPEdXCz5SfOyWh7ko+C19xknqFRMC
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2018 05:47:58.6673
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2018 05:47:51.9695
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 03d95338-9e4f-4672-db49-08d5e7bb05ef
+X-MS-Exchange-CrossTenant-Network-Message-Id: 94188419-9fdd-4397-d663-08d5e7bb01f1
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx1.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB4711
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4720
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch defines a set of functions used to send
-commands to command ring.
+This patch adds platform driver that is entry point for loading and
+unloading usbssp.ko modules.
+It also adds information about this driver to drivers/usb/Kconfig
+and drivers/usb/Makefile files and create Kconfig and Makefile
+files in drivers/usb/usbssp directory.
 
-Commands added to Command Ring are handled sequentially
-by hardware. After completion, controller should
-add appropriate event to Event Ring.
+Patch also adds template for some function ivokked from
+usbssp_plat.c file. These function will be implemented in next patches.
 
-Controller specification said that command may not be
-completed. For this reason, driver should start
-watchdog timer before arming Command Ring.
+This patch also introduce usbssp_trb_virt_to_dma that converts
+virtual address of TRB's to DMA address. In this moment this
+function is used only in gadget-trace.h.
+
+From this moment the driver can be compiled.
 
 Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 ---
- drivers/usb/usbssp/gadget-ring.c | 535 ++++++++++++++++++++++++++++++-
- drivers/usb/usbssp/gadget.h      |   4 +
- 2 files changed, 538 insertions(+), 1 deletion(-)
+ drivers/usb/Kconfig              |   2 +
+ drivers/usb/Makefile             |   2 +
+ drivers/usb/usbssp/Kconfig       |  21 ++++
+ drivers/usb/usbssp/Makefile      |  11 ++
+ drivers/usb/usbssp/gadget-ring.c |  48 ++++++++
+ drivers/usb/usbssp/gadget.c      |  64 +++++++++++
+ drivers/usb/usbssp/gadget.h      |  16 ++-
+ drivers/usb/usbssp/usbssp-plat.c | 186 +++++++++++++++++++++++++++++++
+ 8 files changed, 349 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/usb/usbssp/Kconfig
+ create mode 100644 drivers/usb/usbssp/Makefile
+ create mode 100644 drivers/usb/usbssp/gadget-ring.c
+ create mode 100644 drivers/usb/usbssp/gadget.c
+ create mode 100644 drivers/usb/usbssp/usbssp-plat.c
 
+diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
+index f699abab1787..dc05f384c34c 100644
+--- a/drivers/usb/Kconfig
++++ b/drivers/usb/Kconfig
+@@ -110,6 +110,8 @@ source "drivers/usb/mtu3/Kconfig"
+ 
+ source "drivers/usb/musb/Kconfig"
+ 
++source "drivers/usb/usbssp/Kconfig"
++
+ source "drivers/usb/dwc3/Kconfig"
+ 
+ source "drivers/usb/dwc2/Kconfig"
+diff --git a/drivers/usb/Makefile b/drivers/usb/Makefile
+index 060643a1b5c8..b1cd5f83d440 100644
+--- a/drivers/usb/Makefile
++++ b/drivers/usb/Makefile
+@@ -8,6 +8,8 @@
+ obj-$(CONFIG_USB)		+= core/
+ obj-$(CONFIG_USB_SUPPORT)	+= phy/
+ 
++obj-$(CONFIG_USB_USBSSP)	+= usbssp/
++
+ obj-$(CONFIG_USB_DWC3)		+= dwc3/
+ obj-$(CONFIG_USB_DWC2)		+= dwc2/
+ obj-$(CONFIG_USB_ISP1760)	+= isp1760/
+diff --git a/drivers/usb/usbssp/Kconfig b/drivers/usb/usbssp/Kconfig
+new file mode 100644
+index 000000000000..ee20b01753dc
+--- /dev/null
++++ b/drivers/usb/usbssp/Kconfig
+@@ -0,0 +1,21 @@
++config USB_USBSSP
++	tristate "Cadence USBSSP DRD Controller"
++	depends on (USB || USB_GADGET) && HAS_DMA
++	select USB_USBSSP_GADGET
++	help
++	  Say Y here if your system has a cadence USBSSP dual-role controller.
++	  It supports: dual-role switch Host-only, and Peripheral-only.
++
++	  If you choose to build this driver is a dynamically linked
++	  module, the module will be called usbssp.ko.
++
++if USB_USBSSP
++
++config USB_USBSSP_GADGET
++	tristate "Gadget only mode"
++	default USB_USBSSP
++	depends on USB_GADGET=y || USB_GADGET=USB_USBSSP
++	help
++	  Select this when you want to use USBSSP in gadget mode only,
++endif
++
+diff --git a/drivers/usb/usbssp/Makefile b/drivers/usb/usbssp/Makefile
+new file mode 100644
+index 000000000000..1b6261068fd9
+--- /dev/null
++++ b/drivers/usb/usbssp/Makefile
+@@ -0,0 +1,11 @@
++# SPDX-License-Identifier: GPL-2.0
++# define_trace.h needs to know how to find our header
++CFLAGS_gadget-trace.o := -I$(src)
++
++obj-$(CONFIG_USB_USBSSP_GADGET) += usbssp.o
++usbssp-y 			:=  usbssp-plat.o gadget-ring.o \
++				    gadget.o
++
++ifneq ($(CONFIG_TRACING),)
++	usbssp-y		+= gadget-trace.o
++endif
 diff --git a/drivers/usb/usbssp/gadget-ring.c b/drivers/usb/usbssp/gadget-ring.c
-index c3612f4bc2a9..e2fb81259ca1 100644
---- a/drivers/usb/usbssp/gadget-ring.c
+new file mode 100644
+index 000000000000..d1da59306d02
+--- /dev/null
 +++ b/drivers/usb/usbssp/gadget-ring.c
-@@ -10,10 +10,55 @@
-  * Origin: Copyright (C) 2008 Intel Corp
-  */
- 
+@@ -0,0 +1,48 @@
++// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Ring initialization rules:
-+ * 1. Each segment is initialized to zero, except for link TRBs.
-+ * 2. Ring cycle state = 0.  This represents Producer Cycle State (PCS) or
-+ *    Consumer Cycle State (CCS), depending on ring function.
-+ * 3. Enqueue pointer = dequeue pointer = address of first TRB in the segment.
++ * USBSSP device controller driver
 + *
-+ * Ring behavior rules:
-+ * 1. A ring is empty if enqueue == dequeue.  This means there will always be at
-+ *    least one free TRB in the ring.  This is useful if you want to turn that
-+ *    into a link TRB and expand the ring.
-+ * 2. When incrementing an enqueue or dequeue pointer, if the next TRB is a
-+ *    link TRB, then load the pointer with the address in the link TRB.  If the
-+ *    link TRB had its toggle bit set, you may need to update the ring cycle
-+ *    state (see cycle bit rules).  You may have to do this multiple times
-+ *    until you reach a non-link TRB.
-+ * 3. A ring is full if enqueue++ (for the definition of increment above)
-+ *    equals the dequeue pointer.
++ * Copyright (C) 2018 Cadence.
 + *
-+ * Cycle bit rules:
-+ * 1. When a consumer increments a dequeue pointer and encounters a toggle bit
-+ *    in a link TRB, it must toggle the ring cycle state.
-+ * 2. When a producer increments an enqueue pointer and encounters a toggle bit
-+ *    in a link TRB, it must toggle the ring cycle state.
++ * Author: Pawel Laszczak
 + *
-+ * Producer rules:
-+ * 1. Check if ring is full before you enqueue.
-+ * 2. Write the ring cycle state to the cycle bit in the TRB you're enqueuing.
-+ *    Update enqueue pointer between each write (which may update the ring
-+ *    cycle state).
-+ * 3. Notify consumer.  If SW is producer, it rings the doorbell for command
-+ *    and endpoint rings.  If DC is the producer for the event ring,
-+ *    and it generates an interrupt according to interrupt modulation rules.
-+ *
-+ * Consumer rules:
-+ * 1. Check if TRB belongs to you.  If the cycle bit == your ring cycle state,
-+ *    the TRB is owned by the consumer.
-+ * 2. Update dequeue pointer (which may update the ring cycle state) and
-+ *    continue processing TRBs until you reach a TRB which is not owned by you.
-+ * 3. Notify the producer.  SW is the consumer for the event ring, and it
-+ *   updates event ring dequeue pointer.  DC is the consumer for the command and
-+ *   endpoint rings; it generates events on the event ring for these.
++ * A lot of code based on Linux XHCI driver.
++ * Origin: Copyright (C) 2008 Intel Corp
 + */
 +
- #include <linux/scatterlist.h>
- #include <linux/slab.h>
- #include <linux/dma-mapping.h>
- #include <linux/irq.h>
-+
- #include "gadget-trace.h"
- #include "gadget.h"
- 
-@@ -35,6 +80,145 @@ dma_addr_t usbssp_trb_virt_to_dma(struct usbssp_segment *seg,
- 	return seg->dma + (segment_offset * sizeof(*trb));
- }
- 
-+static bool trb_is_link(union usbssp_trb *trb)
-+{
-+	return TRB_TYPE_LINK_LE32(trb->link.control);
-+}
-+
-+static bool last_trb_on_seg(struct usbssp_segment *seg, union usbssp_trb *trb)
-+{
-+	return trb == &seg->trbs[TRBS_PER_SEGMENT - 1];
-+}
-+
-+static bool last_trb_on_ring(struct usbssp_ring *ring,
-+			     struct usbssp_segment *seg,
-+			     union usbssp_trb *trb)
-+{
-+	return last_trb_on_seg(seg, trb) && (seg->next == ring->first_seg);
-+}
-+
-+static bool link_trb_toggles_cycle(union usbssp_trb *trb)
-+{
-+	return le32_to_cpu(trb->link.control) & LINK_TOGGLE;
-+}
-+/*
-+ * See Cycle bit rules. SW is the consumer for the event ring only.
-+ * Don't make a ring full of link TRBs.  That would be dumb and this would loop.
-+ */
-+void inc_deq(struct usbssp_udc *usbssp_data, struct usbssp_ring *ring)
-+{
-+	/* event ring doesn't have link trbs, check for last trb */
-+	if (ring->type == TYPE_EVENT) {
-+		if (!last_trb_on_seg(ring->deq_seg, ring->dequeue)) {
-+			ring->dequeue++;
-+			goto out;
-+		}
-+		if (last_trb_on_ring(ring, ring->deq_seg, ring->dequeue))
-+			ring->cycle_state ^= 1;
-+		ring->deq_seg = ring->deq_seg->next;
-+		ring->dequeue = ring->deq_seg->trbs;
-+		goto out;
-+	}
-+
-+	/* All other rings have link trbs */
-+	if (!trb_is_link(ring->dequeue)) {
-+		ring->dequeue++;
-+		ring->num_trbs_free++;
-+	}
-+	while (trb_is_link(ring->dequeue)) {
-+		ring->deq_seg = ring->deq_seg->next;
-+		ring->dequeue = ring->deq_seg->trbs;
-+	}
-+out:
-+	trace_usbssp_inc_deq(ring);
-+}
++#include <linux/scatterlist.h>
++#include <linux/slab.h>
++#include <linux/dma-mapping.h>
++#include <linux/irq.h>
++#include "gadget-trace.h"
++#include "gadget.h"
 +
 +/*
-+ * See Cycle bit rules. SW is the consumer for the event ring only.
-+ * Don't make a ring full of link TRBs.  That would be dumb and this would loop.
-+ *
-+ * If we've just enqueued a TRB that is in the middle of a TD (meaning the
-+ * chain bit is set), then set the chain bit in all the following link TRBs.
-+ * If we've enqueued the last TRB in a TD, make sure the following link TRBs
-+ * have their chain bit cleared (so that each Link TRB is a separate TD).
-+ *
-+ * @more_trbs_coming:	Will you enqueue more TRBs before calling
-+ *			prepare_transfer()?
++ * Returns zero if the TRB isn't in this segment, otherwise it returns the DMA
++ * address of the TRB.
 + */
-+static void inc_enq(struct usbssp_udc *usbssp_data,
-+		    struct usbssp_ring *ring,
-+		    bool more_trbs_coming)
++dma_addr_t usbssp_trb_virt_to_dma(struct usbssp_segment *seg,
++				  union usbssp_trb *trb)
 +{
-+	u32 chain;
-+	union usbssp_trb *next;
++	unsigned long segment_offset;
 +
-+	chain = le32_to_cpu(ring->enqueue->generic.field[3]) & TRB_CHAIN;
-+	/* If this is not event ring, there is one less usable TRB */
-+	if (!trb_is_link(ring->enqueue))
-+		ring->num_trbs_free--;
-+	next = ++(ring->enqueue);
-+
-+	/* Update the dequeue pointer further if that was a link TRB */
-+	while (trb_is_link(next)) {
-+
-+		/*
-+		 * If the caller doesn't plan on enqueueing more TDs before
-+		 * ringing the doorbell, then we don't want to give the link TRB
-+		 * to the hardware just yet. We'll give the link TRB back in
-+		 * prepare_ring() just before we enqueue the TD at the top of
-+		 * the ring.
-+		 */
-+		if (!chain && !more_trbs_coming)
-+			break;
-+
-+		next->link.control &= cpu_to_le32(~TRB_CHAIN);
-+		next->link.control |= cpu_to_le32(chain);
-+
-+		/* Give this link TRB to the hardware */
-+		wmb();
-+		next->link.control ^= cpu_to_le32(TRB_CYCLE);
-+
-+		/* Toggle the cycle bit after the last ring segment. */
-+		if (link_trb_toggles_cycle(next))
-+			ring->cycle_state ^= 1;
-+
-+		ring->enq_seg = ring->enq_seg->next;
-+		ring->enqueue = ring->enq_seg->trbs;
-+		next = ring->enqueue;
-+	}
-+	trace_usbssp_inc_enq(ring);
-+}
-+
-+/*
-+ * Check to see if there's room to enqueue num_trbs on the ring and make sure
-+ * enqueue pointer will not advance into dequeue segment. See rules above.
-+ */
-+static inline int room_on_ring(struct usbssp_udc *usbssp_data,
-+			       struct usbssp_ring *ring,
-+			       unsigned int num_trbs)
-+{
-+	int num_trbs_in_deq_seg;
-+
-+	if (ring->num_trbs_free < num_trbs)
++	if (!seg || !trb || trb < seg->trbs)
 +		return 0;
++	/* offset in TRBs */
++	segment_offset = trb - seg->trbs;
++	if (segment_offset >= TRBS_PER_SEGMENT)
++		return 0;
++	return seg->dma + (segment_offset * sizeof(*trb));
++}
 +
-+	if (ring->type != TYPE_COMMAND && ring->type != TYPE_EVENT) {
-+		num_trbs_in_deq_seg = ring->dequeue - ring->deq_seg->trbs;
++irqreturn_t usbssp_irq(int irq, void *priv)
++{
++	struct usbssp_udc *usbssp_data = (struct usbssp_udc *)priv;
++	irqreturn_t ret = IRQ_NONE;
++	unsigned long flags;
 +
-+		if (ring->num_trbs_free < num_trbs + num_trbs_in_deq_seg)
-+			return 0;
-+	}
++	spin_lock_irqsave(&usbssp_data->lock, flags);
 +
++	spin_unlock_irqrestore(&usbssp_data->lock, flags);
++	return ret;
++}
+diff --git a/drivers/usb/usbssp/gadget.c b/drivers/usb/usbssp/gadget.c
+new file mode 100644
+index 000000000000..2f60d7dd1fe4
+--- /dev/null
++++ b/drivers/usb/usbssp/gadget.c
+@@ -0,0 +1,64 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * USBSSP device controller driver
++ *
++ * Copyright (C) 2018 Cadence.
++ *
++ * Author: Pawel Laszczak
++ *
++ * A lot of code based on Linux XHCI driver.
++ * Origin: Copyright (C) 2008 Intel Corp
++ */
++
++#include <linux/pci.h>
++#include <linux/irq.h>
++#include <linux/log2.h>
++#include <linux/module.h>
++#include <linux/moduleparam.h>
++#include <linux/slab.h>
++#include <linux/dmi.h>
++#include <linux/dma-mapping.h>
++#include <linux/delay.h>
++
++#include "gadget-trace.h"
++#include "gadget.h"
++
++#ifdef CONFIG_PM
++/*
++ * Stop DC (not bus-specific)
++ *
++ * This is called when the machine transition into S3/S4 mode.
++ *
++ */
++int usbssp_suspend(struct usbssp_udc *usbssp_data, bool do_wakeup)
++{
++	/*TODO*/
++	return -ENOSYS;
++}
++
++/*
++ * start DC (not bus-specific)
++ *
++ * This is called when the machine transition from S3/S4 mode.
++ *
++ */
++int usbssp_resume(struct usbssp_udc *usbssp_data, bool hibernated)
++{
++	/*TODO*/
++	return -ENOSYS;
++}
++
++#endif	/* CONFIG_PM */
++
++int usbssp_gadget_init(struct usbssp_udc *usbssp_data)
++{
++	int ret;
++	return ret;
++}
++
++int usbssp_gadget_exit(struct usbssp_udc *usbssp_data)
++{
++	int ret = 0;
++
++	return ret;
++}
+diff --git a/drivers/usb/usbssp/gadget.h b/drivers/usb/usbssp/gadget.h
+index 6b634dc63d9e..2f9ee3543911 100644
+--- a/drivers/usb/usbssp/gadget.h
++++ b/drivers/usb/usbssp/gadget.h
+@@ -9,7 +9,6 @@
+  * A lot of code based on Linux XHCI driver.
+  * Origin: Copyright (C) 2008 Intel Corp.
+  */
+-
+ #ifndef __LINUX_USBSSP_GADGET_H
+ #define __LINUX_USBSSP_GADGET_H
+ 
+@@ -1671,6 +1670,21 @@ static inline void usbssp_write_64(struct usbssp_udc *usbssp_data,
+ {
+ 	lo_hi_writeq(val, regs);
+ }
++
++/* USBSSP Device controller glue */
++int usbssp_suspend(struct usbssp_udc *usbssp_data, bool do_wakeup);
++int usbssp_resume(struct usbssp_udc *usbssp_data, bool hibernated);
++
++irqreturn_t usbssp_irq(int irq, void *priv);
++
++/* USBSSP ring, segment, TRB, and TD functions */
++dma_addr_t usbssp_trb_virt_to_dma(struct usbssp_segment *seg,
++		union usbssp_trb *trb);
++
++/* USBSSP gadget interface*/
++int usbssp_gadget_init(struct usbssp_udc *usbssp_data);
++int  usbssp_gadget_exit(struct usbssp_udc *usbssp_data);
++
+ static inline char *usbssp_slot_state_string(u32 state)
+ {
+ 	switch (state) {
+diff --git a/drivers/usb/usbssp/usbssp-plat.c b/drivers/usb/usbssp/usbssp-plat.c
+new file mode 100644
+index 000000000000..dfb3a2dc4e8c
+--- /dev/null
++++ b/drivers/usb/usbssp/usbssp-plat.c
+@@ -0,0 +1,186 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * USBSSP device controller driver
++ *
++ * Copyright (C) 2018 Cadence.
++ *
++ * Author: Pawel Laszczak
++ *
++ */
++
++#include <linux/clk.h>
++#include <linux/dma-mapping.h>
++#include <linux/module.h>
++#include <linux/pci.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/usb/phy.h>
++#include <linux/slab.h>
++#include <linux/acpi.h>
++
++#include "gadget.h"
++
++#define DRIVER_AUTHOR "Pawel Laszczak"
++#define DRIVER_DESC "USBSSP Device Controller (USBSSP) Driver"
++
++#ifdef CONFIG_OF
++
++static const struct of_device_id usbssp_dev_of_match[] = {
++	{
++		.compatible = "Cadence, usbssp-dev",
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(of, usbssp_dev_of_match);
++#endif
++
++int usbssp_is_platform(void)
++{
 +	return 1;
 +}
 +
-+static bool usbssp_mod_cmd_timer(struct usbssp_udc *usbssp_data,
-+				  unsigned long delay)
++static int usbssp_plat_probe(struct platform_device *pdev)
 +{
-+	return mod_delayed_work(system_wq, &usbssp_data->cmd_timer, delay);
-+	return 0;
-+}
++	struct device *dev = &pdev->dev;
++	struct resource *res;
++	struct usbssp_udc *usbssp_data;
++	int ret = 0;
++	int irq;
++	struct device *sysdev;
 +
- irqreturn_t usbssp_irq(int irq, void *priv)
- {
- 	struct usbssp_udc *usbssp_data = (struct usbssp_udc *)priv;
-@@ -47,7 +231,6 @@ irqreturn_t usbssp_irq(int irq, void *priv)
- 	return ret;
- }
- 
--
- void usbssp_handle_command_timeout(struct work_struct *work)
- {
- 	/*TODO: implements function*/
-@@ -146,3 +329,353 @@ struct usbssp_segment *usbssp_trb_in_td(struct usbssp_udc *usbssp_data,
- 
- 	return NULL;
- }
-+
-+/****		Endpoint Ring Operations	****/
-+
-+/*
-+ * Generic function for queueing a TRB on a ring.
-+ * The caller must have checked to make sure there's room on the ring.
-+ *
-+ * @more_trbs_coming:	Will you enqueue more TRBs before calling
-+ *			prepare_transfer()?
-+ */
-+static void queue_trb(struct usbssp_udc *usbssp_data, struct usbssp_ring *ring,
-+		bool more_trbs_coming,
-+		u32 field1, u32 field2, u32 field3, u32 field4)
-+{
-+	struct usbssp_generic_trb *trb;
-+
-+	trb = &ring->enqueue->generic;
-+
-+	usbssp_dbg(usbssp_data, "Queue TRB at virt: %p, dma: %llx\n", trb,
-+			usbssp_trb_virt_to_dma(ring->enq_seg, ring->enqueue));
-+
-+	trb->field[0] = cpu_to_le32(field1);
-+	trb->field[1] = cpu_to_le32(field2);
-+	trb->field[2] = cpu_to_le32(field3);
-+	trb->field[3] = cpu_to_le32(field4);
-+
-+	trace_usbssp_queue_trb(ring, trb);
-+	inc_enq(usbssp_data, ring, more_trbs_coming);
-+}
-+
-+/*
-+ * Does various checks on the endpoint ring, and makes it ready to
-+ * queue num_trbs.
-+ */
-+static int prepare_ring(struct usbssp_udc *usbssp_data,
-+			struct usbssp_ring *ep_ring,
-+			u32 ep_state, unsigned
-+			int num_trbs,
-+			gfp_t mem_flags)
-+{
-+	unsigned int num_trbs_needed;
-+
-+	/* Make sure the endpoint has been added to USBSSP schedule */
-+	switch (ep_state) {
-+	case EP_STATE_DISABLED:
-+		usbssp_warn(usbssp_data,
-+			"WARN request submitted to disabled ep\n");
-+		return -ENOENT;
-+	case EP_STATE_ERROR:
-+		usbssp_warn(usbssp_data,
-+			"WARN waiting for error on ep to be cleared\n");
-+		return -EINVAL;
-+	case EP_STATE_HALTED:
-+		usbssp_dbg(usbssp_data,
-+			"WARN halted endpoint, queueing request anyway.\n");
-+	case EP_STATE_STOPPED:
-+	case EP_STATE_RUNNING:
-+		break;
-+	default:
-+		usbssp_err(usbssp_data,
-+			"ERROR unknown endpoint state for ep\n");
-+		return -EINVAL;
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(&pdev->dev, "Incorrect IRQ number\n");
++		return -ENODEV;
 +	}
 +
-+	while (1) {
-+		if (room_on_ring(usbssp_data, ep_ring, num_trbs))
++	usbssp_data = devm_kzalloc(dev, sizeof(*usbssp_data), GFP_KERNEL);
++	if (!usbssp_data)
++		return -ENOMEM;
++
++	for (sysdev = &pdev->dev; sysdev; sysdev = sysdev->parent) {
++		if (is_of_node(sysdev->fwnode) ||
++		    is_acpi_device_node(sysdev->fwnode))
 +			break;
-+
-+		if (ep_ring == usbssp_data->cmd_ring) {
-+			usbssp_err(usbssp_data,
-+				"Do not support expand command ring\n");
-+			return -ENOMEM;
-+		}
-+
-+		usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_ring_expansion,
-+				"ERROR no room on ep ring, try ring expansion");
-+
-+		num_trbs_needed = num_trbs - ep_ring->num_trbs_free;
-+		if (usbssp_ring_expansion(usbssp_data, ep_ring, num_trbs_needed,
-+					mem_flags)) {
-+			usbssp_err(usbssp_data, "Ring expansion failed\n");
-+			return -ENOMEM;
-+		}
++#ifdef CONFIG_PCI
++		else if (sysdev->bus == &pci_bus_type)
++			break;
++#endif
 +	}
 +
-+	while (trb_is_link(ep_ring->enqueue)) {
++	if (!sysdev)
++		sysdev = &pdev->dev;
 +
-+		ep_ring->enqueue->link.control |= cpu_to_le32(TRB_CHAIN);
-+		wmb();
-+		ep_ring->enqueue->link.control ^= cpu_to_le32(TRB_CYCLE);
++	/* Try to set 64-bit DMA first */
++	if (WARN_ON(!dev->dma_mask))
++		/* Platform did not initialize dma_mask */
++		ret = dma_coerce_mask_and_coherent(dev,
++				DMA_BIT_MASK(64));
++	else
++		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64));
 +
-+		/* Toggle the cycle bit after the last ring segment. */
-+		if (link_trb_toggles_cycle(ep_ring->enqueue))
-+			ep_ring->cycle_state ^= 1;
-+		ep_ring->enq_seg = ep_ring->enq_seg->next;
-+		ep_ring->enqueue = ep_ring->enq_seg->trbs;
-+	}
-+	return 0;
-+}
-+
-+/****		Command Ring Operations		****/
-+/* Generic function for queueing a command TRB on the command ring.
-+ * Check to make sure there's room on the command ring for one command TRB.
-+ * Also check that there's room reserved for commands that must not fail.
-+ * If this is a command that must not fail, meaning command_must_succeed = TRUE,
-+ * then only check for the number of reserved spots.
-+ * Don't decrement usbssp_data->cmd_ring_reserved_trbs after we've queued the
-+ * TRB because the command event handler may want to resubmit a failed command.
-+ */
-+static int queue_command(struct usbssp_udc *usbssp_data,
-+			 struct usbssp_command *cmd,
-+			 u32 field1, u32 field2,
-+			 u32 field3, u32 field4,
-+			 bool command_must_succeed)
-+{
-+	int reserved_trbs = usbssp_data->cmd_ring_reserved_trbs;
-+	int ret;
-+
-+	if ((usbssp_data->usbssp_state & USBSSP_STATE_DYING) ||
-+		(usbssp_data->usbssp_state & USBSSP_STATE_HALTED)) {
-+		usbssp_dbg(usbssp_data,
-+			"USBSSP dying or halted, can't queue command\n");
-+		return -ESHUTDOWN;
++	/* If seting 64-bit DMA mask fails, fall back to 32-bit DMA mask */
++	if (ret) {
++		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
++		if (ret)
++			return ret;
 +	}
 +
-+	if (!command_must_succeed)
-+		reserved_trbs++;
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	usbssp_data->regs = devm_ioremap_resource(dev, res);
 +
-+	ret = prepare_ring(usbssp_data, usbssp_data->cmd_ring, EP_STATE_RUNNING,
-+			reserved_trbs, GFP_ATOMIC);
-+	if (ret < 0) {
-+		usbssp_err(usbssp_data,
-+			"ERR: No room for command on command ring\n");
-+		if (command_must_succeed)
-+			usbssp_err(usbssp_data,
-+				"ERR: Reserved TRB counting for "
-+				"unfailable commands failed.\n");
++	if (IS_ERR(usbssp_data->regs)) {
++		ret = PTR_ERR(usbssp_data->regs);
 +		return ret;
 +	}
 +
-+	cmd->command_trb = usbssp_data->cmd_ring->enqueue;
++	usbssp_data->rsrc_start = res->start;
++	usbssp_data->rsrc_len = resource_size(res);
 +
-+	/* if there are no other commands queued we start the timeout timer */
-+	if (list_empty(&usbssp_data->cmd_list)) {
-+		usbssp_data->current_cmd = cmd;
-+		usbssp_mod_cmd_timer(usbssp_data, USBSSP_CMD_DEFAULT_TIMEOUT);
-+	}
++	ret = devm_request_irq(dev, irq, usbssp_irq, IRQF_SHARED,
++			dev_name(dev), usbssp_data);
 +
-+	list_add_tail(&cmd->cmd_list, &usbssp_data->cmd_list);
++	if (ret < 0)
++		return ret;
 +
-+	queue_trb(usbssp_data, usbssp_data->cmd_ring, false, field1, field2,
-+		field3, field4 | usbssp_data->cmd_ring->cycle_state);
-+	return 0;
++	usbssp_data->irq = irq;
++	usbssp_data->dev = dev;
++	platform_set_drvdata(pdev, usbssp_data);
++	ret = usbssp_gadget_init(usbssp_data);
++
++	return ret;
 +}
 +
-+/* Queue a slot enable or disable request on the command ring */
-+int usbssp_queue_slot_control(struct usbssp_udc *usbssp_data,
-+			      struct usbssp_command *cmd,
-+			      u32 trb_type)
++static int usbssp_plat_remove(struct platform_device *pdev)
 +{
-+	return queue_command(usbssp_data, cmd, 0, 0, 0,
-+			TRB_TYPE(trb_type) |
-+			SLOT_ID_FOR_TRB(usbssp_data->slot_id), false);
++	int ret = 0;
++	struct usbssp_udc *usbssp_data;
++
++	usbssp_data = (struct usbssp_udc *)platform_get_drvdata(pdev);
++	ret = usbssp_gadget_exit(usbssp_data);
++	return ret;
++
 +}
 +
-+/* Queue an address device command TRB */
-+int usbssp_queue_address_device(struct usbssp_udc *usbssp_data,
-+				struct usbssp_command *cmd,
-+				dma_addr_t in_ctx_ptr,
-+				enum usbssp_setup_dev setup)
++static int __maybe_unused usbssp_plat_suspend(struct device *dev)
 +{
-+	return queue_command(usbssp_data, cmd, lower_32_bits(in_ctx_ptr),
-+			upper_32_bits(in_ctx_ptr), 0,
-+			TRB_TYPE(TRB_ADDR_DEV) |
-+			SLOT_ID_FOR_TRB(usbssp_data->slot_id)
-+			| (setup == SETUP_CONTEXT_ONLY ? TRB_BSR : 0), false);
++	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++
++	return usbssp_suspend(usbssp_data, device_may_wakeup(dev));
 +}
 +
-+int usbssp_queue_vendor_command(struct usbssp_udc *usbssp_data,
-+				struct usbssp_command *cmd,
-+				u32 field1, u32 field2, u32 field3, u32 field4)
++static int __maybe_unused usbssp_plat_resume(struct device *dev)
 +{
-+	return queue_command(usbssp_data, cmd, field1, field2, field3,
-+			field4, false);
++	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++
++	return usbssp_resume(usbssp_data, 0);
 +}
 +
-+/* Queue a reset device command TRB */
-+int usbssp_queue_reset_device(struct usbssp_udc *usbssp_data,
-+			      struct usbssp_command *cmd)
++static int __maybe_unused usbssp_plat_runtime_suspend(struct device *dev)
 +{
-+	return queue_command(usbssp_data, cmd, 0, 0, 0,
-+			TRB_TYPE(TRB_RESET_DEV) |
-+			SLOT_ID_FOR_TRB(usbssp_data->slot_id),
-+			false);
++	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++
++	return usbssp_suspend(usbssp_data, true);
 +}
 +
-+/* Queue a configure endpoint command TRB */
-+int usbssp_queue_configure_endpoint(struct usbssp_udc *usbssp_data,
-+				    struct usbssp_command *cmd,
-+				    dma_addr_t in_ctx_ptr,
-+				    bool command_must_succeed)
++static int __maybe_unused usbssp_plat_runtime_resume(struct device *dev)
 +{
-+	return queue_command(usbssp_data, cmd, lower_32_bits(in_ctx_ptr),
-+			upper_32_bits(in_ctx_ptr), 0,
-+			TRB_TYPE(TRB_CONFIG_EP) |
-+			SLOT_ID_FOR_TRB(usbssp_data->slot_id),
-+			command_must_succeed);
++	struct usbssp_udc *usbssp_data = dev_get_drvdata(dev);
++
++	return usbssp_resume(usbssp_data, 0);
 +}
 +
-+/* Queue an evaluate context command TRB */
-+int usbssp_queue_evaluate_context(struct usbssp_udc *usbssp_data,
-+				  struct usbssp_command *cmd,
-+				  dma_addr_t in_ctx_ptr,
-+				  bool command_must_succeed)
++static const struct dev_pm_ops usbssp_plat_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(usbssp_plat_suspend, usbssp_plat_resume)
++
++	SET_RUNTIME_PM_OPS(usbssp_plat_runtime_suspend,
++			usbssp_plat_runtime_resume,
++			NULL)
++};
++
++static struct platform_driver usbssp_driver = {
++	.probe	= usbssp_plat_probe,
++	.remove	= usbssp_plat_remove,
++	.driver	= {
++		.name = "usbssp-dev",
++		.pm = &usbssp_plat_pm_ops,
++		.of_match_table = of_match_ptr(usbssp_dev_of_match),
++	},
++};
++
++static int __init usbssp_plat_init(void)
 +{
-+	return queue_command(usbssp_data, cmd, lower_32_bits(in_ctx_ptr),
-+			upper_32_bits(in_ctx_ptr), 0,
-+			TRB_TYPE(TRB_EVAL_CONTEXT) |
-+			SLOT_ID_FOR_TRB(usbssp_data->slot_id),
-+			command_must_succeed);
++	return platform_driver_register(&usbssp_driver);
 +}
++module_init(usbssp_plat_init);
 +
-+/*
-+ * Suspend is set to indicate "Stop Endpoint Command" is being issued to stop
-+ * activity on an endpoint that is about to be suspended.
-+ */
-+int usbssp_queue_stop_endpoint(struct usbssp_udc *usbssp_data,
-+			       struct usbssp_command *cmd,
-+			       unsigned int ep_index, int suspend)
++static void __exit usbssp_plat_exit(void)
 +{
-+	u32 trb_slot_id = SLOT_ID_FOR_TRB(usbssp_data->slot_id);
-+	u32 trb_ep_index = EP_ID_FOR_TRB(ep_index);
-+	u32 type = TRB_TYPE(TRB_STOP_RING);
-+	u32 trb_suspend = SUSPEND_PORT_FOR_TRB(suspend);
-+
-+	return queue_command(usbssp_data, cmd, 0, 0, 0,
-+			trb_slot_id | trb_ep_index | type | trb_suspend, false);
++	platform_driver_unregister(&usbssp_driver);
 +}
++module_exit(usbssp_plat_exit);
 +
-+/* Set Transfer Ring Dequeue Pointer command */
-+void usbssp_queue_new_dequeue_state(struct  usbssp_udc *usbssp_data,
-+				    unsigned int ep_index,
-+				    struct usbssp_dequeue_state *deq_state)
-+{
-+	dma_addr_t addr;
-+	u32 trb_slot_id = SLOT_ID_FOR_TRB(usbssp_data->slot_id);
-+	u32 trb_ep_index = EP_ID_FOR_TRB(ep_index);
-+	u32 trb_stream_id = STREAM_ID_FOR_TRB(deq_state->stream_id);
-+	u32 trb_sct = 0;
-+	u32 type = TRB_TYPE(TRB_SET_DEQ);
-+	struct usbssp_ep *ep_priv;
-+	struct usbssp_command *cmd;
-+	int ret;
-+
-+	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_cancel_request,
-+		"Set TR Deq Ptr cmd, new deq seg = %p (0x%llx dma), "
-+		"new deq ptr = %p (0x%llx dma), new cycle = %u",
-+		deq_state->new_deq_seg,
-+		(unsigned long long)deq_state->new_deq_seg->dma,
-+		deq_state->new_deq_ptr,
-+		(unsigned long long)usbssp_trb_virt_to_dma(
-+			deq_state->new_deq_seg, deq_state->new_deq_ptr),
-+		deq_state->new_cycle_state);
-+
-+	addr = usbssp_trb_virt_to_dma(deq_state->new_deq_seg,
-+				    deq_state->new_deq_ptr);
-+	if (addr == 0) {
-+		usbssp_warn(usbssp_data, "WARN Cannot submit Set TR Deq Ptr\n");
-+		usbssp_warn(usbssp_data, "WARN deq seg = %p, deq pt = %p\n",
-+			  deq_state->new_deq_seg, deq_state->new_deq_ptr);
-+		return;
-+	}
-+	ep_priv = &usbssp_data->devs.eps[ep_index];
-+	if ((ep_priv->ep_state & SET_DEQ_PENDING)) {
-+		usbssp_warn(usbssp_data, "WARN Cannot submit Set TR Deq Ptr\n");
-+		usbssp_warn(usbssp_data,
-+			"A Set TR Deq Ptr command is pending.\n");
-+		return;
-+	}
-+
-+	/* This function gets called from contexts where it cannot sleep */
-+	cmd = usbssp_alloc_command(usbssp_data, false, GFP_ATOMIC);
-+	if (!cmd) {
-+		usbssp_warn(usbssp_data,
-+			"WARN Cannot submit Set TR Deq Ptr: ENOMEM\n");
-+		return;
-+	}
-+
-+	ep_priv->queued_deq_seg = deq_state->new_deq_seg;
-+	ep_priv->queued_deq_ptr = deq_state->new_deq_ptr;
-+	if (deq_state->stream_id)
-+		trb_sct = SCT_FOR_TRB(SCT_PRI_TR);
-+	ret = queue_command(usbssp_data, cmd,
-+		lower_32_bits(addr) | trb_sct | deq_state->new_cycle_state,
-+		upper_32_bits(addr), trb_stream_id,
-+		trb_slot_id | trb_ep_index | type, false);
-+	if (ret < 0) {
-+		usbssp_free_command(usbssp_data, cmd);
-+		return;
-+	}
-+
-+	/* Stop the TD queueing code from ringing the doorbell until
-+	 * this command completes.  The DC won't set the dequeue pointer
-+	 * if the ring is running, and ringing the doorbell starts the
-+	 * ring running.
-+	 */
-+	ep_priv->ep_state |= SET_DEQ_PENDING;
-+}
-+
-+int usbssp_queue_reset_ep(struct usbssp_udc *usbssp_data,
-+			  struct usbssp_command *cmd,
-+			  unsigned int ep_index,
-+			  enum usbssp_ep_reset_type reset_type)
-+{
-+	u32 trb_slot_id = SLOT_ID_FOR_TRB(usbssp_data->slot_id);
-+	u32 trb_ep_index = EP_ID_FOR_TRB(ep_index);
-+	u32 type = TRB_TYPE(TRB_RESET_EP);
-+
-+	if (reset_type == EP_SOFT_RESET)
-+		type |= TRB_TSP;
-+
-+	return queue_command(usbssp_data, cmd, 0, 0, 0,
-+			trb_slot_id | trb_ep_index | type, false);
-+}
-+
-+/*
-+ * Queue an NOP command TRB
-+ */
-+int usbssp_queue_nop(struct usbssp_udc *usbssp_data,
-+		     struct usbssp_command *cmd)
-+{
-+	return queue_command(usbssp_data, cmd, 0, 0, 0,
-+			TRB_TYPE(TRB_CMD_NOOP), false);
-+}
-+
-+/*
-+ * Queue a halt endpoint request on the command ring
-+ */
-+int usbssp_queue_halt_endpoint(struct usbssp_udc *usbssp_data,
-+			       struct usbssp_command *cmd,
-+			       unsigned int ep_index)
-+{
-+	u32 trb_slot_id = SLOT_ID_FOR_TRB(usbssp_data->slot_id);
-+	u32 trb_ep_index = EP_ID_FOR_TRB(ep_index);
-+
-+	return queue_command(usbssp_data, cmd, 0, 0, 0,
-+			TRB_TYPE(TRB_HALT_ENDPOINT) | trb_slot_id |
-+			trb_ep_index, false);
-+}
-+
-diff --git a/drivers/usb/usbssp/gadget.h b/drivers/usb/usbssp/gadget.h
-index 374c85995dd7..d0ce20f35ec6 100644
---- a/drivers/usb/usbssp/gadget.h
-+++ b/drivers/usb/usbssp/gadget.h
-@@ -1679,7 +1679,11 @@ void usbssp_dbg_trace(struct usbssp_udc *usbssp_data,
- /* USBSSP memory management */
- void usbssp_mem_cleanup(struct usbssp_udc *usbssp_data);
- int usbssp_mem_init(struct usbssp_udc *usbssp_data, gfp_t flags);
-+int usbssp_ring_expansion(struct usbssp_udc *usbssp_data,
-+		struct usbssp_ring *ring, unsigned int num_trbs, gfp_t flags);
- 
-+struct usbssp_command *usbssp_alloc_command(struct usbssp_udc *usbssp_data,
-+		bool allocate_completion, gfp_t mem_flags);
- void usbssp_free_command(struct usbssp_udc *usbssp_data,
- 		struct usbssp_command *command);
- 
++MODULE_ALIAS("platform:usbss-gadget");
++MODULE_DESCRIPTION("USBSSP' Device Controller (USBSSP) Driver");
++MODULE_LICENSE("GPL");
 -- 
 2.17.1
 
