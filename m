@@ -3,101 +3,197 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B85A7C476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6A1C476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72494208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:32:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADF95208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:32:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VZ0otPOC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72494208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gKABBZB/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADF95208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732415AbeGLQmV (ORCPT
+        id S1732343AbeGLQm4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:42:21 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:35052 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726816AbeGLQmV (ORCPT
+        Thu, 12 Jul 2018 12:42:56 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:44588 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbeGLQmz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:42:21 -0400
-Received: by mail-io0-f195.google.com with SMTP id q4-v6so28784518iob.2;
-        Thu, 12 Jul 2018 09:32:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=FhpM/08uzNucjIkrBK1MW4AOCttLe59TUAf6vhz7Bdo=;
-        b=VZ0otPOC5r3NuziRW0eJhXGpsxJdmpnK2cvMu3jjx+5E2jvlVwCIMaH6bOCy8jxFoP
-         I2Sn8TwrEWAdApy3+V4LBo5Ru+NpE07+V5WvEnQWzXNAmjI4Bi69XGFU8j9BnAv6DELK
-         RYWj5Ngh4iF+g5460ECTyCoxPvA1lOTvAPBFI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FhpM/08uzNucjIkrBK1MW4AOCttLe59TUAf6vhz7Bdo=;
-        b=TfRuGpBQTDedHSLPZHCInC5VDT6ulaXJHvgtocR5O21czqAYiYbfDcXdozFlm+0HEH
-         ybWWX+wj8co9bAwNuYBabrh4uHjIzBdjZFY/P5IUz5R5/RYm/99phLSn2oVJwgosTraZ
-         50/5LB/CHBgldn6A8kj8UtS3GZHGNBd696FKjBCfwcs2lmi6h2Rku41qrlm1y+hJ96b5
-         k51XFMSS1GocDCpl9jo02aCFyHL7VIBgq6NEVPa4nOw8RfXElcXRUsrUCtP3NmJ23z7s
-         KdZC8nUjQI5mnuS9Nw+rIGwz1xD7W9LtsAoBDtBw9phFHdOV/jF9qm7oTqj8hMl5fnZy
-         MW4A==
-X-Gm-Message-State: APt69E0rshxr4WW7Y3qab2h3Qtwc6M5puzR10NlAKbuWOeF3uhhnmPwH
-        77w5a2v5Ooa2owb+sYxpxQWbJ0bEu+0Vh7IhdJOz0cBY
-X-Google-Smtp-Source: AAOMgpeSBUUdZPw0H9wa4e3G0rGzKtEcmZcLE8dVpHYmP2IUz+fv3VUZx3PTwhIppMnxKpFVSR3WUnAhmLSNXCqSacc=
-X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr29776048iov.203.1531413123824;
- Thu, 12 Jul 2018 09:32:03 -0700 (PDT)
+        Thu, 12 Jul 2018 12:42:55 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6CGTTCB005848;
+        Thu, 12 Jul 2018 16:32:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=lv2Btp6Mm4okD3pBhCL33JsV5bct/yIGpBOza90WMp0=;
+ b=gKABBZB/NpU6cO5sj0rGJTYewXFVksTFDUfHE50ffTUBLLysvSrQVbLLht6oB7osSnIA
+ 0bTwMeprhUSduCbPjYFYC+CeXeNnxA56VAgzOXHfaZPQx/JomFFR5xB29vXcCJTJIfcs
+ LLsw666ADDrzQCKIIlW8mg+SQMdHq6xL9wdpHIIGN4toxVb+ovuOi/JC5KZ5eaxdwavS
+ hctKpzZHFbJQRcUODDDc+pLMK/unNnpWDkDe3F+oTLwqmd3MgKBO6rXu0ZAvpKw7CMUt
+ wtFwCDgQYA0tiBxFSLA/AUMaKmy+OZZBhrrdFZEjqzdclt5GdHW7FjRVXUqB5F1u037q DA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2k2p764j1q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 16:32:05 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6CGW4to030638
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 16:32:04 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6CGW3DU030541;
+        Thu, 12 Jul 2018 16:32:03 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Jul 2018 09:32:02 -0700
+Subject: Re: [RFC PATCH] perf/core: don't sample kernel regs upon skid
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Jin Yao <yao.jin@linux.intel.com>
+References: <20180702151250.14536-1-mark.rutland@arm.com>
+ <20180702154655.GR2494@hirez.programming.kicks-ass.net>
+ <20180702160249.qck45h76galxrckn@lakrids.cambridge.arm.com>
+ <ec514ab8-cf18-6fa7-d2b5-5f81e1a70983@oracle.com>
+ <20180712115657.jgcxwrgoxuaz6jxq@lakrids.cambridge.arm.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <3ed46248-3039-c8b2-067c-f296ea64951c@oracle.com>
+Date:   Thu, 12 Jul 2018 12:32:31 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
- <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
- <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
- <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk>
- <7002.1531407244@warthog.procyon.org.uk> <338BC3C4-F3E7-48F0-A82E-2C7295B6640E@amacapital.net>
-In-Reply-To: <338BC3C4-F3E7-48F0-A82E-2C7295B6640E@amacapital.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 12 Jul 2018 09:31:52 -0700
-Message-ID: <CA+55aFxGqLfu1pjT5421k7KbSd94NWU4fw0H-zJe-qSWwBfAeQ@mail.gmail.com>
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
- superblock creation [ver #9]
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     David Howells <dhowells@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20180712115657.jgcxwrgoxuaz6jxq@lakrids.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=853
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807120174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 9:23 AM Andy Lutomirski <luto@amacapital.net> wrote=
-:
+On 07/12/2018 07:56 AM, Mark Rutland wrote:
+> On Mon, Jul 09, 2018 at 06:42:29PM -0400, Boris Ostrovsky wrote:
+>> On 07/02/2018 12:02 PM, Mark Rutland wrote:
+>>> On Mon, Jul 02, 2018 at 05:46:55PM +0200, Peter Zijlstra wrote:
+>>>> On Mon, Jul 02, 2018 at 04:12:50PM +0100, Mark Rutland wrote:
+>>>>> +static struct pt_regs *perf_get_sample_regs(struct perf_event *event,
+>>>>> +					    struct pt_regs *regs)
+>>>>> +{
+>>>>> +	/*
+>>>>> +	 * Due to interrupt latency (AKA "skid"), we may enter the kernel
+>>>>> +	 * before taking an overflow, even if the PMU is only counting user
+>>>>> +	 * events.
+>>>>> +	 *
+>>>>> +	 * If we're not counting kernel events, always use the user regs when
+>>>>> +	 * sampling.
+>>>>> +	 *
+>>>>> +	 * TODO: what do we do about sampling a guest's registers? The IP is
+>>>>> +	 * special-cased, but for the rest of the regs they'll get the
+>>>>> +	 * user/kernel regs depending on whether exclude_kernel is set, which
+>>>>> +	 * is nonsensical.
+>>>>> +	 *
+>>>>> +	 * We can't get at the full set of regs in all cases (e.g. Xen's PV PMU
+>>>>> +	 * can't provide the GPRs), so should we just zero the GPRs when in a
+>>>>> +	 * guest? Or skip outputting the regs in perf_output_sample?
+>>>> Seems daft Xen cannot provide registers; why is that? Boris?
+>>> The xen_pmu_regs structure simply doesn't have them, so I assume there's
+>>> no API to get them.
+>>>
+>>> Given we don't currently sample the guest regs, I'd be tempted to just
+>>> zero them for now, or skip the sample at output time (if that doesn't
+>>> break some other case).
+>> (Was out on vacation, couldn't respond earlier)
+>>
+>> Yes, PV guests only get a limited set of registers passed to the handler
+>> by the hypervisor. GPRs are not part of this set.
+>>
+>> I think we need do
+>>
+>> diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
+>> index 7d00d4a..95997e6 100644
+>> --- a/arch/x86/xen/pmu.c
+>> +++ b/arch/x86/xen/pmu.c
+>> @@ -478,7 +478,7 @@ static void xen_convert_regs(const struct
+>> xen_pmu_regs *xen_regs,
+>>  irqreturn_t xen_pmu_irq_handler(int irq, void *dev_id)
+>>  {
+>>         int err, ret = IRQ_NONE;
+>> -       struct pt_regs regs;
+>> +       struct pt_regs regs = {0};
+>>         const struct xen_pmu_data *xenpmu_data = get_xenpmu_data();
+>>         uint8_t xenpmu_flags = get_xenpmu_flags();
+>>
+>>
+>> Do you want me to submit a separate patch or can you make this part of
+>> yours?
+> I've only just realised that this is an issue today, without my
+> synthezied pt_regs changes. For any PERF_SAMPLE_REGS_* event under Xen,
+> we'll leak uninitialised kernel stack to userspace in the GPR fields.
 >
-> (Al- can=E2=80=99t we just stop allowing splice() at all on things that d=
-on=E2=80=99t use iov_iter?)
+> Boris, I think it's worth spinning a patch to address that now, with Cc
+> stable, if you're still happy to do so?
 
-We could add a FMODE_SPLICE_READ/WRITE bit, and let people opt in to
-splice. We probably should have.
 
-But again, that really doesn't change the fundamentals.  Using write()
-for commands is stupid.
+Sure, I can do this.
 
-It also means that you have to _parse_ all the damn input at that
-level, which is a mistake too. It easily leads to insane decisions
-like "you have to use 'write()' calls without buffering", because
-re-buffering the stream is a f*cking pain.
+(As a side note, I also noticed this issue but wasn't especially
+concerned about it since VPMU is not supported in Xen from security
+perspective: http://xenbits.xenproject.org/xsa/advisory-163.html).
 
-Just say no. Seriously. Stop this idiotic discussion.
+-boris
 
-I'm just happy this came up early, because that way I know to look out
-for it and not merge it.
-
-                 Linus
