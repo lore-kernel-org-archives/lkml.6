@@ -2,98 +2,111 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CEBEC476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF406C476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8D6920849
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77FB32147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:17:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6hRCukI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D6920849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="vhNQQRm2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77FB32147C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732355AbeGLQ1D (ORCPT
+        id S1732338AbeGLQ1v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:27:03 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:37220 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbeGLQ1C (ORCPT
+        Thu, 12 Jul 2018 12:27:51 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54974 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbeGLQ1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:27:02 -0400
-Received: by mail-ed1-f66.google.com with SMTP id v22-v6so22327113edq.4
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 09:16:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=+KMamtl9zKpkUOF4V71i5K5DqQg35O6kvgINOWpT9T0=;
-        b=d6hRCukIcN9WcLJNe/NCtZcqUDjibfO1tPYLTbPQKm+7GKOU760nXk9mAXo4gv4J30
-         FtfNoPz0H3g7PN5/dP/40oL2ckO+V/Z0+WNJSqd1Rdufdwbb+tCnY/pf2sX5+Mt071Um
-         RKXHJW4KSB4fr1ONpLHqtrmh5+1rsfNwj4djqAuH0uLTc6U/NSM4cMXNbDjqmwLm4/5L
-         wCZc+85vSNZE8i/EaYF7j/e1x1TMKGs5TzbohsN3mNZzl4AAA1BIosceRKCEvxQFj4+c
-         iD724vCI0aaOSzLZmDCJ8I7sSrdQ5bMYznmf72uk0wrAbwzOxDfs1DlL/nJ/CkfvaG0U
-         GSzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=+KMamtl9zKpkUOF4V71i5K5DqQg35O6kvgINOWpT9T0=;
-        b=oDYCt6mevGyQ84AnTrRM5jJZWjuPxA6klXeB4EfHRaf8VYVE9jD9FoazXPyW+uab4Z
-         xGIzRFR+4MZzn29V1YW+XmUbkOlqDYUqwwn5uXsCqNwkO8lwHedTqYirgrMJHRUlISRD
-         a3GzFZBx89J2C9ir+VZIcj01IjI57+xSC0TkZxqvCNhw+XUWI4FRyDGYPfMy7CuGLXnU
-         R0SHvZfh/0V4K9ENw4pydLZ4YItXQA4UnE4dVMlJru9cnru+5BkOngyhUd9VRX/Jw1Tn
-         u36EE8fM4BFDHlV7evnHdIrIDcPtAGzMqcVxhOlPsGpSfbzZP2DsLfLXkr5dMsGmqKH2
-         GOkw==
-X-Gm-Message-State: AOUpUlF6SjPkdtzURYf4qgiCUt3jmJ3b/MuhCb90lyce8EBdIiHtsx2b
-        OpdvXNKT2tKPvzYPa7cIC3A=
-X-Google-Smtp-Source: AAOMgpflhJ4rQgeWOd30KOaAB8dVBaaD7FonI69Y+iZxUqXn9NbgOKOc3roSFJY3I1akyLOlocQtiQ==
-X-Received: by 2002:a50:8d46:: with SMTP id t6-v6mr3184035edt.238.1531412207824;
-        Thu, 12 Jul 2018 09:16:47 -0700 (PDT)
-Received: from arch.localdomain (x4d0a32b7.dyn.telefonica.de. [77.10.50.183])
-        by smtp.gmail.com with ESMTPSA id r11-v6sm3923921edh.32.2018.07.12.09.16.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 09:16:47 -0700 (PDT)
-From:   Michael Straube <straube.linux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH] staging: rtl8188eu: use strlcpy instead of strncpy
-Date:   Thu, 12 Jul 2018 18:16:13 +0200
-Message-Id: <20180712161613.9317-1-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.18.0
+        Thu, 12 Jul 2018 12:27:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=F4/vIbGvf448O3+o8PZnmFNU+LxaMxMKgRz1iHO53mg=; b=vhNQQRm2fojAHljFAaNuQeAFx
+        c7vF+GxmyPI0LIWggZ720rkvDGLXMmMiR3dQrL/kr4gLTYXlCr/uokpnTnP1o8O76vl1+gfirvrSN
+        0fiutOoc3wYV2hXBhKPKYzn7zcZrhbZeS4Hk6metjdYPLtTxzTOf7ZP+bu5Gsi+axnSTQ=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fdeHZ-0003ob-En; Thu, 12 Jul 2018 16:17:29 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fdeHY-0007XS-7T; Thu, 12 Jul 2018 17:17:28 +0100
+Date:   Thu, 12 Jul 2018 17:17:28 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Takashi Iwai <tiwai@suse.de>, alsa-devel@alsa-project.org,
+        lgirdwood@gmail.com,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        bgoswami@codeaurora.org, rohitkr@codeaurora.org, vkoul@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH] ASoC: core: add support to card
+ re-bind/unbind using component framework
+Message-ID: <20180712161728.GH10369@sirena.org.uk>
+References: <20180711084318.11786-1-srinivas.kandagatla@linaro.org>
+ <68715fbc-9447-dfaf-3fe5-4200684c2cbc@linux.intel.com>
+ <s5hsh4o8nq1.wl-tiwai@suse.de>
+ <0f437d5d-5857-a608-8d8f-345c832a0ee1@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="o71xDhNo7p97+qVi"
+Content-Disposition: inline
+In-Reply-To: <0f437d5d-5857-a608-8d8f-345c832a0ee1@linux.intel.com>
+X-Cookie: Kleeneness is next to Godelness.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use strlcpy instead of strncpy to avoid gcc 8 warning:
-warning: '__builtin_strncpy' specified bound 16 equals destination size [-Wstringop-truncation]
 
-The maximum length of the source string including terminating null is 5.
-Hence it always fits in the destination buffer of length 16.
+--o71xDhNo7p97+qVi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8188eu/os_dep/ioctl_linux.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Jul 12, 2018 at 10:54:05AM -0500, Pierre-Louis Bossart wrote:
+> On 7/12/18 10:42 AM, Takashi Iwai wrote:
 
-diff --git a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-index 80ccd19e776d..0f82a8c330f8 100644
---- a/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-+++ b/drivers/staging/rtl8188eu/os_dep/ioctl_linux.c
-@@ -1912,7 +1912,7 @@ static int rtw_wx_set_enc_ext(struct net_device *dev,
- 		goto exit;
- 	}
- 
--	strncpy((char *)param->u.crypt.alg, alg_name, IEEE_CRYPT_ALG_NAME_LEN);
-+	strlcpy((char *)param->u.crypt.alg, alg_name, IEEE_CRYPT_ALG_NAME_LEN);
- 
- 	if (pext->ext_flags & IW_ENCODE_EXT_SET_TX_KEY)
- 		param->u.crypt.set_tx = 1;
--- 
-2.18.0
+> > It's basically similar as the hotplug like USB, so I thought it would
+> > work as is.
 
+> Such transitions would probably not break userspace but they result from an
+> explicit user action. The DSP going off and back is less clear, you might
+> want the system to wait before triggering re-routing to different outputs,
+> etc.
+
+> Again I wasn't trying to push back but rather ask what the side effects of
+> this patch might be for userspace.
+
+For userspace it's just another reason why a card might hotplug, it
+doesn't make much difference - this doesn't add hotplugging of the DSP,
+it just supports components getting removed like we used to.  If someone
+decides to start randomly rebooting their DSP that's probably going to
+be disruptive no matter what.
+
+--o71xDhNo7p97+qVi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltHfxcACgkQJNaLcl1U
+h9Bw+AgAhT8K4srl7HkIx2mBtvLuCjm0LISYc8fMwQvNLJJpvgSw1a3/+XsVKrP/
+jiCaOTnFAN7Nll4pgFqpGjj68DnkNsbteheJgSjdzDqT9ySbE64bAkcAN7VyQZjo
+3v05gsMQySzB5MSqZMxZ3SzDC+LFjgOuM09QwkBY+DRDJZyeoMLofLRU/LKKeglW
+rHS+/qusiDrQuq09yhNXpXXtMJDiEH5h0n4XaMIgJ/EMRudOOTJPDt4eT6TkyEF7
+x1AHxcLs3gAt9fmkuxMQZaONAhI+i9I4g3aQrUJxYQtcpw49+r9xg0tPIQRNQJoU
+kJdeN57fxLeAkxv7vn/o0xNRBMfRaw==
+=JfnE
+-----END PGP SIGNATURE-----
+
+--o71xDhNo7p97+qVi--
