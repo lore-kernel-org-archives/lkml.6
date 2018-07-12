@@ -2,103 +2,120 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB772C476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A01DFC476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54E9120842
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:14:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BE872086E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:14:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Y2P2jfCG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54E9120842
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Ll3oO4gC";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ekX7xACT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BE872086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732565AbeGLRYp (ORCPT
+        id S1732596AbeGLRZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:24:45 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:37201 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727136AbeGLRYp (ORCPT
+        Thu, 12 Jul 2018 13:25:01 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:42672 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727136AbeGLRZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:24:45 -0400
-Received: by mail-it0-f65.google.com with SMTP id p17-v6so7806177itc.2;
-        Thu, 12 Jul 2018 10:14:17 -0700 (PDT)
+        Thu, 12 Jul 2018 13:25:01 -0400
+Received: by mail-ua0-f193.google.com with SMTP id x18-v6so18893935uaj.9
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 10:14:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=75n14uXlMfFID40faZb/54QOEji1la+9qZWFPnZn89E=;
-        b=Y2P2jfCGeGlwFXyCI6fpyqrg4g7/ylyS6kNRiAPGd24URD5lvdiw9P02atozasgj4/
-         CzpTqgg4o3Gd6I3FFoKS3diWrTlpZGGXCLSS5n6Qbe7bFS2DyZX5ndArgXHyEYq0WLTN
-         Yh/9ViAFhnR81pI3DVZ0KnKFrfxl+pZPwxrvg=
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=6QnmvKBptGa3JHubY9IquB532uhl2eHzuUn9DRyHzsk=;
+        b=Ll3oO4gCmNtWpkcKE1VNDWQD8EjktsYPW09qeZ6IVbHYMxT4eYQa1qI19Un+3uY8zy
+         L0owZRd9aLvryNIAl9nBceip5BCHIEQPpYYHzYdlobIOvNIMHaLcWPc8oEvn/k8vi0uq
+         04c5YVrfqyQa+Cdm6fmkfnvUjWS9k8cHKRv9nYZcSW97hoBz8aJpMwXFgQVUQJtKlLL4
+         zxbzmxb0IEaHgJuZBy0H8/vvtF2DW4af1WGt/NgVCwpQk+ZmYBf7u+DRmngBdjuy71kD
+         E5FXJJQkDJI3XXPZbQSpPET10/nEmofuMlWC+8jP0xyA28bIZsrFx9dOJnkiN1FezgyF
+         ksgw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=6QnmvKBptGa3JHubY9IquB532uhl2eHzuUn9DRyHzsk=;
+        b=ekX7xACTGpkW0sWslNisCVXSkQ4iXX0drtHx1pflmfaJJJyen9huTk7D7AAvbww6Rj
+         OxF8PsDldpjzhwP5/uGFWXS3Vk0CxpWKiASqgXU8kJHkO+7h6b19657NKviHlWvX/+5C
+         XdLSeA9SuzuveygTa6JvqbI1z/6AOGxIcXPK8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=75n14uXlMfFID40faZb/54QOEji1la+9qZWFPnZn89E=;
-        b=bhIR2rKr2Qc9PtPdck3Hq4f8GAR/hCYR0vd80gaIUpRYES5fuvWGTn738fe9dgx64Q
-         mTeW98qln9GgPmhAb+SoN4I1IuuZoqPQ0Uij+/DHwEEodXbDbrlog2lEFH7oZH9m0bjN
-         cr25VBgYYqM6naEZplMIWPxsbyUdY+LMFOBE6I1Pp2X/bLf978LA0zJQRsqlt3Uz5vs8
-         VSBN+c8CSqw4laxdK+3B7PzwqUJmR7V/fER4ryMDH65v9CsKWr+t+WFKz0PTLcRZ5NwX
-         A+vT+jfUPYLJNnyD6jqfYxWBEfTsRHp+++HvAI+mzDH0U2U01e0/cXv30E1IbRMjpk4o
-         0CCA==
-X-Gm-Message-State: AOUpUlFUz6rOeUTWonoeLBuG2L18S1q39afUtgI1J8wA64cQbHnl93ph
-        kCLGulnDkei9HUohUcuEfJNj5RI0ZuObWCYv56k=
-X-Google-Smtp-Source: AAOMgpfwZts1oPgQEkQdpv2c5J40WLtidlXyMY+xFqFVSKEmWFUqpktpqtfuPkrmsMriR/EMPeHSv0zPPKzX8gJgrIM=
-X-Received: by 2002:a24:94f:: with SMTP id 76-v6mr2013172itm.113.1531415657142;
- Thu, 12 Jul 2018 10:14:17 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=6QnmvKBptGa3JHubY9IquB532uhl2eHzuUn9DRyHzsk=;
+        b=dymx3gHFGoY1uASvqZAjOB3VKrqA7V5x4deYTDqVQ8a3DLHAGImUJLP7o3f8iVL7aW
+         841t9nxfs0qD8MorpwjjHzD/tPlZMNb8ujUcW2hS/KBU2ECxJg7UgixJkLAkOjaR8msN
+         5tdNXBEceoZbLMpiGgNWCRzs97ro8UrJ/KcUG7qSqlBFERqbsfrZabzw9dLFF2vyjXEr
+         ZWfbyskhh3dPW6QfnSCW5plhxJnnqOM9pFtY6yNPOfQALkUb0vNNYnXolBMSN7fcckBZ
+         N5gdcj8xgeW31QZ4aStExdPLxq85iSxEDjfwu4kvTgs8a08+8zz/2VQJUPq3XQzFWFYL
+         b0fA==
+X-Gm-Message-State: AOUpUlHXfxxpO0KBkiCJvqDsiFcbOP1J2NR6oydtaNU/y10UsQkQHouf
+        N8HW+g4fwr9m9YhbngWxdlBxFUcRuB2Pr6nqg3IRGX7VAUA=
+X-Google-Smtp-Source: AAOMgpcjiKpBN7w9MeqEPDKHoibMMYYKQp1mUCOXV2N7IRiinSKZzM86uFRjswuWVsmOW2ge2DkoT5uIDDbr/SIA0X0=
+X-Received: by 2002:ab0:11dd:: with SMTP id q29-v6mr1970311uac.191.1531415672724;
+ Thu, 12 Jul 2018 10:14:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
- <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
- <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk>
- <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
- <7002.1531407244@warthog.procyon.org.uk> <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com>
- <20180712160030.GV30522@ZenIV.linux.org.uk> <CA+55aFwkiFdhGmT8gaSohAQGMWpGUZBQ0dhGNGWEN4cpjK7XHA@mail.gmail.com>
- <20180712163107.GW30522@ZenIV.linux.org.uk> <CA+55aFz6Uaqag5qPcT2M3Q07-yc_6y2cAarfw7hjXEiQq4tTYw@mail.gmail.com>
-In-Reply-To: <CA+55aFz6Uaqag5qPcT2M3Q07-yc_6y2cAarfw7hjXEiQq4tTYw@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 12 Jul 2018 10:14:05 -0700
-Message-ID: <CA+55aFw9WuyGqRHerhESw+Shzg1UtCjORLVYT=uCMh8jXbLWmg@mail.gmail.com>
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
- superblock creation [ver #9]
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
+Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 10:14:32
+ -0700 (PDT)
+In-Reply-To: <f6cb99e6b805b0850b039e4f5d469e761d84f6d0.1531384019.git.amit.kucheria@linaro.org>
+References: <cover.1531384019.git.amit.kucheria@linaro.org> <f6cb99e6b805b0850b039e4f5d469e761d84f6d0.1531384019.git.amit.kucheria@linaro.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 12 Jul 2018 10:14:32 -0700
+X-Google-Sender-Auth: m_1zTIss_S3E0WQwIeVZodduUbE
+Message-ID: <CAD=FV=W-7CfChV0wn29uR-OH7mH65kmO=0yQUWUbksmb6qL=GQ@mail.gmail.com>
+Subject: Re: [PATCH v7 3/7] arm64: dts: msm8996: thermal: Initialise via DT
+ and add second controller
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        smohanad@codeaurora.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 9:39 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+Hi,
+
+On Thu, Jul 12, 2018 at 1:39 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
+> We also split up the regmap address space into two, for the TM and SROT
+> registers. This was required to deal with different address offsets for the
+> TM and SROT registers across different SoC families.
 >
-> I agree that a system call is likely saner. Especially since we'd have
-> one to _start_ this (ie "fsopen()") it would make sense to have the
-> one to finalize it.
+> 8996 has two TSENS IP blocks, initialise the second one too.
+>
+> Since tsens-common.c/init_common() currently only registers one address
+> space, the order is important (TM before SROT). This is OK since the code
+> doesn't really use the SROT functionality yet.
+>
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 14 ++++++++++++--
+>  1 file changed, 12 insertions(+), 2 deletions(-)
 
-Side note: if we can make do with just a buffer, then we wouldn't need
-"fsopen()". You could literally just open a pipe, and write to it.
-It's got 16 pages worth of buffers by default, and you can increase it
-(within reason) as root.
-
-Of course, depending on IO patterns, not all the buffer pages are
-necessarily fully used, so it's not like you get a buffer of size
-PAGE_SIZE*16, but we do merge buffers so you should be fairly close.
-
-Then you really could do without a fsopen(). Just fill a pipe with
-data, and do "fsmount()" on the pipe contents.
-
-Added upside? You can use "iov_iter_pipe()" to iterate over all that data.
-
-I'm only half joking.
-
-            Linus
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
