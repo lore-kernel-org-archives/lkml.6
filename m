@@ -2,125 +2,97 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F44ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C23DECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87A822083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:38:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tZCM6w/n"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87A822083B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 36F5B208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:43:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36F5B208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732620AbeGLUtb (ORCPT
+        id S1732505AbeGLUzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 16:49:31 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:56998 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbeGLUtb (ORCPT
+        Thu, 12 Jul 2018 16:55:01 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:55156 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726966AbeGLUzB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:49:31 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6CKSnIi182548;
-        Thu, 12 Jul 2018 20:37:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id; s=corp-2018-07-02;
- bh=gPTDMzEnXd+fcfEt6u+qktTSHeQD0hG2qgOYakm1Guk=;
- b=tZCM6w/nPBTHwjshn0GAA2DItL83EpfqXEoluLg8Z8MdCc61upTQKY5GWiNEqkYGy7oX
- cKHafi0JefChWHheIn/FN1FLfQ+Z/L8hTRS3uZzMDWFbgwtXy2plcBtvT4bfQei2nwOW
- MOts55773OS9MKVbxjdxT8QMnGZ3wSNBj+fsVmVBwEZwquBSu+NdP2tbsUZaetSrfyx8
- I3DfQWsQpsFPb9VBxhiEG6k2j84/8ZvrVotxzUx4zZ2YyYIKkPz/T3T63VcEE9WMP2G0
- 0nKU2S5CUJuahYaVZYTnhS31ibhJt0n6l3ilSgRllHdguMJikWvunMkkaE47FMpEEsur mQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2k2p765bv3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 20:37:45 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6CKbiPs030301
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 20:37:44 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6CKbeoP017012;
-        Thu, 12 Jul 2018 20:37:40 GMT
-Received: from localhost.localdomain (/73.69.118.222)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 12 Jul 2018 13:37:40 -0700
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
-        jglisse@redhat.com, jrdr.linux@gmail.com, bhe@redhat.com,
-        gregkh@linuxfoundation.org, vbabka@suse.cz,
-        richard.weiyang@gmail.com, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org,
-        osalvador@techadventures.net, pasha.tatashin@oracle.com,
-        abdhalee@linux.vnet.ibm.com, mpe@ellerman.id.au
-Subject: [PATCH v5 0/5] sparse_init rewrite
-Date:   Thu, 12 Jul 2018 16:37:25 -0400
-Message-Id: <20180712203730.8703-1-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.18.0
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8952 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=831
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807120216
+        Thu, 12 Jul 2018 16:55:01 -0400
+Received: (qmail 553 invoked by uid 2102); 12 Jul 2018 16:43:46 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 12 Jul 2018 16:43:46 -0400
+Date:   Thu, 12 Jul 2018 16:43:46 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+cc:     Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+In-Reply-To: <20180712175228.GB3533@andrea>
+Message-ID: <Pine.LNX.4.44L0.1807121637050.1306-100000@iolanthe.rowland.org>
+MIME-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changelog:
-v5 - v4
-	- Fixed the issue that was reported on ppc64 when
-	  CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER is removed
-	- Consolidated the new buffer allocation between vmemmap
-	  and non-vmemmap variants of sparse layout.
-	- Removed all review-by comments, because I had to do
-	  significant amount of changes compared to previous version
-	  and need another round of review.
-	- I also would appreciate if those who reported problems with
-	  PPC64 could test this change.
-v4 - v3
-	- Addressed comments from Dave Hansen
-v3 - v1
-	- Fixed two issues found by Baoquan He
-v1 - v2
-	- Addressed comments from Oscar Salvador
+On Thu, 12 Jul 2018, Andrea Parri wrote:
 
-In sparse_init() we allocate two large buffers to temporary hold usemap and
-memmap for the whole machine. However, we can avoid doing that if we
-changed sparse_init() to operated on per-node bases instead of doing it on
-the whole machine beforehand.
+> > It seems reasonable to ask people to learn that locks have stronger
+> > ordering guarantees than RMW atomics do.  Maybe not the greatest
+> > situation in the world, but one I think we could live with.
+> 
+> Yeah, this was one of my main objections.
 
-As shown by Baoquan
-http://lkml.kernel.org/r/20180628062857.29658-1-bhe@redhat.com
+Does this mean you don't think you could live with it?
 
-The buffers are large enough to cause machine stop to boot on small memory
-systems.
+> > > Hence my proposal to strenghten rmw-acquire, because that is the basic
+> > > primitive used to implement lock.
+> > 
+> > That was essentially what the v2 patch did.  (And my reasoning was
+> > basically the same as what you have just outlined.  There was one
+> > additional element: smp_store_release() is already strong enough for
+> > TSO; the acquire is what needs to be stronger in the memory model.)
+> 
+> Mmh? see my comments to v2 (and your reply, in part., the part "At
+> least, it's not a valid general-purpose implementation".).
+> 
+> 
+> > > Another, and I like this proposal least, is to introduce a new barrier
+> > > to make this all work.
+> > 
+> > This apparently boils down to two questions:
+> > 
+> > 	Should spin_lock/spin_unlock be RCsc?
+> > 
+> > 	Should rmw-acquire be strong enough so that smp_store_release + 
+> > 	rmw-acquire is RCtso?
+> > 
+> > If both answers are No, we end up with the v3 patch.  If the first
+> > answer is No and the second is Yes, we end up with the v2 patch.  The
+> > problem is that different people seem to want differing answers.
+> 
+> Again, maybe you're confonding v2 with v1?
 
-Another benefit of these changes is that they also obsolete
-CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER.
+Oops, yes, I was.  v1 was the version that made RMW updates be RCtso.  
+v2 and v3 affected only locking, the difference being that v2 used 
+unlock-rf-lock-po and v3 used po-unlock-rf-lock-po.
 
-Pavel Tatashin (5):
-  mm/sparse: abstract sparse buffer allocations
-  mm/sparse: use the new sparse buffer functions in non-vmemmap
-  mm/sparse: move buffer init/fini to the common place
-  mm/sparse: add new sparse_init_nid() and sparse_init()
-  mm/sparse: delete old sprase_init and enable new one
-
- include/linux/mm.h  |   7 +-
- mm/Kconfig          |   4 -
- mm/sparse-vmemmap.c |  59 +--------
- mm/sparse.c         | 300 +++++++++++++++-----------------------------
- 4 files changed, 105 insertions(+), 265 deletions(-)
-
--- 
-2.18.0
+Alan
 
