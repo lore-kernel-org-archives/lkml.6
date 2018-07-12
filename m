@@ -2,103 +2,156 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E441C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:52:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 882C0C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20C7720BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:52:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C7720BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2971E208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:54:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="S//9Tjmg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2971E208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732490AbeGLOBq (ORCPT
+        id S1732444AbeGLODx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 10:01:46 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46994 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727072AbeGLOBq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 10:01:46 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5050D40201BF;
-        Thu, 12 Jul 2018 13:52:06 +0000 (UTC)
-Received: from krava.redhat.com (ovpn-204-115.brq.redhat.com [10.40.204.115])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B1FA1111AF0E;
-        Thu, 12 Jul 2018 13:52:03 +0000 (UTC)
-From:   Jiri Olsa <jolsa@kernel.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     David Carrillo-Cisneros <davidcc@google.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Stephane Eranian <eranian@google.com>
-Subject: [PATCH] perf tools: Synthesize GROUP_DESC feature in pipe mode
-Date:   Thu, 12 Jul 2018 15:52:02 +0200
-Message-Id: <20180712135202.14774-1-jolsa@kernel.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 13:52:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 13:52:06 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@kernel.org' RCPT:''
+        Thu, 12 Jul 2018 10:03:53 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:52368 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeGLODx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 10:03:53 -0400
+Received: by mail-it0-f66.google.com with SMTP id p4-v6so6922773itf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 06:54:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=w8YvEjiLA/4L3GEa/k/+iGppymABmOp1WNRqWKDZHI0=;
+        b=S//9Tjmg13mDZdFZ6GdIcc1KM9e0xFVa97tsbqC7/9mqLPG3jfCFwAIcAaflBfc+Po
+         6/02IstO6hUcyNSxt9mN6h0wo/BYbp5BInM/SyzNuAXnrTFETienyg68LcWcwLZ3jp6+
+         Eh75Ld0yG6cAbenkAf88/2GVSBMq1tG2JLrR1jPkxFDis+QIvB6CyklYoPLtRL+vT1nR
+         dZqIqdbTc3gPgNfI6U847ZaKM0SwbMW1G0wqO/5JPdudwaivkT9NsT3HPPmkkBzwO/Hg
+         PN7lgoDc4UKiu/2QxxAQiaQnzPSnBGR7mPhIWLjiQmy3UwDxPRd+7E3bK32jcXNrF+yA
+         Fkkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=w8YvEjiLA/4L3GEa/k/+iGppymABmOp1WNRqWKDZHI0=;
+        b=hFwxg6WhuN0BGRwQWrmm5eePmZ6xV4XELurKSwxGX7KiJS9a8HYmxPKGoP4WaFnkR8
+         3EXb1N/vBZrPFTWyybTTGu4XuNa8zIeTyzb2V8mSyz+29/js+2dWrsdUUQoQJTmESOyM
+         I5f9QGIu9YcE9Vrk7yTWnEtP1siEqAYB5tZnrxup+YUla4UmGhcThn64kHJWew0f7qq8
+         H/dkS53qTNtdcFcVg2UrTsPIM2OdN/qhrirw+koi5VXk156GIVUzON8ba/smjo8MMduS
+         Y61eJE/nAe7oT/Jp7hsWGdHOalvRLJImgtWsPECWR9EzIe36zqku57Wshr8dSB81wI3g
+         UNnA==
+X-Gm-Message-State: AOUpUlHRass1pzOicFa6wTA8AxEgLpawV6NuNmpBaAZHJUYhScoD5A5W
+        WRur8RwZs7Yd4IEwF9MBBoFbgg==
+X-Google-Smtp-Source: AAOMgpfGf/yzB/gzI0UN4SKWpwd4+BWLCL9z385MWDu7pX3gdv2IVVNnyitETEpTbCDC5DJKJ+rqFQ==
+X-Received: by 2002:a24:f6c5:: with SMTP id u188-v6mr1448171ith.150.1531403652862;
+        Thu, 12 Jul 2018 06:54:12 -0700 (PDT)
+Received: from [192.168.1.167] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id v3-v6sm6495511iop.78.2018.07.12.06.54.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 06:54:11 -0700 (PDT)
+Subject: Re: [PATCH 02/12] blk: use for_each_if
+To:     Joe Perches <joe@perches.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Tejun Heo <tj@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Shaohua Li <shli@fb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Arnd Bergmann <arnd@arndb.de>
+References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
+ <20180709083650.23549-2-daniel.vetter@ffwll.ch>
+ <20180711164058.GC72677@devbig577.frc2.facebook.com>
+ <20180711164536.GD72677@devbig577.frc2.facebook.com>
+ <965184f9-e5ed-3c8b-bfd7-a033a252371b@kernel.dk>
+ <CAKMK7uE5aJq-1wd0ZOhwFaTy3iKMAZsfdAf=Tw+eGxtCmfcVQg@mail.gmail.com>
+ <2296606a890a1f3543c5db825ed172f7d295a504.camel@perches.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <efb7a7fe-16ef-1928-9d95-50b1fb84f0c3@kernel.dk>
+Date:   Thu, 12 Jul 2018 07:54:10 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <2296606a890a1f3543c5db825ed172f7d295a504.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Stephan reported, that pipe mode does not carry the group
-information and thus the piped report won't display the
-grouped output for following command:
+On 7/12/18 12:45 AM, Joe Perches wrote:
+> On Wed, 2018-07-11 at 20:50 +0200, Daniel Vetter wrote:
+>> On Wed, Jul 11, 2018 at 8:30 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>>> On 7/11/18 10:45 AM, Tejun Heo wrote:
+>>>> On Wed, Jul 11, 2018 at 09:40:58AM -0700, Tejun Heo wrote:
+>>>>> On Mon, Jul 09, 2018 at 10:36:40AM +0200, Daniel Vetter wrote:
+>>>>>> Makes the macros resilient against if {} else {} blocks right
+>>>>>> afterwards.
+>>>>>>
+>>>>>> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+>>>>>> Cc: Tejun Heo <tj@kernel.org>
+>>>>>> Cc: Jens Axboe <axboe@kernel.dk>
+>>>>>> Cc: Shaohua Li <shli@fb.com>
+>>>>>> Cc: Kate Stewart <kstewart@linuxfoundation.org>
+>>>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>>>> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
+>>>>>> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+>>>>>> Cc: Arnd Bergmann <arnd@arndb.de>
+>>>>>
+>>>>> Acked-by: Tejun Heo <tj@kernel.org>
+>>>>>
+>>>>> Jens, it'd probably be best to route this through block tree.
+>>>>
+>>>> Oops, this requires an earlier patch to move the for_each_if def to a
+>>>> common header and should be routed together.
+>>>
+>>> Yeah, this is a problem with the submission.
+>>>
+>>> Always (ALWAYS) CC folks on at least the cover letter and generic
+>>> earlier patches. Getting just one patch sent like this is mostly
+>>> useless, and causes more harm than good.
+>>
+>> Ime sending a patch with more than 20 or so recipients means it gets
+>> stuck everywhere in moderation queues. Or outright spam filters. I
+>> thought the correct way to do this is to cc: mailing lists (lkml has
+>> them all), but apparently that's not how it's done. Despite that all
+>> the patch series I get never have the cover letter addressed to me
+>> either.
+>>
+>> So what's the magic way to make this possible?
+> 
+> Jens' advice is crap.
+> 
+> There is no generic way to make this possible.
 
-  # perf record -e '{cycles,instructions,branches}' -a sleep 4 | perf report
+Nobody claimed there was. And the advice is perfectly fine,
+sending out patches to folks that have hidden dependencies on other
+patches is a no-go.
 
-It has no idea about the group setup, so it will display
-events separately:
+> BCC's don't work, series that touch multiple subsystems
+> get rejected when the recipient list is too large.
+> 
+> I think you did it correctly.
 
-  # Overhead  Command          Shared Object             ...
-  # ........  ...............  .......................
-  #
-       6.71%  swapper          [kernel.kallsyms]
-       2.28%  offlineimap      libpython2.7.so.1.0
-       0.78%  perf             [kernel.kallsyms]
-  ...
+Clearly that's not the case, regardless of what you think.
 
-Fixing GROUP_DESC feature record to be synthesized in pipe mode,
-so the report output is grouped if there's group defined in record:
+Thanks for your invaluable and useful feedback, sharing your vast
+experience in patchsets with dependencies.
 
-  #                 Overhead  Command          Shared    ...
-  # ........................  ...............  .......
-  #
-       7.57%   0.16%   0.30%  swapper          [kernel
-       1.87%   3.15%   2.46%  offlineimap      libpyth
-       1.33%   0.00%   0.00%  perf             [kernel
-  ...
-
-Cc: David Carrillo-Cisneros <davidcc@google.com>
-Reported-by: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/n/tip-ybqyh8ac4g173iy3xt4pxnlo@git.kernel.org
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
----
- tools/perf/util/header.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 59fcc790c865..af9aaf28f976 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -2587,7 +2587,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
- 	FEAT_OPR(NUMA_TOPOLOGY,	numa_topology,	true),
- 	FEAT_OPN(BRANCH_STACK,	branch_stack,	false),
- 	FEAT_OPR(PMU_MAPPINGS,	pmu_mappings,	false),
--	FEAT_OPN(GROUP_DESC,	group_desc,	false),
-+	FEAT_OPR(GROUP_DESC,	group_desc,	false),
- 	FEAT_OPN(AUXTRACE,	auxtrace,	false),
- 	FEAT_OPN(STAT,		stat,		false),
- 	FEAT_OPN(CACHE,		cache,		true),
 -- 
-2.17.1
+Jens Axboe
 
