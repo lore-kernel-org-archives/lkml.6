@@ -2,255 +2,148 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B69F5ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B35A5ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED902147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:01:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="NpFLjnc7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ED902147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 727B8208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:03:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 727B8208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732475AbeGLUMk (ORCPT
+        id S1732498AbeGLUOl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 16:12:40 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40289 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732235AbeGLUMk (ORCPT
+        Thu, 12 Jul 2018 16:14:41 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:35644 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732298AbeGLUOk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:12:40 -0400
-Received: by mail-ed1-f67.google.com with SMTP id e19-v6so22798699edq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 13:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=fAwgq7QivYAgvcdovXeBJWdfWW1SKzK+SP1JtfBcnes=;
-        b=NpFLjnc7y0YntCQVOUHJHLe8bY+LvETloPkQqTJ9BzxhlF/Nebo+oQHRhmfL8jtgHB
-         V2HRr4HDFT4Hi4hfmQLbKAkqCnHm020CQMRhc3bktKv02p38NUH9tYrmA2PIJ8mq2O6y
-         pv1jBcW1OQPwdzfZgkBC1LxIxzsgiZTATe55o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=fAwgq7QivYAgvcdovXeBJWdfWW1SKzK+SP1JtfBcnes=;
-        b=atXz+t4xfzGdm8BTTgmSikeNtwrHpfhBH9c1iUb8rnNpMz04Boi6fe6E++81rO6UDs
-         l//2Vp/JJYqXBSC+wtyMuxI4NLBtd2X7p5tmVrEL524XttXJs6V6kXiAFvr0vM2C6QRG
-         k79R/eXDF9AWWuzVvwEGAiNEqZlarlEseSHqwV/xF7LbPqDcdjs9AJgsQw6WG2CW4C6A
-         QJcefmLxCLKnwGRxHqluRbg6KTfFDwITJSqk8hTs9rWl/+NXO09Ipmo3MmmLuWdXppMI
-         pqPe+GZDeIs77WWcCAO3Up9hDvzgV0Lkr/T/NebNgwddS51SwXwt6/E2+1ZwVfQ7D6be
-         JxgQ==
-X-Gm-Message-State: AOUpUlHXR8n0hycgLozb8/aVJmWO/vk6F7CfFO7WnDEdHPhH5okj+vsR
-        sdf15v0Xms3Sqrxw8k4wEZXYuP44
-X-Google-Smtp-Source: AAOMgpd0u+B+lc/uariRI4syTj42MQnO7hiLkP165Ok/FW6MJ0x0visy3vVuUPyECTShrNVuDX7erQ==
-X-Received: by 2002:a50:fd0f:: with SMTP id i15-v6mr4173729eds.83.1531425693597;
-        Thu, 12 Jul 2018 13:01:33 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
-        by smtp.gmail.com with ESMTPSA id l89-v6sm2680706ede.13.2018.07.12.13.01.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 12 Jul 2018 13:01:32 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 22:01:31 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/dp_helper: Add DP aux channel tracing
-Message-ID: <20180712200131.GW3008@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-References: <20180712172419.790-1-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Thu, 12 Jul 2018 16:14:40 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CJwiJK064252
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 16:03:35 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k69y8980r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 16:03:34 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Thu, 12 Jul 2018 21:03:32 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 12 Jul 2018 21:03:27 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6CK3Q4t26869994
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Jul 2018 20:03:26 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 525D1A405D;
+        Thu, 12 Jul 2018 23:03:47 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 631DDA4059;
+        Thu, 12 Jul 2018 23:03:45 +0100 (BST)
+Received: from localhost.localdomain (unknown [9.80.98.31])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Jul 2018 23:03:45 +0100 (BST)
+Subject: Re: [PATCH v5 7/8] ima: based on policy warn about loading firmware
+ (pre-allocated buffer)
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Date:   Thu, 12 Jul 2018 16:03:13 -0400
+In-Reply-To: <CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+         <1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
+         <CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
+         <1531165294.3332.40.camel@linux.ibm.com>
+         <CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
+         <CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
+         <20180710191951.GF1731@minitux>
+         <CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180712172419.790-1-lyude@redhat.com>
-X-Operating-System: Linux phenom 4.14.0-3-amd64 
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-TM-AS-GCONF: 00
+x-cbid: 18071220-0016-0000-0000-000001E634D8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071220-0017-0000-0000-0000323ACB02
+Message-Id: <1531425793.3568.275.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807120210
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 01:24:19PM -0400, Lyude Paul wrote:
-> This is something we've needed for a very long time now, as it makes
-> debugging issues with faulty MST hubs along with debugging issues
-> regarding us interfacing with hubs correctly vastly easier to debug.
-> Currently this can actually be done if you trace the i2c devices for DP
-> using ftrace but that's significantly less useful for a couple of
-> reasons:
+On Wed, 2018-07-11 at 08:24 +0200, Ard Biesheuvel wrote:
+> On 10 July 2018 at 21:19, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+
+> > Tbh the only case I can think of where there would be a "race condition"
+> > here is if we have a device that is polling the last byte of a
+> > predefined firmware memory area for the firmware loader to read some
+> > specific data into it. In cases where the firmware request is followed
+> > by some explicit signalling to the device (or a power on sequence) I'm
+> > unable to see the issue discussed here.
+> >
 > 
-> - Tracing the i2c devices through ftrace means all of the traces are
->   going to contain a lot of "garbage" output that we're sending over the
->   i2c line. Most of this garbage comes from retrying transactions, DRM's
->   helper library adding extra transactions to work around bad hubs, etc.
-> - Having a user set up ftrace so that they can provide debugging
->   information is a lot more difficult then being able to say "just boot
->   with drm.debug=0x100"
-> - We can potentially expand upon this tracing in the future to print
->   debugging information in regards to other DP transactions like MST
->   sideband transactions
-> 
-> This is inspired by a patch Rob Clark sent to do this a long time back.
-> Neither of us could find the patch however, so we both assumed it would
-> probably just be easier to rewrite it anyway.
-> 
-> Cc: Rob Clark <robdclark@gmail.com>
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  drivers/gpu/drm/drm_dp_helper.c | 34 ++++++++++++++++++++++++++++-----
->  drivers/gpu/drm/drm_drv.c       | 15 ++++++++-------
->  include/drm/drm_print.h         |  6 ++++++
->  3 files changed, 43 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-> index a7ba602a43a8..6fa5a59aa17c 100644
-> --- a/drivers/gpu/drm/drm_dp_helper.c
-> +++ b/drivers/gpu/drm/drm_dp_helper.c
-> @@ -185,6 +185,21 @@ EXPORT_SYMBOL(drm_dp_bw_code_to_link_rate);
->  
->  #define AUX_RETRY_INTERVAL 500 /* us */
->  
-> +static inline void
-> +drm_dp_dump_access(const struct drm_dp_aux *aux,
-> +		   u8 request, uint offset, void *buffer, int ret)
-> +{
-> +	const char *arrow = request == DP_AUX_NATIVE_READ ? "->" : "<-";
-> +
-> +	if (ret > 0)
-> +		drm_dbg(DRM_UT_DP, "%s: 0x%08x AUX %s (ret=%3d) %*ph%s\n",
-> +			aux->name, offset, arrow, ret, min(ret, 64),
-> +			buffer, ret > 64 ? "..." : "");
+> I agree. But the latter part is platform specific, and so it requires
+> some degree of trust in the driver author on the part of the IMA
+> routines that request_firmware() is called at an appropriate time.
 
-Afaik dp spec limits transfers to 20 bytes max. We should probably update
-the docs about this in drm_dp_aux_msg. i915 definitely throws a E2BIG at
-you if you try something else.
+Exactly.  Qualcomm could be using the pre-allocated buffer
+appropriately, but that doesn't guarantee how it will be used in the
+future.
 
-Similar with addresses, they're only 20 bits afaiui. Again should probably
-update the docs of drm_dp_aux_msg.
+> The point I am trying to make in this thread is that there are cases
+> where it makes no sense for the kernel to reason about these things,
+> given that higher privilege levels such as the TrustZone secure world
+> own the kernel's execution context entirely already, and given that
+> masters that are not behind an IOMMU can read and write all of memory
+> all of the time anyway.
 
-Otherwise lgtm and I guess we can figure out how to report i2c stuff at a
-different time, or delegate that to the i2c core.
+> The bottom line is that reality does not respect the layering that IMA
+> assumes, and so the only meaningful way to treat some of the use cases
+> is simply to ignore them entirely. So we should still perform all the
+> checks, but we will have to live with the limited utility of doing so
+> in some scenarios (and not print nasty warnings to the kernel log for
+> such cases)
 
-With the pretty printing adjusted to follow the dp limits:
+You have convinced me that the warning shouldn't be emitted in either
+the non IOMMU or in the IOMMU case, assuming the buffer has not been
+DMA mapped.
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+The remaining concern is using the same buffer mapped to multiple
+devices or re-using the same buffer to load multiple firmware blobs.
+I'm not sure how easy that would be to detect.
 
-btw, want drm-misc commit rights for stuff like this? If yes just ask
-seanpaul/mlankhorst/padovan on irc for ack and then poke daniels or
-another fdo admin.
+I need to stage the rest of the patch set to be upstreamed.  Could we
+just add a comment in the code reflecting this discussion?
 
-Cheers, Daniel
+Mimi
 
-> +	else
-> +		drm_dbg(DRM_UT_DP, "%s: 0x%08x AUX %s (ret=%3d)\n",
-> +			aux->name, offset, arrow, ret);
-> +}
-> +
->  /**
->   * DOC: dp helpers
->   *
-> @@ -288,10 +303,14 @@ ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
->  	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, DP_DPCD_REV, buffer,
->  				 1);
->  	if (ret != 1)
-> -		return ret;
-> +		goto out;
->  
-> -	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset, buffer,
-> -				  size);
-> +	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset, buffer,
-> +				 size);
-> +
-> +out:
-> +	drm_dp_dump_access(aux, DP_AUX_NATIVE_READ, offset, buffer, ret);
-> +	return ret;
->  }
->  EXPORT_SYMBOL(drm_dp_dpcd_read);
->  
-> @@ -312,8 +331,13 @@ EXPORT_SYMBOL(drm_dp_dpcd_read);
->  ssize_t drm_dp_dpcd_write(struct drm_dp_aux *aux, unsigned int offset,
->  			  void *buffer, size_t size)
->  {
-> -	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer,
-> -				  size);
-> +	int ret;
-> +
-> +
-> +	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer,
-> +				 size);
-> +	drm_dp_dump_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer, ret);
-> +	return ret;
->  }
->  EXPORT_SYMBOL(drm_dp_dpcd_write);
->  
-> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-> index 7af748ed1c58..e555eb5de275 100644
-> --- a/drivers/gpu/drm/drm_drv.c
-> +++ b/drivers/gpu/drm/drm_drv.c
-> @@ -53,13 +53,14 @@ MODULE_AUTHOR("Gareth Hughes, Leif Delgass, Jos� Fonseca, Jon Smirl");
->  MODULE_DESCRIPTION("DRM shared core routines");
->  MODULE_LICENSE("GPL and additional rights");
->  MODULE_PARM_DESC(debug, "Enable debug output, where each bit enables a debug category.\n"
-> -"\t\tBit 0 (0x01) will enable CORE messages (drm core code)\n"
-> -"\t\tBit 1 (0x02) will enable DRIVER messages (drm controller code)\n"
-> -"\t\tBit 2 (0x04) will enable KMS messages (modesetting code)\n"
-> -"\t\tBit 3 (0x08) will enable PRIME messages (prime code)\n"
-> -"\t\tBit 4 (0x10) will enable ATOMIC messages (atomic code)\n"
-> -"\t\tBit 5 (0x20) will enable VBL messages (vblank code)\n"
-> -"\t\tBit 7 (0x80) will enable LEASE messages (leasing code)");
-> +"\t\tBit 0 (0x01)  will enable CORE messages (drm core code)\n"
-> +"\t\tBit 1 (0x02)  will enable DRIVER messages (drm controller code)\n"
-> +"\t\tBit 2 (0x04)  will enable KMS messages (modesetting code)\n"
-> +"\t\tBit 3 (0x08)  will enable PRIME messages (prime code)\n"
-> +"\t\tBit 4 (0x10)  will enable ATOMIC messages (atomic code)\n"
-> +"\t\tBit 5 (0x20)  will enable VBL messages (vblank code)\n"
-> +"\t\tBit 7 (0x80)  will enable LEASE messages (leasing code)\n"
-> +"\t\tBit 8 (0x100) will enable DP messages (displayport code)");
->  module_param_named(debug, drm_debug, int, 0600);
->  
->  static DEFINE_SPINLOCK(drm_minor_lock);
-> diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
-> index e1a46e9991cc..767c90b654c5 100644
-> --- a/include/drm/drm_print.h
-> +++ b/include/drm/drm_print.h
-> @@ -195,6 +195,7 @@ static inline struct drm_printer drm_debug_printer(const char *prefix)
->  #define DRM_UT_VBL		0x20
->  #define DRM_UT_STATE		0x40
->  #define DRM_UT_LEASE		0x80
-> +#define DRM_UT_DP		0x100
->  
->  __printf(3, 4)
->  void drm_dev_printk(const struct device *dev, const char *level,
-> @@ -307,6 +308,11 @@ void drm_err(const char *format, ...);
->  #define DRM_DEBUG_LEASE(fmt, ...)					\
->  	drm_dbg(DRM_UT_LEASE, fmt, ##__VA_ARGS__)
->  
-> +#define	DRM_DEV_DEBUG_DP(dev, fmt, ...)					\
-> +	drm_dev_dbg(dev, DRM_UT_DP, fmt, ## __VA_ARGS__)
-> +#define DRM_DEBUG_DP(dev, fmt, ...)					\
-> +	drm_dbg(DRM_UT_DP, fmt, ## __VA_ARGS__)
-> +
->  #define _DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, category, fmt, ...)	\
->  ({									\
->  	static DEFINE_RATELIMIT_STATE(_rs,				\
-> -- 
-> 2.17.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
