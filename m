@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8B1C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13175C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D8B6208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:26:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B466C208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:26:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bCazjq5o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D8B6208E9
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UNgUyHAF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B466C208E9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbeGLMfn (ORCPT
+        id S1727642AbeGLMgL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:35:43 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39440 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726885AbeGLMfn (ORCPT
+        Thu, 12 Jul 2018 08:36:11 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37218 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726768AbeGLMgK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:35:43 -0400
-Received: by mail-wm0-f66.google.com with SMTP id h20-v6so5794211wmb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 05:26:22 -0700 (PDT)
+        Thu, 12 Jul 2018 08:36:10 -0400
+Received: by mail-wm0-f67.google.com with SMTP id n17-v6so5860565wmh.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 05:26:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=kBZLPcFa72WGNuYk3Mmtlfkj8Tm7Awu3tpJXUOxMTU4=;
-        b=bCazjq5oi/gnaHw1XQ4UdXLDdtgsm1eZBc3fB8wBFpFkl7jMitN/5q0lIxETIw4sZI
-         4OMOGz4u16SlkKyyZQKvNKayWke0v8OdgJo3SgL2X1geiKCIPPoBgZNGuR/jIxXaINSA
-         EZ6nV37Sxn/Lm6UZ8aMHAMN8V6zYn3qIYAtSA=
+        bh=Xo1D7zw6ZtaNyAkaHreMqFBi7XKPoPT644sdcodOMiY=;
+        b=UNgUyHAFaZmTs4FldA8B3b8exzTYORAryxoP3N2Z5RTOjzh1LxBLBw0junjI7QeSyq
+         ij4T7yiWscMDtKdqxXbZmo5z44/6C2IxR00Yuo15RGHY7w0P8biGD22Gji8ZjcVfA+TE
+         FegDn3c2C4401lDKYvKq/WlDO6osiZprWZuSo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=kBZLPcFa72WGNuYk3Mmtlfkj8Tm7Awu3tpJXUOxMTU4=;
-        b=ri0iI24Wy5vIqs0kgengXRg+gTvVM6/oDVeZMY9TpK0FqYT5PIKxkPPF4k0Ezce6Cn
-         0BJ5IEnmcwpt0fHKS451mBoFT82z8k3jOs8sFJRQ6IBrSayYyNKtSCyML9kZ4CX54UjK
-         XQd1rjT3ZvVg1xY59TS2odQ667SBLN3NgYiWzpJEmKTRd/a6Ryb0jaTya+q32/AzMR0i
-         ifG7s2Lf2SnSicJAiq9EVWbW5ghe6pERtCNowQKXzWkCORRxzCNhI9eMp/HZNRBYoUAX
-         Pkkrb323oOJBz337vBObDRrMz0vX465Tw06g/gLadIu+300NLQbwjfFDKZeaqNVx7Yf7
-         h2qw==
-X-Gm-Message-State: AOUpUlHibx5AEyd7huAHWHd/PbTxvwKc0cd91YkwQXfOutMHGw/BX6TT
-        GXW87PESqbZUDXDIRZV6kLEkiw==
-X-Google-Smtp-Source: AAOMgpeumJhiJMSB3YK3UT1LmuCr2rEOarVtz+shOhlBG5/0/9Kf8JNHcvecElj3q4wYBCTGNN1jTA==
-X-Received: by 2002:a1c:8010:: with SMTP id b16-v6mr1324957wmd.9.1531398381471;
-        Thu, 12 Jul 2018 05:26:21 -0700 (PDT)
+        bh=Xo1D7zw6ZtaNyAkaHreMqFBi7XKPoPT644sdcodOMiY=;
+        b=udBnYeu47hTOfXpFl9IEej4CJr0C1exf08T175dCKC+aHJew2slp1GOT4TYzDtmY6X
+         aOtWtJ0IZpBQYdXKoQHUL4JMGiVlBOIFQ3zK9A6dQ86H0OzW9CKMydft1cEX+bNn6cZ+
+         aNyYsRu6iK7cZvvP2KEU4eTrCkzcQHkZ1Tcmina9LSQwZvd2UKAMHHaV2ATFDysQvdpg
+         vJ7WVNJsPsQk04GbMI0voh24KMCxp0XpnETooEa2UmkrDRMJpeSMuOOwsBLCnYrbo+YZ
+         UbCndwpHQzrJw6KfBgJCcqOAfx1TUM8gysN2CaOAOleMmiAzDG+jAeX808YE4L2gORMq
+         nlQA==
+X-Gm-Message-State: AOUpUlH3DdENL/My6IcaWrvlFwyfAWwQoINtUd9Q2hQnQMxw3yDhCZcU
+        ncuQ8U5nUFUINBHHTtfD36yhEA==
+X-Google-Smtp-Source: AAOMgpdQffpEczZNEX/UFTscGwCIf4Ts7Ftp0DNsKIFWwNVL7LUP1UZRpfMSkG008f/5WMMn5BaVjw==
+X-Received: by 2002:a1c:ae8b:: with SMTP id x133-v6mr1318100wme.125.1531398407524;
+        Thu, 12 Jul 2018 05:26:47 -0700 (PDT)
 Received: from dell ([2.27.167.87])
-        by smtp.gmail.com with ESMTPSA id h12-v6sm2166319wmb.3.2018.07.12.05.26.20
+        by smtp.gmail.com with ESMTPSA id u11-v6sm1691816wmf.28.2018.07.12.05.26.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 12 Jul 2018 05:26:20 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 13:26:18 +0100
+        Thu, 12 Jul 2018 05:26:46 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 13:26:45 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     airlied@linux.ie, hans.verkuil@cisco.com, olof@lixom.net,
@@ -65,17 +65,15 @@ Cc:     airlied@linux.ie, hans.verkuil@cisco.com, olof@lixom.net,
         bleung@google.com, darekm@google.com, marcheu@chromium.org,
         fparent@baylibre.com, dri-devel@lists.freedesktop.org,
         linux-media@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, eballetbo@gmail.com,
-        Stefan Adolfsson <sadolfsson@chromium.org>
-Subject: Re: [PATCH v8 3/6] mfd: cros-ec: Increase maximum mkbp event size
-Message-ID: <20180712122618.GD4641@dell>
+        linux-kernel@vger.kernel.org, eballetbo@gmail.com
+Subject: Re: [PATCH v8 0/6] Add ChromeOS EC CEC Support
+Message-ID: <20180712122645.GE4641@dell>
 References: <1530716901-30164-1-git-send-email-narmstrong@baylibre.com>
- <1530716901-30164-4-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1530716901-30164-4-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1530716901-30164-1-git-send-email-narmstrong@baylibre.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -84,22 +82,100 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Wed, 04 Jul 2018, Neil Armstrong wrote:
 
-> Having a 16 byte mkbp event size makes it possible to send CEC
-> messages from the EC to the AP directly inside the mkbp event
-> instead of first doing a notification and then a read.
+> Hi All,
 > 
-> Signed-off-by: Stefan Adolfsson <sadolfsson@chromium.org>
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
-> ---
->  drivers/platform/chrome/cros_ec_proto.c | 40 +++++++++++++++++++++++++--------
->  include/linux/mfd/cros_ec.h             |  2 +-
->  include/linux/mfd/cros_ec_commands.h    | 16 +++++++++++++
->  3 files changed, 48 insertions(+), 10 deletions(-)
+> The new Google "Fizz" Intel-based ChromeOS device is gaining CEC support
+> through it's Embedded Controller, to enable the Linux CEC Core to communicate
+> with it and get the CEC Physical Address from the correct HDMI Connector, the
+> following must be added/changed:
+> - Add the CEC sub-device registration in the ChromeOS EC MFD Driver
+> - Add the CEC related commands and events definitions into the EC MFD driver
+> - Add a way to get a CEC notifier with it's (optional) connector name
+> - Add the CEC notifier to the i915 HDMI driver
+> - Add the proper ChromeOS EC CEC Driver
+> 
+> The CEC notifier with the connector name is the tricky point, since even on
+> Device-Tree platforms, there is no way to distinguish between multiple HDMI
+> connectors from the same DRM driver. The solution I implemented is pretty
+> simple and only adds an optional connector name to eventually distinguish
+> an HDMI connector notifier from another if they share the same device.
+> 
+> Feel free to comment this patchset !
+> 
+> Changes since v7:
+> - rebased on v4.18-rc1
+> - Fixed whitespace issues on patch 3
+> - Added Lee's tags
+> 
+> Changes since v6:
+> - Added stable identifier comment in intel_display.h
+> - Renamed to cec_notifier in intel_hdmi.c/intel_drv.h
+> - Added Acked-by/Reviewed-By tags
+> 
+> Changes since v5:
+>  - Small fixups on include/linux/mfd/cros_ec_commands.h
+>  - Fixed on cros-ec-cec driver accordingly
+>  - Added Reviewed-By tags
+> 
+> Changes since v4:
+>  - Split patch 3 to move the mkbp event size change into a separate patch
+> 
+> Changes since v3 (incorrectly reported as v2):
+>  - Renamed "Chrome OS" to "ChromeOS"
+>  - Updated cros_ec_commands.h new structs definitions to kernel doc format
+>  - Added Reviewed-By tags
+> 
+> Changes since v2:
+>  - Add i915 port_identifier() and use this stable name as cec_notifier conn name
+>  - Fixed and cleaned up the CEC commands and events handling
+>  - Rebased the CEC sub-device registration on top of Enric's serie
+>  - Fixed comments typo on cec driver
+>  - Protected the DMI match only with PCI and DMI Kconfigs
+> 
+> Changes since v1:
+>  - Added cec_notifier_put to intel_hdmi
+>  - Fixed all small reported issues on the EC CEC driver
+>  - Moved the cec_notifier_get out of the #if .. #else .. #endif
+> 
+> Changes since RFC:
+>  - Moved CEC sub-device registration after CEC commands and events definitions patch
+>  - Removed get_notifier_get_byname
+>  - Added CEC_CORE select into i915 Kconfig
+>  - Removed CEC driver fallback if notifier is not configured on HW, added explicit warn
+>  - Fixed CEC core return type on error
+>  - Moved to cros-ec-cec media platform directory
+>  - Use bus_find_device() to find the pci i915 device instead of get_notifier_get_byname()
+>  - Fix Logical Address setup
+>  - Added comment about HW support
+>  - Removed memset of msg structures
+> 
+> Neil Armstrong (6):
+>   media: cec-notifier: Get notifier by device and connector name
+>   drm/i915: hdmi: add CEC notifier to intel_hdmi
+>   mfd: cros-ec: Increase maximum mkbp event size
+>   mfd: cros-ec: Introduce CEC commands and events definitions.
+>   mfd: cros_ec_dev: Add CEC sub-device registration
+>   media: platform: Add ChromeOS EC CEC driver
+> 
+>  drivers/gpu/drm/i915/Kconfig                     |   1 +
+>  drivers/gpu/drm/i915/intel_display.h             |  24 ++
+>  drivers/gpu/drm/i915/intel_drv.h                 |   2 +
+>  drivers/gpu/drm/i915/intel_hdmi.c                |  13 +
+>  drivers/media/cec/cec-notifier.c                 |  11 +-
+>  drivers/media/platform/Kconfig                   |  11 +
+>  drivers/media/platform/Makefile                  |   2 +
+>  drivers/media/platform/cros-ec-cec/Makefile      |   1 +
+>  drivers/media/platform/cros-ec-cec/cros-ec-cec.c | 347 +++++++++++++++++++++++
+>  drivers/mfd/cros_ec_dev.c                        |  16 ++
+>  drivers/platform/chrome/cros_ec_proto.c          |  40 ++-
+>  include/linux/mfd/cros_ec.h                      |   2 +-
+>  include/linux/mfd/cros_ec_commands.h             |  97 +++++++
+>  include/media/cec-notifier.h                     |  27 +-
+>  14 files changed, 578 insertions(+), 16 deletions(-)
+>  create mode 100644 drivers/media/platform/cros-ec-cec/Makefile
+>  create mode 100644 drivers/media/platform/cros-ec-cec/cros-ec-cec.c
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+How would you like to handle this set?
 
 -- 
 Lee Jones [李琼斯]
