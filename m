@@ -2,116 +2,191 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0829CC476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB1CC476E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:19:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE1DF20849
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:17:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE1DF20849
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1044620849
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:19:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9L1V6Tl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1044620849
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732391AbeGLQ16 (ORCPT
+        id S1727159AbeGLQ34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:27:58 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41040 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726816AbeGLQ15 (ORCPT
+        Thu, 12 Jul 2018 12:29:56 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:40760 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbeGLQ3z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:27:57 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CGDTDv069010
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 12:17:43 -0400
-Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k66ggbrkc-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 12:17:43 -0400
-Received: from localhost
-        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 12 Jul 2018 12:17:41 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Jul 2018 12:17:38 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6CGHbfq6816216
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Jul 2018 16:17:37 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64718B2067;
-        Thu, 12 Jul 2018 12:17:35 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 435D3B205F;
-        Thu, 12 Jul 2018 12:17:35 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Jul 2018 12:17:35 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id AB83916C2E34; Thu, 12 Jul 2018 09:19:57 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 09:19:57 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <Pine.LNX.4.44L0.1807091519180.2462-100000@iolanthe.rowland.org>
- <20180710093821.GA5414@andrea>
- <20180711094310.GA13963@arm.com>
- <20180711123421.GA9673@andrea>
- <20180712074040.GA4920@worktop.programming.kicks-ass.net>
- <20180712115249.GA6201@andrea>
- <20180712134821.GT2494@hirez.programming.kicks-ass.net>
+        Thu, 12 Jul 2018 12:29:55 -0400
+Received: by mail-lf0-f67.google.com with SMTP id y200-v6so24739801lfd.7;
+        Thu, 12 Jul 2018 09:19:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=Vyz4XxstOcV8pbG74Qmupu88IRUf9qTh3TTCwU1140Y=;
+        b=U9L1V6TlGNyyQWynDhjK21uxg3cdBuwc5nkY8atWnrVc3asoAUXwLu+/+Z8aC/vuhx
+         /gHJRK+2RwS0p4LOBtfLbdQo36M6pEiM7UwyTTVGlxIBrKjv1jFMstgFh1vKMZkJeFde
+         2/NeMxoAh8pR4PfTW7gauUlWdYX6qS7LjIh8tjdTnRPoeJpmBKzOd55HPax2Cu97FAx4
+         xb0Z73Iblr81CNwYr4hbA5I5n9nijT1zRig2q1q69uSsPG6um5wzIrmjDdi9lbubmUS4
+         yNfM9sBjOMQGDIyDkRnCEx2+sJw2eHxQD/bRaBjPJaJSK8rW7nRrOWRnIsNvYOukhJnt
+         Udjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=Vyz4XxstOcV8pbG74Qmupu88IRUf9qTh3TTCwU1140Y=;
+        b=PPe3lSOHK2zr9fKdCDIzr/pjyPwskyjt15BhWU6nl6X4uxFApVCXRKC66ndExVa3iY
+         rWeQkj1o/RPtDLiUyljVc8TUBemVoykJ0vtRAprPciSHKIXwrQ0p9fNAu+reN7m43nig
+         /R2I+fBzAYvlpQ6loc3DvgbB7dbalkat/c8dG8uq+ploWMyBqRwM/zWMnFYO1R8qu8Y/
+         4pGYQZ+ceTk8U+haIFmvhDCoimLB9rcBzpR0KL/dP4Ni7wU/QXdpCe0ND97Pm6PEYk7m
+         pru/nVo5gPJjJ1FKARZFRnA9yNkYNYYBuo6+HkSrXiPOuWrcCLF+qJxnGZT++5xRim1m
+         0l5g==
+X-Gm-Message-State: AOUpUlGCd3mNF99VsAbrkjuVoOCIm2euSER66W/FuCUcHhWqIxsIz0TF
+        uv8tlVa0zw2gn9T+89lscv8=
+X-Google-Smtp-Source: AAOMgpcu411h3wi1yPK4obZHBXHQKZ6xqwoCrYWfOfq0aiOAjnc/wtHazRLuBdzMYxQyjcivcpk3Tg==
+X-Received: by 2002:a19:d44a:: with SMTP id l71-v6mr2213897lfg.28.1531412379056;
+        Thu, 12 Jul 2018 09:19:39 -0700 (PDT)
+Received: from ?IPv6:2001:2012:22e:1b00:f2e2:9015:9262:3fde? ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
+        by smtp.gmail.com with ESMTPSA id y74-v6sm6179292lfi.61.2018.07.12.09.19.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 09:19:38 -0700 (PDT)
+Subject: Re: [V9fs-developer] [PATCH] p9_parse_header() validate PDU length
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     ericvh@gmail.com, rminnich@sandia.gov, lucho@ionkov.net,
+        viro@ZenIV.linux.org.uk, davem@davemloft.net,
+        v9fs-developer@lists.sourceforge.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller@googlegroups.com,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180712110211.25535-1-tomasbortoli@gmail.com>
+ <20180712114304.GB17774@nautica>
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <fed36388-4e18-49f4-ec26-2b6b3d08ef54@gmail.com>
+Date:   Thu, 12 Jul 2018 18:19:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18071216-0068-0000-0000-00000317260F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009357; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01060331; UDB=6.00544266; IPR=6.00838250;
- MB=3.00022118; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-12 16:17:41
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071216-0069-0000-0000-00004501CB5B
-Message-Id: <20180712161957.GR3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=613 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807120171
+In-Reply-To: <20180712114304.GB17774@nautica>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 03:48:21PM +0200, Peter Zijlstra wrote:
++ Cc: Andrew Morton <akpm@linux-foundation.org>
 
-[ . . . ]
+On 07/12/2018 01:43 PM, Dominique Martinet wrote:
+> Tomas Bortoli wrote on Thu, Jul 12, 2018:
+>> This patch adds checks to the p9_parse_header() function to
+>> verify that the length found within the header coincides with the actu=
+al
+>> length of the PDU. Furthermore, it checks that the length stays within=
+ the
+>> acceptable range. To do this the patch brings the actual length of the=
+ PDU
+>> from the different transport layers (rdma and virtio). For TCP (trans_=
+fd.c)
+>> the length is not know before, so we get it from the header but we che=
+ck it
+>> anyway that it's within the valid range.
 
-> I'm still hoping we can convince the PowerPC people that they're wrong,
-> and get rid of this wart and just call all locks RCsc.
+Still for TCP it you could read "garbage" pre-allocated memory but I
+don't know how much it is a risk, it might be a good idea to zero it
+post allocation (I mean pdu->sdata). Allocated at:
 
-As always, I must defer to the PowerPC maintainers on this point.
+https://github.com/torvalds/linux/blob/master/net/9p/client.c#L236
 
-							Thanx, Paul
+> Just a note on transports here, I totally had forgotten about trans_xen=
+
+> when we discussed this earlier as it is fairly new, but it looks like i=
+t
+> sets the length in the fcall properly so it should work without any
+> change.
+>
+> I however cannot test trans=3Dxen, so if someone could either point me =
+to
+> how to set that up (I couldn't find any decent documentation) or do som=
+e
+> very basic tests that would be great.
+
+>> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+>> Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
+> Looks good to me, as the rdma/virtio part come from my suggestion:
+> Signed-off-by: Dominique Martinet <dominique.martinet@cea.fr>
+
+True
+>
+>> diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
+>> index 3d414acb7015..002badbcc9c0 100644
+>> --- a/net/9p/trans_rdma.c
+>> +++ b/net/9p/trans_rdma.c
+>> @@ -319,7 +319,7 @@ recv_done(struct ib_cq *cq, struct ib_wc *wc)
+>> =20
+>>  	if (wc->status !=3D IB_WC_SUCCESS)
+>>  		goto err_out;
+>> -
+>> +	c->rc->size =3D wc->byte_len;
+> (nitpick, I'd keep the empty line here. If you don't mind I'll add it
+> back in my tree; this doesn't warrant a v2)
+>
+
+Sure,
+
+Tomas
 
