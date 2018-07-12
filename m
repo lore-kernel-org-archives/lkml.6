@@ -2,594 +2,692 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3141AC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E03C9C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:38:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C202084E
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:38:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5454220878
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:38:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="T3hIZAaS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C202084E
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="paJNK5k8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5454220878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732549AbeGLPsW (ORCPT
+        id S1732571AbeGLPsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 11:48:22 -0400
-Received: from mail-eopbgr710054.outbound.protection.outlook.com ([40.107.71.54]:62720
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Thu, 12 Jul 2018 11:48:52 -0400
+Received: from mail-dm3nam03on0065.outbound.protection.outlook.com ([104.47.41.65]:27505
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727277AbeGLPsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:48:21 -0400
+        id S1727642AbeGLPsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 11:48:51 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EXOmG2wwKGmdJTKIxSk9j58/2+1dzinWvUCIPt36964=;
- b=T3hIZAaSu1wJA/uXCIIQsdhz7AyysR567xI/+YDnjCaZyw43ng94EvrY16K4hsOfnF9bZ+9X4ANV9lkB78HLCOaFOKQtdJq83F9cu0FWgoGaqxlnERztqNqzWfpO4TQCu7m8xE3xIDm+2r8HAqfKmRZVHtES/fqB+rntCZ5KKGU=
-Received: from BN6PR03CA0066.namprd03.prod.outlook.com (2603:10b6:404:4c::28)
- by BN3PR0301MB1218.namprd03.prod.outlook.com (2a01:111:e400:403d::18) with
+ bh=mQ6DAGBoou4fGBLS086Ei3HL6U+7jK8Bkd8PUR68UFw=;
+ b=paJNK5k8qbeVR1yvJUc4DjZKPcgfFQ01LhWX1bX7X+rGyv0Z46qLYEz+Fg1D8nQgqCCYQMlOnAi/+yiV97Op4XP+QLYNTgCgMx4USR7o3YNJo9x5QnTPnw5v75B4JAy1IfXKeShm1CLoQMlvHNSMtD5qup+uJqs5PDt70pZeQ30=
+Received: from BN3PR03CA0099.namprd03.prod.outlook.com (2603:10b6:400:4::17)
+ by DM5PR03MB3132.namprd03.prod.outlook.com (2603:10b6:4:3c::29) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.930.20; Thu, 12 Jul
- 2018 15:36:08 +0000
-Received: from BL2FFO11FD009.protection.gbl (2a01:111:f400:7c09::178) by
- BN6PR03CA0066.outlook.office365.com (2603:10b6:404:4c::28) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.906.26 via Frontend Transport; Thu, 12 Jul 2018 15:36:08 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.930.21; Thu, 12 Jul
+ 2018 15:34:38 +0000
+Received: from BN1BFFO11FD018.protection.gbl (2a01:111:f400:7c10::1:151) by
+ BN3PR03CA0099.outlook.office365.com (2603:10b6:400:4::17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.930.21 via Frontend Transport; Thu, 12 Jul 2018 15:34:38 +0000
 Authentication-Results: spf=pass (sender IP is 137.71.25.57)
- smtp.mailfrom=analog.com; pmeerw.net; dkim=none (message not signed)
- header.d=none;pmeerw.net; dmarc=bestguesspass action=none
+ smtp.mailfrom=analog.com; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=bestguesspass action=none
  header.from=analog.com;
 Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
  137.71.25.57 as permitted sender) receiver=protection.outlook.com;
  client-ip=137.71.25.57; helo=nwd2mta4.analog.com;
 Received: from nwd2mta4.analog.com (137.71.25.57) by
- BL2FFO11FD009.mail.protection.outlook.com (10.173.161.15) with Microsoft SMTP
+ BN1BFFO11FD018.mail.protection.outlook.com (10.58.144.81) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.906.21
- via Frontend Transport; Thu, 12 Jul 2018 15:36:08 +0000
+ via Frontend Transport; Thu, 12 Jul 2018 15:34:38 +0000
 Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id w6CFa7Xj003741
+        by nwd2mta4.analog.com (8.13.8/8.13.8) with ESMTP id w6CFYbMV002810
         (version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=OK);
-        Thu, 12 Jul 2018 08:36:07 -0700
+        Thu, 12 Jul 2018 08:34:37 -0700
 Received: from linux.ad.analog.com (10.50.1.113) by NWD2HUBCAS7.ad.analog.com
  (10.64.69.107) with Microsoft SMTP Server id 14.3.301.0; Thu, 12 Jul 2018
- 11:36:07 -0400
+ 11:34:37 -0400
 From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>
-CC:     <knaack.h@gmx.de>, <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <Michael.Hennerich@analog.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stefan.popa@analog.com>
-Subject: [PATCH 3/5] iio:adxl372: Add FIFO and interrupts support
-Date:   Thu, 12 Jul 2018 18:36:00 +0300
-Message-ID: <1531409760-20070-1-git-send-email-stefan.popa@analog.com>
+To:     <jic23@kernel.org>, <Michael.Hennerich@analog.com>,
+        <lars@metafoo.de>
+CC:     <knaack.h@gmx.de>, <pmeerw@pmeerw.net>, <mchehab@kernel.org>,
+        <davem@davemloft.net>, <gregkh@linuxfoundation.org>,
+        <akpm@linux-foundation.org>, <rdunlap@infradead.org>,
+        <shreeya.patel23498@gmail.com>, <mirq-linux@rere.qmqm.pl>,
+        <thierry.escande@collabora.com>, <himanshujha199640@gmail.com>,
+        <gwendal@chromium.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <stefan.popa@analog.com>
+Subject: [PATCH 1/5] iio: adxl372: New driver for Analog Devices ADXL372 Accelerometer
+Date:   Thu, 12 Jul 2018 18:34:23 +0300
+Message-ID: <1531409663-19846-1-git-send-email-stefan.popa@analog.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
 X-ADIRoutedOnPrem: True
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(376002)(346002)(2980300002)(438002)(199004)(189003)(126002)(2906002)(8676002)(316002)(6666003)(48376002)(107886003)(54906003)(426003)(16586007)(336012)(246002)(47776003)(44832011)(4326008)(478600001)(72206003)(6916009)(2616005)(476003)(106466001)(50226002)(26826003)(26005)(14444005)(8936002)(5660300001)(486006)(2351001)(36756003)(51416003)(77096007)(50466002)(305945005)(7636002)(356003)(7696005)(186003)(106002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN3PR0301MB1218;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD009;1:v69NOaUBupkA5bHJIKv2rOixlNrUsfp8Dw98Y4BXjRPfUBuuz07O9T7KPJeSx1xY+EEQD3IohnO6ZArCfMBJ0Nj1H/a3UMD/qqoUOz0FQjBtJVwBl0bQ1l40fDxZ5q6B
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:CAL;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(39860400002)(396003)(2980300002)(438002)(189003)(199004)(126002)(44832011)(476003)(246002)(48376002)(26005)(72206003)(966005)(356003)(186003)(77096007)(51416003)(50466002)(2616005)(7636002)(7696005)(486006)(107886003)(54906003)(6666003)(478600001)(47776003)(8936002)(26826003)(6306002)(1720100001)(336012)(4326008)(106002)(16586007)(39060400002)(14444005)(2201001)(5660300001)(50226002)(106466001)(305945005)(36756003)(575784001)(426003)(2906002)(7416002)(316002)(8676002)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3132;H:nwd2mta4.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1BFFO11FD018;1:6dWDGyLQavZs92HztNyHVhPdD6ic4glJwLrSOWMnXsb2ASEO0R1Aq2xL2ls4ymH9gfql2yPWRgzYjYz4TgzhcmOW1CP+Vr2GoYjmBmvg/8a1dHUZrVUWblhlU20gfAqr
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 48253e63-a041-4b7b-36ef-08d5e80d3041
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(5600053)(711020)(4608076)(2017052603328)(7153060);SRVR:BN3PR0301MB1218;
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR0301MB1218;3:FKkPdmbN6BIWgmC11HAjddGWjBM/Osi3DZ8xHSqrLy/pqXsK9p+wmqcuKrDHv0qVdRNFV6Gp1O2U7QmT+5ZZDpiEX1OJfN+wF1tPMD4W6pXwgXLrqhblDKEfJzSdLIHtEVTadqTfFc5aDxIeoHN01ZCRL6EPre6GZPp+IlGp6LiOgzNjrG3Vi3P0gtNk4rGoEAHMMRrM49MaISXwz6BVJyb3UzNLeLPRATCLphLnZn7wtt77mr+y6iJ+EQE+aEu4CHNfcLT44PufEftlKoctIn5WjX4J70mY2dD5fibDiJVJIkoD97pKGXFfTvRf25yynz+cr8giYYzHs9wdP7MFQlko6wqETGIYaU7oYopf6Yk=;25:Kee9XF7aoB10ra+AoyLnCe0yn81JDCC6qI7SY7V/6NhrwNW2yU4IlzdRYy+GXNwi0nQXUO3zqtHURAt3PfP+NsDIZ1wvySjDlLl2ogYpZcfaj/W7te2AeXkKseCLcC+47vwB9fliiBfYW+iBGAW5s/Z2S6mQBWCWAkVdAjjEdQGMs2oaO26GshiYGWBaVEgmMzE5guWuG2OBdVhILuunmBZUTgqslgRGuOOQvzWiBeFxGgpAunPtI/JGkJOujawnDdrOZ18QQ4mldKmsc1IIjmuaAZJhEQmul0hTL4PMYcLHjXbeMUuvV9iYBvKyd8nqihhw8fK0MpmYPqOcazQ51g==
-X-MS-TrafficTypeDiagnostic: BN3PR0301MB1218:
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR0301MB1218;31:6VbI9Z+4jZSN81E/dBpSGMahMiDhKGYZ4F7NNpaQ9pM8fX/g7PBoWlRrepT8yJnRxspKFJbisCxYvrW7NxxkP+yZlH2F2LUcg3buF6vkRt+2gBSZPr5ANZQutUY1ZKv5LYKw2EGZlQFT5MfHF1U9WPTQWcUM4Kr4TzoSrBN4zeRsW2fG9JuSiuNf3EzTFYe33nh7h7VxXLW0eBzfxfDSOu1h2kQ2iK800GLo+tHnzY8=;20:++k965CX9QwqwZepP6OjSNXWyFQWDEGvNENUZSzJxlSzHiNMbMI+UojZeUv8p/2fDgPICPBJADvZwqBATRh4P7tniw5pwMzrsIXL569dNHB8vDFxmKIN2BvssffvQETtT/M4Zt8uwxjlkeQ+JC/N/4sXL7woz4MxA0ghXrfwWVyr8m2XD9xm2fXvx7yvLOVLWnh29ZFOOMnOp1EEN14nk511nE5juFuyuX4f/BT+ThX5H/W9Ttopp9XxumngMd02oXtyTHsfhaeg5N2P6vBTDEnhPWCoLnlY/xJnEDcCNXcrW7j9GV61uhkH/wbuYOpGKDzba7Tvka+QONgbB59/hmzaUcymXRDpN+ZRTfE5ZM25L/lf5ROKDYsE/BZU5OEOqjTXHJoYrhx15EUkM+iNHYZ8FdaQ2PLnTTaPK//dI8BAcWXAx4WhESmVo21e0MLHwhhRxwyzI9bkZpZkNSZptm89eR9voduB+LZWt6CGsE/gCX2f1+bOCpfYAMxcxpKz
-X-Microsoft-Antispam-PRVS: <BN3PR0301MB121837519C0A833F8F9BC9A59D590@BN3PR0301MB1218.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(232431446821674);
+X-MS-Office365-Filtering-Correlation-Id: e6a950b2-960f-4cb7-63d0-08d5e80cfaa0
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:DM5PR03MB3132;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3132;3:/Pmfbry9+WmOV/96Tt4RYQCuZX12QdfSvxZZP/hy81qh9xuHtw3EhDMbNTlvsj5l2meONLO6sZgOfnJXw9YK2CCKCrmT/Y8rcb7ccISgs3s0YwR5rDBTTL77KmNcyJbAqmgfiNqutgjEqzoRFxqicoNfbLRPMvdzp7z71j+RMRWqChiBZahOHmAr2re5qIEBeIA7aPzOYW5SH2jkVttjQ85dkVyUc2SIzXSiOFflvqQdZh9WY0qWCne5QK7P+xMDJqsS4p0hqsEhpMrMIUPDA06ELsY6neYowjZAuH7bcWzI6LIn/fgp6igJ7f1Uc80AUTdXFRd+ZcjFEH3xCajYB7MArqPsBg7jSz2kvc5a6s0=;25:n2LYWFIvF1hcoCKPBDADh3O42MrPLAnlAj8g7pNUeJUjLArHu1lFbsMdJZABQ7iATks3jrLb0ChzOX/FVxYgB4si8o+vUjVQ9uYSEl5J0pVCMllmm4/SbMvgdN+JPJwqNW/e1Niii4MUxKJaIu+k6TsVK7/3oT/m4c9mXNJt8G2pUws2H3IBKZLBPN8yKONR41GH4kVH44TY//iGuKmRGj7FAVoacuv4QcH1QzNqXLsD0jgaBCLzayqZKnF6d4Lys0WeMPOxXd6ZQ1rD4TmWGe82CoYU6FNQvF7uIZ/uxK8dJpPfYgl12HHhnX4f2eSHPBraTzFzQ/Hl7+5EqkrXJA==
+X-MS-TrafficTypeDiagnostic: DM5PR03MB3132:
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3132;31:ZyR9fpoL7YVkJyPluo41lD+77DG5ZCXAxTbCjz6sva49e7iojCXokP1sgv6KY0ER3aFQTyjsA/7DCarM32ZOnbluCDm/GEdzhwU22Q7BLORoqP9B03eF9eNgstrBojYaBI+viTXVQ7AFJ5eZEAZ7ifGJy1eCNPIcyFlPmuNhuCb8t83oblbWOKiM7qxVOKJrNeaJJC4N8/Tf7CKqfCNu9cUAr/2hNKxRQ2rPpLovCUw=;20:djm+7hQYbkulcOYJwcptCatcNrX8mcnW08P/RCQKDmfF3jB1pbnqqPWY14696sWIpIBhVxkvDtQWFohSvsWvbZnVg2wtewbTjxr6IguKhciF3Mc9kyS0U3L/gy03IfoYTb6qusRjK4o+3Kk7WCYAe0q0npRRyj1CO0DIxbg1OydAZEt4gjXMdR+Wdjl98S/5GKdKC9Vn/FTvA0kV35toJupHx/H0HT0/Wr5jZT3Ix34/g+RlJTYDaCUe6ls/qPpX87UFVT4E05jQbwi/FLrIOQIwYAluzMFgRASE0x8UxhsOB98RQFxudA0TWFWutHbfCAZGkD4d4dFE8y8QRe/qgV+cOPj/znK/ycseBEemPS4QLfC2GC/m639UT7NSvFNfjTgUJsxYDEll7wlhLqecMJ6tTbvcfNjaEf7kpTlr1/3CzbZU/9JweHn8FyS093x36c4GbRhYTrelHxqIL0yHUoOomqVmP4tscKFh5+dSYxiCrfSBG55wQKMQaNu0Ttsz
+X-Microsoft-Antispam-PRVS: <DM5PR03MB313267F2E641ACF1A1767A0C9D590@DM5PR03MB3132.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(270121546159015)(9452136761055)(232431446821674)(170811661138872);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231311)(944501410)(52105095)(10201501046)(93006095)(93004095)(3002001)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:BN3PR0301MB1218;BCL:0;PCL:0;RULEID:;SRVR:BN3PR0301MB1218;
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR0301MB1218;4:Doc+pJRdj+RSqemiifp9uKykx6l24R16BjuHjjXFn3N3m+Yi+8Ly0By1qRpYI0/nW+LziyQtDa1qUFcaBjBcEuK4vyYwj0aqaAKBAELCAy7taGfDM0POevrC61WTU1VM8pgZHk7PlIZvG1H+m8yyweZQu6SDNuEILHl6/zp+ZCc5bXF7Jmx45rJCMYleMx9x0d/6dk6PKGFzc44N9POFH0oalSRxcIIgnBAdN640DtC0v8bg3vevStmQHasYC3Cu+S/0h5NYkoRyflhkpsQ+R5x+JyL/b69vowWrkhZ9zULENCovEmDVBZs8H14iP6je
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93004095)(3231311)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:DM5PR03MB3132;BCL:0;PCL:0;RULEID:;SRVR:DM5PR03MB3132;
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3132;4:ctmM16qq7Fybjz/PRh/W5/f14D2qqZm3ZpkHJvXf/u6rXllqwY6HY4kJoUNp2cR96FExEnMYw6LdgCt9YlvV41UvDFyX7/wdJnBx7IgnggLyrgJKDZGI+miqizDzy3Si9Ncoa9W7FcTARA3+HQeCrQM4qqPNZsx+diwdiCCSM4aetmzfaOHxVIa+0iWXmm3MV0vcA5iRoU14TUkduaqOrl8xZdwrU/cdfCSoHNvqQPdNqpVm/Hie89JclP2ayc0LzdyymKM0bcc3m39VZtPJnD4tk9yDQWk/0P+/Ee3R5g2cBZgVK7LcSFqLIUmkLjnz9XT3kmd4HkmCzb3Og9jS7gKcWO84ba/vyn7DEInKA1AuSbLc/3T8TDLupmHZ3qj3YUUuG0eS35Qd5G/2oXQV5bhU4jFZhkyns+WuErrO5Sc=
 X-Forefront-PRVS: 0731AA2DE6
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN3PR0301MB1218;23:Nq8T20b1LAC0M9iJiHO8PSAr5PVnGV3uvp+Zie3?=
- =?us-ascii?Q?5UYU/5VOaKwT07GzmpwDJdCxMxQ/9AlEWbpycCJUU2rGlzrodesQK/zTGD9V?=
- =?us-ascii?Q?+QFtTya/rzlrmvxzLhpy5C9GUDjbGmSk8mm6JB52XSiiNPo6PaLLMIHXJc+A?=
- =?us-ascii?Q?i1ncMLzR4hkH2IyD+YQj12u8sNKxeT7Lhnibm83Pct7A1kb14zwIBw940pZk?=
- =?us-ascii?Q?REn0bpPODDmpnFeN1pm0LX23zVvGYVK8MwJ6X07gk8GQ92rrCb/3EWN+7VVA?=
- =?us-ascii?Q?GasNft45zPA3M6UXOkRBYfbxdfkaw/EMKCIGf0/1FTLfel+tI3EzvgtdhM0T?=
- =?us-ascii?Q?TOMuMXjNzxGg4DolV3LV1UMlR28DCoKMYtt72q64xWgkNaZeUPN722epR/fi?=
- =?us-ascii?Q?Me9dpDLZJAh6igT8OVJbkJPQVQwyT7Fo2o4wyBdzhl46KVG0DWbuZkriFrlD?=
- =?us-ascii?Q?OfykDq/Steb/50YFRyepOgVGU8obDymorbh9OTS/HYn/oZajZAErf3ABklHl?=
- =?us-ascii?Q?EQ53V5qsXr0rOUHp5mgEpwIoTgkFAEcKKbVOrS1V7+u/kxzx2yJpu5IJJfU+?=
- =?us-ascii?Q?lVmtOgjSslKuhwok5WdeceVMdPEJs7UXNgFRPy0P2Iydlb1EAg54+xWdrau/?=
- =?us-ascii?Q?9oqdTO2RiJgbHSutl4kHMi7BW0YxWhaxXZBOMj0t09kcOZmWwGkB8AclSOoD?=
- =?us-ascii?Q?XDyOLcOtldKygEC2ZPuNQNVXt7gsLieDmkuOAJB7S06ROC0RnO51F7+qUvSG?=
- =?us-ascii?Q?64jotiPWCn033spGcZ4JhG92XlQnTDBRVRrYP6ULGLCVqRhPqn77Hh5NIFcJ?=
- =?us-ascii?Q?EeBCbGXYsbx7K+F/r0liVmpQvrv+rV8QnC3jJMzwE2uErjkyhRW/CfXaOgSI?=
- =?us-ascii?Q?E/hjIkOnlZsQLKW2HZSPCmOajjXawiGi2qPxm9FWP4Vjyufkq/c8mGIMD3n7?=
- =?us-ascii?Q?s9Ega+DOkp9hK0hSHfYtj6B7gFq5p4rZtMGVYrz4f1VMQeF+iewQxh+FK32y?=
- =?us-ascii?Q?ZnTSOypZnR4RrpPR18yKtHTOvzS5jybMidF3z3BrsZ2CrBjnGV/S2JhvscDI?=
- =?us-ascii?Q?DJqOSQvE=3D?=
-X-Microsoft-Antispam-Message-Info: Zi4nSksbgr95S3sbEEd/ZoUHRhbQklpjDHrbtA17IXQs2gPvmxnzakL7ksKDMRgyksgmR3xMOThRSyp/IsckmOMpsnZDn1rfBRYrKIRBPPTGH5hel+miM+p3837YqDsqgM93IiJXEqAHVnuYd1ioiG5FnkNj7QAhTj6MHSvY3GLZYooUTGDvj14c6zwcDezTKn3vVPalNljw4NLmfdT4IzyPykLNAogXj6F622dMPNL4Obj1qwBhqaypc+wVPswRD6GugGEnrm1hKMXY7+dQpCwZski/e5HZqCxytpgcDX7nV4WxdZ2YvhbXpgKAswX6A8dzbZ/M3NET9bGi2g/7EPRT5ZqwBDaTFij89+FKfko=
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR0301MB1218;6:dez1mzE8wuub1tfSakUOIfgn1vk1H7oRn2uOyDKGoGQhliXfbtrKOOOky6L+jitM7NYaMrVWKfqm8kI+GfBOfvaRPvv08bya0ZL1y0vGaxDp2JBR08wgIiLBoS7oEwNhPo6XgjdAt5Vtx6Pf99oTockNaJhkqfvixlLYs/ISUXq3QntE4TPB0bYAV6U4BlgS6qFMCaUAOd/LMcwPbMmJdsJz08RH0skcmvJTF5Yt013rX3STd4PGvN02uyGmBIl1Co4zllPvw1RLzjxKmkaCrduYuaLlFBDmu9fOY6PoBYcczzpp21DLAIHpuF3mEYDv+oiOQAmToO9d4wh5PONMI8gNa7N43wNolUR064aAElIh/dLHYphZ1HeVCzVMs/7a0VeYYOpQ5ZUoslpSe2hpdxWBukgGbLqekTa5nsvW/+0vfk4D9+HCF16Gn2vyBA+2TVQ+6BiqGiEVQywGusYRZw==;5:UGRU4kMpzS2b5H1VEnWhHrgaJufMpwFgDF3SPj5VCZX9PFh4EfC2QeRoC7ZYSXq4YZgIqIwn5JDnG8tFXbE6DCtgzXE7qyY8umuTwVqfRcJCyW33SZ/N+k9OBlwIW2Ex9Cg6rf0iYqXr8MVsnPPQwE7rSjzpiCSuBfMGaVBjwGQ=;24:rOLGRZxAFaljFYMyRNgcV5bDVpNxWgb1mvMsb40Remz/fVLOv3DGS35XhuJQFKtXsmcYiW3JIKzrvDhEsIVjTFBVWOYUl7xRJdSe4Nzvurg=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR03MB3132;23:DJIWxpHveryyuSjWlQQaaHPjn/FY4vveZjBdcAyXf?=
+ =?us-ascii?Q?Rlv/owdMtBkSZHol7d3Hpq9eD3Sq8tdocs0MxIgm0r8mtixFMJGYicfEKuiM?=
+ =?us-ascii?Q?p8sNAIK11zaMCuuBjh0wtjtHx/3rFT0S/3/zTMnJsLY6WaJkv2s01+1fN6bQ?=
+ =?us-ascii?Q?B4dwOB8WPTYYFGa6x6mBpsTxS3inkxBxVhgPEOMTGaR6QEa3Fe3S/+MRF26m?=
+ =?us-ascii?Q?E5W23ZKjNFG/LEjId8pBEd7g6UV6sVHNFhxf5Q25mKUoVQjR5hpR3bkDmlUH?=
+ =?us-ascii?Q?nWc5JaO+BHHI5BuTG/aDMaNn6HzwV76kf/GxW2erZg3u+SyukO4Iug7roMUv?=
+ =?us-ascii?Q?cpyW3lnxUdw3ro9CKWhKr+HJDOjz2HFU28Pdkp3XgqirS7jYvYZ5yBRkITEm?=
+ =?us-ascii?Q?9X68WOLWvgLUOi5siO2bTS6K86rkXojD8uoatraM+mrnheoT13abp3723KXb?=
+ =?us-ascii?Q?zSUL0p6+RZtuHcEYihrtUzNIFHtGZ/RtnNOm0F83FSRzwx9Jq9xUagJRj2pI?=
+ =?us-ascii?Q?kwY6vK2H4dNjeqqOwOt1kXThobM0W0TOrFUhzZmbOFqbn1SsnD2LgNxEExyG?=
+ =?us-ascii?Q?UxIGTjs3IYctRwnVYGZ+UTES7nsKBoWISzAX8VB0fi86GxjBJsXLMqoik4R6?=
+ =?us-ascii?Q?s1b5ETfwPJuVOgg+gUylNOcF/UuulOtpbB+RX4qOpGlR53med2MV74OX7zn0?=
+ =?us-ascii?Q?7xoJr0WXis9rJKqJfID+eCTiNsb6V94V9AWLpsRbOcQqANbdkP7QP3gN5+2R?=
+ =?us-ascii?Q?W5N8wYmcWIY9I3mAO/yhUzEjsP1zr4x29gf0GPJ2SwM6zRVJVlSEuqBAxxj7?=
+ =?us-ascii?Q?V0LohFIUKdDbr2Uvn+xHXStDHQ+XDtKFlUtsAx1ZXbShcuDk4BhgdFCOBMa4?=
+ =?us-ascii?Q?d/UCnPEsP2Vcy+youykWmuUx+xt0cfF54rU7gG83ncjw9T8HPMK4NRff6yy8?=
+ =?us-ascii?Q?wejTjFu6bbCwJkdmgRhjmKIzsFNO0TMLltycupzU9jd+wslOke4ZIaMxapy+?=
+ =?us-ascii?Q?sFRSqb8ivkot26u7km8v2enDrFKdtr3JVN7aplmd2TvUhNS7hp/WiR6MfI+D?=
+ =?us-ascii?Q?fA5zMnIUsv1OSGg0/q1TDvZVRLB1QyGzIDfp03Va4YTwTHBZ5nWXRL5GH6Kg?=
+ =?us-ascii?Q?ZcKlDKlI8asjFM0kggIKgVqrbJKw41hwqxWlv/cSHOl7Ygl8QSwoBTYCT0ch?=
+ =?us-ascii?Q?JyxzWnnzkvWHZU=3D?=
+X-Microsoft-Antispam-Message-Info: H/FqEWx67TfZHy3GvrsRfi7hZjUxMJFnzIsoCx3InFXzrVw36FyfTIXpKOse3N60I00E+WDyMnZfEwxIxvMMgekGbGWaSEe3qk92czOGTd6oVZbantgHyjX2Mfr5aby+g2l1v850fQrSuqpCwIEOhrIoLlJBIXLUT7dR8eQh2FnmrsbFBrrp9OECg7rqazNI/8QZz6vmo+Z9s9mnfjEnsmzKBcw1o6HzFuqpVoDLgKASMGU+1U9hPGsa3NqiP723gPKuLloYwqPMtlbq00JsV1cJQr5wpPmhZ4XuNSXm0k/VTEUBzLjWYMkMdeL3c9RUFP4Yy1P7DTvaGeKXSvCUjTnGD9/m35K+XvEk0D8EdME=
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3132;6:IsbWDgzN9D3EPbLn268UUIUbNOGxd5aeP9/x+p0ikjvjV3IBxwFOYQ4BKUmOiS7GMiyrN8+BV5w+THl4Oe1bJAy1FU16PyqKFI6i62oLZlW47OfhVOCoftVVLEQp/wmgE+uaw7XiaceVW9dTzekUAPCvQcjY7/JSFTsobFQ5T4K5wP7lN3oYNw0773tXJRfXdu76WZ7M0jsSdLCNK8mdwtKpaq0C57fhA7uy6xuasMfqXJQNqftKqIrzX3KRpfRH4uJLKSAdrGs/6UXO01vGzpzWHoHTVAkLLcFrmlMKOaRk2OagHrJpelyOn6+Dys6ZtKVwkiyO73yJ/L9v4Evn/MuwcC2KATIu5iBIYzVpsDryyaTDOXLt7DM75zXcRie2XeiSklat9Md/75iv5/iVMrnxBTZHO4rvuF5vecDXD0pXtmB87rSX9JuVpDqJX2wpzG3ySz/924zHe5LHDIr4Qw==;5:GLOc+gYCfsnLhS0VsCXSSoq5or+7AelHHJuyzlil5Cd3h2MVvB9mvCH7Fmeu6Ez27Je86YsvTmKKS5oXotOLf6h0Pf/ZRMiVgV/EyZoXTJxikkJ64ZE2IccVTcqIz6LKtTs+WKduqwLj0SDl56NjiclFO3fvKhsOgcUSdDp4tfQ=;24:A8obF0T1QxwDFqN2zGhMibdmOg/C7+H4Jvn5IEiTUpxAGAk1DcfblfELGLSouJDfFniJgyJfjGbvxenvXZfBxL0TFfGNvP5w107K6+vfb7c=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BN3PR0301MB1218;7:OZXfBCGSvo8yflfNFEfd5HY5wCkEe5Bx7Ns2Cy0keurlFIhRhj+wJDHlMxEvm6bnUWxtnqBycAppyqLGvdRCvqVgeK2gAk/llnHTX2Tm7Pv/3B5bEBvMk6S7wjpDLtYHLkftmv3aj+CG/1U1A6djX32FJ7tZdWGM1gN7DnjLG91w35Ypx9WGA+4KcCJC4OlaPmqhThwB6AOFyK1GKQQZxrBp4SAMfU7S/dK6GsmKsBoA4TWUUwhorsWOWTLSovzZ
+X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3132;7:aEHdMqVCpsBW5y11G8puLZOKLtU5J03TEohfsjPBJTjqQOI8Clc+Xyk2mDPawNkXzTDpi/icOCy9A7x1bri01PucKdf1Qq4O8cDCzgLIm8nWdcWoP4/d63uMflbOg0fWvo2XMW+QaNFx7+5Rih3t4lMUJp18JLFc6i02prWDlkdnuHeUuYtGxonHxoXnKyJ8QcMHzA6CalV+9EAeOBVuSMAx4dHhCpJgOtXkLeICGvCMeTHiqObWTzR1QWz5Fwd4
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2018 15:36:08.3342
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2018 15:34:38.2828
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 48253e63-a041-4b7b-36ef-08d5e80d3041
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6a950b2-960f-4cb7-63d0-08d5e80cfaa0
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta4.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3PR0301MB1218
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for the adxl372 FIFO. In order to accomplish this,
-triggered buffers were used.
+This patch adds basic support for Analog Devices ADXL372 SPI-Bus
+Three-Axis Digital Accelerometer.
 
-The number of FIFO samples which trigger the watermark interrupt can be
-configured by using the buffer watermark, while the format depends on the
-selected channels.The FIFO data along with the timestamp is pushed to the
-IIO device's buffer.
+The device is probed and configured the with some initial default
+values. With this basic driver, it is possible to read raw acceleration
+data.
+
+Datasheet:
+http://www.analog.com/media/en/technical-documentation/data-sheets/ADXL372.pdf
 
 Signed-off-by: Stefan Popa <stefan.popa@analog.com>
 ---
- .../devicetree/bindings/iio/accel/adxl372.txt      |   7 +
- drivers/iio/accel/adxl372.c                        | 346 ++++++++++++++++++++-
- 2 files changed, 352 insertions(+), 1 deletion(-)
+ MAINTAINERS                 |   6 +
+ drivers/iio/accel/Kconfig   |  11 +
+ drivers/iio/accel/Makefile  |   1 +
+ drivers/iio/accel/adxl372.c | 483 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 501 insertions(+)
+ create mode 100644 drivers/iio/accel/adxl372.c
 
-diff --git a/Documentation/devicetree/bindings/iio/accel/adxl372.txt b/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-index fea4baf..73d7e03 100644
---- a/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-+++ b/Documentation/devicetree/bindings/iio/accel/adxl372.txt
-@@ -7,10 +7,17 @@ Required properties:
-  - reg: SPI chip select number for the device
-  - spi-max-frequency: Max SPI frequency to use
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 60b1028..2ba47bb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -543,6 +543,12 @@ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
+ F:	drivers/input/misc/adxl34x.c
  
-+Optional properties:
-+ - interrupt-parent: phandle to the parent interrupt controller
-+ - interrupts: interrupt mapping for GPIO IRQ, it should by configured with
-+ 		flag IRQ_TYPE_EDGE_FALLING
++ADXL372 THREE-AXIS DIGITAL ACCELEROMETER DRIVER
++M:	Stefan Popa <stefan.popa@analog.com>
++W:	http://ez.analog.com/community/linux-device-drivers
++S:	Supported
++F:	drivers/iio/accel/adxl372.c
 +
- Example:
+ AF9013 MEDIA DRIVER
+ M:	Antti Palosaari <crope@iki.fi>
+ L:	linux-media@vger.kernel.org
+diff --git a/drivers/iio/accel/Kconfig b/drivers/iio/accel/Kconfig
+index 62ae7e5..1b496ef 100644
+--- a/drivers/iio/accel/Kconfig
++++ b/drivers/iio/accel/Kconfig
+@@ -60,6 +60,17 @@ config ADXL345_SPI
+ 	  will be called adxl345_spi and you will also get adxl345_core
+ 	  for the core module.
  
- 	accelerometer@0 {
- 		compatible = "adi,adxl372";
- 		reg = <0>;
- 		spi-max-frequency = <1000000>;
-+		interrupt-parent = <&gpio>;
-+		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
- 	};
++config ADXL372
++	tristate "Analog Devices ADXL372 3-Axis Accelerometer Driver"
++	depends on SPI
++	select IIO_BUFFER
++	select IIO_TRIGGERED_BUFFER
++	help
++	  Say yes here to add support for the Analog Devices ADXL372 triaxial
++	  acceleration sensor.
++	  To compile this driver as a module, choose M here: the
++	  module will be called adxl372.
++
+ config BMA180
+ 	tristate "Bosch BMA180/BMA250 3-Axis Accelerometer Driver"
+ 	depends on I2C
+diff --git a/drivers/iio/accel/Makefile b/drivers/iio/accel/Makefile
+index 636d4d1..5758ffc 100644
+--- a/drivers/iio/accel/Makefile
++++ b/drivers/iio/accel/Makefile
+@@ -9,6 +9,7 @@ obj-$(CONFIG_ADIS16209) += adis16209.o
+ obj-$(CONFIG_ADXL345) += adxl345_core.o
+ obj-$(CONFIG_ADXL345_I2C) += adxl345_i2c.o
+ obj-$(CONFIG_ADXL345_SPI) += adxl345_spi.o
++obj-$(CONFIG_ADXL372) += adxl372.o
+ obj-$(CONFIG_BMA180) += bma180.o
+ obj-$(CONFIG_BMA220) += bma220_spi.o
+ obj-$(CONFIG_BMC150_ACCEL) += bmc150-accel-core.o
 diff --git a/drivers/iio/accel/adxl372.c b/drivers/iio/accel/adxl372.c
-index 62ce238..645902d 100644
---- a/drivers/iio/accel/adxl372.c
+new file mode 100644
+index 0000000..62ce238
+--- /dev/null
 +++ b/drivers/iio/accel/adxl372.c
-@@ -6,12 +6,20 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
- #include <linux/module.h>
- #include <linux/regmap.h>
- #include <linux/spi/spi.h>
-+#include <linux/gpio/consumer.h>
- 
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/events.h>
-+#include <linux/iio/trigger.h>
-+#include <linux/iio/trigger_consumer.h>
-+#include <linux/iio/triggered_buffer.h>
- 
- /* ADXL372 registers definition */
- #define ADXL372_DEVID			0x00
-@@ -126,6 +134,8 @@
- #define ADXL372_INT1_MAP_LOW_MSK		BIT(7)
- #define ADXL372_INT1_MAP_LOW_MODE(x)		(((x) & 0x1) << 7)
- 
-+#define ADXL372_FIFO_SIZE			512
+@@ -0,0 +1,483 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * ADXL372 3-Axis Digital Accelerometer SPI driver
++ *
++ * Copyright 2018 Analog Devices Inc.
++ */
 +
- /*
-  * At +/- 200g with 12-bit resolution, scale is computed as:
-  * (200 + 200) * 9.81 / (2^12 - 1) = 0.958241
-@@ -167,6 +177,28 @@ enum adxl372_bandwidth {
- 	ADXL372_BW_3200HZ,
- };
- 
-+enum adxl372_fifo_format {
-+	ADXL372_XYZ_FIFO,
-+	ADXL372_X_FIFO,
-+	ADXL372_Y_FIFO,
-+	ADXL372_XY_FIFO,
-+	ADXL372_Z_FIFO,
-+	ADXL372_XZ_FIFO,
-+	ADXL372_YZ_FIFO,
-+	ADXL372_XYZ_PEAK_FIFO,
++#include <linux/bitops.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <linux/spi/spi.h>
++
++#include <linux/iio/iio.h>
++#include <linux/iio/sysfs.h>
++
++/* ADXL372 registers definition */
++#define ADXL372_DEVID			0x00
++#define ADXL372_DEVID_MST		0x01
++#define ADXL372_PARTID			0x02
++#define ADXL372_REVID			0x03
++#define ADXL372_STATUS_1		0x04
++#define ADXL372_STATUS_2		0x05
++#define ADXL372_FIFO_ENTRIES_2		0x06
++#define ADXL372_FIFO_ENTRIES_1		0x07
++#define ADXL372_X_DATA_H		0x08
++#define ADXL372_X_DATA_L		0x09
++#define ADXL372_Y_DATA_H		0x0A
++#define ADXL372_Y_DATA_L		0x0B
++#define ADXL372_Z_DATA_H		0x0C
++#define ADXL372_Z_DATA_L		0x0D
++#define ADXL372_X_MAXPEAK_H		0x15
++#define ADXL372_X_MAXPEAK_L		0x16
++#define ADXL372_Y_MAXPEAK_H		0x17
++#define ADXL372_Y_MAXPEAK_L		0x18
++#define ADXL372_Z_MAXPEAK_H		0x19
++#define ADXL372_Z_MAXPEAK_L		0x1A
++#define ADXL372_OFFSET_X		0x20
++#define ADXL372_OFFSET_Y		0x21
++#define ADXL372_OFFSET_Z		0x22
++#define ADXL372_X_THRESH_ACT_H		0x23
++#define ADXL372_X_THRESH_ACT_L		0x24
++#define ADXL372_Y_THRESH_ACT_H		0x25
++#define ADXL372_Y_THRESH_ACT_L		0x26
++#define ADXL372_Z_THRESH_ACT_H		0x27
++#define ADXL372_Z_THRESH_ACT_L		0x28
++#define ADXL372_TIME_ACT		0x29
++#define ADXL372_X_THRESH_INACT_H	0x2A
++#define ADXL372_X_THRESH_INACT_L	0x2B
++#define ADXL372_Y_THRESH_INACT_H	0x2C
++#define ADXL372_Y_THRESH_INACT_L	0x2D
++#define ADXL372_Z_THRESH_INACT_H	0x2E
++#define ADXL372_Z_THRESH_INACT_L	0x2F
++#define ADXL372_TIME_INACT_H		0x30
++#define ADXL372_TIME_INACT_L		0x31
++#define ADXL372_X_THRESH_ACT2_H		0x32
++#define ADXL372_X_THRESH_ACT2_L		0x33
++#define ADXL372_Y_THRESH_ACT2_H		0x34
++#define ADXL372_Y_THRESH_ACT2_L		0x35
++#define ADXL372_Z_THRESH_ACT2_H		0x36
++#define ADXL372_Z_THRESH_ACT2_L		0x37
++#define ADXL372_HPF			0x38
++#define ADXL372_FIFO_SAMPLES		0x39
++#define ADXL372_FIFO_CTL		0x3A
++#define ADXL372_INT1_MAP		0x3B
++#define ADXL372_INT2_MAP		0x3C
++#define ADXL372_TIMING			0x3D
++#define ADXL372_MEASURE			0x3E
++#define ADXL372_POWER_CTL		0x3F
++#define ADXL372_SELF_TEST		0x40
++#define ADXL372_RESET			0x41
++#define ADXL372_FIFO_DATA		0x42
++
++#define ADXL372_DEVID_VAL		0xAD
++#define ADXL372_PARTID_VAL		0xFA
++#define ADXL372_RESET_CODE		0x52
++
++#define ADXL372_RD_FLAG_MSK(x)		((((x) & 0xFF) << 1) | 0x01)
++#define ADXL372_WR_FLAG_MSK(x)		(((x) & 0xFF) << 1)
++
++/* ADXL372_POWER_CTL */
++#define ADXL372_POWER_CTL_MODE_MSK		GENMASK_ULL(1, 0)
++#define ADXL372_POWER_CTL_MODE(x)		(((x) & 0x3) << 0)
++
++/* ADXL372_MEASURE */
++#define ADXL372_MEASURE_LINKLOOP_MSK		GENMASK_ULL(5, 4)
++#define ADXL372_MEASURE_LINKLOOP_MODE(x)	(((x) & 0x3) << 4)
++#define ADXL372_MEASURE_BANDWIDTH_MSK		GENMASK_ULL(2, 0)
++#define ADXL372_MEASURE_BANDWIDTH_MODE(x)	(((x) & 0x7) << 0)
++
++/* ADXL372_TIMING */
++#define ADXL372_TIMING_ODR_MSK			GENMASK_ULL(7, 5)
++#define ADXL372_TIMING_ODR_MODE(x)		(((x) & 0x7) << 5)
++
++/* ADXL372_FIFO_CTL */
++#define ADXL372_FIFO_CTL_FORMAT_MSK		GENMASK(5, 3)
++#define ADXL372_FIFO_CTL_FORMAT_MODE(x)		(((x) & 0x7) << 3)
++#define ADXL372_FIFO_CTL_MODE_MSK		GENMASK(2, 1)
++#define ADXL372_FIFO_CTL_MODE_MODE(x)		(((x) & 0x3) << 1)
++#define ADXL372_FIFO_CTL_SAMPLES_MSK		BIT(1)
++#define ADXL372_FIFO_CTL_SAMPLES_MODE(x)	(((x) > 0xFF) ? 1 : 0)
++
++/* ADXL372_STATUS_1 */
++#define ADXL372_STATUS_1_DATA_RDY(x)		(((x) >> 0) & 0x1)
++#define ADXL372_STATUS_1_FIFO_RDY(x)		(((x) >> 1) & 0x1)
++#define ADXL372_STATUS_1_FIFO_FULL(x)		(((x) >> 2) & 0x1)
++#define ADXL372_STATUS_1_FIFO_OVR(x)		(((x) >> 3) & 0x1)
++#define ADXL372_STATUS_1_USR_NVM_BUSY(x)	(((x) >> 5) & 0x1)
++#define ADXL372_STATUS_1_AWAKE(x)		(((x) >> 6) & 0x1)
++#define ADXL372_STATUS_1_ERR_USR_REGS(x)	(((x) >> 7) & 0x1)
++
++/* ADXL372_INT1_MAP */
++#define ADXL372_INT1_MAP_DATA_RDY_MSK		BIT(0)
++#define ADXL372_INT1_MAP_DATA_RDY_MODE(x)	(((x) & 0x1) << 0)
++#define ADXL372_INT1_MAP_FIFO_RDY_MSK		BIT(1)
++#define ADXL372_INT1_MAP_FIFO_RDY_MODE(x)	(((x) & 0x1) << 1)
++#define ADXL372_INT1_MAP_FIFO_FULL_MSK		BIT(2)
++#define ADXL372_INT1_MAP_FIFO_FULL_MODE(x)	(((x) & 0x1) << 2)
++#define ADXL372_INT1_MAP_FIFO_OVR_MSK		BIT(3)
++#define ADXL372_INT1_MAP_FIFO_OVR_MODE(x)	(((x) & 0x1) << 3)
++#define ADXL372_INT1_MAP_INACT_MSK		BIT(4)
++#define ADXL372_INT1_MAP_INACT_MODE(x)		(((x) & 0x1) << 4)
++#define ADXL372_INT1_MAP_ACT_MSK		BIT(5)
++#define ADXL372_INT1_MAP_ACT_MODE(x)		(((x) & 0x1) << 5)
++#define ADXL372_INT1_MAP_AWAKE_MSK		BIT(6)
++#define ADXL372_INT1_MAP_AWAKE_MODE(x)		(((x) & 0x1) << 6)
++#define ADXL372_INT1_MAP_LOW_MSK		BIT(7)
++#define ADXL372_INT1_MAP_LOW_MODE(x)		(((x) & 0x1) << 7)
++
++/*
++ * At +/- 200g with 12-bit resolution, scale is computed as:
++ * (200 + 200) * 9.81 / (2^12 - 1) = 0.958241
++ */
++#define ADXL372_USCALE	958241
++
++enum adxl372_op_mode {
++	ADXL372_STANDBY,
++	ADXL372_WAKE_UP,
++	ADXL372_INSTANT_ON,
++	ADXL372_FULL_BW_MEASUREMENT,
 +};
 +
-+enum adxl372_fifo_mode {
-+	ADXL372_FIFO_BYPASSED,
-+	ADXL372_FIFO_STREAMED,
-+	ADXL372_FIFO_TRIGGERED,
-+	ADXL372_FIFO_OLD_SAVED
++enum adxl372_act_proc_mode {
++	ADXL372_DEFAULT,
++	ADXL372_LINKED,
++	ADXL372_LOOPED,
 +};
 +
-+static const int adxl372_samp_freq_tbl[5] = {
-+	400, 800, 1600, 3200, 6400,
++enum adxl372_th_activity {
++	ADXL372_ACTIVITY,
++	ADXL372_ACTIVITY2,
++	ADXL372_INACTIVITY,
 +};
 +
- #define ADXL372_ACCEL_CHANNEL(index, reg, axis) {			\
- 	.type = IIO_ACCEL,						\
- 	.address = reg,							\
-@@ -193,12 +225,27 @@ static const struct iio_chan_spec adxl372_channels[] = {
- struct adxl372_state {
- 	struct spi_device		*spi;
- 	struct regmap			*regmap;
-+	struct iio_trigger		*dready_trig;
-+	enum adxl372_fifo_mode		fifo_mode;
-+	enum adxl372_fifo_format	fifo_format;
- 	enum adxl372_op_mode		op_mode;
- 	enum adxl372_act_proc_mode	act_proc_mode;
- 	enum adxl372_odr		odr;
- 	enum adxl372_bandwidth		bw;
-+	u8				fifo_set_size;
-+	u8				int1_bitmask;
-+	u8				int2_bitmask;
-+	u16				watermark;
-+	__be16				fifo_buf[512];
- };
- 
-+static int adxl372_read_fifo(struct adxl372_state *st, u16 fifo_entries)
-+{
-+	return regmap_bulk_read(st->regmap,
-+				ADXL372_RD_FLAG_MSK(ADXL372_FIFO_DATA),
-+				st->fifo_buf, fifo_entries * 2);
++enum adxl372_odr {
++	ADXL372_ODR_400HZ,
++	ADXL372_ODR_800HZ,
++	ADXL372_ODR_1600HZ,
++	ADXL372_ODR_3200HZ,
++	ADXL372_ODR_6400HZ,
++};
++
++enum adxl372_bandwidth {
++	ADXL372_BW_200HZ,
++	ADXL372_BW_400HZ,
++	ADXL372_BW_800HZ,
++	ADXL372_BW_1600HZ,
++	ADXL372_BW_3200HZ,
++};
++
++#define ADXL372_ACCEL_CHANNEL(index, reg, axis) {			\
++	.type = IIO_ACCEL,						\
++	.address = reg,							\
++	.modified = 1,							\
++	.channel2 = IIO_MOD_##axis,					\
++	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),			\
++	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),		\
++	.scan_index = index,						\
++	.scan_type = {							\
++		.sign = 's',						\
++		.realbits = 12,						\
++		.storagebits = 16,					\
++		.shift = 4,						\
++		.endianness = IIO_CPU,					\
++	},								\
 +}
 +
- static int adxl372_read_axis(struct adxl372_state *st, u8 addr)
- {
- 	__be16 regval;
-@@ -313,6 +360,114 @@ static int adxl372_set_activity_threshold(struct adxl372_state *st,
- 				 buf, ARRAY_SIZE(buf));
- }
- 
-+static int adxl372_set_interrupts(struct adxl372_state *st,
-+				  unsigned char int1_bitmask,
-+				  unsigned char int2_bitmask)
++static const struct iio_chan_spec adxl372_channels[] = {
++	ADXL372_ACCEL_CHANNEL(0, ADXL372_X_DATA_H, X),
++	ADXL372_ACCEL_CHANNEL(1, ADXL372_Y_DATA_H, Y),
++	ADXL372_ACCEL_CHANNEL(2, ADXL372_Z_DATA_H, Z),
++};
++
++struct adxl372_state {
++	struct spi_device		*spi;
++	struct regmap			*regmap;
++	enum adxl372_op_mode		op_mode;
++	enum adxl372_act_proc_mode	act_proc_mode;
++	enum adxl372_odr		odr;
++	enum adxl372_bandwidth		bw;
++};
++
++static int adxl372_read_axis(struct adxl372_state *st, u8 addr)
 +{
-+	unsigned char buf[2];
++	__be16 regval;
 +	int ret;
 +
-+	buf[0] = int1_bitmask;
-+	buf[1] = int2_bitmask;
-+
-+	/* INT1_MAP and INT2_MAP are adjacent registers */
-+	ret = regmap_bulk_write(st->regmap,
-+				ADXL372_WR_FLAG_MSK(ADXL372_INT1_MAP),
-+				buf, ARRAY_SIZE(buf));
++	ret = regmap_bulk_read(st->regmap, ADXL372_RD_FLAG_MSK(addr),
++			       &regval, sizeof(regval));
 +	if (ret < 0)
 +		return ret;
 +
-+	st->int1_bitmask = int1_bitmask;
-+	st->int2_bitmask = int2_bitmask;
++	return be16_to_cpu(regval);
++}
++
++static int adxl372_set_op_mode(struct adxl372_state *st,
++			       enum adxl372_op_mode op_mode)
++{
++	int ret;
++
++	ret = regmap_update_bits(st->regmap, ADXL372_POWER_CTL,
++				 ADXL372_POWER_CTL_MODE_MSK,
++				 ADXL372_POWER_CTL_MODE(op_mode));
++	if (ret < 0)
++		return ret;
++
++	st->op_mode = op_mode;
 +
 +	return ret;
 +}
 +
-+static int adxl372_configure_fifo(struct adxl372_state *st)
++static int adxl372_set_odr(struct adxl372_state *st,
++			   enum adxl372_odr odr)
 +{
-+	unsigned char buf[2];
 +	int ret;
 +
-+	/* FIFO must be configured while in standby mode */
++	ret = regmap_update_bits(st->regmap, ADXL372_TIMING,
++				 ADXL372_TIMING_ODR_MSK,
++				 ADXL372_TIMING_ODR_MODE(odr));
++	if (ret < 0)
++		return ret;
++
++	st->odr = odr;
++
++	return ret;
++}
++
++static int adxl372_set_bandwidth(struct adxl372_state *st,
++				 enum adxl372_bandwidth bw)
++{
++	int ret;
++
++	ret = regmap_update_bits(st->regmap, ADXL372_MEASURE,
++				 ADXL372_MEASURE_BANDWIDTH_MSK,
++				 ADXL372_MEASURE_BANDWIDTH_MODE(bw));
++	if (ret < 0)
++		return ret;
++
++	st->bw = bw;
++
++	return ret;
++}
++
++static int adxl372_set_act_proc_mode(struct adxl372_state *st,
++				     enum adxl372_act_proc_mode mode)
++{
++	int ret;
++
++	ret = regmap_update_bits(st->regmap,
++				 ADXL372_MEASURE,
++				 ADXL372_MEASURE_LINKLOOP_MSK,
++				 ADXL372_MEASURE_LINKLOOP_MODE(mode));
++	if (ret < 0)
++		return ret;
++
++	st->act_proc_mode = mode;
++
++	return ret;
++}
++
++static int adxl372_set_activity_threshold(struct adxl372_state *st,
++					  enum adxl372_th_activity act,
++					  bool ref_en, bool enable,
++					  unsigned int threshold)
++{
++	unsigned char buf[6];
++	unsigned char th_reg_high_val, th_reg_low_val, th_reg_high_addr;
++
++	/* scale factor is 100 mg/code */
++	th_reg_high_val = (threshold / 100) >> 3;
++	th_reg_low_val = ((threshold / 100) << 5) | (ref_en << 1) | enable;
++
++	switch (act) {
++	case ADXL372_ACTIVITY:
++		th_reg_high_addr = ADXL372_X_THRESH_ACT_H;
++		break;
++	case ADXL372_ACTIVITY2:
++		th_reg_high_addr = ADXL372_X_THRESH_ACT2_H;
++		break;
++	case ADXL372_INACTIVITY:
++		th_reg_high_addr = ADXL372_X_THRESH_INACT_H;
++		break;
++	}
++
++	buf[0] = th_reg_high_val;
++	buf[1] = th_reg_low_val;
++	buf[2] = th_reg_high_val;
++	buf[3] = th_reg_low_val;
++	buf[4] = th_reg_high_val;
++	buf[5] = th_reg_low_val;
++
++	return regmap_bulk_write(st->regmap,
++				 ADXL372_WR_FLAG_MSK(th_reg_high_addr),
++				 buf, ARRAY_SIZE(buf));
++}
++
++static int adxl372_setup(struct adxl372_state *st)
++{
++	unsigned int regval;
++	int ret;
++
++	ret = regmap_read(st->regmap, ADXL372_RD_FLAG_MSK(ADXL372_DEVID),
++			  &regval);
++	if (ret < 0)
++		return ret;
++
++	if (regval != ADXL372_DEVID_VAL) {
++		dev_err(&st->spi->dev, "Invalid chip id %x\n", regval);
++		return -ENODEV;
++	}
++
 +	ret = adxl372_set_op_mode(st, ADXL372_STANDBY);
 +	if (ret < 0)
 +		return ret;
 +
-+	buf[0] = st->watermark & 0xFF;
-+	buf[1] = ADXL372_FIFO_CTL_FORMAT_MODE(st->fifo_format) |
-+		 ADXL372_FIFO_CTL_MODE_MODE(st->fifo_mode) |
-+		 ADXL372_FIFO_CTL_SAMPLES_MODE(st->watermark);
-+
-+	/* FIFO_SAMPLES and FIFO_CTL are adjacent registers */
-+	ret = regmap_bulk_write(st->regmap,
-+				ADXL372_WR_FLAG_MSK(ADXL372_FIFO_SAMPLES),
-+				buf, ARRAY_SIZE(buf));
++	/* Set threshold for activity detection to 500mg */
++	ret = adxl372_set_activity_threshold(st, ADXL372_ACTIVITY,
++					     true, true, 500);
 +	if (ret < 0)
 +		return ret;
 +
++	/* Set threshold for inactivity detection to 500mg */
++	ret = adxl372_set_activity_threshold(st, ADXL372_INACTIVITY,
++					     true, true, 500);
++	if (ret < 0)
++		return ret;
++
++	/* Set activity processing in Looped mode */
++	ret = adxl372_set_act_proc_mode(st, ADXL372_LOOPED);
++	if (ret < 0)
++		return ret;
++
++	ret = adxl372_set_odr(st, ADXL372_ODR_6400HZ);
++	if (ret < 0)
++		return ret;
++
++	ret = adxl372_set_bandwidth(st, ADXL372_BW_3200HZ);
++	if (ret < 0)
++		return ret;
++
++	/* Set activity timer */
++	ret = regmap_write(st->regmap,
++			   ADXL372_WR_FLAG_MSK(ADXL372_TIME_ACT), 1);
++	if (ret < 0)
++		return ret;
++
++	/* Set inactivity timer to 1s */
++	ret = regmap_write(st->regmap,
++			   ADXL372_WR_FLAG_MSK(ADXL372_TIME_INACT_L), 0x28);
++	if (ret < 0)
++		return ret;
++
++	/* Set the mode of operation to full bandwidth measurement mode */
 +	return adxl372_set_op_mode(st, ADXL372_FULL_BW_MEASUREMENT);
 +}
 +
-+static int adxl372_get_status(struct adxl372_state *st,
-+			      u8 *status1, u8 *status2,
-+			      u16 *fifo_entries)
++static int adxl372_reg_access(struct iio_dev *indio_dev,
++			      unsigned int reg,
++			      unsigned int writeval,
++			      unsigned int *readval)
 +{
-+	unsigned char buf[4];
-+	int ret;
-+
-+	/* STATUS, STATUS2, FIFO_ENTRIES2 and FIFO_ENTRIES are adjacent regs */
-+	ret = regmap_bulk_read(st->regmap,
-+			       ADXL372_RD_FLAG_MSK(ADXL372_STATUS_1),
-+			       buf, ARRAY_SIZE(buf));
-+	if (ret < 0)
-+		return ret;
-+
-+	*status1 = buf[0];
-+	*status2 = buf[1];
-+	/*
-+	 * FIFO_ENTRIES contains the least significant byte, and FIFO_ENTRIES2
-+	 * contains the two most significant bits
-+	 */
-+	*fifo_entries = ((buf[2] & 0x3) << 8) | buf[3];
-+
-+	return ret;
-+}
-+
-+static irqreturn_t adxl372_trigger_handler(int irq, void  *p)
-+{
-+	struct iio_poll_func *pf = p;
-+	struct iio_dev *indio_dev = pf->indio_dev;
 +	struct adxl372_state *st = iio_priv(indio_dev);
-+	u8 status1, status2;
-+	u16 fifo_entries, i;
-+	int ret;
 +
-+	ret = adxl372_get_status(st, &status1, &status2, &fifo_entries);
-+	if (ret < 0)
-+		goto err;
-+
-+	if ((st->fifo_mode != ADXL372_FIFO_BYPASSED) &&
-+	    (ADXL372_STATUS_1_FIFO_FULL(status1))) {
-+		/*
-+		 * When reading data from multiple axes from the FIFO,
-+		 * to ensure that data is not overwritten and stored out
-+		 * of order at least one sample set must be left in the
-+		 * FIFO after every read.
-+		 */
-+		fifo_entries -= st->fifo_set_size;
-+
-+		ret = adxl372_read_fifo(st, fifo_entries);
-+		if (ret < 0)
-+			goto err;
-+
-+		for (i = 0; i < fifo_entries * 2; i += st->fifo_set_size * 2)
-+			iio_push_to_buffers(indio_dev, &st->fifo_buf[i]);
-+	}
-+err:
-+	iio_trigger_notify_done(indio_dev->trig);
-+	return IRQ_HANDLED;
++	if (readval)
++		return regmap_read(st->regmap, ADXL372_RD_FLAG_MSK(reg),
++				   readval);
++	else
++		return regmap_write(st->regmap, ADXL372_WR_FLAG_MSK(reg),
++				    writeval);
 +}
 +
- static int adxl372_setup(struct adxl372_state *st)
- {
- 	unsigned int regval;
-@@ -397,7 +552,12 @@ static int adxl372_read_raw(struct iio_dev *indio_dev,
- 
- 	switch (info) {
- 	case IIO_CHAN_INFO_RAW:
-+		ret = iio_device_claim_direct_mode(indio_dev);
-+		if (ret)
++static int adxl372_read_raw(struct iio_dev *indio_dev,
++			    struct iio_chan_spec const *chan,
++			    int *val, int *val2, long info)
++{
++	struct adxl372_state *st = iio_priv(indio_dev);
++	int ret;
++
++	switch (info) {
++	case IIO_CHAN_INFO_RAW:
++		ret = adxl372_read_axis(st, chan->address);
++		if (ret < 0)
 +			return ret;
 +
- 		ret = adxl372_read_axis(st, chan->address);
-+		iio_device_release_direct_mode(indio_dev);
- 		if (ret < 0)
- 			return ret;
- 
-@@ -413,9 +573,159 @@ static int adxl372_read_raw(struct iio_dev *indio_dev,
- 	}
- }
- 
-+static ssize_t adxl372_get_fifo_enabled(struct device *dev,
-+					  struct device_attribute *attr,
-+					  char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+
-+	return sprintf(buf, "%d\n", st->fifo_mode);
-+}
-+
-+static ssize_t adxl372_get_fifo_watermark(struct device *dev,
-+					  struct device_attribute *attr,
-+					  char *buf)
-+{
-+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+
-+	return sprintf(buf, "%d\n", st->watermark);
-+}
-+
-+static IIO_CONST_ATTR(hwfifo_watermark_min, "1");
-+static IIO_CONST_ATTR(hwfifo_watermark_max,
-+		      __stringify(ADXL372_FIFO_SIZE));
-+static IIO_DEVICE_ATTR(hwfifo_watermark, 0444,
-+		       adxl372_get_fifo_watermark, NULL, 0);
-+static IIO_DEVICE_ATTR(hwfifo_enabled, 0444,
-+		       adxl372_get_fifo_enabled, NULL, 0);
-+
-+static const struct attribute *adxl372_fifo_attributes[] = {
-+	&iio_const_attr_hwfifo_watermark_min.dev_attr.attr,
-+	&iio_const_attr_hwfifo_watermark_max.dev_attr.attr,
-+	&iio_dev_attr_hwfifo_watermark.dev_attr.attr,
-+	&iio_dev_attr_hwfifo_enabled.dev_attr.attr,
-+	NULL,
-+};
-+
-+static int adxl372_set_watermark(struct iio_dev *indio_dev, unsigned int val)
-+{
-+	struct adxl372_state *st  = iio_priv(indio_dev);
-+
-+	if (val > ADXL372_FIFO_SIZE)
-+		val = ADXL372_FIFO_SIZE;
-+
-+	st->watermark = val;
-+
-+	return 0;
-+}
-+
-+static int adxl372_buffer_postenable(struct iio_dev *indio_dev)
-+{
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+	u8 fifo_set_size, accel_axis_en;
-+	int bit, ret;
-+
-+	if (!st->watermark)
++		*val = sign_extend32(ret >> chan->scan_type.shift,
++				     chan->scan_type.realbits - 1);
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SCALE:
++		*val = 0;
++		*val2 = ADXL372_USCALE;
++		return IIO_VAL_INT_PLUS_MICRO;
++	default:
 +		return -EINVAL;
-+
-+	ret = adxl372_set_interrupts(st,
-+				     ADXL372_INT1_MAP_FIFO_FULL_MSK,
-+				     0);
-+	if (ret < 0)
-+		return ret;
-+
-+	fifo_set_size = 0;
-+	accel_axis_en = 0;
-+	for_each_set_bit(bit, indio_dev->active_scan_mask,
-+			 indio_dev->masklength) {
-+		accel_axis_en |= bit;
-+		fifo_set_size++;
 +	}
-+
-+	switch (accel_axis_en) {
-+	case 0:
-+		st->fifo_format = ADXL372_X_FIFO;
-+		break;
-+	case 1:
-+		if (fifo_set_size == 1)
-+			st->fifo_format = ADXL372_Y_FIFO;
-+		else
-+			st->fifo_format = ADXL372_XY_FIFO;
-+		break;
-+	case 2:
-+		if (fifo_set_size == 1)
-+			st->fifo_format = ADXL372_Z_FIFO;
-+		else
-+			st->fifo_format = ADXL372_XZ_FIFO;
-+		break;
-+	default: /* case 3 */
-+		if (fifo_set_size == 3)
-+			st->fifo_format = ADXL372_XYZ_PEAK_FIFO;
-+		else
-+			st->fifo_format = ADXL372_YZ_FIFO;
-+		break;
-+	}
-+
-+	/*
-+	 * The 512 FIFO samples can be allotted in several ways, such as:
-+	 * 170 sample sets of concurrent 3-axis data
-+	 * 256 sample sets of concurrent 2-axis data (user selectable)
-+	 * 512 sample sets of single-axis data
-+	 */
-+	if ((st->watermark * fifo_set_size) > ADXL372_FIFO_SIZE)
-+		st->watermark = (ADXL372_FIFO_SIZE  / fifo_set_size);
-+
-+	st->fifo_set_size = fifo_set_size;
-+	st->fifo_mode = ADXL372_FIFO_STREAMED;
-+
-+	ret = adxl372_configure_fifo(st);
-+	if (ret < 0) {
-+		st->fifo_mode = ADXL372_FIFO_BYPASSED;
-+		adxl372_set_interrupts(st, 0, 0);
-+	}
-+
-+	return ret;
 +}
 +
-+static int adxl372_buffer_predisable(struct iio_dev *indio_dev)
-+{
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+
-+	adxl372_set_interrupts(st, 0, 0);
-+	st->fifo_mode = ADXL372_FIFO_BYPASSED;
-+	adxl372_configure_fifo(st);
-+
-+	return 0;
-+}
-+
-+static const struct iio_buffer_setup_ops adxl372_buffer_ops = {
-+	.postenable = adxl372_buffer_postenable,
-+	.predisable = adxl372_buffer_predisable,
++static const struct iio_info adxl372_info = {
++	.read_raw = adxl372_read_raw,
++	.debugfs_reg_access = &adxl372_reg_access,
 +};
 +
-+static int adxl372_dready_trig_set_state(struct iio_trigger *trig,
-+					 bool state)
-+{
-+	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
-+	struct adxl372_state *st = iio_priv(indio_dev);
-+	unsigned long int mask = 0;
-+
-+	if (state)
-+		mask = ADXL372_INT1_MAP_FIFO_FULL_MSK;
-+
-+	return adxl372_set_interrupts(st, mask, 0);
-+}
-+
-+static const struct iio_trigger_ops adxl372_trigger_ops = {
-+	.set_trigger_state = adxl372_dready_trig_set_state,
++static const struct regmap_config adxl372_spi_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.read_flag_mask = BIT(0),
 +};
 +
- static const struct iio_info adxl372_info = {
- 	.read_raw = adxl372_read_raw,
- 	.debugfs_reg_access = &adxl372_reg_access,
-+	.hwfifo_set_watermark = adxl372_set_watermark,
- };
- 
- static const struct regmap_config adxl372_spi_regmap_config = {
-@@ -451,7 +761,7 @@ static int adxl372_probe(struct spi_device *spi)
- 	indio_dev->dev.parent = &spi->dev;
- 	indio_dev->name = spi_get_device_id(spi)->name;
- 	indio_dev->info = &adxl372_info;
--	indio_dev->modes = INDIO_DIRECT_MODE;
-+	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_SOFTWARE;
- 
- 	ret = adxl372_setup(st);
- 	if (ret < 0) {
-@@ -459,6 +769,40 @@ static int adxl372_probe(struct spi_device *spi)
- 		return ret;
- 	}
- 
-+	ret = devm_iio_triggered_buffer_setup(&st->spi->dev,
-+					      indio_dev, NULL,
-+					      adxl372_trigger_handler,
-+					      &adxl372_buffer_ops);
-+	if (ret < 0)
-+		return ret;
++static int adxl372_probe(struct spi_device *spi)
++{
++	struct iio_dev *indio_dev;
++	struct adxl372_state *st;
++	struct regmap *regmap;
++	int ret;
 +
-+	st->dready_trig = devm_iio_trigger_alloc(&st->spi->dev,
-+			  "%s-dev%d",
-+			  indio_dev->name);
-+	if (st->dready_trig == NULL)
++	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
++	if (!indio_dev)
 +		return -ENOMEM;
 +
-+	st->dready_trig->ops = &adxl372_trigger_ops;
-+	st->dready_trig->dev.parent = &st->spi->dev;
-+	iio_trigger_set_drvdata(st->dready_trig, indio_dev);
-+	ret = devm_iio_trigger_register(&st->spi->dev, st->dready_trig);
-+	if (ret < 0)
++	st = iio_priv(indio_dev);
++	spi_set_drvdata(spi, indio_dev);
++
++	st->spi = spi;
++
++	regmap = devm_regmap_init_spi(spi, &adxl372_spi_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	st->regmap = regmap;
++
++	indio_dev->channels = adxl372_channels;
++	indio_dev->num_channels = ARRAY_SIZE(adxl372_channels);
++	indio_dev->dev.parent = &spi->dev;
++	indio_dev->name = spi_get_device_id(spi)->name;
++	indio_dev->info = &adxl372_info;
++	indio_dev->modes = INDIO_DIRECT_MODE;
++
++	ret = adxl372_setup(st);
++	if (ret < 0) {
++		dev_err(&st->spi->dev, "ADXL372 setup failed\n");
 +		return ret;
++	}
 +
-+	indio_dev->trig = iio_trigger_get(st->dready_trig);
++	return devm_iio_device_register(&st->spi->dev, indio_dev);
++}
 +
-+	ret = devm_request_threaded_irq(&st->spi->dev, st->spi->irq,
-+					iio_trigger_generic_data_rdy_poll,
-+					NULL,
-+					IRQF_TRIGGER_RISING |
-+					IRQF_ONESHOT,
-+					indio_dev->name,
-+					st->dready_trig);
-+	if (ret < 0)
-+		return ret;
++static const struct spi_device_id adxl372_id[] = {
++	{ "adxl372", 0 },
++	{}
++};
++MODULE_DEVICE_TABLE(spi, adxl372_id);
 +
-+	iio_buffer_set_attrs(indio_dev->buffer, adxl372_fifo_attributes);
++static struct spi_driver adxl372_driver = {
++	.driver = {
++		.name = KBUILD_MODNAME,
++	},
++	.probe = adxl372_probe,
++	.id_table = adxl372_id,
++};
 +
- 	return devm_iio_device_register(&st->spi->dev, indio_dev);
- }
- 
++module_spi_driver(adxl372_driver);
++
++MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
++MODULE_DESCRIPTION("Analog Devices ADXL372 3-axis accelerometer driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
