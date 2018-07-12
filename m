@@ -2,99 +2,134 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E911ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F03ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B3B2124D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0ED602124D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:35:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="SHwjSL03"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0B3B2124D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jYEWKy3u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0ED602124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732630AbeGLUqJ (ORCPT
+        id S1732646AbeGLUqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 16:46:09 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:46558 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732461AbeGLUqI (ORCPT
+        Thu, 12 Jul 2018 16:46:18 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:40775 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732594AbeGLUqS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:46:08 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D82748365B
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 08:34:53 +1200 (NZST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail; t=1531427693;
-        bh=xRPPUO/Vi3ybWtREwep2+EnAgsvz7vw3WgKZGSxIlFo=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To;
-        b=SHwjSL036xKmv0KcQEGFdrS8ggxtCuRKmijxRWnDG7lmuSRuZ2wzQnw41gVEOw/Bo
-         8DJOeQtkWftuV1gE682fIwaaRj1awVFal7cBjtiggKuK+ygsmrt8Qnz2YqQ4OUJrBb
-         HAXMmcYslI6iLJM4KTSlZ5PJxT8zHRRwuIVj8Y24=
-Received: from svr-chch-ex1.atlnz.lc (Not Verified[10.32.16.77]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5b47bb6c0001>; Fri, 13 Jul 2018 08:34:52 +1200
-Received: from svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) by
- svr-chch-ex1.atlnz.lc (2001:df5:b000:bc8::77) with Microsoft SMTP Server
- (TLS) id 15.0.1156.6; Fri, 13 Jul 2018 08:34:53 +1200
-Received: from svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8]) by
- svr-chch-ex1.atlnz.lc ([fe80::409d:36f5:8899:92e8%12]) with mapi id
- 15.00.1156.000; Fri, 13 Jul 2018 08:34:53 +1200
-From:   Hamish Martin <Hamish.Martin@alliedtelesis.co.nz>
-To:     "xiubli@redhat.com" <xiubli@redhat.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "jannh@google.com" <jannh@google.com>,
-        "pkalever@redhat.com" <pkalever@redhat.com>,
-        "pkarampu@redhat.com" <pkarampu@redhat.com>,
-        "atumball@redhat.com" <atumball@redhat.com>,
-        "sabose@redhat.com" <sabose@redhat.com>,
-        "mchristi@redhat.com" <mchristi@redhat.com>
-Subject: Re: [PATCH v4 0/3] uio: fix potential crash bug
-Thread-Topic: [PATCH v4 0/3] uio: fix potential crash bug
-Thread-Index: AQHUFZcKWb+j+auOh0KSnc6fzl5wqaSLSzOA
-Date:   Thu, 12 Jul 2018 20:34:53 +0000
-Message-ID: <7c0ae0c9-2af6-c7c3-49b0-24302584a24d@alliedtelesis.co.nz>
-References: <1530929139-13652-1-git-send-email-xiubli@redhat.com>
-In-Reply-To: <1530929139-13652-1-git-send-email-xiubli@redhat.com>
-Accept-Language: en-NZ, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.32.16.78]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F3B4080B963C484AA69131A2EA72BF2B@atlnz.lc>
-Content-Transfer-Encoding: base64
+        Thu, 12 Jul 2018 16:46:18 -0400
+Received: by mail-pf0-f195.google.com with SMTP id e13-v6so7886940pff.7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 13:35:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=zLPg+ZMnkHqRoRSwpuhB3kNpy3QtB4EcoIMhtTIlVRU=;
+        b=jYEWKy3uovlwTXZ90J1mh5IF0CkQJ/QURWm7iqHaRd8s4Ve87CGtf9K6EHA8/K8sI1
+         8AwPyJeZSQ7bix9WeiEyPSb5xQh50XSO0ZnNCeXoh0mUZQTrAtHPzh4a+3MEYyk/tsmr
+         SiDcOsqvOvYhM3M51BeGH/rTtKMlv2PyEvBa0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=zLPg+ZMnkHqRoRSwpuhB3kNpy3QtB4EcoIMhtTIlVRU=;
+        b=bvEOYWJRRRqeRj2/pKyrKVPDS6uAjoKVdqLrc83du5xN6QoYCIkdRk+TpM0MGulbaO
+         ZDrxB0P7vz5t698EYkPjcE7Rq6tuN6OraX2s9eryXj3DjhCRfkUCs6Q6aeJ/ZYACMVR3
+         rO/zxeSdcr7Gzh/alqLzl2qAqbfeaLivdU16gxlua7gabJ80viR1+47sZQeW/gIUoJq3
+         WPWDWUpk0Jg641KUGNKxDeOHkE1XlE+8nxbeytaTg1UmtlUJ9qInVWcd1FxuHYU5SXXC
+         IXtwKWMukQ07Xh3qvNl1l9HWNKoHQS2e5gtqxiQpPCyTTOSfMeCtKZpSQAw0KDFyUVWd
+         /m0A==
+X-Gm-Message-State: AOUpUlGCbxhuaC5gNuHLi8OqJ762+16A/5VfT+ixE+TgYzKDSniZR4U7
+        RPB2uy7LUmr1lbt/XAvlQXAbgA==
+X-Google-Smtp-Source: AAOMgpdokCGULGhAijb+GNgOV6l0nM0UVFXhKSGGbJ6Kwo7/s2U5v6HTGuEgaRrgWLol//zbttVEBA==
+X-Received: by 2002:a63:1902:: with SMTP id z2-v6mr3374052pgl.86.1531427706198;
+        Thu, 12 Jul 2018 13:35:06 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id l25-v6sm8734824pff.8.2018.07.12.13.35.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Jul 2018 13:35:05 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 13:37:46 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kexec Mailing List <kexec@lists.infradead.org>,
+        Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v5 7/8] ima: based on policy warn about loading firmware
+ (pre-allocated buffer)
+Message-ID: <20180712203746.GG545@tuxbook-pro>
+References: <1530542283-26145-1-git-send-email-zohar@linux.vnet.ibm.com>
+ <1530542283-26145-8-git-send-email-zohar@linux.vnet.ibm.com>
+ <CAKv+Gu-nky1yX59TL2FNQ-0q7Sy399t2WpVWSy7jqYpQY4Fxjw@mail.gmail.com>
+ <1531165294.3332.40.camel@linux.ibm.com>
+ <CAKv+Gu-knHeBRGqo+2pb3X9cCjwovEykoXUf=DZyP7aJpoS60A@mail.gmail.com>
+ <CAKv+Gu8qjzh_Tta=n9C+cfXO29e_5RcLqfQSpvR5r7QmqzHbEg@mail.gmail.com>
+ <20180710191951.GF1731@minitux>
+ <CAKv+Gu_C0H9LoqeC3PkKhaKr0TQys=1TcYFNG-JUivnN_YgBKQ@mail.gmail.com>
+ <1531425793.3568.275.camel@linux.ibm.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1531425793.3568.275.camel@linux.ibm.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgWGl1Ym8sDQoNClRlc3RlZC1ieTogSGFtaXNoIE1hcnRpbiA8aGFtaXNoLm1hcnRpbkBhbGxp
-ZWR0ZWxlc2lzLmNvLm56Pg0KDQpJIHNlZSB0aGVzZSB3ZXJlIGFscmVhZHkgbWVyZ2VkIGludG8g
-TGludXMnIHRyZWUgYnV0IEkgd2FudGVkIHRvIGxldCB5b3UgDQprbm93IHRoYXQgSSB0ZXN0ZWQg
-djQuMTgtcmM0ICh3aGljaCBjb250YWlucyB0aGVzZSB0aHJlZSBwYXRjaGVzKSBhbmQgDQp0aGUg
-aXNzdWUgd2hpY2ggbGVkIHRvIG15IG9yaWdpbmFsIHNlcmllcyBpcyBzdGlsbCBmaXhlZCBhbmQg
-dGhpcyBwYXRjaCANCnNlcmllcyBvZiB5b3VycyBoYXMgY2F1c2VkIG5vIHJlZ3Jlc3Npb24gaW4g
-b3VyIHNjZW5hcmlvLiBUaGlzIHdhcyANCnRlc3RlZCBvbiBQUEMgNjQgYml0IHN5c3RlbSAoTlhQ
-IFQyMDgxKS4NCg0KVGhhbmtzIGZvciByZXNvbHZpbmcgdGhhdC4NCg0KUmVnYXJkcywNCkhhbWlz
-aCBNLg0KDQpPbiAwNy8wNy8yMDE4IDAyOjA1IFBNLCB4aXVibGlAcmVkaGF0LmNvbSB3cm90ZToN
-Cj4gRnJvbTogWGl1Ym8gTGkgPHhpdWJsaUByZWRoYXQuY29tPg0KPg0KPiBWMjoNCj4gLSByZXNl
-bmQgaXQgd2l0aCBzb21lIHNtYWxsIGZpeA0KPg0KPiBWMzoNCj4gLSBzd2l0Y2ggdG8gdXNlIHJl
-cXVlc3RfdGhyZWFkZWRfaXJxDQo+DQo+IFY0Og0KPiAtIHJlbW92ZSB1c2VsZXNzIGNoZWNraW5n
-IGNvZGUsIFRoYW5rcyBNaWtlLg0KPiAtIFRoYW5rcyB2ZXJ5IG11Y2ggZm9yIHRoZSByZXZpZXcg
-ZnJvbSBIYW1pc2ggYW5kIE1pa2UuDQo+DQo+DQo+IFhpdWJvIExpICgzKToNCj4gICAgdWlvOiB1
-c2UgcmVxdWVzdF90aHJlYWRlZF9pcnEgaW5zdGVhZA0KPiAgICB1aW86IGNoYW5nZSB0byB1c2Ug
-dGhlIG11dGV4IGxvY2sgaW5zdGVhZCBvZiB0aGUgc3BpbiBsb2NrDQo+ICAgIHVpbzogZml4IGNy
-YXNoIGFmdGVyIHRoZSBkZXZpY2UgaXMgdW5yZWdpc3RlcmVkDQo+DQo+ICAgZHJpdmVycy91aW8v
-dWlvLmMgICAgICAgICAgfCAxMzkgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0t
-LS0tLS0tLS0tDQo+ICAgaW5jbHVkZS9saW51eC91aW9fZHJpdmVyLmggfCAgIDIgKy0NCj4gICAy
-IGZpbGVzIGNoYW5nZWQsIDEwNCBpbnNlcnRpb25zKCspLCAzNyBkZWxldGlvbnMoLSkNCj4NCg==
+On Thu 12 Jul 13:03 PDT 2018, Mimi Zohar wrote:
+
+> On Wed, 2018-07-11 at 08:24 +0200, Ard Biesheuvel wrote:
+> > On 10 July 2018 at 21:19, Bjorn Andersson <bjorn.andersson@linaro.org> wrote:
+> 
+> > > Tbh the only case I can think of where there would be a "race condition"
+> > > here is if we have a device that is polling the last byte of a
+> > > predefined firmware memory area for the firmware loader to read some
+> > > specific data into it. In cases where the firmware request is followed
+> > > by some explicit signalling to the device (or a power on sequence) I'm
+> > > unable to see the issue discussed here.
+> > >
+> > 
+> > I agree. But the latter part is platform specific, and so it requires
+> > some degree of trust in the driver author on the part of the IMA
+> > routines that request_firmware() is called at an appropriate time.
+> 
+> Exactly.  Qualcomm could be using the pre-allocated buffer
+> appropriately, but that doesn't guarantee how it will be used in the
+> future.
+> 
+
+Agreed.
+
+But a device that starts operate on the firmware memory before it's
+fully loaded (and verified) will likely hit other nasty issues. Using a
+traditional request_firmware() and memcpy() or simply mapping the buffer
+into the remote piecemeal would have the same issue.
+
+So I think that regardless of using IMA, if you don't have the ability
+to control your device's view of the entire firmware buffer atomically
+you must write your device drivers accordingly.
+
+Regards,
+Bjorn
