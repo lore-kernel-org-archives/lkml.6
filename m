@@ -2,221 +2,208 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URG_BIZ autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E69FFC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A22DAC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A3152086E
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AC6E2086E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:01:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="edicngku"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A3152086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="RD67On7R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AC6E2086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbeGLMKE (ORCPT
+        id S1732590AbeGLMKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:10:04 -0400
-Received: from twosheds.infradead.org ([90.155.92.209]:42296 "EHLO
-        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbeGLMKE (ORCPT
+        Thu, 12 Jul 2018 08:10:25 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46005 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbeGLMKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:10:04 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
-        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=9xAT8AqGWH18zuxQmZenqCk43rq/cIuD4j4bOxhcYuk=; b=edicngku313aeGZwGgbGjUWeO
-        Ff1veN/TXeYs35V0cQ6bUe4DGWBl1Zkti2AULcTF5YNlmSjtNBviTMgZ9dTMcP8Ddzk6FCii+1Vlo
-        OEhvKQGJzpUOozUb6cw3zm6EpN2PJ6XYnSS/TZ4n4M4MYOYa08hyMH1Chx1x24Vghu2li/6LdaO2j
-        76g2ZSjMLGG62Bkgpu3nt0dQ/Zn2IVSPSTV8UIVlI5UohMp4NYKdTt+6Xv9APesCww44tg4m1Dxwl
-        nOVt3972ruOb6P3AN3jUPjLGOMy3gAxeiancTK2gCQL/V+2gKJkVqhuOy0bpCFUhSq3ZsBRsBjL/v
-        S0ryLlRMw==;
-Received: from [2001:8b0:10b:1::2fb]
-        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdaH5-00035a-2r; Thu, 12 Jul 2018 12:00:43 +0000
-Message-ID: <1531396842.8759.125.camel@infradead.org>
-Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
- requested
-From:   David Woodhouse <dwmw2@infradead.org>
-To:     paulmck@linux.vnet.ibm.com
-Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        kvm <kvm@vger.kernel.org>
-In-Reply-To: <20180711210828.GD3593@linux.vnet.ibm.com>
-References: <1531169145.26547.8.camel@infradead.org>
-         <20180709210532.GH3593@linux.vnet.ibm.com>
-         <20180709220823.GA18045@linux.vnet.ibm.com>
-         <1531319025.8759.57.camel@infradead.org>
-         <20180711144303.GQ3593@linux.vnet.ibm.com>
-         <20180711164952.GA29994@linux.vnet.ibm.com>
-         <e21c6d7666bfbad1e1c8295559a6ddc7e4110105.camel@infradead.org>
-         <9ee4d6fd-02e2-2c73-36a7-36ef4f6413b0@de.ibm.com>
-         <20180711201759.GB3593@linux.vnet.ibm.com>
-         <1531340384.8759.86.camel@infradead.org>
-         <20180711210828.GD3593@linux.vnet.ibm.com>
-Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-MMD/6LSnZj1kTWtQSDpD"
-Date:   Thu, 12 Jul 2018 13:00:42 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 12 Jul 2018 08:10:24 -0400
+Received: by mail-wr1-f67.google.com with SMTP id c4-v6so8761861wrs.12
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 05:01:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=DrjMqM9DfRkdPO3b8AbZcqKJWVhEEiaN5vW1Y5jijMs=;
+        b=RD67On7RKWDz3Pm3K08Leq+4W0QPR4923OI+J0xeWXKv22NmY8CaIzrcSi91LPT7J7
+         ryKP/NtE2xFgkOEqgSAEmigsGiDGI6wH2K4dqEpuWf96LaA60r/oJLEFwn5M+qMtFuPs
+         aEEdPZaFh6dXHwOOxoEqCIEyPZ80ZVXb06Jjo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=DrjMqM9DfRkdPO3b8AbZcqKJWVhEEiaN5vW1Y5jijMs=;
+        b=Q0peGgDXpIhHVna5izIZ+0XbmurBLVRi699zBkALc5N+u9KA+jzuIrApkiZti/a9Po
+         smhKOHQAnc8eK9+RyMFZC1UE7NdHVmXl6XyE3PmE3ra+ifBsi+O7+oCEx1yDS3WWaZED
+         +lzZ2iZ7DkJbfF6f+D/270DU7p8kBrYOL7fGKugvYTUdXD4LaJYGLtoY1yiUqMczjJCY
+         xA2q9lQYzCmEVd9Ex51R/eg9omuRe4Zli6nn6VuoAk7xiZkwklOsPYIcWGSeFej/Gmpg
+         Oc1P17zO5AGE5XLwu2ePR0G0uEpSSX+9Ceep06EsH1YOUXFxRb3OOJ4AC7F0j0SctiE4
+         Atag==
+X-Gm-Message-State: AOUpUlEWujuIj+5FYpQfkquHBNFvihz23aB7ym/0RDa/mNCPXMCoIQD6
+        4OGZYAdOcR/+Sh7HofckpRrncw==
+X-Google-Smtp-Source: AAOMgpe25VqiDOruM6/v9RrYpsN0wr4vvijsO5FmLJbPuCHYiWKxyv+1FOAjTHRf60JrDELNOg+/FQ==
+X-Received: by 2002:adf:ae51:: with SMTP id u17-v6mr1465690wrd.201.1531396867368;
+        Thu, 12 Jul 2018 05:01:07 -0700 (PDT)
+Received: from andrea (85.100.broadband17.iol.cz. [109.80.100.85])
+        by smtp.gmail.com with ESMTPSA id k13-v6sm17022485wrr.14.2018.07.12.05.01.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 05:01:06 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 14:01:00 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+Message-ID: <20180712120100.GA7404@andrea>
+References: <Pine.LNX.4.44L0.1807091519180.2462-100000@iolanthe.rowland.org>
+ <20180710093821.GA5414@andrea>
+ <20180711094310.GA13963@arm.com>
+ <20180711123421.GA9673@andrea>
+ <20180712074040.GA4920@worktop.programming.kicks-ass.net>
+ <20180712115249.GA6201@andrea>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712115249.GA6201@andrea>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 12, 2018 at 01:52:49PM +0200, Andrea Parri wrote:
+> On Thu, Jul 12, 2018 at 09:40:40AM +0200, Peter Zijlstra wrote:
+> > On Wed, Jul 11, 2018 at 02:34:21PM +0200, Andrea Parri wrote:
+> > > Simplicity is the eye of the beholder.  From my POV (LKMM maintainer), the
+> > > simplest solution would be to get rid of rfi-rel-acq and unlock-rf-lock-po
+> > > (or its analogous in v3) all together:
+> > 
+> > <snip>
+> > 
+> > > Among other things, this would immediately:
+> > > 
+> > >   1) Enable RISC-V to use their .aq/.rl annotations _without_ having to
+> > >      "worry" about tso or release/acquire fences; IOW, this will permit
+> > >      a partial revert of:
+> > > 
+> > >        0123f4d76ca6 ("riscv/spinlock: Strengthen implementations with fences")
+> > >        5ce6c1f3535f ("riscv/atomic: Strengthen implementations with fences")
+> > 
+> > But I feel this goes in the wrong direction. This weakens the effective
+> > memory model, where I feel we should strengthen it.
+> > 
+> > Currently PowerPC is the weakest here, and the above RISC-V changes
+> > (reverts) would make RISC-V weaker still.
+> > 
+> > Any any effective weakening makes me very uncomfortable -- who knows
+> > what will come apart this time. This memory ordering stuff causes
+> > horrible subtle bugs at best.
+> 
+> Indeed, what I was suggesting above is a weaking of the current model
+> (and I agree: I wouldn't say that bugs in this context are nice  ;-).
+> 
+> These changes would affect a specific area: (IMO,) the examples we've
+> been considering here aren't for the faint-hearted  ;-) and as Daniel
+> already suggested, everything would again be "nice and neat", if this
+> was all about locking/if every thread used lock-synchronization.
+> 
+> 
+> > 
+> > >   2) Resolve the above mentioned controversy (the inconsistency between
+> > >      - locking operations and atomic RMWs on one side, and their actual
+> > >      implementation in generic code on the other), thus enabling the use
+> > >      of LKMM _and_ its tools for the analysis/reviewing of the latter.
+> > 
+> > This is a good point; so lets see if there is something we can do to
+> > strengthen the model so it all works again.
+> > 
+> > And I think if we raise atomic*_acquire() to require TSO (but ideally
+> > raise it to RCsc) we're there.
+> > 
+> > The TSO archs have RCpc load-acquire and store-release, but fully
+> > ordered atomics. Most of the other archs have smp_mb() everything, with
+> > the exception of PPC, ARM64 and now RISC-V.
+> > 
+> > PPC has the RCpc TSO fence LWSYNC, ARM64 has the RCsc
+> > load-acquire/store-release. And RISC-V has a gazillion of options IIRC.
+> > 
+> > 
+> > So ideally atomic*_acquire() + smp_store_release() will be RCsc, and is
+> > with the notable exception of PPC, and ideally RISC-V would be RCsc
+> > here. But at the very least it should not be weaker than PPC.
+> > 
+> > By increasing atomic*_acquire() to TSO we also immediately get the
+> > proposed:
+> > 
+> >   P0()
+> >   {
+> > 	  WRITE_ONCE(X, 1);
+> > 	  spin_unlock(&s);
+> > 	  spin_lock(&s);
+> > 	  WRITE_ONCE(Y, 1);
+> >   }
+> > 
+> >   P1()
+> >   {
+> > 	  r1 = READ_ONCE(Y);
+> > 	  smp_rmb();
+> > 	  r2 = READ_ONCE(X);
+> >   }
+> > 
+> > behaviour under discussion; because the spin_lock() will imply the TSO
+> > ordering.
+> 
+> You mean: "when paired with a po-earlier release to the same memory
+> location", right?  I am afraid that neither arm64 nor riscv current
+> implementations would ensure "(r1 == 1 && r2 == 0) forbidden" if we
+> removed the po-earlier spin_unlock()...
+> 
+> AFAICT, the current implementation would work with that release: as
+> you remarked above, arm64 release->acquire is SC; riscv has an rw,w
+> fence in its spin_unlock() (hence an w,w fence between the stores),
+> or it could have a .tso fence ...
+> 
+> But again, these are stuble patterns, and my guess is that several/
+> most kernel developers really won't care about such guarantees (and
+> if some will do, they'll have the tools to figure out what they can
+> actually rely on ...)
+> 
+> OTOH (as I pointed out earlier) the strengthening we're configuring
+> will prevent some arch. (riscv being just the example of today!) to
+> go "full RCsc", and this will inevitably "complicate" both the LKMM
 
---=-MMD/6LSnZj1kTWtQSDpD
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+"full RCpc"
 
-
-
-On Wed, 2018-07-11 at 14:08 -0700, Paul E. McKenney wrote:
->=20
-> > Also... why in $DEITY's name was the existing
-> > rcu_virt_note_context_switch() not actually sufficient? If we had that
-> > there, why did we need an additional explicit calls to rcu_all_qs() in
-> > the KVM loop, or the more complex fixes to need_resched() which
-> > ultimately had the same effect, to avoid ten-second latencies?
->=20
-> My guess is that this was because control passed through the
-> rcu_virt_note_context_switch() only once, and then subsequent
-> scheduling-clock interrupts bypassed this code.=C2=A0 But that is just a =
-guess.
-> I need to defer to someone who understands the KVM code better than I do.
-
-I think it's more likely that we just never happened at all. It's
-conditional. From the latest patch iteration (see it being removed):
-
-@@ -118,12 +118,12 @@ static inline void guest_enter_irqoff(void)
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* one time slice). Le=
-ts treat guest mode as quiescent state, just like
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* we do with user-mod=
-e execution.
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0*/
--=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!context_tracking_cpu_is_ena=
-bled())
--=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0rcu_virt_note_context_switch(smp_processor_id());
-+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rcu_kvm_enter();
-=C2=A0}
-
-
-Given the vmexit overhead, I don't think we can do the currently-
-proposed rcu_kvm_enter() thing except for CONFIG_NO_HZ_FULL where it's
-really necessary. I'll make that conditional, but probably on the RCU
-side.
-
-Without CONFIG_NO_HZ_FULL, rcu_kvm_exit() can do nothing, and
-rcu_kvm_enter() can do rcu_virt_note_context_switch().
-
-OK?
---=-MMD/6LSnZj1kTWtQSDpD
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
-ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
-NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
-hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
-5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
-3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
-3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
-5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
-ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
-AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
-AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
-UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
-aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
-SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
-U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
-BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
-QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
-XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
-TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
-7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
-PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
-hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
-MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
-TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
-MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
-YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
-xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
-5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
-Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
-kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
-tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
-HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
-AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
-RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
-Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
-Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
-BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
-bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
-Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
-hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
-HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
-w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
-WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
-U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
-EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
-DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
-A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
-nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
-xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
-jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
-4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
-7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
-HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
-Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
-BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
-T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
-DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
-7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
-4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
-Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
-vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
-ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
-uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
-mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
-N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
-px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
-ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
-QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
-U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
-hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MTIxMjAwNDJaMC8GCSqG
-SIb3DQEJBDEiBCCosDIELr8Aa1izq5hKLukdRteaz/m6T4EbuK3cgIefdTCBvQYJKwYBBAGCNxAE
-MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
-jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
-cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
-aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
-dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAAVOeXYEwrp8
-03WxYviY0x/wZwysqRtOL1PICTBQCDMW+RiSGlaNP+YScfNwrTq2YLocxjLZgdlWhq3zTnpzeKI7
-5JwbJKYGygaFC2g9sheNs8D6SkE0mKngXULrFgij/Fp+Nu45DE9WoVTQ7A5AQWJ6pGgjuImWyGqR
-7jKRuZXEJ2LPW+8glG+cKpYqiygLolbscJg1sixMA6BwFVjtqb9urdc6XEbN2McnLVtog65qaY/s
-8DyRrr47usASJWYBEjlkf2Xdq+rWfViCF3YGGjMs3wIZtzGWN+ispnas7t4gF9PRbDT2wEIGvM//
-6hTjCMau3e5shTVwEMBfYR3ZdqkAAAAAAAA=
+  Andrea
 
 
---=-MMD/6LSnZj1kTWtQSDpD--
-
+> and the reviewing process of related changes (atomics, locking, ...;
+> c.f., this debate), apparently, just because you  ;-) want to "care"
+> about these guarantees.
+> 
+> Not yet convinced ...  :/
+> 
+>   Andrea
+> 
+> 
+> > 
+> > And note that this retains regular RCpc ACQUIRE for smp_load_acquire()
+> > and associated primitives -- as they have had since their introduction
+> > not too long ago.
