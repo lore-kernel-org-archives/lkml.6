@@ -2,119 +2,95 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49E8ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:10:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C7FECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F81120841
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:10:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eXZ58IUy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F81120841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id EE1F621477
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:15:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE1F621477
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732485AbeGLUVm (ORCPT
+        id S1732444AbeGLU0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 16:21:42 -0400
-Received: from mail-oi0-f73.google.com ([209.85.218.73]:46310 "EHLO
-        mail-oi0-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726778AbeGLUVm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:21:42 -0400
-Received: by mail-oi0-f73.google.com with SMTP id j5-v6so41432204oiw.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 13:10:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:message-id:subject:from:to:cc;
-        bh=7HBBS12wdzPnBqb4PrxQnvTynFROAsoBAJFMXIhIg7Q=;
-        b=eXZ58IUykEz8VdCuzNS6RPoVPfkmTF1iOoslHx1q2+xQRoF9blLLyNpSG+yd6pB6VB
-         /GBnY1suP6yD//ftGZ5vEWpfLpg7M2WjS6EM97RCVI/MaWlKMmEqggoGcBA7r5g868F6
-         PmSysizzQ6f165LhH5B44C+DKgSiLLJw5g2mdOcY7exSUgZHhhrVKpgiyB5pbrYll8h3
-         VVt3LFOCTB7hK+i5ZADi36HBQbsYnyEoFct1XvToGCfii9KAnhzCd90NxWcCcleRZocW
-         iWZkj23EnToiKpnIwV2NV4z+AAS7RT0XC9gd604gi/VMIBS/1sSvaQv2GOP+6fwOMEnE
-         t6+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
-        bh=7HBBS12wdzPnBqb4PrxQnvTynFROAsoBAJFMXIhIg7Q=;
-        b=lMGjSgWMMZyj+EgY0nrxLXCd9Apt6uo3mmG8aaYDIaLa6umvDpTYD3hUIXpCYWRIR8
-         7RWozA2CbRTJnuIhpkH3D9P888BfMcsAerkEw1cRvUtEjf/e8BO3FfwSSAcpfyU89+/L
-         jFVxV3LVrzfAVaPUM3/FSCguVDmWRlvNazWxCulJ7P/wCd254mEi3Aj/nM0DkiFa9O1B
-         87VZ/aAvuxIcMiSrcdBC5wCqd48JDmGDaXHeeDIGp/48SUyBLcq78sZpLHpLNL4UaBPX
-         hAF2EJmq2cYk/MdwjHDj/xPIKy74obPp4rEr7hI4HBLvs5EXREF0eVnZc6uXjh6BgT3a
-         X1lQ==
-X-Gm-Message-State: AOUpUlGR4ZPFPeDuUDhMmYAgOucE7pjAQoi1V55luqFe/1I/x0WWr1cm
-        fIpr72g0JheywihSoxDd4/qB70cFw1eIwnHTEgSIDIQucFP0+OYuDgdKS6kDyTV2+bDbIgCN90x
-        jZy6IZZgip+KvPz5nPoXnmZou6DPpxaSsWxA/YQABpppHLZ9/Z1stpBqBmGLE9HfhbUtX550dWI
-        GaEA==
-X-Google-Smtp-Source: AAOMgpes7GQ36nMec3KT4wmuTkVBHt+qsBjvoBRloTTRAQdH75dFeJWy/u10WjeDITzbnZ6mCzZGgZSd/+EVc2w=
-MIME-Version: 1.0
-X-Received: by 2002:aca:bd84:: with SMTP id n126-v6mr2235933oif.78.1531426235108;
- Thu, 12 Jul 2018 13:10:35 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 13:10:32 -0700
-Message-Id: <20180712201032.156997-1-astrachan@google.com>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
-Subject: [PATCH] x86: vdso: Fix leaky vdso link with CC=clang
-From:   Alistair Strachan <astrachan@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        Thu, 12 Jul 2018 16:26:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57112 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727082AbeGLU0u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 16:26:50 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA6FC20870;
+        Thu, 12 Jul 2018 20:15:40 +0000 (UTC)
+Date:   Thu, 12 Jul 2018 16:15:38 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
+        Byungchul Park <byungchul.park@lge.com>,
         Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        x86@kernel.org, kernel-team@android.com, joel@joelfernandes.com
-Content-Type: text/plain; charset="UTF-8"
+        Julia Cartwright <julia@ni.com>,
+        linux-kselftest@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Glexiner <tglx@linutronix.de>,
+        Tom Zanussi <tom.zanussi@linux.intel.com>
+Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
+ SRCU
+Message-ID: <20180712161538.0737ba7f@gandalf.local.home>
+In-Reply-To: <20180712191701.GA107829@joelaf.mtv.corp.google.com>
+References: <20180628182149.226164-1-joel@joelfernandes.org>
+        <20180628182149.226164-5-joel@joelfernandes.org>
+        <20180711124954.GE2476@hirez.programming.kicks-ass.net>
+        <20180711090003.42596c2b@gandalf.local.home>
+        <20180711142744.GN3593@linux.vnet.ibm.com>
+        <20180711104618.05dc4b46@gandalf.local.home>
+        <20180711205249.GA32091@joelaf.mtv.corp.google.com>
+        <20180711232120.5dbfa1c7@vmware.local.home>
+        <20180712042825.GA154647@joelaf.mtv.corp.google.com>
+        <20180712093512.1f612a24@gandalf.local.home>
+        <20180712191701.GA107829@joelaf.mtv.corp.google.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The vdso{32,64}.so can fail to link with CC=clang when clang tries to
-find a suitable GCC toolchain to link these libraries with.
+On Thu, 12 Jul 2018 12:17:01 -0700
+Joel Fernandes <joel@joelfernandes.org> wrote:
 
-/usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o:
-  access beyond end of merged section (782)
+> AFAICT, _notrace doesn't call into lockdep or tracing (there's also a comment
+> that says so):
+> 
+> /**
+>  * srcu_dereference_notrace - no tracing and no lockdep calls from here
+>  */
 
-This happens because the host environment leaked into the cross
-compiler environment due to the way clang searches for suitable GCC
-toolchains.
+Note, I had a different tree checked out, so I didn't have the source
+available without digging through my email.
 
-Most of the time this goes unnoticed because the host linker is new
-enough to work anyway, but this cannot be reliably assumed.
+> 
+> So then, we should use the regular variant for this additional check you're
+> suggesting.
 
-Extract the needed --target and --gcc-toolchain flags added in the top
-level Makefile from KBUILD_CFLAGS. These flags direct clang to the
-appropriate toolchain to link the vdsos.
+OK, I thought we had a rcu_dereference_notrace() that did checks and
+thought that this followed suit, but it appears there is no such call.
+That's where my confusion was.
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: x86@kernel.org
-Cc: kernel-team@android.com
-Cc: joel@joelfernandes.com
-Signed-off-by: Alistair Strachan <astrachan@google.com>
----
- arch/x86/entry/vdso/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Sure, I'll nuke the notrace() portion, thanks.
 
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 261802b1cc50..062ee94d2d26 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -163,7 +163,8 @@ quiet_cmd_vdso = VDSO    $@
- 		 sh $(srctree)/$(src)/checkundef.sh '$(NM)' '$@'
- 
- VDSO_LDFLAGS = -fPIC -shared $(call cc-ldoption, -Wl$(comma)--hash-style=both) \
--	$(call cc-ldoption, -Wl$(comma)--build-id) -Wl,-Bsymbolic $(LTO_CFLAGS)
-+	$(call cc-ldoption, -Wl$(comma)--build-id) -Wl,-Bsymbolic $(LTO_CFLAGS) \
-+	$(filter --target=% --gcc-toolchain=%,$(KBUILD_CFLAGS))
- GCOV_PROFILE := n
- 
- #
+Also, I've applied 1-3, since 4 and 5 looks to be getting a remake, I'm
+going to remove them from my queue. Please fold the SPDX patch into 5.
+
+Thanks!
+
+-- Steve
