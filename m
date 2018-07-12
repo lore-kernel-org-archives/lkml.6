@@ -2,153 +2,119 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,SPF_PASS,
-	T_DKIMWL_WL_MED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612F6C476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:23:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478AEC476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A07920878
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:23:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E684E20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:25:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="iQa9+eEZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A07920878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j+YZioOY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E684E20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbeGLQdl (ORCPT
+        id S1727455AbeGLQgD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:33:41 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:43289 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbeGLQdk (ORCPT
+        Thu, 12 Jul 2018 12:36:03 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38688 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbeGLQgC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:33:40 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y8-v6so20890258pfm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 09:23:25 -0700 (PDT)
+        Thu, 12 Jul 2018 12:36:02 -0400
+Received: by mail-oi0-f66.google.com with SMTP id v8-v6so56901128oie.5
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 09:25:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=35OnGesK99ZOwShmDJR3A/7Pyg2gg8VvIWMpirwcrmo=;
-        b=iQa9+eEZ/um+hMnRqG9FHdOIKQbC8yIeQyGsGnNWC6abvtZ3+LQTBZQRdNImQCA0x8
-         Tl/xZqERDJaQ5aY6iNfbayH3etO4eR3B0wGxDC8t1XR9VEOT/it6QXCwepNbojob2AHO
-         vB07AEJILoTdkS4f0H8kZAY6mbj0N5i0GyWXhAqK/TAj85hQ8NkWVHRTVDPyvlXmCAj6
-         8SYeXimiXKLqQBoKyKkGtg6F0HtrKZzgq/L1N0V1drjKALZktN7O5TdE6qOpH9iFmroA
-         0eiMH3UO/GTnYMH1pYjruGA2osF+Jum/zJXG1vVTpLiw327tRR84Bi2HncNnkFnmZUys
-         ExuA==
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=LiNiRxfqiEcD/6U+Ix5RXDcWy+3wHNAtbCOcI2W0So4=;
+        b=j+YZioOY7N3jFPnl7f+35PecUFLFnyoGWm+fyqCTKw9dTp6gnJMoVFflEodQVNIPMw
+         iWhYfvNMLjhTu44JhfPf0eCi/nwt0qZsqrUg7z+b3w/cpg2YlAVmXwfal44DPPwGspac
+         EW/rCQvO4L0Q/IDeh0JSI59NNwK0dalWmzOvAJylduVQK0AR+YmSAG83+TW/hNTXoA5Y
+         YWS8LsVK5wW1yD2WoWz1HL5y6q9c6j0rr6PpSbFlK/puD0itG+6zxbKp6lXCJB9W1lc1
+         jZiE4gcs798H88asNmw/HFmkO5cVnVNbD4fmxUIhtymv5ISfjmZx+WbbiaDiTjoc8KCV
+         Kr2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=35OnGesK99ZOwShmDJR3A/7Pyg2gg8VvIWMpirwcrmo=;
-        b=AifFO8jtvkBwx61ptMXC3YzDY++8rTf8f8TyN/Hxpg8PA0tY81Le2QtDXTfHsSEqC/
-         l1aUZzg+fV0Xug+K+6Bf8Ou/hyaQIoOX5Bk/Q15JVmRitq6vnIRQqeeXdsV7YxJQVjqK
-         Lgm1VXqfN++X+QFqAO4x5zsWGG2/5NJCYsWUBSAVkpV90PYDOjGSHGTwJTn3k9zVXWbU
-         6mdSX1D6BkuQmoY1lO1RJE1EIpSTnBhCacVfmoeruAoewiVRVM8IOdVgbQNqn2TeCNwn
-         bS5vrhCUhHs4AYZ6cWPqCtI51CAn2WjBLguENuXUhEZcK2824m9wCAKFeyThULxe5KWr
-         BCqQ==
-X-Gm-Message-State: AOUpUlFsWmubt3qWqJF/o/SfQgzm25Ddmbkwj9QJYIiSgfDxiKkeI32m
-        0f/mwKIAUZOO1dNaXVCYHtd6EQ==
-X-Google-Smtp-Source: AAOMgpftGVGhGkJKVarTVclumk+aQkst7rSsnet5pmn66dZYuop7DH5yH0n+VRo5Wr3a+XdiRPT9Pw==
-X-Received: by 2002:a62:43c8:: with SMTP id l69-v6mr3161985pfi.196.1531412604993;
-        Thu, 12 Jul 2018 09:23:24 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b052:968:4f0:92ce:1385:5f3d? ([2600:1010:b052:968:4f0:92ce:1385:5f3d])
-        by smtp.gmail.com with ESMTPSA id o3-v6sm32678738pgp.3.2018.07.12.09.23.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 09:23:23 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for superblock creation [ver #9]
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <7002.1531407244@warthog.procyon.org.uk>
-Date:   Thu, 12 Jul 2018 09:23:22 -0700
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, tycho@tycho.ws
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <338BC3C4-F3E7-48F0-A82E-2C7295B6640E@amacapital.net>
-References: <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk> <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk> <7002.1531407244@warthog.procyon.org.uk>
-To:     David Howells <dhowells@redhat.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=LiNiRxfqiEcD/6U+Ix5RXDcWy+3wHNAtbCOcI2W0So4=;
+        b=A70nub7sA9lXGpNjXeM+yx6xCQ6atnmT/FbMvVsuqP6oVuoVR3o6iJ16MqdbztOa+e
+         iJcPVcj9NQZtITF/wVB4RxPT3Obr6WkInUkMEoM9vD95Te7AlmL1aKc4EC3m+pskOFob
+         Pewt4jO2nyUcxPB+t+5CG8E0mC1Ejjqq9HuutlS98oLhXsFIlOIEzS8DOYDLXAnzmQSB
+         Y72BZTBfZxjXTa2JXG9jCZGWJo9FkXjX7N1XyMYDA5MB1KR07zedZhejWNJUB3QxcX3n
+         HNc0vmL6rH7YzZP6DhqEIzIJrfssmwzmrnsV8XAkoTwY/izZARJAi8J5rwqS9HbcRUOT
+         E8YA==
+X-Gm-Message-State: AOUpUlG4CFHD/h4J0oLmkDil7SNtr+q5MDaoogrW4l3KvWH3KjHK9JiA
+        mTfGa+58S0NUI8F44UeLhC+IGJTIgXsKkX6jFrYvcQ==
+X-Google-Smtp-Source: AAOMgpdW/LbBm0xbc61T3cUhEARLwx59OiaLt6HoGpJL26ht6in+lYW+UszSajMFPp5zktUqil4Pu+BtGtPACQXPkiw=
+X-Received: by 2002:aca:c585:: with SMTP id v127-v6mr3319662oif.348.1531412746618;
+ Thu, 12 Jul 2018 09:25:46 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:ac9:3404:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 09:25:46
+ -0700 (PDT)
+In-Reply-To: <20180712113505.23354-1-vkuznets@redhat.com>
+References: <20180712113505.23354-1-vkuznets@redhat.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Thu, 12 Jul 2018 09:25:46 -0700
+Message-ID: <CALMp9eRabYJ0Q==pok9R0eDUXtdPa2iv83GWPcM-xw3ZFGq4Ww@mail.gmail.com>
+Subject: Re: [PATCH] x86/kvm/nVMX: set exit_qualification correctly when
+ nested_vmx_load_msr() fails
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This looks similar to my "[PATCH] kvm: nVMX: Restore exit qual for
+VM-entry failure due to MSR loading"
 
-
-> On Jul 12, 2018, at 7:54 AM, David Howells <dhowells@redhat.com> wrote:
->=20
-> Andy Lutomirski <luto@kernel.org> wrote:
->=20
->>> On Jul 11, 2018, at 12:22 AM, David Howells <dhowells@redhat.com> wrote:=
-
->>>=20
->>> Andy Lutomirski <luto@amacapital.net> wrote:
->>>=20
->>>>>  sfd =3D fsopen("ext4", FSOPEN_CLOEXEC);
->>>>>  write(sfd, "s /dev/sdb1"); // note I'm ignoring write's length arg
->>>>=20
->>>> Imagine some malicious program passes sfd as stdout to a setuid
->>>> program. That program gets persuaded to write "s /etc/shadow".  What
->>>> happens?  You=E2=80=99re okay as long as *every single fs* gets it righ=
-t, but
->>>> that=E2=80=99s asking a lot.
->>>=20
->>> Do note that you must already have CAP_SYS_ADMIN to be able to call
->>> fsopen().
->>=20
->> If you're not allowing it already, someone will want user namespace
->> root to be able to use this very, very soon.
->=20
-> Yeah, I'm sure.  And I've been thinking on how to deal with it.
->=20
-> I think we *have* to open the source files/devices with the creds of whoev=
-er
-> called fsopen() or fspick() - that way you can't upgrade your privs by pas=
-sing
-> your context fd to a suid program.  To enforce this, I think it's simplest=
- for
-> fscontext_write() to call override_creds() right after taking the uapi_mut=
-ex
-> and then call revert_creds() right before dropping the mutex.
->=20
-
-If you make a syscall that attaches a block device to an fscontext, you don=E2=
-=80=99t need any of this.  Heck, someone might actually *want* to grab a blo=
-ck device from a different namespace.
-
-All this override_creds() stuff is maybe okay if we were fixing an old broke=
-n thing. But this is brand new.  And having write() call override_creds() an=
-d do nontrivial things is a fascinating attack surface.
-
-Just imagine what blows up if I abuse fscontext to open a block device on a p=
-ath that traverses an AFS mount or /proc/.../fd or similar.  Or if I splice(=
-) from a network filesystem into fscontext.
-
-(Al- can=E2=80=99t we just stop allowing splice() at all on things that don=E2=
-=80=99t use iov_iter?)
-
-> Another thing we might want to look at is to allow a supervisory process t=
-o
-> examine the context before permitting the create/reconfigure action to
-> proceed.  It might also be possible to do this through the LSM.
-
-Cc Tycho. He=E2=80=99s working on this exact idea using seccomp. And he=E2=80=
-=99d probably much, much prefer if configuration of an fscontext didn=E2=80=99=
-t use a performance-critical syscall like write().
-
-As a straw man, I suggest:
-
-fsconfigure(contextfd, ADD_BLOCKDEV, dfd, path, flags);
-
-fsconfigure(contextfd, ADD_OPTION, 0, =E2=80=9Cfoo=3Dbar=E2=80=9D, flags);
-
-Etc. =20
+On Thu, Jul 12, 2018 at 4:35 AM, Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+> Commit e79f245ddec1 ("X86/KVM: Properly update 'tsc_offset' to represent
+> the running guest") introduced a regression in enter_vmx_non_root_mode():
+> when nested_vmx_load_msr() fails exit_qualification needs to point to the
+> entry number we failed to validate. Intel's SDM states:
+>
+> "VM-entry failure due to MSR loading. The exit qualification is loaded to
+> indicate which entry in the VM-entry MSR-load area caused the problem (1
+> for the first entry, 2 for the second, etc.)."
+>
+> Fixes: e79f245ddec1 ("X86/KVM: Properly update 'tsc_offset' to represent the running guest")
+> Reported-by: Wanpeng Li <kernellwp@gmail.com>
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/kvm/vmx.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 65968649b365..be468c822892 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -11720,8 +11720,10 @@ static int enter_vmx_non_root_mode(struct kvm_vcpu *vcpu)
+>         msr_entry_idx = nested_vmx_load_msr(vcpu,
+>                                             vmcs12->vm_entry_msr_load_addr,
+>                                             vmcs12->vm_entry_msr_load_count);
+> -       if (msr_entry_idx)
+> +       if (msr_entry_idx) {
+> +               exit_qual = msr_entry_idx;
+>                 goto fail;
+> +       }
+>
+>         /*
+>          * Note no nested_vmx_succeed or nested_vmx_fail here. At this point
+> --
+> 2.14.4
+>
