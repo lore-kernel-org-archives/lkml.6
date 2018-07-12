@@ -7,64 +7,63 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1656C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFCEC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F97F21471
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:18:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7E082147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:19:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RMfd6JBA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F97F21471
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sNP/IHQ6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E082147C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732671AbeGLP2Q (ORCPT
+        id S1732536AbeGLP3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 11:28:16 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:39476 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732557AbeGLP2P (ORCPT
+        Thu, 12 Jul 2018 11:29:54 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:45898 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732195AbeGLP3y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:28:15 -0400
-Received: by mail-oi0-f67.google.com with SMTP id d189-v6so56436631oib.6;
-        Thu, 12 Jul 2018 08:18:15 -0700 (PDT)
+        Thu, 12 Jul 2018 11:29:54 -0400
+Received: by mail-oi0-f65.google.com with SMTP id q11-v6so30900936oic.12;
+        Thu, 12 Jul 2018 08:19:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=x2re6sEyIFh6UFvzoVLgEZJ3iLjpdmrjE6slE9J8KiQ=;
-        b=RMfd6JBAbfzCKsERjKBw0B1V6KxeGrAPZxxFismYBpFmVb6936lifzcJ1/wMXfjjPn
-         j5c0aXi5bRjsjStytjeN10cNq/tLirmMZjkiygrdS7NMw2KFh/ufaqukBSPQ1jDoviD2
-         ELHF2NLK0awy6ROiz8Ry63Md20a1urv8QzkDqLb3JHqjHBabcypvfwdsWbSSnmqo5287
-         tHl/w5w+tzDV0vnbU0jCd4b5sdvESHdLtTwSA7QvW0z3014sWjt1TZsqixACrWnDTDy8
-         Z9hchablzU57b+GOImkXlrMGcKotDZmlRf7aWwtbXb94xBHt0sJsWeurRgXW+7gPd+2/
-         pKaA==
+        bh=ku49n2pnzJt27LJbE9BwCiyKv06T+Enwo4Uz44PDqAA=;
+        b=sNP/IHQ6z6n6n6nKpiF+nKkhb/zcQc0NP8so/UZB7xgPq9XxnZ9oWoHaZ7sHQqhyGF
+         ml3+hFeLWEfTNxjZdvL8I0Tr3+yiO604R+dDmvzU9hROSbI/K2/glyYwVLkjVlRfdIbW
+         G9XLL2gbDf58zaAqnvpZgOoktoaUirLpcuy1kdMaOJUaTuOPVUXKJCIGE1jGohV+leDr
+         4n1Cji5GldsmjWKykq3LVYwEyPpEjHofoV+WHm2Vcjtwt0eq0jooB6G0lSea8lmr5mNP
+         H5k93LVgkM6nRwPhb7ugBhBMr8WME3Z6rRUFeQOBso+u7yP8eqPyd8zDV91hQA6w0qFy
+         mWrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=x2re6sEyIFh6UFvzoVLgEZJ3iLjpdmrjE6slE9J8KiQ=;
-        b=otQw4XZbfhCiYZ9pQ63leGdujrwnfXBnpsHp7aGyn/F/nVA4x4hMkOeaCU3vCdHmKP
-         W7bMfnLU4p0uh64CO98SjclIPLg+1ikVUI1ZJcQwCmUeh6H/bATqZijgnktRaNIBXo/s
-         J46zgEP93mweFKOU9vfnpW0HVQpETIlejfHAGjgoq4SXo3fue2/urrPUu+fg4I36TySu
-         7C4qlhf7keH15TZeFY24w9R6FN/3GDHmfj0uKGzsiVUoGU4RCOp5aG7x+VEyC2Eyu8zm
-         c21rkJA80+JItSF+c3KDcD8VZjMFoq7iFZwFwl0Ov1jNAqLRUwkaxxgwvY+XXg0iexFk
-         feog==
-X-Gm-Message-State: AOUpUlEKOUcA+9pnajkFqmHyBFEM4xTTMw9Iez5+LhUSml81PpFww5f8
-        csDNHnjYulPD3eg6P5XQjgQmq/VV6IIDP9FCDac=
-X-Google-Smtp-Source: AAOMgpfg4tQxmNomBbl4WCrxURtoEZ375qonfKJkLJexjzD97+56cBM5OyWD9P/L9gnxGekwhzlBB4mf9t8aTgHxutU=
-X-Received: by 2002:aca:b3c5:: with SMTP id c188-v6mr2987980oif.9.1531408695339;
- Thu, 12 Jul 2018 08:18:15 -0700 (PDT)
+        bh=ku49n2pnzJt27LJbE9BwCiyKv06T+Enwo4Uz44PDqAA=;
+        b=dEEnNfaNHhkFE1iNbd5EaqEtSFyTejo9Z/jr+jKksU75L5OPG6a+SAxwOKc3FGxGN5
+         NCRKiM3QAOMPFpauaTXAJ+7SUnHJERvzFDnizRm4jzr884t/+laSAJqyudaDC58kwiyA
+         J/Ie9skJhCS4VXt2iUfGLFCbGykIq5jvpV0wkfL4Moq3jh2mu0HNa+uR7lOKaXT4cGN+
+         M4XQFqD0hnlrUnOHsbBTs1g4bevi9fAyzY+iMEGylPA5u+8oq/Ljd5MEkAQx+PieVHHK
+         P+yb3VGmZBK1W+C6RUtRoQkOedOTMYqt90mLDy12WgnBa1J32ulofQ9A3M/aKoMIsIaT
+         kghA==
+X-Gm-Message-State: AOUpUlH3QKhehaliWyK7PMuEDAkJ/F7qr+ZtqQN1/ch4tlTdAZwF0JIg
+        S7MO3z147346QsnUBuIFU20Z3RnpmqOAcXHbipk=
+X-Google-Smtp-Source: AAOMgpfJWRDZyuHH4rUjJLh6Cysoua7QJHUSM/hvRIad6TXv7HzSsETqxQ2KsmPXeOWfCI9MnNHprDKT088Q1UoISPw=
+X-Received: by 2002:aca:3a57:: with SMTP id h84-v6mr3006985oia.336.1531408793680;
+ Thu, 12 Jul 2018 08:19:53 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:6285:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 08:18:14
+Received: by 2002:a9d:6285:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 08:19:53
  -0700 (PDT)
-In-Reply-To: <20180712110240.3006-3-m.felsch@pengutronix.de>
-References: <20180712110240.3006-1-m.felsch@pengutronix.de> <20180712110240.3006-3-m.felsch@pengutronix.de>
+In-Reply-To: <20180712110240.3006-2-m.felsch@pengutronix.de>
+References: <20180712110240.3006-1-m.felsch@pengutronix.de> <20180712110240.3006-2-m.felsch@pengutronix.de>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 12 Jul 2018 12:18:14 -0300
-Message-ID: <CAOMZO5AtrR52+U1XrJbeD6WnuVmsYMESYwq643uFvRE2avJxNA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] regulator: pfuze100: add support to en-/disable
- switch regulators
+Date:   Thu, 12 Jul 2018 12:19:53 -0300
+Message-ID: <CAOMZO5Cx-ooNJ8hseTYBvBvWx6mMX0jOsFTmRxC1yogXk0ZZuA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pfuze100: add optional pfuze-disable-sw binding
 To:     Marco Felsch <m.felsch@pengutronix.de>
 Cc:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
@@ -82,21 +81,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marco,
-
 On Thu, Jul 12, 2018 at 8:02 AM, Marco Felsch <m.felsch@pengutronix.de> wrote:
-> Add enable/disable support for switch regulators on pfuze100.
->
-> Based on commit 5fe156f1cab4 ("regulator: pfuze100: add enable/disable for
-> switch") which is reverted due to boot regressions by commit 464a5686e6c9
-> ("regulator: Revert "regulator: pfuze100: add enable/disable for switch"").
-> Disabling the switch regulators will only be done if the user specifies
-> "pfuze-disable-sw" in its device tree to keep backward compatibility with
-> current dtb's [1]. Otherwise the regulators are marked as 'disabled', but
-> the driver keeps them on. So it's more like a simulated disable.
->
-> [1] https://patchwork.kernel.org/patch/10490381/
->
-> Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
+
+> +Optional properties:
+> +- pfuze-disable-sw: Disable all unused switch regulators to save power
+> +  consumption. Attention, some platforms are using the switch regulators as DDR
+> +  ref or supply voltage. Mark these regulators as "regulator-always-on" to skip
+> +  disabling these regulators. If not specified, the driver simualtes the
+
+s/simualtes/simulates/
 
 Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
