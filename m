@@ -2,153 +2,97 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E83CC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A71C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:33:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5493A21473
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BEA820BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:33:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="sewRqrK6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5493A21473
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InrgZ4bX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BEA820BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391275AbeGLCjy (ORCPT
+        id S2391286AbeGLClI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 22:39:54 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41078 "EHLO
+        Wed, 11 Jul 2018 22:41:08 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37539 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390354AbeGLCjx (ORCPT
+        with ESMTP id S2387708AbeGLClI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 22:39:53 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z8-v6so1965879pgu.8
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 19:32:38 -0700 (PDT)
+        Wed, 11 Jul 2018 22:41:08 -0400
+Received: by mail-pg1-f195.google.com with SMTP id n15-v6so3440973pgv.4;
+        Wed, 11 Jul 2018 19:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=me5K91H+DhPMTRgX432675GLbmMcAt+6VcyLXySnwBs=;
-        b=sewRqrK6P0t2emWbJvCSqDGIzB6MyNfwk6clZEg3uofdyx5KPTuZHMrKChgU5AB49L
-         tNKWQSNJM+3urJ8LLpFV3BuX/qQjIBSZ9BOvm6IO9OH0JN2zLGlyn/IGf9uz2zqk/N7a
-         +VkwqB4PuEetM/GWDef6ZoZb3O7FHTGYN+d2I=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=rM/XLnZ4ERqEllAhmXX2H1tj/qTgojFHE1D53R5iDL8=;
+        b=InrgZ4bX9MVWBr4ZbZ3B1ZwhKm8zi+AubbYSA5rtw4UrPBYkHFlNF04Zdr8rFmZbT2
+         urp6kxg18NoSf6sPTxeDVS/3+Fe8umnb+yx2hT1FECqxm1yN6wJy101IBfxrnUAXtbCo
+         FDiGFC3F0224CiUJy803m51svTHZfZa+vqvPo2UUuF42JJ56WSivgFHpbopK3PWeJfsd
+         x9tvzY2FDVajaOBIFU71oNEERnLHXyS+h36qHRj5VxWpWcZdcCUgvdQvoWiT0sj5uSCM
+         06aTcuRvX1z25Yx5lvhUWDZHOvF39VOOi1TiWmWGUZ36+zKbCVwSJmOFvZVIz5cRc/OW
+         NiXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=me5K91H+DhPMTRgX432675GLbmMcAt+6VcyLXySnwBs=;
-        b=mSPCYYno00Dv7cMah1sXvEt53T5YwQORCbwNFm6xlewUducD4GDPpTW2qRdiMJKCyX
-         g8sClpApOzQfYvxAuxH6ypy3O5BUUUe2FGxRhouysSmF/u5b+WAr0bpXuZK2zkc9oYWX
-         fUCnmxELtaXUQZpiuYNsqw1bWlLmqGrHd85rg2WHADUlz94QAWslcizsWSkmp4QzTqok
-         LNZfUeSo80i83uB/CmKNRqZEaXB23VBUt04om2IsJ+MfgT+cJPiPFrrauKyIQleSZOs3
-         95rOswcBwTYa//Hjcd5I74dprBiuE2H7lefb7wi+QaHFd4+tTcn1Sn2bKtJ8poXiu4qy
-         jfXg==
-X-Gm-Message-State: AOUpUlE8SKNL5PwVHvGpzqj6mpkHJGn8dqDAIz1VQRf2LOT8Gxw7Xx79
-        GzuQ0+wQlj45Sab10xoTdmRz1Q==
-X-Google-Smtp-Source: AAOMgpffk1CaQuEWI/UqHA+SLXWcYRy02JBnzWOwBiS9l/JfQzQZDXCRVlkK/TyRAVffI2pbNGCmCA==
-X-Received: by 2002:a62:1f06:: with SMTP id f6-v6mr424061pff.140.1531362758574;
-        Wed, 11 Jul 2018 19:32:38 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id l4-v6sm21697941pgn.46.2018.07.11.19.32.37
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=rM/XLnZ4ERqEllAhmXX2H1tj/qTgojFHE1D53R5iDL8=;
+        b=jpdHbWZaH3NuECRZQZT8KYIifXo8so4SduBM46jOQ9Bqq44SXfTjFPhlr7YJwfnnp7
+         EPT26k5ZnJpj1kjQRO4lzWSN2i9ISct6FZoVXWUcNLdrXQhC+ZyMeGyg0aFjnZAq+5G2
+         Ljm6sNd3d9S/r9qC+D8M1QRRihhJZO6Y+34lqOVmrI+kKcUB0b9aVPK7b5KOpgkIqrqp
+         72fgmFSdJ/bTomgi/hvqHNngZFyTb0oiKQFKw3PzBlzM5GKQQ6rG55DhFKTeU42aIOPQ
+         13hXcIvse/VN6jbCfnEXW17etx/pDIAzFCeSGtpQx+hMftiINSQKmV5UTKAn0AyRDGXo
+         x6Gw==
+X-Gm-Message-State: AOUpUlFUAf6fypv9MN557V9Pc/UhWWjBQW5A6uwq/KDYa5Scp9WCBlbG
+        WFkvqpXQgAWd/0KmWD2FZJE=
+X-Google-Smtp-Source: AAOMgpfM653p0mIFpjkul/HMVsY/uoJrAMz9e8VMRRKr0ePOChd1yHA6jqnN3svXo6YBCrfNQutvUw==
+X-Received: by 2002:a63:1644:: with SMTP id 4-v6mr370239pgw.103.1531362832783;
+        Wed, 11 Jul 2018 19:33:52 -0700 (PDT)
+Received: from localhost.localdomain (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id w16-v6sm57260335pfi.101.2018.07.11.19.33.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 19:32:38 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 19:32:37 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
- SRCU
-Message-ID: <20180712023237.GA122777@joelaf.mtv.corp.google.com>
-References: <20180628182149.226164-1-joel@joelfernandes.org>
- <20180628182149.226164-5-joel@joelfernandes.org>
- <20180711125322.GF2476@hirez.programming.kicks-ass.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711125322.GF2476@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Wed, 11 Jul 2018 19:33:51 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Lucas Stach <l.stach@pengutronix.de>, cphealy@gmail.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH 0/2] Follow up fixes for SCU3 ESB
+Date:   Wed, 11 Jul 2018 19:33:35 -0700
+Message-Id: <20180712023337.30112-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 02:53:22PM +0200, Peter Zijlstra wrote:
-> On Thu, Jun 28, 2018 at 11:21:46AM -0700, Joel Fernandes wrote:
-> > -		rcu_read_lock_sched_notrace();				\
-> > -		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
-> > +									\
-> > +		/*							\
-> > +		 * For rcuidle callers, use srcu since sched-rcu	\
-> > +		 * doesn't work from the idle path.			\
-> > +		 */							\
-> > +		if (rcuidle) {						\
-> > +			if (in_nmi()) {					\
-> > +				WARN_ON_ONCE(1);			\
-> > +				return; /* no srcu from nmi */		\
-> > +			}						\
-> > +									\
-> > +			idx = srcu_read_lock_notrace(&tracepoint_srcu);	\
-> > +			it_func_ptr =					\
-> > +				srcu_dereference_notrace((tp)->funcs,	\
-> > +						&tracepoint_srcu);	\
-> > +			/* To keep it consistent with !rcuidle path */	\
-> > +			preempt_disable_notrace();			\
-> > +		} else {						\
-> > +			rcu_read_lock_sched_notrace();			\
-> > +			it_func_ptr =					\
-> > +				rcu_dereference_sched((tp)->funcs);	\
-> > +		}							\
-> > +									\
-> >  		if (it_func_ptr) {					\
-> >  			do {						\
-> >  				it_func = (it_func_ptr)->func;		\
-> > @@ -148,9 +177,13 @@ extern void syscall_unregfunc(void);
-> >  				((void(*)(proto))(it_func))(args);	\
-> >  			} while ((++it_func_ptr)->func);		\
-> >  		}							\
-> > -		rcu_read_unlock_sched_notrace();			\
-> > -		if (rcucheck)						\
-> > -			rcu_irq_exit_irqson();				\
-> > +									\
-> > +		if (rcuidle) {						\
-> > +			preempt_enable_notrace();			\
-> > +			srcu_read_unlock_notrace(&tracepoint_srcu, idx);\
-> > +		} else {						\
-> > +			rcu_read_unlock_sched_notrace();		\
-> > +		}							\
-> >  	} while (0)
-> 
-> In fact, I would write the thing like:
-> 
-> 		preempt_disable_notrace();
-> 		if (rcuidle)
-> 			idx = srcu_read_lock_notrace(&tracepoint_srcu);
-> 
-> 		it_func_ptr = rcu_dereference_raw((tp)->funcs);
-> 
-> 		/* ... */
-> 
-> 		if (rcu_idle)
-> 			srcu_read_unlock_notrace(&tracepoint_srcu, idx);
-> 		preempt_enable_notrace();
-> 
-> Much simpler and very much the same.
+Shawn:
 
-Cool, thanks! I will do it this way and resend.
+Here's a couple of fixes for things I missed in the
+[original-submission]. Sorry about the inconvenience.
 
-- Joel
+Thanks,
+Andrey Smirnov
+
+[original-submission] lkml.kernel.org/r/20180711050704.11492-1-andrew.smirnov@gmail.com
+
+Andrey Smirnov (2):
+  ARM: dts: imx51-zii-scu3-esb: Add switch IRQ line pinumx config
+  ARM: dts: imx51-zii-scu3-esb: Fix RAVE SP watchdog compatible string
+
+ arch/arm/boot/dts/imx51-zii-scu3-esb.dts | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+-- 
+2.17.1
 
