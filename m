@@ -3,145 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB0BECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8ECECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A45CB2083B
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:48:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45CB2083B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 728E72083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:48:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728E72083B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732243AbeGLWAI (ORCPT
+        id S1732326AbeGLWAP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 18:00:08 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44562 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732225AbeGLWAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 18:00:08 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A7084406C7A3;
-        Thu, 12 Jul 2018 21:48:38 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-10.rdu2.redhat.com [10.10.112.10])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5BE002156889;
-        Thu, 12 Jul 2018 21:48:37 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 17:46:08 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Eric Paris <eparis@parisplace.org>, linux-audit@redhat.com,
+        Thu, 12 Jul 2018 18:00:15 -0400
+Received: from sauhun.de ([88.99.104.3]:60142 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727057AbeGLWAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 18:00:15 -0400
+Received: from localhost (p5486CFAA.dip0.t-ipconnect.de [84.134.207.170])
+        by pokefinder.org (Postfix) with ESMTPSA id B7CF4574781;
+        Thu, 12 Jul 2018 23:48:45 +0200 (CEST)
+Date:   Thu, 12 Jul 2018 23:48:45 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Juergen Fitschen <me@jue.yt>, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH ghak59 V1 3/6] audit: exclude user records from
- syscall context
-Message-ID: <20180712214608.ed4chli7mdc7ymin@madcap2.tricolour.ca>
-References: <cover.1529003588.git.rgb@redhat.com>
- <907e32319825bb6336a662f4f6f6d173f56f3226.1529003588.git.rgb@redhat.com>
- <CAHC9VhSKcxHScr-ZNQU3iVrqhU4CDKW7tpn3e+NBKAAmnpRP4g@mail.gmail.com>
+Subject: Re: [v2,3/3] i2c: at91: added slave mode support
+Message-ID: <20180712214845.iimw4sfckgm6uhh4@ninjato>
+References: <c9b749fca8e684aa47ead9a5d9e68751326f63cb.1510247114.git.me@jue.yt>
+ <20180602213513.qv45gaq2kogagju3@katana>
+ <20180709151504.6phtp4rm7of6b2qc@M43218.corp.atmel.com>
+ <20180709155135.bjwhrmbk6j26fx4c@ninjato>
+ <20180710084257.ewgnvroow5weffvf@M43218.corp.atmel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mkhkdeglwbk2k536"
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhSKcxHScr-ZNQU3iVrqhU4CDKW7tpn3e+NBKAAmnpRP4g@mail.gmail.com>
-User-Agent: NeoMutt/20180512
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 12 Jul 2018 21:48:38 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 12 Jul 2018 21:48:38 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'rgb@redhat.com' RCPT:''
+In-Reply-To: <20180710084257.ewgnvroow5weffvf@M43218.corp.atmel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-28 18:11, Paul Moore wrote:
-> On Thu, Jun 14, 2018 at 4:23 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > Since the function audit_log_common_recv_msg() is shared by a number of
-> > AUDIT_CONFIG_CHANGE and the entire range of AUDIT_USER_* record types,
-> > and since the AUDIT_CONFIG_CHANGE message type has been converted to a
-> > syscall accompanied record type, special-case the AUDIT_USER_* range of
-> > messages so they remain standalone records.
-> >
-> > See: https://github.com/linux-audit/audit-kernel/issues/59
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  kernel/audit.c | 12 +++++++++---
-> >  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> I think this is fine, but see my previous comment about combining 2/6
-> and 3/6 as a safety measure.
 
-This one I left as a seperate patch for discussion.  We'd previously
-talked about connecting all possible records with syscall records if
-they exist, but this one I'm unsure about, since we don't really care
-what userspace process is issuing this message.  It is just the message
-content itself that is important.  Or is it?  Are we concerned about
-CAP_AUDIT_WRITE holders/abusers and want as much info about them as we
-can get in case they go rogue or pear-shaped?
+--mkhkdeglwbk2k536
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > diff --git a/kernel/audit.c b/kernel/audit.c
-> > index e469234..c8c2efc 100644
-> > --- a/kernel/audit.c
-> > +++ b/kernel/audit.c
-> > @@ -1057,7 +1057,8 @@ static int audit_netlink_ok(struct sk_buff *skb, u16 msg_type)
-> >         return err;
-> >  }
-> >
-> > -static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > +static void __audit_log_common_recv_msg(struct audit_context *context,
-> > +                                       struct audit_buffer **ab, u16 msg_type)
-> >  {
-> >         uid_t uid = from_kuid(&init_user_ns, current_uid());
-> >         pid_t pid = task_tgid_nr(current);
-> > @@ -1067,7 +1068,7 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> >                 return;
-> >         }
-> >
-> > -       *ab = audit_log_start(audit_context(), GFP_KERNEL, msg_type);
-> > +       *ab = audit_log_start(context, GFP_KERNEL, msg_type);
-> >         if (unlikely(!*ab))
-> >                 return;
-> >         audit_log_format(*ab, "pid=%d uid=%u", pid, uid);
-> > @@ -1075,6 +1076,11 @@ static void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> >         audit_log_task_context(*ab);
-> >  }
-> >
-> > +static inline void audit_log_common_recv_msg(struct audit_buffer **ab, u16 msg_type)
-> > +{
-> > +       __audit_log_common_recv_msg(audit_context(), ab, msg_type);
-> > +}
-> > +
-> >  int is_audit_feature_set(int i)
-> >  {
-> >         return af.features & AUDIT_FEATURE_TO_MASK(i);
-> > @@ -1341,7 +1347,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh)
-> >                                 if (err)
-> >                                         break;
-> >                         }
-> > -                       audit_log_common_recv_msg(&ab, msg_type);
-> > +                       __audit_log_common_recv_msg(NULL, &ab, msg_type);
-> >                         if (msg_type != AUDIT_USER_TTY)
-> >                                 audit_log_format(ab, " msg='%.*s'",
-> >                                                  AUDIT_MESSAGE_TEXT_MAX,
-> > --
-> > 1.8.3.1
-> >
-> 
-> 
-> -- 
-> paul moore
-> www.paul-moore.com
-> 
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
+On Tue, Jul 10, 2018 at 10:42:57AM +0200, Ludovic Desroches wrote:
+> On Mon, Jul 09, 2018 at 05:51:36PM +0200, Wolfram Sang wrote:
+> >=20
+> > > Sorry for having not catched it. If I remember well, it was the only
+> > > issue I had while testing the slave support.
+> > >=20
+> > > >=20
+> > > > BTW maybe I asked already and forgot: is this IP core capable of be=
+ing
+> > > > master and slave on the same bus?
+> > > >=20
+> > >=20
+> > > No the master and slave modes are exclusive.
+> >=20
+> > Pity.
+> >=20
+> > But thanks for the heads up, any tag you want to give? Ack or Rev?
+> >=20
+>=20
+> Yes sure, you can add my Ack. I would be pleased to see the slave
+> support taken.
 
-- RGB
+Not needed now, but next time please give a formal ack. Patchwork
+collects them for me automatically, this saves me quite some work.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+
+--mkhkdeglwbk2k536
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltHzL0ACgkQFA3kzBSg
+Kbal6A//YTHyE5KzXlxI4eBX/n0u9WTNdkK/I3OV3kg9xHCYu7h3LSkN4N15+uyq
+YtgapKqdoChzwSqqXwL0xKRMmSDDTXC3C2xUjc4qIm2xbh0XWuP6jeOr4hWe2+Fs
+Es2DXD+0ZIiubeEI3lqQXwufv7jWtKbexx4YElMUFhHJfEHYQe7P2nWg/Z96bfC3
+ewiS6+mexevwCw4F3qH2KSvx5fA3NIRFf+dO75S1ogtp2ULKdHCgE138PJ8kgH+o
+XajfqDMxz0HVmh44w9fi5yK9jGWF7cuDlROiM36ljhGX7h5w07HpMozRigjoxgfL
+XitM9pTgnCZn6bKjwSSBJ4whRL/WjiftFmxEWxhyRwHcBFSU0E7Kj1AGVE3JmiYP
+JFboI4at60LgdqUI5F/dYQE5ijPG/G60jk0Rc2lyBA++JmLr+9sda4cjYSvfQJww
+jZKHJ8g5kVfJ4qRZ59vD11GiSPqBTQtnWFhXjG3G0NevW6FlyKbOj6qUj7WlJeL8
+o5SyhXDvJ/h8trABuXzB1huvcEiNRGjTf2gegsN+3q0+P1VS+53CJ5qRDUlmVpmh
+7fcRxQ9kwc8H2ChB6S+P1PeHJAtLDpbZ9U7VWuQ4PYk0GQQb14hL96QISisagukC
+EHTK9lT/1Zfl62qpytzC9kl6zXmdX+vYw54IpdJTaxYZOnddvLw=
+=0jgE
+-----END PGP SIGNATURE-----
+
+--mkhkdeglwbk2k536--
