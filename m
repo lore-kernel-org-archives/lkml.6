@@ -2,101 +2,168 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF37C476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4145AC476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC812147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:43:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE45320BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:44:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjT9Urs/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC812147C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGxkF9Jq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE45320BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732340AbeGLQyO (ORCPT
+        id S1732378AbeGLQym (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:54:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726820AbeGLQyO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:54:14 -0400
-Received: from localhost (unknown [106.51.18.60])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3EC520BF2;
-        Thu, 12 Jul 2018 16:43:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531413834;
-        bh=B0h2Six/lErtu1MhSLyQJTEnn9/rnqMO+bpoY13JzCQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JjT9Urs/7nNhPMlB7AW0I9Vf7tgTnPiwrJBu2Oa+s4A5If2eLn2h/fM81ndEizobX
-         45XwvN/zcGVm5VZc7LrBtRowe362R1pA8EWeShFIHeDDxUTHEyApPvrZ+OCTpTkrKJ
-         EdFdjCLAC0dsLqYnqSn3u4u391ucNk8qu4hLweCA=
-Date:   Thu, 12 Jul 2018 22:13:50 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        broonie@kernel.org, lgirdwood@gmail.com,
-        alsa-devel@alsa-project.org, bgoswami@codeaurora.org,
-        linux-kernel@vger.kernel.org, tiwai@suse.com,
-        rohitkr@codeaurora.org
-Subject: Re: [alsa-devel] [PATCH] ASoC: core: add support to card
- re-bind/unbind using component framework
-Message-ID: <20180712164350.GW3219@vkoul-mobl>
-References: <20180711084318.11786-1-srinivas.kandagatla@linaro.org>
- <68715fbc-9447-dfaf-3fe5-4200684c2cbc@linux.intel.com>
+        Thu, 12 Jul 2018 12:54:42 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38222 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbeGLQym (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 12:54:42 -0400
+Received: by mail-lj1-f196.google.com with SMTP id p6-v6so22502425ljc.5;
+        Thu, 12 Jul 2018 09:44:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=cJMGzfnu3TyRDgiglceqEEIzN1R+cLijOaQMwQhdM3s=;
+        b=RGxkF9JqD4MRU1KFsApAVtoK1rtPav1UJutQL12ybxXACU4wuUyWh+C8eRQVqAgdss
+         PVPlhLXW2QdPn6hrU9fsYAIrOPQZ1l9eGU7vcrZ2eVxWIlmM1FKF59vcC46G0C1ylxUt
+         6b8YLmuP4dTnFvEUN54a9fi+OXAurdHkXpdq8ue7YyLQnw8mGPXQpkU22xqhjT+JyLTy
+         VM9wQXT213erxxHURub4kqeEJIz2gtU1p/9aNrdg1dkVvmL3IeOsiH9+rGSH1PNCfps5
+         IAosAiJJCnUEuCSEl0Auw+k6MNHrGF+rjmAg0T2tHKR12jo0/ZYPTM5jU1JSTkkxm6iP
+         Pr1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=cJMGzfnu3TyRDgiglceqEEIzN1R+cLijOaQMwQhdM3s=;
+        b=PIERFQfOqCkgOrXu0cwZdggW8Lzgo5yCfq7Y7TkuOT4dJRapSMo9Vt/KkNTHfFml0k
+         GryGomDkFd/U3qjn42EntSl6h5Bg3TqZeK3KEFYvCBLjk9j2KZ4MdO9yO+pIIv8AouCT
+         Hkr+AvPQiNFgY2+CINq2uLJ4TbO4kzXsL+RuRx2INc5HQxLcR+I776+CU0gRvwH6IZJ/
+         3zR4OU+QE1a6BZ6/A4WygEzltBhfvb823nrc4axn0UPM26PJRA4nSEzx3MGCBHncP4a0
+         g6vH7n+2fRoa6YsLxqDAJIld63KsRfNPhzDaIRdGBxhflgv9f9GcGAVC5AP4yBs9NbTL
+         /fqQ==
+X-Gm-Message-State: AOUpUlEo6lDdYbnM2pF6WhosNJhnkbwoUfRfsVx3N5mtXxF4pfCulrDA
+        k+5vuUndcj6I+4uAis0GUHM=
+X-Google-Smtp-Source: AAOMgpdYgMjLBQHpg5y6lxucNCf1pTleLi6cnPs63bc8r0wrSppRvnml6XWIi+mW5BCKGH2T7qLUiw==
+X-Received: by 2002:a2e:5d1c:: with SMTP id r28-v6mr1043940ljb.89.1531413859902;
+        Thu, 12 Jul 2018 09:44:19 -0700 (PDT)
+Received: from ?IPv6:2001:2012:22e:1b00:f2e2:9015:9262:3fde? ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
+        by smtp.gmail.com with ESMTPSA id w8-v6sm3283257lfe.67.2018.07.12.09.44.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 09:44:18 -0700 (PDT)
+Subject: Re: [V9fs-developer] [PATCH] version pointer uninitialized
+To:     jiangyiwen <jiangyiwen@huawei.com>, ericvh@gmail.com,
+        rminnich@sandia.gov, lucho@ionkov.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller@googlegroups.com, v9fs-developer@lists.sourceforge.net,
+        davem@davemloft.net, Andrew Morton <akpm@linux-foundation.org>
+References: <20180709222943.19503-1-tomasbortoli@gmail.com>
+ <5B455CBB.8030501@huawei.com>
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <02d636a1-858a-45a5-d28c-9f7380d27ab3@gmail.com>
+Date:   Thu, 12 Jul 2018 18:44:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68715fbc-9447-dfaf-3fe5-4200684c2cbc@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <5B455CBB.8030501@huawei.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-07-18, 10:26, Pierre-Louis Bossart wrote:
-> On 7/11/18 3:43 AM, Srinivas Kandagatla wrote:
-> > This patch aims at add achieving dynamic behaviour of audio card when
-> > the dependent components disappear and reappear.
-> > 
-> > With this patch the card is removed if any of the dependent component
-> > is removed and card is added back if the dependent component comes back.
-> > All this is done using component framework and matching based on
-> > component name.
-> 
-> Humm, no real comment on this patch proper but rather on how userspace would
-> deal with this dynamic behavior?
+On 07/11/2018 03:26 AM, jiangyiwen wrote:
+> On 2018/7/10 6:29, Tomas Bortoli wrote:
+>> The p9_client_version() does not initialize the version
+>> pointer. If the call to p9pdu_readf() returns an error and version has not
+>> been allocated in p9pdu_readf(), then the program will jump to the "error"
+>> label and will try to free the version pointer. If version is not
+>> initialized, free() will be called with uninitialized, garbage data and
+>> will provoke a crash.
+>>
+>> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+> Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+>
+>> Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
+>> ---
+>>  net/9p/client.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/net/9p/client.c b/net/9p/client.c
+>> index 18c5271910dc..40f7c47f2f74 100644
+>> --- a/net/9p/client.c
+>> +++ b/net/9p/client.c
+>> @@ -957,7 +957,7 @@ static int p9_client_version(struct p9_client *c)
+>>  {
+>>  	int err = 0;
+>>  	struct p9_req_t *req;
+>> -	char *version;
+>> +	char *version = NULL;
+>>  	int msize;
+>>  
+>>  	p9_debug(P9_DEBUG_9P, ">>> TVERSION msize %d protocol %d\n",
+>>
+>
 
-As Takashi pointed out card disappearing and appearing should not be an
-issue. On this machine, I typically run a BT headset which disappears
-and keep appearing, haven't seen issue :)
++ Cc: Andrew Morton <akpm@linux-foundation.org>
 
-> We had similar opens when we worked on the BYT/CHT HDMI stuff and ended-up
-> with quite a few issues in userspace (PulseAudio mainly) related to dynamic
-> behavior at the kernel level as a result of plug/unplug.
+This goes with the other patch: [V9fs-developer] [PATCH]
+p9_parse_header() validate PDU length
 
-IIRC those had something to do with gfx callback, register, interrupt
-racing on BYT HDMI. Ramesh/Jerome might have more details if they
-remember now :)
-
-> Also not sure how
-> an Android HAL would deal with a card disappearing temporarily if DSP
-> resources become unavailable or unresponsive. Any thoughts or guidance you
-> might think of?
-
-I have not see userspace HAL code but my guess is that it deals with
-card not being there.
-
-Btw this was handled/buried in the driver atm and asking realized that
-this is better suited in core, so Srini pushed it up. Current QC stack
-expects DSP to go off and card disappear as a result. Once DSP is back
-it would appear again (DSP is handled thru remoteproc, I think you
-should have a look at it and see if it would suit your DSP needs too)
-
--- 
-~Vinod
+Tomas
