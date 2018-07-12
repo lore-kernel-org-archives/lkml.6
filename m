@@ -2,94 +2,77 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F208C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F08C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D59A020BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:10:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59A020BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 6418220C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:13:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6418220C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbeGLHSf convert rfc822-to-8bit (ORCPT
+        id S1726611AbeGLHWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 03:18:35 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:56454 "EHLO hermes.aosc.io"
+        Thu, 12 Jul 2018 03:22:02 -0400
+Received: from verein.lst.de ([213.95.11.211]:57004 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725992AbeGLHSf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 03:18:35 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id DE7EB5C880;
-        Thu, 12 Jul 2018 07:10:16 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 15:09:55 +0800
-In-Reply-To: <20180712064601.m3bdd46wzac5fpgh@flea>
-References: <20180711132233.42301-1-icenowy@aosc.io> <20180711132233.42301-2-icenowy@aosc.io> <20180711150532.6gzm7krouriddreh@flea> <8F6CDF5C-2AC1-43EC-858A-5C6345CF279A@aosc.io> <20180712064601.m3bdd46wzac5fpgh@flea>
+        id S1725992AbeGLHWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 03:22:02 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 8B3C86FB7B; Thu, 12 Jul 2018 09:15:36 +0200 (CEST)
+Date:   Thu, 12 Jul 2018 09:15:36 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Joonsoo Kim <js1304@gmail.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        iommu@lists.linux-foundation.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Chris Zankel <chris@zankel.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH 1/2] mm/cma: remove unsupported gfp_mask parameter from
+        cma_alloc()
+Message-ID: <20180712071536.GA15506@lst.de>
+References: <CGME20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29@eucas1p2.samsung.com> <20180709121956.20200-1-m.szyprowski@samsung.com> <20180709122019eucas1p2340da484acfcc932537e6014f4fd2c29~-sqTPJKij2939229392eucas1p2j@eucas1p2.samsung.com> <CAAmzW4PPNYhUj_MeZox+ddq8MjXqnJs_AJ3xkayf710udD1pSg@mail.gmail.com> <20180710095056.GE14284@dhcp22.suse.cz> <CAAmzW4P1m_T77DfQzDD6ysGaOF46++-0gwRaOajmo6ef=VYp=A@mail.gmail.com> <20180711085407.GB20050@dhcp22.suse.cz> <CAAmzW4M3KADCZD9+B2h7=WsYksGtg-GzYRCJjbqK5Scceynrrg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] Re: [PATCH 1/2] ARM: sun8i: h3: enable HDMI output on Banana Pi M2 Zero
-To:     linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-CC:     devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi@googlegroups.com, linux-kernel@vger.kernel.org
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <A7CA2831-7117-415C-BC59-3FB4AE425598@aosc.io>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAmzW4M3KADCZD9+B2h7=WsYksGtg-GzYRCJjbqK5Scceynrrg@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 12, 2018 at 11:48:47AM +0900, Joonsoo Kim wrote:
+> One of existing user is general DMA layer and it takes gfp flags that is
+> provided by user. I don't check all the DMA allocation sites but how do
+> you convince that none of them try to use anything other
+> than GFP_KERNEL [|__GFP_NOWARN]?
 
-
-于 2018年7月12日 GMT+08:00 下午2:46:01, Maxime Ripard <maxime.ripard@bootlin.com> 写到:
->On Wed, Jul 11, 2018 at 11:15:50PM +0800, Icenowy Zheng wrote:
->> 
->> 
->> 于 2018年7月11日 GMT+08:00 下午11:05:32, Maxime Ripard
-><maxime.ripard@bootlin.com> 写到:
->> >Hi,
->> >
->> >On Wed, Jul 11, 2018 at 09:22:32PM +0800, Icenowy Zheng wrote:
->> >> Banana Pi M2 Zero board has a miniHDMI port connected to the HDMI
->> >> controller of Allwinner H3 SoC.
->> >> 
->> >> Enable the HDMI output in Banana Pi M2 Zero device tree.
->> >> 
->> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> >> ---
->> >>  .../dts/sun8i-h2-plus-bananapi-m2-zero.dts    | 25
->> >+++++++++++++++++++
->> >>  1 file changed, 25 insertions(+)
->> >> 
->> >> diff --git a/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
->> >b/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
->> >> index 7d01f9322658..eb61dcf32797 100644
->> >> --- a/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
->> >> +++ b/arch/arm/boot/dts/sun8i-h2-plus-bananapi-m2-zero.dts
->> >> @@ -26,6 +26,17 @@
->> >>  		stdout-path = "serial0:115200n8";
->> >>  	};
->> >>  
->> >> +	hdmi-connector {
->> >> +		compatible = "hdmi-connector";
->> >> +		type = "c";
->> >
->> >This is not one of the connector type declared in DRM, how is it
->> >exposed to the userspace?
->> 
->> So just use "A" here (because of single link)?
->
->If the connector type is C, it should be C, and DRM / driver adjusted
->to handle it.
-
-Okay I won't change this property, if there's any further revisions.
-
-For DRM driver, I think it can be an independent patchset.
-
->
->Maxime
+They use a few others things still like __GFP_COMP, __GPF_DMA or
+GFP_HUGEPAGE.  But all these are bogus as we have various implementations
+that can't respect them.  I plan to get rid of the gfp_t argument
+in the dma_map_ops alloc method in a few merge windows because of that,
+but it needs further implementation consolidation first.
