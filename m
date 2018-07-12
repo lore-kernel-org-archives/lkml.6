@@ -6,73 +6,73 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2787EC476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:18:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 074DEC476E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE7952086E
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:18:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B835C2086E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="VrdmQFKH";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kb9u84ou"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7952086E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="bQSaexFq";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EWfedUVk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B835C2086E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732500AbeGLR3C (ORCPT
+        id S1732548AbeGLR3b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:29:02 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:43536 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732343AbeGLR3C (ORCPT
+        Thu, 12 Jul 2018 13:29:31 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:46431 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732343AbeGLR3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:29:02 -0400
-Received: by mail-ua0-f195.google.com with SMTP id x24-v6so18897309ual.10
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 10:18:33 -0700 (PDT)
+        Thu, 12 Jul 2018 13:29:31 -0400
+Received: by mail-ua0-f196.google.com with SMTP id r18-v6so18894514ual.13
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 10:19:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=6Umkd06nmktfMlUkTbZHjnWkj2jKM2eg4jojzzG5DLc=;
-        b=VrdmQFKHWLVaEB2GbyMEWXqb18RDFz9v4FqJsQHVaf74OF6oHrjgiNn+O4CMy/cQyl
-         n/DV4wxrbJ/HxrCoCHgVvBmwj1FrAai9U2u5gB/SVJNTGEzpVrx2WRiP1Kb67joOiC3S
-         8NZSuX3HF93izRwYmMdhI6H2MYpLeQy7Qr0chQhyBrdmKB+zO54pQwbw3iwV9pI8HRGH
-         bXrS5dFfSlv1M3JUXBMnx8ividQ13aOSTpAMW/gKgy4UCZkM963GVkxd4gVhqhRidahE
-         26EkWmJhpVXxXkb/Yzbyy3ujYKGSK+62m50KMf5Dj0PTPKYJkS/rCzoWSfQ4ol9fYK9c
-         CaOw==
+        bh=LsS+yh6UX5fQLn+Npe0FhoJuj8beO2ssH4Dh1rxFMzQ=;
+        b=bQSaexFqqMRIY9AvddrDSfR7Xmg14PAh6dFEdJ0SVCi5AwgakjsSfjqtC3/qnduV7x
+         bSlnYCtYAPIhwCECsHIcjMxmpgK2N+MFnGktGv8ng7E6Gzq0np66nJZvfunsK3cNESjo
+         0zexG5drvBXLwOei81PMlSCSUvbRLBhZYLGQHzNk+A3qsQN7e13fktZbus4OJdLRFSNx
+         dAmVhP53GDRbspha8rM8r8WA2tYoiub18zunlgi4yPOsbN+deSDUO+MoqQ9LRCeyT7Uh
+         CoDO8S09BtRYVzOwrLPJGFyeAH9YoDayql2KwC5oJn1tM0BeeeIAIE+az6w6u8gWR1Ra
+         0u6A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=6Umkd06nmktfMlUkTbZHjnWkj2jKM2eg4jojzzG5DLc=;
-        b=kb9u84ouB/qIXR4zO45IQD+SY/XpByCaE4RMTAB8gu2MzLR+mAnHe8/Gk330Sx/fHM
-         j4oTrRyh5IB961A+BkXzzsO4a+WCo2J0KPER0RZ4vajBUUahDvuloGWvBgdBPjYJuMHo
-         mBWd5SbTbKjlsqYb9FAbt0L8HPU4jVoHqCx/4=
+        bh=LsS+yh6UX5fQLn+Npe0FhoJuj8beO2ssH4Dh1rxFMzQ=;
+        b=EWfedUVkfqlaGj3h/JQjx4UC9krtOGUaTZ119MkFje+HwyF16ylKvUNPEwpIzU84Q0
+         VXOw4BqWKoLRGG4zlwleuTiNM/cXZbx4htTRjQaI0b06uPDZ0vfNfI0YlBcf75R4bQ4G
+         sgd/OciS645xUeR02RaksHcEwU2ciA+T7Txek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=6Umkd06nmktfMlUkTbZHjnWkj2jKM2eg4jojzzG5DLc=;
-        b=Z6T6u0N0SOaZLMOJt/YN+CfelWOZiJ0/VsXuoUGXxqbMP1+6AKJnxlrE41wChfl23W
-         P2Ab/AoHtndYisfpwVJU7d7d4Hr9SRJ3cM65MN9v1Q0mMOIK4SOXqEMc0ZUImywp1yl6
-         ZF3jIOBODxT8R+B0K42P+pyq6g/fvPG2jzwtUEKcuPAix4UPNFRpsipIB75mg3hvO1C9
-         3Owy8F6pbh65u2kuKwergE09TsSyk1eQxeO1ejENGG00O0rGCuYSHZK+f84wRl6pwbwn
-         rB/RL3XMjWa+6osqM+4Pk/5gENdwyCcoHtMPormCXvmOFKhvmmhIOg/duKAwoc46WzRa
-         KG9Q==
-X-Gm-Message-State: AOUpUlFPyinb4OXRO3TkafW3TXGbVdamMJqcYWFuSc6ttlNiM8AHP1LX
-        jS5si2Sqgsge/p+++0NrV3NwQsdOFxYpDOEYAgqAlw==
-X-Google-Smtp-Source: AAOMgpehecfhG5n90onp3XmXgf/uWEfLIUsnO6SjLggGYYGSeX2lWShCe9BNcPJlOOZHVWyz/CIwZOI6EyKfx1hSJ2U=
-X-Received: by 2002:ab0:4364:: with SMTP id k91-v6mr2065496uak.46.1531415912518;
- Thu, 12 Jul 2018 10:18:32 -0700 (PDT)
+        bh=LsS+yh6UX5fQLn+Npe0FhoJuj8beO2ssH4Dh1rxFMzQ=;
+        b=uXT32YUtXndEX5ZFJt44L071o1mJZrDYaPG+hbCXoWrC02rb8nf8DdnnQF1Zo29G31
+         5BwZMDZwSKeQ+pSRtc7d84ZPukovWunwhbcIKo98SAj97wdtuWMAnGFoEJvXHfR9ZmBl
+         3eGbLQg+Xw9DafvmCHfgNTsvmdNeYIXc3D6zt6FctTc+4UV+Qa2Ddc7VEs4nGPM37ylO
+         deb2SaU4uKy4el1JdVyRGLYUMXldnvrr2FdaiZNKUTigxySGElwoPgQZ8cLFndRS8uMI
+         dI6LHYSynAS5GmovrxrB2f9Pk0/7Z/DKi1ckVdUpxScyrtsyDij28NrQQp7tfX4Z3fKg
+         nBLg==
+X-Gm-Message-State: AOUpUlHjmtfHGqJpRzt+axtvqM+hSZmYYkB9OhmhZaokZ5Qr43tALSK6
+        NCLY0tJJrzCYQvWq3BO3FqX9hKGcfq1H+BRNB7V5mE8na1Y=
+X-Google-Smtp-Source: AAOMgpec9RUBbK9yuqJarD+H/F6RkDmeszqnbPAi8dcX765Eo9Ku1mqDNstTmTzFEnR32PccLjw/TYr25OLoyJVkQkI=
+X-Received: by 2002:ab0:1163:: with SMTP id g35-v6mr1982282uac.135.1531415941134;
+ Thu, 12 Jul 2018 10:19:01 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 10:18:30
+Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 10:19:00
  -0700 (PDT)
-In-Reply-To: <0dfdbfa82edced85ea5be02e1d74d73d232c7a08.1531384019.git.amit.kucheria@linaro.org>
-References: <cover.1531384019.git.amit.kucheria@linaro.org> <0dfdbfa82edced85ea5be02e1d74d73d232c7a08.1531384019.git.amit.kucheria@linaro.org>
+In-Reply-To: <3bd2c05db1bfe6fd3891abd87b0c767152346a1d.1531384019.git.amit.kucheria@linaro.org>
+References: <cover.1531384019.git.amit.kucheria@linaro.org> <3bd2c05db1bfe6fd3891abd87b0c767152346a1d.1531384019.git.amit.kucheria@linaro.org>
 From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 12 Jul 2018 10:18:30 -0700
-X-Google-Sender-Auth: kGaw0iUJ9S5GyTYgd9IgK1L9ER0
-Message-ID: <CAD=FV=UHQ2SDC9WbS2=D_ka3OxnxPPrQt6tLx5Yy6Lf_bnVqrg@mail.gmail.com>
-Subject: Re: [PATCH v7 7/7] arm64: dts: sdm845: Add tsens nodes
+Date:   Thu, 12 Jul 2018 10:19:00 -0700
+X-Google-Sender-Auth: kt2cn1n0ObZ-0J3a3D1tdMFls4g
+Message-ID: <CAD=FV=WkF5VHEekxc0WTPbNvYikwgiZg684QQ7mLWmqSN12tgA@mail.gmail.com>
+Subject: Re: [PATCH v7 4/7] thermal: tsens: Rename tsens-8996 to tsens-v2 for reuse
 To:     Amit Kucheria <amit.kucheria@linaro.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -83,14 +83,7 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Vivek Gautam <vivek.gautam@codeaurora.org>,
         Andy Gross <andy.gross@linaro.org>,
         Matthias Kaehlcke <mka@chromium.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -100,15 +93,18 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi,
 
 On Thu, Jul 12, 2018 at 1:39 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> SDM845 has two tsens blocks, one with 13 sensors and the other with 8
-> sensors. It uses version 2 of the TSENS IP, so use the fallback property to
-> allow more common code.
+> The TSENS block inside the 8996 is internally classified as version 2 of
+> the IP. Several other SoC families use this block and can share this code.
+>
+> We rename get_temp() to reflect that it can be used across the v2 family.
 >
 > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 > Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Tested-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  drivers/thermal/qcom/Makefile                     |  2 +-
+>  drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c} | 25 ++++++++---------------
+>  2 files changed, 9 insertions(+), 18 deletions(-)
+>  rename drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c} (66%)
 
 Reviewed-by: Douglas Anderson <dianders@chromium.org>
