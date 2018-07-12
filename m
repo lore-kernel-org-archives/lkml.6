@@ -2,96 +2,88 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D0E5C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B39C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139D420C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:19:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 139D420C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B91E720C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:19:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91E720C0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728250AbeGLG1U (ORCPT
+        id S1732303AbeGLG1X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 02:27:20 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:48763 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726584AbeGLG1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 02:27:18 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 8D210874C7C9A;
-        Thu, 12 Jul 2018 14:19:12 +0800 (CST)
-Received: from localhost (10.177.23.164) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.382.0; Thu, 12 Jul 2018
- 14:19:06 +0800
-From:   Zhen Lei <thunder.leizhen@huawei.com>
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-CC:     Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH v3 5/6] iommu/arm-smmu-v3: add support for non-strict mode
-Date:   Thu, 12 Jul 2018 14:18:31 +0800
-Message-ID: <1531376312-2192-6-git-send-email-thunder.leizhen@huawei.com>
-X-Mailer: git-send-email 1.9.5.msysgit.0
-In-Reply-To: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
-References: <1531376312-2192-1-git-send-email-thunder.leizhen@huawei.com>
+        Thu, 12 Jul 2018 02:27:23 -0400
+Received: from mga04.intel.com ([192.55.52.120]:3952 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732191AbeGLG1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 02:27:22 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 23:19:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,341,1526367600"; 
+   d="scan'208";a="56271324"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.168]) ([10.237.72.168])
+  by orsmga008.jf.intel.com with ESMTP; 11 Jul 2018 23:19:06 -0700
+Subject: Re: [PATCH] scsi: switch to scsi-mq by default
+To:     Ming Lei <tom.leiming@gmail.com>
+Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Hannes Reinecke <hare@suse.de>,
+        Bart Van Assche <Bart.VanAssche@sandisk.com>,
+        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>
+References: <20180704085356.10888-1-jthumshirn@suse.de>
+ <yq1d0vupjq2.fsf@oracle.com> <6cf082e4-6fff-21dd-4df5-a6e9e4f2847c@intel.com>
+ <CACVXFVOSssuveZDN185FUYpjX1i0ma59Cn30XBSJ1dAHDKLnLQ@mail.gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <0f4af58b-5684-eba8-961a-b912a60befff@intel.com>
+Date:   Thu, 12 Jul 2018 09:17:33 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.23.164]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CACVXFVOSssuveZDN185FUYpjX1i0ma59Cn30XBSJ1dAHDKLnLQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. Add IOMMU_CAP_NON_STRICT capability.
-2. Dynamic choose strict or non-strict mode base on the iommu domain type.
+On 11/07/18 19:35, Ming Lei wrote:
+> On Wed, Jul 11, 2018 at 4:31 PM, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>> On 11/07/18 05:52, Martin K. Petersen wrote:
+>>>
+>>> Johannes,
+>>>
+>>>> It has been more than one year since we tried to change the default
+>>>> from legacy to multi queue in SCSI with commit c279bd9e406 ("scsi:
+>>>> default to scsi-mq"). But due to issues with suspend/resume and
+>>>> performance problems it had been reverted again with commit
+>>>> cbe7dfa26eee ("Revert "scsi: default to scsi-mq"").
+>>>>
+>>>> In the meantime there have been a substantial amount of performance
+>>>> improvements and suspend/resume got fixed as well, thus we can
+>>>> re-enable scsi-mq without a significant performance penalty.
+>>>
+>>> Applied to 4.19/scsi-queue, thanks!
+>>>
+>>
+>> But there is no runtime pm support, is there?  I tried enabling runtime PM
+>> for UFS SCSI devices with scsi-mq and it didn't work, which is a regression.
+> 
+> I just posted one RFC patchset for supporting runtime PM on scsi_mq, and
+> looks it works in my test on usb-storage.
+> 
+> https://marc.info/?l=linux-block&m=153132657922233&w=2
 
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
----
- drivers/iommu/arm-smmu-v3.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 4402187..4a198a0 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -1440,6 +1440,8 @@ static bool arm_smmu_capable(enum iommu_cap cap)
- 		return true;
- 	case IOMMU_CAP_NOEXEC:
- 		return true;
-+	case IOMMU_CAP_NON_STRICT:
-+		return true;
- 	default:
- 		return false;
- 	}
-@@ -1767,7 +1769,7 @@ static int arm_smmu_map(struct iommu_domain *domain, unsigned long iova,
- 	if (!ops)
- 		return 0;
- 
--	return ops->unmap(ops, iova, size);
-+	return ops->unmap(ops, iova | IOMMU_DOMAIN_STRICT_MODE(domain), size);
- }
- 
- static void arm_smmu_flush_iotlb_all(struct iommu_domain *domain)
-@@ -1782,7 +1784,7 @@ static void arm_smmu_iotlb_sync(struct iommu_domain *domain)
- {
- 	struct arm_smmu_device *smmu = to_smmu_domain(domain)->smmu;
- 
--	if (smmu)
-+	if (smmu && (IOMMU_DOMAIN_STRICT_MODE(domain) == IOMMU_STRICT))
- 		__arm_smmu_tlb_sync(smmu);
- }
- 
--- 
-1.8.3
-
-
+Cool, please cc me on the next revision of your patch set.
