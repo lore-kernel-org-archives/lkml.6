@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 574CFC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01454C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14419213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:55:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14419213A2
+	by mail.kernel.org (Postfix) with ESMTP id 9C302213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:55:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C302213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732683AbeGLMEu (ORCPT
+        id S1732554AbeGLMEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:04:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57996 "EHLO mail.bootlin.com"
+        Thu, 12 Jul 2018 08:04:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58001 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732195AbeGLMEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:04:10 -0400
+        id S1732249AbeGLMEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 08:04:06 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B875020741; Thu, 12 Jul 2018 13:54:56 +0200 (CEST)
+        id C7CFF20741; Thu, 12 Jul 2018 13:54:52 +0200 (CEST)
 Received: from mc-bl-xps13.lan (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6D582206A6;
-        Thu, 12 Jul 2018 13:54:56 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 74D7E206A6;
+        Thu, 12 Jul 2018 13:54:52 +0200 (CEST)
 From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
 To:     davem@davemloft.net
 Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -35,9 +35,9 @@ Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
         thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
         ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next 14/18] net: mvpp2: rename per-port RSS init function
-Date:   Thu, 12 Jul 2018 13:54:23 +0200
-Message-Id: <20180712115427.27375-15-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next 10/18] net: mvpp2: use one RSS table per port
+Date:   Thu, 12 Jul 2018 13:54:19 +0200
+Message-Id: <20180712115427.27375-11-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
 References: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
@@ -46,66 +46,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mvpp22_init_rss function configures the RSS parameters for each port, so
-rename it accordingly. Since this function relies on classifier
-configuration, move its call right after the classifier config.
+PPv2 Controller has 8 RSS Tables, of 32 entries each. A lookup in the
+RXQ2RSS_TABLE is performed for each incoming packet, and the RSS Table
+to be used is chosen according to the default rx queue that would be
+used for the packet.
+
+This default rx queue is set in the Lookup_id Table (also called
+Decoding Table), and is equal to the port->first_rxq.
+
+Since the Classifier itself isn't active at any time for the moment,
+this doesn't have a direct effect, the default rx queue at the moment is
+the one where all packets end-up into.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c  | 2 +-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h  | 2 +-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
-index f2bcfa8f1dfd..66160b9b8a9a 100644
+index fe4bcaf983b2..c8cf3db85ffe 100644
 --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
 +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
-@@ -141,7 +141,7 @@ void mvpp22_rss_fill_table(struct mvpp2_port *port, u32 table)
- 	}
- }
+@@ -115,23 +115,22 @@ void mvpp22_init_rss(struct mvpp2_port *port)
+ 	/* Set the table width: replace the whole classifier Rx queue number
+ 	 * with the ones configured in RSS table entries.
+ 	 */
+-	mvpp2_write(priv, MVPP22_RSS_INDEX, MVPP22_RSS_INDEX_TABLE(0));
++	mvpp2_write(priv, MVPP22_RSS_INDEX, MVPP22_RSS_INDEX_TABLE(port->id));
+ 	mvpp2_write(priv, MVPP22_RSS_WIDTH, 8);
  
--void mvpp22_init_rss(struct mvpp2_port *port)
-+void mvpp22_rss_port_init(struct mvpp2_port *port)
- {
- 	struct mvpp2 *priv = port->priv;
- 	int i;
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h
-index 4c7be7469a92..38a8cf1172df 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h
-@@ -34,7 +34,7 @@ struct mvpp2_cls_lookup_entry {
+-	/* Loop through the classifier Rx Queues and map them to a RSS table.
+-	 * Map them all to the first table (0) by default.
++	/* The default RxQ is used as a key to select the RSS table to use.
++	 * We use one RSS table per port.
+ 	 */
+-	for (i = 0; i < MVPP2_CLS_RX_QUEUES; i++) {
+-		mvpp2_write(priv, MVPP22_RSS_INDEX, MVPP22_RSS_INDEX_QUEUE(i));
+-		mvpp2_write(priv, MVPP22_RXQ2RSS_TABLE,
+-			    MVPP22_RSS_TABLE_POINTER(0));
+-	}
++	mvpp2_write(priv, MVPP22_RSS_INDEX,
++		    MVPP22_RSS_INDEX_QUEUE(port->first_rxq));
++	mvpp2_write(priv, MVPP22_RXQ2RSS_TABLE,
++		    MVPP22_RSS_TABLE_POINTER(port->id));
  
- void mvpp22_rss_fill_table(struct mvpp2_port *port, u32 table);
- 
--void mvpp22_init_rss(struct mvpp2_port *port);
-+void mvpp22_rss_port_init(struct mvpp2_port *port);
- 
- void mvpp2_cls_init(struct mvpp2 *priv);
- 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index f0b5fb78cd67..93e37d20899d 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -3373,9 +3373,6 @@ static int mvpp2_open(struct net_device *dev)
- 
- 	mvpp2_start_dev(port);
- 
--	if (mvpp22_rss_is_supported())
--		mvpp22_init_rss(port);
--
- 	/* Start hardware statistics gathering */
- 	queue_delayed_work(priv->stats_queue, &port->stats_work,
- 			   MVPP2_MIB_COUNTERS_STATS_DELAY);
-@@ -4153,6 +4150,9 @@ static int mvpp2_port_init(struct mvpp2_port *port)
- 	mvpp2_cls_oversize_rxq_set(port);
- 	mvpp2_cls_port_config(port);
- 
-+	if (mvpp22_rss_is_supported())
-+		mvpp22_rss_port_init(port);
-+
- 	/* Provide an initial Rx packet size */
- 	port->pkt_size = MVPP2_RX_PKT_SIZE(port->dev->mtu);
+ 	/* Configure the first table to evenly distribute the packets across
+ 	 * real Rx Queues. The table entries map a hash to a port Rx Queue.
+ 	 */
+ 	for (i = 0; i < MVPP22_RSS_TABLE_ENTRIES; i++) {
+-		u32 sel = MVPP22_RSS_INDEX_TABLE(0) |
++		u32 sel = MVPP22_RSS_INDEX_TABLE(port->id) |
+ 			  MVPP22_RSS_INDEX_TABLE_ENTRY(i);
+ 		mvpp2_write(priv, MVPP22_RSS_INDEX, sel);
  
 -- 
 2.11.0
