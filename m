@@ -2,117 +2,128 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CD7C476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:58:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC03C476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:59:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D3F221471
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:58:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8BD82124D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:59:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ZR78c0eU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D3F221471
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2Z4Ymjh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BD82124D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732284AbeGLQIf (ORCPT
+        id S1732363AbeGLQJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:08:35 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50984 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726725AbeGLQIf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:08:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rxWNbK8Y0p66Z9w0AVbWsVr4o2fqRHBIIdsEUhakLWY=; b=ZR78c0eUYVOoyrArBu5iKKCq9
-        PGrRSuu4yy0EU3TWeDp4BW20AUhZDOdPKpfqWJOWrZSJGqApzMxw+j0BUOCLaaspQ0FWafmAHjTpG
-        ianeKm1lBEvhUkyhL1sdiXSZ9GNzrgfdbpKkZ0HDCiQZ97E9cILbzf2Sn9xEbcKXdagJU=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fddz0-0003ny-Lb; Thu, 12 Jul 2018 15:58:18 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fddyz-0006vj-W9; Thu, 12 Jul 2018 16:58:18 +0100
-Date:   Thu, 12 Jul 2018 16:58:17 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org, lgirdwood@gmail.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        bgoswami@codeaurora.org, rohitkr@codeaurora.org, vkoul@kernel.org,
+        Thu, 12 Jul 2018 12:09:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48036 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726725AbeGLQJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 12:09:58 -0400
+Received: from localhost (unknown [146.7.4.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B04F320652;
+        Thu, 12 Jul 2018 15:59:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531411187;
+        bh=0VAnb2QzGQGbzIp5741flZtAPgW8xyEHk9cO0cCynFc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=m2Z4YmjhitcoezRwk4j8m1nmF5t4zRtSAvWGKNnK3dW5KIgn+rWGukrRyAaY7nF0+
+         6WwUWgQQhIPQTVPF6X215lMP1amtPcQyVyyzPbf3w2mThxC6fkmPuyoOl5Nmgte5wT
+         Wu/dsjwP68utj3+yYHv3K7/PYtgxRlW5rAG5QUmc=
+Date:   Thu, 12 Jul 2018 10:59:46 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [alsa-devel] [PATCH] ASoC: core: add support to card
- re-bind/unbind using component framework
-Message-ID: <20180712155817.GG10369@sirena.org.uk>
-References: <20180711084318.11786-1-srinivas.kandagatla@linaro.org>
- <68715fbc-9447-dfaf-3fe5-4200684c2cbc@linux.intel.com>
- <s5hsh4o8nq1.wl-tiwai@suse.de>
+Subject: Re: [PATCH v1 1/2] PCI: Document patch submission hints
+Message-ID: <20180712155946.GB28466@bhelgaas-glaptop.roam.corp.google.com>
+References: <153030390808.57832.2200774416664543563.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <153030405971.57832.12860154795039493576.stgit@bhelgaas-glaptop.roam.corp.google.com>
+ <20180701174508.GB28249@wunner.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GdbWtwDHkcXqP16f"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <s5hsh4o8nq1.wl-tiwai@suse.de>
-X-Cookie: Kleeneness is next to Godelness.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180701174508.GB28249@wunner.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Jul 01, 2018 at 07:45:08PM +0200, Lukas Wunner wrote:
+> On Fri, Jun 29, 2018 at 03:27:39PM -0500, Bjorn Helgaas wrote:
+> > --- /dev/null
+> > +++ b/Documentation/PCI/submitting-patches.txt
+> > @@ -0,0 +1,153 @@
+> > +Start with Documentation/process/submitting-patches.rst for general
+> > +guidance.
+> > +
+> > +These are things I look at when reviewing patches.
+> 
+> For an uninitiated reader who doesn't know that you're currently the
+> (sole) maintainer of the PCI subsystem, this sentence might look odd.
+> Who's "I"?  What happens if you onboard co-maintainers, are you
+> going to change this to "we"?
 
---GdbWtwDHkcXqP16f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+You're absolutely right.  That was appropriate for email (where I
+originally posted this) but certainly not for the tree.
 
-On Thu, Jul 12, 2018 at 05:42:30PM +0200, Takashi Iwai wrote:
-> Pierre-Louis Bossart wrote:
-> > On 7/11/18 3:43 AM, Srinivas Kandagatla wrote:
+> > +  - Follow the existing convention  Run "git log --oneline <file>" and make
+> > +    your subject line match previous changes in format, capitalization, and
+> > +    sentence structure.  For example, native host bridge driver patch
+> > +    titles look like this:
+> > +
+> > +      PCI: vmd: Remove IRQ affinity so we can allocate more IRQs
+> > +      PCI: mediatek: Add MSI support for MT2712 and MT7622
+> > +      PCI: rockchip: Remove IRQ domain if probe fails
+> 
+> A quick "git log --oneline --no-merges drivers/pci" shows that the prefixes
+> in use aren't consistent at all:  Sometimes a slash is used to separate
+> "PCI" from the subpart touched by the patch, sometimes a colon, e.g.
+> "PCI/AER: " versus "PCI: shpchp: ".  Your own patches aren't consistent
+> in that respect.  Sometimes, only "PCI: " is given as prefix, even though
+> the commit only touches a subpart such as "sysfs", so could easily specify
+> more precisely what it's touching.
+> 
+> If you value consistency, it would be good to codify the preferred form
+> right here.
 
-> > > This patch aims at add achieving dynamic behaviour of audio card when
-> > > the dependent components disappear and reappear.
+I was trying to make the point that whenever we're doing *anything* in
+a shared project like Linux, it's better to look at existing practice
+and follow it than it is to slavishly follow rules.
 
-> > Humm, no real comment on this patch proper but rather on how userspace
-> > would deal with this dynamic behavior?
-> > We had similar opens when we worked on the BYT/CHT HDMI stuff and
-> > ended-up with quite a few issues in userspace (PulseAudio mainly)
-> > related to dynamic behavior at the kernel level as a result of
-> > plug/unplug. Also not sure how an Android HAL would deal with a card
-> > disappearing temporarily if DSP resources become unavailable or
-> > unresponsive. Any thoughts or guidance you might think of?
+So I purposely didn't enumerate all the cases.  I think if you look at
+logs of individual files, they're pretty consistent.  I generally use
+"PCI/XXX" for things in the core (mostly capabilities like MSI, AER,
+DPC, etc) and "PCI: xxx:" for drivers (shpchp, pciehp, etc).  IIRC, I
+adopted this from previous practice.
 
-> Was the card-level register / unregister really problematic with PA?
-> It's basically similar as the hotplug like USB, so I thought it would
-> work as is.
+Of course there are things I don't apply that are different.  And
+Rafael does most of the PM stuff, so I try to follow *his* convention
+for that.
 
-Yeah, I'd expect normal desktop stuff to be able to cope with this due
-to physically hotpluggable hardware.  The main use case for doing things
-like this with module unload is in a development context where hopefully
-people can also arrange to use a userspace that can cope or to do
-whatever to reset it, any limitations in some userspace shouldn't prevent
-people from having the facility available.
+> > +  - Always copy linux-pci@vger.kernel.org and linux-kernel@vger.kernel.org.
+> 
+> I'd drop linux-kernel here.  The volume on that list is already like
+> drinking from a firehose, I doubt it adds much value to cc it.
 
---GdbWtwDHkcXqP16f
-Content-Type: application/pgp-signature; name="signature.asc"
+It's useful as an archive and for people not subscribed to linux-pci
+who happen to see the occasional thing they want to respond to.
+Nobody expects to be able to follow everything on LKML.
+get_maintainer.pl reports LKML for everything, and I'm not trying to
+innovate by being different.
 
------BEGIN PGP SIGNATURE-----
+But on reflection, I think the overall value of this writeup is
+minimal.  It's a lot of repetition of things already documented
+elsewhere and most of it boils down to "pay attention to existing
+practice and don't do things differently unless you're innovating and
+adding value."  That *should* be obvious, and if it's not, I doubt
+that adding one more thing to read is going to make it more obvious.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltHepkACgkQJNaLcl1U
-h9AMIwf7BhRkGokjgqRqrNGjXZa6Kwykx4hHriSACyNkX7n9KrQJnmZjM7DYZ6sl
-sNQIJL5AUetE0Swwtk5pQpYsqnBO0/yPSwCDthWu9gzTLC1o95LTVaJb+g5RtrJt
-i65c6oKpL+UZ0ALa3FvUwSNOvnpQOvIg5X+ATPhXN8MajRFC/SxK456Pi52pR6Eo
-lJ6TowhzK8lYfft2edbh2Z4XZA3X2YvOEBvgo0VWcd8eWQ6ive9Y2D8BhVoBFaWZ
-98DOLCBvNhFmN/1mPSr56nQS/lEgF736wbNzOa2t3/lvLrS5ykkB3XzZv+Y/70o3
-/DyeAr2GtVEJp2TLt23wkZgDhe0LFQ==
-=nrKD
------END PGP SIGNATURE-----
-
---GdbWtwDHkcXqP16f--
+Bjorn
