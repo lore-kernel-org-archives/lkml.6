@@ -3,117 +3,84 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C230C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 658B8C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFDF5213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:53:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFDF5213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 284F62147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:54:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284F62147C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732343AbeGLMCl (ORCPT
+        id S1732362AbeGLMD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:02:41 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15532 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbeGLMCk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:02:40 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b47410b0000>; Thu, 12 Jul 2018 04:52:43 -0700
-Received: from HQMAIL106.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 12 Jul 2018 04:53:28 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 12 Jul 2018 04:53:28 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 12 Jul
- 2018 11:53:06 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Thu, 12 Jul 2018 11:53:06 +0000
-Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b4741200000>; Thu, 12 Jul 2018 04:53:06 -0700
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Aapo Vienamo <avienamo@nvidia.com>
-Subject: [PATCH v6 0/4] Multiplex sdmmc low jitter clock path
-Date:   Thu, 12 Jul 2018 14:52:58 +0300
-Message-ID: <1531396382-5579-1-git-send-email-avienamo@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 12 Jul 2018 08:03:57 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57958 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726663AbeGLMD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 08:03:56 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 13DAD20741; Thu, 12 Jul 2018 13:54:43 +0200 (CEST)
+Received: from mc-bl-xps13.lan (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id BD355206A6;
+        Thu, 12 Jul 2018 13:54:42 +0200 (CEST)
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     davem@davemloft.net
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: [PATCH net-next 01/18] net: mvpp2: fix include guards in mvpp2_prs.h
+Date:   Thu, 12 Jul 2018 13:54:10 +0200
+Message-Id: <20180712115427.27375-2-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
+References: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The SDMMC clocks have a Low Jitter (LJ) clock path which bypasses a
-divider to achieve better jitter performance with high speed signaling
-modes. The clock path with the divider is needed by some of the slower
-signaling modes. This series automatically multiplexes the LJ and
-non-LJ clock paths based on the requested frequency.
+Include guards should be put before #includes. This doesn't fix any bug,
+but prevent future compilation issues when adding new files in the mvpp2
+driver
 
-Changelog:
-v6:
-	- Rename div-frac.c to clk-utils.c
-	- Fix checkpatch errors and warnings introduced in v5
-	- Replace int mul = 2 with a macro in clk-sdmmc-mux.c
-	- Remove unnecessary space from clk_sdmmc_mux_enable() return
-	- Free sdmmc_mux if clk_register() fails in
-	  tegra_clk_register_sdmmc_mux_div()
+The Header Parser init function needs the platform_device definition,
+and with the fixed include guards we need to add the missing include.
 
-v5:
-	- Rename div71_get() to div_frac_get()
-	- Rename div71.c to div-frac.c
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-v4:
-	- Add a changelog
-
-v3:
-	- Use <asm/div64.h> include instead of <linux/kernel.h> for
-	  do_div()
-	- Use SPDX tags for new files
-	- Make mux_lj_idx[] and mux_non_lj_idx[] const
-	- Make tegra_clk_sdmmc_mux_ops static
-	- Fix the includes for fence_udelay() in a separate patch
-
-v2:
-	- Fix the type compatibility error on do_div
-
-Aapo Vienamo (1):
-  clk: tegra: Fix includes required by fence_udelay()
-
-Peter De Schrijver (1):
-  clk: tegra: Refactor fractional divider calculation
-
-Peter De-Schrijver (2):
-  clk: tegra: Add sdmmc mux divider clock
-  clk: tegra: make sdmmc2 and sdmmc4 as sdmmc clocks
-
- drivers/clk/tegra/Makefile           |   2 +
- drivers/clk/tegra/clk-divider.c      |  30 +----
- drivers/clk/tegra/clk-id.h           |   2 -
- drivers/clk/tegra/clk-sdmmc-mux.c    | 251 +++++++++++++++++++++++++++++++++++
- drivers/clk/tegra/clk-tegra-periph.c |  11 --
- drivers/clk/tegra/clk-tegra210.c     |  14 +-
- drivers/clk/tegra/clk-utils.c        |  43 ++++++
- drivers/clk/tegra/clk.h              |  30 +++++
- 8 files changed, 343 insertions(+), 40 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-sdmmc-mux.c
- create mode 100644 drivers/clk/tegra/clk-utils.c
-
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h
+index a7c8d0818432..64a64666257c 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h
+@@ -9,14 +9,15 @@
+  * License version 2. This program is licensed "as is" without any
+  * warranty of any kind, whether express or implied.
+  */
++#ifndef _MVPP2_PRS_H_
++#define _MVPP2_PRS_H_
++
+ #include <linux/kernel.h>
+ #include <linux/netdevice.h>
++#include <linux/platform_device.h>
+ 
+ #include "mvpp2.h"
+ 
+-#ifndef _MVPP2_PRS_H_
+-#define _MVPP2_PRS_H_
+-
+ /* Parser constants */
+ #define MVPP2_PRS_TCAM_SRAM_SIZE	256
+ #define MVPP2_PRS_TCAM_WORDS		6
 -- 
-2.7.4
+2.11.0
 
