@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC556C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0692CC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:07:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99A392146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:07:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A59CC2146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:07:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NF5rX9Hz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99A392146E
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xb9+kqqX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A59CC2146E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403778AbeGLANM (ORCPT
+        id S2391052AbeGLANw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 20:13:12 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:35448 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390060AbeGLANK (ORCPT
+        Wed, 11 Jul 2018 20:13:52 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:39522 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388774AbeGLANv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 20:13:10 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6C04UPA185776;
-        Thu, 12 Jul 2018 00:04:39 GMT
+        Wed, 11 Jul 2018 20:13:51 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6C04kZt178248;
+        Thu, 12 Jul 2018 00:04:46 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=ojtIfDU9Hmh4WsZ+AKbp7P/EH/CbS1Gw9ojO+BQEWHg=;
- b=NF5rX9Hz+VSWoKdLZ2lZ4uclDj+ZKMVPnMB2/ZcVASNs+Fy8Mu/y6f8HpRpVfTHt4p9A
- Af7gCJDtbILBJCG/nz5vONFCB5Mqzhf8oXRUWxH5jQYlYjHBNME2IoYUs+bliaBSGSOX
- 7zzEueFKOpzBCQJrBMcBa6ikhdBmCI+PabyzLMuZSm1QXd98biRUxu9oyRyrL2v+ZiHn
- phKsUDTX9w/IPlxlswM9b+NppuVni4ohsDxjI+2s+nre0UEPzGVzd9MQq8WVzYrdVo+E
- Z+PM8FOs0NyOdkNGaKm1INxyO2cLdJYt67RMuey23Zbt4Bfms6Z1+a33UQT2PmoJkb3H Nw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2k2p7e09gh-1
+ bh=RiGhTN6g///YxNlAnsuvWKTlhs2d21Xsjt/HDHC/SIs=;
+ b=xb9+kqqXpu8CTCnBlEkFShV463SWHkFLNk1KQ71+s/Th3XAxZ75UogYMIbHBHJlpwaFy
+ J5Zj7GBkdiC3QBD0X0iilUobPIojLwrPr0lOnLIyoeJk8zYF16F2ThXTZRs5Vr6rf8SF
+ Y4KCNN9nqYOtI3xrvYX8mPuZhsAh9Ej3LS2E5DBd9kMTS/ricppdcb5aOVhfXcC9lTqC
+ PiwJE0f1eWyiAGNtDCz6b4bW0fR5hPLaOVwQfYl2W+Q/bjIJwZ6SLwTrRItoncZAUPLU
+ I3XCliia2ampikgL8T/Y/r/kD1yJXk61QiCYihS95jAx5AM38CHbleYKQdRRciI6jQQr Rg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2k2p760972-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 00:04:39 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6C04c17013056
+        Thu, 12 Jul 2018 00:04:46 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6C04jPk029475
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 00:04:38 GMT
+        Thu, 12 Jul 2018 00:04:45 GMT
 Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6C04bts004580;
-        Thu, 12 Jul 2018 00:04:37 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6C04iQI011296;
+        Thu, 12 Jul 2018 00:04:44 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Jul 2018 17:04:36 -0700
+        with ESMTP ; Wed, 11 Jul 2018 17:04:44 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -61,15 +61,15 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
         boris.ostrovsky@oracle.com, jgross@suse.com
-Subject: [PATCH v13 06/18] x86/xen/time: initialize pv xen time in init_hypervisor_platform
-Date:   Wed, 11 Jul 2018 20:04:07 -0400
-Message-Id: <20180712000419.5165-7-pasha.tatashin@oracle.com>
+Subject: [PATCH v13 10/18] time: default boot time offset to local_clock()
+Date:   Wed, 11 Jul 2018 20:04:11 -0400
+Message-Id: <20180712000419.5165-11-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180712000419.5165-1-pasha.tatashin@oracle.com>
 References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=781
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1806210000 definitions=main-1807110252
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,224 +77,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In every hypervisor except for xen pv time ops are initialized in
-init_hypervisor_platform().
+read_persistent_wall_and_boot_offset() is called during boot to read
+both the persistent clock and also return the offset between the boot time
+and the value of persistent clock.
 
-Xen PV domains initialize time ops in x86_init.paging.pagetable_init(),
-by calling xen_setup_shared_info() which is a poor design, as time is
-needed prior to memory allocator.
-
-xen_setup_shared_info() is called from two places: during boot, and
-after suspend. Split the content of xen_setup_shared_info() into
-three places:
-
-1. add the clock relavent data into new xen pv init_platform vector, and
-   set clock ops in there.
-
-2. move xen_setup_vcpu_info_placement() to new xen_pv_guest_late_init()
-   call.
-
-3. Re-initializing parts of shared info copy to xen_pv_post_suspend() to
-   be symmetric to xen_pv_pre_suspend
-
-Also, remove code duplications by calling xen_init_time_ops() from
-xen_hvm_init_time_ops().
+Change the default boot_offset from zero to local_clock() so architectures,
+that do not have a dedicated boot_clock but have early sched_clock(), such
+as SPARCv9, x86, and possibly more will benefit from this change by getting
+a better and more consistent estimate of the boot time without need for an
+arch specific implementation.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/x86/xen/enlighten_pv.c | 51 +++++++++++++++++--------------------
- arch/x86/xen/mmu_pv.c       |  6 ++---
- arch/x86/xen/suspend_pv.c   |  5 ++--
- arch/x86/xen/time.c         | 14 +++-------
- arch/x86/xen/xen-ops.h      |  6 ++---
- 5 files changed, 35 insertions(+), 47 deletions(-)
+ kernel/time/timekeeping.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
-index 8d4e2e1ae60b..615ad0f16848 100644
---- a/arch/x86/xen/enlighten_pv.c
-+++ b/arch/x86/xen/enlighten_pv.c
-@@ -119,6 +119,27 @@ static void __init xen_banner(void)
- 	       version >> 16, version & 0xffff, extra.extraversion,
- 	       xen_feature(XENFEAT_mmu_pt_update_preserve_ad) ? " (preserve-AD)" : "");
- }
-+
-+static void __init xen_pv_init_platform(void)
-+{
-+	set_fixmap(FIX_PARAVIRT_BOOTMAP, xen_start_info->shared_info);
-+	HYPERVISOR_shared_info = (void *)fix_to_virt(FIX_PARAVIRT_BOOTMAP);
-+
-+	/* xen clock uses per-cpu vcpu_info, need to init it for boot cpu */
-+	xen_vcpu_info_reset(0);
-+
-+	/* pvclock is in shared info area */
-+	xen_init_time_ops();
-+}
-+
-+static void __init xen_pv_guest_late_init(void)
-+{
-+#ifndef CONFIG_SMP
-+	/* Setup shared vcpu info for non-smp configurations */
-+	xen_setup_vcpu_info_placement();
-+#endif
-+}
-+
- /* Check if running on Xen version (major, minor) or later */
- bool
- xen_running_on_version_or_later(unsigned int major, unsigned int minor)
-@@ -947,34 +968,8 @@ static void xen_write_msr(unsigned int msr, unsigned low, unsigned high)
- 	xen_write_msr_safe(msr, low, high);
- }
- 
--void xen_setup_shared_info(void)
--{
--	set_fixmap(FIX_PARAVIRT_BOOTMAP, xen_start_info->shared_info);
--
--	HYPERVISOR_shared_info =
--		(struct shared_info *)fix_to_virt(FIX_PARAVIRT_BOOTMAP);
--
--	xen_setup_mfn_list_list();
--
--	if (system_state == SYSTEM_BOOTING) {
--#ifndef CONFIG_SMP
--		/*
--		 * In UP this is as good a place as any to set up shared info.
--		 * Limit this to boot only, at restore vcpu setup is done via
--		 * xen_vcpu_restore().
--		 */
--		xen_setup_vcpu_info_placement();
--#endif
--		/*
--		 * Now that shared info is set up we can start using routines
--		 * that point to pvclock area.
--		 */
--		xen_init_time_ops();
--	}
--}
--
- /* This is called once we have the cpu_possible_mask */
--void __ref xen_setup_vcpu_info_placement(void)
-+void __init xen_setup_vcpu_info_placement(void)
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index cb738f825c12..30d7f64ffc87 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1503,14 +1503,17 @@ void __weak read_persistent_clock64(struct timespec64 *ts64)
+  * Weak dummy function for arches that do not yet support it.
+  * wall_time	- current time as returned by persistent clock
+  * boot_offset	- offset that is defined as wall_time - boot_time
+- *		  default to 0.
++ * The default function calculates offset based on the current value of
++ * local_clock(). This way architectures that support sched_clock() but don't
++ * support dedicated boot time clock will provide the best estimate of the
++ * boot time.
+  */
+ void __weak __init
+ read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
+ 				     struct timespec64 *boot_offset)
  {
- 	int cpu;
- 
-@@ -1220,6 +1215,8 @@ asmlinkage __visible void __init xen_start_kernel(void)
- 	x86_init.irqs.intr_mode_init	= x86_init_noop;
- 	x86_init.oem.arch_setup = xen_arch_setup;
- 	x86_init.oem.banner = xen_banner;
-+	x86_init.hyper.init_platform = xen_pv_init_platform;
-+	x86_init.hyper.guest_late_init = xen_pv_guest_late_init;
- 
- 	/*
- 	 * Set up some pagetable state before starting to set any ptes.
-diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
-index 2c30cabfda90..52206ad81e4b 100644
---- a/arch/x86/xen/mmu_pv.c
-+++ b/arch/x86/xen/mmu_pv.c
-@@ -1230,8 +1230,7 @@ static void __init xen_pagetable_p2m_free(void)
- 	 * We roundup to the PMD, which means that if anybody at this stage is
- 	 * using the __ka address of xen_start_info or
- 	 * xen_start_info->shared_info they are in going to crash. Fortunatly
--	 * we have already revectored in xen_setup_kernel_pagetable and in
--	 * xen_setup_shared_info.
-+	 * we have already revectored in xen_setup_kernel_pagetable.
- 	 */
- 	size = roundup(size, PMD_SIZE);
- 
-@@ -1292,8 +1291,7 @@ static void __init xen_pagetable_init(void)
- 
- 	/* Remap memory freed due to conflicts with E820 map */
- 	xen_remap_memory();
--
--	xen_setup_shared_info();
-+	xen_setup_mfn_list_list();
- }
- static void xen_write_cr2(unsigned long cr2)
- {
-diff --git a/arch/x86/xen/suspend_pv.c b/arch/x86/xen/suspend_pv.c
-index a2e0f110af56..8303b58c79a9 100644
---- a/arch/x86/xen/suspend_pv.c
-+++ b/arch/x86/xen/suspend_pv.c
-@@ -27,8 +27,9 @@ void xen_pv_pre_suspend(void)
- void xen_pv_post_suspend(int suspend_cancelled)
- {
- 	xen_build_mfn_list_list();
--
--	xen_setup_shared_info();
-+	set_fixmap(FIX_PARAVIRT_BOOTMAP, xen_start_info->shared_info);
-+	HYPERVISOR_shared_info = (void *)fix_to_virt(FIX_PARAVIRT_BOOTMAP);
-+	xen_setup_mfn_list_list();
- 
- 	if (suspend_cancelled) {
- 		xen_start_info->store_mfn =
-diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
-index e0f1bcf01d63..2ad61bf896d6 100644
---- a/arch/x86/xen/time.c
-+++ b/arch/x86/xen/time.c
-@@ -40,7 +40,7 @@ static unsigned long xen_tsc_khz(void)
- 	return pvclock_tsc_khz(info);
+ 	read_persistent_clock64(wall_time);
+-	*boot_offset = (struct timespec64){0};
++	*boot_offset = ns_to_timespec64(local_clock());
  }
  
--u64 xen_clocksource_read(void)
-+static u64 xen_clocksource_read(void)
- {
-         struct pvclock_vcpu_time_info *src;
- 	u64 ret;
-@@ -503,7 +503,7 @@ static void __init xen_time_init(void)
- 		pvclock_gtod_register_notifier(&xen_pvclock_gtod_notifier);
- }
- 
--void __ref xen_init_time_ops(void)
-+void __init xen_init_time_ops(void)
- {
- 	pv_time_ops = xen_time_ops;
- 
-@@ -542,17 +542,11 @@ void __init xen_hvm_init_time_ops(void)
- 		return;
- 
- 	if (!xen_feature(XENFEAT_hvm_safe_pvclock)) {
--		printk(KERN_INFO "Xen doesn't support pvclock on HVM,"
--				"disable pv timer\n");
-+		pr_info("Xen doesn't support pvclock on HVM, disable pv timer");
- 		return;
- 	}
--
--	pv_time_ops = xen_time_ops;
-+	xen_init_time_ops();
- 	x86_init.timers.setup_percpu_clockev = xen_time_init;
- 	x86_cpuinit.setup_percpu_clockev = xen_hvm_setup_cpu_clockevents;
--
--	x86_platform.calibrate_tsc = xen_tsc_khz;
--	x86_platform.get_wallclock = xen_get_wallclock;
--	x86_platform.set_wallclock = xen_set_wallclock;
- }
- #endif
-diff --git a/arch/x86/xen/xen-ops.h b/arch/x86/xen/xen-ops.h
-index 3b34745d0a52..e78684597f57 100644
---- a/arch/x86/xen/xen-ops.h
-+++ b/arch/x86/xen/xen-ops.h
-@@ -31,7 +31,6 @@ extern struct shared_info xen_dummy_shared_info;
- extern struct shared_info *HYPERVISOR_shared_info;
- 
- void xen_setup_mfn_list_list(void);
--void xen_setup_shared_info(void);
- void xen_build_mfn_list_list(void);
- void xen_setup_machphys_mapping(void);
- void xen_setup_kernel_pagetable(pgd_t *pgd, unsigned long max_pfn);
-@@ -68,12 +67,11 @@ void xen_init_irq_ops(void);
- void xen_setup_timer(int cpu);
- void xen_setup_runstate_info(int cpu);
- void xen_teardown_timer(int cpu);
--u64 xen_clocksource_read(void);
- void xen_setup_cpu_clockevents(void);
- void xen_save_time_memory_area(void);
- void xen_restore_time_memory_area(void);
--void __ref xen_init_time_ops(void);
--void __init xen_hvm_init_time_ops(void);
-+void xen_init_time_ops(void);
-+void xen_hvm_init_time_ops(void);
- 
- irqreturn_t xen_debug_interrupt(int irq, void *dev_id);
- 
+ /* Flag for if timekeeping_resume() has injected sleeptime */
 -- 
 2.18.0
 
