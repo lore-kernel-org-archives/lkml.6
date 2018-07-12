@@ -2,258 +2,129 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0443DC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFF5C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D7E208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:23:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dominion-thruhere-net.20150623.gappssmtp.com header.i=@dominion-thruhere-net.20150623.gappssmtp.com header.b="1ikAV0GN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D7E208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dominion.thruhere.net
+	by mail.kernel.org (Postfix) with ESMTP id E289E20BEC
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:24:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E289E20BEC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbeGLKcj (ORCPT
+        id S1726838AbeGLKdT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 06:32:39 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40867 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbeGLKci (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 06:32:38 -0400
-Received: by mail-ed1-f66.google.com with SMTP id e19-v6so21466205edq.7
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 03:23:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dominion-thruhere-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=O/OakhnURXw2SPRYPClWxRYPMuMPvWJGRKzcBMjpsEI=;
-        b=1ikAV0GNRtSo9HSdcbAIT3CaRoVcdNg054SdqSAVXadu579oXxrOkooSye6H4KFiHD
-         Idfg9fyl/ki1/T7yqkWpKXliAWBzYDUvoGwKVS5M2XuLt663JEkJ2dmu6x6xJeC7IV6l
-         iXB4QTAc6A4sWSoYFRiihL/FWeIOxKjRCp0TgKyfck/umZQf9aoZ6kCg3wVqxBQqYWIe
-         NXUqcYkqlrNvi65lHu4IIATH6NNtdw+pHmnm274HqpXGRWbSbCnzwhWLsuR7HqB5JIJ5
-         DiQbcQwCpYrU/Q4KF6Bj+XLfplzOFR7etaD0IT6Ahb6zivR8UksA7yT5hEIElQWZmMAB
-         GEHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=O/OakhnURXw2SPRYPClWxRYPMuMPvWJGRKzcBMjpsEI=;
-        b=tHrl0Cf17TbhQOHUX3sIPMO9HJpJOpp15zA9+ITIEpH5M+AxQHJQCGT4Yqi0LrGT/G
-         UwG0krRasZeGE2jpY0Dp8wDYOzbLvO0beJe4yy6eZsNa8U9EXJPXMv7q2JS4MG8JWWhm
-         opCcbaWUxHiux4DqYHE8Poplx8MHEVqhSx/uXnK2uywEnmrA+GWnD6rNuFvqtjeECqoj
-         5UtpRugv/yqh4Uh0kpkpUbV/8KfwHBjUFOAKaznMynjCW/a3CMsr3DHgkpAuV2dBU/VN
-         Y/hB1Qq+hGhNC7EiDdHumnD7gOtJLdbLL4qYIWyYsJPAdz9qWqb8yUYzrLZPW92DbcVv
-         lDoA==
-X-Gm-Message-State: AOUpUlGpJle55S6/b1p4jfGck4kTg25NFCF7q9m9u/pcpAh0IDuJHR/N
-        IvVObNZZuxonToy0pmqBi4PH7Q==
-X-Google-Smtp-Source: AAOMgpfJ8wGajx7NP2VQc3eW1ZaCrVji10svAljpldlcmkhPVzABnm/Ve89Ps0Gqd9owMJrVFmfj1Q==
-X-Received: by 2002:a50:b206:: with SMTP id o6-v6mr1865054edd.160.1531391021829;
-        Thu, 12 Jul 2018 03:23:41 -0700 (PDT)
-Received: from localhost ([82.163.40.65])
-        by smtp.gmail.com with ESMTPSA id p10-v6sm4485289edh.9.2018.07.12.03.23.41
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Thu, 12 Jul 2018 03:23:41 -0700 (PDT)
-From:   Koen Kooi <koen@dominion.thruhere.net>
-To:     linux-omap@vger.kernel.org
-Cc:     Koen Kooi <koen@dominion.thruhere.net>,
-        Rob Herring <robh+dt@kernel.org>,
+        Thu, 12 Jul 2018 06:33:19 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56155 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726562AbeGLKdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 06:33:19 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id A1F8520703; Thu, 12 Jul 2018 12:24:21 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0A6EC2069C;
+        Thu, 12 Jul 2018 12:24:21 +0200 (CEST)
+Date:   Thu, 12 Jul 2018 12:24:20 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] ARM: dts: am335x: add am335x-sancloud-bbe board support
-Date:   Thu, 12 Jul 2018 12:23:25 +0200
-Message-Id: <1531391007-29552-3-git-send-email-koen@dominion.thruhere.net>
-X-Mailer: git-send-email 2.0.1
-In-Reply-To: <1531391007-29552-1-git-send-email-koen@dominion.thruhere.net>
-References: <1531391007-29552-1-git-send-email-koen@dominion.thruhere.net>
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
+Message-ID: <20180712122420.7c3ebd4e@bbrezillon>
+In-Reply-To: <CAK8P3a3raE9rmyvgxR0YVmYSCN4tumYS1TCexCuTEUXjy_9kSw@mail.gmail.com>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+        <20180330074751.25987-2-boris.brezillon@bootlin.com>
+        <CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com>
+        <20180711164120.3e32fb08@bbrezillon>
+        <CAK8P3a2EZB_tMS_47wv6M2Qpm79ZocxxhG5zLxXsBM_YjZgkyA@mail.gmail.com>
+        <20180711191212.3855bb25@bbrezillon>
+        <CAK8P3a2djk8c6STaxJC0MCkBddyOafk4WbG2LdfPf0V1EYiqmQ@mail.gmail.com>
+        <20180712000932.3b04ee9d@bbrezillon>
+        <CAK8P3a13GX67YEci2J8Rxn6O4FBjjD82X+w3hyGMT3TDbtFkTg@mail.gmail.com>
+        <20180712104658.220ef8f6@bbrezillon>
+        <CAK8P3a3raE9rmyvgxR0YVmYSCN4tumYS1TCexCuTEUXjy_9kSw@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "Beaglebone Enhanced" by Sancloud is based on the Beaglebone Black,
-but with the following differences:
+On Thu, 12 Jul 2018 12:03:05 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
- * Gigabit capable PHY
- * Extra USB hub, optional i2c control
- * lps3331ap barometer connected over i2c
- * MPU6050 6 axis MEMS accelerometer/gyro connected over i2c
- * 1GiB DDR3 RAM
- * RTL8723 Wifi/Bluetooth connected over USB
+> >> want to be in b) rather than c). An example of this would be
+> >> an input device on a PC: If the user operateds the keyboard
+> >> or pointer and we have handed off ownership to a sensor hub,
+> >> we never get an input event, right?  
+> >
+> > Correct. I guess we could try to regain bus ownership in case we have
+> > IBIs enabled. Or we let the secondary master give the bus back to us
+> > when it sees IBIs it can't handle, as described in section 5.1.7:
+> >
+> > "
+> > Once granted control of the Bus, the Secondary Master maintains
+> > control until another Master is granted Bus control. After the
+> > Secondary Master transitions to the Current Master role it could
+> > encounter Bus management activities besides the data transfers that it
+> > itself initiates. Some examples are the In-Band Interrupt, or the
+> > Hot-Join request. One optional possibility, shown at Section 5.1.7.2,
+> > is that the Secondary Master performs the Current Master’s actions with
+> > the full capabilities of the Main Master. Another optional possibility
+> > is that the Secondary Master, while serving in the Current Master role,
+> > could defer some actions to a more capable Master, as described in
+> > Section 5.1.7.3.
+> > "  
+> 
+> Ah, so the current master can ask a secondary master to take over
+> again even if  the secondary master has not requested to be come the
+> current master?
 
-Tested on a revision G board.
+Yes. Then the inactive master can refuse of course, but it is working
+both ways:
 
-Signed-off-by: Koen Kooi <koen@dominion.thruhere.net>
----
-v3: Drop oppnitro-1000000000, not needed on the versions Sancloud is using
-v2: * Add missing #include <dt-bindings/interrupt-controller/irq.h>
-    * Fix Barometer compatible string
-v1: Initial submission
+- an inactive master can ask for bus ownership
+- an active master can ask an inactive one to take over
 
- arch/arm/boot/dts/Makefile                |   1 +
- arch/arm/boot/dts/am335x-sancloud-bbe.dts | 136 ++++++++++++++++++++++++++++++
- 2 files changed, 137 insertions(+)
- create mode 100644 arch/arm/boot/dts/am335x-sancloud-bbe.dts
+> 
+> >> > I agree. This being said, moving to a representation where the bus is
+> >> > implicitly represented by the master_controller instance shouldn't be
+> >> > too difficult. So, if you think we should try this approach I can do
+> >> > the modifications in my v6.  
+> >>
+> >> I'd say let's wait before you do that change, possibly add a comment
+> >> in there now to remind us of what an alternative would be.  
+> >
+> > You mean I should keep the i3c_bus object?  
+> 
+> I mean the ongoing discussion shouldn't stop you from posting a v6.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 37a3de7..83a4d61 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -695,6 +695,7 @@ dtb-$(CONFIG_SOC_AM33XX) += \
- 	am335x-pepper.dtb \
- 	am335x-phycore-rdk.dtb \
- 	am335x-pocketbeagle.dtb \
-+	am335x-sancloud-bbe.dtb \
- 	am335x-shc.dtb \
- 	am335x-sbc-t335.dtb \
- 	am335x-sl50.dtb \
-diff --git a/arch/arm/boot/dts/am335x-sancloud-bbe.dts b/arch/arm/boot/dts/am335x-sancloud-bbe.dts
-new file mode 100644
-index 0000000..ba5f4bd
---- /dev/null
-+++ b/arch/arm/boot/dts/am335x-sancloud-bbe.dts
-@@ -0,0 +1,136 @@
-+/*
-+ * Copyright (C) 2012 Texas Instruments Incorporated - http://www.ti.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+/dts-v1/;
-+
-+#include "am33xx.dtsi"
-+#include "am335x-bone-common.dtsi"
-+#include "am335x-boneblack-common.dtsi"
-+#include <dt-bindings/interrupt-controller/irq.h>
-+
-+/ {
-+	model = "SanCloud BeagleBone Enhanced";
-+	compatible = "sancloud,am335x-boneenhanced", "ti,am335x-bone-black", "ti,am335x-bone", "ti,am33xx";
-+};
-+
-+&am33xx_pinmux {
-+	pinctrl-names = "default";
-+
-+	cpsw_default: cpsw_default {
-+		pinctrl-single,pins = <
-+			/* Slave 1 */
-+			AM33XX_IOPAD(0x914, PIN_OUTPUT_PULLDOWN | MUX_MODE2)	/* mii1_txen.rgmii1_tctl */
-+			AM33XX_IOPAD(0x918, PIN_INPUT_PULLDOWN | MUX_MODE2)	/* mii1_rxdv.rgmii1_rctl */
-+			AM33XX_IOPAD(0x91c, PIN_OUTPUT_PULLDOWN | MUX_MODE2)	/* mii1_txd3.rgmii1_td3 */
-+			AM33XX_IOPAD(0x920, PIN_OUTPUT_PULLDOWN | MUX_MODE2)	/* mii1_txd2.rgmii1_td2 */
-+			AM33XX_IOPAD(0x924, PIN_OUTPUT_PULLDOWN | MUX_MODE2)	/* mii1_txd1.rgmii1_td1 */
-+			AM33XX_IOPAD(0x928, PIN_OUTPUT_PULLDOWN | MUX_MODE2)	/* mii1_txd0.rgmii1_td0 */
-+			AM33XX_IOPAD(0x92c, PIN_OUTPUT_PULLDOWN | MUX_MODE2)	/* mii1_txclk.rgmii1_tclk */
-+			AM33XX_IOPAD(0x930, PIN_INPUT_PULLDOWN | MUX_MODE2)	/* mii1_rxclk.rgmii1_rclk */
-+			AM33XX_IOPAD(0x934, PIN_INPUT_PULLDOWN | MUX_MODE2)	/* mii1_rxd3.rgmii1_rd3 */
-+			AM33XX_IOPAD(0x938, PIN_INPUT_PULLDOWN | MUX_MODE2)	/* mii1_rxd2.rgmii1_rd2 */
-+			AM33XX_IOPAD(0x93c, PIN_INPUT_PULLDOWN | MUX_MODE2)	/* mii1_rxd1.rgmii1_rd1 */
-+			AM33XX_IOPAD(0x940, PIN_INPUT_PULLDOWN | MUX_MODE2)	/* mii1_rxd0.rgmii1_rd0 */
-+		>;
-+	};
-+
-+	cpsw_sleep: cpsw_sleep {
-+		pinctrl-single,pins = <
-+			/* Slave 1 reset value */
-+			AM33XX_IOPAD(0x914, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x918, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x91c, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x920, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x924, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x928, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x92c, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x930, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x934, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x938, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x93c, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x940, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+		>;
-+	};
-+
-+	davinci_mdio_default: davinci_mdio_default {
-+		pinctrl-single,pins = <
-+			/* MDIO */
-+			AM33XX_IOPAD(0x948, PIN_INPUT_PULLUP | SLEWCTRL_FAST | MUX_MODE0)	/* mdio_data.mdio_data */
-+			AM33XX_IOPAD(0x94c, PIN_OUTPUT_PULLUP | MUX_MODE0)			/* mdio_clk.mdio_clk */
-+		>;
-+	};
-+
-+	davinci_mdio_sleep: davinci_mdio_sleep {
-+		pinctrl-single,pins = <
-+			/* MDIO reset value */
-+			AM33XX_IOPAD(0x948, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+			AM33XX_IOPAD(0x94c, PIN_INPUT_PULLDOWN | MUX_MODE7)
-+		>;
-+	};
-+
-+	usb_hub_ctrl: usb_hub_ctrl {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x944, PIN_OUTPUT_PULLUP | MUX_MODE7)     /* rmii1_refclk.gpio0_29 */
-+		>;
-+	};
-+
-+	mpu6050_pins: pinmux_mpu6050_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x968, PIN_INPUT | MUX_MODE7)    /* uart0_ctsn.gpio1_8 */
-+		>;
-+	};
-+
-+	lps3331ap_pins: pinmux_lps3331ap_pins {
-+		pinctrl-single,pins = <
-+			AM33XX_IOPAD(0x868, PIN_INPUT | MUX_MODE7)     /* gpmc_a10.gpio1_26 */
-+		>;
-+	};
-+};
-+
-+&mac {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&cpsw_default>;
-+	pinctrl-1 = <&cpsw_sleep>;
-+	status = "okay";
-+};
-+
-+&davinci_mdio {
-+	pinctrl-names = "default", "sleep";
-+	pinctrl-0 = <&davinci_mdio_default>;
-+	pinctrl-1 = <&davinci_mdio_sleep>;
-+	status = "okay";
-+};
-+
-+&cpsw_emac0 {
-+	phy_id = <&davinci_mdio>, <0>;
-+	phy-mode = "rgmii-txid";
-+};
-+
-+&i2c0 {
-+	lps331ap: lps331ap@5C {
-+		compatible = "st,lps331ap-press";
-+		st,drdy-int-pin = <1>;
-+		reg = <0x5C>;
-+		interrupt-parent = <&gpio1>;
-+		interrupts = <26 IRQ_TYPE_EDGE_RISING>;
-+	};
-+
-+	mpu6050: mpu6050@68 {
-+		compatible = "invensense,mpu6050";
-+		reg = <0x68>;
-+		interrupt-parent = <&gpio0>;
-+		interrupts = <2 IRQ_TYPE_EDGE_RISING>;
-+		orientation = <0xff 0 0 0 1 0 0 0 0xff>;
-+	};
-+
-+	usb2512b@2c {
-+		compatible = "microchip,usb2512b";
-+		reg = <0x2c>;
-+		reset-gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;
-+		/* wifi on port 4 */
-+	};
-+};
--- 
-2.0.1
-
+Ok.
