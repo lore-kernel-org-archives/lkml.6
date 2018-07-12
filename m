@@ -5,39 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8683C476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:29:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC81CC476E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 586DE208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:29:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 586DE208E3
+	by mail.kernel.org (Postfix) with ESMTP id 778A4208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 778A4208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732327AbeGLQkF (ORCPT
+        id S1732354AbeGLQlW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:40:05 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:52949 "EHLO mx1.molgen.mpg.de"
+        Thu, 12 Jul 2018 12:41:22 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:53553 "EHLO mx1.molgen.mpg.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727455AbeGLQkF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:40:05 -0400
+        id S1727006AbeGLQlW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 12:41:22 -0400
 Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 618F12012BA069;
-        Thu, 12 Jul 2018 18:29:45 +0200 (CEST)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 426CC2012BA06C;
+        Thu, 12 Jul 2018 18:31:04 +0200 (CEST)
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: [PATCH] ata: Only output sg element mapped number in verbose debug
 To:     Tejun Heo <tj@kernel.org>
 Cc:     linux-ide@vger.kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Paul Menzel <pmenzel@molgen.mpg.de>
-Subject: [PATCH] ata: Guard ata_scsi_dump_cdb() by ATA_VERBOSE_DEBUG
-Message-ID: <fb36a7b0-74f6-2a0e-0826-fd1561ec7790@molgen.mpg.de>
-Date:   Thu, 12 Jul 2018 18:29:44 +0200
+Message-ID: <5474a38b-c0d7-a7f7-6447-5720f40aafbe@molgen.mpg.de>
+Date:   Thu, 12 Jul 2018 18:31:03 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020807090001060303000401"
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms030304020705090607080405"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -45,46 +45,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 This is a cryptographically signed message in MIME format.
 
---------------ms020807090001060303000401
+--------------ms030304020705090607080405
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
 
-Date: Sun, 8 Jul 2018 09:11:34 +0200
+Date: Sun, 8 Jul 2018 09:18:21 +0200
 
-Defining `ATA_DEBUG` nothing can be really seen, as the log is spammed
-with CDB messages.
+Defining `ATA_DEBUG` there are a lof of messages like below in the log.
 
-Therefore, guard the print by `ATA_VERBOSE_DEBUG`.
+    [   16.345472] ata_sg_setup: 1 sg elements mapped
+
+As that is too verbose, only output these messages in verbose debug.
 
 Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
 ---
- drivers/ata/libata-scsi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/ata/libata-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index aad1b01447de..067aec4527b2 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -4294,10 +4294,10 @@ static inline ata_xlat_func_t ata_get_xlat_func(s=
-truct ata_device *dev, u8 cmd)
- static inline void ata_scsi_dump_cdb(struct ata_port *ap,
- 				     struct scsi_cmnd *cmd)
- {
--#ifdef ATA_DEBUG
-+#ifdef ATA_VERBOSE_DEBUG
- 	struct scsi_device *scsidev =3D cmd->device;
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index cc71c63df381..7186f4a59422 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -5066,7 +5066,7 @@ static int ata_sg_setup(struct ata_queued_cmd *qc)
+ 	if (n_elem < 1)
+ 		return -1;
 =20
--	DPRINTK("CDB (%u:%d,%d,%lld) %9ph\n",
-+	VPRINTK("CDB (%u:%d,%d,%lld) %9ph\n",
- 		ap->print_id,
- 		scsidev->channel, scsidev->id, scsidev->lun,
- 		cmd->cmnd);
+-	DPRINTK("%d sg elements mapped\n", n_elem);
++	VPRINTK("%d sg elements mapped\n", n_elem);
+ 	qc->orig_n_elem =3D qc->n_elem;
+ 	qc->n_elem =3D n_elem;
+ 	qc->flags |=3D ATA_QCFLAG_DMAMAP;
 --=20
 2.17.1
 
 
---------------ms020807090001060303000401
+--------------ms030304020705090607080405
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -172,18 +168,18 @@ fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
 EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
 LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
 RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
-SIb3DQEJBTEPFw0xODA3MTIxNjI5NDRaMC8GCSqGSIb3DQEJBDEiBCDgW4UdA6PUdNhZIHjj
-HfBHuKk1sEm5sTGexnRQqw51LzBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+SIb3DQEJBTEPFw0xODA3MTIxNjMxMDNaMC8GCSqGSIb3DQEJBDEiBCAtLb4fSo6fiKs60xy6
+bwuOFK5ZOZ0mrEDkcvomwKgcSzBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
 hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
 BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
 MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
 bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
 gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
 DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
-BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAKZc
-L/7COowQFKcN00/RD7nJEumkUNZteIYxCIeFIkfzNNB5sodtuYyZLIOZQn1XQqYLGPrsUjfd
-hBRQDpkcwHVpxOlFYRzgkR4iN0CGkCpBQSTy9zw/GU3IFlVMRQDecPh5Nc8tc59j6CjRS9iJ
-fkQSKeu64gIYXdfApeAXaSitYaW022MvDMTT6uoX1lbSlsFt6uzR+V+hBrwOzyUp94i79zEC
-RPcrpLYwifsxjYL8ATT1oovIGzwMD/6oUqmhmA0c8ThlOtfx95McXOa7Dag5hb3EWcrnBtVK
-yWAa4PpzKJK5QKD1Ru3u0XsQdhkuKxdOOT5m6FdHHkyHONpMEI4AAAAAAAA=
---------------ms020807090001060303000401--
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBALI4
+xJeLIn3hJS/KDgJCtBKJ5UzGU0HDCxZvDLJFufph/Yjz0Uogq7r43x0zVE2bpz1JO9/LxDO2
+An7FoRtFtG8v8I0LFQnkLZByMLDRmwIUju1IhxfjrJxIeB62rCWNBsd8SxM4wK4t6PwXwP62
+8gZeh4tF//wHv6j/YWfUwX7n6ZVfy5bsyzpnHGlRSfeJROc6R+R5uLZD4BK2ZKRcwDvhSVd0
+i6B7+k6ZrE+bJ44ptYw7qUD/0I0BhynuqlSZqfgcF/0eo+bKqunBURmIonrG3QRwu9V6HqE8
+6RZROcRhkGW5gpN+19nP3E7MpLEqZOK4xZyPPjrX+e1oeo+Q4hcAAAAAAAA=
+--------------ms030304020705090607080405--
