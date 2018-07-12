@@ -2,659 +2,126 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE28AC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A95AC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63A0221476
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA06520883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:10:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VonnSIlY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A0221476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="wfsCdYy4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA06520883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732248AbeGLISg (ORCPT
+        id S1732389AbeGLITQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:18:36 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56878 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726622AbeGLISg (ORCPT
+        Thu, 12 Jul 2018 04:19:16 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:55898 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727037AbeGLITQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:18:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6TCxEgVMHZRdYD8ux4qpwfTh2JBXaZLbkkJs816EM88=; b=VonnSIlYH5SXPFaviD+XrR+OC
-        usQkv/u1kwK7oNrWf7Z6BOmRmrTKM37Yq2ui2L0148YBT97xfgnnHFuwaK8jYm70tcXXyxP6hKeTh
-        qnhNL37+/QZ2QD0ycuhhUcszJgNqeDJYqmmGbpY8K4RjepN6nGX32NVfB1i/kfMwjqEMX7egkVPco
-        CUfDMYx61WaLpunE5uR0NfNQX8ERYAsnya/IAIFTUw5C15QBgL5W8SXevKxyq6uz20Rwmqk3Jm9GR
-        8MCTpnV/oZrEi2Q32hPjJfddNedA6AA+OtXYSd85DSTpgL0V611bxFiKNGfWAVneJNh+VGRF2WNwe
-        1qffw1akw==;
-Received: from 213-225-6-92.nat.highway.a1.net ([213.225.6.92] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdWfs-0005Rx-Ml; Thu, 12 Jul 2018 08:10:05 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     axboe@kernel.dk
-Cc:     torvalds@linux-foundation.org, tonyb@cybernetics.com,
-        jannh@google.com, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] bsg: remove read/write support
-Date:   Thu, 12 Jul 2018 10:09:59 +0200
-Message-Id: <20180712080959.21180-1-hch@lst.de>
-X-Mailer: git-send-email 2.18.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+        Thu, 12 Jul 2018 04:19:16 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 4BB925C21A1;
+        Thu, 12 Jul 2018 10:10:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1531383027;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=S748qoIXaQfwOIuBiFJPrEGMD08pcJ6w6ExG8TD2iFc=;
+        b=wfsCdYy4LNnRX9x9X3LLLCPvRFpO8MM7fZdK4IpyHO136t/s2mboocKIFkvy+RBqd7PW8j
+        G6Jgu30dOhrr6aOAgPQs+fbfYbvBQGlWB5HbC2KB8bl9HW3nfBV3t4NUkOvWE4iYPM+mp1
+        VGlZeIimvuZh4g4761TXCcKbeskW6vM=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 12 Jul 2018 10:10:23 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
+Cc:     fabio.estevam@nxp.com, haibo.chen@nxp.com, aisheng.dong@nxp.com,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mmc: sdhci-esdhc-imx: disable clocks before
+ changing frequency
+In-Reply-To: <20180712080650.13878-1-stefan@agner.ch>
+References: <20180712080650.13878-1-stefan@agner.ch>
+Message-ID: <1e00d6df032983bd588b068d30b48cea@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-1.38 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         BAYES_HAM(-1.28)[89.89%];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[7];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         TO_DN_NONE(0.00)[];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code poses a security risk due to user memory access in ->release
-and had an API that can't be used reliably.  As far as we know it was
-never used for real, but if that turns out wrong we'll have to revert
-this commit and come up with a band aid.
+On 12.07.2018 10:06, Stefan Agner wrote:
+> In the uSDHC case (e.g. i.MX 6) clocks only get disabled if frequency
+> is set to 0. However, it could be that the stack asks for a frequency
+> change while clocks are on. In that case the function clears the
+> divider registers (by clearing ESDHC_CLOCK_MASK) while the clock is
+> enabled! This causes a short period of time where the clock is
+> undivided (on a i.MX 6DL a clock of 196MHz has been measured).
+> 
+> For older IP variants the driver disables clock by clearing some bits
+> in ESDHC_SYSTEM_CONTROL.
+> 
+> Make sure to disable card clock before changing frequency for uSDHC
+> IP variants too.
 
-Jann Horn did look software archives for users of this interface,
-and the only users found were example code in sg3_utils, and optional
-support in an optional module of the tgt user space iscsi target,
-which looks like a proof of concept extension of the /dev/sg
-read/write support.
+Ignore this patch, its a duplicate.
 
-Tony Battersby chimes in that the code is basically unsafe to use in
-general:
+I should not have pressed Ctrl-C while git send-email is working :-)
 
-  The read/write interface on /dev/bsg is impossible to use safely
-  because the list of completed commands is per-device (bd->done_list)
-  rather than per-fd like it is with /dev/sg.  So if program A and
-  program B are both using the write/read interface on the same bsg
-  device, then their command responses will get mixed up, and program
-  A will read() some command results from program B and vice versa.
-  So no, I don't use read/write on /dev/bsg.  From a security standpoint,
-  it should definitely be fixed or removed.
+--
+Stefan
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/bsg.c | 460 +---------------------------------------------------
- 1 file changed, 6 insertions(+), 454 deletions(-)
-
-diff --git a/block/bsg.c b/block/bsg.c
-index 3da540faf673..db588add6ba6 100644
---- a/block/bsg.c
-+++ b/block/bsg.c
-@@ -13,11 +13,9 @@
- #include <linux/init.h>
- #include <linux/file.h>
- #include <linux/blkdev.h>
--#include <linux/poll.h>
- #include <linux/cdev.h>
- #include <linux/jiffies.h>
- #include <linux/percpu.h>
--#include <linux/uio.h>
- #include <linux/idr.h>
- #include <linux/bsg.h>
- #include <linux/slab.h>
-@@ -38,21 +36,10 @@
- struct bsg_device {
- 	struct request_queue *queue;
- 	spinlock_t lock;
--	struct list_head busy_list;
--	struct list_head done_list;
- 	struct hlist_node dev_list;
- 	atomic_t ref_count;
--	int queued_cmds;
--	int done_cmds;
--	wait_queue_head_t wq_done;
--	wait_queue_head_t wq_free;
- 	char name[20];
- 	int max_queue;
--	unsigned long flags;
--};
--
--enum {
--	BSG_F_BLOCK		= 1,
- };
- 
- #define BSG_DEFAULT_CMDS	64
-@@ -67,64 +54,6 @@ static struct hlist_head bsg_device_list[BSG_LIST_ARRAY_SIZE];
- static struct class *bsg_class;
- static int bsg_major;
- 
--static struct kmem_cache *bsg_cmd_cachep;
--
--/*
-- * our internal command type
-- */
--struct bsg_command {
--	struct bsg_device *bd;
--	struct list_head list;
--	struct request *rq;
--	struct bio *bio;
--	struct bio *bidi_bio;
--	int err;
--	struct sg_io_v4 hdr;
--};
--
--static void bsg_free_command(struct bsg_command *bc)
--{
--	struct bsg_device *bd = bc->bd;
--	unsigned long flags;
--
--	kmem_cache_free(bsg_cmd_cachep, bc);
--
--	spin_lock_irqsave(&bd->lock, flags);
--	bd->queued_cmds--;
--	spin_unlock_irqrestore(&bd->lock, flags);
--
--	wake_up(&bd->wq_free);
--}
--
--static struct bsg_command *bsg_alloc_command(struct bsg_device *bd)
--{
--	struct bsg_command *bc = ERR_PTR(-EINVAL);
--
--	spin_lock_irq(&bd->lock);
--
--	if (bd->queued_cmds >= bd->max_queue)
--		goto out;
--
--	bd->queued_cmds++;
--	spin_unlock_irq(&bd->lock);
--
--	bc = kmem_cache_zalloc(bsg_cmd_cachep, GFP_KERNEL);
--	if (unlikely(!bc)) {
--		spin_lock_irq(&bd->lock);
--		bd->queued_cmds--;
--		bc = ERR_PTR(-ENOMEM);
--		goto out;
--	}
--
--	bc->bd = bd;
--	INIT_LIST_HEAD(&bc->list);
--	bsg_dbg(bd, "returning free cmd %p\n", bc);
--	return bc;
--out:
--	spin_unlock_irq(&bd->lock);
--	return bc;
--}
--
- static inline struct hlist_head *bsg_dev_idx_hash(int index)
- {
- 	return &bsg_device_list[index & (BSG_LIST_ARRAY_SIZE - 1)];
-@@ -285,101 +214,6 @@ bsg_map_hdr(struct request_queue *q, struct sg_io_v4 *hdr, fmode_t mode)
- 	return ERR_PTR(ret);
- }
- 
--/*
-- * async completion call-back from the block layer, when scsi/ide/whatever
-- * calls end_that_request_last() on a request
-- */
--static void bsg_rq_end_io(struct request *rq, blk_status_t status)
--{
--	struct bsg_command *bc = rq->end_io_data;
--	struct bsg_device *bd = bc->bd;
--	unsigned long flags;
--
--	bsg_dbg(bd, "finished rq %p bc %p, bio %p\n",
--		rq, bc, bc->bio);
--
--	bc->hdr.duration = jiffies_to_msecs(jiffies - bc->hdr.duration);
--
--	spin_lock_irqsave(&bd->lock, flags);
--	list_move_tail(&bc->list, &bd->done_list);
--	bd->done_cmds++;
--	spin_unlock_irqrestore(&bd->lock, flags);
--
--	wake_up(&bd->wq_done);
--}
--
--/*
-- * do final setup of a 'bc' and submit the matching 'rq' to the block
-- * layer for io
-- */
--static void bsg_add_command(struct bsg_device *bd, struct request_queue *q,
--			    struct bsg_command *bc, struct request *rq)
--{
--	int at_head = (0 == (bc->hdr.flags & BSG_FLAG_Q_AT_TAIL));
--
--	/*
--	 * add bc command to busy queue and submit rq for io
--	 */
--	bc->rq = rq;
--	bc->bio = rq->bio;
--	if (rq->next_rq)
--		bc->bidi_bio = rq->next_rq->bio;
--	bc->hdr.duration = jiffies;
--	spin_lock_irq(&bd->lock);
--	list_add_tail(&bc->list, &bd->busy_list);
--	spin_unlock_irq(&bd->lock);
--
--	bsg_dbg(bd, "queueing rq %p, bc %p\n", rq, bc);
--
--	rq->end_io_data = bc;
--	blk_execute_rq_nowait(q, NULL, rq, at_head, bsg_rq_end_io);
--}
--
--static struct bsg_command *bsg_next_done_cmd(struct bsg_device *bd)
--{
--	struct bsg_command *bc = NULL;
--
--	spin_lock_irq(&bd->lock);
--	if (bd->done_cmds) {
--		bc = list_first_entry(&bd->done_list, struct bsg_command, list);
--		list_del(&bc->list);
--		bd->done_cmds--;
--	}
--	spin_unlock_irq(&bd->lock);
--
--	return bc;
--}
--
--/*
-- * Get a finished command from the done list
-- */
--static struct bsg_command *bsg_get_done_cmd(struct bsg_device *bd)
--{
--	struct bsg_command *bc;
--	int ret;
--
--	do {
--		bc = bsg_next_done_cmd(bd);
--		if (bc)
--			break;
--
--		if (!test_bit(BSG_F_BLOCK, &bd->flags)) {
--			bc = ERR_PTR(-EAGAIN);
--			break;
--		}
--
--		ret = wait_event_interruptible(bd->wq_done, bd->done_cmds);
--		if (ret) {
--			bc = ERR_PTR(-ERESTARTSYS);
--			break;
--		}
--	} while (1);
--
--	bsg_dbg(bd, "returning done %p\n", bc);
--
--	return bc;
--}
--
- static int blk_complete_sgv4_hdr_rq(struct request *rq, struct sg_io_v4 *hdr,
- 				    struct bio *bio, struct bio *bidi_bio)
- {
-@@ -398,234 +232,6 @@ static int blk_complete_sgv4_hdr_rq(struct request *rq, struct sg_io_v4 *hdr,
- 	return ret;
- }
- 
--static bool bsg_complete(struct bsg_device *bd)
--{
--	bool ret = false;
--	bool spin;
--
--	do {
--		spin_lock_irq(&bd->lock);
--
--		BUG_ON(bd->done_cmds > bd->queued_cmds);
--
--		/*
--		 * All commands consumed.
--		 */
--		if (bd->done_cmds == bd->queued_cmds)
--			ret = true;
--
--		spin = !test_bit(BSG_F_BLOCK, &bd->flags);
--
--		spin_unlock_irq(&bd->lock);
--	} while (!ret && spin);
--
--	return ret;
--}
--
--static int bsg_complete_all_commands(struct bsg_device *bd)
--{
--	struct bsg_command *bc;
--	int ret, tret;
--
--	bsg_dbg(bd, "entered\n");
--
--	/*
--	 * wait for all commands to complete
--	 */
--	io_wait_event(bd->wq_done, bsg_complete(bd));
--
--	/*
--	 * discard done commands
--	 */
--	ret = 0;
--	do {
--		spin_lock_irq(&bd->lock);
--		if (!bd->queued_cmds) {
--			spin_unlock_irq(&bd->lock);
--			break;
--		}
--		spin_unlock_irq(&bd->lock);
--
--		bc = bsg_get_done_cmd(bd);
--		if (IS_ERR(bc))
--			break;
--
--		tret = blk_complete_sgv4_hdr_rq(bc->rq, &bc->hdr, bc->bio,
--						bc->bidi_bio);
--		if (!ret)
--			ret = tret;
--
--		bsg_free_command(bc);
--	} while (1);
--
--	return ret;
--}
--
--static int
--__bsg_read(char __user *buf, size_t count, struct bsg_device *bd,
--	   const struct iovec *iov, ssize_t *bytes_read)
--{
--	struct bsg_command *bc;
--	int nr_commands, ret;
--
--	if (count % sizeof(struct sg_io_v4))
--		return -EINVAL;
--
--	ret = 0;
--	nr_commands = count / sizeof(struct sg_io_v4);
--	while (nr_commands) {
--		bc = bsg_get_done_cmd(bd);
--		if (IS_ERR(bc)) {
--			ret = PTR_ERR(bc);
--			break;
--		}
--
--		/*
--		 * this is the only case where we need to copy data back
--		 * after completing the request. so do that here,
--		 * bsg_complete_work() cannot do that for us
--		 */
--		ret = blk_complete_sgv4_hdr_rq(bc->rq, &bc->hdr, bc->bio,
--					       bc->bidi_bio);
--
--		if (copy_to_user(buf, &bc->hdr, sizeof(bc->hdr)))
--			ret = -EFAULT;
--
--		bsg_free_command(bc);
--
--		if (ret)
--			break;
--
--		buf += sizeof(struct sg_io_v4);
--		*bytes_read += sizeof(struct sg_io_v4);
--		nr_commands--;
--	}
--
--	return ret;
--}
--
--static inline void bsg_set_block(struct bsg_device *bd, struct file *file)
--{
--	if (file->f_flags & O_NONBLOCK)
--		clear_bit(BSG_F_BLOCK, &bd->flags);
--	else
--		set_bit(BSG_F_BLOCK, &bd->flags);
--}
--
--/*
-- * Check if the error is a "real" error that we should return.
-- */
--static inline int err_block_err(int ret)
--{
--	if (ret && ret != -ENOSPC && ret != -ENODATA && ret != -EAGAIN)
--		return 1;
--
--	return 0;
--}
--
--static ssize_t
--bsg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
--{
--	struct bsg_device *bd = file->private_data;
--	int ret;
--	ssize_t bytes_read;
--
--	bsg_dbg(bd, "read %zd bytes\n", count);
--
--	bsg_set_block(bd, file);
--
--	bytes_read = 0;
--	ret = __bsg_read(buf, count, bd, NULL, &bytes_read);
--	*ppos = bytes_read;
--
--	if (!bytes_read || err_block_err(ret))
--		bytes_read = ret;
--
--	return bytes_read;
--}
--
--static int __bsg_write(struct bsg_device *bd, const char __user *buf,
--		       size_t count, ssize_t *bytes_written, fmode_t mode)
--{
--	struct bsg_command *bc;
--	struct request *rq;
--	int ret, nr_commands;
--
--	if (count % sizeof(struct sg_io_v4))
--		return -EINVAL;
--
--	nr_commands = count / sizeof(struct sg_io_v4);
--	rq = NULL;
--	bc = NULL;
--	ret = 0;
--	while (nr_commands) {
--		struct request_queue *q = bd->queue;
--
--		bc = bsg_alloc_command(bd);
--		if (IS_ERR(bc)) {
--			ret = PTR_ERR(bc);
--			bc = NULL;
--			break;
--		}
--
--		if (copy_from_user(&bc->hdr, buf, sizeof(bc->hdr))) {
--			ret = -EFAULT;
--			break;
--		}
--
--		/*
--		 * get a request, fill in the blanks, and add to request queue
--		 */
--		rq = bsg_map_hdr(bd->queue, &bc->hdr, mode);
--		if (IS_ERR(rq)) {
--			ret = PTR_ERR(rq);
--			rq = NULL;
--			break;
--		}
--
--		bsg_add_command(bd, q, bc, rq);
--		bc = NULL;
--		rq = NULL;
--		nr_commands--;
--		buf += sizeof(struct sg_io_v4);
--		*bytes_written += sizeof(struct sg_io_v4);
--	}
--
--	if (bc)
--		bsg_free_command(bc);
--
--	return ret;
--}
--
--static ssize_t
--bsg_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
--{
--	struct bsg_device *bd = file->private_data;
--	ssize_t bytes_written;
--	int ret;
--
--	bsg_dbg(bd, "write %zd bytes\n", count);
--
--	if (unlikely(uaccess_kernel()))
--		return -EINVAL;
--
--	bsg_set_block(bd, file);
--
--	bytes_written = 0;
--	ret = __bsg_write(bd, buf, count, &bytes_written, file->f_mode);
--
--	*ppos = bytes_written;
--
--	/*
--	 * return bytes written on non-fatal errors
--	 */
--	if (!bytes_written || err_block_err(ret))
--		bytes_written = ret;
--
--	bsg_dbg(bd, "returning %zd\n", bytes_written);
--	return bytes_written;
--}
--
- static struct bsg_device *bsg_alloc_device(void)
- {
- 	struct bsg_device *bd;
-@@ -635,29 +241,20 @@ static struct bsg_device *bsg_alloc_device(void)
- 		return NULL;
- 
- 	spin_lock_init(&bd->lock);
--
- 	bd->max_queue = BSG_DEFAULT_CMDS;
--
--	INIT_LIST_HEAD(&bd->busy_list);
--	INIT_LIST_HEAD(&bd->done_list);
- 	INIT_HLIST_NODE(&bd->dev_list);
--
--	init_waitqueue_head(&bd->wq_free);
--	init_waitqueue_head(&bd->wq_done);
- 	return bd;
- }
- 
- static int bsg_put_device(struct bsg_device *bd)
- {
--	int ret = 0, do_free;
- 	struct request_queue *q = bd->queue;
- 
- 	mutex_lock(&bsg_mutex);
- 
--	do_free = atomic_dec_and_test(&bd->ref_count);
--	if (!do_free) {
-+	if (!atomic_dec_and_test(&bd->ref_count)) {
- 		mutex_unlock(&bsg_mutex);
--		goto out;
-+		return 0;
- 	}
- 
- 	hlist_del(&bd->dev_list);
-@@ -668,20 +265,9 @@ static int bsg_put_device(struct bsg_device *bd)
- 	/*
- 	 * close can always block
- 	 */
--	set_bit(BSG_F_BLOCK, &bd->flags);
--
--	/*
--	 * correct error detection baddies here again. it's the responsibility
--	 * of the app to properly reap commands before close() if it wants
--	 * fool-proof error detection
--	 */
--	ret = bsg_complete_all_commands(bd);
--
- 	kfree(bd);
--out:
--	if (do_free)
--		blk_put_queue(q);
--	return ret;
-+	blk_put_queue(q);
-+	return 0;
- }
- 
- static struct bsg_device *bsg_add_device(struct inode *inode,
-@@ -704,8 +290,6 @@ static struct bsg_device *bsg_add_device(struct inode *inode,
- 
- 	bd->queue = rq;
- 
--	bsg_set_block(bd, file);
--
- 	atomic_set(&bd->ref_count, 1);
- 	hlist_add_head(&bd->dev_list, bsg_dev_idx_hash(iminor(inode)));
- 
-@@ -779,24 +363,6 @@ static int bsg_release(struct inode *inode, struct file *file)
- 	return bsg_put_device(bd);
- }
- 
--static __poll_t bsg_poll(struct file *file, poll_table *wait)
--{
--	struct bsg_device *bd = file->private_data;
--	__poll_t mask = 0;
--
--	poll_wait(file, &bd->wq_done, wait);
--	poll_wait(file, &bd->wq_free, wait);
--
--	spin_lock_irq(&bd->lock);
--	if (!list_empty(&bd->done_list))
--		mask |= EPOLLIN | EPOLLRDNORM;
--	if (bd->queued_cmds < bd->max_queue)
--		mask |= EPOLLOUT;
--	spin_unlock_irq(&bd->lock);
--
--	return mask;
--}
--
- static long bsg_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct bsg_device *bd = file->private_data;
-@@ -870,9 +436,6 @@ static long bsg_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- }
- 
- static const struct file_operations bsg_fops = {
--	.read		=	bsg_read,
--	.write		=	bsg_write,
--	.poll		=	bsg_poll,
- 	.open		=	bsg_open,
- 	.release	=	bsg_release,
- 	.unlocked_ioctl	=	bsg_ioctl,
-@@ -977,21 +540,12 @@ static int __init bsg_init(void)
- 	int ret, i;
- 	dev_t devid;
- 
--	bsg_cmd_cachep = kmem_cache_create("bsg_cmd",
--				sizeof(struct bsg_command), 0, 0, NULL);
--	if (!bsg_cmd_cachep) {
--		printk(KERN_ERR "bsg: failed creating slab cache\n");
--		return -ENOMEM;
--	}
--
- 	for (i = 0; i < BSG_LIST_ARRAY_SIZE; i++)
- 		INIT_HLIST_HEAD(&bsg_device_list[i]);
- 
- 	bsg_class = class_create(THIS_MODULE, "bsg");
--	if (IS_ERR(bsg_class)) {
--		ret = PTR_ERR(bsg_class);
--		goto destroy_kmemcache;
--	}
-+	if (IS_ERR(bsg_class))
-+		return PTR_ERR(bsg_class);
- 	bsg_class->devnode = bsg_devnode;
- 
- 	ret = alloc_chrdev_region(&devid, 0, BSG_MAX_DEVS, "bsg");
-@@ -1012,8 +566,6 @@ static int __init bsg_init(void)
- 	unregister_chrdev_region(MKDEV(bsg_major, 0), BSG_MAX_DEVS);
- destroy_bsg_class:
- 	class_destroy(bsg_class);
--destroy_kmemcache:
--	kmem_cache_destroy(bsg_cmd_cachep);
- 	return ret;
- }
- 
--- 
-2.18.0
-
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
+> ---
+>  drivers/mmc/host/sdhci-esdhc-imx.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c
+> b/drivers/mmc/host/sdhci-esdhc-imx.c
+> index 85fd5a8b0b6d..acacd8481473 100644
+> --- a/drivers/mmc/host/sdhci-esdhc-imx.c
+> +++ b/drivers/mmc/host/sdhci-esdhc-imx.c
+> @@ -708,14 +708,14 @@ static inline void esdhc_pltfm_set_clock(struct
+> sdhci_host *host,
+>  	int div = 1;
+>  	u32 temp, val;
+>  
+> +	if (esdhc_is_usdhc(imx_data)) {
+> +		val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
+> +		writel(val & ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
+> +			host->ioaddr + ESDHC_VENDOR_SPEC);
+> +	}
+> +
+>  	if (clock == 0) {
+>  		host->mmc->actual_clock = 0;
+> -
+> -		if (esdhc_is_usdhc(imx_data)) {
+> -			val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
+> -			writel(val & ~ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
+> -					host->ioaddr + ESDHC_VENDOR_SPEC);
+> -		}
+>  		return;
+>  	}
