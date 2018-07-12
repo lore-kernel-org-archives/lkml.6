@@ -2,168 +2,190 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4145AC476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 232DFC476E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE45320BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:44:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGxkF9Jq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE45320BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C304C2148C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:47:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C304C2148C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732378AbeGLQym (ORCPT
+        id S1732181AbeGLQ5Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:54:42 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38222 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726820AbeGLQym (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:54:42 -0400
-Received: by mail-lj1-f196.google.com with SMTP id p6-v6so22502425ljc.5;
-        Thu, 12 Jul 2018 09:44:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=cJMGzfnu3TyRDgiglceqEEIzN1R+cLijOaQMwQhdM3s=;
-        b=RGxkF9JqD4MRU1KFsApAVtoK1rtPav1UJutQL12ybxXACU4wuUyWh+C8eRQVqAgdss
-         PVPlhLXW2QdPn6hrU9fsYAIrOPQZ1l9eGU7vcrZ2eVxWIlmM1FKF59vcC46G0C1ylxUt
-         6b8YLmuP4dTnFvEUN54a9fi+OXAurdHkXpdq8ue7YyLQnw8mGPXQpkU22xqhjT+JyLTy
-         VM9wQXT213erxxHURub4kqeEJIz2gtU1p/9aNrdg1dkVvmL3IeOsiH9+rGSH1PNCfps5
-         IAosAiJJCnUEuCSEl0Auw+k6MNHrGF+rjmAg0T2tHKR12jo0/ZYPTM5jU1JSTkkxm6iP
-         Pr1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=cJMGzfnu3TyRDgiglceqEEIzN1R+cLijOaQMwQhdM3s=;
-        b=PIERFQfOqCkgOrXu0cwZdggW8Lzgo5yCfq7Y7TkuOT4dJRapSMo9Vt/KkNTHfFml0k
-         GryGomDkFd/U3qjn42EntSl6h5Bg3TqZeK3KEFYvCBLjk9j2KZ4MdO9yO+pIIv8AouCT
-         Hkr+AvPQiNFgY2+CINq2uLJ4TbO4kzXsL+RuRx2INc5HQxLcR+I776+CU0gRvwH6IZJ/
-         3zR4OU+QE1a6BZ6/A4WygEzltBhfvb823nrc4axn0UPM26PJRA4nSEzx3MGCBHncP4a0
-         g6vH7n+2fRoa6YsLxqDAJIld63KsRfNPhzDaIRdGBxhflgv9f9GcGAVC5AP4yBs9NbTL
-         /fqQ==
-X-Gm-Message-State: AOUpUlEo6lDdYbnM2pF6WhosNJhnkbwoUfRfsVx3N5mtXxF4pfCulrDA
-        k+5vuUndcj6I+4uAis0GUHM=
-X-Google-Smtp-Source: AAOMgpdYgMjLBQHpg5y6lxucNCf1pTleLi6cnPs63bc8r0wrSppRvnml6XWIi+mW5BCKGH2T7qLUiw==
-X-Received: by 2002:a2e:5d1c:: with SMTP id r28-v6mr1043940ljb.89.1531413859902;
-        Thu, 12 Jul 2018 09:44:19 -0700 (PDT)
-Received: from ?IPv6:2001:2012:22e:1b00:f2e2:9015:9262:3fde? ([2001:2012:22e:1b00:f2e2:9015:9262:3fde])
-        by smtp.gmail.com with ESMTPSA id w8-v6sm3283257lfe.67.2018.07.12.09.44.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 09:44:18 -0700 (PDT)
-Subject: Re: [V9fs-developer] [PATCH] version pointer uninitialized
-To:     jiangyiwen <jiangyiwen@huawei.com>, ericvh@gmail.com,
-        rminnich@sandia.gov, lucho@ionkov.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com, v9fs-developer@lists.sourceforge.net,
-        davem@davemloft.net, Andrew Morton <akpm@linux-foundation.org>
-References: <20180709222943.19503-1-tomasbortoli@gmail.com>
- <5B455CBB.8030501@huawei.com>
-From:   Tomas Bortoli <tomasbortoli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tomasbortoli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <02d636a1-858a-45a5-d28c-9f7380d27ab3@gmail.com>
-Date:   Thu, 12 Jul 2018 18:44:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <5B455CBB.8030501@huawei.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Thu, 12 Jul 2018 12:57:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:57250 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726820AbeGLQ5X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 12:57:23 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5B04B81663FC;
+        Thu, 12 Jul 2018 16:47:02 +0000 (UTC)
+Received: from llong.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E37031C676;
+        Thu, 12 Jul 2018 16:46:59 +0000 (UTC)
+From:   Waiman Long <longman@redhat.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Waiman Long <longman@redhat.com>
+Subject: [PATCH v7 0/6] fs/dcache: Track & limit # of negative dentries
+Date:   Thu, 12 Jul 2018 12:45:59 -0400
+Message-Id: <1531413965-5401-1-git-send-email-longman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 12 Jul 2018 16:47:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 12 Jul 2018 16:47:02 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/11/2018 03:26 AM, jiangyiwen wrote:
-> On 2018/7/10 6:29, Tomas Bortoli wrote:
->> The p9_client_version() does not initialize the version
->> pointer. If the call to p9pdu_readf() returns an error and version has not
->> been allocated in p9pdu_readf(), then the program will jump to the "error"
->> label and will try to free the version pointer. If version is not
->> initialized, free() will be called with uninitialized, garbage data and
->> will provoke a crash.
->>
->> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-> Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
->
->> Reported-by: syzbot+65c6b72f284a39d416b4@syzkaller.appspotmail.com
->> ---
->>  net/9p/client.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/9p/client.c b/net/9p/client.c
->> index 18c5271910dc..40f7c47f2f74 100644
->> --- a/net/9p/client.c
->> +++ b/net/9p/client.c
->> @@ -957,7 +957,7 @@ static int p9_client_version(struct p9_client *c)
->>  {
->>  	int err = 0;
->>  	struct p9_req_t *req;
->> -	char *version;
->> +	char *version = NULL;
->>  	int msize;
->>  
->>  	p9_debug(P9_DEBUG_9P, ">>> TVERSION msize %d protocol %d\n",
->>
->
+ v6->v7:
+  - Drop the 2 patches that add a new shrinker for negative dentries.
+    Instead, the default memory shrinker will be relied on to get
+    rid of excess negative dentries when free memory is low.
+  - Change the sysctl parameter "neg-dentry-pc" to "neg-dentry-limit"
+    and the unit is now 1/1000 of the total system memory with a range
+    of 0-100.
+  - Add a patch to brief up the warning so that one warning will be
+    printed every minute to the console if the limit is exceeded until
+    the system administrator does something about it. It can be disabling
+    the limit, raising the limit or turning on the enforcement option.
 
-+ Cc: Andrew Morton <akpm@linux-foundation.org>
+ v5->v6:
+  - Drop the neg_dentry_pc boot command line option, but add a
+    "neg-dentry-pc" sysctl parameter instead.
+  - Change the "enforce-neg-dentry-limit" sysctl parameter to
+    "neg-dentry-enforce".
+  - Add a patch to add negative dentry to the head of the LRU initially
+    so that they will be the first to be removed if they are not
+    accessed again.
+  - Run some additional performance test.
 
-This goes with the other patch: [V9fs-developer] [PATCH]
-p9_parse_header() validate PDU length
+ v4->v5:
+  - Backed to the latest 4.18 kernel and modify the code
+    accordingly. Patch 1 "Relocate dentry_kill() after lock_parent()"
+    is now no longer necessary.
+  - Make tracking and limiting of negative dentries a user configurable
+    option (CONFIG_DCACHE_TRACK_NEG_ENTRY) so that users can decide if
+    they want to include this capability in the kernel.
+  - Make killing excess negative dentries an optional feature that can be
+    enabled via a boot command line option or a sysctl parameter.
+  - Spread negative dentry pruning across multiple CPUs.
 
-Tomas
+ v4: https://lkml.org/lkml/2017/9/18/739
+ v5: https://lkml.org/lkml/2018/7/2/21
+ v6: https://lkml.org/lkml/2018/7/6/875
+
+A rogue application can potentially create a large number of negative
+dentries in the system consuming a significant portion of the memory
+available if it is not under the direct control of a memory controller
+that enforces kernel memory limit. Unlike other user activities that
+can be easily tracked, generation of too many negative dentries is hard
+to detect.
+
+This patchset introduces changes to the dcache subsystem to track and
+optionally limit the number of negative dentries allowed to be created.
+Once the limit is exceeded, warnings will be printed in the console.
+System administrators can then either disable the limit, raise the limit
+or enforce the limit by killing off excess negative dentries. They
+should also investigate if something wrong is happening that causes
+the number of negative dentries used to go way up.
+
+Patch 1 tracks the number of negative dentries present in the LRU
+lists and reports it in /proc/sys/fs/dentry-state.
+
+Patch 2 moves the negative dentries to the head of the LRU after they
+are initially created. They will be moved to the tail like the positive
+dentries the second time they are reinserted. This will make sure that
+all those accssed-once negative dentries will be removed first when a
+shrinker is running.
+
+Patch 3 adds a "neg-dentry-limit" sysctl parameter that can be used to
+to specify a soft limit on the number of negative allowed as a multiple
+of 1/1000 of the total system memory available. This parameter is 0 by
+default which means no negative dentry limiting will be performed.
+
+Patch 4 briefs up the warning to once every minute and gives instruction
+on how to disable it.
+
+Patch 5 adds a "neg-dentry-enforce" sysctl parameter which can be
+dynamically enabled at run time to enforce the negative dentry limit
+by killing excess newly created negative dentires right after use,
+if necessary.
+
+Patch 6 makes the negative dentry limiting code a user configurable
+option so that it can be configured out, if desired.
+
+With a 4.18 based kernel and a simple microbenchmark to measure dentry
+lookup and creation rates, the rates (average on 3 runs) after initial
+boot on a 2-socket 24-core 48-thread 128G memory system with and without
+the patch were as follows:
+
+  Metric               w/o patch   limit=0  limit=1  limit=1,enforce
+  ------               ---------   -------  -------  ---------------
+  +ve dentry lookup      672313     679720   676250      676071
+  -ve dentry lookup     1547694    1555210  1542731     1559395
+  -ve dentry creation    696427     700975   697713      693494
+
+For the lookup and creation rates, there wasn't any signifcant difference
+with or without the patch. It could be hard to compare the figures as
+they were from different kernels and other factors like code layout
+could have an impact.
+
+When the limit was enabled, a very slight performance drop (0.5%-0.8%)
+was observed.
+
+The negative dentry creation test created 10 millions unique negative
+dentries. With a setting of neg-dentry-limit=1, the warning threshold
+was about 339020.  So most of negative dentries were created with the
+limit exceeded.  The performance drop was only about 0.5% which was not
+much. Turning on the enforce option to kill excess negative dentries
+dropped the performance by a further 0.6% (1.1% in total).
+
+I had also run other microbenchmarks, but I didn't observe any changes
+in performance that were not in the run-to-run variation range for
+those benchmarks.
+
+Waiman Long (6):
+  fs/dcache: Track & report number of negative dentries
+  fs/dcache: Add negative dentries to LRU head initially
+  fs/dcache: Add sysctl parameter neg-dentry-limit as a soft limit on
+    negative dentries
+  fs/dcache: Print negative dentry warning every min until turned off by
+    user
+  fs/dcache: Allow optional enforcement of negative dentry limit
+  fs/dcache: Allow deconfiguration of negative dentry code to reduce
+    kernel size
+
+ Documentation/sysctl/fs.txt |  40 +++++-
+ fs/Kconfig                  |  10 ++
+ fs/dcache.c                 | 310 +++++++++++++++++++++++++++++++++++++++++++-
+ include/linux/dcache.h      |  17 ++-
+ include/linux/list_lru.h    |  17 +++
+ kernel/sysctl.c             |  22 ++++
+ mm/list_lru.c               |  19 ++-
+ 7 files changed, 421 insertions(+), 14 deletions(-)
+
+-- 
+1.8.3.1
+
