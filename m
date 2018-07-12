@@ -2,184 +2,125 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47748C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BAEC468C8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03E61213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:53:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E61213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+	by mail.kernel.org (Postfix) with ESMTP id 4DC1D2147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:53:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pLFw6k0K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC1D2147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732562AbeGLPDS (ORCPT
+        id S1732597AbeGLPDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 11:03:18 -0400
-Received: from 18.mo3.mail-out.ovh.net ([87.98.172.162]:48724 "EHLO
-        18.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732310AbeGLPDR (ORCPT
+        Thu, 12 Jul 2018 11:03:20 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:46226 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732310AbeGLPDT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:03:17 -0400
-X-Greylist: delayed 983 seconds by postgrey-1.27 at vger.kernel.org; Thu, 12 Jul 2018 11:03:16 EDT
-Received: from player732.ha.ovh.net (unknown [10.109.122.11])
-        by mo3.mail-out.ovh.net (Postfix) with ESMTP id 22C561C2ED2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 16:37:02 +0200 (CEST)
-Received: from bahia.lan (lns-bzn-46-82-253-208-248.adsl.proxad.net [82.253.208.248])
-        (Authenticated sender: groug@kaod.org)
-        by player732.ha.ovh.net (Postfix) with ESMTPSA id 3A979200BB;
-        Thu, 12 Jul 2018 16:36:50 +0200 (CEST)
-Date:   Thu, 12 Jul 2018 16:36:49 +0200
-From:   Greg Kurz <groug@kaod.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        linux-kernel@vger.kernel.org, Ron Minnich <rminnich@sandia.gov>,
-        linux-fsdevel@vger.kernel.org, v9fs-developer@lists.sourceforge.net
-Subject: Re: [V9fs-developer] [PATCH v2 4/6] 9p: Embed wait_queue_head into
- p9_req_t
-Message-ID: <20180712163649.36057b6e@bahia.lan>
-In-Reply-To: <20180711210225.19730-5-willy@infradead.org>
-References: <20180711210225.19730-1-willy@infradead.org>
-        <20180711210225.19730-5-willy@infradead.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 12 Jul 2018 11:03:19 -0400
+Received: by mail-lf0-f68.google.com with SMTP id l16-v6so24490214lfc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 07:53:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=LtMXOsEKRmo9Xs1o6pS7MykKjB6sXzjGV7cjCMO8fUM=;
+        b=pLFw6k0KgTb5+cSsY+TFfbarGSjZmNVC1KM9XVbm2TrEE5oWeV/Y/MPDPfRHaQ4DQP
+         LqAASKqaU094bu7Hj2j/ZC3opFaLSd55T9VtRdoAjNnhzDxp0wEY0wThridvOvWftitq
+         RxV5C6BdKDV3pnxn39SS2lP39YkpQDXjzsdWYkmBlxyKu0QpM1hMUXvXbl9w9GLiOvMF
+         2UtKdb9dl48ozwaykQgEXlMyt7NPHzQd8svaweJIcr6mB5yyuxFDSdOmUTrMSlgJqKMa
+         fIHMVVl+mvmt1S7JluoLHIq67YCddMQG9ZFLYgPK8eYxlgsCVbRYi6wRMgW66ZAHx4ha
+         1hbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=LtMXOsEKRmo9Xs1o6pS7MykKjB6sXzjGV7cjCMO8fUM=;
+        b=hIyj5D3vH6Jt6T5Hs8wOykwSyF7m8grsxSgRLL42DWgkN/0Rh+PZo06xwE/IzJ+8Nq
+         gEQy/OZk6zkupbv9c5XmPGJo9aQNbrop1Y/RkFERBKa/H9EGd81QYNVNBtybIu+H9PZi
+         hsBVTlReWOsVDkxJSvborSpI5Tb5WFN8Uucw+2ZbsuBXKOizvwpkS4D+08nq7PS6Jxku
+         h6drPSuCRwi+SLAgPLiYoY7m9ZdlaoneW24Q/i+Avw72TH3ObIaFISlXAJLJBHXVsUph
+         lLi49YPTiT3zvPezhXIfB68HXsLdurtRRB7a0YtS+L3fs7R+UPnMS0M4YnG9CMUxIu4f
+         19rw==
+X-Gm-Message-State: AOUpUlGlDEHxPsVjOHsIXRAme6BIGtocOkeGY76FxbuQWvc9wKJe+sk3
+        PqDWMWm02hIBweT6fOlzDx7mcL+XVAzwkrZj8hw=
+X-Google-Smtp-Source: AAOMgpdUndlgFe0adDQ0v446vQpZsS03GYrvNxsdOV6J4B8xaN+HBKy/TE4QHFpUa2u6p8FhTN9znAFQFyLYfk0tFWk=
+X-Received: by 2002:a19:7b08:: with SMTP id w8-v6mr2116559lfc.22.1531407204113;
+ Thu, 12 Jul 2018 07:53:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Ovh-Tracer-Id: 7461620159068674373
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedtiedrgeekgdejlecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 07:53:23
+ -0700 (PDT)
+In-Reply-To: <20180712082609.GB8802@infradead.org>
+References: <20180707054247.19802-1-deepa.kernel@gmail.com>
+ <20180707054247.19802-6-deepa.kernel@gmail.com> <20180712082609.GB8802@infradead.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 12 Jul 2018 16:53:23 +0200
+X-Google-Sender-Auth: ZjS_JP_ATnZ01T9h9c6B8fUOzsw
+Message-ID: <CAK8P3a02MJt7xDR3-u4r7GGaUc-ndnkq8Hb_ZC7YB6mkNqmeLw@mail.gmail.com>
+Subject: Re: [PATCH v3 5/7] time: Add struct __kernel_timex
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Jul 2018 14:02:23 -0700
-Matthew Wilcox <willy@infradead.org> wrote:
+On Thu, Jul 12, 2018 at 10:26 AM, Christoph Hellwig <hch@infradead.org> wrote:
 
-> On a 64-bit system, the wait_queue_head_t is 24 bytes while the pointer
-> to it is 8 bytes.  Growing the p9_req_t by 16 bytes is better than
-> performing a 24-byte memory allocation.
-> 
+>> +#ifndef CONFIG_64BIT_TIME
+>> +#define __kernel_timex timex
+>> +#endif
+>
+> using #defines for structs has all kinds of ill effects.  Why can't
+> we aways use __kernel_timex for the in-kernel usage?
 
-This is true when all tags have been used at least once. But the current code
-lazily allocates the wait_queue_head_t, ie, only when a tag is used for the
-first time. Your patch causes a full row of wait_quest_head_t to be pre-allocated.
+It's the same thing that Deepa did in the already merged
+series for the timespec interfaces, this is done in order to
+stage the conversion of 50 system calls and 20 architectures
+without having to do everything at once.
 
-ie, P9_ROW_MAXTAG * 24 = 255 * 24 = 6120
+The system call entry points are changed to take a __kernel_timespec
+or __kernel_timex argument as the first step, and the conditional
+macro override makes that a NOP. At the same time, the existing
+compat entry points are modified so they have the exact same
+behavior but use the compat_timespec, compat_timex etc
+argument types (which we can rename, too, as discussed).
 
-instead of (P9_ROW_MAXTAG * 8) + 24 = 255 * 8 + 24 = 2064
+When a 32-bit architecture gets converted, it sets
+CONFIG_64BIT_TIME, which flips the normal syscall entry to
+use 64-bit time_t, and enables the compat syscalls to be built.
+The same arch specific patch must then change the syscall
+table to redirect the old syscall numbers to the compat handlers
+(which implement the 32-bit time_t arguments), and add new
+numbers pointing to the default handlers that now take the
+64-bit time_t, see https://pastebin.com/F3QZdyin
 
-This is nearly a page of allocated memory that might be never used.
+This was all explained in a lot of detail when the first set
+of patches got merged for the clock_ syscalls, but I suppose
+it can all be explained again.
 
-Not sure if this is a problem though...
+>> +#ifndef __kernel_timex
+>> +struct __kernel_timex {
+>> +     unsigned int modes;     /* mode selector */
+>> +     int :32;            /* pad */
+>
+> Why do we need padding for a purely in-kernel structure?
+>
+> Also the anonymous member syntax is rather odd and I don't remeber
+> us using it anywhere else.  Why here?
 
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
-> ---
->  include/net/9p/client.h |  2 +-
->  net/9p/client.c         | 19 +++++--------------
->  net/9p/trans_virtio.c   |  2 +-
->  3 files changed, 7 insertions(+), 16 deletions(-)
-> 
+This is in the uapi header, and the structure just matches the
+existing timex definition, which has the same oddity.
 
-... and the diffstat is nice :) so
-
-Reviewed-by: Greg Kurz <groug@kaod.org>
-
-> diff --git a/include/net/9p/client.h b/include/net/9p/client.h
-> index e405729cd1c7..0fa0fbab33b0 100644
-> --- a/include/net/9p/client.h
-> +++ b/include/net/9p/client.h
-> @@ -113,7 +113,7 @@ enum p9_req_status_t {
->  struct p9_req_t {
->  	int status;
->  	int t_err;
-> -	wait_queue_head_t *wq;
-> +	wait_queue_head_t wq;
->  	struct p9_fcall *tc;
->  	struct p9_fcall *rc;
->  	void *aux;
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index b89c7298267c..bc8aba6b5ce0 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -282,8 +282,9 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
->  				return ERR_PTR(-ENOMEM);
->  			}
->  			for (col = 0; col < P9_ROW_MAXTAG; col++) {
-> -				c->reqs[row][col].status = REQ_STATUS_IDLE;
-> -				c->reqs[row][col].tc = NULL;
-> +				req = &c->reqs[row][col];
-> +				req->status = REQ_STATUS_IDLE;
-> +				init_waitqueue_head(&req->wq);
->  			}
->  			c->max_tag += P9_ROW_MAXTAG;
->  		}
-> @@ -293,13 +294,6 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
->  	col = tag % P9_ROW_MAXTAG;
->  
->  	req = &c->reqs[row][col];
-> -	if (!req->wq) {
-> -		req->wq = kmalloc(sizeof(wait_queue_head_t), GFP_NOFS);
-> -		if (!req->wq)
-> -			goto grow_failed;
-> -		init_waitqueue_head(req->wq);
-> -	}
-> -
->  	if (!req->tc)
->  		req->tc = p9_fcall_alloc(alloc_msize);
->  	if (!req->rc)
-> @@ -319,9 +313,7 @@ p9_tag_alloc(struct p9_client *c, u16 tag, unsigned int max_size)
->  	pr_err("Couldn't grow tag array\n");
->  	kfree(req->tc);
->  	kfree(req->rc);
-> -	kfree(req->wq);
->  	req->tc = req->rc = NULL;
-> -	req->wq = NULL;
->  	return ERR_PTR(-ENOMEM);
->  }
->  
-> @@ -409,7 +401,6 @@ static void p9_tag_cleanup(struct p9_client *c)
->  	/* free requests associated with tags */
->  	for (row = 0; row < (c->max_tag/P9_ROW_MAXTAG); row++) {
->  		for (col = 0; col < P9_ROW_MAXTAG; col++) {
-> -			kfree(c->reqs[row][col].wq);
->  			kfree(c->reqs[row][col].tc);
->  			kfree(c->reqs[row][col].rc);
->  		}
-> @@ -452,7 +443,7 @@ void p9_client_cb(struct p9_client *c, struct p9_req_t *req, int status)
->  	smp_wmb();
->  	req->status = status;
->  
-> -	wake_up(req->wq);
-> +	wake_up(&req->wq);
->  	p9_debug(P9_DEBUG_MUX, "wakeup: %d\n", req->tc->tag);
->  }
->  EXPORT_SYMBOL(p9_client_cb);
-> @@ -773,7 +764,7 @@ p9_client_rpc(struct p9_client *c, int8_t type, const char *fmt, ...)
->  	}
->  again:
->  	/* Wait for the response */
-> -	err = wait_event_killable(*req->wq, req->status >= REQ_STATUS_RCVD);
-> +	err = wait_event_killable(req->wq, req->status >= REQ_STATUS_RCVD);
->  
->  	/*
->  	 * Make sure our req is coherent with regard to updates in other
-> diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
-> index 05006cbb3361..3e096c98313c 100644
-> --- a/net/9p/trans_virtio.c
-> +++ b/net/9p/trans_virtio.c
-> @@ -490,7 +490,7 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
->  	virtqueue_kick(chan->vq);
->  	spin_unlock_irqrestore(&chan->lock, flags);
->  	p9_debug(P9_DEBUG_TRANS, "virtio request kicked\n");
-> -	err = wait_event_killable(*req->wq, req->status >= REQ_STATUS_RCVD);
-> +	err = wait_event_killable(req->wq, req->status >= REQ_STATUS_RCVD);
->  	/*
->  	 * Non kernel buffers are pinned, unpin them
->  	 */
-
+     Arnd
