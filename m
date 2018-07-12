@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 658B8C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 205A1C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 284F62147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:54:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284F62147C
+	by mail.kernel.org (Postfix) with ESMTP id D6B15213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:54:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6B15213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732362AbeGLMD5 (ORCPT
+        id S1732442AbeGLMEA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:03:57 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57958 "EHLO mail.bootlin.com"
+        Thu, 12 Jul 2018 08:04:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57963 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeGLMD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:03:56 -0400
+        id S1727346AbeGLMD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 08:03:59 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 13DAD20741; Thu, 12 Jul 2018 13:54:43 +0200 (CEST)
+        id 77A4B2074F; Thu, 12 Jul 2018 13:54:46 +0200 (CEST)
 Received: from mc-bl-xps13.lan (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id BD355206A6;
-        Thu, 12 Jul 2018 13:54:42 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2AB0B206A6;
+        Thu, 12 Jul 2018 13:54:46 +0200 (CEST)
 From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
 To:     davem@davemloft.net
 Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -35,9 +35,9 @@ Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
         thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
         ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next 01/18] net: mvpp2: fix include guards in mvpp2_prs.h
-Date:   Thu, 12 Jul 2018 13:54:10 +0200
-Message-Id: <20180712115427.27375-2-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next 04/18] net: mvpp2: make multi queue mode the default mode
+Date:   Thu, 12 Jul 2018 13:54:13 +0200
+Message-Id: <20180712115427.27375-5-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
 References: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
@@ -46,41 +46,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Include guards should be put before #includes. This doesn't fix any bug,
-but prevent future compilation issues when adding new files in the mvpp2
-driver
+The multi queue mode is needed to have RSS available, and offers some
+nice advantages, being able to have one rx queue vector per CPU.
 
-The Header Parser init function needs the platform_device definition,
-and with the fixed include guards we need to add the missing include.
+This mode has been usable through the use of a module parameter, this
+commit makes it the default value.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h
-index a7c8d0818432..64a64666257c 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h
-@@ -9,14 +9,15 @@
-  * License version 2. This program is licensed "as is" without any
-  * warranty of any kind, whether express or implied.
-  */
-+#ifndef _MVPP2_PRS_H_
-+#define _MVPP2_PRS_H_
-+
- #include <linux/kernel.h>
- #include <linux/netdevice.h>
-+#include <linux/platform_device.h>
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 0d2dde336ea2..b1d812b12421 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -66,7 +66,7 @@ static void mvpp2_mac_config(struct net_device *dev, unsigned int mode,
+ #define MVPP2_QDIST_SINGLE_MODE	0
+ #define MVPP2_QDIST_MULTI_MODE	1
  
- #include "mvpp2.h"
+-static int queue_mode = MVPP2_QDIST_SINGLE_MODE;
++static int queue_mode = MVPP2_QDIST_MULTI_MODE;
  
--#ifndef _MVPP2_PRS_H_
--#define _MVPP2_PRS_H_
--
- /* Parser constants */
- #define MVPP2_PRS_TCAM_SRAM_SIZE	256
- #define MVPP2_PRS_TCAM_WORDS		6
+ module_param(queue_mode, int, 0444);
+ MODULE_PARM_DESC(queue_mode, "Set queue_mode (single=0, multi=1)");
 -- 
 2.11.0
 
