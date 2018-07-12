@@ -2,79 +2,134 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FA78C476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB16C476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A42F620652
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:10:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p8j1sb4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A42F620652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A563620652
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:12:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A563620652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732361AbeGLQUO (ORCPT
+        id S1732359AbeGLQWo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:20:14 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:45562 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726775AbeGLQUO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:20:14 -0400
-Received: by mail-oi0-f68.google.com with SMTP id q11-v6so31217441oic.12;
-        Thu, 12 Jul 2018 09:10:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=aYNNiOkxV0+qzrrcfAnBC1hBKWw9HPmzpsTThQDXBeE=;
-        b=p8j1sb4JMDFLlADA2+rBr/9P8OJzxTPRYY1xCBwKqSWZDXrHzW8UbczjgMW/Ay/6gQ
-         PMWQh3Uwikf40dmkhsyq6ZBlAGz7ONTBBJYROZPZroVJeGxMzuhtH5OVQ/vP+3ZCsq1Z
-         xXc4qZNBwN3doGQ6DRJX2kCry+uw31LB+T+Iq4MqVydUchiOZPaCnwyhIUx+SlSwkDdd
-         9gPyPXqzrZoVC22C2YvgI6eiWwuP65JKv/+Y7LELYBRoiv8/hiXOWrJ4Wez5CSchWBf5
-         ttvDH5bFfTKIEb0Va7iSCrSL0EV16FriNjfwo0QUDsv+SsX7MRz9G5GOw9yDpKfnkb8x
-         XX1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=aYNNiOkxV0+qzrrcfAnBC1hBKWw9HPmzpsTThQDXBeE=;
-        b=WyFEkAaIBZjEaJltcRlQiWX8kHlmSJ8YaB544+93HjkBhwejqFUjwlSTUr1o3jpgA6
-         gPlmFHuegsUeMU4BlH6Qj2Pru7B+NMFhIXMhf7TJIxzxff/S/KbR0URYx+Of/7218wnE
-         hY1fKzWJER2BWyRRz1eMD11H8EVrNR0hRXMNvkPL0D0j1aN1W5DiuAqmrfrTbhXzGc2e
-         JQ2hVuvM5uQJCO3+bLRZPnodCXvpey+id+mQb0IWxQsh8Dk4CssCoPwjgvyuGuKCzJHx
-         4YxQBg08Akdrt1Mm3i15Lmh8CkmlQqk39ddysLyDOgBX3UhjmG2qsxUf6F9MQAkW7FLP
-         Z/Dw==
-X-Gm-Message-State: AOUpUlFeYhijcka2QHHaiiNGRnX9+figUftbhDOyDJAqjMDg2sgEGOdT
-        JGi+TyXKJnC4rnENe+CeZXljbByCNZPILppfeMw=
-X-Google-Smtp-Source: AAOMgpeXeoWl34p90RcS5hzLfJKTN/OsGVnMzU5HXnD1MRaXvTLUG0iM1F4QO6op0rUjuh97US4MuuNqTls5qkEsDEE=
-X-Received: by 2002:aca:b3c5:: with SMTP id c188-v6mr3209996oif.9.1531411801714;
- Thu, 12 Jul 2018 09:10:01 -0700 (PDT)
+        Thu, 12 Jul 2018 12:22:44 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:34844 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726912AbeGLQWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 12:22:43 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0669540122CD;
+        Thu, 12 Jul 2018 16:12:30 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 36EA62026D6B;
+        Thu, 12 Jul 2018 16:12:28 +0000 (UTC)
+Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>
+References: <1530905572-817-1-git-send-email-longman@redhat.com>
+ <20180709081920.GD22049@dhcp22.suse.cz>
+ <62275711-e01d-7dbe-06f1-bf094b618195@redhat.com>
+ <20180710142740.GQ14284@dhcp22.suse.cz>
+ <a2794bcc-9193-cbca-3a54-47420a2ab52c@redhat.com>
+ <20180711102139.GG20050@dhcp22.suse.cz>
+ <9f24c043-1fca-ee86-d609-873a7a8f7a64@redhat.com>
+ <20180712084807.GF32648@dhcp22.suse.cz>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <c68aa6ad-9e35-f828-6373-39938fd6e2a7@redhat.com>
+Date:   Thu, 12 Jul 2018 12:12:28 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Received: by 2002:a9d:6285:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 09:10:01
- -0700 (PDT)
-In-Reply-To: <20180712160517.7382-1-standby24x7@gmail.com>
-References: <20180712160517.7382-1-standby24x7@gmail.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 12 Jul 2018 13:10:01 -0300
-Message-ID: <CAOMZO5C19cfkXaT29g+rW7t3x6gAiZpEyMWV9uqjzLF=9fwgrw@mail.gmail.com>
-Subject: Re: [PATCH] bonding: Fix a typo in bonxing.txt
-To:     Masanari Iida <standby24x7@gmail.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>, netdev <netdev@vger.kernel.org>,
-        j.vosburgh@gmail.com, vfalico@gmail.com, andy@greyhouse.net,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180712084807.GF32648@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 12 Jul 2018 16:12:30 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 12 Jul 2018 16:12:30 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 1:05 PM, Masanari Iida <standby24x7@gmail.com> wrote:
-> This patch fixes a spelling typo in bonding.txt
+On 07/12/2018 04:48 AM, Michal Hocko wrote:
+> On Wed 11-07-18 11:13:58, Waiman Long wrote:
+>> On 07/11/2018 06:21 AM, Michal Hocko wrote:
+>>> On Tue 10-07-18 12:09:17, Waiman Long wrote:
+>>>> On 07/10/2018 10:27 AM, Michal Hocko wrote:
+>>>>> On Mon 09-07-18 12:01:04, Waiman Long wrote:
+>>>>>> On 07/09/2018 04:19 AM, Michal Hocko wrote:
+>>> [...]
+>>>>>>> percentage has turned out to be a really wrong unit for many tunables
+>>>>>>> over time. Even 1% can be just too much on really large machines.
+>>>>>> Yes, that is true. Do you have any suggestion of what kind of unit
+>>>>>> should be used? I can scale down the unit to 0.1% of the system memory.
+>>>>>> Alternatively, one unit can be 10k/cpu thread, so a 20-thread system
+>>>>>> corresponds to 200k, etc.
+>>>>> I simply think this is a strange user interface. How much is a
+>>>>> reasonable number? How can any admin figure that out?
+>>>> Without the optional enforcement, the limit is essentially just a
+>>>> notification mechanism where the system signals that there is something
+>>>> wrong going on and the system administrator need to take a look. So it
+>>>> is perfectly OK if the limit is sufficiently high that normally we won't
+>>>> need to use that many negative dentries. The goal is to prevent negative
+>>>> dentries from consuming a significant portion of the system memory.
+>>> So again. How do you tell the right number?
+>> I guess it will be more a trial and error kind of adjustment as the
+>> right figure will depend on the kind of workloads being run on the
+>> system. So unless the enforcement option is turned on, setting a limit
+>> that is too small won't have too much impact over than a slight
+>> performance drop because of the invocation of the slowpaths and the
+>> warning messages in the console. Whenever a non-zero value is written
+>> into "neg-dentry-limit", an informational message will be printed about
+>> what the actual negative dentry limits
+>> will be. It can be compared against the current negative dentry number
+>> (5th number) from "dentry-state" to see if there is enough safe margin
+>> to avoid false positive warning.
+> What you wrote above is exactly the reason why I do not like yet another
+> tunable. If you cannot give a reasonable cook book on how to tune this
+> properly then nobody will really use it and we will eventually find
+> out that we have a user visible API which might simply make further
+> development harder and which will be hard to get rid of because you
+> never know who is going to use it for strange purposes.
+>
+> Really, negative entries are a cache and if we do not shrink that cache
+> properly then this should be fixed rather than giving up and pretending
+> that the admin is the one to control that.
 
-There is a typo in the subject too: s/ bonxing/bonding/
+The rationale beside this patchset comes from a customer request to have
+the ability to track and limit negative dentries. The goal is to not
+have a disproportionate amount of memory being consumed by negative
+dentries. Setting the limit and reaching it does nothing other than
+gives out a warning about the limit being breached unless the enforce
+option is turned on which is for the paranoids.
+
+There is no one right value for the limit. It all depends on what the
+users think is a disproportionate amount of memory.
+
+Cheers,
+Longman
+
+
