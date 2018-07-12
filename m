@@ -2,143 +2,104 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5C8AEA0866
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77B2EA0873
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:45:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06A7A2124D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 748CB2124D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:45:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Qzi5g/jo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A7A2124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="diTFXIZE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 748CB2124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbeGLR4K (ORCPT
+        id S1726809AbeGLR4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:56:10 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:52346 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbeGLR4K (ORCPT
+        Thu, 12 Jul 2018 13:56:14 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:48780 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726416AbeGLR4N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:56:10 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o11-v6so493060wmh.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 10:45:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EjVcH7YLw8ZdGHtJ/psVQSXscAxtrdV2QAzG4MbyvqQ=;
-        b=Qzi5g/jol+J6qUk4SPrLAn3LjJ3eYUo8FmDgf95sdN/FrdqfZVkmBKPDNYZfLZQFUe
-         iVTwPDAY+sklYArH5OA4erxRiYL8XSzV182bfzuPPiSjDHioRlPkpnULemnuR/BwJsoa
-         VvUePaqy5V6L8I4OCCJLmd1r0ovfdxp+6YKqw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EjVcH7YLw8ZdGHtJ/psVQSXscAxtrdV2QAzG4MbyvqQ=;
-        b=ZmcI3CBv5vfnhy2DL28TZSWouybSWRwiSbCZJoReEP5cpxncf8GuftaK25CyYn34ke
-         WCiNQ0/Fml9ZBbKeYpc+EBWmWHYFqqORm7TJf8ByrdyYt0DW5RZ8m7hB+ciKm+Htzrld
-         nxxJFDwpQukipeJH2fJ74lx0apHk5k4TCmPfV0grITTlTxHfAhDr3J9K5bBHVtiTqBeB
-         89o2pABjVB54Px8GH2G9+gl9sLy1+fhzvoXwFzPz+h2ne4c8TP8lF7uiGElQNGIlrsnD
-         T5bvoI+JsBJm/LocaJLBUzR4A1h3QyNebf46S5OHATn+gPNWlGLaKxcXtuBJFUP6WHrq
-         v0nA==
-X-Gm-Message-State: AOUpUlGZWE0A1ex2OmUi5aeJO6AXCDGLHNMcfHtGUcYtXByxAdD+y+xI
-        WI5Yuyd1HF/eQN8YcgtLaYh8Lg==
-X-Google-Smtp-Source: AAOMgpc0s5RuVskOFpjoCzGdXbNNFrJmS2IOX2el00Sg6yxzLry9TXmV+9Yo3G8kHn61scHIKWWNlw==
-X-Received: by 2002:a1c:dc89:: with SMTP id t131-v6mr2084955wmg.50.1531417533953;
-        Thu, 12 Jul 2018 10:45:33 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id w21-v6sm5846052wmw.29.2018.07.12.10.45.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 10:45:33 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 19:45:27 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Message-ID: <20180712174527.GA3533@andrea>
-References: <Pine.LNX.4.44L0.1807091519180.2462-100000@iolanthe.rowland.org>
- <20180710093821.GA5414@andrea>
- <20180711094310.GA13963@arm.com>
- <20180711123421.GA9673@andrea>
- <20180712074040.GA4920@worktop.programming.kicks-ass.net>
- <20180712115249.GA6201@andrea>
- <20180712134821.GT2494@hirez.programming.kicks-ass.net>
+        Thu, 12 Jul 2018 13:56:13 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6CHhZbp030359;
+        Thu, 12 Jul 2018 17:45:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=hwJEdEES9x7Fka9+z2w50MfbeuL1Jw957SHjqlMD0uA=;
+ b=diTFXIZEf7FxhsRJaFpSmm3Y1MS10DKOp9FlntzLVXo9RMImKx9nSz22dzSSvs8JYqVc
+ hp3W18jJ77SNHz37F+KdGpvE3hSsLIKOUPhKHbxk3/DAe8Hw/Kd1b7osso1Rd4C137Gd
+ IRA0tYCfiQyuWgRJU4YSQkxoWeI62pYZWWrd72am8Eq+vNqnSaVeO7rJwjIY5ywjj/mq
+ RpdZ91Ty/u0eOIeA2HywVsCspzSRjxXyZVguYiQWkRDgOP9v+Im9GrgzBpwTPM2ga+Eg
+ 9ZNfTQn1JMcdydYAE3cF+ET2LRvKf78lic8RE5r4eZw3Nteu1IJrnxjmrgS9yKLE4Q5Z /Q== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2k2p7vmry1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 17:45:37 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6CHjaFF027943
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 17:45:36 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6CHjag0028898;
+        Thu, 12 Jul 2018 17:45:36 GMT
+Received: from mail-oi0-f51.google.com (/209.85.218.51)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Jul 2018 10:45:35 -0700
+Received: by mail-oi0-f51.google.com with SMTP id y207-v6so57345891oie.13;
+        Thu, 12 Jul 2018 10:45:35 -0700 (PDT)
+X-Gm-Message-State: AOUpUlHGaSFuROdtdqF4HHviRVHXNpMl/jyOeFRZsMeNV5w+vapRV8oE
+        bvWP5d3VVrkmTYH+uFt+9dGpJrrwQ5EdEVHGU5E=
+X-Google-Smtp-Source: AAOMgpeXzkt+/qvGw/QQ7B9FS+v0WSZ0jgKCyjp735+gnmgHKzdqfdrnCHalZcJdtQwTIxflf1trmpgWYOv7xz5S43A=
+X-Received: by 2002:aca:3bc2:: with SMTP id i185-v6mr3648614oia.156.1531417535646;
+ Thu, 12 Jul 2018 10:45:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <1531416305.6480.24.camel@abdul.in.ibm.com>
+In-Reply-To: <1531416305.6480.24.camel@abdul.in.ibm.com>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 12 Jul 2018 13:44:59 -0400
+X-Gmail-Original-Message-ID: <CAGM2rebtisZda0kqhg0u92fTDxC+=zMNNgKFBLH38osphk0fdA@mail.gmail.com>
+Message-ID: <CAGM2rebtisZda0kqhg0u92fTDxC+=zMNNgKFBLH38osphk0fdA@mail.gmail.com>
+Subject: Re: [next-20180711][Oops] linux-next kernel boot is broken on powerpc
+To:     abdhalee@linux.vnet.ibm.com
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-next@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, mpe@ellerman.id.au,
+        sachinp@linux.vnet.ibm.com, venkatb3@in.ibm.com,
+        manvanth@linux.vnet.ibm.com, sim@linux.vnet.ibm.com,
+        Michal Hocko <mhocko@suse.com>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        aneesh.kumar@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=10 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=863
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807120187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Anyway, back to the problem of being able to use the memory model to
-> describe locks. This is I think a useful property.
-> 
-> My earlier reasoning was that:
-> 
->   - smp_store_release() + smp_load_acquire() := RCpc
-> 
->   - we use smp_store_release() as unlock()
-> 
-> Therefore, if we want unlock+lock to imply at least TSO (ideally
-> smp_mb()) we need lock to make up for whatever unlock lacks.
-> 
-> Hence my proposal to strenghten rmw-acquire, because that is the basic
-> primitive used to implement lock.
-> 
-> But as you (and Will) point out, we don't so much care about rmw-acquire
-> semantics as much as that we care about unlock+lock behaviour. Another
-> way to look at this is to define:
-> 
->   smp-store-release + rmw-acquire := TSO (ideally smp_mb)
-> 
-> But then we also have to look at:
-> 
->   rmw-release + smp-load-acquire
->   rmw-release + rmw-acquire
-> 
-> for completeness sake, and I would suggest they result in (at least) the
-> same (TSO) ordering as the one we really care about.
+> Related commit could be one of below ? I see lots of patches related to mm and could not bisect
+>
+> 5479976fda7d3ab23ba0a4eb4d60b296eb88b866 mm: page_alloc: restore memblock_next_valid_pfn() on arm/arm64
+> 41619b27b5696e7e5ef76d9c692dd7342c1ad7eb mm-drop-vm_bug_on-from-__get_free_pages-fix
+> 531bbe6bd2721f4b66cdb0f5cf5ac14612fa1419 mm: drop VM_BUG_ON from __get_free_pages
+> 479350dd1a35f8bfb2534697e5ca68ee8a6e8dea mm, page_alloc: actually ignore mempolicies for high priority allocations
+> 088018f6fe571444caaeb16e84c9f24f22dfc8b0 mm: skip invalid pages block at a time in zero_resv_unresv()
 
-Indeed (unless I'm not seeing something...  ;-).
+Looks like:
+0ba29a108979 mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
 
+This patch is going to be reverted from linux-next. Abdul, please
+verify that issue is gone once  you revert this patch.
 
-> 
-> One alternative is to no longer use smp_store_release() for unlock(),
-> and say define atomic_set_release() to be in the rmw-release class
-> instead of being a simple smp_store_release().
-> 
-> Another, and I like this proposal least, is to introduce a new barrier
-> to make this all work.
-
-An smp_tso__after_unlock_lock()?  (In a certain sense, the solution
-adopted by RCU aligns to this approach: live with powerpc's RCpc and
-introduce smp_mb__after_unlock_lock().)  Or did you have something
-else in mind?
-
-But I wouldn't hasten to introduce such a barrier, given that:  (1)
-this would be a "do { } while (0)" for all the supported arch. _if_
-we sticked to the current implementations, and  (2) even if these
-implementations changed or some new arch. required a non-trivial
-definition, we still would have to find a "pure/TSO" case  ;-).
-
-  Andrea
+Thank you,
+Pavel
