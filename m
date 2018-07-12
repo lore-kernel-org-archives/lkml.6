@@ -6,32 +6,31 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 606C6C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A05D8C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:26:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E742146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:22:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19E742146E
+	by mail.kernel.org (Postfix) with ESMTP id 4ED0321471
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:26:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED0321471
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403817AbeGLB3l (ORCPT
+        id S2403878AbeGLBdc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 21:29:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54256 "EHLO mail.kernel.org"
+        Wed, 11 Jul 2018 21:33:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726701AbeGLB3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 21:29:41 -0400
+        id S2403839AbeGLBdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 21:33:32 -0400
 Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDE7620BEC;
-        Thu, 12 Jul 2018 01:22:38 +0000 (UTC)
-Date:   Wed, 11 Jul 2018 21:22:37 -0400
+        by mail.kernel.org (Postfix) with ESMTPSA id A51472146F;
+        Thu, 12 Jul 2018 01:26:28 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 21:26:26 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+Cc:     Peter Zijlstra <peterz@infradead.org>,
         linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
         Byungchul Park <byungchul.park@lge.com>,
         Ingo Molnar <mingo@redhat.com>,
@@ -40,20 +39,18 @@ Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Namhyung Kim <namhyung@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
         Thomas Glexiner <tglx@linutronix.de>,
         Tom Zanussi <tom.zanussi@linux.intel.com>
 Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
  SRCU
-Message-ID: <20180711212237.3eff418f@vmware.local.home>
-In-Reply-To: <20180711205639.GB32091@joelaf.mtv.corp.google.com>
+Message-ID: <20180711212626.5992e2c8@vmware.local.home>
+In-Reply-To: <20180712003100.GC32091@joelaf.mtv.corp.google.com>
 References: <20180628182149.226164-1-joel@joelfernandes.org>
         <20180628182149.226164-5-joel@joelfernandes.org>
-        <20180711124954.GE2476@hirez.programming.kicks-ass.net>
-        <20180711090003.42596c2b@gandalf.local.home>
-        <20180711142744.GN3593@linux.vnet.ibm.com>
-        <20180711104618.05dc4b46@gandalf.local.home>
-        <20180711151559.GR3593@linux.vnet.ibm.com>
-        <20180711205639.GB32091@joelaf.mtv.corp.google.com>
+        <20180711125647.GG2476@hirez.programming.kicks-ass.net>
+        <20180711090649.68af40f9@gandalf.local.home>
+        <20180712003100.GC32091@joelaf.mtv.corp.google.com>
 X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -63,54 +60,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Jul 2018 13:56:39 -0700
+On Wed, 11 Jul 2018 17:31:00 -0700
 Joel Fernandes <joel@joelfernandes.org> wrote:
 
-> > > #define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
-> > > 	extern struct tracepoint __tracepoint_##name;			\
-> > > 	static inline void trace_##name(proto)				\
-> > > 	{								\
-> > > 		if (static_key_false(&__tracepoint_##name.key))		\
-> > > 			__DO_TRACE(&__tracepoint_##name,		\
-> > > 				TP_PROTO(data_proto),			\
-> > > 				TP_ARGS(data_args),			\
-> > > 				TP_CONDITION(cond), 0);			\
-> > > 		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
-> > > 			rcu_read_lock_sched_notrace();			\
-> > > 			rcu_dereference_sched(__tracepoint_##name.funcs);\
-> > > 			rcu_read_unlock_sched_notrace();		\
-> > > 		}							\
-> > > 	}
+> On Wed, Jul 11, 2018 at 09:06:49AM -0400, Steven Rostedt wrote:
+> > On Wed, 11 Jul 2018 14:56:47 +0200
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> >   
+> > > On Thu, Jun 28, 2018 at 11:21:46AM -0700, Joel Fernandes wrote:  
+> > > >  static inline void tracepoint_synchronize_unregister(void)
+> > > >  {
+> > > > +	synchronize_srcu(&tracepoint_srcu);
+> > > >  	synchronize_sched();
+> > > >  }    
 > > > 
-> > > Because lockdep would only trigger warnings when the tracepoint was
-> > > enabled and used in a place it shouldn't be, we added the above
-> > > IS_ENABLED(CONFIG_LOCKDEP) part to test regardless if the the
-> > > tracepoint was enabled or not. Because we do this, we don't need to
-> > > have the test in the __DO_TRACE() code itself. That means we can clean
-> > > up the code as per Peter's suggestion.  
+> > > Given you below do call_rcu_sched() and then call_srcu(), isn't the
+> > > above the wrong way around?  
 > > 
-> > Indeed, the rcu_dereference_sched() would catch it in that case, so
-> > agreed, Peter's suggestion isn't losing any debuggability.  
+> > Good catch!
+> > 
+> > 	release_probes()
+> > 		call_rcu_sched()  
+> > 			---> rcu_free_old_probes() queued  
+> > 
+> > 	tracepoint_synchronize_unregister()
+> > 		synchronize_srcu(&tracepoint_srcu);
+> > 			< finishes right away >
+> > 		synchronize_sched()  
+> > 			--> rcu_free_old_probes()
+> > 				--> srcu_free_old_probes() queued  
+> > 	
+> > Here tracepoint_synchronize_unregister() returned before the srcu
+> > portion ran.  
 > 
-> Hmm, but if we are doing the check later anyway, then why not do it in
-> __DO_TRACE itself?
-
-Because __DO_TRACE is only called if the trace event is enabled. If we
-never enable a trace event, we never know if it has a potential of
-doing it wrong. The second part is to trigger the warning immediately
-regardless if the trace event is enabled or not.
-
+> But isn't the point of synchronize_rcu to make sure that we're no longer in
+> an RCU read-side section, not that *all* queued callbacks already ran? So in that
+> case, I think it doesn't matter which order the 2 synchronize functions are
+> called in. Please let me know if if I missed something!
 > 
-> Also I guess we are discussing about changing the rcu_dereference_sched which
-> I think should go into a separate patch since my patch isn't touching how the
-> rcuidle==0 paths use the RCU API. So I think this is an existing issue
-> independent of this series.
+> I believe what we're trying to guarantee here is that no tracepoints using
+> either flavor of RCU are active after tracepoint_synchronize_unregister
+> returns.
 
-But the code you added made it much more complex to keep the checks as
-is. If we remove the checks then this patch doesn't need to have all
-the if statements, and we can do it the way Peter suggested.
-
-But sure, go ahead and make a separate patch first that removes the
-checks from __DO_TRACE() first if you want to.
+Yes you are correct. If tracepoint_synchronize_unregister() is only to
+make sure that there is no more trace events using the probes, then
+this should work. I was focused on looking at it with release_probes()
+too. So the patch is fine as is.
 
 -- Steve
