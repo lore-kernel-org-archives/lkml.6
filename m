@@ -2,477 +2,141 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013CBC78511
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB99CC78A82
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A036920839
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:28:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 503AF21471
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:28:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cmpxchg.org header.i=@cmpxchg.org header.b="F95LYc1G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A036920839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="rS1mMWwB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 503AF21471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732623AbeGLRiD (ORCPT
+        id S1732634AbeGLRjQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:38:03 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:44942 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732586AbeGLRiC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:38:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cmpxchg.org
-        ; s=x; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:
-        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=qQSBTnxNlt3eRiLy52Sx1ZjqVOe8sAaRJJ76RsaU+wI=; b=F95LYc1G6mammtKL4WdXjExNXl
-        v0RiARnMg9NYsJqGfLY+ZQtDwE/I2dec+mgeaZS1Rf1D+PubC6i6KPSalF3MFeV2AI+sGD5wY/jqQ
-        RqezZyUWVlGY96v1v3uwNqvkHI5cKd5ThPrSuvls5HF/qKhgauEiVzzvzvFa1LtOQ24k=;
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Tejun Heo <tj@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: [PATCH 02/10] mm: workingset: tell cache transitions from workingset thrashing
-Date:   Thu, 12 Jul 2018 13:29:34 -0400
-Message-Id: <20180712172942.10094-3-hannes@cmpxchg.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180712172942.10094-1-hannes@cmpxchg.org>
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
+        Thu, 12 Jul 2018 13:39:16 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:35184 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732250AbeGLRjP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 13:39:15 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6CHOYWr015232;
+        Thu, 12 Jul 2018 17:28:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=QHsF6VRcCX8d/dkCEHXOVrcBLd7BRfeFw4pUq1Del/k=;
+ b=rS1mMWwBt0V1gcJB3FelCe0sE6qWt3KMX7YF5w+sQqUpJnKRxNHJ6I9ORShnXYXmOfvf
+ YbF7WQXhG7w4Yio0b8A4LIRkdXdkrPEOdEYA8K6ipQoYmWXqaTrV8v2HaaGatv5nY0oI
+ QOxW+PMtjku7oYENuOgOSyQJjSjJKVBzdGyabLsejYL3bqKenQ77GjJ8upAf8Nx5cPU+
+ lcRH3iJ57NFoz5VAvnvQ2FjiYEii45rKCXHBkNpwG/Mp8o0n8DAnFHvfJ5ihnaRYiOQ1
+ iH0bT1sTnPEmaxX6V9IvMbnaCVh0C8gqY5+bWS0WESBLn2+ysLmkR07Gj191oKKhP9ak RQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2k2p7vmpj0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 17:28:19 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6CHSIVf026359
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 17:28:18 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6CHSIPG016130;
+        Thu, 12 Jul 2018 17:28:18 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Jul 2018 10:28:17 -0700
+Subject: Re: [PATCH v2] xen: setup pv irq ops vector earlier
+To:     Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
+        xen-devel@lists.xenproject.org, x86@kernel.org
+Cc:     hpa@zytor.com, tglx@linutronix.de, mingo@redhat.com,
+        stable@vger.kernel.org
+References: <20180712154034.28010-1-jgross@suse.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <3ba34cbe-b9f8-91bb-03dc-efe5ae44991f@oracle.com>
+Date:   Thu, 12 Jul 2018 13:28:46 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180712154034.28010-1-jgross@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=797
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807120184
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refaults happen during transitions between workingsets as well as
-in-place thrashing. Knowing the difference between the two has a range
-of applications, including measuring the impact of memory shortage on
-the system performance, as well as the ability to smarter balance
-pressure between the filesystem cache and the swap-backed workingset.
+On 07/12/2018 11:40 AM, Juergen Gross wrote:
+> Setting pv_irq_ops for Xen PV domains should be done as early as
+> possible in order to support e.g. very early printk() usage.
+>
+> The same applies to xen_vcpu_info_reset(0), as it is needed for the
+> pv irq ops.
+>
+> Move the call of xen_setup_machphys_mapping() after initializing the
+> pv functions as it contains a WARN_ON(), too.
+>
+> Remove the no longer necessary conditional in xen_init_irq_ops()
+> from PVH V1 times to make clear this is a PV only function.
+>
+> Cc: <stable@vger.kernel.org> # 4.14
+> Signed-off-by: Juergen Gross <jgross@suse.com>
 
-During workingset transitions, inactive cache refaults and pushes out
-established active cache. When that active cache isn't stale, however,
-and also ends up refaulting, that's bonafide thrashing.
-
-Introduce a new page flag that tells on eviction whether the page has
-been active or not in its lifetime. This bit is then stored in the
-shadow entry, to classify refaults as transitioning or thrashing.
-
-How many page->flags does this leave us with on 32-bit?
-
-	20 bits are always page flags
-
-	21 if you have an MMU
-
-	23 with the zone bits for DMA, Normal, HighMem, Movable
-
-	29 with the sparsemem section bits
-
-	30 if PAE is enabled
-
-	31 with this patch.
-
-So on 32-bit PAE, that leaves 1 bit for distinguishing two NUMA
-nodes. If that's not enough, the system can switch to discontigmem and
-re-gain the 6 or 7 sparsemem section bits.
-
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- include/linux/mmzone.h         |  1 +
- include/linux/page-flags.h     |  5 +-
- include/linux/swap.h           |  2 +-
- include/trace/events/mmflags.h |  1 +
- mm/filemap.c                   |  9 ++--
- mm/huge_memory.c               |  1 +
- mm/memcontrol.c                |  2 +
- mm/migrate.c                   |  2 +
- mm/swap_state.c                |  1 +
- mm/vmscan.c                    |  1 +
- mm/vmstat.c                    |  1 +
- mm/workingset.c                | 95 ++++++++++++++++++++++------------
- 12 files changed, 79 insertions(+), 42 deletions(-)
-
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 32699b2dc52a..6af87946d241 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -163,6 +163,7 @@ enum node_stat_item {
- 	NR_ISOLATED_FILE,	/* Temporary isolated pages from file lru */
- 	WORKINGSET_REFAULT,
- 	WORKINGSET_ACTIVATE,
-+	WORKINGSET_RESTORE,
- 	WORKINGSET_NODERECLAIM,
- 	NR_ANON_MAPPED,	/* Mapped anonymous pages */
- 	NR_FILE_MAPPED,	/* pagecache pages mapped into pagetables.
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index e34a27727b9a..7af1c3c15d8e 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -69,13 +69,14 @@
-  */
- enum pageflags {
- 	PG_locked,		/* Page is locked. Don't touch. */
--	PG_error,
- 	PG_referenced,
- 	PG_uptodate,
- 	PG_dirty,
- 	PG_lru,
- 	PG_active,
-+	PG_workingset,
- 	PG_waiters,		/* Page has waiters, check its waitqueue. Must be bit #7 and in the same byte as "PG_locked" */
-+	PG_error,
- 	PG_slab,
- 	PG_owner_priv_1,	/* Owner use. If pagecache, fs may use*/
- 	PG_arch_1,
-@@ -280,6 +281,8 @@ PAGEFLAG(Dirty, dirty, PF_HEAD) TESTSCFLAG(Dirty, dirty, PF_HEAD)
- PAGEFLAG(LRU, lru, PF_HEAD) __CLEARPAGEFLAG(LRU, lru, PF_HEAD)
- PAGEFLAG(Active, active, PF_HEAD) __CLEARPAGEFLAG(Active, active, PF_HEAD)
- 	TESTCLEARFLAG(Active, active, PF_HEAD)
-+PAGEFLAG(Workingset, workingset, PF_HEAD)
-+	TESTCLEARFLAG(Workingset, workingset, PF_HEAD)
- __PAGEFLAG(Slab, slab, PF_NO_TAIL)
- __PAGEFLAG(SlobFree, slob_free, PF_NO_TAIL)
- PAGEFLAG(Checked, checked, PF_NO_COMPOUND)	   /* Used by some filesystems */
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index 2417d288e016..d8c47dcdec6f 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -296,7 +296,7 @@ struct vma_swap_readahead {
- 
- /* linux/mm/workingset.c */
- void *workingset_eviction(struct address_space *mapping, struct page *page);
--bool workingset_refault(void *shadow);
-+void workingset_refault(struct page *page, void *shadow);
- void workingset_activation(struct page *page);
- 
- /* Do not use directly, use workingset_lookup_update */
-diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index a81cffb76d89..a1675d43777e 100644
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -88,6 +88,7 @@
- 	{1UL << PG_dirty,		"dirty"		},		\
- 	{1UL << PG_lru,			"lru"		},		\
- 	{1UL << PG_active,		"active"	},		\
-+	{1UL << PG_workingset,		"workingset"	},		\
- 	{1UL << PG_slab,		"slab"		},		\
- 	{1UL << PG_owner_priv_1,	"owner_priv_1"	},		\
- 	{1UL << PG_arch_1,		"arch_1"	},		\
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 0604cb02e6f3..bd36b7226cf4 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -915,12 +915,9 @@ int add_to_page_cache_lru(struct page *page, struct address_space *mapping,
- 		 * data from the working set, only to cache data that will
- 		 * get overwritten with something else, is a waste of memory.
- 		 */
--		if (!(gfp_mask & __GFP_WRITE) &&
--		    shadow && workingset_refault(shadow)) {
--			SetPageActive(page);
--			workingset_activation(page);
--		} else
--			ClearPageActive(page);
-+		WARN_ON_ONCE(PageActive(page));
-+		if (!(gfp_mask & __GFP_WRITE) && shadow)
-+			workingset_refault(page, shadow);
- 		lru_cache_add(page);
- 	}
- 	return ret;
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index b9f3dbd885bd..c67ecf77ea8b 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2370,6 +2370,7 @@ static void __split_huge_page_tail(struct page *head, int tail,
- 			 (1L << PG_mlocked) |
- 			 (1L << PG_uptodate) |
- 			 (1L << PG_active) |
-+			 (1L << PG_workingset) |
- 			 (1L << PG_locked) |
- 			 (1L << PG_unevictable) |
- 			 (1L << PG_dirty)));
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 2bd3df3d101a..c59519d600ea 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -5283,6 +5283,8 @@ static int memory_stat_show(struct seq_file *m, void *v)
- 		   stat[WORKINGSET_REFAULT]);
- 	seq_printf(m, "workingset_activate %lu\n",
- 		   stat[WORKINGSET_ACTIVATE]);
-+	seq_printf(m, "workingset_restore %lu\n",
-+		   stat[WORKINGSET_RESTORE]);
- 	seq_printf(m, "workingset_nodereclaim %lu\n",
- 		   stat[WORKINGSET_NODERECLAIM]);
- 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 8c0af0f7cab1..a6a9114e62dc 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -682,6 +682,8 @@ void migrate_page_states(struct page *newpage, struct page *page)
- 		SetPageActive(newpage);
- 	} else if (TestClearPageUnevictable(page))
- 		SetPageUnevictable(newpage);
-+	if (PageWorkingset(page))
-+		SetPageWorkingset(newpage);
- 	if (PageChecked(page))
- 		SetPageChecked(newpage);
- 	if (PageMappedToDisk(page))
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 07f9aa2340c3..2721ef8862d1 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -451,6 +451,7 @@ struct page *__read_swap_cache_async(swp_entry_t entry, gfp_t gfp_mask,
- 			/*
- 			 * Initiate read into locked page and return.
- 			 */
-+			SetPageWorkingset(new_page);
- 			lru_cache_add_anon(new_page);
- 			*new_page_allocated = true;
- 			return new_page;
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 9270a4370d54..8d1ad48ffbcd 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1976,6 +1976,7 @@ static void shrink_active_list(unsigned long nr_to_scan,
- 		}
- 
- 		ClearPageActive(page);	/* we are de-activating */
-+		SetPageWorkingset(page);
- 		list_add(&page->lru, &l_inactive);
- 	}
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index a2b9518980ce..507dc9c01b88 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1145,6 +1145,7 @@ const char * const vmstat_text[] = {
- 	"nr_isolated_file",
- 	"workingset_refault",
- 	"workingset_activate",
-+	"workingset_restore",
- 	"workingset_nodereclaim",
- 	"nr_anon_pages",
- 	"nr_mapped",
-diff --git a/mm/workingset.c b/mm/workingset.c
-index 53759a3cf99a..ef6be3d92116 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -121,7 +121,7 @@
-  * the only thing eating into inactive list space is active pages.
-  *
-  *
-- *		Activating refaulting pages
-+ *		Refaulting inactive pages
-  *
-  * All that is known about the active list is that the pages have been
-  * accessed more than once in the past.  This means that at any given
-@@ -134,6 +134,10 @@
-  * used less frequently than the refaulting page - or even not used at
-  * all anymore.
-  *
-+ * That means if inactive cache is refaulting with a suitable refault
-+ * distance, we assume the cache workingset is transitioning and put
-+ * pressure on the current active list.
-+ *
-  * If this is wrong and demotion kicks in, the pages which are truly
-  * used more frequently will be reactivated while the less frequently
-  * used once will be evicted from memory.
-@@ -141,6 +145,14 @@
-  * But if this is right, the stale pages will be pushed out of memory
-  * and the used pages get to stay in cache.
-  *
-+ *		Refaulting active pages
-+ *
-+ * If on the other hand the refaulting pages have recently been
-+ * deactivated, it means that the active list is no longer protecting
-+ * actively used cache from reclaim. The cache is NOT transitioning to
-+ * a different workingset; the existing workingset is thrashing in the
-+ * space allocated to the page cache.
-+ *
-  *
-  *		Implementation
-  *
-@@ -156,8 +168,7 @@
-  */
- 
- #define EVICTION_SHIFT	(RADIX_TREE_EXCEPTIONAL_ENTRY + \
--			 NODES_SHIFT +	\
--			 MEM_CGROUP_ID_SHIFT)
-+			 1 + NODES_SHIFT + MEM_CGROUP_ID_SHIFT)
- #define EVICTION_MASK	(~0UL >> EVICTION_SHIFT)
- 
- /*
-@@ -170,23 +181,28 @@
-  */
- static unsigned int bucket_order __read_mostly;
- 
--static void *pack_shadow(int memcgid, pg_data_t *pgdat, unsigned long eviction)
-+static void *pack_shadow(int memcgid, pg_data_t *pgdat, unsigned long eviction,
-+			 bool workingset)
- {
- 	eviction >>= bucket_order;
- 	eviction = (eviction << MEM_CGROUP_ID_SHIFT) | memcgid;
- 	eviction = (eviction << NODES_SHIFT) | pgdat->node_id;
-+	eviction = (eviction << 1) | workingset;
- 	eviction = (eviction << RADIX_TREE_EXCEPTIONAL_SHIFT);
- 
- 	return (void *)(eviction | RADIX_TREE_EXCEPTIONAL_ENTRY);
- }
- 
- static void unpack_shadow(void *shadow, int *memcgidp, pg_data_t **pgdat,
--			  unsigned long *evictionp)
-+			  unsigned long *evictionp, bool *workingsetp)
- {
- 	unsigned long entry = (unsigned long)shadow;
- 	int memcgid, nid;
-+	bool workingset;
- 
- 	entry >>= RADIX_TREE_EXCEPTIONAL_SHIFT;
-+	workingset = entry & 1;
-+	entry >>= 1;
- 	nid = entry & ((1UL << NODES_SHIFT) - 1);
- 	entry >>= NODES_SHIFT;
- 	memcgid = entry & ((1UL << MEM_CGROUP_ID_SHIFT) - 1);
-@@ -195,6 +211,7 @@ static void unpack_shadow(void *shadow, int *memcgidp, pg_data_t **pgdat,
- 	*memcgidp = memcgid;
- 	*pgdat = NODE_DATA(nid);
- 	*evictionp = entry << bucket_order;
-+	*workingsetp = workingset;
- }
- 
- /**
-@@ -207,8 +224,8 @@ static void unpack_shadow(void *shadow, int *memcgidp, pg_data_t **pgdat,
-  */
- void *workingset_eviction(struct address_space *mapping, struct page *page)
- {
--	struct mem_cgroup *memcg = page_memcg(page);
- 	struct pglist_data *pgdat = page_pgdat(page);
-+	struct mem_cgroup *memcg = page_memcg(page);
- 	int memcgid = mem_cgroup_id(memcg);
- 	unsigned long eviction;
- 	struct lruvec *lruvec;
-@@ -220,30 +237,30 @@ void *workingset_eviction(struct address_space *mapping, struct page *page)
- 
- 	lruvec = mem_cgroup_lruvec(pgdat, memcg);
- 	eviction = atomic_long_inc_return(&lruvec->inactive_age);
--	return pack_shadow(memcgid, pgdat, eviction);
-+	return pack_shadow(memcgid, pgdat, eviction, PageWorkingset(page));
- }
- 
- /**
-  * workingset_refault - evaluate the refault of a previously evicted page
-+ * @page: the freshly allocated replacement page
-  * @shadow: shadow entry of the evicted page
-  *
-  * Calculates and evaluates the refault distance of the previously
-  * evicted page in the context of the node it was allocated in.
-- *
-- * Returns %true if the page should be activated, %false otherwise.
-  */
--bool workingset_refault(void *shadow)
-+void workingset_refault(struct page *page, void *shadow)
- {
- 	unsigned long refault_distance;
-+	struct pglist_data *pgdat;
- 	unsigned long active_file;
- 	struct mem_cgroup *memcg;
- 	unsigned long eviction;
- 	struct lruvec *lruvec;
- 	unsigned long refault;
--	struct pglist_data *pgdat;
-+	bool workingset;
- 	int memcgid;
- 
--	unpack_shadow(shadow, &memcgid, &pgdat, &eviction);
-+	unpack_shadow(shadow, &memcgid, &pgdat, &eviction, &workingset);
- 
- 	rcu_read_lock();
- 	/*
-@@ -263,41 +280,51 @@ bool workingset_refault(void *shadow)
- 	 * configurations instead.
- 	 */
- 	memcg = mem_cgroup_from_id(memcgid);
--	if (!mem_cgroup_disabled() && !memcg) {
--		rcu_read_unlock();
--		return false;
--	}
-+	if (!mem_cgroup_disabled() && !memcg)
-+		goto out;
- 	lruvec = mem_cgroup_lruvec(pgdat, memcg);
- 	refault = atomic_long_read(&lruvec->inactive_age);
- 	active_file = lruvec_lru_size(lruvec, LRU_ACTIVE_FILE, MAX_NR_ZONES);
- 
- 	/*
--	 * The unsigned subtraction here gives an accurate distance
--	 * across inactive_age overflows in most cases.
-+	 * Calculate the refault distance
- 	 *
--	 * There is a special case: usually, shadow entries have a
--	 * short lifetime and are either refaulted or reclaimed along
--	 * with the inode before they get too old.  But it is not
--	 * impossible for the inactive_age to lap a shadow entry in
--	 * the field, which can then can result in a false small
--	 * refault distance, leading to a false activation should this
--	 * old entry actually refault again.  However, earlier kernels
--	 * used to deactivate unconditionally with *every* reclaim
--	 * invocation for the longest time, so the occasional
--	 * inappropriate activation leading to pressure on the active
--	 * list is not a problem.
-+	 * The unsigned subtraction here gives an accurate distance
-+	 * across inactive_age overflows in most cases. There is a
-+	 * special case: usually, shadow entries have a short lifetime
-+	 * and are either refaulted or reclaimed along with the inode
-+	 * before they get too old.  But it is not impossible for the
-+	 * inactive_age to lap a shadow entry in the field, which can
-+	 * then can result in a false small refault distance, leading
-+	 * to a false activation should this old entry actually
-+	 * refault again.  However, earlier kernels used to deactivate
-+	 * unconditionally with *every* reclaim invocation for the
-+	 * longest time, so the occasional inappropriate activation
-+	 * leading to pressure on the active list is not a problem.
- 	 */
- 	refault_distance = (refault - eviction) & EVICTION_MASK;
- 
- 	inc_lruvec_state(lruvec, WORKINGSET_REFAULT);
- 
--	if (refault_distance <= active_file) {
--		inc_lruvec_state(lruvec, WORKINGSET_ACTIVATE);
--		rcu_read_unlock();
--		return true;
-+	/*
-+	 * Compare the distance to the existing workingset size. We
-+	 * don't act on pages that couldn't stay resident even if all
-+	 * the memory was available to the page cache.
-+	 */
-+	if (refault_distance > active_file)
-+		goto out;
-+
-+	SetPageActive(page);
-+	atomic_long_inc(&lruvec->inactive_age);
-+	inc_lruvec_state(lruvec, WORKINGSET_ACTIVATE);
-+
-+	/* Page was active prior to eviction */
-+	if (workingset) {
-+		SetPageWorkingset(page);
-+		inc_lruvec_state(lruvec, WORKINGSET_RESTORE);
- 	}
-+out:
- 	rcu_read_unlock();
--	return false;
- }
- 
- /**
--- 
-2.18.0
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 
