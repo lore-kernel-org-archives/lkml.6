@@ -2,111 +2,133 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4DFC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:21:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AFDC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C23CD20864
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:21:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C23CD20864
+	by mail.kernel.org (Postfix) with ESMTP id 6130E20BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:27:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6130E20BF2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732390AbeGLG3r (ORCPT
+        id S1727092AbeGLGfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 02:29:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:60462 "EHLO
+        Thu, 12 Jul 2018 02:35:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37298 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbeGLG3q (ORCPT
+        with ESMTP id S1726693AbeGLGfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 02:29:46 -0400
+        Thu, 12 Jul 2018 02:35:23 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66CC5C9E;
-        Thu, 12 Jul 2018 06:21:41 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 08:21:39 +0200
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0A7FBC75;
+        Thu, 12 Jul 2018 06:27:16 +0000 (UTC)
+Date:   Thu, 12 Jul 2018 08:27:14 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     Pawel Laszczak <pawell@cadence.com>
 Cc:     linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
         linux-kernel@vger.kernel.org, ltyrala@cadence.com,
         adouglas@cadence.com
-Subject: Re: [PATCH 04/31] usb: usbssp: Added USBSSP platform driver
-Message-ID: <20180712062139.GH20905@kroah.com>
+Subject: Re: [PATCH 05/31] usb: usbssp: Added first part of initialization
+ sequence.
+Message-ID: <20180712062714.GI20905@kroah.com>
 References: <1531374448-26532-1-git-send-email-pawell@cadence.com>
- <1531374448-26532-5-git-send-email-pawell@cadence.com>
+ <1531374448-26532-6-git-send-email-pawell@cadence.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1531374448-26532-5-git-send-email-pawell@cadence.com>
+In-Reply-To: <1531374448-26532-6-git-send-email-pawell@cadence.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 06:47:01AM +0100, Pawel Laszczak wrote:
-> This patch adds platform driver that is entry point for loading and
-> unloading usbssp.ko modules.
-> It also adds information about this driver to drivers/usb/Kconfig
-> and drivers/usb/Makefile files and create Kconfig and Makefile
-> files in drivers/usb/usbssp directory.
-> 
-> Patch also adds template for some function ivokked from
-> usbssp_plat.c file. These function will be implemented in next patches.
-> 
-> This patch also introduce usbssp_trb_virt_to_dma that converts
-> virtual address of TRB's to DMA address. In this moment this
-> function is used only in gadget-trace.h.
-> 
-> >From this moment the driver can be compiled.
-> 
-> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+On Thu, Jul 12, 2018 at 06:47:02AM +0100, Pawel Laszczak wrote:
+> +/* USB 2.0 hardware LMP capability*/
+> +#define USBSSP_HLC			(1 << 19)
+> +#define USBSSP_BLC			(1 << 20)
 
-This is a much nicer breakup of the patches than the last series, thanks
-for doing it this way.
+Again, BIT() please.
 
-> --- a/drivers/usb/usbssp/gadget.h
-> +++ b/drivers/usb/usbssp/gadget.h
-> @@ -9,7 +9,6 @@
->   * A lot of code based on Linux XHCI driver.
->   * Origin: Copyright (C) 2008 Intel Corp.
->   */
-> -
->  #ifndef __LINUX_USBSSP_GADGET_H
->  #define __LINUX_USBSSP_GADGET_H
->  
+> +int usbssp_handshake(void __iomem *ptr, u32 mask, u32 done, int usec)
+> +{
+> +	u32	result;
 
-You should have done that in an earlier patch :)
+Some places you use tabs for the variable declarations, and some you do
+not.  Pick a single style and stick to it please.
 
-> @@ -1671,6 +1670,21 @@ static inline void usbssp_write_64(struct usbssp_udc *usbssp_data,
->  {
->  	lo_hi_writeq(val, regs);
->  }
 > +
-> +/* USBSSP Device controller glue */
-> +int usbssp_suspend(struct usbssp_udc *usbssp_data, bool do_wakeup);
-> +int usbssp_resume(struct usbssp_udc *usbssp_data, bool hibernated);
-> +
-> +irqreturn_t usbssp_irq(int irq, void *priv);
-> +
-> +/* USBSSP ring, segment, TRB, and TD functions */
-> +dma_addr_t usbssp_trb_virt_to_dma(struct usbssp_segment *seg,
-> +		union usbssp_trb *trb);
-> +
-> +/* USBSSP gadget interface*/
-> +int usbssp_gadget_init(struct usbssp_udc *usbssp_data);
-> +int  usbssp_gadget_exit(struct usbssp_udc *usbssp_data);
+> +	do {
+> +		result = readl(ptr);
+> +		if (result == ~(u32)0)	/* card removed */
+> +			return -ENODEV;
+> +		result &= mask;
+> +		if (result == done)
+> +			return 0;
+> +		udelay(1);
+> +		usec--;
+> +	} while (usec > 0);
+> +	return -ETIMEDOUT;
 
-Very odd indentation, don't you think?
+We don't have a built-in kernel function to do this type of thing
+already?  That's sad.  Oh well...
 
-> +MODULE_ALIAS("platform:usbss-gadget");
-> +MODULE_DESCRIPTION("USBSSP' Device Controller (USBSSP) Driver");
-> +MODULE_LICENSE("GPL");
+> +int usbssp_init(struct usbssp_udc *usbssp_data)
+> +{
+> +	int retval = 0;
+> +
+> +	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init, "usbssp_init");
+> +
+> +	spin_lock_init(&usbssp_data->lock);
+> +	spin_lock_init(&usbssp_data->irq_thread_lock);
+> +
+> +	//TODO: memory initialization
+> +	//retval = usbssp_mem_init(usbssp_data, GFP_KERNEL);
+> +
+> +	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
+> +			"Finished usbssp_init");
 
-Wrong MODULE_LICENSE() string.  Please read module.h for what these all
-should be.
+When your trace functions do nothing but say "entered a function", and
+"exited a function", why even have them?  ftrace can provide that for
+you already, no need to overload that on the tracing framework, right?
+
+> +/*
+> + * gadget-if.c file is part of gadget.c file and implements interface
+> + * for gadget driver
+> + */
+> +#include "gadget-if.c"
+
+Ugh, I know USB hcd drivers love to include .c files in the middle of
+them, but do we have to continue that crazy practice in newer drivers?
+Is it really necessary?
+
+> +	/*
+> +	 * Check the compiler generated sizes of structures that must be laid
+> +	 * out in specific ways for hardware access.
+> +	 */
+> +	BUILD_BUG_ON(sizeof(struct usbssp_doorbell_array) != 2*32/8);
+> +	BUILD_BUG_ON(sizeof(struct usbssp_slot_ctx) != 8*32/8);
+> +	BUILD_BUG_ON(sizeof(struct usbssp_ep_ctx) != 8*32/8);
+> +	/* usbssp_device has eight fields, and also
+> +	 * embeds one usbssp_slot_ctx and 31 usbssp_ep_ctx
+> +	 */
+> +	BUILD_BUG_ON(sizeof(struct usbssp_stream_ctx) != 4*32/8);
+> +	BUILD_BUG_ON(sizeof(union usbssp_trb) != 4*32/8);
+> +	BUILD_BUG_ON(sizeof(struct usbssp_erst_entry) != 4*32/8);
+> +	BUILD_BUG_ON(sizeof(struct usbssp_cap_regs) != 8*32/8);
+> +	BUILD_BUG_ON(sizeof(struct usbssp_intr_reg) != 8*32/8);
+> +	/* usbssp_run_regs has eight fields and embeds 128 usbssp_intr_regs */
+> +	BUILD_BUG_ON(sizeof(struct usbssp_run_regs) != (8+8*128)*32/8);
+
+I love hard-coded numbers as much as the next person, but really?  Is
+this necessary now that you have the code up and working properly?
+
+
+I've stopped reviewing this series here.
 
 thanks,
 
