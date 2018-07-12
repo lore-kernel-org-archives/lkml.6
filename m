@@ -2,135 +2,214 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED67C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:46:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C7EC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9222820C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:46:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="SN3/1HP+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9222820C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id E707220883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:47:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E707220883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbeGLIzO (ORCPT
+        id S1732355AbeGLIzs convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:55:14 -0400
-Received: from mail-eopbgr60124.outbound.protection.outlook.com ([40.107.6.124]:11076
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726393AbeGLIzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:55:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Me2YHz1AVg6KQalV9x7FAhfe6aFTfXHKYzZEn8dlu5g=;
- b=SN3/1HP+XQadQSP9m7TJbsHjg2sGHmDZMl5xhSG67bguLmYen0saVXhm98JcouAGQhj2ul+6NsfWzfztEKr2y18zgZ1/Eg2zLKOfJT4ECrh03O/5Ct5GFqD4553IFo9Y/EZc5oXbEWjMt2CsSBscvQjrX6kNvWYp4l/i5XDnphs=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
-Received: from localhost.localdomain (185.231.240.5) by
- AM5PR0801MB2017.eurprd08.prod.outlook.com (2603:10a6:203:4b::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.930.20; Thu, 12 Jul
- 2018 08:46:31 +0000
-Subject: [PATCH] bug-hunting.rst: Clarify bytes sequence format when making
- "Code:" human-readable
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     corbet@lwn.net, christophe.jaillet@wanadoo.fr,
-        ktkhai@virtuozzo.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 12 Jul 2018 11:46:25 +0300
-Message-ID: <153138515186.6379.2711739561825941424.stgit@localhost.localdomain>
-User-Agent: StGit/0.18
+        Thu, 12 Jul 2018 04:55:48 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54091 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726393AbeGLIzs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 04:55:48 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4DC7E2072B; Thu, 12 Jul 2018 10:47:09 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id ABD5720012;
+        Thu, 12 Jul 2018 10:46:58 +0200 (CEST)
+Date:   Thu, 12 Jul 2018 10:46:58 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
+Message-ID: <20180712104658.220ef8f6@bbrezillon>
+In-Reply-To: <CAK8P3a13GX67YEci2J8Rxn6O4FBjjD82X+w3hyGMT3TDbtFkTg@mail.gmail.com>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+        <20180330074751.25987-2-boris.brezillon@bootlin.com>
+        <CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com>
+        <20180711164120.3e32fb08@bbrezillon>
+        <CAK8P3a2EZB_tMS_47wv6M2Qpm79ZocxxhG5zLxXsBM_YjZgkyA@mail.gmail.com>
+        <20180711191212.3855bb25@bbrezillon>
+        <CAK8P3a2djk8c6STaxJC0MCkBddyOafk4WbG2LdfPf0V1EYiqmQ@mail.gmail.com>
+        <20180712000932.3b04ee9d@bbrezillon>
+        <CAK8P3a13GX67YEci2J8Rxn6O4FBjjD82X+w3hyGMT3TDbtFkTg@mail.gmail.com>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [185.231.240.5]
-X-ClientProxiedBy: HE1PR02CA0109.eurprd02.prod.outlook.com
- (2603:10a6:7:29::38) To AM5PR0801MB2017.eurprd08.prod.outlook.com
- (2603:10a6:203:4b::20)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 0a3c5d69-ad32-4813-97dc-08d5e7d3f76a
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB2017;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;3:zrAFyTdmOf+uDPBWCKdHHZmMPAphyRGim7BmDziBAgHhfhGiTpwDn0L592HIU8QgZNYaOOpSNtEWndMucCzjgUeXGB1JjprrOAj0+mr8vKAnMeMWnEMBLbPNkW5DGp5QX37gTT92TgT0WtiPqFNBN22fyU/b1tvYjrDd0MBo99dl40kerbR5NYmRsEY/btIEJJwxVjhzikH8P3bBr+a4d4Ny/EO/vyf14AM7JEcwIXjFowMFaTVVHEMSLIGFlv9M;25:AOILjdttCvJODUh7mJaT8RLybRyd1PuZFy5ZxVC1RHdDxiMBQZ7QSOHuW0hUa/ptcwh1FjsJ6aL0Y2082mYInR2tGT/wj7k3WHImq7siZtRqbzj/Ne55vttAp/VAUQuiZ5hNCUEkM+Qceo++JAO9XNN+jeoUjaXTRjdAnCZeioI7vn0AmCkp6uQvwB0nj8kXSP42NQGfSJcYdWFGmqA7Vi9WSXeXS1iEvnpbZzCq5GCYRJ7a30qr20u+l7EVc8WELMjzcra/K/rOxYXbwPSSZgixVhrVos1R3qFqKvf4Uda4168rmBEbfXdgsK3+6zXPu1pNly58mxYE0YdE7+xVBw==;31:K5XgCjwYh4v1tG6F1xwq7DA8pkZ4TTFf79yLPAp/Dl9+b1ktPSP449deERxC/HUmv+dJt9yLqo/CaUg33P90sHghjwRXwF3tSDIMii9+ungwnbHIM5knbwTddH3Hml7U+rneAemR3PhjUhSAzWNOV80yUimNfKdO4njcCV5bT775smKhZ7I2hdD3xcuyDkRjwjxFrwr3AKyRb9AbiWwGvUqC9mVbc8s3B1itWbZFJy8=
-X-MS-TrafficTypeDiagnostic: AM5PR0801MB2017:
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;20:QRp5OWka8wK8rkdl5lUHwJ2ShEMCQ/pszg+yjUxvl/n4aCT830LGkyMdozGU5NRchquw+bwjqdQI6iJOk3J3qgDmhCd+bvxpDMHLkvDs5ElheqBtjEFpNQT3nCRvwS8XQvcn7YEBPH1hYyB0gGz30UuvICHP6tUZhBZsgHFeXQ48vXNRurXeBwl3Vnf6loDszP5ZCWJ2dSUE/TKNtl69USZo7kUjzi5KCqdbsrUtV3/5BI0gURKGZIOIBkmrRozPo7u9sFlOaXquegumbz+JFjD3B2bYjJAGjMLrGxVTF3VezBWy3fu/BNSD6XM0OyAftHKT0ErYlo5wI2t/JKWqI/jI3tle6Xkqv32igXSn4cCXJ1fDlIzV0WuFE1dNOrKhMUFPq3O0Yk4gDSrmLmhbfo7yuNoM+N9TxkbEklWXWzrjAEZVMu/4RZ2AeHUzyc9FLSy/ths/c2wsEXsGcaPBcyMiMyewqs8KNaUywebmrkkdAZheKX1FhgjJFie8oVoi;4:eMM/6Zjxnr2dnXyPBQTsifkSgYZksCBtCvk0NBtoHt2fEo7q66dMb2mzoJYaxar66mZCZGSg8qbCntZgCyTNAtzF4sIbz1Tduxr3SGqf+xkoV6ngpIQO4Bbd8iCYw11adaw6ei5ZPf0UqTs0wpZ2hM4qOwBB4/xW5YlGb0q4pg4OTTECXKtMMl6/lctKL3vVqpdfjrPASBfRqPr63FUyL4eaAuXqiFrbZjVnBWhM7aw23V24CexPPyPjgKiEcNdupkVkTc6QStPCrY2ZhJzQFA==
-X-Microsoft-Antispam-PRVS: <AM5PR0801MB2017AE2B3196616C1C64E6CFCD590@AM5PR0801MB2017.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(10201501046)(149027)(150027)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM5PR0801MB2017;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB2017;
-X-Forefront-PRVS: 0731AA2DE6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(136003)(346002)(366004)(396003)(376002)(39850400004)(189003)(199004)(6666003)(5660300001)(86362001)(50466002)(316002)(68736007)(230700001)(14444005)(58126008)(8936002)(105586002)(486006)(956004)(106356001)(103116003)(53936002)(97736004)(476003)(6506007)(478600001)(9686003)(81166006)(61506002)(52116002)(305945005)(7736002)(2906002)(1857600001)(81156014)(186003)(16526019)(6116002)(33896004)(8676002)(23676004)(55016002)(386003)(47776003)(66066001)(7696005)(26005)(3846002)(2486003)(25786009);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0801MB2017;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA4MDFNQjIwMTc7MjM6ZHIxS2VxWXlTWkFHMzh1MVBGQkVmUnQ3?=
- =?utf-8?B?NHpPaUx1MDZmRUFkdUdGRGhENEJVME44T3pMUGR3TDdVY3lGOFZuYWNxVE5T?=
- =?utf-8?B?TFROaWM4QUQ1NDZ6VlZhdnhhUjJWQ0pxVHF1Q1hEaytIL0hOVXd3MmdqYnJO?=
- =?utf-8?B?cFZFS0VGbktkWXNhcFM1VnB6bDFHeVFtMXhHSFB0Y1QrczRhMVJxaTFWZGJl?=
- =?utf-8?B?ekVHaUdhaTg5V05DWHpUL0FQUDFkKy9MTHVvSEpVOEd2bm5JZ1ZYMTQrYUFI?=
- =?utf-8?B?K1BLNmZMODdsUTdhZm42L0NyOFM2SFAxQkV2TnZwRFQrWXc4VytDMnhsZjVw?=
- =?utf-8?B?aFdLZFcvTU45K2tFYlRIdVljTzFib09DNkV0bXJpM3c0aWxDelYyN1pXbnZB?=
- =?utf-8?B?VTk5aE5PWE1zay83UFRKTXhOYWF0aFIvL2owcVZIWnpDL3NER3BqRUVUamZj?=
- =?utf-8?B?cWc0ZmhLOVFxbjBDVDQxRTZva2pmMzRDN2hjYW1BRG5UR3pkVlhjV21KVHlH?=
- =?utf-8?B?aUVDbEdZS2RmQ0htcitIOWVsVUM2aXJ2M2tWdGh0c040RnZpKzdnemNRdHZO?=
- =?utf-8?B?eGhtNVdkWkxHOWxpR1NXdWpTMWczdG1ZRmpTcGxtYjJpcU53aURlSFkzYlkr?=
- =?utf-8?B?cGJmYXl5bDlJelphOE9DTlVPUzZUeTdieXlqZDNVYlIrOXRBRTFnczRkY3dk?=
- =?utf-8?B?U2pNeW54Y1lWaDlWb3lSaThxSkhLanpRQ0ZQMS9yR0tzZmJiei9BZDk3ZkY5?=
- =?utf-8?B?Mkc3TDUxUzArU2hiMFh1SUVtQVg4K1JmcUx3OG9ZUlllOGVhZjkyRVJ1Wktx?=
- =?utf-8?B?UHVEVTYxRnZvK0xqdjNZTExxcHJtZ3p0ZDZ0bVU5S3BQK2dzb1oxd0JhVjZD?=
- =?utf-8?B?a04rQTlHK2trSWRWT2JQTGd4R01oZlFxOS9lditqdG4wVENCRXQwaUNhSkFy?=
- =?utf-8?B?NUsvWnJvU1BDUzcxa1hzbnJ1Y1hDYVFHSlNFa2VXY0FyeCtPK21QY2VLcnlK?=
- =?utf-8?B?RDhNWUowMFduVkRVVFUzbEJPUzlTSllUdklkQ2dEL001QjhLTFI5UzhnTjlJ?=
- =?utf-8?B?dGg4dSsyakt2WWtwaG93bitma2VTQjVWUXVoSkhlc0svZlRjbVIvc2xVaTNT?=
- =?utf-8?B?aWQ4bzhwa1E1bWJKWi8vcmk5cHFTRXA1UWRtTW5VNEpwNzc1dU9mT3d5R0E2?=
- =?utf-8?B?ckQ1YmZuV0IzZndUbFF0VEJXZ0VqSVRoUHFLVFZqbFc2NG9XNlRnd1MyU3c5?=
- =?utf-8?B?MURIcVcxK2JaRFZ5V3RYSW9XOUExRDFCaEEwUlFSc0Q0RUt1SEVrUmlTWGdi?=
- =?utf-8?B?eTNTOC9VeXdkQWkvelBGQU0vdzJyUmRTUVNiTTgvamo5a0k1ZUNFYmkrMi9o?=
- =?utf-8?B?RWc5Vis5YW1tZ0dTWllCM1l2aEt4R3lhRzlWV1dSbHVNTFhWb0xrbFlHZksw?=
- =?utf-8?B?WWRjcU82QUwraGFJb0dUVEJQWUZ2VU11MFJLSXp6T3FHWTJVYnV2NHkwbTFW?=
- =?utf-8?B?bmJKVW5ZOGk2ai8wdXQyaDBCcFNtd1JRdkkreGhEUmoxK1BlNWVlNDdyT1JG?=
- =?utf-8?B?WkRFa3FVTzVvVWZmOEVRZlZXYUN4andkMjBBa3FNbHEySWlkdUE3RjVockpV?=
- =?utf-8?Q?A=3D?=
-X-Microsoft-Antispam-Message-Info: DicwQ9H+n3CzRCwVK6ZVjq17YSRHErNWVvnI7IL3wTQjENQkOU6PorugZhq0gdpYoO8mn6nezxWbaegm9SjYLPne6k4C3/sHTiGTO/YZDBRBdsNpslMmrkxVXjgsAibEkgdsSA/dQwZ059fM/2/TyCT5y0t8+UaDX6anaKQQ9hHOuNyKjWfMnD2n89Z3ub02OsbTP4I3sGxLGpxwL23epK2pL9B+l7b0Oz+Wi7D2/iit5SkAoSlHYSKZg93UcP7U+miHrB+DadeKbyUl2kSMwls7HYdcVJIwoUdH5yCAWGVd1dh0UGkSo2B4rg/VjqXaNrhVcMHvVAcTxERiAjYpcP0oOhWyNJXnee43TWP5iPk=
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;6:z8tJ5y49weVZtQDEBjXXtyDbLWvNSlOpk+qYoRk51QFnnOmhkUlCU1o1y0i6G7riZxFQZiv5Bkl+VW5xkQ0LPcPUlF6yGhiZwKUQ3nRvHRwq2DEezvwv7pCz8booeGQJ9E+M0UnWnbwMy6QRWzsHUVbJ/ovmZ7X/tXITurH7Qu25vX6Y5kufyntgPCSQj2arohPppA2kffvIcjj/PcT/XWzV8dYI+ZBXu7vcQXXKkGaX8cLhf8WdoDsLF3Q6v8H+EKeh/mD+XoqusIAFQvz1EjWO/gA2GEnd5OaKrqM+M0iUAbD6Vz7p6YAwIIg7F4V9uAR+wYPOSS6+JKKFOuOp9gMC6Hz0Wc2isd0sEJJz0T9VsNM343i5MFDS6FWdGAaFSgW3MsJhhJOt9RbKAbRpRvxkXWbM1WwpiD7HwXewLI4UsMkhnO8sBNayr5xj5F7TE1as7Dt00dIcdhyHWxFTwg==;5:L3uqaZ+jHxY3Nf09y7WwMC2whQ/KaGTM0E/pk3/pIJKXmi24EedeEFoZEkJOO6pjLysSiVFMTsRlhToSNGkarH97PMYMk+QCEkzwwJ11XR5GXRnoTPcVYCYGtG3Deh15Cs1dpMMFJGzUNQZ0T2a+JJDzCbZOC96qyrBVEPkP8OM=;24:VMpuDB0jJ9Uh38DjjBk3UurNIZ+eBH3AbRk7BDzNjINGKQzJRp0ewPGOk6eY+KeTZRTyTS3SVbxXPwi/NX2qi0vC7GfSUg3t/U+EG8xBdd0=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB2017;7:ePpCKYm0BVL45ZQKhobmC9962zZ9NvUwLrrdDAMcM2zpQ6wYAcAQw3nZswm2JKc+p4olPfAxbnp7IvT8lXG56bEf1nHhCYQq66pv4OgneeQQPhS+UJ9b40EALUs3NM60ycQkcDnrEFAbB4Y0Vz5DPsHtAfX1DmexFJy4ydLgNB+CVvaPlPRI1mCqcy3BLeMYFGbdu6q8mlyazS5Bgwc0v7T4UTJWdk0AxT7a+UT0PS57wY5t+vUoCXzINnGXlQuP;20:VlAZjlxyNNvdH8Nyc7ib+/IZrGHen7QkOhuEhvpdOxPBMZ1o/lc65m0kStR+pkqRwGBpfJQTqaX44LaTEX9gVOAFJtwR7U/Zv+m4MmWTDxMkZuoxdF9CaoVrutXldWVm15PkLae2RvnppOr1fZTkPGveMsNb9BaP5rZj9RI6aCE=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2018 08:46:31.2241 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0a3c5d69-ad32-4813-97dc-08d5e7d3f76a
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB2017
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bytes have to be separated commas, and this is not obvious
-for a person, who does not write in pure ".byte" assembler.
-Let's clarify this and make visible for people.
+On Thu, 12 Jul 2018 10:21:40 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
----
- Documentation/admin-guide/bug-hunting.rst |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Thu, Jul 12, 2018 at 12:09 AM, Boris Brezillon
+> <boris.brezillon@bootlin.com> wrote:
+> > On Wed, 11 Jul 2018 22:10:26 +0200 Arnd Bergmann <arnd@arndb.de> wrote:  
+> >> On Wed, Jul 11, 2018 at 7:12 PM, Boris Brezillon <boris.brezillon@bootlin.com> wrote:  
+> >> > On Wed, 11 Jul 2018 17:39:56 +0200 Arnd Bergmann <arnd@arndb.de> wrote:  
+> >> >> On Wed, Jul 11, 2018 at 4:41 PM, Boris Brezillon <boris.brezillon@bootlin.com> wrote:  
+> 
+> >> >> IOW, what feature would we lose if we were to declare that
+> >> >> setup above invalid (and ensure you cannot represent it in DT)?  
+> >> >
+> >> > That's exactly the sort of discussion I wanted to trigger. Maybe we
+> >> > shouldn't care and expose this use case as if it was X different I3C
+> >> > buses (with all devices present on the bus being exposed X times
+> >> > to the system).  
+> >>
+> >> That's probably fine for many slave devices (you could read a
+> >> single sensor multiple times if you iterate through all i2c sensors
+> >> on all buses) but might not work for others (a slave device sending
+> >> an interrupt to the current master for a request that was started
+> >> from the previous master).
+> >> My impression however is that this is actually a corner case that
+> >> we can leave to be undefined, and not prepare to handle well,
+> >> as long as we can deal with the interesting examples above.  
+> >
+> > Mastership handover/takeover is something I already thought about.
+> > Actually, that's the reason for the i3c_bus->cur_master field (so that
+> > the master being asked to do a transfer on the bus can request bus
+> > ownership it bus->cur_master != master->this->info.pid).
+> >
+> > I guess this would be replaced by something simpler if we get rid of
+> > the i3c_bus object (just a bool i3c_master->owns_bus).  
+> 
+> If we can ignore the case of handing over between two masters that
+> we both own, we end up being in just one of two states:
+> 
+> a) currently we are the master
+> b) we are not currently the master but have asked the current
+>     master to transfer ownership back to us. For this, we have to
+>     know who the current master is of course.
+> 
+> I think that's the simplest case that would work with the specification,
+> but it relies on the assumption that the master controlled by Linux
+> is always more important than any other master, and that we just
+> hand over ownership for as long as the others want it.
+> 
+> If that is not the case, we also need a third state
+> 
+> c) we have handed ownership to another master that is equally
+>     important, but no i2c device driver is currently trying to talk
+>     to a device, so we don't need ownership back until a slave driver
+>     changes state.
 
-diff --git a/Documentation/admin-guide/bug-hunting.rst b/Documentation/admin-guide/bug-hunting.rst
-index f278b289e260..861ee752eae9 100644
---- a/Documentation/admin-guide/bug-hunting.rst
-+++ b/Documentation/admin-guide/bug-hunting.rst
-@@ -213,7 +213,7 @@ If you don't have access to the code you can also debug on some crash dumps
-             .text
-             .globl foo
-      foo:
--            .byte  .... /* bytes from Code: part of OOPS dump */
-+            .byte  0x44,0x24,0x04,... /* bytes from Code: part of OOPS dump */
- 
-      Compile it with "gcc -c -o foo.o foo.s" then look at the output of
-      "objdump --disassemble foo.o".
+That was the solution I was opting for.
 
+> 
+> The main difference between b) and c) that I see would be what
+> happens with in-band interrupts. If I understand the specification
+> correctly, only the current master receives them, so if you have
+> any i2c device that uses interrupts to talk to a Linux driver, we
+
+      ^ you mean i3c here, right?
+
+> want to be in b) rather than c). An example of this would be
+> an input device on a PC: If the user operateds the keyboard
+> or pointer and we have handed off ownership to a sensor hub,
+> we never get an input event, right?
+
+Correct. I guess we could try to regain bus ownership in case we have
+IBIs enabled. Or we let the secondary master give the bus back to us
+when it sees IBIs it can't handle, as described in section 5.1.7:
+
+"
+Once granted control of the Bus, the Secondary Master maintains
+control until another Master is granted Bus control. After the
+Secondary Master transitions to the Current Master role it could
+encounter Bus management activities besides the data transfers that it
+itself initiates. Some examples are the In-Band Interrupt, or the
+Hot-Join request. One optional possibility, shown at Section 5.1.7.2,
+is that the Secondary Master performs the Current Master’s actions with
+the full capabilities of the Main Master. Another optional possibility
+is that the Secondary Master, while serving in the Current Master role,
+could defer some actions to a more capable Master, as described in
+Section 5.1.7.3.
+"
+
+> 
+> >> Ok, but maybe you could you put the information about those devices
+> >> on a local list on the stack rather than the controller? I suppose this
+> >> would not change the logic much, but it would slightly simplify the
+> >> data structures for the bus and stop others from wondering about
+> >> them. ;-)  
+> >
+> > This has changed a bit in the v6 I'm about to send (probably next week).
+> > I now have 2 different objects which do not necessarily have the same
+> > lifetime:
+> >
+> > * i3c_dev_desc: an I3C device descriptor. This is the representation
+> >   exposed to I3C master controller drivers which usually reserve one
+> >   slot in the HW device table per-device on the bus. Since the same
+> >   device can be re-discovered with a different address, we have a short
+> >   period in time during which the controller will have 2
+> >   slots/descriptors used to control the same device, except one would
+> >   be inactive (any transfer to the old dynamic address would fail) and
+> >   the other one would be active. The core then takes care of releasing
+> >   the old descriptor/slot and attaching the new one to the i3c_device
+> >   object exposed to I3C device drivers
+> >
+> > * i3c_device: this is the object exposed to I3C device drivers. It's
+> >   lifetime is usually the same as the i3c_dev_desc it's attached to,
+> >   except when the device lose its dynamic address and get a new one
+> >   assigned. In this case we keep the same i3c_device object, but
+> >   dynamically re-attach it to a new i3c_dev_desc before releasing the
+> >   old dev desc. This way the I3C does not even see that the device
+> >   address has changed and can keep doing transfers to it.
+> >
+> > With these 2 distinct representations, the handling on the controller
+> > side is greatly simplified: the core takes care of the resource
+> > migration steps, while it was up to the controller to do that my
+> > previous versions (look at the ->reattach_i3c_dev() hook in the Cadence
+> > driver, and I think it's even more complicated with other controllers,
+> > like the HCI one).
+> >  
+> >> This is a really minor point though, let's work out the problem of the
+> >> multiple masters first.  
+> >
+> > I agree. This being said, moving to a representation where the bus is
+> > implicitly represented by the master_controller instance shouldn't be
+> > too difficult. So, if you think we should try this approach I can do
+> > the modifications in my v6.  
+> 
+> I'd say let's wait before you do that change, possibly add a comment
+> in there now to remind us of what an alternative would be.
+
+You mean I should keep the i3c_bus object?
