@@ -2,249 +2,112 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C5D9C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4DFC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:21:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F7D220864
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:21:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F7D220864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C23CD20864
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:21:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C23CD20864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732354AbeGLG3g (ORCPT
+        id S1732390AbeGLG3r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 02:29:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51380 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726808AbeGLG3g (ORCPT
+        Thu, 12 Jul 2018 02:29:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60462 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbeGLG3q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 02:29:36 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6C6Iksx134914
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 02:21:31 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k5y6ynqs0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 02:21:31 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 12 Jul 2018 07:21:11 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Jul 2018 07:21:08 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6C6L7OV34078836
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Jul 2018 06:21:07 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3B260AE045;
-        Thu, 12 Jul 2018 09:21:01 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E81F4AE059;
-        Thu, 12 Jul 2018 09:21:00 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.152.99.116])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Jul 2018 09:21:00 +0100 (BST)
-Subject: Re: [PATCH v2] kvm/x86: Inform RCU of quiescent state when entering
- guest mode
-To:     paulmck@linux.vnet.ibm.com
-Cc:     David Woodhouse <dwmw2@infradead.org>, peterz@infradead.org,
-        mhillenb@amazon.de, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-References: <20180711174843.GX3593@linux.vnet.ibm.com>
- <20180711180101.3711464-1-dwmw2@infradead.org>
- <20180711182053.GA3593@linux.vnet.ibm.com>
- <20180711183645.GA23820@linux.vnet.ibm.com>
- <62e945ee-a58e-f9b3-279c-74cd0f5809da@de.ibm.com>
- <20180711202752.GC3593@linux.vnet.ibm.com>
- <2f7ba67e-0442-13cc-628c-2dca56520c21@de.ibm.com>
- <20180711213259.GF3593@linux.vnet.ibm.com>
- <20180711233727.GA9888@linux.vnet.ibm.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Thu, 12 Jul 2018 08:21:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 12 Jul 2018 02:29:46 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 66CC5C9E;
+        Thu, 12 Jul 2018 06:21:41 +0000 (UTC)
+Date:   Thu, 12 Jul 2018 08:21:39 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Pawel Laszczak <pawell@cadence.com>
+Cc:     linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        linux-kernel@vger.kernel.org, ltyrala@cadence.com,
+        adouglas@cadence.com
+Subject: Re: [PATCH 04/31] usb: usbssp: Added USBSSP platform driver
+Message-ID: <20180712062139.GH20905@kroah.com>
+References: <1531374448-26532-1-git-send-email-pawell@cadence.com>
+ <1531374448-26532-5-git-send-email-pawell@cadence.com>
 MIME-Version: 1.0
-In-Reply-To: <20180711233727.GA9888@linux.vnet.ibm.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18071206-0012-0000-0000-0000028949AF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071206-0013-0000-0000-000020BAEF67
-Message-Id: <2c0ad6f0-cf2d-acaa-1162-2a3d80952464@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807120066
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531374448-26532-5-git-send-email-pawell@cadence.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 07/12/2018 01:37 AM, Paul E. McKenney wrote:
-> On Wed, Jul 11, 2018 at 02:32:59PM -0700, Paul E. McKenney wrote:
->> On Wed, Jul 11, 2018 at 11:11:19PM +0200, Christian Borntraeger wrote:
->>>
->>>
->>> On 07/11/2018 10:27 PM, Paul E. McKenney wrote:
->>>> On Wed, Jul 11, 2018 at 08:39:36PM +0200, Christian Borntraeger wrote:
->>>>>
->>>>>
->>>>> On 07/11/2018 08:36 PM, Paul E. McKenney wrote:
->>>>>> On Wed, Jul 11, 2018 at 11:20:53AM -0700, Paul E. McKenney wrote:
->>>>>>> On Wed, Jul 11, 2018 at 07:01:01PM +0100, David Woodhouse wrote:
->>>>>>>> From: David Woodhouse <dwmw@amazon.co.uk>
->>>>>>>>
->>>>>>>> RCU can spend long periods of time waiting for a CPU which is actually in
->>>>>>>> KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
->>>>>>>> modes, and don't wait for it.
->>>>>>>>
->>>>>>>> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
->>>>>>>
->>>>>>> And idiot here forgot about some of the debugging code in RCU's dyntick-idle
->>>>>>> code.  I will reply with a fixed patch.
->>>>>>>
->>>>>>> The code below works just fine as long as you don't enable CONFIG_RCU_EQS_DEBUG,
->>>>>>> so should be OK for testing, just not for mainline.
->>>>>>
->>>>>> And here is the updated code that allegedly avoids splatting when run with
->>>>>> CONFIG_RCU_EQS_DEBUG.
->>>>>>
->>>>>> Thoughts?
->>>>>>
->>>>>> 							Thanx, Paul
->>>>>>
->>>>>> ------------------------------------------------------------------------
->>>>>>
->>>>>> commit 12cd59e49cf734f907f44b696e2c6e4b46a291c3
->>>>>> Author: David Woodhouse <dwmw@amazon.co.uk>
->>>>>> Date:   Wed Jul 11 19:01:01 2018 +0100
->>>>>>
->>>>>>     kvm/x86: Inform RCU of quiescent state when entering guest mode
->>>>>>     
->>>>>>     RCU can spend long periods of time waiting for a CPU which is actually in
->>>>>>     KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
->>>>>>     modes, and don't wait for it.
->>>>>>     
->>>>>>     Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
->>>>>>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
->>>>>>     [ paulmck: Adjust to avoid bad advice I gave to dwmw, avoid WARN_ON()s. ]
->>>>>>
->>>>>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->>>>>> index 0046aa70205a..b0c82f70afa7 100644
->>>>>> --- a/arch/x86/kvm/x86.c
->>>>>> +++ b/arch/x86/kvm/x86.c
->>>>>> @@ -7458,7 +7458,9 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
->>>>>>  		vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_RELOAD;
->>>>>>  	}
->>>>>>
->>>>>> +	rcu_kvm_enter();
->>>>>>  	kvm_x86_ops->run(vcpu);
->>>>>> +	rcu_kvm_exit();
->>>>>
->>>>> As indicated in my other mail. This is supposed to be handled in the guest_enter|exit_ calls around
->>>>> the run function. This would also handle other architectures. So if the guest_enter_irqoff code is
->>>>> not good enough, we should rather fix that instead of adding another rcu hint.
->>>>
->>>> Something like this, on top of the earlier patch?  I am not at all
->>>> confident of this patch because there might be other entry/exit
->>>> paths I am missing.  Plus there might be RCU uses on the arch-specific
->>>> patch to and from the guest OS.
->>>>
->>>> Thoughts?
->>>>
->>>
->>> If you instrment guest_enter/exit, you should cover all cases and all architectures as far
->>> as I can tell. FWIW, we did this rcu_note thing back then actually handling this particular
->>> case of long running guests blocking rcu for many seconds. And I am pretty sure that
->>> this did help back then.
->>
->> And my second patch on the email you replied to replaced the only call
->> to rcu_virt_note_context_switch().  So maybe it covers what it needs to,
->> but yes, there might well be things I missed.  Let's see what David
->> comes up with.
->>
->> What changed was RCU's reactions to longish grace periods.  It used to
->> be very aggressive about forcing the scheduler to do otherwise-unneeded
->> context switches, which became a problem somewhere between v4.9 and v4.15.
->> I therefore reduced the number of such context switches, which in turn
->> caused KVM to tell RCU about quiescent states way too infrequently.
->>
->> The advantage of the rcu_kvm_enter()/rcu_kvm_exit() approach is that
->> it tells RCU of an extended duration in the guest, which means that
->> RCU can ignore the corresponding CPU, which in turn allows the guest
->> to proceed without any RCU-induced interruptions.
->>
->> Does that make sense, or am I missing something?  I freely admit to
->> much ignorance of both kvm and s390!  ;-)
+On Thu, Jul 12, 2018 at 06:47:01AM +0100, Pawel Laszczak wrote:
+> This patch adds platform driver that is entry point for loading and
+> unloading usbssp.ko modules.
+> It also adds information about this driver to drivers/usb/Kconfig
+> and drivers/usb/Makefile files and create Kconfig and Makefile
+> files in drivers/usb/usbssp directory.
 > 
-> But I am getting some rcutorture near misses on the commit that
-> introduces rcu_kvm_enter() and rcu_kvm_exit() to the x86 arch-specific
-> vcpu_enter_guest() function.  These near misses occur when running
-> rcutorture scenarios TREE01 and TREE03, and in my -rcu tree rather
-> than the v4.15 version of this patch.
+> Patch also adds template for some function ivokked from
+> usbssp_plat.c file. These function will be implemented in next patches.
 > 
-> Given that I am making pervasive changes to the way that RCU works,
-> it might well be that this commit is an innocent bystander.  I will
-> run tests overnight and let you know what comes up.
+> This patch also introduce usbssp_trb_virt_to_dma that converts
+> virtual address of TRB's to DMA address. In this moment this
+> function is used only in gadget-trace.h.
+> 
+> >From this moment the driver can be compiled.
+> 
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 
-Is there a single patch that that I can test or do I have to combine all the pieces
-that are sprinkled in this mail thread?
+This is a much nicer breakup of the patches than the last series, thanks
+for doing it this way.
 
+> --- a/drivers/usb/usbssp/gadget.h
+> +++ b/drivers/usb/usbssp/gadget.h
+> @@ -9,7 +9,6 @@
+>   * A lot of code based on Linux XHCI driver.
+>   * Origin: Copyright (C) 2008 Intel Corp.
+>   */
+> -
+>  #ifndef __LINUX_USBSSP_GADGET_H
+>  #define __LINUX_USBSSP_GADGET_H
+>  
+
+You should have done that in an earlier patch :)
+
+> @@ -1671,6 +1670,21 @@ static inline void usbssp_write_64(struct usbssp_udc *usbssp_data,
+>  {
+>  	lo_hi_writeq(val, regs);
+>  }
+> +
+> +/* USBSSP Device controller glue */
+> +int usbssp_suspend(struct usbssp_udc *usbssp_data, bool do_wakeup);
+> +int usbssp_resume(struct usbssp_udc *usbssp_data, bool hibernated);
+> +
+> +irqreturn_t usbssp_irq(int irq, void *priv);
+> +
+> +/* USBSSP ring, segment, TRB, and TD functions */
+> +dma_addr_t usbssp_trb_virt_to_dma(struct usbssp_segment *seg,
+> +		union usbssp_trb *trb);
+> +
+> +/* USBSSP gadget interface*/
+> +int usbssp_gadget_init(struct usbssp_udc *usbssp_data);
+> +int  usbssp_gadget_exit(struct usbssp_udc *usbssp_data);
+
+Very odd indentation, don't you think?
+
+> +MODULE_ALIAS("platform:usbss-gadget");
+> +MODULE_DESCRIPTION("USBSSP' Device Controller (USBSSP) Driver");
+> +MODULE_LICENSE("GPL");
+
+Wrong MODULE_LICENSE() string.  Please read module.h for what these all
+should be.
+
+thanks,
+
+greg k-h
