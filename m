@@ -2,100 +2,194 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7196AC48F67
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85594C4AE24
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E4DE2086E
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:22:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBrWeCe7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E4DE2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3132B20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:24:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3132B20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732647AbeGLRcv (ORCPT
+        id S1732480AbeGLRex (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:32:51 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39311 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727366AbeGLRcv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:32:51 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n2-v6so4099144pgq.6;
-        Thu, 12 Jul 2018 10:22:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=280g+RGAhxopkf5zYfi9U7OBxHSGkQm3DuoAW1Gjzrg=;
-        b=XBrWeCe7iriTKjWH74RhfDJup/h6x/k3BY/UPgE4D4zgI+xl3jLRxATMUhaTfCzS78
-         rwaUUAQIpfuRgv0Qv4n7R/OdFaFaRwXkaYencr7o33HYlv1QS7hZeDZsAtl5IfeCnoPA
-         80mb0hVEXJl/1X1LV78ae/3SbUioiGuQZYk+eJU/HK3toafmTVjvxQVOXC/44+TGm2+A
-         0JRQiiCfOAvT0ZFgTHq+8Ui2ZjzebV5qUsiVnuiKmtCb7Ej5P4JWWIRbH8ubb/T1uV3L
-         8zDuCKt5jftiP3eU5MviA7/UVnUSeM1pltOmZUKYGBp8QNVPPs0wc1KpMUfh5hD1S11R
-         Bpjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=280g+RGAhxopkf5zYfi9U7OBxHSGkQm3DuoAW1Gjzrg=;
-        b=hmIsMGBt1BGNt7jv9qEgEjIETmOD8H6j7iuj43evwbVj7s7H2iLpFJcvFgGg/KnvNT
-         b5+6kRt6E7yVTr5+TOlXStxstlgZ3m5zh1Xb9FflTekM4FdpaV45f2M2ldMlBRtDjX83
-         TFyUjiv0N6fkD0/1xRYV5ZeRMqh5JH3/2pmifwloy8rmAXe5MAjzIf3faTBw5XHOxsA1
-         /ITBc1yH4bY3HjqFQ8DcPdON3trMKLoj//lxvXWtW3hpTNKQX7STvlihcsrXFQuZ+4rK
-         wdbVJky6kK8SZlOwA3eZVzJ+xPonqzChX6ABCTZHrkjp3nKc28ZiwpOhq9MjC0pjU/zA
-         He7A==
-X-Gm-Message-State: AOUpUlHjWt0LA/tBOIE5VBArh0/Y///TfmoSu25HD2dIMsm6qQ5KyLL3
-        6AHY+ZgH2ZbCSQWOmq9IWSZDEfNd
-X-Google-Smtp-Source: AAOMgpeZ4Ym40so6dXcTQuIh/HCbAVy4tlHIEtsn6phwVNN7cUof8XXZ1oSZPIBd+TFuRxECJdqAsw==
-X-Received: by 2002:a62:d39b:: with SMTP id z27-v6mr3379033pfk.182.1531416141610;
-        Thu, 12 Jul 2018 10:22:21 -0700 (PDT)
-Received: from masabert (i118-21-156-233.s30.a048.ap.plala.or.jp. [118.21.156.233])
-        by smtp.gmail.com with ESMTPSA id l27-v6sm2899061pfi.42.2018.07.12.10.22.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 10:22:20 -0700 (PDT)
-Received: by masabert (Postfix, from userid 1000)
-        id A78DF200465; Fri, 13 Jul 2018 02:22:18 +0900 (JST)
-From:   Masanari Iida <standby24x7@gmail.com>
-To:     linux-kernel@vger.kernel.org, corbet@lwn.net,
-        netdev@vger.kernel.org, j.vosburgh@gmail.com, vfalico@gmail.com,
-        andy@greyhouse.net
-Cc:     Masanari Iida <standby24x7@gmail.com>
-Subject: [PATCH/v2] bonding: Fix a typo in bonding.txt
-Date:   Fri, 13 Jul 2018 02:21:57 +0900
-Message-Id: <20180712172157.8551-1-standby24x7@gmail.com>
-X-Mailer: git-send-email 2.18.0.96.ged843436dd49
-In-Reply-To: <20180712160517.7382-1-standby24x7@gmail.com>
-References: <20180712160517.7382-1-standby24x7@gmail.com>
+        Thu, 12 Jul 2018 13:34:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58640 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727455AbeGLRew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 13:34:52 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AF5FD814F0B6;
+        Thu, 12 Jul 2018 17:24:21 +0000 (UTC)
+Received: from whitewolf.lyude.net.com (ovpn-120-214.rdu2.redhat.com [10.10.120.214])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 23BEE2026D6B;
+        Thu, 12 Jul 2018 17:24:21 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Rob Clark <robdclark@gmail.com>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/dp_helper: Add DP aux channel tracing
+Date:   Thu, 12 Jul 2018 13:24:19 -0400
+Message-Id: <20180712172419.790-1-lyude@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 12 Jul 2018 17:24:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 12 Jul 2018 17:24:21 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes a spelling typo in bonding.txt
+This is something we've needed for a very long time now, as it makes
+debugging issues with faulty MST hubs along with debugging issues
+regarding us interfacing with hubs correctly vastly easier to debug.
+Currently this can actually be done if you trace the i2c devices for DP
+using ftrace but that's significantly less useful for a couple of
+reasons:
 
-Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+- Tracing the i2c devices through ftrace means all of the traces are
+  going to contain a lot of "garbage" output that we're sending over the
+  i2c line. Most of this garbage comes from retrying transactions, DRM's
+  helper library adding extra transactions to work around bad hubs, etc.
+- Having a user set up ftrace so that they can provide debugging
+  information is a lot more difficult then being able to say "just boot
+  with drm.debug=0x100"
+- We can potentially expand upon this tracing in the future to print
+  debugging information in regards to other DP transactions like MST
+  sideband transactions
+
+This is inspired by a patch Rob Clark sent to do this a long time back.
+Neither of us could find the patch however, so we both assumed it would
+probably just be easier to rewrite it anyway.
+
+Cc: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- Documentation/networking/bonding.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_dp_helper.c | 34 ++++++++++++++++++++++++++++-----
+ drivers/gpu/drm/drm_drv.c       | 15 ++++++++-------
+ include/drm/drm_print.h         |  6 ++++++
+ 3 files changed, 43 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/networking/bonding.txt b/Documentation/networking/bonding.txt
-index c13214d073a4..d3e5dd26db12 100644
---- a/Documentation/networking/bonding.txt
-+++ b/Documentation/networking/bonding.txt
-@@ -1490,7 +1490,7 @@ To remove an ARP target:
+diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
+index a7ba602a43a8..6fa5a59aa17c 100644
+--- a/drivers/gpu/drm/drm_dp_helper.c
++++ b/drivers/gpu/drm/drm_dp_helper.c
+@@ -185,6 +185,21 @@ EXPORT_SYMBOL(drm_dp_bw_code_to_link_rate);
  
- To configure the interval between learning packet transmits:
- # echo 12 > /sys/class/net/bond0/bonding/lp_interval
--	NOTE: the lp_inteval is the number of seconds between instances where
-+	NOTE: the lp_interval is the number of seconds between instances where
- the bonding driver sends learning packets to each slaves peer switch.  The
- default interval is 1 second.
+ #define AUX_RETRY_INTERVAL 500 /* us */
  
++static inline void
++drm_dp_dump_access(const struct drm_dp_aux *aux,
++		   u8 request, uint offset, void *buffer, int ret)
++{
++	const char *arrow = request == DP_AUX_NATIVE_READ ? "->" : "<-";
++
++	if (ret > 0)
++		drm_dbg(DRM_UT_DP, "%s: 0x%08x AUX %s (ret=%3d) %*ph%s\n",
++			aux->name, offset, arrow, ret, min(ret, 64),
++			buffer, ret > 64 ? "..." : "");
++	else
++		drm_dbg(DRM_UT_DP, "%s: 0x%08x AUX %s (ret=%3d)\n",
++			aux->name, offset, arrow, ret);
++}
++
+ /**
+  * DOC: dp helpers
+  *
+@@ -288,10 +303,14 @@ ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
+ 	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, DP_DPCD_REV, buffer,
+ 				 1);
+ 	if (ret != 1)
+-		return ret;
++		goto out;
+ 
+-	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset, buffer,
+-				  size);
++	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset, buffer,
++				 size);
++
++out:
++	drm_dp_dump_access(aux, DP_AUX_NATIVE_READ, offset, buffer, ret);
++	return ret;
+ }
+ EXPORT_SYMBOL(drm_dp_dpcd_read);
+ 
+@@ -312,8 +331,13 @@ EXPORT_SYMBOL(drm_dp_dpcd_read);
+ ssize_t drm_dp_dpcd_write(struct drm_dp_aux *aux, unsigned int offset,
+ 			  void *buffer, size_t size)
+ {
+-	return drm_dp_dpcd_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer,
+-				  size);
++	int ret;
++
++
++	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer,
++				 size);
++	drm_dp_dump_access(aux, DP_AUX_NATIVE_WRITE, offset, buffer, ret);
++	return ret;
+ }
+ EXPORT_SYMBOL(drm_dp_dpcd_write);
+ 
+diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+index 7af748ed1c58..e555eb5de275 100644
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -53,13 +53,14 @@ MODULE_AUTHOR("Gareth Hughes, Leif Delgass, José Fonseca, Jon Smirl");
+ MODULE_DESCRIPTION("DRM shared core routines");
+ MODULE_LICENSE("GPL and additional rights");
+ MODULE_PARM_DESC(debug, "Enable debug output, where each bit enables a debug category.\n"
+-"\t\tBit 0 (0x01) will enable CORE messages (drm core code)\n"
+-"\t\tBit 1 (0x02) will enable DRIVER messages (drm controller code)\n"
+-"\t\tBit 2 (0x04) will enable KMS messages (modesetting code)\n"
+-"\t\tBit 3 (0x08) will enable PRIME messages (prime code)\n"
+-"\t\tBit 4 (0x10) will enable ATOMIC messages (atomic code)\n"
+-"\t\tBit 5 (0x20) will enable VBL messages (vblank code)\n"
+-"\t\tBit 7 (0x80) will enable LEASE messages (leasing code)");
++"\t\tBit 0 (0x01)  will enable CORE messages (drm core code)\n"
++"\t\tBit 1 (0x02)  will enable DRIVER messages (drm controller code)\n"
++"\t\tBit 2 (0x04)  will enable KMS messages (modesetting code)\n"
++"\t\tBit 3 (0x08)  will enable PRIME messages (prime code)\n"
++"\t\tBit 4 (0x10)  will enable ATOMIC messages (atomic code)\n"
++"\t\tBit 5 (0x20)  will enable VBL messages (vblank code)\n"
++"\t\tBit 7 (0x80)  will enable LEASE messages (leasing code)\n"
++"\t\tBit 8 (0x100) will enable DP messages (displayport code)");
+ module_param_named(debug, drm_debug, int, 0600);
+ 
+ static DEFINE_SPINLOCK(drm_minor_lock);
+diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
+index e1a46e9991cc..767c90b654c5 100644
+--- a/include/drm/drm_print.h
++++ b/include/drm/drm_print.h
+@@ -195,6 +195,7 @@ static inline struct drm_printer drm_debug_printer(const char *prefix)
+ #define DRM_UT_VBL		0x20
+ #define DRM_UT_STATE		0x40
+ #define DRM_UT_LEASE		0x80
++#define DRM_UT_DP		0x100
+ 
+ __printf(3, 4)
+ void drm_dev_printk(const struct device *dev, const char *level,
+@@ -307,6 +308,11 @@ void drm_err(const char *format, ...);
+ #define DRM_DEBUG_LEASE(fmt, ...)					\
+ 	drm_dbg(DRM_UT_LEASE, fmt, ##__VA_ARGS__)
+ 
++#define	DRM_DEV_DEBUG_DP(dev, fmt, ...)					\
++	drm_dev_dbg(dev, DRM_UT_DP, fmt, ## __VA_ARGS__)
++#define DRM_DEBUG_DP(dev, fmt, ...)					\
++	drm_dbg(DRM_UT_DP, fmt, ## __VA_ARGS__)
++
+ #define _DRM_DEV_DEFINE_DEBUG_RATELIMITED(dev, category, fmt, ...)	\
+ ({									\
+ 	static DEFINE_RATELIMIT_STATE(_rs,				\
 -- 
-2.18.0.96.ged843436dd49
+2.17.1
 
