@@ -3,165 +3,228 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BFAC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 09:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18301C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 09:08:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2F7220BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 09:07:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B931320BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 09:08:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="HN0eEUqm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2F7220BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OehpOE8x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B931320BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeGLJQH (ORCPT
+        id S1732281AbeGLJRX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 05:16:07 -0400
-Received: from mail-co1nam03on0076.outbound.protection.outlook.com ([104.47.40.76]:18363
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726528AbeGLJQH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 05:16:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FqM6+owMBwUOgP6G6Lr5N7xxdnbTo/ESenIiAVN9bkM=;
- b=HN0eEUqm7l3KbcIfwoE88kuEtiT/4f+L/fZE0vTmaYDlLWbE7/E0Hc4csKuF+GQHtinFOjiG2ktXdZykeMc6jINmw4zZ2sHL/BmzH1Ne/lngkPJQe7ZulRLNttgDiS5iUHTO3OMqpqZBlupDeVwO5FJN1oDH/LS4gQ1Wi9pTODM=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB5352.namprd07.prod.outlook.com (20.177.125.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.21; Thu, 12 Jul 2018 09:03:31 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::39ca:4bef:3be8:fdf5]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::39ca:4bef:3be8:fdf5%3]) with mapi id 15.20.0952.017; Thu, 12 Jul 2018
- 09:03:31 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Tyrala <ltyrala@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>
-Subject: RE: [PATCH 05/31] usb: usbssp: Added first part of initialization
- sequence.
-Thread-Topic: [PATCH 05/31] usb: usbssp: Added first part of initialization
- sequence.
-Thread-Index: AQHUGaPrXhW1ftKvwUmD/Pn5NzNpOqSLH3YAgAAiAfA=
-Date:   Thu, 12 Jul 2018 09:03:30 +0000
-Message-ID: <BYAPR07MB47096E3B832D07F8F3017974DD590@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1531374448-26532-1-git-send-email-pawell@cadence.com>
- <1531374448-26532-6-git-send-email-pawell@cadence.com>
- <20180712062714.GI20905@kroah.com>
-In-Reply-To: <20180712062714.GI20905@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-tag-bcast: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNzljNmFlMDAtODViMi0xMWU4LTg3MTAtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XDc5YzZhZTAxLTg1YjItMTFlOC04NzEwLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMzgyMCIgdD0iMTMxNzU4NTk4MjM5MTYyMjQ0IiBoPSIxVUVYY0dSNXNUU0ZLY0czWkFuOTIvRGNBa1k9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-paste: 
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pawell@cadence.com; 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB5352;7:gNvMd7tL1uydEaR/EK+SLr9FfHG0KMgSaNInnvyHAnZ7rTmGt2/+EriUUtd4+hRaxzhU9RVa6lvVfZkaht0bBSZI92r6l5IJcLJZMOQ1XI9U64CRYoIk5lL+xaD2GgPdTAjMAIfsK/unUz0xln4JdfTH+bEtj/ZQ51MAEoif5Vef1dMHGyxc/dD2sHrahsaasYDeC6ICwtwjmsr5blYzWsFI1az6WhW6IfZyqCBr76BVEbn9Gkw9XO4kMWWK8o+D;20:JgVeOBbNazWeonZNTI3F03slNGCbEB9E8W38uE2+ZGeZ/lhkfQ/sWCGi1NuKpyEvkLzgDXKlDtGRtpIjs6oyYEdPOwCBsNOlFftrpupsJYBgRSiN0mllxmHld/4+regGWNR0iKjtMSyJs+LjE1OgnMl61UnJ9JQ4JNU65dwPJV9Hp8JRcDxAvV280SiYMuSowPelgMO+X1+Nqv5tI/dUYIwk1viNO43pdgOhsUMEVff/PLIEe+RsGldac4RcLms3
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(346002)(396003)(366004)(189003)(199004)(36092001)(105586002)(229853002)(11346002)(6916009)(2900100001)(4326008)(55016002)(6436002)(14444005)(5250100002)(68736007)(476003)(256004)(99286004)(9686003)(446003)(486006)(86362001)(66066001)(107886003)(54906003)(14454004)(186003)(25786009)(97736004)(6246003)(102836004)(478600001)(26005)(53936002)(8936002)(2906002)(76176011)(5660300001)(316002)(3846002)(81166006)(106356001)(6506007)(74316002)(7736002)(305945005)(7696005)(33656002)(6116002)(8676002)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5352;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 9b0b27b0-04af-45a7-5190-08d5e7d656f5
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB5352;
-x-ms-traffictypediagnostic: BYAPR07MB5352:
-x-microsoft-antispam-prvs: <BYAPR07MB53522CD2288A0F38B83CED29DD590@BYAPR07MB5352.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231311)(944501410)(52105095)(3002001)(93006095)(93001095)(149027)(150027)(6041310)(20161123560045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BYAPR07MB5352;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB5352;
-x-forefront-prvs: 0731AA2DE6
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 8pbnnAzA2JW6y2Q6AoetoTEj3LHioOu5n12d2Eu9sGA5AUU85xQf7DDPznict2zfZQXgGPqnzKR0jkhEKTwdjuUayt4SPZGrcf63jPEnpYx3MloSeAOqu7QNtqLzhrIfswlLri1o7AWToKVNKsAWS17Rwk367B1HckiU6+rCOg09S2E03WNE+DoQ+B68niNHNP2YCPtkDdjGomo1rZAyIGxAkVY6HmOdUE/WlyA2FA8o3PWLFQ0TNIZl3ZQQeddH1UHgxlrK/J4PfvlrE7CtSxzgUMX+m54xY5W5OtXJ0dOJ4hqqLsP525kZSjrlTVzha+6fzxPBrgxQ7Yo18/GVYW8IXdA3cLv11rL9qaEnKMY=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b0b27b0-04af-45a7-5190-08d5e7d656f5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2018 09:03:30.9707
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5352
+        Thu, 12 Jul 2018 05:17:23 -0400
+Received: from mailout2.samsung.com ([203.254.224.25]:36702 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726528AbeGLJRX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 05:17:23 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20180712090840epoutp02be47b2ff5361f01535071cd322db518c~Ak_096K3e0216702167epoutp02Q;
+        Thu, 12 Jul 2018 09:08:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20180712090840epoutp02be47b2ff5361f01535071cd322db518c~Ak_096K3e0216702167epoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1531386520;
+        bh=Wkplri9XOHjDgS++xukPdKVen16VR2D7u3HsKoHjSjM=;
+        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
+        b=OehpOE8xeRXibxzJXa2fT3TV8wC8u05oxD7gBFa2NVeN9tTRl0Pkjy9m/IeICR2+n
+         M2/PAbVTAjiheP1oQ4SeW04FLwp8k48Sk9loFYHh0SlC9oDSAToOemILRCyXWCm2z6
+         7BIPT4iHsi2/ck0ceClmNum0Gh6Id9V+fEVPXYn8=
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.153]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20180712090837epcas1p4de8c52b9a3d8f71fbe199360b0561a9a~Ak_yML6_50987909879epcas1p49;
+        Thu, 12 Jul 2018 09:08:37 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        23.5B.04068.59A174B5; Thu, 12 Jul 2018 18:08:37 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180712090837epcas1p27a4704b395e0765ab0dc4aaad05657e1~Ak_x5DqWY2357523575epcas1p2H;
+        Thu, 12 Jul 2018 09:08:37 +0000 (GMT)
+X-AuditID: b6c32a36-be9ff70000000fe4-5a-5b471a95c1ef
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6C.BE.03915.49A174B5; Thu, 12 Jul 2018 18:08:37 +0900 (KST)
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Received: from [10.113.63.77] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PBQ00BW6XEC3W60@mmp1.samsung.com>; Thu, 12 Jul 2018 18:08:36 +0900 (KST)
+Subject: Re: [PATCH v5 07/12] PM / devfreq: export devfreq_class
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-id: <41164a91-b271-5f3b-b461-21ff5997cc84@samsung.com>
+Date:   Thu, 12 Jul 2018 18:08:36 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
+In-reply-to: <20180706180923.GH129942@google.com>
+Content-language: en-US
+Content-transfer-encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHJsWRmVeSWpSXmKPExsWy7bCmnu5UKfdog5XLJS3+TjrGbjH9yWUW
+        i00f37NazD9yjtXi7LKDbBZrbh9itGhevJ7N4mzTG3aL+1+PMlpc3jWHzeJz7xFGi6XXLzJZ
+        fN7wmNHiduMKNotT1z+zWZw5fYnVonXvEXaLjV89HIQ81sxbw+jx+9ckRo/ZDRdZPHbcXcLo
+        sWlVJ5vHnWt72Dz2z13D7nHlRBOrx5ar7SwefVtWMXp83iQXwB2VapORmpiSWqSQmpecn5KZ
+        l26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkD9JqSQlliTilQKCCxuFhJ386mKL+0
+        JFUhI7+4xFYp2tDQSM/QwFzPyAhIG8daGZkClSSkZszbNp+94J90xZZJJ1kbGLvEuxg5OSQE
+        TCReflnEDGILCexglLh9R7qLkQvI/s4oceFtKxNM0anJq5kgErsZJebcnAOW4BUQlPgx+R4L
+        iM0soCnx4sskFoiiu4wS5379BEsICzhI3Nh3nB3EFhHQkHjy+zwjSBGzwDRWie5p/9lAEmwC
+        WhL7X9wAs/kFFCWu/njMCLHBTmJV8yqwQSwCqhL7L5wC2ywqECHR9Pwn2FBOAUOJ5T9uMkNc
+        IS7R3HoT6iJ5iYNXnoNdJCFwi13i4smlUP+4SNyf95gFwhaWeHV8C9AgDiBbWuLSUVuI+nZG
+        iS8vmlkhnAmMEh9ObYZqNpZ4trCLCWIDn8S7rz2sEM28Eh1tQhAlHhI39veyQYLiL6NE++Tj
+        7BMY5WYhBdkspCCbheTwWUgOX8DIsopRLLWgODc9tdiwwEivODG3uDQvXS85P3cTIzhta5nt
+        YFx0zucQowAHoxIP7wYOt2gh1sSy4srcQ4wSHMxKIryXpgCFeFMSK6tSi/Lji0pzUosPMZoC
+        A3Mis5Rocj4wp+SVxBuaGhkbG1uYGJqZGhoqifP2nHaNFhJITyxJzU5NLUgtgulj4uCUamBc
+        f+Fy0qydXBdtEuQEnk3rXLT0ZfC0zKYF1XNd5y+4uP4k850f03fl8d+PU5wZWfHrzO+lneLK
+        L1x6ojlscttE7e8UnfSN17oUlfNNOLCl+afMTlPvOR1vDlz+/ufJ9ItzFMwS/p7PenDlTsCF
+        xXJnonenVl1PseDjurTKSdh463OOHfd6tja9VWIpzkg01GIuKk4EALaorlXxAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t9jAd2pUu7RBm3T2Cz+TjrGbjH9yWUW
+        i00f37NazD9yjtXi7LKDbBZrbh9itGhevJ7N4mzTG3aL+1+PMlpc3jWHzeJz7xFGi6XXLzJZ
+        fN7wmNHiduMKNotT1z+zWZw5fYnVonXvEXaLjV89HIQ81sxbw+jx+9ckRo/ZDRdZPHbcXcLo
+        sWlVJ5vHnWt72Dz2z13D7nHlRBOrx5ar7SwefVtWMXp83iQXwB3FZZOSmpNZllqkb5fAlTFv
+        23z2gn/SFVsmnWRtYOwS72Lk5JAQMJE4NXk1UxcjF4eQwE5Gif13TrOAJHgFBCV+TL4HZHNw
+        MAuoS0yZkgtRc59RYvK8C+wgNcICDhI39h0Hs0UENCSe/D7PCGIzC8xgldh4IQai4S+jxJb7
+        H1lBEmwCWhL7X9xgA7H5BRQlrv54zAixzE5iVfMqsMUsAqoS+y+cYgKxRQUiJO6d/wRWzylg
+        KLH8x01miAXiEs2tN1kgbHmJg1ees0xgFJyF5O5ZCHfPQtIxC0nHAkaWVYySqQXFuem5xUYF
+        hnmp5XrFibnFpXnpesn5uZsYgVG87bBW3w7G+0viDzEKcDAq8fBu4HCLFmJNLCuuzD3EKMHB
+        rCTCe2kKUIg3JbGyKrUoP76oNCe1+BCjNAeLkjjv7bxjkUIC6YklqdmpqQWpRTBZJg5OqQZG
+        JYbzbML86c3n+L/Jdi+b/+WAm8W2TSe3F3b5TPgsG3jjFrfm97+r2kRvbmI93Rz8cMWkLLHO
+        H8tr1XbnmTD0Wn8PCotYceAQT1/Ivqz13w8cZIlKvM29Rig3S1WtW1xEZiPz9DyutLXfd3zN
+        kvjmn37ZYvah3TNff+j/UnLn4o3oP5k7KidGKrEUZyQaajEXFScCAB2SftzeAgAA
+X-CMS-MailID: 20180712090837epcas1p27a4704b395e0765ab0dc4aaad05657e1
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180703234837epcas5p1da751e0394c16816b95ac1956bf6de20
+References: <20180703234705.227473-1-mka@chromium.org>
+        <CGME20180703234837epcas5p1da751e0394c16816b95ac1956bf6de20@epcas5p1.samsung.com>
+        <20180703234705.227473-8-mka@chromium.org> <5B3C5B78.6020401@samsung.com>
+        <20180706180923.GH129942@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+ICsvKiBVU0IgMi4wIGhhcmR3YXJlIExNUCBjYXBhYmlsaXR5Ki8NCj4gPiArI2RlZmluZSBV
-U0JTU1BfSExDCQkJKDEgPDwgMTkpDQo+ID4gKyNkZWZpbmUgVVNCU1NQX0JMQwkJCSgxIDw8IDIw
-KQ0KPiANCj4gQWdhaW4sIEJJVCgpIHBsZWFzZS4NCj4gDQo+ID4gK2ludCB1c2Jzc3BfaGFuZHNo
-YWtlKHZvaWQgX19pb21lbSAqcHRyLCB1MzIgbWFzaywgdTMyIGRvbmUsIGludCB1c2VjKQ0KPiA+
-ICt7DQo+ID4gKwl1MzIJcmVzdWx0Ow0KPiANCj4gU29tZSBwbGFjZXMgeW91IHVzZSB0YWJzIGZv
-ciB0aGUgdmFyaWFibGUgZGVjbGFyYXRpb25zLCBhbmQgc29tZSB5b3UgZG8NCj4gbm90LiAgUGlj
-ayBhIHNpbmdsZSBzdHlsZSBhbmQgc3RpY2sgdG8gaXQgcGxlYXNlLg0KPiANCj4gPiArDQo+ID4g
-KwlkbyB7DQo+ID4gKwkJcmVzdWx0ID0gcmVhZGwocHRyKTsNCj4gPiArCQlpZiAocmVzdWx0ID09
-IH4odTMyKTApCS8qIGNhcmQgcmVtb3ZlZCAqLw0KPiA+ICsJCQlyZXR1cm4gLUVOT0RFVjsNCj4g
-PiArCQlyZXN1bHQgJj0gbWFzazsNCj4gPiArCQlpZiAocmVzdWx0ID09IGRvbmUpDQo+ID4gKwkJ
-CXJldHVybiAwOw0KPiA+ICsJCXVkZWxheSgxKTsNCj4gPiArCQl1c2VjLS07DQo+ID4gKwl9IHdo
-aWxlICh1c2VjID4gMCk7DQo+ID4gKwlyZXR1cm4gLUVUSU1FRE9VVDsNCj4gDQo+IFdlIGRvbid0
-IGhhdmUgYSBidWlsdC1pbiBrZXJuZWwgZnVuY3Rpb24gdG8gZG8gdGhpcyB0eXBlIG9mIHRoaW5n
-IGFscmVhZHk/DQo+IFRoYXQncyBzYWQuICBPaCB3ZWxsLi4uDQo+IA0KPiA+ICtpbnQgdXNic3Nw
-X2luaXQoc3RydWN0IHVzYnNzcF91ZGMgKnVzYnNzcF9kYXRhKSB7DQo+ID4gKwlpbnQgcmV0dmFs
-ID0gMDsNCj4gPiArDQo+ID4gKwl1c2Jzc3BfZGJnX3RyYWNlKHVzYnNzcF9kYXRhLCB0cmFjZV91
-c2Jzc3BfZGJnX2luaXQsDQo+ICJ1c2Jzc3BfaW5pdCIpOw0KPiA+ICsNCj4gPiArCXNwaW5fbG9j
-a19pbml0KCZ1c2Jzc3BfZGF0YS0+bG9jayk7DQo+ID4gKwlzcGluX2xvY2tfaW5pdCgmdXNic3Nw
-X2RhdGEtPmlycV90aHJlYWRfbG9jayk7DQo+ID4gKw0KPiA+ICsJLy9UT0RPOiBtZW1vcnkgaW5p
-dGlhbGl6YXRpb24NCj4gPiArCS8vcmV0dmFsID0gdXNic3NwX21lbV9pbml0KHVzYnNzcF9kYXRh
-LCBHRlBfS0VSTkVMKTsNCj4gPiArDQo+ID4gKwl1c2Jzc3BfZGJnX3RyYWNlKHVzYnNzcF9kYXRh
-LCB0cmFjZV91c2Jzc3BfZGJnX2luaXQsDQo+ID4gKwkJCSJGaW5pc2hlZCB1c2Jzc3BfaW5pdCIp
-Ow0KPiANCj4gV2hlbiB5b3VyIHRyYWNlIGZ1bmN0aW9ucyBkbyBub3RoaW5nIGJ1dCBzYXkgImVu
-dGVyZWQgYSBmdW5jdGlvbiIsIGFuZA0KPiAiZXhpdGVkIGEgZnVuY3Rpb24iLCB3aHkgZXZlbiBo
-YXZlIHRoZW0/ICBmdHJhY2UgY2FuIHByb3ZpZGUgdGhhdCBmb3IgeW91DQo+IGFscmVhZHksIG5v
-IG5lZWQgdG8gb3ZlcmxvYWQgdGhhdCBvbiB0aGUgdHJhY2luZyBmcmFtZXdvcmssIHJpZ2h0Pw0K
-DQpEbyB5b3Ugc3VnZ2VzdCB0byB1c2Ugb25seTogDQoJdHJhY2VfdXNic3NwX2RiZ19pbml0KCJG
-aW5pc2hlZCB1c2Jzc3BfaW5pdCIpOyANCmluc3RlYWQ6IA0KCXVzYnNzcF9kYmcodXNic3NwX2Rh
-dGEsICIlcFZcbiIsICJGaW5pc2hlZCB1c2Jzc3BfaW5pdCIpOw0KCXRyYWNlX3VzYnNzcF9kYmdf
-aW5pdCgiRmluaXNoZWQgdXNic3NwX2luaXQiKTsNCj8NCg0KSSdtIHNpbXBsZSByZS11c2VkIHRo
-ZSBjb2RlIGZyb20gWEhDSSBkcml2ZXIuIEl0J3MgcmVhbGx5IHJlZHVuZGFudCwgDQpidXQgSSBk
-b24ndCBrbm93IHRoZSBpbnRlbnRpb24gb2YgYXV0aG9yIPCfmIouICANCiANCj4gPiArLyoNCj4g
-PiArICogZ2FkZ2V0LWlmLmMgZmlsZSBpcyBwYXJ0IG9mIGdhZGdldC5jIGZpbGUgYW5kIGltcGxl
-bWVudHMgaW50ZXJmYWNlDQo+ID4gKyAqIGZvciBnYWRnZXQgZHJpdmVyDQo+ID4gKyAqLw0KPiA+
-ICsjaW5jbHVkZSAiZ2FkZ2V0LWlmLmMiDQo+IA0KPiBVZ2gsIEkga25vdyBVU0IgaGNkIGRyaXZl
-cnMgbG92ZSB0byBpbmNsdWRlIC5jIGZpbGVzIGluIHRoZSBtaWRkbGUgb2YgdGhlbSwgYnV0DQo+
-IGRvIHdlIGhhdmUgdG8gY29udGludWUgdGhhdCBjcmF6eSBwcmFjdGljZSBpbiBuZXdlciBkcml2
-ZXJzPw0KPiBJcyBpdCByZWFsbHkgbmVjZXNzYXJ5Pw0KDQpJdCdzIG5vdCBuZWNlc3NhcnkgSSB3
-YW50ZWQgdG8gbGVhdmUgdGhpcyBhcyB0d28gc2VwYXJhdGUgZmlsZSwgYmVjYXVzZSBnYWRnZXQu
-YyANCklzIGJhc2VkIG9uIHhoY2kuYyBhbmQgZ2FkZ2V0LWlmLmMgZGVmaW5lIGludGVyZmFjZSBi
-ZXR3ZWVuIGdhZGdldC5jIGFuZCANClVTQiBnYWRnZXQgY29yZSBkcml2ZXIuIEkgZGlkbid0IHdh
-bnQgdG8gY29tYmluZSB0aGVzZSB0d28gZmlsZXMuIA0KDQpJIHdpbGwgYWRkIHNvbWUgYWRkaXRp
-b25hbCBmdW5jdGlvbiBkZWNsYXJhdGlvbiB0byBnYWRnZXQuaCBhbmQgcmVtb3ZlIGl0IA0KZnJv
-bSBnYWRnZXQuYyBmaWxlLiANCg0KIA0KPiA+ICsJLyoNCj4gPiArCSAqIENoZWNrIHRoZSBjb21w
-aWxlciBnZW5lcmF0ZWQgc2l6ZXMgb2Ygc3RydWN0dXJlcyB0aGF0IG11c3QgYmUgbGFpZA0KPiA+
-ICsJICogb3V0IGluIHNwZWNpZmljIHdheXMgZm9yIGhhcmR3YXJlIGFjY2Vzcy4NCj4gPiArCSAq
-Lw0KPiA+ICsJQlVJTERfQlVHX09OKHNpemVvZihzdHJ1Y3QgdXNic3NwX2Rvb3JiZWxsX2FycmF5
-KSAhPSAyKjMyLzgpOw0KPiA+ICsJQlVJTERfQlVHX09OKHNpemVvZihzdHJ1Y3QgdXNic3NwX3Ns
-b3RfY3R4KSAhPSA4KjMyLzgpOw0KPiA+ICsJQlVJTERfQlVHX09OKHNpemVvZihzdHJ1Y3QgdXNi
-c3NwX2VwX2N0eCkgIT0gOCozMi84KTsNCj4gPiArCS8qIHVzYnNzcF9kZXZpY2UgaGFzIGVpZ2h0
-IGZpZWxkcywgYW5kIGFsc28NCj4gPiArCSAqIGVtYmVkcyBvbmUgdXNic3NwX3Nsb3RfY3R4IGFu
-ZCAzMSB1c2Jzc3BfZXBfY3R4DQo+ID4gKwkgKi8NCj4gPiArCUJVSUxEX0JVR19PTihzaXplb2Yo
-c3RydWN0IHVzYnNzcF9zdHJlYW1fY3R4KSAhPSA0KjMyLzgpOw0KPiA+ICsJQlVJTERfQlVHX09O
-KHNpemVvZih1bmlvbiB1c2Jzc3BfdHJiKSAhPSA0KjMyLzgpOw0KPiA+ICsJQlVJTERfQlVHX09O
-KHNpemVvZihzdHJ1Y3QgdXNic3NwX2Vyc3RfZW50cnkpICE9IDQqMzIvOCk7DQo+ID4gKwlCVUlM
-RF9CVUdfT04oc2l6ZW9mKHN0cnVjdCB1c2Jzc3BfY2FwX3JlZ3MpICE9IDgqMzIvOCk7DQo+ID4g
-KwlCVUlMRF9CVUdfT04oc2l6ZW9mKHN0cnVjdCB1c2Jzc3BfaW50cl9yZWcpICE9IDgqMzIvOCk7
-DQo+ID4gKwkvKiB1c2Jzc3BfcnVuX3JlZ3MgaGFzIGVpZ2h0IGZpZWxkcyBhbmQgZW1iZWRzIDEy
-OA0KPiB1c2Jzc3BfaW50cl9yZWdzICovDQo+ID4gKwlCVUlMRF9CVUdfT04oc2l6ZW9mKHN0cnVj
-dCB1c2Jzc3BfcnVuX3JlZ3MpICE9ICg4KzgqMTI4KSozMi84KTsNCj4gDQo+IEkgbG92ZSBoYXJk
-LWNvZGVkIG51bWJlcnMgYXMgbXVjaCBhcyB0aGUgbmV4dCBwZXJzb24sIGJ1dCByZWFsbHk/ICBJ
-cyB0aGlzDQo+IG5lY2Vzc2FyeSBub3cgdGhhdCB5b3UgaGF2ZSB0aGUgY29kZSB1cCBhbmQgd29y
-a2luZyBwcm9wZXJseT8NCg0KQ29kZSBpcyBzdGlsbCBiZWluZyBkZXZlbG9wZWQsICBhbmQgaXMg
-c3RpbGwgdGVzdGVkLiBJdCdzIGJldHRlciB0byBsZWF2ZSB0aGlzIGNvZGUgYXQgDQp0aGlzIG1v
-bWVudC4gIEkgd2lsbCByZW1vdmUgaXQgaW4gdGhlIGZlYXR1cmUuIA0KDQp0aGFua3MsDQpQYXdl
-bCBMYXN6Y3phaw0K
+Hi Matthias,
+
+On 2018년 07월 07일 03:09, Matthias Kaehlcke wrote:
+> Hi,
+> 
+> On Wed, Jul 04, 2018 at 02:30:32PM +0900, Chanwoo Choi wrote:
+> 
+>> I didn't see any framework which exporting the class instance.
+>> It is very dangerous. Unknown device drivers is able to reset
+>> the 'devfreq_class' instance. I can't agree this approach.
+> 
+> While I agree that it is potential dangerous it is actually a common
+> practice to export the class:
+> 
+
+I tried to find the real usage of exported class instance
+and I add the comment for each class instance. Almost exported class
+instance are used in the their own director or some exported class
+like rio_mport_class/switchtec_class are created from specific device driver
+instead of subsystem.
+
+Only following two cases are used on outside of subsystem directory.
+devtmpfs.c and alarmtimer.c are core feature of linux kernel.
+
+	drivers/base/devtmpfs.c uses 'block_class'.
+	kernel/time/alarmtimer.c uses 'rtc_class'.
+
+I cannot yet agree this approach due to only block_class and rtc_class.
+
+You added the following comment why devfreq_class instance is necessary.
+Actullay, I don't know the best solution right now. But, all device drivers
+can be added or removed if driver uses the module type. It is not a problem
+for only devfreq instance. 
+
+/*
++	 * devfreq devices can be added and removed at runtime, hence they
++	 * must also be handled dynamically. The class_interface notifies us
++	 * whenever a device is added or removed. When the interface is
++	 * registered ci->add_dev() is called for all existing devfreq
++	 * devices.
+*/
+
+
+> grep "extern struct class " include/linux/ -R
+> include/linux/rio.h:extern struct class rio_mport_class;
+rio_mport_class is created on drivers/rapidio/rio-drivers.c.
+It means that just device driver create the 'rio_mport_class' class
+instead of any linux kernel subsystem.
+
+> include/linux/tty.h:extern struct class *tty_class;
+tty_class is not used on outside of drivers/tty
+
+> include/linux/fb.h:extern struct class *fb_class;
+fb_class is not used on outside of drivers/video/fbdev
+
+> include/linux/ide.h:extern struct class *ide_port_class;
+ide_port_class is not used on outside of drivers/ide.
+
+> include/linux/device.h:extern struct class * __must_check __class_create(struct module *owner,
+
+> include/linux/devfreq.h:extern struct class *devfreq_class;
+not yet
+
+> include/linux/switchtec.h:extern struct class *switchtec_class;
+switchtec_class is created on drivers/pci/switch/switchtec.c
+and then switchtec_class is only used on drivers/ntb/hw/mscc/ntb_hw_switchtec.c.
+It is not subsystem. Just switchtec.c device driver makes the their own class.
+
+> include/linux/input.h:extern struct class input_class;
+	input_class is not used on outside of drivers/input.
+
+> include/linux/power_supply.h:extern struct class *power_supply_class;
+	power_supply_class is not used on outside of drivers/power/supply.
+
+
+> include/linux/genhd.h:extern struct class block_class;
+	drivers/base/devtmpfs.c uses 'block_class'.
+
+> include/linux/rtc.h:extern struct class *rtc_class;
+	kernel/time/alarmtimer.c uses 'rtc_class'.
+
+> 
+> struct class_interface and class_interface_register() would be
+> pointless without exported classes.
+> 
+> My understanding is that the kernel is often lax on encapsulation and
+> exposes private/delicate data pragmatically within the kernel when
+> needed because "the kernel trusts itself".
+> 
+> Thanks
+> 
+> Matthias
+> 
+> 
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
