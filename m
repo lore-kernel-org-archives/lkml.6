@@ -4,67 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D3F8C468C9
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54093C468C8
 	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 441AE21479
+	by mail.kernel.org (Postfix) with ESMTP id 0B62B213A2
 	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:36:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JS/3+lLk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 441AE21479
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qo2Ds1RD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B62B213A2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbeGLKp2 (ORCPT
+        id S1726738AbeGLKp1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 06:45:28 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42834 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeGLKp2 (ORCPT
+        Thu, 12 Jul 2018 06:45:27 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40300 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726588AbeGLKp1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 06:45:28 -0400
-Received: by mail-ed1-f67.google.com with SMTP id g12-v6so21493396edi.9
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 03:36:29 -0700 (PDT)
+        Thu, 12 Jul 2018 06:45:27 -0400
+Received: by mail-ed1-f65.google.com with SMTP id e19-v6so21493304edq.7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 03:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=anKfC4aCnw8IkdbS9m18e4upLpD9da7Lj0mtfsM3I/0=;
-        b=JS/3+lLkPUBMnEdOzJ3++2UAUZQdvAypk4grDNteGIumxkr1MhQcGmuwOTZrpn5v4z
-         Dmpff8uwdh365lzFrAY5OitA2t5AIpCNry8TGfzvQCxlapVL3zGXXpqfWDSDHRYG07xg
-         hz1hkRBGzTB1ji+a0bfAbDReA6T12yv/RFhA7VrmMf5+vmza/zh8lLjV8481lGiDmjiK
-         Y8Q0vyntOvPYK2G+T/m9hoErm8ninJHx+ySIL4MVUKIzQshr0lyZ9uUxwhJrvlESu8iP
-         te/tnBncs4K4uEemnVYtoclpeCVtFOwFHx6xmlvjeVYGeXU5+caVI7F9wdo2lrayA5SH
-         okdQ==
+        bh=97Hwk7qyw/2m/Ri383OvmGWSE3E5FauAWWiEzY1T4YQ=;
+        b=Qo2Ds1RD2YTIAP0vtsn47m6ga/S3rBVsWyQG+wuUcDEMWp5Bt3Zr/cOiLz4NUtAeSo
+         6PR9yivWMrBtL3m2nivtEiPPVpH/i0/EikBn9VX25Sil8Fss+36ARJ/RL7sLV3ExQZOd
+         D5AOZF6xcvOeXe2JsDdn5FKhMTvtHAHbXob8xlHo8LSzxbQooUpZVGYCmAIsyJ7Y5Ebt
+         eb7n/YxAjQlRVoxFpctsBpFi3cP9TsLImkdmJV2MuqKQeg6iLAUlRJpw7nQsxbjVrF0F
+         HncElN38KS207iWngWsUW0XPGYA/6KtGksXvlPA5TB63qmnWFsa8ScSvJ9b1ZWu2Ro3/
+         5BWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=anKfC4aCnw8IkdbS9m18e4upLpD9da7Lj0mtfsM3I/0=;
-        b=kIFeBv9KPIF9w+W7Ov/mXAONVPkybn18pOX3WziWO1JHAEkdxmpCQt2298y6GoIOfU
-         EJqx1bepnkLJxqjIBhBpt9umxZf+Adcp403Zb1jaaTxJutXhcQxh+U1amYvBZe+7Th/0
-         2mPpu/N67nMFYHRjRnXvbZXrIKFpquLLoZKe8vVewfo8nRguFLbfTH7ewLiBbGbP5//1
-         Akfn6a8rHKJ7O+A1hXQuA0PbNphaSfmcW3GfcoIF5ZH1mqJgy5sdUy3ZOhq2bCoHhTJ8
-         kKv3gDlbz2eR05sOxW7AxS/sYbeEQyGKP5lyuxlIM8C/0OcQ7oBVux0BnhaECD8/atk4
-         qaRg==
-X-Gm-Message-State: AOUpUlErlDm3y7trYHPBU2P9sWzbZMIijjCT4cd5VBLrCPUGQlKbpzsA
-        oxI/s/si0Gh2Wm2M5BMf3iC2uIF9AjE=
-X-Google-Smtp-Source: AAOMgpehgzKLtdfDNJ9/qJBLQY9IRLTVURimKIiI+7P/Jfl5JuCPx68nno3pwwui7KsHwGHR2ItEQg==
-X-Received: by 2002:a50:8d46:: with SMTP id t6-v6mr1928217edt.238.1531391789358;
-        Thu, 12 Jul 2018 03:36:29 -0700 (PDT)
-Received: from arch.localdomain (x4d0a32b7.dyn.telefonica.de. [77.10.50.183])
-        by smtp.gmail.com with ESMTPSA id r11-v6sm3661567edh.32.2018.07.12.03.36.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=97Hwk7qyw/2m/Ri383OvmGWSE3E5FauAWWiEzY1T4YQ=;
+        b=anbrzwoQY/iAG+ZhHE0DkqCqpAeNsKK+M9KpMQVnUSwdYoRXDV9lU7ZTTE5p8scnuq
+         rVEvNcagioMQiUuCrBZJYRtjMTFJOqe5cQlLVqS2Oz+IMoY/vJW7sxmNPenGiiL8DUec
+         1DhrtgfGTyoVX/Ga6Ok8fkOWaPaLmHgn4s8f1m7hJQwb0kYT4XXSRazItZWzWR4NqegC
+         WO6vTjq/EL3NXIAxjYqJhJMWr5LViSKbRyC+uqJgCerVEnslYgMGekJUUKA/L2WWAc/B
+         pQGMCIqOdcMmZ3Xmq6caleptG/ABcTVBP8r/WU4zcCVOJj6rzd24h4h7wiWx9FR1HR9F
+         XlNQ==
+X-Gm-Message-State: AOUpUlGwwwvJQ1oav0ZXsb2X3GnqPmtHilOkbOA0+A7U/SnRsE20+miT
+        xBU4SvvTREwbaYGJY4ol0zk=
+X-Google-Smtp-Source: AAOMgpfr4PPA0dVcgEFTc66XbeQ+bGsUEUJA8LkklUZaWpNobUIWVPSRZ+Me95AewM3KxvySEUN2Qg==
+X-Received: by 2002:aa7:da16:: with SMTP id r22-v6mr2035786eds.54.1531391788007;
         Thu, 12 Jul 2018 03:36:28 -0700 (PDT)
+Received: from arch.localdomain (x4d0a32b7.dyn.telefonica.de. [77.10.50.183])
+        by smtp.gmail.com with ESMTPSA id r11-v6sm3661567edh.32.2018.07.12.03.36.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 03:36:27 -0700 (PDT)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 4/5] staging: rtl8723bs: change return type to bool
-Date:   Thu, 12 Jul 2018 12:36:09 +0200
-Message-Id: <20180712103610.19532-4-straube.linux@gmail.com>
+Subject: [PATCH 3/5] staging: rtl8723bs: refactor rtw_is_cckratesonly_included
+Date:   Thu, 12 Jul 2018 12:36:08 +0200
+Message-Id: <20180712103610.19532-3-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180712103610.19532-1-straube.linux@gmail.com>
 References: <20180712103610.19532-1-straube.linux@gmail.com>
@@ -73,53 +73,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both rtw_is_cckrates_included() and rtw_is_cckratesonly_included()
-return true or false. Change the return type from uint to bool.
+Refactor rtw_is_cckratesonly_included() to improve readability and
+slightly reduce object file size.
 
+Suggested-by: Joe Perches <joe@perches.com>
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8723bs/core/rtw_ieee80211.c | 4 ++--
- drivers/staging/rtl8723bs/include/ieee80211.h  | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/rtl8723bs/core/rtw_ieee80211.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-index e4a20a4a5e59..62718045f3cc 100644
+index 3adb58759d5f..e4a20a4a5e59 100644
 --- a/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
 +++ b/drivers/staging/rtl8723bs/core/rtw_ieee80211.c
-@@ -66,7 +66,7 @@ int rtw_get_bit_value_from_ieee_value(u8 val)
- 	return 0;
- }
+@@ -81,13 +81,12 @@ uint rtw_is_cckrates_included(u8 *rate)
  
--uint rtw_is_cckrates_included(u8 *rate)
-+bool rtw_is_cckrates_included(u8 *rate)
+ uint rtw_is_cckratesonly_included(u8 *rate)
  {
- 	while (*rate) {
- 		u8 r = *rate & 0x7f;
-@@ -79,7 +79,7 @@ uint rtw_is_cckrates_included(u8 *rate)
- 	return false;
- }
+-	u32 i = 0;
++	while (*rate) {
++		u8 r = *rate & 0x7f;
  
--uint rtw_is_cckratesonly_included(u8 *rate)
-+bool rtw_is_cckratesonly_included(u8 *rate)
- {
- 	while (*rate) {
- 		u8 r = *rate & 0x7f;
-diff --git a/drivers/staging/rtl8723bs/include/ieee80211.h b/drivers/staging/rtl8723bs/include/ieee80211.h
-index 974e922f54fa..bcc8dfa8e672 100644
---- a/drivers/staging/rtl8723bs/include/ieee80211.h
-+++ b/drivers/staging/rtl8723bs/include/ieee80211.h
-@@ -1169,9 +1169,9 @@ int rtw_generate_ie(struct registry_priv *pregistrypriv);
+-	while (rate[i] != 0) {
+-		if  ((((rate[i]) & 0x7f) != 2) && (((rate[i]) & 0x7f) != 4) &&
+-		     (((rate[i]) & 0x7f) != 11)  && (((rate[i]) & 0x7f) != 22))
++		if (r != 2 && r != 4 && r != 11 && r != 22)
+ 			return false;
+-		i++;
++		rate++;
+ 	}
  
- int rtw_get_bit_value_from_ieee_value(u8 val);
- 
--uint	rtw_is_cckrates_included(u8 *rate);
-+bool rtw_is_cckrates_included(u8 *rate);
- 
--uint	rtw_is_cckratesonly_included(u8 *rate);
-+bool rtw_is_cckratesonly_included(u8 *rate);
- 
- int rtw_check_network_type(unsigned char *rate, int ratelen, int channel);
- 
+ 	return true;
 -- 
 2.18.0
 
