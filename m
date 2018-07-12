@@ -2,121 +2,125 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0059ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7ED7ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A5621480
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:17:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75FE12147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:23:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jOsn/rV2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A5621480
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="u7LKRZ9Z";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EIw9lXXU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75FE12147C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732550AbeGLU2g (ORCPT
+        id S1732488AbeGLUeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 16:28:36 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:41895 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732526AbeGLU2f (ORCPT
+        Thu, 12 Jul 2018 16:34:18 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:46005 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732391AbeGLUeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:28:35 -0400
-Received: by mail-pf0-f194.google.com with SMTP id c21-v6so16625361pfn.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 13:17:27 -0700 (PDT)
+        Thu, 12 Jul 2018 16:34:18 -0400
+Received: by mail-yw0-f194.google.com with SMTP id 139-v6so10926283ywg.12
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 13:23:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dAwq1mkAVXiY0/cfgYJalGRPhrDv9DLxOQ4uYGDmhxI=;
-        b=jOsn/rV269hQMYahSiYnGT0KhcbsEoeFGeTe9e1CA1Z7T7K9amJ4xyA3/4wDXr4YjN
-         YJbM2THUiDBHdGyZureu1f5z3XWdnM9asZhCWrKOzY1TZQuZzxPGA1zLsatvGBE3McNU
-         KbXWA6SF0W09rwSf78pD9JMUD8lt+IfJTlyvQ=
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Qp9XrCjDlrTvpp2/shwNgeaHX5kY0gaKvBENU8mBZjI=;
+        b=u7LKRZ9ZeRBwzjeVNzoV7Xfv5YMs6fu/qC1gwMpLcgFOtjv+atyVWw0pb9IDiLUWP2
+         wHJ0PWFJKvCjnYqposDHnn6e/Pqt7GpDexL1OpGv/1qSmOkOa0e4PoAlKqyHGb7iqbcR
+         qn6lCJmPzyHKeHOwUJ4MR6YwjiYuMIdD5a3y+YrIhmaLesgLFL22EeJan7qoxDl9DIEZ
+         wbA+8YCe0jbqDum7CSgOoierE/HccGWocNx+zUqGn4P3rivvw3rmLqHDKMyQJkSKmbSa
+         RQubGnSS298uf9QaXvQZM62a28gHRs9LHmWLET88eUTPYtow2q8h5/R+GfWZdUOT9X0L
+         mvng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Qp9XrCjDlrTvpp2/shwNgeaHX5kY0gaKvBENU8mBZjI=;
+        b=EIw9lXXUlooim1Aa5qnaxRgwF6K07Ltyu4/D2A8DZq0jIiCj8NNJ7kj0LiFRGazcjE
+         76lnXdxhjt8ZMQnGGxiW0jxwf1ZSeyqJ3buFC3gsEHMKSzTFbmaejVT9+PN+8FyIQRpd
+         OtvHFYV78BB51m+su5tN9slyCR1RFEIi1rCRE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=dAwq1mkAVXiY0/cfgYJalGRPhrDv9DLxOQ4uYGDmhxI=;
-        b=iFGqTWaiqjMNUjD6dzdmdYY4MW/I5ynHFceQ7Nz83OXxb8d65P4WKcEnqUwpUOK3k2
-         qv50dv1BUO+LNslz+YARxEpiJ1f0a0ZVVlGaluBHgEPEfvScEKM6+PtW/D3Xb18nzRD4
-         PzHnaIcrsXgMZQCjSOr74+R9U2wYl/76zBZC/c28q4a3BfS6jEHm99yimGxGsrfLEWcl
-         4kGm2b1kGZrUiv4Ko/k6xwlpTbDjrqSxAVI2RHmvSKiX8oIX7Z2uXMlDiSAbVbqibYZE
-         lF575pArt6AplXAES/g9JGYulAH99OoSQDiN4/U5aBBt78i/38gPKc/sESDIFRBAxyKl
-         tLfg==
-X-Gm-Message-State: AOUpUlGJEtFyxu3s2ijBPY0uDSrwM6cZjECKNpL//Ze2cdu167QSN9Mq
-        cuY4UaZLnJWXfodHy+8Thla33OYPJOo=
-X-Google-Smtp-Source: AAOMgpcxXG8zppfEzhP4X7Dd4URpMRKbWeb5IjdvmXArLCfXaO9YnvcfjBkG6Eekx6+xGOlyyW6BOQ==
-X-Received: by 2002:a63:c742:: with SMTP id v2-v6mr3351953pgg.331.1531426646491;
-        Thu, 12 Jul 2018 13:17:26 -0700 (PDT)
-Received: from localhost.localdomain ([2601:1c2:600:5100:4e72:b9ff:fe99:466a])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm22647000pgc.55.2018.07.12.13.17.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 12 Jul 2018 13:17:25 -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miroslav Lichvar <mlichvar@redhat.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Stephen Boyd <sboyd@kernel.org>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH 1/2] selftest: timers: Tweak raw_skew to SKIP when ADJ_OFFSET/other clock adjustments are in progress
-Date:   Thu, 12 Jul 2018 13:17:20 -0700
-Message-Id: <1531426641-20076-2-git-send-email-john.stultz@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531426641-20076-1-git-send-email-john.stultz@linaro.org>
-References: <1531426641-20076-1-git-send-email-john.stultz@linaro.org>
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=Qp9XrCjDlrTvpp2/shwNgeaHX5kY0gaKvBENU8mBZjI=;
+        b=Yug7Hh3yg8J1p3rzphphVqySo22NVhhVrKmGewhjDfDJV+mJ9dm3kdC3Q991zL1i9M
+         SqMhE8pw2E0A704/6vGPTHd8wmJX6wnoYPqS1ZNU33GV4yQO8guOiv8fOnBaEzOGCpZl
+         mdsbdkAgqkyJyeoIu2ZVjflDCxea3nMSvTU+nZVoKIHxHOn6g56EDzbTvLj+pRHIqqhY
+         9wvOi4BiFme4UiINaYECK0Waxx+y+Encg7tzRw/vELPiVJ/rcDnf0ESFonSgyzNiInnq
+         yeQUFBtrlNboBaxjCjL9pwpR7u2XdujO4D6dB8THaFu7Dgs0ptmV7B3k4SN9G5e0hxkY
+         4fag==
+X-Gm-Message-State: AOUpUlFrShufpQUCJ+nKcR+V1kWlUoRGkhVIhcBsEhPcHkr92+CwV1b8
+        ynoAjrXXiYgC2aIlmvZXXaaGqniuZWR/x0/AAb4A+A==
+X-Google-Smtp-Source: AAOMgpc9QjX2DL2NiO2ps53oHYDVlNidIgKnqx5GPQ9LGwCOMIH1QdBw/MqL+0vBfbwjgQNN5seNToHZ3e6CuTHUWwk=
+X-Received: by 2002:a0d:e2cd:: with SMTP id l196-v6mr1821350ywe.38.1531426987898;
+ Thu, 12 Jul 2018 13:23:07 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 13:23:07
+ -0700 (PDT)
+In-Reply-To: <CAK8P3a1k+cy9wAVNQMWE4tdA4aV8tiu6K3haLc+kMPt0iiUQ9Q@mail.gmail.com>
+References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-14-keescook@chromium.org>
+ <CAK8P3a1k+cy9wAVNQMWE4tdA4aV8tiu6K3haLc+kMPt0iiUQ9Q@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 12 Jul 2018 13:23:07 -0700
+X-Google-Sender-Auth: 7MCj1LJXpxMe0BIhEdizAc2qcJs
+Message-ID: <CAGXu5jLUME9cjntUUed9EYukzEaODDzqRmtGht=uu7YVAG2WWg@mail.gmail.com>
+Subject: Re: [PATCH v4 13/14] rxrpc: Prepare to remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
+        dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the past we've warned when ADJ_OFFSET was in progress, usually
-caused by ntpd or some other time adjusting daemon running in non
-steady sate, which can cause the skew calculations to be
-incorrect.
+On Thu, Jul 12, 2018 at 8:11 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wed, Jul 11, 2018 at 10:36 PM, Kees Cook <keescook@chromium.org> wrote:
+>> Two uses of SKCIPHER_REQUEST_ON_STACK() will trigger FRAME_WARN warnings
+>> (when less than 2048) once the VLA is no longer hidden from the check:
+>>
+>> net/rxrpc/rxkad.c:398:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>> net/rxrpc/rxkad.c:242:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>
+>> This bumps the affected objects by 20% to silence the warnings while
+>> still providing coverage is anything grows even more.
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>
+> (adding David Howells to cc)
+>
+> I don't think these are in a fast path, it should be possible to just use
+> skcipher_alloc_req() instead of SKCIPHER_REQUEST_ON_STACK() here.
+> From what I can tell, neither of the two are called in atomic context, so
+> you should be able to use a GFP_KERNEL allocation.
 
-Thus, this patch checks to see if the clock was being adjusted
-when we fail so that we don't cause false negatives.
+Sure, I can do that instead.
 
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Miroslav Lichvar <mlichvar@redhat.com>
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Prarit Bhargava <prarit@redhat.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org
-Suggested-by: Miroslav Lichvar <mlichvar@redhat.com>
-Signed-off-by: John Stultz <john.stultz@linaro.org>
----
-v2: Widened the checks to look for other clock adjustments that
-    could happen, as suggested by Miroslav
-v3: Fixed up commit message
----
- tools/testing/selftests/timers/raw_skew.c | 5 +++++
- 1 file changed, 5 insertions(+)
+-Kees
 
-diff --git a/tools/testing/selftests/timers/raw_skew.c b/tools/testing/selftests/timers/raw_skew.c
-index ca6cd14..dcf73c5 100644
---- a/tools/testing/selftests/timers/raw_skew.c
-+++ b/tools/testing/selftests/timers/raw_skew.c
-@@ -134,6 +134,11 @@ int main(int argv, char **argc)
- 	printf(" %lld.%i(act)", ppm/1000, abs((int)(ppm%1000)));
- 
- 	if (llabs(eppm - ppm) > 1000) {
-+		if (tx1.offset || tx2.offset ||
-+		    tx1.freq != tx2.freq || tx1.tick != tx2.tick) {
-+			printf("	[SKIP]\n");
-+			return ksft_exit_skip("The clock was adjusted externally. Shutdown NTPd or other time sync daemons\n");
-+		}
- 		printf("	[FAILED]\n");
- 		return ksft_exit_fail();
- 	}
 -- 
-2.7.4
-
+Kees Cook
+Pixel Security
