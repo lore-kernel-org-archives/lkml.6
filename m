@@ -6,85 +6,62 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8C1C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 687C9C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04F9820C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:51:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F9820C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 2799120C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2799120C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726780AbeGLC7J (ORCPT
+        id S1727094AbeGLC7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 22:59:09 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:8055 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeGLC7J (ORCPT
+        Wed, 11 Jul 2018 22:59:34 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:51930 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeGLC7d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 22:59:09 -0400
-Received: from [192.168.90.200] (10.18.20.235) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 12 Jul
- 2018 10:51:05 +0800
-Subject: Re: [PATCH v2 2/3] clk: meson: add sub MMC clock dt-bindings IDs
-To:     Rob Herring <robh@kernel.org>
-References: <20180710163658.6175-1-yixun.lan@amlogic.com>
- <20180710163658.6175-3-yixun.lan@amlogic.com>
- <20180711194546.GA7090@rob-hp-laptop>
-CC:     <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
-        <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-From:   Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <84511d9a-5d29-ae6f-de0b-4701bafe2ab7@amlogic.com>
-Date:   Thu, 12 Jul 2018 10:51:28 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180711194546.GA7090@rob-hp-laptop>
-Content-Type: text/plain; charset="windows-1252"
+        Wed, 11 Jul 2018 22:59:33 -0400
+Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B1C731008D9A2;
+        Wed, 11 Jul 2018 19:52:14 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 19:52:14 -0700 (PDT)
+Message-Id: <20180711.195214.373420143941741317.davem@davemloft.net>
+To:     arnd@arndb.de
+Cc:     boris.brezillon@bootlin.com, linux-ia64@vger.kernel.org,
+        linux-alpha@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] sparc64: add reads{b,w,l}/writes{b,w,l}
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20180711120824.3882108-2-arnd@arndb.de>
+References: <20180711120824.3882108-1-arnd@arndb.de>
+        <20180711120824.3882108-2-arnd@arndb.de>
+X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.20.235]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 11 Jul 2018 19:52:14 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Wed, 11 Jul 2018 14:08:06 +0200
 
-On 07/12/18 03:45, Rob Herring wrote:
-> On Tue, Jul 10, 2018 at 04:36:57PM +0000, Yixun Lan wrote:
->> Add two clock bindings IDs which provided by the MMC clock controller,
->> These two clocks will be used by MMC or NAND driver.
+> Some drivers need these for compile-testing. On most architectures
+> they come from asm-generic/io.h, but not on sparc64, which has its
+> own definitions.
 > 
-> I count 3 ids.
-I will update this
-
+> Since we already have ioread*_rep()/iowrite*_rep() that have the
+> same behavior on sparc64 (i.e. all PCI I/O space is memory mapped),
+> we can rename the existing helpers and add macros to define them
+> to the same implementation.
 > 
->>
->> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->> ---
->>  .../dt-bindings/clock/amlogic,meson-mmc-clkc.h   | 16 ++++++++++++++++
->>  1 file changed, 16 insertions(+)
->>  create mode 100644 include/dt-bindings/clock/amlogic,meson-mmc-clkc.h
-> 
-> This can go with the binding patch.
-> 
-sure
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-.
-
-
+Acked-by: David S. Miller <davem@davemloft.net>
