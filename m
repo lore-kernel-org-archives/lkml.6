@@ -3,119 +3,106 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D50DECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92071ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5B9420846
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4740A20846
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:21:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="nv/S24D/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B9420846
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="2HZSO/pH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4740A20846
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387607AbeGLXb5 (ORCPT
+        id S1733199AbeGLXd1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 19:31:57 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43151 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732464AbeGLXb5 (ORCPT
+        Thu, 12 Jul 2018 19:33:27 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46929 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732243AbeGLXd1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 19:31:57 -0400
-Received: by mail-pg1-f195.google.com with SMTP id v13-v6so4352710pgr.10
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 16:20:10 -0700 (PDT)
+        Thu, 12 Jul 2018 19:33:27 -0400
+Received: by mail-pl0-f67.google.com with SMTP id 30-v6so11309107pld.13
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 16:21:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amacapital-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=DcK46Q99O7zg0qFywGK5ISuKvrCOmsvXy4TNoaEAQ0k=;
-        b=nv/S24D/ymDVmWqNcKQgMMzKNb4B91ZckfdTrdqgtvXif/+77n3ISn2elOSIwUOYXz
-         VkW0F7zys5YRuNgSbrO4FoHHasFj8hww6bP8zflbNprFUw6asBVJPiMVrDZFxuGXbcN+
-         C9VwPGzI5zcWo/UfBhgA4tkCi7hr/DYz/9/c8TVNjdRxTi0Om9vr/FAjo6OPJGjA88tm
-         7gpF5Ikshq116NUWytS9w8kVUFIMCac1F71cimNcK/dD5mjQmnwMSY26e5bkGAExKmAu
-         T+zSpowuIQLBr5esbTB5W3qyFEsHtrWi3YsIKO3D6d1pbvfXjy5H9dFi0z8KwzKA7xOs
-         IxuQ==
+        bh=E59WpRPCjmtFx5KXXD35289bbHUJ8DPuvAaEKu2ztBA=;
+        b=2HZSO/pHC2CLSf3beAjygTAjeXsmduUwOa4MT4Zs4mYzi6g/RDcsRTAIPYAczzkyzz
+         2dK/6U+xbFuCLjF16xvVzHB+rx8ztmwJ+7AJNe2XyYA3a1zD2I6q/skCUxIyDtOjBRDi
+         eWTQ/3IrJklEVYMbpC5VR8PqWzKJBqW5geIu3s2Jsprl/TjPQXB/yuGBSgkQ+Irp1WbV
+         eZh7Ci+h1PfAeeeNiuqrVqI6LTPVgocaWKoIidYMBkHasU6ir970xdnUlB9lhYG6kveB
+         FSoPc+lHD65XgF+Jr54ch0XY1UWfgFaD83Q9in/YNbXPbtciL9otg/XUDpnfiZWSZmn3
+         qffQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=DcK46Q99O7zg0qFywGK5ISuKvrCOmsvXy4TNoaEAQ0k=;
-        b=OtaTG9lZEkBlY+nSQqRQo6wNEdVh9I2bDRtmuiX806PRvDjsRaIajS/2I82ssrC2pT
-         UtcAzXeXQTSinkvJFLTIXTtJeyiw92Q5sMqAa7QgOhtBibWRT4e2GcW02CyhCvuKPB6c
-         VJGIDyP3sDXV11JGtolk27Ne0XaVDyNlikaFNF1B53L+TJweYmuPX7P7Amv76rF6JO54
-         MCVw6EDSsWFHZtE2FrSisrzdcRXwsgjCTyjIZZEyXqDE0475lipg9cm7H4pMVoq/V1sL
-         oAhj3dCNmyJtuEvGkg6A/Z1nmvTgmHqyPdS0W7Xs2UaV6PBUkNoTLNfT1SlG19inH9F9
-         DVOg==
-X-Gm-Message-State: AOUpUlF2SWkkRE98U5en6HLV5dMMUx1ZnOvvylQygDBmt9Z5tsTCCABj
-        sygOdHnP/cmbdS/YwZhXLgPM8w==
-X-Google-Smtp-Source: AAOMgpfjMwXOfow8HXj0Kx+KvqSmZrh9mUrDCQk6hu+JF8bSFyMvXEV8wTSS9Rd3x/X5kpRTo30bLA==
-X-Received: by 2002:a63:8c0b:: with SMTP id m11-v6mr3854123pgd.372.1531437609695;
-        Thu, 12 Jul 2018 16:20:09 -0700 (PDT)
-Received: from ?IPv6:2600:1011:b01e:e4d1:54df:ba07:cac1:aeab? ([2600:1011:b01e:e4d1:54df:ba07:cac1:aeab])
-        by smtp.gmail.com with ESMTPSA id p8-v6sm6040326pfk.186.2018.07.12.16.20.08
+        bh=E59WpRPCjmtFx5KXXD35289bbHUJ8DPuvAaEKu2ztBA=;
+        b=pn6rwtbJ0xU63MKdRLJK/2r0k7awzopQL2I7YBXPKxCPdvxeqMcKLr6/XcdDDRypP6
+         GgD3vnZgohhVBJXOQcrTtLl7okp1b+ibSWvQ18wy78M6k4MpgKmW+cXqL90rrEkbK2eh
+         YeRgN6Re8jbDpTAJ714L60maLyRN64ydQvbbl1hB/3JfnmFIAqi4/uR92ff9xygGLTz+
+         m9h+cEBtW66XJjYHZU7cm+r/QXdhqWWs4C+dDU1Z5XcehPSbjtfRl70gKywisuiNTsln
+         dOl0urU2vzFkeTYCYsG3v5iIf4c+spSI8iE5jyzrta9OiuF/ntyezMDcdaYZUlgPTTZE
+         gZjQ==
+X-Gm-Message-State: AOUpUlGqlMejfNqCAXmZSoWpts0ZSxtfhdIPdJwrXD64ybuo5wZq79RW
+        dzddyQVbKy6nGp946DbwspWZZA==
+X-Google-Smtp-Source: AAOMgpd/A3vmghXXTnE2leJPQuO03iBopb9+UurOqjao4l4btbG/VTMiaz55vyIBWUFIgmSgb7zKLw==
+X-Received: by 2002:a17:902:bc8c:: with SMTP id bb12-v6mr4038339plb.84.1531437699188;
+        Thu, 12 Jul 2018 16:21:39 -0700 (PDT)
+Received: from [100.125.106.90] (24.sub-174-237-8.myvzw.com. [174.237.8.24])
+        by smtp.gmail.com with ESMTPSA id s20-v6sm34661548pga.37.2018.07.12.16.21.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 16:20:08 -0700 (PDT)
+        Thu, 12 Jul 2018 16:21:38 -0700 (PDT)
 Content-Type: text/plain;
         charset=us-ascii
 Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] x86: vdso: Fix leaky vdso link with CC=clang
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for superblock creation [ver #9]
 From:   Andy Lutomirski <luto@amacapital.net>
 X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <1432bfde-41b4-e8aa-037b-fca41a149cb8@zytor.com>
-Date:   Thu, 12 Jul 2018 16:20:06 -0700
-Cc:     Alistair Strachan <astrachan@google.com>,
-        linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        x86@kernel.org, kernel-team@android.com, joel@joelfernandes.com
-Content-Transfer-Encoding: 7bit
-Message-Id: <5AB78E47-BC62-4DA5-920B-00E9731AAE04@amacapital.net>
-References: <20180712201032.156997-1-astrachan@google.com> <47d4b24e-8c60-fb3b-3377-62d20c5f3dd1@zytor.com> <CANDihLEz3_fZ4r4g=VcxWps5DWSjMJdbJZKZWsLFKVp_c7FscA@mail.gmail.com> <1432bfde-41b4-e8aa-037b-fca41a149cb8@zytor.com>
-To:     "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <22105.1531436081@warthog.procyon.org.uk>
+Date:   Thu, 12 Jul 2018 16:21:35 -0700
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <611054C7-D6E8-4C89-958E-3128C9305E1E@amacapital.net>
+References: <20180712223223.GA28610@thunk.org> <CA+55aFw1WyKY+-2dg62M-QT_F0-waCTCrba1DW4dStYz-f_fjA@mail.gmail.com> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk> <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk> <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com> <7002.1531407244@warthog.procyon.org.uk> <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com> <16699.1531426991@warthog.procyon.org.uk> <18233.1531430797@warthog.procyon.org.uk> <22105.1531436081@warthog.procyon.org.uk>
+To:     David Howells <dhowells@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> On Jul 12, 2018, at 3:06 PM, H. Peter Anvin <hpa@zytor.com> wrote:
-> 
->> On 07/12/18 13:37, Alistair Strachan wrote:
->>> On Thu, Jul 12, 2018 at 1:25 PM H. Peter Anvin <hpa@zytor.com> wrote:
->>>> On 07/12/18 13:10, Alistair Strachan wrote:
->>>> The vdso{32,64}.so can fail to link with CC=clang when clang tries to
->>>> find a suitable GCC toolchain to link these libraries with.
->>>> 
->>>> /usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o:
->>>>  access beyond end of merged section (782)
->>>> 
->>>> This happens because the host environment leaked into the cross
->>>> compiler environment due to the way clang searches for suitable GCC
->>>> toolchains.
->>>> 
->>> 
->>> Is this another clang bug that you want a workaround for in the kernel?
->> 
->> Clang is a retargetable compiler (specified with --target=<something>)
->> and so it has a mechanism for searching for suitable binutils (from
->> another "GCC toolchain") to perform assembly and linkage. This
->> mechanism relies on both --target and --gcc-toolchain when
->> cross-compiling, otherwise it will fall back to searching /usr.
->> 
->> The --target and --gcc-toolchain flags are already specified correctly
->> in the top level Makefile, but the vdso Makefile rolls its own linker
->> flags and doesn't use KBUILD_CFLAGS. Therefore, these flags get
->> incorrectly dropped from the vdso $CC link command line, and an
->> inconsistency is created between the "GCC toolchain" used to generate
->> the objects for the vdso, and the linker used to link them.
->> 
-> 
-> It sounds like there needs to be a more fundamental symbol than
-> KBUILD_CFLAGS to contain these kinds of things.
 
-How about $(CC)?
+> On Jul 12, 2018, at 3:54 PM, David Howells <dhowells@redhat.com> wrote:
+>=20
+> Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>=20
+>> So maybe the answer is that you open /dev/sda1 and /dev/sda2 and then
+>> pass the file descriptors to the fsopen object?  We can require that
+>> the fd's be opened with O_RDWR and O_EXCL, which has the benefit where
+>> if you have multiple block devices, you know *which* block device had
+>> a problem with being grabbed for an exclusive open.
+>=20
+> Would that mean then that doing:
+>=20
+>    mount /dev/sda3 /a
+>    mount /dev/sda3 /b
+>=20
+> would then fail on the second command because /dev/sda3 is already open
+> exclusively?
+>=20
 
-> 
->    -hpa
+I tend to think that this *should* fail using the new API.  The semantics of=
+ the second mount request are bizarre at best.=
