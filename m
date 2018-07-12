@@ -2,248 +2,221 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AEAECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C82D6ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6BD220841
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:34:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="K5FZglZP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6BD220841
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=posteo.de
+	by mail.kernel.org (Postfix) with ESMTP id 7C3F320841
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:37:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C3F320841
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732373AbeGLTpU (ORCPT
+        id S1728250AbeGLTsB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 15:45:20 -0400
-Received: from mout01.posteo.de ([185.67.36.65]:36298 "EHLO mout01.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726767AbeGLTpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 15:45:20 -0400
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id BC12C212B1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 21:34:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1531424059; bh=qT1d0o0YKumc2bTeaTW6zgog+62UsuUwdK+Notlz8DA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=K5FZglZPQUNoaLLbTKzZNAHCF59AkINhCRRCOtnEPubpu/P0uqqWMNOevwxXXcrqx
-         rUDVNxluFzSbK0ELSHR/RpYsBQZJARk/KrBWZtyzYHfBoDc+CGqNVuG69FIMiOwnuV
-         3gzf0ZKksFGi8s6po04wIY7MxjqkgPXZ589zXlMc/KQo5eEWtS7z/l+9yz8PY1gxMw
-         A15TqG45NVaGwWqgu0Rf8/AvNE5wOV351L0Pj0qMVSXh08UfdykVRnMEEW4LkqAE6s
-         hobnL3RAw0/J7m885KOldjD+4Q/TpMA4sZhBy30TeHR1cZhhLSCrJ1BoeoAZGQbSlf
-         8q3AVjUHp0dVQ==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 41RR2f31NVz9rxb;
-        Thu, 12 Jul 2018 21:34:18 +0200 (CEST)
-From:   Felix Siegel <felix.siegel@posteo.de>
-To:     devel@driverdev.osuosl.org
-Cc:     Felix Siegel <felix.siegel@posteo.de>,
-        Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] staging: gasket: Use __func__ instead of hardcoded string - Style
-Date:   Thu, 12 Jul 2018 21:27:15 +0200
-Message-Id: <1531423694-22478-4-git-send-email-felix.siegel@posteo.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531423694-22478-1-git-send-email-felix.siegel@posteo.de>
-References: <1531423694-22478-1-git-send-email-felix.siegel@posteo.de>
+        Thu, 12 Jul 2018 15:48:01 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60423 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726500AbeGLTsA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 15:48:00 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6CJas4n4025646
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 12 Jul 2018 12:36:54 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6CJasiv4025643;
+        Thu, 12 Jul 2018 12:36:54 -0700
+Date:   Thu, 12 Jul 2018 12:36:54 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Reinette Chatre <tipbot@zytor.com>
+Message-ID: <tip-2989360d9c6669d8ae64edc933088e640481b48b@git.kernel.org>
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
+        reinette.chatre@intel.com, hpa@zytor.com
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
+          reinette.chatre@intel.com, mingo@kernel.org
+In-Reply-To: <fffb57f9c6b8285904c9a60cc91ce21591af17fe.1531332480.git.reinette.chatre@intel.com>
+References: <fffb57f9c6b8285904c9a60cc91ce21591af17fe.1531332480.git.reinette.chatre@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cache] x86/intel_rdt: Fix possible circular lock
+ dependency
+Git-Commit-ID: 2989360d9c6669d8ae64edc933088e640481b48b
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changed logging statements to use %s and __func__ instead of hard coding
-the function name in a string.
+Commit-ID:  2989360d9c6669d8ae64edc933088e640481b48b
+Gitweb:     https://git.kernel.org/tip/2989360d9c6669d8ae64edc933088e640481b48b
+Author:     Reinette Chatre <reinette.chatre@intel.com>
+AuthorDate: Wed, 11 Jul 2018 13:06:07 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Thu, 12 Jul 2018 21:33:43 +0200
 
-Signed-off-by: Felix Siegel <felix.siegel@posteo.de>
+x86/intel_rdt: Fix possible circular lock dependency
+
+Lockdep is reporting a possible circular locking dependency:
+
+ ======================================================
+ WARNING: possible circular locking dependency detected
+ 4.18.0-rc1-test-test+ #4 Not tainted
+ ------------------------------------------------------
+ user_example/766 is trying to acquire lock:
+ 0000000073479a0f (rdtgroup_mutex){+.+.}, at: pseudo_lock_dev_mmap
+
+ but task is already holding lock:
+ 000000001ef7a35b (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0x9f/0x
+
+ which lock already depends on the new lock.
+
+ the existing dependency chain (in reverse order) is:
+
+ -> #2 (&mm->mmap_sem){++++}:
+        _copy_to_user+0x1e/0x70
+        filldir+0x91/0x100
+        dcache_readdir+0x54/0x160
+        iterate_dir+0x142/0x190
+        __x64_sys_getdents+0xb9/0x170
+        do_syscall_64+0x86/0x200
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+ -> #1 (&sb->s_type->i_mutex_key#3){++++}:
+        start_creating+0x60/0x100
+        debugfs_create_dir+0xc/0xc0
+        rdtgroup_pseudo_lock_create+0x217/0x4d0
+        rdtgroup_schemata_write+0x313/0x3d0
+        kernfs_fop_write+0xf0/0x1a0
+        __vfs_write+0x36/0x190
+        vfs_write+0xb7/0x190
+        ksys_write+0x52/0xc0
+        do_syscall_64+0x86/0x200
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+ -> #0 (rdtgroup_mutex){+.+.}:
+        __mutex_lock+0x80/0x9b0
+        pseudo_lock_dev_mmap+0x2f/0x170
+        mmap_region+0x3d6/0x610
+        do_mmap+0x387/0x580
+        vm_mmap_pgoff+0xcf/0x110
+        ksys_mmap_pgoff+0x170/0x1f0
+        do_syscall_64+0x86/0x200
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+ other info that might help us debug this:
+
+ Chain exists of:
+   rdtgroup_mutex --> &sb->s_type->i_mutex_key#3 --> &mm->mmap_sem
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&mm->mmap_sem);
+                                lock(&sb->s_type->i_mutex_key#3);
+                                lock(&mm->mmap_sem);
+   lock(rdtgroup_mutex);
+
+  *** DEADLOCK ***
+
+ 1 lock held by user_example/766:
+  #0: 000000001ef7a35b (&mm->mmap_sem){++++}, at: vm_mmap_pgoff+0x9f/0x110
+
+rdtgroup_mutex is already being released temporarily during pseudo-lock
+region creation to prevent the potential deadlock between rdtgroup_mutex
+and mm->mmap_sem that is obtained during device_create(). Move the
+debugfs creation into this area to avoid the same circular dependency.
+
+Signed-off-by: Reinette Chatre <reinette.chatre@intel.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: fenghua.yu@intel.com
+Cc: tony.luck@intel.com
+Cc: vikas.shivappa@linux.intel.com
+Cc: gavin.hindman@intel.com
+Cc: jithu.joseph@intel.com
+Cc: hpa@zytor.com
+Link: https://lkml.kernel.org/r/fffb57f9c6b8285904c9a60cc91ce21591af17fe.1531332480.git.reinette.chatre@intel.com
+
 ---
- drivers/staging/gasket/apex_driver.c       | 15 ++++++++-------
- drivers/staging/gasket/gasket_core.c       | 11 ++++++-----
- drivers/staging/gasket/gasket_ioctl.c      |  4 ++--
- drivers/staging/gasket/gasket_page_table.c | 13 ++++++++-----
- 4 files changed, 24 insertions(+), 19 deletions(-)
+ arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
-index ffcc59d..735d43d 100644
---- a/drivers/staging/gasket/apex_driver.c
-+++ b/drivers/staging/gasket/apex_driver.c
-@@ -341,7 +341,7 @@ static int apex_add_dev_cb(struct gasket_dev *gasket_dev)
- 	ulong page_table_ready, msix_table_ready;
- 	int retries = 0;
+diff --git a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+index 751c78f9992f..f80c58f8adc3 100644
+--- a/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
++++ b/arch/x86/kernel/cpu/intel_rdt_pseudo_lock.c
+@@ -1254,19 +1254,10 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 		goto out_cstates;
+ 	}
  
--	gasket_log_error(gasket_dev, "apex_add_dev_cb.");
-+	gasket_log_error(gasket_dev, "%s.", __func__);
- 
- 	apex_reset(gasket_dev, 0);
- 
-@@ -422,8 +422,9 @@ static int apex_device_cleanup(struct gasket_dev *gasket_dev)
- 
- 	gasket_log_info(
- 		gasket_dev,
--		"apex_device_cleanup 0x%p hib_error 0x%llx scalar_error "
-+		"%s 0x%p hib_error 0x%llx scalar_error "
- 		"0x%llx.",
-+		__func__,
- 		gasket_dev, hib_error, scalar_error);
- 
- 	if (allow_power_save)
-@@ -447,13 +448,13 @@ static int apex_reset(struct gasket_dev *gasket_dev, uint type)
- 	if (bypass_top_level)
- 		return 0;
- 
--	gasket_log_debug(gasket_dev, "apex_reset.");
-+	gasket_log_debug(gasket_dev, "%s.", __func__);
- 
- 	if (!is_gcb_in_reset(gasket_dev)) {
- 		/* We are not in reset - toggle the reset bit so as to force
- 		 * re-init of custom block
- 		 */
--		gasket_log_debug(gasket_dev, "apex_reset: toggle reset.");
-+		gasket_log_debug(gasket_dev, "%s: toggle reset.", __func__);
- 
- 		ret = apex_enter_reset(gasket_dev, type);
- 		if (ret)
-@@ -472,7 +473,7 @@ static int apex_enter_reset(struct gasket_dev *gasket_dev, uint type)
- 	if (bypass_top_level)
- 		return 0;
- 
--	gasket_log_debug(gasket_dev, "apex_enter_reset.");
-+	gasket_log_debug(gasket_dev, "%s.", __func__);
+-	if (!IS_ERR_OR_NULL(debugfs_resctrl)) {
+-		plr->debugfs_dir = debugfs_create_dir(rdtgrp->kn->name,
+-						      debugfs_resctrl);
+-		if (!IS_ERR_OR_NULL(plr->debugfs_dir))
+-			debugfs_create_file("pseudo_lock_measure", 0200,
+-					    plr->debugfs_dir, rdtgrp,
+-					    &pseudo_measure_fops);
+-	}
+-
+ 	ret = pseudo_lock_minor_get(&new_minor);
+ 	if (ret < 0) {
+ 		rdt_last_cmd_puts("unable to obtain a new minor number\n");
+-		goto out_debugfs;
++		goto out_cstates;
+ 	}
  
  	/*
- 	 * Software reset:
-@@ -534,7 +535,7 @@ static int apex_quit_reset(struct gasket_dev *gasket_dev, uint type)
- 	if (bypass_top_level)
- 		return 0;
+@@ -1275,11 +1266,20 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 	 *
+ 	 * The mutex has to be released temporarily to avoid a potential
+ 	 * deadlock with the mm->mmap_sem semaphore which is obtained in
+-	 * the device_create() callpath below as well as before the mmap()
+-	 * callback is called.
++	 * the device_create() and debugfs_create_dir() callpath below
++	 * as well as before the mmap() callback is called.
+ 	 */
+ 	mutex_unlock(&rdtgroup_mutex);
  
--	gasket_log_debug(gasket_dev, "apex_quit_reset.");
-+	gasket_log_debug(gasket_dev, "%s.", __func__);
- 
- 	/*
- 	 * Disable sleep mode:
-@@ -681,7 +682,7 @@ static long apex_clock_gating(struct gasket_dev *gasket_dev, ulong arg)
- 			return -EFAULT;
- 
- 		gasket_log_error(
--			gasket_dev, "apex_clock_gating %llu", ibuf.enable);
-+			gasket_dev, "%s %llu", __func__, ibuf.enable);
- 
- 		if (ibuf.enable) {
- 			/* Quiesce AXI, gate GCB clock. */
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 5eeaae7..b14a956 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -932,7 +932,8 @@ static int gasket_enable_dev(
- 		} else {
- 			gasket_log_error(
- 				gasket_dev,
--				"gasket_enable_dev with no physical device!!");
-+				"%s with no physical device!!",
-+				__func__);
- 			WARN_ON(1);
- 			ddev = NULL;
- 		}
-@@ -2100,9 +2101,9 @@ int gasket_wait_sync(
- 		if (diff_nanosec > timeout_ns) {
- 			gasket_log_error(
- 				gasket_dev,
--				"gasket_wait_sync timeout: reg %llx count %x "
-+				"%s timeout: reg %llx count %x "
- 				"dma %lld ns\n",
--				offset, count, diff_nanosec);
-+				__func__, offset, count, diff_nanosec);
- 			return -1;
- 		}
- 		reg = gasket_dev_read_64(gasket_dev, bar, offset);
-@@ -2141,8 +2142,8 @@ int gasket_wait_with_reschedule(
- 	if (retries == max_retries) {
- 		gasket_log_error(
- 			gasket_dev,
--			"gasket_wait_with_reschedule timeout: reg %llx timeout (%llu ms)",
--			offset, max_retries * delay_ms);
-+			"%s timeout: reg %llx timeout (%llu ms)",
-+			__func__, offset, max_retries * delay_ms);
- 		return -EINVAL;
- 	}
- 	return 0;
-diff --git a/drivers/staging/gasket/gasket_ioctl.c b/drivers/staging/gasket/gasket_ioctl.c
-index 832beed..738c56f 100644
---- a/drivers/staging/gasket/gasket_ioctl.c
-+++ b/drivers/staging/gasket/gasket_ioctl.c
-@@ -180,8 +180,8 @@ static uint gasket_ioctl_check_permissions(struct file *filp, uint cmd)
- 	alive = (gasket_dev->status == GASKET_STATUS_ALIVE);
- 	if (!alive) {
- 		gasket_nodev_error(
--			"gasket_ioctl_check_permissions alive %d status %d.",
--			alive, gasket_dev->status);
-+			"%s alive %d status %d.",
-+			__func__,  alive, gasket_dev->status);
++	if (!IS_ERR_OR_NULL(debugfs_resctrl)) {
++		plr->debugfs_dir = debugfs_create_dir(rdtgrp->kn->name,
++						      debugfs_resctrl);
++		if (!IS_ERR_OR_NULL(plr->debugfs_dir))
++			debugfs_create_file("pseudo_lock_measure", 0200,
++					    plr->debugfs_dir, rdtgrp,
++					    &pseudo_measure_fops);
++	}
++
+ 	dev = device_create(pseudo_lock_class, NULL,
+ 			    MKDEV(pseudo_lock_major, new_minor),
+ 			    rdtgrp, "%s", rdtgrp->kn->name);
+@@ -1290,7 +1290,7 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
+ 		ret = PTR_ERR(dev);
+ 		rdt_last_cmd_printf("failed to create character device: %d\n",
+ 				    ret);
+-		goto out_minor;
++		goto out_debugfs;
  	}
  
- 	root = capable(CAP_SYS_ADMIN);
-diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-index 04ea0d2..8021272 100644
---- a/drivers/staging/gasket/gasket_page_table.c
-+++ b/drivers/staging/gasket/gasket_page_table.c
-@@ -445,8 +445,9 @@ int gasket_page_table_map(
- 	mutex_unlock(&pg_tbl->mutex);
+ 	/* We released the mutex - check if group was removed while we did so */
+@@ -1311,10 +1311,9 @@ int rdtgroup_pseudo_lock_create(struct rdtgroup *rdtgrp)
  
- 	gasket_nodev_debug(
--		"gasket_page_table_map done: ha %llx daddr %llx num %d, "
-+		"%s done: ha %llx daddr %llx num %d, "
- 		"ret %d\n",
-+		__func__,
- 		(unsigned long long)host_addr,
- 		(unsigned long long)dev_addr, num_pages, ret);
- 	return ret;
-@@ -869,7 +870,7 @@ static int gasket_perform_mapping(
- 	for (i = 0; i < num_pages; i++) {
- 		page_addr = host_addr + i * PAGE_SIZE;
- 		offset = page_addr & (PAGE_SIZE - 1);
--		gasket_nodev_debug("gasket_perform_mapping i %d\n", i);
-+		gasket_nodev_debug("%s i %d\n", __func__, i);
- 		if (is_coherent(pg_tbl, host_addr)) {
- 			u64 off =
- 				(u64)host_addr -
-@@ -907,17 +908,19 @@ static int gasket_perform_mapping(
- 			}
- 
- 			gasket_nodev_debug(
--				"    gasket_perform_mapping dev %p "
-+				"    %s dev %p "
- 				"i %d pte %p pfn %p -> mapped %llx\n",
-+				__func__,
- 				pg_tbl->device, i, &ptes[i],
- 				(void *)page_to_pfn(page),
- 				(unsigned long long)ptes[i].dma_addr);
- 
- 			if (ptes[i].dma_addr == -1) {
- 				gasket_nodev_error(
--					"gasket_perform_mapping i %d"
-+					"%s i %d"
- 					" -> fail to map page %llx "
- 					"[pfn %p ohys %p]\n",
-+					__func__,
- 					i,
- 					(unsigned long long)ptes[i].dma_addr,
- 					(void *)page_to_pfn(page),
-@@ -1623,7 +1626,7 @@ int gasket_set_user_virt(
- 	pg_tbl = gasket_dev->page_table[0];
- 	if (!pg_tbl) {
- 		gasket_nodev_error(
--			"gasket_set_user_virt: invalid page table index");
-+			"%s: invalid page table index", __func__);
- 		return 0;
- 	}
- 	for (j = 0; j < num_pages; j++) {
--- 
-2.7.4
-
+ out_device:
+ 	device_destroy(pseudo_lock_class, MKDEV(pseudo_lock_major, new_minor));
+-out_minor:
+-	pseudo_lock_minor_release(new_minor);
+ out_debugfs:
+ 	debugfs_remove_recursive(plr->debugfs_dir);
++	pseudo_lock_minor_release(new_minor);
+ out_cstates:
+ 	pseudo_lock_cstates_relax(plr);
+ out_region:
