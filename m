@@ -2,92 +2,129 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875CFC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A52DC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B0A21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42D0B20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:08:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="qYQExqvu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B0A21476
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rf0eZyhQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42D0B20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732415AbeGLIQc (ORCPT
+        id S1732456AbeGLIQh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:16:32 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:55858 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbeGLIQc (ORCPT
+        Thu, 12 Jul 2018 04:16:37 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:36415 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbeGLIQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:16:32 -0400
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 2C8665C205F;
-        Thu, 12 Jul 2018 10:07:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1531382865;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qjCVkabvhyb5Cu6v12SG/n9h/qJC6gc/5us2/GUOqHg=;
-        b=qYQExqvumN/HQzVPSEUmZS7zV6bphARX25RokI4LFiw0NF8UJvG6zq5yOWc7sULdBwRGuv
-        4EtsGFBasLYV2TP917CpMiYwKNsDwzEvJiY8qRlZUjEjnPRGmwTq5VRkSXtVcyD9OAhKdN
-        o0hl4hO8pGR89ztwbnEz1DR5gQbT5Cg=
-From:   Stefan Agner <stefan@agner.ch>
-To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
-Cc:     fabio.estevam@nxp.com, haibo.chen@nxp.com, aisheng.dong@nxp.com,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH v2 2/2] mmc: sdhci-esdhc-imx: fix indent
-Date:   Thu, 12 Jul 2018 10:07:25 +0200
-Message-Id: <20180712080725.14250-2-stefan@agner.ch>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180712080725.14250-1-stefan@agner.ch>
-References: <20180712080725.14250-1-stefan@agner.ch>
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:6830, ipnet:46.140.0.0/17, country:AT];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+        Thu, 12 Jul 2018 04:16:36 -0400
+Received: by mail-lf0-f65.google.com with SMTP id b22-v6so11058255lfa.3;
+        Thu, 12 Jul 2018 01:08:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=zqpK3YHjwleJqx6PiBCC/89qvsqEXLCeMNu82nibIDk=;
+        b=Rf0eZyhQXslhN6JEBUJJKqk+QcK2kB501C3r9E7Z7rqarRyZrlLa/2H24vSqBsgujB
+         Skzaf7TG6G+0NDARuSXuH7zFbUTulBCviJT0OfNbHQMH1jcHv6rc4oGCeemTh0EFC+Sq
+         3QK2VTHek4nL++wLc442WCm+68IK2SlPCs+JOLiaIsC6XG7SoVfKK+OK3iyAwBQR5fRe
+         EtzPMI6TggR2p0gzDBg8mDVCA/ucxHXcmQWxFDokblDQp3H0vcK2W3RuzevxEFzaqB5Y
+         3uH+BbDBZQfiD0huJ+42wMStj882qs6UvwKogpoJrDt2J/ZSoBb40WF9MgkJCHm/zHy2
+         sZ+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=zqpK3YHjwleJqx6PiBCC/89qvsqEXLCeMNu82nibIDk=;
+        b=eboVBvO4LD+IvjFg6vBgvPKlygjVOrFeNsOjsFxqIbHozWOlwY1U5yTbWi7BaWdlLg
+         moNB32BTwOIkpIhH3gl5uroFpX5pSvVsnIDiziCxtuSL0VeC/x9PvdimQ8wGKYdg6yzQ
+         lAyGLcdpsR85YO7IjPYo2heB5UbFHL4Jrhb9Ury3HyDyz7Sb7EjE3pNGa1dr806X5rZg
+         ZSpxjiibBg/+0/yvkep7sylEUyg9lfkt4MXs7y7oX+I2fAwRPeaAsQokKEds0IG5Xdbx
+         1FcF3pbG3/NP3azrrfZ0GdK3rWm0bpde/6umUR1dtVE0DeDHQxVPi1/L4V2BPw/nvb+5
+         EabA==
+X-Gm-Message-State: AOUpUlG7pH5fcUWMTJzvb5I9I7FFFAgJbk+i8um3YgBhPlThaFMF5PiS
+        X1qV6XJUj7A8eNg+qY0ZkxBWTY1Jr1pr6F8QIog=
+X-Google-Smtp-Source: AAOMgpcIKW8JvFcBTfObUfsPzbXyFTNAOvCM5hxK9JEdABgJfEfdAf6ABHgch4RCHQ0In5okBN2qxrRywX0XZ8N33sg=
+X-Received: by 2002:a19:b24e:: with SMTP id b75-v6mr939664lff.11.1531382886917;
+ Thu, 12 Jul 2018 01:08:06 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 01:08:05
+ -0700 (PDT)
+In-Reply-To: <a31dc625-56bf-7a59-d9a3-2841360b864e@axentia.se>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+ <20180330074751.25987-2-boris.brezillon@bootlin.com> <CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com>
+ <20180711164120.3e32fb08@bbrezillon> <CAK8P3a2EZB_tMS_47wv6M2Qpm79ZocxxhG5zLxXsBM_YjZgkyA@mail.gmail.com>
+ <20180711191212.3855bb25@bbrezillon> <a31dc625-56bf-7a59-d9a3-2841360b864e@axentia.se>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 12 Jul 2018 10:08:05 +0200
+X-Google-Sender-Auth: r04NhL0R8-yZlON2DPxF_T_AKjc
+Message-ID: <CAK8P3a2oMDw2zHzE5vFFHDqzKVKEzOga6v0ExdYVawnMtcdbrQ@mail.gmail.com>
+Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
+To:     Peter Rosin <peda@axentia.se>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix indent. This also makes disable/enable clock blocks look
-alike.
+On Thu, Jul 12, 2018 at 6:41 AM, Peter Rosin <peda@axentia.se> wrote:
+> On 2018-07-11 19:12, Boris Brezillon wrote:
+>> On Wed, 11 Jul 2018 17:39:56 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+>>
+>> That's exactly the sort of discussion I wanted to trigger. Maybe we
+>> shouldn't care and expose this use case as if it was X different I3C
+>> buses (with all devices present on the bus being exposed X times to the
+>> system).
+>
+> For I2C, this multiple masters for one bus case was retrofitted in
+> the i2c-demux-pinctrl driver. It's a huge kludge with a number of
+> undesirable quirks. I don't know if the circumstances for adding
+> this I2C driver also applies for I3C, but it might be an argument
+> in favor of the proposed extra bus object...
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
----
- drivers/mmc/host/sdhci-esdhc-imx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+From reading the documentation and git history on that driver,
+it seems to be used only for static configuration, i.e. you use
+one driver or the other, but don't flip between them at runtime,
+right?
 
-diff --git a/drivers/mmc/host/sdhci-esdhc-imx.c b/drivers/mmc/host/sdhci-esdhc-imx.c
-index acacd8481473..aa48f4b2541a 100644
---- a/drivers/mmc/host/sdhci-esdhc-imx.c
-+++ b/drivers/mmc/host/sdhci-esdhc-imx.c
-@@ -761,7 +761,7 @@ static inline void esdhc_pltfm_set_clock(struct sdhci_host *host,
- 	if (esdhc_is_usdhc(imx_data)) {
- 		val = readl(host->ioaddr + ESDHC_VENDOR_SPEC);
- 		writel(val | ESDHC_VENDOR_SPEC_FRC_SDCLK_ON,
--		host->ioaddr + ESDHC_VENDOR_SPEC);
-+			host->ioaddr + ESDHC_VENDOR_SPEC);
- 	}
- 
- 	mdelay(1);
--- 
-2.18.0
+I'm guessing that even with i3c we may have to support something
+like that, as a likely scenario might be that the i3c controller is
+multiplexed with a traditional i2c controller and/or gpios, but you
+would not be able to perform the i3c standard secondary master
+transition with the latter two because they are (by definition) not
+i3c compatible.
 
+       Arnd
