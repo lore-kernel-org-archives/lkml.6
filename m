@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4269C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:48:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A239C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4734120875
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:48:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2290D20875
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:49:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="ch6q0q/L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4734120875
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="gIV9wuKT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2290D20875
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732402AbeGLF4G (ORCPT
+        id S1732565AbeGLF5A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 01:56:06 -0400
-Received: from mail-eopbgr710081.outbound.protection.outlook.com ([40.107.71.81]:32736
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Thu, 12 Jul 2018 01:57:00 -0400
+Received: from mail-eopbgr690086.outbound.protection.outlook.com ([40.107.69.86]:50096
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732343AbeGLF4D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 01:56:03 -0400
+        id S1732317AbeGLF4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 01:56:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wXwsnVE/kGUed8WtB3n0MjBmAOH/i3q1wVWYE6Tk8jQ=;
- b=ch6q0q/LHCLeU3vCQDDdGTVD70PW7nZhbKOkI5UyPLipwq9v41ubZfM0suiq1RuvyO6aFkGjZx2FZT5X3PVriPJwaTThW9ZHgngEDAJU3gY0nk+3+DgZcXm09iiEXbM2Vf32OhMYljjrEeH+dQhmgcCZsWQF+03WNGwL6Th1Gi4=
-Received: from BYAPR07CA0041.namprd07.prod.outlook.com (2603:10b6:a03:60::18)
- by BY1PR0701MB1333.namprd07.prod.outlook.com (2a01:111:e400:480f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.952.17; Thu, 12 Jul
- 2018 05:48:05 +0000
-Received: from CO1NAM05FT035.eop-nam05.prod.protection.outlook.com
- (2a01:111:f400:7e50::200) by BYAPR07CA0041.outlook.office365.com
- (2603:10b6:a03:60::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.952.17 via Frontend
- Transport; Thu, 12 Jul 2018 05:48:05 +0000
+ bh=al2KBErFB8gGu2kF19VXJUC1ozSso5ncSVHZJMrgT5M=;
+ b=gIV9wuKTfX6UgCFoImMVmvTFLRLlD5+q4hNQfqntzxXndNSNDFYJzrvdSfcC0xKjW8Tv2x68uTZDLe+1nK3wyjKnVlC0e4xbhr7YYpeTfwcvSSRXbedZVM2LQl92JKP5SJ2KIj5Rd/gSXM6Li/volcDSJF72V/KARiCgBykWPng=
+Received: from BY2PR07CA0087.namprd07.prod.outlook.com
+ (2a01:111:e400:7bff::40) by SN1PR07MB2303.namprd07.prod.outlook.com
+ (2a01:111:e400:7a45::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.930.20; Thu, 12 Jul
+ 2018 05:48:04 +0000
+Received: from DM3NAM05FT045.eop-nam05.prod.protection.outlook.com
+ (2a01:111:f400:7e51::203) by BY2PR07CA0087.outlook.office365.com
+ (2a01:111:e400:7bff::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.930.20 via Frontend
+ Transport; Thu, 12 Jul 2018 05:48:03 +0000
 Authentication-Results: spf=softfail (sender IP is 158.140.1.28)
  smtp.mailfrom=cadence.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=fail action=none
@@ -47,34 +47,34 @@ Authentication-Results: spf=softfail (sender IP is 158.140.1.28)
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  cadence.com discourages use of 158.140.1.28 as permitted sender)
 Received: from sjmaillnx2.cadence.com (158.140.1.28) by
- CO1NAM05FT035.mail.protection.outlook.com (10.152.96.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.20.973.9 via Frontend Transport; Thu, 12 Jul 2018 05:48:04 +0000
+ DM3NAM05FT045.mail.protection.outlook.com (10.152.98.159) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.973.9 via Frontend Transport; Thu, 12 Jul 2018 05:48:02 +0000
 Received: from maileu3.global.cadence.com (maileu3.cadence.com [10.160.88.99])
-        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id w6C5luUY017906
+        by sjmaillnx2.cadence.com (8.14.4/8.14.4) with ESMTP id w6C5luUV017906
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Wed, 11 Jul 2018 22:48:03 -0700
+        Wed, 11 Jul 2018 22:48:01 -0700
 X-CrossPremisesHeadersFilteredBySendConnector: maileu3.global.cadence.com
 Received: from maileu3.global.cadence.com (10.160.88.99) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3; Thu, 12 Jul 2018 07:48:09 +0200
+ 15.0.1367.3; Thu, 12 Jul 2018 07:48:08 +0200
 Received: from lvlogina.cadence.com (10.165.176.102) by
  maileu3.global.cadence.com (10.160.88.99) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Thu, 12 Jul 2018 07:48:09 +0200
+ 15.0.1367.3 via Frontend Transport; Thu, 12 Jul 2018 07:48:08 +0200
 Received: from lvlogina.cadence.com (localhost.localdomain [127.0.0.1])
-        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w6C5lrkU029902;
-        Thu, 12 Jul 2018 06:47:53 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4) with ESMTP id w6C5lqKW029870;
+        Thu, 12 Jul 2018 06:47:52 +0100
 Received: (from pawell@localhost)
-        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w6C5lreo029900;
-        Thu, 12 Jul 2018 06:47:53 +0100
+        by lvlogina.cadence.com (8.14.4/8.14.4/Submit) id w6C5lqEO029864;
+        Thu, 12 Jul 2018 06:47:52 +0100
 From:   Pawel Laszczak <pawell@cadence.com>
 CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
         <linux-kernel@vger.kernel.org>, <ltyrala@cadence.com>,
         <adouglas@cadence.com>, <pawell@cadence.com>
-Subject: [PATCH 28/31] usb: usbssp: implemented usbssp_gadget_ep_disable function.
-Date:   Thu, 12 Jul 2018 06:47:25 +0100
-Message-ID: <1531374448-26532-29-git-send-email-pawell@cadence.com>
+Subject: [PATCH 25/31] usb: usbssp: added implementation of usbssp interface.
+Date:   Thu, 12 Jul 2018 06:47:22 +0100
+Message-ID: <1531374448-26532-26-git-send-email-pawell@cadence.com>
 X-Mailer: git-send-email 1.7.11.2
 In-Reply-To: <1531374448-26532-1-git-send-email-pawell@cadence.com>
 References: <1531374448-26532-1-git-send-email-pawell@cadence.com>
@@ -82,260 +82,499 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-OrganizationHeadersPreserved: maileu3.global.cadence.com
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39860400002)(2980300002)(189003)(199004)(36092001)(4720700003)(109986005)(107886003)(4326008)(86362001)(316002)(5660300001)(6666003)(42186006)(54906003)(50226002)(16586007)(106466001)(2906002)(50466002)(26826003)(105596002)(478600001)(48376002)(87636003)(1671002)(76176011)(47776003)(426003)(446003)(14444005)(11346002)(8936002)(246002)(51416003)(336012)(305945005)(7636002)(126002)(356003)(2616005)(8676002)(486006)(476003)(186003)(26005)(36756003)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:BY1PR0701MB1333;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CO1NAM05FT035;1:eSpbIRca0Fh8rc4fi2Oj7aBDCj8WaDxcCVzhvkziqPKEbksLv9kkUGefLBqjyflIeWOplaKHp7Eywo3dsVyooU9O4exLBvvdwpm5MYjKJbyonCXYhubx66FVylAaMYs/
+X-Forefront-Antispam-Report: CIP:158.140.1.28;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(39860400002)(136003)(2980300002)(36092001)(189003)(199004)(486006)(4326008)(7636002)(1671002)(5660300001)(8936002)(356003)(8676002)(87636003)(107886003)(109986005)(305945005)(76176011)(14444005)(26826003)(51416003)(86362001)(575784001)(478600001)(4720700003)(6666003)(47776003)(54906003)(26005)(36756003)(105596002)(186003)(106466001)(50226002)(246002)(316002)(2616005)(2906002)(476003)(48376002)(16586007)(50466002)(11346002)(446003)(42186006)(126002)(336012)(426003)(266003)(309714004)(19627235001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR07MB2303;H:sjmaillnx2.cadence.com;FPR:;SPF:SoftFail;LANG:en;PTR:corp.cadence.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;DM3NAM05FT045;1:eS2nW1akkWHQ7rgyNGkX6r4x0NrJSlBAnPzlc6uPhgn7c2RGzO/de4G+UW39cu6pFb9bi55as2qdZiFhGlxTyqDgN58ZGx1gIGu9yito6l+yw6hE4Uf2MtZwA1O0wZNb
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 4c1d0dc9-793d-4416-3e69-08d5e7bb099a
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:BY1PR0701MB1333;
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR0701MB1333;3:wxA3yUPMuCKYQ9iVOZvambeYceeDvFZYEPmp0ligPL33OksZuxIYAck828ELE20f29xokkpzRbtbpCdJJwOj0LK+Van6c+K5ZlhJ37sPFONGHfaSlqO0RSnd1KSeYXdgyEbyZaQaahftPK2jXcGxaCmK6kogGAg+aVoqiRdvk98Tw4A8USwmp183RiWw777S0Yj3140G3rn2e4bed1BETjerdFnpwNz9pUS0j964BcVZZcGM4WgBqNS135PmzMaF8XYucAGwlvM5Bvd4Uv91D/9uZzA1MlkdR6GnWsogWI9FYdgfFC7n44g0W1WWFLFILoWJANl6/TBE449vrrVwQ9uD5s8naYfFUFZeP/OCwRI=;25:oGxgTzaicCPGVCH46Znx5cgP4okCFmkOqkvBkUZbdf9vXolmc0az/RZDi88lKIBZ0VoMxNYKXqBMF02RIcBh3faX9l19d44bOeCyFDtZJmLfO34nU68avkf21FYUYxfYf93Dv4Pd/sqvqPgGb5lnz7ktvhMtSgSkRq89au8kzJ631YKnVpOLCz0x2y/GU3eexO/WaAst9RVsOgF0QKGxex74Q3neMni66CxvGtGFxfBxO+KKp9Cctn+auA998zAjhKBX8su7m+MTcNZsvDrqa06JBhOWEqrISx+S86LJxmzd4QejjPX0xe7YgnGgUjwGUnY4WdWzV7Q0owZa9efQfQ==
-X-MS-TrafficTypeDiagnostic: BY1PR0701MB1333:
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR0701MB1333;31:1FlgbUykkhgLlaM9/mLpv2t7HJTGiSWpQ6r6J9zzVtlU+5uEhQadzvS3s2bFu51dOtgvJVeUIbi57dr80lN7D8QeqCBX4FsouPXeghqZm736AMA4acT6sdQP6H+SEY3N6odac6CGnZtquyIN1xErk0T+vth/h+wLaV4SGtyfjCFZLuKuhL75HYSenX8znAWfbrE8uw+3sXXK7Tvogr/ChP+13OBbout+eLsqMX7Vtnw=;20:Dpww+FwZUmaUsqM4U2B55Dt3dwCZ5h5Xn6xcL0Ea/e3++aYixF65AgyBykDVg7Y790cmrtvy3PGBtkIU6WJW91Kpc5c9Y8Ug3X4qs5N8c/O+WOBhDqiBq3XdFEwXbzSXgBlNiD1OPQrg+1M2gCrOXEH+wpgb2Op8BujZnXVeMGmuuF5vOD1liqOtTNRsQRuLC2xd1cusieU0ykuClVqYZhiPjpfQfHxIFdZLVCpAOQdAUL/fqEFJYDT8fUKW5hh3nTalK+EnjjHAsyK6MF+ISprCZY2YyU2yaf3CgEZyBPnb00vjazK51N3hFf2MDnX4mUAD6S4uo4t6+cwDRfwFzbu80ayhACa/GgUFbixebUrvUMshAHJLnFaNQQwCWiG+8v0BSwtbRG+TFfZ48NBIJPRBnGns9M5R+ps8kq1CiTFTkfXb3j2x123GCcW/5/0gBcAU4HpCSVj0vs+QR4vcPvDAyobuhfm+rulrz18YWRTlX85iPnUm+NP9/d8mMwA5
-X-Microsoft-Antispam-PRVS: <BY1PR0701MB13332EF82CDD09A94C33602DDD590@BY1PR0701MB1333.namprd07.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 08c64c2c-33e7-48b9-9939-08d5e7bb08aa
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060);SRVR:SN1PR07MB2303;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2303;3:3JbMxaLAnT2wS4Ttu07ygJPrVXWSnsw/jQgg4RjhjH8bhQOqx5gkKSwI4i/Dbcw/a18CwMOla88Aqs7HjiFOZue5liZgW+qwj1oVVjs4b82yrRNH4Um1IUqDjtNBL0qYT60C3/4KzpIS1Sl6VCssDrUmIhtG8WiYdfOaJS96rgAaAEyriI97mOZ25YLZjbiSp46eiBXGx+Wgx06/x6czJTmoIwVFw9SieJZpvNfaFO4GgiPNRlczYOOCiXjV96T4G99YrfSwoT5zy0A4i3NhS4yf+nUC8g+59H2qkUIsr7urSP7dnKMYWXbZ58FObav2JlWSs3v7Jp6myMO3UFysAI7/4OrI+gFq0EPIj+YWOLk=;25:XF4rCA+dAx/2kebV4XMEPn0mWP/kGDDbU9ACAsA8L39tpR/xkhxFljci/dLpahiBI9H+7nvs5XdEIvqyqxCCLeeM4egsAfFT1nxOXkyjHWk+9dD+q1mvs9IO1R0AoRswn5KS8y0/dF4hpB9lLMTdhR/FQsp5NQUoZ7IdJJEFFx6pPQwHfbl1JTWiQpQda+vRYgJHwOxUdsLAxFSR49Jf7+yGCjpeBYMcFANNggTosy0VoqLEl3ev+fS1t6TKiKyF77HDW6ewabKiF3XInUPJ5D3eHJvRIGwCtus8vRY3NxCo2LAHOIjyE02xu9XBrCqwhkaVbRnA02Z522U9hk7z/w==
+X-MS-TrafficTypeDiagnostic: SN1PR07MB2303:
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2303;31:98q9zo/Gf6zHDSU7gZtr9eKBkK53tMTe9CWNZPiwxMffJ7cpkCq8Eb8SvZp5wxUegWLl2Ue6Gx/9v6nECuslkKqB57KuzSyoNaUShlbm34Z3931uB/WnGQyZK3qXWW24SckMvJiKAGeKAm54a3hbVGafAUw0OZdVOdROWTPq6vUkahDMlzKjjoMfk8+VgI09US9pfWY+e9OluWj/ANR9CMn2NvYBhcp94NlUapuqFyk=;20:Axg41AWDY+3iJrbTAbA2D/P4XtUjiVPjpB1ISew180uePZjG5n2ImBi9fkJlWviT3kYO4rSPv1X2vWBIAgJ52cvAYuWvflNlZyOPypcmIjgvhYMfpK2j/rt9SxIx77WsWjf06PsAB1FDt6o/I9OyLp0ZVhmrjviTxZdoA43Ghsz8Tlabm20RlQn/IXbBnpg8vjVcfm78+CiVqL/VkUT4HFy4BHAX47zXCPD1fo2rvvcEwv8pijbNi//EIPsYhyIF+fEEG7vMFWa8aMCYYoAiChZcC998IelKmXrHmGeYJhTR7pCuFtiXMy9s/VQSggwimv7EvMY908iAmY+nPqOpFWPTKuNLUX4U/TqnS1iseKWQSViwT6RmshFElD+wiFmcvRMXwUNvUWWonIP9410mK5Js12F4M1NjPnz+sdssGePcfqoFvQf86r8Ve5j1wEZIUBz3K/iUOmYWYI/ygabc7pb6gIHjuJPhdCn6bfGMUZlfm/XpgtqvYnGMh5dir3kK
+X-Microsoft-Antispam-PRVS: <SN1PR07MB23036D639C9662BE2573BDCBDD590@SN1PR07MB2303.namprd07.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(72806322054110);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(10201501046)(3002001)(93006095)(93003095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BY1PR0701MB1333;BCL:0;PCL:0;RULEID:;SRVR:BY1PR0701MB1333;
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR0701MB1333;4:Vy53t+Eu/TjibPW14/j+dhNS5A11Gxnlg6nJbL39aasih9oDZb01sqguXTMx0Pv0kf1KaeqifeN9+lXMAp9LMgDgTmTEXvZ1nOwfoxPvslUo+9iNxKZjRk1n9CtWyBCO07ZayJR/QxUeQiWLtRIp2e8UhBnpM6vHfDM4HhZncFhlCurgZYbLX2SAKjcxSfa8aKyhsFYcvIeZDCrnFuCyXSQpj7k/tH4hCYjZmHGa16wjT/7psmBydKQTpk9vDTpTnwmnjSHO+GGR5yXGNox7LO+/4jz80yrfFwZ9GPdgzqCRuqZ1Jlv+emHfDibt0c5c
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(10201501046)(3002001)(3231311)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:SN1PR07MB2303;BCL:0;PCL:0;RULEID:;SRVR:SN1PR07MB2303;
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2303;4:cpu0isaLWBxU2GtePFPjOO76xoVBkin2j+MvN46EkhTrE5zXsZnh1wKE/jAiL7r6a3oifyjYSWPQsKzRtsVIwl4lAMbBexnwNR//Oy8pF+OHHX9uYlF0Gxi8WXkomBX2ZjCKCPEgNbYQz5ooGzI18NLqyW4DydQdswXhBQZ6m0k48LqoNX06u45AWTbYu3aTTUZBTAh2tBLnBRPa+APN4RvoOP6XyowFmtwYWf1vnR94flPSRwk9HQIRTB167MH9ZOuy2UwbEwxRidn1mvgncUt0Op7YENuPF/8reCe2hMx439P48KtajB2LK3WrSgad
 X-Forefront-PRVS: 0731AA2DE6
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BY1PR0701MB1333;23:Tx0wNuyXZxVPwhVirJD7BPVa7dVHDy+PY9R1kwe?=
- =?us-ascii?Q?DZwlPD3qhLhd1WKEzOKVNnrkJKlwFQE4n4L2K5wr3XPtlQvIqyBWb3UXjwns?=
- =?us-ascii?Q?6Rzd/YuFyuBvm0VdDF/878v02g8rLmvmlDCLB6d2efCFrkSDTafAj2iiGVZQ?=
- =?us-ascii?Q?E96Z/1ljexVifejopg9cdMikyY7h6zESbUyO9C/qeUGStwJ3W5g9h2ykfbew?=
- =?us-ascii?Q?Pd37OCMxsm0ss4iHk5WPyv0z8DFHrWBOib2pIWAJgDBg8nN46cxA/HQwVrt0?=
- =?us-ascii?Q?7jPISuZzg0p2eiEVnjtIYpikmpSfLOvvIfW3y1zEHGdJC6Cidrp/K3aKxkfa?=
- =?us-ascii?Q?qEeH48L/VI1kZUga4bDp235rAimWKiSo0QVRJd/u2rb5N5WtUKbrvj1GZ+C+?=
- =?us-ascii?Q?6MBljmx5IQy3shrvVGzyN57+qatinR64CujhlHiUIBMg+PQq5jLBhJVDVRDL?=
- =?us-ascii?Q?3ebo0xgGwJtcmTuWvToyZXXpL1+UsB95VfDMDtTy2pJQR0EaylWDV1qQuepW?=
- =?us-ascii?Q?WqTZ8zEGV4IMdi1GLRuM6kvjCKK0UjSQI0h2tRUMqmCLhaYyvkbECgAlcl7N?=
- =?us-ascii?Q?cXh2096W6qMRYGLVSJFKexX1JjtSqj6rQVI+zvGXBgcq3GAhuvhHEz53rmdm?=
- =?us-ascii?Q?rWJjMQF+f6wvphrF/OO9qHN8sZ++si6gLEcj7NSwt7+1wVmFYtdziGYGS46q?=
- =?us-ascii?Q?M19h3W8bSV6yjhE1CLR49dMk5m1tX6Q7PZ8g/rYUM43/YP4C2Bc0FR1P1Ynf?=
- =?us-ascii?Q?OG9hN1PbKo85PsY9ZkIHWgBzf3vpU6MnKln2jIFVW45qF7/UGAbNxZ93Ou5f?=
- =?us-ascii?Q?sxMjiCWHbdZP11YVdZs5uSmAHQdnOoVkieVRut2cAbej5lRQBxy0+2E0zL31?=
- =?us-ascii?Q?gMTEWwEOl4q2h7QM44duWD/bLG/JnMJvciHV26ywwVgXmrj0dillSXoi1+/y?=
- =?us-ascii?Q?4gXNvOkz7CPV0IRnI9vZpeAtzDmdYdKInvoLYX+6QYW/hFkfFBbAb+2onHGk?=
- =?us-ascii?Q?eCVqJOqEcEuOaFPYDXqU9f4KKHEECUHKFnZCLluNXIoPBUxs1Hj8Ai93ep+x?=
- =?us-ascii?Q?GwBdjTqEhNXeUNN2BWN6eqsQUyvUKoIi+AzWQUPe39RaMqF6OOM9QVoODep+?=
- =?us-ascii?Q?nXhjsbjfGDiiX0q3XMvc+Dyk7PCDnSKSd67IlbmQ/J51AeUe1kX2BYQ=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR07MB2303;23:ZaY/vQ8faS6LSf/lkFMM4gAVKHhPrQRSxTEYB2NDk?=
+ =?us-ascii?Q?Vgr+6lvUN46mn8EjaOCMMbaYaVNGuJzxSxmB+KfHq5UKy9CrLk5SNfWV0l5w?=
+ =?us-ascii?Q?F1Q2t7R1JiFixFsm2XeqxqjAYwr3AESRNcIk2alpBuLNl6NcYiMtmphwdQa8?=
+ =?us-ascii?Q?aNciSlqTgYwFNpSQ6AWJEbxwJpvw8j+yKUW731Yz7wj4tYSVIDhVTWAA9Lvw?=
+ =?us-ascii?Q?1cFPOD8/aT+KAhFp5YN564BIukpnuZwBgk73sSMeTfLiL0NKiUtW0Hvei2NV?=
+ =?us-ascii?Q?5I+aTOJvte+93K1a7MBXkXWUZe6pyW0pXB3LIOUzJpREO93VNiteeUrNmArw?=
+ =?us-ascii?Q?ighSPvXuQF7Fa98ydSU0ZXTDdnOb0VFSyTNHTGLwjDoKj7o2Vw/H9ePfN6Wn?=
+ =?us-ascii?Q?Zd1DoG2JesDUT/dXoVduP/LbuqDnBUbFLmaQJnKjW7kOehj2yeIx3ZvOKj0m?=
+ =?us-ascii?Q?ALNcuKdQbaekbndXFGPGT1J7rvCXlmi2r2JC6WiUkX7KRI1QlxkujRhaOqdJ?=
+ =?us-ascii?Q?URLyImDdYJ+Xvty/l+ZG1kGchzC7xw1fcIAKp87NE/TuBx0RBatEjqUBmKtw?=
+ =?us-ascii?Q?L+GJv3+T/0ggjKRfEhzBNUlDiU3xgDM8soHawRkCQrIaVm2rGIlyDTwY/2ne?=
+ =?us-ascii?Q?v0Eu53tCJPnjFjUjb0pxlvweFo7A0GqfY6rOUFAqZdrucKmyIMkOAYLc4Gtv?=
+ =?us-ascii?Q?FLvwfg4GI1wr8ssnrrjqAII5YQVZ2TmSDdHkyCWYzwJ0FRg1MxzbbrjnK+/G?=
+ =?us-ascii?Q?mEGUiYo+XvK9tC1K4y8rwaIf192CMScIKYr5/CK2yuIFKKriwivWFf0v5PCI?=
+ =?us-ascii?Q?riMAobcWvqSXAC5oGW+NpSGETiA9BaEVXQZjAxxLvKTjsxCVj9mbMHruvI6R?=
+ =?us-ascii?Q?S/Jn/LlYM9FOwvEdbmwg3iQsq487z/1cf0FMec9lvYKgXB+TcStM0cBf0pgy?=
+ =?us-ascii?Q?f+Eumf98VxxT0+SRLReSbwsV7dBxsdYi1bg7w9uB2Tc6XYOaHLE04GkqJzjj?=
+ =?us-ascii?Q?eHy1BqyyaVWRSB0wg5p/I4aCBtFLEPea8jXqppy/dLvRlw7uVjsXpxAJUOCw?=
+ =?us-ascii?Q?qKt5rMmSuPLro5vzSzG3Ru0iS+s94IP2cWuUGcdL9ehca0JP13vv9majWI/7?=
+ =?us-ascii?Q?GWrApB0p1nSQ/dJZ+2wMc27T/JhNfxwXxHu7BbC4LS4BsChJ024xnWVgZAqz?=
+ =?us-ascii?Q?S+3p6Uhz6JnJf2NsUKBmSTlWNghgV17EpO2V6+ww171z4JT5zjqdczYVQ=3D?=
  =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: JE/JQzeU60abkNt50PiamfHKEizOGG40GM3Js0LH4/mysMhJbTmG9O0AEkRLt1GQqBlhvXrtb7wFPTJDLL5X5nG8DGoYQHQfTIRybg1UOCX4rQGcdCh7rfWJ4N6+yGktf52xrT1znhXVMS4NlYT2i32zCMrXHO5JKCOGxjWzL9hHandCvL3Q8iYol1TAdKb0Ud31DzX6gIj+NTNuwbm3pKGc0yQISK9OFvhaJq95B5N5vyp087Rqq0aubeRIZyyvaZ7gc6A8c+NSeVh/ML4WM42lqVp2rg60UKTmIg1pXsyy3rXE/d8Ryb0ZqRR1K2IN9B9C8zMVXFPkmXFGncWCdgafIIp+qAVWZJZe4LDFgeR0M+AAFwTOlpY64HzTjwWVGyV4zSExRIM0TeQBP+OtFQ==
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR0701MB1333;6:e01a86P6bwn9Au76r/qqiyFn83UxGzfpZ7BjbERDoB5JjXCrQQNQ0C2zMeb/rjiXSaokwLOCJm4ua2YjC/tCWy2Q+xErhFkTINF/xoup1NSkF4SGd/rDGKRQL03vLzcwGPrlH1jN8KOf/ysSPHYSPcizGJTKIivFuxPwN6fmUnHN+jAkjuLApoCNuXSRUjbtDB9itFlfsneE/9fvoWeGQ/kynbJfjdWdBzJm1Gl71r7VRskLChuwK5dQ4CXLwVB1nBkFjLdHfeiV8DhM7nvnlKk9vbXYZ+MuGMxyeKfAmRLRNmYlUaZZgUO2/Osira0EhMpy+ocYd6GCVHLFcumbArhCXJto87dQW6sx1gzC4skI9fqNiYiR7PU4yRVoWElRrday/AjK7Qn7FxLfhWs1CdP2/V2rP003MXhvkIFY7pWCqr9cRbKHbleb1Ta+TowBlo0P9mEa2qiePs8Db/ITuw==;5:V43enumZXVkTt+7HVRGk9uNMl4IVzL6ZU0Yx1Pey+Jpwk8izCWAqNOqzilr/f85a2A+NLFZIgdUy7PHdr8ZA1eeMYn74MOWcNMU+J+uQL/Wcv1zTshAdt2V8Z/taNKDe4X5dgFEIO7d2cNC3JM7mS0p1AvVzdV/t+CR8GW7IgLA=;24:AVsDPkwcrPrugC0y35uRhRrUgHLBJ10AGUrCMsVEh0uXIQnKlTPeoPA1qD15z2WVsUmaVBkhYDXqToMrpSbBVSRzMbfn4d3J4iBo2F68jlM=
+X-Microsoft-Antispam-Message-Info: 2JS9/ulODElUwwsUw7774d1wZYbRswYJT4cVEQHcZdzQf2HNDmuj3H5RhotFHPUZT7CxZUlfh6Y5BbZ+VpMXgEWZYjdXWVRAiVmR7Mt7DYA+ADjWMrzBPdNfdyTtNIrXk/jr2t/IxXLb+BCWl/i98fGbxYW6V3zeVL7gJ5k6nmkjUFdbPRTZQkW9ZLPJOUQxZttCqkgN5Q37TPdKj4cz5/FYpv24eeiVa7+Ulp8xiUpB7Oryk8/P1Mb5oF1lrvkUu4jHf90e4TY7y0OUwBAtgZrJrtonJ2ex/yi/0PjpMwXkCX8tWw8c/efdF+ccq296QHnoVVup5V5O8aKMYTq2s9qE9tVk/hRkWCA2XjbOcxxcyXS/9wLIYAwjtpPBgBPFTi3N3/i0yOSKJb9CxfQ8Qw==
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2303;6:Yj/+LNc5bJgyoGVXfI4oUznsg04aKKgHZ/YBEd4saetAtheslCVuKDU6g68PYAicAIOJZPlIYHlsU4PHnhEoYdexHvAvPyoGlSQzC9GD+HWdSQZVCN7oYot5itKUnrTDmFtfNW6dgw6IN8sNXNKXxpZ6c8NB7/ZW/cmg+SgJP6Ljwxtf4btb9iOx9f/93B3/Tk9K9wYfPWwBWE2iLwmGAFnOrJMfFbADlkVi64CiXrXKEg3Ceiyo4z8RVHeoxVGyqMzsXLaqLXDwSNFocenkPCp2iLF8Dgia2gPy1YVz/C99aJwQofIc83MUWrTYM90XX/3vlIOIigAGyqAjuUshB+nliWSYH55J3BLyG0sn3PkrngSfA6vgt+6b9vqK7lg2ktjiNmpnsZB4ubLLX49TjtoePA69N4JkFBvOStdQmQ1ZHvH/OdruqlIG+JokcUy55NzyrFdxCyTKi+P0I9sfAA==;5:XXMRU+6Y3YoNvKu7Ol4mmD2qW9I2LRgaIPH6VOnYztc3zr721SCTMHPmfyfJcbYauaXTj+C8bLA1jYk/gz8BN06/WQfgfCjPI46S/iqX2NStr4uHV8MbYwHMrW5vkaSJezFppG7e4ZM5/5IE+QWK/vnTVJI98uqWXcF1WVS2tOs=;24:q/ulxjGlp4TC9rud0Qu/QNO+xB9l3guS8gOui0vdZO8+pqzfGJLutJZrL5tJKPxbo3a7dPT9m4rrsJw/0i40EkurSVTeb0N964Sy7/RDIjQ=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;BY1PR0701MB1333;7:pE6jarIjfelfmJYqVO+M+zyLn6/qHZs+bDSFVUdb0dJrvTJCJRaG3I+QVCk3y8fJprguGb7jR5iSsPgNS06FxhacEA4115fxU018o7mDwSun3PXsQPeQME4pnkRbW09RzsbUM2JUVlscYTJ1nU8NxVThp7SBpYU0jrg82TLAR3FTDI8CR91VYvcS8ZudIP+iZ3gW4n1LoOWoeRJqIH6k92/mqen7ORbrDYiLBUiLD6C5XFhOdhAvvylyGV23XbxB;20:GgKAeaGA6sQEV4Ir628kWwpguNb0BRGuMYZQxY9dgU4hNb5g+ODKKLOLPWbxs+nEaePnMiTp7upX/g5P97cAjYoBZjsOx7ykslF6Zt1xu1aayMn5+AehVFXPgxsMKwwawverZADApGYcEo9sPGuiRY665XSGebm4KLKyefC3+Ck/BtXyiRZW+E8tcxo570WC4ABBxGv+qtvxNRwQfA/4BlEndErMX1SRj4U9Ms9m80bJTu/pN+n+ZCVn9JqoA/R+
+X-Microsoft-Exchange-Diagnostics: 1;SN1PR07MB2303;7:S2fKddRfgi2ICS2MCmymbV4p7spHgAz1UfVMugKF/FoREcGo6qPyNgIYVd5DnWaQtZabqdyTwbs+kjwg+9iQsCFKY4YY761dPLanDzK2olrD9q0dsLwnGG5lCN3sZjG4j3S5a4SvVNBFAbW6oOo9YHyVaKV4D+iAMhkp6HapirbCWmXbkwt6yNb5MbCMpJvC+UCaZDwRMJNQvGZssA2EQSNDteyL5d1ZcPGrc7WVP2mZx5pFYIAZ+63uy47hYQt/;20:4WcEc9coA3FHGJwNZ424kDn8pOOrxKxeAHBaDjMIpSt1UNDus6UGeLvvx0ayvOSTxbCXi6rqeC165BByIsNn3FIYxTG9r8lr3ebG/5TMQCqlskhfnRknqSCZfomtIQRyEbmK3U9PbyR5fUefaM10vMr38cIvYn5FsZgXk0j1hxFDOucVRcftmoWLODpVi9MyYNVetu+lF/Un1Hwsm66L6+60l9m6z4AZ7AHYQLhZjHyZeTWh3OTyihV72SxwanS0
 X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2018 05:48:04.7078
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2018 05:48:02.9966
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4c1d0dc9-793d-4416-3e69-08d5e7bb099a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08c64c2c-33e7-48b9-9939-08d5e7bb08aa
 X-MS-Exchange-CrossTenant-Id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=d36035c5-6ce6-4662-a3dc-e762e61ae4c9;Ip=[158.140.1.28];Helo=[sjmaillnx2.cadence.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR0701MB1333
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR07MB2303
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch implements function responsible for disabling
-USB endpoint. This function is called
-from USB core gadget during handling SET_CONFIGURATION or
-SET_INTERFACE request, or after such events as USB_RESET or detaching
-device from host.
+Patch add implementation of most function from usb_ep_ops and
+usbssp_gadget_ops objects. The implementation of
+usbssp_gadget_ep_enable and usbssp_gadget_ep_disable functions
+will be added as separate patch.
+
+Patch also adds usbssp_g_lock and usbssp_g_unlock macros.
+They are responsible for proper handling of semaphores.
+Some functions belonging to usb_ep_ops and usbssp_gadget_ops
+can be invoked from some different context.
+In usbssp driver we have Hard Irq interrupt context and deferred interrupt
+context (thread context). Additionally, driver in thread context can
+calls commands on which ends it must wait and must enable
+interrupts to detect completion.
+Therefor when driver is waiting for command completion, the new event can
+be reported and driver starts handling it in Hard Irq context.
+Therefor driver use two separate SpinLock objects. The first usbssp->lock
+is used in Hard Irq context and second usbssp->irq_thread_lock is used
+in kernel thread context.
 
 Signed-off-by: Pawel Laszczak <pawell@cadence.com>
 ---
- drivers/usb/usbssp/gadget-if.c  | 44 +++++++++++++++++--
- drivers/usb/usbssp/gadget-mem.c | 18 ++++++++
- drivers/usb/usbssp/gadget.c     | 75 +++++++++++++++++++++++++++++++++
- drivers/usb/usbssp/gadget.h     |  2 +
- 4 files changed, 135 insertions(+), 4 deletions(-)
+ drivers/usb/usbssp/gadget-if.c | 180 ++++++++++++++++++++++++++-------
+ drivers/usb/usbssp/gadget.c    | 107 ++++++++++++++++++++
+ 2 files changed, 248 insertions(+), 39 deletions(-)
 
 diff --git a/drivers/usb/usbssp/gadget-if.c b/drivers/usb/usbssp/gadget-if.c
-index 2fecc934cbce..75444eaaf699 100644
+index 411c3971082f..356571eadb3d 100644
 --- a/drivers/usb/usbssp/gadget-if.c
 +++ b/drivers/usb/usbssp/gadget-if.c
-@@ -86,13 +86,49 @@ static int usbssp_gadget_ep_enable(struct usb_ep *ep,
+@@ -12,6 +12,30 @@
+ #include <linux/usb/composite.h>
+ #include "gadget.h"
  
- int usbssp_gadget_ep_disable(struct usb_ep *ep)
++#define usbssp_g_lock(flag, save_flags) { \
++	if (in_interrupt()) {\
++		spin_lock_irqsave(&usbssp_data->lock, save_flags); \
++	} else { \
++		if (!irqs_disabled()) { \
++			spin_lock_irqsave(&usbssp_data->irq_thread_lock,\
++					usbssp_data->irq_thread_flag);\
++			flag = 1; \
++		} else \
++			spin_lock(&usbssp_data->irq_thread_lock); \
++	} }
++
++
++#define usbssp_g_unlock(flag, save_flags) { \
++	if (in_interrupt()) \
++		spin_unlock_irqrestore(&usbssp_data->lock, save_flags); \
++	else  { \
++		if (flag) \
++			spin_unlock_irqrestore(&usbssp_data->irq_thread_lock,\
++					usbssp_data->irq_thread_flag);\
++		else \
++			spin_unlock(&usbssp_data->irq_thread_lock); \
++	} }
++
+ static int usbssp_gadget_ep_enable(struct usb_ep *ep,
+ 		const struct usb_endpoint_descriptor *desc)
+ {
+@@ -40,24 +64,27 @@ int usbssp_gadget_ep_disable(struct usb_ep *ep)
+ static struct usb_request *usbssp_gadget_ep_alloc_request(struct usb_ep *ep,
+ 							  gfp_t gfp_flags)
+ {
++	struct usbssp_request *req_priv;
+ 	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
+ 
+-	if (!ep_priv)
++	req_priv = kzalloc(sizeof(*req_priv), gfp_flags);
++	if (!req_priv)
+ 		return NULL;
+ 
+-	/*TODO: implements this function*/
+-	return NULL;
++	req_priv->epnum = ep_priv->number;
++	req_priv->dep  = ep_priv;
++
++	trace_usbssp_alloc_request(&req_priv->request);
++	return &req_priv->request;
+ }
+ 
+ static void usbssp_gadget_ep_free_request(struct usb_ep *ep,
+ 		struct usb_request *request)
  {
 -	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
++	struct usbssp_request *req_priv = to_usbssp_request(request);
+ 
+-	if (!ep_priv)
+-		return;
+-
+-	/*TODO: implements this function*/
++	trace_usbssp_free_request(&req_priv->request);
++	kfree(req_priv);
+ }
+ 
+ static int  usbssp_gadget_ep_queue(struct usb_ep *ep,
+@@ -65,12 +92,32 @@ static int  usbssp_gadget_ep_queue(struct usb_ep *ep,
+ 				   gfp_t gfp_flags)
+ {
+ 	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
 -	int ret = 0;
-+	struct usbssp_ep *ep_priv;
-+	struct usbssp_udc *usbssp_data;
-+	int ep_index = 0;
++	struct usbssp_request *req_priv = to_usbssp_request(request);
++	struct usbssp_udc *usbssp_data = ep_priv->usbssp_data;
++	unsigned long flags = 0;
++	int irq_disabled_locally = 0;
++	int ret;
++
++	if (!ep_priv->endpoint.desc) {
++		usbssp_err(usbssp_data,
++				"%s: can't queue to disabled endpoint\n",
++				ep_priv->name);
++		return -ESHUTDOWN;
++	}
+ 
+-	if (!ep_priv)
+-		return -EINVAL;
++	if ((ep_priv->ep_state & USBSSP_EP_DISABLE_PENDING ||
++			!(ep_priv->ep_state & USBSSP_EP_ENABLED))) {
++		dev_err(usbssp_data->dev,
++				"%s: can't queue to disabled endpoint\n",
++				ep_priv->name);
++		ret = -ESHUTDOWN;
++		goto out;
++	}
+ 
+-	/*TODO: implements this function*/
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ret =  usbssp_enqueue(ep_priv, req_priv);
++	usbssp_g_unlock(irq_disabled_locally, flags);
++out:
+ 	return ret;
+ }
+ 
+@@ -78,36 +125,53 @@ static int usbssp_gadget_ep_dequeue(struct usb_ep *ep,
+ 				    struct usb_request *request)
+ {
+ 	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
+-	int ret = 0;
++	struct usbssp_request *req_priv = to_usbssp_request(request);
++	struct usbssp_udc *usbssp_data = ep_priv->usbssp_data;
++	unsigned long flags = 0;
++	int ret;
++	int irq_disabled_locally = 0;
++
++	if (!ep_priv->endpoint.desc) {
++		usbssp_err(usbssp_data,
++				"%s: can't queue to disabled endpoint\n",
++				ep_priv->name);
++		return -ESHUTDOWN;
++	}
+ 
+-	if (!ep_priv)
+-		return -EINVAL;
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ret =  usbssp_dequeue(ep_priv, req_priv);
++	usbssp_g_unlock(irq_disabled_locally, flags);
+ 
+-	/*TODO: implements this function*/
+ 	return ret;
+ }
+ 
+ static int usbssp_gadget_ep_set_halt(struct usb_ep *ep, int value)
+ {
+ 	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
+-	int ret = 0;
+-
+-	if (!ep_priv)
+-		return -EINVAL;
++	struct usbssp_udc *usbssp_data = ep_priv->usbssp_data;
 +	int ret;
 +	int irq_disabled_locally = 0;
 +	unsigned long flags = 0;
-+	struct usbssp_request  *req_priv;
- 
--	if (!ep_priv)
-+	ep_priv = to_usbssp_ep(ep);
-+	usbssp_data = ep_priv->usbssp_data;
-+	ep_index = usbssp_get_endpoint_index(ep_priv->endpoint.desc);
-+
-+	if (!(ep_priv->ep_state & USBSSP_EP_ENABLED)) {
-+		usbssp_dbg(usbssp_data, "%s is already disabled\n",
-+				ep_priv->name);
- 		return -EINVAL;
-+	}
-+
-+	usbssp_g_lock(irq_disabled_locally, flags);
  
 -	/*TODO: implements this function*/
-+	ep_priv->ep_state |= USBSSP_EP_DISABLE_PENDING;
-+
-+	/*dequeue all USB request from endpoint*/
-+	list_for_each_entry(req_priv, &ep_priv->pending_list, list) {
-+		usbssp_dequeue(ep_priv, req_priv);
-+	}
-+
-+	ret = usbssp_drop_endpoint(usbssp_data, &usbssp_data->gadget, ep_priv);
-+	if (ret)
-+		goto finish;
-+
-+	ret = usbssp_check_bandwidth(usbssp_data, &usbssp_data->gadget);
-+	if (ret)
-+		goto finish;
-+
-+	ep_priv->ep_state &= ~USBSSP_EP_ENABLED;
-+
-+finish:
-+	ep_priv->ep_state &= ~USBSSP_EP_DISABLE_PENDING;
-+	usbssp_dbg(usbssp_data, "%s disable endpoint %s\n", ep_priv->name,
-+			(ret == 0) ? "success" : "failed");
-+
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ret =  usbssp_halt_endpoint(usbssp_data, ep_priv, value);
 +	usbssp_g_unlock(irq_disabled_locally, flags);
  	return ret;
  }
  
-diff --git a/drivers/usb/usbssp/gadget-mem.c b/drivers/usb/usbssp/gadget-mem.c
-index 303dc8fab8ad..772a43f24ca9 100644
---- a/drivers/usb/usbssp/gadget-mem.c
-+++ b/drivers/usb/usbssp/gadget-mem.c
-@@ -1103,6 +1103,24 @@ int usbssp_endpoint_init(struct usbssp_udc *usbssp_data,
- 	return 0;
- }
+ static int usbssp_gadget_ep_set_wedge(struct usb_ep *ep)
+ {
+ 	struct usbssp_ep *ep_priv = to_usbssp_ep(ep);
+-	int ret = 0;
++	struct usbssp_udc *usbssp_data = ep_priv->usbssp_data;
++	unsigned long flags = 0;
++	int ret;
++	int irq_disabled_locally = 0;
  
-+void usbssp_endpoint_zero(struct usbssp_udc *usbssp_data,
-+			  struct usbssp_device *dev_priv,
-+			  struct usbssp_ep *ep)
-+{
-+	unsigned int ep_index;
-+	struct usbssp_ep_ctx *ep_ctx;
-+
-+	ep_index = usbssp_get_endpoint_index(ep->endpoint.desc);
-+	ep_ctx = usbssp_get_ep_ctx(usbssp_data, dev_priv->in_ctx, ep_index);
-+
-+	ep_ctx->ep_info = 0;
-+	ep_ctx->ep_info2 = 0;
-+	ep_ctx->deq = 0;
-+	ep_ctx->tx_info = 0;
-+	/* Don't free the endpoint ring until the set interface or configuration
-+	 * request succeeds.
-+	 */
-+}
- struct usbssp_command *usbssp_alloc_command(struct usbssp_udc *usbssp_data,
- 					    bool allocate_completion,
- 					    gfp_t mem_flags)
-diff --git a/drivers/usb/usbssp/gadget.c b/drivers/usb/usbssp/gadget.c
-index 833647600485..bf6a147e2a16 100644
---- a/drivers/usb/usbssp/gadget.c
-+++ b/drivers/usb/usbssp/gadget.c
-@@ -723,6 +723,81 @@ int usbssp_dequeue(struct usbssp_ep *ep_priv, struct usbssp_request *req_priv)
+-	if (!ep_priv)
+-		return -EINVAL;
++	usbssp_g_lock(irq_disabled_locally, flags);
++	ep_priv->ep_state |= USBSSP_EP_WEDGE;
++	ret =  usbssp_halt_endpoint(usbssp_data, ep_priv, 1);
++	usbssp_g_unlock(irq_disabled_locally, flags);
+ 
+-	/*TODO: implements this function*/
  	return ret;
  }
  
-+/* Drop an endpoint from a new bandwidth configuration for this device.
-+ * Only one call to this function is allowed per endpoint before
-+ * check_bandwidth() or reset_bandwidth() must be called.
-+ * A call to usbssp_drop_endpoint() followed by a call to usbssp_add_endpoint()
-+ * will add the endpoint to the schedule with possibly new parameters
-+ * denoted by a different endpoint descriptor in usbssp_ep.
-+ * A call to usbssp_add_endpoint() followed by a call to
-+ * usbsssp_drop_endpoint() is not allowed.
-+ */
-+int usbssp_drop_endpoint(struct usbssp_udc *usbssp_data, struct usb_gadget *g,
-+		struct usbssp_ep *dep)
+@@ -182,19 +246,39 @@ static int usbssp_gadget_start(struct usb_gadget *g,
+ 				usbssp_data->gadget.name,
+ 				usbssp_data->gadget_driver->driver.name);
+ 		ret = -EBUSY;
++		goto err1;
+ 	}
+ 
+-	/*TODO: add implementation*/
++	usbssp_data->gadget_driver = driver;
++
++	if (pm_runtime_active(usbssp_data->dev)) {
++		usbssp_gadget_ep0_desc.wMaxPacketSize = cpu_to_le16(512);
++		usbssp_data->ep0state = USBSSP_EP0_UNCONNECTED;
++		ret = usbssp_run(usbssp_data);
++		if (ret < 0)
++			goto err1;
++	}
++	return 0;
++err1:
+ 	return ret;
+ }
+ 
+ static int usbssp_gadget_stop(struct usb_gadget *g)
+ {
++	unsigned long flags = 0;
++	int irq_disabled_locally = 0;
+ 	struct usbssp_udc *usbssp_data  = gadget_to_usbssp(g);
+ 
+-	if (!usbssp_data)
+-		return -EINVAL;
+-	/*TODO: add implementation*/
++	usbssp_g_lock(irq_disabled_locally, flags);
++	if (pm_runtime_suspended(usbssp_data->dev))
++		goto out;
++
++	usbssp_free_dev(usbssp_data);
++	usbssp_stop(usbssp_data);
++out:
++	usbssp_data->gadget_driver = NULL;
++	usbssp_g_unlock(irq_disabled_locally, flags);
++
+ 	return 0;
+ }
+ 
+@@ -202,33 +286,51 @@ static int usbssp_gadget_get_frame(struct usb_gadget *g)
+ {
+ 	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
+ 
+-	if (!usbssp_data)
+-		return -EINVAL;
+-
+-	/*TODO: add implementation*/
+-	return 0;
++	return usbssp_get_frame(usbssp_data);
+ }
+ 
+ static int usbssp_gadget_wakeup(struct usb_gadget *g)
+ {
+ 	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
++	unsigned long flags = 0;
++	int irq_disabled_locally = 0;
++	__le32 __iomem *port_regs;
++	u32 temp;
++
++	if (!usbssp_data->port_remote_wakeup)
++		return -EINVAL;
+ 
+-	if (!usbssp_data)
++	if (!usbssp_data->port_suspended)
+ 		return -EINVAL;
+ 
+-	/*TODO: add implementation*/
++	usbssp_g_lock(irq_disabled_locally, flags);
++
++	port_regs = usbssp_get_port_io_addr(usbssp_data);
++	temp = readl(port_regs+PORTPMSC);
++
++	if (!(temp & PORT_RWE))
++		return 0;
++
++	temp = readl(port_regs + PORTSC);
++
++	temp &= ~PORT_PLS_MASK;
++	writel(temp, port_regs + PORTPMSC);
++	usbssp_g_unlock(irq_disabled_locally, flags);
+ 	return 0;
+ }
+ 
+ static int usbssp_gadget_set_selfpowered(struct usb_gadget *g,
+ 		int is_selfpowered)
+ {
++	unsigned long flags = 0;
++	int irq_disabled_locally = 0;
+ 	struct usbssp_udc *usbssp_data = gadget_to_usbssp(g);
+ 
+-	if (!usbssp_data)
+-		return -EINVAL;
++	usbssp_g_lock(irq_disabled_locally, flags);
++
++	g->is_selfpowered = !!is_selfpowered;
++	usbssp_g_unlock(irq_disabled_locally, flags);
+ 
+-	/*TODO: add implementation*/
+ 	return 0;
+ }
+ 
+diff --git a/drivers/usb/usbssp/gadget.c b/drivers/usb/usbssp/gadget.c
+index b4e26aab1fb8..38df3d3e937b 100644
+--- a/drivers/usb/usbssp/gadget.c
++++ b/drivers/usb/usbssp/gadget.c
+@@ -265,6 +265,22 @@ int usbssp_reset(struct usbssp_udc *usbssp_data)
+ 	return ret;
+ }
+ 
++static inline int usbssp_try_enable_msi(struct usbssp_udc *usbssp_data)
 +{
-+	struct usbssp_container_ctx *in_ctx, *out_ctx;
-+	struct usbssp_input_control_ctx *ctrl_ctx;
-+	unsigned int ep_index;
-+	struct usbssp_ep_ctx *ep_ctx;
-+	u32 drop_flag;
-+	u32 new_add_flags, new_drop_flags;
-+	int ret;
-+
-+	ret = usbssp_check_args(usbssp_data, dep, 1, true, __func__);
-+	if (ret <= 0)
-+		return ret;
-+
-+	if (usbssp_data->usbssp_state & USBSSP_STATE_DYING)
-+		return -ENODEV;
-+
-+	drop_flag = usbssp_get_endpoint_flag(dep->endpoint.desc);
-+	if (drop_flag == SLOT_FLAG || drop_flag == EP0_FLAG) {
-+		usbssp_dbg(usbssp_data, "USBSSP %s - can't drop slot or ep 0 %#x\n",
-+				__func__, drop_flag);
-+		return 0;
-+	}
-+
-+	in_ctx = usbssp_data->devs.in_ctx;
-+	out_ctx = usbssp_data->devs.out_ctx;
-+	ctrl_ctx = usbssp_get_input_control_ctx(in_ctx);
-+	if (!ctrl_ctx) {
-+		usbssp_warn(usbssp_data, "%s: Could not get input context, bad type.\n",
-+				__func__);
-+		return 0;
-+	}
-+
-+	ep_index = usbssp_get_endpoint_index(dep->endpoint.desc);
-+	ep_ctx = usbssp_get_ep_ctx(usbssp_data, out_ctx, ep_index);
-+	/* If the controller already knows the endpoint is disabled,
-+	 * or the USBSSP driver has noted it is disabled, ignore this request
-+	 */
-+	if ((GET_EP_CTX_STATE(ep_ctx) == EP_STATE_DISABLED) ||
-+	    le32_to_cpu(ctrl_ctx->drop_flags) &
-+	    usbssp_get_endpoint_flag(dep->endpoint.desc)) {
-+		/* Do not warn when called after a usb_device_reset */
-+		if (usbssp_data->devs.eps[ep_index].ring != NULL)
-+			usbssp_warn(usbssp_data, "USBSSP %s called with disabled ep %p\n",
-+					__func__, dep);
-+		return 0;
-+	}
-+
-+	ctrl_ctx->drop_flags |= cpu_to_le32(drop_flag);
-+	new_drop_flags = le32_to_cpu(ctrl_ctx->drop_flags);
-+
-+	ctrl_ctx->add_flags &= cpu_to_le32(~drop_flag);
-+	new_add_flags = le32_to_cpu(ctrl_ctx->add_flags);
-+
-+//	usbssp_debugfs_remove_endpoint(usbssp_data, &usbssp_data->devs,
-+//				       ep_index);
-+
-+	usbssp_endpoint_zero(usbssp_data, &usbssp_data->devs, dep);
-+
-+	usbssp_dbg(usbssp_data, "drop ep 0x%x, new drop flags = %#x, new add flags = %#x\n",
-+			(unsigned int) dep->endpoint.desc->bEndpointAddress,
-+			(unsigned int) new_drop_flags,
-+			(unsigned int) new_add_flags);
++	usbssp_data->msi_enabled = 1;
 +	return 0;
 +}
++
++static inline void usbssp_cleanup_msix(struct usbssp_udc *usbssp_data)
++{
++	usbssp_data->msi_enabled = 0;
++}
++
++static inline void usbssp_msix_sync_irqs(struct usbssp_udc *usbssp_data)
++{
++	/*TODO*/
++}
++
+ /*
+  * Initialize memory for gadget driver and USBSSP (one-time init).
+  *
+@@ -288,6 +304,91 @@ int usbssp_init(struct usbssp_udc *usbssp_data)
+ 	return retval;
+ }
  
- /* Add an endpoint to a new possible bandwidth configuration for this device.
-  * Only one call to this function is allowed per endpoint before
-diff --git a/drivers/usb/usbssp/gadget.h b/drivers/usb/usbssp/gadget.h
-index a3288cd16c4a..cc826255593f 100644
---- a/drivers/usb/usbssp/gadget.h
-+++ b/drivers/usb/usbssp/gadget.h
-@@ -1688,6 +1688,8 @@ void usbssp_copy_ep0_dequeue_into_input_ctx(struct usbssp_udc *usbssp_data);
- unsigned int usbssp_get_endpoint_index(const struct usb_endpoint_descriptor *desc);
- unsigned int usbssp_get_endpoint_address(unsigned int ep_index);
- unsigned int usbssp_last_valid_endpoint(u32 added_ctxs);
-+void usbssp_endpoint_zero(struct usbssp_udc *usbssp_data,
-+		struct usbssp_device *dev_priv, struct usbssp_ep *ep);
- int usbssp_endpoint_init(struct usbssp_udc *usbssp_data,
- 		struct usbssp_device *dev_priv,
- 		struct usbssp_ep *dep,
++/*-------------------------------------------------------------------------*/
++/*
++ * Start the USBSSP after it was halted.
++ *
++ * This function is called by the usbssp_gadget_start function when the
++ * gadget driver is started. Its opposite is usbssp_stop().
++ *
++ * usbssp_init() must be called once before this function can be called.
++ * Reset the USBSSP, enable device slot contexts, program DCBAAP, and
++ * set command ring pointer and event ring pointer.
++ */
++int usbssp_run(struct usbssp_udc *usbssp_data)
++{
++	u32 temp;
++	u64 temp_64;
++	int ret;
++	__le32 __iomem	*portsc;
++	u32 portsc_val = 0;
++	int i = 0;
++
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init, "usbssp_run");
++
++	ret = usbssp_try_enable_msi(usbssp_data);
++	if (ret)
++		return ret;
++
++	temp_64 = usbssp_read_64(usbssp_data,
++				 &usbssp_data->ir_set->erst_dequeue);
++	temp_64 &= ~ERST_PTR_MASK;
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
++			"ERST deq = 64'h%0lx",
++			(unsigned long int) temp_64);
++
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
++		"// Set the interrupt modulation register");
++	temp = readl(&usbssp_data->ir_set->irq_control);
++	temp &= ~ER_IRQ_INTERVAL_MASK;
++	temp |= (usbssp_data->imod_interval / 250) & ER_IRQ_INTERVAL_MASK;
++	writel(temp, &usbssp_data->ir_set->irq_control);
++
++	/******************************************/
++	//enable USB2 port
++	for (i = 0; i < usbssp_data->num_usb2_ports; i++) {
++		portsc = usbssp_data->usb2_ports + PORTSC;
++		portsc_val = readl(portsc) & ~PORT_PLS_MASK;
++		portsc_val = portsc_val | (5 << 5) | PORT_LINK_STROBE;
++		writel(portsc_val, portsc);
++	}
++
++	//enable USB3.0 port
++	for (i = 0; i < usbssp_data->num_usb3_ports; i++) {
++		portsc = usbssp_data->usb3_ports + PORTSC;
++		portsc_val = readl(portsc) & ~PORT_PLS_MASK;
++		portsc_val = portsc_val | (5 << 5) | PORT_LINK_STROBE;
++		writel(portsc_val, portsc);
++	}
++
++	if (usbssp_start(usbssp_data)) {
++		usbssp_halt(usbssp_data);
++		return -ENODEV;
++	}
++
++	/* Set the USBSSP state before we enable the irqs */
++	temp = readl(&usbssp_data->op_regs->command);
++	temp |= (CMD_EIE);
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
++			"// Enable interrupts, cmd = 0x%x.", temp);
++	writel(temp, &usbssp_data->op_regs->command);
++
++	temp = readl(&usbssp_data->ir_set->irq_pending);
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
++		"// Enabling event ring interrupter %p by writing 0x%x to irq_pending",
++		usbssp_data->ir_set, (unsigned int) ER_IRQ_ENABLE(temp));
++	writel(ER_IRQ_ENABLE(temp), &usbssp_data->ir_set->irq_pending);
++
++	usbssp_dbg_trace(usbssp_data, trace_usbssp_dbg_init,
++			"Finished usbssp_run for USBSSP controller");
++
++	usbssp_data->cmd_ring_state = CMD_RING_STATE_RUNNING;
++
++//	usbssp_debugfs_init(usbssp_data);
++
++	return 0;
++}
++
+ /*
+  * Stop USBSSP controller.
+  *
+@@ -1104,6 +1205,12 @@ int usbssp_enable_device(struct usbssp_udc *usbssp_data)
+ 	return usbssp_setup_device(usbssp_data, SETUP_CONTEXT_ONLY);
+ }
+ 
++
++int usbssp_get_frame(struct usbssp_udc *usbssp_data)
++{
++	return readl(&usbssp_data->run_regs->microframe_index) >> 3;
++}
++
+ int usbssp_gen_setup(struct usbssp_udc *usbssp_data)
+ {
+ 	int	retval;
 -- 
 2.17.1
 
