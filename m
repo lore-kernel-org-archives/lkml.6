@@ -2,312 +2,370 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24212C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95C5EC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A631A20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4444A20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:45:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kMIjYapw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A631A20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LNKS5CV3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4444A20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726836AbeGLIxP (ORCPT
+        id S1727478AbeGLIxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:53:15 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:26158 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726393AbeGLIxO (ORCPT
+        Thu, 12 Jul 2018 04:53:37 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:40558 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeGLIxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:53:14 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180712084436epoutp031e02f3ba7a9fafadcf20952c1edfe648~Akp0d28pt0233202332epoutp03R;
-        Thu, 12 Jul 2018 08:44:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180712084436epoutp031e02f3ba7a9fafadcf20952c1edfe648~Akp0d28pt0233202332epoutp03R
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1531385076;
-        bh=7BcvqNkwXpTvzDop9jX8fV60L76kLs5GenhgrnjoWZE=;
-        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
-        b=kMIjYapwLnE3/PkKxWYIuHKruY6ojv2LRpAuYYZgC4zMeGwSKGb8EV80t5qfVdJZF
-         E1jAtlwgqNJ8qDl/hk7/3xs75xDm9r02a3mQxPm1UKTaXFh0gjPZowmma9RzLVfjsM
-         ejn2Nxlf5jRuY8hvLKLhmUmH87RJXVmabU066CQY=
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20180712084434epcas1p49bf54ecd95642bfc0f75e17d532427cf~AkpyRCzb10043700437epcas1p4P;
-        Thu, 12 Jul 2018 08:44:34 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BA.26.04343.2F4174B5; Thu, 12 Jul 2018 17:44:34 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20180712084434epcas1p49625b4e18142768d96f6329352370473~Akpx5XONV0741207412epcas1p4c;
-        Thu, 12 Jul 2018 08:44:34 +0000 (GMT)
-X-AuditID: b6c32a38-78bff700000010f7-48-5b4714f222a4
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 11.CD.03915.1F4174B5; Thu, 12 Jul
-        2018 17:44:33 +0900 (KST)
-MIME-version: 1.0
-Content-type: text/plain; charset="utf-8"
-Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PBQ00A8AWA9M940@mmp2.samsung.com>; Thu, 12 Jul 2018 17:44:33 +0900 (KST)
-Subject: Re: [PATCH v5 05/12] PM / devfreq: Add support for policy notifiers
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Brian Norris <briannorris@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Benson Leung <bleung@chromium.org>,
-        Olof Johansson <olof@lixom.net>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-id: <5399c191-e140-e2b8-629b-72ddfbf99b0f@samsung.com>
-Date:   Thu, 12 Jul 2018 17:44:33 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.7.0
-In-reply-to: <20180706175301.GG129942@google.com>
-Content-language: en-US
-Content-transfer-encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLJsWRmVeSWpSXmKPExsWy7bCmvu4nEfdog6/3xC3+TjrGbjH9yWUW
-        i00f37NazD9yjtXi7LKDbBZrbh9itGhevJ7N4mzTG3aL+1+PMlpc3jWHzeJz7xFGi6XXLzJZ
-        fN7wmNHiduMKNotT1z+zWZw5fYnVonXvEXaLjV89HIQ81sxbw+jx+9ckRo/ZDRdZPHbcXcLo
-        sWlVJ5vHnWt72Dz2z13D7nHlRBOrx5ar7SwefVtWMXp83iQXwB2VapORmpiSWqSQmpecn5KZ
-        l26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkD9JqSQlliTilQKCCxuFhJ386mKL+0
-        JFUhI7+4xFYp2tDQSM/QwFzPyAhIG8daGZkClSSkZhy82MVWsNOs4mbzLvYGxq26XYycHBIC
-        JhIT905g6mLk4hAS2MEocWjqMlYI5zuQ828eSxcjB1jV2TMREPENjBL39l5nBOnmFRCU+DH5
-        HguIzSygKfHiyyQWiKK7jBKzXzxiAkkIC/hI3Ov4zApiiwhoSDz5fZ4RpIhZYBqrRPe0/2wg
-        CTYBLYn9L26A2fwCihJXfzyG2mAnMXf/XTCbRUBVYvaSfrAaUYEIiabnP9lBbE4BQ4m2trdM
-        EFeISzS33oS6SF7i4JXnYBdJCFxjl9jw+g0TxNMuEmeXTmWDsIUlXh3fwg7xprTEpaO2EPXt
-        jBJfXjSzQjgTGCU+nNoM1Wws8WxhF9Q2Pol3X3tYIZp5JTrahCBMD4lpE2shIfGXUaK1ZwXz
-        BEa5WUghNgspxGYhuXsWkrsXMLKsYhRLLSjOTU8tNiww0StOzC0uzUvXS87P3cQITtpaFjsY
-        95zzOcQowMGoxMPLwe0WLcSaWFZcmXuIUYKDWUmE99IUoBBvSmJlVWpRfnxRaU5q8SFGU2BY
-        TmSWEk3OB2aUvJJ4Q1MjY2NjCxNDM1NDQyVx3p7TrtFCAumJJanZqakFqUUwfUwcnFINjF1/
-        GT257tyT3dhyUWZuR6LJnofN809bsl8yyLc41+y1d3dgMo9zXfqq5TPW6ZxTUxJ94jTz+j1N
-        7+54mXvnou32Pw7//euJhI/787t6M/kKO3IOnrRx+nHnSpnt+xzeINW5z14Ylst3+0/fbvRR
-        4eyGs1amjZIBRpevJDdPmvnvzYIJHZvuOCuxFGckGmoxFxUnAgAkoY4a8AMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsVy+t9jQd2PIu7RBl/6rC3+TjrGbjH9yWUW
-        i00f37NazD9yjtXi7LKDbBZrbh9itGhevJ7N4mzTG3aL+1+PMlpc3jWHzeJz7xFGi6XXLzJZ
-        fN7wmNHiduMKNotT1z+zWZw5fYnVonXvEXaLjV89HIQ81sxbw+jx+9ckRo/ZDRdZPHbcXcLo
-        sWlVJ5vHnWt72Dz2z13D7nHlRBOrx5ar7SwefVtWMXp83iQXwB3FZZOSmpNZllqkb5fAlXHw
-        YhdbwU6zipvNu9gbGLfqdjFycEgImEicPRPRxcjFISSwjlHi6/3NLF2MnBy8AoISPybfYwGp
-        YRZQl5gyJRei5j6jxOWVk8FqhAV8JO51fGYFsUUENCSe/D7PCGIzC8xgldh4IQai4S+jxP0b
-        h8CK2AS0JPa/uMEGYvMLKEpc/fGYEWKZncTc/XfBbBYBVYnZS/rBakQFIiTunf8EZnMKGEq0
-        tb1lglggLtHcepMFwpaXOHjlOcsERsFZSO6ehXD3LCQds5B0LGBkWcUomVpQnJueW2xUYJiX
-        Wq5XnJhbXJqXrpecn7uJERjD2w5r9e1gvL8k/hCjAAejEg/vBg63aCHWxLLiytxDjBIczEoi
-        vJemAIV4UxIrq1KL8uOLSnNSiw8xSnOwKInz3s47FikkkJ5YkpqdmlqQWgSTZeLglGpg5Ivt
-        XvrJaLfTcrXz+Qtql7cUPrps+1tO8+vNoKuXVr4td9S7MflH1+arfN8N/0/awlB2KnBmYXTZ
-        zk8ctyQf/vm8Rno6n/a7hLw/3yRvrXKa6PZauaWB+3GI0CX/j3lCno2Pnf3P9vj5rK+5sMNg
-        Huc3ZsO6wu8vuiMl17ufUXKUEEoS+XLQX4mlOCPRUIu5qDgRAN/3ywbdAgAA
-X-CMS-MailID: 20180712084434epcas1p49625b4e18142768d96f6329352370473
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180703234900epcas1p1cda806bab6bbe69228ca5ee56bc33f36
-References: <20180703234705.227473-1-mka@chromium.org>
-        <CGME20180703234900epcas1p1cda806bab6bbe69228ca5ee56bc33f36@epcas1p1.samsung.com>
-        <20180703234705.227473-6-mka@chromium.org> <5B3C6C2A.1070205@samsung.com>
-        <20180706175301.GG129942@google.com>
+        Thu, 12 Jul 2018 04:53:37 -0400
+Received: by mail-pf0-f193.google.com with SMTP id e13-v6so6817372pff.7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 01:45:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=zFaCie2Frja+zTzIavMJRsXKeSi3+WJbCOfjDafXsco=;
+        b=LNKS5CV3qjZR2PpC9V5q7CuAC9XGSPUbbUqsYkl9sZfG9T58NGRuq75quj/+ZfowBY
+         7wYu0SuT6WiZd3pe/8fTpIGbB9AMHLTyFYg/q/+qQrGaWAE6/gDFxA0xB30XMT6AMKMb
+         EajSjT6xtw77nImHtaGF9OlZcAAbNB20Gq6Hg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=zFaCie2Frja+zTzIavMJRsXKeSi3+WJbCOfjDafXsco=;
+        b=Vhk6pYSHxBJ5yvpq8BvIeZeL3ywPZgwfGqNdjN0O3D3KGTL4GpTpjphk7NvxbC978u
+         O23m9tukE+d3xkZcnAEylqw4PKGfcCZqWIYnSYGVKOh+eqNC5pUZuS7qQSjqCNJag5Zp
+         v897/o/Zv2FrqpVkqgFmw841C21aYsACmW5SnutjzgnMvg9wHz2B8H0nJ6gbkfigRTaJ
+         oM58MFT00ZytowMtEo1NmaCSw38F2A1zI0hUQag1Z6Cr+EUFBn0BEZUlY+JjSu5qlWbM
+         AzWh7Epw30FzkepuFWlvUfQbAM5BzN6x1bEds+zw9MPq/cjcZtN1CIvS0sAKJP7H6d5Z
+         1qiQ==
+X-Gm-Message-State: AOUpUlHgMEhxNg8V63aFSufmj0HuFT/IF0wMaO2IaTc9hRy/GO+yZbn+
+        7oG85Tj4eR9Wl1QTbf/oSCTp2w==
+X-Google-Smtp-Source: AAOMgpfDpHt6nT3ZNkiIWTy9OR9/tRiRLCLPb74MJYDULA9GI4MfE5rU7zwZ+5RJUvmnd4W9nGvkQw==
+X-Received: by 2002:a65:6688:: with SMTP id b8-v6mr1306345pgw.24.1531385100539;
+        Thu, 12 Jul 2018 01:45:00 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id v17-v6sm27184314pfn.177.2018.07.12.01.44.57
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 12 Jul 2018 01:45:00 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     tglx@linutronix.de, john.stultz@linaro.org, sboyd@kernel.org,
+        arnd@arndb.de, broonie@kernel.org, daniel.lezcano@linaro.org
+Cc:     linux-kernel@vger.kernel.org, baolin.wang@linaro.org
+Subject: [RFC PATCH 1/2] time: Introduce one suspend clocksource to compensate the suspend time
+Date:   Thu, 12 Jul 2018 16:44:12 +0800
+Message-Id: <4aa9a65166f7e10984bfcff59e72d86e37c369a1.1531384486.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+On some hardware with multiple clocksources, we have course grained
+clocksources that support the CLOCK_SOURCE_SUSPEND_NONSTOP flag, but
+which are less ideal for timekeeping then other clocksources which
+halt in suspend.
 
-On 2018년 07월 07일 02:53, Matthias Kaehlcke wrote:
-> Hi Chanwoo,
-> 
-> On Wed, Jul 04, 2018 at 03:41:46PM +0900, Chanwoo Choi wrote:
-> 
->> Firstly,
->> I'm not sure why devfreq needs the devfreq_verify_within_limits() function.
->>
->> devfreq already used the OPP interface as default. It means that
->> the outside of 'drivers/devfreq' can disable/enable the frequency
->> such as drivers/thermal/devfreq_cooling.c. Also, when some device
->> drivers disable/enable the specific frequency, the devfreq core
->> consider them.
->>
->> So, devfreq doesn't need to devfreq_verify_within_limits() because
->> already support some interface to change the minimum/maximum frequency
->> of devfreq device. 
->>
->> In case of cpufreq subsystem, cpufreq only provides 'cpufreq_verify_with_limits()'
->> to change the minimum/maximum frequency of cpu. some device driver cannot
->> change the minimum/maximum frequency through OPP interface.
->>
->> But, in case of devfreq subsystem, as I explained already, devfreq support
->> the OPP interface as default way. devfreq subsystem doesn't need to add
->> other way to change the minimum/maximum frequency.
-> 
-> Using the OPP interface exclusively works as long as a
-> enabling/disabling of OPPs is limited to a single driver
-> (drivers/thermal/devfreq_cooling.c). When multiple drivers are
-> involved you need a way to resolve conflicts, that's the purpose of
-> devfreq_verify_within_limits(). Please let me know if there are
-> existing mechanisms for conflict resolution that I overlooked.
-> 
-> Possibly drivers/thermal/devfreq_cooling.c could be migrated to use
-> devfreq_verify_within_limits() instead of the OPP interface if
-> desired, however this seems beyond the scope of this series.
+Currently, the timekeeping core only supports timing suspend using
+CLOCK_SOURCE_SUSPEND_NONSTOP clocksources if that clocksource is the
+current clocksource for timekeeping.
 
-Actually, if we uses this approach, it doesn't support the multiple drivers too.
-If non throttler drivers uses devfreq_verify_within_limits(), the conflict
-happen.
+As a result, some architectures try to implement read_persisitent_clock64()
+using those non-stop clocksources, but isn't really ideal. Thus this
+patch provides logic to allow a registered SUSPEND_NONSTOP clocksource,
+which isn't the current clocksource, to be used to calculate the suspend
+time.
 
-To resolve the conflict for multiple device driver, maybe OPP interface
-have to support 'usage_count' such as clk_enable/disable().
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ include/linux/clocksource.h |    3 +
+ kernel/time/clocksource.c   |  152 +++++++++++++++++++++++++++++++++++++++++++
+ kernel/time/timekeeping.c   |   22 ++++---
+ 3 files changed, 169 insertions(+), 8 deletions(-)
 
-> 
->> Secondly,
->> This patch send the 'struct devfreq_policy' instance as the data
->> when sending the notification as following:
->>
->> 	srcu_notifier_call_chain(&devfreq->policy_notifier_list,
->> 			DEVFREQ_ADJUST, policy);
->>
->> But, I think that if devfreq core sends the 'struct devfreq_freq_limits'
->> instance instead of 'struct devfreq_policy', it is enough.
->> Because receiver of DEVFREQ_ADJUST just will use the min_freq/max_freq variables.
->>
->> So, I tried to find the cpufreq's case. The some device drivers using
->> CPUFREQ_POLICY_NOTIFIER uses following variables of 'struct cpufreq_policy'.
->> It means that receiver of CPUFREQ_POLICY_NOTIFIER don't need to other
->> information/variables except for min/max frequency.
->>
->> - policy->min
->> - policy->max
->> - policy->cpuinfo.max_freq
->> - policy->cpuinfo.min_freq
->> - policy->cpu : not related to devfreq)
->> - policy->related_cpus : not related to devfreq)
->>
->> - list of device drivers using CPUFREQ_POLICY_NOTIFIER (linux kernel is v4.18-rc1)
->> $ grep -rn "CPUFREQ_POLICY_NOTIFIER" .
->> ./drivers/macintosh/windfarm_cpufreq_clamp.c
->> ./drivers/thermal/cpu_cooling.c
->> ./drivers/thermal/cpu_cooling.c
->> ./drivers/acpi/processor_thermal.c
->> ./drivers/acpi/processor_thermal.c
->> ./drivers/acpi/processor_perflib.c
->> ./drivers/acpi/processor_perflib.c
->> ./drivers/base/arch_topology.c
->> ./drivers/base/arch_topology.c
->> ./drivers/video/fbdev/sa1100fb.c
->> ./drivers/video/fbdev/pxafb.c
->> ./drivers/cpufreq/ppc_cbe_cpufreq_pmi.c
->> ./drivers/cpufreq/cpufreq.c
->> ./drivers/cpufreq/cpufreq.c
->> ./drivers/cpufreq/cpufreq.c
->> ./drivers/cpufreq/cpufreq.c
-> 
-> Thanks for your investigation.
-> 
-> I decided to mirror the cpufreq interface for consistency, but I agree
-> that 'struct devfreq_freq_limits' could be passed instead of the
-> policy object. I'm fine with changing that.
-> 
->> On 2018년 07월 04일 08:46, Matthias Kaehlcke wrote:
->>> Policy notifiers are called before a frequency change and may narrow
->>> the min/max frequency range in devfreq_policy, which is used to adjust
->>> the target frequency if it is beyond this range.
->>>
->>> Also add a few helpers:
->>>  - devfreq_verify_within_[dev_]limits()
->>>     - should be used by the notifiers for policy adjustments.
->>>  - dev_to_devfreq()
->>>     - lookup a devfreq strict from a device pointer
->>>
->>> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
->>> Reviewed-by: Brian Norris <briannorris@chromium.org>
->>> ---
->>> Changes in v5:
->>> - none
->>>
->>> Changes in v4:
->>> - Fixed typo in commit message: devfreg => devfreq
->>> - added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
->>>
->>> Changes in v3:
->>> - devfreq.h: fixed misspelling of struct devfreq_policy
->>>
->>> Changes in v2:
->>> - performance, powersave and simpleondemand governors don't need changes
->>>   with "PM / devfreq: Don't adjust to user limits in governors"
->>> - formatting fixes
->>> ---
->>>  drivers/devfreq/devfreq.c | 48 ++++++++++++++++++++++-------
->>>  include/linux/devfreq.h   | 65 +++++++++++++++++++++++++++++++++++++++
->>>  2 files changed, 102 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
->>> index 21604d6ae2b8..4cbaa7ad1972 100644
->>> --- a/drivers/devfreq/devfreq.c
->>> +++ b/drivers/devfreq/devfreq.c
->>> @@ -72,6 +72,21 @@ static struct devfreq *find_device_devfreq(struct device *dev)
->>>  	return ERR_PTR(-ENODEV);
->>>  }
->>>  
->>> +/**
->>> + * dev_to_devfreq() - find devfreq struct using device pointer
->>> + * @dev:	device pointer used to lookup device devfreq.
->>> + */
->>> +struct devfreq *dev_to_devfreq(struct device *dev)
->>> +{
->>> +	struct devfreq *devfreq;
->>> +
->>> +	mutex_lock(&devfreq_list_lock);
->>> +	devfreq = find_device_devfreq(dev);
->>> +	mutex_unlock(&devfreq_list_lock);
->>> +
->>> +	return devfreq;
->>> +}
->>> +
->>>  static unsigned long find_available_min_freq(struct devfreq *devfreq)
->>>  {
->>>  	struct dev_pm_opp *opp;
->>> @@ -269,20 +284,21 @@ int update_devfreq(struct devfreq *devfreq)
->>>  	if (!policy->governor)
->>>  		return -EINVAL;
->>>  
->>> +	policy->min = policy->devinfo.min_freq;
->>> +	policy->max = policy->devinfo.max_freq;
->>
->> Why don't you consider 'policy->user.max/min_freq' as following?
->> As I already commented, I think that 'struct devfreq_freq_limits' is enough
->> instead of 'struct devfreq_policy'.
->>
->> 	->max_freq = MIN(policy->devinfo.max_freq, policy->user.max_freq);
->> 	->min_freq = MAX(policy->devinfo.min_freq, policy->user.min_freq);
-> 
-> You mean limiting the frequency range with user.min/max before
-> DEVFREQ_ADJUST instead of adjusting it afterwards? That's fine with
-> me.
-> 
-> Thanks
-> 
-> Matthias
-> 
-> 
-> 
-
-
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index 7dff196..3089189 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -194,6 +194,9 @@ static inline s64 clocksource_cyc2ns(u64 cycles, u32 mult, u32 shift)
+ extern void clocksource_resume(void);
+ extern struct clocksource * __init clocksource_default_clock(void);
+ extern void clocksource_mark_unstable(struct clocksource *cs);
++extern void
++clocksource_start_suspend_timing(struct clocksource *cs, u64 start_cycles);
++extern u64 clocksource_stop_suspend_timing(struct clocksource *cs, u64 now);
+ 
+ extern u64
+ clocks_calc_max_nsecs(u32 mult, u32 shift, u32 maxadj, u64 mask, u64 *max_cycles);
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index f89a78e..7778eaa 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -94,6 +94,8 @@
+ /*[Clocksource internal variables]---------
+  * curr_clocksource:
+  *	currently selected clocksource.
++ * suspend_clocksource:
++ *	used to calculate the suspend time.
+  * clocksource_list:
+  *	linked list with the registered clocksources
+  * clocksource_mutex:
+@@ -102,10 +104,12 @@
+  *	Name of the user-specified clocksource.
+  */
+ static struct clocksource *curr_clocksource;
++static struct clocksource *suspend_clocksource;
+ static LIST_HEAD(clocksource_list);
+ static DEFINE_MUTEX(clocksource_mutex);
+ static char override_name[CS_NAME_LEN];
+ static int finished_booting;
++static u64 suspend_start;
+ 
+ #ifdef CONFIG_CLOCKSOURCE_WATCHDOG
+ static void clocksource_watchdog_work(struct work_struct *work);
+@@ -447,6 +451,133 @@ static inline void clocksource_watchdog_unlock(unsigned long *flags) { }
+ 
+ #endif /* CONFIG_CLOCKSOURCE_WATCHDOG */
+ 
++static bool clocksource_is_suspend(struct clocksource *cs)
++{
++	return cs == suspend_clocksource;
++}
++
++static void __clocksource_suspend_select(struct clocksource *cs)
++{
++	/*
++	 * Skip the clocksource which will be stopped in suspend state.
++	 */
++	if (!(cs->flags & CLOCK_SOURCE_SUSPEND_NONSTOP))
++		return;
++
++	/* Pick the best rating. */
++	if (!suspend_clocksource || cs->rating > suspend_clocksource->rating)
++		suspend_clocksource = cs;
++}
++
++/**
++ * clocksource_suspend_select - Select the best clocksource for suspend timing
++ * @fallback:	if select a fallback clocksource
++ */
++static void clocksource_suspend_select(bool fallback)
++{
++	struct clocksource *cs, *old_suspend;
++
++	old_suspend = suspend_clocksource;
++	if (fallback)
++		suspend_clocksource = NULL;
++
++	list_for_each_entry(cs, &clocksource_list, list) {
++		/* Skip current if we were requested for a fallback. */
++		if (fallback && cs == old_suspend)
++			continue;
++
++		__clocksource_suspend_select(cs);
++	}
++
++	/* If we failed to find a fallback restore the old one. */
++	if (!suspend_clocksource)
++		suspend_clocksource = old_suspend;
++}
++
++/**
++ * clocksource_start_suspend_timing - Start measuring the suspend timing
++ * @cs:			current clocksource from timekeeping
++ * @start_cycles:	current cycles from timekeeping
++ *
++ * This function will save the start cycle values of suspend timer to calculate
++ * the suspend time when resuming system.
++ *
++ * This function is called late in the suspend process from timekeeping_suspend(),
++ * that means processes are freezed, non-boot cpus and interrupts are disabled
++ * now. It is therefore possible to start the suspend timer without taking the
++ * clocksource mutex.
++ */
++void clocksource_start_suspend_timing(struct clocksource *cs, u64 start_cycles)
++{
++	if (!suspend_clocksource)
++		return;
++
++	/*
++	 * If current clocksource is the suspend timer, we should use the
++	 * tkr_mono.cycle_last value as suspend_start to avoid same reading
++	 * from suspend timer.
++	 */
++	if (clocksource_is_suspend(cs)) {
++		suspend_start = start_cycles;
++		return;
++	}
++
++	if (suspend_clocksource->enable &&
++	    WARN_ON_ONCE(suspend_clocksource->enable(suspend_clocksource))) {
++		pr_warn_once("Failed to enable the non-suspend-able clocksource.\n");
++		return;
++	}
++
++	suspend_start = suspend_clocksource->read(suspend_clocksource);
++}
++
++/**
++ * clocksource_stop_suspend_timing - Stop measuring the suspend timing
++ * @cs:		current clocksource from timekeeping
++ * @cycle_now:	current cycles from timekeeping
++ *
++ * This function will calculate the suspend time from suspend timer, and return
++ * nanoseconds since suspend started or 0 if no usable clocksource.
++ *
++ * This function is called early in the resume process from timekeeping_resume(),
++ * that means there is only one cpu, no processes are running and the interrupts
++ * are disabled. It is therefore possible to stop the suspend timer without
++ * taking the clocksource mutex.
++ */
++u64 clocksource_stop_suspend_timing(struct clocksource *cs, u64 cycle_now)
++{
++	u64 now, delta, nsec = 0;
++
++	if (!suspend_clocksource)
++		return 0;
++
++	/*
++	 * If current clocksource is the suspend timer, we should use the
++	 * tkr_mono.cycle_last value from timekeeping as current cycle to
++	 * avoid same reading from suspend timer.
++	 */
++	if (clocksource_is_suspend(cs))
++		now = cycle_now;
++	else
++		now = suspend_clocksource->read(suspend_clocksource);
++
++	if (now > suspend_start) {
++		delta = clocksource_delta(now, suspend_start,
++					  suspend_clocksource->mask);
++		nsec = mul_u64_u32_shr(delta, suspend_clocksource->mult,
++				       suspend_clocksource->shift);
++	}
++
++	/*
++	 * Disable the suspend timer to save power if current clocksource is
++	 * not the suspend timer.
++	 */
++	if (!clocksource_is_suspend(cs) && suspend_clocksource->disable)
++		suspend_clocksource->disable(suspend_clocksource);
++
++	return nsec;
++}
++
+ /**
+  * clocksource_suspend - suspend the clocksource(s)
+  */
+@@ -779,6 +910,16 @@ int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
+ {
+ 	unsigned long flags;
+ 
++	/*
++	 * The nonstop clocksource can be selected as the suspend clocksource to
++	 * calculate the suspend time, so it should not supply suspend/resume
++	 * interfaces to suspend the nonstop clocksource when system suspends.
++	 */
++	if ((cs->flags & CLOCK_SOURCE_SUSPEND_NONSTOP) &&
++	    (cs->suspend || cs->resume))
++		pr_warn("Nonstop clocksource %s should not supply suspend/resume interfaces\n",
++			cs->name);
++
+ 	/* Initialize mult/shift and max_idle_ns */
+ 	__clocksource_update_freq_scale(cs, scale, freq);
+ 
+@@ -792,6 +933,7 @@ int __clocksource_register_scale(struct clocksource *cs, u32 scale, u32 freq)
+ 
+ 	clocksource_select();
+ 	clocksource_select_watchdog(false);
++	__clocksource_suspend_select(cs);
+ 	mutex_unlock(&clocksource_mutex);
+ 	return 0;
+ }
+@@ -820,6 +962,7 @@ void clocksource_change_rating(struct clocksource *cs, int rating)
+ 
+ 	clocksource_select();
+ 	clocksource_select_watchdog(false);
++	clocksource_suspend_select(false);
+ 	mutex_unlock(&clocksource_mutex);
+ }
+ EXPORT_SYMBOL(clocksource_change_rating);
+@@ -838,6 +981,15 @@ static int clocksource_unbind(struct clocksource *cs)
+ 			return -EBUSY;
+ 	}
+ 
++	if (clocksource_is_suspend(cs)) {
++		/*
++		 * Select and try to install a replacement suspend clocksource.
++		 */
++		clocksource_suspend_select(true);
++		if (clocksource_is_suspend(cs))
++			return -EBUSY;
++	}
++
+ 	if (cs == curr_clocksource) {
+ 		/* Select and try to install a replacement clock source */
+ 		clocksource_select_fallback();
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 4786df9..d80dba3 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1669,7 +1669,7 @@ void timekeeping_resume(void)
+ 	struct clocksource *clock = tk->tkr_mono.clock;
+ 	unsigned long flags;
+ 	struct timespec64 ts_new, ts_delta;
+-	u64 cycle_now;
++	u64 cycle_now, nsec;
+ 
+ 	sleeptime_injected = false;
+ 	read_persistent_clock64(&ts_new);
+@@ -1693,13 +1693,8 @@ void timekeeping_resume(void)
+ 	 * usable source. The rtc part is handled separately in rtc core code.
+ 	 */
+ 	cycle_now = tk_clock_read(&tk->tkr_mono);
+-	if ((clock->flags & CLOCK_SOURCE_SUSPEND_NONSTOP) &&
+-		cycle_now > tk->tkr_mono.cycle_last) {
+-		u64 nsec, cyc_delta;
+-
+-		cyc_delta = clocksource_delta(cycle_now, tk->tkr_mono.cycle_last,
+-					      tk->tkr_mono.mask);
+-		nsec = mul_u64_u32_shr(cyc_delta, clock->mult, clock->shift);
++	nsec = clocksource_stop_suspend_timing(clock, cycle_now);
++	if (nsec > 0) {
+ 		ts_delta = ns_to_timespec64(nsec);
+ 		sleeptime_injected = true;
+ 	} else if (timespec64_compare(&ts_new, &timekeeping_suspend_time) > 0) {
+@@ -1732,6 +1727,8 @@ int timekeeping_suspend(void)
+ 	unsigned long flags;
+ 	struct timespec64		delta, delta_delta;
+ 	static struct timespec64	old_delta;
++	struct clocksource *curr_clock;
++	u64 cycle_now;
+ 
+ 	read_persistent_clock64(&timekeeping_suspend_time);
+ 
+@@ -1748,6 +1745,15 @@ int timekeeping_suspend(void)
+ 	timekeeping_forward_now(tk);
+ 	timekeeping_suspended = 1;
+ 
++	/*
++	 * Since we've called forward_now, cycle_last stores the value
++	 * just read from the current clocksource. Save this to potentially
++	 * use in suspend timing.
++	 */
++	curr_clock = tk->tkr_mono.clock;
++	cycle_now = tk->tkr_mono.cycle_last;
++	clocksource_start_suspend_timing(curr_clock, cycle_now);
++
+ 	if (persistent_clock_exists) {
+ 		/*
+ 		 * To avoid drift caused by repeated suspend/resumes,
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+1.7.9.5
+
