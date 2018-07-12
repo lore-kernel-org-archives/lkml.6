@@ -2,123 +2,109 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F62ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E17B2ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7A632087C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:29:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87B062087C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:32:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HDVjSWM4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A632087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="NH0MoP2/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87B062087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733311AbeGLWlc (ORCPT
+        id S1733235AbeGLWoH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 18:41:32 -0400
-Received: from mail-qk0-f201.google.com ([209.85.220.201]:37112 "EHLO
-        mail-qk0-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733178AbeGLWlc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 18:41:32 -0400
-Received: by mail-qk0-f201.google.com with SMTP id q3-v6so30313136qki.4
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 15:29:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:message-id:subject:from:to:cc;
-        bh=pZCDk0LJyCkWFCJPAGY1ZlUzKY9xV4LLkh4d/Phuwsc=;
-        b=HDVjSWM4xsIQ+49wf4C0Y9KHHna7Ux0kXPDuRrWpOIs7eyhGI5YD2Itgymn+aLssb8
-         r7Nn6Y/yjWct5hfMxa6yKYWYhuWRWHccVxJMe1INbDjJH9Y4DG+QiVOG5oYFh0R6yaaQ
-         ifRdVZqALLissZIc6k79Ub9L2zFtXIpRaJulUD1HZZEyKpy1XrVcv/i26tQuFibRNcmF
-         5IdTJDLI8Dqc/9uk2otUQDix8mjTdwFXkAQieZ8ZE5RxMDcQoZEes8apLlJAAQi6bXyk
-         BRmxe7Xllo90a67jU2LSptfs0x4lRSSjCpMJsQEd92eqYXRzAW8ngP+dyHBzk/HfpjbB
-         00Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
-        bh=pZCDk0LJyCkWFCJPAGY1ZlUzKY9xV4LLkh4d/Phuwsc=;
-        b=D6KAmvkW5GJX9Nx2XYjrJGxkxxhF2+Yru2S2JnTKI+Oo0mAeG91+Q5U10kTjfvjczM
-         2iDDPFNCUTtbn8+CvJpJM+pmT+iP4D+SFawpNX1saiBcK5wGf3qjQ6xh+Edu0OLqJTPO
-         opaFW63XETuF3W4FJ7zLAsE00romCz42Q71iG9AMScgv2Jxuhw6WvlyzfvCbFntrN5pq
-         SmOrN4jB6LwNLmKck0Y/ZnK6hQdEWdfPD5ikS4AgfRXZLnn490LzkPVjcqFHMyW2xBJf
-         k2o0Wx7CfUyCROC1nWxjZ0ZAbGHyHlRhZZECpmiL4jeU+nOTPq1/zGLDYfnUXOqH3N0e
-         Dy5g==
-X-Gm-Message-State: AOUpUlHEESI+DEJUnXNNU3Xvm+0cP0tVmJf5Tvzhks7GLMhWZin8WtZZ
-        LmrjJ4JYYHDPKkBukVSPI2sKuFSaig==
-X-Google-Smtp-Source: AAOMgpcZiYm5bteJQDrQXOyFm5t3v3hhisrWaMaeCjyBjMkfuS4g/jX3tpNLLkkmt/TAjshiJjfVKCkJAw==
+        Thu, 12 Jul 2018 18:44:07 -0400
+Received: from imap.thunk.org ([74.207.234.97]:36656 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732240AbeGLWoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 18:44:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=vfPnEpp+H+H84JqdRBOieBEdfnjzEGVQB1H7VxLkfEQ=; b=NH0MoP2/E3qeaESfP5AVpBJGqC
+        45vVIWpINRxLc72PEH4fzWdAOc2p5kBtc5BoycSe8xTk7GNQLdf23MPnaCaAh4jHr3Cfg5Vkg8+Ru
+        uZWO5YQSj81n1PKhlYhsW+d48hWKcaSpqG2LoKjqS7ya55QOZVcNoQyspNqdWzRDFlkM=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1fdk8O-0005tl-P7; Thu, 12 Jul 2018 22:32:24 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 7EF0F7A55D2; Thu, 12 Jul 2018 18:32:23 -0400 (EDT)
+Date:   Thu, 12 Jul 2018 18:32:23 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
+ superblock creation [ver #9]
+Message-ID: <20180712223223.GA28610@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        David Howells <dhowells@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+References: <CA+55aFw1WyKY+-2dg62M-QT_F0-waCTCrba1DW4dStYz-f_fjA@mail.gmail.com>
+ <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+ <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
+ <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net>
+ <22370.1531293761@warthog.procyon.org.uk>
+ <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
+ <7002.1531407244@warthog.procyon.org.uk>
+ <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com>
+ <16699.1531426991@warthog.procyon.org.uk>
+ <18233.1531430797@warthog.procyon.org.uk>
 MIME-Version: 1.0
-X-Received: by 2002:ae9:ebc1:: with SMTP id b184-v6mr2355166qkg.14.1531434594425;
- Thu, 12 Jul 2018 15:29:54 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 00:29:36 +0200
-Message-Id: <20180712222935.257776-1-jannh@google.com>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
-Subject: [PATCH] staging: speakup: fix wraparound in uaccess length check
-From:   Jann Horn <jannh@google.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        speakup@linux-speakup.org, jannh@google.com
-Cc:     Samuel Thibault <samuel.thibault@ens-lyon.org>,
-        William Hubbs <w.d.hubbs@gmail.com>,
-        Chris Brannon <chris@the-brannons.com>,
-        Kirk Reiser <kirk@reisers.ca>, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <18233.1531430797@warthog.procyon.org.uk>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+On Thu, Jul 12, 2018 at 10:26:37PM +0100, David Howells wrote:
+> The problem is that there's more than one actual "open" involved.
+> 
+> 	fd = fsopen("ext4");				<--- #1
+> 	whatever_interface(fd, "s /dev/sda1");
+> 	whatever_interface(fd, "o journal_path=/dev/sda2");
+> 	do_the_create_thing(fd);			<--- #2 and #3
+> 
+> The initial check to see whether you can mount or not is done at #1.
+> 
+> But later there are two nested file opens.  Internally, deep down inside the
+> block layer, /dev/sda1 and /dev/sda2 are opened and further permissions checks
+> are done, whether you like it or not.  But these have no access to the creds
+> attached to fd as things currently stand.
 
-From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+So maybe the answer is that you open /dev/sda1 and /dev/sda2 and then
+pass the file descriptors to the fsopen object?  We can require that
+the fd's be opened with O_RDWR and O_EXCL, which has the benefit where
+if you have multiple block devices, you know *which* block device had
+a problem with being grabbed for an exclusive open.
 
-If softsynthx_read() is called with `count < 3`, `count - 3` wraps, causing
-the loop to copy as much data as available to the provided buffer. If
-softsynthx_read() is invoked through sys_splice(), this causes an
-unbounded kernel write; but even when userspace just reads from it
-normally, a small size could cause userspace crashes.
+Just a thought.
 
-Fixes: 425e586cf95b ("speakup: add unicode variant of /dev/softsynth")
-Cc: stable@vger.kernel.org
-Signed-off-by: Samuel Thibault <samuel.thibault@ens-lyon.org>
-Signed-off-by: Jann Horn <jannh@google.com>
----
- drivers/staging/speakup/speakup_soft.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/staging/speakup/speakup_soft.c b/drivers/staging/speakup/speakup_soft.c
-index a61bc41b82d7..947c79532e10 100644
---- a/drivers/staging/speakup/speakup_soft.c
-+++ b/drivers/staging/speakup/speakup_soft.c
-@@ -198,11 +198,15 @@ static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
- 	int chars_sent = 0;
- 	char __user *cp;
- 	char *init;
-+	size_t bytes_per_ch = unicode ? 3 : 1;
- 	u16 ch;
- 	int empty;
- 	unsigned long flags;
- 	DEFINE_WAIT(wait);
- 
-+	if (count < bytes_per_ch)
-+		return -EINVAL;
-+
- 	spin_lock_irqsave(&speakup_info.spinlock, flags);
- 	while (1) {
- 		prepare_to_wait(&speakup_event, &wait, TASK_INTERRUPTIBLE);
-@@ -228,7 +232,7 @@ static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
- 	init = get_initstring();
- 
- 	/* Keep 3 bytes available for a 16bit UTF-8-encoded character */
--	while (chars_sent <= count - 3) {
-+	while (chars_sent <= count - bytes_per_ch) {
- 		if (speakup_info.flushing) {
- 			speakup_info.flushing = 0;
- 			ch = '\x18';
--- 
-2.18.0.203.gfac676dfb9-goog
-
+						- Ted
