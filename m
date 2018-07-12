@@ -2,154 +2,105 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B41FAECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2EAECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E11A20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:11:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E11A20883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id B950B20839
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:16:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="GPkdZki3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B950B20839
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732597AbeGLWXO (ORCPT
+        id S1732679AbeGLW21 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 18:23:14 -0400
-Received: from sauhun.de ([88.99.104.3]:60328 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732381AbeGLWXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 18:23:14 -0400
-Received: from localhost (p5486CFAA.dip0.t-ipconnect.de [84.134.207.170])
-        by pokefinder.org (Postfix) with ESMTPSA id DC8EE5748B6;
-        Fri, 13 Jul 2018 00:11:37 +0200 (CEST)
-Date:   Fri, 13 Jul 2018 00:11:37 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] Split i2c_lock_adapter into i2c_lock_root and
- i2c_lock_segment
-Message-ID: <20180712221137.i3osg6viuz4lwvnd@ninjato>
-References: <20180620051803.12206-1-peda@axentia.se>
+        Thu, 12 Jul 2018 18:28:27 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:47210 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732298AbeGLW20 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 18:28:26 -0400
+Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 593B510C0ED7;
+        Thu, 12 Jul 2018 15:16:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1531433812; bh=Yca7s6kD60X289PP1e7w0j3AFetzIOVmOpQwIZStfjc=;
+        h=From:To:CC:Subject:Date:From;
+        b=GPkdZki3HmVWGuySb2wdl/QNuceX0Rj4eIIF4xK8wP+YuBhiLULG2RgphO3yuhJRP
+         BW9xBGyrw+tWkwRAkoO+qVWdjd7S9sMLP2cUi/HUn7LhGMrUG4p70jciA0dhP8pm9e
+         VOSdi3c0Rsv8VxP7QEzJ9mLTebj5AiZRnYzp0zPYwrHlW1TRad5ueeZkD2sf1ddYVd
+         WNKwBrJaZMdBxxMJIZZEoKzSuEV8yz6pVF52y3O1KiwWZ00RuyaiLV4gO1siYCuFQl
+         S/K3ctXJzDtQbcCLIZggB0tyg+01nVTR8HLwIoec+Iy/j5ApDGGpUsWfL9EOtKlnAl
+         k5xpivJgf71pQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 45E5934AF;
+        Thu, 12 Jul 2018 15:16:52 -0700 (PDT)
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Thu, 12 Jul 2018 15:16:52 -0700
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Fri, 13 Jul 2018 03:46:49 +0530
+Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.10.161.98) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.361.1; Fri, 13 Jul 2018 03:46:48 +0530
+From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
+To:     <linux-snps-arc@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>,
+        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH] ARC: mm: allow mprotect to make stack mappings executable
+Date:   Thu, 12 Jul 2018 15:16:34 -0700
+Message-ID: <1531433794-7518-1-git-send-email-vgupta@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qm72oajvd5nwh2m6"
-Content-Disposition: inline
-In-Reply-To: <20180620051803.12206-1-peda@axentia.se>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-Originating-IP: [10.10.161.98]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+mprotect(EXEC) was failing for stack mappings as default vm flags was
+missing MAYEXEC.
 
---qm72oajvd5nwh2m6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This was triggered by glibc test suite nptl/tst-execstack testcase
 
-On Wed, Jun 20, 2018 at 07:17:53AM +0200, Peter Rosin wrote:
-> Hi!
->=20
-> With the introduction of mux-locked I2C muxes, the concept of
-> locking only a segment of the I2C adapter tree was added. At the
-> time, I did not want to cause a lot of extra churn, so left most
-> users of i2c_lock_adapter alone and apparently didn't think enough
-> about it; they simply continued to lock the whole adapter tree.
-> However, i2c_lock_adapter is in fact wrong for almost every caller
-> (there is naturally an exception) that is itself not a driver for
-> a root adapter. What normal drivers generally want is to only
-> lock the segment of the adapter tree that their device sits on.
->=20
-> In fact, if a device sits behind a mux-locked I2C mux, and its
-> driver calls i2c_lock_adapter followed by an unlocked I2C transfer,
-> things will deadlock (since even a mux-locked I2C adapter will lock
-> its parent at some point). If the device is not sitting behind a
-> mux-locked I2C mux (i.e. either directly on the root adapter or
-> behind a (chain of) parent-locked I2C muxes) the root/segment
-> distinction is of no consequence; the root adapter is locked either
-> way.
->=20
-> Mux-locked I2C muxes are probably not that common, and putting any
-> of the affected devices behind one is probably even rarer, which
-> is why we have not seen any deadlocks. At least not that I know
-> of...
->=20
-> Since silently changing the semantics of i2c_lock_adapter might
-> be quite a surprise, especially for out-of-tree users, this series
-> instead removes the function and forces all users to explicitly
-> name I2C_LOCK_SEGMENT or I2C_LOCK_ROOT_ADAPTER in a call to
-> i2c_lock_bus, as suggested by Wolfram. Yes, users will be a teensy
-> bit more wordy, but open-coding I2C locking from random drivers
-> should be avoided, so it's perhaps a good thing if it doesn't look
-> too neat?
->=20
-> I suggest that Wolfram takes this series through the I2C tree and
-> creates an immutable branch for the other subsystems. The series
-> is based on v4.18-r1.
->=20
-> I do not have *any* of the affected devices, and have thus only
-> done build tests.
->=20
-> Cheers,
-> Peter
+What is surprising is that despite running LTP for years on, we didn't
+catch this issue as it lacks a directed test case.
 
-Applied to for-next, thanks! And thanks for all the acks. An immutable
-branch can be found here:
+gcc dejagnu tests with nested functions also requiring exec stack work
+fine though because they rely on the GNU_STACK segment spit out by
+compiler and handled in kernel elf loader.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/precise-loc=
-king-names_immutable
+This glibc case is different as the stack is non exec to begin with and
+a dlopen of shared lib with GNU_STACK segment triggers the exec stack
+proceedings using a mprotect(PROT_EXEC) which was broken.
 
+CC: stable@vger.kernel.org
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+---
+ arch/arc/include/asm/page.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---qm72oajvd5nwh2m6
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
+index 109baa06831c..09ddddf71cc5 100644
+--- a/arch/arc/include/asm/page.h
++++ b/arch/arc/include/asm/page.h
+@@ -105,7 +105,7 @@ typedef pte_t * pgtable_t;
+ #define virt_addr_valid(kaddr)  pfn_valid(virt_to_pfn(kaddr))
+ 
+ /* Default Permissions for stack/heaps pages (Non Executable) */
+-#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE)
++#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
+ 
+ #define WANT_PAGE_VIRTUAL   1
+ 
+-- 
+2.7.4
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltH0hkACgkQFA3kzBSg
-KbZDYg//UGVwnuphbOMKhmwxqf3WAAQyKPV28EuVpX8NIevvAgiCFBuCKmH1aZjk
-1z+4AYTgfiefQoJ1hZKoIRv0AGAmQ/jwNtJYhQdDfrVLx/BMUouL9JtZubWosatD
-gIcaSKx1fGsvxgYPTfBk5sEnLwlG52g5lWJnSXlMeA5wyKzBBS/zpa6eHGyBiMq6
-2zUHEJa09BydQDfZ3yXNY3KU3Y/tlaK2sexiM6y2tt4uzoqV4eExKO1jvVwVZhvK
-HSK3RSnWaTQzeim8OVmyWUj/AgnH6rTRvGw9/LijXmKmBdTvqAvqPJpIQRIaklFs
-bHyHMB/jcw2QJw5N/6g1myg/8unfkP7Iq0MkA7/K2SckdAdSYGbAudDqhWwOBqPK
-p7RWS9Si5LqR2d7hFgzXNZDKdmERzG24/JQOi5vw4IOdaXTZ5FBzPg1V0xHpf7uy
-dIzmaN4TeNdS0CFvr0c4gyex+7TD6ejC2CqgtTnX5AGiXqONRDlg/K+K66tMGZyB
-n6TzknvGLgWreNKZfnLjs/ZoT0J9joUj2v9DEhGUT4pJIN+j6MjKGwNKvrwfRpmb
-V2uL5mNSEJdc5+IpIngTuHLnjtQnbqbq3UlIkEc1iR/iuKZqrNHCUJib9fHErV81
-25/XJBC+188GB/Ifm1sMRf40z7GMmpOkpvs70pT8eZCqBtRvNvM=
-=3VaW
------END PGP SIGNATURE-----
-
---qm72oajvd5nwh2m6--
