@@ -2,107 +2,74 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C431CECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83455ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC7ED213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:13:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Kc3w/VZD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC7ED213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 434E0213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:15:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 434E0213A2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732908AbeGLVZR (ORCPT
+        id S1732923AbeGLV0o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 17:25:17 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34608 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732816AbeGLVZR (ORCPT
+        Thu, 12 Jul 2018 17:26:44 -0400
+Received: from www62.your-server.de ([213.133.104.62]:48209 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732816AbeGLV0o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 17:25:17 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c13-v6so23013413wrt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 14:13:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MLBrXH8l8BEh3BfNKPVXEtzagAfU9Q66aZ7Q5xL6in0=;
-        b=Kc3w/VZDqhMxfuqVdcFNwynV5/U/FW4xMiRNwBPNzrK6ohp2ydHp46KFUpzQRL8+uz
-         1HzsNjp1gXqqzF9fpJToLfpFL/gF1cJPfqQdWerACZOsorLEuMYnh+Ua8l+wzPRhSjcB
-         LM7LznRz8aS3DbbH68CCWJhKE5jhqZh2znUXU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MLBrXH8l8BEh3BfNKPVXEtzagAfU9Q66aZ7Q5xL6in0=;
-        b=QZ3x5PoO7arpcQa638/XCtfHFpjQK+BtY+kPmkrrn0wGoruvvPdu3Uc9zc4poyuJvU
-         XpncxJCYal398qDgbiI1fLci8rg66VWjVS915AY3YmZ+RdV2VCvE8Pa2GtXgYtVkKwT4
-         af5s27Mi9kmuBMlWYKJuyPk7Tga/jKvTFjAs/sMvgRtETPyE6blNLrc/VBUPVyFJGOIh
-         d2Wr+DZl6EkOibgLBV9nDDtekbI1xRgbgqZcm5Nty7zvUarfsZJLbMpS6o7MQ1Yu7U2n
-         XJwAGSbPeUF4kL+dCAbT1jHPVWexyXZXgfs59DS9tvDURORlcWQ4buYNAdS4lbkqu7qi
-         CaRA==
-X-Gm-Message-State: AOUpUlHmDtNXjFDGpud7xZ9BcYInnZ4V8rNjNoLmwEfFvZS2i8CMNUaL
-        iPrr/seLiyF3IwzTFmbiNFAXwA==
-X-Google-Smtp-Source: AAOMgpcwD5KRrd9IUg78jeVl8F399JPxIxA9gCSdTwWIpKR1c9qQ/aRD4lrsqjGY6UYAOupuQTr0sA==
-X-Received: by 2002:adf:9b11:: with SMTP id b17-v6mr2851325wrc.119.1531430035160;
-        Thu, 12 Jul 2018 14:13:55 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id n23-v6sm4103291wmh.6.2018.07.12.14.13.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 14:13:54 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 23:13:48 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Message-ID: <20180712211348.GA5308@andrea>
-References: <20180712175228.GB3533@andrea>
- <Pine.LNX.4.44L0.1807121637050.1306-100000@iolanthe.rowland.org>
+        Thu, 12 Jul 2018 17:26:44 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fdivp-00021p-6N; Thu, 12 Jul 2018 23:15:21 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fdivp-000KGl-0a; Thu, 12 Jul 2018 23:15:21 +0200
+Subject: Re: WARNING in bpf_check
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+7d427828b2ea6e592804@syzkaller.appspotmail.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <00000000000025f8880570c87c51@google.com>
+ <CACT4Y+aDK2yFb=8GGMEL8+Tfq6VVJhU-jrhMrQj9KywmMBNHNg@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <e47e6f52-63e1-e251-fd10-5aab2abe27eb@iogearbox.net>
+Date:   Thu, 12 Jul 2018 23:15:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1807121637050.1306-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CACT4Y+aDK2yFb=8GGMEL8+Tfq6VVJhU-jrhMrQj9KywmMBNHNg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24746/Thu Jul 12 14:54:54 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 04:43:46PM -0400, Alan Stern wrote:
-> On Thu, 12 Jul 2018, Andrea Parri wrote:
-> 
-> > > It seems reasonable to ask people to learn that locks have stronger
-> > > ordering guarantees than RMW atomics do.  Maybe not the greatest
-> > > situation in the world, but one I think we could live with.
-> > 
-> > Yeah, this was one of my main objections.
-> 
-> Does this mean you don't think you could live with it?
+On 07/12/2018 09:51 AM, Dmitry Vyukov wrote:
+> On Thu, Jul 12, 2018 at 9:41 AM, syzbot
+> <syzbot+7d427828b2ea6e592804@syzkaller.appspotmail.com> wrote:
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    671dffa7de7b Merge branch 'bpf-bpftool-improved-prog-load'
+>> git tree:       bpf-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1550b562400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=a501a01deaf0fe9
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=7d427828b2ea6e592804
+>> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Well, I *could* leave with it and with RCtso locks, ;-) but I'd rather not.
-
-Assuming that I will not be able to resist this RCtso trend, ;-) would the
-below (completely untested) work?
-
-  let rmw = rmw | lk-rmw   (* from lock.cat *)
-  let po-unlock-rf-lock-po = po ; [Release] ; rf ; [domain(rmw)] ; po
-  [the rest of your patch + the updates to the doc. I suggested in v2 ;-)]
-
-   Andrea
+#syz fix: bpf: don't leave partial mangled prog in jit_subprogs error path
