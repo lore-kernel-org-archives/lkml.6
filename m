@@ -2,203 +2,80 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CE1C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11192C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:08:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DDE120875
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:04:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DDE120875
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id B955B20BEC
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:08:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B955B20BEC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbeGLMOD (ORCPT
+        id S1726885AbeGLMRm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:14:03 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41772 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726762AbeGLMOD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:14:03 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CC0cxg103265
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 08:04:46 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k66e91627-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 08:04:46 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 12 Jul 2018 13:04:44 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Jul 2018 13:04:42 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6CC4fSE41746596
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Jul 2018 12:04:41 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1BE6011C054;
-        Thu, 12 Jul 2018 15:05:03 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D200911C04A;
-        Thu, 12 Jul 2018 15:05:02 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.152.99.116])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Jul 2018 15:05:02 +0100 (BST)
-Subject: Re: [PATCH v2] kvm/x86: Inform RCU of quiescent state when entering
- guest mode
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-To:     David Woodhouse <dwmw2@infradead.org>, paulmck@linux.vnet.ibm.com
-Cc:     peterz@infradead.org, mhillenb@amazon.de,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20180711174843.GX3593@linux.vnet.ibm.com>
- <20180711180101.3711464-1-dwmw2@infradead.org>
- <20180711182053.GA3593@linux.vnet.ibm.com>
- <20180711183645.GA23820@linux.vnet.ibm.com>
- <62e945ee-a58e-f9b3-279c-74cd0f5809da@de.ibm.com>
- <20180711202752.GC3593@linux.vnet.ibm.com>
- <2f7ba67e-0442-13cc-628c-2dca56520c21@de.ibm.com>
- <20180711213259.GF3593@linux.vnet.ibm.com>
- <18288874-e778-4f7f-2fd5-f03624717e9c@de.ibm.com>
- <20180711234720.GJ3593@linux.vnet.ibm.com>
- <1531384288.8759.101.camel@infradead.org>
- <b3c188f7-454f-35da-b9aa-ddddc4d494cc@de.ibm.com>
- <1531393828.8759.116.camel@infradead.org>
- <2997e5b4-57b4-dba5-2487-6908ca1b9500@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Thu, 12 Jul 2018 14:04:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 12 Jul 2018 08:17:42 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50290 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726650AbeGLMRl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 08:17:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 531FDED1;
+        Thu, 12 Jul 2018 05:08:25 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F2BD83F5B1;
+        Thu, 12 Jul 2018 05:08:23 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 13:08:21 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     dsterba@suse.cz, Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH] refcount: always allow checked forms
+Message-ID: <20180712120821.3qw3erubpok5csd7@lakrids.cambridge.arm.com>
+References: <20180703100102.16615-1-mark.rutland@arm.com>
+ <20180704084641.GL3126@suse.cz>
+ <20180711054946.wdkfoou6kt2a2vml@salmiak>
+ <20180711173705.j6qfye4rq3ccmdyq@twin.jikos.cz>
 MIME-Version: 1.0
-In-Reply-To: <2997e5b4-57b4-dba5-2487-6908ca1b9500@de.ibm.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18071212-0008-0000-0000-000002525D1D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071212-0009-0000-0000-000021B8962E
-Message-Id: <1f63cd8e-1afa-b508-ba66-751c9091fde6@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807120127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711173705.j6qfye4rq3ccmdyq@twin.jikos.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jul 11, 2018 at 07:37:05PM +0200, David Sterba wrote:
+> On Wed, Jul 11, 2018 at 06:49:46AM +0100, Mark Rutland wrote:
+> > > > Dave pointed out that it would be useful to be able to opt-in to full checks
+> > > > regardless of CONFIG_REFCOUNT_FULL, so that we can simplify callsites where we
+> > > > always want checks. I've spotted a few of these in code which is still awaiting
+> > > > conversion.
+> > > 
+> > > The motivation was code like
+> > > 
+> > > 	WARN_ON(refcount_read(&ref));
+> > > 	if (refcount_dec_and_test(&ref)) { ... }
+> > > 
+> > > so the warning is redundant for REFCOUNT_FULL, but I'm going to use the
+> > > _checked versions everywhere the performance of refcounts is not
+> > > critical.
+> > 
+> > If you will have conversion patches, do you want to pick this up as the start
+> > of a series?
+> 
+> The patches where I'd use the enhanced refcounts are nice-to-have and I
+> don't have an ETA so it would be better if the patch gets merged
+> independently. Thanks.
 
+Ok.
 
-On 07/12/2018 01:58 PM, Christian Borntraeger wrote:
-> 
-> 
-> On 07/12/2018 01:10 PM, David Woodhouse wrote:
->> On Thu, 2018-07-12 at 13:00 +0200, Christian Borntraeger wrote:
->>>
->>> On s390 this seems to add about 10ns (~3%) for a guest exit/rentry
->>> microbenchmark mostly due to  rcu_eqs_enter and rcu_eqs_exit now being
->>> visible in perf samples. The older interface was cheaper.
->>
->> Well, the older interface wasn't actually working, which made it
->> moderately suboptimal :)
->>
->> But that is fixed by the first patch of the two, so perhaps the second
->> ought to be conditional on CONFIG_NO_HZ_FULL since it's only really
->> fixing a real bug there?
->>
->> Unless we can contrive some way to do the rcu_eqs_enter/exit only on
->> the paths to/from userspace, and *not* when we loop in the kernel to
->> handle interrupts (etc.) and immediately re-enter the guest without
->> returning? That's somewhat non-trivial though...
-> 
-> Assuming that patch1 really fixes the issue (and all KVM hot loops are
-> supposed to have something like
->         if (need_resched())
->                 schedule();
-> 
-> this could work out given that patch1 does what it is supposed to do.
-> 
-> So you are thinking of something like
-> 
-> diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
-> index d8ee9f949ce3..cac5de8a887c 100644
-> --- a/include/linux/rcutree.h
-> +++ b/include/linux/rcutree.h
-> @@ -72,8 +72,17 @@ void cond_synchronize_sched(unsigned long oldstate);
->  
->  void rcu_idle_enter(void);
->  void rcu_idle_exit(void);
-> +#ifdef CONFIG_NO_HZ_FULL
->  void rcu_kvm_enter(void);
->  void rcu_kvm_exit(void);
-> +#else
-> +static inline void rcu_kvm_enter(void)
-> +{
-> +}
-> +static inline void rcu_kvm_exit(void)
-> +{
-> +}
-> +#endif
->  void rcu_irq_enter(void);
->  void rcu_irq_exit(void);
->  void rcu_irq_enter_irqson(void);
-> 
-> ?
-> 
+Kees, I will leave this to you.
 
-Of course we also need to shift the ifdefs in rcu.c
-and the rcu_virt_note_context_switch() on enter as you
-said.
-
+Mark.
