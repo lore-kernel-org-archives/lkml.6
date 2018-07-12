@@ -2,212 +2,114 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99BB7C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:05:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E515C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:06:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AFA020C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:05:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFA020C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4693E20C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:06:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrJUG5O6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4693E20C0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732361AbeGLINb (ORCPT
+        id S1732357AbeGLIOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:13:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52605 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726896AbeGLINa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:13:30 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 00F732074F; Thu, 12 Jul 2018 10:05:02 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AFB2420618;
-        Thu, 12 Jul 2018 10:04:35 +0200 (CEST)
-Date:   Thu, 12 Jul 2018 10:04:34 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>,
-        linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180712100434.79f1e962@bbrezillon>
-In-Reply-To: <a31dc625-56bf-7a59-d9a3-2841360b864e@axentia.se>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
-        <20180330074751.25987-2-boris.brezillon@bootlin.com>
-        <CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com>
-        <20180711164120.3e32fb08@bbrezillon>
-        <CAK8P3a2EZB_tMS_47wv6M2Qpm79ZocxxhG5zLxXsBM_YjZgkyA@mail.gmail.com>
-        <20180711191212.3855bb25@bbrezillon>
-        <a31dc625-56bf-7a59-d9a3-2841360b864e@axentia.se>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 12 Jul 2018 04:14:25 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:46894 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726685AbeGLIOZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 04:14:25 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 30-v6so10344360pld.13
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 01:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XtjZYxrDNPEPq8UcV/aUKGmMXCiZ3LUEvev/K/gy77A=;
+        b=jrJUG5O6VXbAMGz1KZOoWrOXp8NSFPxxUWWFZfvVwiGtM/7O7ra88PhAnOMCYjeTJQ
+         bJaIgiNQneCF04egVl3hdC0grRUfuymlR+P1YlCNpiw0lynF9w1nvp/LcrdJvKO4Dhg7
+         xdIWZBT9meeTgtd3t/X/NI9lQwpzYMzsLAd+31baDKLGXB6QUts1ksIVltpGCf0ZoHBC
+         dgb4+XqtQdLYu0U0tmH1jyzexTvfai0qbvUpCuhU0k7ZOJYIoiuVfhpX6jqVDRIb5Ae0
+         odLbF5x5XsFxgJv8l8WtovyBoO0iOIQIZEP8Ql9Su7X40QlIWBnNR4TEaTltVEERM32T
+         AXrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XtjZYxrDNPEPq8UcV/aUKGmMXCiZ3LUEvev/K/gy77A=;
+        b=PxWBSB12wsCXyC2uUjvw4F8G57BLO4FXks1X2yYpDKfu9k6ZnN8aPLXRB0dbnHoDR7
+         +FaJvmdhJzghjP7GSgKuC/u9YAIMlX0akH7+fs9/Zmv0WZmuXidg7rs7bmxN+ATrZgeR
+         JmaSl6PIa0c72vwHspSSOW01Q+rOgUMljvGmrxD7OmvlmQlgpkq/abTPuTXLIhvPVlC4
+         8X8nzhkgp2uuUIlqjUEdH+fBKWk/rdXUdqMz6g0i1wD1W8ESFJSFEXAgUIW/4qEyGFOA
+         6glEVNBlvCl2SThnmXyUyW9u3/cdNAuzNz/nunSBjLNwmvaErnD6h3q2tNYbQoaPmVsd
+         hBiQ==
+X-Gm-Message-State: AOUpUlFLxIX0FWcqkvfHODWXPTvfJw1/f6H1h2PJgeTLxvTdk9RpYHEF
+        nbiwP0G9iEn7AS0krYDwVfI=
+X-Google-Smtp-Source: AAOMgpcyZbRcclu1bb4Yt/pecDezolvXKk2kXpyi10RT25XRswgfimrZBPstKUp5B+9qIxAF0EmIaQ==
+X-Received: by 2002:a17:902:a581:: with SMTP id az1-v6mr1184541plb.61.1531382758804;
+        Thu, 12 Jul 2018 01:05:58 -0700 (PDT)
+Received: from localhost ([175.223.26.85])
+        by smtp.gmail.com with ESMTPSA id r6-v6sm30743846pgv.0.2018.07.12.01.05.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Jul 2018 01:05:57 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 17:09:20 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] console: Replace #if 1 with a bool to ignore
+ WARN_CONSOLE_UNLOCKED()
+Message-ID: <20180712080920.GA17915@jagdpanzerIV>
+References: <20180711151755.613eba3c@gandalf.local.home>
+ <20180712015848.GA663@jagdpanzerIV>
+ <20180711230912.2575fae1@vmware.local.home>
+ <20180712042552.GB663@jagdpanzerIV>
+ <20180712075315.vvcebweho635d3le@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712075315.vvcebweho635d3le@pathway.suse.cz>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Jul 2018 06:41:15 +0200
-Peter Rosin <peda@axentia.se> wrote:
-
-> [tried to send something like this yesterday, but it appears to have been
-> lost, sorry for any duplicate]
+On (07/12/18 09:53), Petr Mladek wrote:
+> > 
+> > True, but at the same time nobody complained that we didn't have those
+> > extra WARN_CONSOLE_UNLOCKED()-s. Just saying. Over all I agree that there
+> > is probably some value in those extra WARN-s.
 > 
-> On 2018-07-11 19:12, Boris Brezillon wrote:
-> > On Wed, 11 Jul 2018 17:39:56 +0200
-> > Arnd Bergmann <arnd@arndb.de> wrote:
-> >   
-> >> On Wed, Jul 11, 2018 at 4:41 PM, Boris Brezillon
-> >> <boris.brezillon@bootlin.com> wrote:  
-> >>> On Wed, 11 Jul 2018 16:01:56 +0200 Arnd Bergmann <arnd@arndb.de> wrote:    
-> >>>>> - the bus element is a separate object and is not implicitly described
-> >>>>>   by the master (as done in I2C). The reason is that I want to be able
-> >>>>>   to handle multiple master connected to the same bus and visible to
-> >>>>>   Linux.
-> >>>>>   In this situation, we should only have one instance of the device and
-> >>>>>   not one per master, and sharing the bus object would be part of the
-> >>>>>   solution to gracefully handle this case.
-> >>>>>   I'm not sure we will ever need to deal with multiple masters
-> >>>>>   controlling the same bus and exposed under Linux, but separating the
-> >>>>>   bus and master concept is pretty easy, hence the decision to do it
-> >>>>>   like that.
-> >>>>>   The other benefit of separating the bus and master concepts is that
-> >>>>>   master devices appear under the bus directory in sysfs.    
-> >>>>
-> >>>> I'm not following here at all, sorry for missing prior discussion if this
-> >>>> was already explained. What is the "multiple master" case? Do you
-> >>>> mean multiple devices that are controlled by Linux and that each talk
-> >>>> to other devices on the same bus, multiple operating systems that
-> >>>> have talk to are able to own the bus with the kernel being one of
-> >>>> them, a controller that controls multiple independent buses,
-> >>>> or something else?    
-> >>>
-> >>> I mean several masters connected to the same bus and all exposed to the
-> >>> same Linux instance. In this case, the question is, should we have X
-> >>> I3C buses exposed (X being the number of masters) or should we only
-> >>> have one?
-> >>>
-> >>> Having a bus represented as a separate object allows us to switch to
-> >>> the "one bus : X masters" representation if we need too.    
-> >> ...  
-> >>>>
-> >>>> This feels a bit odd: so you have bus_type that can contain devices
-> >>>> of three (?) different device types: i3c_device_type, i3c_master_type
-> >>>> and i3c_busdev_type.
-> >>>>
-> >>>> Generally speaking, we don't have a lot of subsystems that even
-> >>>> use device_types. I assume that the i3c_device_type for a
-> >>>> device that corresponds to an endpoint on the bus, but I'm
-> >>>> still confused about the other two, and why they are part of
-> >>>> the same bus_type.    
-> >>>
-> >>> i3c_busdev is just a virtual device representing the bus itself.
-> >>> i3c_master is representing the I3C master driving the bus. The reason
-> >>> for having a different type here is to avoid attaching this device to a
-> >>> driver but still being able to see the master controller as a device on
-> >>> the bus. And finally, i3c_device are all remote devices that can be
-> >>> accessed through a given i3c_master.
-> >>>
-> >>> This all comes from the design choice I made to represent the bus as a
-> >>> separate object in order to be able to share it between different
-> >>> master controllers exposed through the same Linux instance. Since
-> >>> master controllers are also remote devices for other controllers, we
-> >>> need to represent them.    
-> >>
-> >> Ok, so I think this is the most important question to resolve: do we
-> >> actually need to control multiple masters on a single bus from one OS
-> >> or not?
-> >>
-> >> The problem that I see is that it breaks the tree abstraction that
-> >> we use in the dtb interface, in the driver model and in sysfs.
-> >> If we need to deal with a hardware bus structure like
-> >>
-> >>               cpu
-> >>              /   \
-> >>             /     \
-> >>        platdev   platdev
-> >>            |        |
-> >>      i3c-master   i3c-master
-> >>             \      /
-> >>              \    /
-> >>             i3c-bus
-> >>              /    \
-> >>          device   device
-> >>
-> >> then that abstraction no longer holds. Clearly you could build
-> >> a system like that, and if we have to support it, the i3c infrastructure
-> >> should be prepared for it, since we wouldn't be able to retrofit
-> >> it later.  
-> > 
-> > Exactly. For the DT representation I thought we could have the primary
-> > master hold the device nodes, and then have secondary masters reference
-> > the main master with a phandle (i3c-bus = <&main_i3c_master>;). For the
-> > sysfs representation, it would be the same. Only one of the master
-> > would create the i3c_bus object and the other masters would just
-> > reference it.
-> >   
-> >>
-> >> What would be the point of building such a system though?  
-> > 
-> > This, I don't know. But as you said, if we go for a "one bus per
-> > master" representation, going back will be difficult.
-> >   
-> >> Is this for performance, failover, or something else?  
-> > 
-> > No, I don't think so, especially since the mastership handover
-> > operation is not free. So keeping the same master in control is
-> > probably better in term of perfs.
-> > 
-> > One case I can think of is when the primary master does not have enough
-> > resources to address all devices on the bus, and let the secondary
-> > master handle all transactions targeting those devices.
-> >   
-> >> IOW, what feature would we lose if we were to declare that
-> >> setup above invalid (and ensure you cannot represent it in DT)?  
-> > 
-> > That's exactly the sort of discussion I wanted to trigger. Maybe we
-> > shouldn't care and expose this use case as if it was X different I3C
-> > buses (with all devices present on the bus being exposed X times to the
-> > system).  
-> 
-> For I2C, this multiple masters for one bus case was retrofitted in
-> the i2c-demux-pinctrl driver. It's a huge kludge with a number of
-> undesirable quirks. I don't know if the circumstances for adding
-> this I2C driver also applies for I3C,
+> I agree that there is some value in the extra WARN's. Also it seems
+> that it is useful to disable them for debugging purposes. I do not
+> see a better solution. Therefore I am fine with this one.
 
-It's hard to guess now.
+Good.
 
-> but it might be an argument
-> in favor of the proposed extra bus object...
+> Yes, this extra comment would be appreciated.
 
-I know that Wolfram was in favor of this separate bus <-> master
-representation, probably because of his experience with this particular
-driver.
+Yep.
 
+> If you send v2, please, break also the WARN definition to 80-chars's
+> per line ;-)
+
+Yeah, I noticed that too.
+
+Acked-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+
+	-ss
