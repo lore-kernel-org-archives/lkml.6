@@ -2,189 +2,294 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3229FC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:21:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B70C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C82A72148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:21:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qM129+u4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C82A72148C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DA6521471
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:22:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA6521471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732405AbeGLPbA (ORCPT
+        id S1732404AbeGLPcn convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 11:31:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33968 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbeGLPbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:31:00 -0400
-Received: from mail-io0-f178.google.com (mail-io0-f178.google.com [209.85.223.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 12 Jul 2018 11:32:43 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50230 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726762AbeGLPcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 11:32:43 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43A34214C1;
-        Thu, 12 Jul 2018 15:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531408858;
-        bh=hqe8VQruhE+IQX0Imx4r/+ZqqmS0d9C9lupo+GeGUpI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=qM129+u4iGSudpNThRYM5CrSW+7MrlHzP9AfVMhuYDt5Cdr2pXytDnDnMmrqGsEq/
-         tCaxfDa7LDIiamCv9nRpVdg6QElDqTYmIgaIqynYkVa6ZJneBYGdGlKjctGmxYe/Tn
-         RgdI9ZTT1l2qHQtYpmW9uFPylJRHoQZXgj6PzwO0=
-Received: by mail-io0-f178.google.com with SMTP id l14-v6so18613006iob.7;
-        Thu, 12 Jul 2018 08:20:58 -0700 (PDT)
-X-Gm-Message-State: APt69E2Uqk+GpEjV5ERtS8d1NTDlzoYxEWcnSoSQDTMsXEtBqVtDkBUk
-        S9iXk0ggr58xCOveDYN+o3+mEReWaDY9odF3/g==
-X-Google-Smtp-Source: AAOMgpdyREtFqQNOLBWwsps0y6Fl9hXNXhQJhgGxH2BxCyxPmUvNhQ7jkYO+KHn3EaAnX9VVECal4/HEZyTiPQT4Lp0=
-X-Received: by 2002:a6b:c693:: with SMTP id w141-v6mr27802939iof.79.1531408857605;
- Thu, 12 Jul 2018 08:20:57 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id 015E74022909;
+        Thu, 12 Jul 2018 15:22:40 +0000 (UTC)
+Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D8FC91C66C;
+        Thu, 12 Jul 2018 15:22:38 +0000 (UTC)
+Date:   Thu, 12 Jul 2018 17:22:36 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v3 0/8] vfio: ccw: Refactoring the VFIO CCW state
+ machine
+Message-ID: <20180712172236.2e038b8c.cohuck@redhat.com>
+In-Reply-To: <3406a24b-1e3a-ac23-c5d0-87c9a3b5515c@linux.ibm.com>
+References: <1528790210-19535-1-git-send-email-pmorel@linux.ibm.com>
+        <20180613165151.056ecaec.cohuck@redhat.com>
+        <bd5fb44e-3395-63bc-23a5-b9b6a8a8f1ef@linux.ibm.com>
+        <20180619160045.13caf12e.cohuck@redhat.com>
+        <63d1948a-3844-26e3-fc4f-0e7da7b4f515@linux.ibm.com>
+        <20180626180052.7412ee79.cohuck@redhat.com>
+        <3406a24b-1e3a-ac23-c5d0-87c9a3b5515c@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-References: <1530789310-16254-1-git-send-email-frieder.schrempf@exceet.de>
- <1530789310-16254-6-git-send-email-frieder.schrempf@exceet.de>
- <20180711160521.GA16884@rob-hp-laptop> <9fd871dd-3d10-044c-db80-d65df161a7d9@exceet.de>
-In-Reply-To: <9fd871dd-3d10-044c-db80-d65df161a7d9@exceet.de>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 12 Jul 2018 09:20:45 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLYiiLNabGWnriL7UoUpVmYfAii+3y-o8od6wU7=xpz1A@mail.gmail.com>
-Message-ID: <CAL_JsqLYiiLNabGWnriL7UoUpVmYfAii+3y-o8od6wU7=xpz1A@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] dt-bindings: spi: Adjust the bindings for the
- FSL QSPI driver
-To:     Schrempf Frieder <frieder.schrempf@exceet.de>
-Cc:     MTD Maling List <linux-mtd@lists.infradead.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        =?UTF-8?Q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Mark Brown <broonie@kernel.org>, david.wolfe@nxp.com,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
-        Yogesh Gaur <yogeshnarayan.gaur@nxp.com>,
-        Han Xu <han.xu@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 15:22:40 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 15:22:40 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 2:14 AM Frieder Schrempf
-<frieder.schrempf@exceet.de> wrote:
->
-> Hi Rob,
->
-> On 11.07.2018 18:05, Rob Herring wrote:
-> > On Thu, Jul 05, 2018 at 01:15:01PM +0200, Frieder Schrempf wrote:
-> >> Adjust the documentation of the new SPI memory interface based
-> >> driver to reflect the new drivers settings.
-> >
-> > Bindings shouldn't change (other than new properties) due to driver
-> > changes.
->
-> Right, I added an explanation below, why I think the changes are necessary.
->
-> >
+On Wed, 27 Jun 2018 12:00:41 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
+
+Apologies for the late answer, this topic had dropped off my radar.
+
+> On 26/06/2018 18:00, Cornelia Huck wrote:
+> > On Tue, 26 Jun 2018 13:04:12 +0200
+> > Pierre Morel <pmorel@linux.ibm.com> wrote:
+> >  
+> >> On 19/06/2018 16:00, Cornelia Huck wrote:  
+> >>> On Thu, 14 Jun 2018 10:06:31 +0200
+> >>> Pierre Morel<pmorel@linux.ibm.com>  wrote:
+> >>>     
+> ...snip...
+> >> The goal of the state machine is to describe the device driver state.
+> >> Not the device state which is hold by the CIO level.  
+> > I don't think there really is such a thing as "device driver state" (or
+> > maybe I don't understand what you mean by it). The state is attached to
+> > the individual device, isn't it?  
+> Yes but it is related to the software handling the device and not to the 
+> device.
+> This is a difference between QEMU, Linux VFIO driver and Hardware.
+> 
+> In my point of view:
+> 
+> QEMU                  : Emulates a device, internal state is state of 
+> the device
+> Linux VFIO driver: Handle the device, internal state is driver state
+> Hardware            : obviously get the device state
+
+OK, I understand where you're coming from, but I find your terminology
+a bit confusing :)
+
+Maybe call the state that is tracked by the vfio driver "vfio device
+state"?
+
+> >>>> ------------------------------------------------------------
+> >>>> | STANDBY          | A guest is associated but not started |  
+> >>> This is basically "device is bound to driver, but no mdev has been set
+> >>> up".  
+> >> When the device is bound to the driver, the device driver
+> >> is still in NOT_OPERATIONAL state.
 > >>
-> >> Signed-off-by: Frieder Schrempf <frieder.schrempf@exceet.de>
-> >> ---
-> >> Changes in v2:
-> >> ==============
-> >> * Split the moving and editing of the dt-bindings in two patches
+> >> The transition to STANDBY is done when the virtual machine starts and
+> >> opens the mediated device.
+> >> Note that the device is still not usable until it is reseted.  
+> > Hm, isn't that transition happening when the mdev is created?  
+> No, when the mdev is created the VM is not started.
+> The STANDBY state is entered when the mdev_open is called,
+> this is when the VFIO framework is initialized as QEMU starts.
+> 
+> When the mdev is created the mdev_create is called but do not
+> induce any state change.
+
+Ah, now I understand where the disconnect here came from: Your patch 7
+changed this :)
+
+I have to think further about this (still undecided).
+
+> ...snip...
+> >> Now you are talking about the driver :) This should probably be done  
+> >>> for the other states as well.  
+> >> Ill update the description to make clear that the state is the
+> >> driver state (device driver) and not the device state.
+> >> The device state is handled by the firmware.  
+> > Now you have managed to confuse me completely... isn't the firmware
+> > only handling the (real) subchannel state?  
+> 
+> Yes and QEMU the virtual one.
+> But the driver does not need to handle the device state
+> but the driver state. Which is quite different.
+
+That's again the terminology confusion from above.
+
+> >>> Isn't that rather "an mdev is created"?  
+> >> No, ONLINE is triggered by VFIO_RESET, after the mdev has been created
+> >> and when the VM is started or restarted by QEMU.
 > >>
-> >>   .../devicetree/bindings/spi/spi-fsl-qspi.txt    | 22 ++++++++++----------
-> >>   1 file changed, 11 insertions(+), 11 deletions(-)
+> >> I see that I did not do a good job describing what triggers the events.
+> >> I will try again in a dedicated document.  
+> > It might be good to combine the two.  
+> 
+> When mdev is created the VM does not exist, it is created by the admin.
+> 
+> The mdev_open() is called once when the VM starts.
+> VFIO_RESET is called on start and every time the VM is reseted.
+
+And this was again /me looking at the current code.
+
+> 
+> These are three different events occuring in the life of the driver.
+> mdev creation do not influence the way the driver works.
+
+I'm wondering if it should. Having an mdev is a prereq for any setup.
+So a device in not oper state without mdev is a different thing from a
+device in not oper state with an mdev that received e.g. some path
+failures.
+
+> mdev open does, and issues the INIT event
+> VFIO_RESET does and issues the ONLINE event
+
+The last one is possibly a bit unintuitive (might be a naming issue).
+
+> >>>> |                  | triggered by: vfio_reset              |
+> >>>> |                  | action: enable SC                     |
+> >>>> |                  | state on success: IDLE                |
+> >>>> |                  | state on error  : STANDBY             |  
+> >>> What happens if the subchannel is not operational when we try to get it
+> >>> ready? Can it go to NOT_OPERATIONAL in that case?  
+> >> I think we have a confusion between the sub-channel being non operational
+> >> and the device driver being non operational.
+> >> Here, the device driver is operational, even the device may not.  
+> > How can something be operational if the device is not? It could be in a
+> > state like the ccw device's disconnected state, but it's certainly not
+> > ready for requests.  
+> 
+> The driver may be operational even the device is not.
+> Depending on the protocol between device and driver it allows
+> the driver to reset the device.
+> We have two drivers here speaking with the device, the one in the guest
+> and the VFIO driver.
+> The VFIO driver works is to handle the virtualization infrastructure,
+> not to handle the device. Handling the device is done by the guest
+> driver.
+
+Hm, let's assume the hardware device is not operational (cc 3 on ssch
+or whatever).
+
+What I'd assume to happen would be:
+- The vfio driver notices that the subchannel is not operational, and
+  switches state or flips an indication somewhere.
+- The vfio driver is probably also notified by the common I/O layer
+  (because of machine check on the hardware). It has two choices: give
+  up on the device (the common I/O layer will deregister the device),
+  or keep it (which would mean something similar to the disconnected
+  state for ccw devices; I guess that is what you meant with 'the
+  driver is operational'?).
+- If the (subchannel) device is gone, the child mdev should be gone as
+  well.
+
+What would be the best way to interact with the guest? On real
+hardware, I'd expect both cc 3 and crws. Regardless whether we
+unregister or do something like the disconnected state, we should relay
+the cc 3 to the guest *and* inject a machine check to kick the guest's
+handling.
+
+If we use the disconnected state approach, what should the guest get if
+it tries to interact with the device anyway? We could answer with cc 3
+immediately, or let the hardware give us the cc 3 that we relay back to
+the guest. (We should get a notification from the common I/O layer when
+it is informed via a machine check that the device is alive again.)
+
+What do you think?
+
+> >> For the VM perspective, if the device is not operational we send a RESET.
 > >>
-> >> diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-> >> index 483e9cf..8b4eed7 100644
-> >> --- a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-> >> +++ b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
-> >> @@ -3,9 +3,8 @@
-> >>   Required properties:
-> >>     - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
-> >>               "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
-> >> -             "fsl,ls1021a-qspi"
-> >> +             "fsl,ls1021a-qspi", "fsl,ls2080a-qspi"
-> >>               or
-> >> -             "fsl,ls2080a-qspi" followed by "fsl,ls1021a-qspi",
-> >>               "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
-> >
-> > So the 2080a h/w was compatible with the 1021a h/w, but now it is not?
-> > How did the h/w change?
->
-> I guess this should be posted as a separate fix. Formerly there was only
-> "fsl,ls1021a-qspi" handled in the driver and the bindings here claimed
-> that "fsl,ls2080a-qspi" is compatible.
->
-> Some time ago a separate entry for "fsl,ls2080a-qspi" was added to the
-> driver [1] and it adds a quirk, that is not set for "fsl,ls1021a-qspi".
-> That's why I concluded, that these two are actually not compatible.
+> >> For the guest perspective we can do what ever instruction we needs to
+> >> get the device operational, therefor we need the driver to be operational
+> >> to process the instruction.  
+> > Ah, do you mean 'subchannel enabled'? I was thinking about 'device
+> > dead, we get cc 3 or somesuch'.  
+> 
+> What can we do on the host level that the guest can not do?
+> If we have a way to retrieve a dead device in the host, shouldn't
+> we give the guest this possibility?
 
-So before the driver change, the driver didn't work at all on the
-ls2080a? If so, then removing is appropriate. If not, then removing
-breaks all kernel versions before the change if you use a newer DT.
+See above... we can get the machine checks, but the guest can't.
 
+> Speaking about sub-channel enabled:
+> 
+> We currently have very restricted possibilities for the guest
+> to manage the sub-channel or even to get real information
+> on the sub-channel.
+> Dong-Jia began working in this direction with his last patch series
+> and I think it is a way to follow.
 
-> >>     - reg : the first contains the register location and length,
-> >>             the second contains the memory mapping address and length
-> >> @@ -15,14 +14,15 @@ Required properties:
-> >>     - clock-names : Should contain the name of the clocks: "qspi_en" and "qspi".
-> >>
-> >>   Optional properties:
-> >> -  - fsl,qspi-has-second-chip: The controller has two buses, bus A and bus B.
-> >> -                              Each bus can be connected with two NOR flashes.
-> >> -                          Most of the time, each bus only has one NOR flash
-> >> -                          connected, this is the default case.
-> >> -                          But if there are two NOR flashes connected to the
-> >> -                          bus, you should enable this property.
-> >> -                          (Please check the board's schematic.)
-> >
-> > You can't just remove properties without explanation. Why is this no
-> > longer needed? What about backwards compatibility with existing dtbs?
->
-> You're right, the explanation is missing here.
->
-> The "old" driver was using this property to select one of two dual chip
-> setups (two chips on one bus or two chips on separate buses). And it
-> used the order in which the subnodes are defined in the dt to select the
-> CS, the chip is connected to.
->
-> Both methods are wrong and in fact the "reg" property should be used to
-> determine which bus and CS a chip is connected to. This also enables us
-> to use different setups than just single chip, or symmetric dual chip.
->
-> So the porting of the driver from the MTD to the SPI framework actually
-> enforces the use of the "reg" properties and makes
-> "fsl,qspi-has-second-chip" superfluous.
->
-> As all boards that have "fsl,qspi-has-second-chip" set, also have
-> correct "reg" properties, the removal of this property shouldn't lead to
-> any incompatibilities.
->
-> The only compatibility issues I can see are with imx6sx-sdb.dts and
-> imx6sx-sdb-reva.dts, which have their reg properties set incorrectly
-> (see explanation here: [2]), all other boards should stay compatible.
+Is anyone at IBM picking up this work?
 
-Add this to the commit msg.
+> My point of view is that we should not do too much in the VFIO
+> driver but only take care of the virtualization of the SCHIB.
+> But this is beyond the scope of this patch .
 
-> >> -  - big-endian : That means the IP register is big endian
-> >> +  - big-endian : That means the IP registers format is big endian
-> >
-> > This is a standard property so it doesn't really need to be redefined
-> > here, but just reference the definition.
->
-> So I will change that to:
->
->         big-endian : See common-properties.txt for a definition
+The main thing missing is probably machine check handling. But probably
+msch passthrough as well.
 
-You can drop "for a definition"
+> >>> This is the common I/O layer's sch_event callback. That can mean
+> >>> different things:
+> >>> - Something regarding the paths to the device changed. We can translate
+> >>>     that to "schib updated".
+> >>> - Device is gone. This is a different situation; we may either try to
+> >>>     implement the disconnected state, or we may give up the device.
+> >>>
+> >>> Also, can't we get this event in QUIESCING or STANDBY as well?  
+> >> I think it should be ignored in STANDBY as we did not even
+> >> start to use the sub-channel we have no information on it
+> >> at that moment.  
+> > As long as we do update it some time before we need the information, ok.  
+> 
+> AFAIK we currently never forward this information to the guest,
+> when we do it we will need to virtualize this information.
 
-Rob
+Agreed.
+  
+> >>>> | |                                       |
+> >>>> |                  | triggered by: sch_event               |
+> >>>> |                  | action: Store the SCHIB in IO region  |
+> >>>> |                  | state on success: no change           |  
+> >>> As said, we may want some different handling for "device gone"
+> >>> situations.
+> >>>
+> >>> Also, what happens if we get that event in BUSY? Is the I/O still
+> >>> running?  
+> >> AFAIK yes, it is an asynchronous event.
+> >> It can happen during BUSY.
+> >> However AFAIU we still get an IRQ even we get the device gone
+> >> during I/O operation.  
+> > It depends. We either get a deferred cc 3, or a machine check (but no
+> > interrupt).  
+> 
+> I understood from current code that all kind of CRW do not
+> imply that the sub-channel is gone.
+> I must investigate a little more.
+
+Path handling is sometimes a bit odd...
+
+> 
+> Anyway, the CRW should be handled and forwarded to the guest
+> but I would prefer not to change too much in this series,
+> shouldn't this changes be part of a next series?
+
+Yes, that should be a different series, as it will probably be quite
+complex and needs thought. Anyway, I've updated
+https://wiki.qemu.org/ToDo/Channel_I/O_Passthrough with some machine
+check considerations.
