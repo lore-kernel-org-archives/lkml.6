@@ -2,95 +2,81 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAC4C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E125C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA90C20873
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:26:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA90C20873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2874220883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:28:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2874220883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbeGLHeh (ORCPT
+        id S1726588AbeGLHhL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 03:34:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45976 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725995AbeGLHeg (ORCPT
+        Thu, 12 Jul 2018 03:37:11 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49292 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725995AbeGLHhL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 03:34:36 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6C7NuhH050384
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 03:26:19 -0400
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k61rsagry-1
+        Thu, 12 Jul 2018 03:37:11 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6C7NdDd094869
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 03:28:50 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k61xd1w3p-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 03:26:18 -0400
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 03:28:50 -0400
 Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Thu, 12 Jul 2018 01:26:18 -0600
-Received: from b03cxnp08025.gho.boulder.ibm.com (9.17.130.17)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.vnet.ibm.com>;
+        Thu, 12 Jul 2018 08:28:48 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Jul 2018 01:26:16 -0600
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6C7QDMZ18088324
+        Thu, 12 Jul 2018 08:28:46 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6C7Sjd542336342
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Jul 2018 00:26:13 -0700
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 35BD0C6057;
-        Thu, 12 Jul 2018 01:26:13 -0600 (MDT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 50026C6055;
-        Thu, 12 Jul 2018 01:26:09 -0600 (MDT)
-Received: from oc8043147753.ibm.com (unknown [9.152.224.124])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Jul 2018 01:26:09 -0600 (MDT)
-Subject: Re: [PATCH v6 21/21] s390: doc: detailed specifications for AP
- virtualization
-To:     pmorel@linux.ibm.com, Halil Pasic <pasic@linux.ibm.com>,
-        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1530306683-7270-22-git-send-email-akrowiak@linux.vnet.ibm.com>
- <753c5e17-c241-580d-6e3a-a3c3159d44a8@linux.ibm.com>
- <0580735b-8813-f860-a2ac-654d82203b35@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Thu, 12 Jul 2018 09:26:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 12 Jul 2018 07:28:45 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3FE5AE045;
+        Thu, 12 Jul 2018 10:28:38 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 17866AE053;
+        Thu, 12 Jul 2018 10:28:38 +0100 (BST)
+Received: from rapoport-lnx (unknown [9.148.8.135])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 12 Jul 2018 10:28:37 +0100 (BST)
+Date:   Thu, 12 Jul 2018 10:28:42 +0300
+From:   Mike Rapoport <rppt@linux.vnet.ibm.com>
+To:     Matt Turner <mattst88@gmail.com>,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        linux-alpha <linux-alpha@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] alpha: switch to NO_BOOTMEM
+References: <1530371610-22174-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <20180704124446.GF4352@rapoport-lnx>
 MIME-Version: 1.0
-In-Reply-To: <0580735b-8813-f860-a2ac-654d82203b35@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180704124446.GF4352@rapoport-lnx>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 X-TM-AS-GCONF: 00
-x-cbid: 18071207-0036-0000-0000-00000A0E0850
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009355; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01060154; UDB=6.00544160; IPR=6.00838072;
- MB=3.00022112; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-12 07:26:18
+x-cbid: 18071207-0028-0000-0000-000002DABF14
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071207-0037-0000-0000-0000481254AF
-Message-Id: <89f903ad-259a-41d3-ba6a-218d2c277ffb@linux.ibm.com>
+x-cbparentid: 18071207-0029-0000-0000-00002392693A
+Message-Id: <20180712072842.GC4422@rapoport-lnx>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_03:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1807120076
@@ -99,63 +85,414 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/09/2018 11:21 AM, Pierre Morel wrote:
-> On 03/07/2018 01:10, Halil Pasic wrote:
->>
->>
->> On 06/29/2018 11:11 PM, Tony Krowiak wrote:
->>> This patch provides documentation describing the AP architecture and
->>> design concepts behind the virtualization of AP devices. It also
->>> includes an example of how to configure AP devices for exclusive
->>> use of KVM guests.
->>>
->>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
->>
->> I don't like the design of external interfaces except for:
->> * cpu model features, and
->> * reset handling.
->>
->> In particular:
->>
->>
-> ...snip...
->
->> 4) If I were to act out the role of the administrator, I would prefer 
->> to think of
->> specifying or changing the access controls of a guest in respect to 
->> AP (that is
->> setting the AP matrix) as a single atomic operation -- which either 
->> succeeds or fails.
->>
->> The operation should succeed for any valid configuration, and fail 
->> for any invalid
->> on.
->>
->> The current piecemeal approach seems even less fitting if we consider 
->> changing the
->> access controls of a running guest. AFAIK changing access controls 
->> for a running
->> guest is possible, and I don't see a reason why should we 
->> artificially prohibit this.
->>
->> I think the current sysfs interface for manipulating the matrix is 
->> good for
->> manual playing around, but I would prefer having an interface that is 
->> better
->> suited for programs (e.g. ioctl).
->
-> I disagree with using ioctl.
-> I agree that the current implementation is not right.
-> The configuration of APM and AQM should always be guarantied as coherent
-> within the host but it can be done doing the right checks when using 
-> the sysfs.
+(added Matt Turner, sorry, should have done it from the beginning)
 
-What sysfs interfaces do you suggest?
+Any comments on this?
+ 
+> On Sat, Jun 30, 2018 at 06:13:30PM +0300, Mike Rapoport wrote:
+> Replace bootmem allocator with memblock and enable use of NO_BOOTMEM like
+> on most other architectures.
+> 
+> Alpha gets the description of the physical memory from the firmware as an
+> array of memory clusters. Each cluster that is not reserved by the firmware
+> is added to memblock.memory.
+> 
+> Once the memblock.memory is set up, we reserve the kernel and initrd pages
+> with memblock reserve.
+> 
+> Since we don't need the bootmem bitmap anymore, the code that finds an
+> appropriate place is removed.
+> 
+> The conversion does not take care of NUMA support which is marked broken
+> for more than 10 years now.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> ---
+> v2: describe the conversion as per Michal's request
+> 
+> Tested with qemu-system-alpha. I've added some tweaks to sys_dp264 to force
+> memory split for testing with CONFIG_DISCONTIGMEM=y
+> 
+> The allyesconfig build requires update to DEFERRED_STRUCT_PAGE_INIT
+> dependencies [1] which is already in -mm tree.
+> 
+> [1] https://lkml.org/lkml/2018/6/29/353
+> 
+>  arch/alpha/Kconfig                |   2 +
+>  arch/alpha/kernel/core_irongate.c |   4 +-
+>  arch/alpha/kernel/setup.c         |  98 ++++-----------------------------
+>  arch/alpha/mm/numa.c              | 113 +++++---------------------------------
+>  4 files changed, 29 insertions(+), 188 deletions(-)
+> 
+> diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+> index 04a4a138ed13..040692a8d433 100644
+> --- a/arch/alpha/Kconfig
+> +++ b/arch/alpha/Kconfig
+> @@ -30,6 +30,8 @@ config ALPHA
+>  	select ODD_RT_SIGACTION
+>  	select OLD_SIGSUSPEND
+>  	select CPU_NO_EFFICIENT_FFS if !ALPHA_EV67
+> +	select HAVE_MEMBLOCK
+> +	select NO_BOOTMEM
+>  	help
+>  	  The Alpha is a 64-bit general-purpose processor designed and
+>  	  marketed by the Digital Equipment Corporation of blessed memory,
+> diff --git a/arch/alpha/kernel/core_irongate.c b/arch/alpha/kernel/core_irongate.c
+> index aec757250e07..f70986683fc6 100644
+> --- a/arch/alpha/kernel/core_irongate.c
+> +++ b/arch/alpha/kernel/core_irongate.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/init.h>
+>  #include <linux/initrd.h>
+>  #include <linux/bootmem.h>
+> +#include <linux/memblock.h>
+> 
+>  #include <asm/ptrace.h>
+>  #include <asm/cacheflush.h>
+> @@ -241,8 +242,7 @@ albacore_init_arch(void)
+>  				       size / 1024);
+>  		}
+>  #endif
+> -		reserve_bootmem_node(NODE_DATA(0), pci_mem, memtop -
+> -				pci_mem, BOOTMEM_DEFAULT);
+> +		memblock_reserve(pci_mem, memtop - pci_mem);
+>  		printk("irongate_init_arch: temporarily reserving "
+>  			"region %08lx-%08lx for PCI\n", pci_mem, memtop - 1);
+>  	}
+> diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+> index 5576f7646fb6..4f0d94471bc9 100644
+> --- a/arch/alpha/kernel/setup.c
+> +++ b/arch/alpha/kernel/setup.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/ioport.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/bootmem.h>
+> +#include <linux/memblock.h>
+>  #include <linux/pci.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/root_dev.h>
+> @@ -312,9 +313,7 @@ setup_memory(void *kernel_end)
+>  {
+>  	struct memclust_struct * cluster;
+>  	struct memdesc_struct * memdesc;
+> -	unsigned long start_kernel_pfn, end_kernel_pfn;
+> -	unsigned long bootmap_size, bootmap_pages, bootmap_start;
+> -	unsigned long start, end;
+> +	unsigned long kernel_size;
+>  	unsigned long i;
+> 
+>  	/* Find free clusters, and init and free the bootmem accordingly.  */
+> @@ -322,6 +321,8 @@ setup_memory(void *kernel_end)
+>  	  (hwrpb->mddt_offset + (unsigned long) hwrpb);
+> 
+>  	for_each_mem_cluster(memdesc, cluster, i) {
+> +		unsigned long end;
+> +
+>  		printk("memcluster %lu, usage %01lx, start %8lu, end %8lu\n",
+>  		       i, cluster->usage, cluster->start_pfn,
+>  		       cluster->start_pfn + cluster->numpages);
+> @@ -335,6 +336,9 @@ setup_memory(void *kernel_end)
+>  		end = cluster->start_pfn + cluster->numpages;
+>  		if (end > max_low_pfn)
+>  			max_low_pfn = end;
+> +
+> +		memblock_add(PFN_PHYS(cluster->start_pfn),
+> +			     cluster->numpages << PAGE_SHIFT);
+>  	}
+> 
+>  	/*
+> @@ -363,87 +367,9 @@ setup_memory(void *kernel_end)
+>  		max_low_pfn = mem_size_limit;
+>  	}
+> 
+> -	/* Find the bounds of kernel memory.  */
+> -	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
+> -	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
+> -	bootmap_start = -1;
+> -
+> - try_again:
+> -	if (max_low_pfn <= end_kernel_pfn)
+> -		panic("not enough memory to boot");
+> -
+> -	/* We need to know how many physically contiguous pages
+> -	   we'll need for the bootmap.  */
+> -	bootmap_pages = bootmem_bootmap_pages(max_low_pfn);
+> -
+> -	/* Now find a good region where to allocate the bootmap.  */
+> -	for_each_mem_cluster(memdesc, cluster, i) {
+> -		if (cluster->usage & 3)
+> -			continue;
+> -
+> -		start = cluster->start_pfn;
+> -		end = start + cluster->numpages;
+> -		if (start >= max_low_pfn)
+> -			continue;
+> -		if (end > max_low_pfn)
+> -			end = max_low_pfn;
+> -		if (start < start_kernel_pfn) {
+> -			if (end > end_kernel_pfn
+> -			    && end - end_kernel_pfn >= bootmap_pages) {
+> -				bootmap_start = end_kernel_pfn;
+> -				break;
+> -			} else if (end > start_kernel_pfn)
+> -				end = start_kernel_pfn;
+> -		} else if (start < end_kernel_pfn)
+> -			start = end_kernel_pfn;
+> -		if (end - start >= bootmap_pages) {
+> -			bootmap_start = start;
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (bootmap_start == ~0UL) {
+> -		max_low_pfn >>= 1;
+> -		goto try_again;
+> -	}
+> -
+> -	/* Allocate the bootmap and mark the whole MM as reserved.  */
+> -	bootmap_size = init_bootmem(bootmap_start, max_low_pfn);
+> -
+> -	/* Mark the free regions.  */
+> -	for_each_mem_cluster(memdesc, cluster, i) {
+> -		if (cluster->usage & 3)
+> -			continue;
+> -
+> -		start = cluster->start_pfn;
+> -		end = cluster->start_pfn + cluster->numpages;
+> -		if (start >= max_low_pfn)
+> -			continue;
+> -		if (end > max_low_pfn)
+> -			end = max_low_pfn;
+> -		if (start < start_kernel_pfn) {
+> -			if (end > end_kernel_pfn) {
+> -				free_bootmem(PFN_PHYS(start),
+> -					     (PFN_PHYS(start_kernel_pfn)
+> -					      - PFN_PHYS(start)));
+> -				printk("freeing pages %ld:%ld\n",
+> -				       start, start_kernel_pfn);
+> -				start = end_kernel_pfn;
+> -			} else if (end > start_kernel_pfn)
+> -				end = start_kernel_pfn;
+> -		} else if (start < end_kernel_pfn)
+> -			start = end_kernel_pfn;
+> -		if (start >= end)
+> -			continue;
+> -
+> -		free_bootmem(PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
+> -		printk("freeing pages %ld:%ld\n", start, end);
+> -	}
+> -
+> -	/* Reserve the bootmap memory.  */
+> -	reserve_bootmem(PFN_PHYS(bootmap_start), bootmap_size,
+> -			BOOTMEM_DEFAULT);
+> -	printk("reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
+> +	/* Reserve the kernel memory. */
+> +	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
+> +	memblock_reserve(KERNEL_START_PHYS, kernel_size);
+> 
+>  #ifdef CONFIG_BLK_DEV_INITRD
+>  	initrd_start = INITRD_START;
+> @@ -459,8 +385,8 @@ setup_memory(void *kernel_end)
+>  				       initrd_end,
+>  				       phys_to_virt(PFN_PHYS(max_low_pfn)));
+>  		} else {
+> -			reserve_bootmem(virt_to_phys((void *)initrd_start),
+> -					INITRD_SIZE, BOOTMEM_DEFAULT);
+> +			memblock_reserve(virt_to_phys((void *)initrd_start),
+> +					INITRD_SIZE);
+>  		}
+>  	}
+>  #endif /* CONFIG_BLK_DEV_INITRD */
+> diff --git a/arch/alpha/mm/numa.c b/arch/alpha/mm/numa.c
+> index a9e86475f169..26cd925d19b1 100644
+> --- a/arch/alpha/mm/numa.c
+> +++ b/arch/alpha/mm/numa.c
+> @@ -11,6 +11,7 @@
+>  #include <linux/kernel.h>
+>  #include <linux/mm.h>
+>  #include <linux/bootmem.h>
+> +#include <linux/memblock.h>
+>  #include <linux/swap.h>
+>  #include <linux/initrd.h>
+>  #include <linux/pfn.h>
+> @@ -59,12 +60,10 @@ setup_memory_node(int nid, void *kernel_end)
+>  	struct memclust_struct * cluster;
+>  	struct memdesc_struct * memdesc;
+>  	unsigned long start_kernel_pfn, end_kernel_pfn;
+> -	unsigned long bootmap_size, bootmap_pages, bootmap_start;
+>  	unsigned long start, end;
+>  	unsigned long node_pfn_start, node_pfn_end;
+>  	unsigned long node_min_pfn, node_max_pfn;
+>  	int i;
+> -	unsigned long node_datasz = PFN_UP(sizeof(pg_data_t));
+>  	int show_init = 0;
+> 
+>  	/* Find the bounds of current node */
+> @@ -134,24 +133,14 @@ setup_memory_node(int nid, void *kernel_end)
+>  	/* Cute trick to make sure our local node data is on local memory */
+>  	node_data[nid] = (pg_data_t *)(__va(node_min_pfn << PAGE_SHIFT));
+>  #endif
+> -	/* Quasi-mark the pg_data_t as in-use */
+> -	node_min_pfn += node_datasz;
+> -	if (node_min_pfn >= node_max_pfn) {
+> -		printk(" not enough mem to reserve NODE_DATA");
+> -		return;
+> -	}
+> -	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
+> -
+>  	printk(" Detected node memory:   start %8lu, end %8lu\n",
+>  	       node_min_pfn, node_max_pfn);
+> 
+>  	DBGDCONT(" DISCONTIG: node_data[%d]   is at 0x%p\n", nid, NODE_DATA(nid));
+> -	DBGDCONT(" DISCONTIG: NODE_DATA(%d)->bdata is at 0x%p\n", nid, NODE_DATA(nid)->bdata);
+> 
+>  	/* Find the bounds of kernel memory.  */
+>  	start_kernel_pfn = PFN_DOWN(KERNEL_START_PHYS);
+>  	end_kernel_pfn = PFN_UP(virt_to_phys(kernel_end));
+> -	bootmap_start = -1;
+> 
+>  	if (!nid && (node_max_pfn < end_kernel_pfn || node_min_pfn > start_kernel_pfn))
+>  		panic("kernel loaded out of ram");
+> @@ -161,89 +150,11 @@ setup_memory_node(int nid, void *kernel_end)
+>  	   has much larger alignment than 8Mb, so it's safe. */
+>  	node_min_pfn &= ~((1UL << (MAX_ORDER-1))-1);
+> 
+> -	/* We need to know how many physically contiguous pages
+> -	   we'll need for the bootmap.  */
+> -	bootmap_pages = bootmem_bootmap_pages(node_max_pfn-node_min_pfn);
+> -
+> -	/* Now find a good region where to allocate the bootmap.  */
+> -	for_each_mem_cluster(memdesc, cluster, i) {
+> -		if (cluster->usage & 3)
+> -			continue;
+> -
+> -		start = cluster->start_pfn;
+> -		end = start + cluster->numpages;
+> -
+> -		if (start >= node_max_pfn || end <= node_min_pfn)
+> -			continue;
+> -
+> -		if (end > node_max_pfn)
+> -			end = node_max_pfn;
+> -		if (start < node_min_pfn)
+> -			start = node_min_pfn;
+> -
+> -		if (start < start_kernel_pfn) {
+> -			if (end > end_kernel_pfn
+> -			    && end - end_kernel_pfn >= bootmap_pages) {
+> -				bootmap_start = end_kernel_pfn;
+> -				break;
+> -			} else if (end > start_kernel_pfn)
+> -				end = start_kernel_pfn;
+> -		} else if (start < end_kernel_pfn)
+> -			start = end_kernel_pfn;
+> -		if (end - start >= bootmap_pages) {
+> -			bootmap_start = start;
+> -			break;
+> -		}
+> -	}
+> -
+> -	if (bootmap_start == -1)
+> -		panic("couldn't find a contiguous place for the bootmap");
+> -
+> -	/* Allocate the bootmap and mark the whole MM as reserved.  */
+> -	bootmap_size = init_bootmem_node(NODE_DATA(nid), bootmap_start,
+> -					 node_min_pfn, node_max_pfn);
+> -	DBGDCONT(" bootmap_start %lu, bootmap_size %lu, bootmap_pages %lu\n",
+> -		 bootmap_start, bootmap_size, bootmap_pages);
+> +	memblock_add(PFN_PHYS(node_min_pfn),
+> +		     (node_max_pfn - node_min_pfn) << PAGE_SHIFT);
+> 
+> -	/* Mark the free regions.  */
+> -	for_each_mem_cluster(memdesc, cluster, i) {
+> -		if (cluster->usage & 3)
+> -			continue;
+> -
+> -		start = cluster->start_pfn;
+> -		end = cluster->start_pfn + cluster->numpages;
+> -
+> -		if (start >= node_max_pfn || end <= node_min_pfn)
+> -			continue;
+> -
+> -		if (end > node_max_pfn)
+> -			end = node_max_pfn;
+> -		if (start < node_min_pfn)
+> -			start = node_min_pfn;
+> -
+> -		if (start < start_kernel_pfn) {
+> -			if (end > end_kernel_pfn) {
+> -				free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start),
+> -					     (PFN_PHYS(start_kernel_pfn)
+> -					      - PFN_PHYS(start)));
+> -				printk(" freeing pages %ld:%ld\n",
+> -				       start, start_kernel_pfn);
+> -				start = end_kernel_pfn;
+> -			} else if (end > start_kernel_pfn)
+> -				end = start_kernel_pfn;
+> -		} else if (start < end_kernel_pfn)
+> -			start = end_kernel_pfn;
+> -		if (start >= end)
+> -			continue;
+> -
+> -		free_bootmem_node(NODE_DATA(nid), PFN_PHYS(start), PFN_PHYS(end) - PFN_PHYS(start));
+> -		printk(" freeing pages %ld:%ld\n", start, end);
+> -	}
+> -
+> -	/* Reserve the bootmap memory.  */
+> -	reserve_bootmem_node(NODE_DATA(nid), PFN_PHYS(bootmap_start),
+> -			bootmap_size, BOOTMEM_DEFAULT);
+> -	printk(" reserving pages %ld:%ld\n", bootmap_start, bootmap_start+PFN_UP(bootmap_size));
+> +	NODE_DATA(nid)->node_start_pfn = node_min_pfn;
+> +	NODE_DATA(nid)->node_present_pages = node_max_pfn - node_min_pfn;
+> 
+>  	node_set_online(nid);
+>  }
+> @@ -251,6 +162,7 @@ setup_memory_node(int nid, void *kernel_end)
+>  void __init
+>  setup_memory(void *kernel_end)
+>  {
+> +	unsigned long kernel_size;
+>  	int nid;
+> 
+>  	show_mem_layout();
+> @@ -262,6 +174,9 @@ setup_memory(void *kernel_end)
+>  	for (nid = 0; nid < MAX_NUMNODES; nid++)
+>  		setup_memory_node(nid, kernel_end);
+> 
+> +	kernel_size = virt_to_phys(kernel_end) - KERNEL_START_PHYS;
+> +	memblock_reserve(KERNEL_START_PHYS, kernel_size);
+> +
+>  #ifdef CONFIG_BLK_DEV_INITRD
+>  	initrd_start = INITRD_START;
+>  	if (initrd_start) {
+> @@ -279,9 +194,8 @@ setup_memory(void *kernel_end)
+>  				       phys_to_virt(PFN_PHYS(max_low_pfn)));
+>  		} else {
+>  			nid = kvaddr_to_nid(initrd_start);
+> -			reserve_bootmem_node(NODE_DATA(nid),
+> -					     virt_to_phys((void *)initrd_start),
+> -					     INITRD_SIZE, BOOTMEM_DEFAULT);
+> +			memblock_reserve(virt_to_phys((void *)initrd_start),
+> +					 INITRD_SIZE);
+>  		}
+>  	}
+>  #endif /* CONFIG_BLK_DEV_INITRD */
+> @@ -303,9 +217,8 @@ void __init paging_init(void)
+>  	dma_local_pfn = virt_to_phys((char *)MAX_DMA_ADDRESS) >> PAGE_SHIFT;
+> 
+>  	for_each_online_node(nid) {
+> -		bootmem_data_t *bdata = &bootmem_node_data[nid];
+> -		unsigned long start_pfn = bdata->node_min_pfn;
+> -		unsigned long end_pfn = bdata->node_low_pfn;
+> +		unsigned long start_pfn = NODE_DATA(nid)->node_start_pfn;
+> +		unsigned long end_pfn = start_pfn + NODE_DATA(nid)->node_present_pages;
+> 
+>  		if (dma_local_pfn >= end_pfn - start_pfn)
+>  			zones_size[ZONE_DMA] = end_pfn - start_pfn;
+> -- 
+> 2.7.4
 
->
->
-> Regards,
->
-> Pierre
->
+-- 
+Sincerely yours,
+Mike.
 
