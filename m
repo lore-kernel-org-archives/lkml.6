@@ -3,118 +3,116 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72E18C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF032C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35D50213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:57:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D50213A2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id B26F921479
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:57:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26F921479
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbeGLMD4 (ORCPT
+        id S1732319AbeGLMGO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:03:56 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57950 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726650AbeGLMD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:03:56 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 030AE20731; Thu, 12 Jul 2018 13:54:42 +0200 (CEST)
-Received: from mc-bl-xps13.lan (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AA061206A6;
-        Thu, 12 Jul 2018 13:54:41 +0200 (CEST)
-From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
-To:     davem@davemloft.net
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next 00/18] net: mvpp2: add RSS support
-Date:   Thu, 12 Jul 2018 13:54:09 +0200
-Message-Id: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.11.0
+        Thu, 12 Jul 2018 08:06:14 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50196 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726768AbeGLMGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 08:06:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAAD0ED1;
+        Thu, 12 Jul 2018 04:57:00 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC41E3F5B1;
+        Thu, 12 Jul 2018 04:56:59 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 12:56:57 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Jin Yao <yao.jin@linux.intel.com>
+Subject: Re: [RFC PATCH] perf/core: don't sample kernel regs upon skid
+Message-ID: <20180712115657.jgcxwrgoxuaz6jxq@lakrids.cambridge.arm.com>
+References: <20180702151250.14536-1-mark.rutland@arm.com>
+ <20180702154655.GR2494@hirez.programming.kicks-ass.net>
+ <20180702160249.qck45h76galxrckn@lakrids.cambridge.arm.com>
+ <ec514ab8-cf18-6fa7-d2b5-5f81e1a70983@oracle.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ec514ab8-cf18-6fa7-d2b5-5f81e1a70983@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for RSS on PPv2. There already was some code to
-handle the RSS tables, but the driver was missing all the classification
-steps required to actually use these tables.
+On Mon, Jul 09, 2018 at 06:42:29PM -0400, Boris Ostrovsky wrote:
+> On 07/02/2018 12:02 PM, Mark Rutland wrote:
+> > On Mon, Jul 02, 2018 at 05:46:55PM +0200, Peter Zijlstra wrote:
+> >> On Mon, Jul 02, 2018 at 04:12:50PM +0100, Mark Rutland wrote:
+> >>> +static struct pt_regs *perf_get_sample_regs(struct perf_event *event,
+> >>> +					    struct pt_regs *regs)
+> >>> +{
+> >>> +	/*
+> >>> +	 * Due to interrupt latency (AKA "skid"), we may enter the kernel
+> >>> +	 * before taking an overflow, even if the PMU is only counting user
+> >>> +	 * events.
+> >>> +	 *
+> >>> +	 * If we're not counting kernel events, always use the user regs when
+> >>> +	 * sampling.
+> >>> +	 *
+> >>> +	 * TODO: what do we do about sampling a guest's registers? The IP is
+> >>> +	 * special-cased, but for the rest of the regs they'll get the
+> >>> +	 * user/kernel regs depending on whether exclude_kernel is set, which
+> >>> +	 * is nonsensical.
+> >>> +	 *
+> >>> +	 * We can't get at the full set of regs in all cases (e.g. Xen's PV PMU
+> >>> +	 * can't provide the GPRs), so should we just zero the GPRs when in a
+> >>> +	 * guest? Or skip outputting the regs in perf_output_sample?
+> >> Seems daft Xen cannot provide registers; why is that? Boris?
+> > The xen_pmu_regs structure simply doesn't have them, so I assume there's
+> > no API to get them.
+> >
+> > Given we don't currently sample the guest regs, I'd be tempted to just
+> > zero them for now, or skip the sample at output time (if that doesn't
+> > break some other case).
+> 
+> (Was out on vacation, couldn't respond earlier)
+> 
+> Yes, PV guests only get a limited set of registers passed to the handler
+> by the hypervisor. GPRs are not part of this set.
+> 
+> I think we need do
+> 
+> diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
+> index 7d00d4a..95997e6 100644
+> --- a/arch/x86/xen/pmu.c
+> +++ b/arch/x86/xen/pmu.c
+> @@ -478,7 +478,7 @@ static void xen_convert_regs(const struct
+> xen_pmu_regs *xen_regs,
+>  irqreturn_t xen_pmu_irq_handler(int irq, void *dev_id)
+>  {
+>         int err, ret = IRQ_NONE;
+> -       struct pt_regs regs;
+> +       struct pt_regs regs = {0};
+>         const struct xen_pmu_data *xenpmu_data = get_xenpmu_data();
+>         uint8_t xenpmu_flags = get_xenpmu_flags();
+> 
+> 
+> Do you want me to submit a separate patch or can you make this part of
+> yours?
 
-RSS is used through the classifier, using at least 2 lookups :
- - One using the C2 engine, a TCAM engine that match the packet based on
-   some header extracted fields, assigns the default rx queue for that
-   packet and tag it for RSS
- - One using the C3Hx engine, which computes the hash that's used to perform
-   the lookup in the RSS table.
+I've only just realised that this is an issue today, without my
+synthezied pt_regs changes. For any PERF_SAMPLE_REGS_* event under Xen,
+we'll leak uninitialised kernel stack to userspace in the GPR fields.
 
-Since RSS spreads the load across CPUs, we need to make sure that packets
-from the same flow are always assigned the same rx queue, to prevent
-re-ordering.
+Boris, I think it's worth spinning a patch to address that now, with Cc
+stable, if you're still happy to do so?
 
-This series therefore adds a classification step based on the Header Parser,
-that separate ingress traffic into 52 flows, based on some L2, L3 and L4
-parameters.
-
-Patches 1 and 2 fix some header issues, from the driver splitting
-
-Patches 3 to 7 make sure the correct receive queue setup is used for RSS
-
-Patches 8 to 14 deal with the way we handle the RSS tables
-
-Patch 15 implement basic classifier configuration, by using it to assign the
-default receive queue
-
-Patch 16 implement the ingress traffic splitting into multiple flows
-
-Patch 17 adds RSS support, by using the needed classification steps
-
-Patch 18 adds the required ethtool ops to configure the flow hash parameters
-
-This was tested on MacchiatoBin, giving some nice performance improvements
-using ip forwarding (going from 5Gbps to 9.6Gbps total throughput).
-
-RSS is disabled by default.
-
-Antoine Tenart (3):
-  net: mvpp2: fix a typo in the RSS code
-  net: mvpp2: RSS indirection table support
-  net: mvpp2: improve the distribution of packets on CPUs when using RSS
-
-Maxime Chevallier (14):
-  net: mvpp2: fix include guards in mvpp2_prs.h
-  net: mvpp2: define the number of RSS entries per table in mvpp2.h
-  net: mvpp2: make sure we use single queue mode on PPv2.1
-  net: mvpp2: make multi queue mode the default mode
-  net: mvpp2: fix hardcoded number of rx queues
-  net: mvpp2: use only one rx queue per port per CPU
-  net: mvpp2: fix RSS register definitions
-  net: mvpp2: use one RSS table per port
-  net: mvpp2: make sure we don't spread load on disabled CPUs
-  net: mvpp2: rename per-port RSS init function
-  net: mvpp2: use classifier to assign default rx queue
-  net: mvpp2: split ingress traffic into multiple flows
-  net: mvpp2: add an RSS classification step for each flow
-  net: mvpp2: allow setting RSS flow hash parameters with ethtool
-
-Yan Markman (1):
-  net: mvpp2: use RSS only when using multi-queue mode
-
- drivers/net/ethernet/marvell/mvpp2/mvpp2.h      |  52 +-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c  | 929 +++++++++++++++++++++++-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h  | 177 ++++-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 127 +++-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.c  |  35 +
- drivers/net/ethernet/marvell/mvpp2/mvpp2_prs.h  |  18 +-
- 6 files changed, 1307 insertions(+), 31 deletions(-)
-
--- 
-2.11.0
-
+Thanks,
+Mark.
