@@ -2,151 +2,110 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA9AFECDFAA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D01AECDFB0
 	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FF4B2087C
+	by mail.kernel.org (Postfix) with ESMTP id 525E120842
 	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:08:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="lm5/UU5V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FF4B2087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525E120842
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387615AbeGLXUU (ORCPT
+        id S2387500AbeGLXUT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 19:20:20 -0400
-Received: from imap.thunk.org ([74.207.234.97]:36784 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733209AbeGLXUT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Jul 2018 19:20:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=yOIL+9IsP/4zAVFUwwD0UX/lBiOJQN0rRGB2wSH3kKY=; b=lm5/UU5V5lSA5hn/fbFW0+fezh
-        54lVWe95bfALvUacxU9YUdbKaOnFQBTr3HZf5LOhN22rc3EVaK3HgNAf77oiQhoRAU1nYNzcGe6e6
-        u/yOl97zZ+M9u+ZVu4zNexyWjmp9XE6yM2x8k3FxiV085TZP2mFCPz1hfysylMKDmBGM=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fdkhI-0006Fz-A1; Thu, 12 Jul 2018 23:08:28 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 002327A55D2; Thu, 12 Jul 2018 19:08:26 -0400 (EDT)
-Date:   Thu, 12 Jul 2018 19:08:26 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Ike Panhc <ike.pan@canonical.com>
-Cc:     dann frazier <dann.frazier@canonical.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yanaijie@huawei.com, colin.king@canonical.com,
-        kamal.mostafa@canonical.com
-Subject: Re: [Bisect] ext4_validate_inode_bitmap:98: comm stress-ng: Corrupt
- inode bitmap
-Message-ID: <20180712230826.GB28610@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Ike Panhc <ike.pan@canonical.com>,
-        dann frazier <dann.frazier@canonical.com>,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yanaijie@huawei.com, colin.king@canonical.com,
-        kamal.mostafa@canonical.com
-References: <20180706174324.GA3049@xps13.dannf>
- <20180707041018.GB3546@thunk.org>
- <20180710165143.GA20459@xps13.dannf>
- <20180710204329.GB20459@xps13.dannf>
- <b39169ad-2237-0a4f-e3d1-afc51ac10fa5@canonical.com>
+Received: from Galois.linutronix.de ([146.0.238.70]:46071 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733207AbeGLXUS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 19:20:18 -0400
+Received: from p4fea482e.dip0.t-ipconnect.de ([79.234.72.46] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fdkhE-0007hs-IU; Fri, 13 Jul 2018 01:08:24 +0200
+Date:   Fri, 13 Jul 2018 01:08:23 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
+cc:     Ingo Molnar <mingo@kernel.org>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-mm@kvack.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Subject: Re: [RFC PATCH v2 25/27] x86/cet: Add PTRACE interface for CET
+In-Reply-To: <1531435034.2965.15.camel@intel.com>
+Message-ID: <alpine.DEB.2.21.1807130102470.1597@nanos.tec.linutronix.de>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>  <20180710222639.8241-26-yu-cheng.yu@intel.com>  <20180711102035.GB8574@gmail.com> <1531323638.13297.24.camel@intel.com>  <20180712140327.GA7810@gmail.com> <1531435034.2965.15.camel@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b39169ad-2237-0a4f-e3d1-afc51ac10fa5@canonical.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: multipart/mixed; boundary="8323329-1575887918-1531436904=:1597"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-1575887918-1531436904=:1597
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Thu, 12 Jul 2018, Yu-cheng Yu wrote:
+> On Thu, 2018-07-12 at 16:03 +0200, Ingo Molnar wrote:
+> > * Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > > > > diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
+> > > > > index e2ee403865eb..ac2bc3a18427 100644
+> > > > > --- a/arch/x86/kernel/ptrace.c
+> > > > > +++ b/arch/x86/kernel/ptrace.c
+> > > > > @@ -49,7 +49,9 @@ enum x86_regset {
+> > > > >  	REGSET_IOPERM64 = REGSET_XFP,
+> > > > >  	REGSET_XSTATE,
+> > > > >  	REGSET_TLS,
+> > > > > +	REGSET_CET64 = REGSET_TLS,
+> > > > >  	REGSET_IOPERM32,
+> > > > > +	REGSET_CET32,
+> > > > >  };
+> > > > Why does REGSET_CET64 alias on REGSET_TLS?
+> > > In x86_64_regsets[], there is no [REGSET_TLS].  The core dump code
+> > > cannot handle holes in the array.
+> > Is there a fundamental (ABI) reason for that?
 > 
-> Review console log and on each run I have filesystem rebuild. The problem
-> is that mke2fs I am using is 1.44.3-rc2. I am now reseting the environment
-> and re-test.
->
+> What I did was, ran Linux with 'slub_debug', and forced a core dump
+> (kill -abrt <pid>), then there was a red zone warning in the dmesg.
+> My feeling is there could be issues in the core dump code.  These
 
-Could it be that you saw the error in ext4_validate_block_bitmap()?
-The patch which I sent Dann only fixed the problem for inode bitmaps;
-I noticed today that we need to fix it for block allocation bitmaps as
-well.
+Kernel development is not about feelings.
 
-						- Ted
+Either you can track down the root cause or you cannot. There is no place
+for feelings and no place in between. And if you cannot track down the root
+cause and explain it proper then the resulting patch is just papering over
+the symptoms and will come back to hunt you (or others) sooner than later.
 
-commit 8d5a803c6a6ce4ec258e31f76059ea5153ba46ef
-Author: Theodore Ts'o <tytso@mit.edu>
-Date:   Thu Jul 12 19:08:05 2018 -0400
+No if, no could, no feelings. Facts is what matters. Really.
 
-    ext4: check for allocation block validity with block group locked
-    
-    With commit 044e6e3d74a3: "ext4: don't update checksum of new
-    initialized bitmaps" the buffer valid bit will get set without
-    actually setting up the checksum for the allocation bitmap, since the
-    checksum will get calculated once we actually allocate an inode or
-    block.
-    
-    If we are doing this, then we need to (re-)check the verified bit
-    after we take the block group lock.  Otherwise, we could race with
-    another process reading and verifying the bitmap, which would then
-    complain about the checksum being invalid.
-    
-    https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1780137
-    
-    Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-    Cc: stable@kernel.org
+Thanks,
 
-diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-index e68cefe08261..aa52d87985aa 100644
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -368,6 +368,8 @@ static int ext4_validate_block_bitmap(struct super_block *sb,
- 		return -EFSCORRUPTED;
- 
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	if (unlikely(!ext4_block_bitmap_csum_verify(sb, block_group,
- 			desc, bh))) {
- 		ext4_unlock_group(sb, block_group);
-@@ -386,6 +388,7 @@ static int ext4_validate_block_bitmap(struct super_block *sb,
- 		return -EFSCORRUPTED;
- 	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
- 	return 0;
- }
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index fb83750c1a14..e9d8e2667ab5 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -90,6 +90,8 @@ static int ext4_validate_inode_bitmap(struct super_block *sb,
- 		return -EFSCORRUPTED;
- 
- 	ext4_lock_group(sb, block_group);
-+	if (buffer_verified(bh))
-+		goto verified;
- 	blk = ext4_inode_bitmap(sb, desc);
- 	if (!ext4_inode_bitmap_csum_verify(sb, block_group, desc, bh,
- 					   EXT4_INODES_PER_GROUP(sb) / 8)) {
-@@ -101,6 +103,7 @@ static int ext4_validate_inode_bitmap(struct super_block *sb,
- 		return -EFSBADCRC;
- 	}
- 	set_buffer_verified(bh);
-+verified:
- 	ext4_unlock_group(sb, block_group);
- 	return 0;
- }
+	tglx
+--8323329-1575887918-1531436904=:1597--
