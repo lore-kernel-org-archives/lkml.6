@@ -2,244 +2,108 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C5AC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D0DC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C68208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:10:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C68208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B9FBA208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:11:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WgG76QHN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9FBA208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732765AbeGLPUv (ORCPT
+        id S1732779AbeGLPVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 11:20:51 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58005 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732638AbeGLPUq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:20:46 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id B504D8F383D9;
-        Thu, 12 Jul 2018 23:10:39 +0800 (CST)
-Received: from huawei.com (10.113.189.234) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Thu, 12 Jul 2018
- 23:10:35 +0800
-From:   Yunlong Song <yunlong.song@huawei.com>
-To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 5/5] f2fs: do not __punch_discard_cmd in lfs mode
-Date:   Thu, 12 Jul 2018 23:09:30 +0800
-Message-ID: <1531408170-45758-6-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
-References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
+        Thu, 12 Jul 2018 11:21:10 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38210 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732624AbeGLPVK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 11:21:10 -0400
+Received: by mail-lf0-f66.google.com with SMTP id a4-v6so24553876lff.5;
+        Thu, 12 Jul 2018 08:11:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=gBJLHm43nmxR0fb5MnbyEfA4qtmlrJntl9eWUpdy+Xs=;
+        b=WgG76QHNNRaKV+0jm7mvK5Iy7ghEJWDi0aqvnGeHbx2BmSu5Nit9N1ZvzZ03xpDjHy
+         TSk9q4zwAl5l6Pm9Gd4XqtM/rEwbooMr9nxluZT4RtJ+4yXHGKAwriGG/ylAh4YhDQA+
+         RIkYPq0lSGOm8V1FxDIlPEFkzUbXgDUsQA9DaW00xv4JMjvrKyhRUTx46GjypOqWoJ4d
+         C9yVKpXNZC0XGTssG9CMbp9ThWh3ie8OT26LKF/sSlVpjb4yA+Ppe5wIjJFm9wNyei48
+         eBevILGNMvr2INFdcrQmxgntRaxKuaAYvu4dSm4pAbEhfLgyZQH3ynqSPfuZAPSMrVD2
+         k7Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=gBJLHm43nmxR0fb5MnbyEfA4qtmlrJntl9eWUpdy+Xs=;
+        b=uRQ0r4N/q8TdWG9s3efu/frxOhP5Fu6QkyB8ENk+kgzwnZ6tWcIdkPV/ILx3iYFdXx
+         aER2diFgtWVijrkxHboQtrm54m67b9LVa8C5LPta5M0h+DRfuVMFSGaHYybLa36z/tnk
+         v43OttDaWg1N+VuKUh4AC0OihIOR0RkgIegSM3YPmAthq4ZcDHKgIf3ZF4VN947TrsPh
+         eQ7ioUFuUQAIRHLmv0ydtUiogiuT8YxsrSZkG4QMxFWcHDcn6ZhuTwYZV0Noww346UT6
+         bHryI/bDoz3cnay8bvBzzBHxROhJ3yDSlXFGCNDiTgXWvd8Q9qNw++gUbJc7E0DKccm6
+         Eonw==
+X-Gm-Message-State: AOUpUlFBA/b97BLCNH0QBYHpWEonnlbI/yG+4EtBcCecaGel2aLJV429
+        7AyZoUwonCb1uu6HqYs5NbqtWu1FvgVqW4j0fjE=
+X-Google-Smtp-Source: AAOMgpcJTcXbNzNgEY7oq6QDksvx/tbelQ6DOkwJKmB6RSOfJQG5PPnXdSBvoV7T+9qKI/u5kN0dlaSrDuS8P+LoTys=
+X-Received: by 2002:a19:a705:: with SMTP id q5-v6mr2327141lfe.148.1531408269849;
+ Thu, 12 Jul 2018 08:11:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 08:11:09
+ -0700 (PDT)
+In-Reply-To: <20180711203619.1020-14-keescook@chromium.org>
+References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-14-keescook@chromium.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 12 Jul 2018 17:11:09 +0200
+X-Google-Sender-Auth: LpGsEEoSFAYl13IewekLrvCe6Co
+Message-ID: <CAK8P3a1k+cy9wAVNQMWE4tdA4aV8tiu6K3haLc+kMPt0iiUQ9Q@mail.gmail.com>
+Subject: Re: [PATCH v4 13/14] rxrpc: Prepare to remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        Lars Persson <larper@axis.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Rabin Vincent <rabinv@axis.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
+        dm-devel@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In lfs mode, it is better to submit and wait for discard of the
-new_blkaddr's overall section, rather than punch it which makes
-more small discards and is not friendly with flash alignment. And
-f2fs does not have to wait discard of each new_blkaddr except for the
-start_block of each section with this patch.
+On Wed, Jul 11, 2018 at 10:36 PM, Kees Cook <keescook@chromium.org> wrote:
+> Two uses of SKCIPHER_REQUEST_ON_STACK() will trigger FRAME_WARN warnings
+> (when less than 2048) once the VLA is no longer hidden from the check:
+>
+> net/rxrpc/rxkad.c:398:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+> net/rxrpc/rxkad.c:242:1: warning: the frame size of 1152 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>
+> This bumps the affected objects by 20% to silence the warnings while
+> still providing coverage is anything grows even more.
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/segment.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++++++-----
- fs/f2fs/segment.h |  7 ++++-
- 2 files changed, 75 insertions(+), 8 deletions(-)
+(adding David Howells to cc)
 
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index f6c20e0..bce321a 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -893,7 +893,19 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi,
- static void f2fs_submit_discard_endio(struct bio *bio)
- {
- 	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
-+	struct f2fs_sb_info *sbi = F2FS_SB(dc->bdev->bd_super);
- 
-+	if (test_opt(sbi, LFS)) {
-+		unsigned int segno = GET_SEGNO(sbi, dc->lstart);
-+		unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
-+		int cnt = (dc->len >> sbi->log_blocks_per_seg) /
-+				sbi->segs_per_sec;
-+
-+		while (cnt--) {
-+			set_bit(secno, FREE_I(sbi)->discard_secmap);
-+			secno++;
-+		}
-+	}
- 	dc->error = blk_status_to_errno(bio->bi_status);
- 	dc->state = D_DONE;
- 	complete_all(&dc->wait);
-@@ -1349,8 +1361,15 @@ static void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
- 	dc = (struct discard_cmd *)f2fs_lookup_rb_tree(&dcc->root,
- 							NULL, blkaddr);
- 	if (dc) {
--		if (dc->state == D_PREP) {
-+		if (dc->state == D_PREP && !test_opt(sbi, LFS))
- 			__punch_discard_cmd(sbi, dc, blkaddr);
-+		else if (dc->state == D_PREP && test_opt(sbi, LFS)) {
-+			struct discard_policy dpolicy;
-+
-+			__init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE, 1);
-+			__submit_discard_cmd(sbi, &dpolicy, dc);
-+			dc->ref++;
-+			need_wait = true;
- 		} else {
- 			dc->ref++;
- 			need_wait = true;
-@@ -2071,9 +2090,10 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
- 	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
- 	unsigned int left_start = hint;
--	bool init = true;
-+	bool init = true, check_discard = test_opt(sbi, LFS) ? true : false;
- 	int go_left = 0;
- 	int i;
-+	unsigned long *free_secmap;
- 
- 	spin_lock(&free_i->segmap_lock);
- 
-@@ -2084,11 +2104,25 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 			goto got_it;
- 	}
- find_other_zone:
--	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
-+	if (check_discard) {
-+		int entries = f2fs_bitmap_size(MAIN_SECS(sbi)) / sizeof(unsigned long);
-+
-+		free_secmap = free_i->tmp_secmap;
-+		for (i = 0; i < entries; i++)
-+			free_secmap[i] = (!(free_i->free_secmap[i] ^
-+				free_i->discard_secmap[i])) | free_i->free_secmap[i];
-+	} else
-+		free_secmap = free_i->free_secmap;
-+
-+	secno = find_next_zero_bit(free_secmap, MAIN_SECS(sbi), hint);
- 	if (secno >= MAIN_SECS(sbi)) {
- 		if (dir == ALLOC_RIGHT) {
--			secno = find_next_zero_bit(free_i->free_secmap,
-+			secno = find_next_zero_bit(free_secmap,
- 							MAIN_SECS(sbi), 0);
-+			if (secno >= MAIN_SECS(sbi) && check_discard) {
-+				check_discard = false;
-+				goto find_other_zone;
-+			}
- 			f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
- 		} else {
- 			go_left = 1;
-@@ -2098,13 +2132,17 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
- 	if (go_left == 0)
- 		goto skip_left;
- 
--	while (test_bit(left_start, free_i->free_secmap)) {
-+	while (test_bit(left_start, free_secmap)) {
- 		if (left_start > 0) {
- 			left_start--;
- 			continue;
- 		}
--		left_start = find_next_zero_bit(free_i->free_secmap,
-+		left_start = find_next_zero_bit(free_secmap,
- 							MAIN_SECS(sbi), 0);
-+		if (left_start >= MAIN_SECS(sbi) && check_discard) {
-+			check_discard = false;
-+			goto find_other_zone;
-+		}
- 		f2fs_bug_on(sbi, left_start >= MAIN_SECS(sbi));
- 		break;
- 	}
-@@ -2719,7 +2757,18 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
- 
- 	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
- 
--	f2fs_wait_discard_bio(sbi, *new_blkaddr);
-+	if (test_opt(sbi, LFS)) {
-+		unsigned int start_segno, secno;
-+
-+		secno = GET_SEC_FROM_SEG(sbi, curseg->segno);
-+		start_segno = secno * sbi->segs_per_sec;
-+		if (*new_blkaddr == START_BLOCK(sbi, start_segno) &&
-+				!test_bit(secno, FREE_I(sbi)->discard_secmap))
-+			f2fs_wait_discard_bio(sbi, *new_blkaddr);
-+		f2fs_bug_on(sbi, !test_bit(secno, FREE_I(sbi)->discard_secmap));
-+	}
-+	else
-+		f2fs_wait_discard_bio(sbi, *new_blkaddr);
- 
- 	/*
- 	 * __add_sum_entry should be resided under the curseg_mutex
-@@ -3648,10 +3697,21 @@ static int build_free_segmap(struct f2fs_sb_info *sbi)
- 	if (!free_i->free_secmap)
- 		return -ENOMEM;
- 
-+	free_i->discard_secmap = f2fs_kvmalloc(sbi, sec_bitmap_size, GFP_KERNEL);
-+	if (!free_i->discard_secmap)
-+		return -ENOMEM;
-+
-+	free_i->tmp_secmap = f2fs_kvmalloc(sbi, sec_bitmap_size, GFP_KERNEL);
-+	if (!free_i->tmp_secmap)
-+		return -ENOMEM;
-+
- 	/* set all segments as dirty temporarily */
- 	memset(free_i->free_segmap, 0xff, bitmap_size);
- 	memset(free_i->free_secmap, 0xff, sec_bitmap_size);
- 
-+	/* set all sections as discarded temporarily */
-+	memset(free_i->discard_secmap, 0xff, sec_bitmap_size);
-+
- 	/* init free segmap information */
- 	free_i->start_segno = GET_SEGNO_FROM_SEG0(sbi, MAIN_BLKADDR(sbi));
- 	free_i->free_segments = 0;
-@@ -4047,6 +4107,8 @@ static void destroy_free_segmap(struct f2fs_sb_info *sbi)
- 	SM_I(sbi)->free_info = NULL;
- 	kvfree(free_i->free_segmap);
- 	kvfree(free_i->free_secmap);
-+	kvfree(free_i->discard_secmap);
-+	kvfree(free_i->tmp_secmap);
- 	kfree(free_i);
- }
- 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index 5049551..b37a909 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -259,6 +259,8 @@ struct free_segmap_info {
- 	spinlock_t segmap_lock;		/* free segmap lock */
- 	unsigned long *free_segmap;	/* free segment bitmap */
- 	unsigned long *free_secmap;	/* free section bitmap */
-+	unsigned long *discard_secmap;	/* discard section bitmap */
-+	unsigned long *tmp_secmap;	/* bitmap for temporal use */
- };
- 
- /* Notice: The order of dirty type is same with CURSEG_XXX in f2fs.h */
-@@ -453,8 +455,11 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
- 		next = find_next_bit(free_i->free_segmap,
- 				start_segno + sbi->segs_per_sec, start_segno);
- 		if (next >= start_segno + sbi->segs_per_sec) {
--			if (test_and_clear_bit(secno, free_i->free_secmap))
-+			if (test_and_clear_bit(secno, free_i->free_secmap)) {
- 				free_i->free_sections++;
-+				if (test_opt(sbi, LFS))
-+					clear_bit(secno, free_i->discard_secmap);
-+			}
- 		}
- 	}
- skip_free:
--- 
-1.8.5.2
+I don't think these are in a fast path, it should be possible to just use
+skcipher_alloc_req() instead of SKCIPHER_REQUEST_ON_STACK() here.
+From what I can tell, neither of the two are called in atomic context, so
+you should be able to use a GFP_KERNEL allocation.
 
+      Arnd
