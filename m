@@ -2,74 +2,133 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF04FC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C301AC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F53121471
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:52:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 792D721471
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:53:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y4Co2IaS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F53121471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XsZz2DuT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792D721471
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732326AbeGLDAH (ORCPT
+        id S1732370AbeGLDAw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 23:00:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40044 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726720AbeGLDAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 23:00:07 -0400
-Received: from dragon (unknown [45.56.152.98])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53A8E2146F;
-        Thu, 12 Jul 2018 02:52:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531363967;
-        bh=T3JCCyljl45Ni/cy6re04iTIvnnFMtnCR2GDa8bwLx8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y4Co2IaSSxGT8k3Rwj0Foq66sQ0e0v/VAv0o4OCNOIlPFZKKH+ZBNaoab2n/pmIC3
-         DYNAZSZaV3NGl7QMSQbzGCwPdGBtMFZuGm4vgukfxwtofiz55J1K0E8u72VwXKP+bA
-         1jBjIIB6vhOzTiNz13/sy/4kpAL0Nh7tz5HP9k30=
-Date:   Thu, 12 Jul 2018 10:52:04 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     s.hauer@pengutronix.de, kernel@pengutronix.de,
-        fabio.estevam@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, sboyd@kernel.org, aisheng.dong@nxp.com,
-        ping.bai@nxp.com, Linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] ARM: dts: imx6sll: add gpio clocks
-Message-ID: <20180712025203.GQ6959@dragon>
-References: <1529649154-5724-1-git-send-email-Anson.Huang@nxp.com>
- <1529649154-5724-2-git-send-email-Anson.Huang@nxp.com>
+        Wed, 11 Jul 2018 23:00:52 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:46382 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbeGLDAw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 23:00:52 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6C2i5Sk078473;
+        Thu, 12 Jul 2018 02:53:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=OnbjnVd6dKHGHU6/jnDFS1tjvvt44ra9wrGOWE3a9Uc=;
+ b=XsZz2DuTAjaa1z1itlZATYfytWS5At2+bc9ha77v+0+p4jyHte/xkedLVdcZLP773qD3
+ 48upR0hbMf+eIW/4kgVJ7W2pmP+UEa7ZTP6014n/vI5vnTAGxe69vM4ZKLSLCccJnExt
+ hVW3BTPCXG8zw/zUboXrudh6drOTwWnxKAdu12sIpcMhrrTVZT1NOZBlezbOrM77eMy2
+ NbkSNlM1XY/3B+ylSFWLwcy7hIfJDbLadSfxUj+o7aIlwywUkjVKxWw+kLmcRg0PQ70Y
+ jq6kAN/Z87CNOFRdYWMpDfWI2GmxqEdSoltFEhi0l63vCx5+d+7WSeM+UFIDr8/VtZJv dQ== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2k2p760guq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 02:53:31 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6C2rUx7014237
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 02:53:30 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6C2rUhN020053;
+        Thu, 12 Jul 2018 02:53:30 GMT
+Received: from mail-oi0-f50.google.com (/209.85.218.50)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Jul 2018 19:53:30 -0700
+Received: by mail-oi0-f50.google.com with SMTP id v8-v6so53099083oie.5;
+        Wed, 11 Jul 2018 19:53:29 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGQRbmaM3ycalUo3FvFOxULbInqfvNpHbtDQBXiPfw8M8y1TqO+
+        DEt2Uo5cJ7beFBY6WBPLzRv4rnbGzaulpEYBm5g=
+X-Google-Smtp-Source: AAOMgpdbyXlzk+apjb+LOFdABiSnnxYKIdw48qeFrD1+gDuH9Ki03mQrF9D39eDip50QufyLKjiEPwE63CusjG+iGpw=
+X-Received: by 2002:aca:db09:: with SMTP id s9-v6mr450243oig.339.1531364009740;
+ Wed, 11 Jul 2018 19:53:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529649154-5724-2-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20180706161307.733337643@linutronix.de> <20180706162049.765314976@linutronix.de>
+In-Reply-To: <20180706162049.765314976@linutronix.de>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Wed, 11 Jul 2018 22:52:53 -0400
+X-Gmail-Original-Message-ID: <CAGM2reY5MoUq_BSHwE7GN=55oM1dNhXZ8s_z58HxbARu+REsSA@mail.gmail.com>
+Message-ID: <CAGM2reY5MoUq_BSHwE7GN=55oM1dNhXZ8s_z58HxbARu+REsSA@mail.gmail.com>
+Subject: Re: [patch 6/7] x86/kvmclock: Move kvmclock vsyscall param and init
+ to kvmclock
+To:     tglx@linutronix.de
+Cc:     LKML <linux-kernel@vger.kernel.org>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, peterz@infradead.org, jgross@suse.com,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>, x86@kernel.org,
+        kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=702
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807120029
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 22, 2018 at 02:32:34PM +0800, Anson Huang wrote:
-> i.MX6SLL has GPIO clock gates in CCM CCGR, add
-> clock property for GPIO driver to make sure all
-> GPIO banks work as expected.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
++#include <asm/hypervisor.h>
 
-I tried to create a topic branch for this patch with dependent clk
-branch merged in.  But it turns out to be difficult and not worth the
-effort, because too many imx6sll patches need to be moved out from
-imx/dt branch, and some imx6sll changes are mixed with other SoCs.
-Let's apply this in next cycle.  Ping me when 4.19-rc1 is available.
+Can be removed, because as Paolo, noticed X86_HYPER_KVM check is not needed.
 
-Shawn
+> +static int __init kvm_setup_vsyscall_timeinfo(void)
+> +{
+> +#ifdef CONFIG_X86_64
+> +       u8 flags;
+> +
+> +       if (!hv_clock || !kvmclock_vsyscall)
+> +               return 0;
+> +
+> +       flags = pvclock_read_flags(&hv_clock[0].pvti);
+> +       if (!(flags & PVCLOCK_TSC_STABLE_BIT))
+> +               return 1;
+> +
+> +       pvclock_set_pvti_cpu0_va(hv_clock);
+> +       kvm_clock.archdata.vclock_mode = VCLOCK_PVCLOCK;
+> +#endif
+> +       return 0;
+> +}
+> +early_initcall(kvm_setup_vsyscall_timeinfo);
+> +
+....
+> -
+> -int __init kvm_setup_vsyscall_timeinfo(void)
+> -{
+> -#ifdef CONFIG_X86_64
+> -       u8 flags;
+> -
+> -       if (!hv_clock)
+> -               return 0;
+> -
+> -       flags = pvclock_read_flags(&hv_clock[0].pvti);
+> -       if (!(flags & PVCLOCK_TSC_STABLE_BIT))
+> -               return 1;
+> -
+> -       pvclock_set_pvti_cpu0_va(hv_clock);
+> -       kvm_clock.archdata.vclock_mode = VCLOCK_PVCLOCK;
+> -#endif
+> -       return 0;
+> -}
+
+I am not sure what the point of moving this function. The patch would
+be much smaller without it.
+
+Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
