@@ -6,18 +6,18 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9165ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506CEECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63D352148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:37:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63D352148C
+	by mail.kernel.org (Postfix) with ESMTP id 0D1E62147E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:37:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D1E62147E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387745AbeGLXsz (ORCPT
+        id S2387774AbeGLXs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 19:48:55 -0400
+        Thu, 12 Jul 2018 19:48:56 -0400
 Received: from mga05.intel.com ([192.55.52.43]:43058 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
         id S2387729AbeGLXsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
@@ -28,9 +28,9 @@ Received: from orsmga006.jf.intel.com ([10.7.209.51])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2018 16:37:04 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,345,1526367600"; 
-   d="scan'208";a="57272242"
+   d="scan'208";a="57272256"
 Received: from yongjuns-mobl2.ccr.corp.intel.com (HELO yhuang6-ux31a.ccr.corp.intel.com) ([10.254.213.67])
-  by orsmga006.jf.intel.com with ESMTP; 12 Jul 2018 16:36:47 -0700
+  by orsmga006.jf.intel.com with ESMTP; 12 Jul 2018 16:36:52 -0700
 From:   "Huang, Ying" <ying.huang@intel.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
@@ -43,9 +43,9 @@ Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         Daniel Jordan <daniel.m.jordan@oracle.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH 2/6] mm/swapfile.c: Replace some #ifdef with IS_ENABLED()
-Date:   Fri, 13 Jul 2018 07:36:32 +0800
-Message-Id: <20180712233636.20629-3-ying.huang@intel.com>
+Subject: [PATCH 4/6] swap: Unify normal/huge code path in put_swap_page()
+Date:   Fri, 13 Jul 2018 07:36:34 +0800
+Message-Id: <20180712233636.20629-5-ying.huang@intel.com>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20180712233636.20629-1-ying.huang@intel.com>
 References: <20180712233636.20629-1-ying.huang@intel.com>
@@ -56,24 +56,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huang Ying <ying.huang@intel.com>
 
-In mm/swapfile.c, THP (Transparent Huge Page) swap specific code is
-enclosed by #ifdef CONFIG_THP_SWAP/#endif to avoid code dilating when
-THP isn't enabled.  But #ifdef/#endif in .c file hurt the code
-readability, so Dave suggested to use IS_ENABLED(CONFIG_THP_SWAP)
-instead and let compiler to do the dirty job for us.  This has
-potential to remove some duplicated code too.  From output of `size`,
+In this patch, the normal/huge code path in put_swap_page() and
+several helper functions are unified to avoid duplicated code, bugs,
+etc. and make it easier to review the code.
 
-		text	   data	    bss	    dec	    hex	filename
-THP=y:         26269	   2076	    340	  28685	   700d	mm/swapfile.o
-ifdef/endif:   24115	   2028	    340	  26483	   6773	mm/swapfile.o
-IS_ENABLED:    24179	   2028	    340	  26547	   67b3	mm/swapfile.o
-
-IS_ENABLED() based solution works quite well, almost as good as that
-of #ifdef/#endif.  And from the diffstat, the removed lines are more
-than added lines.
-
-One #ifdef for split_swap_cluster() is kept.  Because it is a public
-function with a stub implementation for CONFIG_THP_SWAP=n in swap.h.
+The removed lines are more than added lines.  And the binary size is
+kept exactly same when CONFIG_TRANSPARENT_HUGEPAGE=n.
 
 Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
 Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
@@ -86,153 +74,133 @@ Cc: Rik van Riel <riel@redhat.com>
 Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
 Cc: Dan Williams <dan.j.williams@intel.com>
 ---
- mm/swapfile.c | 56 ++++++++++++++++----------------------------------------
- 1 file changed, 16 insertions(+), 40 deletions(-)
+ mm/swapfile.c | 83 ++++++++++++++++++++++++++---------------------------------
+ 1 file changed, 37 insertions(+), 46 deletions(-)
 
 diff --git a/mm/swapfile.c b/mm/swapfile.c
-index e31aa601d9c0..75c84aa763a3 100644
+index 160f78072667..e0df8d22ac92 100644
 --- a/mm/swapfile.c
 +++ b/mm/swapfile.c
-@@ -870,7 +870,6 @@ static int scan_swap_map_slots(struct swap_info_struct *si,
- 	return n_ret;
- }
+@@ -205,8 +205,16 @@ static void discard_swap_cluster(struct swap_info_struct *si,
  
--#ifdef CONFIG_THP_SWAP
- static int swap_alloc_cluster(struct swap_info_struct *si, swp_entry_t *slot)
- {
- 	unsigned long idx;
-@@ -878,6 +877,11 @@ static int swap_alloc_cluster(struct swap_info_struct *si, swp_entry_t *slot)
- 	unsigned long offset, i;
- 	unsigned char *map;
- 
-+	if (!IS_ENABLED(CONFIG_THP_SWAP)) {
-+		VM_WARN_ON_ONCE(1);
-+		return 0;
-+	}
+ #ifdef CONFIG_THP_SWAP
+ #define SWAPFILE_CLUSTER	HPAGE_PMD_NR
 +
- 	if (cluster_list_empty(&si->free_clusters))
- 		return 0;
++#define nr_swap_entries(nr)	(nr)
+ #else
+ #define SWAPFILE_CLUSTER	256
++
++/*
++ * Define nr_swap_entries() as constant to let compiler to optimize
++ * out some code if !CONFIG_THP_SWAP
++ */
++#define nr_swap_entries(nr)	1
+ #endif
+ #define LATENCY_LIMIT		256
  
-@@ -908,13 +912,6 @@ static void swap_free_cluster(struct swap_info_struct *si, unsigned long idx)
- 	unlock_cluster(ci);
- 	swap_range_free(si, offset, SWAPFILE_CLUSTER);
- }
--#else
--static int swap_alloc_cluster(struct swap_info_struct *si, swp_entry_t *slot)
+@@ -1249,18 +1257,7 @@ void swap_free(swp_entry_t entry)
+ /*
+  * Called after dropping swapcache to decrease refcnt to swap entries.
+  */
+-static void swapcache_free(swp_entry_t entry)
 -{
--	VM_WARN_ON_ONCE(1);
--	return 0;
+-	struct swap_info_struct *p;
+-
+-	p = _swap_info_get(entry);
+-	if (p) {
+-		if (!__swap_entry_free(p, entry, SWAP_HAS_CACHE))
+-			free_swap_slot(entry);
+-	}
 -}
--#endif /* CONFIG_THP_SWAP */
- 
- static unsigned long scan_swap_map(struct swap_info_struct *si,
- 				   unsigned char usage)
-@@ -1260,7 +1257,6 @@ static void swapcache_free(swp_entry_t entry)
- 	}
- }
- 
--#ifdef CONFIG_THP_SWAP
- static void swapcache_free_cluster(swp_entry_t entry)
+-
+-static void swapcache_free_cluster(swp_entry_t entry)
++void put_swap_page(struct page *page, swp_entry_t entry)
  {
  	unsigned long offset = swp_offset(entry);
-@@ -1271,6 +1267,9 @@ static void swapcache_free_cluster(swp_entry_t entry)
+ 	unsigned long idx = offset / SWAPFILE_CLUSTER;
+@@ -1269,39 +1266,41 @@ static void swapcache_free_cluster(swp_entry_t entry)
+ 	unsigned char *map;
  	unsigned int i, free_entries = 0;
  	unsigned char val;
+-
+-	if (!IS_ENABLED(CONFIG_THP_SWAP))
+-		return;
++	int nr = nr_swap_entries(hpage_nr_pages(page));
  
-+	if (!IS_ENABLED(CONFIG_THP_SWAP))
-+		return;
-+
  	si = _swap_info_get(entry);
  	if (!si)
  		return;
-@@ -1306,6 +1305,7 @@ static void swapcache_free_cluster(swp_entry_t entry)
- 	}
- }
  
-+#ifdef CONFIG_THP_SWAP
- int split_swap_cluster(swp_entry_t entry)
- {
- 	struct swap_info_struct *si;
-@@ -1320,11 +1320,7 @@ int split_swap_cluster(swp_entry_t entry)
- 	unlock_cluster(ci);
- 	return 0;
+-	ci = lock_cluster(si, offset);
+-	VM_BUG_ON(!cluster_is_huge(ci));
+-	map = si->swap_map + offset;
+-	for (i = 0; i < SWAPFILE_CLUSTER; i++) {
+-		val = map[i];
+-		VM_BUG_ON(!(val & SWAP_HAS_CACHE));
+-		if (val == SWAP_HAS_CACHE)
+-			free_entries++;
+-	}
+-	if (!free_entries) {
+-		for (i = 0; i < SWAPFILE_CLUSTER; i++)
+-			map[i] &= ~SWAP_HAS_CACHE;
+-	}
+-	cluster_clear_huge(ci);
+-	unlock_cluster(ci);
+-	if (free_entries == SWAPFILE_CLUSTER) {
+-		spin_lock(&si->lock);
++	if (nr == SWAPFILE_CLUSTER) {
+ 		ci = lock_cluster(si, offset);
+-		memset(map, 0, SWAPFILE_CLUSTER);
++		VM_BUG_ON(!cluster_is_huge(ci));
++		map = si->swap_map + offset;
++		for (i = 0; i < SWAPFILE_CLUSTER; i++) {
++			val = map[i];
++			VM_BUG_ON(!(val & SWAP_HAS_CACHE));
++			if (val == SWAP_HAS_CACHE)
++				free_entries++;
++		}
++		if (!free_entries) {
++			for (i = 0; i < SWAPFILE_CLUSTER; i++)
++				map[i] &= ~SWAP_HAS_CACHE;
++		}
++		cluster_clear_huge(ci);
+ 		unlock_cluster(ci);
+-		mem_cgroup_uncharge_swap(entry, SWAPFILE_CLUSTER);
+-		swap_free_cluster(si, idx);
+-		spin_unlock(&si->lock);
+-	} else if (free_entries) {
+-		for (i = 0; i < SWAPFILE_CLUSTER; i++, entry.val++) {
++		if (free_entries == SWAPFILE_CLUSTER) {
++			spin_lock(&si->lock);
++			ci = lock_cluster(si, offset);
++			memset(map, 0, SWAPFILE_CLUSTER);
++			unlock_cluster(ci);
++			mem_cgroup_uncharge_swap(entry, SWAPFILE_CLUSTER);
++			swap_free_cluster(si, idx);
++			spin_unlock(&si->lock);
++			return;
++		}
++	}
++	if (nr == 1 || free_entries) {
++		for (i = 0; i < nr; i++, entry.val++) {
+ 			if (!__swap_entry_free(si, entry, SWAP_HAS_CACHE))
+ 				free_swap_slot(entry);
+ 		}
+@@ -1325,14 +1324,6 @@ int split_swap_cluster(swp_entry_t entry)
  }
--#else
--static inline void swapcache_free_cluster(swp_entry_t entry)
+ #endif
+ 
+-void put_swap_page(struct page *page, swp_entry_t entry)
 -{
+-	if (!PageTransHuge(page))
+-		swapcache_free(entry);
+-	else
+-		swapcache_free_cluster(entry);
 -}
--#endif /* CONFIG_THP_SWAP */
-+#endif
- 
- void put_swap_page(struct page *page, swp_entry_t entry)
+-
+ static int swp_entry_cmp(const void *ent1, const void *ent2)
  {
-@@ -1483,7 +1479,6 @@ int swp_swapcount(swp_entry_t entry)
- 	return count;
- }
- 
--#ifdef CONFIG_THP_SWAP
- static bool swap_page_trans_huge_swapped(struct swap_info_struct *si,
- 					 swp_entry_t entry)
- {
-@@ -1494,6 +1489,9 @@ static bool swap_page_trans_huge_swapped(struct swap_info_struct *si,
- 	int i;
- 	bool ret = false;
- 
-+	if (!IS_ENABLED(CONFIG_THP_SWAP))
-+		return swap_swapcount(si, entry) != 0;
-+
- 	ci = lock_cluster_or_swap_info(si, offset);
- 	if (!ci || !cluster_is_huge(ci)) {
- 		if (map[roffset] != SWAP_HAS_CACHE)
-@@ -1516,7 +1514,7 @@ static bool page_swapped(struct page *page)
- 	swp_entry_t entry;
- 	struct swap_info_struct *si;
- 
--	if (likely(!PageTransCompound(page)))
-+	if (!IS_ENABLED(CONFIG_THP_SWAP) || likely(!PageTransCompound(page)))
- 		return page_swapcount(page) != 0;
- 
- 	page = compound_head(page);
-@@ -1540,10 +1538,8 @@ static int page_trans_huge_map_swapcount(struct page *page, int *total_mapcount,
- 	/* hugetlbfs shouldn't call it */
- 	VM_BUG_ON_PAGE(PageHuge(page), page);
- 
--	if (likely(!PageTransCompound(page))) {
--		mapcount = atomic_read(&page->_mapcount) + 1;
--		if (total_mapcount)
--			*total_mapcount = mapcount;
-+	if (!IS_ENABLED(CONFIG_THP_SWAP) || likely(!PageTransCompound(page))) {
-+		mapcount = page_trans_huge_mapcount(page, total_mapcount);
- 		if (PageSwapCache(page))
- 			swapcount = page_swapcount(page);
- 		if (total_swapcount)
-@@ -1590,26 +1586,6 @@ static int page_trans_huge_map_swapcount(struct page *page, int *total_mapcount,
- 
- 	return map_swapcount;
- }
--#else
--#define swap_page_trans_huge_swapped(si, entry)	swap_swapcount(si, entry)
--#define page_swapped(page)			(page_swapcount(page) != 0)
--
--static int page_trans_huge_map_swapcount(struct page *page, int *total_mapcount,
--					 int *total_swapcount)
--{
--	int mapcount, swapcount = 0;
--
--	/* hugetlbfs shouldn't call it */
--	VM_BUG_ON_PAGE(PageHuge(page), page);
--
--	mapcount = page_trans_huge_mapcount(page, total_mapcount);
--	if (PageSwapCache(page))
--		swapcount = page_swapcount(page);
--	if (total_swapcount)
--		*total_swapcount = swapcount;
--	return mapcount + swapcount;
--}
--#endif
- 
- /*
-  * We can write to an anon page without COW if there are no other references
+ 	const swp_entry_t *e1 = ent1, *e2 = ent2;
 -- 
 2.16.4
 
