@@ -2,155 +2,145 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C93C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA2AC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D679A20BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:35:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Vgz6TWCY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D679A20BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id B7DCD20C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:47:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7DCD20C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391344AbeGLCmn (ORCPT
+        id S1726505AbeGLCyy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 22:42:43 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:46111 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387702AbeGLCmn (ORCPT
+        Wed, 11 Jul 2018 22:54:54 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:60528 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726394AbeGLCyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 22:42:43 -0400
-Received: by mail-pf0-f196.google.com with SMTP id l123-v6so19617918pfl.13
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 19:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2ys+0VIScvXFlw57RU/DTxKZ1PGYl/lavqc8LpndOYE=;
-        b=Vgz6TWCY1V5tQ9/cug8jbbYEGhJ4ceQrCNAtWf1SNSdnltDNv0nlx2AdE2FMJ9Xk3g
-         ylOwqoO4/JLwAmSI+7i3al/2DegbyNXsYsYD1GCtrGNkg1z4XgIRSsxt+80SqezUxon+
-         0YibtVvl7d7qAgb81FoJG5DkM3a8UfRdrX+8w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2ys+0VIScvXFlw57RU/DTxKZ1PGYl/lavqc8LpndOYE=;
-        b=RbTg9D6sut3rSJbm+zPxLROZRh7FBHCznvu7PFi0SJjcpkTa3487DlwlzU9FVwWBUD
-         q1wlz7tLgGdOqVGMSO+TGsrCGqZnXK9FJ8sRvS5Fk7i6CMW66UWW1JqSPDtzE8MdedXi
-         anyg+7BtfOIV4sraA2WzEYXmJmvihh8mxO5fkAUtwrEiHOPSWNV4zs9GgVPZlWX5NYM3
-         xs0NOQjsoBoxZlc8t/P55Yi8OyeTuuxRGVGwEcmuqhwLOLRGw7+1ZWEzwfJk+iJ8q3ZQ
-         +Sr2EGRa3GK47J+ZeVtvOi3ujQsvmCCfTRyV/05/7ziyCDbcf/BIwRI7kHWVkK9YNSf/
-         wO1A==
-X-Gm-Message-State: AOUpUlE7y3Jk7kyM/nQdnrHqDJrS8C8LlOyXgTlvVxUfEi91JPLWnwSa
-        6+FHn7H+CM67drb9KkgvbnMrCA==
-X-Google-Smtp-Source: AAOMgpeW9oVu8PrDsTGBvP8TMR0+TjnARjWZbyRT3e1PdxoNhHL3+YSMJcqI/xGssczFXrVP9C3N1g==
-X-Received: by 2002:a62:e106:: with SMTP id q6-v6mr413446pfh.75.1531362926895;
-        Wed, 11 Jul 2018 19:35:26 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id e82-v6sm52228441pfd.40.2018.07.11.19.35.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 19:35:26 -0700 (PDT)
-Date:   Wed, 11 Jul 2018 19:35:25 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
- SRCU
-Message-ID: <20180712023525.GB122777@joelaf.mtv.corp.google.com>
-References: <20180628182149.226164-1-joel@joelfernandes.org>
- <20180628182149.226164-5-joel@joelfernandes.org>
- <20180711124954.GE2476@hirez.programming.kicks-ass.net>
- <20180711090003.42596c2b@gandalf.local.home>
- <20180711142744.GN3593@linux.vnet.ibm.com>
- <20180711104618.05dc4b46@gandalf.local.home>
- <20180711151559.GR3593@linux.vnet.ibm.com>
- <20180711205639.GB32091@joelaf.mtv.corp.google.com>
- <20180711212237.3eff418f@vmware.local.home>
+        Wed, 11 Jul 2018 22:54:54 -0400
+Received: from [192.168.90.200] (10.18.20.235) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 12 Jul
+ 2018 10:46:50 +0800
+Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock
+ controller
+To:     Rob Herring <robh@kernel.org>
+References: <20180710163658.6175-1-yixun.lan@amlogic.com>
+ <20180710163658.6175-2-yixun.lan@amlogic.com>
+ <20180711194346.GA32414@rob-hp-laptop>
+CC:     <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>, <linux-clk@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+From:   Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
+Date:   Thu, 12 Jul 2018 10:47:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711212237.3eff418f@vmware.local.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180711194346.GA32414@rob-hp-laptop>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.20.235]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 09:22:37PM -0400, Steven Rostedt wrote:
-> On Wed, 11 Jul 2018 13:56:39 -0700
-> Joel Fernandes <joel@joelfernandes.org> wrote:
+Hi Rob
+
+see my comments
+
+On 07/12/18 03:43, Rob Herring wrote:
+> On Tue, Jul 10, 2018 at 04:36:56PM +0000, Yixun Lan wrote:
+>> Document the MMC sub clock controller driver, the potential consumer
+>> of this driver is MMC or NAND.
 > 
-> > > > #define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
-> > > > 	extern struct tracepoint __tracepoint_##name;			\
-> > > > 	static inline void trace_##name(proto)				\
-> > > > 	{								\
-> > > > 		if (static_key_false(&__tracepoint_##name.key))		\
-> > > > 			__DO_TRACE(&__tracepoint_##name,		\
-> > > > 				TP_PROTO(data_proto),			\
-> > > > 				TP_ARGS(data_args),			\
-> > > > 				TP_CONDITION(cond), 0);			\
-> > > > 		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
-> > > > 			rcu_read_lock_sched_notrace();			\
-> > > > 			rcu_dereference_sched(__tracepoint_##name.funcs);\
-> > > > 			rcu_read_unlock_sched_notrace();		\
-> > > > 		}							\
-> > > > 	}
-> > > > 
-> > > > Because lockdep would only trigger warnings when the tracepoint was
-> > > > enabled and used in a place it shouldn't be, we added the above
-> > > > IS_ENABLED(CONFIG_LOCKDEP) part to test regardless if the the
-> > > > tracepoint was enabled or not. Because we do this, we don't need to
-> > > > have the test in the __DO_TRACE() code itself. That means we can clean
-> > > > up the code as per Peter's suggestion.  
-> > > 
-> > > Indeed, the rcu_dereference_sched() would catch it in that case, so
-> > > agreed, Peter's suggestion isn't losing any debuggability.  
-> > 
-> > Hmm, but if we are doing the check later anyway, then why not do it in
-> > __DO_TRACE itself?
+> So you all have decided to properly model this now?
 > 
-> Because __DO_TRACE is only called if the trace event is enabled. If we
-> never enable a trace event, we never know if it has a potential of
-> doing it wrong. The second part is to trigger the warning immediately
-> regardless if the trace event is enabled or not.
+Yes, ;-)
 
-I see, thanks for the clarification.
-
-> > 
-> > Also I guess we are discussing about changing the rcu_dereference_sched which
-> > I think should go into a separate patch since my patch isn't touching how the
-> > rcuidle==0 paths use the RCU API. So I think this is an existing issue
-> > independent of this series.
+>>
+>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>> ---
+>>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
+>>  1 file changed, 31 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>> new file mode 100644
+>> index 000000000000..ff6b4bf3ecf9
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>> @@ -0,0 +1,31 @@
+>> +* Amlogic MMC Sub Clock Controller Driver
+>> +
+>> +The Amlogic MMC clock controller generates and supplies clock to support
+>> +MMC and NAND controller
+>> +
+>> +Required Properties:
+>> +
+>> +- compatible: should be:
+>> +		"amlogic,meson-gx-mmc-clkc"
+>> +		"amlogic,meson-axg-mmc-clkc"
+>> +
+>> +- #clock-cells: should be 1.
+>> +- clocks: phandles to clocks corresponding to the clock-names property
+>> +- clock-names: list of parent clock names
+>> +	- "clkin0", "clkin1"
+>> +
+>> +Parent node should have the following properties :
+>> +- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
 > 
-> But the code you added made it much more complex to keep the checks as
-> is. If we remove the checks then this patch doesn't need to have all
-> the if statements, and we can do it the way Peter suggested.
+> You don't need "simple-mfd" and probably not syscon either. The order is 
+> wrong too. Most specific first.
+> 
+Ok, I will drop "simple-mfd"..
 
-Yes, I agree Peter's suggestion is very clean.
+but the syscon is a must, since this mmc clock model access registers
+via the regmap interface
 
-> But sure, go ahead and make a separate patch first that removes the
-> checks from __DO_TRACE() first if you want to.
+I will fix the order, thanks for pointing this out
 
-No its ok, no problem, I can just do it in the same patch now that I see the code is much simplified with what Peter is suggesting.
+>> +- reg: base address and size of the MMC control register space.
+>> +
+>> +Example: Clock controller node:
+>> +
+>> +sd_mmc_c_clkc: clock-controller@7000 {
+>> +	compatible = "amlogic,mmc-clkc", "syscon", "simple-mfd";
+> 
+> Doesn't match the binding...
+> 
+oops, I will update this
 
-thanks!
-
-- Joel
-
+>> +	reg = <0x0 0x7000 0x0 0x4>;
+>> +	#clock-cells = <1>;
+>> +
+>> +	clock-names = "clkin0", "clkin1";
+>> +	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
+>> +			<&clkc CLKID_FCLK_DIV2>;
+>> +};
+>> -- 
+>> 2.18.0
+>>
+> 
+> .
+> 
 
