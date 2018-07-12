@@ -2,107 +2,103 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEA13C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 03:08:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4B4C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 03:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F70D2086B
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 03:08:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xy8gd1S3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F70D2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2442720BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 03:09:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2442720BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732433AbeGLDQT (ORCPT
+        id S1732451AbeGLDQm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 23:16:19 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43915 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbeGLDQT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 23:16:19 -0400
-Received: by mail-lf0-f68.google.com with SMTP id m12-v6so22940680lfc.10;
-        Wed, 11 Jul 2018 20:08:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=0Lc+CRz37aIH1qb4D7Cnk+dsGVj3FmfEkpPWIkrX+v8=;
-        b=Xy8gd1S3VVJCQeNYw6bdof/9X6WJOxa0r9VDV4WypFOWt4Pxag+6LUgC+Ej7RlDdGy
-         nATonNQ+sqT2fZgB/ck/Z4T5Vxjipt73tCZ7vBdh0S14+K7baPX/2G3YuwHfF+dWFZUB
-         DDD3LieenXsnhVSe3VZIScDU6PaWJEZS6wH3PWIXd76i8M9h4Xxwn1ZGXu+knibM4OKd
-         agXUj0qRkCYLP7aYA8daiWrCIivl/L2bsVX17IJHZ8S9aS3/pb332ddY4Fd80t6eiTxe
-         DSM96EKmBqccZy5vgvMhgon7oNiODYas8/Mtn75M6U2OLOdBgpwL+0ytzCHdiGiuJXr9
-         2XzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0Lc+CRz37aIH1qb4D7Cnk+dsGVj3FmfEkpPWIkrX+v8=;
-        b=U+TB1ts92Rvo+NQJvgcvInw6U0kqTr9MI6dBA0J5U/98XsnzA3arJOrdytlLk3NfXp
-         tdP/QJoftxiArPTM7Kd+hno0vF/R2gAYuZ3xUizJMBPwNmpSWxvKOqoAEDBEREnncEmJ
-         HAovwI/SXGAj3yiNV5WKXLL2KvUej12GuCwIaZsp4CTwepyvF/2vc7Ubp1bnyroJb442
-         SzZr7HuWhJfdRVTlYwsEni/b2knGqIVVd7u3+ewC4pVGGz+38UZgGqTzbKIqH+mrXtnU
-         08RAa+74pmpOmS36myvSwl/KeY1t+lSssXXeOOW8hAkQwBcYIb/yQiY2deVtjn7iTdyz
-         xP4A==
-X-Gm-Message-State: AOUpUlE/Q1R9LcK3j1lsE1hu2WSWVb1O2TOgJUEi1T2BGn/GhMtxsebQ
-        3y1t7/8WnPaMlIyz6st8r82w9HR89N4agO4IrnY=
-X-Google-Smtp-Source: AAOMgpcSRWtbbvytkIzgRhc2sbRH1OW6e5JpLTwwTQHohLhgFLGowZEnu4TH6IcVRiu7mnLBvd3gLX5f393DspY6X+4=
-X-Received: by 2002:a19:5d54:: with SMTP id p20-v6mr235368lfj.143.1531364930411;
- Wed, 11 Jul 2018 20:08:50 -0700 (PDT)
+        Wed, 11 Jul 2018 23:16:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726463AbeGLDQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 23:16:41 -0400
+Received: from vmware.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35C4620BF2;
+        Thu, 12 Jul 2018 03:09:14 +0000 (UTC)
+Date:   Wed, 11 Jul 2018 23:09:12 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] console: Replace #if 1 with a bool to ignore
+ WARN_CONSOLE_UNLOCKED()
+Message-ID: <20180711230912.2575fae1@vmware.local.home>
+In-Reply-To: <20180712015848.GA663@jagdpanzerIV>
+References: <20180711151755.613eba3c@gandalf.local.home>
+        <20180712015848.GA663@jagdpanzerIV>
+X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a19:53d7:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 20:08:19
- -0700 (PDT)
-In-Reply-To: <20180711133137.GM99251@atomide.com>
-References: <1531294352-27385-1-git-send-email-koen@dominion.thruhere.net>
- <1531294352-27385-3-git-send-email-koen@dominion.thruhere.net> <20180711133137.GM99251@atomide.com>
-From:   Robert Nelson <robertcnelson@gmail.com>
-Date:   Wed, 11 Jul 2018 22:08:19 -0500
-Message-ID: <CAOCHtYhENAEiUPPzTVLDUt-eZgexEo7UqpxJg_5-Q=xTtxqtCQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: am335x: add am335x-sancloud-bbe board support
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Koen Kooi <koen@dominion.thruhere.net>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 8:31 AM, Tony Lindgren <tony@atomide.com> wrote:
-> * Koen Kooi <koen@dominion.thruhere.net> [180711 07:36]:
->> +&cpu0_opp_table {
->> +     /*
->> +      * All PG 2.0 silicon may not support 1GHz but some of the early
->> +      * BeagleBone Blacks have PG 2.0 silicon which is guaranteed
->> +      * to support 1GHz OPP so enable it for PG 2.0 on this board.
->> +      */
->> +     oppnitro-1000000000 {
->> +             opp-supported-hw = <0x06 0x0100>;
->> +     };
->> +};
->
-> Is the above valid for new boards or should it be just
-> dropped? Or is the comment just out of date?
+On Thu, 12 Jul 2018 10:58:48 +0900
+Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
 
-For SanCloud, this can be dropped, they got normal 1Ghz parts from TI.
+> On (07/11/18 15:17), Steven Rostedt wrote:
+> > +bool ignore_console_lock_warning __read_mostly;
+> > +EXPORT_SYMBOL(ignore_console_lock_warning);  
+> 
+> OK. So, to recap,
+> We made is_console_locked() EXPORT_SYMBOL recently [it's still in linux-next],
+> so people could use WARN_CONSOLE_UNLOCKED in more places; this made other
+> people unhappy, so now we add another EXPORT_SYMBOL to the picture, which will
+> disable those newly added WARN_CONSOLE_UNLOCKED and make other people happy
+> again.
 
-and they aren't using the Octavo SIP which didn't have the 1Ghz efuse set..
+Note, it only made people that added a module parameter that disables
+grabbing the console lock in the first place for debugging purposes
+only. The added WARN_CONSOLE_UNLOCKED() are good. Nobody complaining
+that they exist. They are complaining that it breaks one of their
+debugging work flows, and need to disable it when they are doing so.
 
-So just the normal am335x errata, nothing special required in it's dts...
+> 
+> This makes me wonder - do we want to add more WARN_CONSOLE_UNLOCKED in the
+> first place? :)
 
-Regards,
+I would say yes.
 
--- 
-Robert Nelson
-https://rcn-ee.com/
+> 
+> Other than that, the patch looks OK to me I guess. I'm not super happy with
+> more printk EXPORT_SYMBOL-s, frankly speaking, I'm not entirely in love with
+> the "add a bool flag to suppress warn print outs which we added in the
+> previous patch" direction, but if you guys want/need it...
+
+I could add a comment explaining why it exists. Something like:
+
+/*
+ * Set this is you need to quiet WARN_CONSOLE_UNLOCKED() for debugging
+ * purposes.
+ */
+
+> Probably I'm just dramatizing it, as usual ;)
+> The removal of "#if 1" is definitely nice.
+
+Yeah, that had to go regardless.
+
+> 
+> Let's hear from Petr.
+
+Sure.
+
+-- Steve
