@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB684C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BEBC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54A0F213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:55:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54A0F213A2
+	by mail.kernel.org (Postfix) with ESMTP id 97C54213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:55:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97C54213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732659AbeGLMEQ (ORCPT
+        id S1732680AbeGLMES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:04:16 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:58016 "EHLO mail.bootlin.com"
+        Thu, 12 Jul 2018 08:04:18 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:58043 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726762AbeGLMEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:04:14 -0400
+        id S1726762AbeGLMER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 08:04:17 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6C64220731; Thu, 12 Jul 2018 13:55:00 +0200 (CEST)
+        id 4326120731; Thu, 12 Jul 2018 13:55:03 +0200 (CEST)
 Received: from mc-bl-xps13.lan (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 157DC206A6;
-        Thu, 12 Jul 2018 13:55:00 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id EC4F9206A6;
+        Thu, 12 Jul 2018 13:55:02 +0200 (CEST)
 From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
 To:     davem@davemloft.net
 Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -35,9 +35,9 @@ Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
         thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
         ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next 17/18] net: mvpp2: add an RSS classification step for each flow
-Date:   Thu, 12 Jul 2018 13:54:26 +0200
-Message-Id: <20180712115427.27375-18-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next 18/18] net: mvpp2: allow setting RSS flow hash parameters with ethtool
+Date:   Thu, 12 Jul 2018 13:54:27 +0200
+Message-Id: <20180712115427.27375-19-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
 References: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
@@ -46,241 +46,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the classification action that can be performed is to compute a
-hash of the packet header based on some header fields, and lookup a RSS
-table based on this hash to determine the final RxQ.
+This commit allows setting the RSS hash generation parameters from
+ethtool. When setting parameters for a given flow type from ethtool
+(e.g. tcp4), all the corresponding flows in the flow table are updated,
+according to the supported hash parameters.
 
-This is done by adding one lookup entry per flow per port, so that we
-can configure the hash generation parameters for each flow and each
-port.
-
-There are 2 possible engines that can be used for RSS hash generation :
-
- - C3HA, that generates a hash based on up to 4 header-extracted fields
- - C3HB, that does the same as c3HA, but also includes L4 info in the hash
-
-There are a lot of fields that can be extracted from the header. For now,
-we only use the ones that we can configure using ethtool :
- - DST MAC address
- - L3 info
- - Source IP
- - Destination IP
- - Source port
- - Destination port
-
-The C3HB engine is selected when we use L4 fields (src/dst port).
-
-               Header parser          Dec table
- Ingress pkt  +-------------+ flow id +----------------------------+
-------------->| TCAM + SRAM |-------->|TCP IPv4 w/ VLAN, not frag  |
-              +-------------+         |TCP IPv4 w/o VLAN, not frag |
-                                      |TCP IPv4 w/ VLAN, frag      |--+
-                                      |etc.                        |  |
-                                      +----------------------------+  |
-                                                                      |
-                                            Flow table                |
-  +---------+   +------------+         +--------------------------+   |
-  | RSS tbl |<--| Classifier |<--------| flow 0: C2 lookup        |   |
-  +---------+   +------------+         |         C3 lookup port 0 |   |
-                 |         |           |         C3 lookup port 1 |   |
-         +-----------+ +-------------+ |         ...              |   |
-         | C2 engine | | C3H engines | | flow 1: C2 lookup        |<--+
-         +-----------+ +-------------+ |         C3 lookup port 0 |
-                                       |         ...              |
-                                       | ...                      |
-                                       | flow 51 : C2 lookup      |
-                                       |           ...            |
-                                       +--------------------------+
-
-The C2 engine also gains the role of enabling and disabling the RSS
-table lookup for this packet.
+For example, when configuring TCP over IPv4 hash parameters to be
+src/dst IP  + src/dst port ("ethtool -N eth0 rx-flow-hash tcp4 sdfn"),
+we only set the "src/dst port" hash parameters on the non-fragmented TCP
+over IPv4 flows.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c  | 279 +++++++++++++++++++++++-
- drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h  |  15 ++
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |  10 +
- 3 files changed, 302 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c  | 104 ++++++++++++++++++++++++
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h  |   3 +
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c |  26 +++++-
+ 3 files changed, 132 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
-index 1fc8a446d94e..98e0e25f7dca 100644
+index 98e0e25f7dca..dc7dfa9a6606 100644
 --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
 +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.c
-@@ -325,6 +325,16 @@ static struct mvpp2_cls_flow cls_flows[MVPP2_N_FLOWS] = {
- 		       0, 0),
- };
- 
-+static void mvpp2_cls_flow_read(struct mvpp2 *priv, int index,
-+				struct mvpp2_cls_flow_entry *fe)
-+{
-+	fe->index = index;
-+	mvpp2_write(priv, MVPP2_CLS_FLOW_INDEX_REG, index);
-+	fe->data[0] = mvpp2_read(priv, MVPP2_CLS_FLOW_TBL0_REG);
-+	fe->data[1] = mvpp2_read(priv, MVPP2_CLS_FLOW_TBL1_REG);
-+	fe->data[2] = mvpp2_read(priv, MVPP2_CLS_FLOW_TBL2_REG);
-+}
-+
- /* Update classification flow table registers */
- static void mvpp2_cls_flow_write(struct mvpp2 *priv,
- 				 struct mvpp2_cls_flow_entry *fe)
-@@ -346,6 +356,34 @@ static void mvpp2_cls_lookup_write(struct mvpp2 *priv,
- 	mvpp2_write(priv, MVPP2_CLS_LKP_TBL_REG, le->data);
+@@ -663,6 +663,35 @@ u16 mvpp2_flow_get_hek_fields(struct mvpp2_cls_flow_entry *fe)
+ 	return hash_opts;
  }
  
-+/* Operations on flow entry */
-+static int mvpp2_cls_flow_hek_num_get(struct mvpp2_cls_flow_entry *fe)
-+{
-+	return fe->data[1] & MVPP2_CLS_FLOW_TBL1_N_FIELDS_MASK;
-+}
-+
-+static void mvpp2_cls_flow_hek_num_set(struct mvpp2_cls_flow_entry *fe,
-+				       int num_of_fields)
-+{
-+	fe->data[1] &= ~MVPP2_CLS_FLOW_TBL1_N_FIELDS_MASK;
-+	fe->data[1] |= MVPP2_CLS_FLOW_TBL1_N_FIELDS(num_of_fields);
-+}
-+
-+static int mvpp2_cls_flow_hek_get(struct mvpp2_cls_flow_entry *fe,
-+				  int field_index)
-+{
-+	return (fe->data[2] >> MVPP2_CLS_FLOW_TBL2_FLD_OFFS(field_index)) &
-+		MVPP2_CLS_FLOW_TBL2_FLD_MASK;
-+}
-+
-+static void mvpp2_cls_flow_hek_set(struct mvpp2_cls_flow_entry *fe,
-+				   int field_index, int field_id)
-+{
-+	fe->data[2] &= ~MVPP2_CLS_FLOW_TBL2_FLD(field_index,
-+						MVPP2_CLS_FLOW_TBL2_FLD_MASK);
-+	fe->data[2] |= MVPP2_CLS_FLOW_TBL2_FLD(field_index, field_id);
-+}
-+
- static void mvpp2_cls_flow_eng_set(struct mvpp2_cls_flow_entry *fe,
- 				   int engine)
- {
-@@ -430,15 +468,93 @@ static void mvpp2_cls_flow_init(struct mvpp2 *priv, struct mvpp2_cls_flow *flow)
- 
- 	mvpp2_cls_flow_eng_set(&fe, MVPP22_CLS_ENGINE_C2);
- 	mvpp2_cls_flow_port_id_sel(&fe, true);
--	mvpp2_cls_flow_last_set(&fe, 1);
-+	mvpp2_cls_flow_last_set(&fe, 0);
- 	mvpp2_cls_flow_pri_set(&fe, 0);
--	mvpp2_cls_flow_seq_set(&fe, MVPP2_CLS_FLOW_SEQ_LAST);
-+	mvpp2_cls_flow_seq_set(&fe, MVPP2_CLS_FLOW_SEQ_FIRST1);
- 
- 	/* Add all ports */
- 	for (i = 0; i < MVPP2_MAX_PORTS; i++)
- 		mvpp2_cls_flow_port_add(&fe, BIT(i));
- 
- 	mvpp2_cls_flow_write(priv, &fe);
-+
-+	/* C3Hx lookups */
-+	for (i = 0; i < MVPP2_MAX_PORTS; i++) {
-+		memset(&fe, 0, sizeof(fe));
-+		fe.index = MVPP2_PORT_FLOW_HASH_ENTRY(i, flow->flow_id);
-+
-+		mvpp2_cls_flow_port_id_sel(&fe, true);
-+		mvpp2_cls_flow_pri_set(&fe, i + 1);
-+		mvpp2_cls_flow_seq_set(&fe, MVPP2_CLS_FLOW_SEQ_MIDDLE);
-+		mvpp2_cls_flow_port_add(&fe, BIT(i));
-+
-+		mvpp2_cls_flow_write(priv, &fe);
-+	}
-+
-+	/* Update the last entry */
-+	mvpp2_cls_flow_last_set(&fe, 1);
-+	mvpp2_cls_flow_seq_set(&fe, MVPP2_CLS_FLOW_SEQ_LAST);
-+
-+	mvpp2_cls_flow_write(priv, &fe);
-+}
-+
-+/* Adds a field to the Header Extracted Key generation parameters*/
-+static int mvpp2_flow_add_hek_field(struct mvpp2_cls_flow_entry *fe,
-+				    u32 field_id)
-+{
-+	int nb_fields = mvpp2_cls_flow_hek_num_get(fe);
-+
-+	if (nb_fields == MVPP2_FLOW_N_FIELDS)
-+		return -EINVAL;
-+
-+	mvpp2_cls_flow_hek_set(fe, nb_fields, field_id);
-+
-+	mvpp2_cls_flow_hek_num_set(fe, nb_fields + 1);
-+
-+	return 0;
-+}
-+
-+static int mvpp2_flow_set_hek_fields(struct mvpp2_cls_flow_entry *fe,
-+				     unsigned long hash_opts)
-+{
-+	u32 field_id;
-+	int i;
-+
-+	/* Clear old fields */
-+	mvpp2_cls_flow_hek_num_set(fe, 0);
-+	fe->data[2] = 0;
-+
-+	for_each_set_bit(i, &hash_opts, MVPP22_CLS_HEK_N_FIELDS) {
-+		switch (BIT(i)) {
-+		case MVPP22_CLS_HEK_OPT_VLAN:
-+			field_id = MVPP22_CLS_FIELD_VLAN;
-+			break;
-+		case MVPP22_CLS_HEK_OPT_IP4SA:
-+			field_id = MVPP22_CLS_FIELD_IP4SA;
-+			break;
-+		case MVPP22_CLS_HEK_OPT_IP4DA:
-+			field_id = MVPP22_CLS_FIELD_IP4DA;
-+			break;
-+		case MVPP22_CLS_HEK_OPT_IP6SA:
-+			field_id = MVPP22_CLS_FIELD_IP6SA;
-+			break;
-+		case MVPP22_CLS_HEK_OPT_IP6DA:
-+			field_id = MVPP22_CLS_FIELD_IP6DA;
-+			break;
-+		case MVPP22_CLS_HEK_OPT_L4SIP:
-+			field_id = MVPP22_CLS_FIELD_L4SIP;
-+			break;
-+		case MVPP22_CLS_HEK_OPT_L4DIP:
-+			field_id = MVPP22_CLS_FIELD_L4DIP;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		if (mvpp2_flow_add_hek_field(fe, field_id))
-+			return -EINVAL;
-+	}
-+
-+	return 0;
- }
- 
- struct mvpp2_cls_flow *mvpp2_cls_flow_get(int flow)
-@@ -449,6 +565,104 @@ struct mvpp2_cls_flow *mvpp2_cls_flow_get(int flow)
- 	return &cls_flows[flow];
- }
- 
-+/* Set the hash generation options for the given traffic flow.
-+ * One traffic flow (in the ethtool sense) has multiple classification flows,
-+ * to handle specific cases such as fragmentation, or the presence of a
-+ * VLAN / DSA Tag.
-+ *
-+ * Each of these individual flows has different constraints, for example we
-+ * can't hash fragmented packets on L4 data (else we would risk having packet
-+ * re-ordering), so each classification flows masks the options with their
-+ * supported ones.
-+ *
++/* Returns the hash opts for this flow. There are several classifier flows
++ * for one traffic flow, this returns an aggregation of all configurations.
 + */
-+static int mvpp2_port_rss_hash_opts_set(struct mvpp2_port *port, int flow_type,
-+					u16 requested_opts)
++static u16 mvpp2_port_rss_hash_opts_get(struct mvpp2_port *port, int flow_type)
 +{
 +	struct mvpp2_cls_flow_entry fe;
 +	struct mvpp2_cls_flow *flow;
-+	int i, engine, flow_index;
-+	u16 hash_opts;
++	int i, flow_index;
++	u16 hash_opts = 0;
 +
 +	for (i = 0; i < MVPP2_N_FLOWS; i++) {
 +		flow = mvpp2_cls_flow_get(i);
 +		if (!flow)
-+			return -EINVAL;
++			return 0;
 +
 +		if (flow->flow_type != flow_type)
 +			continue;
@@ -290,216 +94,167 @@ index 1fc8a446d94e..98e0e25f7dca 100644
 +
 +		mvpp2_cls_flow_read(port->priv, flow_index, &fe);
 +
-+		hash_opts = flow->supported_hash_opts & requested_opts;
-+
-+		/* Use C3HB engine to access L4 infos. This adds L4 infos to the
-+		 * hash parameters
-+		 */
-+		if (hash_opts & MVPP22_CLS_HEK_L4_OPTS)
-+			engine = MVPP22_CLS_ENGINE_C3HB;
-+		else
-+			engine = MVPP22_CLS_ENGINE_C3HA;
-+
-+		if (mvpp2_flow_set_hek_fields(&fe, hash_opts))
-+			return -EINVAL;
-+
-+		mvpp2_cls_flow_eng_set(&fe, engine);
-+
-+		mvpp2_cls_flow_write(port->priv, &fe);
++		hash_opts |= mvpp2_flow_get_hek_fields(&fe);
 +	}
 +
-+	return 0;
-+}
-+
-+u16 mvpp2_flow_get_hek_fields(struct mvpp2_cls_flow_entry *fe)
-+{
-+	u16 hash_opts = 0;
-+	int n_fields, i, field;
-+
-+	n_fields = mvpp2_cls_flow_hek_num_get(fe);
-+
-+	for (i = 0; i < n_fields; i++) {
-+		field = mvpp2_cls_flow_hek_get(fe, i);
-+
-+		switch (field) {
-+		case MVPP22_CLS_FIELD_MAC_DA:
-+			hash_opts |= MVPP22_CLS_HEK_OPT_MAC_DA;
-+			break;
-+		case MVPP22_CLS_FIELD_VLAN:
-+			hash_opts |= MVPP22_CLS_HEK_OPT_VLAN;
-+			break;
-+		case MVPP22_CLS_FIELD_L3_PROTO:
-+			hash_opts |= MVPP22_CLS_HEK_OPT_L3_PROTO;
-+			break;
-+		case MVPP22_CLS_FIELD_IP4SA:
-+			hash_opts |= MVPP22_CLS_HEK_OPT_IP4SA;
-+			break;
-+		case MVPP22_CLS_FIELD_IP4DA:
-+			hash_opts |= MVPP22_CLS_HEK_OPT_IP4DA;
-+			break;
-+		case MVPP22_CLS_FIELD_IP6SA:
-+			hash_opts |= MVPP22_CLS_HEK_OPT_IP6SA;
-+			break;
-+		case MVPP22_CLS_FIELD_IP6DA:
-+			hash_opts |= MVPP22_CLS_HEK_OPT_IP6DA;
-+			break;
-+		case MVPP22_CLS_FIELD_L4SIP:
-+			hash_opts |= MVPP22_CLS_HEK_OPT_L4SIP;
-+			break;
-+		case MVPP22_CLS_FIELD_L4DIP:
-+			hash_opts |= MVPP22_CLS_HEK_OPT_L4DIP;
-+			break;
-+		default:
-+			break;
-+		}
-+	}
 +	return hash_opts;
 +}
 +
  static void mvpp2_cls_port_init_flows(struct mvpp2 *priv)
  {
  	struct mvpp2_cls_flow *flow;
-@@ -485,6 +699,27 @@ static void mvpp2_cls_c2_write(struct mvpp2 *priv,
- 	mvpp2_write(priv, MVPP22_CLS_C2_ATTR3, c2->attr[3]);
+@@ -897,6 +926,81 @@ void mvpp22_rss_fill_table(struct mvpp2_port *port, u32 table)
+ 	}
  }
  
-+static void mvpp2_cls_c2_read(struct mvpp2 *priv, int index,
-+			      struct mvpp2_cls_c2_entry *c2)
++int mvpp2_ethtool_rxfh_set(struct mvpp2_port *port, struct ethtool_rxnfc *info)
 +{
-+	mvpp2_write(priv, MVPP22_CLS_C2_TCAM_IDX, index);
++	u16 hash_opts = 0;
 +
-+	c2->index = index;
++	switch (info->flow_type) {
++	case TCP_V4_FLOW:
++	case UDP_V4_FLOW:
++	case TCP_V6_FLOW:
++	case UDP_V6_FLOW:
++		if (info->data & RXH_L4_B_0_1)
++			hash_opts |= MVPP22_CLS_HEK_OPT_L4SIP;
++		if (info->data & RXH_L4_B_2_3)
++			hash_opts |= MVPP22_CLS_HEK_OPT_L4DIP;
++		/* Fallthrough */
++	case IPV4_FLOW:
++	case IPV6_FLOW:
++		if (info->data & RXH_L2DA)
++			hash_opts |= MVPP22_CLS_HEK_OPT_MAC_DA;
++		if (info->data & RXH_VLAN)
++			hash_opts |= MVPP22_CLS_HEK_OPT_VLAN;
++		if (info->data & RXH_L3_PROTO)
++			hash_opts |= MVPP22_CLS_HEK_OPT_L3_PROTO;
++		if (info->data & RXH_IP_SRC)
++			hash_opts |= (MVPP22_CLS_HEK_OPT_IP4SA |
++				     MVPP22_CLS_HEK_OPT_IP6SA);
++		if (info->data & RXH_IP_DST)
++			hash_opts |= (MVPP22_CLS_HEK_OPT_IP4DA |
++				     MVPP22_CLS_HEK_OPT_IP6DA);
++		break;
++	default: return -EOPNOTSUPP;
++	}
 +
-+	c2->tcam[0] = mvpp2_read(priv, MVPP22_CLS_C2_TCAM_DATA0);
-+	c2->tcam[1] = mvpp2_read(priv, MVPP22_CLS_C2_TCAM_DATA1);
-+	c2->tcam[2] = mvpp2_read(priv, MVPP22_CLS_C2_TCAM_DATA2);
-+	c2->tcam[3] = mvpp2_read(priv, MVPP22_CLS_C2_TCAM_DATA3);
-+	c2->tcam[4] = mvpp2_read(priv, MVPP22_CLS_C2_TCAM_DATA4);
-+
-+	c2->act = mvpp2_read(priv, MVPP22_CLS_C2_ACT);
-+
-+	c2->attr[0] = mvpp2_read(priv, MVPP22_CLS_C2_ATTR0);
-+	c2->attr[1] = mvpp2_read(priv, MVPP22_CLS_C2_ATTR1);
-+	c2->attr[2] = mvpp2_read(priv, MVPP22_CLS_C2_ATTR2);
-+	c2->attr[3] = mvpp2_read(priv, MVPP22_CLS_C2_ATTR3);
++	return mvpp2_port_rss_hash_opts_set(port, info->flow_type, hash_opts);
 +}
 +
- static void mvpp2_port_c2_cls_init(struct mvpp2_port *port)
++int mvpp2_ethtool_rxfh_get(struct mvpp2_port *port, struct ethtool_rxnfc *info)
++{
++	unsigned long hash_opts;
++	int i;
++
++	hash_opts = mvpp2_port_rss_hash_opts_get(port, info->flow_type);
++	info->data = 0;
++
++	for_each_set_bit(i, &hash_opts, MVPP22_CLS_HEK_N_FIELDS) {
++		switch (BIT(i)) {
++		case MVPP22_CLS_HEK_OPT_MAC_DA:
++			info->data |= RXH_L2DA;
++			break;
++		case MVPP22_CLS_HEK_OPT_VLAN:
++			info->data |= RXH_VLAN;
++			break;
++		case MVPP22_CLS_HEK_OPT_L3_PROTO:
++			info->data |= RXH_L3_PROTO;
++			break;
++		case MVPP22_CLS_HEK_OPT_IP4SA:
++		case MVPP22_CLS_HEK_OPT_IP6SA:
++			info->data |= RXH_IP_SRC;
++			break;
++		case MVPP22_CLS_HEK_OPT_IP4DA:
++		case MVPP22_CLS_HEK_OPT_IP6DA:
++			info->data |= RXH_IP_DST;
++			break;
++		case MVPP22_CLS_HEK_OPT_L4SIP:
++			info->data |= RXH_L4_B_0_1;
++			break;
++		case MVPP22_CLS_HEK_OPT_L4DIP:
++			info->data |= RXH_L4_B_2_3;
++			break;
++		default:
++			return -EINVAL;
++		}
++	}
++	return 0;
++}
++
+ void mvpp22_rss_port_init(struct mvpp2_port *port)
  {
- 	struct mvpp2_cls_c2_entry c2;
-@@ -580,6 +815,38 @@ void mvpp2_cls_port_config(struct mvpp2_port *port)
- 	mvpp2_port_c2_cls_init(port);
- }
- 
-+static void mvpp2_rss_port_c2_enable(struct mvpp2_port *port)
-+{
-+	struct mvpp2_cls_c2_entry c2;
-+
-+	mvpp2_cls_c2_read(port->priv, MVPP22_CLS_C2_RSS_ENTRY(port->id), &c2);
-+
-+	c2.attr[2] |= MVPP22_CLS_C2_ATTR2_RSS_EN;
-+
-+	mvpp2_cls_c2_write(port->priv, &c2);
-+}
-+
-+static void mvpp2_rss_port_c2_disable(struct mvpp2_port *port)
-+{
-+	struct mvpp2_cls_c2_entry c2;
-+
-+	mvpp2_cls_c2_read(port->priv, MVPP22_CLS_C2_RSS_ENTRY(port->id), &c2);
-+
-+	c2.attr[2] &= ~MVPP22_CLS_C2_ATTR2_RSS_EN;
-+
-+	mvpp2_cls_c2_write(port->priv, &c2);
-+}
-+
-+void mvpp22_rss_enable(struct mvpp2_port *port)
-+{
-+	mvpp2_rss_port_c2_enable(port);
-+}
-+
-+void mvpp22_rss_disable(struct mvpp2_port *port)
-+{
-+	mvpp2_rss_port_c2_disable(port);
-+}
-+
- /* Set CPU queue number for oversize packets */
- void mvpp2_cls_oversize_rxq_set(struct mvpp2_port *port)
- {
-@@ -656,4 +923,12 @@ void mvpp22_rss_port_init(struct mvpp2_port *port)
- 		port->indir[i] = ethtool_rxfh_indir_default(i, port->nrxqs);
- 
- 	mvpp22_rss_fill_table(port, port->id);
-+
-+	/* Configure default flows */
-+	mvpp2_port_rss_hash_opts_set(port, IPV4_FLOW, MVPP22_CLS_HEK_IP4_2T);
-+	mvpp2_port_rss_hash_opts_set(port, IPV6_FLOW, MVPP22_CLS_HEK_IP6_2T);
-+	mvpp2_port_rss_hash_opts_set(port, TCP_V4_FLOW, MVPP22_CLS_HEK_IP4_5T);
-+	mvpp2_port_rss_hash_opts_set(port, TCP_V6_FLOW, MVPP22_CLS_HEK_IP6_5T);
-+	mvpp2_port_rss_hash_opts_set(port, UDP_V4_FLOW, MVPP22_CLS_HEK_IP4_5T);
-+	mvpp2_port_rss_hash_opts_set(port, UDP_V6_FLOW, MVPP22_CLS_HEK_IP6_5T);
- }
+ 	struct mvpp2 *priv = port->priv;
 diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h
-index 747c5f055b82..21bd0249be0d 100644
+index 21bd0249be0d..151d791a91b6 100644
 --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h
 +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h
-@@ -62,6 +62,18 @@ enum mvpp2_cls_engine {
- #define MVPP22_CLS_HEK_IP6_5T	(MVPP22_CLS_HEK_IP6_2T | \
- 				 MVPP22_CLS_HEK_L4_OPTS)
+@@ -203,6 +203,9 @@ void mvpp22_rss_port_init(struct mvpp2_port *port);
+ void mvpp22_rss_enable(struct mvpp2_port *port);
+ void mvpp22_rss_disable(struct mvpp2_port *port);
  
-+enum mvpp2_cls_field_id {
-+	MVPP22_CLS_FIELD_MAC_DA = 0x03,
-+	MVPP22_CLS_FIELD_VLAN = 0x06,
-+	MVPP22_CLS_FIELD_L3_PROTO = 0x0f,
-+	MVPP22_CLS_FIELD_IP4SA = 0x10,
-+	MVPP22_CLS_FIELD_IP4DA = 0x11,
-+	MVPP22_CLS_FIELD_IP6SA = 0x17,
-+	MVPP22_CLS_FIELD_IP6DA = 0x1a,
-+	MVPP22_CLS_FIELD_L4SIP = 0x1d,
-+	MVPP22_CLS_FIELD_L4DIP = 0x1e,
-+};
-+
- enum mvpp2_cls_flow_seq {
- 	MVPP2_CLS_FLOW_SEQ_NORMAL = 0,
- 	MVPP2_CLS_FLOW_SEQ_FIRST1,
-@@ -188,6 +200,9 @@ void mvpp22_rss_fill_table(struct mvpp2_port *port, u32 table);
- 
- void mvpp22_rss_port_init(struct mvpp2_port *port);
- 
-+void mvpp22_rss_enable(struct mvpp2_port *port);
-+void mvpp22_rss_disable(struct mvpp2_port *port);
++int mvpp2_ethtool_rxfh_get(struct mvpp2_port *port, struct ethtool_rxnfc *info);
++int mvpp2_ethtool_rxfh_set(struct mvpp2_port *port, struct ethtool_rxnfc *info);
 +
  void mvpp2_cls_init(struct mvpp2 *priv);
  
  void mvpp2_cls_port_config(struct mvpp2_port *port);
 diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 93e37d20899d..61e2d6886a4b 100644
+index 61e2d6886a4b..2283be12d700 100644
 --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
 +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -3631,6 +3631,13 @@ static int mvpp2_set_features(struct net_device *dev,
- 		}
+@@ -3829,11 +3829,15 @@ static int mvpp2_ethtool_get_rxnfc(struct net_device *dev,
+ 				   struct ethtool_rxnfc *info, u32 *rules)
+ {
+ 	struct mvpp2_port *port = netdev_priv(dev);
++	int ret = 0;
+ 
+ 	if (!mvpp22_rss_is_supported())
+ 		return -EOPNOTSUPP;
+ 
+ 	switch (info->cmd) {
++	case ETHTOOL_GRXFH:
++		ret = mvpp2_ethtool_rxfh_get(port, info);
++		break;
+ 	case ETHTOOL_GRXRINGS:
+ 		info->data = port->nrxqs;
+ 		break;
+@@ -3841,7 +3845,26 @@ static int mvpp2_ethtool_get_rxnfc(struct net_device *dev,
+ 		return -ENOTSUPP;
  	}
  
-+	if (changed & NETIF_F_RXHASH) {
-+		if (features & NETIF_F_RXHASH)
-+			mvpp22_rss_enable(port);
-+		else
-+			mvpp22_rss_disable(port);
-+	}
+-	return 0;
++	return ret;
++}
 +
- 	return 0;
++static int mvpp2_ethtool_set_rxnfc(struct net_device *dev,
++				   struct ethtool_rxnfc *info)
++{
++	struct mvpp2_port *port = netdev_priv(dev);
++	int ret = 0;
++
++	if (!mvpp22_rss_is_supported())
++		return -EOPNOTSUPP;
++
++	switch (info->cmd) {
++	case ETHTOOL_SRXFH:
++		ret = mvpp2_ethtool_rxfh_set(port, info);
++		break;
++	default:
++		return -EOPNOTSUPP;
++	}
++	return ret;
  }
  
-@@ -4759,6 +4766,9 @@ static int mvpp2_port_probe(struct platform_device *pdev,
- 	dev->hw_features |= features | NETIF_F_RXCSUM | NETIF_F_GRO |
- 			    NETIF_F_HW_VLAN_CTAG_FILTER;
- 
-+	if (mvpp22_rss_is_supported())
-+		dev->hw_features |= NETIF_F_RXHASH;
-+
- 	if (port->pool_long->id == MVPP2_BM_JUMBO && port->id != 0) {
- 		dev->features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
- 		dev->hw_features &= ~(NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM);
+ static u32 mvpp2_ethtool_get_rxfh_indir_size(struct net_device *dev)
+@@ -3922,6 +3945,7 @@ static const struct ethtool_ops mvpp2_eth_tool_ops = {
+ 	.get_link_ksettings	= mvpp2_ethtool_get_link_ksettings,
+ 	.set_link_ksettings	= mvpp2_ethtool_set_link_ksettings,
+ 	.get_rxnfc		= mvpp2_ethtool_get_rxnfc,
++	.set_rxnfc		= mvpp2_ethtool_set_rxnfc,
+ 	.get_rxfh_indir_size	= mvpp2_ethtool_get_rxfh_indir_size,
+ 	.get_rxfh		= mvpp2_ethtool_get_rxfh,
+ 	.set_rxfh		= mvpp2_ethtool_set_rxfh,
 -- 
 2.11.0
 
