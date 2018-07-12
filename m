@@ -1,157 +1,196 @@
 Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.3 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 882C0C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBCEC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2971E208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C734208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:54:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="S//9Tjmg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2971E208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kY0QNs2u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C734208E9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732444AbeGLODx (ORCPT
+        id S1732500AbeGLOEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 10:03:53 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:52368 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeGLODx (ORCPT
+        Thu, 12 Jul 2018 10:04:01 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50741 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeGLOEB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 10:03:53 -0400
-Received: by mail-it0-f66.google.com with SMTP id p4-v6so6922773itf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 06:54:13 -0700 (PDT)
+        Thu, 12 Jul 2018 10:04:01 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v25-v6so5774679wmc.0;
+        Thu, 12 Jul 2018 06:54:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w8YvEjiLA/4L3GEa/k/+iGppymABmOp1WNRqWKDZHI0=;
-        b=S//9Tjmg13mDZdFZ6GdIcc1KM9e0xFVa97tsbqC7/9mqLPG3jfCFwAIcAaflBfc+Po
-         6/02IstO6hUcyNSxt9mN6h0wo/BYbp5BInM/SyzNuAXnrTFETienyg68LcWcwLZ3jp6+
-         Eh75Ld0yG6cAbenkAf88/2GVSBMq1tG2JLrR1jPkxFDis+QIvB6CyklYoPLtRL+vT1nR
-         dZqIqdbTc3gPgNfI6U847ZaKM0SwbMW1G0wqO/5JPdudwaivkT9NsT3HPPmkkBzwO/Hg
-         PN7lgoDc4UKiu/2QxxAQiaQnzPSnBGR7mPhIWLjiQmy3UwDxPRd+7E3bK32jcXNrF+yA
-         Fkkg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dClUg8Az4+NuIH/YQmzvi4ucSoobRoqGdp/zBqKtSZA=;
+        b=kY0QNs2uFZqtl6e15SPBpmooV9HLA4amcKn0/AYtYwINs8gQLdVuie+SXOXDM1oEa+
+         EFmRkGHGPxhxj/l1bAghBY/MzyRdWMp+UuUK+d0zwwyHg2gek34ETSJLUYUHRgGi4VYD
+         3gVNFgf7+yku9mjgvJdAwQsspN4YSj7AGFYDIHJwz4n4zaLyfdKo3CMx46Vegwg1kvBu
+         nmCGr71cTHJEvh1uIhZCc3PikR8Xj55O29HfPRrKoa8FZs1ZfZb4kRk5GKnFv8NEO4Su
+         KUq+JNkQ6H6awWkWgtoCKE2E3gd8gqPzjYLo46MwmirvbC4FsbgM6LyyqLXzmQ7dpWAO
+         6l9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w8YvEjiLA/4L3GEa/k/+iGppymABmOp1WNRqWKDZHI0=;
-        b=hFwxg6WhuN0BGRwQWrmm5eePmZ6xV4XELurKSwxGX7KiJS9a8HYmxPKGoP4WaFnkR8
-         3EXb1N/vBZrPFTWyybTTGu4XuNa8zIeTyzb2V8mSyz+29/js+2dWrsdUUQoQJTmESOyM
-         I5f9QGIu9YcE9Vrk7yTWnEtP1siEqAYB5tZnrxup+YUla4UmGhcThn64kHJWew0f7qq8
-         H/dkS53qTNtdcFcVg2UrTsPIM2OdN/qhrirw+koi5VXk156GIVUzON8ba/smjo8MMduS
-         Y61eJE/nAe7oT/Jp7hsWGdHOalvRLJImgtWsPECWR9EzIe36zqku57Wshr8dSB81wI3g
-         UNnA==
-X-Gm-Message-State: AOUpUlHRass1pzOicFa6wTA8AxEgLpawV6NuNmpBaAZHJUYhScoD5A5W
-        WRur8RwZs7Yd4IEwF9MBBoFbgg==
-X-Google-Smtp-Source: AAOMgpfGf/yzB/gzI0UN4SKWpwd4+BWLCL9z385MWDu7pX3gdv2IVVNnyitETEpTbCDC5DJKJ+rqFQ==
-X-Received: by 2002:a24:f6c5:: with SMTP id u188-v6mr1448171ith.150.1531403652862;
-        Thu, 12 Jul 2018 06:54:12 -0700 (PDT)
-Received: from [192.168.1.167] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id v3-v6sm6495511iop.78.2018.07.12.06.54.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 06:54:11 -0700 (PDT)
-Subject: Re: [PATCH 02/12] blk: use for_each_if
-To:     Joe Perches <joe@perches.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Tejun Heo <tj@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Shaohua Li <shli@fb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>
-References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
- <20180709083650.23549-2-daniel.vetter@ffwll.ch>
- <20180711164058.GC72677@devbig577.frc2.facebook.com>
- <20180711164536.GD72677@devbig577.frc2.facebook.com>
- <965184f9-e5ed-3c8b-bfd7-a033a252371b@kernel.dk>
- <CAKMK7uE5aJq-1wd0ZOhwFaTy3iKMAZsfdAf=Tw+eGxtCmfcVQg@mail.gmail.com>
- <2296606a890a1f3543c5db825ed172f7d295a504.camel@perches.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <efb7a7fe-16ef-1928-9d95-50b1fb84f0c3@kernel.dk>
-Date:   Thu, 12 Jul 2018 07:54:10 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dClUg8Az4+NuIH/YQmzvi4ucSoobRoqGdp/zBqKtSZA=;
+        b=UoJjpmh2ScwX7WOoaqDbp9ppZ3ZdKesn0T/rTHtvYEIv930Q0A1DKTBip1OvRQDmOc
+         UrUovUL1qddaCZNLwnAOgbouIB86Mc/TZy9KBXNdmcPbscxcn5kLEzOXwtCzACI3KUPu
+         eL0f+0ZXp0KVAM6m0dS8V/80yOoDTZ/zjHNAXvEW/disWIHc7b7Kjf/lzrlRTPsAMPT/
+         0ZTpoq24Khg6irdkfEwq7Q0thESBIGhuCarq5vIvw4aT/4ipz6tX5B8IblIiuvL+HOO+
+         sg2j/+kHmBAIFz8Sv7clsXmItBbddPv5nR01ZnDHv+eGiMCaAUvoEjWNX9JbKixa0OD/
+         VJrg==
+X-Gm-Message-State: AOUpUlE+qBxO0ZrIvVjVHzfdy16c5NnFRHcwRm1vUXmO4GrbwlOhxrYi
+        lFl5zLLKqVmyXeoHXwT/wqA=
+X-Google-Smtp-Source: AAOMgpdnzHRUcU9eq0Nr47/ya/utDG5/jsjJn7OJGttU/nwehOgquELvnMmCRwSms5M0tk0xH9lKaA==
+X-Received: by 2002:a1c:c40a:: with SMTP id u10-v6mr1401023wmf.10.1531403658875;
+        Thu, 12 Jul 2018 06:54:18 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id r140-v6sm7048367wmd.27.2018.07.12.06.54.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Jul 2018 06:54:17 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 15:54:15 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Herton Krzesinski <herton@redhat.com>,
+        Janne Huttunen <janne.huttunen@nokia.com>,
+        Jaroslav Skarvada <jskarvad@redhat.com>,
+        Jeremy Cline <jcline@redhat.com>, Jiri Olsa <jolsa@redhat.com>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Michael Petlan <mpetlan@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Thomas Richter <tmricht@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [GIT PULL 00/14] perf/urgent fixes
+Message-ID: <20180712135415.GA6199@gmail.com>
+References: <20180711204305.12924-1-acme@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2296606a890a1f3543c5db825ed172f7d295a504.camel@perches.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711204305.12924-1-acme@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/12/18 12:45 AM, Joe Perches wrote:
-> On Wed, 2018-07-11 at 20:50 +0200, Daniel Vetter wrote:
->> On Wed, Jul 11, 2018 at 8:30 PM, Jens Axboe <axboe@kernel.dk> wrote:
->>> On 7/11/18 10:45 AM, Tejun Heo wrote:
->>>> On Wed, Jul 11, 2018 at 09:40:58AM -0700, Tejun Heo wrote:
->>>>> On Mon, Jul 09, 2018 at 10:36:40AM +0200, Daniel Vetter wrote:
->>>>>> Makes the macros resilient against if {} else {} blocks right
->>>>>> afterwards.
->>>>>>
->>>>>> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
->>>>>> Cc: Tejun Heo <tj@kernel.org>
->>>>>> Cc: Jens Axboe <axboe@kernel.dk>
->>>>>> Cc: Shaohua Li <shli@fb.com>
->>>>>> Cc: Kate Stewart <kstewart@linuxfoundation.org>
->>>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>>> Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
->>>>>> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
->>>>>> Cc: Arnd Bergmann <arnd@arndb.de>
->>>>>
->>>>> Acked-by: Tejun Heo <tj@kernel.org>
->>>>>
->>>>> Jens, it'd probably be best to route this through block tree.
->>>>
->>>> Oops, this requires an earlier patch to move the for_each_if def to a
->>>> common header and should be routed together.
->>>
->>> Yeah, this is a problem with the submission.
->>>
->>> Always (ALWAYS) CC folks on at least the cover letter and generic
->>> earlier patches. Getting just one patch sent like this is mostly
->>> useless, and causes more harm than good.
->>
->> Ime sending a patch with more than 20 or so recipients means it gets
->> stuck everywhere in moderation queues. Or outright spam filters. I
->> thought the correct way to do this is to cc: mailing lists (lkml has
->> them all), but apparently that's not how it's done. Despite that all
->> the patch series I get never have the cover letter addressed to me
->> either.
->>
->> So what's the magic way to make this possible?
+
+* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+
+> Hi Ingo,
 > 
-> Jens' advice is crap.
+> 	Please consider pulling,
 > 
-> There is no generic way to make this possible.
-
-Nobody claimed there was. And the advice is perfectly fine,
-sending out patches to folks that have hidden dependencies on other
-patches is a no-go.
-
-> BCC's don't work, series that touch multiple subsystems
-> get rejected when the recipient list is too large.
+> - Arnaldo
 > 
-> I think you did it correctly.
+> Test results at the end of this message, as usual.
+> 
+> The following changes since commit 092150a25cb7bd6a79aa00bb1ad131063f58073d:
+> 
+>   Merge branch 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/jikos/hid (2018-07-09 17:16:11 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.18-20180711
+> 
+> for you to fetch changes up to 32aa928a7b817140c84987b726d5014911808fa4:
+> 
+>   perf tools: Use python-config --includes rather than --cflags (2018-07-11 09:48:31 -0400)
+> 
+> ----------------------------------------------------------------
+> perf/urgent fixes:
+> 
+> python interface:
+> 
+> - Make 'perf script -g python' generate scripts that are compatible
+>   with both python 2 and 3 (Jeremy Cline)
+> 
+> - Fix python dictionary reference counting (Janne Huttunen)
+> 
+> - Add python3 support for various python scripts (Jeremy Cline)
+> 
+> - Use python-config --includes rather than --cflags, fixing the build
+>   on Fedora, where the python 3.7 started adding -flto to what
+> 
+> perf stat:
+> 
+>   - Remove needless extra header line in --interval_clear (Jiri Olsa)
+>   python-config --cflags generate, breaking the perf build (Jeremy Cline)
+> 
+> Build:
+> 
+> - Fix compilation errors on gcc8 (Jiri Olsa)
+> 
+> perf llvm-utils:
+> 
+> - Remove bashism from kernel include fetch script (Kim Phillips)
+> 
+> perf test: (Kim Phillips)
+> 
+> - Replace '|&' with '2>&1 |' to work with more shells
+> 
+> - Make perf's inet_pton test more portable
+> 
+> - Prevent temporary editor files from being considered test scripts
+> 
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Janne Huttunen (1):
+>       perf script python: Fix dict reference counting
+> 
+> Jeremy Cline (7):
+>       perf tools: Generate a Python script compatible with Python 2 and 3
+>       perf scripts python: Add Python 3 support to Core.py
+>       perf scripts python: Add Python 3 support to SchedGui.py
+>       perf scripts python: Add Python 3 support to Util.py
+>       perf scripts python: Add Python 3 support to sched-migration.py
+>       perf scripts python: Add Python 3 support to EventClass.py
+>       perf tools: Use python-config --includes rather than --cflags
+> 
+> Jiri Olsa (2):
+>       perf tools: Fix compilation errors on gcc8
+>       perf stat: Fix --interval_clear option
+> 
+> Kim Phillips (4):
+>       perf test shell: Replace '|&' with '2>&1 |' to work with more shells
+>       perf test shell: Make perf's inet_pton test more portable
+>       perf llvm-utils: Remove bashism from kernel include fetch script
+>       perf test shell: Prevent temporary editor files from being considered test scripts
+> 
+>  tools/perf/Makefile.config                         |  3 +-
+>  tools/perf/arch/x86/util/perf_regs.c               |  2 +-
+>  tools/perf/builtin-stat.c                          |  2 +-
+>  tools/perf/jvmti/jvmti_agent.c                     |  3 +-
+>  .../python/Perf-Trace-Util/lib/Perf/Trace/Core.py  | 40 +++++++++-------------
+>  .../Perf-Trace-Util/lib/Perf/Trace/EventClass.py   |  4 ++-
+>  .../Perf-Trace-Util/lib/Perf/Trace/SchedGui.py     |  2 +-
+>  .../python/Perf-Trace-Util/lib/Perf/Trace/Util.py  | 11 +++---
+>  tools/perf/scripts/python/sched-migration.py       | 14 +++++---
+>  tools/perf/tests/builtin-test.c                    |  2 +-
+>  .../tests/shell/record+probe_libc_inet_pton.sh     | 37 +++++++++++---------
+>  tools/perf/tests/shell/trace+probe_vfs_getname.sh  |  2 +-
+>  tools/perf/util/llvm-utils.c                       |  6 ++--
+>  .../util/scripting-engines/trace-event-python.c    | 37 +++++++++-----------
+>  14 files changed, 84 insertions(+), 81 deletions(-)
 
-Clearly that's not the case, regardless of what you think.
+Pulled, thanks a lot Arnaldo!
 
-Thanks for your invaluable and useful feedback, sharing your vast
-experience in patchsets with dependencies.
-
--- 
-Jens Axboe
-
+	Ingo
