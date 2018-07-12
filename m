@@ -2,59 +2,62 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7950BC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CB3C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3328320862
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:20:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3328320862
+	by mail.kernel.org (Postfix) with ESMTP id B432C20862
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B432C20862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732428AbeGLI3V (ORCPT
+        id S1732467AbeGLI31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:29:21 -0400
-Received: from mail1.bemta23.messagelabs.com ([67.219.246.3]:35768 "EHLO
-        mail1.bemta23.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725845AbeGLI3T (ORCPT
+        Thu, 12 Jul 2018 04:29:27 -0400
+Received: from mail1.bemta24.messagelabs.com ([67.219.250.4]:19118 "EHLO
+        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732181AbeGLI3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:29:19 -0400
-Received: from [67.219.246.101] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-3.bemta.az-b.us-east-1.aws.symcld.net id 93/5A-01621-F5F074B5; Thu, 12 Jul 2018 08:20:47 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEKsWRWlGSWpSXmKPExsXi5LtOQDee3z3
-  aYPliCYv5R86xWmzcfJvFYtXUnSwWmx5fY7Xo+rWS2eLyrjlsFkuvX2SyaN17hN3i7/ZNLBYv
-  tog7cHmsmbeG0WPTqk42j81L6j02vtvB5NH/18Dj8ya5ALYo1sy8pPyKBNaM5v69rAVXNCuO/
-  V3H0sDYodTFyMUhJLCKUaJ5+UZWCGcLo8SbvQ+Yuxg5OdgEdCSm7D/MAmKLCEhKrF25iBmkiF
-  lgCpPE6W+72LoYOTiEBWIkPrWJg5gsAqoSq/prQMp5BVwlNl66yQRiSwjISdw81wk2klPATeL
-  fmv2sILYQUE3vk1fMEPWCEidnPgFbxSygKdG6/Tc7hC0v0bx1NjNEvbLElhUXGCFmKkisPXCe
-  aQKjwCwk7bOQtM9C0r6AkXkVo1lSUWZ6RkluYmaOrqGBga6hoZGuga6RsaleYpVukl5psW5qY
-  nGJrqFeYnmxXnFlbnJOil5easkmRmD8MADBDsYfs1IPMUpyMCmJ8kpZuUYL8SXlp1RmJBZnxB
-  eV5qQWH2KU4eBQkuBt5HOPFhIsSk1PrUjLzAFGMkxagoNHSYRXGSTNW1yQmFucmQ6ROsWoy/H
-  n/dRJzEIsefl5qVLivOUgRQIgRRmleXAjYEnlEqOslDAvI9BRQjwFqUW5mSWo8q8YxTkYlYR5
-  60Cm8GTmlcBtegV0BBPQEXEpbiBHlCQipKQaGI+VK3q2HD76nN3P+N2jGl9FJ8lj1tkruV54J
-  YXmiqov7xZ5xPxGbbnPnrydzUWhRQIp7ww3pKre8HzddfSNk3j4at2/rKFz6mP7pvQcfKtpHL
-  XpS9yFG5rTpver3Ly2uFlE8Zh3uMnxZt19DkLbHO9byYt/KClvs3u86540xwr/htmrPryLU2I
-  pzkg01GIuKk4EABY8pEclAwAA
+        Thu, 12 Jul 2018 04:29:21 -0400
+Received: from [67.219.250.101] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-4.bemta.az-a.us-west-2.aws.symcld.net id 86/60-01612-26F074B5; Thu, 12 Jul 2018 08:20:50 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleJIrShJLcpLzFFi42Jx8l0noJvE7x5
+  t0H6Vx2L+kXOsFhs332axWDV1J4vFpsfXWC26fq1ktri8aw6bxdLrF5ksWvceYbf4u30Ti8WL
+  LeIOXB5r5q1h9Ni0qpPNY/OSeo+N73YwefT/NfD4vEkugC2KNTMvKb8igTXj0okp7AXXdSp+n
+  BRtYHyv2sXIxSEksJpR4vvqRWwQzhpGiZZt1xghnC2MEn8X/mfpYuTkYBPQkZiy/zCYLSIgKb
+  F25SJmkCJmgSlMEqe/7QJq5+AQFgiUaG1IBalhEVCVuD3xMViYV8BV4urVNJCwhICcxM1zncw
+  gNqeAm8S/NftZQWwhoJLeJ6/A4rwCghInZz4BW8UsICFx8MULZogaZYktKy4wQsxRkFh74DzT
+  BEaBWUhaZiFpWcDItIrRIqkoMz2jJDcxM0fX0MBA19DQSNfQyFLX0NRML7FKN1GvtFi3PLW4R
+  NdIL7G8WK+4Mjc5J0UvL7VkEyMwVhiAYAfj00MphxglOZiURHmlrFyjhfiS8lMqMxKLM+KLSn
+  NSiw8xynBwKEnwbuFzjxYSLEpNT61Iy8wBRi1MWoKDR0mEVxkkzVtckJhbnJkOkTrFqMvx5/3
+  UScxCLHn5ealS4rz7QIoEQIoySvPgRsASyCVGWSlhXkago4R4ClKLcjNLUOVfMYpzMCoJ89aB
+  TOHJzCuB2/QK6AgmoCPiUtxAjihJREhJNTC2WBx7Z73t8M8Lbs3LoybzdEvvPK7tfuJV7wktH
+  otTGTbWob7CV/j+9j22P++9eunrOtPLsTLTzv5xudTJ0rEicoPG3dTj/+U1PbZ9Kehd2Td35c
+  ES05ZCRQXzBt2fxZf5dh5Lr0/b13804MfCD79mOZhaelo/93aL/s7Ee+TY038HJDTCHd8psRR
+  nJBpqMRcVJwIAKXEzdRsDAAA=
 X-Env-Sender: Alex.Gonzalez@digi.com
-X-Msg-Ref: server-8.tower-385.messagelabs.com!1531383646!835803!2
+X-Msg-Ref: server-27.tower-325.messagelabs.com!1531383648!1480979!4
 X-Originating-IP: [66.77.174.16]
 X-SYMC-ESS-Client-Auth: outbound-route-from=pass
 X-StarScan-Received: 
 X-StarScan-Version: 9.9.15; banners=-,-,-
 X-VirusChecked: Checked
-Received: (qmail 12031 invoked from network); 12 Jul 2018 08:20:47 -0000
+Received: (qmail 23141 invoked from network); 12 Jul 2018 08:20:50 -0000
 Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
-  by server-8.tower-385.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 12 Jul 2018 08:20:47 -0000
-Received: from DOR-SMS-XCH01.digi.com (10.49.8.99) by MCL-VMS-XCH01.digi.com
+  by server-27.tower-325.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 12 Jul 2018 08:20:50 -0000
+Received: from MTK-SMS-XCH02.digi.com (10.10.8.196) by MCL-VMS-XCH01.digi.com
  (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 12 Jul 2018
- 03:20:46 -0500
+ 03:20:49 -0500
+Received: from DOR-SMS-XCH01.digi.com (10.49.8.99) by MTK-SMS-XCH02.digi.com
+ (10.10.8.196) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 12 Jul
+ 2018 03:20:48 -0500
 Received: from log-linux-hp-agonzal.digi.com (10.101.2.214) by
  dor-sms-xch01.digi.com (10.49.8.99) with Microsoft SMTP Server (TLS) id
- 14.3.399.0; Thu, 12 Jul 2018 10:20:44 +0200
+ 14.3.399.0; Thu, 12 Jul 2018 10:20:47 +0200
 From:   Alex Gonzalez <alex.gonzalez@digi.com>
 To:     <shawnguo@kernel.org>
 CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
@@ -62,244 +65,254 @@ CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <fabio.estevam@nxp.com>, <linux-imx@nxp.com>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <alex.gonzalez@digi.com>
-Subject: [PATCH v2 1/2] ARM: dts: imx6ul: Add DTS for ConnectCore 6UL System-On-Module (SOM)
-Date:   Thu, 12 Jul 2018 10:20:35 +0200
-Message-ID: <1531383636-3406-2-git-send-email-alex.gonzalez@digi.com>
+Subject: [PATCH v2 2/2] ARM: dts: imx6ul: Add DTS for ConnectCore 6UL SBC Express
+Date:   Thu, 12 Jul 2018 10:20:36 +0200
+Message-ID: <1531383636-3406-3-git-send-email-alex.gonzalez@digi.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1531383636-3406-1-git-send-email-alex.gonzalez@digi.com>
 References: <1531383636-3406-1-git-send-email-alex.gonzalez@digi.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [10.101.2.214]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ConnectCore 6UL System-On-Module has the following hardware
-specification:
+The ConnectCore 6UL Single Board Computer (SBC) Express contains the
+ConnectCore 6UL System-On-Module.
 
-* Based on a NXP i.MX6UL SoC
-* Industrial temperature ranges (-40ºC to +85ºC)
-* Up to 1GB DDR3 memory
-* Up to 2GB NAND flash
-* Dual Ethernet
-* On module 802.11 WiFi and Bluetooth 4.2 (QCA6564)
-* On module NXP Kinetis KL03
-* On module Microchip ATECC508A crypto element
+Its hardware specifications are:
+
+* 256MB DDR3 memory
+* 256MB NAND flash
+* Single Ethernet
+* USB Host and USB-OTG
+* MicroSD external storage
+* Groove connectors and Raspberry Pi Hat compatible expansion header
 
 Signed-off-by: Alex Gonzalez <alex.gonzalez@digi.com>
 ---
- arch/arm/boot/dts/imx6ul-ccimx6ulsom.dtsi | 202 ++++++++++++++++++++++++++++++
- 1 file changed, 202 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6ul-ccimx6ulsom.dtsi
+ arch/arm/boot/dts/Makefile                      |   1 +
+ arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts | 200 ++++++++++++++++++++++++
+ 2 files changed, 201 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts
 
-diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsom.dtsi b/arch/arm/boot/dts/imx6ul-ccimx6ulsom.dtsi
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 37a3de760d40..6135d3dc381c 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -533,6 +533,7 @@ dtb-$(CONFIG_SOC_IMX6SX) += \
+ 	imx6sx-udoo-neo-full.dtb
+ dtb-$(CONFIG_SOC_IMX6UL) += \
+ 	imx6ul-14x14-evk.dtb \
++	imx6ul-ccimx6ulsbcexpress.dtb \
+ 	imx6ul-geam.dtb \
+ 	imx6ul-isiot-emmc.dtb \
+ 	imx6ul-isiot-nand.dtb \
+diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts
 new file mode 100644
-index 000000000000..255c482ce56f
+index 000000000000..3792679c0c90
 --- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsom.dtsi
-@@ -0,0 +1,202 @@
++++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts
+@@ -0,0 +1,200 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Digi International's ConnectCore 6UL System-On-Module device tree source
++ * Digi International's ConnectCore6UL SBC Express board device tree source
 + *
 + * Copyright 2018 Digi International, Inc.
 + *
 + */
 +
-+/ {
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
++/dts-v1/;
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/interrupt-controller/irq.h>
++#include "imx6ul.dtsi"
++#include "imx6ul-ccimx6ulsom.dtsi"
 +
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			reusable;
-+			size = <0x4000000>;
-+			linux,cma-default;
-+		};
-+	};
++/ {
++	model = "Digi International ConnectCore 6UL SBC Express.";
++	compatible = "digi,ccimx6ulsbcexpress", "digi,ccimx6ulsom",
++		     "fsl,imx6ul";
 +};
 +
 +&adc1 {
-+	vref-supply = <&vdda_adc_3v3>;
-+};
-+
-+&gpmi {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_gpmi_nand>;
++	pinctrl-0 = <&pinctrl_adc1>;
 +	status = "okay";
 +};
 +
-+&i2c1 {
-+	clock-frequency = <100000>;
++&can1 {
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c1>;
++	pinctrl-0 = <&pinctrl_flexcan1>;
++	xceiver-supply = <&ext_3v3>;
++	status = "okay";
++};
++
++&ecspi3 {
++	cs-gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_ecspi3_master>;
++	status = "okay";
++};
++
++&fec1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_enet1>;
++	phy-mode = "rmii";
++	phy-handle = <&ethphy0>;
 +	status = "okay";
 +
-+	pfuze3000: pmic@8 {
-+		compatible = "fsl,pfuze3000";
-+		reg = <0x08>;
++	mdio {
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+		regulators {
-+			int_3v3: sw1a {
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vdd_arm_soc_in: sw1b {
-+				regulator-min-microvolt = <700000>;
-+				regulator-max-microvolt = <1475000>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <925000>;
-+				};
-+			};
-+
-+			ext_3v3: sw2 {
-+				regulator-min-microvolt = <2500000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-ramp-delay = <6250>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vcc_ddr3: sw3 {
-+				regulator-min-microvolt = <900000>;
-+				regulator-max-microvolt = <1650000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-suspend-microvolt = <1300000>;
-+				};
-+			};
-+
-+			swbst_reg: swbst {
-+				regulator-min-microvolt = <5000000>;
-+				regulator-max-microvolt = <5150000>;
-+			};
-+
-+			vdd_snvs_3v3: vsnvs {
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vrefddr: vrefddr {
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			vdda_adc_3v3: vldo1 {
-+				compatible = "regulator-fixed";
-+				regulator-name = "vref-adc-3v3";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			ldo2_ext: vldo2 {
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1550000>;
-+			};
-+
-+			vdda_wlan: vccsd {
-+				regulator-min-microvolt = <2850000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
-+			};
-+
-+			vdd_high_in: v33 {
-+				regulator-min-microvolt = <2850000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			ldo3_int: vldo3 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			ldo4_ext: vldo4 {
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			vcoin_chg: vcoin {
-+				regulator-min-microvolt = <2500000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
++		ethphy0: ethernet-phy@0 {
++			compatible = "ethernet-phy-ieee802.3-c22";
++			smsc,disable-energy-detect;
++			reg = <0>;
 +		};
 +	};
 +};
 +
++&i2c2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c2>;
++	status = "okay";
++};
++
++&pwm1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_pwm1>;
++	status = "okay";
++};
++
++&uart4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart4>;
++	status = "okay";
++};
++
++&uart5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_uart5>;
++	status = "okay";
++};
++
++&usbotg1 {
++	dr_mode = "host";
++	disable-over-current;
++	status = "okay";
++};
++
++&usbotg2 {
++	dr_mode = "host";
++	disable-over-current;
++	status = "okay";
++};
++
++&usdhc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usdhc2>;
++	broken-cd;      /* no carrier detect line (use polling) */
++	no-1-8-v;
++	status = "okay";
++};
++
 +&iomuxc {
-+	pinctrl_gpmi_nand: gpmigrp {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_hog>;
++
++	pinctrl_adc1: adc1grp {
 +		fsl,pins = <
-+			MX6UL_PAD_NAND_CE0_B__RAWNAND_CE0_B	0xb0b1
-+			MX6UL_PAD_NAND_RE_B__RAWNAND_RE_B	0xb0b1
-+			MX6UL_PAD_NAND_WE_B__RAWNAND_WE_B	0xb0b1
-+			MX6UL_PAD_NAND_WP_B__RAWNAND_WP_B	0xb0b1
-+			MX6UL_PAD_NAND_ALE__RAWNAND_ALE		0xb0b1
-+			MX6UL_PAD_NAND_CLE__RAWNAND_CLE		0xb0b1
-+			MX6UL_PAD_NAND_DATA00__RAWNAND_DATA00	0xb0b1
-+			MX6UL_PAD_NAND_DATA01__RAWNAND_DATA01	0xb0b1
-+			MX6UL_PAD_NAND_DATA02__RAWNAND_DATA02	0xb0b1
-+			MX6UL_PAD_NAND_DATA03__RAWNAND_DATA03	0xb0b1
-+			MX6UL_PAD_NAND_DATA04__RAWNAND_DATA04	0xb0b1
-+			MX6UL_PAD_NAND_DATA05__RAWNAND_DATA05	0xb0b1
-+			MX6UL_PAD_NAND_DATA06__RAWNAND_DATA06	0xb0b1
-+			MX6UL_PAD_NAND_DATA07__RAWNAND_DATA07	0xb0b1
-+			MX6UL_PAD_NAND_READY_B__RAWNAND_READY_B	0xb0b1
-+			>;
-+		};
++			/* GPIO1_4/ADC1_IN4 (pin 7 of the expansion header) */
++			MX6UL_PAD_GPIO1_IO04__GPIO1_IO04        0xb0
++		>;
++	};
 +
-+	pinctrl_i2c1: i2c1grp {
++	pinctrl_ecspi3_master: ecspi3grp1 {
 +		fsl,pins = <
-+			MX6UL_PAD_UART4_TX_DATA__I2C1_SCL 0x4001b8b0
-+			MX6UL_PAD_UART4_RX_DATA__I2C1_SDA 0x4001b8b0
-+			>;
-+		};
-+};
++			MX6UL_PAD_UART2_RX_DATA__ECSPI3_SCLK	0x10b0
++			MX6UL_PAD_UART2_CTS_B__ECSPI3_MOSI	0x10b0
++			MX6UL_PAD_UART2_RTS_B__ECSPI3_MISO	0x10b0
++			MX6UL_PAD_UART2_TX_DATA__GPIO1_IO20	0x10b0 /* Chip Select */
++		>;
++	};
 +
-+&reg_arm {
-+	vin-supply = <&vdd_arm_soc_in>;
-+	regulator-allow-bypass;
-+};
++	pinctrl_ecspi3_slave: ecspi3grp2 {
++		fsl,pins = <
++			MX6UL_PAD_UART2_RX_DATA__ECSPI3_SCLK	0x10b0
++			MX6UL_PAD_UART2_CTS_B__ECSPI3_MOSI	0x10b0
++			MX6UL_PAD_UART2_RTS_B__ECSPI3_MISO	0x10b0
++			MX6UL_PAD_UART2_TX_DATA__ECSPI3_SS0	0x10b0 /* Chip Select */
++		>;
++	};
 +
-+&reg_soc {
-+	vin-supply = <&vdd_arm_soc_in>;
-+	regulator-allow-bypass;
-+};
++	pinctrl_enet1: enet1grp {
++		fsl,pins = <
++			MX6UL_PAD_GPIO1_IO07__ENET1_MDC		0x1b0b0
++			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO	0x1b0b0
++			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN	0x1b0b0
++			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER	0x1b0b0
++			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00	0x1b0b0
++			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01	0x1b0b0
++			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN	0x1b0b0
++			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00	0x1b0b0
++			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01	0x1b0b0
++			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x40017051
++		>;
++	};
 +
++	pinctrl_flexcan1: flexcan1grp{
++		fsl,pins = <
++			MX6UL_PAD_LCD_DATA08__FLEXCAN1_TX	0x1b020
++			MX6UL_PAD_LCD_DATA09__FLEXCAN1_RX	0x1b020
++		>;
++	};
++
++	pinctrl_i2c2: i2c2grp {
++		fsl,pins = <
++			MX6UL_PAD_GPIO1_IO00__I2C2_SCL 0x4001b8b0
++			MX6UL_PAD_GPIO1_IO01__I2C2_SDA 0x4001b8b0
++		>;
++	};
++
++	pinctrl_pwm1: pwm1grp {
++		fsl,pins = <
++			MX6UL_PAD_LCD_DATA00__PWM1_OUT		0x10b0
++		>;
++	};
++
++	pinctrl_uart4: uart4grp {
++		fsl,pins = <
++			MX6UL_PAD_LCD_CLK__UART4_DCE_TX		0x1b0b1
++			MX6UL_PAD_LCD_ENABLE__UART4_DCE_RX	0x1b0b1
++		>;
++	};
++
++	pinctrl_uart5: uart5grp {
++		fsl,pins = <
++			MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX	0x1b0b1
++			MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX	0x1b0b1
++		>;
++	};
++
++	pinctrl_usdhc2: usdhc2grp {
++		fsl,pins = <
++			MX6UL_PAD_CSI_HSYNC__USDHC2_CMD		0x17059
++			MX6UL_PAD_CSI_VSYNC__USDHC2_CLK		0x10071
++			MX6UL_PAD_CSI_DATA00__USDHC2_DATA0	0x17059
++			MX6UL_PAD_CSI_DATA01__USDHC2_DATA1	0x17059
++			MX6UL_PAD_CSI_DATA02__USDHC2_DATA2	0x17059
++			MX6UL_PAD_CSI_DATA03__USDHC2_DATA3	0x17059
++		>;
++	};
++
++	/* General purpose pinctrl */
++	pinctrl_hog: hoggrp {
++		fsl,pins = <
++			/* GPIOs BANK 3 */
++			MX6UL_PAD_LCD_RESET__GPIO3_IO04		0xf030
++		>;
++	};
++};
