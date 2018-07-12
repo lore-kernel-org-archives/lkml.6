@@ -2,80 +2,120 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B691DC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:15:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BD0C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79B6F21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:15:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79B6F21479
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D48B42077B
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:17:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="yIkv2wlg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D48B42077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732485AbeGLIXz (ORCPT
+        id S1732405AbeGLIZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:23:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60432 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727016AbeGLIXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:23:54 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D60A1AE61;
-        Thu, 12 Jul 2018 08:15:24 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 10:15:24 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Yang Shi <yang.shi@linux.alibaba.com>, willy@infradead.org,
-        ldufour@linux.vnet.ibm.com, kirill@shutemov.name,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC v4 0/3] mm: zap pages with read mmap_sem in munmap for
- large mapping
-Message-ID: <20180712081524.GE32648@dhcp22.suse.cz>
-References: <1531265649-93433-1-git-send-email-yang.shi@linux.alibaba.com>
- <20180711103312.GH20050@dhcp22.suse.cz>
- <20180711154954.afe001e284574cd5d4c3ec89@linux-foundation.org>
+        Thu, 12 Jul 2018 04:25:53 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:44556 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726845AbeGLIZx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 04:25:53 -0400
+Received: by mail-pl0-f68.google.com with SMTP id m16-v6so10366632pls.11
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 01:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YaXCr5/u7vglMXNeli0r9hPBM6mNfeAqra1cWWxPVWU=;
+        b=yIkv2wlg1ucMMTFImfGpBmK2WS7NWY/5mBDFV/76fHqRZsaZSW14LdIqpH9j8Rn45B
+         A9uGvvobEkxjUSuUMq0jQIDySyMdpqc8fm7eDU55tM1uApddyFc03NFZ8yQnuKr6shnb
+         6URKc5UJtTGOw8mR4veJM4rKj/q1lcSbkZqog=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YaXCr5/u7vglMXNeli0r9hPBM6mNfeAqra1cWWxPVWU=;
+        b=dj9Ba0gT65E/EWQ4y5TzueQhD8MKCDio5z0383g0JsuLCkQG8acSlC7xikKBHCPZ5P
+         cf5IIsHM8xl+oH7AqcXOohR63EP15Of3L0RgeYzntQL8cdONIjAF/Dbvz9+LH8Yqk3XW
+         SSS2/JaDe/sJPInDmZCW4Packl4ipCKTOSZErBu0HLUAHswxbLZKujqmJOMQbirh9LiN
+         EG3tHMbGHUDsQMlZ2GS5e1tzhfF1ADP1s3jmCx+StO0UMF5ri0sRARc9+trRsWv6p3FQ
+         +KbLllsNxtBDehtwsIx93jZjAt93POd145+mpj7GWwbEEgMTKvJjV1FXBXKUSM6wNyNf
+         UmTw==
+X-Gm-Message-State: AOUpUlF5Y07y7OszF7CMej0a0OqiDdV/lIzrgJi5pldp3/M/PCf/pqVq
+        gZ0sEG7k5Z3wxM3RyzJTgyBIqw==
+X-Google-Smtp-Source: AAOMgpcHRHeQbR5Ar4U9UJB8nDtHgZtD5gXGbynKXE1tkg9hpVdngDDULYug+jn/I7X88xNgUgP7Vw==
+X-Received: by 2002:a17:902:342:: with SMTP id 60-v6mr1200848pld.311.1531383443767;
+        Thu, 12 Jul 2018 01:17:23 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
+        by smtp.gmail.com with ESMTPSA id u8-v6sm37647091pfl.105.2018.07.12.01.17.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Jul 2018 01:17:23 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 01:17:22 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        kernel-team@android.com, Joel Fernandes <joelaf@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: Remove setting task's se->runnable_weight
+ during PELT update
+Message-ID: <20180712081722.GB154647@joelaf.mtv.corp.google.com>
+References: <20180709164753.24699-1-dietmar.eggemann@arm.com>
+ <20180710230917.GA187293@joelaf.mtv.corp.google.com>
+ <0aba9bb6-eec7-130e-373f-5f87f192f2d4@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180711154954.afe001e284574cd5d4c3ec89@linux-foundation.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <0aba9bb6-eec7-130e-373f-5f87f192f2d4@arm.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 11-07-18 15:49:54, Andrew Morton wrote:
-> On Wed, 11 Jul 2018 12:33:12 +0200 Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > > Approach:
-> > > Zapping pages is the most time consuming part, according to the suggestion from
-> > > Michal Hocko [1], zapping pages can be done with holding read mmap_sem, like
-> > > what MADV_DONTNEED does. Then re-acquire write mmap_sem to cleanup vmas.
+On Wed, Jul 11, 2018 at 10:43:28AM +0200, Dietmar Eggemann wrote:
+> On 07/11/2018 01:09 AM, Joel Fernandes wrote:
+> > On Mon, Jul 09, 2018 at 05:47:53PM +0100, Dietmar Eggemann wrote:
+> > > A CFS (SCHED_OTHER, SCHED_BATCH or SCHED_IDLE policy) task's
+> > > se->runnable_weight must always be in sync with its se->load.weight.
 > > > 
-> > > But, we can't call MADV_DONTNEED directly, since there are two major drawbacks:
-> > >   * The unexpected state from PF if it wins the race in the middle of munmap.
-> > >     It may return zero page, instead of the content or SIGSEGV.
-> > >   * Can’t handle VM_LOCKED | VM_HUGETLB | VM_PFNMAP and uprobe mappings, which
-> > >     is a showstopper from akpm
+> > > se->runnable_weight is set to se->load.weight when the task is
+> > > forked (init_entity_runnable_average()) or reniced (reweight_entity()).
+> > > 
+> > > There are two cases in set_load_weight() which since they currently only
+> > > set se->load.weight could lead to a situation in which se->load.weight
+> > > is different to se->runnable_weight for a CFS task:
+> > > 
+> > > (1) A task switches to SCHED_IDLE.
+> > > 
+> > > (2) A SCHED_FIFO, SCHED_RR or SCHED_DEADLINE task which has been reniced
+> > >      (during which only its static priority gets set) switches to
+> > >      SCHED_OTHER or SCHED_BATCH.
+> > > 
+> > > Set se->runnable_weight to se->load.weight in these two cases to prevent
+> > > this. This eliminates the need to explicitly set it to se->load.weight
+> > > during PELT updates in the CFS scheduler fastpath.
 > > 
-> > I do not really understand why this is a showstopper. This is a mere
-> > optimization. VM_LOCKED ranges are usually not that large. VM_HUGETLB
-> > can be quite large alright but this should be doable on top. Is there
-> > any reason to block any "cover most mappings first" patch?
+> > Looks good to me. By the way just asking, is there a chance where
+> > se_weight(se) and se_runnable(se) can ever be different?
 > 
-> Somebody somewhere is going to want to unmap vast mlocked regions and
-> they're going to report softlockup warnings. So we shouldn't implement
-> something which can't address these cases.  Maybe it doesn't do so in
-> the first version, but we should at least have a plan to handle all
-> cases.
+> Yes they can be different, not for a task though but for se's representing
+> task groups. It got introduced to be able to propagate load and runnable
+> load independently through the task groups hierarchies.
 
-Absolutely. I was just responding to the "showstopper" part. This is
-improving some cases but it shouldn't make others worse so going
-incremental should be perfectly reasonable.
--- 
-Michal Hocko
-SUSE Labs
+I know that task-group se has different values. I was saying for task ses,
+the extra division can be skipped possibly improving performance (if at all).
+
+thanks,
+
+- Joel
+
