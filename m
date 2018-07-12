@@ -2,159 +2,204 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2928C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE6EC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9CF620BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:32:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="rbpQM/Up"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9CF620BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+	by mail.kernel.org (Postfix) with ESMTP id 2D3BC20BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:34:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3BC20BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732537AbeGLOly (ORCPT
+        id S1732472AbeGLOoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 10:41:54 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40496 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727094AbeGLOly (ORCPT
+        Thu, 12 Jul 2018 10:44:04 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39820 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732302AbeGLOoD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 10:41:54 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x5-v6so3959811pgp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 07:32:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+cY5515XQFFJf75PglpAaqgaiPiDB97yZJu28sfA6Y4=;
-        b=rbpQM/Up+ZeG1AdQ5qpnl00HOm4hZH/OAuTq2Y0R8WqBVeueTN+0wHJ06PEHLKlU9L
-         YEaNCegM5FZR3bFrpByqcqbKjSrCBqQmT2n3vZP1qMvo4ROAGUPqc99y/QyTmVvg7lQ7
-         J/yBFX+PYCO4warjO7BKFa0RCrSpsBqJBqwwFEIXkJl8xsTJcLGlNRIG6j+/ZhLfCi15
-         njf2Wi1n+J6aWDFYaOcUHrxbEO89dr8Xi6xrWnyvgA2/Gu4sA0HB8RGD6kOofrKQwnBY
-         CqME6i3gm0/M6XmvJJLLBXDZi/8R02Eo3R0TdqHwSGnUf8K2ItrpBnBK1P8W4cTPYufQ
-         JqAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+cY5515XQFFJf75PglpAaqgaiPiDB97yZJu28sfA6Y4=;
-        b=M76o4IOcMkmZLzu61ZVryBJx55jdU4ylQWvVseVU0vJKYqej7h9D5Za49q0w8Bvb3L
-         z72SUgwelDxYRwYl60pByQvUfHFksonBr9d579aaUeUyvyst1Xu/RwsV8Q2gUjuj8F9R
-         Mm3OFzGLU6xFEv8feZTQhoA1jeiLoSjEeM9t98ADvvCg2hU2HRdB+YFip+Rwm7Kf9Hov
-         UMsNffSeig9n1MEO+bSWjVSQIsjNBGEK9mcJYIlmCA/CJmlQG3tog+vJlTo+6EnJtJzl
-         zsLroxw6TZRjy5qxcTo9wXHggwGa/0arCn1Hszb32qhekfoF6XQ+j1SmV1IF5LDmBX2U
-         WzfA==
-X-Gm-Message-State: AOUpUlH/dKJ0hGBh8mHIu+3dj2wtPZU/COM2IihvKAsukE7rDPBMtrn8
-        RIluctzXZ+vXYcgwGiMHQJNiTQ==
-X-Google-Smtp-Source: AAOMgpdCmyHARUxbjH1+qsGtBqcJYk5qaYcMFibt+NSWjHTQZcEKv/WgxhWcTQOY6CSk70QvPu3qkQ==
-X-Received: by 2002:a65:5641:: with SMTP id m1-v6mr2427110pgs.246.1531405924603;
-        Thu, 12 Jul 2018 07:32:04 -0700 (PDT)
-Received: from kshutemo-mobl1.localdomain ([134.134.139.83])
-        by smtp.gmail.com with ESMTPSA id m6-v6sm33241303pfh.153.2018.07.12.07.32.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 07:32:03 -0700 (PDT)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 3560630029E; Thu, 12 Jul 2018 17:31:59 +0300 (+03)
-Date:   Thu, 12 Jul 2018 17:31:59 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     syzbot <syzbot+120abb1c3f7bfdc523f7@syzkaller.appspotmail.com>,
-        jglisse@redhat.com, kirill.shutemov@linux.intel.com,
-        ldufour@linux.vnet.ibm.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, mhocko@suse.com, minchan@kernel.org,
-        ross.zwisler@linux.intel.com, sfr@canb.auug.org.au,
-        syzkaller-bugs@googlegroups.com, ying.huang@intel.com
-Subject: Re: general protection fault in _vm_normal_page
-Message-ID: <20180712143158.7d5njt37x2bvq2xr@kshutemo-mobl1>
-References: <00000000000010c9390570bc0643@google.com>
- <20180711140449.3702358d7e8898017e34dcfd@linux-foundation.org>
+        Thu, 12 Jul 2018 10:44:03 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CEOSs1081327
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 10:34:13 -0400
+Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k65etu0kh-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 10:34:13 -0400
+Received: from localhost
+        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Thu, 12 Jul 2018 08:34:12 -0600
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 12 Jul 2018 08:34:08 -0600
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6CEY5iP5898588
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Jul 2018 07:34:05 -0700
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 64A23C6055;
+        Thu, 12 Jul 2018 08:34:05 -0600 (MDT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 54BCEC6059;
+        Thu, 12 Jul 2018 08:34:01 -0600 (MDT)
+Received: from oc8043147753.ibm.com (unknown [9.152.224.124])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Jul 2018 08:34:01 -0600 (MDT)
+Subject: Re: [PATCH v6 09/21] s390: vfio-ap: structure for storing mdev matrix
+To:     Halil Pasic <pasic@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-10-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <8a708a2e-3961-bd0c-9354-705070ada83d@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Thu, 12 Jul 2018 16:34:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711140449.3702358d7e8898017e34dcfd@linux-foundation.org>
-User-Agent: NeoMutt/20180622
+In-Reply-To: <8a708a2e-3961-bd0c-9354-705070ada83d@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18071214-0004-0000-0000-000014625997
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009357; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01060296; UDB=6.00544245; IPR=6.00838215;
+ MB=3.00022117; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-12 14:34:11
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071214-0005-0000-0000-0000881002CD
+Message-Id: <9338b672-d907-3ca2-9afa-974a2caf4bb1@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807120152
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 02:04:49PM -0700, Andrew Morton wrote:
-> On Wed, 11 Jul 2018 09:49:01 -0700 syzbot <syzbot+120abb1c3f7bfdc523f7@syzkaller.appspotmail.com> wrote:
-> 
-> > Hello,
-> > 
-> > syzbot found the following crash on:
-> > 
-> > HEAD commit:    98be45067040 Add linux-next specific files for 20180711
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=12496ac2400000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3f3b3673fec35d01
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=120abb1c3f7bfdc523f7
-> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> > syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12a46568400000
-> 
-> Handy.  /dev/ion from drivers/staging/android/ion/ion.c
-> 
-> > 
-> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > Reported-by: syzbot+120abb1c3f7bfdc523f7@syzkaller.appspotmail.com
-> > 
-> > R10: 0000000004000812 R11: 0000000000000246 R12: 0000000000000005
-> > R13: 00000000004c0565 R14: 00000000004cffb0 R15: 0000000000000005
-> > ion_mmap: failure mapping buffer to userspace
-> > kasan: CONFIG_KASAN_INLINE enabled
-> > kasan: GPF could be caused by NULL-ptr deref or user memory access
-> > general protection fault: 0000 [#1] SMP KASAN
-> > CPU: 0 PID: 4785 Comm: syz-executor0 Not tainted 4.18.0-rc4-next-20180711+  
-> > #4
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-> > Google 01/01/2011
-> > RIP: 0010:_vm_normal_page+0x1e5/0x330 mm/memory.c:828
-> 
-> Presumably has a NULL vma->vm_ops.  Probably one of the now-removed
-> checks in mm-drop-unneeded-vm_ops-checks.patch would have avoided
-> this.
-> 
-> Something for Kirill to think about ;)
-> 
+On 07/06/2018 04:26 PM, Halil Pasic wrote:
+>
+>
+> On 06/29/2018 11:11 PM, Tony Krowiak wrote:
+>> From: Tony Krowiak <akrowiak@linux.ibm.com>
+>>
+>> Introduces a new structure for storing the AP matrix configured
+>> for the mediated matrix device via its sysfs attributes files.
+>>
+>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>> ---
+>>   drivers/s390/crypto/vfio_ap_ops.c     |   12 ++++++++++++
+>>   drivers/s390/crypto/vfio_ap_private.h |   24 ++++++++++++++++++++++++
+>>   2 files changed, 36 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
+>> b/drivers/s390/crypto/vfio_ap_ops.c
+>> index 4e61e33..bf7ed9f 100644
+>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -20,6 +20,17 @@
+>>   DEFINE_SPINLOCK(mdev_list_lock);
+>>   LIST_HEAD(mdev_list);
+>>
+>> +static void vfio_ap_matrix_init(struct ap_matrix *matrix)
+>> +{
+>> +    /* Test if PQAP(QCI) instruction is available */
+>> +    if (test_facility(12))
+>> +        ap_qci(&matrix->info);
+>> +
+>> +    matrix->apm_max = matrix->info.apxa ? matrix->info.Na : 63;
+>> +    matrix->aqm_max = matrix->info.apxa ? matrix->info.Nd : 15;
+>> +    matrix->adm_max = matrix->info.apxa ? matrix->info.Nd : 15;
+>> +}
+>> +
+>>   static int vfio_ap_mdev_create(struct kobject *kobj, struct 
+>> mdev_device *mdev)
+>>   {
+>>       struct ap_matrix_dev *matrix_dev =
+>> @@ -31,6 +42,7 @@ static int vfio_ap_mdev_create(struct kobject 
+>> *kobj, struct mdev_device *mdev)
+>>           return -ENOMEM;
+>>
+>>       matrix_mdev->name = dev_name(mdev_dev(mdev));
+>> +    vfio_ap_matrix_init(&matrix_mdev->matrix);
+>>       mdev_set_drvdata(mdev, matrix_mdev);
+>>
+>>       if (atomic_dec_if_positive(&matrix_dev->available_instances) < 
+>> 0) {
+>> diff --git a/drivers/s390/crypto/vfio_ap_private.h 
+>> b/drivers/s390/crypto/vfio_ap_private.h
+>> index 3de1275..ae771f5 100644
+>> --- a/drivers/s390/crypto/vfio_ap_private.h
+>> +++ b/drivers/s390/crypto/vfio_ap_private.h
+>> @@ -29,9 +29,33 @@ struct ap_matrix_dev {
+>>       atomic_t available_instances;
+>>   };
+>>
+>> +/**
+>> + * The AP matrix is comprised of three bit masks identifying the 
+>> adapters,
+>> + * queues (domains) and control domains that belong to an AP matrix. 
+>> The bits i
+>> + * each mask, from least significant to most significant bit, 
+>> correspond to IDs
+>> + * 0 to 255. When a bit is set, the corresponding ID belongs to the 
+>> matrix.
+>> + *
+>> + * @apm identifies the AP adapters in the matrix
+>> + * @apm_max: max adapter number in @apm
+>> + * @aqm identifies the AP queues (domains) in the matrix
+>> + * @aqm_max: max domain number in @aqm
+>> + * @adm identifies the AP control domains in the matrix
+>> + * @adm_max: max domain number in @adm
+>> + */
+>> +struct ap_matrix {
+>> +    unsigned long apm_max;
+>> +    DECLARE_BITMAP(apm, 256);
+>> +    unsigned long aqm_max;
+>> +    DECLARE_BITMAP(aqm, 256);
+>> +    unsigned long adm_max;
+>> +    DECLARE_BITMAP(adm, 256);
+>> +    struct ap_config_info info;
+>
+> Why do we maintain (and populate by doing a QCI) the info member on a
+> per mdev device basis?
 
-Okay. Looks like we need vm_ops in the error path too :P
+That is a mistake, I am going to move it to struct ap_matrix_dev and
+execute the QCI instruction when the matrix device is registered
+with mdev during driver initialization.
 
-Here's the fixup which should help.
+>
+>
+>> +};
+>> +
+>>   struct ap_matrix_mdev {
+>>       const char *name;
+>>       struct list_head list;
+>> +    struct ap_matrix matrix;
+>>   };
+>>
+>>   static struct ap_matrix_dev *to_ap_matrix_dev(struct device *dev)
+>>
+>
 
-I'll post the new version of the patchset once figure out nommu issues.
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 74d4d2a8fe08..eedac20735c1 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1776,6 +1776,11 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		 */
- 		vma->vm_file = get_file(file);
- 		error = call_mmap(file, vma);
-+
-+		/* All mappings must have ->vm_ops set */
-+		if (!vma->vm_ops)
-+			vma->vm_ops = &dummy_vm_ops;
-+
- 		if (error)
- 			goto unmap_and_free_vma;
- 
-@@ -1788,10 +1793,6 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		 */
- 		WARN_ON_ONCE(addr != vma->vm_start);
- 
--		/* All mappings must have ->vm_ops set */
--		if (!vma->vm_ops)
--			vma->vm_ops = &dummy_vm_ops;
--
- 		addr = vma->vm_start;
- 		vm_flags = vma->vm_flags;
- 	} else if (vm_flags & VM_SHARED) {
--- 
- Kirill A. Shutemov
