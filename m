@@ -5,82 +5,165 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33ECC476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:04:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8EFC476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:04:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D93421471
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:04:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D93421471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 088C82086E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:04:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 088C82086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732480AbeGLROa convert rfc822-to-8bit (ORCPT
+        id S1732490AbeGLROx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:14:30 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53210 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727455AbeGLROa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:14:30 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D0E2D400ADC2;
-        Thu, 12 Jul 2018 17:04:05 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id F06112026D6B;
-        Thu, 12 Jul 2018 17:04:04 +0000 (UTC)
-Subject: Re: [PATCH v7 3/6] fs/dcache: Add sysctl parameter neg-dentry-limit
- as a soft limit on negative dentries
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
+        Thu, 12 Jul 2018 13:14:53 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:54786 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727037AbeGLROx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 13:14:53 -0400
+Received: (qmail 29054 invoked by uid 2102); 12 Jul 2018 13:04:27 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 12 Jul 2018 13:04:27 -0400
+Date:   Thu, 12 Jul 2018 13:04:27 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Will Deacon <will.deacon@arm.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-References: <1531413965-5401-1-git-send-email-longman@redhat.com>
- <1531413965-5401-4-git-send-email-longman@redhat.com>
- <20180712165605.GB3475@bombadil.infradead.org>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <91d03770-b184-354b-576c-690dade2d695@redhat.com>
-Date:   Thu, 12 Jul 2018 13:04:04 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+In-Reply-To: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
+Message-ID: <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20180712165605.GB3475@bombadil.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 17:04:05 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 17:04:05 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 12:56 PM, Matthew Wilcox wrote:
-> On Thu, Jul 12, 2018 at 12:46:02PM -0400, Waiman Long wrote:
->> +int neg_dentry_limit;
->> +EXPORT_SYMBOL_GPL(neg_dentry_limit);
-> Why are you exporting it?  What module needs this?
+On Thu, 12 Jul 2018, Peter Zijlstra wrote:
 
-I was following the example of another sysctl parameter in dcache.c -
-sysctl_vfs_cache_pressure. Looking more carefully now, you are right
-that I don't need to do the exporting. Will fix that in the next update.
+> > But again, these are stuble patterns, and my guess is that several/
+> > most kernel developers really won't care about such guarantees (and
+> > if some will do, they'll have the tools to figure out what they can
+> > actually rely on ...)
+> 
+> Yes it is subtle, yes most people won't care, however the problem is
+> that it is subtly the wrong way around. People expect causality, this is
+> a human failing perhaps, but that's how it is.
+> 
+> And I strongly feel we should have our locks be such that they don't
+> subtly break things.
+> 
+> Take for instance the pattern where RCU relies on RCsc locks, this is an
+> entirely simple and straight forward use of locks, yet completely fails
+> on this subtle point.
 
-Thanks,
-Longman
+Do you happen to remember exactly where in the kernel source this 
+occurs?
 
+> And people will not even try and use complicated tools for apparently
+> simple things. They'll say, oh of course this simple thing will work
+> right.
+> 
+> I'm still hoping we can convince the PowerPC people that they're wrong,
+> and get rid of this wart and just call all locks RCsc.
+
+It seems reasonable to ask people to learn that locks have stronger
+ordering guarantees than RMW atomics do.  Maybe not the greatest
+situation in the world, but one I think we could live with.
+
+> > OTOH (as I pointed out earlier) the strengthening we're configuring
+> > will prevent some arch. (riscv being just the example of today!) to
+> > go "full RCpc", and this will inevitably "complicate" both the LKMM
+> > and the reviewing process of related changes (atomics, locking, ...;
+> > c.f., this debate), apparently, just because you  ;-) want to "care"
+> > about these guarantees.
+> 
+> It's not just me btw, Linus also cares about these matters. Widely used
+> primitives such as spinlocks, should not have subtle and
+> counter-intuitive behaviour such as RCpc.
+
+Which raises the question of whether RCtso (adopting Daniel's suggested
+term) is also too subtle or counter-intuitive for spinlocks.  I wonder 
+what Linus would say...
+
+> Anyway, back to the problem of being able to use the memory model to
+> describe locks. This is I think a useful property.
+> 
+> My earlier reasoning was that:
+> 
+>   - smp_store_release() + smp_load_acquire() := RCpc
+> 
+>   - we use smp_store_release() as unlock()
+> 
+> Therefore, if we want unlock+lock to imply at least TSO (ideally
+> smp_mb()) we need lock to make up for whatever unlock lacks.
+> 
+> Hence my proposal to strenghten rmw-acquire, because that is the basic
+> primitive used to implement lock.
+
+That was essentially what the v2 patch did.  (And my reasoning was
+basically the same as what you have just outlined.  There was one
+additional element: smp_store_release() is already strong enough for
+TSO; the acquire is what needs to be stronger in the memory model.)
+
+> But as you (and Will) point out, we don't so much care about rmw-acquire
+> semantics as much as that we care about unlock+lock behaviour. Another
+> way to look at this is to define:
+> 
+>   smp-store-release + rmw-acquire := TSO (ideally smp_mb)
+> 
+> But then we also have to look at:
+> 
+>   rmw-release + smp-load-acquire
+>   rmw-release + rmw-acquire
+
+Let's assume that rmw-release is equivalent, in terms of ordering
+strength, to smp_store_release().  Then we can focus our attention on
+just the acquire part.
+
+On PowerPC, for instance, if spin_lock() used a full HWSYNC fence
+then unlock+lock would become RCsc -- even with no changes to
+spin_unlock().
+
+> for completeness sake, and I would suggest they result in (at least) the
+> same (TSO) ordering as the one we really care about.
+> 
+> One alternative is to no longer use smp_store_release() for unlock(),
+> and say define atomic_set_release() to be in the rmw-release class
+> instead of being a simple smp_store_release().
+> 
+> Another, and I like this proposal least, is to introduce a new barrier
+> to make this all work.
+
+This apparently boils down to two questions:
+
+	Should spin_lock/spin_unlock be RCsc?
+
+	Should rmw-acquire be strong enough so that smp_store_release + 
+	rmw-acquire is RCtso?
+
+If both answers are No, we end up with the v3 patch.  If the first
+answer is No and the second is Yes, we end up with the v2 patch.  The
+problem is that different people seem to want differing answers.
+
+(The implicit third question, "Should spin_lock/spin_unlock be RCtso?",
+seems to be pretty well settled at this point -- by Peter's and Will's
+vociferousness if nothing else -- despite Andrea's reservations.  
+However I admit it would be nice to have one or two examples showing
+that the kernel really needs this.)
+
+Alan
 
