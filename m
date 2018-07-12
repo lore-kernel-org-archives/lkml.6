@@ -6,66 +6,66 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4726AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E556ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01C48208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23E9208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 20:49:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="PDpik4TR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01C48208E3
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="cH7FRJFz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23E9208E3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732627AbeGLU4H (ORCPT
+        id S1732690AbeGLVAb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 16:56:07 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38741 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732488AbeGLU4G (ORCPT
+        Thu, 12 Jul 2018 17:00:31 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37702 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732583AbeGLVAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:56:06 -0400
-Received: by mail-pg1-f193.google.com with SMTP id k3-v6so4242096pgq.5
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 13:44:52 -0700 (PDT)
+        Thu, 12 Jul 2018 17:00:31 -0400
+Received: by mail-pf0-f193.google.com with SMTP id x10-v6so11409902pfm.4
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 13:49:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amacapital-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=Sp0ZEe9xEry08NpaHCB0cPGumuA0C3lQIgu4ezSHUPQ=;
-        b=PDpik4TR7Uphl/n8gNYeBuqsSyyJIA24Dd3EmIQ7U99iMbyO+JrlwFIDn16Onyyejm
-         WTVVfpNveILnaon1Sfc32945oh1CRBLZ/AzYaArFgPPQ5IIdT57o3Wxc7TNaFn/nGRmY
-         uOO4wLAadvG8Ecdwtqrfwh2owow1s1KpnAA8B9eMGH3sJV3l/E5m5dIaACLQcFZjNpEY
-         uzgBtL08a97vUaXot0kmXq9Iz6xQB2WY7YLxrPVA/UIAv/nqhyeSUo1Gw85rsvVKbBcM
-         +wsrm54bSRP4lio0xtTUA/3uUxXs8JQI898viT8zq7mBGIe4fQqUbun2nEJ97Pk59G5E
-         nibQ==
+        bh=q1Cd2NZGsiwiAqO4rvurU5q8igwq3KhHLdfmIkZ3XSk=;
+        b=cH7FRJFzuxEYwD0oRvSVtV0AIOgfUnMjZyGR4lAzr6tX6niRPFtLumWBnqLO34hdWC
+         uXdhdzsV4WpmVpKYxuXE9mtihKMG0Se3mycTQAIBNUnPzAcy3iNyzIyiztUy/1ZJ50kD
+         2jHt2nTnt/FzF2vdgy8P0g7pyRpl48wnEnygZHh+C1eYK3uvBQgPZsWF9V5kpC+ivBRb
+         Ms5SyWNTjPbD5oLAn+C/q4NJUWxy3/Ub/BFGmL+ETNduq+oAkCw7f6LlCTQTzWYw/HGt
+         DW4R4dUrCYPy0ZNh0YrTaIa7sUzf+9b+/B0PsXrIvkyMOpUqNzWHa+AvGt+i/rMkuw3x
+         QBAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
          :content-transfer-encoding:message-id:references:to;
-        bh=Sp0ZEe9xEry08NpaHCB0cPGumuA0C3lQIgu4ezSHUPQ=;
-        b=J3Ptp/WrUDXdW1ZdOirLsDMGvvHWI8en2ET1Q/wXBoPXDbA/L+mF6u1TdwbFjO+usO
-         pf9q4qfPmpotlY5qyulgu9cCpUwN/FeX+QpC0ZDEMAzLr/toFvKLpfLDB03y+ZZk8zW0
-         CiJcDqHtZOQHKtdmBkr+apYoZ/sgsQohoKeXFI1FA3LpaMjeI8DxZma3/3qzzDy5Bppa
-         LLVEblQ0bTI8JJxJDVMDCnFse0b9NUyI7TsSzuUJrBdv/QZwtr14SIxgRwGDSsmMCP7Z
-         l38I6aBNPviyEjcHA6sbQayd5jwt0rvJxmsWLjMwHbsle05dXoqsLfWtBYEBogw/LYgB
-         q5mg==
-X-Gm-Message-State: AOUpUlF7QrJ19B4NISwPXxAA7i30+Ag2e/t3tMxk6lxMUNbXyMvL9Nel
-        aoPfiLw5vAIznV5HAon+U0Wblg==
-X-Google-Smtp-Source: AAOMgpe5strWJuVdv+7UyTAt1bB6Q3SDWFErCGbabOb4jh0vx6c5AG1hReuox3rODx6kWfGy+RHDng==
-X-Received: by 2002:a65:60cd:: with SMTP id r13-v6mr3467138pgv.232.1531428291847;
-        Thu, 12 Jul 2018 13:44:51 -0700 (PDT)
-Received: from ?IPv6:2600:1011:b01e:e4d1:54df:ba07:cac1:aeab? ([2600:1011:b01e:e4d1:54df:ba07:cac1:aeab])
-        by smtp.gmail.com with ESMTPSA id i12-v6sm34268204pgd.87.2018.07.12.13.44.50
+        bh=q1Cd2NZGsiwiAqO4rvurU5q8igwq3KhHLdfmIkZ3XSk=;
+        b=bS/ddWzjhEVOjrZhcagaZ2yHVj44JreEvUmv3g1dQOyRfak3/6+jv54cqgzcMgyttF
+         4gk0lpq2vdPVyDtzjHnik7iIzF7bSubnSywkGsV8nnR/HEHmx2kMaj4bt4Mc2I+bWhSU
+         UulWuLjI7ZIeWQ8HW5uQ7hzEPHXPHzVYzqLmw6hM+yIaOLeRT1N1nIMpOfuO9LqAH4Nd
+         lT5jBgItouphJE5nsYuuV2OTaeQhzNxWJi5toDnbXPlUXv+3S3AAU06HvM0dHqauoKQr
+         bywCh1gZZlR72m7AUqezlvDom8RTVCNWHSOmFa+Cxp8+7lRHTK3rQM4/EOa6+ZUYC6oI
+         +eqA==
+X-Gm-Message-State: AOUpUlFrfGtgJ8o3slHq1MSHQ4roxbkcdRW1j9j9JOPrkHSRAxg0SaWu
+        38BeBsUkBaCiL1AtbrVp0MjM6g==
+X-Google-Smtp-Source: AAOMgpfSxNuJNTArc3NpGUTj59JTLPc+54ItSoNupYr9HB5d8scNz6MmkL4Ynb1kj7mL5j9kadRbCg==
+X-Received: by 2002:a62:3b03:: with SMTP id i3-v6mr3948474pfa.197.1531428555695;
+        Thu, 12 Jul 2018 13:49:15 -0700 (PDT)
+Received: from [100.125.106.90] (24.sub-174-237-8.myvzw.com. [174.237.8.24])
+        by smtp.gmail.com with ESMTPSA id s1-v6sm14376273pfj.53.2018.07.12.13.49.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 13:44:50 -0700 (PDT)
+        Thu, 12 Jul 2018 13:49:14 -0700 (PDT)
 Content-Type: text/plain;
-        charset=us-ascii
+        charset=utf-8
 Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 01/39] x86/asm-offsets: Move TSS_sp0 and TSS_sp1 to asm-offsets.c
+Subject: Re: [PATCH 03/39] x86/entry/32: Load task stack from x86_tss.sp1 in SYSENTER handler
 From:   Andy Lutomirski <luto@amacapital.net>
 X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <1531308586-29340-2-git-send-email-joro@8bytes.org>
-Date:   Thu, 12 Jul 2018 13:44:49 -0700
+In-Reply-To: <1531308586-29340-4-git-send-email-joro@8bytes.org>
+Date:   Thu, 12 Jul 2018 13:49:13 -0700
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
@@ -89,8 +89,8 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
         "David H . Gutteridge" <dhgutteridge@sympatico.ca>, jroedel@suse.de
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <29DEB3A0-223F-4C28-920B-0C1C918F2B56@amacapital.net>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org> <1531308586-29340-2-git-send-email-joro@8bytes.org>
+Message-Id: <823BAA9B-FACA-4E91-BE56-315FF569297C@amacapital.net>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org> <1531308586-29340-4-git-send-email-joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -98,51 +98,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+
 > On Jul 11, 2018, at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
 >=20
 > From: Joerg Roedel <jroedel@suse.de>
->=20
-> These offsets will be used in 32 bit assembly code as well,
-> so make them available for all of x86 code.
+> We want x86_tss.sp0 point to the entry stack later to use
+> it as a trampoline stack for other kernel entry points
+> besides SYSENTER.
 
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Makes sense: sp0 will be the entry stack. But:
 
 >=20
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
-> arch/x86/kernel/asm-offsets.c    | 4 ++++
-> arch/x86/kernel/asm-offsets_64.c | 2 --
-> 2 files changed, 4 insertions(+), 2 deletions(-)
 >=20
-> diff --git a/arch/x86/kernel/asm-offsets.c b/arch/x86/kernel/asm-offsets.c=
+>    /* Offset from the sysenter stack to tss.sp0 */
+> -    DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.s=
+p0) -
+> +    DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.s=
+p1) -
+>           offsetofend(struct cpu_entry_area, entry_stack_page.stack));
+>=20
 
-> index dcb008c..a1e1628 100644
-> --- a/arch/x86/kernel/asm-offsets.c
-> +++ b/arch/x86/kernel/asm-offsets.c
-> @@ -103,4 +103,8 @@ void common(void) {
->    OFFSET(CPU_ENTRY_AREA_entry_trampoline, cpu_entry_area, entry_trampolin=
-e);
->    OFFSET(CPU_ENTRY_AREA_entry_stack, cpu_entry_area, entry_stack_page);
->    DEFINE(SIZEOF_entry_stack, sizeof(struct entry_stack));
-> +
-> +    /* Offset for sp0 and sp1 into the tss_struct */
-> +    OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
-> +    OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
-> }
-> diff --git a/arch/x86/kernel/asm-offsets_64.c b/arch/x86/kernel/asm-offset=
-s_64.c
-> index b2dcd16..3b9405e 100644
-> --- a/arch/x86/kernel/asm-offsets_64.c
-> +++ b/arch/x86/kernel/asm-offsets_64.c
-> @@ -65,8 +65,6 @@ int main(void)
-> #undef ENTRY
->=20
->    OFFSET(TSS_ist, tss_struct, x86_tss.ist);
-> -    OFFSET(TSS_sp0, tss_struct, x86_tss.sp0);
-> -    OFFSET(TSS_sp1, tss_struct, x86_tss.sp1);
->    BLANK();
->=20
-> #ifdef CONFIG_STACKPROTECTOR
-> --=20
-> 2.7.4
->=20
+The code reads differently. Did you perhaps mean TSS_task_stack?
+
+Also, the =E2=80=9Ctop of task stack=E2=80=9D is a bit weird on 32-bit due t=
+o vm86. Can you document *exactly* what goes in sp1?
+
