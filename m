@@ -2,152 +2,519 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0327FC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58763C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A645C20BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:23:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A645C20BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0788F20BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:23:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0788F20BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=olimex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbeGLIcH (ORCPT
+        id S1732227AbeGLIcM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:32:07 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9224 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725874AbeGLIcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:32:06 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B6BECAB94E7E9;
-        Thu, 12 Jul 2018 16:23:21 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Thu, 12 Jul 2018
- 16:23:19 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do checkpoint in kill_sb
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     Chao Yu <chao@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20180707012020.4708-1-jaegeuk@kernel.org>
- <0cb1e0fd-1fb4-ba69-6c70-e05e991a243a@kernel.org>
- <20180709203624.GA24534@jaegeuk-macbookpro.roam.corp.google.com>
- <05429d14-a690-7f57-cde4-7fddadef241c@huawei.com>
- <20180712073449.GA21745@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <954cab70-0745-1550-c0fc-f0539040b7c6@huawei.com>
-Date:   Thu, 12 Jul 2018 16:23:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 12 Jul 2018 04:32:12 -0400
+Received: from olimex.com ([184.105.72.32]:59607 "EHLO olimex.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726598AbeGLIcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 04:32:11 -0400
+Received: from localhost.localdomain ([195.238.85.143])
+        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AES(128):Mac=SHA256) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 01:23:29 -0700
+From:   Stefan Mavrodiev <stefan@olimex.com>
+To:     Stefan Mavrodiev <stefan@olimex.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        dri-devel@lists.freedesktop.org (open list:DRM PANEL DRIVERS),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3 1/1] drm/panel: Add support for Olimex LCD-OLinuXino panel
+Date:   Thu, 12 Jul 2018 11:21:53 +0300
+Message-Id: <1531383729-13932-1-git-send-email-stefan@olimex.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20180712073449.GA21745@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/7/12 15:34, Jaegeuk Kim wrote:
-> On 07/10, Chao Yu wrote:
->> On 2018/7/10 4:36, Jaegeuk Kim wrote:
->>> On 07/09, Chao Yu wrote:
->>>> On 2018/7/7 9:20, Jaegeuk Kim wrote:
->>>>> When unmounting f2fs in force mode, we can get it stuck by io_schedule()
->>>>
->>>> force mode means force shutdown?
->>>
->>> Yes.
->>>
->>>>
->>>>> by some pending IOs in meta_inode.
->>>>>
->>>>> io_schedule+0xd/0x30
->>>>> wait_on_page_bit_common+0xc6/0x130
->>>>
->>>> Looks like a deadlock here? Does this mean we forget to submit cached bio in
->>>> somewhere?
->>>
->>> I'm hitting this randomly, when running all the testcases in xfstests.
->>> I can't find the missing flow, and only get this during kill_sb.
->>
->> I guess we need this before returning from ->writepage{,s}:
->>
->> if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN))
->> 	f2fs_submit_merged_write()
->>
->> How about trying this instead?
-> 
-> No, it's not shutdown case unfortunately.
+This patch adds Olimex Ltd. LCD-OLinuXino bridge panel driver. The
+panel is used with different LCDs (currently from 480x272 to 1280x800).
+Small EEPROM chip is used for identification, which holds some
+factory data and timing requirements.
 
-Still I didn't understand why this patch can fix the issue... :(
+Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+---
+Changes for v3:
+  - Change module license from "GPL v2" to "GPL"
+  - Make use of backlight_enable()/backlight_disable() helpers
+  - Rework backlight device request
+  - Remove drm_panel_detach()
+  - Use module_i2c_driver() for initialization
+  - Make the first mode preferred
+  - If num_modes value is invalid, overwrite it with 4, which is the maximum
+  - Some variable types optimizations
 
-Thanks,
+Changes for v2:
+  - Changed lcd_olinuxino_funcs to static const
 
-> 
->>
->> Thanks,
->>
->>>
->>>>
->>>> Thanks,
->>>>
->>>>> __filemap_fdatawait_range+0xbd/0x100
->>>>> filemap_fdatawait_keep_errors+0x15/0x40
->>>>> sync_inodes_sb+0x1cf/0x240
->>>>> sync_filesystem+0x52/0x90
->>>>> generic_shutdown_super+0x1d/0x110
->>>>> ceph_kill_sb+0x28/0x80 [ceph]
->>>>> deactivate_locked_super+0x35/0x60
->>>>> cleanup_mnt+0x36/0x70
->>>>> task_work_run+0x79/0xa0
->>>>> exit_to_usermode_loop+0x62/0x70
->>>>> do_syscall_64+0xdb/0xf0
->>>>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
->>>>> 0xffffffffffffffff
->>>>>
->>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>>>> ---
->>>>>  fs/f2fs/super.c | 16 +++++++++++++---
->>>>>  1 file changed, 13 insertions(+), 3 deletions(-)
->>>>>
->>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
->>>>> index 3995e926ba3a..1dc6809fac38 100644
->>>>> --- a/fs/f2fs/super.c
->>>>> +++ b/fs/f2fs/super.c
->>>>> @@ -3089,9 +3089,19 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
->>>>>  static void kill_f2fs_super(struct super_block *sb)
->>>>>  {
->>>>>  	if (sb->s_root) {
->>>>> -		set_sbi_flag(F2FS_SB(sb), SBI_IS_CLOSE);
->>>>> -		f2fs_stop_gc_thread(F2FS_SB(sb));
->>>>> -		f2fs_stop_discard_thread(F2FS_SB(sb));
->>>>> +		struct f2fs_sb_info *sbi = F2FS_SB(sb);
->>>>> +
->>>>> +		set_sbi_flag(sbi, SBI_IS_CLOSE);
->>>>> +		f2fs_stop_gc_thread(sbi);
->>>>> +		f2fs_stop_discard_thread(sbi);
->>>>> +
->>>>> +		if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
->>>>> +				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
->>>>> +			struct cp_control cpc = {
->>>>> +				.reason = CP_UMOUNT,
->>>>> +			};
->>>>> +			f2fs_write_checkpoint(sbi, &cpc);
->>>>> +		}
->>>>>  	}
->>>>>  	kill_block_super(sb);
->>>>>  }
->>>>>
->>>
->>> .
->>>
-> 
-> .
-> 
+ .../display/panel/olimex,lcd-olinuxino.txt         |  42 +++
+ MAINTAINERS                                        |   6 +
+ drivers/gpu/drm/panel/Kconfig                      |  10 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c | 331 +++++++++++++++++++++
+ 5 files changed, 390 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
+
+diff --git a/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt b/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
+new file mode 100644
+index 0000000..a89f9c8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
+@@ -0,0 +1,42 @@
++Binding for Olimex Ltd. LCD-OLinuXino bridge panel.
++
++This device can be used as bridge between a host controller and LCD panels.
++Currently supported LCDs are:
++  - LCD-OLinuXino-4.3TS
++  - LCD-OLinuXino-5
++  - LCD-OLinuXino-7
++  - LCD-OLinuXino-10
++
++The panel itself contains:
++  - AT24C16C EEPROM holding panel identification and timing requirements
++  - AR1021 resistive touch screen controller (optional)
++  - FT5x6 capacitive touch screnn controller (optional)
++  - GT911/GT928 capacitive touch screen controller (optional)
++
++The above chips share same I2C bus. The EEPROM is factory preprogrammed with
++device information (id, serial, etc.) and timing requirements.
++
++Touchscreen bingings can be found in these files:
++  - input/touchscreen/goodix.txt
++  - input/touchscreen/edt-ft5x06.txt
++  - input/touchscreen/ar1021.txt
++
++Required properties:
++  - compatible: should be "olimex,lcd-olinuxino"
++  - reg: address of the configuration EEPROM, should be <0x50>
++  - power-supply: phandle of the regulator that provides the supply voltage
++
++Optional properties:
++  - enable-gpios: GPIO pin to enable or disable the panel
++  - backlight: phandle of the backlight device attacked to the panel
++
++Example:
++&i2c2 {
++	panel@50 {
++		compatible = "olimex,lcd-olinuxino";
++		reg = <0x50>;
++		power-supply = <&reg_vcc5v0>;
++		enable-gpios = <&pio 7 8 GPIO_ACTIVE_HIGH>;
++		backlight = <&backlight>;
++	};
++};
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 624c3fd..30343f1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4557,6 +4557,12 @@ S:	Supported
+ F:	drivers/gpu/drm/nouveau/
+ F:	include/uapi/drm/nouveau_drm.h
+ 
++DRM DRIVER FOR OLIMEX LCD-OLINUXINO PANELS
++M:	Stefan Mavrodiev <stefan@olimex.com>
++S:	Maintained
++F:	drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
++F:	Documentation/devicetree/bindings/display/panel/olimex,lcd-olinuxino.txt
++
+ DRM DRIVER FOR PERVASIVE DISPLAYS REPAPER PANELS
+ M:	Noralf Trønnes <noralf@tronnes.org>
+ S:	Maintained
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 25682ff..0292994 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -81,6 +81,16 @@ config DRM_PANEL_LG_LG4573
+ 	  Say Y here if you want to enable support for LG4573 RGB panel.
+ 	  To compile this driver as a module, choose M here.
+ 
++config DRM_PANEL_OLIMEX_LCD_OLINUXINO
++	tristate "Olimex LCD-OLinuXino panel"
++	depends on OF
++	depends on I2C
++	depends on BACKLIGHT_CLASS_DEVICE
++	help
++	  Say Y here if you want to enable support for Olimex Ltd.
++	  LCD-OLinuXino panel. The panel is used with different sizes LCDs,
++	  from 480x272 to 1280x800, and 24 bit per pixel.
++
+ config DRM_PANEL_ORISETECH_OTM8009A
+ 	tristate "Orise Technology otm8009a 480x800 dsi 2dl panel"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index f26efc1..185027f 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
+ obj-$(CONFIG_DRM_PANEL_INNOLUX_P079ZCA) += panel-innolux-p079zca.o
+ obj-$(CONFIG_DRM_PANEL_JDI_LT070ME05000) += panel-jdi-lt070me05000.o
+ obj-$(CONFIG_DRM_PANEL_LG_LG4573) += panel-lg-lg4573.o
++obj-$(CONFIG_DRM_PANEL_OLIMEX_LCD_OLINUXINO) += panel-olimex-lcd-olinuxino.o
+ obj-$(CONFIG_DRM_PANEL_ORISETECH_OTM8009A) += panel-orisetech-otm8009a.o
+ obj-$(CONFIG_DRM_PANEL_PANASONIC_VVX10F034N00) += panel-panasonic-vvx10f034n00.o
+ obj-$(CONFIG_DRM_PANEL_RASPBERRYPI_TOUCHSCREEN) += panel-raspberrypi-touchscreen.o
+diff --git a/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
+new file mode 100644
+index 0000000..16b27a4
+--- /dev/null
++++ b/drivers/gpu/drm/panel/panel-olimex-lcd-olinuxino.c
+@@ -0,0 +1,331 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * LCD-OLinuXino support for panel driver
++ *
++ * Copyright (C) 2018 Olimex Ltd.
++ *   Author: Stefan Mavrodiev <stefan@olimex.com>
++ */
++
++#include <linux/backlight.h>
++#include <linux/crc32.h>
++#include <linux/gpio/consumer.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/of.h>
++#include <linux/regulator/consumer.h>
++
++#include <drm/drm_modes.h>
++#include <drm/drm_panel.h>
++#include <drm/drmP.h>
++
++#include <video/videomode.h>
++#include <video/display_timing.h>
++
++
++#define LCD_OLINUXINO_HEADER_MAGIC	0x4F4CB727
++#define LCD_OLINUXINO_DATA_LEN		256
++
++struct lcd_olinuxino_mode {
++	u32 pixelclock;
++	u32 hactive;
++	u32 hfp;
++	u32 hbp;
++	u32 hpw;
++	u32 vactive;
++	u32 vfp;
++	u32 vbp;
++	u32 vpw;
++	u32 refresh;
++	u32 flags;
++};
++
++struct lcd_olinuxino_info {
++	char name[32];
++	u32 width_mm;
++	u32 height_mm;
++	u32 bpc;
++	u32 bus_format;
++	u32 bus_flag;
++} __attribute__((__packed__));
++
++struct lcd_olinuxino_eeprom {
++	u32 header;
++	u32 id;
++	char revision[4];
++	u32 serial;
++	struct lcd_olinuxino_info info;
++	u32 num_modes;
++	u8 reserved[180];
++	u32 checksum;
++} __attribute__((__packed__));
++
++struct lcd_olinuxino {
++	struct drm_panel panel;
++	struct device *dev;
++	struct i2c_client *client;
++	struct mutex mutex;
++
++	bool prepared;
++	bool enabled;
++
++	struct backlight_device *backlight;
++	struct regulator *supply;
++	struct gpio_desc *enable_gpio;
++
++	struct lcd_olinuxino_eeprom eeprom;
++};
++
++static inline struct lcd_olinuxino *to_lcd_olinuxino(struct drm_panel *panel)
++{
++	return container_of(panel, struct lcd_olinuxino, panel);
++}
++
++static int lcd_olinuxino_disable(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++
++	if (!lcd->enabled)
++		return 0;
++
++	backlight_disable(lcd->backlight);
++
++	lcd->enabled = false;
++
++	return 0;
++}
++
++static int lcd_olinuxino_unprepare(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++
++	if (!lcd->prepared)
++		return 0;
++
++	gpiod_set_value_cansleep(lcd->enable_gpio, 0);
++	regulator_disable(lcd->supply);
++
++	lcd->prepared = false;
++
++	return 0;
++}
++
++static int lcd_olinuxino_prepare(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++	int ret;
++
++	if (lcd->prepared)
++		return 0;
++
++	ret = regulator_enable(lcd->supply);
++	if (ret < 0)
++		return ret;
++
++	gpiod_set_value_cansleep(lcd->enable_gpio, 1);
++	lcd->prepared = true;
++
++	return 0;
++}
++
++static int lcd_olinuxino_enable(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++
++	if (lcd->enabled)
++		return 0;
++
++	backlight_enable(lcd->backlight);
++
++	lcd->enabled = true;
++
++	return 0;
++}
++
++static int lcd_olinuxino_get_modes(struct drm_panel *panel)
++{
++	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
++	struct drm_connector *connector = lcd->panel.connector;
++	struct lcd_olinuxino_info *lcd_info = &lcd->eeprom.info;
++	struct drm_device *drm = lcd->panel.drm;
++	struct lcd_olinuxino_mode *lcd_mode;
++	struct drm_display_mode *mode;
++	u32 i, num = 0;
++
++	for (i = 0; i < lcd->eeprom.num_modes; i++) {
++		lcd_mode = (struct lcd_olinuxino_mode *)
++			   &lcd->eeprom.reserved[i * sizeof(*lcd_mode)];
++
++		mode = drm_mode_create(drm);
++		if (!mode) {
++			dev_err(drm->dev, "failed to add mode %ux%u@%u\n",
++				lcd_mode->hactive,
++				lcd_mode->vactive,
++				lcd_mode->refresh);
++				continue;
++		}
++
++		mode->clock = lcd_mode->pixelclock;
++		mode->hdisplay = lcd_mode->hactive;
++		mode->hsync_start = lcd_mode->hactive + lcd_mode->hfp;
++		mode->hsync_end = lcd_mode->hactive + lcd_mode->hfp +
++				  lcd_mode->hpw;
++		mode->htotal = lcd_mode->hactive + lcd_mode->hfp +
++			       lcd_mode->hpw + lcd_mode->hbp;
++		mode->vdisplay = lcd_mode->vactive;
++		mode->vsync_start = lcd_mode->vactive + lcd_mode->vfp;
++		mode->vsync_end = lcd_mode->vactive + lcd_mode->vfp +
++				  lcd_mode->vpw;
++		mode->vtotal = lcd_mode->vactive + lcd_mode->vfp +
++			       lcd_mode->vpw + lcd_mode->vbp;
++		mode->vrefresh = lcd_mode->refresh;
++
++		/* Always make the first mode preferred */
++		if (i == 0)
++			mode->type |= DRM_MODE_TYPE_PREFERRED;
++		mode->type |= DRM_MODE_TYPE_DRIVER;
++
++		drm_mode_set_name(mode);
++		drm_mode_probed_add(connector, mode);
++
++		num++;
++	}
++
++	memcpy(connector->display_info.name, lcd_info->name, 32);
++	connector->display_info.width_mm = lcd_info->width_mm;
++	connector->display_info.height_mm = lcd_info->height_mm;
++	connector->display_info.bpc = lcd_info->bpc;
++
++	if (lcd_info->bus_format)
++		drm_display_info_set_bus_formats(&connector->display_info,
++						 &lcd_info->bus_format, 1);
++	connector->display_info.bus_flags = lcd_info->bus_flag;
++
++	return num;
++}
++
++static const struct drm_panel_funcs lcd_olinuxino_funcs = {
++	.disable = lcd_olinuxino_disable,
++	.unprepare = lcd_olinuxino_unprepare,
++	.prepare = lcd_olinuxino_prepare,
++	.enable = lcd_olinuxino_enable,
++	.get_modes = lcd_olinuxino_get_modes,
++};
++
++static int lcd_olinuxino_probe(struct i2c_client *client,
++			       const struct i2c_device_id *id)
++{
++	struct device *dev = &client->dev;
++	struct lcd_olinuxino *lcd;
++	u32 checksum, i;
++	int ret = 0;
++
++	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C |
++				     I2C_FUNC_SMBUS_READ_I2C_BLOCK))
++		return -ENODEV;
++
++	lcd = devm_kzalloc(dev, sizeof(*lcd), GFP_KERNEL);
++	if (!lcd)
++		return -ENOMEM;
++
++	i2c_set_clientdata(client, lcd);
++	lcd->dev = dev;
++	lcd->client = client;
++
++	mutex_init(&lcd->mutex);
++
++	/* Copy data into buffer */
++	for (i = 0; i < LCD_OLINUXINO_DATA_LEN; i += I2C_SMBUS_BLOCK_MAX) {
++		mutex_lock(&lcd->mutex);
++		ret = i2c_smbus_read_i2c_block_data(client,
++						    i,
++						    I2C_SMBUS_BLOCK_MAX,
++						    (u8 *)&lcd->eeprom + i);
++		mutex_unlock(&lcd->mutex);
++		if (ret < 0) {
++			dev_err(dev, "error reading from device at %02x\n", i);
++			return ret;
++		}
++	}
++
++	/* Check configuration checksum */
++	checksum = ~crc32(~0, (u8 *)&lcd->eeprom, 252);
++	if (checksum != lcd->eeprom.checksum) {
++		dev_err(dev, "configuration checksum does not match!\n");
++		return -EINVAL;
++	}
++
++	/* Check magic header */
++	if (lcd->eeprom.header != LCD_OLINUXINO_HEADER_MAGIC) {
++		dev_err(dev, "magic header does not match\n");
++		return -EINVAL;
++	}
++
++	dev_info(dev, "Detected %s, Rev. %s, Serial: %08x\n",
++		 lcd->eeprom.info.name,
++		 lcd->eeprom.revision,
++		 lcd->eeprom.serial);
++
++	/*
++	 * The eeprom can hold up to 4 modes.
++	 * If the stored value is bigger, overwrite it.
++	 */
++	if (lcd->eeprom.num_modes > 4) {
++		dev_warn(dev, "invalid number of modes, falling back to 4\n");
++		lcd->eeprom.num_modes = 4;
++	}
++
++	lcd->enabled = false;
++	lcd->prepared = false;
++
++	lcd->supply = devm_regulator_get(dev, "power");
++	if (IS_ERR(lcd->supply))
++		return PTR_ERR(lcd->supply);
++
++	lcd->enable_gpio = devm_gpiod_get(dev, "enable", GPIOD_OUT_LOW);
++	if (IS_ERR(lcd->enable_gpio))
++		return PTR_ERR(lcd->enable_gpio);
++
++	lcd->backlight = devm_of_find_backlight(dev);
++	if (IS_ERR(lcd->backlight))
++		return PTR_ERR(lcd->backlight);
++
++	drm_panel_init(&lcd->panel);
++	lcd->panel.dev = dev;
++	lcd->panel.funcs = &lcd_olinuxino_funcs;
++
++	return drm_panel_add(&lcd->panel);
++}
++
++static int lcd_olinuxino_remove(struct i2c_client *client)
++{
++	struct lcd_olinuxino *panel = i2c_get_clientdata(client);
++
++	drm_panel_remove(&panel->panel);
++
++	lcd_olinuxino_disable(&panel->panel);
++	lcd_olinuxino_unprepare(&panel->panel);
++
++	return 0;
++}
++
++static const struct of_device_id lcd_olinuxino_of_ids[] = {
++	{ .compatible = "olimex,lcd-olinuxino" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, lcd_olinuxino_of_ids);
++
++static struct i2c_driver lcd_olinuxino_driver = {
++	.driver = {
++		.name = "lcd_olinuxino",
++		.of_match_table = lcd_olinuxino_of_ids,
++	},
++	.probe = lcd_olinuxino_probe,
++	.remove = lcd_olinuxino_remove,
++};
++
++module_i2c_driver(lcd_olinuxino_driver);
++
++MODULE_AUTHOR("Stefan Mavrodiev <stefan@olimex.com>");
++MODULE_DESCRIPTION("LCD-OLinuXino driver");
++MODULE_LICENSE("GPL");
+-- 
+2.7.4
 
