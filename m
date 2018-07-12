@@ -2,294 +2,91 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B70C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1BDBC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DA6521471
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:22:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA6521471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9A91A208E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:24:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A91A208E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732404AbeGLPcn convert rfc822-to-8bit (ORCPT
+        id S1732439AbeGLPey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 11:32:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:50230 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726762AbeGLPcn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:32:43 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 015E74022909;
-        Thu, 12 Jul 2018 15:22:40 +0000 (UTC)
-Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D8FC91C66C;
-        Thu, 12 Jul 2018 15:22:38 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 17:22:36 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     pasic@linux.vnet.ibm.com, bjsdjshi@linux.vnet.ibm.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] vfio: ccw: Refactoring the VFIO CCW state
- machine
-Message-ID: <20180712172236.2e038b8c.cohuck@redhat.com>
-In-Reply-To: <3406a24b-1e3a-ac23-c5d0-87c9a3b5515c@linux.ibm.com>
-References: <1528790210-19535-1-git-send-email-pmorel@linux.ibm.com>
-        <20180613165151.056ecaec.cohuck@redhat.com>
-        <bd5fb44e-3395-63bc-23a5-b9b6a8a8f1ef@linux.ibm.com>
-        <20180619160045.13caf12e.cohuck@redhat.com>
-        <63d1948a-3844-26e3-fc4f-0e7da7b4f515@linux.ibm.com>
-        <20180626180052.7412ee79.cohuck@redhat.com>
-        <3406a24b-1e3a-ac23-c5d0-87c9a3b5515c@linux.ibm.com>
-Organization: Red Hat GmbH
+        Thu, 12 Jul 2018 11:34:54 -0400
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:1964 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbeGLPex (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 11:34:53 -0400
+X-IronPort-AV: E=Sophos;i="5.51,343,1526367600"; 
+   d="scan'208";a="13496163"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 12 Jul 2018 08:24:51 -0700
+Received: from localhost (10.10.76.4) by chn-sv-exch05.mchp-main.com
+ (10.10.76.106) with Microsoft SMTP Server id 14.3.352.0; Thu, 12 Jul 2018
+ 08:24:51 -0700
+Date:   Thu, 12 Jul 2018 17:23:41 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     <linux-arch@vger.kernel.org>, <alexandre.belloni@bootlin.com>,
+        <arnd@arndb.de>, <richard.genoud@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <jslaby@suse.com>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 3/3] tty/serial: atmel: manage shutdown in case of RS485
+ or ISO7816 mode
+Message-ID: <20180712152341.p4lmjyldujv6et56@M43218.corp.atmel.com>
+Mail-Followup-To: Greg KH <gregkh@linuxfoundation.org>,
+        linux-arch@vger.kernel.org, alexandre.belloni@bootlin.com,
+        arnd@arndb.de, richard.genoud@gmail.com,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        jslaby@suse.com, linux-arm-kernel@lists.infradead.org
+References: <20180711131638.12622-1-ludovic.desroches@microchip.com>
+ <20180711132623.13227-1-ludovic.desroches@microchip.com>
+ <20180712145827.GB22502@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 15:22:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 15:22:40 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180712145827.GB22502@kroah.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 27 Jun 2018 12:00:41 +0200
-Pierre Morel <pmorel@linux.ibm.com> wrote:
-
-Apologies for the late answer, this topic had dropped off my radar.
-
-> On 26/06/2018 18:00, Cornelia Huck wrote:
-> > On Tue, 26 Jun 2018 13:04:12 +0200
-> > Pierre Morel <pmorel@linux.ibm.com> wrote:
-> >  
-> >> On 19/06/2018 16:00, Cornelia Huck wrote:  
-> >>> On Thu, 14 Jun 2018 10:06:31 +0200
-> >>> Pierre Morel<pmorel@linux.ibm.com>  wrote:
-> >>>     
-> ...snip...
-> >> The goal of the state machine is to describe the device driver state.
-> >> Not the device state which is hold by the CIO level.  
-> > I don't think there really is such a thing as "device driver state" (or
-> > maybe I don't understand what you mean by it). The state is attached to
-> > the individual device, isn't it?  
-> Yes but it is related to the software handling the device and not to the 
-> device.
-> This is a difference between QEMU, Linux VFIO driver and Hardware.
+On Thu, Jul 12, 2018 at 04:58:27PM +0200, Greg KH wrote:
+> On Wed, Jul 11, 2018 at 03:26:23PM +0200, Ludovic Desroches wrote:
+> > From: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > 
+> > In atmel_shutdown() we call atmel_stop_rx() and atmel_stop_tx() functions.
+> > Prevent the rx restart that is implemented in RS485 or ISO7816 modes when
+> > calling atmel_stop_tx() by using the atomic information tasklet_shutdown
+> > that is already in place for this purpose.
+> > 
+> > Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > ---
+> >  drivers/tty/serial/atmel_serial.c | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> In my point of view:
+> Did you send this patch twice?
 > 
-> QEMU                  : Emulates a device, internal state is state of 
-> the device
-> Linux VFIO driver: Handle the device, internal state is driver state
-> Hardware            : obviously get the device state
+> confused,
 
-OK, I understand where you're coming from, but I find your terminology
-a bit confusing :)
+Yes sorry, as I didn't receive patch 3/3, I resend it. At the end, it
+was sent twice.
 
-Maybe call the state that is tracked by the vfio driver "vfio device
-state"?
+Regards
 
-> >>>> ------------------------------------------------------------
-> >>>> | STANDBY          | A guest is associated but not started |  
-> >>> This is basically "device is bound to driver, but no mdev has been set
-> >>> up".  
-> >> When the device is bound to the driver, the device driver
-> >> is still in NOT_OPERATIONAL state.
-> >>
-> >> The transition to STANDBY is done when the virtual machine starts and
-> >> opens the mediated device.
-> >> Note that the device is still not usable until it is reseted.  
-> > Hm, isn't that transition happening when the mdev is created?  
-> No, when the mdev is created the VM is not started.
-> The STANDBY state is entered when the mdev_open is called,
-> this is when the VFIO framework is initialized as QEMU starts.
-> 
-> When the mdev is created the mdev_create is called but do not
-> induce any state change.
-
-Ah, now I understand where the disconnect here came from: Your patch 7
-changed this :)
-
-I have to think further about this (still undecided).
-
-> ...snip...
-> >> Now you are talking about the driver :) This should probably be done  
-> >>> for the other states as well.  
-> >> Ill update the description to make clear that the state is the
-> >> driver state (device driver) and not the device state.
-> >> The device state is handled by the firmware.  
-> > Now you have managed to confuse me completely... isn't the firmware
-> > only handling the (real) subchannel state?  
-> 
-> Yes and QEMU the virtual one.
-> But the driver does not need to handle the device state
-> but the driver state. Which is quite different.
-
-That's again the terminology confusion from above.
-
-> >>> Isn't that rather "an mdev is created"?  
-> >> No, ONLINE is triggered by VFIO_RESET, after the mdev has been created
-> >> and when the VM is started or restarted by QEMU.
-> >>
-> >> I see that I did not do a good job describing what triggers the events.
-> >> I will try again in a dedicated document.  
-> > It might be good to combine the two.  
-> 
-> When mdev is created the VM does not exist, it is created by the admin.
-> 
-> The mdev_open() is called once when the VM starts.
-> VFIO_RESET is called on start and every time the VM is reseted.
-
-And this was again /me looking at the current code.
+Ludovic
 
 > 
-> These are three different events occuring in the life of the driver.
-> mdev creation do not influence the way the driver works.
-
-I'm wondering if it should. Having an mdev is a prereq for any setup.
-So a device in not oper state without mdev is a different thing from a
-device in not oper state with an mdev that received e.g. some path
-failures.
-
-> mdev open does, and issues the INIT event
-> VFIO_RESET does and issues the ONLINE event
-
-The last one is possibly a bit unintuitive (might be a naming issue).
-
-> >>>> |                  | triggered by: vfio_reset              |
-> >>>> |                  | action: enable SC                     |
-> >>>> |                  | state on success: IDLE                |
-> >>>> |                  | state on error  : STANDBY             |  
-> >>> What happens if the subchannel is not operational when we try to get it
-> >>> ready? Can it go to NOT_OPERATIONAL in that case?  
-> >> I think we have a confusion between the sub-channel being non operational
-> >> and the device driver being non operational.
-> >> Here, the device driver is operational, even the device may not.  
-> > How can something be operational if the device is not? It could be in a
-> > state like the ccw device's disconnected state, but it's certainly not
-> > ready for requests.  
+> greg k-h
 > 
-> The driver may be operational even the device is not.
-> Depending on the protocol between device and driver it allows
-> the driver to reset the device.
-> We have two drivers here speaking with the device, the one in the guest
-> and the VFIO driver.
-> The VFIO driver works is to handle the virtualization infrastructure,
-> not to handle the device. Handling the device is done by the guest
-> driver.
-
-Hm, let's assume the hardware device is not operational (cc 3 on ssch
-or whatever).
-
-What I'd assume to happen would be:
-- The vfio driver notices that the subchannel is not operational, and
-  switches state or flips an indication somewhere.
-- The vfio driver is probably also notified by the common I/O layer
-  (because of machine check on the hardware). It has two choices: give
-  up on the device (the common I/O layer will deregister the device),
-  or keep it (which would mean something similar to the disconnected
-  state for ccw devices; I guess that is what you meant with 'the
-  driver is operational'?).
-- If the (subchannel) device is gone, the child mdev should be gone as
-  well.
-
-What would be the best way to interact with the guest? On real
-hardware, I'd expect both cc 3 and crws. Regardless whether we
-unregister or do something like the disconnected state, we should relay
-the cc 3 to the guest *and* inject a machine check to kick the guest's
-handling.
-
-If we use the disconnected state approach, what should the guest get if
-it tries to interact with the device anyway? We could answer with cc 3
-immediately, or let the hardware give us the cc 3 that we relay back to
-the guest. (We should get a notification from the common I/O layer when
-it is informed via a machine check that the device is alive again.)
-
-What do you think?
-
-> >> For the VM perspective, if the device is not operational we send a RESET.
-> >>
-> >> For the guest perspective we can do what ever instruction we needs to
-> >> get the device operational, therefor we need the driver to be operational
-> >> to process the instruction.  
-> > Ah, do you mean 'subchannel enabled'? I was thinking about 'device
-> > dead, we get cc 3 or somesuch'.  
-> 
-> What can we do on the host level that the guest can not do?
-> If we have a way to retrieve a dead device in the host, shouldn't
-> we give the guest this possibility?
-
-See above... we can get the machine checks, but the guest can't.
-
-> Speaking about sub-channel enabled:
-> 
-> We currently have very restricted possibilities for the guest
-> to manage the sub-channel or even to get real information
-> on the sub-channel.
-> Dong-Jia began working in this direction with his last patch series
-> and I think it is a way to follow.
-
-Is anyone at IBM picking up this work?
-
-> My point of view is that we should not do too much in the VFIO
-> driver but only take care of the virtualization of the SCHIB.
-> But this is beyond the scope of this patch .
-
-The main thing missing is probably machine check handling. But probably
-msch passthrough as well.
-
-> >>> This is the common I/O layer's sch_event callback. That can mean
-> >>> different things:
-> >>> - Something regarding the paths to the device changed. We can translate
-> >>>     that to "schib updated".
-> >>> - Device is gone. This is a different situation; we may either try to
-> >>>     implement the disconnected state, or we may give up the device.
-> >>>
-> >>> Also, can't we get this event in QUIESCING or STANDBY as well?  
-> >> I think it should be ignored in STANDBY as we did not even
-> >> start to use the sub-channel we have no information on it
-> >> at that moment.  
-> > As long as we do update it some time before we need the information, ok.  
-> 
-> AFAIK we currently never forward this information to the guest,
-> when we do it we will need to virtualize this information.
-
-Agreed.
-  
-> >>>> | |                                       |
-> >>>> |                  | triggered by: sch_event               |
-> >>>> |                  | action: Store the SCHIB in IO region  |
-> >>>> |                  | state on success: no change           |  
-> >>> As said, we may want some different handling for "device gone"
-> >>> situations.
-> >>>
-> >>> Also, what happens if we get that event in BUSY? Is the I/O still
-> >>> running?  
-> >> AFAIK yes, it is an asynchronous event.
-> >> It can happen during BUSY.
-> >> However AFAIU we still get an IRQ even we get the device gone
-> >> during I/O operation.  
-> > It depends. We either get a deferred cc 3, or a machine check (but no
-> > interrupt).  
-> 
-> I understood from current code that all kind of CRW do not
-> imply that the sub-channel is gone.
-> I must investigate a little more.
-
-Path handling is sometimes a bit odd...
-
-> 
-> Anyway, the CRW should be handled and forwarded to the guest
-> but I would prefer not to change too much in this series,
-> shouldn't this changes be part of a next series?
-
-Yes, that should be a different series, as it will probably be quite
-complex and needs thought. Anyway, I've updated
-https://wiki.qemu.org/ToDo/Channel_I/O_Passthrough with some machine
-check considerations.
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
