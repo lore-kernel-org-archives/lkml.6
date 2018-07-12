@@ -1,137 +1,129 @@
 Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6A37C476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A167C476E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DA7420842
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:11:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DA7420842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DEDB02147D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:12:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEDB02147D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732593AbeGLRVf (ORCPT
+        id S1732394AbeGLRW1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:21:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53406 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732575AbeGLRVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:21:35 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A3F9D401DEC7;
-        Thu, 12 Jul 2018 17:11:08 +0000 (UTC)
-Received: from whitewolf.lyude.net.com (ovpn-120-214.rdu2.redhat.com [10.10.120.214])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4E7BB2142F20;
-        Thu, 12 Jul 2018 17:11:08 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org
-Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/nouveau: Hook up dp_mst_info in debugfs
-Date:   Thu, 12 Jul 2018 13:10:47 -0400
-Message-Id: <20180712171056.26359-3-lyude@redhat.com>
-In-Reply-To: <20180712171056.26359-1-lyude@redhat.com>
-References: <20180712171056.26359-1-lyude@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 17:11:08 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 17:11:08 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
+        Thu, 12 Jul 2018 13:22:27 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:37361 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727092AbeGLRW0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 13:22:26 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fdf8J-0006ah-VZ; Thu, 12 Jul 2018 11:12:00 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fdf8J-0000zl-3r; Thu, 12 Jul 2018 11:11:59 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        majiang <ma.jiang@zte.com.cn>
+References: <877em2jxyr.fsf_-_@xmission.com>
+        <20180711024459.10654-11-ebiederm@xmission.com>
+        <20180711141456.GA6636@redhat.com> <87h8l5g3qi.fsf@xmission.com>
+        <20180712134220.GA15075@redhat.com>
+Date:   Thu, 12 Jul 2018 12:11:53 -0500
+In-Reply-To: <20180712134220.GA15075@redhat.com> (Oleg Nesterov's message of
+        "Thu, 12 Jul 2018 15:42:20 +0200")
+Message-ID: <87601k5qg6.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
+X-XM-SPF: eid=1fdf8J-0000zl-3r;;;mid=<87601k5qg6.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18SWne0Jm3Irz6jwHDkRo6fABgbFE6uHO8=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [RFC][PATCH 11/11] signal: Ignore all but multi-process signals that come in during fork.
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is very useful for checking what nouveau thinks the current state
-of each MST topology looks like.
+Oleg Nesterov <oleg@redhat.com> writes:
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/nouveau/nouveau_debugfs.c | 47 ++++++++++++++++++++++-
- 1 file changed, 45 insertions(+), 2 deletions(-)
+> On 07/11, Eric W. Biederman wrote:
+>>
+>> Oleg Nesterov <oleg@redhat.com> writes:
+>>
+>> >> -	recalc_sigpending();
+>> >> -	if (signal_pending(current)) {
+>> >> +	if (read_seqcount_retry(&current->signal->multi_process_seq, seq) ||
+>> >> +	    fatal_signal_pending(current)) {
+>> >>  		retval = -ERESTARTNOINTR;
+>> >>  		goto bad_fork_cancel_cgroup;
+>> >
+>> > So once again, I think this is not right, see the discussion on
+>> > bugzilla.
+>>
+>> I am trying to dig through and understand your concerns.  I am having
+>> difficulty understanding your concerns.
+>>
+>> Do the previous patches look good to you?
+>
+> Yes, yes, personally I like 1-10 after a quick glance. I'll try to read this
+> series carefully later, but I don't think I will find something really
+> wrong.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_debugfs.c b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-index 963a4dba8213..82f10beed0df 100644
---- a/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_debugfs.c
-@@ -32,13 +32,19 @@
- #include <nvif/class.h>
- #include <nvif/if0001.h>
- #include "nouveau_debugfs.h"
-+#include "nouveau_encoder.h"
- #include "nouveau_drv.h"
-+#include "dispnv50/disp.h"
-+
-+static inline struct nouveau_drm *node_to_nouveau(struct drm_info_node *node)
-+{
-+	return nouveau_drm(node->minor->dev);
-+}
- 
- static int
- nouveau_debugfs_vbios_image(struct seq_file *m, void *data)
- {
--	struct drm_info_node *node = (struct drm_info_node *) m->private;
--	struct nouveau_drm *drm = nouveau_drm(node->minor->dev);
-+	struct nouveau_drm *drm = node_to_nouveau(m->private);
- 	int i;
- 
- 	for (i = 0; i < drm->vbios.length; i++)
-@@ -46,6 +52,42 @@ nouveau_debugfs_vbios_image(struct seq_file *m, void *data)
- 	return 0;
- }
- 
-+static int
-+nouveau_debugfs_dp_mst_info(struct seq_file *m, void *unused)
-+{
-+	struct nouveau_drm *drm = node_to_nouveau(m->private);
-+	struct drm_device *dev = drm->dev;
-+	struct drm_encoder *encoder;
-+	struct nv50_mstm *mstm;
-+	int ret;
-+
-+	ret = pm_runtime_get_sync(dev->dev);
-+	if (ret < 0 && ret != -EACCES)
-+		return ret;
-+
-+	ret = drm_modeset_lock_single_interruptible(&dev->mode_config.connection_mutex);
-+	if (ret)
-+		goto out;
-+
-+	drm_for_each_encoder(encoder, dev) {
-+		if (encoder->encoder_type != DRM_MODE_ENCODER_TMDS)
-+			continue;
-+
-+		mstm = nouveau_encoder(encoder)->dp.mstm;
-+		if (!mstm)
-+			continue;
-+
-+		seq_printf(m, "MST encoder source %s\n", encoder->name);
-+		drm_dp_mst_dump_topology(m, &mstm->mgr);
-+	}
-+
-+	drm_modeset_unlock(&dev->mode_config.connection_mutex);
-+out:
-+	pm_runtime_mark_last_busy(dev->dev);
-+	pm_runtime_put_autosuspend(dev->dev);
-+	return ret;
-+}
-+
- static int
- nouveau_debugfs_pstate_get(struct seq_file *m, void *data)
- {
-@@ -182,6 +224,7 @@ static const struct file_operations nouveau_pstate_fops = {
- 
- static struct drm_info_list nouveau_debugfs_list[] = {
- 	{ "vbios.rom", nouveau_debugfs_vbios_image, 0, NULL },
-+	{ "dp_mst_info", nouveau_debugfs_dp_mst_info, 0, NULL },
- };
- #define NOUVEAU_DEBUGFS_ENTRIES ARRAY_SIZE(nouveau_debugfs_list)
- 
--- 
-2.17.1
+Good.  Then I will consider those acked by both you and Linus.
 
+Oleg do you mind if I add:
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+
+To those patches?
+
+>> If I understand you correctly.  Your concern is that since we added the:
+>>
+>> 	recalc_sigpending();
+>>         if (signal_pending(current))
+>>         	return -ERESTARTNOINTR;
+>>
+>> Other (non-signal) code such as the freezer has come to depend upon that
+>> test.  Changing the test in the proposed way will allow the new child to
+>> escape the freezer, as it is not guaranteed the new child will be
+>> frozen.
+>
+> Yes.
+
+
+>> It seems reasonable to look at other things that set TIF_SIGPENDING and
+>> see if any of them are broken by the fork changes.
+>
+> Again, please look at do_signal_stop(). If it was the source of signal_pending(),
+> copy_process() should fail. Or we should update the new thread to participate in
+> group-stop, but then we need to set TIF_SIGPENDING, copy the relevant part of
+> current->jobctl, and increment ->group_stop_count at least.
+
+Hmm.  That is an interesting twist.
+
+In general for do_signal_stop is fine as long as we have the
+recalc_sigpending at the start of fork.
+
+But yes.  What happens when it isn't a fork but it is a clone.  Signals
+that affect the entire thread group (STOP CLONE) are very interesting
+from this perspective.
+
+Same issue as with fork, but different scope.
+
+Eric
