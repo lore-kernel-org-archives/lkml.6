@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 554D0C468C7
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 04:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55875C468CA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 04:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 189E62147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 04:49:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 189E62147A
+	by mail.kernel.org (Postfix) with ESMTP id 1A1B220C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 04:49:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A1B220C0C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbeGLE44 (ORCPT
+        id S1726535AbeGLE4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 00:56:56 -0400
+        Thu, 12 Jul 2018 00:56:54 -0400
 Received: from gate.crashing.org ([63.228.1.57]:36090 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726611AbeGLE44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 00:56:56 -0400
+        id S1725814AbeGLE4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 00:56:54 -0400
 Received: from pasglop.ozlabs.ibm.com (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6C3mnNU020207;
-        Wed, 11 Jul 2018 22:48:57 -0500
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6C3mnNX020207;
+        Wed, 11 Jul 2018 22:49:06 -0500
 From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
 To:     linux-aspeed@lists.ozlabs.org
 Cc:     devicetree@vger.kernel.org,
@@ -33,9 +33,9 @@ Cc:     devicetree@vger.kernel.org,
         Joel Stanley <joel@jms.id.au>, Rob Herring <robh@kernel.org>,
         linux-kernel@vger.kernel.org,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Subject: [PATCH v3 2/5] devres: Add devm_of_iomap()
-Date:   Thu, 12 Jul 2018 13:48:44 +1000
-Message-Id: <20180712034847.12878-3-benh@kernel.crashing.org>
+Subject: [PATCH v3 5/5] arm: dts: OpenPower Palmetto system can use coprocessor for FSI
+Date:   Thu, 12 Jul 2018 13:48:47 +1000
+Message-Id: <20180712034847.12878-6-benh@kernel.crashing.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180712034847.12878-1-benh@kernel.crashing.org>
 References: <20180712034847.12878-1-benh@kernel.crashing.org>
@@ -44,94 +44,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are still quite a few cases where a device might want
-to get to a different node of the device-tree, obtain the
-resources and map them.
-
-We have of_iomap() and of_io_request_and_map() but they both
-have shortcomings, such as not returning the size of the
-resource found (which can be useful) and not being "managed".
-
-This adds a devm_of_iomap() that provides all of these and
-should probably replace uses of the above in most drivers.
+This switches away from userspace bitbanging to kernel FSI
+using the coprocessor.
 
 Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Reviewed-by: Joel Stanley <joel@jms.id.au>
 ---
- include/linux/device.h |  4 ++++
- lib/devres.c           | 36 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 40 insertions(+)
+ arch/arm/boot/dts/aspeed-bmc-opp-palmetto.dts | 28 ++++++++++++++-----
+ 1 file changed, 21 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 477956990f5e..96249d790374 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -688,6 +688,10 @@ extern void devm_free_pages(struct device *dev, unsigned long addr);
- 
- void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res);
- 
-+void __iomem *devm_of_iomap(struct device *dev,
-+			    struct device_node *node, int index,
-+			    resource_size_t *size);
+diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-palmetto.dts b/arch/arm/boot/dts/aspeed-bmc-opp-palmetto.dts
+index e6095f51ecf5..feec377c04d4 100644
+--- a/arch/arm/boot/dts/aspeed-bmc-opp-palmetto.dts
++++ b/arch/arm/boot/dts/aspeed-bmc-opp-palmetto.dts
+@@ -31,6 +31,11 @@
+ 			no-map;
+ 			reg = <0x98000000 0x01000000>; /* 16MB */
+ 		};
 +
- /* allows to add/remove a custom action to devres stack */
- int devm_add_action(struct device *dev, void (*action)(void *), void *data);
- void devm_remove_action(struct device *dev, void (*action)(void *), void *data);
-diff --git a/lib/devres.c b/lib/devres.c
-index 5bec1120b392..faccf1a037d0 100644
---- a/lib/devres.c
-+++ b/lib/devres.c
-@@ -4,6 +4,7 @@
- #include <linux/io.h>
- #include <linux/gfp.h>
- #include <linux/export.h>
-+#include <linux/of_address.h>
++		coldfire_memory: codefire_memory@5ee00000 {
++			reg = <0x5ee00000 0x00200000>;
++			no-map;
++		};
+ 	};
  
- enum devm_ioremap_type {
- 	DEVM_IOREMAP = 0,
-@@ -162,6 +163,41 @@ void __iomem *devm_ioremap_resource(struct device *dev, struct resource *res)
- }
- EXPORT_SYMBOL(devm_ioremap_resource);
+ 	leds {
+@@ -49,6 +54,22 @@
+ 		};
+ 	};
  
-+/*
-+ * devm_of_iomap - Requests a resource and maps the memory mapped IO
-+ *		   for a given device_node managed by a given device
-+ *
-+ * Checks that a resource is a valid memory region, requests the memory
-+ * region and ioremaps it. All operations are managed and will be undone
-+ * on driver detach of the device.
-+ *
-+ * This is to be used when a device requests/maps resources described
-+ * by other device tree nodes (children or otherwise).
-+ *
-+ * @dev:	The device "managing" the resource
-+ * @node:       The device-tree node where the resource resides
-+ * @index:	index of the MMIO range in the "reg" property
-+ * @size:	Returns the size of the resource (pass NULL if not needed)
-+ * Returns a pointer to the requested and mapped memory or an ERR_PTR() encoded
-+ * error code on failure. Usage example:
-+ *
-+ *	base = devm_of_iomap(&pdev->dev, node, 0, NULL);
-+ *	if (IS_ERR(base))
-+ *		return PTR_ERR(base);
-+ */
-+void __iomem *devm_of_iomap(struct device *dev, struct device_node *node, int index,
-+			    resource_size_t *size)
-+{
-+	struct resource res;
++	fsi: gpio-fsi {
++		compatible = "aspeed,ast2400-cf-fsi-master", "fsi-master";
++		#address-cells = <2>;
++		#size-cells = <0>;
 +
-+	if (of_address_to_resource(node, index, &res))
-+		return IOMEM_ERR_PTR(-EINVAL);
-+	if (size)
-+		*size = resource_size(&res);
-+	return devm_ioremap_resource(dev, &res);
-+}
-+EXPORT_SYMBOL(devm_of_iomap);
++		memory-region = <&coldfire_memory>;
++		aspeed,sram = <&sram>;
++		aspeed,cvic = <&cvic>;
 +
- #ifdef CONFIG_HAS_IOPORT_MAP
- /*
-  * Generic iomap devres
++		clock-gpios = <&gpio ASPEED_GPIO(A, 4) GPIO_ACTIVE_HIGH>;
++		data-gpios = <&gpio ASPEED_GPIO(A, 5) GPIO_ACTIVE_HIGH>;
++		mux-gpios = <&gpio ASPEED_GPIO(A, 6) GPIO_ACTIVE_HIGH>;
++		enable-gpios = <&gpio ASPEED_GPIO(D, 0) GPIO_ACTIVE_HIGH>;
++		trans-gpios = <&gpio ASPEED_GPIO(H, 6) GPIO_ACTIVE_HIGH>;
++	};
++
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 
+@@ -323,13 +344,6 @@
+ 		line-name = "SYS_PWROK_BMC";
+ 	};
+ 
+-	pin_gpio_h6 {
+-		gpio-hog;
+-		gpios = <ASPEED_GPIO(H, 6) GPIO_ACTIVE_HIGH>;
+-		output-high;
+-		line-name = "SCM1_FSI0_DATA_EN";
+-	};
+-
+ 	pin_gpio_h7 {
+ 		gpio-hog;
+ 		gpios = <ASPEED_GPIO(H, 7) GPIO_ACTIVE_HIGH>;
 -- 
 2.17.1
 
