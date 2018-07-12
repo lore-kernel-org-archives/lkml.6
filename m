@@ -2,155 +2,93 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A582CECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F152AECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60B042087C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:28:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60B042087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 91BB22087C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:29:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BW/ooRkr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91BB22087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733105AbeGLVkT (ORCPT
+        id S1733111AbeGLVk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 17:40:19 -0400
-Received: from sauhun.de ([88.99.104.3]:59974 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733084AbeGLVkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 17:40:19 -0400
-Received: from localhost (p5486CFAA.dip0.t-ipconnect.de [84.134.207.170])
-        by pokefinder.org (Postfix) with ESMTPSA id 73672574612;
-        Thu, 12 Jul 2018 23:28:51 +0200 (CEST)
-Date:   Thu, 12 Jul 2018 23:28:51 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Peter Rosin <peda@axentia.se>
-Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Haavard Skinnemoen <hskinnemoen@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Antti Palosaari <crope@iki.fi>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] Split i2c_lock_adapter into i2c_lock_root and
- i2c_lock_segment
-Message-ID: <20180712212850.axi3rrfwivqymqh5@ninjato>
-References: <20180620051803.12206-1-peda@axentia.se>
- <20180626023735.xj7aqhvw7ta2lq6s@ninjato>
+        Thu, 12 Jul 2018 17:40:58 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:36014 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbeGLVk6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 17:40:58 -0400
+Received: by mail-it0-f67.google.com with SMTP id j185-v6so8828786ite.1;
+        Thu, 12 Jul 2018 14:29:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Hp3wP5HIeaAb1MyubyDQbhJGZ8EMn/j9IYJKly3yMhM=;
+        b=BW/ooRkrcSJ68tbGYBNaUcbRRway2zwDtodrEnY3DyK0G56l0wMvbRMWfoQF/8ac2T
+         uo05Bni8pYUcqyiaAd6qd8f6skVBSKRxf4cZYEmQpHUXqb5p1RZ57+VbV1l+0h9rtOB3
+         2JyQpJPOKcfQfWOSDPVZA5N7NhW1/C9JUCtgA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Hp3wP5HIeaAb1MyubyDQbhJGZ8EMn/j9IYJKly3yMhM=;
+        b=lnMJrasBpO//KXjaPL9XiEedfkBhLNbPgvsf+JlKH2WsIZAlU/GFNsPNWNWMqElHxb
+         E0pZPn5Veda8tTm3JaHu9FhkUBaESft2muzcAmXNfIZ9vgTKRbQUXsEVWXxM/s7i1fuF
+         J2sJ/TQf3IpIoy4kIc6NvidHpCEIuEA9dC31P0junUfeS/fWVNR++zI1UisrTo2m5ydj
+         mgCP3Gy3CLaptW3Va7j7hYq6PY+XYiDmtJx0WP0EOEZejVyKlAz9nBIMHG9ODFbrHQEA
+         /JMlOM+q1ztYd6G3dpinhXUeJ6azxWZOEUybtW51jHwZmpZreo7yaak4q/vsmp87X/ry
+         dhhQ==
+X-Gm-Message-State: AOUpUlHElbHHlCXknfAGWBaGErR4P2qzI1IG09W/+dZDSyW8Bt6DeTcI
+        O8X8MrlHZaCcNwICw+xCUGqJakEv937KrnOjIJU=
+X-Google-Smtp-Source: AAOMgpcT8qg5ZITuKT80Ij3JxXL2+0v8/IIRVDyptcPnLYhz+U4iI3v/i90igQ+dhZq0qk26LbgDtidUhoQPx1aPQUs=
+X-Received: by 2002:a02:702:: with SMTP id f2-v6mr3151427jaf.70.1531430973467;
+ Thu, 12 Jul 2018 14:29:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="x66e45tdlj2g4bta"
-Content-Disposition: inline
-In-Reply-To: <20180626023735.xj7aqhvw7ta2lq6s@ninjato>
-User-Agent: NeoMutt/20170113 (1.7.2)
+References: <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
+ <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+ <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
+ <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk>
+ <7002.1531407244@warthog.procyon.org.uk> <338BC3C4-F3E7-48F0-A82E-2C7295B6640E@amacapital.net>
+ <17749.1531429218@warthog.procyon.org.uk>
+In-Reply-To: <17749.1531429218@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 12 Jul 2018 14:29:22 -0700
+Message-ID: <CA+55aFzaTQJp6aHG_9+W2ShxeZncq7k9G3FkVFjFm7W=ECUiMw@mail.gmail.com>
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
+ superblock creation [ver #9]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jul 12, 2018 at 2:00 PM David Howells <dhowells@redhat.com> wrote:
+>
+>
+> for example:
+>
+>         fd = fsopen("ext4", FSOPEN_CLOEXEC);
+>         fsconfig(fd, fsconfig_blockdev, "dev.data", "/dev/sda1", ...);
+>         fsconfig(fd, fsconfig_blockdev, "dev.journal", "/dev/sda2", ...);
 
---x66e45tdlj2g4bta
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, that looks good to me. It also avoids the parsing issue with using
+an interface like "write()", where the expectation is that you can
+append things etc.
 
-On Tue, Jun 26, 2018 at 11:37:36AM +0900, Wolfram Sang wrote:
-> On Wed, Jun 20, 2018 at 07:17:53AM +0200, Peter Rosin wrote:
-> > Hi!
-> >=20
-> > With the introduction of mux-locked I2C muxes, the concept of
-> > locking only a segment of the I2C adapter tree was added. At the
-> > time, I did not want to cause a lot of extra churn, so left most
-> > users of i2c_lock_adapter alone and apparently didn't think enough
-> > about it; they simply continued to lock the whole adapter tree.
-> > However, i2c_lock_adapter is in fact wrong for almost every caller
-> > (there is naturally an exception) that is itself not a driver for
-> > a root adapter. What normal drivers generally want is to only
-> > lock the segment of the adapter tree that their device sits on.
-> >=20
-> > In fact, if a device sits behind a mux-locked I2C mux, and its
-> > driver calls i2c_lock_adapter followed by an unlocked I2C transfer,
-> > things will deadlock (since even a mux-locked I2C adapter will lock
-> > its parent at some point). If the device is not sitting behind a
-> > mux-locked I2C mux (i.e. either directly on the root adapter or
-> > behind a (chain of) parent-locked I2C muxes) the root/segment
-> > distinction is of no consequence; the root adapter is locked either
-> > way.
-> >=20
-> > Mux-locked I2C muxes are probably not that common, and putting any
-> > of the affected devices behind one is probably even rarer, which
-> > is why we have not seen any deadlocks. At least not that I know
-> > of...
-> >=20
-> > Since silently changing the semantics of i2c_lock_adapter might
-> > be quite a surprise, especially for out-of-tree users, this series
-> > instead removes the function and forces all users to explicitly
-> > name I2C_LOCK_SEGMENT or I2C_LOCK_ROOT_ADAPTER in a call to
-> > i2c_lock_bus, as suggested by Wolfram. Yes, users will be a teensy
-> > bit more wordy, but open-coding I2C locking from random drivers
-> > should be avoided, so it's perhaps a good thing if it doesn't look
-> > too neat?
-> >=20
-> > I suggest that Wolfram takes this series through the I2C tree and
-> > creates an immutable branch for the other subsystems. The series
-> > is based on v4.18-r1.
->=20
-> Applied to a seperate branch named "i2c/precise-locking-names" which I
-> will merge into for-next, so it will get proper testing already. Once we
-> get the missing acks from media, MFD, and IIO maintainers, I will merge
-> it into for-4.19.
-
-Ping for media related acks.
-
-Thanks,
-
-   Wolfram
-
-
---x66e45tdlj2g4bta
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltHyA4ACgkQFA3kzBSg
-KbZ2HhAAjghhfIxl1PUVt0HWyAG9QvpZUyd/pnXG1rS1R5Ho2LBck9bTQygMLbt2
-EjLyMlpLpBTNLIG3eMmsLQY5IN5TisTG72jBrfFk6bj6M9pe1Cv9y9rRwQajKdwH
-3Zkppsx+FXVoopq2HqOp9RgGR3srJV+kHzpkPg23tgXoKhMmpSb7qxxk8YnCaMcF
-3cU31OC1BF7GrhmhI5RpJyDOc1td7gfJjLWjfUjtj+r9gQPGvvPeB4WwV/agtFRh
-TDARV2YNPuvt1+1CkQ4tuowOrBeGB8qtlP9jm1+HcyxejVBbVzEXS27R7Afw6t2d
-ZY7Wkq4U+KB0JCgZ+VS5O6Q3g8F0nUUqADBNxDnkH9Vbj/Eshn9+oMQUWjn6D7my
-XkEHJnUlwSf4+lN5NvUUwOjNrbG7HhogY0+6fDWgg01eibnfK017SWQm0VHgmb1X
-EJIL1CMjBdlLJfCATrndShKwJIQRZmLsARZFmj+94Run5gD7bdZzMeO3CCp8Faly
-NZSNeOjGEqFKFX04vmh9zNiJDo/fxMzOPd8cB71pFidYXn6DtkoZyyD74XcZExtz
-5aAEBjKKUnZ79hO66oTLwQhiaORP4obH5M+yrlzOacTLIYhww+G7QGJdMdndX6zO
-A2j8aCnxOVxr9Di8Pk+DXJOiskU/TyKCQeT49UdT94cSpc4r6IM=
-=4bN7
------END PGP SIGNATURE-----
-
---x66e45tdlj2g4bta--
+              Linus
