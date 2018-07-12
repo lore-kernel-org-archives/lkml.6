@@ -6,127 +6,227 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F1AC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 09:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61680C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 09:19:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3F820BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 09:18:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0898B20BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 09:19:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="k3vP+WzO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E3F820BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="FCQZfLxg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0898B20BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732394AbeGLJ1J (ORCPT
+        id S1732448AbeGLJ2O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 05:27:09 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:33726 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732250AbeGLJ1J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 05:27:09 -0400
-Received: by mail-oi0-f66.google.com with SMTP id l10-v6so7822777oii.0
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 02:18:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8d2pqce4j5baClWobMhZqT/ca+p1xkkv1IBlL5vI47Y=;
-        b=k3vP+WzOWe+NgH0Khiut0oGQxQ0KVt68UfkkJUSUfelAHwxZRsPYWMiBrvZI1QHlXe
-         7nAMLJJ9gjLQjylU+Yr/hfwsRrUORgNpXsiO87F85jSme1T4c46hgGWTS5qf4bjEqCIY
-         smwGGnD5VzBzq2XV7WD48a0PCM+7F/aF/DXmY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8d2pqce4j5baClWobMhZqT/ca+p1xkkv1IBlL5vI47Y=;
-        b=o27nOPQPLaoZvU89jxnOu0TdnzuixLqVMg1o6sCEPRuGdUTw6VcunLylRunA37+x0p
-         Z+0gmmMzM5cArzYnm6duyeGixDHPEsrlcsmty1mgWx/TWKaRR+XmhGyX3HrMlD6qMgXg
-         iyAVi4PmUrG23OjCLTEDGRIy+HXtPyow794/73JKilaBdfYUj8Ll9KDQGmXvHSQHkl0g
-         oEMFCjdQwf60ZyqrdLD8b3FRyL1SDi9CF83B5fZVIKWcPv5F4PBWc/BN7yRNkm3czr/n
-         pU3zt9hnV62vesUmK4ZI5uA/OHZW2E053fQfKkSWUkK21AQHfotvOX6KVGuR73zFIMXL
-         Nc1w==
-X-Gm-Message-State: AOUpUlFyZzQo7HSD8D14364m+MxFTknKbfMNOsYG8B0wQNbet2NjFqCo
-        XtJpWC+vd+oKPLKOkxg/sEfDYU/XZ63ixHw/FiCG4w==
-X-Google-Smtp-Source: AAOMgpciVbIsgGAkUSEHKgQTu44ZVcc62GJ7VPznBQYa9ilWAPNDDInkHtxFfMCSrkUdsVYZG42LE9Cq1Ewn954Ipeg=
-X-Received: by 2002:aca:f401:: with SMTP id s1-v6mr1494193oih.269.1531387106583;
- Thu, 12 Jul 2018 02:18:26 -0700 (PDT)
+        Thu, 12 Jul 2018 05:28:14 -0400
+Received: from mail-eopbgr730082.outbound.protection.outlook.com ([40.107.73.82]:5056
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726620AbeGLJ2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 05:28:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7tkFDv289be54eduCGB5nT5c+pORvJsI95aPX82s92Y=;
+ b=FCQZfLxgzPm78fe4TmkLCBG6Drjg77kW7V043oe3beOpuKQY1qCp5XUVuzvzaFNyIiOJVYjH6OWQ7Q4vjd0KIt97JyIQlNuVj6MW0wqf5Vf+niOvDp9Nc3zL9ln8Buzc9ghtziBoM5tMrc7mv9JmgMYVIeofI4zSWucIrQ9UHDk=
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
+ BYAPR07MB5064.namprd07.prod.outlook.com (52.135.239.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.930.20; Thu, 12 Jul 2018 09:19:27 +0000
+Received: from BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::39ca:4bef:3be8:fdf5]) by BYAPR07MB4709.namprd07.prod.outlook.com
+ ([fe80::39ca:4bef:3be8:fdf5%3]) with mapi id 15.20.0952.017; Thu, 12 Jul 2018
+ 09:19:26 +0000
+From:   Pawel Laszczak <pawell@cadence.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Lukasz Tyrala <ltyrala@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>
+Subject: RE: [PATCH 01/31] usb: usbssp: Defined register maps and other useful
+ structures.
+Thread-Topic: [PATCH 01/31] usb: usbssp: Defined register maps and other
+ useful structures.
+Thread-Index: AQHUGaPfTNlOUM3Lak6bmBJPFm47N6SLGpMAgAAxcnA=
+Date:   Thu, 12 Jul 2018 09:19:26 +0000
+Message-ID: <BYAPR07MB4709DAABE0A1395152375395DD590@BYAPR07MB4709.namprd07.prod.outlook.com>
+References: <1531374448-26532-1-git-send-email-pawell@cadence.com>
+ <1531374448-26532-2-git-send-email-pawell@cadence.com>
+ <20180712060944.GA20905@kroah.com>
+In-Reply-To: <20180712060944.GA20905@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYjM3ZWMzYTctODViNC0xMWU4LTg3MTAtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGIzN2VjM2E4LTg1YjQtMTFlOC04NzEwLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iNzY0NiIgdD0iMTMxNzU4NjA3Nzk3MTQ5NzczIiBoPSI5UXB0OGZIMmVtYnpwQ2IyZllLaUd5Ykw5d2M9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
+x-dg-rorf: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=pawell@cadence.com; 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB5064;7:GAqzc/d0G+vpyyXk5jQgFpEAP0V5azmUIaeIdJXVsKmt1qRZtG6wVnc1F6Nw7nGSdkdUPLGuT9+6iunnXuNwmLqAOxMHyG75JZttNppR6IIknvjLOGeQIIPbWR6eQmtf7ZKiv5fV67TiNvIha+gXcn13wzv6L8MkXPhch2YhMXTZCZK8ZwgrMsX8nCIa1fhnjvoo9H5QsGJ9EBOQjw0OkrRrpDNcgbp5vWzPWz6J/qUOk1yxBCzvQjQA/y8RmId0;20:W+iW8SwSIMYAX98YMnhDFccEpyjstj++pJEFX/7xYCc1Tij+qLcVTRiZCY+QuW8LADogOvGGEO/KPwUT3O+4IabV8z0fUHPXO6rqWxR1vEYMDU5/S6z7l5UNCQNjlOqmaaeoUgoKCRhEhrN+/5vngceUzs5oCc69au9rgmaGlqnL699rbM/wYbbqzBpwB2AdYR9xZ0Tfb3PPQmOMmOPKZhJbv8KWcfuIWsh+bmFiDWBrTNADABnlPGV/uujhPKsX
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(396003)(39860400002)(366004)(36092001)(189003)(199004)(51444003)(7696005)(7736002)(478600001)(5660300001)(446003)(76176011)(11346002)(9686003)(106356001)(305945005)(105586002)(55016002)(26005)(107886003)(8676002)(8936002)(81156014)(6916009)(81166006)(6506007)(102836004)(6436002)(5250100002)(229853002)(33656002)(14444005)(6246003)(186003)(14454004)(256004)(53936002)(316002)(25786009)(66066001)(3846002)(6116002)(68736007)(2900100001)(99286004)(2906002)(54906003)(74316002)(476003)(4326008)(486006)(86362001)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5064;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-correlation-id: 97c13e2e-3bcf-4277-616e-08d5e7d8909b
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB5064;
+x-ms-traffictypediagnostic: BYAPR07MB5064:
+x-microsoft-antispam-prvs: <BYAPR07MB5064CC0E06FDD2E4763DAC17DD590@BYAPR07MB5064.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72806322054110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231311)(944501410)(52105095)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BYAPR07MB5064;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB5064;
+x-forefront-prvs: 0731AA2DE6
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: pGQz1zcuY3PF+MvOwjYeUrmPqkznnTIkrDPriRHuHIn/5LB1WNTzTk+Cq0tsS+4/u70EXawWmHvMt7HnML8xvykQ7eytmBH16mH2jBuqu0OfFkAuLmacmBxipRaNcPBvjqJTEpSBlUjgGmJcwyqigygsZm/7STG+JDampwswyv0Dj+lFoi6B0jGzTWfLIoEyz671RjwIoFrgDDzY+meb3m8/1m5/Q3q6W488SKYtPMJGnUSSz+FME4i/8L1xza+CjI2vyS/CVsaKM04cgc4U5Gkak2Km/zNP5VTmdDx0hjumgJ7uCcN090hRfuxtroZzva1TEyQFLR7y3IHDHGvgQ9ZHomo24l6r+PU4nDH834I=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Received: by 2002:a9d:192d:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 02:18:26
- -0700 (PDT)
-In-Reply-To: <20180712085501.GA25313@kroah.com>
-References: <20180712080623.21203-1-benjamin.gaignard@st.com> <20180712085501.GA25313@kroah.com>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Thu, 12 Jul 2018 11:18:26 +0200
-Message-ID: <CA+M3ks5nj2gfc+ePYg1y2w3P0cW861YkRqpuHh49n+noktPVUQ@mail.gmail.com>
-Subject: Re: [PATCH] base: core: Remove WARN_ON from link dependencies check
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Mark Brown <broonie@kernel.org>,
-        pascal paillet <p.paillet@st.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97c13e2e-3bcf-4277-616e-08d5e7d8909b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2018 09:19:26.6376
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5064
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-12 10:55 GMT+02:00 Greg KH <gregkh@linuxfoundation.org>:
-> On Thu, Jul 12, 2018 at 10:06:23AM +0200, Benjamin Gaignard wrote:
->> In some cases the link between between customer and supplier
->> already exist. Do not warn about already existing dependencies
->> because device_link_add() take care of this case.
->
-> Why would a link already exist that is asked to be created again?  What
-> code path causes this?
-
-It could happen that the link exist because a device use it parent as supplier.
-That case has been describe by Marek in this thread (I forgot to add
-it in the commit message, sorry):
-https://lkml.org/lkml/2018/7/9/356
-
->
->>
->> Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
->> ---
->>  drivers/base/core.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/base/core.c b/drivers/base/core.c
->> index df3e1a44707a..fcdc17f0f349 100644
->> --- a/drivers/base/core.c
->> +++ b/drivers/base/core.c
->> @@ -105,7 +105,7 @@ static int device_is_dependent(struct device *dev, void *target)
->>       struct device_link *link;
->>       int ret;
->>
->> -     if (WARN_ON(dev == target))
->> +     if (dev == target)
->>               return 1;
->>
->>       ret = device_for_each_child(dev, target, device_is_dependent);
->> @@ -113,7 +113,7 @@ static int device_is_dependent(struct device *dev, void *target)
->>               return ret;
->>
->>       list_for_each_entry(link, &dev->links.consumers, s_node) {
->> -             if (WARN_ON(link->consumer == target))
->> +             if (link->consumer == target)
->>                       return 1;
->
-> Both of these WARN_ON are for valid code?  That feels really odd to me,
-> I need more explanation here please.
-
-The documentation of the function is clear about return values:
-"Check if @target depends on @dev or any device dependent on it (its
-child or ts consumer etc).  Return 1 if that is the case or 0
-otherwise."
-so, for me, not need to warn user about something that is expected.
-
-Benjamin
->
-> thanks,
->
-> greg k-h
+PiA+IEl0IGlzIGEgZmlyc3QgcGF0Y2ggaW50cm9kdWNlIENhZGVuY2UgVVNCU1NQIERSRCBjb250
+cm9sbGVyLiBUaGlzDQo+ID4gcGF0Y2ggaXMgcmVsYXRlZCB0byBkZXZpY2Ugc2lkZS4NCj4gPg0K
+PiA+IERldmljZSBwYXJ0IG9mIFVTQlNTUCBjb250cm9sbGVyIGJhc2Ugb24gc3RhbmRhcmQgWEhD
+SSBzcGVjaWZpY2F0aW9uLg0KPiA+DQo+ID4gRmlsZSBkZWZpbmUgbWFjcm9zIHVzZWQgYnllIFVT
+QlNTUCBjb250cm9sbGVyLCBzdHJ1Y3R1cmVzIGhvbGRpbmcgYW5kDQo+ID4gZ3JvdXBpbmcgcmVn
+aXN0ZXJzLCBhbmQgb3RoZXIgb2JqZWN0IHRoYXQgYXJlIHVzZWQgYnkgZGV2aWNlDQo+ID4gY29u
+dHJvbGxlci4NCj4gPg0KPiA+IFJlZ2lzdGVyIG1hcCBpbmNsdWRlOg0KPiA+IHN0cnVjdCB1c2Jz
+c3BfY2FwX3JlZ3MgLSBDYXBhYmlsaXRpZXMgUmVnaXN0ZXIgU2V0Lg0KPiA+IHN0cnVjdCB1c2Jz
+c3Bfb3BfcmVncyAtIE9wZXJhdGlvbmFsIFJlZ2lzdGVyIFNldC4NCj4gPiBzdHJ1Y3QgdXNic3Nw
+X2ludHJfcmVnIC0gSW50ZXJydXB0ZXIgUmVnaXN0ZXIgU2V0Lg0KPiA+IHN0cnVjdCB1c2Jzc3Bf
+cnVuX3JlZ3MgLSBSdW50aW1lIFJlZ2lzdGVyIFNldC4NCj4gPg0KPiA+IE9iamVjdCB1c2VkIGJ5
+IGhhcmR3YXJlIGluY2x1ZGVzOg0KPiA+IHN0cnVjdCB1c2Jzc3BfZG9vcmJlbGxfYXJyYXkgLSBh
+cnJheSB1c2VkIGZvciBhcm1pbmcgY29tbWFuZCBhbmQNCj4gPiAJdHJhbnNmZXIgcmluZ3MuDQo+
+ID4gc3RydWN0IHVzYnNzcF9zbG90X2N0eCAtIGhvbGRzIGluZm9ybWF0aW9uIHJlbGF0ZWQgdG8g
+U2xvdCBDb250ZXh0Lg0KPiA+IHN0cnVjdCB1c2Jzc3BfZXBfY3R4IC0gaG9sZCBpbmZvcm1hdGlv
+biByZWxhdGVkIHRvIEVuZHBvaW50IENvbnRleHQuDQo+ID4gc3RydWN0IHVzYnNzcF9pbnB1dF9j
+b250cm9sX2N0eCAtIGhvbGQgaW5mb3JtYXRpb24gYWJvdXQNCj4gPiAJSW5wdXQgQ29udHJvbCBD
+b250ZXh0Lg0KPiA+IHN0cnVjdCB1c2Jzc3BfbGlua190cmIgLSBkZWZpbmUgbGluayBUUkIuDQo+
+ID4gc3RydWN0IHVzYnNzcF90cmFuc2Zlcl9ldmVudCAtIGRlZmluZSBUcmFuc2ZlciBFdmVudCBU
+UkIuDQo+ID4gc3RydWN0IHVzYnNzcF9ldmVudF9jbWQgLSBkZWZpbmUgQ29tbWFuZCBFdmVudCBU
+UkIuDQo+ID4gc3RydWN0IHVzYnNzcF9nZW5lcmljX3RyYiAtIGdlbmVyaWMgdXNlZCBUUkIgb2Jq
+ZWN0Lg0KPiA+DQo+ID4gUGF0Y2ggYWxzbyBhZGQgc29tZSBoaWdoIGxldmVsIG9iamVjdCB0aGF0
+IGhvbGQgIGluZm9ybWF0aW9uIHVzZWQgaW4NCj4gPiBkcml2ZXIuDQo+ID4NCj4gPiBTb21lIG9m
+IHRoZW0gYXJlOg0KPiA+IHN0cnVjdCB1c2Jzc3BfdWRjIC0gbWFpbiBvYmplY3QgaW4gZHJpdmVy
+IHdoaWNoIGlzIHBhc3NlZA0KPiA+IAlhcyBwYXJhbWV0ZXIgdG8gbW9zdCBvZiBmdW5jdGlvbiBp
+biBkcml2ZXIgYW5kIGFsbG93cw0KPiA+IAl0byBhY2Nlc3MgdG8gYWxsIG90aGVyIHN0cnVjdHVy
+ZXMuDQo+ID4gc3RydWN0IHVzYnNzcF9lcCAtIGhvbGRzIGluZm9ybWF0aW9uIHJlbGF0ZWQgdG8g
+VVNCIGVuZHBvaW50Lg0KPiA+IHN0cnVjdCB1c2Jzc3BfY29tbWFuZCAtIGRlc2NyaWJlIGNvbW1h
+bmQgc2VuZCB0byBFdmVudCBSaW5nLg0KPiA+IHN0cnVjdCB1c2Jzc3BfZGV2aWNlIC0gaG9sZHMg
+aW5mb3JtYXRpb24gcmVsYXRlIGRvIFVTQiBkZXZpY2UuDQo+ID4gc3RydWN0IHVzYnNzcF9zZWdt
+ZW50IC0gaG9sZHMgaW5mb3JtYXRpb24gZGVzY3JpYmluZyBzZWdtZW50cyBvZiBUUkJzLg0KPiA+
+IHN0cnVjdCB1c2Jzc3BfdGQgIC0gaG9sZCBpbmZvcm1hdGlvbiBhYm91dCBUcmFuc2ZlciBEZXNj
+cmlwdG9yLg0KPiA+IHN0cnVjdCB1c2Jzc3BfcmluZyAtIGhvbGRzIGluZm9ybWF0aW9uIHJlbGF0
+ZWQgdG8gVHJhbnNmZXIsIEV2ZW50IG9yDQo+ID4gCUNvbW1hbmQgcmluZy4NCj4gPiBzdHJ1Y3Qg
+dXNic3NwX3JlcXVlc3QgLSBob2xkcyBpbmZvcm1hdGlvbiByZWxhdGVkIHRvIHNpbmdsZSB0cmFu
+c2Zlci4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBhd2VsIExhc3pjemFrIDxwYXdlbGxAY2Fk
+ZW5jZS5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvdXNiL3VzYnNzcC9nYWRnZXQuaCB8IDE1
+NjcNCj4gPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUg
+Y2hhbmdlZCwgMTU2NyBpbnNlcnRpb25zKCspDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2
+ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmgNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3Vz
+Yi91c2Jzc3AvZ2FkZ2V0LmggYi9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmgNCj4gPiBuZXcg
+ZmlsZSBtb2RlIDEwMDY0NCBpbmRleCAwMDAwMDAwMDAwMDAuLjQ4NmU4NjgwNjhiNw0KPiA+IC0t
+LSAvZGV2L251bGwNCj4gPiArKysgYi9kcml2ZXJzL3VzYi91c2Jzc3AvZ2FkZ2V0LmgNCj4gPiBA
+QCAtMCwwICsxLDE1NjcgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0y
+LjANCj4gPiArLyoNCj4gPiArICogVVNCU1NQIGRldmljZSBjb250cm9sbGVyIGRyaXZlcg0KPiA+
+ICsgKg0KPiA+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTggQ2FkZW5jZS4NCj4gPiArICoNCj4gPiAr
+ICogQXV0aG9yOiBQYXdlbCBMYXN6Y3phaw0KPiA+ICsgKg0KPiA+ICsgKiBBIGxvdCBvZiBjb2Rl
+IGJhc2VkIG9uIExpbnV4IFhIQ0kgZHJpdmVyLg0KPiA+ICsgKiBPcmlnaW46IENvcHlyaWdodCAo
+QykgMjAwOCBJbnRlbCBDb3JwLg0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNpZm5kZWYgX19MSU5V
+WF9VU0JTU1BfR0FER0VUX0gNCj4gPiArI2RlZmluZSBfX0xJTlVYX1VTQlNTUF9HQURHRVRfSA0K
+PiA+ICsNCj4gPiArI2luY2x1ZGUgPGxpbnV4L3VzYi5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgv
+dGltZXIuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L2tlcm5lbC5oPg0KPiA+ICsjaW5jbHVkZSA8
+bGludXgvaW8tNjQtbm9uYXRvbWljLWxvLWhpLmg+ICNpbmNsdWRlDQo+ID4gKzxsaW51eC91c2Iv
+Z2FkZ2V0Lmg+DQo+IA0KPiBXaHkgZG9lcyB0aGlzIC5oIGZpbGUgbmVlZCBhbGwgb2YgdGhlc2U/
+ICBPbmx5IGluY2x1ZGUgd2hhdCBpcyBuZWVkZWQgdG8gYnVpbGQNCj4gdGhpcyBzcGVjaWZpYyBm
+aWxlIGlmIGF0IGFsbCBwb3NzaWJsZS4NCg0KSSB0aGluayB0aGF0IGFsbCBhcmUgbmVjZXNzYXJ5
+IHRvIGJ1aWxkIHRoaXMgb3RoZXIgZmlsZSB0aGF0IGluY2x1ZGUgdGhpcyBvbmUuICANCkkgd2ls
+bCBjaGVjayBpdC4gDQoNCg0KPiA+ICsNCj4gPiArLyogTWF4IG51bWJlciBzbG90cyAtIG9ubHkg
+MSBpcyBhbGxvd2VkICovICNkZWZpbmUgREVWX01BWF9TTE9UUyAxDQo+ID4gKw0KPiA+ICsvKiBt
+YXggcG9ydHMgZm9yIFVTQlNTUC1EZXYgLSBvbmx5IDIgYXJlIGFsbG93ZWQqLw0KPiA+ICsjZGVm
+aW5lIE1BWF9VU0JTU1BfUE9SVFMJMg0KPiA+ICsNCj4gPiArI2RlZmluZSBVU0JTU1BfRVAwX1NF
+VFVQX1NJWkUgNTEyDQo+ID4gKw0KPiA+ICsvKjE2IGZvciBpbiBhbmQgMTYgZm9yIG91dCAqLw0K
+PiANCj4gIi8qIDE2Li4uIg0KPiANCj4gPiArI2RlZmluZSBVU0JTU1BfRU5EUE9JTlRTX05VTQkz
+Mg0KPiANCj4gT2RkIGFsaWdubWVudCBvZiBhbGwgb2YgdGhlc2UgZGVmaW5lcywgZWl0aGVyIG1h
+a2UgdGhlbSBsaW5lIHVwIG9yIG5vdCwgd2hhdA0KPiB5b3UgaGF2ZSBpcyBhbiBvZGQgbWl4IG9m
+IHRhYnMgYW5kIHNwYWNlcy4NCj4gDQo+ID4gKy8qKg0KPiA+ICsgKiBzdHJ1Y3QgdXNic3NwX2Nh
+cF9yZWdzIC0gVVNCU1NQIFJlZ2lzdGVycy4NCj4gPiArICogQGhjX2NhcGJhc2U6CQlsZW5ndGgg
+b2YgdGhlIGNhcGFiaWxpdGllcyByZWdpc3RlciBhbmQgREMNCj4gdmVyc2lvbiBudW1iZXINCj4g
+PiArICogQGhjc19wYXJhbXMxOglIQ1NQQVJBTVMxIC0gU3RydWN0dXJhbCBQYXJhbWV0ZXJzIDEN
+Cj4gPiArICogQGhjc19wYXJhbXMyOglIQ1NQQVJBTVMyIC0gU3RydWN0dXJhbCBQYXJhbWV0ZXJz
+IDINCj4gPiArICogQGhjc19wYXJhbXMzOglIQ1NQQVJBTVMzIC0gU3RydWN0dXJhbCBQYXJhbWV0
+ZXJzIDMNCj4gPiArICogQGhjY19wYXJhbXM6CQlIQ0NQQVJBTVMgLSBDYXBhYmlsaXR5IFBhcmFt
+ZXRlcnMNCj4gPiArICogQGRiX29mZjoJCURCT0ZGIC0gRG9vcmJlbGwgYXJyYXkgb2Zmc2V0DQo+
+ID4gKyAqIEBydW5fcmVnc19vZmY6CVJUU09GRiAtIFJ1bnRpbWUgcmVnaXN0ZXIgc3BhY2Ugb2Zm
+c2V0DQo+ID4gKyAqIEBoY2NfcGFyYW1zMjoJSENDUEFSQU1TMiBDYXBhYmlsaXR5IFBhcmFtZXRl
+cnMgMiwNCj4gPiArICovDQo+ID4gK3N0cnVjdCB1c2Jzc3BfY2FwX3JlZ3Mgew0KPiA+ICsJX19s
+ZTMyCWhjX2NhcGJhc2U7DQo+ID4gKwlfX2xlMzIJaGNzX3BhcmFtczE7DQo+ID4gKwlfX2xlMzIJ
+aGNzX3BhcmFtczI7DQo+ID4gKwlfX2xlMzIJaGNzX3BhcmFtczM7DQo+ID4gKwlfX2xlMzIJaGNj
+X3BhcmFtczsNCj4gPiArCV9fbGUzMglkYl9vZmY7DQo+ID4gKwlfX2xlMzIJcnVuX3JlZ3Nfb2Zm
+Ow0KPiA+ICsJX19sZTMyCWhjY19wYXJhbXMyOw0KPiA+ICsJLyogUmVzZXJ2ZWQgdXAgdG8gKENB
+UExFTkdUSCAtIDB4MUMpICovIH07DQo+IA0KPiBEb2VzIHRoaXMsIGFuZCB5b3VyIG90aGVyIHN0
+cnVjdHVyZXMgdGhhdCBtYXAgdG8gaGFyZHdhcmUsIG5lZWQgdG8gYmUNCj4gX19wYWNrZWQ/DQo+
+IA0KPiA+ICsNCj4gPiArLyogUmVzZXQgREMgLSByZXNldHMgaW50ZXJuYWwgREMgc3RhdGUgbWFj
+aGluZSBhbmQgYWxsIHJlZ2lzdGVycw0KPiA+ICsoZXhjZXB0DQo+ID4gKyAqIFBDSSBjb25maWcg
+cmVncykuDQo+ID4gKyAqLw0KPiA+ICsjZGVmaW5lIENNRF9SRVNFVAkoMSA8PCAxKQ0KPiANCj4g
+Rm9yIGFsbCBvZiB0aGVzZSwgdHJ5IHVzaW5nIHRoZSBCSVQoKSBtYWNyby4NCj4gDQo+ID4gKy8q
+IGJpdCAyIHJlc2VydmVkIGFuZCB6ZXJvZWQgKi8NCj4gPiArLyogdHJ1ZTogcG9ydCBoYXMgYW4g
+b3Zlci1jdXJyZW50IGNvbmRpdGlvbiAqLw0KPiA+ICsjZGVmaW5lIFBPUlRfT0MJCQkoMSA8PCAz
+KQ0KPiA+ICsvKiB0cnVlOiBwb3J0IHJlc2V0IHNpZ25hbGluZyBhc3NlcnRlZCAqLw0KPiA+ICsj
+ZGVmaW5lIFBPUlRfUkVTRVQJCSgxIDw8IDQpDQo+ID4gKy8qIFBvcnQgTGluayBTdGF0ZSAtIGJp
+dHMgNTo4DQo+ID4gKyAqIEEgcmVhZCBnaXZlcyB0aGUgY3VycmVudCBsaW5rIFBNIHN0YXRlIG9m
+IHRoZSBwb3J0LA0KPiA+ICsgKiBhIHdyaXRlIHdpdGggTGluayBTdGF0ZSBXcml0ZSBTdHJvYmUg
+c2V0IHNldHMgdGhlIGxpbmsgc3RhdGUuDQo+ID4gKyAqLw0KPiA+ICsNCj4gPiArI2RlZmluZSBQ
+T1JUX1BMU19NQVNLCSgweGYgPDwgNSkNCj4gPiArI2RlZmluZSBYREVWX1UwCQkoMHgwIDw8IDUp
+DQo+IA0KPiBZb3VyIHNwYWNpbmcganVzdCBkb2Vzbid0IG1ha2UgbXVjaCBzZW5zZSBhdCBhbGwu
+ICBJcyB0aGF0IGNvbW1lbnQgZm9yIHRoZQ0KPiBsaW5lIGFib3ZlLCBvciBiZWxvdz8gIFBsZWFz
+ZSBtYWtlIHRoZXNlIGVhc2llciB0byB1bmRlcnN0YW5kLCBhcyBpdCBpcywgdGhleQ0KPiBhcmUg
+bm90Lg0KPiANCj4gPiArI2RlZmluZSBYREVWX1JFU1VNRQkJKDB4ZiA8PCA1KQ0KPiA+ICsNCj4g
+PiArLyogdHJ1ZTogcG9ydCBoYXMgcG93ZXIgKHNlZSBIQ0NfUFBDKSAqLw0KPiA+ICsjZGVmaW5l
+IFBPUlRfUE9XRVIJKDEgPDwgOSkNCj4gDQo+IE9rLCB0aGF0IHdvcmtzLCBidXQgd2h5IG5vIGJs
+YW5rIGxpbmUgYWZ0ZXIgdGhpcz8gIFlvdSBkaXZlIHJpZ2h0IGludG8gYW5vdGhlcg0KPiBjb21t
+ZW50Og0KPiANCj4gPiArLyogYml0cyAxMDoxMyBpbmRpY2F0ZSBkZXZpY2Ugc3BlZWQ6DQo+ID4g
+KyAqIDAgLSB1bmRlZmluZWQgc3BlZWQgLSBwb3J0IGhhc24ndCBiZSBpbml0aWFsaXplZCBieSBh
+IHJlc2V0IHlldA0KPiA+ICsgKiAxIC0gZnVsbCBzcGVlZA0KPiA+ICsgKiAyIC0gbG93IHNwZWVk
+DQo+ID4gKyAqIDMgLSBoaWdoIHNwZWVkDQo+ID4gKyAqIDQgLSBzdXBlciBzcGVlZA0KPiA+ICsg
+KiA1LTE1IHJlc2VydmVkDQo+ID4gKyAqLw0KPiA+ICsjZGVmaW5lIERFVl9TUEVFRF9NQVNLCQko
+MHhmIDw8IDEwKQ0KPiANCj4gQW5kIHRyeSB1c2luZyB0aGUgbXVsdGktbGluZSBmb3JtYXQgdGhh
+dCB0aGUgcmVzdCBvZiB0aGUga2VybmVsIHVzZXMgKG5vdA0KPiBuZXR3b3JraW5nKSwgaXQncyBl
+YXNpZXIgdG8gcmVhZC4NCj4gDQo+ID4gKy8qIFBvcnQgTGluayBTdGF0ZSBXcml0ZSBTdHJvYmUg
+LSBzZXQgdGhpcyB3aGVuIGNoYW5naW5nIGxpbmsgc3RhdGUgKi8NCj4gPiArI2RlZmluZSBQT1JU
+X0xJTktfU1RST0JFCSgxIDw8IDE2KQ0KPiANCj4gQWdhaW4gd2l0aCB0aGUgQklUKCkgdXNhZ2Uu
+DQo+IA0KPiBKdXN0IGNsZWFuIHVwIHRoZSB3aGl0ZXNwYWNlIHRvIG1ha2UgdGhpcyB3aG9sZSBm
+aWxlIGVhc2llciB0byByZWFkIHBsZWFzZSwNCj4gSSdtIHN0b3BwaW5nIHJldmlld2luZyBoZXJl
+Lg0KPiANCj4gT29wcywgbm8sIG9uZSBmaW5hbCB0aGluZzoNCj4gDQo+ID4gKyNkZWZpbmUgdXNi
+c3NwX2RiZyh1c2Jzc3BfZGF0YSwgZm10LCBhcmdzLi4uKSBcDQo+ID4gKwlkZXZfZGJnKHVzYnNz
+cF9kYXRhLT5kZXYsIGZtdCwgIyMgYXJncykNCj4gPiArDQo+ID4gKyNkZWZpbmUgdXNic3NwX2Vy
+cih1c2Jzc3BfZGF0YSwgZm10LCBhcmdzLi4uKSBcDQo+ID4gKwlkZXZfZXJyKHVzYnNzcF9kYXRh
+LT5kZXYsIGZtdCwgIyMgYXJncykNCj4gPiArDQo+ID4gKyNkZWZpbmUgdXNic3NwX3dhcm4odXNi
+c3NwX2RhdGEsIGZtdCwgYXJncy4uLikgXA0KPiA+ICsJZGV2X3dhcm4odXNic3NwX2RhdGEtPmRl
+diwgZm10LCAjIyBhcmdzKQ0KPiA+ICsNCj4gPiArI2RlZmluZSB1c2Jzc3Bfd2Fybl9yYXRlbGlt
+aXRlZCh1c2Jzc3BfZGF0YSwgZm10LCBhcmdzLi4uKSBcDQo+ID4gKwlkZXZfd2Fybl9yYXRlbGlt
+aXRlZCh1c2Jzc3BfZGF0YS0+ZGV2LCBmbXQsICMjIGFyZ3MpDQo+ID4gKw0KPiA+ICsjZGVmaW5l
+IHVzYnNzcF9pbmZvKHVzYnNzcF9kYXRhLCBmbXQsIGFyZ3MuLi4pIFwNCj4gPiArCWRldl9pbmZv
+KHVzYnNzcF9kYXRhLT5kZXYsIGZtdCwgIyMgYXJncykNCj4gDQo+IEFsbCBkcml2ZXJzIGZlZWwg
+dGhleSBhcmUgdW5pcXVlIGFuZCBzcGVjaWFsIGxpa2UgYWxsIG90aGVyIGRyaXZlcnMsIHNvIHRo
+ZXkgd2FudA0KPiB0byBjcmVhdGUgdGhlaXIgb3duIGRlYnVnZ2luZyBtYWNyb3MuICBEb24ndCBk
+byBpdCwganVzdCB1c2UNCj4gZGV2X2RiZygpIGFuZCBmcmllbmRzIGRpcmVjdGx5IHBsZWFzZS4g
+IEl0IHNhdmVzIG5vIG9uZSBhbnkgdGltZSB0byB1c2Ugc3BlY2lhbA0KPiBvbmVzIGFzIHRoZW4g
+ZXZlcnlvbmUgaGFzIHRvIGdvIGFuZCBsb29rIHVwIGV4YWN0bHkgd2hhdCB0aGV5IGRvLg0KPiAN
+Cj4gRG9uJ3QgYmUgc3BlY2lhbCwgeW91IGFyZSBsaWtlIGFsbCBvZiB0aGUgcmVzdCBvZiB1cyA6
+KQ0KDQpJIHRob3VnaHQgaXQgd2FzIGEgc3RhbmRhcmQsIEkgc2F3IHRoaXMgYXBwcm9hY2ggaW4g
+bWFueSBkaXZlcnMg8J+Yig0KSSB3aWxsIGNoYW5nZSBpdC4gDQogDQoNCiB0aGFua3MsDQogUGF3
+ZWwgTGFzemN6YWsNCg==
