@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E06A6C476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E42C476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 976B120842
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2DE120842
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DJ9QPMOy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DJ9QPMOy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976B120842
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ieTYlVkP";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QF5vMUIL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2DE120842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732508AbeGLRUc (ORCPT
+        id S1732532AbeGLRUg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:20:32 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56592 "EHLO
+        Thu, 12 Jul 2018 13:20:36 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56676 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbeGLRUb (ORCPT
+        with ESMTP id S1727084AbeGLRUf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:20:31 -0400
+        Thu, 12 Jul 2018 13:20:35 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B7A2360251; Thu, 12 Jul 2018 17:10:04 +0000 (UTC)
+        id 8C0856074D; Thu, 12 Jul 2018 17:10:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531415404;
-        bh=iovhbuGlCY1tz3IuJVoEBR0Z90erYn2zppG5LomJDgc=;
+        s=default; t=1531415408;
+        bh=3e8LZF6Dm7VaMn9ei+/aaX42QedmFWYdz7psShlQpxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DJ9QPMOyrqLboDo9gheVSpLQGZZM6NrToEL1CsZAHMVKn1E2FfxlbTi8T/ceVJBSh
-         4/jB9UqHjmJ9v+aL0xHPJYaJUpaHBzaoaaIbNK/Lp5E4/x7BR/3+r/DqLuNpa4LLa9
-         yUntTx7ZJTE4fIVebQeK10v1RmW3ktoPH6nB2cvA=
+        b=ieTYlVkPRKHHBizUBxq8Xm/VMPZlHXSPuun/FWVCDbdOnPGS3fwhcwYUdun15/jUq
+         npnaiXz2y9boNDTxoJz98YaHrDd5OAGtZusI0IqdZAcXcejU0psbSAiN/20rVwZKzO
+         R6LnoL0rL6f7yw2IEt1HmwlWrp19m9C/kTOO60qU=
 Received: from anischal-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: anischal@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 95AED6063F;
-        Thu, 12 Jul 2018 17:10:00 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 85F996074D;
+        Thu, 12 Jul 2018 17:10:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531415404;
-        bh=iovhbuGlCY1tz3IuJVoEBR0Z90erYn2zppG5LomJDgc=;
+        s=default; t=1531415407;
+        bh=3e8LZF6Dm7VaMn9ei+/aaX42QedmFWYdz7psShlQpxw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DJ9QPMOyrqLboDo9gheVSpLQGZZM6NrToEL1CsZAHMVKn1E2FfxlbTi8T/ceVJBSh
-         4/jB9UqHjmJ9v+aL0xHPJYaJUpaHBzaoaaIbNK/Lp5E4/x7BR/3+r/DqLuNpa4LLa9
-         yUntTx7ZJTE4fIVebQeK10v1RmW3ktoPH6nB2cvA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95AED6063F
+        b=QF5vMUIL+6JWWMuUn5AbcW5e8XUl7cm7HkWceUog7LXZ2igtzY6Y3T7tYBO9JmVvT
+         YpO5VADpTgqaJVuexF3U4sIiYjc1ENaYF4g9AF6vEzUSF/zoNILKzq8UH1ul1CseF2
+         Z3zRV4QLi2wYOCaGj5hLj+I30KHfyo7/zdTKfSXY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 85F996074D
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
 From:   Amit Nischal <anischal@codeaurora.org>
@@ -62,9 +62,9 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v2 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
-Date:   Thu, 12 Jul 2018 22:39:39 +0530
-Message-Id: <1531415381-16885-3-git-send-email-anischal@codeaurora.org>
+Subject: [PATCH v2 3/4] dt-bindings: clock: Introduce QCOM Graphics clock bindings
+Date:   Thu, 12 Jul 2018 22:39:40 +0530
+Message-Id: <1531415381-16885-4-git-send-email-anischal@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1531415381-16885-1-git-send-email-anischal@codeaurora.org>
 References: <1531415381-16885-1-git-send-email-anischal@codeaurora.org>
@@ -73,145 +73,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-To turn on the gpu_gx_gdsc, there is a hardware requirement to
-turn on the root clock (GFX3D RCG) first which would be the turn
-on signal for the gdsc along with the SW_COLLAPSE. As per the
-current implementation of clk_rcg2_shared_ops, it clears the
-root_enable bit in the enable() clock op. But due to the above
-said requirement for GFX3D shared RCG, root_enable bit would be
-already set by gdsc driver and clk_rcg2_shared_enable()should
-not clear the root unless the disable is called.
-
-Add support for the same by reusing the existing clk_rcg2_shared_ops
-and deriving "clk_rcg2_gfx3d_ops" clk_ops for GFX3D clock to take
-care of the root set/clear requirement.
+Add device tree bindings for graphics clock controller for
+Qualcomm Technology Inc's SDM845 SoCs.
 
 Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 ---
- drivers/clk/qcom/clk-rcg.h  |  1 +
- drivers/clk/qcom/clk-rcg2.c | 87 +++++++++++++++++++++++++++++++++++++++++++--
- 2 files changed, 86 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/clock/qcom,gpucc.txt       | 18 ++++++++++
+ include/dt-bindings/clock/qcom,gpucc-sdm845.h      | 38 ++++++++++++++++++++++
+ 2 files changed, 56 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sdm845.h
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index b209a2f..c8c9558 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -160,5 +160,6 @@ struct clk_rcg2 {
- extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
- extern const struct clk_ops clk_rcg2_shared_ops;
-+extern const struct clk_ops clk_rcg2_gfx3d_ops;
-
- #endif
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 52208d4..667edd9 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -866,7 +866,7 @@ static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
- 	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
- }
-
--static int clk_rcg2_shared_enable(struct clk_hw *hw)
-+static int __clk_rcg2_shared_enable(struct clk_hw *hw)
- {
- 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
- 	int ret;
-@@ -879,7 +879,14 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
- 	if (ret)
- 		return ret;
-
--	ret = update_config(rcg);
-+	return update_config(rcg);
-+}
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+new file mode 100644
+index 0000000..93752db
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+@@ -0,0 +1,18 @@
++Qualcomm Graphics Clock & Reset Controller Binding
++--------------------------------------------------
 +
-+static int clk_rcg2_shared_enable(struct clk_hw *hw)
-+{
-+	int ret;
++Required properties :
++- compatible : shall contain "qcom,sdm845-gpucc".
++- reg : shall contain base register location and length.
++- #clock-cells : from common clock binding, shall contain 1.
++- #reset-cells : from common reset binding, shall contain 1.
++- #power-domain-cells : from generic power domain binding, shall contain 1.
 +
-+	ret = __clk_rcg2_shared_enable(hw);
- 	if (ret)
- 		return ret;
-
-@@ -929,3 +936,79 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
- 	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
++Example:
++	gpucc: clock-controller@5090000 {
++		compatible = "qcom,sdm845-gpucc";
++		reg = <0x5090000 0x9000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,gpucc-sdm845.h b/include/dt-bindings/clock/qcom,gpucc-sdm845.h
+new file mode 100644
+index 0000000..b9cbce5
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,gpucc-sdm845.h
+@@ -0,0 +1,38 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
 +
-+static int clk_rcg2_gfx3d_enable(struct clk_hw *hw)
-+{
-+	return __clk_rcg2_shared_enable(hw);
-+}
++#ifndef _DT_BINDINGS_CLK_SDM_GPU_CC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_GPU_CC_SDM845_H
 +
-+static int clk_rcg2_gfx3d_determine_rate(struct clk_hw *hw,
-+					struct clk_rate_request *req)
-+{
-+	struct clk_rate_request parent_req = { };
-+	struct clk_hw *p;
-+	unsigned long rate = req->rate;
-+	int ret;
++/* GPU_CC clock registers */
++#define GPU_CC_CRC_AHB_CLK			0
++#define GPU_CC_CX_APB_CLK			1
++#define GPU_CC_CX_GFX3D_CLK			2
++#define GPU_CC_CX_GFX3D_SLV_CLK			3
++#define GPU_CC_CX_GMU_CLK			4
++#define GPU_CC_CX_SNOC_DVM_CLK			5
++#define GPU_CC_CXO_CLK				6
++#define GPU_CC_GMU_CLK_SRC			7
++#define GPU_CC_GX_GMU_CLK			8
++#define GPU_CC_GX_GFX3D_CLK_SRC			9
++#define GPU_CC_GX_GFX3D_CLK			10
++#define GPU_CC_PLL0				11
++#define GPU_CC_PLL0_OUT_EVEN			12
++#define GPU_CC_PLL1				13
 +
-+	if (rate < req->min_rate || rate > req->max_rate)
-+		return -EINVAL;
++/* GPU_CC Resets */
++#define GPUCC_GPU_CC_ACD_BCR			0
++#define GPUCC_GPU_CC_CX_BCR			1
++#define GPUCC_GPU_CC_GFX3D_AON_BCR		2
++#define GPUCC_GPU_CC_GMU_BCR			3
++#define GPUCC_GPU_CC_GX_BCR			4
++#define GPUCC_GPU_CC_SPDM_BCR			5
++#define GPUCC_GPU_CC_XO_BCR			6
 +
-+	/* Get fixed parent - GPU_CC_PLL0_OUT_EVEN */
-+	p = clk_hw_get_parent_by_index(hw, 1);
++/* GPU_CC GDSCRs */
++#define GPU_CX_GDSC				0
++#define GPU_GX_GDSC				1
 +
-+	/* Parent should always run at twice of the requested rate */
-+	parent_req.rate = 2 * req->rate;
-+
-+	ret = __clk_determine_rate(req->best_parent_hw, &parent_req);
-+	if (ret)
-+		return ret;
-+
-+	req->best_parent_hw = p;
-+	req->best_parent_rate = parent_req.rate;
-+	req->rate = parent_req.rate / 2;
-+
-+	return 0;
-+}
-+
-+static int clk_rcg2_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long parent_rate)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+	int ret;
-+	u32 cfg;
-+
-+	/* Configure fixed SRC and DIV */
-+	cfg = rcg->parent_map[1].cfg << CFG_SRC_SEL_SHIFT;
-+	cfg |= 0x3 << CFG_SRC_DIV_SHIFT;
-+
-+	ret = regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * In case clock is disabled, update the SRC and DIV only
-+	 * and return without configuration update.
-+	 */
-+	if (!__clk_is_enabled(hw->clk))
-+		return 0;
-+
-+	return update_config(rcg);
-+}
-+
-+static int clk_rcg2_gfx3d_set_rate_and_parent(struct clk_hw *hw,
-+		unsigned long rate, unsigned long parent_rate, u8 index)
-+{
-+	return clk_rcg2_gfx3d_set_rate(hw, rate, parent_rate);
-+}
-+
-+const struct clk_ops clk_rcg2_gfx3d_ops = {
-+	.enable = clk_rcg2_gfx3d_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_get_parent,
-+	.set_parent = clk_rcg2_set_parent,
-+	.recalc_rate = clk_rcg2_recalc_rate,
-+	.determine_rate = clk_rcg2_gfx3d_determine_rate,
-+	.set_rate = clk_rcg2_gfx3d_set_rate,
-+	.set_rate_and_parent = clk_rcg2_gfx3d_set_rate_and_parent,
-+};
-+EXPORT_SYMBOL_GPL(clk_rcg2_gfx3d_ops);
++#endif
 --
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
