@@ -2,128 +2,74 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FC03C476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:59:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79436C476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:00:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BD82124D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:59:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2Z4Ymjh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BD82124D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3721921471
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:00:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3721921471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732363AbeGLQJ6 (ORCPT
+        id S1732405AbeGLQKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:09:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48036 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726725AbeGLQJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:09:58 -0400
-Received: from localhost (unknown [146.7.4.79])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B04F320652;
-        Thu, 12 Jul 2018 15:59:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531411187;
-        bh=0VAnb2QzGQGbzIp5741flZtAPgW8xyEHk9cO0cCynFc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m2Z4YmjhitcoezRwk4j8m1nmF5t4zRtSAvWGKNnK3dW5KIgn+rWGukrRyAaY7nF0+
-         6WwUWgQQhIPQTVPF6X215lMP1amtPcQyVyyzPbf3w2mThxC6fkmPuyoOl5Nmgte5wT
-         Wu/dsjwP68utj3+yYHv3K7/PYtgxRlW5rAG5QUmc=
-Date:   Thu, 12 Jul 2018 10:59:46 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/2] PCI: Document patch submission hints
-Message-ID: <20180712155946.GB28466@bhelgaas-glaptop.roam.corp.google.com>
-References: <153030390808.57832.2200774416664543563.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <153030405971.57832.12860154795039493576.stgit@bhelgaas-glaptop.roam.corp.google.com>
- <20180701174508.GB28249@wunner.de>
+        Thu, 12 Jul 2018 12:10:44 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39428 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbeGLQKo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 12:10:44 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fde19-0000p8-26; Thu, 12 Jul 2018 16:00:31 +0000
+Date:   Thu, 12 Jul 2018 17:00:31 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
+ superblock creation [ver #9]
+Message-ID: <20180712160030.GV30522@ZenIV.linux.org.uk>
+References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+ <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
+ <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net>
+ <22370.1531293761@warthog.procyon.org.uk>
+ <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
+ <7002.1531407244@warthog.procyon.org.uk>
+ <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180701174508.GB28249@wunner.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jul 01, 2018 at 07:45:08PM +0200, Lukas Wunner wrote:
-> On Fri, Jun 29, 2018 at 03:27:39PM -0500, Bjorn Helgaas wrote:
-> > --- /dev/null
-> > +++ b/Documentation/PCI/submitting-patches.txt
-> > @@ -0,0 +1,153 @@
-> > +Start with Documentation/process/submitting-patches.rst for general
-> > +guidance.
-> > +
-> > +These are things I look at when reviewing patches.
+On Thu, Jul 12, 2018 at 08:50:46AM -0700, Linus Torvalds wrote:
+
+> But "write()" simply is *NOT* a good "command" interface. If you want
+> to send a command, use an ioctl or a system call.
 > 
-> For an uninitiated reader who doesn't know that you're currently the
-> (sole) maintainer of the PCI subsystem, this sentence might look odd.
-> Who's "I"?  What happens if you onboard co-maintainers, are you
-> going to change this to "we"?
+> Because it's not just about credentials. It's not just about fooling a
+> suid app into writing an error message to a descriptor you wrote. It's
+> also about things like "splice()", which can write to your target
+> using a kernel buffer, and thus trick you into doing a command while
+> we have the context set to kernel addresses.
 
-You're absolutely right.  That was appropriate for email (where I
-originally posted this) but certainly not for the tree.
+Wait a sec - that's only a problem if your command contains pointer-chasing
+et.al.  Which is why e.g. /dev/sg is fucked in head.  But for something that
+is plain text, what's the problem with splice/write/sendmsg/whatever?
 
-> > +  - Follow the existing convention  Run "git log --oneline <file>" and make
-> > +    your subject line match previous changes in format, capitalization, and
-> > +    sentence structure.  For example, native host bridge driver patch
-> > +    titles look like this:
-> > +
-> > +      PCI: vmd: Remove IRQ affinity so we can allocate more IRQs
-> > +      PCI: mediatek: Add MSI support for MT2712 and MT7622
-> > +      PCI: rockchip: Remove IRQ domain if probe fails
-> 
-> A quick "git log --oneline --no-merges drivers/pci" shows that the prefixes
-> in use aren't consistent at all:  Sometimes a slash is used to separate
-> "PCI" from the subpart touched by the patch, sometimes a colon, e.g.
-> "PCI/AER: " versus "PCI: shpchp: ".  Your own patches aren't consistent
-> in that respect.  Sometimes, only "PCI: " is given as prefix, even though
-> the commit only touches a subpart such as "sysfs", so could easily specify
-> more precisely what it's touching.
-> 
-> If you value consistency, it would be good to codify the preferred form
-> right here.
-
-I was trying to make the point that whenever we're doing *anything* in
-a shared project like Linux, it's better to look at existing practice
-and follow it than it is to slavishly follow rules.
-
-So I purposely didn't enumerate all the cases.  I think if you look at
-logs of individual files, they're pretty consistent.  I generally use
-"PCI/XXX" for things in the core (mostly capabilities like MSI, AER,
-DPC, etc) and "PCI: xxx:" for drivers (shpchp, pciehp, etc).  IIRC, I
-adopted this from previous practice.
-
-Of course there are things I don't apply that are different.  And
-Rafael does most of the PM stuff, so I try to follow *his* convention
-for that.
-
-> > +  - Always copy linux-pci@vger.kernel.org and linux-kernel@vger.kernel.org.
-> 
-> I'd drop linux-kernel here.  The volume on that list is already like
-> drinking from a firehose, I doubt it adds much value to cc it.
-
-It's useful as an archive and for people not subscribed to linux-pci
-who happen to see the occasional thing they want to respond to.
-Nobody expects to be able to follow everything on LKML.
-get_maintainer.pl reports LKML for everything, and I'm not trying to
-innovate by being different.
-
-But on reflection, I think the overall value of this writeup is
-minimal.  It's a lot of repetition of things already documented
-elsewhere and most of it boils down to "pay attention to existing
-practice and don't do things differently unless you're innovating and
-adding value."  That *should* be obvious, and if it's not, I doubt
-that adding one more thing to read is going to make it more obvious.
-
-Bjorn
+I'm not talking about this particular interface, but "write is bad for
+commands" as general policy looks missing the point.  If anything, it's
+pointer-chasing crap that should be banned everywhere.  Just look at SG_IO -
+it's a ioctl, and it's absolute garbage...
