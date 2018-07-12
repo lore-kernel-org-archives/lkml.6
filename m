@@ -2,142 +2,186 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,
+	SPF_PASS,T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD845C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CBFC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87D152147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:35:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87D152147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 5CDD7213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:36:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GVTteLv2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CDD7213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbeGLNov (ORCPT
+        id S1732355AbeGLNqK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 09:44:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726782AbeGLNov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 09:44:51 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 188BF213A2;
-        Thu, 12 Jul 2018 13:35:14 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 09:35:12 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH v9 4/7] tracepoint: Make rcuidle tracepoint callers use
- SRCU
-Message-ID: <20180712093512.1f612a24@gandalf.local.home>
-In-Reply-To: <20180712042825.GA154647@joelaf.mtv.corp.google.com>
-References: <20180628182149.226164-1-joel@joelfernandes.org>
-        <20180628182149.226164-5-joel@joelfernandes.org>
-        <20180711124954.GE2476@hirez.programming.kicks-ass.net>
-        <20180711090003.42596c2b@gandalf.local.home>
-        <20180711142744.GN3593@linux.vnet.ibm.com>
-        <20180711104618.05dc4b46@gandalf.local.home>
-        <20180711205249.GA32091@joelaf.mtv.corp.google.com>
-        <20180711232120.5dbfa1c7@vmware.local.home>
-        <20180712042825.GA154647@joelaf.mtv.corp.google.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 12 Jul 2018 09:46:10 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:36606 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727667AbeGLNqJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 09:46:09 -0400
+Received: by mail-ua0-f194.google.com with SMTP id y8-v6so18415250uan.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 06:36:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=2CT3LYQQzLqgEKWx5Y9tPVAoava6CJ+59DF0ZLzo8rs=;
+        b=GVTteLv2PhkroZrubuRajyYGamQhEzqrcf23+gyloNIrRvXIs9mK62Hmsrc8qZV/3j
+         wrdFxaX0PFKS2YTYU8x+q59OZNIda1IftyXV0QLCnRxc7tVu232CT789oBEIY5UksvR8
+         BhwLbfZwxBgykwJgdZ5eZoUv26ERE00a9s1LmM4u5CY/W6AHEZZZKOU8nSINz37T0Mp0
+         3JGTxk+RnK+HhnmG7gaqUTookYTthOf+RfUymOURRV470ZDl2DuOZojtzt4+8AvgZyRu
+         FUELk9mriKo1TmbKMR+wYOdVeRyZjmm3iEXLL0CwHUZN87lhebHTnV7IzA/DRyrIbJX+
+         IwNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=2CT3LYQQzLqgEKWx5Y9tPVAoava6CJ+59DF0ZLzo8rs=;
+        b=bnHQNkuijKStoW4tJjZCX3ISnr1b4VhLZ8AvQgWngCSCVrar7RWBY8YDpPbvJ9udgM
+         TxHf/tjmmVK+YV9PWteSQftdB0RvktxRuaGx+u/9oXY51GWPFf4Zf0AaqB2xeIchspuA
+         bFDyVw9A6dxqFQQMg3ut/9HQrZe13YyUip/2bpvlUY7SwFoGjII6gEmS2oKgLcDan9VO
+         whQrKfONXfYdjazcRNMFkEPLEkurws6Cbyk1+aEFaid0GmDN1VlszaJTAvEIqtffGQry
+         x0ZtiYY6/dlR9cagl0aG2SKeIZyFSHKI4jsPBTMQAX0rt0CHBqwwhton0dQLsjsgFf4S
+         Iu7g==
+X-Gm-Message-State: AOUpUlEIhihCZ8pE/4BLRoisSaiowe3rZIgMR3MIJq9PPkw1/1jIKBt0
+        VSVPeekZ7SsD4Zv5VNDdwqLH7Hr30UkLV1lPC92GfQ==
+X-Google-Smtp-Source: AAOMgpfMG6H57UetgJbVRKlpqgtwv8KQowIe4CTNZhQ2F1ES8P5wWUypob9ZqWSVRH6i3R8fDXt6Q0tPxRa17tezxhc=
+X-Received: by 2002:ab0:d94:: with SMTP id i20-v6mr1396068uak.67.1531402592849;
+ Thu, 12 Jul 2018 06:36:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <000000000000c541110570a978a4@google.com> <00000000000077da4b0570c9eccc@google.com>
+In-Reply-To: <00000000000077da4b0570c9eccc@google.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Thu, 12 Jul 2018 15:36:21 +0200
+Message-ID: <CAG_fn=XDS-HTNQnzLixYHVFmg0EZkiFvZosOCALjoCMeNxYwWQ@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in p9_client_rpc
+To:     syzbot+4de40388f584432bf004@syzkaller.appspotmail.com
+Cc:     David Miller <davem@davemloft.net>, ericvh@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>, lucho@ionkov.net,
+        Networking <netdev@vger.kernel.org>, rminnich@sandia.gov,
+        syzkaller-bugs@googlegroups.com,
+        v9fs-developer@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 11 Jul 2018 21:28:25 -0700
-Joel Fernandes <joel@joelfernandes.org> wrote:
+On Thu, Jul 12, 2018 at 11:24 AM syzbot
+<syzbot+4de40388f584432bf004@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following crash on:
+>
+> HEAD commit:    b64f7ec04e12 kmsan: implement kmsan_memmove_shadow() and =
+k..
+> git tree:       https://github.com/google/kmsan.git/master
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D12f6791c40000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D93d57043084ee=
+e38
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D4de40388f584432=
+bf004
+> compiler:       clang version 7.0.0 (trunk 334104)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=3D147c36dc400=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D14e8704440000=
+0
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit=
+:
+> Reported-by: syzbot+4de40388f584432bf004@syzkaller.appspotmail.com
+>
+> FS-Cache: O-key=3D[10] '34323934373135343132'
+> FS-Cache: N-cookie c=3D(____ptrval____) [p=3D(____ptrval____) fl=3D2 nc=
+=3D0 na=3D1]
+> FS-Cache: N-cookie d=3D(____ptrval____) n=3D(____ptrval____)
+> FS-Cache: N-key=3D[10] '34323934373135343132'
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KMSAN: uninit-value in p9_client_rpc+0x194c/0x1dc0 net/9p/client.c:8=
+18
+> CPU: 1 PID: 4620 Comm: syz-executor262 Not tainted 4.18.0-rc4+ #24
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x185/0x1e0 lib/dump_stack.c:113
+>   kmsan_report+0x195/0x2c0 mm/kmsan/kmsan.c:1092
+>   __msan_warning_32+0x7d/0xe0 mm/kmsan/kmsan_instr.c:640
+>   p9_client_rpc+0x194c/0x1dc0 net/9p/client.c:818
+>   p9_client_attach+0x35b/0xc30 net/9p/client.c:1147
+>   v9fs_session_init+0x24b9/0x2970 fs/9p/v9fs.c:449
+>   v9fs_mount+0x107/0x11b0 fs/9p/vfs_super.c:135
+>   mount_fs+0x29b/0x780 fs/super.c:1277
+>   vfs_kern_mount+0x222/0x990 fs/namespace.c:1037
+>   do_new_mount fs/namespace.c:2518 [inline]
+>   do_mount+0xd30/0x5310 fs/namespace.c:2848
+>   ksys_mount+0x32e/0x3d0 fs/namespace.c:3064
+>   __do_sys_mount fs/namespace.c:3078 [inline]
+>   __se_sys_mount fs/namespace.c:3075 [inline]
+>   __x64_sys_mount+0x157/0x1c0 fs/namespace.c:3075
+>   do_syscall_64+0x15b/0x230 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> RIP: 0033:0x445f79
+> Code: e8 cc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f=
+7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> ff 0f 83 3b 0d fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007ffb83104da8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+> RAX: ffffffffffffffda RBX: 00000000006dbc3c RCX: 0000000000445f79
+> RDX: 0000000020000180 RSI: 00000000200000c0 RDI: 0000000000000000
+> RBP: 00000000006dbc38 R08: 00000000200001c0 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000202 R12: 0030656c69662f2e
+> R13: 64663d736e617274 R14: 7974697275636573 R15: 0000000000000001
+>
+> Local variable description: ----ecode.i@p9_client_rpc
+> Variable was created at:
+>   p9_client_rpc+0x183/0x1dc0 net/9p/client.c:750
+>   p9_client_attach+0x35b/0xc30 net/9p/client.c:1147
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+FWIW the bug occurs here:
+https://elixir.bootlin.com/linux/latest/source/net/9p/client.c#L560
 
-> On Wed, Jul 11, 2018 at 11:21:20PM -0400, Steven Rostedt wrote:
-> > On Wed, 11 Jul 2018 13:52:49 -0700
-> > Joel Fernandes <joel@joelfernandes.org> wrote:
-> >   
-> > > > #define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
-> > > > 	extern struct tracepoint __tracepoint_##name;			\
-> > > > 	static inline void trace_##name(proto)				\
-> > > > 	{								\
-> > > > 		if (static_key_false(&__tracepoint_##name.key))		\
-> > > > 			__DO_TRACE(&__tracepoint_##name,		\
-> > > > 				TP_PROTO(data_proto),			\
-> > > > 				TP_ARGS(data_args),			\
-> > > > 				TP_CONDITION(cond), 0);			\
-> > > > 		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
-> > > > 			rcu_read_lock_sched_notrace();			\
-> > > > 			rcu_dereference_sched(__tracepoint_##name.funcs);\
-> > > > 			rcu_read_unlock_sched_notrace();		\
-> > > > 		}							\
-> > > > 	}
-> > > > 
-> > > > Because lockdep would only trigger warnings when the tracepoint was
-> > > > enabled and used in a place it shouldn't be, we added the above
-> > > > IS_ENABLED(CONFIG_LOCKDEP) part to test regardless if the the
-> > > > tracepoint was enabled or not. Because we do this, we don't need to
-> > > > have the test in the __DO_TRACE() code itself. That means we can clean
-> > > > up the code as per Peter's suggestion.    
-> > > 
-> > > Sounds good, I'm Ok with making this change.
-> > > 
-> > > Just to clarify, are you proposing to change the rcu_dereference_sched to
-> > > rcu_dereference_raw in both __DECLARE_TRACE and __DO_TRACE?  
-> > 
-> > No, just in __DO_TRACE(). The rcu_dereference_sched() above in
-> > __DECLARE_TRACE() in the if (IS_ENABLED(CONFIG_LOCKDEP) block is
-> > required to show the warnings if trace_##name() is used wrong, and is
-> > the reason we can use rcu_dereference_raw() in __DO_TRACE() in the
-> > first place ;-)
-> > 
-> > This brings up another point. We should probably add to
-> > __DECLARE_TRACE_RCU() this:
-> > 
-> > #ifndef MODULE
-> > #define __DECLARE_TRACE_RCU(name, proto, args, cond, data_proto, data_args) \
-> > 	static inline void trace_##name##_rcuidle(proto)		\
-> > 	{								\
-> > 		if (static_key_false(&__tracepoint_##name.key))		\
-> > 			__DO_TRACE(&__tracepoint_##name,		\
-> > 				TP_PROTO(data_proto),			\
-> > 				TP_ARGS(data_args),			\
-> > 				TP_CONDITION(cond), 1);			\
-> > +		if (IS_ENABLED(CONFIG_LOCKDEP) && (cond)) {		\
-> > +			int idx;					\
-> > +			idx = srcu_read_lock_notrace(&tracepoint_srcu); \
-> > +			srcu_dereference_notrace(__tracepoint_##name.funcs, \
-> > +						&tracepoint_srcu);	\
-> > +			srcu_read_unlock_notrace(&tracepoint_srcu, idx); \
-> > +		}							\
-> > 	}
-> > #else
-> > 
-> > 
-> > So that lockdep works with trace_##name##__rcuidle() when the trace
-> > event is not enabled.
-> > 
-> > But that should be a separate patch and not part of this series. I may
-> > write that up tomorrow.  
-> 
-> Yes, that sounds good to me and would be good to add the safe guard there.
-> But you meant srcu_dereference above, not srcu_dereference_notrace right?
+  } else {
+    err =3D p9pdu_readf(req->rc, c->proto_version, "d", &ecode);
+    err =3D -ecode;
 
-We don't need to trace them. I believe that the "srcu_*_notrace" still
-performs the lockdep checks. That's what we want. If they don't then we
-should not use notrace. But I believe they still do lockdep.
+    p9_debug(P9_DEBUG_9P, "<<< RLERROR (%d)\n", -ecode);
+  }
 
--- Steve
+When p9pdu_readf() fails with -EFAULT, |ecode| may remain uninitialized.
+We need to check the value of |err| before assigning |-ecode| to it.
+
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgi=
+d/syzkaller-bugs/00000000000077da4b0570c9eccc%40google.com.
+> For more options, visit https://groups.google.com/d/optout.
+
+
+
+--=20
+Alexander Potapenko
+Software Engineer
+
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
