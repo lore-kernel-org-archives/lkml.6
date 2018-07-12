@@ -5,103 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E900C476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19523C476E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 357C020842
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 357C020842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C779420842
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:11:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C779420842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732563AbeGLRVA (ORCPT
+        id S1732573AbeGLRV3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:21:00 -0400
-Received: from mga14.intel.com ([192.55.52.115]:58538 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732355AbeGLRU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:20:59 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2018 10:10:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,344,1526367600"; 
-   d="scan'208";a="64234634"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by FMSMGA003.fm.intel.com with ESMTP; 12 Jul 2018 10:10:33 -0700
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: Re: [PATCH] i2c: aspeed: Add newline characters into message
- printings.
-To:     Brendan Higgins <brendanhiggins@google.com>, joe@perches.com
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jarkko.nikula@linux.intel.com, james.feist@linux.intel.com,
-        vernon.mauery@linux.intel.com
-References: <20180702211359.30585-1-jae.hyun.yoo@linux.intel.com>
- <CAFd5g443wTQJ+0hrprOV949Sr_nRnBGpNo3Wd01xFN4GW4K2Ng@mail.gmail.com>
- <2d2f2b2b-394a-506f-c870-33520335250b@linux.intel.com>
- <c13fc12e859f7bdb300f08ad805cdf6d7ec09f52.camel@perches.com>
- <CAFd5g47-Bq_wUkL4vP93si+urDs-A0j26ukZ+Riy24HWi5AuuA@mail.gmail.com>
-Message-ID: <41770e0f-c0ab-5fb7-6c8f-6cf4f80f01f0@linux.intel.com>
-Date:   Thu, 12 Jul 2018 10:10:29 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <CAFd5g47-Bq_wUkL4vP93si+urDs-A0j26ukZ+Riy24HWi5AuuA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 12 Jul 2018 13:21:29 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53388 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727092AbeGLRV3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 13:21:29 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E0CD240201BF;
+        Thu, 12 Jul 2018 17:11:02 +0000 (UTC)
+Received: from whitewolf.lyude.net.com (ovpn-120-214.rdu2.redhat.com [10.10.120.214])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3A5A22142F20;
+        Thu, 12 Jul 2018 17:11:02 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     nouveau@lists.freedesktop.org
+Cc:     "David Airlie" <airlied@linux.ie>,
+        "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+        "Daniel Vetter" <daniel.vetter@ffwll.ch>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        "Ben Skeggs" <bskeggs@redhat.com>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        "Archit Taneja" <architt@codeaurora.org>,
+        "Lyude Paul" <lyude@redhat.com>
+Subject: [PATCH 0/2] drm/nouveau: Add support for dp_mst_info in debugfs
+Date:   Thu, 12 Jul 2018 13:10:45 -0400
+Message-Id: <20180712171056.26359-1-lyude@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 17:11:02 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 17:11:02 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lyude@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/12/2018 1:38 AM, Brendan Higgins wrote:
-> On Wed, Jul 11, 2018 at 10:10 AM Joe Perches <joe@perches.com> wrote:
->>
->> On Wed, 2018-07-11 at 09:53 -0700, Jae Hyun Yoo wrote:
->>> On 7/10/2018 10:42 PM, Brendan Higgins wrote:
->>>> On Mon, Jul 2, 2018 at 2:14 PM Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
->>>>> There are some log printing without a newline character. This
->>>>> patch adds the missing newline characters.
->> []
->>>>> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
->> []
->>>>> @@ -431,7 +431,7 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->>>>>            */
->>>>>           if (bus->master_state == ASPEED_I2C_MASTER_START) {
->>>>>                   if (unlikely(!(irq_status & ASPEED_I2CD_INTR_TX_ACK))) {
->>>>> -                       pr_devel("no slave present at %02x", msg->addr);
->>>>> +                       pr_devel("no slave present at %02x\n", msg->addr);
->>>>
->>>> Unless something changed in the last couple versions of the kernel, this is the
->>>> only line that actually changes anything. dev_* inserts a newline for every
->>>> call.
->>
->> Not true.
->>
->> Any printk without KERN_CONT inserts a newline
->> if the last character
->> emitted is not a newline.
->>
->> dev_<level> uses can also be followed by pr_cont.
->>
->> So this patch does reduce the possibility of
->> interleaved messages from multiple processes.
-> 
-> My mistake. Thanks for pointing that out.
-> 
-> Jae, forget what I said earlier. This looks good to me.
-> 
+This hooks up the DRM helpers for dumping information on the current
+status of each MST topology from nouveau's perspective to debugfs files,
+similar to what i915 does (albeit, i915 labels their debugfs node for
+this as i915_dp_mst_info).
 
-Okay. I'll keep this patch as is.
-Thanks Joe for your clarification!
-Thanks Brendan for your 'Reviewed-by' tag!
+Lyude Paul (2):
+  drm/nouveau: Expose nv50 MST structures in disp.h
+  drm/nouveau: Hook up dp_mst_info in debugfs
 
-Jae
+ drivers/gpu/drm/nouveau/dispnv50/disp.c   | 34 ----------------
+ drivers/gpu/drm/nouveau/dispnv50/disp.h   | 35 +++++++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_debugfs.c | 47 ++++++++++++++++++++++-
+ 3 files changed, 80 insertions(+), 36 deletions(-)
+
+-- 
+2.17.1
+
