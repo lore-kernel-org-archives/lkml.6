@@ -3,139 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A38C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C53A4C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA0C2146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:16:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA0C2146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E3B62146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:17:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E3B62146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391203AbeGLCX1 (ORCPT
+        id S2391216AbeGLCZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 22:23:27 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45492 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389318AbeGLCX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 22:23:27 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 6AB706DAF893D;
-        Thu, 12 Jul 2018 10:16:10 +0800 (CST)
-Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Thu, 12 Jul 2018
- 10:16:07 +0800
-Subject: Re: [V9fs-developer] [PATCH v2 2/6] 9p: Change p9_fid_create calling
- convention
-To:     Matthew Wilcox <willy@infradead.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-References: <20180711210225.19730-1-willy@infradead.org>
- <20180711210225.19730-3-willy@infradead.org>
-CC:     Latchesar Ionkov <lucho@ionkov.net>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        <linux-kernel@vger.kernel.org>, Ron Minnich <rminnich@sandia.gov>,
-        <linux-fsdevel@vger.kernel.org>,
-        <v9fs-developer@lists.sourceforge.net>
-From:   piaojun <piaojun@huawei.com>
-Message-ID: <5B46B9BC.4010909@huawei.com>
-Date:   Thu, 12 Jul 2018 10:15:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.2.0
+        Wed, 11 Jul 2018 22:25:03 -0400
+Received: from mga04.intel.com ([192.55.52.120]:44953 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388239AbeGLCZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 22:25:03 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jul 2018 19:17:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,341,1526367600"; 
+   d="scan'208";a="215323634"
+Received: from unknown (HELO [10.239.13.97]) ([10.239.13.97])
+  by orsmga004.jf.intel.com with ESMTP; 11 Jul 2018 19:17:47 -0700
+Message-ID: <5B46BB46.2080802@intel.com>
+Date:   Thu, 12 Jul 2018 10:21:58 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-In-Reply-To: <20180711210225.19730-3-willy@infradead.org>
-Content-Type: text/plain; charset="windows-1252"
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>
+CC:     virtio-dev@lists.oasis-open.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com,
+        Rik van Riel <riel@redhat.com>, peterx@redhat.com
+Subject: Re: [PATCH v35 1/5] mm: support to get hints of free page blocks
+References: <1531215067-35472-1-git-send-email-wei.w.wang@intel.com> <1531215067-35472-2-git-send-email-wei.w.wang@intel.com> <CA+55aFz9a=D-kquM=sG5uhV_HrBAw+VAhcJmtPNz+howy4j9ow@mail.gmail.com> <5B455D50.90902@intel.com> <CA+55aFzqj8wxXnHAdUTiOomipgFONVbqKMjL_tfk7e5ar1FziQ@mail.gmail.com> <20180711092152.GE20050@dhcp22.suse.cz> <CA+55aFwku2tDH4+rfaC67xc4-cEwSrXgnQaci=e2id5ZCRE9JQ@mail.gmail.com>
+In-Reply-To: <CA+55aFwku2tDH4+rfaC67xc4-cEwSrXgnQaci=e2id5ZCRE9JQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.253.249]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LGTM
+On 07/12/2018 12:23 AM, Linus Torvalds wrote:
+> On Wed, Jul 11, 2018 at 2:21 AM Michal Hocko <mhocko@kernel.org> wrote:
+>> We already have an interface for that. alloc_pages(GFP_NOWAIT, MAX_ORDER -1).
+>> So why do we need any array based interface?
+> That was actually my original argument in the original thread - that
+> the only new interface people might want is one that just tells how
+> many of those MAX_ORDER-1 pages there are.
+>
+> See the thread in v33 with the subject
+>
+>    "[PATCH v33 1/4] mm: add a function to get free page blocks"
+>
+> and look for me suggesting just using
+>
+>      #define GFP_MINFLAGS (__GFP_NORETRY | __GFP_NOWARN |
+> __GFP_THISNODE | __GFP_NOMEMALLOC)
 
-On 2018/7/12 5:02, Matthew Wilcox wrote:
-> Return NULL instead of ERR_PTR when we can't allocate a FID.  The ENOSPC
-> return value was getting all the way back to userspace, and that's
-> confusing for a userspace program which isn't expecting read() to tell it
-> there's no space left on the filesystem.  The best error we can return to
-> indicate a temporary failure caused by lack of client resources is ENOMEM.
-> 
-> Maybe it would be better to sleep until a FID is available, but that's
-> not a change I'm comfortable making.
-> 
-> Signed-off-by: Matthew Wilcox <willy@infradead.org>
-Reviewed-by: Jun Piao <piaojun@huawei.com>
-> ---
->  net/9p/client.c | 23 +++++++++--------------
->  1 file changed, 9 insertions(+), 14 deletions(-)
-> 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index 999eceb8af98..389a2904b7b3 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -913,13 +913,11 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
->  	p9_debug(P9_DEBUG_FID, "clnt %p\n", clnt);
->  	fid = kmalloc(sizeof(struct p9_fid), GFP_KERNEL);
->  	if (!fid)
-> -		return ERR_PTR(-ENOMEM);
-> +		return NULL;
->  
->  	ret = p9_idpool_get(clnt->fidpool);
-> -	if (ret < 0) {
-> -		ret = -ENOSPC;
-> +	if (ret < 0)
->  		goto error;
-> -	}
->  	fid->fid = ret;
->  
->  	memset(&fid->qid, 0, sizeof(struct p9_qid));
-> @@ -935,7 +933,7 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
->  
->  error:
->  	kfree(fid);
-> -	return ERR_PTR(ret);
-> +	return NULL;
->  }
->  
->  static void p9_fid_destroy(struct p9_fid *fid)
-> @@ -1137,9 +1135,8 @@ struct p9_fid *p9_client_attach(struct p9_client *clnt, struct p9_fid *afid,
->  	p9_debug(P9_DEBUG_9P, ">>> TATTACH afid %d uname %s aname %s\n",
->  		 afid ? afid->fid : -1, uname, aname);
->  	fid = p9_fid_create(clnt);
-> -	if (IS_ERR(fid)) {
-> -		err = PTR_ERR(fid);
-> -		fid = NULL;
-> +	if (!fid) {
-> +		err = -ENOMEM;
->  		goto error;
->  	}
->  	fid->uid = n_uname;
-> @@ -1188,9 +1185,8 @@ struct p9_fid *p9_client_walk(struct p9_fid *oldfid, uint16_t nwname,
->  	clnt = oldfid->clnt;
->  	if (clone) {
->  		fid = p9_fid_create(clnt);
-> -		if (IS_ERR(fid)) {
-> -			err = PTR_ERR(fid);
-> -			fid = NULL;
-> +		if (!fid) {
-> +			err = -ENOMEM;
->  			goto error;
->  		}
->  
-> @@ -2018,9 +2014,8 @@ struct p9_fid *p9_client_xattrwalk(struct p9_fid *file_fid,
->  	err = 0;
->  	clnt = file_fid->clnt;
->  	attr_fid = p9_fid_create(clnt);
-> -	if (IS_ERR(attr_fid)) {
-> -		err = PTR_ERR(attr_fid);
-> -		attr_fid = NULL;
-> +	if (!attr_fid) {
-> +		err = -ENOMEM;
->  		goto error;
->  	}
->  	p9_debug(P9_DEBUG_9P,
-> 
+Would it be better to remove __GFP_THISNODE? We actually want to get all 
+the guest free pages (from all the nodes).
+
+Best,
+Wei
