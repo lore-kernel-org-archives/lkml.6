@@ -2,145 +2,155 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EADCFC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41489C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:47:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5EA42147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:47:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Dn8IcVmT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5EA42147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	by mail.kernel.org (Postfix) with ESMTP id 06FB520BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:47:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FB520BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732497AbeGLN4q (ORCPT
+        id S1732510AbeGLN5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 09:56:46 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:58678 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732347AbeGLN4p (ORCPT
+        Thu, 12 Jul 2018 09:57:03 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41100 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732247AbeGLN5D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 09:56:45 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 5C3C85C21BE;
-        Thu, 12 Jul 2018 15:46:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1531403202;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=iUIorg6jie9sK1DLkr/h7I77azMX5qAVfUzsG9fcAzo=;
-        b=Dn8IcVmTVMEmPVr4qpdsj7h2r5rFr1qwr7cjuX+JO38xsbQAPMvbyafErSbKn0OBnsGUc1
-        kqtHaF81EoexeBWMaS6OcWfRLsvAFjpOprb2W/nXlR0ulhpVi3hnaPZAw5nbkamGpW7ZYF
-        /S5Jf7d3IYU4JNYY5lyzsbyuf7tXNnM=
+        Thu, 12 Jul 2018 09:57:03 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CDiO6w110323
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 09:47:24 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k65jwg8ew-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 09:47:23 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <brueckner@linux.ibm.com>;
+        Thu, 12 Jul 2018 14:47:22 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 12 Jul 2018 14:47:19 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6CDlJCK24838314
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Jul 2018 13:47:19 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4C55552052;
+        Thu, 12 Jul 2018 16:47:40 +0100 (BST)
+Received: from lynx.boeblingen.de.ibm.com (unknown [9.145.10.223])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 30E8852050;
+        Thu, 12 Jul 2018 16:47:40 +0100 (BST)
+Received: from brueckh by lynx.boeblingen.de.ibm.com with local (Exim 4.90_1)
+        (envelope-from <brueckner@linux.ibm.com>)
+        id 1fdbwD-00027G-Nj; Thu, 12 Jul 2018 15:47:17 +0200
+Date:   Thu, 12 Jul 2018 15:47:17 +0200
+From:   Hendrik Brueckner <brueckner@linux.ibm.com>
+To:     Adrian Reber <adrian@lisas.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        alice@linux.ibm.com
+Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
+References: <20180712130733.11510-1-adrian@lisas.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 12 Jul 2018 15:46:33 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     marex@denx.de, dl-linux-imx <linux-imx@nxp.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        festevam@gmail.com, linux-fbdev@vger.kernel.org,
-        Fabio Estevam <fabio.estevam@nxp.com>, marcofrk@gmail.com,
-        dri-devel@lists.freedesktop.org, shawnguo@kernel.org,
-        linux-arm-kernel@lists.infradead.org, l.stach@pengutronix.de,
-        kernel@pengutronix.de, marek.vasut@gmail.com
-Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
-In-Reply-To: <7f40f34a401ced78703b1a151d9f5fe4ed8c209f.camel@nxp.com>
-References: <cover.1529091248.git.leonard.crestez@nxp.com>
- <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
- <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
- <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
- <638457fd-85da-8fec-d146-517c43f71813@denx.de>
- <b3fa74c5110b45e5992920485749869ab1f7ebce.camel@nxp.com>
- <6995fa4b-47a9-887b-5e4f-4284ca6a2c79@gmail.com>
- <fd22085f646d97f66cff5b7f22785500@agner.ch>
- <6fdba55b-0be6-9e28-d87a-43d876a1fd09@denx.de>
- <617c0a7e9132b929877b8cbcf116b1ea@agner.ch>
- <7f40f34a401ced78703b1a151d9f5fe4ed8c209f.camel@nxp.com>
-Message-ID: <ce461f1f192de0648feb2db148edf60b@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[15];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-0.00)[13.59%];
-         ARC_NA(0.00)[]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712130733.11510-1-adrian@lisas.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071213-0008-0000-0000-000002526603
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071213-0009-0000-0000-000021B89F8C
+Message-Id: <20180712134717.GB4676@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807120145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12.07.2018 15:03, Leonard Crestez wrote:
-> On Thu, 2018-07-12 at 11:21 +0200, Stefan Agner wrote:
->> On 10.07.2018 11:11, Marek Vasut wrote:
->> > On 07/10/2018 11:06 AM, Stefan Agner wrote:
->> > > This is one of the situation where states quo is kinda the worst
->> > > situation.
->> > >
->> > > Currently imx_v6_v7_defconfig and mxs_defconfig actually still uses
->> > > CONFIG_FB_MXS.
->> > >
->> > > I understand that you'd rather prefer to move forward. I suggest we do
->> > > it in steps.
->> > >
->> > > In 4.19:
->> > >
->> > > - Change DRM driver.name to mxsfb-drm so we avoid conflicts for now
->> >
->> > But this will break mesa if it depends on mxsfb name for ie. etnaviv
->> > binding.
->>
->> Does it? grep -r -e mxsfb in libdrm and mesa master returns nothing.
->>
->> There is also .name in struct drm_driver, which is already set to
->> mxsfb-drm... Is that the one exposed to user space?
+On Thu, Jul 12, 2018 at 03:07:33PM +0200, Adrian Reber wrote:
+> The CHECKPOINT_RESTORE configuration option was introduced in 2012 and
+> combined with EXPERT. CHECKPOINT_RESTORE is already enabled in many
+> distribution kernels and also part of the defconfigs of various
+> architectures.
 > 
-> Running etnaviv+x11 with a renamed mxsfb driver works fine on imx6sx-
-> sdb.
+> To make it easier for distributions to enable CHECKPOINT_RESTORE this
+> removes EXPERT and moves the configuration option out of the EXPERT
+> block.
 > 
-> Tools like modetest already need -M mxsfb-drm, the drm_driver.name
-> seems to be what matters.
-
-Ok, almost thought so, thanks for the confirmation! So we should be
-good.
-
+> Signed-off-by: Adrian Reber <adrian@lisas.de>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Pavel Emelyanov <xemul@virtuozzo.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Eric W. Biederman <ebiederm@xmission.com>
+> Cc: Andrei Vagin <avagin@virtuozzo.com>
+> Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+> ---
+>  init/Kconfig | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
 > 
->> - Remove CONFIG_FB_MXS from imx_v6_v7_defconfig/mxs_defconfig now, and
->> only enable CONFIG_DRM_MXSFB=y
+> diff --git a/init/Kconfig b/init/Kconfig
+> index 041f3a022122..9c529c763326 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -932,6 +932,18 @@ config NET_NS
 > 
-> If one of the drivers is renamed then they can coexist: since the
-> bindings are distinct one driver will return a probe error and the
-> other will bind successfully. This can even be adjusted so that it
-> doesn't even print ugly scary errors.
+>  endif # NAMESPACES
 > 
-> This can last until somebody implements support for old bindings in the
-> drm driver and then FB_MXS can just be deleted.
+> +config CHECKPOINT_RESTORE
+> +	bool "Checkpoint/restore support"
+> +	select PROC_CHILDREN
+> +	default n
+> +	help
+> +	  Enables additional kernel features in a sake of checkpoint/restore.
+> +	  In particular it adds auxiliary prctl codes to setup process text,
+> +	  data and heap segment sizes, and a few additional /proc filesystem
+> +	  entries.
+> +
+> +	  If unsure, say N here.
+> +
+>  config SCHED_AUTOGROUP
+>  	bool "Automatic process group scheduling"
+>  	select CGROUPS
+> @@ -1348,18 +1360,6 @@ config MEMBARRIER
+> 
+>  	  If unsure, say Y.
+> 
+> -config CHECKPOINT_RESTORE
+> -	bool "Checkpoint/restore support" if EXPERT
+> -	select PROC_CHILDREN
+> -	default n
+> -	help
+> -	  Enables additional kernel features in a sake of checkpoint/restore.
+> -	  In particular it adds auxiliary prctl codes to setup process text,
+> -	  data and heap segment sizes, and a few additional /proc filesystem
+> -	  entries.
+> -
+> -	  If unsure, say N here.
+> -
+>  config KALLSYMS
+>  	 bool "Load all symbols for debugging/ksymoops" if EXPERT
+>  	 default y
 
-Yeah I guess that is what Marek don't want because it promotes using
-FB_MXS for longer than needed.
+Thanks!
 
-I don't care as much since we anyway use the MXSFB DRM driver. However,
-what I really dislike is that a kernel compiled with both drivers
-currently leads to MXSFB DRM being unusable (because fbdev gets probed
-first). I feel removing the MXS_FB is rather harsh, so I *really* would
-love to see the MXSFB DRM driver renamed.
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
 
---
-Stefan
