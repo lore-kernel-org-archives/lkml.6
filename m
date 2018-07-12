@@ -2,79 +2,60 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE894EB92A8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:34:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48575EB94B9
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 887952124D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:34:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2C1IxkgR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 887952124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 165E92147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:34:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 165E92147C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732228AbeGLSow (ORCPT
+        id S1727077AbeGLSpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 14:44:52 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:49134 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbeGLSow (ORCPT
+        Thu, 12 Jul 2018 14:45:16 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:43762 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726424AbeGLSpQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 14:44:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aT8wYNcncZsNjp+4/8xdzZbChni5paeFTIqYph7B6r4=; b=2C1IxkgRUp3nLV8laoJIgiwyE
-        fCuWodpMeU92cn1OFiPs2k+m40U5ATy9zUy6I2ayhjHIt8RuqnVxb9VuXWmfyvgILyYXsS/Q4QjJW
-        WS/XlL/FOlgP3p7mKUd5DjzW+W9BGK6D6ZkNMvSFcn148MGoDVtbHzpmairoxQvDiv3lVzsil98An
-        B3kqTkSEpk2lhDEdlzr8iKqm9UTYv7SGhCTQ4hM9U6EWIKEuAzrQzy3o3llB+vQn2cY6dEXhSt0XG
-        Yk0MmdUTcdF14BtLSh8/iXPxhvN82JZIZC1QsVG1A20lQXrTvrVteb10NharJIBA5iTesAnQPn+bb
-        VPxCGrudA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdgPS-0005XS-OQ; Thu, 12 Jul 2018 18:33:47 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 339AE20289331; Thu, 12 Jul 2018 20:33:44 +0200 (CEST)
-Date:   Thu, 12 Jul 2018 20:33:44 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Message-ID: <20180712183344.GQ2476@hirez.programming.kicks-ass.net>
-References: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
- <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org>
+        Thu, 12 Jul 2018 14:45:16 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fdgQ6-000104-M4; Thu, 12 Jul 2018 18:34:26 +0000
+Date:   Thu, 12 Jul 2018 19:34:26 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
+ superblock creation [ver #9]
+Message-ID: <20180712183426.GC30522@ZenIV.linux.org.uk>
+References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+ <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
+ <20180712171505.GA23780@kroah.com>
+ <20180712172024.GZ30522@ZenIV.linux.org.uk>
+ <20180712180304.GA27758@kroah.com>
+ <76211EBC-05ED-4FBA-A136-F5EEBFDD9FDF@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <76211EBC-05ED-4FBA-A136-F5EEBFDD9FDF@amacapital.net>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 01:04:27PM -0400, Alan Stern wrote:
-> Which raises the question of whether RCtso (adopting Daniel's suggested
-> term) is also too subtle or counter-intuitive for spinlocks. 
+On Thu, Jul 12, 2018 at 11:30:32AM -0700, Andy Lutomirski wrote:
 
-IMO yes, RCtso also sucks :-) But in my 'fight' for RCsc it disallows
-RCpc and captures the current state of affairs more accurately.
+Andi, Greg - alt.tasteless is over -> that way.
+
+And for fsck sake, fix your MUA.  Lines are obscenely long...
+
+> How do you mount configfs in the first place?  And how do you use this in a mount namespace without a private configfs instance or where you don’t want configfs mounted?
