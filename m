@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA85EAAD5A
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9324EAAF17
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C47E8208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DF062147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:06:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="A8QVcHxr";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AnMulebz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47E8208E9
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HbLP8nqn";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ihyFMjE7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DF062147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727037AbeGLSQi (ORCPT
+        id S1727641AbeGLSQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 14:16:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57854 "EHLO
+        Thu, 12 Jul 2018 14:16:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58000 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726444AbeGLSQi (ORCPT
+        with ESMTP id S1726444AbeGLSQo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 14:16:38 -0400
+        Thu, 12 Jul 2018 14:16:44 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3471660B72; Thu, 12 Jul 2018 18:05:58 +0000 (UTC)
+        id 61CF460791; Thu, 12 Jul 2018 18:06:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531418758;
-        bh=c2UaUhd++qxvnHNttwGw5YWntlz99bmFbOJRTgKvs14=;
-        h=From:To:Cc:Subject:Date:From;
-        b=A8QVcHxrKTFUye/l5UtWxPxlBQKjc8k8D58SPZPo4XybeQILYwHBZODQYDRgdfVMc
-         KdHZGUSfDxiKWw/0LP/m9OIYYlohr2J6/Zbq2m/TBheh/4VtojUyziFLVGPkKxrEiF
-         1gRHXGwzkK6706Rk5zGfCfttcRTo9o8NM7r8W1Cw=
+        s=default; t=1531418764;
+        bh=m8R7DY47uMVWH4ZPm+aEupLzOQmrHUbCYX43/M6Zcpk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HbLP8nqnJFVCRpOkaU1iypWjZAh1vGxLy7gNlgM80yf1Mx28+PE0XLvGfJMc/AyQ2
+         TOJPaeHmp7VcJJEDji0EqX76hcfA2O1x9qZhnNESFynhlBLUVnjy1aAvVluaT4je7U
+         98bE6Fe/UABpMmbqQD6elLXwsWfA6BcTonruj3Cg=
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7A61660555;
-        Thu, 12 Jul 2018 18:05:53 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AD9E160B74;
+        Thu, 12 Jul 2018 18:05:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531418757;
-        bh=c2UaUhd++qxvnHNttwGw5YWntlz99bmFbOJRTgKvs14=;
-        h=From:To:Cc:Subject:Date:From;
-        b=AnMulebzg8HAoOjctw0oaRK8mxkA+Eok9GhsjuG0FhYLCvUL63iMbgsLLipOdJSGD
-         wNRY1CKi2ejM91+X3ht6ev+AWQmzbm6/OETJpyWjEyXpYAy6Ipi5eEks/RfiT24eXV
-         R+zE5c6kdVrH5eaPNHQ0WFl5CJTVZBRauYakm8qs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7A61660555
+        s=default; t=1531418763;
+        bh=m8R7DY47uMVWH4ZPm+aEupLzOQmrHUbCYX43/M6Zcpk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ihyFMjE7iXMpeUrx5I9aB0nExpm1rvgiJ6Ggub1ioNl0B1kuNdPc79sVBOxy6yWYc
+         XxWJwC1mlFhR523kvnVdenNo93lR5Bf62J2Oc+EUlhXSnul5W82F5BaFMo0D8cnVLq
+         yJttbQ66iIc6Lp/vzb3Ilzo53ZMzDoO76x2TgYkc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AD9E160B74
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -61,85 +61,191 @@ Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         devicetree@vger.kernel.org, robh@kernel.org,
         skannan@codeaurora.org, amit.kucheria@linaro.org,
         evgreen@google.com, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v5 0/2] cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-Date:   Thu, 12 Jul 2018 23:35:43 +0530
-Message-Id: <1531418745-19742-1-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v5 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ Firmware bindings
+Date:   Thu, 12 Jul 2018 23:35:44 +0530
+Message-Id: <1531418745-19742-2-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1531418745-19742-1-git-send-email-tdas@codeaurora.org>
+References: <1531418745-19742-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[v5]
-  * Remove mapping different register regions of perf/lut/enable,
-    instead map the entire HW region.
-  * Add reg_offset/cpufreq_qcom_std_offsets to be supplied as device data.
-  * Check of src == 0 during lut read.
-  * Add of_node_put(cpu_np) in qcom_get_related_cpus
-  * Update the qcom_cpu_resources_init for register offset data,
-    and cleanup the related cpus to keep a single copy of CPUfreq.
-  * Replace FW with HW, update Kconfig, rename filename qcom-cpufreq-hw.c
-  * Update the documentation binding to reflect the changes of mapping the
-  * entire HW region.
+Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
+SoCs. This is required for managing the cpu frequency transitions which are
+controlled by the hardware engine.
 
-[v4]
-  * Fixed console messages as per comments.
-  * Return error from qcom_resources_init()
-    in the cases where failed to get frequency domain.
-  * Rename cpu_dev to cpu_np in qcom_resources_init,
-    qcom_get_related_cpus(). Also use temp variable freq_np in
-    qcom_get_related_cpus().
-  * Update qcom_cpufreq_fw_get() to use the policy data to incoporate
-    the hotplug use case.
-  * Update code to use of fast_switching.
-  * Check for !c->max_cores instead of cpumask_empty in
-    qcom_get_related_cpus().
-  * Update the logic of assigning 'c' to qcom_freq_domain_map[cpu].
-
- [v3]
-  * Remove index check from 'qcom_cpufreq_fw_target_index'.
-  * Update the Documentation binding to add the platform specific properties in
-    the CPU nodes, node name "qcom,freq-domain".
-  * Update return value to '0' from -ENODEV from 'qcom_cpufreq_fw_get'.
-  * Update the logic for boost frequency to use local variables instead of
-    cpufreq driver data in 'qcom_read_lut'.
-  * Update the logic in 'qcom_get_related_cpus' to find the related cpus.
-  * Update the reg-names to remove "_base" and also update the binding with the
-    description of these registers.
-  * Update the logic in 'qcom_resources_init' to address the new device tree
-    notation of handling the frequency domain phandles.
-
- [v2]
- * Fixed the alignment issues in "qcom_cpufreq_fw_target_index" for dev_err and
-   also for "qcom_cpu_resources_init".
- * Removed ret = 0 from qcom_get_related_cpus and added to check for
-   cpu_mask_empty to return -ENOENT.
- * Fixes qcom_cpu_resources_init function
-   * Remove initialization of 'index'
-   * Check for valid 'c'
- * Removed initialization of 'prev_cc' from 'qcom_read_lut'.
- * Remove initialization of 'ret' from function qcom_resources_init and add
-   return -ENODEV based on 'of_get_available_child_count'.
- * Removed initialization of 'rc' from qcom_cpufreq_fw_driver_probe
- * Removed module_exit as this driver would not be used as module, also updated
-   the Kconfig to bool from tristate.
- * Updated the subsystem in device tree bindings.
-
- [v1]
-   * Fixed compilation reported by Amit K.
-
-Taniya Das (2):
-  dt-bindings: cpufreq: Introduce QCOM CPUFREQ Firmware bindings
-  cpufreq: qcom-hw: Add support for QCOM cpufreq HW driver
-
- .../bindings/cpufreq/cpufreq-qcom-hw.txt           | 158 ++++++++++
- drivers/cpufreq/Kconfig.arm                        |  10 +
- drivers/cpufreq/Makefile                           |   1 +
- drivers/cpufreq/qcom-cpufreq-hw.c                  | 344 +++++++++++++++++++++
- 4 files changed, 513 insertions(+)
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ .../bindings/cpufreq/cpufreq-qcom-hw.txt           | 158 +++++++++++++++++++++
+ 1 file changed, 158 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
- create mode 100644 drivers/cpufreq/qcom-cpufreq-hw.c
 
+diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+new file mode 100644
+index 0000000..52a53e1
+--- /dev/null
++++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-hw.txt
+@@ -0,0 +1,158 @@
++Qualcomm Technologies, Inc. CPUFREQ Bindings
++
++CPUFREQ HW is a hardware engine used by some Qualcomm Technologies, Inc. (QTI)
++SoCs to manage frequency in hardware. It is capable of controlling frequency
++for multiple clusters.
++
++Properties:
++- compatible
++	Usage:		required
++	Value type:	<string>
++	Definition:	must be "qcom,cpufreq-hw".
++
++* Property qcom,freq-domain
++Devices supporting freq-domain must set their "qcom,freq-domain" property with
++phandle to a freq_domain_table in their DT node.
++
++* Frequency Domain Table Node
++
++This describes the frequency domain belonging to a device.
++This node can have following properties:
++
++- reg
++	Usage:		required
++	Value type:	<prop-encoded-array>
++	Definition:	Addresses and sizes for the memory of the HW bases.
++
++Example:
++
++Example 1: Dual-cluster, Quad-core per cluster. CPUs within a cluster switch
++DCVS state together.
++
++/ {
++	cpus {
++		#address-cells = <2>;
++		#size-cells = <0>;
++
++		CPU0: cpu@0 {
++			device_type = "cpu";
++			compatible = "qcom,kryo385";
++			reg = <0x0 0x0>;
++			enable-method = "psci";
++			next-level-cache = <&L2_0>;
++			qcom,freq-domain = <&freq_domain_table0>;
++			L2_0: l2-cache {
++				compatible = "cache";
++				next-level-cache = <&L3_0>;
++				L3_0: l3-cache {
++				      compatible = "cache";
++				};
++			};
++		};
++
++		CPU1: cpu@100 {
++			device_type = "cpu";
++			compatible = "qcom,kryo385";
++			reg = <0x0 0x100>;
++			enable-method = "psci";
++			next-level-cache = <&L2_100>;
++			qcom,freq-domain = <&freq_domain_table0>;
++			L2_100: l2-cache {
++				compatible = "cache";
++				next-level-cache = <&L3_0>;
++			};
++		};
++
++		CPU2: cpu@200 {
++			device_type = "cpu";
++			compatible = "qcom,kryo385";
++			reg = <0x0 0x200>;
++			enable-method = "psci";
++			next-level-cache = <&L2_200>;
++			qcom,freq-domain = <&freq_domain_table0>;
++			L2_200: l2-cache {
++				compatible = "cache";
++				next-level-cache = <&L3_0>;
++			};
++		};
++
++		CPU3: cpu@300 {
++			device_type = "cpu";
++			compatible = "qcom,kryo385";
++			reg = <0x0 0x300>;
++			enable-method = "psci";
++			next-level-cache = <&L2_300>;
++			qcom,freq-domain = <&freq_domain_table0>;
++			L2_300: l2-cache {
++				compatible = "cache";
++				next-level-cache = <&L3_0>;
++			};
++		};
++
++		CPU4: cpu@400 {
++			device_type = "cpu";
++			compatible = "qcom,kryo385";
++			reg = <0x0 0x400>;
++			enable-method = "psci";
++			next-level-cache = <&L2_400>;
++			qcom,freq-domain = <&freq_domain_table1>;
++			L2_400: l2-cache {
++				compatible = "cache";
++				next-level-cache = <&L3_0>;
++			};
++		};
++
++		CPU5: cpu@500 {
++			device_type = "cpu";
++			compatible = "qcom,kryo385";
++			reg = <0x0 0x500>;
++			enable-method = "psci";
++			next-level-cache = <&L2_500>;
++			qcom,freq-domain = <&freq_domain_table1>;
++			L2_500: l2-cache {
++				compatible = "cache";
++				next-level-cache = <&L3_0>;
++			};
++		};
++
++		CPU6: cpu@600 {
++			device_type = "cpu";
++			compatible = "qcom,kryo385";
++			reg = <0x0 0x600>;
++			enable-method = "psci";
++			next-level-cache = <&L2_600>;
++			qcom,freq-domain = <&freq_domain_table1>;
++			L2_600: l2-cache {
++				compatible = "cache";
++				next-level-cache = <&L3_0>;
++			};
++		};
++
++		CPU7: cpu@700 {
++			device_type = "cpu";
++			compatible = "qcom,kryo385";
++			reg = <0x0 0x700>;
++			enable-method = "psci";
++			next-level-cache = <&L2_700>;
++			qcom,freq-domain = <&freq_domain_table1>;
++			L2_700: l2-cache {
++				compatible = "cache";
++				next-level-cache = <&L3_0>;
++			};
++		};
++	};
++
++	qcom,cpufreq-hw {
++		compatible = "qcom,cpufreq-hw";
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++		freq_domain_table0: freq_table0 {
++			reg = <0 0x17d43000 0 0x1400>;
++		};
++
++		freq_domain_table1: freq_table1 {
++			reg = <0 0x17d45800 0 0x1400>;
++		};
++	};
++};
 --
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
