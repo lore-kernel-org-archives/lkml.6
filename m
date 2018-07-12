@@ -2,134 +2,167 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC74C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 334ACC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8983620BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:51:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ta1Rlspy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8983620BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id ED20320BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:51:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED20320BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732430AbeGLOAw (ORCPT
+        id S1732462AbeGLOBf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 10:00:52 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33988 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727072AbeGLOAw (ORCPT
+        Thu, 12 Jul 2018 10:01:35 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46394 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727072AbeGLOBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 10:00:52 -0400
-Received: by mail-lj1-f195.google.com with SMTP id f8-v6so4352480ljk.1
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 06:51:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=AtkEJxT8mN/BeY1ItHRWhkM+ayj5VqKeLGM3V2DIujA=;
-        b=ta1RlspyLyTLAW//graGPjOmHceIR7axuCsFqzap9zTaYi2ZoFUVin1jUCzoRNVSmy
-         9tyiN/86vTUhB1DMMOdVXS6d1JeT6kefkocyvsy+Rl8jM9I7CrD0aT2UEz6Pm/roS38p
-         jPaQOz5pv1PvXt5BcFpOzdNJIYDTARZpN48u9vHlJGzf7/HpuwA9juPQ+FMuJ6kjAfLy
-         VV/L08XfWeMgi16Fh9qbey4cJZQCckWUmKwbai2wZANDpfjxt8IdUkir9Kw+yjIVHsWC
-         Img+MH9tmDdMPG8FJiv1Ojvnm+DKP1LrKB1DVFN6mEN73i3Yc7UGorep2VcbpsPtqeSM
-         PbLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=AtkEJxT8mN/BeY1ItHRWhkM+ayj5VqKeLGM3V2DIujA=;
-        b=CP65BGNAnS41MPZJ3O8s+mBqrIHVpa5PhtItsZ6PG+XFPRbxjPsmE+aYjTvf/M6KZI
-         zPVxmhi6EuDmXuV7E10kpbyakYYxVCMenDvIJeDWJeFKVEw30vK32ACHOoqQNBlgfC0w
-         1VRA5ipE+K8GiOGrQ/8TUeJV/cS3jayBrzg4FysQuJnl8tPkCTzSKI5AkiLkYZFcD0u4
-         f9Zf7pnW1aarkhPq1x6egyZT9mwHr3mK9/Za7t6DXIkR6aX7si29lzb5qm3nOcZvtFtD
-         HbnLjCrksWk8oGKGkOG6kGC8/NKUOipH0+pRi6cWgTWutMEJqfxpVsp870Uygu2nj/wM
-         6wfg==
-X-Gm-Message-State: AOUpUlF1wKn6/xScTKY0e3YLdzDP2pZ4+xlbzV4ABnshiXsBIBN7mHd0
-        2aMKie9PZIPnhu89iFyPdmoarnuxHu7zVSqWTgw=
-X-Google-Smtp-Source: AAOMgpfjBD1jiMWZcZ4kByYeIOsVrQDeZ7bcXanKmyeCA/noVpTcK+9622XT3wCb5YqeLrAY2aMEnH6HUDnn/C0Q47I=
-X-Received: by 2002:a2e:1207:: with SMTP id t7-v6mr703233lje.129.1531403471419;
- Thu, 12 Jul 2018 06:51:11 -0700 (PDT)
+        Thu, 12 Jul 2018 10:01:34 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CDnMi0126042
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 09:51:54 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k65jwge9c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 09:51:54 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alice@linux.vnet.ibm.com>;
+        Thu, 12 Jul 2018 09:51:53 -0400
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 12 Jul 2018 09:51:50 -0400
+Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6CDpnqK12583402
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Jul 2018 13:51:49 GMT
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DE448AC05B;
+        Thu, 12 Jul 2018 09:52:45 -0400 (EDT)
+Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1E6FAC05E;
+        Thu, 12 Jul 2018 09:52:44 -0400 (EDT)
+Received: from [9.152.224.119] (unknown [9.152.224.119])
+        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Thu, 12 Jul 2018 09:52:44 -0400 (EDT)
+Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
+To:     Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Adrian Reber <adrian@lisas.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        alice@linux.ibm.com
+References: <20180712130733.11510-1-adrian@lisas.de>
+ <20180712134717.GB4676@linux.ibm.com>
+From:   Alice Frosi <alice@linux.vnet.ibm.com>
+Date:   Thu, 12 Jul 2018 15:51:47 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 06:51:10
- -0700 (PDT)
-In-Reply-To: <CAMuHMdUOVdmeM9GohMQ6Ass8hWVDxezA0f+bKqGyH1OanMJtXA@mail.gmail.com>
-References: <20180705213604.18883-1-deepa.kernel@gmail.com>
- <20180705213604.18883-4-deepa.kernel@gmail.com> <20180705222110.GA5698@infradead.org>
- <CABeXuvoj_WwvnaqY1wao+axx1JLpPte-iXP=Ti7jsT+r6VrVUg@mail.gmail.com>
- <CAK8P3a2L9z+Ok1Wd0=5F=Xt7nvqL6be+AS++F3rZzByN+a+9QA@mail.gmail.com> <CAMuHMdUOVdmeM9GohMQ6Ass8hWVDxezA0f+bKqGyH1OanMJtXA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 12 Jul 2018 15:51:10 +0200
-X-Google-Sender-Auth: _86t2ls9UuAsRece1AJ-0vrCM9Q
-Message-ID: <CAK8P3a0JS6Rc4FXKu80MHAxc4b8JGqEQ9M-=4gACRk4OQ+VN8Q@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] riscv: Include asm-generic/compat.h
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180712134717.GB4676@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18071213-2213-0000-0000-000002C9C32B
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009357; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01060283; UDB=6.00544237; IPR=6.00838201;
+ MB=3.00022117; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-12 13:51:52
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071213-2214-0000-0000-00005ACEE601
+Message-Id: <dac0b136-26fb-155c-403d-30315f90e978@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807120146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 2:42 PM, Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Fri, Jul 6, 2018 at 1:43 PM Arnd Bergmann <arnd@arndb.de> wrote:
->> On Fri, Jul 6, 2018 at 1:56 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
->> > On Thu, Jul 5, 2018 at 3:21 PM, Christoph Hellwig <hch@infradead.org> wrote:
->> >> On Thu, Jul 05, 2018 at 02:36:00PM -0700, Deepa Dinamani wrote:
+
+
+On 12.07.2018 15:47, Hendrik Brueckner wrote:
+> On Thu, Jul 12, 2018 at 03:07:33PM +0200, Adrian Reber wrote:
+>> The CHECKPOINT_RESTORE configuration option was introduced in 2012 and
+>> combined with EXPERT. CHECKPOINT_RESTORE is already enabled in many
+>> distribution kernels and also part of the defconfigs of various
+>> architectures.
 >>
->> It would be easy to rename compat_time_t, compat_timespec and
->> compat_timeval to something else if we could come up with a good
->> name for them (we already have too many variants of each of
->> them though, otherwise we end up being more confusing rather
->> than less).
+>> To make it easier for distributions to enable CHECKPOINT_RESTORE this
+>> removes EXPERT and moves the configuration option out of the EXPERT
+>> block.
+>>
+>> Signed-off-by: Adrian Reber <adrian@lisas.de>
+>> Cc: Oleg Nesterov <oleg@redhat.com>
+>> Cc: Pavel Emelyanov <xemul@virtuozzo.com>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Eric W. Biederman <ebiederm@xmission.com>
+>> Cc: Andrei Vagin <avagin@virtuozzo.com>
+>> Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+>> ---
+>>   init/Kconfig | 24 ++++++++++++------------
+>>   1 file changed, 12 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/init/Kconfig b/init/Kconfig
+>> index 041f3a022122..9c529c763326 100644
+>> --- a/init/Kconfig
+>> +++ b/init/Kconfig
+>> @@ -932,6 +932,18 @@ config NET_NS
+>>
+>>   endif # NAMESPACES
+>>
+>> +config CHECKPOINT_RESTORE
+>> +	bool "Checkpoint/restore support"
+>> +	select PROC_CHILDREN
+>> +	default n
+>> +	help
+>> +	  Enables additional kernel features in a sake of checkpoint/restore.
+>> +	  In particular it adds auxiliary prctl codes to setup process text,
+>> +	  data and heap segment sizes, and a few additional /proc filesystem
+>> +	  entries.
+>> +
+>> +	  If unsure, say N here.
+>> +
+>>   config SCHED_AUTOGROUP
+>>   	bool "Automatic process group scheduling"
+>>   	select CGROUPS
+>> @@ -1348,18 +1360,6 @@ config MEMBARRIER
+>>
+>>   	  If unsure, say Y.
+>>
+>> -config CHECKPOINT_RESTORE
+>> -	bool "Checkpoint/restore support" if EXPERT
+>> -	select PROC_CHILDREN
+>> -	default n
+>> -	help
+>> -	  Enables additional kernel features in a sake of checkpoint/restore.
+>> -	  In particular it adds auxiliary prctl codes to setup process text,
+>> -	  data and heap segment sizes, and a few additional /proc filesystem
+>> -	  entries.
+>> -
+>> -	  If unsure, say N here.
+>> -
+>>   config KALLSYMS
+>>   	 bool "Load all symbols for debugging/ksymoops" if EXPERT
+>>   	 default y
+> Thanks!
 >
-> legacy_time_t etc.?
+> Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
 
-I think it should have '32' in the name, otherwise it might lead to confusion
-regarding the size, as we also need legacy types that use 'long' (either
-32-bit or 64-bit) seconds, besides the modern types that are always
-64-bit.
+Reviewed-by: Alice Frosi <alice@linux.vnet.ibm.com>
 
-In the previous patches, we introduced in the uapi
-
-__kernel_timespec:     always 64-bit (both seconds and nanoseconds)
-__kernel_old_timeval: replaces timeval (variable 'long' seconds/nanoseconds)
-
-The __kernel_ prefix here signifies structures that are used in the
-uapi headers and are possibly included in user space but must not
-conflict with user space defined types like 'timeval' that can use either
-'long' or 'long long' seconds in user space.
-
-I would suggest we use __kernel_old_timespec for the equivalent
-timespec variant (long/long) for consistency. I originally thought we
-wouldn't need that one, but now it looks more likely that we do.
-I still think we won't need a 64-bit '__kernel_timeval' type, but
-it depends on what we do about getrusage(), getitimer() and
-adjtimex().
-
-For the pure 32-bit types, I'd prefer 'old' over 'legacy', which is
-similar to the existing  __kernel_old_dev_t, __kernel_gid_t, and
-__kernel_old_uid_t types, but we don't need the __kernel_
-prefix because we would not use them in uapi headers.
-
-I don't see a need for replacing compat_time_t right now
-(I may be missing something I had in mind earlier), but
-for timespec/timeval/itimerspec, how about old_timespec32,
-old_timeval32 and old_itimerspec32 to replace
-compat_timespec, compat_timeval and compat_itimerspec?
-
-For itimerval, we probably need a __kernel_old_itimerval,
-but no __kernel_itimerval or old_itimerval, similar to what we
-do for timeval.
-
-      Arnd
