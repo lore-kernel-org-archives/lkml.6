@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08DEC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4361C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50F3F20BEC
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:07:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9372720BEC
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:07:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="2dr8RbOw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50F3F20BEC
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mdHi++T6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9372720BEC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391073AbeGLAOY (ORCPT
+        id S2391085AbeGLAOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 20:14:24 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56988 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390956AbeGLANL (ORCPT
+        Wed, 11 Jul 2018 20:14:35 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:35450 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390953AbeGLANK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 20:13:11 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6C04UWK147370;
-        Thu, 12 Jul 2018 00:04:30 GMT
+        Wed, 11 Jul 2018 20:13:10 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6C04aav185821;
+        Thu, 12 Jul 2018 00:04:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=r7SXJWkozyYrojFxuysUT6TzwtpLaVe7lrT+lSNKJPQ=;
- b=2dr8RbOwhTkNYwNjU2crP1VDIXCJlnUd+GvRCdUVA1Ng79cPPeQENPE+X9lrNvvyNFHv
- +7Y4YtYh86XvVvWVMpaCDoT+4LebFHsVsaX2ftEzgMrD4fAUKwJhDFqmMhYjsU4DJe1Q
- xrVeHAK9FgcC3tHh8DBAU3+RZWFhH7La0LtqGTMl5rZ3llfDTM4rlhj0ZXHJ2F+h1tiN
- VaqeubL0jrbCAgCy02jlUYQ1EUQxQq8/ZwZ6Y+nmP1KpYW8pNR4dygY6/pjSLznjBqya
- E88mIiXsr3xFGfBXCOjIcVUdqlK+3NcvsATCVUEBwEuc5irjWSEP09jF7Csv77+JR7Cr Ng== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2k2p7vg837-1
+ bh=gCvt6QurdgS3KZsbEL+BvYkbmjbt98ZOD4kPsx//Qu8=;
+ b=mdHi++T6tRYl8lZs4eK3pBHvg/vM1VdgY/o3zof+apUDyWGBLhsPQFzLUchFEltYYP3l
+ 5wMrtX5k8XnYYpbbU55eV3nSn5yQhmONHrNCOPKBMQUNsPbjghWwtbKUG7VtSPXa64p5
+ kHRCLXgwnalmfTlBxJpyRg0wbN6E4ofnnzqIDP1owiqlNd+NmOxJoNNY1YDuX1riCnQv
+ j9YD3hMhpz9Gy6vrjUjJRS/K4fuLsZiUMgjVdzkhtaMXDH/mv9kSlpgW7882RxXowbu7
+ KOGttnhlrt442EyeC3J8cB+FN6kPP7nAYsMTLnhjiOrfp7D6Ypg8tfZWsi9XGFaT1EBG Yg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2k2p7e09gf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 00:04:30 +0000
+        Thu, 12 Jul 2018 00:04:35 +0000
 Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6C04TvN012847
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6C04YDt029097
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 00:04:29 GMT
+        Thu, 12 Jul 2018 00:04:35 GMT
 Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6C04S7H031913;
-        Thu, 12 Jul 2018 00:04:29 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6C04Y7E031939;
+        Thu, 12 Jul 2018 00:04:34 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Jul 2018 17:04:28 -0700
+        with ESMTP ; Wed, 11 Jul 2018 17:04:34 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -61,14 +61,14 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
         boris.ostrovsky@oracle.com, jgross@suse.com
-Subject: [PATCH v13 02/18] x86: initialize static branching early
-Date:   Wed, 11 Jul 2018 20:04:03 -0400
-Message-Id: <20180712000419.5165-3-pasha.tatashin@oracle.com>
+Subject: [PATCH v13 05/18] kvm/x86: remove kvm memblock dependency
+Date:   Wed, 11 Jul 2018 20:04:06 -0400
+Message-Id: <20180712000419.5165-6-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180712000419.5165-1-pasha.tatashin@oracle.com>
 References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1806210000 definitions=main-1807110252
@@ -77,153 +77,195 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-static branching is useful to hot-patch branches that are used in hot
-path, but are infrequently changed.
+KVM clock is initialized later compared to other hypervisor because it has
+dependency on memblock allocator.
 
-x86 clock framework is one example that uses static branches to setup
-the best clock during boot and never change it again.
+Lets bring it inline with other hypervisors by removing this dependency by
+using memory from BSS instead of allocating it.
 
-Since we plan to enable clock early, we need static branching
-functionality early as well.
-
-static branching requires patching nop instructions, thus, we need
-arch_init_ideal_nops() to be called prior to jump_label_init()
-
-Here we do all the necessary steps to call arch_init_ideal_nops
-after early_cpu_init().
+The benefits:
+- remove ifdef from common code
+- earlier availability of TSC.
+- remove dependency on memblock, and reduce code
+- earlier kvm sched_clock()
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Reviewed-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/cpu/amd.c    | 13 +++++++-----
- arch/x86/kernel/cpu/common.c | 38 +++++++++++++++++++-----------------
- arch/x86/kernel/setup.c      |  4 ++--
- 3 files changed, 30 insertions(+), 25 deletions(-)
+ arch/x86/include/asm/kvm_para.h |  2 +-
+ arch/x86/kernel/kvm.c           |  1 +
+ arch/x86/kernel/kvmclock.c      | 66 +++++----------------------------
+ arch/x86/kernel/setup.c         |  7 +---
+ 4 files changed, 14 insertions(+), 62 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
-index 38915fbfae73..b732438c1a1e 100644
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -232,8 +232,6 @@ static void init_amd_k7(struct cpuinfo_x86 *c)
- 		}
- 	}
+diff --git a/arch/x86/include/asm/kvm_para.h b/arch/x86/include/asm/kvm_para.h
+index 3aea2658323a..62872a862914 100644
+--- a/arch/x86/include/asm/kvm_para.h
++++ b/arch/x86/include/asm/kvm_para.h
+@@ -6,7 +6,7 @@
+ #include <asm/alternative.h>
+ #include <uapi/asm/kvm_para.h>
  
--	set_cpu_cap(c, X86_FEATURE_K7);
--
- 	/* calling is from identify_secondary_cpu() ? */
- 	if (!c->cpu_index)
- 		return;
-@@ -617,6 +615,14 @@ static void early_init_amd(struct cpuinfo_x86 *c)
+-extern void kvmclock_init(void);
++extern void kvm_platform_init(void);
+ extern int kvm_register_clock(char *txt);
  
- 	early_init_amd_mc(c);
+ #ifdef CONFIG_KVM_GUEST
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 5b2300b818af..874c53dd8ba2 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -628,6 +628,7 @@ const __initconst struct hypervisor_x86 x86_hyper_kvm = {
+ 	.name			= "KVM",
+ 	.detect			= kvm_detect,
+ 	.type			= X86_HYPER_KVM,
++	.init.init_platform	= kvm_platform_init,
+ 	.init.guest_late_init	= kvm_guest_init,
+ 	.init.x2apic_available	= kvm_para_available,
+ };
+diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+index bf8d1eb7fca3..d2af1b1f060e 100644
+--- a/arch/x86/kernel/kvmclock.c
++++ b/arch/x86/kernel/kvmclock.c
+@@ -23,9 +23,9 @@
+ #include <asm/apic.h>
+ #include <linux/percpu.h>
+ #include <linux/hardirq.h>
+-#include <linux/memblock.h>
+ #include <linux/sched.h>
+ #include <linux/sched/clock.h>
++#include <linux/mm.h>
  
-+#ifdef CONFIG_X86_32
-+	if (c->x86 == 6)
-+		set_cpu_cap(c, X86_FEATURE_K7);
-+#endif
-+
-+	if (c->x86 >= 0xf)
-+		set_cpu_cap(c, X86_FEATURE_K8);
-+
- 	rdmsr_safe(MSR_AMD64_PATCH_LEVEL, &c->microcode, &dummy);
+ #include <asm/mem_encrypt.h>
+ #include <asm/x86_init.h>
+@@ -44,6 +44,11 @@ static int parse_no_kvmclock(char *arg)
+ }
+ early_param("no-kvmclock", parse_no_kvmclock);
  
- 	/*
-@@ -863,9 +869,6 @@ static void init_amd(struct cpuinfo_x86 *c)
- 
- 	init_amd_cacheinfo(c);
- 
--	if (c->x86 >= 0xf)
--		set_cpu_cap(c, X86_FEATURE_K8);
--
- 	if (cpu_has(c, X86_FEATURE_XMM2)) {
- 		unsigned long long val;
- 		int ret;
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index eb4cb3efd20e..71281ac43b15 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1015,6 +1015,24 @@ static void __init cpu_set_bug_bits(struct cpuinfo_x86 *c)
- 	setup_force_cpu_bug(X86_BUG_CPU_MELTDOWN);
++/* Aligned to page sizes to match whats mapped via vsyscalls to userspace */
++#define HV_CLOCK_SIZE	(sizeof(struct pvclock_vsyscall_time_info) * NR_CPUS)
++#define WALL_CLOCK_SIZE	(sizeof(struct pvclock_wall_clock))
++static u8 hv_clock_mem[PAGE_ALIGN(HV_CLOCK_SIZE)] __aligned(PAGE_SIZE);
++static u8 wall_clock_mem[PAGE_ALIGN(WALL_CLOCK_SIZE)] __aligned(PAGE_SIZE);
+ /* The hypervisor will put information about time periodically here */
+ static struct pvclock_vsyscall_time_info *hv_clock;
+ static struct pvclock_wall_clock *wall_clock;
+@@ -244,43 +249,12 @@ static void kvm_shutdown(void)
+ 	native_machine_shutdown();
  }
  
-+/*
-+ * The NOPL instruction is supposed to exist on all CPUs of family >= 6;
-+ * unfortunately, that's not true in practice because of early VIA
-+ * chips and (more importantly) broken virtualizers that are not easy
-+ * to detect. In the latter case it doesn't even *fail* reliably, so
-+ * probing for it doesn't even work. Disable it completely on 32-bit
-+ * unless we can find a reliable way to detect all the broken cases.
-+ * Enable it explicitly on 64-bit for non-constant inputs of cpu_has().
-+ */
-+static void detect_nopl(struct cpuinfo_x86 *c)
-+{
-+#ifdef CONFIG_X86_32
-+	clear_cpu_cap(c, X86_FEATURE_NOPL);
-+#else
-+	set_cpu_cap(c, X86_FEATURE_NOPL);
-+#endif
-+}
-+
- /*
-  * Do minimum CPU detection early.
-  * Fields really needed: vendor, cpuid_level, family, model, mask,
-@@ -1089,6 +1107,8 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
- 	 */
- 	if (!pgtable_l5_enabled())
- 		setup_clear_cpu_cap(X86_FEATURE_LA57);
-+
-+	detect_nopl(c);
- }
- 
- void __init early_cpu_init(void)
-@@ -1124,24 +1144,6 @@ void __init early_cpu_init(void)
- 	early_identify_cpu(&boot_cpu_data);
- }
- 
--/*
-- * The NOPL instruction is supposed to exist on all CPUs of family >= 6;
-- * unfortunately, that's not true in practice because of early VIA
-- * chips and (more importantly) broken virtualizers that are not easy
-- * to detect. In the latter case it doesn't even *fail* reliably, so
-- * probing for it doesn't even work. Disable it completely on 32-bit
-- * unless we can find a reliable way to detect all the broken cases.
-- * Enable it explicitly on 64-bit for non-constant inputs of cpu_has().
-- */
--static void detect_nopl(struct cpuinfo_x86 *c)
+-static phys_addr_t __init kvm_memblock_alloc(phys_addr_t size,
+-					     phys_addr_t align)
 -{
--#ifdef CONFIG_X86_32
--	clear_cpu_cap(c, X86_FEATURE_NOPL);
--#else
--	set_cpu_cap(c, X86_FEATURE_NOPL);
--#endif
+-	phys_addr_t mem;
+-
+-	mem = memblock_alloc(size, align);
+-	if (!mem)
+-		return 0;
+-
+-	if (sev_active()) {
+-		if (early_set_memory_decrypted((unsigned long)__va(mem), size))
+-			goto e_free;
+-	}
+-
+-	return mem;
+-e_free:
+-	memblock_free(mem, size);
+-	return 0;
 -}
 -
- static void detect_null_seg_behavior(struct cpuinfo_x86 *c)
+-static void __init kvm_memblock_free(phys_addr_t addr, phys_addr_t size)
+-{
+-	if (sev_active())
+-		early_set_memory_encrypted((unsigned long)__va(addr), size);
+-
+-	memblock_free(addr, size);
+-}
+-
+-void __init kvmclock_init(void)
++void __init kvm_platform_init(void)
  {
- #ifdef CONFIG_X86_64
+ 	struct pvclock_vcpu_time_info *vcpu_time;
+-	unsigned long mem, mem_wall_clock;
+-	int size, cpu, wall_clock_size;
++	int cpu;
+ 	u8 flags;
+ 
+-	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+-
+ 	if (!kvm_para_available())
+ 		return;
+ 
+@@ -290,28 +264,11 @@ void __init kvmclock_init(void)
+ 	} else if (!(kvmclock && kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE)))
+ 		return;
+ 
+-	wall_clock_size = PAGE_ALIGN(sizeof(struct pvclock_wall_clock));
+-	mem_wall_clock = kvm_memblock_alloc(wall_clock_size, PAGE_SIZE);
+-	if (!mem_wall_clock)
+-		return;
+-
+-	wall_clock = __va(mem_wall_clock);
+-	memset(wall_clock, 0, wall_clock_size);
+-
+-	mem = kvm_memblock_alloc(size, PAGE_SIZE);
+-	if (!mem) {
+-		kvm_memblock_free(mem_wall_clock, wall_clock_size);
+-		wall_clock = NULL;
+-		return;
+-	}
+-
+-	hv_clock = __va(mem);
+-	memset(hv_clock, 0, size);
++	wall_clock = (struct pvclock_wall_clock *)wall_clock_mem;
++	hv_clock = (struct pvclock_vsyscall_time_info *)hv_clock_mem;
+ 
+ 	if (kvm_register_clock("primary cpu clock")) {
+ 		hv_clock = NULL;
+-		kvm_memblock_free(mem, size);
+-		kvm_memblock_free(mem_wall_clock, wall_clock_size);
+ 		wall_clock = NULL;
+ 		return;
+ 	}
+@@ -354,13 +311,10 @@ int __init kvm_setup_vsyscall_timeinfo(void)
+ 	int cpu;
+ 	u8 flags;
+ 	struct pvclock_vcpu_time_info *vcpu_time;
+-	unsigned int size;
+ 
+ 	if (!hv_clock)
+ 		return 0;
+ 
+-	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+-
+ 	cpu = get_cpu();
+ 
+ 	vcpu_time = &hv_clock[cpu].pvti;
 diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 2f86d883dd95..403b2d2c31d2 100644
+index 403b2d2c31d2..01fcc8bf7c8f 100644
 --- a/arch/x86/kernel/setup.c
 +++ b/arch/x86/kernel/setup.c
-@@ -866,6 +866,8 @@ void __init setup_arch(char **cmdline_p)
+@@ -1014,6 +1014,8 @@ void __init setup_arch(char **cmdline_p)
+ 	 */
+ 	init_hypervisor_platform();
  
- 	idt_setup_early_traps();
- 	early_cpu_init();
-+	arch_init_ideal_nops();
-+	jump_label_init();
- 	early_ioremap_init();
++	tsc_early_delay_calibrate();
++
+ 	x86_init.resources.probe_roms();
  
- 	setup_olpc_ofw_pgd();
-@@ -1272,8 +1274,6 @@ void __init setup_arch(char **cmdline_p)
+ 	/* after parse_early_param, so could debug it */
+@@ -1199,11 +1201,6 @@ void __init setup_arch(char **cmdline_p)
  
- 	mcheck_init();
+ 	memblock_find_dma_reserve();
  
--	arch_init_ideal_nops();
+-#ifdef CONFIG_KVM_GUEST
+-	kvmclock_init();
+-#endif
 -
- 	register_refined_jiffies(CLOCK_TICK_RATE);
+-	tsc_early_delay_calibrate();
+ 	if (!early_xdbc_setup_hardware())
+ 		early_xdbc_register_console();
  
- #ifdef CONFIG_EFI
 -- 
 2.18.0
 
