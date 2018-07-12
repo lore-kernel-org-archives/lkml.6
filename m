@@ -2,522 +2,210 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5EEC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E6BC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F131A20862
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F131A20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
+	by mail.kernel.org (Postfix) with ESMTP id 88ADD20862
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHRuN39I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88ADD20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732496AbeGLIaO (ORCPT
+        id S1732516AbeGLIaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:30:14 -0400
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:33066 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726620AbeGLIaO (ORCPT
+        Thu, 12 Jul 2018 04:30:16 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:41922 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbeGLIaP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:30:14 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 4BDFC27390;
-        Thu, 12 Jul 2018 04:21:41 -0400 (EDT)
-Date:   Thu, 12 Jul 2018 18:23:09 +1000
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [RFC] macintosh: Use common code to access RTC
+        Thu, 12 Jul 2018 04:30:15 -0400
+Received: by mail-lj1-f194.google.com with SMTP id y17-v6so16558543ljy.8;
+        Thu, 12 Jul 2018 01:21:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=j3GRVs5QdaCvzkNqHu3pRIHoQbXSF4DPa5zkup5RP0I=;
+        b=RHRuN39ItsDFxGc1cWjLEJZQmV29TcarcMt1X4T69oyd1773KoLJh4/259KVNI88jS
+         36ci2nOjnaPAsEYIZavrtMf0KVwUvJxNUCeRiYmURCKc9CEaYUTui5XNgthfq+0OCcNx
+         ffDcH6to64fcl9+VnYmrWCrSq0TK7U5AWXXuWX1bQnGlpqxf84lt92Nf/z5g5CWHXYWZ
+         Z3KfKN+U8/aCSwz+eTjJICFk8Ws734D8vkTRQdhb1ccmsbVqZ/HOyUPTfGWlOCotkn3b
+         3yj6l43xHd7jFpU3yAtjJzYR2c3sefKymWZ261UI3oe1B1bOGrU/suZ7OOpjfGkvYiCw
+         6+ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=j3GRVs5QdaCvzkNqHu3pRIHoQbXSF4DPa5zkup5RP0I=;
+        b=IT3sU8IwQDZzl57YHi5MW4iE4BQl7NATXQVcUlwzm/gmERWTH2I/eruz/SkYjDG7DV
+         svLz0N46U3ZSDGY7bDxFnUZRAv02Ze3tbHcpwJqeaH5Ww3PihcvhjratUX1+Et4G/vc3
+         YCyiwXf4E5TulF4wjmCy1PngH69wB/TgBEZzSlsOrNBwCFEqC9eAPi7VeCgimf1Hl8wn
+         4mgEddab3wB2IWw4g4SljxIQxCu4zasTlQEEfC9m1mXU/JyHbB1tIXonYc3U3KCDOpND
+         7eN/Y8xGcLebtdMsLzKk77O8g/71asq2KBr4LRHTN++G+0V7WGdkvjQpT34Moesiqzje
+         2ObA==
+X-Gm-Message-State: APt69E1RD1dvpSm9CQB0UzsdN4NaQqg9+5lFnplhhbOm5RYSGBMlG5nI
+        chuyXo7i63l2RAE9PkoDDWHLR3mAwcsQXTBJfXw=
+X-Google-Smtp-Source: AAOMgpejjrhfHovHvH/M3Su+a1+j4rc6LlGIShC1a6mXfuZiZNCf0pe4Ad7aGrx4iBGb/UV+ioTZpVxY7WFvxqfaejQ=
+X-Received: by 2002:a2e:118f:: with SMTP id 15-v6mr19848413ljr.38.1531383701692;
+ Thu, 12 Jul 2018 01:21:41 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 01:21:40
+ -0700 (PDT)
+In-Reply-To: <20180712000932.3b04ee9d@bbrezillon>
+References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
+ <20180330074751.25987-2-boris.brezillon@bootlin.com> <CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com>
+ <20180711164120.3e32fb08@bbrezillon> <CAK8P3a2EZB_tMS_47wv6M2Qpm79ZocxxhG5zLxXsBM_YjZgkyA@mail.gmail.com>
+ <20180711191212.3855bb25@bbrezillon> <CAK8P3a2djk8c6STaxJC0MCkBddyOafk4WbG2LdfPf0V1EYiqmQ@mail.gmail.com>
+ <20180712000932.3b04ee9d@bbrezillon>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 12 Jul 2018 10:21:40 +0200
+X-Google-Sender-Auth: fqlxLLQ7N9vvq3ZEjGGtsR8bo5w
+Message-ID: <CAK8P3a13GX67YEci2J8Rxn6O4FBjjD82X+w3hyGMT3TDbtFkTg@mail.gmail.com>
+Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-Message-Id: <S1732496AbeGLIaO/20180712083015Z+64@vger.kernel.org>
 
-Once the 68k Mac port adopts the via-pmu driver, it must access
-the PMU RTC using the appropriate command format. The same code can
-then be used for both m68k and powerpc.
+On Thu, Jul 12, 2018 at 12:09 AM, Boris Brezillon
+<boris.brezillon@bootlin.com> wrote:
+> On Wed, 11 Jul 2018 22:10:26 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Wed, Jul 11, 2018 at 7:12 PM, Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+>> > On Wed, 11 Jul 2018 17:39:56 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
+>> >> On Wed, Jul 11, 2018 at 4:41 PM, Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-Replace the RTC code that's duplicated in arch/powerpc and arch/m68k
-with common RTC accessors for Cuda and PMU devices.
+>> >> IOW, what feature would we lose if we were to declare that
+>> >> setup above invalid (and ensure you cannot represent it in DT)?
+>> >
+>> > That's exactly the sort of discussion I wanted to trigger. Maybe we
+>> > shouldn't care and expose this use case as if it was X different I3C
+>> > buses (with all devices present on the bus being exposed X times
+>> > to the system).
+>>
+>> That's probably fine for many slave devices (you could read a
+>> single sensor multiple times if you iterate through all i2c sensors
+>> on all buses) but might not work for others (a slave device sending
+>> an interrupt to the current master for a request that was started
+>> from the previous master).
+>> My impression however is that this is actually a corner case that
+>> we can leave to be undefined, and not prepare to handle well,
+>> as long as we can deal with the interesting examples above.
+>
+> Mastership handover/takeover is something I already thought about.
+> Actually, that's the reason for the i3c_bus->cur_master field (so that
+> the master being asked to do a transfer on the bus can request bus
+> ownership it bus->cur_master != master->this->info.pid).
+>
+> I guess this would be replaced by something simpler if we get rid of
+> the i3c_bus object (just a bool i3c_master->owns_bus).
 
-While we're at it, drop the problematic WARN_ON that was introduced in
-commit 22db552b50fa ("powerpc/powermac: Fix rtc read/write functions").
+If we can ignore the case of handing over between two masters that
+we both own, we end up being in just one of two states:
 
----
-The patch below hasn't been tested yet and would need to be applied
-after my PMU patch series (v4). So I'll probably append it to v5.
+a) currently we are the master
+b) we are not currently the master but have asked the current
+    master to transfer ownership back to us. For this, we have to
+    know who the current master is of course.
 
-The patch below is an alternative both to the patch Arnd posted here,
-https://lore.kernel.org/lkml/20180619140229.3615110-2-arnd@arndb.de/
-as well as another future patch to remove the WARN_ON from 
-arch/powerpc/platforms/powermac/time.c.
+I think that's the simplest case that would work with the specification,
+but it relies on the assumption that the master controlled by Linux
+is always more important than any other master, and that we just
+hand over ownership for as long as the others want it.
 
----
- arch/m68k/mac/misc.c                   |  75 +++----------------
- arch/powerpc/platforms/powermac/time.c | 130 ++++-----------------------------
- drivers/macintosh/via-cuda.c           |  35 +++++++++
- drivers/macintosh/via-pmu.c            |  33 +++++++++
- include/linux/cuda.h                   |   4 +
- include/linux/pmu.h                    |   4 +
- 6 files changed, 99 insertions(+), 182 deletions(-)
+If that is not the case, we also need a third state
 
-diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
-index 28090a44fa09..21e3afa48de9 100644
---- a/arch/m68k/mac/misc.c
-+++ b/arch/m68k/mac/misc.c
-@@ -33,34 +33,6 @@
- static void (*rom_reset)(void);
- 
- #ifdef CONFIG_ADB_CUDA
--static long cuda_read_time(void)
--{
--	struct adb_request req;
--	long time;
--
--	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
--		return 0;
--	while (!req.complete)
--		cuda_poll();
--
--	time = (req.reply[3] << 24) | (req.reply[4] << 16) |
--	       (req.reply[5] << 8) | req.reply[6];
--	return time - RTC_OFFSET;
--}
--
--static void cuda_write_time(long data)
--{
--	struct adb_request req;
--
--	data += RTC_OFFSET;
--	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
--			 (data >> 24) & 0xFF, (data >> 16) & 0xFF,
--			 (data >> 8) & 0xFF, data & 0xFF) < 0)
--		return;
--	while (!req.complete)
--		cuda_poll();
--}
--
- static __u8 cuda_read_pram(int offset)
- {
- 	struct adb_request req;
-@@ -86,34 +58,6 @@ static void cuda_write_pram(int offset, __u8 data)
- #endif /* CONFIG_ADB_CUDA */
- 
- #ifdef CONFIG_ADB_PMU
--static long pmu_read_time(void)
--{
--	struct adb_request req;
--	long time;
--
--	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
--		return 0;
--	while (!req.complete)
--		pmu_poll();
--
--	time = (req.reply[1] << 24) | (req.reply[2] << 16) |
--	       (req.reply[3] << 8) | req.reply[4];
--	return time - RTC_OFFSET;
--}
--
--static void pmu_write_time(long data)
--{
--	struct adb_request req;
--
--	data += RTC_OFFSET;
--	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
--			(data >> 24) & 0xFF, (data >> 16) & 0xFF,
--			(data >> 8) & 0xFF, data & 0xFF) < 0)
--		return;
--	while (!req.complete)
--		pmu_poll();
--}
--
- static __u8 pmu_read_pram(int offset)
- {
- 	struct adb_request req;
-@@ -291,13 +235,17 @@ static long via_read_time(void)
-  * is basically any machine with Mac II-style ADB.
-  */
- 
--static void via_write_time(long time)
-+static void via_set_rtc_time(struct rtc_time *tm)
- {
- 	union {
- 		__u8 cdata[4];
- 		long idata;
- 	} data;
- 	__u8 temp;
-+	unsigned long time;
-+
-+	time = mktime(tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
-+	              tm->tm_hour, tm->tm_min, tm->tm_sec);
- 
- 	/* Clear the write protect bit */
- 
-@@ -635,12 +583,12 @@ int mac_hwclk(int op, struct rtc_time *t)
- #ifdef CONFIG_ADB_CUDA
- 		case MAC_ADB_EGRET:
- 		case MAC_ADB_CUDA:
--			now = cuda_read_time();
-+			now = cuda_get_time();
- 			break;
- #endif
- #ifdef CONFIG_ADB_PMU
- 		case MAC_ADB_PB2:
--			now = pmu_read_time();
-+			now = pmu_get_time();
- 			break;
- #endif
- 		default:
-@@ -659,24 +607,21 @@ int mac_hwclk(int op, struct rtc_time *t)
- 		         __func__, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
- 		         t->tm_hour, t->tm_min, t->tm_sec);
- 
--		now = mktime(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
--			     t->tm_hour, t->tm_min, t->tm_sec);
--
- 		switch (macintosh_config->adb_type) {
- 		case MAC_ADB_IOP:
- 		case MAC_ADB_II:
- 		case MAC_ADB_PB1:
--			via_write_time(now);
-+			via_set_rtc_time(t);
- 			break;
- #ifdef CONFIG_ADB_CUDA
- 		case MAC_ADB_EGRET:
- 		case MAC_ADB_CUDA:
--			cuda_write_time(now);
-+			cuda_set_rtc_time(t);
- 			break;
- #endif
- #ifdef CONFIG_ADB_PMU
- 		case MAC_ADB_PB2:
--			pmu_write_time(now);
-+			pmu_set_rtc_time(t);
- 			break;
- #endif
- 		default:
-diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index 12e6e4d30602..3f35dcf5cfa8 100644
---- a/arch/powerpc/platforms/powermac/time.c
-+++ b/arch/powerpc/platforms/powermac/time.c
-@@ -42,13 +42,6 @@
- #define DBG(x...)
- #endif
- 
--/*
-- * Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
-- * times wrap in 2040. If we need to handle later times, the read_time functions
-- * need to be changed to interpret wrapped times as post-2040.
-- */
--#define RTC_OFFSET	2082844800
--
- /*
-  * Calibrate the decrementer frequency with the VIA timer 1.
-  */
-@@ -88,98 +81,6 @@ long __init pmac_time_init(void)
- 	return delta;
- }
- 
--#ifdef CONFIG_ADB_CUDA
--static time64_t cuda_get_time(void)
--{
--	struct adb_request req;
--	time64_t now;
--
--	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
--		return 0;
--	while (!req.complete)
--		cuda_poll();
--	if (req.reply_len != 7)
--		printk(KERN_ERR "cuda_get_time: got %d byte reply\n",
--		       req.reply_len);
--	now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
--		    (req.reply[5] << 8) + req.reply[6]);
--	/* it's either after year 2040, or the RTC has gone backwards */
--	WARN_ON(now < RTC_OFFSET);
--
--	return now - RTC_OFFSET;
--}
--
--#define cuda_get_rtc_time(tm)	rtc_time64_to_tm(cuda_get_time(), (tm))
--
--static int cuda_set_rtc_time(struct rtc_time *tm)
--{
--	u32 nowtime;
--	struct adb_request req;
--
--	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
--	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
--			 nowtime >> 24, nowtime >> 16, nowtime >> 8,
--			 nowtime) < 0)
--		return -ENXIO;
--	while (!req.complete)
--		cuda_poll();
--	if ((req.reply_len != 3) && (req.reply_len != 7))
--		printk(KERN_ERR "cuda_set_rtc_time: got %d byte reply\n",
--		       req.reply_len);
--	return 0;
--}
--
--#else
--#define cuda_get_time()		0
--#define cuda_get_rtc_time(tm)
--#define cuda_set_rtc_time(tm)	0
--#endif
--
--#ifdef CONFIG_ADB_PMU
--static time64_t pmu_get_time(void)
--{
--	struct adb_request req;
--	time64_t now;
--
--	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
--		return 0;
--	pmu_wait_complete(&req);
--	if (req.reply_len != 4)
--		printk(KERN_ERR "pmu_get_time: got %d byte reply from PMU\n",
--		       req.reply_len);
--	now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16)	+
--		    (req.reply[2] << 8) + req.reply[3]);
--
--	/* it's either after year 2040, or the RTC has gone backwards */
--	WARN_ON(now < RTC_OFFSET);
--
--	return now - RTC_OFFSET;
--}
--
--#define pmu_get_rtc_time(tm)	rtc_time64_to_tm(pmu_get_time(), (tm))
--
--static int pmu_set_rtc_time(struct rtc_time *tm)
--{
--	u32 nowtime;
--	struct adb_request req;
--
--	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
--	if (pmu_request(&req, NULL, 5, PMU_SET_RTC, nowtime >> 24,
--			nowtime >> 16, nowtime >> 8, nowtime) < 0)
--		return -ENXIO;
--	pmu_wait_complete(&req);
--	if (req.reply_len != 0)
--		printk(KERN_ERR "pmu_set_rtc_time: %d byte reply from PMU\n",
--		       req.reply_len);
--	return 0;
--}
--
--#else
--#define pmu_get_time()		0
--#define pmu_get_rtc_time(tm)
--#define pmu_set_rtc_time(tm)	0
--#endif
--
- #ifdef CONFIG_PMAC_SMU
- static time64_t smu_get_time(void)
- {
-@@ -189,11 +90,6 @@ static time64_t smu_get_time(void)
- 		return 0;
- 	return rtc_tm_to_time64(&tm);
- }
--
--#else
--#define smu_get_time()			0
--#define smu_get_rtc_time(tm, spin)
--#define smu_set_rtc_time(tm, spin)	0
- #endif
- 
- /* Can't be __init, it's called when suspending and resuming */
-@@ -201,12 +97,18 @@ time64_t pmac_get_boot_time(void)
- {
- 	/* Get the time from the RTC, used only at boot time */
- 	switch (sys_ctrler) {
-+#ifdef CONFIG_ADB_CUDA
- 	case SYS_CTRLER_CUDA:
- 		return cuda_get_time();
-+#endif
-+#ifdef CONFIG_ADB_PMU
- 	case SYS_CTRLER_PMU:
- 		return pmu_get_time();
-+#endif
-+#ifdef CONFIG_PMAC_SMU
- 	case SYS_CTRLER_SMU:
- 		return smu_get_time();
-+#endif
- 	default:
- 		return 0;
- 	}
-@@ -215,30 +117,24 @@ time64_t pmac_get_boot_time(void)
- void pmac_get_rtc_time(struct rtc_time *tm)
- {
- 	/* Get the time from the RTC, used only at boot time */
--	switch (sys_ctrler) {
--	case SYS_CTRLER_CUDA:
--		cuda_get_rtc_time(tm);
--		break;
--	case SYS_CTRLER_PMU:
--		pmu_get_rtc_time(tm);
--		break;
--	case SYS_CTRLER_SMU:
--		smu_get_rtc_time(tm, 1);
--		break;
--	default:
--		;
--	}
-+	rtc_time64_to_tm(pmac_get_boot_time(), tm);
- }
- 
- int pmac_set_rtc_time(struct rtc_time *tm)
- {
- 	switch (sys_ctrler) {
-+#ifdef CONFIG_ADB_CUDA
- 	case SYS_CTRLER_CUDA:
- 		return cuda_set_rtc_time(tm);
-+#endif
-+#ifdef CONFIG_ADB_PMU
- 	case SYS_CTRLER_PMU:
- 		return pmu_set_rtc_time(tm);
-+#endif
-+#ifdef CONFIG_PMAC_SMU
- 	case SYS_CTRLER_SMU:
- 		return smu_set_rtc_time(tm, 1);
-+#endif
- 	default:
- 		return -ENODEV;
- 	}
-diff --git a/drivers/macintosh/via-cuda.c b/drivers/macintosh/via-cuda.c
-index 98dd702eb867..bbd5a81ba262 100644
---- a/drivers/macintosh/via-cuda.c
-+++ b/drivers/macintosh/via-cuda.c
-@@ -766,3 +766,38 @@ cuda_input(unsigned char *buf, int nb)
- 	               buf, nb, false);
-     }
- }
-+
-+/* Offset between Unix time (1970-based) and Mac time (1904-based) */
-+#define RTC_OFFSET	2082844800
-+
-+time64_t cuda_get_time(void)
-+{
-+	struct adb_request req;
-+	time64_t now;
-+
-+	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
-+		return 0;
-+	while (!req.complete)
-+		cuda_poll();
-+	if (req.reply_len != 7)
-+		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
-+	now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
-+	            (req.reply[5] << 8) + req.reply[6]);
-+	return now - RTC_OFFSET;
-+}
-+
-+int cuda_set_rtc_time(struct rtc_time *tm)
-+{
-+	u32 now;
-+	struct adb_request req;
-+
-+	now = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
-+	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
-+	                 now >> 24, now >> 16, now >> 8, now) < 0)
-+		return -ENXIO;
-+	while (!req.complete)
-+		cuda_poll();
-+	if ((req.reply_len != 3) && (req.reply_len != 7))
-+		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
-+	return 0;
-+}
-diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
-index d72c450aebe5..48eaa770f0f6 100644
---- a/drivers/macintosh/via-pmu.c
-+++ b/drivers/macintosh/via-pmu.c
-@@ -1737,6 +1737,39 @@ pmu_enable_irled(int on)
- 	pmu_wait_complete(&req);
- }
- 
-+/* Offset between Unix time (1970-based) and Mac time (1904-based) */
-+#define RTC_OFFSET	2082844800
-+
-+time64_t pmu_get_time(void)
-+{
-+	struct adb_request req;
-+	time64_t now;
-+
-+	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
-+		return 0;
-+	pmu_wait_complete(&req);
-+	if (req.reply_len != 4)
-+		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
-+	now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16)	+
-+	            (req.reply[2] << 8) + req.reply[3]);
-+	return now - RTC_OFFSET;
-+}
-+
-+int pmu_set_rtc_time(struct rtc_time *tm)
-+{
-+	u32 now;
-+	struct adb_request req;
-+
-+	now = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
-+	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
-+	                now >> 24, now >> 16, now >> 8, now) < 0)
-+		return -ENXIO;
-+	pmu_wait_complete(&req);
-+	if (req.reply_len != 0)
-+		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
-+	return 0;
-+}
-+
- void
- pmu_restart(void)
- {
-diff --git a/include/linux/cuda.h b/include/linux/cuda.h
-index 056867f09a01..45bfe9d61271 100644
---- a/include/linux/cuda.h
-+++ b/include/linux/cuda.h
-@@ -8,6 +8,7 @@
- #ifndef _LINUX_CUDA_H
- #define _LINUX_CUDA_H
- 
-+#include <linux/rtc.h>
- #include <uapi/linux/cuda.h>
- 
- 
-@@ -16,4 +17,7 @@ extern int cuda_request(struct adb_request *req,
- 			void (*done)(struct adb_request *), int nbytes, ...);
- extern void cuda_poll(void);
- 
-+extern time64_t cuda_get_time(void);
-+extern int cuda_set_rtc_time(struct rtc_time *tm);
-+
- #endif /* _LINUX_CUDA_H */
-diff --git a/include/linux/pmu.h b/include/linux/pmu.h
-index 9ac8fc60ad49..52453a24a24f 100644
---- a/include/linux/pmu.h
-+++ b/include/linux/pmu.h
-@@ -9,6 +9,7 @@
- #ifndef _LINUX_PMU_H
- #define _LINUX_PMU_H
- 
-+#include <linux/rtc.h>
- #include <uapi/linux/pmu.h>
- 
- 
-@@ -36,6 +37,9 @@ static inline void pmu_resume(void)
- 
- extern void pmu_enable_irled(int on);
- 
-+extern time64_t pmu_get_time(void);
-+extern int pmu_set_rtc_time(struct rtc_time *tm);
-+
- extern void pmu_restart(void);
- extern void pmu_shutdown(void);
- extern void pmu_unlock(void);
--- 
-2.16.4
+c) we have handed ownership to another master that is equally
+    important, but no i2c device driver is currently trying to talk
+    to a device, so we don't need ownership back until a slave driver
+    changes state.
 
+The main difference between b) and c) that I see would be what
+happens with in-band interrupts. If I understand the specification
+correctly, only the current master receives them, so if you have
+any i2c device that uses interrupts to talk to a Linux driver, we
+want to be in b) rather than c). An example of this would be
+an input device on a PC: If the user operateds the keyboard
+or pointer and we have handed off ownership to a sensor hub,
+we never get an input event, right?
+
+>> Ok, but maybe you could you put the information about those devices
+>> on a local list on the stack rather than the controller? I suppose this
+>> would not change the logic much, but it would slightly simplify the
+>> data structures for the bus and stop others from wondering about
+>> them. ;-)
+>
+> This has changed a bit in the v6 I'm about to send (probably next week).
+> I now have 2 different objects which do not necessarily have the same
+> lifetime:
+>
+> * i3c_dev_desc: an I3C device descriptor. This is the representation
+>   exposed to I3C master controller drivers which usually reserve one
+>   slot in the HW device table per-device on the bus. Since the same
+>   device can be re-discovered with a different address, we have a short
+>   period in time during which the controller will have 2
+>   slots/descriptors used to control the same device, except one would
+>   be inactive (any transfer to the old dynamic address would fail) and
+>   the other one would be active. The core then takes care of releasing
+>   the old descriptor/slot and attaching the new one to the i3c_device
+>   object exposed to I3C device drivers
+>
+> * i3c_device: this is the object exposed to I3C device drivers. It's
+>   lifetime is usually the same as the i3c_dev_desc it's attached to,
+>   except when the device lose its dynamic address and get a new one
+>   assigned. In this case we keep the same i3c_device object, but
+>   dynamically re-attach it to a new i3c_dev_desc before releasing the
+>   old dev desc. This way the I3C does not even see that the device
+>   address has changed and can keep doing transfers to it.
+>
+> With these 2 distinct representations, the handling on the controller
+> side is greatly simplified: the core takes care of the resource
+> migration steps, while it was up to the controller to do that my
+> previous versions (look at the ->reattach_i3c_dev() hook in the Cadence
+> driver, and I think it's even more complicated with other controllers,
+> like the HCI one).
+>
+>> This is a really minor point though, let's work out the problem of the
+>> multiple masters first.
+>
+> I agree. This being said, moving to a representation where the bus is
+> implicitly represented by the master_controller instance shouldn't be
+> too difficult. So, if you think we should try this approach I can do
+> the modifications in my v6.
+
+I'd say let's wait before you do that change, possibly add a comment
+in there now to remind us of what an alternative would be.
+
+       Arnd
