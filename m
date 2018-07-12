@@ -5,76 +5,81 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD15EECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95051ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E8A208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:05:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94E8A208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A4722147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A4722147C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732464AbeGLWRB (ORCPT
+        id S1732492AbeGLWSo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 18:17:01 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44896 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732301AbeGLWRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 18:17:01 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 099A6406805C;
-        Thu, 12 Jul 2018 22:05:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A36BA1C67B;
-        Thu, 12 Jul 2018 22:05:21 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <CAK8P3a1k+cy9wAVNQMWE4tdA4aV8tiu6K3haLc+kMPt0iiUQ9Q@mail.gmail.com>
-References: <CAK8P3a1k+cy9wAVNQMWE4tdA4aV8tiu6K3haLc+kMPt0iiUQ9Q@mail.gmail.com> <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-14-keescook@chromium.org>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     dhowells@redhat.com, Kees Cook <keescook@chromium.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 13/14] rxrpc: Prepare to remove VLA usage for SKCIPHER_REQUEST_ON_STACK
+        Thu, 12 Jul 2018 18:18:44 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48705 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726820AbeGLWSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 18:18:44 -0400
+Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w6CM6x7v4066665
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 12 Jul 2018 15:06:59 -0700
+Subject: Re: [PATCH] x86: vdso: Fix leaky vdso link with CC=clang
+To:     Alistair Strachan <astrachan@google.com>
+Cc:     linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        x86@kernel.org, kernel-team@android.com, joel@joelfernandes.com
+References: <20180712201032.156997-1-astrachan@google.com>
+ <47d4b24e-8c60-fb3b-3377-62d20c5f3dd1@zytor.com>
+ <CANDihLEz3_fZ4r4g=VcxWps5DWSjMJdbJZKZWsLFKVp_c7FscA@mail.gmail.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <1432bfde-41b4-e8aa-037b-fca41a149cb8@zytor.com>
+Date:   Thu, 12 Jul 2018 15:06:54 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <20098.1531433120.1@warthog.procyon.org.uk>
-Date:   Thu, 12 Jul 2018 23:05:20 +0100
-Message-ID: <20099.1531433120@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 12 Jul 2018 22:05:28 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 12 Jul 2018 22:05:28 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+In-Reply-To: <CANDihLEz3_fZ4r4g=VcxWps5DWSjMJdbJZKZWsLFKVp_c7FscA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> wrote:
+On 07/12/18 13:37, Alistair Strachan wrote:
+> On Thu, Jul 12, 2018 at 1:25 PM H. Peter Anvin <hpa@zytor.com> wrote:
+>> On 07/12/18 13:10, Alistair Strachan wrote:
+>>> The vdso{32,64}.so can fail to link with CC=clang when clang tries to
+>>> find a suitable GCC toolchain to link these libraries with.
+>>>
+>>> /usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o:
+>>>   access beyond end of merged section (782)
+>>>
+>>> This happens because the host environment leaked into the cross
+>>> compiler environment due to the way clang searches for suitable GCC
+>>> toolchains.
+>>>
+>>
+>> Is this another clang bug that you want a workaround for in the kernel?
+> 
+> Clang is a retargetable compiler (specified with --target=<something>)
+> and so it has a mechanism for searching for suitable binutils (from
+> another "GCC toolchain") to perform assembly and linkage. This
+> mechanism relies on both --target and --gcc-toolchain when
+> cross-compiling, otherwise it will fall back to searching /usr.
+> 
+> The --target and --gcc-toolchain flags are already specified correctly
+> in the top level Makefile, but the vdso Makefile rolls its own linker
+> flags and doesn't use KBUILD_CFLAGS. Therefore, these flags get
+> incorrectly dropped from the vdso $CC link command line, and an
+> inconsistency is created between the "GCC toolchain" used to generate
+> the objects for the vdso, and the linker used to link them.
+> 
 
-> From what I can tell, neither of the two are called in atomic context, so
-> you should be able to use a GFP_KERNEL allocation.
+It sounds like there needs to be a more fundamental symbol than
+KBUILD_CFLAGS to contain these kinds of things.
 
-You need to be careful doing that since the allocation might happen in the AFS
-writeback path.  I use GFP_NOIO or GFP_NOFS in rxkad.c and skb_cow_data() uses
-GFP_ATOMIC - though we should have single ownership of the packet at this
-point.
-
-David
+	-hpa
