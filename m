@@ -6,77 +6,66 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD78ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4E1ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B11D120883
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:38:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC1D720883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:39:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="J4DroyfD";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="inE0l6ky"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B11D120883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gA4pkTXC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC1D720883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733187AbeGLVuF (ORCPT
+        id S1733199AbeGLVu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 17:50:05 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:46094 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733172AbeGLVuE (ORCPT
+        Thu, 12 Jul 2018 17:50:26 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:44717 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733154AbeGLVu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 17:50:04 -0400
-Received: by mail-yw0-f195.google.com with SMTP id e23-v6so10510834ywe.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 14:38:38 -0700 (PDT)
+        Thu, 12 Jul 2018 17:50:26 -0400
+Received: by mail-lf0-f68.google.com with SMTP id g6-v6so14770018lfb.11;
+        Thu, 12 Jul 2018 14:38:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=ONWqKtYhc/tnXsuDckqvurPMc6P9qtgDSuq4r0nbps4=;
-        b=J4DroyfDK48lgFYDmjLyIp3pw/MImrCE4u0CPCWPOQvqSbA750hoPwB4VYnk36qCiG
-         ZpVRTcMcSLbcTI3EjGTpH/sjz8XWdcMuCAJjoBv3cfs2xB0McVlYQzTaPPgDQ2mSO3re
-         gqvgEr3oqfg30ITB5JLxmlh9ElvbCbRTjRoTgG1Q0+blJFdoxetHari15vj0Ih0NObAi
-         mKONFp47pA4R9SC16NfDHr57lfmBmHhWpNfd7w674L+5Ugx2bXNdmMqdmMTSm7RjyFVk
-         Wau5NoaKxdwNDeT8fM0qflODlW310jyGzXEU6MZMd1dCNZUO+53R0Ygspefd429xZMvB
-         4PdA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=ONWqKtYhc/tnXsuDckqvurPMc6P9qtgDSuq4r0nbps4=;
-        b=inE0l6kyYayWY0L5rOf7MQJ5wYstA8xRtKHl/0Tp5FJtypciRVz8IDlhwBi9ldkl9N
-         RTH/ITeGq8PFcEMStBBv8fa5fy3ii0xGyFYnFOP2RWbLXkC+QN/DgpZfZTrx1TT70W0L
-         9Xg1Ijv605I10Cw8XhtuRMYABqhAi4i9eaSYc=
+        bh=+MmnrW13lbjXde0tBAxwHORIwCAQendwUaxFSzCN1Js=;
+        b=gA4pkTXCRhIL/PECOs0fQyLTNcntX5VNvCWwmATjp/nef8lm99xiKIIA85nPo7G32e
+         Yc2Wh5w04NbtpdSjsSRUNLTNVRNkNDNlqQqH+uPmsoxRr2IrieTxD20+UFycT4GD5Ght
+         +PrD7Sx3ns/SCbztXNqqwEDFC+3eCnF4s8ycnZrGKfH0b+mK20QKNHwc07WD6dSU2zGb
+         /GZrt95XB3ZY5j2JDb8SCgp9QdNwyCEy86OCh1rm4yTwvWmmMePBfJ317lzT43YuBYaX
+         nRutz7dB/slK9QLh4wViOOgvpEcOQ/ZTn4lwmTDI8MmRL+oPSMPZ27MEZBr/x08xzYTE
+         YumA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=ONWqKtYhc/tnXsuDckqvurPMc6P9qtgDSuq4r0nbps4=;
-        b=Sxx/VdkfB8DTSzSsExB0G3bMXAE2x9jCE6nrgFzoq+0MtzsevLtgP1vQpqcuXlgRog
-         IWln9belBAnhYNt/ll/qnn8iqIAqAAT9frHz3PgWyi9Gt8NU4VJd5zPOt6oP9BKYRZr7
-         MNM49hDaOobLcxaeIGibyOUiwd2xa/zjTnu/f/hciuxKADTGDMcexF5Cf4Z1vLdmcqye
-         O7Gp7IaZtdGQYpJ9Ld+nq8Vs3QLiMQF050EE8v6Jmw4Q5BFc1w6LGRQ70kee/n0hRm8E
-         +tthUlkLQqr1ND4r5OXblC/gPY+iKey1cDNcedJjlPlPG0DFTNOi8SApelSV+t7QtAm+
-         YeKg==
-X-Gm-Message-State: AOUpUlH0+qZsFcrUbgl/uBMAezKePcdeXtq/UU3MeqLWw1GFw3Iqfkpe
-        JZqWXVlSKMHYfiEfbzOIrXzCfz/V0hjSk0iXJVyd+Q==
-X-Google-Smtp-Source: AAOMgpf880B7EX6ENTGddObG5zaj7O9qeYccQUjidPmQKsFeV4rMMWR8PHt0dbB8ELyaP/F7evrn9yj6hjYjoCyAWMQ=
-X-Received: by 2002:a0d:f002:: with SMTP id z2-v6mr2131459ywe.116.1531431517788;
- Thu, 12 Jul 2018 14:38:37 -0700 (PDT)
+        bh=+MmnrW13lbjXde0tBAxwHORIwCAQendwUaxFSzCN1Js=;
+        b=ZuQ5xdlJusQrkMUz9+h4N47wbJcWeESw8eOdkRniFQyZUlBjNgyOb8PfnosS0VlOGc
+         xE8IUl3pGL2EYVmDA1QyArI+r+bIJBwFcfanazYJLYyYq3cZrwLh4ZvwoiePIoFh6e8n
+         REoJMaE2RAGQ18fmWdNkF3XuLmQFuUGiOHcp27/8seAtkSt2qcl/fZI5xBe4cxUBOKmV
+         itRFf5/KxTiit33NGtHAzaC8E1V3pZiq8MGQNp8GNVKCmouT7XijqEM2o4S2IvjpJ+Vd
+         5mFEavjVTl8NkZFFu4U3OpzrQc4MOS8Tpv/9A9ESgysmbte88WC0yK46lJFXR456k4y+
+         JIAw==
+X-Gm-Message-State: AOUpUlFupTD8t1iZkirpivFhFSmIKTmHzGOCMCIdKbVR8V2i73u0ZAH2
+        anF0IbECppzXDHrDa7CUJuIEtT1lAi0VbdOQNQo=
+X-Google-Smtp-Source: AAOMgpf7gi2kE7LpLx+P8Zhl1QB6vWwMkxqJnp6IEtamy53ujj5XcFudmCkP+FJ4yuWrr9NAUruEmHbedFivSz6hbZY=
+X-Received: by 2002:a19:b2c7:: with SMTP id t68-v6mr2885684lfk.132.1531431537768;
+ Thu, 12 Jul 2018 14:38:57 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 14:38:37
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 14:38:57
  -0700 (PDT)
-In-Reply-To: <CAK8P3a3zvmAtkmqHhNO4788WQ8kbunSW8Jp-nA+hYHc2YmziEg@mail.gmail.com>
-References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-14-keescook@chromium.org>
- <CAK8P3a1k+cy9wAVNQMWE4tdA4aV8tiu6K3haLc+kMPt0iiUQ9Q@mail.gmail.com>
- <CAGXu5jLUME9cjntUUed9EYukzEaODDzqRmtGht=uu7YVAG2WWg@mail.gmail.com>
- <CAGXu5jK7iRv1HE7JgW95vTgg5vhye4dxjfoQyN3G7HZzp7nZhA@mail.gmail.com> <CAK8P3a3zvmAtkmqHhNO4788WQ8kbunSW8Jp-nA+hYHc2YmziEg@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 12 Jul 2018 14:38:37 -0700
-X-Google-Sender-Auth: mCR6trw6s4VU_86QjS7KxqAVPr0
-Message-ID: <CAGXu5j+ckXWYmPodbp5WW91HayRF8E4-DGk1fVsXmL8k0BmefA@mail.gmail.com>
-Subject: Re: [PATCH v4 13/14] rxrpc: Prepare to remove VLA usage for SKCIPHER_REQUEST_ON_STACK
-To:     Arnd Bergmann <arnd@arndb.de>
+In-Reply-To: <CAGXu5jKiJkypPKXrSjnXOgkZZT=Sm=fLK0sAL_U9A40GVRFZBg@mail.gmail.com>
+References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
+ <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com> <CAGXu5jKiJkypPKXrSjnXOgkZZT=Sm=fLK0sAL_U9A40GVRFZBg@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 12 Jul 2018 23:38:57 +0200
+X-Google-Sender-Auth: AFE34jNw91G_t3rV6Z9ZHU1pbNs
+Message-ID: <CAK8P3a1-bQ5WqSpoOQV0xYfK5tkRWCYTQeOJGoaXm=8K=3_K7w@mail.gmail.com>
+Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
+To:     Kees Cook <keescook@chromium.org>
 Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
         "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
         Eric Biggers <ebiggers@google.com>,
@@ -91,27 +80,114 @@ Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
         "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
         <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
         dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 2:15 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thu, Jul 12, 2018 at 10:30 PM, Kees Cook <keescook@chromium.org> wrote:
->> Actually, I think this can actually be adjusted to just re-use the
->> stack allocation, since rxkad_verify_packet() finishes one before
->> doing another in rxkad_verify_packet_1():
+On Thu, Jul 12, 2018 at 10:17 PM, Kees Cook <keescook@chromium.org> wrote:
+> On Thu, Jul 12, 2018 at 9:02 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Wed, Jul 11, 2018 at 10:36 PM, Kees Cook <keescook@chromium.org> wrote:
+>>> Several uses of AHASH_REQUEST_ON_STACK() will trigger FRAME_WARN warnings
+>>> (when less than 2048) once the VLA is no longer hidden from the check:
+>>>
+>>> drivers/block/drbd/drbd_worker.c:325:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>> drivers/block/drbd/drbd_worker.c:352:1: warning: the frame size of 1120 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>> crypto/ccm.c:235:1: warning: the frame size of 1184 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>> drivers/md/dm-crypt.c:353:1: warning: the frame size of 1096 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>> drivers/net/ppp/ppp_mppe.c:158:1: warning: the frame size of 1168 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>> net/wireless/lib80211_crypt_tkip.c:537:1: warning: the frame size of 1136 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>> drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_tkip.c:528:1: warning: the frame size of 1136 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>> drivers/staging/rtl8192e/rtllib_crypt_tkip.c:531:1: warning: the frame size of 1136 bytes is larger than 1024 bytes [-Wframe-larger-than=]
+>>>
+>>> This bumps the affected objects by 20% to silence the warnings while still
+>>> providing coverage is anything grows even more.
+>>>
+>>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>>
+>> I think this is a dangerous precedent, I wouldn't really want any of
+>> those functions to
+>> ever take more than 1024 bytes, even that is really too much, but we
+>> can't easily
+>> lower the global limit.
 >
-> That looks very nice, yes. The same thing is needed in
-> rxkad_secure_packet(), right?
+> The issue is that these are _already_ able to use this much stack
+> because of the VLA. It was just hidden from the FRAME_WARN checks.
 
-Yup. 4 leaf functions and the 2 callers.
+Yes, of course.
 
--Kees
+>> You are patching all users of AHASH_REQUEST_ON_STACK with the exception of
+>> arch/x86/power/hibernate_64.c here (which is always used on 64-bit and has
+>> a larger limit already), which in turn suggests that the AHASH_REQUEST_ON_STACK
+>> macro using bytes is just fundamentally broken by requiring that much space
+>> (808 bytes for the context, plus 8 pointers for struct ahash_request, plus
+>> CRYPTO_MINALIGN_ATTR).
+>
+> Yes -- it's huge. That's always been true, unfortunately.
+>
+>> How did you come up with that 808 byte number? I see a total of 39 callers
+>> of crypto_ahash_set_reqsize(), did you check all of those individually?
+>> If 808 bytes is the worst case, what are the next 5 ones? If there are only
+>> a few of them that are badly written, maybe we can fix the drivers instead
+>> and lower that number to something more reasonable.
+>
+> That was discussed a bit (maybe not enough?) in the next patch:
+> https://patchwork.kernel.org/patch/10520407/
+>
+> I used tcrypt (which examines all sane combinations) and sha512
+> produces the 808 number. I had done an earlier manual evaluation of
+> all crypto_ahash_set_reqsize() callers but Herbert and Eric pointed
+> out issues with my methodology (namely that things can be recursively
+> stacked (I had calculated too low) but some things will never be
+> stacked together (so some pathological conditions will never happen)).
+> So I moved to the tcrypt instrumentation approach, which tests
+> real-world combinations.
+>
+> For example, reaching this 808 size is trivially easy to do right now
+> by just asking for dm-crypt to use a cipher of
+> capi:cbc(aes)-essiv:sha512.
 
--- 
-Kees Cook
-Pixel Security
+Ok, but is there anything that can be done to the sha512
+implementation to lower that number? E.g. if a significant chunk
+of struct sha512_hash_ctx is only used to hold temporary data,
+could it be replaced with e.g. a percpu buffer?
+>> The other ones I looked at seem to all be well under 400 bytes (which is
+>> still a lot to put on the stack, but probably ok).
+>
+> I wish sha512 was "rare", but it's not. :(
+
+Looking at the callers of crypto_ahash_set_reqsize(), it appears
+that the only instance that is so bad is specifically
+arch/x86/crypto/sha512-mb/sha512_mb.c, which is architecture
+specific, and only one of multiple implementations of sha512.
+
+Am I misreading that code, or does that mean that we could get
+away with using the 808 byte limit only on x86 when
+CONFIG_CRYPTO_SHA512_MB is enabled, but using a smaller
+limit everywhere where else?
+
+> So: mainly the crypto VLA removal is about exposing all these giant
+> stack usages. We can work to fix them, but I want to get these fixed
+> so we can add -Wvla to the kernel to avoid more being added (we've had
+> at least 2 added during this linux-next cycle already).
+>
+> IMO, we're much better off with this stack usage _actually_ being
+> checked (even with a 20% bump) than staying entirely hidden (as it's
+> been).
+
+Yes, definitely. You may recall that I spent several months tracking
+down all drivers that grew to insane stack usage when CONFIG_KASAN
+was enabled, so we could again turn on the existing stack check
+in an allmodconfig build in order to find the normal regressions, so
+I'm definitely all for improving both the actual usage and the kind
+of diagnostic we have available.
+
+I mainly want to ensure that we have tried anything within reason
+to reduce the stack usage of the AHASH_REQUEST_ON_STACK()
+users before we resort to changing the warning limit. I'm not
+convinced that everything has been tried if we have 808 byte
+structures.
+
+      Arnd
