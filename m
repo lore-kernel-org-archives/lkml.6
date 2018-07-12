@@ -2,299 +2,211 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD538C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 595DDC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68A2C2146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:13:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="t0teInFK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68A2C2146F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 12E9D2146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:13:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12E9D2146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403881AbeGLCUp (ORCPT
+        id S2403898AbeGLCU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 22:20:45 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:20815 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732787AbeGLCUp (ORCPT
+        Wed, 11 Jul 2018 22:20:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46192 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2403883AbeGLCU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 22:20:45 -0400
-Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com [209.85.213.52]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w6C2DQha029459;
-        Thu, 12 Jul 2018 11:13:27 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w6C2DQha029459
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1531361607;
-        bh=9hg9OpriGNGc5k6EpxfGpmhJIN4iUUjGMvxPTfQiHtE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=t0teInFK9FCIuZS0ZmLg1QhPSlus9u9KQmHn1T3UZ9Y5eUu8+619CKE/Im4BlXWMz
-         YQ3gDvwcJI8JkWf9SsWIS/xlR6+1eBHyPssLDr1bhYM64P/Q9S/zS+xMxJHV/DZyDD
-         e2CntpwMSvFv6KXMGPCPQJAIEnL8sjc7EtSSwb/FCmxvTrqaHOFKzQvAQ1g1ov57IO
-         ogRWrxLCJgNMXSwg/wi47YI4j2OzJLbJtj4L3OHWxaGPfCVA1YSmR7W21Tiu74xIxQ
-         akczHxhnWx5Qc3aV/EiF1v/HnOyR3V7DkPuZrrbaphP+UlIIAlpkBey8wnAdlFEgw+
-         MiUZv2h7tdHSw==
-X-Nifty-SrcIP: [209.85.213.52]
-Received: by mail-vk0-f52.google.com with SMTP id 125-v6so15526991vke.11;
-        Wed, 11 Jul 2018 19:13:27 -0700 (PDT)
-X-Gm-Message-State: AOUpUlEsCBvyq3Srw1yhVaNqXf272dC2TAJHG2CT0cHNCr85ZzrmmPJM
-        LdF+zWkw6pEwx+csrp/x71bHUoMsscDM8Y/ODlE=
-X-Google-Smtp-Source: AAOMgpf5z+Gc9lVjIIso4OC2ojyDQKMLhEdxa157xsd5q2+ARvXkBVUxrmb2FCNdUzcgUeUpMVkFOlhMSS7m+bX9NbI=
-X-Received: by 2002:a1f:88:: with SMTP id 130-v6mr175457vka.154.1531361605964;
- Wed, 11 Jul 2018 19:13:25 -0700 (PDT)
+        Wed, 11 Jul 2018 22:20:57 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6C244Xh125313
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 22:13:45 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k5teexgj4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 22:13:44 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 11 Jul 2018 22:13:43 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 11 Jul 2018 22:13:41 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6C2De7g18153840
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 12 Jul 2018 02:13:40 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1F36BB2064;
+        Wed, 11 Jul 2018 22:13:39 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DDBAAB205F;
+        Wed, 11 Jul 2018 22:13:38 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.161.121])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 11 Jul 2018 22:13:38 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 06C8916C41DD; Wed, 11 Jul 2018 19:16:00 -0700 (PDT)
+Date:   Wed, 11 Jul 2018 19:15:59 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>, peterz@infradead.org,
+        mhillenb@amazon.de, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH v2] kvm/x86: Inform RCU of quiescent state when entering
+ guest mode
+Reply-To: paulmck@linux.vnet.ibm.com
+References: <20180711174843.GX3593@linux.vnet.ibm.com>
+ <20180711180101.3711464-1-dwmw2@infradead.org>
+ <20180711182053.GA3593@linux.vnet.ibm.com>
+ <20180711183645.GA23820@linux.vnet.ibm.com>
+ <62e945ee-a58e-f9b3-279c-74cd0f5809da@de.ibm.com>
+ <20180711202752.GC3593@linux.vnet.ibm.com>
+ <2f7ba67e-0442-13cc-628c-2dca56520c21@de.ibm.com>
+ <20180711213259.GF3593@linux.vnet.ibm.com>
+ <20180711233727.GA9888@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 19:12:45
- -0700 (PDT)
-In-Reply-To: <ghwou4prif.fsf@lena.gouders.net>
-References: <1530758389-30862-1-git-send-email-yamada.masahiro@socionext.com>
- <1530758389-30862-6-git-send-email-yamada.masahiro@socionext.com>
- <ghva9simch.fsf@lena.gouders.net> <ghbmbk0wbj.fsf@quad.gouders.net> <ghwou4prif.fsf@lena.gouders.net>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 12 Jul 2018 11:12:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT9WjCMVqtq1ivxOqNERVbnC5fQbzrPrGCfz0aAbk_DEQ@mail.gmail.com>
-Message-ID: <CAK7LNAT9WjCMVqtq1ivxOqNERVbnC5fQbzrPrGCfz0aAbk_DEQ@mail.gmail.com>
-Subject: Re: [PATCH v3 05/12] kconfig: make syncconfig update .config
- regardless of sym_change_count
-To:     Dirk Gouders <dirk@gouders.net>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Ulf Magnusson <ulfalizer@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711233727.GA9888@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071202-0040-0000-0000-0000044D8CAA
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009354; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01060050; UDB=6.00544097; IPR=6.00837970;
+ MB=3.00022109; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-12 02:13:42
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071202-0041-0000-0000-00000853B277
+Message-Id: <20180712021559.GA413@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-11_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807120022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-09 20:39 GMT+09:00 Dirk Gouders <dirk@gouders.net>:
-> Dirk Gouders <dirk@gouders.net> writes:
->
->> Dirk Gouders <dirk@gouders.net> writes:
->>
->>> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
->>>
->>>> syncconfig updates the .config only when sym_change_count > 0, i.e.
->>>> any change in config symbols has been detected.
->>>>
->>>> Not only symbols but also comments are contained in the .config file.
->>>> If only comments are updated, they are not fed back to the .config,
->>>> then the stale comments are left-over.  Of course, this is just a
->>>> matter of comments, but why not fix it.
->>>
->>> Hello Masahiro,
->>>
->>> I am currently looking at and testing this series.
->>>
->>> First: For this patch I would suggest to also edit the syncconfig
->>>        section of "conf --help".
->>>
->>> Further, on a slow laptop, I was suspecting, this patch to cause full
->>> rebuilds of everything, each time I ran "make syncconfig" followed by
->>> "make" but could not verify this on another machine, so perhaps I am
->>> just (for testing purposes) removing the wrong files (modules.builtin
->>> for example) -- I am still testing.
->>>
->>> But, what irritates me with testing is that (also without your
->>> patches) two consecutive "make" produce different output, one of them
->>> always shows a warning and this is reproducable.  I just want to make
->>> sure there is no other problem that influences my testing:
->>>
->>> $ make
->>>   CALL    scripts/checksyscalls.sh
->>>   DESCEND  objtool
->>>   CHK     include/generated/compile.h
->>>   DATAREL arch/x86/boot/compressed/vmlinux
->>> Kernel: arch/x86/boot/bzImage is ready  (#15)
->>>   Building modules, stage 2.
->>>   MODPOST 211 modules
->>>
->>> $ make
->>>   CALL    scripts/checksyscalls.sh
->>>   DESCEND  objtool
->>>   CHK     include/generated/compile.h
->>>   LD      arch/x86/boot/compressed/vmlinux
->>> ld: arch/x86/boot/compressed/head_64.o: warning: relocation in read-only section `.head.text'
->>> ld: warning: creating a DT_TEXTREL in object.
->>>   ZOFFSET arch/x86/boot/zoffset.h
->>>   AS      arch/x86/boot/header.o
->>>   LD      arch/x86/boot/setup.elf
->>>   OBJCOPY arch/x86/boot/setup.bin
->>>   OBJCOPY arch/x86/boot/vmlinux.bin
->>>   BUILD   arch/x86/boot/bzImage
->>> Setup is 15580 bytes (padded to 15872 bytes).
->>> System is 8069 kB
->>> CRC e01d75ec
->>> Kernel: arch/x86/boot/bzImage is ready  (#15)
->>>   Building modules, stage 2.
->>>   MODPOST 211 modules
->>
->> I spent some more time with the behaviour described above and bisected
->> to the commit after that two consecutive invocations of "make" (on an
->> already compiled tree) seem to do different things.  That commit is
->> 98f78525371b55cc (x86/boot: Refuse to build with data relocations), so I
->> put Kees and Ingo on CC.
->>
->> I did the bisecting on another system, so I'll provide the output of two
->> consecutive "make" on an already compiled tree on that machine:
->>
->> $ make
->>   CALL    scripts/checksyscalls.sh
->>   DESCEND  objtool
->>   CHK     include/generated/compile.h
->>   DATAREL arch/x86/boot/compressed/vmlinux
->> Kernel: arch/x86/boot/bzImage is ready  (#48)
->>   Building modules, stage 2.
->>   MODPOST 165 modules
->>
->> $ make
->>   CALL    scripts/checksyscalls.sh
->>   DESCEND  objtool
->>   CHK     include/generated/compile.h
->>   LD      arch/x86/boot/compressed/vmlinux
->>   ZOFFSET arch/x86/boot/zoffset.h
->>   AS      arch/x86/boot/header.o
->>   LD      arch/x86/boot/setup.elf
->>   OBJCOPY arch/x86/boot/setup.bin
->>   OBJCOPY arch/x86/boot/vmlinux.bin
->>   BUILD   arch/x86/boot/bzImage
->> Setup is 15644 bytes (padded to 15872 bytes).
->> System is 6663 kB
->> CRC 3eb90f40
->> Kernel: arch/x86/boot/bzImage is ready  (#48)
->>   Building modules, stage 2.
->>   MODPOST 165 modules
->>
->> If I comment out $(call if_changed,check_data_rel) in
->> arch/x86/boot/compressed/Makefile, two consecutive "make" produce
->> identical output i.e. seem to not do different things:
->>
->> $ make
->>   CALL    scripts/checksyscalls.sh
->>   DESCEND  objtool
->>   CHK     include/generated/compile.h
->> Kernel: arch/x86/boot/bzImage is ready  (#49)
->>   Building modules, stage 2.
->>   MODPOST 165 modules
->>
->> $ make
->>   CALL    scripts/checksyscalls.sh
->>   DESCEND  objtool
->>   CHK     include/generated/compile.h
->> Kernel: arch/x86/boot/bzImage is ready  (#49)
->>   Building modules, stage 2.
->>   MODPOST 165 modules
->>
->> So, I guess this different behaviour of two consecutive "make" is not
->> intentional but I am failing to understand why it happens.
->
-> I think, I solved the puzzle and perhaps, that saves others some time:
->
-> The problem is that "if_changed" was not designed for multiple use
-> inside a recipe and in the case of compressed/vmlinux, the 2-fold use
-> created a kind of flip-flop for situations when nothing has to be done
-> to build the target.
->
-> Because each of the two users of "if_changed" stores it's footprint in
-> .vmlinux.cmd but that file then isn't re-read, one of the two
-> "if_changed" calculates that nothing has to be done wheras the other one
-> recognizes a change in the commandline, because it sees the command-line
-> for the other part of the reciepe.
->
-> In the next make, the roles flip, because the previously satisfied
-> "if_changed" now sees the command-line of the other one.  And so on...
->
-> I am not a Kbuild expert but the attached patch fixes that problem by
-> introducing "if_changed_multi" that accepts two commands -- one whose
-> commandline should be checked and a second one that should be
-> executed.
+On Wed, Jul 11, 2018 at 04:37:27PM -0700, Paul E. McKenney wrote:
+> On Wed, Jul 11, 2018 at 02:32:59PM -0700, Paul E. McKenney wrote:
+> > On Wed, Jul 11, 2018 at 11:11:19PM +0200, Christian Borntraeger wrote:
+> > > 
+> > > 
+> > > On 07/11/2018 10:27 PM, Paul E. McKenney wrote:
+> > > > On Wed, Jul 11, 2018 at 08:39:36PM +0200, Christian Borntraeger wrote:
+> > > >>
+> > > >>
+> > > >> On 07/11/2018 08:36 PM, Paul E. McKenney wrote:
+> > > >>> On Wed, Jul 11, 2018 at 11:20:53AM -0700, Paul E. McKenney wrote:
+> > > >>>> On Wed, Jul 11, 2018 at 07:01:01PM +0100, David Woodhouse wrote:
+> > > >>>>> From: David Woodhouse <dwmw@amazon.co.uk>
+> > > >>>>>
+> > > >>>>> RCU can spend long periods of time waiting for a CPU which is actually in
+> > > >>>>> KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
+> > > >>>>> modes, and don't wait for it.
+> > > >>>>>
+> > > >>>>> Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> > > >>>>
+> > > >>>> And idiot here forgot about some of the debugging code in RCU's dyntick-idle
+> > > >>>> code.  I will reply with a fixed patch.
+> > > >>>>
+> > > >>>> The code below works just fine as long as you don't enable CONFIG_RCU_EQS_DEBUG,
+> > > >>>> so should be OK for testing, just not for mainline.
+> > > >>>
+> > > >>> And here is the updated code that allegedly avoids splatting when run with
+> > > >>> CONFIG_RCU_EQS_DEBUG.
+> > > >>>
+> > > >>> Thoughts?
+> > > >>>
+> > > >>> 							Thanx, Paul
+> > > >>>
+> > > >>> ------------------------------------------------------------------------
+> > > >>>
+> > > >>> commit 12cd59e49cf734f907f44b696e2c6e4b46a291c3
+> > > >>> Author: David Woodhouse <dwmw@amazon.co.uk>
+> > > >>> Date:   Wed Jul 11 19:01:01 2018 +0100
+> > > >>>
+> > > >>>     kvm/x86: Inform RCU of quiescent state when entering guest mode
+> > > >>>     
+> > > >>>     RCU can spend long periods of time waiting for a CPU which is actually in
+> > > >>>     KVM guest mode, entirely pointlessly. Treat it like the idle and userspace
+> > > >>>     modes, and don't wait for it.
+> > > >>>     
+> > > >>>     Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
+> > > >>>     Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > >>>     [ paulmck: Adjust to avoid bad advice I gave to dwmw, avoid WARN_ON()s. ]
+> > > >>>
+> > > >>> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> > > >>> index 0046aa70205a..b0c82f70afa7 100644
+> > > >>> --- a/arch/x86/kvm/x86.c
+> > > >>> +++ b/arch/x86/kvm/x86.c
+> > > >>> @@ -7458,7 +7458,9 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+> > > >>>  		vcpu->arch.switch_db_regs &= ~KVM_DEBUGREG_RELOAD;
+> > > >>>  	}
+> > > >>>
+> > > >>> +	rcu_kvm_enter();
+> > > >>>  	kvm_x86_ops->run(vcpu);
+> > > >>> +	rcu_kvm_exit();
+> > > >>
+> > > >> As indicated in my other mail. This is supposed to be handled in the guest_enter|exit_ calls around
+> > > >> the run function. This would also handle other architectures. So if the guest_enter_irqoff code is
+> > > >> not good enough, we should rather fix that instead of adding another rcu hint.
+> > > > 
+> > > > Something like this, on top of the earlier patch?  I am not at all
+> > > > confident of this patch because there might be other entry/exit
+> > > > paths I am missing.  Plus there might be RCU uses on the arch-specific
+> > > > patch to and from the guest OS.
+> > > > 
+> > > > Thoughts?
+> > > > 
+> > > 
+> > > If you instrment guest_enter/exit, you should cover all cases and all architectures as far
+> > > as I can tell. FWIW, we did this rcu_note thing back then actually handling this particular
+> > > case of long running guests blocking rcu for many seconds. And I am pretty sure that
+> > > this did help back then.
+> > 
+> > And my second patch on the email you replied to replaced the only call
+> > to rcu_virt_note_context_switch().  So maybe it covers what it needs to,
+> > but yes, there might well be things I missed.  Let's see what David
+> > comes up with.
+> > 
+> > What changed was RCU's reactions to longish grace periods.  It used to
+> > be very aggressive about forcing the scheduler to do otherwise-unneeded
+> > context switches, which became a problem somewhere between v4.9 and v4.15.
+> > I therefore reduced the number of such context switches, which in turn
+> > caused KVM to tell RCU about quiescent states way too infrequently.
+> > 
+> > The advantage of the rcu_kvm_enter()/rcu_kvm_exit() approach is that
+> > it tells RCU of an extended duration in the guest, which means that
+> > RCU can ignore the corresponding CPU, which in turn allows the guest
+> > to proceed without any RCU-induced interruptions.
+> > 
+> > Does that make sense, or am I missing something?  I freely admit to
+> > much ignorance of both kvm and s390!  ;-)
+> 
+> But I am getting some rcutorture near misses on the commit that
+> introduces rcu_kvm_enter() and rcu_kvm_exit() to the x86 arch-specific
+> vcpu_enter_guest() function.  These near misses occur when running
+> rcutorture scenarios TREE01 and TREE03, and in my -rcu tree rather
+> than the v4.15 version of this patch.
+> 
+> Given that I am making pervasive changes to the way that RCU works,
+> it might well be that this commit is an innocent bystander.  I will
+> run tests overnight and let you know what comes up.
 
+And thus far, the verdict is "intermittent".  I am starting a new
+series with CONFIG_RCU_EQS_DEBUG=y, which should detect any mismatched
+rcu_kvm_enter()/rcu_kvm_exit() pairs.
 
-if_changed should not appear multiple times in one target.
+							Thanx, Paul
 
-
-I think the simplest fix-up is to
-create a new command that combines
-'cmd_check_data_rel' and 'cmd_ld'.
-
-
-quiet_cmd_link-vmlinux = LD      $@
-      cmd_link-vmlinux = $(cmd_check_data_rel); $(cmd_ld)
-
-$(obj)/vmlinux: $(vmlinux-objs-y) FORCE
-        $(call if_changed,link-vmlinux)
-
-
-
-
-Kbuild also supports if_changed_rule,
-but the usage is more complex.
-
-There are only a few usages:
-https://github.com/torvalds/linux/blob/v4.17/scripts/Makefile.build#L288
-
-
-
-
-
-
-> Dirk
->
->
-> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
-> index fa42f895fdde..f39822fca994 100644
-> --- a/arch/x86/boot/compressed/Makefile
-> +++ b/arch/x86/boot/compressed/Makefile
-> @@ -107,8 +107,8 @@ define cmd_check_data_rel
->  endef
->
->  $(obj)/vmlinux: $(vmlinux-objs-y) FORCE
-> -       $(call if_changed,check_data_rel)
-> -       $(call if_changed,ld)
-> +       $(call if_changed_multi,ld,check_data_rel)
-> +       $(call if_changed_multi,ld,ld)
->
->  OBJCOPYFLAGS_vmlinux.bin :=  -R .comment -S
->  $(obj)/vmlinux.bin: vmlinux FORCE
-> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-> index b2d14f1136e8..3bf419319e09 100644
-> --- a/scripts/Kbuild.include
-> +++ b/scripts/Kbuild.include
-> @@ -265,6 +265,23 @@ if_changed = $(if $(strip $(any-prereq) $(arg-check)),                       \
->         $(echo-cmd) $(cmd_$(1));                                             \
->         printf '%s\n' 'cmd_$@ := $(make-cmd)' > $(dot-target).cmd, @:)
->
-> +# echo command for command stored in $2
-> +# Short version is used, if $(quiet) equals `quiet_', otherwise full one.
-> +echo-cmd2 = $(if $($(quiet)cmd_$(2)),\
-> +       echo '  $(call escsq,$($(quiet)cmd_$(2)))$(echo-why)';)
-> +
-> +# Execute command arg2 if commandline for command arg1 or prerequisite(s) are
-> +# updated.
-> +#
-> +# This is safe for multiple use inside a recipe; arg1 and arg2 may be
-> +# identical.
-> +if_changed_multi = $(if $(strip $(any-prereq) $(arg-check)),                \
-> +       @set -e;                                                             \
-> +       $(echo-cmd2) : ; \
-> +       $(cmd_$(2));                                            \
-> +       printf '%s\n' 'cmd_$@ := $(make-cmd)' > $(dot-target).cmd, @:)
-> +
-> +
->  # Execute the command and also postprocess generated .d dependencies file.
->  if_changed_dep = $(if $(strip $(any-prereq) $(arg-check) ),                  \
->         @set -e;                                                             \
->
-
-
-
--- 
-Best Regards
-Masahiro Yamada
