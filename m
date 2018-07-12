@@ -2,77 +2,116 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D30E8ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49191ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86A3E208E3
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:54:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86A3E208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 027DC208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:55:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kqC/Z9FO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 027DC208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387538AbeGLXG0 (ORCPT
+        id S2387551AbeGLXHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 19:06:26 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44390 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387438AbeGLXG0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 19:06:26 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 878C54074475;
-        Thu, 12 Jul 2018 22:54:43 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 49FA0111AF3C;
-        Thu, 12 Jul 2018 22:54:42 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20180712223223.GA28610@thunk.org>
-References: <20180712223223.GA28610@thunk.org> <CA+55aFw1WyKY+-2dg62M-QT_F0-waCTCrba1DW4dStYz-f_fjA@mail.gmail.com> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk> <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk> <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com> <7002.1531407244@warthog.procyon.org.uk> <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com> <16699.1531426991@warthog.procyon.org.uk> <18233.1531430797@warthog.procyon.org.uk>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Cc:     dhowells@redhat.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for superblock creation [ver #9]
+        Thu, 12 Jul 2018 19:07:02 -0400
+Received: from mail-oi0-f53.google.com ([209.85.218.53]:39964 "EHLO
+        mail-oi0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387452AbeGLXHB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 19:07:01 -0400
+Received: by mail-oi0-f53.google.com with SMTP id w126-v6so58857142oie.7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 15:55:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=u4bQOMtbraI9l0OiIweTvgfc43WKn8u99eS7ay4tZNs=;
+        b=kqC/Z9FOvBXC/IqJ+fv5r8uLyofJbcx45CgOK+/LEy4UtWY6/X/GTiWwTSl4ZbEKCL
+         eFHr5UHJjoUuroxGeG9fR4WyYQ6f4HLVzCE1HzrdgKiMSHmvhk9Fi4bHPJJj0sxUqEhM
+         3plYY03h4MGAddayrDj5bRWdZ8FFmDEuYyXJYp1ihTs3ZsNGKVmLhRbQXXczTCAUSy/M
+         b4S4yE46wNHtvLddIU3l+9QVa41YyW1QvBMa0G4iBRszeJ44aGvKAFc8pozYzn9e4x3Q
+         WTQm+SDs3+7yuZb7Hv8rlgUnxVZHpxn0lATDrNKI4Bkyr6yjad4SqC8gYSdop1e314FK
+         NcTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=u4bQOMtbraI9l0OiIweTvgfc43WKn8u99eS7ay4tZNs=;
+        b=Zs9Rv9aXE/OSjJyIK5OjS8JKUwWhJ9gwRwDkVYAOM8J9GRE3/GJ1LZQ+yBb6nGVO9A
+         eQZNfdRomGKfSer0HbKe0c/XIWUm/wZD56xcEDMJDAufaLV8wivUF8w5QRPXHX8y86Ul
+         z83OFo5ctlWm9zocyGhjtm2GRNldzXUd2aUO58oEuRt5MkcWrNiu4ZlNAO7dLvgyYfKd
+         kPTCDSV7oi4V9U8xlMTXQNbjDqbvLU0CITQa6iB7lIfjGeOk2LLD8Mx3YZKUeCoz2Oir
+         3zkA6MdnoOTRF5vOkX4rqGnT9+aLPj1WE6onJxCRVaVcG1xteyBnXoeIzE7gYkUGLMiK
+         Nisw==
+X-Gm-Message-State: AOUpUlEPSrAa7ApKQ2cc3dCW/WHKGbauJUSeD+4TUl4PZ2DUzsa+/d0k
+        huLS/DWTs9qiwsfrRQXXKUwDEu5ILIZRt9Fj1sR3bN+lOAI=
+X-Google-Smtp-Source: AAOMgpfsiDC1pc/lNvNW3l/O7mISat1NTbN6GxknW6r+g7c17aS4M5sQRQHnC4ICwKnbdaxaju0xzrM3y8b7/Q1bH70=
+X-Received: by 2002:aca:6044:: with SMTP id u65-v6mr90143oib.323.1531436118971;
+ Thu, 12 Jul 2018 15:55:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <22104.1531436081.1@warthog.procyon.org.uk>
-Date:   Thu, 12 Jul 2018 23:54:41 +0100
-Message-ID: <22105.1531436081@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 12 Jul 2018 22:54:43 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 12 Jul 2018 22:54:43 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 12 Jul 2018 15:54:52 -0700
+Message-ID: <CAG48ez0srRLS07oiL6x61eRzoD+LpLgT_=74hCJGRFqfYd00Pg@mail.gmail.com>
+Subject: readdir() and directory names containing slashes
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org
+Cc:     kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Theodore Y. Ts'o <tytso@mit.edu> wrote:
+Hi!
 
-> So maybe the answer is that you open /dev/sda1 and /dev/sda2 and then
-> pass the file descriptors to the fsopen object?  We can require that
-> the fd's be opened with O_RDWR and O_EXCL, which has the benefit where
-> if you have multiple block devices, you know *which* block device had
-> a problem with being grabbed for an exclusive open.
+The kernel doesn't seem to filter slashes out of directory names
+coming from the disk (with the exception of a few specific
+filesystems, like FUSE):
 
-Would that mean then that doing:
+# touch fatimg
+# truncate --size=40M fatimg
+# mkfs.fat fatimg
+mkfs.fat 4.1 (2017-01-24)
+# mkdir mount
+# mount fatimg mount
+# touch mount/FOOBAR
+# umount mount
+# sed -i 's|FOOBAR|FO/BAR|' fatimg
+# mount fatimg mount
+# strace -v -e trace=getdents,lstat ls -l mount
+lstat("mount", {st_dev=makedev(7, 0), st_ino=1, st_mode=S_IFDIR|0755,
+st_nlink=2, st_uid=0, st_gid=0, st_blksize=2048, st_blocks=32,
+st_size=16384, st_atime=0, st_atime_nsec=0, st_mtime=0,
+st_mtime_nsec=0, st_ctime=0, st_ctime_nsec=0}) = 0
+getdents(3, [{d_ino=1, d_off=1, d_reclen=24, d_name=".",
+d_type=DT_DIR}, {d_ino=1, d_off=2, d_reclen=24, d_name="..",
+d_type=DT_DIR}, {d_ino=267, d_off=16384, d_reclen=32, d_name="FO/BAR",
+d_type=DT_REG}], 32768) = 80
+lstat("mount/FO/BAR", 0x5603c71ee1a8)   = -1 ENOENT (No such file or directory)
+ls: cannot access 'mount/FO/BAR': No such file or directory
+getdents(3, [], 32768)                  = 0
+total 0
+-????????? ? ? ? ?            ? FO/BAR
++++ exited with 1 +++
 
-	mount /dev/sda3 /a
-	mount /dev/sda3 /b
+I think it would be reasonable for the VFS layer to block this - if
+someone puts something like "../../etc" in a filename, userspace could
+get pretty confused.
 
-would then fail on the second command because /dev/sda3 is already open
-exclusively?
+AFAICS the simple way to deal with this would be to patch dir_emit()
+to do something like this:
 
-David
+if (WARN_ON_ONCE(memchr(name, '/', namelen))) return true;
+
+... but then readdir() won't indicate to userspace that the kernel
+omitted a (bad) directory entry. A cleaner way might be to patch all
+the ->actor handlers to do the check and propagate the error
+appropriately, but then the checks would have to be placed in more
+places... which also doesn't seem very clean.
+
+Al, you probably have opinions on this?
