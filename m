@@ -4,59 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A71C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A58EC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BEA820BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14F9920BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InrgZ4bX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BEA820BF2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2SBfh9Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F9920BF2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391286AbeGLClI (ORCPT
+        id S2391301AbeGLClL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 22:41:08 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37539 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387708AbeGLClI (ORCPT
+        Wed, 11 Jul 2018 22:41:11 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:43840 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387708AbeGLClK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 22:41:08 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n15-v6so3440973pgv.4;
-        Wed, 11 Jul 2018 19:33:53 -0700 (PDT)
+        Wed, 11 Jul 2018 22:41:10 -0400
+Received: by mail-pf0-f195.google.com with SMTP id y8-v6so19620599pfm.10;
+        Wed, 11 Jul 2018 19:33:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=rM/XLnZ4ERqEllAhmXX2H1tj/qTgojFHE1D53R5iDL8=;
-        b=InrgZ4bX9MVWBr4ZbZ3B1ZwhKm8zi+AubbYSA5rtw4UrPBYkHFlNF04Zdr8rFmZbT2
-         urp6kxg18NoSf6sPTxeDVS/3+Fe8umnb+yx2hT1FECqxm1yN6wJy101IBfxrnUAXtbCo
-         FDiGFC3F0224CiUJy803m51svTHZfZa+vqvPo2UUuF42JJ56WSivgFHpbopK3PWeJfsd
-         x9tvzY2FDVajaOBIFU71oNEERnLHXyS+h36qHRj5VxWpWcZdcCUgvdQvoWiT0sj5uSCM
-         06aTcuRvX1z25Yx5lvhUWDZHOvF39VOOi1TiWmWGUZ36+zKbCVwSJmOFvZVIz5cRc/OW
-         NiXg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=/ULPlg3Be4vbEje7rTmj0UMFj2MBNyHrkJAQohUVeQ4=;
+        b=Z2SBfh9YUtWqy3tU7005dnYRkE1Y+c1DEvogXJ2vZJmyHXkD+LKo8HnBTn6jQb9iUc
+         xajquJ9/73vOg69tisjodrTB9Fk8+K7Hj/jGuGIH8LznOhTq8oLx6zUEwyE6XVcZjqPD
+         5xHNARFwx5HCmX2IfD1hcoG5vca8JbFEu9M0yqDb14PCElsRqIUCY2TPhQr4yS0jcVDN
+         38d4uekejd3z2TumTCtt9AV0PaU8vPpUbSfMLrwJpEpbPslamTRoyYFq/7KxFROt7Dsb
+         hA6iA5wGpepraDCvcADRrjAcLfsCZgsdoF6Eld2yllOM8YjdWHUj/+Uq7xr6ukoLi1Pt
+         WuSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rM/XLnZ4ERqEllAhmXX2H1tj/qTgojFHE1D53R5iDL8=;
-        b=jpdHbWZaH3NuECRZQZT8KYIifXo8so4SduBM46jOQ9Bqq44SXfTjFPhlr7YJwfnnp7
-         EPT26k5ZnJpj1kjQRO4lzWSN2i9ISct6FZoVXWUcNLdrXQhC+ZyMeGyg0aFjnZAq+5G2
-         Ljm6sNd3d9S/r9qC+D8M1QRRihhJZO6Y+34lqOVmrI+kKcUB0b9aVPK7b5KOpgkIqrqp
-         72fgmFSdJ/bTomgi/hvqHNngZFyTb0oiKQFKw3PzBlzM5GKQQ6rG55DhFKTeU42aIOPQ
-         13hXcIvse/VN6jbCfnEXW17etx/pDIAzFCeSGtpQx+hMftiINSQKmV5UTKAn0AyRDGXo
-         x6Gw==
-X-Gm-Message-State: AOUpUlFUAf6fypv9MN557V9Pc/UhWWjBQW5A6uwq/KDYa5Scp9WCBlbG
-        WFkvqpXQgAWd/0KmWD2FZJE=
-X-Google-Smtp-Source: AAOMgpfM653p0mIFpjkul/HMVsY/uoJrAMz9e8VMRRKr0ePOChd1yHA6jqnN3svXo6YBCrfNQutvUw==
-X-Received: by 2002:a63:1644:: with SMTP id 4-v6mr370239pgw.103.1531362832783;
-        Wed, 11 Jul 2018 19:33:52 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=/ULPlg3Be4vbEje7rTmj0UMFj2MBNyHrkJAQohUVeQ4=;
+        b=rWc2uL/ktoBCFdHLr6rnloeu2KymjSJSedYidUsXiu4wZhBlPHfz4dFz5MQ5tPTLLo
+         Gr90qc59G2W38jTfbbC2MqjXioz59t1Xs+Ev3Rzes4JNH+9DqpifWUBgCtPkbHTfI8UU
+         sgFUaWM9uhCG8xUQ9lwgWt6wVma993w/s8oGhxY/t1ZwRAZVqNZ+SDcMjC460r0dYEwv
+         jsigA+CiMK/trZZY06ymTUE2X7zn73n2F8JS6ski6EH0v8cBn33pMVLyqNSJVKrnFXSw
+         X7XL6qq3G/IgvyrDS5v4uaNfmDXHQ4hSI7ANqiKpugRCt1vIxoTwir0kvp4laZj0fB39
+         vSgg==
+X-Gm-Message-State: AOUpUlFevMSe7xQnY6GWeAV0dL+5krQCUbu83zAYFWGnH9bWQ267X2+w
+        djZSOdu1og9GoQ+j3ehuzy8=
+X-Google-Smtp-Source: AAOMgpcb/mnqH0nQxnSr1qW4FnyZcVZ1jyoeCy5gZCoesDQby0nM814do0wW466Hs8p2dsLIVG8+PA==
+X-Received: by 2002:a65:4b87:: with SMTP id t7-v6mr342099pgq.391.1531362834411;
+        Wed, 11 Jul 2018 19:33:54 -0700 (PDT)
 Received: from localhost.localdomain (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id w16-v6sm57260335pfi.101.2018.07.11.19.33.51
+        by smtp.gmail.com with ESMTPSA id w16-v6sm57260335pfi.101.2018.07.11.19.33.52
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Jul 2018 19:33:51 -0700 (PDT)
+        Wed, 11 Jul 2018 19:33:53 -0700 (PDT)
 From:   Andrey Smirnov <andrew.smirnov@gmail.com>
 To:     Shawn Guo <shawnguo@kernel.org>
 Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
@@ -67,32 +68,62 @@ Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH 0/2] Follow up fixes for SCU3 ESB
-Date:   Wed, 11 Jul 2018 19:33:35 -0700
-Message-Id: <20180712023337.30112-1-andrew.smirnov@gmail.com>
+Subject: [PATCH 1/2] ARM: dts: imx51-zii-scu3-esb: Add switch IRQ line pinumx config
+Date:   Wed, 11 Jul 2018 19:33:36 -0700
+Message-Id: <20180712023337.30112-2-andrew.smirnov@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180712023337.30112-1-andrew.smirnov@gmail.com>
+References: <20180712023337.30112-1-andrew.smirnov@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Shawn:
+Add DT code to explicitly configure PAD_AUD3_BB_CK and avoid relying
+on defaults.
 
-Here's a couple of fixes for things I missed in the
-[original-submission]. Sorry about the inconvenience.
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: cphealy@gmail.com
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+---
+ arch/arm/boot/dts/imx51-zii-scu3-esb.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks,
-Andrey Smirnov
-
-[original-submission] lkml.kernel.org/r/20180711050704.11492-1-andrew.smirnov@gmail.com
-
-Andrey Smirnov (2):
-  ARM: dts: imx51-zii-scu3-esb: Add switch IRQ line pinumx config
-  ARM: dts: imx51-zii-scu3-esb: Fix RAVE SP watchdog compatible string
-
- arch/arm/boot/dts/imx51-zii-scu3-esb.dts | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
+diff --git a/arch/arm/boot/dts/imx51-zii-scu3-esb.dts b/arch/arm/boot/dts/imx51-zii-scu3-esb.dts
+index 2941a92d40f1..0bb42c00d72b 100644
+--- a/arch/arm/boot/dts/imx51-zii-scu3-esb.dts
++++ b/arch/arm/boot/dts/imx51-zii-scu3-esb.dts
+@@ -221,6 +221,8 @@
+ 			interrupts = <20 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-controller;
+ 			#interrupt-cells = <2>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&pinctrl_switch>;
+ 
+ 			ports {
+ 				#address-cells = <1>;
+@@ -426,6 +428,12 @@
+ 		>;
+ 	};
+ 
++	pinctrl_switch: switchgrp {
++		fsl,pins = <
++			MX51_PAD_AUD3_BB_CK__GPIO4_20		0xc5
++		>;
++	};
++
+ 	pinctrl_uart1: uart1grp {
+ 		fsl,pins = <
+ 			MX51_PAD_UART1_RXD__UART1_RXD		0x1c5
 -- 
 2.17.1
 
