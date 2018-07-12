@@ -2,900 +2,156 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92B76C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81BB5C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0D3220C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19CFE20C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:57:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qM1bhlpl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0D3220C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="oQqVWWiC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19CFE20C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synaptics.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391116AbeGLCBn (ORCPT
+        id S2391130AbeGLCE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 22:01:43 -0400
-Received: from mail-pl0-f54.google.com ([209.85.160.54]:38093 "EHLO
-        mail-pl0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726464AbeGLCBn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 22:01:43 -0400
-Received: by mail-pl0-f54.google.com with SMTP id b1-v6so9956519pls.5
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 18:54:35 -0700 (PDT)
+        Wed, 11 Jul 2018 22:04:26 -0400
+Received: from mail-eopbgr730087.outbound.protection.outlook.com ([40.107.73.87]:10129
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726464AbeGLCEZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 22:04:25 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=pdMqTbamcluSxi1CyaDLc3SUyGtVk6eXs0rmfTyccsg=;
-        b=qM1bhlplO9twfwA2tlfmXwzjUm3KRTuSgzhzRr33m0hC/LO0GA0BsloFNQF3hnrNHy
-         qBSDxg4cgWpD1bYddzNWl9xtEJpgq3FrZqPw8D49ctWlNIPD+6jU1qjcXiWzRnPy0CRX
-         3f+CaAsjk0HpXNaqCujF4Zu+9UNgKAUQSefxE1WjR4fzwpE1EVljC3612MmVru1OULGx
-         9hKWA69sHOFZYOrzQVNeviHja87+A62hbuugmFP9bvje6J7Rn5nl4Rfk7ANjN2EvFa4K
-         GEeBOHrgIgfYJWuA5Lnx56bgIU5rNyzquiqvcejIqyEY+91ANrx7TKS/i5YW/Y09Ubyn
-         2mow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pdMqTbamcluSxi1CyaDLc3SUyGtVk6eXs0rmfTyccsg=;
-        b=cGbmSf9RwfiJTnW+yRBkcV1+0jsQSoDIfXOfJpMa/ShWfYwFrOPMq34fNXud1H8hxZ
-         DNv2bDfsLKszGMcwKAVdVbdaNChxXb3qREzZ/mRDmlxKj9uxp/sOE+NTTQHIUtLGh06T
-         tlgi3xkxMj5e7SJQW6hX4AsC3X5+ns53+2t7V8GKF7dAANRfEFVcmag1uXdxowinj6fD
-         hW0bC04iQ4bBEDeqH0UD82rwh9d0FtZCqCjfMd0Rx5hGXSQqREGRMYgEATZKpF73Ycd7
-         IlTEeKjbIrdy7qCOy9ZdElKtz8goYGiH4eKVMnc4yl4/n4HIj2TN0O4XTCjJKMfNj3sZ
-         +66w==
-X-Gm-Message-State: AOUpUlFSzuYmQjJ7ZGR2Hk9wQtybTQ0KWjm8DE73v7ASmo0hljTtyqiq
-        FrGM3RqIaxBSJnFZUMz0glIMLJd2dDGQDQ==
-X-Google-Smtp-Source: AAOMgpdSOx1BheqviIahN7/hUJZCdLoEI0pAPvaZPrZBuYBGdNjgdgtgtpQG7zHRkV136zlkW3PVZg==
-X-Received: by 2002:a17:902:9687:: with SMTP id n7-v6mr273214plp.33.1531360474396;
-        Wed, 11 Jul 2018 18:54:34 -0700 (PDT)
-Received: from drosen.mtv.corp.google.com ([2620:0:1000:1611:7129:1142:3149:848c])
-        by smtp.gmail.com with ESMTPSA id y9-v6sm11741495pfk.7.2018.07.11.18.54.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 18:54:33 -0700 (PDT)
-From:   Daniel Rosenberg <drosen@google.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-f2fs-devel@lists.sourceforge.net
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@android.com, Daniel Rosenberg <drosen@google.com>
-Subject: [PATCH 1/1] f2fs: checkpoint disabling
-Date:   Wed, 11 Jul 2018 18:53:47 -0700
-Message-Id: <20180712015347.55992-1-drosen@google.com>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Mmfj1XqGgc3IHKaZrHgv5QQ8kUMOdf7cHrYWlV9+ZiA=;
+ b=oQqVWWiCGY5j2YjYO23CQ7fBTiqPY4ERhK/7xSnAmFfAVb8Xsy6NPX1hizRX1gGL+gcLKUuOCGJYrYw+dsnMrxGTmiPYI9WTE/WugvKMGuOvFl+rHu7zxClphx3u7CSrwJofjFPOmqf8iBtLl+T3YwtlyXq7pMVOGzdAo0Wcjcg=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+Received: from xhacker.debian (124.74.246.114) by
+ MWHPR03MB2639.namprd03.prod.outlook.com (2603:10b6:300:46::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.18; Thu, 12 Jul 2018 01:57:11 +0000
+Date:   Thu, 12 Jul 2018 09:55:04 +0800
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/3] serial: 8250_dw: add fractional divisor support
+Message-ID: <20180712095504.4d9583ce@xhacker.debian>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [124.74.246.114]
+X-ClientProxiedBy: MRXP264CA0025.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:500:14::13) To MWHPR03MB2639.namprd03.prod.outlook.com
+ (2603:10b6:300:46::9)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ded1bfd4-1327-4676-64e7-08d5e79aca2b
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:MWHPR03MB2639;
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;3:tEEN2HXEHqB1uE5+R6KJgz8dElzPRP7dgWFTiJ25vyFCVNW0Je4KzRHBX4OKt2L2WyBNJIvAfkJTRFhsshjw1tJWMDrv+hDxL4P2ozNrQQxwCDUsm0h2naR0e5b0ytxb4oUBZi1smHsqCKbsaFFKUyiQuns1Qcv4HjNC0PC2IpU/XfvtBEW9cFc6qZpGIBDbclXFCXod1F22jORhjNv3qpjkDJDe4FZKO7Etkp6CWYaFBMmtxYr0JimMrF/S08k6;25:FDSMXzRpNtZM1CpZmrSP/AvSP+vProYU5dqoIWrz/EMUS6vcqHqmAcj9PRBVwrze9AdCFhUNLjeSuGrtjc8zM9J8TWMJGYbup+wTBdfMY1nawrmyRKDtLG+D8LXH9VXdF/uMWMLwhvjIMbNjVOAKTY3u2Fu950KtIuZNw3jDKtIbpWBEtGKjqtTSD22BUJeTpWQal6c8+afjy1EGZxFTt5res9P2Sdv+HpSAOV8vJiTy0s2Rgk8NIqXvIW3msn18gsfSrNNUFqzA4Lw8PBnzkKyORrd3NONdxTQM2U4lJhsHpNsR1T0Xo7W9Om7qvT1ZRAW3vcFR0tum0W4mYaICJw==;31:4a0jyHFWO93CkM4KnmyvlNBWaHQwv3iCGpFsoj1wX40z2QfqLjP7z3LDWAPjVQF9+7dLKyw2FxQgkm2JxE33hqRTrqa5GFh+673Gc7K8mF3JG35fZeJO76oJsRrWlNalkJ0x6sYtjvAqHPW95ta5Cu02yo/uJoIZzyuIH2O6rUTJOS5LZKzou8zedNqRBjQ2+eirgLReU/b1EwQGZK0vbzLlakPps5HRjRP8m9cULtw=
+X-MS-TrafficTypeDiagnostic: MWHPR03MB2639:
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;20:tsHFUIit9+EskmyoK0cwtXIrYx1su+TsdwFClKeHBIHGWDVadbY0upv+6nXnxliVxr/eZgSxNiVfu0yX9p4X+iXJOLC04TGlxEEeaWDNVd5LcXi7cSLKN/pq6aEnQZA2mrTj7QP8iKFZZFRdIhK6wEy6aeHVUsW5KQRi0SokkTikuL241C9t9hs4ta8r8VWGNQ1LI+u9crFCvI9seZA0RGJqoZuMuoAJdoMqw7UGcxAm1miHNpDj+g/hZ6orZ40r2urIzvm71D/RyrVZYj3LrCUiiWEeJsb5BE3ndaAuBK+jnq5oSsNYkvjbnN6ZVN3cdOjLlLizkMRX+Ot93bgHaYVIY+8TFNp1anCouZQyKmD/3pBkdXWBJmVcgr3GOBz2iUDkxV2CgK1faTYmCu0RMbVhGSiKKFm7llc5JsKStTtiz9WI68VVspAfJM00wEwRMpS/LAMUT29lrZecdmI6AvwGwhjDSfxCnD4BrSAp/EJ5UgACQSf6Mo9G4qrgDQZI;4:NPVePEUW6QCP59brOo0N4NTu+Gc73uhijMLoAsFI5ydhsTiZfIn+3jrKw5N+xJhzrWTL8oKkbxaWWSGqXRmzYNRwAQKj10ySqdoxhlx9hBLeowK1uK+J4DKMoQ9qp9jHVp3FUUmzJ/iJ3Zmaqbf2Tw9RnMq04vF4PpbKG8jSbHLOKGx3B/c1VQDh+bLIh3W/Zl4VVGzVinjhDKCxJsyNLWXCnj/gwvtNkJAlD6rPL+8wUU1VlLjQg6mFejBKRYqYV7g5j/2Ae6HeJocTPIn5fA==
+X-Microsoft-Antispam-PRVS: <MWHPR03MB2639FA01FEA06A38E752208DED590@MWHPR03MB2639.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MWHPR03MB2639;BCL:0;PCL:0;RULEID:;SRVR:MWHPR03MB2639;
+X-Forefront-PRVS: 0731AA2DE6
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(39860400002)(136003)(376002)(366004)(346002)(396003)(189003)(199004)(55016002)(9686003)(4326008)(6666003)(386003)(6506007)(105586002)(186003)(66066001)(26005)(16526019)(53936002)(106356001)(230700001)(2906002)(52116002)(50226002)(5660300001)(7696005)(33896004)(86362001)(68736007)(486006)(956004)(476003)(110136005)(7736002)(316002)(305945005)(23726003)(8936002)(6116002)(1076002)(72206003)(81156014)(97736004)(3846002)(81166006)(50466002)(478600001)(47776003)(25786009)(8676002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR03MB2639;H:xhacker.debian;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;MWHPR03MB2639;23:JxXFuWGfdU5vzRQZKEz6NpcPvVnhrg34NZapsR3H2?=
+ =?us-ascii?Q?vE7bbmIEHqlDhlgjzpSrtRUb5y4XUEv6bIo7n2ApnKL/LDerxUwWSoCWKHdS?=
+ =?us-ascii?Q?ZupX1cKxJq4hnEBAuQgOZXZZsm/asrmW19N2bOV5VT9gfgnCMYhKg8BUnNow?=
+ =?us-ascii?Q?N/sq3gPZZHgZ0jWKKb6v54VPk5ovKDWqFgLU2NAQojvkr5saWd+tW6lwv8rH?=
+ =?us-ascii?Q?ekPMgi+el7YX0VDDKBpTmzPqEjP1WShBhsTEyjy23632j670P2mTHYWzgaqI?=
+ =?us-ascii?Q?FzEXV2YCOgyiXQ0yB3zs7vOVU8ytll2FHD0jlOXDptIzxtZC3di0BIGzOACK?=
+ =?us-ascii?Q?+JVUh2kaQQ9mFEbfC4WvLQW/oyvZ81mngLWBd3F2AWkDBAH+avPA6gT7PD8g?=
+ =?us-ascii?Q?EA4/ee+XdZc/UJL23OcbuDuWaWd9NqX5nhdcBvnVNCghCillj4WYyhbskxtd?=
+ =?us-ascii?Q?N9zlJma3kluGBNgMy/zewLqoJoPagQVH7fvP81MkT+xcTms8yxJCYpeDu44m?=
+ =?us-ascii?Q?mBRDBUz8px1s3OVgd8cKd/kom97NwYl2fPs4aa0RfJan+E7oU7HyClaweAQr?=
+ =?us-ascii?Q?WYRZqXMAsurBJvWzb2bkPPzZ8uWXjO0cYjlhd0F4/bUzdFZdFq0c4kC2gpwH?=
+ =?us-ascii?Q?aLTAyH2phvm1/7aCDRhqM7fFM0IgTQ6MawiWM2EwiI8kTlIS+OcHcu9N28go?=
+ =?us-ascii?Q?0U/PX770uBcH7ndl8opwM1L8N8W7Tsfil5JQsVWwRu5m+XIIwQqJeT57FXdz?=
+ =?us-ascii?Q?33460Rzo3FXYjV3x7YvFbq2BaCoC0oD5Aq/gKUy1qNjiF8VYiuvZKsMWRSWV?=
+ =?us-ascii?Q?G06kicwydfb477UseJCpB4+RE2dH56zwhguRZST8MddXgDjsDVPGCYvX9HKP?=
+ =?us-ascii?Q?CsgcghBLVA3cA3Euu4zAYaYYg0tkktlec7PKlzME8oubTUdnsbBO/rVeB3w1?=
+ =?us-ascii?Q?OnyZB9HQCBF+9qDIqFlyGv8I0rpn30awePi8/ls+gYkBtpP7iUN6IZPskWfE?=
+ =?us-ascii?Q?LSBIEvrZVD8g5C6NgLXR0+0mnHPXCZnKIbvapqPg6d5k42+vZhdvmJMmREPl?=
+ =?us-ascii?Q?BriQkFTWhLKcytJ97aVbsBWme4SYgVMIgrJFqlWXS+ONq7kVhdMcsERO7SjL?=
+ =?us-ascii?Q?kM3yZLMlw6GFQ+98sowHpUKlx4tcKSxLURxYkJ9nwb1qfUGngiy3A=3D=3D?=
+X-Microsoft-Antispam-Message-Info: Ks+Vl3SlDHSCpCWRwXepiXMUpHFzp2PzS53/TdDXCZfFG8dK2KyrZtWvURBq5x0RQE9ejmxAteCrVh56uwsLCZgNvRDCUfjnBpxwwItz0kNeyKq7fctfogyIaRh5oAQZO1yxRCnZluZMwYQeDA3BWyMaxhUu/Wt4DovAzt2Ra2G4QvyIbPPpXjJ5jo5+kPMS6CUCfWqJ3COZ7aRJqdCGMFepXc4kqY5ZI/mv/pEyYnlTAxrqvyyvNZzDUaVou1clgpWJ/i9zZbvE0y7e51M9Jq0GvFCShjonGTmR/wQbxxE868UQ65CxZKDFlTdk7sV8bPPMKswPWkCAm2TIH3tzaYeEidaDYuc+JJRWWBdbAVs=
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;6:ojO2yuAcB1VP8kW5reKHFSkAmjsh+7VdJsWZTsBu1JIgCPz8acg8b7895/J+FKSEJVb9qIgSvssaEKUN2DXeXBNd9/zwZCBho+a78jrnv+dxHdkW4UXV112H8aGexGDZm2qlW6OSYO4QP198zbu6Qx0PLYk5XNvq50gIjVq8xiJ1aJSCzq62+t5AdJ2BQokt9koGaVPLyOkbLWleeW8406y7N0WQ6GXsPXXmlpeKuwEjbJ1ByR2KumPPrdgqMu+0tmJwTmuvFFxhSOmXqGGkF4S3+7FtLLMDoizTnXZsAXUZeeYioHFzZHIw6m/4VxZftnGzQpXvdjnr7CrfNBaU1+yg1HyRG7tsz+h1Zzy6YU6iLqlXwvYOXpvszhf3P26sPn8ia7GTi/khB6w0LJT6y4SyujOXscsXva3tgfjnVh6wEhFzXjinHaWEIceoOa3CAKK/dsVuvznB3Olu3btM1g==;5:F/98KlEz86qvt/yzthRd+X6APu++vfkHARy6+FxSBNglgfAcGMHdDsZXYg/Gj3XZ02T27OhG0atdG6affcpzbzBBIdDNnEDdp855l9aJAhaokjITJjPrhtgINUSihHQZxoQZcSUAwdmLYcSBWkPLUUphR8OaxKX4k60bNhqeqlI=;24:qZjwWPd2rQYJ6FD1y9sJtO4qYPB+k4cEC2i9eRomin3cXXmNGGmztYXjvD9STo27kzML5Bx6//jS0SlQNP9Pzczyn0EOqZ3V72yfFBXENig=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;MWHPR03MB2639;7:MFPps4gf4fU+107MXVyy1m9VuUrui2FjWcEE5t06ZNu106USXOeox5XnMcQRFjD23zVRJITJQHpF51UPUOyhSLRvJurTR8ufhBdRvReWbA+g8mUn5gaedZ+JEnI47NIj14mtxjh+uSw7t4KmiffriDx3X0wAJLI/NbQbViLyDIHrZHlmrRPW+XYTNX/5Y6Diqi9rrc9Ocv8PbI71zcPGtc3uRetdDH3mL8rIWCbTUHbXXtMVl7u5MH7t8tKXwZUp
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jul 2018 01:57:11.4364 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ded1bfd4-1327-4676-64e7-08d5e79aca2b
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR03MB2639
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a lightweight non-persistent snapshotting scheme to f2fs.
+For Synopsys DesignWare 8250 uart which version >= 4.00a, there's a
+valid divisor latch fraction register. The fractional divisor width is
+4bits ~ 6bits.
 
-To use, mount with the option checkpoint=disable, and to return to
-normal operation, remount with checkpoint=enable. If the filesystem
-is shut down before remounting with checkpoint=enable, it will revert
-back to its apparent state when it was first mounted with
-checkpoint=disable. This is useful for situations where you wish to be
-able to roll back the state of the disk in case of some critical
-failure.
+patch1 introduces necessary hooks to 8250 core.
+patch2 exports serial8250_do_set_divisor()
+patch3 implements the fractional divisor support for Synopsys DW 8250.
 
-Signed-off-by: Daniel Rosenberg <drosen@google.com>
----
+Since v5:
+ - Add Andy's Reviewed-by tag to all patches.
 
-This probably needs some work in the mount/remount areas to ensure it
-plays nicely with all combinations of other options.
-I'm also unsure how it should interact with statfs.
+Since v4:
+ - use tmp to save baud * 16 rather than calculate every time in
+   dw8250_get_divisor()
 
-It currently handles accounting for free space in checkpoint disabled
-mode by setting up addition tracking for free data blocks, node blocks,
-and segments. These are used in inc_valid_block_cnt and inc_valid_node_cnt
-to track what the state will be once the blocks are actually allocated.
-We choose new current segments in SSR mode first to avoid the edge case
-where the disk is not yet full, but we only have dirty segments remaining
-that happen to not be of the right type. We also agressively add segments
-to the dirty list instead of pre-free when it is possible to reuse them to
-allow us to continue without a checkpoint as long as possible.
+Since v3:
+ - simplify the dw8250_get_divisor() implementation again.
 
- Documentation/filesystems/f2fs.txt |   5 ++
- fs/f2fs/data.c                     |  21 ++++++
- fs/f2fs/f2fs.h                     |  63 +++++++++++++++-
- fs/f2fs/file.c                     |  18 +++++
- fs/f2fs/gc.c                       |   4 +
- fs/f2fs/segment.c                  |  96 +++++++++++-------------
- fs/f2fs/segment.h                  |  66 +++++++++++++++++
- fs/f2fs/super.c                    | 115 +++++++++++++++++++++++++++--
- 8 files changed, 326 insertions(+), 62 deletions(-)
+Since v2:
+ - rebase to tty-next branch, since I need one patch from Andy which
+   is in tty-next
+ - drop the patch "serial: 8250: let serial8250_get_divisor() get
+   uart_port * as param" since it's in tty-next now.
+ - add a new patch to export serial8250_do_set_divisor(), and reuse it
+   to complete dw8250_set_divisor().
+ - remove DW 8250 version check, since the DLF register always exists
+   and if fractional divisor isn't supported, the register read as 0
+ - add comments to explain how dw8250_get_divisor() get quot and frac.
+ - the frac calcuation is simplified with well implemented GENMASK
+ - Add Andy's Reviewed-by tag to patch1.
 
-diff --git a/Documentation/filesystems/f2fs.txt b/Documentation/filesystems/f2fs.txt
-index 69f8de9957397..a026b353a99d4 100644
---- a/Documentation/filesystems/f2fs.txt
-+++ b/Documentation/filesystems/f2fs.txt
-@@ -193,6 +193,11 @@ fsync_mode=%s          Control the policy of fsync. Currently supports "posix",
-                        non-atomic files likewise "nobarrier" mount option.
- test_dummy_encryption  Enable dummy encryption, which provides a fake fscrypt
-                        context. The fake fscrypt context is used by xfstests.
-+checkpoint=%s          Set to "disable" to turn off checkpointing. Set to "enable"
-+                       to reenable checkpointing. Is enabled by default. While
-+                       disabled, any unmounting or unexpected shutdowns will cause
-+                       the filesystem contents to appear as they did when the
-+                       filesystem was mounted with that option.
- 
- ================================================================================
- DEBUGFS ENTRIES
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 83d4cff445f53..b3fa713fd42bf 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -1654,9 +1654,20 @@ bool f2fs_should_update_inplace(struct inode *inode, struct f2fs_io_info *fio)
- bool f2fs_should_update_outplace(struct inode *inode, struct f2fs_io_info *fio)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+	struct seg_entry *se;
-+	unsigned int segno, offset;
- 
- 	if (test_opt(sbi, LFS))
- 		return true;
-+	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
-+		if (fio->old_blkaddr == NULL_ADDR)
-+			return true;
-+		segno = GET_SEGNO(sbi, fio->old_blkaddr);
-+		se = get_seg_entry(sbi, segno);
-+		offset = GET_BLKOFF_FROM_SEG0(sbi, fio->old_blkaddr);
-+		if (f2fs_test_bit(offset, se->ckpt_valid_map))
-+			return true;
-+	}
- 	if (S_ISDIR(inode->i_mode))
- 		return true;
- 	if (f2fs_is_atomic_file(inode))
-@@ -1684,9 +1695,12 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- {
- 	struct page *page = fio->page;
- 	struct inode *inode = page->mapping->host;
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	struct dnode_of_data dn;
- 	struct extent_info ei = {0,0,0};
- 	bool ipu_force = false;
-+	bool need_tmp_grab = test_opt(sbi, DISABLE_CHECKPOINT);
-+	blkcnt_t tmp_block = 1;
- 	int err = 0;
- 
- 	set_new_dnode(&dn, inode, NULL, NULL, 0);
-@@ -1750,6 +1764,11 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 	if (err)
- 		goto out_writepage;
- 
-+	if (need_tmp_grab) {
-+		err = inc_valid_block_count(sbi, dn.inode, &tmp_block);
-+		if (err)
-+			goto out_writepage;
-+	}
- 	set_page_writeback(page);
- 	ClearPageError(page);
- 
-@@ -1759,6 +1778,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
- 	set_inode_flag(inode, FI_APPEND_WRITE);
- 	if (page->index == 0)
- 		set_inode_flag(inode, FI_FIRST_BLOCK_WRITTEN);
-+	if (need_tmp_grab)
-+		dec_valid_block_count(sbi, dn.inode, tmp_block);
- out_writepage:
- 	f2fs_put_dnode(&dn);
- out:
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index fe80eb637075c..024b6b971e214 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -97,6 +97,7 @@ extern char *fault_name[FAULT_MAX];
- #define F2FS_MOUNT_QUOTA		0x00400000
- #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00800000
- #define F2FS_MOUNT_RESERVE_ROOT		0x01000000
-+#define F2FS_MOUNT_DISABLE_CHECKPOINT	0x02000000
- 
- #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
- #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
-@@ -175,6 +176,7 @@ enum {
- #define	CP_RECOVERY	0x00000008
- #define	CP_DISCARD	0x00000010
- #define CP_TRIMMED	0x00000020
-+#define CP_PAUSE	0x00000040
- 
- #define MAX_DISCARD_BLOCKS(sbi)		BLKS_PER_SEC(sbi)
- #define DEF_MAX_DISCARD_REQUEST		8	/* issue 8 discards per round */
-@@ -1067,6 +1069,7 @@ enum {
- 	SBI_NEED_SB_WRITE,			/* need to recover superblock */
- 	SBI_NEED_CP,				/* need to checkpoint */
- 	SBI_IS_SHUTDOWN,			/* shutdown by ioctl */
-+	SBI_CP_DISABLED,			/* CP was disabled last mount */
- };
- 
- enum {
-@@ -1192,6 +1195,12 @@ struct f2fs_sb_info {
- 	block_t reserved_blocks;		/* configurable reserved blocks */
- 	block_t current_reserved_blocks;	/* current reserved blocks */
- 
-+	/* Additional tracking for no checkpoint mode */
-+	block_t unusable_block_count;		/* # of blocks saved by last cp */
-+	block_t free_ssr_data_block;
-+	block_t free_ssr_node_block;
-+	block_t free_segments;
-+
- 	unsigned int nquota_files;		/* # of quota sysfile */
- 
- 	u32 s_next_generation;			/* for NFS support */
-@@ -1643,7 +1652,7 @@ static inline void f2fs_i_blocks_write(struct inode *, block_t, bool, bool);
- static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 				 struct inode *inode, blkcnt_t *count)
- {
--	blkcnt_t diff = 0, release = 0;
-+	blkcnt_t diff = 0, release = 0, seg_diff = 0, seg_rel = 0;
- 	block_t avail_user_block_count;
- 	int ret;
- 
-@@ -1671,6 +1680,8 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 
- 	if (!__allow_reserved_blocks(sbi, inode, true))
- 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		avail_user_block_count -= sbi->unusable_block_count;
- 
- 	if (unlikely(sbi->total_valid_block_count > avail_user_block_count)) {
- 		diff = sbi->total_valid_block_count - avail_user_block_count;
-@@ -1681,18 +1692,51 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 		sbi->total_valid_block_count -= diff;
- 		if (!*count) {
- 			spin_unlock(&sbi->stat_lock);
--			percpu_counter_sub(&sbi->alloc_valid_block_count, diff);
- 			goto enospc;
- 		}
- 	}
-+	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
-+		if (unlikely(*count > sbi->free_ssr_data_block)) {
-+			/* We'll need to pull from free. */
-+			blkcnt_t needed = *count - sbi->free_ssr_data_block;
-+			blkcnt_t new_segs = ((needed - 1) >>
-+						sbi->log_blocks_per_seg) + 1;
-+
-+			/* Check if we have enough free */
-+			if (unlikely(new_segs > sbi->free_segments)) {
-+				seg_diff = new_segs - sbi->free_segments;
-+
-+				seg_rel = ((needed - 1) %
-+						sbi->log_blocks_per_seg) + 1;
-+				seg_rel += (seg_diff - 1) <<
-+							sbi->log_blocks_per_seg;
-+				new_segs -= seg_diff;
-+				*count -= seg_rel;
-+				release += seg_rel;
-+				if (!*count) {
-+					spin_unlock(&sbi->stat_lock);
-+					goto enospc;
-+				}
-+			}
-+
-+			sbi->free_segments -= new_segs;
-+			sbi->free_ssr_data_block += new_segs <<
-+							sbi->log_blocks_per_seg;
-+
-+		}
-+		sbi->free_ssr_data_block -= *count;
-+	}
- 	spin_unlock(&sbi->stat_lock);
- 
--	if (unlikely(release))
-+	if (unlikely(release)) {
-+		percpu_counter_sub(&sbi->alloc_valid_block_count, release);
- 		dquot_release_reservation_block(inode, release);
-+	}
- 	f2fs_i_blocks_write(inode, *count, true, true);
- 	return 0;
- 
- enospc:
-+	percpu_counter_sub(&sbi->alloc_valid_block_count, release);
- 	dquot_release_reservation_block(inode, release);
- 	return -ENOSPC;
- }
-@@ -1878,6 +1922,8 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 
- 	if (!__allow_reserved_blocks(sbi, inode, false))
- 		valid_block_count += F2FS_OPTION(sbi).root_reserved_blocks;
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		valid_block_count += sbi->unusable_block_count;
- 
- 	if (unlikely(valid_block_count > sbi->user_block_count)) {
- 		spin_unlock(&sbi->stat_lock);
-@@ -1890,6 +1936,17 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 		goto enospc;
- 	}
- 
-+	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
-+		if (unlikely(!sbi->free_ssr_node_block)) {
-+			if (unlikely(!sbi->free_segments)) {
-+				spin_unlock(&sbi->stat_lock);
-+				goto enospc;
-+			}
-+			sbi->free_segments--;
-+		}
-+		sbi->free_ssr_node_block--;
-+	}
-+
- 	sbi->total_valid_node_count++;
- 	sbi->total_valid_block_count++;
- 	spin_unlock(&sbi->stat_lock);
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 8af6683e022be..1f9a8119e17da 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -150,6 +150,9 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 	enum cp_reason_type cp_reason = CP_NO_NEEDED;
- 
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		return CP_NO_NEEDED;
-+
- 	if (!S_ISREG(inode->i_mode))
- 		cp_reason = CP_NON_REGULAR;
- 	else if (inode->i_nlink != 1)
-@@ -2046,6 +2049,9 @@ static int f2fs_ioc_gc(struct file *filp, unsigned long arg)
- 	if (f2fs_readonly(sbi->sb))
- 		return -EROFS;
- 
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		return -EINVAL;
-+
- 	ret = mnt_want_write_file(filp);
- 	if (ret)
- 		return ret;
-@@ -2088,6 +2094,9 @@ static int f2fs_ioc_gc_range(struct file *filp, unsigned long arg)
- 		return -EINVAL;
- 	}
- 
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		return -EINVAL;
-+
- 	ret = mnt_want_write_file(filp);
- 	if (ret)
- 		return ret;
-@@ -2123,6 +2132,12 @@ static int f2fs_ioc_f2fs_write_checkpoint(struct file *filp, unsigned long arg)
- 	if (f2fs_readonly(sbi->sb))
- 		return -EROFS;
- 
-+	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
-+		f2fs_msg(sbi->sb, KERN_INFO,
-+			"Skipping Checkpoint. Checkpoints currently disabled.");
-+		return -EINVAL;
-+	}
-+
- 	ret = mnt_want_write_file(filp);
- 	if (ret)
- 		return ret;
-@@ -2489,6 +2504,9 @@ static int f2fs_ioc_flush_device(struct file *filp, unsigned long arg)
- 	if (f2fs_readonly(sbi->sb))
- 		return -EROFS;
- 
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		return -EINVAL;
-+
- 	if (copy_from_user(&range, (struct f2fs_flush_device __user *)arg,
- 							sizeof(range)))
- 		return -EFAULT;
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 9093be6e7a7db..4100dced6c309 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -60,6 +60,9 @@ static int gc_thread_func(void *data)
- 		}
- #endif
- 
-+		if (test_opt(sbi, DISABLE_CHECKPOINT))
-+			goto do_balance;
-+
- 		if (!sb_start_write_trylock(sbi->sb))
- 			continue;
- 
-@@ -105,6 +108,7 @@ static int gc_thread_func(void *data)
- 		trace_f2fs_background_gc(sbi->sb, wait_ms,
- 				prefree_segments(sbi), free_segments(sbi));
- 
-+do_balance:
- 		/* balancing f2fs's metadata periodically */
- 		f2fs_balance_fs_bg(sbi);
- next:
-diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-index 9efce174c51a9..608bf53d81f54 100644
---- a/fs/f2fs/segment.c
-+++ b/fs/f2fs/segment.c
-@@ -179,6 +179,10 @@ bool f2fs_need_SSR(struct f2fs_sb_info *sbi)
- 		return false;
- 	if (sbi->gc_mode == GC_URGENT)
- 		return true;
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		return true;
-+	if (sbi->gc_thread && sbi->gc_thread->gc_urgent)
-+		return true;
- 
- 	return free_sections(sbi) <= (node_secs + 2 * dent_secs + imeta_secs +
- 			SM_I(sbi)->min_ssr_sections + reserved_sections(sbi));
-@@ -479,7 +483,8 @@ void f2fs_balance_fs(struct f2fs_sb_info *sbi, bool need)
- 	 * We should do GC or end up with checkpoint, if there are so many dirty
- 	 * dir/node pages without enough free segments.
- 	 */
--	if (has_not_enough_free_secs(sbi, 0, 0)) {
-+	if (has_not_enough_free_secs(sbi, 0, 0) &&
-+			!test_opt(sbi, DISABLE_CHECKPOINT)) {
- 		mutex_lock(&sbi->gc_mutex);
- 		f2fs_gc(sbi, false, false, NULL_SEGNO);
- 	}
-@@ -519,8 +524,10 @@ void f2fs_balance_fs_bg(struct f2fs_sb_info *sbi)
- 			f2fs_sync_dirty_inodes(sbi, FILE_INODE);
- 			blk_finish_plug(&plug);
- 		}
--		f2fs_sync_fs(sbi->sb, true);
--		stat_inc_bg_cp_count(sbi->stat_info);
-+		if (!test_opt(sbi, DISABLE_CHECKPOINT)) {
-+			f2fs_sync_fs(sbi->sb, true);
-+			stat_inc_bg_cp_count(sbi->stat_info);
-+		}
- 	}
- }
- 
-@@ -735,52 +742,6 @@ int f2fs_flush_device_cache(struct f2fs_sb_info *sbi)
- 	return ret;
- }
- 
--static void __locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
--		enum dirty_type dirty_type)
--{
--	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
--
--	/* need not be added */
--	if (IS_CURSEG(sbi, segno))
--		return;
--
--	if (!test_and_set_bit(segno, dirty_i->dirty_segmap[dirty_type]))
--		dirty_i->nr_dirty[dirty_type]++;
--
--	if (dirty_type == DIRTY) {
--		struct seg_entry *sentry = get_seg_entry(sbi, segno);
--		enum dirty_type t = sentry->type;
--
--		if (unlikely(t >= DIRTY)) {
--			f2fs_bug_on(sbi, 1);
--			return;
--		}
--		if (!test_and_set_bit(segno, dirty_i->dirty_segmap[t]))
--			dirty_i->nr_dirty[t]++;
--	}
--}
--
--static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
--		enum dirty_type dirty_type)
--{
--	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
--
--	if (test_and_clear_bit(segno, dirty_i->dirty_segmap[dirty_type]))
--		dirty_i->nr_dirty[dirty_type]--;
--
--	if (dirty_type == DIRTY) {
--		struct seg_entry *sentry = get_seg_entry(sbi, segno);
--		enum dirty_type t = sentry->type;
--
--		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
--			dirty_i->nr_dirty[t]--;
--
--		if (get_valid_blocks(sbi, segno, true) == 0)
--			clear_bit(GET_SEC_FROM_SEG(sbi, segno),
--						dirty_i->victim_secmap);
--	}
--}
--
- /*
-  * Should not occur error such as -ENOMEM.
-  * Adding dirty entry into seglist is not critical operation.
-@@ -789,7 +750,7 @@ static void __remove_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno,
- static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
- {
- 	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
--	unsigned short valid_blocks;
-+	unsigned short valid_blocks, ckpt_valid_blocks;
- 
- 	if (segno == NULL_SEGNO || IS_CURSEG(sbi, segno))
- 		return;
-@@ -797,8 +758,10 @@ static void locate_dirty_segment(struct f2fs_sb_info *sbi, unsigned int segno)
- 	mutex_lock(&dirty_i->seglist_lock);
- 
- 	valid_blocks = get_valid_blocks(sbi, segno, false);
-+	ckpt_valid_blocks = get_ckpt_valid_blocks(sbi, segno);
- 
--	if (valid_blocks == 0) {
-+	if (valid_blocks == 0 && (ckpt_valid_blocks == sbi->blocks_per_seg ||
-+					!test_opt(sbi, DISABLE_CHECKPOINT))) {
- 		__locate_dirty_segment(sbi, segno, PRE);
- 		__remove_dirty_segment(sbi, segno, DIRTY);
- 	} else if (valid_blocks < sbi->blocks_per_seg) {
-@@ -1852,7 +1815,8 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 			sbi->discard_blks--;
- 
- 		/* don't overwrite by SSR to keep node chain */
--		if (IS_NODESEG(se->type)) {
-+		if (IS_NODESEG(se->type) &&
-+				!test_opt(sbi, DISABLE_CHECKPOINT)) {
- 			if (!f2fs_test_and_set_bit(offset, se->ckpt_valid_map))
- 				se->ckpt_valid_blocks++;
- 		}
-@@ -1874,6 +1838,25 @@ static void update_sit_entry(struct f2fs_sb_info *sbi, block_t blkaddr, int del)
- 			f2fs_bug_on(sbi, 1);
- 			se->valid_blocks++;
- 			del = 0;
-+		} else {
-+			/* If checkpoints are off, we must not reuse data that
-+			 * was used in the previous checkpoint. If it was used
-+			 * before, we must track that to know how much space we
-+			 * really have
-+			 */
-+			if (f2fs_test_bit(offset, se->ckpt_valid_map)) {
-+				spin_lock(&sbi->stat_lock);
-+				sbi->unusable_block_count++;
-+				spin_unlock(&sbi->stat_lock);
-+			} else {
-+				spin_lock(&sbi->stat_lock);
-+				if (IS_DATASEG(se->type))
-+					sbi->free_ssr_data_block++;
-+				else
-+					sbi->free_ssr_node_block++;
-+				spin_unlock(&sbi->stat_lock);
-+			}
-+
- 		}
- 
- 		if (f2fs_discard_en(sbi) &&
-@@ -2163,7 +2146,8 @@ static unsigned int __get_next_segno(struct f2fs_sb_info *sbi, int type)
- 		return SIT_I(sbi)->last_victim[ALLOC_NEXT];
- 
- 	/* find segments from 0 to reuse freed segments */
--	if (F2FS_OPTION(sbi).alloc_mode == ALLOC_MODE_REUSE)
-+	if (F2FS_OPTION(sbi).alloc_mode == ALLOC_MODE_REUSE
-+			|| test_opt(sbi, DISABLE_CHECKPOINT))
- 		return 0;
- 
- 	return CURSEG_I(sbi, type)->segno;
-@@ -2315,7 +2299,8 @@ static void allocate_segment_by_default(struct f2fs_sb_info *sbi,
- 	else if (!is_set_ckpt_flags(sbi, CP_CRC_RECOVERY_FLAG) &&
- 					type == CURSEG_WARM_NODE)
- 		new_curseg(sbi, type, false);
--	else if (curseg->alloc_type == LFS && is_next_segment_free(sbi, type))
-+	else if (curseg->alloc_type == LFS && is_next_segment_free(sbi, type) &&
-+			!test_opt(sbi, DISABLE_CHECKPOINT))
- 		new_curseg(sbi, type, false);
- 	else if (f2fs_need_SSR(sbi) && get_ssr_segment(sbi, type))
- 		change_curseg(sbi, type);
-@@ -3476,6 +3461,9 @@ void f2fs_flush_sit_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
- 			sit_i->dirty_sentries--;
- 			ses->entry_cnt--;
- 		}
-+		spin_lock(&sbi->stat_lock);
-+		sbi->unusable_block_count = 0;
-+		spin_unlock(&sbi->stat_lock);
- 
- 		if (to_journal)
- 			up_write(&curseg->journal_rwsem);
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index f18fc82fbe998..9789cadc16569 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -342,6 +342,12 @@ static inline unsigned int get_valid_blocks(struct f2fs_sb_info *sbi,
- 		return get_seg_entry(sbi, segno)->valid_blocks;
- }
- 
-+static inline unsigned int get_ckpt_valid_blocks(struct f2fs_sb_info *sbi,
-+				unsigned int segno)
-+{
-+	return get_seg_entry(sbi, segno)->ckpt_valid_blocks;
-+}
-+
- static inline void seg_info_from_raw_sit(struct seg_entry *se,
- 					struct f2fs_sit_entry *rs)
- {
-@@ -521,6 +527,66 @@ static inline unsigned int dirty_segments(struct f2fs_sb_info *sbi)
- 		DIRTY_I(sbi)->nr_dirty[DIRTY_COLD_NODE];
- }
- 
-+static inline void __locate_dirty_segment(struct f2fs_sb_info *sbi,
-+		unsigned int segno, enum dirty_type dirty_type)
-+{
-+	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-+
-+	/* need not be added */
-+	if (IS_CURSEG(sbi, segno))
-+		return;
-+
-+	if (!test_and_set_bit(segno, dirty_i->dirty_segmap[dirty_type]))
-+		dirty_i->nr_dirty[dirty_type]++;
-+
-+	if (dirty_type == DIRTY) {
-+		struct seg_entry *sentry = get_seg_entry(sbi, segno);
-+		enum dirty_type t = sentry->type;
-+
-+		if (unlikely(t >= DIRTY)) {
-+			f2fs_bug_on(sbi, 1);
-+			return;
-+		}
-+		if (!test_and_set_bit(segno, dirty_i->dirty_segmap[t]))
-+			dirty_i->nr_dirty[t]++;
-+	}
-+}
-+
-+static inline void __remove_dirty_segment(struct f2fs_sb_info *sbi,
-+		unsigned int segno, enum dirty_type dirty_type)
-+{
-+	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-+
-+	if (test_and_clear_bit(segno, dirty_i->dirty_segmap[dirty_type]))
-+		dirty_i->nr_dirty[dirty_type]--;
-+
-+	if (dirty_type == DIRTY) {
-+		struct seg_entry *sentry = get_seg_entry(sbi, segno);
-+		enum dirty_type t = sentry->type;
-+
-+		if (test_and_clear_bit(segno, dirty_i->dirty_segmap[t]))
-+			dirty_i->nr_dirty[t]--;
-+
-+		if (get_valid_blocks(sbi, segno, true) == 0)
-+			clear_bit(GET_SEC_FROM_SEG(sbi, segno),
-+						dirty_i->victim_secmap);
-+	}
-+}
-+
-+/* This moves currently empty dirty blocks to prefree. Must hold seglist_lock */
-+static inline void dirty_to_prefree(struct f2fs_sb_info *sbi)
-+{
-+	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-+	unsigned int segno;
-+
-+	for_each_set_bit(segno, dirty_i->dirty_segmap[DIRTY], MAIN_SEGS(sbi)) {
-+		if (!get_valid_blocks(sbi, segno, false)) {
-+			__locate_dirty_segment(sbi, segno, PRE);
-+			__remove_dirty_segment(sbi, segno, DIRTY);
-+		}
-+	}
-+}
-+
- static inline int overprovision_segments(struct f2fs_sb_info *sbi)
- {
- 	return SM_I(sbi)->ovp_segments;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1cb5d1e4fcfd2..78b46f1b9000e 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -132,6 +132,7 @@ enum {
- 	Opt_alloc,
- 	Opt_fsync,
- 	Opt_test_dummy_encryption,
-+	Opt_checkpoint,
- 	Opt_err,
- };
- 
-@@ -189,6 +190,7 @@ static match_table_t f2fs_tokens = {
- 	{Opt_alloc, "alloc_mode=%s"},
- 	{Opt_fsync, "fsync_mode=%s"},
- 	{Opt_test_dummy_encryption, "test_dummy_encryption"},
-+	{Opt_checkpoint, "checkpoint=%s"},
- 	{Opt_err, NULL},
- };
- 
-@@ -764,6 +766,23 @@ static int parse_options(struct super_block *sb, char *options)
- 					"Test dummy encryption mount option ignored");
- #endif
- 			break;
-+		case Opt_checkpoint:
-+			name = match_strdup(&args[0]);
-+			if (!name)
-+				return -ENOMEM;
-+
-+			if (strlen(name) == 6 &&
-+					!strncmp(name, "enable", 6)) {
-+				clear_opt(sbi, DISABLE_CHECKPOINT);
-+			} else if (strlen(name) == 7 &&
-+					!strncmp(name, "disable", 7)) {
-+				set_opt(sbi, DISABLE_CHECKPOINT);
-+			} else {
-+				kfree(name);
-+				return -EINVAL;
-+			}
-+			kfree(name);
-+			break;
- 		default:
- 			f2fs_msg(sb, KERN_ERR,
- 				"Unrecognized mount option \"%s\" or missing value",
-@@ -809,6 +828,11 @@ static int parse_options(struct super_block *sb, char *options)
- 		}
- 	}
- 
-+	if (test_opt(sbi, DISABLE_CHECKPOINT) && test_opt(sbi, LFS)) {
-+		f2fs_msg(sb, KERN_ERR,
-+				"LFS not compatible with checkpoint=disable\n");
-+	}
-+
- 	/* Not pass down write hints if the number of active logs is lesser
- 	 * than NR_CURSEG_TYPE.
- 	 */
-@@ -996,8 +1020,9 @@ static void f2fs_put_super(struct super_block *sb)
- 	 * But, the previous checkpoint was not done by umount, it needs to do
- 	 * clean checkpoint again.
- 	 */
--	if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
--			!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
-+	if ((is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
-+			!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) &&
-+			!test_opt(sbi, DISABLE_CHECKPOINT)) {
- 		struct cp_control cpc = {
- 			.reason = CP_UMOUNT,
- 		};
-@@ -1007,7 +1032,8 @@ static void f2fs_put_super(struct super_block *sb)
- 	/* be sure to wait for any on-going discard commands */
- 	dropped = f2fs_wait_discard_bios(sbi);
- 
--	if (f2fs_discard_en(sbi) && !sbi->discard_blks && !dropped) {
-+	if (f2fs_discard_en(sbi) && !sbi->discard_blks && !dropped &&
-+			!test_opt(sbi, DISABLE_CHECKPOINT)) {
- 		struct cp_control cpc = {
- 			.reason = CP_UMOUNT | CP_TRIMMED,
- 		};
-@@ -1064,6 +1090,8 @@ int f2fs_sync_fs(struct super_block *sb, int sync)
- 
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return 0;
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		return 0;
- 
- 	trace_f2fs_sync_fs(sb, sync);
- 
-@@ -1162,7 +1190,8 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 
- 	buf->f_blocks = total_count - start_count;
- 	buf->f_bfree = user_block_count - valid_user_blocks(sbi) -
--						sbi->current_reserved_blocks;
-+						sbi->current_reserved_blocks -
-+						sbi->unusable_block_count;
- 	if (buf->f_bfree > F2FS_OPTION(sbi).root_reserved_blocks)
- 		buf->f_bavail = buf->f_bfree -
- 				F2FS_OPTION(sbi).root_reserved_blocks;
-@@ -1338,6 +1367,9 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 	else if (F2FS_OPTION(sbi).alloc_mode == ALLOC_MODE_REUSE)
- 		seq_printf(seq, ",alloc_mode=%s", "reuse");
- 
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		seq_puts(seq, ",checkpoint=disable");
-+
- 	if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_POSIX)
- 		seq_printf(seq, ",fsync_mode=%s", "posix");
- 	else if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
-@@ -1362,6 +1394,7 @@ static void default_options(struct f2fs_sb_info *sbi)
- 	set_opt(sbi, INLINE_DENTRY);
- 	set_opt(sbi, EXTENT_CACHE);
- 	set_opt(sbi, NOHEAP);
-+	clear_opt(sbi, DISABLE_CHECKPOINT);
- 	sbi->sb->s_flags |= SB_LAZYTIME;
- 	set_opt(sbi, FLUSH_MERGE);
- 	if (f2fs_sb_has_blkzoned(sbi->sb)) {
-@@ -1384,6 +1417,60 @@ static void default_options(struct f2fs_sb_info *sbi)
- #ifdef CONFIG_QUOTA
- static int f2fs_enable_quotas(struct super_block *sb);
- #endif
-+
-+static void f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
-+{
-+	struct cp_control cpc;
-+	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-+	unsigned int segno;
-+	int type;
-+
-+	set_sbi_flag(sbi, SBI_CP_DISABLED);
-+
-+	cpc.reason = CP_PAUSE;
-+
-+	mutex_lock(&sbi->gc_mutex);
-+	write_checkpoint(sbi, &cpc);
-+	mutex_unlock(&sbi->gc_mutex);
-+
-+	mutex_lock(&dirty_i->seglist_lock);
-+	for (type = 0; type < NR_CURSEG_TYPE; type++) {
-+		for_each_set_bit(segno, dirty_i->dirty_segmap[type],
-+							MAIN_SEGS(sbi)) {
-+			if (IS_DATASEG(type))
-+				sbi->free_ssr_data_block +=
-+					get_valid_blocks(sbi, segno, false);
-+			else
-+				sbi->free_ssr_node_block +=
-+					get_valid_blocks(sbi, segno, false);
-+		}
-+	}
-+	sbi->free_segments = FREE_I(sbi)->free_segments;
-+	mutex_unlock(&dirty_i->seglist_lock);
-+}
-+
-+static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
-+{
-+	struct super_block *sb = sbi->sb;
-+	struct dirty_seglist_info *dirty_i = DIRTY_I(sbi);
-+
-+	clear_sbi_flag(sbi, SBI_CP_DISABLED);
-+	writeback_inodes_sb(sb, WB_REASON_SYNC);
-+	sync_inodes_sb(sb);
-+
-+	mutex_lock(&dirty_i->seglist_lock);
-+	dirty_to_prefree(sbi);
-+	sbi->free_segments = 0;
-+	sbi->free_ssr_data_block = 0;
-+	sbi->free_ssr_node_block = 0;
-+	mutex_unlock(&dirty_i->seglist_lock);
-+
-+	set_sbi_flag(sbi, SBI_IS_DIRTY);
-+	set_sbi_flag(sbi, SBI_IS_CLOSE);
-+	f2fs_sync_fs(sb, 1);
-+	clear_sbi_flag(sbi, SBI_IS_CLOSE);
-+}
-+
- static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
-@@ -1393,6 +1480,8 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	bool need_restart_gc = false;
- 	bool need_stop_gc = false;
- 	bool no_extent_cache = !test_opt(sbi, EXTENT_CACHE);
-+	bool disable_checkpoint = test_opt(sbi, DISABLE_CHECKPOINT);
-+	bool checkpoint_changed;
- #ifdef CONFIG_QUOTA
- 	int i, j;
- #endif
-@@ -1437,6 +1526,8 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	err = parse_options(sb, data);
- 	if (err)
- 		goto restore_opts;
-+	checkpoint_changed =
-+			disable_checkpoint != test_opt(sbi, DISABLE_CHECKPOINT);
- 
- 	/*
- 	 * Previous and new state of filesystem is RO,
-@@ -1498,6 +1589,13 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		clear_sbi_flag(sbi, SBI_IS_CLOSE);
- 	}
- 
-+	if (checkpoint_changed) {
-+		if (test_opt(sbi, DISABLE_CHECKPOINT))
-+			f2fs_disable_checkpoint(sbi);
-+		else
-+			f2fs_enable_checkpoint(sbi);
-+	}
-+
- 	/*
- 	 * We stop issue flush thread if FS is mounted as RO
- 	 * or if flush_merge is not passed in mount option.
-@@ -2944,7 +3042,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_meta;
- 
- 	/* recover fsynced data */
--	if (!test_opt(sbi, DISABLE_ROLL_FORWARD)) {
-+	if (!test_opt(sbi, DISABLE_ROLL_FORWARD) &&
-+			!is_sbi_flag_set(sbi, SBI_CP_DISABLED)) {
- 		/*
- 		 * mount should be failed, when device has readonly mode, and
- 		 * previous checkpoint was not done by clean system shutdown.
-@@ -3010,6 +3109,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 				cur_cp_version(F2FS_CKPT(sbi)));
- 	f2fs_update_time(sbi, CP_TIME);
- 	f2fs_update_time(sbi, REQ_TIME);
-+
-+	if (test_opt(sbi, DISABLE_CHECKPOINT))
-+		f2fs_disable_checkpoint(sbi);
-+	else if (is_sbi_flag_set(sbi, SBI_CP_DISABLED))
-+		f2fs_enable_checkpoint(sbi);
-+
- 	return 0;
- 
- free_meta:
+Since v1:
+ - add an extra patch to let serial8250_get_divisor() get uart_port *
+   as param
+ - take Andy's suggestions to "integrates hooks in the same way like
+   it's done for the rest of 8250 ones". Many thanks to Andy.
+
+Jisheng Zhang (3):
+  serial: 8250: introduce get_divisor() and set_divisor() hook
+  serial: 8250: export serial8250_do_set_divisor()
+  serial: 8250_dw: add fractional divisor support
+
+ drivers/tty/serial/8250/8250_core.c |  4 +++
+ drivers/tty/serial/8250/8250_dw.c   | 45 +++++++++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_port.c | 30 +++++++++++++++----
+ include/linux/serial_8250.h         |  3 ++
+ include/linux/serial_core.h         |  7 +++++
+ 5 files changed, 84 insertions(+), 5 deletions(-)
+
 -- 
-2.18.0.203.gfac676dfb9-goog
+2.18.0
 
