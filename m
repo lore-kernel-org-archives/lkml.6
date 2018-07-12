@@ -2,129 +2,109 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DFF5C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 088BAC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E289E20BEC
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:24:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E289E20BEC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A774220BEC
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:25:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="ms6JUH2L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A774220BEC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeGLKdT convert rfc822-to-8bit (ORCPT
+        id S1726658AbeGLKe3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 06:33:19 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56155 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbeGLKdT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 06:33:19 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A1F8520703; Thu, 12 Jul 2018 12:24:21 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0A6EC2069C;
-        Thu, 12 Jul 2018 12:24:21 +0200 (CEST)
-Date:   Thu, 12 Jul 2018 12:24:20 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
+        Thu, 12 Jul 2018 06:34:29 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57096 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbeGLKe3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 06:34:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Gb9EqTq6/vuwDMs0sCYxaKM3vjF8RDxpUaV0hxObpqU=; b=ms6JUH2LIYzimTu5NBjVZFjyJ
+        wbWwtqZPeLK+WGVxEb7VBc+0OClbaVzyaNu+6qYY7sa7+IGgTUV2NwqB6al7ZlytTAS43VUtHgZTZ
+        w26xJWOeIBkcguz27rbe9D5/+dbNQA28XryD5C3xGOs9cmnKlGBbUAa/VnAXo/tK+m+5Q=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fdYmv-0003gU-HX; Thu, 12 Jul 2018 10:25:29 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fdYmv-000609-13; Thu, 12 Jul 2018 11:25:29 +0100
+Date:   Thu, 12 Jul 2018 11:25:29 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        pascal paillet <p.paillet@st.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180712122420.7c3ebd4e@bbrezillon>
-In-Reply-To: <CAK8P3a3raE9rmyvgxR0YVmYSCN4tumYS1TCexCuTEUXjy_9kSw@mail.gmail.com>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
-        <20180330074751.25987-2-boris.brezillon@bootlin.com>
-        <CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com>
-        <20180711164120.3e32fb08@bbrezillon>
-        <CAK8P3a2EZB_tMS_47wv6M2Qpm79ZocxxhG5zLxXsBM_YjZgkyA@mail.gmail.com>
-        <20180711191212.3855bb25@bbrezillon>
-        <CAK8P3a2djk8c6STaxJC0MCkBddyOafk4WbG2LdfPf0V1EYiqmQ@mail.gmail.com>
-        <20180712000932.3b04ee9d@bbrezillon>
-        <CAK8P3a13GX67YEci2J8Rxn6O4FBjjD82X+w3hyGMT3TDbtFkTg@mail.gmail.com>
-        <20180712104658.220ef8f6@bbrezillon>
-        <CAK8P3a3raE9rmyvgxR0YVmYSCN4tumYS1TCexCuTEUXjy_9kSw@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: Re: [PATCH] base: core: Remove WARN_ON from link dependencies check
+Message-ID: <20180712102529.GB10369@sirena.org.uk>
+References: <20180712080623.21203-1-benjamin.gaignard@st.com>
+ <20180712085501.GA25313@kroah.com>
+ <CA+M3ks5nj2gfc+ePYg1y2w3P0cW861YkRqpuHh49n+noktPVUQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
+Content-Disposition: inline
+In-Reply-To: <CA+M3ks5nj2gfc+ePYg1y2w3P0cW861YkRqpuHh49n+noktPVUQ@mail.gmail.com>
+X-Cookie: Kleeneness is next to Godelness.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Jul 2018 12:03:05 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
 
-> >> want to be in b) rather than c). An example of this would be
-> >> an input device on a PC: If the user operateds the keyboard
-> >> or pointer and we have handed off ownership to a sensor hub,
-> >> we never get an input event, right?  
-> >
-> > Correct. I guess we could try to regain bus ownership in case we have
-> > IBIs enabled. Or we let the secondary master give the bus back to us
-> > when it sees IBIs it can't handle, as described in section 5.1.7:
-> >
-> > "
-> > Once granted control of the Bus, the Secondary Master maintains
-> > control until another Master is granted Bus control. After the
-> > Secondary Master transitions to the Current Master role it could
-> > encounter Bus management activities besides the data transfers that it
-> > itself initiates. Some examples are the In-Band Interrupt, or the
-> > Hot-Join request. One optional possibility, shown at Section 5.1.7.2,
-> > is that the Secondary Master performs the Current Master’s actions with
-> > the full capabilities of the Main Master. Another optional possibility
-> > is that the Secondary Master, while serving in the Current Master role,
-> > could defer some actions to a more capable Master, as described in
-> > Section 5.1.7.3.
-> > "  
-> 
-> Ah, so the current master can ask a secondary master to take over
-> again even if  the secondary master has not requested to be come the
-> current master?
+--cvVnyQ+4j833TQvp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes. Then the inactive master can refuse of course, but it is working
-both ways:
+On Thu, Jul 12, 2018 at 11:18:26AM +0200, Benjamin Gaignard wrote:
+> 2018-07-12 10:55 GMT+02:00 Greg KH <gregkh@linuxfoundation.org>:
 
-- an inactive master can ask for bus ownership
-- an active master can ask an inactive one to take over
+> > Why would a link already exist that is asked to be created again?  What
+> > code path causes this?
 
-> 
-> >> > I agree. This being said, moving to a representation where the bus is
-> >> > implicitly represented by the master_controller instance shouldn't be
-> >> > too difficult. So, if you think we should try this approach I can do
-> >> > the modifications in my v6.  
-> >>
-> >> I'd say let's wait before you do that change, possibly add a comment
-> >> in there now to remind us of what an alternative would be.  
-> >
-> > You mean I should keep the i3c_bus object?  
-> 
-> I mean the ongoing discussion shouldn't stop you from posting a v6.
+> It could happen that the link exist because a device use it parent as supplier.
+> That case has been describe by Marek in this thread (I forgot to add
+> it in the commit message, sorry):
+> https://lkml.org/lkml/2018/7/9/356
 
-Ok.
+If we don't remove the warning then we'd need to have some way for
+generic code to check if a link that it wants to create exists already
+since if more than one thing adds links there's always a chance that two
+of them will come up with the same idea for a link.  We could export
+device_is_dependent() and have them check that, or add a new flag that
+skips the check for example.  This is however probably going to affect a
+reasonable percentage of potential users.
+
+--cvVnyQ+4j833TQvp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltHLJgACgkQJNaLcl1U
+h9C01Qf/Yo8mNsWOqLp3z3EqeLhbvMwTrMpea8unVff9E7aS/LrnUPVLxIiW8X5O
+znojR6MJEZESFT/yTUlzjEvEMP+XQPEixtj+4aSRfrGqhOA9s8nsQaTqsJdE4nqV
+BRJtJ/lSX62yu01wBhvbi8jMjYPmAc4zPKMXCZ74vmcpZ1pUFGhFCJUMvPKdHY3W
+QVlRGygDQvFzVTpa4CqJ8TVuiSGCxwP2YXWpVQ2iDTe3591yJasARhuGThMPFv+k
+jhgIQPhWyL/pPYcfkTaWFSGYNBVjB7F4si+8SRUqfJC37cyJn3xKtpOJftxQTWe8
+uUnAMJ7rJiqdShqN8ucv33SCvlC+rQ==
+=SpG8
+-----END PGP SIGNATURE-----
+
+--cvVnyQ+4j833TQvp--
