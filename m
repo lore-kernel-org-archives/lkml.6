@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21792C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:56:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB579C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:56:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0859213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:56:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0859213A2
+	by mail.kernel.org (Postfix) with ESMTP id 52711213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:56:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52711213A2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732419AbeGLMD7 (ORCPT
+        id S1732399AbeGLMD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:03:59 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57968 "EHLO mail.bootlin.com"
+        Thu, 12 Jul 2018 08:03:58 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:57963 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbeGLMD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727346AbeGLMD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Jul 2018 08:03:58 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6EA74207C8; Thu, 12 Jul 2018 13:54:45 +0200 (CEST)
+        id 68A2D20731; Thu, 12 Jul 2018 13:54:44 +0200 (CEST)
 Received: from mc-bl-xps13.lan (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 21323206A6;
-        Thu, 12 Jul 2018 13:54:45 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1B552206A6;
+        Thu, 12 Jul 2018 13:54:44 +0200 (CEST)
 From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
 To:     davem@davemloft.net
 Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
@@ -35,9 +35,9 @@ Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
         thomas.petazzoni@bootlin.com, gregory.clement@bootlin.com,
         miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
         ymarkman@marvell.com, mw@semihalf.com
-Subject: [PATCH net-next 03/18] net: mvpp2: make sure we use single queue mode on PPv2.1
-Date:   Thu, 12 Jul 2018 13:54:12 +0200
-Message-Id: <20180712115427.27375-4-maxime.chevallier@bootlin.com>
+Subject: [PATCH net-next 02/18] net: mvpp2: define the number of RSS entries per table in mvpp2.h
+Date:   Thu, 12 Jul 2018 13:54:11 +0200
+Message-Id: <20180712115427.27375-3-maxime.chevallier@bootlin.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
 References: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
@@ -46,36 +46,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PPv2 driver defines 2 "queue_modes" :
- - QDIST_SINGLE_MODE, where we each port share one rx queue vector
-   between all CPUs
- - QDIST_MULTI_MODE, where each port has one rx queue vector per CPU.
+The size of the the RSS indirection tables should be defined in mvpp2.h,
+so that we can use it in all files of the PPv2 driver.
 
-Multi queue mode isn't available on PPv2.1, make sure we fallback to
-single mode when running on this revision.
+This commit moves the define in mvpp2.h, and adds the missing #include
+in mvpp2_cls.h.
 
 Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 ---
- drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2.h     | 3 +++
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h | 5 ++---
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 88f3da184d76..0d2dde336ea2 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -5014,6 +5014,12 @@ static int mvpp2_probe(struct platform_device *pdev)
- 			(unsigned long)of_device_get_match_data(&pdev->dev);
- 	}
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+index 18834619bb3a..5ef5b99a1935 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
+@@ -557,6 +557,9 @@
+ #define MVPP2_BIT_TO_WORD(bit)		((bit) / 32)
+ #define MVPP2_BIT_IN_WORD(bit)		((bit) % 32)
  
-+	/* multi queue mode isn't supported on PPV2.1, fallback to single
-+	 * mode
-+	 */
-+	if (priv->hw_version == MVPP21)
-+		queue_mode = MVPP2_QDIST_SINGLE_MODE;
++/* RSS constants */
++#define MVPP22_RSS_TABLE_ENTRIES	32
 +
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base))
+ /* IPv6 max L3 address size */
+ #define MVPP2_MAX_L3_ADDR_SIZE		16
+ 
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h
+index 8e1d7f9ffa0b..e571238a83cc 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_cls.h
+@@ -13,15 +13,14 @@
+ #ifndef _MVPP2_CLS_H_
+ #define _MVPP2_CLS_H_
+ 
++#include "mvpp2.h"
++
+ /* Classifier constants */
+ #define MVPP2_CLS_FLOWS_TBL_SIZE	512
+ #define MVPP2_CLS_FLOWS_TBL_DATA_WORDS	3
+ #define MVPP2_CLS_LKP_TBL_SIZE		64
+ #define MVPP2_CLS_RX_QUEUES		256
+ 
+-/* RSS constants */
+-#define MVPP22_RSS_TABLE_ENTRIES	32
+-
+ struct mvpp2_cls_flow_entry {
+ 	u32 index;
+ 	u32 data[MVPP2_CLS_FLOWS_TBL_DATA_WORDS];
 -- 
 2.11.0
 
