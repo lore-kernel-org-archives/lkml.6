@@ -2,124 +2,126 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5385EC476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7DEC476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6042075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:49:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WIjEoRWj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D6042075C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id EBBBD2075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:49:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBBD2075C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732413AbeGLQ74 (ORCPT
+        id S1732471AbeGLRAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:59:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40864 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbeGLQ74 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:59:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N7wd4eUrfJZuG+lYRTZKZ1CMnvviF+b+4hdGweq4R2I=; b=WIjEoRWjyIn/yACKSe38FuwUJ
-        iksD4Uk13H1cy9XJzQKI9cmaa9Nyewr7kZ8b7RkOBMz+lr0fKGRUN9bOV3HAeoIREL9xOm1rR2m1T
-        2WLoXwWsMJ49pEUhSqu1JLszYKnqPLiI72EB2n6tUQ+ShqcG6ETIBfs+wKIO7QZDuTOSKEA3G7dmP
-        Emc1cR53PXs2MAfwIq+hwiW0QnU+4zxLwQM162EcLPzm0U36hHJzGzGbAUSuZDsUiqZKYSpTIfzPV
-        zf+i0C7htlfQN3zJMfxbdBygyijkCqqLO4CuNZg6I6Rr6fSu5GG4FNelAPTZWSXPwZ+44q+wTzYg+
-        F8lsM74GA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdema-0006cB-KQ; Thu, 12 Jul 2018 16:49:32 +0000
-Date:   Thu, 12 Jul 2018 09:49:32 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Waiman Long <longman@redhat.com>, Michal Hocko <mhocko@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Thu, 12 Jul 2018 13:00:06 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36198 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726775AbeGLRAG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 13:00:06 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A33C840122CD;
+        Thu, 12 Jul 2018 16:49:44 +0000 (UTC)
+Received: from krava (ovpn-204-45.brq.redhat.com [10.40.204.45])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 6CA851102E24;
+        Thu, 12 Jul 2018 16:49:42 +0000 (UTC)
+Date:   Thu, 12 Jul 2018 18:49:41 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>
-Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
-Message-ID: <20180712164932.GA3475@bombadil.infradead.org>
-References: <62275711-e01d-7dbe-06f1-bf094b618195@redhat.com>
- <20180710142740.GQ14284@dhcp22.suse.cz>
- <a2794bcc-9193-cbca-3a54-47420a2ab52c@redhat.com>
- <20180711102139.GG20050@dhcp22.suse.cz>
- <9f24c043-1fca-ee86-d609-873a7a8f7a64@redhat.com>
- <1531330947.3260.13.camel@HansenPartnership.com>
- <18c5cbfe-403b-bb2b-1d11-19d324ec6234@redhat.com>
- <1531336913.3260.18.camel@HansenPartnership.com>
- <4d49a270-23c9-529f-f544-65508b6b53cc@redhat.com>
- <1531411494.18255.6.camel@HansenPartnership.com>
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] perf tools: Synthesize GROUP_DESC feature in pipe mode
+Message-ID: <20180712164941.GA8420@krava>
+References: <20180712135202.14774-1-jolsa@kernel.org>
+ <CABPqkBQsecn6Tp3q5fG1KgqF49Js0cA7KPY=dRkWV37jsqDXmg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1531411494.18255.6.camel@HansenPartnership.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CABPqkBQsecn6Tp3q5fG1KgqF49Js0cA7KPY=dRkWV37jsqDXmg@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 12 Jul 2018 16:49:44 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 12 Jul 2018 16:49:44 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 09:04:54AM -0700, James Bottomley wrote:
-> On Thu, 2018-07-12 at 11:54 -0400, Waiman Long wrote:
-> > It is not that dentry cache is harder to get rid of than the other
-> > memory. It is that the ability of generate unlimited number of
-> > negative dentries that will displace other useful memory from the
-> > system. What the patch is trying to do is to have a warning or
-> > notification system in place to spot unusual activities in regard to
-> > the number of negative dentries in the system. The system
-> > administrators can then decide on what to do next.
+On Thu, Jul 12, 2018 at 09:34:45AM -0700, Stephane Eranian wrote:
+> Hi Jiri,
+> On Thu, Jul 12, 2018 at 6:52 AM Jiri Olsa <jolsa@kernel.org> wrote:
+> >
+> > Stephan reported, that pipe mode does not carry the group
+> > information and thus the piped report won't display the
+> > grouped output for following command:
+> >
+> Thanks for fixing this quickly.
+
+could I have your tested/acked by?
+
+> I think we should have more testing on the pipe mode, in general.
+
+yea, we should
+
+jirka
+
 > 
-> But every cache has this property: I can cause the same effect by doing
-> a streaming read on a multi gigabyte file: the page cache will fill
-> with the clean pages belonging to the file until I run out of memory
-> and it has to start evicting older cache entries.  Once we hit the
-> steady state of minimal free memory, the mm subsytem tries to balance
-> the cache requests (like my streaming read) against the existing pool
-> of cached objects.
-> 
-> The question I'm trying to get an answer to is why does the dentry
-> cache need special limits when the mm handling of the page cache (and
-> other mm caches) just works?
-
-I don't know that it does work.  Or that it works well.
-
-When we try to allocate something and there's no memory readily available,
-we ask all the shrinkers to shrink in order to free up memory.  That leads
-to one kind of allocation (eg dentries) being able to easily kick all
-the page cache out of the machine.
-
-What we could do instead is first call the shrinker for the type of
-object being allocated.  That is, assume the system is more or less in
-equilibrium between all the different things it could be allocating,
-and if something needs to be kicked out, it's better to kick out this
-kind of thing rather than changing the equilibrium.
-
-Of course, workloads change over time, and sometimes we should accept we
-need more dentries and less page cache, or vice versa.  So we'd need a
-scheme for the shrinker to say "this is getting hard, I think we do need
-more dentries", and then we'd move on to calling the other shrinkers to
-reclaim inodes or page cache or whatever.
-
-I don't think we even try to work at this level today.  But it would
-have the distinct advantage that we can implement this in the slab/slub
-code rather than touching the page allocator.
+> >   # perf record -e '{cycles,instructions,branches}' -a sleep 4 | perf report
+> >
+> > It has no idea about the group setup, so it will display
+> > events separately:
+> >
+> >   # Overhead  Command          Shared Object             ...
+> >   # ........  ...............  .......................
+> >   #
+> >        6.71%  swapper          [kernel.kallsyms]
+> >        2.28%  offlineimap      libpython2.7.so.1.0
+> >        0.78%  perf             [kernel.kallsyms]
+> >   ...
+> >
+> > Fixing GROUP_DESC feature record to be synthesized in pipe mode,
+> > so the report output is grouped if there's group defined in record:
+> >
+> >   #                 Overhead  Command          Shared    ...
+> >   # ........................  ...............  .......
+> >   #
+> >        7.57%   0.16%   0.30%  swapper          [kernel
+> >        1.87%   3.15%   2.46%  offlineimap      libpyth
+> >        1.33%   0.00%   0.00%  perf             [kernel
+> >   ...
+> >
+> > Cc: David Carrillo-Cisneros <davidcc@google.com>
+> > Reported-by: Stephane Eranian <eranian@google.com>
+> > Link: http://lkml.kernel.org/n/tip-ybqyh8ac4g173iy3xt4pxnlo@git.kernel.org
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  tools/perf/util/header.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+> > index 59fcc790c865..af9aaf28f976 100644
+> > --- a/tools/perf/util/header.c
+> > +++ b/tools/perf/util/header.c
+> > @@ -2587,7 +2587,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
+> >         FEAT_OPR(NUMA_TOPOLOGY, numa_topology,  true),
+> >         FEAT_OPN(BRANCH_STACK,  branch_stack,   false),
+> >         FEAT_OPR(PMU_MAPPINGS,  pmu_mappings,   false),
+> > -       FEAT_OPN(GROUP_DESC,    group_desc,     false),
+> > +       FEAT_OPR(GROUP_DESC,    group_desc,     false),
+> >         FEAT_OPN(AUXTRACE,      auxtrace,       false),
+> >         FEAT_OPN(STAT,          stat,           false),
+> >         FEAT_OPN(CACHE,         cache,          true),
+> > --
+> > 2.17.1
+> >
