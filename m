@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C10BC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF84AC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5107208E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:06:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E0702146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:06:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="qZ3d/26b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5107208E5
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LjpyNvh2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E0702146E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391030AbeGLAN2 (ORCPT
+        id S2403802AbeGLANN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 20:13:28 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:57000 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403781AbeGLANN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 11 Jul 2018 20:13:13 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6C04rAO148078;
-        Thu, 12 Jul 2018 00:04:53 GMT
+Received: from aserp2120.oracle.com ([141.146.126.78]:35446 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390950AbeGLANJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 20:13:09 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6C04GM9185734;
+        Thu, 12 Jul 2018 00:04:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=JVe5h6ti7ArCXiGDX/fS8cVGfeHjybL4Dirx8y+GgZE=;
- b=qZ3d/26bOND0oUh1A/MUWILcpvsOwnc7+XWJKUpRUcjk4/eqqDpFLjNGp+Hg2GImC3cJ
- nmDC8FJlS4NPhqp2mOl3+Wnuf9t0vSz+e09fifsD0teCw835/qODS1+e++WEUCLIDynS
- RoyiBWHAWeipBUkW/V8k2qWslyQpw87KLNsy+anepUKDK6ZVt5hjWeDMSXRZo2HXG565
- Y9FRAhsK/ShnzfM1dAkzcylM07cRt9Aulc4mKSoQS7MMqjhazNjLVqbk38LJOGSfJicH
- PN3BsTXpU6chur4AC7iSsD0W0po4f9ofBjhbCrHeeXyYBy/otvVIOobYh/t5DIqQt9OQ rw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2k2p7vg83q-1
+ bh=xf8NcDpJwtO/V0QLuZ8RwMQDwm40h+cLXIf+6TAB+oY=;
+ b=LjpyNvh2BzYWVN364Mf8K0tPOWAlXaiTuFg+K1rowyN49dF6ZHpxafpZOEsSLlxQflm0
+ 0vXWpNrNHEF9i23DfeAjbIWn0zuxUM6Fc77oNTNUltHW2JSwZbrwyXqKItq6ISh5oqCu
+ /wYhNf/T0Sf5jidwCkZi0VC8NvSeOXLnYXWzPDopnwC/yKWo3Hi8HNACrZhfiMoBGcgM
+ Uc/aYtX+5amQ0hxLsVXDesUasraG8VoZ/KC+Bq2vbb6zTlNL/IGXsN/YFvK/Ec3ezZOu
+ NVwXqh4hFj7p2PFEYKzifT0I/9D3RlWpNnSPkv2iw30S1Mf/dxW0XrEu5/uS3UYWDnGx Qw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2k2p7e09ge-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 00:04:52 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6C04q3O017262
+        Thu, 12 Jul 2018 00:04:35 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6C04YYa012979
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 00:04:52 GMT
+        Thu, 12 Jul 2018 00:04:34 GMT
 Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6C04pG3032032;
-        Thu, 12 Jul 2018 00:04:52 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6C04WcC004553;
+        Thu, 12 Jul 2018 00:04:32 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Jul 2018 17:04:51 -0700
+        with ESMTP ; Wed, 11 Jul 2018 17:04:32 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -61,9 +61,9 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
         linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
         boris.ostrovsky@oracle.com, jgross@suse.com
-Subject: [PATCH v13 14/18] x86/tsc: initialize cyc2ns when tsc freq. is determined
-Date:   Wed, 11 Jul 2018 20:04:15 -0400
-Message-Id: <20180712000419.5165-15-pasha.tatashin@oracle.com>
+Subject: [PATCH v13 04/18] x86/tsc: redefine notsc to behave as tsc=unstable
+Date:   Wed, 11 Jul 2018 20:04:05 -0400
+Message-Id: <20180712000419.5165-5-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180712000419.5165-1-pasha.tatashin@oracle.com>
 References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
@@ -77,174 +77,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cyc2ns converts tsc to nanoseconds, and it is handled in a per-cpu data
-structure.
+Currently, notsc kernel parameter disables the use of tsc register by
+sched_clock(). However, this parameter does not prevent linux from
+accessing tsc in other places in kernel.
 
-Currently, the setup code for c2ns data for every possible CPU goes through
-the same sequence of calculations as for the boot CPU, but is based on the
-same tsc frequency as the boot CPU, and thus this is not necessary.
+The only rational to boot with notsc is to avoid timing discrepancies on
+multi-socket systems where different tsc frequencies may present, and thus
+fallback to jiffies for clock source.
 
-Initialize the boot cpu when tsc frequency is determined. Copy the
-calculated data from the boot CPU to the other CPUs in tsc_init().
+However, there is another method to solve the above problem, it is to boot
+with tsc=unstable parameter. This parameter allows sched_clock() to use tsc
+but in case tsc is outside of expected interval it is corrected back to a
+sane value.
 
-In addition do the following:
+This is why there is no reason to keep notsc, and it can be removed. But,
+for compatibility reasons we will keep this parameter but change its
+definition to be the same as tsc=unstable.
 
-- Remove unnecessary zeroing of c2ns data by removing cyc2ns_data_init()
-- Split set_cyc2ns_scale() into two functions, so set_cyc2ns_scale() can be
-  called when system is up, and wraps around __set_cyc2ns_scale() that can
-  be called directly when system is booting but avoids saving restoring
-  IRQs and going and waking up from idle.
-
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Reviewed-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- arch/x86/kernel/tsc.c | 94 ++++++++++++++++++++++++-------------------
- 1 file changed, 53 insertions(+), 41 deletions(-)
+ .../admin-guide/kernel-parameters.txt          |  2 --
+ Documentation/x86/x86_64/boot-options.txt      |  4 +---
+ arch/x86/kernel/tsc.c                          | 18 +++---------------
+ 3 files changed, 4 insertions(+), 20 deletions(-)
 
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index efc7aa7a0670..f7123d28f318 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2835,8 +2835,6 @@
+ 
+ 	nosync		[HW,M68K] Disables sync negotiation for all devices.
+ 
+-	notsc		[BUGS=X86-32] Disable Time Stamp Counter
+-
+ 	nowatchdog	[KNL] Disable both lockup detectors, i.e.
+ 			soft-lockup and NMI watchdog (hard-lockup).
+ 
+diff --git a/Documentation/x86/x86_64/boot-options.txt b/Documentation/x86/x86_64/boot-options.txt
+index 8d109ef67ab6..66114ab4f9fe 100644
+--- a/Documentation/x86/x86_64/boot-options.txt
++++ b/Documentation/x86/x86_64/boot-options.txt
+@@ -92,9 +92,7 @@ APICs
+ Timing
+ 
+   notsc
+-  Don't use the CPU time stamp counter to read the wall time.
+-  This can be used to work around timing problems on multiprocessor systems
+-  with not properly synchronized CPUs.
++  Deprecated, use tsc=unstable instead.
+ 
+   nohpet
+   Don't use the HPET timer.
 diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index bc8eb82050a3..0b1abe7fdd8e 100644
+index 74392d9d51e0..186395041725 100644
 --- a/arch/x86/kernel/tsc.c
 +++ b/arch/x86/kernel/tsc.c
-@@ -103,23 +103,6 @@ void cyc2ns_read_end(void)
-  *                      -johnstul@us.ibm.com "math is hard, lets go shopping!"
+@@ -38,11 +38,6 @@ EXPORT_SYMBOL(tsc_khz);
   */
+ static int __read_mostly tsc_unstable;
  
--static void cyc2ns_data_init(struct cyc2ns_data *data)
--{
--	data->cyc2ns_mul = 0;
--	data->cyc2ns_shift = 0;
--	data->cyc2ns_offset = 0;
--}
+-/* native_sched_clock() is called before tsc_init(), so
+-   we must start with the TSC soft disabled to prevent
+-   erroneous rdtsc usage on !boot_cpu_has(X86_FEATURE_TSC) processors */
+-static int __read_mostly tsc_disabled = -1;
 -
--static void __init cyc2ns_init(int cpu)
--{
--	struct cyc2ns *c2n = &per_cpu(cyc2ns, cpu);
--
--	cyc2ns_data_init(&c2n->data[0]);
--	cyc2ns_data_init(&c2n->data[1]);
--
--	seqcount_init(&c2n->seq);
--}
--
- static inline unsigned long long cycles_2_ns(unsigned long long cyc)
+ static DEFINE_STATIC_KEY_FALSE(__use_tsc);
+ 
+ int tsc_clocksource_reliable;
+@@ -248,8 +243,7 @@ EXPORT_SYMBOL_GPL(check_tsc_unstable);
+ #ifdef CONFIG_X86_TSC
+ int __init notsc_setup(char *str)
  {
- 	struct cyc2ns_data data;
-@@ -135,18 +118,11 @@ static inline unsigned long long cycles_2_ns(unsigned long long cyc)
- 	return ns;
+-	pr_warn("Kernel compiled with CONFIG_X86_TSC, cannot disable TSC completely\n");
+-	tsc_disabled = 1;
++	mark_tsc_unstable("boot parameter notsc");
+ 	return 1;
  }
+ #else
+@@ -1307,7 +1301,7 @@ static void tsc_refine_calibration_work(struct work_struct *work)
  
--static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
-+static void __set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
+ static int __init init_tsc_clocksource(void)
  {
- 	unsigned long long ns_now;
- 	struct cyc2ns_data data;
- 	struct cyc2ns *c2n;
--	unsigned long flags;
--
--	local_irq_save(flags);
--	sched_clock_idle_sleep_event();
--
--	if (!khz)
--		goto done;
+-	if (!boot_cpu_has(X86_FEATURE_TSC) || tsc_disabled > 0 || !tsc_khz)
++	if (!boot_cpu_has(X86_FEATURE_TSC) || !tsc_khz)
+ 		return 0;
  
- 	ns_now = cycles_2_ns(tsc_now);
- 
-@@ -178,12 +154,55 @@ static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_
- 	c2n->data[0] = data;
- 	raw_write_seqcount_latch(&c2n->seq);
- 	c2n->data[1] = data;
-+}
-+
-+static void set_cyc2ns_scale(unsigned long khz, int cpu, unsigned long long tsc_now)
-+{
-+	unsigned long flags;
-+
-+	local_irq_save(flags);
-+	sched_clock_idle_sleep_event();
-+
-+	if (khz)
-+		__set_cyc2ns_scale(khz, cpu, tsc_now);
- 
--done:
- 	sched_clock_idle_wakeup_event();
- 	local_irq_restore(flags);
- }
- 
-+/*
-+ * Initialize cyc2ns for boot cpu
-+ */
-+static void __init cyc2ns_init_boot_cpu(void)
-+{
-+	struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
-+
-+	seqcount_init(&c2n->seq);
-+	__set_cyc2ns_scale(tsc_khz, smp_processor_id(), rdtsc());
-+}
-+
-+/*
-+ * Secondary CPUs do not run through cyc2ns_init(), so set up
-+ * all the scale factors for all CPUs, assuming the same
-+ * speed as the bootup CPU. (cpufreq notifiers will fix this
-+ * up if their speed diverges)
-+ */
-+static void __init cyc2ns_init_secondary_cpus(void)
-+{
-+	unsigned int cpu, this_cpu = smp_processor_id();
-+	struct cyc2ns *c2n = this_cpu_ptr(&cyc2ns);
-+	struct cyc2ns_data *data = c2n->data;
-+
-+	for_each_possible_cpu(cpu) {
-+		if (cpu != this_cpu) {
-+			seqcount_init(&c2n->seq);
-+			c2n = per_cpu_ptr(&cyc2ns, cpu);
-+			c2n->data[0] = data[0];
-+			c2n->data[1] = data[1];
-+		}
-+	}
-+}
-+
- /*
-  * Scheduler clock - returns current time in nanosec units.
-  */
-@@ -1385,6 +1404,10 @@ void __init tsc_early_init(void)
- 	if (!determine_cpu_tsc_frequncies())
- 		return;
- 	loops_per_jiffy = get_loops_per_jiffy();
-+
-+	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
-+	tsc_store_and_check_tsc_adjust(true);
-+	cyc2ns_init_boot_cpu();
- }
- 
- void __init tsc_init(void)
-@@ -1400,23 +1423,12 @@ void __init tsc_init(void)
- 			mark_tsc_unstable("could not calculate TSC khz");
- 			return;
- 		}
-+		/* Sanitize TSC ADJUST before cyc2ns gets initialized */
-+		tsc_store_and_check_tsc_adjust(true);
-+		cyc2ns_init_boot_cpu();
+ 	if (tsc_unstable)
+@@ -1414,12 +1408,6 @@ void __init tsc_init(void)
+ 		set_cyc2ns_scale(tsc_khz, cpu, cyc);
  	}
  
--	/* Sanitize TSC ADJUST before cyc2ns gets initialized */
--	tsc_store_and_check_tsc_adjust(true);
+-	if (tsc_disabled > 0)
+-		return;
 -
--	/*
--	 * Secondary CPUs do not run through tsc_init(), so set up
--	 * all the scale factors for all CPUs, assuming the same
--	 * speed as the bootup CPU. (cpufreq notifiers will fix this
--	 * up if their speed diverges)
--	 */
--	cyc = rdtsc();
--	for_each_possible_cpu(cpu) {
--		cyc2ns_init(cpu);
--		set_cyc2ns_scale(tsc_khz, cpu, cyc);
--	}
+-	/* now allow native_sched_clock() to use rdtsc */
 -
-+	cyc2ns_init_secondary_cpus();
+-	tsc_disabled = 0;
  	static_branch_enable(&__use_tsc);
  
  	if (!no_sched_irq_time)
+@@ -1455,7 +1443,7 @@ unsigned long calibrate_delay_is_known(void)
+ 	int constant_tsc = cpu_has(&cpu_data(cpu), X86_FEATURE_CONSTANT_TSC);
+ 	const struct cpumask *mask = topology_core_cpumask(cpu);
+ 
+-	if (tsc_disabled || !constant_tsc || !mask)
++	if (!constant_tsc || !mask)
+ 		return 0;
+ 
+ 	sibling = cpumask_any_but(mask, cpu);
 -- 
 2.18.0
 
