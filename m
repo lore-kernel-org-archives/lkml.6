@@ -2,99 +2,166 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25847ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9F32ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0CEF20BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:50:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="m2JhyE4e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0CEF20BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 7E6CA20BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:50:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E6CA20BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387760AbeGMACJ (ORCPT
+        id S2387780AbeGMACP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 12 Jul 2018 20:02:15 -0400
+Received: from mga12.intel.com ([192.55.52.136]:51153 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387733AbeGMACJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 12 Jul 2018 20:02:09 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:44951 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387740AbeGMACJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 20:02:09 -0400
-Received: by mail-pl0-f67.google.com with SMTP id m16-v6so11345824pls.11
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 16:50:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=/nUSTiQggfUKI5LhouiCJcMtpyh+XjXP8/cng7yWptU=;
-        b=m2JhyE4eNmVUUpsKBQDfRKdrV8c5wG//fKckUPRx+qrwlRctPGZ9Xa3D37Jda76UHL
-         MVIHnTedCkieha3KOOMBtj11RirMZuA7KIKQ12fLdFivk1mybR5EzOY3T713OzhJyNVZ
-         Bba3UUSicyKxTHTd7iHFjxDfVgPMpOVtD2RKRVKDxAvhMJGZe5/wmfyFrFlhEohZ1eJx
-         QeJLH1Y8PyAWadeqTiEcvhGhxTF0+ZDoxhDMOBM3XGdKi2HI/SRS+u67/JZxTHy3QXTD
-         4UR7aTXy8WvhSw3BixCapv40fs81qRLh9k/1BmboBnUcNMbpc9AI8+V0nM9c1aNrbsRs
-         ZvTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=/nUSTiQggfUKI5LhouiCJcMtpyh+XjXP8/cng7yWptU=;
-        b=UzbM/rELXxq3ujf5b/bnG8l8kwrlQ/pWJ477fCEoM76OlQ97VgW94NOhii5ugHErfV
-         7xsdeYgLk7+e1fzUAOU09AEVpGEMJMwV4UYeKRs2mlOYPprLsr8Ai3iuvB4EtfMGJ047
-         rUCa91kfjVA55ADDBXMsFkwDcuCSThyLZbPhjZB+iHcPr12ijfsMshZ4cuZa7Ei54rU4
-         Yvsymbv8vmext9kY5FOna0TWsL5Xxl6YM2lgPOFeud80qYHTxp9XR/CllqNiDNM94Wcd
-         vmkxf0r07ealWy8u7MORkZ+MagleM/qpGoayEeIbsx1QFGnYMjF60a/Ge/J+UvBMC60j
-         dZRw==
-X-Gm-Message-State: AOUpUlFHaPGEZVrfiyY6Y8Ul74bH1gS+CwPBzviCDf6PsnuGxi8FRa3z
-        J4PtGNKPxwYPbOz+KMo0QUviFg==
-X-Google-Smtp-Source: AAOMgpeiUqYlI8devJ8WQLoPGQmi5bbXDkbbUXv73u5s1f1xgp5qKZfUuM396bk5LTIwFegtwa2KiQ==
-X-Received: by 2002:a17:902:3281:: with SMTP id z1-v6mr4127643plb.226.1531439415780;
-        Thu, 12 Jul 2018 16:50:15 -0700 (PDT)
-Received: from ?IPv6:2600:1011:b01e:e4d1:54df:ba07:cac1:aeab? ([2600:1011:b01e:e4d1:54df:ba07:cac1:aeab])
-        by smtp.gmail.com with ESMTPSA id n86-v6sm43822452pfj.68.2018.07.12.16.50.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 16:50:14 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for superblock creation [ver #9]
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (15F79)
-In-Reply-To: <23894.1531438559@warthog.procyon.org.uk>
-Date:   Thu, 12 Jul 2018 16:50:13 -0700
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3236C75A-5D74-4BB4-A1EC-06F6E22D810C@amacapital.net>
-References: <611054C7-D6E8-4C89-958E-3128C9305E1E@amacapital.net> <20180712223223.GA28610@thunk.org> <CA+55aFw1WyKY+-2dg62M-QT_F0-waCTCrba1DW4dStYz-f_fjA@mail.gmail.com> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk> <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk> <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com> <7002.1531407244@warthog.procyon.org.uk> <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com> <16699.1531426991@warthog.procyon.org.uk> <18233.1531430797@warthog.procyon.org.uk> <22105.1531436081@warthog.procyon.org.uk> <23894.1531438559@warthog.procyon.org.uk>
-To:     David Howells <dhowells@redhat.com>
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2018 16:50:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,345,1526367600"; 
+   d="scan'208";a="66541200"
+Received: from andreser-mobl.amr.corp.intel.com (HELO [10.252.137.224]) ([10.252.137.224])
+  by fmsmga002.fm.intel.com with ESMTP; 12 Jul 2018 16:49:56 -0700
+Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
+To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+ <20180710222639.8241-19-yu-cheng.yu@intel.com>
+ <bbb487cc-ac1c-f734-eee3-2463a0ba7efc@linux.intel.com>
+ <1531436398.2965.18.camel@intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <46784af0-6fbb-522d-6acb-c6248e5e0e0d@linux.intel.com>
+Date:   Thu, 12 Jul 2018 16:49:56 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1531436398.2965.18.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 07/12/2018 03:59 PM, Yu-cheng Yu wrote:
+> On Tue, 2018-07-10 at 16:48 -0700, Dave Hansen wrote:
+>>>
+>>> +/*
+>>> + * WRUSS is a kernel instrcution and but writes to user
+>>> + * shadow stack memory.  When a fault occurs, both
+>>> + * X86_PF_USER and X86_PF_SHSTK are set.
+>>> + */
+>>> +static int is_wruss(struct pt_regs *regs, unsigned long error_code)
+>>> +{
+>>> +	return (((error_code & (X86_PF_USER | X86_PF_SHSTK)) ==
+>>> +		(X86_PF_USER | X86_PF_SHSTK)) && !user_mode(regs));
+>>> +}
+>> I thought X86_PF_USER was set based on the mode in which the fault
+>> occurred.  Does this mean that the architecture of this bit is different
+>> now?
+> 
+> Yes.
+> 
+>> That seems like something we need to call out if so.  It also means we
+>> need to update the SDM because some of the text is wrong.
+> 
+> It needs to mention the WRUSS case.
 
+Ugh.  The documentation for this is not pretty.  But, I guess this is
+not fundamentally different from access to U=1 pages when SMAP is in
+place and we've set EFLAGS.AC=1.
 
-> On Jul 12, 2018, at 4:35 PM, David Howells <dhowells@redhat.com> wrote:
->=20
-> Andy Lutomirski <luto@amacapital.net> wrote:
->=20
->> I tend to think that this *should* fail using the new API.  The semantics=
- of
->> the second mount request are bizarre at best.
->=20
-> You still have to support existing behaviour lest you break userspace.
->=20
+But, sheesh, we need to call this out really explicitly and make it
+crystal clear what is going on.
 
-I assume the existing behavior is that a bind mount is created?  If so, the n=
-ew mount(8) tool could do it in user code.=
+We need to go through the page fault code very carefully and audit all
+the X86_PF_USER spots and make sure there's no impact to those.  SMAP
+should mean that we already dealt with these, but we still need an audit.
+
+The docs[1] are clear as mud on this though: "Page entry has user
+privilege (U=1) for a supervisor-level shadow-stack-load,
+shadow-stack-store-intent or shadow-stack-store access except those that
+originate from the WRUSS instruction."
+
+Or, in short:
+
+	"Page has U=1 ... except those that originate from the WRUSS 	
+	instruction."
+
+Which is backwards from what you said.  I really wish those docs had
+reused the established SDM language instead of reinventing their own way
+of saying things.
+
+1.
+https://software.intel.com/sites/default/files/managed/4d/2a/control-flow-enforcement-technology-preview.pdf
