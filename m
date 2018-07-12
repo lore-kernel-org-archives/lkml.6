@@ -2,202 +2,115 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D08ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B73ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D611021486
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:22:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D611021486
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 55B4F208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:24:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="VuXLWJQr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B4F208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732991AbeGLVd7 (ORCPT
+        id S1732997AbeGLVfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 17:33:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732383AbeGLVd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 17:33:59 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A060213A2;
-        Thu, 12 Jul 2018 21:22:33 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 17:22:32 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thu, 12 Jul 2018 17:35:23 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42517 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732547AbeGLVfX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 17:35:23 -0400
+Received: by mail-wr1-f68.google.com with SMTP id e7-v6so3517357wrs.9
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 14:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=30sN7QPCl2f5+TxQYRNcc470C8xbnsS4dJL//uod7Fs=;
+        b=VuXLWJQrFUPzrcMZDrVZb88vjxrpgFEBo5Ss4yS8eumfNaELOiK5ErLAWiiaDv3Df8
+         gNP3Dp78LyQSx3Wy4SyulWpsFfsij6sQ4t/lGOLQPsfDXMr+z/yTX8aVvBFmXAhafrPS
+         ULK1xI8w+g12J8yGQ1IhJwwjiQgtCosDDLcTo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=30sN7QPCl2f5+TxQYRNcc470C8xbnsS4dJL//uod7Fs=;
+        b=MeoOo8D1JU+MK8m22okApQ06G2EM51vThdJWdnC8Npici5sKLPvm+LxMJ53jC72QWd
+         aq8VFXU0bfL8BI5XFwbOPuDaOcmAjpJCp+Nmmc/gzJmRbVyIcZHxWtCX7FhqGhK63P7Z
+         7V0zQ1+LV8a/D0hr6aURib6MahY8JARmGC84pQ5+Zcica0xbu13Ts1EjpDQYzjoKlKBX
+         UjNz/ZggVkIUTSGfzyyOKk3vJwrKHL8sBagHELgBPzspHypjMXWbrZMilQCt225vT59L
+         RvNoFDHft8j80S82pCl6KBV2mDE+KyXm2evo60mOFfzIlKFKVIiXMwINZP8I7ti0eAlw
+         x02g==
+X-Gm-Message-State: AOUpUlErzR/gHKDhdYjywiq4mvtJo1VxXspWidIQcW3PcEi4s34B2nr1
+        3G/kBSmKEvcxeT9yA64mreETdg==
+X-Google-Smtp-Source: AAOMgpc5pOA26o4SLA73aOJC9umhiETlGDEYHwhdgxvidrpMnBeXhU+oWRW/3tF+BC65zLez8vhN/g==
+X-Received: by 2002:a5d:438d:: with SMTP id i13-v6mr3082627wrq.156.1531430639059;
+        Thu, 12 Jul 2018 14:23:59 -0700 (PDT)
+Received: from andrea ([94.230.152.15])
+        by smtp.gmail.com with ESMTPSA id z5-v6sm25889775wrv.2.2018.07.12.14.23.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 14:23:58 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 23:23:51 +0200
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
         Boqun Feng <boqun.feng@gmail.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        Erick Reyes <erickreyes@google.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Julia Cartwright <julia@ni.com>,
-        linux-kselftest@vger.kernel.org,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Thomas Glexiner <tglx@linutronix.de>,
-        Todd Kjos <tkjos@google.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: Re: [PATCH 1/2] lib: Add module for testing preemptoff/irqsoff
- latency tracers
-Message-ID: <20180712172232.00e4c01e@gandalf.local.home>
-In-Reply-To: <20180711063540.91101-2-joel@joelfernandes.org>
-References: <20180711063540.91101-1-joel@joelfernandes.org>
-        <20180711063540.91101-2-joel@joelfernandes.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+Message-ID: <20180712212351.GA5480@andrea>
+References: <20180712175228.GB3533@andrea>
+ <Pine.LNX.4.44L0.1807121637050.1306-100000@iolanthe.rowland.org>
+ <20180712211348.GA5308@andrea>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712211348.GA5308@andrea>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 10 Jul 2018 23:35:39 -0700
-Joel Fernandes <joel@joelfernandes.org> wrote:
-
+On Thu, Jul 12, 2018 at 11:13:48PM +0200, Andrea Parri wrote:
+> On Thu, Jul 12, 2018 at 04:43:46PM -0400, Alan Stern wrote:
+> > On Thu, 12 Jul 2018, Andrea Parri wrote:
+> > 
+> > > > It seems reasonable to ask people to learn that locks have stronger
+> > > > ordering guarantees than RMW atomics do.  Maybe not the greatest
+> > > > situation in the world, but one I think we could live with.
+> > > 
+> > > Yeah, this was one of my main objections.
+> > 
+> > Does this mean you don't think you could live with it?
 > 
-> Co-developed-by: Erick Reyes <erickreyes@google.com>
-
-A co-developer needs to add their signed off by. To specify that Erick
-is a co-author, you could do:
-
-[ Erick is a co-developer of this commit ]
-Signed-off-by: Add Erick's SOB here.
-
-> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  kernel/trace/Kconfig                 | 15 ++++++
->  kernel/trace/Makefile                |  1 +
->  kernel/trace/preemptirq_delay_test.c | 72 ++++++++++++++++++++++++++++
->  3 files changed, 88 insertions(+)
->  create mode 100644 kernel/trace/preemptirq_delay_test.c
+> Well, I *could* leave with it and with RCtso locks, ;-) but I'd rather not.
 > 
-> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> index 8d51351e3149..eb5ab6b511e2 100644
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -699,6 +699,21 @@ config RING_BUFFER_STARTUP_TEST
->  
->  	 If unsure, say N
->  
-> +config PREEMPTIRQ_DELAY_TEST
-> +	tristate "Preempt / IRQ disable delay thread to test latency tracers"
-> +	depends on m
-> +	help
-> +	  Select this option to build a test module that can help test latency
-> +	  tracers by executing a preempt or irq disable section with a user
-> +	  configurable delay. The module busy waits for the duration of the
-> +	  critical section.
-> +
-> +	  For example, the following invocation forces a one-time irq-disabled
-> +	  critical section for 500us:
-> +	  modprobe preemptirq_delay_test test_mode=irq delay=500000
-> +
-> +	  If unsure, say N
-> +
->  config TRACE_EVAL_MAP_FILE
->         bool "Show eval mappings for trace events"
->         depends on TRACING
-> diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-> index 84a0cb222f20..677540bb1b62 100644
-> --- a/kernel/trace/Makefile
-> +++ b/kernel/trace/Makefile
-> @@ -36,6 +36,7 @@ obj-$(CONFIG_TRACING_MAP) += tracing_map.o
->  obj-$(CONFIG_CONTEXT_SWITCH_TRACER) += trace_sched_switch.o
->  obj-$(CONFIG_FUNCTION_TRACER) += trace_functions.o
->  obj-$(CONFIG_PREEMPTIRQ_TRACEPOINTS) += trace_preemptirq.o
-> +obj-$(CONFIG_PREEMPTIRQ_DELAY_TEST) += preemptirq_delay_test.o
->  obj-$(CONFIG_IRQSOFF_TRACER) += trace_irqsoff.o
->  obj-$(CONFIG_PREEMPT_TRACER) += trace_irqsoff.o
->  obj-$(CONFIG_SCHED_TRACER) += trace_sched_wakeup.o
-> diff --git a/kernel/trace/preemptirq_delay_test.c b/kernel/trace/preemptirq_delay_test.c
-> new file mode 100644
-> index 000000000000..c97a026c0720
-> --- /dev/null
-> +++ b/kernel/trace/preemptirq_delay_test.c
-> @@ -0,0 +1,72 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Preempt / IRQ disable delay thread to test latency tracers
-> + *
-> + * Copyright (C) 2018 Joel Fernandes (Google) <joel@joelfernandes.org>
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/kernel.h>
-> +#include <linux/kthread.h>
-> +#include <linux/ktime.h>
-> +#include <linux/module.h>
-> +#include <linux/printk.h>
-> +#include <linux/string.h>
-> +
-> +static ulong delay = 100;
-> +static char test_mode[10] = "irq";
-> +
-> +module_param_named(delay, delay, ulong, S_IRUGO);
-> +module_param_string(test_mode, test_mode, 10, S_IRUGO);
-> +MODULE_PARM_DESC(delay, "Period in microseconds (100 uS default)");
-> +MODULE_PARM_DESC(test_mode, "Mode of the test such as preempt or irq (default irq)");
-> +
-> +static void busy_wait(ulong time)
-> +{
-> +	ktime_t start, end;
-> +	start = ktime_get();
-> +	do {
-> +		end = ktime_get();
-> +		if (kthread_should_stop())
-> +			break;
-> +	} while (ktime_to_ns(ktime_sub(end, start)) < (time * 1000));
-> +}
-> +
-> +int preemptirq_delay_run(void *data)
-> +{
-> +	unsigned long flags;
-> +
-> +	if (!strcmp(test_mode, "irq")) {
-> +		local_irq_save(flags);
-> +		busy_wait(delay);
-> +		local_irq_restore(flags);
-> +	} else if (!strcmp(test_mode, "preempt")) {
-> +		preempt_disable();
-> +		busy_wait(delay);
-> +		preempt_enable();
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init preemptirq_delay_init(void)
-> +{
-> +	char task_name[50];
-> +	struct task_struct *test_task;
-> +
-> +	snprintf(task_name, sizeof(task_name), "%s_test", test_mode);
-> +
-> +	test_task = kthread_run(preemptirq_delay_run, NULL, task_name);
-> +	return PTR_ERR_OR_ZERO(test_task);
-> +}
-> +
-> +static void __exit preemptirq_delay_exit(void)
-> +{
-> +	return;
-> +}
-> +
-> +module_init(preemptirq_delay_init)
-> +module_exit(preemptirq_delay_exit)
-> +MODULE_LICENSE("GPL v2");
+> Assuming that I will not be able to resist this RCtso trend, ;-) would the
+> below (completely untested) work?
+> 
+>   let rmw = rmw | lk-rmw   (* from lock.cat *)
+>   let po-unlock-rf-lock-po = po ; [Release] ; rf ; [domain(rmw)] ; po
 
+domain(rmw) & Acquire, maybe...
+
+  Andrea
+
+
+>   [the rest of your patch + the updates to the doc. I suggested in v2 ;-)]
+> 
+>    Andrea
