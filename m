@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 358B4C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 692FEC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF8FE20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26B7421476
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:08:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="f3cVppPn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF8FE20883
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="QEPqjXDX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B7421476
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732392AbeGLIP7 (ORCPT
+        id S1732360AbeGLIQY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:15:59 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:55842 "EHLO
+        Thu, 12 Jul 2018 04:16:24 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:55852 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726775AbeGLIP7 (ORCPT
+        with ESMTP id S1726497AbeGLIQY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:15:59 -0400
+        Thu, 12 Jul 2018 04:16:24 -0400
 Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 46B075C1C76;
-        Thu, 12 Jul 2018 10:07:01 +0200 (CEST)
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id F118A5C1D4D;
+        Thu, 12 Jul 2018 10:07:31 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1531382825;
+        t=1531382856;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
          in-reply-to:references; bh=CoNj8VE2HyQ6bHChp8a68xGOzll7C1bZjM219+8MM3M=;
-        b=f3cVppPn/Y3O5yXK6/aIZ3WgmgtUPRvLBwsmqBnyiefbPm9EZAmTzGB/jWgPwueRtH0zz4
-        8ogiTmZnNTpqW3MC3SPGgILL/RcPB/ad44krj+WvArIiJKOVXwHKnZz7db8/BcWpR7bF3A
-        DUNmSAK8BZ55r4ZnwdYWrn+zTUyLeXM=
+        b=QEPqjXDXWHNf4CFmwC9aRSpSWKkvKKXOmpV+D9j+rMuMsOlZsV4EjAAndrYgQ07+i+kP7H
+        NfYWI9Z+RKvHawdS72ee1vDfJyYrtklpHOqTAOsHhXThyuJnCwSmZngIPmaHYxX/yuBAS/
+        ggk7dy8usxZ0jr6VUvv0yUHHcXf9M1g=
 From:   Stefan Agner <stefan@agner.ch>
 To:     adrian.hunter@intel.com, ulf.hansson@linaro.org
 Cc:     fabio.estevam@nxp.com, haibo.chen@nxp.com, aisheng.dong@nxp.com,
         linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         Stefan Agner <stefan@agner.ch>
 Subject: [PATCH v2 1/2] mmc: sdhci-esdhc-imx: disable clocks before changing frequency
-Date:   Thu, 12 Jul 2018 10:06:49 +0200
-Message-Id: <20180712080650.13878-1-stefan@agner.ch>
+Date:   Thu, 12 Jul 2018 10:07:24 +0200
+Message-Id: <20180712080725.14250-1-stefan@agner.ch>
 X-Mailer: git-send-email 2.18.0
 X-Spamd-Result: default: False [-2.00 / 15.00];
          TO_MATCH_ENVRCPT_ALL(0.00)[];
