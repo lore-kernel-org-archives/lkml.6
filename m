@@ -2,74 +2,74 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01BB9C476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C511C476E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A40FC21471
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:53:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A40FC21471
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
+	by mail.kernel.org (Postfix) with ESMTP id 886D221471
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:53:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 886D221471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbeGLQDJ (ORCPT
+        id S1732354AbeGLQDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:03:09 -0400
-Received: from www.osadl.org ([62.245.132.105]:42974 "EHLO www.osadl.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbeGLQDJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:03:09 -0400
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w6CFnXJ8002391;
-        Thu, 12 Jul 2018 17:49:33 +0200
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@st.com>
-Cc:     Patrice Chotard <patrice.chotard@st.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] ARM: STi: at least warn if of_iomap fails
-Date:   Thu, 12 Jul 2018 17:48:50 +0200
-Message-Id: <1531410530-24163-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        Thu, 12 Jul 2018 12:03:48 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:39224 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726843AbeGLQDr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 12:03:47 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fdduT-0000aW-4j; Thu, 12 Jul 2018 15:53:37 +0000
+Date:   Thu, 12 Jul 2018 16:53:37 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Miklos Szeredi <mszeredi@redhat.com>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: vfs / overlayfs conflict resolution for linux-next
+Message-ID: <20180712155337.GU30522@ZenIV.linux.org.uk>
+References: <20180711021136.GN30522@ZenIV.linux.org.uk>
+ <20180711022206.12571-1-viro@ZenIV.linux.org.uk>
+ <CA+55aFxc7M9g+jqVnMHAsK350Ty1tQ9AghuJhBug+FPA6=XQrw@mail.gmail.com>
+ <20180711152555.GR30522@ZenIV.linux.org.uk>
+ <20180711161540.GS30522@ZenIV.linux.org.uk>
+ <20180712124326.GA19272@ZenIV.linux.org.uk>
+ <CA+55aFwyOHvwV4qkmM1kRYQ+4brWbLSHaXE8GPV41u5Sj-AG4Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFwyOHvwV4qkmM1kRYQ+4brWbLSHaXE8GPV41u5Sj-AG4Q@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The call to of_iomap() is unchecked but scu_enable(), which the returned
-address is passed on to, assumes a valid mapping. If the mapping is
-invalid this could probably lead to undefined system state so at least
-a warning should be issued.
+On Thu, Jul 12, 2018 at 08:05:26AM -0700, Linus Torvalds wrote:
+> On Thu, Jul 12, 2018 at 5:43 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > A question regarding the customs in such situations - are previous
+> > Reviewed-by/Acked-by normally kept across rebases like that?
+> 
+> Yeah, unless there were big changes, keep the reviewed/acked-by lines.
+> 
+> Otherwise you'd never be able to handle different people giving
+> slightly different feedback about separate issues.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit 65ebcc115889 ("ARM: sti: Add STiH415 SOC support")
----
-Problem was found by an experimental coccinelle script
+OK...  Miklos, I've pushed #ovl-candidate, with equivalent of the beginning
+of your branch.  I'm *not* saying that I've no remaining issues
+with your series - this is just how I'd prefer to resolve that group
+of conflicts.
 
-Patch was compile tested with: multi_v7_defconfig (implies
-CONFIG_ARCH_STI=y, CONFIG_SMP=y)
+Everything past "vfs: simplify dentry_open()" could live on top of that
+one, or its equivalent.
 
-Patch is against 4.18-rc3 (localversion-next is next-20180712)
-
- arch/arm/mach-sti/platsmp.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/mach-sti/platsmp.c b/arch/arm/mach-sti/platsmp.c
-index 231f19e..89ae76f 100644
---- a/arch/arm/mach-sti/platsmp.c
-+++ b/arch/arm/mach-sti/platsmp.c
-@@ -109,6 +109,7 @@ static void __init sti_smp_prepare_cpus(unsigned int max_cpus)
- 
- 	if (np) {
- 		scu_base = of_iomap(np, 0);
-+		WARN_ON(!scu_base);
- 		scu_enable(scu_base);
- 		of_node_put(np);
- 	}
--- 
-2.1.4
-
+I'm going to put #work-open3 into -next, let's figure out what to do with
+the conflicts; what I can promise is never-rebased status for #for-ovl
+(the beginning of #work-open3 merged into #ovl-candidate).
