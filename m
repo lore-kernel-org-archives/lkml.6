@@ -2,83 +2,172 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F19C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D51DC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 574EE20BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:07:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dHbBo1WG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 574EE20BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id BC76E20C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 01:21:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC76E20C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390206AbeGLBO1 (ORCPT
+        id S2403780AbeGLB2l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 21:14:27 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45002 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732493AbeGLBO1 (ORCPT
+        Wed, 11 Jul 2018 21:28:41 -0400
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:8803 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726701AbeGLB2l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 21:14:27 -0400
-Received: by mail-ed1-f66.google.com with SMTP id d17-v6so8470344eds.11
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 18:07:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iIG+f6E/muzr61PD2+DRwnubpY0korfUWW7JO31sV48=;
-        b=dHbBo1WGcM/2Rdzp6jKLRLkQcCkV33kuBtgpJfaOmp+6fapieoB3X11x2v6SznSg2n
-         bHUfU3dO1NTofihBMImF/rLkyPircLUtzmixC31qegNGNS8/Vev+KqKo+MUuBEjFBdUp
-         yEsRCp3wxZTzuNn5JEczZqBOeQ6eAU96gZJoM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iIG+f6E/muzr61PD2+DRwnubpY0korfUWW7JO31sV48=;
-        b=aw+wj8wIvUVnjKeaUf4VQJFLtnJg2RYnqLZLaRg6uyD/4F61Xk9clvDJHVI1W30NWF
-         PpF9Gr7Kjdq6d8Q6DC+P0ib4s9lyVUmoXJfXGLd/ZaXmvEBOXPV/DcB/ZVLQ91mGNtnj
-         2R8XvWgHdd1zavfyxKWoSHhMxWba1pPkbkND1QMA4EfbqJjs/jx/9y9wtpR4FPiowtaX
-         BEQ6k3GnabL9PCqy+BIradP5C++BoMPYh/V2muCxA78mL9ISjDR+431iL4ZWpi7VDvxW
-         78C/3M2KGxPM7oMaOGNKd1cIIM4KpfHFiZNar7RhPGpMzQsD21S+l5ryI2qIyZwa/2ag
-         i/Ww==
-X-Gm-Message-State: AOUpUlF/eqp0XPyDqgyWkCZzMzJsiJkkPlvVbuZnJL9cMTyzg04Dn0Lo
-        3qS0VZEDip+DN0BX4a/p/qyp04/qMTqXK7E+P99KUTHG
-X-Google-Smtp-Source: AAOMgpe3WgElqsrPoz49SvWhXow2Eju1yrAri9lJgezOLOBwgJxD1+TFWdeEc1UU4CtbgVbtuk4O5k4X9TuTN3+u4sc=
-X-Received: by 2002:a50:80e6:: with SMTP id 93-v6mr156807edb.252.1531357647716;
- Wed, 11 Jul 2018 18:07:27 -0700 (PDT)
+        Wed, 11 Jul 2018 21:28:41 -0400
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="42141154"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 12 Jul 2018 09:21:38 +0800
+Received: from G08CNEXCHPEKD02.g08.fujitsu.local (unknown [10.167.33.83])
+        by cn.fujitsu.com (Postfix) with ESMTP id 50C0E4B43D51;
+        Thu, 12 Jul 2018 09:21:32 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD02.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.399.0; Thu, 12 Jul 2018 09:21:37 +0800
+Date:   Thu, 12 Jul 2018 09:19:54 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Baoquan He <bhe@redhat.com>
+CC:     <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <yasu.isimatu@gmail.com>, <keescook@chromium.org>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>,
+        <douly.fnst@cn.fujitsu.com>, <mhocko@suse.com>, <vbabka@suse.cz>,
+        <mgorman@techsingularity.net>, <fanc.fnst@cn.fujitsu.com>
+Subject: Re: Bug report about KASLR and ZONE_MOVABLE
+Message-ID: <20180712011954.GC6742@localhost.localdomain>
+References: <20180711094244.GA2019@localhost.localdomain>
+ <20180711104158.GE2070@MiWiFi-R3L-srv>
+ <20180711104944.GG1969@MiWiFi-R3L-srv>
+ <20180711124008.GF2070@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-References: <20180712074140.12dd9ca7@canb.auug.org.au>
-In-Reply-To: <20180712074140.12dd9ca7@canb.auug.org.au>
-From:   Shawn Guo <shawn.guo@linaro.org>
-Date:   Thu, 12 Jul 2018 09:07:04 +0800
-Message-ID: <CAAQ0ZWRVUaOxgjNRBwYqXBo2W78_ZfQ0PixMWtZkS3pcp5EYGg@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the imx-mxs tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux-next@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180711124008.GF2070@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 50C0E4B43D51.AB2E5
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
+On Wed, Jul 11, 2018 at 08:40:08PM +0800, Baoquan He wrote:
+>Please try this v3 patch:
+>
+>From 9850d3de9c02e570dc7572069a9749a8add4c4c7 Mon Sep 17 00:00:00 2001
+>From: Baoquan He <bhe@redhat.com>
+>Date: Wed, 11 Jul 2018 20:31:51 +0800
+>Subject: [PATCH v3] mm, page_alloc: find movable zone after kernel text
+>
+>In find_zone_movable_pfns_for_nodes(), when try to find the starting
+>PFN movable zone begins in each node, kernel text position is not
+>considered. KASLR may put kernel after which movable zone begins.
+>
+>Fix it by finding movable zone after kernel text on that node.
+>
+>Signed-off-by: Baoquan He <bhe@redhat.com>
+>---
+> mm/page_alloc.c | 20 +++++++++++++++-----
+> 1 file changed, 15 insertions(+), 5 deletions(-)
+>
+>diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>index 1521100..390eb35 100644
+>--- a/mm/page_alloc.c
+>+++ b/mm/page_alloc.c
+>@@ -6547,7 +6547,7 @@ static unsigned long __init early_calculate_totalpages(void)
+> static void __init find_zone_movable_pfns_for_nodes(void)
+> {
+> 	int i, nid;
+>-	unsigned long usable_startpfn;
+>+	unsigned long usable_startpfn, real_startpfn;
+> 	unsigned long kernelcore_node, kernelcore_remaining;
+> 	/* save the state before borrow the nodemask */
+> 	nodemask_t saved_node_state = node_states[N_MEMORY];
+>@@ -6681,10 +6681,20 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+> 			if (start_pfn >= end_pfn)
+> 				continue;
 
-On Thu, Jul 12, 2018 at 5:41 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Shawn,
->
-> Commit
->
->   3a27f1ac04df ("ARM: dts: imx6ul: add GPIO clocks")
->
-> is missing a Signed-off-by from its committer.
+Hi Baoquan,
 
-Thanks for spotting that.  I just fixed it.  Thanks.
+Thanks for your quick reply and PATCH.
+I think it can work well after reviewing the code. But I think the new
+variable 'real_startpfn' is unnecessary. How about this:
 
-Shawn
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 6d00f746c2fd..0fc9c4283947 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -6492,6 +6492,10 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+                        if (start_pfn >= end_pfn)
+                                continue;
+
++                       if (pfn_to_nid(PFN_UP(_etext)) == i)
++                               usable_startpfn = max(usable_startpfn,
++                                                 PFN_UP(_etext));
++
+                        /* Account for what is only usable for kernelcore */
+                        if (start_pfn < usable_startpfn) {
+                                unsigned long kernel_pages;
+
+I think the logic of these two method are the same, and this method
+change less code. If I am wrong, please let me know.
+
+Thanks,
+Chao Fan
+
+> 
+>+			/*
+>+			 * KASLR may put kernel near tail of node memory,
+>+			 * start after kernel on that node to find PFN
+>+			 * which zone begins.
+>+			 */
+>+			if (pfn_to_nid(PFN_UP(_etext)) == i)
+>+				real_startpfn = max(usable_startpfn,
+>+						PFN_UP(_etext))
+>+			else
+>+				real_startpfn = usable_startpfn;
+> 			/* Account for what is only usable for kernelcore */
+>-			if (start_pfn < usable_startpfn) {
+>+			if (start_pfn < real_startpfn) {
+> 				unsigned long kernel_pages;
+>-				kernel_pages = min(end_pfn, usable_startpfn)
+>+				kernel_pages = min(end_pfn, real_startpfn)
+> 								- start_pfn;
+> 
+> 				kernelcore_remaining -= min(kernel_pages,
+>@@ -6693,7 +6703,7 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+> 							required_kernelcore);
+> 
+> 				/* Continue if range is now fully accounted */
+>-				if (end_pfn <= usable_startpfn) {
+>+				if (end_pfn <= real_startpfn) {
+> 
+> 					/*
+> 					 * Push zone_movable_pfn to the end so
+>@@ -6704,7 +6714,7 @@ static void __init find_zone_movable_pfns_for_nodes(void)
+> 					zone_movable_pfn[nid] = end_pfn;
+> 					continue;
+> 				}
+>-				start_pfn = usable_startpfn;
+>+				start_pfn = real_startpfn;
+> 			}
+> 
+> 			/*
+>-- 
+>2.1.0
+>
+>
+>
+
+
