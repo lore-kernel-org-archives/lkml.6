@@ -2,381 +2,107 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F0BC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8B1C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C596208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D8B6208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:26:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iJkXtVHg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C596208E9
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bCazjq5o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D8B6208E9
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732297AbeGLMdb (ORCPT
+        id S1727181AbeGLMfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:33:31 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:40477 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727119AbeGLMdb (ORCPT
+        Thu, 12 Jul 2018 08:35:43 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:39440 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726885AbeGLMfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:33:31 -0400
-Received: by mail-oi0-f66.google.com with SMTP id w126-v6so55376265oie.7
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 05:24:10 -0700 (PDT)
+        Thu, 12 Jul 2018 08:35:43 -0400
+Received: by mail-wm0-f66.google.com with SMTP id h20-v6so5794211wmb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 05:26:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ZkmB/rfgZktPAw/6K8TYMpsPh+Oj9DvT8dOb+EGX2N4=;
-        b=iJkXtVHgiXXBLXPSuZVO+0Mu8+bBWvqqrxczTf/OibJxjw9zwvl93oAX037OiTxykW
-         g/Y8sYM60MrsI7jE7R0Zpx1yH0Bq0RYQr9+hTNG7k8CNQNnY+KkIod7/AvOemi/xZ5mK
-         jUOLpwTJYJGOH4dMhjZEyTa8vNcPsdMKVEKbk=
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=kBZLPcFa72WGNuYk3Mmtlfkj8Tm7Awu3tpJXUOxMTU4=;
+        b=bCazjq5oi/gnaHw1XQ4UdXLDdtgsm1eZBc3fB8wBFpFkl7jMitN/5q0lIxETIw4sZI
+         4OMOGz4u16SlkKyyZQKvNKayWke0v8OdgJo3SgL2X1geiKCIPPoBgZNGuR/jIxXaINSA
+         EZ6nV37Sxn/Lm6UZ8aMHAMN8V6zYn3qIYAtSA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ZkmB/rfgZktPAw/6K8TYMpsPh+Oj9DvT8dOb+EGX2N4=;
-        b=MMoquJSdfHwXq9Zd68mVvPt7QEHAV2HzZheZSPXiiYtQZH2xWWBfMUQjLb1o+/WaQD
-         AOBbEGL1suW7JvCNeEESaQACokOoFpIIAxy+x9L3da6jxNb0Be2xE1+e4TNSc9FwCVAe
-         StnwqAtbY/1Ye+AFwV0CV5+HCdjKuAPkG6CmmSKBxTVFUmqhN5TQbhLQwbS4pDDYkaQ+
-         QgCYjrZEEiaD81L4TQez2dCxZTsEJMrgctWTU1YeIQpIxYs142CI1G5an+MUzhUmqD1B
-         hJsSrSEvCJYrTrOryt/N5kgqM4uAoNWtQSg3iRqxsdbhwA5S3wTZLooMRpmg3frWFRZa
-         WWdA==
-X-Gm-Message-State: AOUpUlE79NfPZeBx5cBlb5bb3DBFdgd9R2b1OnpI30zAnCWy+JCQCUn9
-        lJRsFkkBYKAWfR9KcG+fz4Tdn6P5C5DrK5tvtq1VyA==
-X-Google-Smtp-Source: AAOMgpcnnv+j+C4EovA/YeNVU8earrhZt9K3PYHSekAbr50bvU9ZSJElmtQqT3SnzfJSIsdWJph7IznYY9nfw3oA6zU=
-X-Received: by 2002:aca:dd07:: with SMTP id u7-v6mr1905165oig.177.1531398250493;
- Thu, 12 Jul 2018 05:24:10 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=kBZLPcFa72WGNuYk3Mmtlfkj8Tm7Awu3tpJXUOxMTU4=;
+        b=ri0iI24Wy5vIqs0kgengXRg+gTvVM6/oDVeZMY9TpK0FqYT5PIKxkPPF4k0Ezce6Cn
+         0BJ5IEnmcwpt0fHKS451mBoFT82z8k3jOs8sFJRQ6IBrSayYyNKtSCyML9kZ4CX54UjK
+         XQd1rjT3ZvVg1xY59TS2odQ667SBLN3NgYiWzpJEmKTRd/a6Ryb0jaTya+q32/AzMR0i
+         ifG7s2Lf2SnSicJAiq9EVWbW5ghe6pERtCNowQKXzWkCORRxzCNhI9eMp/HZNRBYoUAX
+         Pkkrb323oOJBz337vBObDRrMz0vX465Tw06g/gLadIu+300NLQbwjfFDKZeaqNVx7Yf7
+         h2qw==
+X-Gm-Message-State: AOUpUlHibx5AEyd7huAHWHd/PbTxvwKc0cd91YkwQXfOutMHGw/BX6TT
+        GXW87PESqbZUDXDIRZV6kLEkiw==
+X-Google-Smtp-Source: AAOMgpeumJhiJMSB3YK3UT1LmuCr2rEOarVtz+shOhlBG5/0/9Kf8JNHcvecElj3q4wYBCTGNN1jTA==
+X-Received: by 2002:a1c:8010:: with SMTP id b16-v6mr1324957wmd.9.1531398381471;
+        Thu, 12 Jul 2018 05:26:21 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id h12-v6sm2166319wmb.3.2018.07.12.05.26.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Jul 2018 05:26:20 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 13:26:18 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     airlied@linux.ie, hans.verkuil@cisco.com, olof@lixom.net,
+        seanpaul@google.com, sadolfsson@google.com, felixe@google.com,
+        bleung@google.com, darekm@google.com, marcheu@chromium.org,
+        fparent@baylibre.com, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, eballetbo@gmail.com,
+        Stefan Adolfsson <sadolfsson@chromium.org>
+Subject: Re: [PATCH v8 3/6] mfd: cros-ec: Increase maximum mkbp event size
+Message-ID: <20180712122618.GD4641@dell>
+References: <1530716901-30164-1-git-send-email-narmstrong@baylibre.com>
+ <1530716901-30164-4-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Received: by 2002:a9d:237a:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 05:24:10
- -0700 (PDT)
-In-Reply-To: <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
-References: <1665b877dc2f886a90a00e3ca3b7425372d99b6e.1530248085.git.baolin.wang@linaro.org>
- <CAMz4kuJfPKykB6G-8C25mmMCfQgefv-Y=k2OQYZR_e0Tvg3guQ@mail.gmail.com> <8da1b769-8aa3-9698-467a-2e7b0707fecf@gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 12 Jul 2018 20:24:10 +0800
-Message-ID: <CAMz4kuKZ6Z1h=yzFYJihEH1ARC5FKtDC6RLz0u8SmaekOZ=utw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] leds: core: Introduce generic pattern interface
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1530716901-30164-4-git-send-email-narmstrong@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
+On Wed, 04 Jul 2018, Neil Armstrong wrote:
 
-On 12 July 2018 at 05:10, Jacek Anaszewski <jacek.anaszewski@gmail.com> wrote:
-> Hi Baolin.
->
->
-> On 07/11/2018 01:02 PM, Baolin Wang wrote:
->>
->> Hi Jacek and Pavel,
->>
->> On 29 June 2018 at 13:03, Baolin Wang <baolin.wang@linaro.org> wrote:
->>>
->>> From: Bjorn Andersson <bjorn.andersson@linaro.org>
->>>
->>> Some LED controllers have support for autonomously controlling
->>> brightness over time, according to some preprogrammed pattern or
->>> function.
->>>
->>> This adds a new optional operator that LED class drivers can implement
->>> if they support such functionality as well as a new device attribute to
->>> configure the pattern for a given LED.
->>>
->>> [Baolin Wang did some minor improvements.]
->>>
->>> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->>> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
->>> ---
->>> Changes from v2:
->>>   - Change kernel version to 4.19.
->>>   - Force user to return error pointer if failed to issue pattern_get().
->>>   - Use strstrip() to trim trailing newline.
->>>   - Other optimization.
->>>
->>> Changes from v1:
->>>   - Add some comments suggested by Pavel.
->>>   - Change 'delta_t' can be 0.
->>>
->>> Note: I removed the pattern repeat check and will get the repeat number
->>> by adding
->>> one extra file named 'pattern_repeat' according to previous discussion.
->>> ---
->>
->>
->> Do you have any comments for this version patch set? Thanks.
->
->
-> I tried modifying uleds.c driver to support pattern ops, but
-> I'm getting segfault when doing "cat pattern". I didn't give
-> it serious testing and analysis - will do it at weekend.
->
-> It also drew my attention to the issue of desired pattern sysfs
-> interface semantics on uninitialized pattern. In your implementation
-> user seems to be unable to determine if the pattern is activated
-> or not. We should define the semantics for this use case and
-> describe it in the documentation. Possibly pattern could
-> return alone new line character then.
+> Having a 16 byte mkbp event size makes it possible to send CEC
+> messages from the EC to the AP directly inside the mkbp event
+> instead of first doing a notification and then a read.
+> 
+> Signed-off-by: Stefan Adolfsson <sadolfsson@chromium.org>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> ---
+>  drivers/platform/chrome/cros_ec_proto.c | 40 +++++++++++++++++++++++++--------
+>  include/linux/mfd/cros_ec.h             |  2 +-
+>  include/linux/mfd/cros_ec_commands.h    | 16 +++++++++++++
+>  3 files changed, 48 insertions(+), 10 deletions(-)
 
-I am not sure I get your points correctly. If user writes values to
-pattern interface which means we activated the pattern.
-If I am wrong, could you elaborate on the issue you concerned? Thanks.
-
->
-> This is the code snippet I've used for testing pattern interface:
->
-> static struct led_pattern ptrn[10];
-> static int ptrn_len;
->
-> static int uled_pattern_clear(struct led_classdev *ldev)
-> {
->         return 0;
-> }
->
-> static int uled_pattern_set(struct led_classdev *ldev,
->                                   struct led_pattern *pattern,
->                                   int len)
-> {
->         int i;
->
->         for (i = 0; i < len; i++) {
->                 ptrn[i].brightness = pattern[i].brightness;
->                 ptrn[i].delta_t = pattern[i].delta_t;
->         }
->
->         ptrn_len = len;
->
->         return 0;
-> }
->
-> static struct led_pattern *uled_pattern_get(struct led_classdev *ldev,
->                                                   int *len)
-> {
->         int i;
->
->         for (i = 0; i < ptrn_len; i++) {
->                 ptrn[i].brightness = 3;
->                 ptrn[i].delta_t = 5;
->         }
->
->         *len = ptrn_len;
->
->         return ptrn;
->
-> }
-
-The reason you met segfault when doing "cat pattern" is you should not
-return one static pattern array, since in pattern_show() it will help
-to free the pattern memory, could you change to return one pattern
-pointer with dynamic allocation like my patch 2?
-
->>
->>>   Documentation/ABI/testing/sysfs-class-led |   17 +++++
->>>   drivers/leds/led-class.c                  |  119
->>> +++++++++++++++++++++++++++++
->>>   include/linux/leds.h                      |   19 +++++
->>>   3 files changed, 155 insertions(+)
->>>
->>> diff --git a/Documentation/ABI/testing/sysfs-class-led
->>> b/Documentation/ABI/testing/sysfs-class-led
->>> index 5f67f7a..e01ac55 100644
->>> --- a/Documentation/ABI/testing/sysfs-class-led
->>> +++ b/Documentation/ABI/testing/sysfs-class-led
->>> @@ -61,3 +61,20 @@ Description:
->>>                  gpio and backlight triggers. In case of the backlight
->>> trigger,
->>>                  it is useful when driving a LED which is intended to
->>> indicate
->>>                  a device in a standby like state.
->>> +
->>> +What: /sys/class/leds/<led>/pattern
->>> +Date: June 2018
->>> +KernelVersion: 4.19
->>> +Description:
->>> +       Specify a pattern for the LED, for LED hardware that support
->>> +       altering the brightness as a function of time.
->>> +
->>> +       The pattern is given by a series of tuples, of brightness and
->>> +       duration (ms). The LED is expected to traverse the series and
->>> +       each brightness value for the specified duration. Duration of
->>> +       0 means brightness should immediately change to new value.
->>> +
->>> +       As LED hardware might have different capabilities and precision
->>> +       the requested pattern might be slighly adjusted by the driver
->>> +       and the resulting pattern of such operation should be returned
->>> +       when this file is read.
->>> diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
->>> index 3c7e348..8a685a2 100644
->>> --- a/drivers/leds/led-class.c
->>> +++ b/drivers/leds/led-class.c
->>> @@ -74,6 +74,123 @@ static ssize_t max_brightness_show(struct device
->>> *dev,
->>>   }
->>>   static DEVICE_ATTR_RO(max_brightness);
->>>
->>> +static ssize_t pattern_show(struct device *dev,
->>> +                           struct device_attribute *attr, char *buf)
->>> +{
->>> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>> +       struct led_pattern *pattern;
->>> +       size_t offset = 0;
->>> +       int count, n, i;
->>> +
->>> +       if (!led_cdev->pattern_get)
->>> +               return -EOPNOTSUPP;
->
->
-> Please check this in led_classdev_register() and fail
-> if pattern_set is initialized, but pattern_get or pattern_clear not.
-
-Sure.
-
->>> +       pattern = led_cdev->pattern_get(led_cdev, &count);
->>> +       if (IS_ERR(pattern))
->>> +               return PTR_ERR(pattern);
->>> +
->>> +       for (i = 0; i < count; i++) {
->>> +               n = snprintf(buf + offset, PAGE_SIZE - offset, "%d %d ",
->>> +                            pattern[i].brightness, pattern[i].delta_t);
->>> +
->>> +               if (offset + n >= PAGE_SIZE)
->>> +                       goto err_nospc;
->>> +
->>> +               offset += n;
->>> +       }
->>> +
->>> +       buf[offset - 1] = '\n';
->>> +
->>> +       kfree(pattern);
->>> +       return offset;
->>> +
->>> +err_nospc:
->>> +       kfree(pattern);
->>> +       return -ENOSPC;
->>> +}
->>> +
->>> +static ssize_t pattern_store(struct device *dev,
->>> +                            struct device_attribute *attr,
->>> +                            const char *buf, size_t size)
->>> +{
->>> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>> +       struct led_pattern *pattern = NULL;
->>> +       unsigned long val;
->>> +       char *sbegin;
->>> +       char *elem;
->>> +       char *s;
->>> +       int ret, len = 0;
->>> +       bool odd = true;
->>> +
->>> +       sbegin = kstrndup(buf, size, GFP_KERNEL);
->>> +       if (!sbegin)
->>> +               return -ENOMEM;
->>> +
->>> +       /*
->>> +        * Trim trailing newline, if the remaining string is empty,
->>> +        * clear the pattern.
->>> +        */
->>> +       s = strstrip(sbegin);
->>> +       if (!*s) {
->>> +               ret = led_cdev->pattern_clear(led_cdev);
->>> +               goto out;
->>> +       }
->>> +
->>> +       pattern = kcalloc(size, sizeof(*pattern), GFP_KERNEL);
->>> +       if (!pattern) {
->>> +               ret = -ENOMEM;
->>> +               goto out;
->>> +       }
->>> +
->>> +       /* Parse out the brightness & delta_t touples */
->>> +       while ((elem = strsep(&s, " ")) != NULL) {
->>> +               ret = kstrtoul(elem, 10, &val);
->>> +               if (ret)
->>> +                       goto out;
->>> +
->>> +               if (odd) {
->>> +                       pattern[len].brightness = val;
->>> +               } else {
->>> +                       pattern[len].delta_t = val;
->>> +                       len++;
->>> +               }
->>> +
->>> +               odd = !odd;
->>> +       }
->>> +
->>> +       /*
->>> +        * Fail if we didn't find any data points or last data point was
->>> partial
->>> +        */
->>> +       if (!len || !odd) {
->>> +               ret = -EINVAL;
->>> +               goto out;
->>> +       }
->>> +
->>> +       ret = led_cdev->pattern_set(led_cdev, pattern, len);
->>> +
->>> +out:
->>> +       kfree(pattern);
->>> +       kfree(sbegin);
->>> +       return ret < 0 ? ret : size;
->>> +}
->>> +static DEVICE_ATTR_RW(pattern);
->>> +
->>> +static umode_t led_class_attrs_mode(struct kobject *kobj,
->>> +                                   struct attribute *attr, int index)
->>> +{
->>> +       struct device *dev = container_of(kobj, struct device, kobj);
->>> +       struct led_classdev *led_cdev = dev_get_drvdata(dev);
->>> +
->>> +       if (attr == &dev_attr_brightness.attr)
->>> +               return attr->mode;
->>> +       if (attr == &dev_attr_max_brightness.attr)
->>> +               return attr->mode;
->>> +       if (attr == &dev_attr_pattern.attr && led_cdev->pattern_set)
->>> +               return attr->mode;
->>> +
->>> +       return 0;
->>> +}
->
->
->>>   #ifdef CONFIG_LEDS_TRIGGERS
->>>   static DEVICE_ATTR(trigger, 0644, led_trigger_show, led_trigger_store);
->>>   static struct attribute *led_trigger_attrs[] = {
->>> @@ -88,11 +205,13 @@ static ssize_t max_brightness_show(struct device
->>> *dev,
->>>   static struct attribute *led_class_attrs[] = {
->>>          &dev_attr_brightness.attr,
->>>          &dev_attr_max_brightness.attr,
->>> +       &dev_attr_pattern.attr,
->>>          NULL,
->>>   };
->>>
->>>   static const struct attribute_group led_group = {
->>>          .attrs = led_class_attrs,
->>> +       .is_visible = led_class_attrs_mode,
->
->
-> This should not be needed if we'll validate pattern ops
-> in led_classdev_register().
-
-I am afraid we can not remove it. If the driver did not supply
-pattern_set/get/clear, we should not still show the pattern interfaces
-for userspace. Or am I missed anything?
-
-Thanks for your comments.
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-Baolin Wang
-Best Regards
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
