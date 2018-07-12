@@ -2,144 +2,111 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0389C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:27:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0777C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DEB02147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:27:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51596208E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:31:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="HG99Uqge"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DEB02147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="YfZ5Ffz0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51596208E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732425AbeGLPhp (ORCPT
+        id S1732390AbeGLPlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 11:37:45 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:49831 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbeGLPho (ORCPT
+        Thu, 12 Jul 2018 11:41:31 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33980 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727094AbeGLPla (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:37:44 -0400
-Received: from mail-ua0-f169.google.com (mail-ua0-f169.google.com [209.85.217.169]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w6CFRYHT026447;
-        Fri, 13 Jul 2018 00:27:35 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w6CFRYHT026447
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1531409255;
-        bh=e9n13aSF4Fm6bkSeoWhOXLx3/CGcLyV4SWKKZqs5QB8=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=HG99Uqgejcab6r6vSjdQkU7A2YsLDPjMC3wjGJEA5E5gsY/XCoUEX2mwP+Jyndtlx
-         Ii71dtk7F1hBqjFh97Yz2RWYwSHgKzzg9EZf3ySDS8wu45EVURB3RYNHOr7hCgy55o
-         AYrI1tMbyBGMAk+AKweaZSV2ULTzuNBenvJfhHTIClXqh+LuLyFnKjuehHT+ad38Pu
-         kLqCY4tmTEeRaOZbz1fUZXQOBhIe0V3qLVXCKEN2qCCjgVvgIGS24DLofjv3nKEoPW
-         QWLd/dy0/a3g2BxGZMC725Kk/gPpyeYLSCkhZcHEu9aQqNCq2aXJo3G03zvogegne5
-         6XDha3b2sS2fA==
-X-Nifty-SrcIP: [209.85.217.169]
-Received: by mail-ua0-f169.google.com with SMTP id q12-v6so18682153ual.2;
-        Thu, 12 Jul 2018 08:27:35 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHvvNBeXC3r+7UuQpc47RAXn4ihzEh+Px0YpO5PI61CV33ZMhHY
-        htITfez9KL9/f+B8POP5UgFhROAT8LsNjJ4LtoE=
-X-Google-Smtp-Source: AAOMgpe5y5MHRW7CpV5h0rrVib2VGe1tGcBDIMxy3uHNMiwF7XN41vFe1bcHYHypOqCMTvCtHPeFv2wtZg+4sc/g9nQ=
-X-Received: by 2002:ab0:70a9:: with SMTP id q9-v6mr1674889ual.141.1531409254359;
- Thu, 12 Jul 2018 08:27:34 -0700 (PDT)
+        Thu, 12 Jul 2018 11:41:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Rbfai1TL8gYTh2J/bhDypnUhnLjvHpJJmemItE7Et44=; b=YfZ5Ffz0Fbo3gMaCcV9rrT7ua
+        o9CyHggVZpGKNp0H8jSOA9pl2ZQWMrzhP3LWNQYUtTMbFsyc7yrDRNAwkUPYH/JQzK0My7appnNqx
+        XVdPQINspukvY6lX4ZK/4njexa2LKkwe9fSoowI1QnxOU+vUn7CFgNLhgUzgnqBgUMyX8=;
+Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fddYw-0003nG-5s; Thu, 12 Jul 2018 15:31:22 +0000
+Received: from broonie by debutante with local (Exim 4.91)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1fddYv-0006DP-De; Thu, 12 Jul 2018 16:31:21 +0100
+Date:   Thu, 12 Jul 2018 16:31:21 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Marco Felsch <m.felsch@pengutronix.de>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        fabio.estevam@nxp.com, Anson.Huang@nxp.com, kernel@pengutronix.de,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pfuze100: add optional pfuze-disable-sw
+ binding
+Message-ID: <20180712153121.GF10369@sirena.org.uk>
+References: <20180712110240.3006-1-m.felsch@pengutronix.de>
+ <20180712110240.3006-2-m.felsch@pengutronix.de>
 MIME-Version: 1.0
-Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 08:26:53
- -0700 (PDT)
-In-Reply-To: <2d0bd4a4-98cb-380e-36c4-e46dc5d53991@molgen.mpg.de>
-References: <89f15a49-d18b-6b01-adb7-1385f2844cb6@molgen.mpg.de>
- <557a23f8-8993-d832-3290-37481c37e340@molgen.mpg.de> <2d0bd4a4-98cb-380e-36c4-e46dc5d53991@molgen.mpg.de>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 13 Jul 2018 00:26:53 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATB_hR_S4zQQ-jv=NQEnvNfkSPrZ6xbRE8bKNjNO6VTtQ@mail.gmail.com>
-Message-ID: <CAK7LNATB_hR_S4zQQ-jv=NQEnvNfkSPrZ6xbRE8bKNjNO6VTtQ@mail.gmail.com>
-Subject: Re: [PATCH v3] tools/build/Build.include: fix # escaping in .cmd
- files for future Make
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        zibeon@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="m1UC1K4AOz1Ywdkx"
+Content-Disposition: inline
+In-Reply-To: <20180712110240.3006-2-m.felsch@pengutronix.de>
+X-Cookie: Kleeneness is next to Godelness.
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-07-10 23:50 GMT+09:00 Paul Menzel <pmenzel@molgen.mpg.de>:
-> Date: Tue, 5 Jun 2018 19:00:22 +0200
->
-> In 2016 GNU Make made a backwards incompatible change to the way '#'
-> characters were handled in Makefiles when used inside functions or
-> macros:
->
-> http://git.savannah.gnu.org/cgit/make.git/commit/?id=c6966b323811c37acedff05b57
->
-> Due to this change, when attempting to run `make prepare' I get a
-> spurious make syntax error:
->
->     /home/earnest/linux/tools/objtool/.fixdep.o.cmd:1: *** missing separator.  Stop.
->
-> When inspecting `.fixdep.o.cmd' it includes two lines which use
-> unescaped comment characters at the top:
->
->     \# cannot find fixdep (/home/earnest/linux/tools/objtool//fixdep)
->     \# using basic dep data
->
-> This is because `tools/build/Build.include' prints these '\#'
-> characters:
->
->     printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
->     printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
->
-> This completes commit 9564a8cf (Kbuild: fix # escaping in .cmd files for
-> future Make).
->
-> Link: https://bugzilla.kernel.org/show_bug.cgi?id=197847
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
-> ---
 
+--m1UC1K4AOz1Ywdkx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Thu, Jul 12, 2018 at 01:02:39PM +0200, Marco Felsch wrote:
 
-Applied to linux-kbuild/fixes.  Thanks!
+> +Optional properties:
+> +- pfuze-disable-sw: Disable all unused switch regulators to save power
+> +  consumption. Attention, some platforms are using the switch regulators as DDR
+> +  ref or supply voltage. Mark these regulators as "regulator-always-on" to skip
+> +  disabling these regulators. If not specified, the driver simualtes the
+> +  disabling. This means the state of the regulator is set to 'disabled' but the
+> +  driver don't disable the regulator.
 
+This is a bit of a confused way of specifying things that depends on the
+Linux implementation, and the property sounds like a double negative
+too.  I'd say something like "pfuze-support-disable" and then explicitly
+say that this is a workaround for backwards compatibility.
 
-> v2: Add stable@vger.kernel.org
-> v3: Add tag PATCH to subject
->
->  tools/build/Build.include | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/build/Build.include b/tools/build/Build.include
-> index a4bbb984941d..d9048f145f97 100644
-> --- a/tools/build/Build.include
-> +++ b/tools/build/Build.include
-> @@ -63,8 +63,8 @@ dep-cmd = $(if $(wildcard $(fixdep)),
->             $(fixdep) $(depfile) $@ '$(make-cmd)' > $(dot-target).tmp;           \
->             rm -f $(depfile);                                                    \
->             mv -f $(dot-target).tmp $(dot-target).cmd,                           \
-> -           printf '\# cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
-> -           printf '\# using basic dep data\n\n' >> $(dot-target).cmd;           \
-> +           printf '$(pound) cannot find fixdep (%s)\n' $(fixdep) > $(dot-target).cmd; \
-> +           printf '$(pound) using basic dep data\n\n' >> $(dot-target).cmd;           \
->             cat $(depfile) >> $(dot-target).cmd;                                 \
->             printf '\n%s\n' 'cmd_$@ := $(make-cmd)' >> $(dot-target).cmd)
->
-> --
-> 2.16.2
->
+I'd also recommend changing the implementation patch to just register a
+different version of the desc and ops that just doesn't have the disable
+operation so that the framework knows what's going on.  While the
+current implementation works now there's the possibility that at some
+point in the future we might start relying on the disable actually
+having taken effect somehow and will get confused.  There's some
+existing drivers that optimize their resume paths if they know power
+wasn't removed.
 
+--m1UC1K4AOz1Ywdkx
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Best Regards
-Masahiro Yamada
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltHdEgACgkQJNaLcl1U
+h9CaAAf/UU9njCozGSkAnCo5ZtAkrPB4iKYggp6MKxZsOBJgAXqMRBdJrWlI58As
+aWTfq7UaLaaqOsumRWDt/NeX3Q39bRimIJaN0KXBWdFwUz/+/4x2NDpGAe9FQFPW
+S7l4SwVATYbdqQdeJi5QRDgyTJwrjrlTixK4P9LLB8gS49UwIDG/PbKfHIxBrNRG
+NPrZfavFaEEy8HZ4E0vmnNEJkrpTnzndsEBOi/mWT3CkaGpVUJRvUjDQgU+8bj1p
+VHv1AD0pX+eJdClr7oMdGJhcbUScZrXRD1cKs7zG8gSAAgvTG3muhoWvB1pLYLrt
+H7Fmx6YMLkVQ/L9KCPAsErpDhplZgw==
+=fT4z
+-----END PGP SIGNATURE-----
+
+--m1UC1K4AOz1Ywdkx--
