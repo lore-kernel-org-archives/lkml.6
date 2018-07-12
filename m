@@ -2,162 +2,121 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1871EA4F99
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A90DEA5250
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F89C21471
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:54:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2603C21471
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:54:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gNuF7tUe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F89C21471
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="ZrdmskWs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2603C21471
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727092AbeGLSFM (ORCPT
+        id S1727447AbeGLSFR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 14:05:12 -0400
-Received: from mail.efficios.com ([167.114.142.138]:55398 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbeGLSFK (ORCPT
+        Thu, 12 Jul 2018 14:05:17 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:33681 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbeGLSFQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 14:05:10 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 77560233C31;
-        Thu, 12 Jul 2018 13:54:33 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id BQIBqTAz1bAQ; Thu, 12 Jul 2018 13:54:33 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 302F4233C2D;
-        Thu, 12 Jul 2018 13:54:33 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 302F4233C2D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1531418073;
-        bh=iQEKUa+R2ouO896fhsniSMqxUXBRQ/tE0gbr8xXlCqw=;
-        h=From:To:Date:Message-Id;
-        b=gNuF7tUeG950gevnJnr9K2k2FacJncwv3MXEN04/b6pZ5Je6JgApgj1ToHESJCt60
-         NffOflWdRLrCl3FPislj3mpFOIJCvAX8StKr3A/c/IgZSlZt936nTAZg9LdhBDc6rF
-         AaM/3H2HCGYWfFeWo3/2vsdHGV9IuTs3pqDNlhbLLRiTjOA4nvbkKM7tZ9Pxz6Tto7
-         Q3KYRa8HlOL2/OJTVcLPB2zPigBm9prX1jwhiIgVdVEtPEpepUZEZWOUkfuGngokZx
-         pllXmKzUT8g2aUugcd5EcmtrKoXvn2S7+1+gG2qftTkpvgSprQe+qJCrRqy6CA+wZx
-         mlarhFjuV572g==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id jTHeqtS6gSxK; Thu, 12 Jul 2018 13:54:33 -0400 (EDT)
-Received: from raton.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 6542E233C26;
-        Thu, 12 Jul 2018 13:54:32 -0400 (EDT)
-From:   Francis Deslauriers <francis.deslauriers@efficios.com>
-To:     rostedt@goodmis.org, mhiramat@kernel.org, peterz@infradead.org
-Cc:     mathieu.desnoyers@efficios.com, linux-kernel@vger.kernel.org,
-        Francis Deslauriers <francis.deslauriers@efficios.com>
-Subject: [PATCH 2/2] selftest/ftrace: Move kprobe selftest function to separate compile unit
-Date:   Thu, 12 Jul 2018 13:54:13 -0400
-Message-Id: <1531418053-21414-3-git-send-email-francis.deslauriers@efficios.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531418053-21414-1-git-send-email-francis.deslauriers@efficios.com>
-References: <1500044315-9508-3-git-send-email-francis.deslauriers@efficios.com>
- <1531418053-21414-1-git-send-email-francis.deslauriers@efficios.com>
+        Thu, 12 Jul 2018 14:05:16 -0400
+Received: by mail-pf0-f193.google.com with SMTP id b17-v6so21037728pfi.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 10:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=/oLEOluK5VW8jRxl1ijH/HwWNUZeCrIQp22drECYiaY=;
+        b=ZrdmskWsYrHVOnG4cqx28imWxeqvTniaJOVZzdl8sS+oklXeM3rPillXdRhrnbX/hJ
+         TAdWmqSyYmLF64DnVppCTJe9OumLPXGttpBjoMPc75wzUVl/vEr9SkZBvJxVoA9RMUO+
+         vUYEjF6MvVlmCsojc1RG+y56SUZjYzLx+2r/nzKLCeDTP9yAp/P2UuAeejn1Lv6B5jFc
+         LGv7D1+krgFi3KYrqpa+hZKUlXon75ax9hV5EwSufs82SRExzlZ+5G4JQoAaRGEkXhQR
+         hrwmT2AxEf5oIXDpKmdwoZDgzvBlOqInhYAEDVP0TRXMnrw8nzfkNGGG3VuiBoxYT/c/
+         VcVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=/oLEOluK5VW8jRxl1ijH/HwWNUZeCrIQp22drECYiaY=;
+        b=BnYDFZ3JOE097RDM17lCgOO5CL/79K8kEgMq6cNHjGsnWhfZSpoZpmlVXSYh3aJJ3u
+         dXI/RQbazpprBpXLM7nuEI3sHQb8kK9MT/kUq8WnimilRFDKrSo/I/u7fe4bTGDUYxfn
+         y3p5gOCSB8I4qDhVtLCmMn3TJluXhT4JLgRmDCi1uiPfZnfRi1DSAmEHf2ETPivawPvx
+         zhHynN7F+HJfrji2dVN4nVbKHy3U7yIg3NQJRlMrY5o5Cll99c45VW65jt1KuCiI2Ja8
+         JWUqW3cLDM45NWtUINhhqssSPkiOr8Awhif7YBHwN+P86bxjl1OvSqJHZXucIDrRIacD
+         aOJg==
+X-Gm-Message-State: AOUpUlHVXZ6Jx9E+UBJqJi1P1EcTF4ZM8DVohaYCXh+ffugBaNux/h+V
+        W0YATaiweBvgKBZgrmmBxf8OOA==
+X-Google-Smtp-Source: AAOMgpdmoxGVxxJBBZkUgsbKi58hXSUrMdrD7NSceuIEIsw0wIEtHmIPrOtNqxMQBvdJF9+FS3crMg==
+X-Received: by 2002:a65:45cc:: with SMTP id m12-v6mr3011361pgr.160.1531418079280;
+        Thu, 12 Jul 2018 10:54:39 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b052:968:4f0:92ce:1385:5f3d? ([2600:1010:b052:968:4f0:92ce:1385:5f3d])
+        by smtp.gmail.com with ESMTPSA id b66-v6sm7797381pgc.15.2018.07.12.10.54.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 10:54:38 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for superblock creation [ver #9]
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <20180712165821.GY30522@ZenIV.linux.org.uk>
+Date:   Thu, 12 Jul 2018 10:54:36 -0700
+Cc:     David Howells <dhowells@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>, tycho@tycho.ws
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <719E8034-2E07-45C0-9B04-838431F5309F@amacapital.net>
+References: <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk> <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk> <7002.1531407244@warthog.procyon.org.uk> <338BC3C4-F3E7-48F0-A82E-2C7295B6640E@amacapital.net> <20180712165821.GY30522@ZenIV.linux.org.uk>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move selftest function to its own compile unit so it can be compiled
-with the ftrace cflags (CC_FLAGS_FTRACE) allowing it to be probed
-during the ftrace startup tests.
 
-Signed-off-by: Francis Deslauriers <francis.deslauriers@efficios.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
----
- kernel/trace/Makefile                |  5 +++++
- kernel/trace/trace_kprobe.c          | 12 +-----------
- kernel/trace/trace_kprobe_selftest.c | 10 ++++++++++
- kernel/trace/trace_kprobe_selftest.h |  7 +++++++
- 4 files changed, 23 insertions(+), 11 deletions(-)
- create mode 100644 kernel/trace/trace_kprobe_selftest.c
- create mode 100644 kernel/trace/trace_kprobe_selftest.h
 
-diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-index e2538c7..e38771e 100644
---- a/kernel/trace/Makefile
-+++ b/kernel/trace/Makefile
-@@ -13,6 +13,11 @@ obj-y += trace_selftest_dynamic.o
- endif
- endif
- 
-+ifdef CONFIG_FTRACE_STARTUP_TEST
-+CFLAGS_trace_kprobe_selftest.o = $(CC_FLAGS_FTRACE)
-+obj-$(CONFIG_KPROBE_EVENTS) += trace_kprobe_selftest.o
-+endif
-+
- # If unlikely tracing is enabled, do not trace these files
- ifdef CONFIG_TRACING_BRANCHES
- KBUILD_CFLAGS += -DDISABLE_BRANCH_PROFILING
-diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 952dc2a..d12be53 100644
---- a/kernel/trace/trace_kprobe.c
-+++ b/kernel/trace/trace_kprobe.c
-@@ -23,6 +23,7 @@
- #include <linux/rculist.h>
- #include <linux/error-injection.h>
- 
-+#include "trace_kprobe_selftest.h"
- #include "trace_probe.h"
- 
- #define KPROBE_EVENT_SYSTEM "kprobes"
-@@ -1560,17 +1561,6 @@ fs_initcall(init_kprobe_trace);
- 
- 
- #ifdef CONFIG_FTRACE_STARTUP_TEST
--/*
-- * The "__used" keeps gcc from removing the function symbol
-- * from the kallsyms table. 'noinline' makes sure that there
-- * isn't an inlined version used by the test method below
-- */
--static __used __init noinline int
--kprobe_trace_selftest_target(int a1, int a2, int a3, int a4, int a5, int a6)
--{
--	return a1 + a2 + a3 + a4 + a5 + a6;
--}
--
- static __init struct trace_event_file *
- find_trace_probe_file(struct trace_kprobe *tk, struct trace_array *tr)
- {
-diff --git a/kernel/trace/trace_kprobe_selftest.c b/kernel/trace/trace_kprobe_selftest.c
-new file mode 100644
-index 0000000..16548ee
---- /dev/null
-+++ b/kernel/trace/trace_kprobe_selftest.c
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Function used during the kprobe self test. This function is in a separate
-+ * compile unit so it can be compile with CC_FLAGS_FTRACE to ensure that it
-+ * can be probed by the selftests.
-+ */
-+int kprobe_trace_selftest_target(int a1, int a2, int a3, int a4, int a5, int a6)
-+{
-+	return a1 + a2 + a3 + a4 + a5 + a6;
-+}
-diff --git a/kernel/trace/trace_kprobe_selftest.h b/kernel/trace/trace_kprobe_selftest.h
-new file mode 100644
-index 0000000..4e10ec4
---- /dev/null
-+++ b/kernel/trace/trace_kprobe_selftest.h
-@@ -0,0 +1,7 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Function used during the kprobe self test. This function is in a separate
-+ * compile unit so it can be compile with CC_FLAGS_FTRACE to ensure that it
-+ * can be probed by the selftests.
-+ */
-+int kprobe_trace_selftest_target(int a1, int a2, int a3, int a4, int a5, int a6);
--- 
-2.7.4
+> On Jul 12, 2018, at 9:58 AM, Al Viro <viro@ZenIV.linux.org.uk> wrote:
+>=20
+>> On Thu, Jul 12, 2018 at 09:23:22AM -0700, Andy Lutomirski wrote:
+>>=20
+>> As a straw man, I suggest:
+>>=20
+>> fsconfigure(contextfd, ADD_BLOCKDEV, dfd, path, flags);
+>>=20
+>> fsconfigure(contextfd, ADD_OPTION, 0, =E2=80=9Cfoo=3Dbar=E2=80=9D, flags)=
+;
+>=20
+> Bollocks.  First of all, block device *IS* a fucking option.
+> Always had been.  It's not even that it's passed as a separate
+> argument for historical reasons - just look at NFS.  That argument
+> is a detached part of options, parsed (yes, *parsed*) by filesystem
+> in question in whatever way it prefers.
 
+Fine, then generalize it. fsconfigure(context, ADD_FD, =E2=80=9Csome fs-spec=
+ific string explaining what=E2=80=99s going on=E2=80=9D, fd);  The point bei=
+ng that there are tons of cases where the filesystem wants to identify some b=
+acking store by some device node, and it seems like we should support someth=
+ing along the lines of a modern *at interface.
+
+If I=E2=80=99m writing a daemon that deals with filesystems, I don=E2=80=99t=
+ want an API that looks like do_god_knows_what(context, =E2=80=9Cfilesystem s=
+pecific string that may contain a path to a device node or a network address=
+=E2=80=9D). That API will be a pain to use, since that opaque string may com=
+e from some random config file and I have no clue what it does. If I want to=
+ pass a device node or other object to a filesystem, I want to pass an fd (s=
+o I can use openat, SCM_CREDS, etc), and I want it to be crystal clear that I=
+=E2=80=99m passing some object in. And if I tell a filesystem to access the n=
+etwork, I want it to be entirely clear which network namespace is in use.
+
+I realize that doing this right is tricky when there are lots of legacy file=
+systems that parse opaque strings. That=E2=80=99s fine. We can convert thing=
+s slowly.
