@@ -6,157 +6,106 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD5EC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C0AEC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E83C21476
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:16:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E83C21476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E69A820C0C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 05:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69A820C0C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbeGLFYL (ORCPT
+        id S1726713AbeGLFcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 01:24:11 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:40033 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbeGLFYL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 01:24:11 -0400
-Received: by mail-io0-f193.google.com with SMTP id l14-v6so16901954iob.7
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 22:16:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=yuTVIKPvEjiKRA0lzDb1PjMHgODm4WwfzymfkmsvDHA=;
-        b=dQfPYVlCS+Lng0p47ac6wW9gNM0KHCsed4JF1zIPIOv2ktnJE7c1OfZm1mWbURwZWI
-         Ad89He5jntW3nP/uofrbNbKnCxi2JGi+TaPrUQ5VEb2PiJwo8U9EPHgg7+MsThWuZ49E
-         Ps9+KELYCaxliW7HJrU9nr72Jzc0uVwQT7xAVJNv0TUK+vXBlOV1d8XsV3bm6hy1RI0C
-         m80nctUFBH/BqWA9Ol4dbwDTWIBF/klbvMVfTVX+3hGzhU6gOJvmoDxvnwUxhSGWQdRX
-         lJ/2BfE9fKFB2zXMNLvYIUDKLjBYlTcKFJY2+ZxvK5itvFS/ggZKZIJzi3RtzQ3m0B26
-         ghTg==
-X-Gm-Message-State: APt69E34WcIStzsMpPkbl3KbG+k87qgbt38oRy/8CInGg26UHJbs7Njt
-        u+Q7JY5O8dLl7cSZZtsJGg6ev/cbui+uXImxcGiWUg==
-X-Google-Smtp-Source: AAOMgpeLdnQ2cfShgo4lV2XtXTK2LXk1vTNENWeRgwAXZzDLCWbynXkZzDLxnLX4MEACVWcMFoYLjIJoLEsJbsCKXIc=
-X-Received: by 2002:a6b:dd01:: with SMTP id f1-v6mr26274459ioc.45.1531372579475;
- Wed, 11 Jul 2018 22:16:19 -0700 (PDT)
+        Thu, 12 Jul 2018 01:32:36 -0400
+Received: from ozlabs.org ([203.11.71.1]:57581 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725786AbeGLFcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 01:32:36 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41R4BJ6tf8z9s01;
+        Thu, 12 Jul 2018 15:24:40 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Oscar Salvador <osalvador.vilardaga@gmail.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        mhocko@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, mm-commits@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, bhe@redhat.com,
+        aneesh.kumar@linux.ibm.com, khandual@linux.vnet.ibm.com
+Subject: Re: Boot failures with "mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER" on powerpc (was Re: mmotm 2018-07-10-16-50 uploaded)
+In-Reply-To: <CAOXBz7ixEK85S-029XrM4+g4fxtSY6_tke0gcQ-hOXFCb7wcZg@mail.gmail.com>
+References: <20180710235044.vjlRV%akpm@linux-foundation.org> <87lgai9bt5.fsf@concordia.ellerman.id.au> <20180711133737.GA29573@techadventures.net> <CAGM2reYsSi5kDGtnTQASnp1v49T8Y+9o_pNxmSq-+m68QhF2Tg@mail.gmail.com> <CAOXBz7ixEK85S-029XrM4+g4fxtSY6_tke0gcQ-hOXFCb7wcZg@mail.gmail.com>
+Date:   Thu, 12 Jul 2018 15:24:38 +1000
+Message-ID: <87efg981rd.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Received: by 2002:a4f:5882:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 22:16:18
- -0700 (PDT)
-In-Reply-To: <20180712144102.746cb560@canb.auug.org.au>
-References: <20180712113724.413e4a3f@canb.auug.org.au> <CAHc6FU7jM=j6c028ycJS_NiaeOYMH3ofNeTJZxJ78iphujL0WQ@mail.gmail.com>
- <20180712144102.746cb560@canb.auug.org.au>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Thu, 12 Jul 2018 07:16:18 +0200
-Message-ID: <CAHc6FU6eTJvvRx3506v9f8Qo8mNZUgFqNYK6hz0N=cOYkx89Qw@mail.gmail.com>
-Subject: Re: linux-next: duplicate patches in the gfs2 and xfs trees
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        David Chinner <david@fromorbit.com>, linux-xfs@vger.kernel.org,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
-
-On 12 July 2018 at 06:41, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> Hi Andreas,
+Oscar Salvador <osalvador.vilardaga@gmail.com> writes:
+> El dc., 11 jul. 2018 , 15:56, Pavel Tatashin <pasha.tatashin@oracle.com> va
+> escriure:
 >
-> On Thu, 12 Jul 2018 04:30:07 +0200 Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>> I am OK, if this patch is removed from Baoquan's series. But, I would
+>> still like to get rid of CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER, I
+>> can work on this in my sparse_init re-write series. ppc64 should
+>> really fallback safely to small chunks allocs, and if it does not
+>> there is some existing bug. Michael please send the config that you
+>> used.
 >>
->> this is what I'm seeing (git log --pretty=oneline --abbrev-commit
->> --graph ^origin/master gfs2/for-next):
+>> Thank you,
+>> Pavel
+>> On Wed, Jul 11, 2018 at 9:37 AM Oscar Salvador
+>> <osalvador@techadventures.net> wrote:
+>> >
+>> > On Wed, Jul 11, 2018 at 10:49:58PM +1000, Michael Ellerman wrote:
+>> > > akpm@linux-foundation.org writes:
+>> > > > The mm-of-the-moment snapshot 2018-07-10-16-50 has been uploaded to
+>> > > >
+>> > > >    http://www.ozlabs.org/~akpm/mmotm/
+>> > > ...
+>> > >
+>> > > > * mm-sparse-add-a-static-variable-nr_present_sections.patch
+>> > > > * mm-sparsemem-defer-the-ms-section_mem_map-clearing.patch
+>> > > > * mm-sparsemem-defer-the-ms-section_mem_map-clearing-fix.patch
+>> > > > *
+>> mm-sparse-add-a-new-parameter-data_unit_size-for-alloc_usemap_and_memmap.patch
+>> > > > * mm-sparse-optimize-memmap-allocation-during-sparse_init.patch
+>> > > > *
+>> mm-sparse-optimize-memmap-allocation-during-sparse_init-checkpatch-fixes.patch
+>> > >
+>> > > > * mm-sparse-remove-config_sparsemem_alloc_mem_map_together.patch
+>> > >
+>> > > This seems to be breaking my powerpc pseries qemu boots.
+>> > >
+>> > > The boot log with some extra debug shows eg:
+>> > >
+>> > >   $ make pseries_le_defconfig
+>> >
+>> > Could you please share the config?
+>> > I was not able to find such config in the kernel tree.
 >>
->> * f79caf101801 (gfs2/for-next) gfs2: use iomap_readpage for blocksize
->> == PAGE_SIZE
->> * af58827ee500 gfs2: Use iomap for stuffed direct I/O reads
->> *   c38e838abe42 Merge branch 'iomap-4.19-merge' into linux-gfs2/for-next
->> |\
->> | * 806a1477b10a (xfs/iomap-4.19-merge) iomap: add inline data support
->> to iomap_readpage_actor
->> | * ec181f6782d8 iomap: support direct I/O to inline data
->> | * 09230435dffd iomap: refactor iomap_dio_actor
->> | * c03cea42149d iomap: add initial support for writes without buffer heads
->> | * 72b4daa24129 iomap: add an iomap-based readpage and readpages implementation
->> * | 9ab5aa4f4e10 gfs2: fallocate_chunk: Always initialize struct iomap
->> * | 2e2834ef1797 GFS2: Fix recovery issues for spectators
->> * |   5db0147b887e Merge branch 'iomap-write' into linux-gfs2/for-next
->> |\ \
->> | * | 025d0e7f73c6 (gfs2/iomap-write) gfs2: Remove gfs2_write_{begin,end}
->> | * | 967bcc91b044 gfs2: iomap direct I/O support
->> | * | bcfe94139a45 gfs2: gfs2_extent_length cleanup
->> | * | 64bc06bb32ee gfs2: iomap buffered write support
->> | * | d505a96a3b16 gfs2: Further iomap cleanups
->> | |/
->> | * e184fde6f3f5 iomap: add private pointer to struct iomap
->> | * 63899c6f8851 iomap: add a page_done callback
->> | * 19e0c58f6552 iomap: generic inline data handling
->> | * ebf00be37de3 iomap: complete partial direct I/O writes synchronously
->> | * 3d7b6b21f6c5 iomap: mark newly allocated buffer heads as new
->> | * a6d639da63ae fs: factor out a __generic_write_end helper
->> * 3beacef8093b fs: gfs2: Adding new return type vm_fault_t
->> * d80ff78468e4 gfs2: using posix_acl_xattr_size instead of posix_acl_to_xattr
->> * e904f3d486f9 gfs2: Don't reject a supposedly full bitmap if we have
->> blocks reserved
->> * d1475c07f7ce GFS2: rgrp free blocks used incorrectly
->> * b7eba890a228 gfs2: Eliminate redundant ip->i_rgd
->> * 03f8c41c73da gfs2: Stop messing with ip->i_rgd in the rlist code
->> * ee9c7f9ae3d4 gfs2: call ktime_get_coarse_real_ts64() directly
->> * 00251a16d7f9 gfs2: Minor clarification to __gfs2_punch_hole
->> * 9e1a9ecd13b9 gfs2: Don't withdraw under a spin lock
->> * f85c10e24ab9 gfs2: eliminate rs_inum and reduce the size of gfs2 inodes
 >>
->> Commit e184fde6f3f5 "iomap: add private pointer to struct iomap" is on
->> xfs/iomap-4.19-merge. That was my initial merge from
->> xfs/iomap-4.19-merge, but it was a fast-forward so there is no merge
->> commit. I've then merged our iomap-write branch into for-next, with
->> two additional commits on top. Then comes the rest of
->> xfs/iomap-4.19-merge (that branch has moved ahead in the meantime),
->> again with two more commits on top.
->>
->> There are no rebased commits, you're looking at the exact same commits.
->
-> The problem is that commits
->
->   a6d639da63ae fs: factor out a __generic_write_end helper
->
-> to
->
->   806a1477b10a (xfs/iomap-4.19-merge) iomap: add inline data support
->
-> have been rebased in the xfs tree from a base of v4.18-rc1 to
-> v4.18-rc4, so that those patches now appear twice in linux-next where I
-> have merged the gfs2 tree and the xfs tree.
+> I just roughly check, but if I checked the right place,
+> vmemmap_populated() checks for the section to contain the flags we are
+> setting in sparse_init_one_section().
 
-Ah, I see now. It's xfs/for-next that contains those rebased commits
-from xfs/iomap-4.19-merge.
+Yes.
 
-> This has caused a few
-> conflicts today as there are more changes to the same files affected by
-> those commits in the xfs tree. to iomap_readpage_actor
->
-> What should have happened is that those commits should not have been
-> rebased, so either the xfs tree needs rebuilding to use the old
-> commits, or your tree needs to be rebuilt using the new commits from
-> the xfs tree.  This is why we do not like the rebasing of published
-> trees (especially when a subset of the tree is shared with other
-> developers).
->
-> Also, if you are going to merge (part of) another tree you need to make
-> sure that the other maintainer will not do a rebase of it (I assume
-> that this was probably talked about).
+> But with this patch, we populate first everything, and then we call
+> sparse_init_one_section() in sparse_init().
+> As I said I could be mistaken because I just checked the surface.
 
-Indeed, the idea of setting up xfs/iomap-4.19-merge was to have a
-common base that xfs/for-next and gfs2/for-next could both merge from.
-Darrick, could you please fix xfs/for-next?
+Yeah I think that's correct.
 
-Thanks a lot,
-Andreas
+This might just be a bug in our code, let me look at it a bit.
+
+cheers
