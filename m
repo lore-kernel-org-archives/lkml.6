@@ -2,121 +2,162 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B9D4C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:13:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43F0C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 041F42147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:13:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A10A1213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:14:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="e+2Kje6r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 041F42147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AhhyUlOu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A10A1213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732357AbeGLOXD (ORCPT
+        id S1732412AbeGLOXr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 10:23:03 -0400
-Received: from mail-qt0-f171.google.com ([209.85.216.171]:45501 "EHLO
-        mail-qt0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726961AbeGLOXD (ORCPT
+        Thu, 12 Jul 2018 10:23:47 -0400
+Received: from mail-it0-f66.google.com ([209.85.214.66]:53090 "EHLO
+        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727002AbeGLOXq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 10:23:03 -0400
-Received: by mail-qt0-f171.google.com with SMTP id y5-v6so24155234qti.12
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 07:13:17 -0700 (PDT)
+        Thu, 12 Jul 2018 10:23:46 -0400
+Received: by mail-it0-f66.google.com with SMTP id p4-v6so7019779itf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 07:14:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=c6e5mv5qZbiMykO/PA+TCD2xH5BtimFkI3u0CakJflw=;
-        b=e+2Kje6rk9ydoXyJ0AgIX6ccVNlw2yGeqreC40agwvm8iEYEp6G9U2pGbvP3C0yLTJ
-         twjWzKZ+9ZbS6y9JdgeqoDe3SXuwu5a3rKHNdFvXkirHHvwNNdlmvkaJEZp0uTXhqlZU
-         QcfLwmp2h5y0ixePMSgY4LHvFMSlqYCcBPe4Qd2+i+T42Lzxew50QOaV8DHtZpwFXb2c
-         7S4rF/9zZC9veWdEpdWNtsFWb8aXCe7mtftcGdtqKwd4f53RSOAZ9dY5bmpy2tbxDpho
-         cl0xv8di3VX5jTEFFXXVW/0TRjBjDek63LvVPa4U78ntAQZ3GmnvKxmdoGyz/Je0uL72
-         iDqQ==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=KvfAo8SDQ5+PyIA7ArOk5rdKdqRapsK9s15MKvPJWLo=;
+        b=AhhyUlOuYBx9a4EDtRvqU3F7pJofU4HAoAI9k038G9Fmhu5l94ZMxlgc9b9CtSNcfI
+         NqTBsoZUJzjgzzYzvfmWw4BLk7pwgIDwFUxK9BoT3ukVJvZnLh3PktdglHbN0IpA9cHk
+         sq7YMwqaU9xh83v2jjcRHKHpbEXrmgGxbbizU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=c6e5mv5qZbiMykO/PA+TCD2xH5BtimFkI3u0CakJflw=;
-        b=NUFIAE2JlgvQk9t8I5AGkBYVz6AMXpqiEG372caWGrLPw2P3c2RUsEeqAAUVaiV4Yb
-         xPSwSJvmgk7Y/OvbI0Wzc2WysStCZfqTDA28auDccTYM0rWYXLBaPyVYS1UM8JlVxMiA
-         W5uetuBu6KM6HkJvV0LEemg9xdojuf2B0vFrDD01ZSziu/dWpoAnbdQ/jQQi/MQwyQ1F
-         e/P+gHyTJSIQL2gOIntjv15PGURaLTglysrB5MWkd77iA1ohQN6PupeIzNqLGHwGSryx
-         YAO/eXZ27eiiFPb3oldg42rGS8lHjVDKq2C6diK3z30YitoDe463p7ow1GH5uGR0Y6HZ
-         ioZA==
-X-Gm-Message-State: AOUpUlF9Zkx/MJ5RlU87/53zGKOlcIoevA6WDJo8AJfuaXhJzMresjNs
-        85inL1fWb/Gj0aWENIMlOhRtO8h6
-X-Google-Smtp-Source: AAOMgpdNtgctu3cVNC7+bHN/NHM+ZJLVL93y24jUbB819rLvwC5OF+u+YpM07yHFq8x+S2k3CZLQxg==
-X-Received: by 2002:a0c:a9c4:: with SMTP id c4-v6mr2526396qvb.119.1531404797207;
-        Thu, 12 Jul 2018 07:13:17 -0700 (PDT)
-Received: from cisco.cisco.com ([8.24.24.129])
-        by smtp.gmail.com with ESMTPSA id f2-v6sm4671085qkm.51.2018.07.12.07.13.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 12 Jul 2018 07:13:16 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 08:13:14 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v4] uart: fix race between uart_put_char() and
- uart_shutdown()
-Message-ID: <20180712141314.GB13192@cisco.cisco.com>
-References: <20180706212220.GC3583@cisco.lan>
- <20180711160744.32074-1-tycho@tycho.ws>
- <CAHp75VfQe4p_z1uAoq87F6zqaCbqKG1ZgHeK55fjwkFGNtMK0A@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=KvfAo8SDQ5+PyIA7ArOk5rdKdqRapsK9s15MKvPJWLo=;
+        b=uYZCIOxOl575qGGY2QP/wUe/6yJN42BTWiZbO/9j68noqU0HK9m2zQJ2bfeKzl+iyI
+         wvb4C8IbpQEliPN35/81MYQzpU1DbfS/UJhwehqo/CBfIqCh5zST0zgjHtv0QOUEszHK
+         zVXBR5xzNuZhKtY8NWZ3e06sA41pgNGpaICgYajXSSjBSn/d8TjwYjLYwEoDiexelD7Y
+         Hka1J4ds67MO0Bk1BhdGsCT+UeYdQbwvnaJPQGhD+2x4DAu7lg3HYSkL5w7xSi9D6hO3
+         CYDmn70qKhIrWE/W1huSCZtF15ejf59+olUk9KnDfu7mTEX4h7gMi4SK/e05m5iD4Tji
+         4HWg==
+X-Gm-Message-State: AOUpUlFfr3Z9XsFdzsfguNLJ1lrDCorCj0GG9qui50YyqL/ZFrqjuOMn
+        qfs8lqcXuKzuVQi6V+HWsy+w+HFB/CbxlvROeFOxbw==
+X-Google-Smtp-Source: AAOMgpemUgTwBhfMPkBeDydynTFvFN2xPNWS7R7j3kEalx7fX/eZiFtPHSoCU9bgOFzl1+Jon17fXInREcummyfphaw=
+X-Received: by 2002:a24:6196:: with SMTP id s144-v6mr1450084itc.68.1531404841008;
+ Thu, 12 Jul 2018 07:14:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfQe4p_z1uAoq87F6zqaCbqKG1ZgHeK55fjwkFGNtMK0A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 07:14:00
+ -0700 (PDT)
+In-Reply-To: <20180712133220.GA21647@arm.com>
+References: <20180709234229.20181-1-takahiro.akashi@linaro.org>
+ <20180709234229.20181-3-takahiro.akashi@linaro.org> <93c42065-bece-a4c7-ed99-5e98f91315a6@arm.com>
+ <CAKv+Gu_fajf3_P0wKpdV34Ungu=fn0=WG1U_MSQ9WF_2GFRfDA@mail.gmail.com> <20180712133220.GA21647@arm.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 12 Jul 2018 16:14:00 +0200
+Message-ID: <CAKv+Gu_+XcOFfJBhVaQp3yUZ36Q5gS47vJzFMniwQ2DZp062tw@mail.gmail.com>
+Subject: Re: [PATCH v3.1 2/4] efi/arm: preserve early mapping of UEFI memory
+ map longer for BGRT
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     James Morse <james.morse@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Baicar, Tyler" <tbaicar@codeaurora.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Dave Young <dyoung@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Al Stone <al.stone@linaro.org>,
+        Graeme Gregory <graeme.gregory@linaro.org>,
+        Hanjun Guo <hanjun.guo@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kexec Mailing List <kexec@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy,
+On 12 July 2018 at 15:32, Will Deacon <will.deacon@arm.com> wrote:
+> On Tue, Jul 10, 2018 at 08:39:16PM +0200, Ard Biesheuvel wrote:
+>> On 10 July 2018 at 19:57, James Morse <james.morse@arm.com> wrote:
+>> > Hi Ard,
+>> >
+>> > On 10/07/18 00:42, AKASHI Takahiro wrote:
+>> >> From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>> >>
+>> >> The BGRT code validates the contents of the table against the UEFI
+>> >> memory map, and so it expects it to be mapped when the code runs.
+>> >>
+>> >> On ARM, this is currently not the case, since we tear down the early
+>> >> mapping after efi_init() completes, and only create the permanent
+>> >> mapping in arm_enable_runtime_services(), which executes as an early
+>> >> initcall, but still leaves a window where the UEFI memory map is not
+>> >> mapped.
+>> >>
+>> >> So move the call to efi_memmap_unmap() from efi_init() to
+>> >> arm_enable_runtime_services().
+>> >
+>> > I don't have a machine that generates a BGRT, but I can see that efi_mem_type()
+>> > call in efi_bgrt_init() would cause the same problems we have with kexec and acpi.
+>> >
+>>
+>> I'm not sure I follow. The BGRT table only contains natively aligned
+>> fields, so the alignment faults should not occur when accessing this
+>> table after kexec. The issue addressed by this patch is that
+>> efi_mem_type() bails when called while EFI_MEMMAP is cleared.
+>>
+>> >
+>> >> diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
+>> >> index b5214c143fee..388a929baf95 100644
+>> >> --- a/drivers/firmware/efi/arm-init.c
+>> >> +++ b/drivers/firmware/efi/arm-init.c
+>> >> @@ -259,7 +259,6 @@ void __init efi_init(void)
+>> >>
+>> >>       reserve_regions();
+>> >>       efi_esrt_init();
+>> >> -     efi_memmap_unmap();
+>> >>
+>> >>       memblock_reserve(params.mmap & PAGE_MASK,
+>> >>                        PAGE_ALIGN(params.mmap_size +
+>> >> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+>> >> index 5889cbea60b8..59a8c0ec94d5 100644
+>> >> --- a/drivers/firmware/efi/arm-runtime.c
+>> >> +++ b/drivers/firmware/efi/arm-runtime.c
+>> >> @@ -115,6 +115,8 @@ static int __init arm_enable_runtime_services(void)
+>> >>               return 0;
+>> >>       }
+>> >>
+>> >> +     efi_memmap_unmap();
+>> >
+>> > This can get called twice if uefi_init() fails after setting the EFI_BOOT flag,
+>> > but this can only happen if the system table signature is wrong, (or we're out
+>> > of memory really early).
+>> >
+>>
+>> I guess we should check the EFI_MEMMAP attribute here as well then.
+>
+> Do you plan to spin a new version of this patch?
+>
 
-On Thu, Jul 12, 2018 at 12:03:08PM +0300, Andy Shevchenko wrote:
-> On Wed, Jul 11, 2018 at 7:07 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> 
-> > Anyway, since the lock is not acquired, if uart_shutdown() is called, the
-> > last chunk of that function may release state->xmit.buf before its assigned
-> > to null, and cause the race above.
-> >
-> > To fix it, let's lock uport->lock when allocating/deallocating
-> > state->xmit.buf in addition to the per-port mutex.
-> 
-> >     * use the result of uart_port_lock() in uart_shutdown() to avoid
-> >       uninitialized warning
-> >     * don't use the uart_port_lock/unlock macros in uart_port_startup,
-> >       instead test against uport directly; the compiler can't seem to "see"
-> >       through the macros/ref/unref calls to not warn about uninitialized
-> >       flags. We don't need to do a ref here since we hold the per-port
-> >       mutex anyway.
-> 
-> > +       if (uport)
-> > +               spin_lock_irqsave(&uport->lock, flags);
-> 
-> > +       if (uport)
-> > +               spin_unlock_irqrestore(&uport->lock, flags);
-> 
-> At some point it It was uart_port_lock()/uart_port_unlock(), and you
-> changed to simple spin lock. The macro also take reference to the
-> port. Do we aware about that here?
+Either that or fold in the hunk below.
 
-I don't think so, the commit message you quoted above says,
 
-> We don't need to do a ref here since we hold the per-port mutex
-> anyway.
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -110,7 +110,7 @@ static int __init arm_enable_runtime_services(void)
+ {
+        u64 mapsize;
 
-Cheers,
-
-Tycho
+-       if (!efi_enabled(EFI_BOOT)) {
++       if (!efi_enabled(EFI_BOOT) || !efi_enabled(EFI_MEMMAP)) {
+                pr_info("EFI services will not be available.\n");
+                return 0;
+        }
