@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 272E4C476E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E06A6C476E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D519D20842
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 976B120842
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 17:10:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dlMIlMUl";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dlMIlMUl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D519D20842
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DJ9QPMOy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DJ9QPMOy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 976B120842
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732471AbeGLRU2 (ORCPT
+        id S1732508AbeGLRUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:20:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56496 "EHLO
+        Thu, 12 Jul 2018 13:20:32 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56592 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727084AbeGLRU1 (ORCPT
+        with ESMTP id S1727084AbeGLRUb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:20:27 -0400
+        Thu, 12 Jul 2018 13:20:31 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E30CE60251; Thu, 12 Jul 2018 17:10:00 +0000 (UTC)
+        id B7A2360251; Thu, 12 Jul 2018 17:10:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531415400;
-        bh=no6PNoxgHmUzNMTd5bk7eYp/928N5cWSmtMssJh8nJk=;
+        s=default; t=1531415404;
+        bh=iovhbuGlCY1tz3IuJVoEBR0Z90erYn2zppG5LomJDgc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dlMIlMUl8EOT9F+j1ddVje0yHGp4txuG/lbKMZhvt4rrqD/Yk+ay057uN9S9rTSPp
-         B0fr4mPFo4osJ3sKRgc+NBgcQpTMK2pKVkiYrmTCAbZBY5jqBbB1PsynMuk3zotnZg
-         iED/53B85iEncc8XL+1MsF5A/AJL4djU9SZL7k4E=
+        b=DJ9QPMOyrqLboDo9gheVSpLQGZZM6NrToEL1CsZAHMVKn1E2FfxlbTi8T/ceVJBSh
+         4/jB9UqHjmJ9v+aL0xHPJYaJUpaHBzaoaaIbNK/Lp5E4/x7BR/3+r/DqLuNpa4LLa9
+         yUntTx7ZJTE4fIVebQeK10v1RmW3ktoPH6nB2cvA=
 Received: from anischal-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: anischal@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A626860251;
-        Thu, 12 Jul 2018 17:09:56 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 95AED6063F;
+        Thu, 12 Jul 2018 17:10:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531415400;
-        bh=no6PNoxgHmUzNMTd5bk7eYp/928N5cWSmtMssJh8nJk=;
+        s=default; t=1531415404;
+        bh=iovhbuGlCY1tz3IuJVoEBR0Z90erYn2zppG5LomJDgc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dlMIlMUl8EOT9F+j1ddVje0yHGp4txuG/lbKMZhvt4rrqD/Yk+ay057uN9S9rTSPp
-         B0fr4mPFo4osJ3sKRgc+NBgcQpTMK2pKVkiYrmTCAbZBY5jqBbB1PsynMuk3zotnZg
-         iED/53B85iEncc8XL+1MsF5A/AJL4djU9SZL7k4E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A626860251
+        b=DJ9QPMOyrqLboDo9gheVSpLQGZZM6NrToEL1CsZAHMVKn1E2FfxlbTi8T/ceVJBSh
+         4/jB9UqHjmJ9v+aL0xHPJYaJUpaHBzaoaaIbNK/Lp5E4/x7BR/3+r/DqLuNpa4LLa9
+         yUntTx7ZJTE4fIVebQeK10v1RmW3ktoPH6nB2cvA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95AED6063F
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anischal@codeaurora.org
 From:   Amit Nischal <anischal@codeaurora.org>
@@ -62,9 +62,9 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Amit Nischal <anischal@codeaurora.org>
-Subject: [PATCH v2 1/4] clk: qcom: gdsc: Add support to enable/disable the clocks with GDSC
-Date:   Thu, 12 Jul 2018 22:39:38 +0530
-Message-Id: <1531415381-16885-2-git-send-email-anischal@codeaurora.org>
+Subject: [PATCH v2 2/4] clk: qcom: Add clk_rcg2_gfx3d_ops for SDM845
+Date:   Thu, 12 Jul 2018 22:39:39 +0530
+Message-Id: <1531415381-16885-3-git-send-email-anischal@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1531415381-16885-1-git-send-email-anischal@codeaurora.org>
 References: <1531415381-16885-1-git-send-email-anischal@codeaurora.org>
@@ -73,136 +73,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For some of the GDSCs, there is a requirement to enable/disable the
-few clocks before turning on/off the gdsc power domain. Add support
-for the same by specifying a list of clk_hw pointers per gdsc and
-enable/disable them along with power domain on/off callbacks.
+To turn on the gpu_gx_gdsc, there is a hardware requirement to
+turn on the root clock (GFX3D RCG) first which would be the turn
+on signal for the gdsc along with the SW_COLLAPSE. As per the
+current implementation of clk_rcg2_shared_ops, it clears the
+root_enable bit in the enable() clock op. But due to the above
+said requirement for GFX3D shared RCG, root_enable bit would be
+already set by gdsc driver and clk_rcg2_shared_enable()should
+not clear the root unless the disable is called.
+
+Add support for the same by reusing the existing clk_rcg2_shared_ops
+and deriving "clk_rcg2_gfx3d_ops" clk_ops for GFX3D clock to take
+care of the root set/clear requirement.
 
 Signed-off-by: Amit Nischal <anischal@codeaurora.org>
 ---
- drivers/clk/qcom/gdsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/gdsc.h |  5 +++++
- 2 files changed, 49 insertions(+)
+ drivers/clk/qcom/clk-rcg.h  |  1 +
+ drivers/clk/qcom/clk-rcg2.c | 87 +++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 86 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a077133..b6adca1 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -12,6 +12,8 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/jiffies.h>
-@@ -208,11 +210,41 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
- 	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
- 			   GMEM_RESET_MASK, 0);
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index b209a2f..c8c9558 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -160,5 +160,6 @@ struct clk_rcg2 {
+ extern const struct clk_ops clk_pixel_ops;
+ extern const struct clk_ops clk_gfx3d_ops;
+ extern const struct clk_ops clk_rcg2_shared_ops;
++extern const struct clk_ops clk_rcg2_gfx3d_ops;
+
+ #endif
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 52208d4..667edd9 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -866,7 +866,7 @@ static int clk_rcg2_shared_set_rate_and_parent(struct clk_hw *hw,
+ 	return clk_rcg2_shared_set_rate(hw, rate, parent_rate);
  }
+
+-static int clk_rcg2_shared_enable(struct clk_hw *hw)
++static int __clk_rcg2_shared_enable(struct clk_hw *hw)
+ {
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	int ret;
+@@ -879,7 +879,14 @@ static int clk_rcg2_shared_enable(struct clk_hw *hw)
+ 	if (ret)
+ 		return ret;
+
+-	ret = update_config(rcg);
++	return update_config(rcg);
++}
 +
-+static int gdsc_clk_prepare_enable(struct gdsc *sc)
++static int clk_rcg2_shared_enable(struct clk_hw *hw)
 +{
-+	int i, ret;
++	int ret;
 +
-+	for (i = 0; i < sc->clk_count; i++) {
-+		ret = clk_prepare_enable(sc->clk_hws[i]->clk);
-+		if (ret) {
-+			for (i--; i >= 0; i--)
-+				clk_disable_unprepare(sc->clk_hws[i]->clk);
-+			return ret;
-+		}
-+	}
++	ret = __clk_rcg2_shared_enable(hw);
+ 	if (ret)
+ 		return ret;
+
+@@ -929,3 +936,79 @@ static void clk_rcg2_shared_disable(struct clk_hw *hw)
+ 	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
++
++static int clk_rcg2_gfx3d_enable(struct clk_hw *hw)
++{
++	return __clk_rcg2_shared_enable(hw);
++}
++
++static int clk_rcg2_gfx3d_determine_rate(struct clk_hw *hw,
++					struct clk_rate_request *req)
++{
++	struct clk_rate_request parent_req = { };
++	struct clk_hw *p;
++	unsigned long rate = req->rate;
++	int ret;
++
++	if (rate < req->min_rate || rate > req->max_rate)
++		return -EINVAL;
++
++	/* Get fixed parent - GPU_CC_PLL0_OUT_EVEN */
++	p = clk_hw_get_parent_by_index(hw, 1);
++
++	/* Parent should always run at twice of the requested rate */
++	parent_req.rate = 2 * req->rate;
++
++	ret = __clk_determine_rate(req->best_parent_hw, &parent_req);
++	if (ret)
++		return ret;
++
++	req->best_parent_hw = p;
++	req->best_parent_rate = parent_req.rate;
++	req->rate = parent_req.rate / 2;
++
 +	return 0;
 +}
 +
-+static void gdsc_clk_disable_unprepare(struct gdsc *sc)
++static int clk_rcg2_gfx3d_set_rate(struct clk_hw *hw, unsigned long rate,
++				    unsigned long parent_rate)
 +{
-+	int i;
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	int ret;
++	u32 cfg;
 +
-+	for (i = 0; i < sc->clk_count; i++)
-+		clk_disable_unprepare(sc->clk_hws[i]->clk);
++	/* Configure fixed SRC and DIV */
++	cfg = rcg->parent_map[1].cfg << CFG_SRC_SEL_SHIFT;
++	cfg |= 0x3 << CFG_SRC_DIV_SHIFT;
++
++	ret = regmap_write(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, cfg);
++	if (ret)
++		return ret;
++
++	/*
++	 * In case clock is disabled, update the SRC and DIV only
++	 * and return without configuration update.
++	 */
++	if (!__clk_is_enabled(hw->clk))
++		return 0;
++
++	return update_config(rcg);
 +}
 +
- static int gdsc_enable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
-+	if (sc->clk_count) {
-+		ret = gdsc_clk_prepare_enable(sc);
-+		if (ret)
-+			return ret;
-+	}
++static int clk_rcg2_gfx3d_set_rate_and_parent(struct clk_hw *hw,
++		unsigned long rate, unsigned long parent_rate, u8 index)
++{
++	return clk_rcg2_gfx3d_set_rate(hw, rate, parent_rate);
++}
 +
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_deassert_reset(sc);
- 
-@@ -260,6 +292,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 		udelay(1);
- 	}
- 
-+	if (sc->clk_count)
-+		gdsc_clk_disable_unprepare(sc);
-+
- 	return 0;
- }
- 
-@@ -268,6 +303,12 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	struct gdsc *sc = domain_to_gdsc(domain);
- 	int ret;
- 
-+	if (sc->clk_count) {
-+		ret = gdsc_clk_prepare_enable(sc);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	if (sc->pwrsts == PWRSTS_ON)
- 		return gdsc_assert_reset(sc);
- 
-@@ -299,6 +340,9 @@ static int gdsc_disable(struct generic_pm_domain *domain)
- 	if (sc->flags & CLAMP_IO)
- 		gdsc_assert_clamp_io(sc);
- 
-+	if (sc->clk_count)
-+		gdsc_clk_disable_unprepare(sc);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index bd1f2c7..59957d7 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -17,6 +17,7 @@
- #include <linux/err.h>
- #include <linux/pm_domain.h>
- 
-+struct clk_hw;
- struct regmap;
- struct reset_controller_dev;
- 
-@@ -32,6 +33,8 @@
-  * @resets: ids of resets associated with this gdsc
-  * @reset_count: number of @resets
-  * @rcdev: reset controller
-+ * @clk_count: number of associated clocks
-+ * @clk_hws: clk_hw pointers for associated clocks with gdsc
-  */
- struct gdsc {
- 	struct generic_pm_domain	pd;
-@@ -60,6 +63,8 @@ struct gdsc {
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
-+	unsigned int			clk_count;
-+	struct clk_hw			*clk_hws[];
- };
- 
- struct gdsc_desc {
--- 
++const struct clk_ops clk_rcg2_gfx3d_ops = {
++	.enable = clk_rcg2_gfx3d_enable,
++	.disable = clk_rcg2_shared_disable,
++	.get_parent = clk_rcg2_get_parent,
++	.set_parent = clk_rcg2_set_parent,
++	.recalc_rate = clk_rcg2_recalc_rate,
++	.determine_rate = clk_rcg2_gfx3d_determine_rate,
++	.set_rate = clk_rcg2_gfx3d_set_rate,
++	.set_rate_and_parent = clk_rcg2_gfx3d_set_rate_and_parent,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_gfx3d_ops);
+--
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
 
