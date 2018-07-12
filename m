@@ -2,163 +2,122 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88178ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:29:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 537AFECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 423FA2148C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:29:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 423FA2148C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id F3F4420BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:34:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VIb54QcG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3F4420BF2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387690AbeGLXlT (ORCPT
+        id S2387694AbeGLXp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 19:41:19 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:23421 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387606AbeGLXlT (ORCPT
+        Thu, 12 Jul 2018 19:45:56 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:42783 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387610AbeGLXp4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 19:41:19 -0400
-Received: from [192.168.90.65] (61.173.0.103) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 13 Jul
- 2018 07:28:43 +0800
-Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock
- controller
-To:     Rob Herring <robh@kernel.org>
-References: <20180710163658.6175-1-yixun.lan@amlogic.com>
- <20180710163658.6175-2-yixun.lan@amlogic.com>
- <20180711194346.GA32414@rob-hp-laptop>
- <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
- <CABGGisw64MpYx7Pvp+XGt6gfZzie6EKeHdchqS6CPDjmAHBuVA@mail.gmail.com>
-CC:     <yixun.lan@amlogic.com>, <jbrunet@baylibre.com>,
-        <narmstrong@baylibre.com>, <khilman@baylibre.com>,
-        <carlo@caione.org>, Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <miquel.raynal@bootlin.com>,
-        <boris.brezillon@bootlin.com>,
-        <martin.blumenstingl@googlemail.com>, <liang.yang@amlogic.com>,
-        <qiufang.dai@amlogic.com>, <jian.hu@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-From:   Yixun Lan <yixun.lan@amlogic.com>
-Message-ID: <5442a2e8-eb49-2aa8-e53e-8db88cd0bd58@amlogic.com>
-Date:   Fri, 13 Jul 2018 07:29:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.5.1
+        Thu, 12 Jul 2018 19:45:56 -0400
+Received: by mail-oi0-f67.google.com with SMTP id n84-v6so58987990oib.9
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 16:34:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FBQSpQTvdl+u4m4TKpfI4N/JrOAqhBXz0NfkmZ5Wu6M=;
+        b=VIb54QcGqNJVFNFqZ9KYwFohL37Vh+/4OQF8ufQJwAli7M+5GFBT9uO7FsoYkuE5Ba
+         cO6k+RvOg+4zRQkxan1IWHEBtMXJpLpMwNPwvGnEKQmM1NbgCyPxiSWpgOnf322V2fSE
+         SDDAhZQALg0Ny4WQ1NQYhMDDrCT0lVtf6QedTMbi8fNWgRkeA0aiPPjWvDQ/EzMwW7Eh
+         jCRDoE8MiG+X27NUjniPX4lEb61RNbBUI3L4wHia4CBUATffGlJGTiw+3GQcbOx9J0Ia
+         fbcMgcMcG+8NuOIW7PR3D/hhECXkj4/J+y/lWjM+B90RY3c/le3q0wReff11qYwGNFIc
+         tyYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FBQSpQTvdl+u4m4TKpfI4N/JrOAqhBXz0NfkmZ5Wu6M=;
+        b=n5A0IHinDYauxtyH1gZ/RxCSMHjMmzoeB2TEtpD1yT+CT8aC6zetmOE/GGFhH3XX5h
+         i56Kp3YYXRNZKbX4NFymSlXKVMEjkgFkmQ3fqyxK3nKUwjq8mvElE1333vA+4CPWc5XN
+         3DXzQugu6iANQYhueem8dADYNNQ2UB1c02jW4h1XOIuZ2P9TyRIssFfcy1jhLxXJu1YR
+         bXWY+bqHevKn9fKKJciothE1OpW/BnAWeuzosFfyV6pqsXnhlKY5ecfwv3O5xJUMBaq/
+         j1JoR0ZwmHBrkg3jYxa8aLM2ZseRN08b9EBWymkHINubYb6oAAIlvb5ghjFFKFyC/sm8
+         m3Jw==
+X-Gm-Message-State: AOUpUlGLKYpZtMO5X9jEFRtCqM4NyAnuYj4N8ETfgyyMyZeTr3ZVRVCh
+        Rj9rVgo+OQtT6a3NZsHNj3ZNVGDhynW0GTVdXIzICw==
+X-Google-Smtp-Source: AAOMgpdf/gIn2Fj4McfW2g2rKKEAaB0BQFC968muB0mTZ4Rq+hoWm4heppl/7JDA8B1SOWnz6hzK7yx+tlJf8aE3Btg=
+X-Received: by 2002:aca:5bd5:: with SMTP id p204-v6mr4823763oib.91.1531438445310;
+ Thu, 12 Jul 2018 16:34:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CABGGisw64MpYx7Pvp+XGt6gfZzie6EKeHdchqS6CPDjmAHBuVA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [61.173.0.103]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+References: <CA+55aFw1WyKY+-2dg62M-QT_F0-waCTCrba1DW4dStYz-f_fjA@mail.gmail.com>
+ <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+ <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
+ <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk>
+ <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
+ <7002.1531407244@warthog.procyon.org.uk> <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com>
+ <16699.1531426991@warthog.procyon.org.uk> <18233.1531430797@warthog.procyon.org.uk>
+ <20180712223223.GA28610@thunk.org> <22105.1531436081@warthog.procyon.org.uk> <CAG48ez1OF0OfdmnRsV5Ne2mOt-j3Pgf7QRsn3q3Hzjpus9LHGA@mail.gmail.com>
+In-Reply-To: <CAG48ez1OF0OfdmnRsV5Ne2mOt-j3Pgf7QRsn3q3Hzjpus9LHGA@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 12 Jul 2018 16:33:38 -0700
+Message-ID: <CAG48ez1S6Gxtsf8OzH_dhLiPVeH=unsghjGJGL0oOoff+T0iRw@mail.gmail.com>
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
+ superblock creation [ver #9]
+To:     David Howells <dhowells@redhat.com>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HI Rob
-
-see my comments
-
-On 07/12/2018 10:17 PM, Rob Herring wrote:
-> On Wed, Jul 11, 2018 at 8:47 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
->>
->> Hi Rob
->>
->> see my comments
->>
->> On 07/12/18 03:43, Rob Herring wrote:
->>> On Tue, Jul 10, 2018 at 04:36:56PM +0000, Yixun Lan wrote:
->>>> Document the MMC sub clock controller driver, the potential consumer
->>>> of this driver is MMC or NAND.
->>>
->>> So you all have decided to properly model this now?
->>>
->> Yes, ;-)
->>
->>>>
->>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->>>> ---
->>>>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
->>>>  1 file changed, 31 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>>> new file mode 100644
->>>> index 000000000000..ff6b4bf3ecf9
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>>> @@ -0,0 +1,31 @@
->>>> +* Amlogic MMC Sub Clock Controller Driver
->>>> +
->>>> +The Amlogic MMC clock controller generates and supplies clock to support
->>>> +MMC and NAND controller
->>>> +
->>>> +Required Properties:
->>>> +
->>>> +- compatible: should be:
->>>> +            "amlogic,meson-gx-mmc-clkc"
->>>> +            "amlogic,meson-axg-mmc-clkc"
->>>> +
->>>> +- #clock-cells: should be 1.
->>>> +- clocks: phandles to clocks corresponding to the clock-names property
->>>> +- clock-names: list of parent clock names
->>>> +    - "clkin0", "clkin1"
->>>> +
->>>> +Parent node should have the following properties :
->>>> +- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
->>>
->>> You don't need "simple-mfd" and probably not syscon either. The order is
->>> wrong too. Most specific first.
->>>
->> Ok, I will drop "simple-mfd"..
->>
->> but the syscon is a must, since this mmc clock model access registers
->> via the regmap interface
-> 
-> A syscon compatible should not be the only way to get a regmap.
-do you have any suggestion about other function that I can use? is
-devm_regmap_init_mmio() feasible
-
-> Removing lines 56/57 of drivers/mfd/syscon.c should be sufficient.
-> 
-I'm not sure what's the valid point of removing compatible 'syscon' in
-driver/mfd/syscon.c, sounds this will break a lot DT/or need to fix?
-will you propose a patch for this? then I can certainly adjust here
-
-> Why do you need a regmap in the first place? What else needs to access
-> this register directly?
-Yes, the SD_EMMC_CLOCK register contain several bits which not fit well
-into common clock model, and they need to be access in the NAND or eMMC
-driver itself, Martin had explained this in early thread[1]
-
-In this register
-Bit[31] select NAND or eMMC function
-Bit[25] enable SDIO IRQ
-Bit[24] Clock always on
-Bit[15:14] SRAM Power down
-
-[1]
-https://lkml.kernel.org/r/CAFBinCBeyXf6LNaZzAw6WnsxzDAv8E=Yp2eem0xCPWMEUi6pnQ@mail.gmail.com
-
-> Don't you need a patch removing the clock code
-> from within the emmc driver? It's not even using regmap, so using
-> regmap here doesn't help.
+On Thu, Jul 12, 2018 at 4:23 PM Jann Horn <jannh@google.com> wrote:
 >
-No, and current eMMC driver still use iomap to access the register
+> On Thu, Jul 12, 2018 at 3:54 PM David Howells <dhowells@redhat.com> wrote:
+> >
+> > Theodore Y. Ts'o <tytso@mit.edu> wrote:
+> >
+> > > So maybe the answer is that you open /dev/sda1 and /dev/sda2 and then
+> > > pass the file descriptors to the fsopen object?  We can require that
+> > > the fd's be opened with O_RDWR and O_EXCL, which has the benefit where
+> > > if you have multiple block devices, you know *which* block device had
+> > > a problem with being grabbed for an exclusive open.
+> >
+> > Would that mean then that doing:
+> >
+> >         mount /dev/sda3 /a
+> >         mount /dev/sda3 /b
+> >
+> > would then fail on the second command because /dev/sda3 is already open
+> > exclusively?
+>
+> Not exactly. mount_bdev() uses FMODE_EXCL, which locks out parallel
+> usage *with a different filesystem type*. This is the effect:
+>
+> # strace -e trace=mount mount -t vfat /dev/loop0 mount
+> mount("/dev/loop0", "/home/jannh/tmp/x/mount", "vfat", MS_MGC_VAL, NULL) = 0
+> +++ exited with 0 +++
+> # strace -e trace=mount mount -t ext4 /dev/loop0 mount
+> mount("/dev/loop0", "/home/jannh/tmp/x/mount", "ext4", MS_MGC_VAL,
+> NULL) = -1 EBUSY (Device or resource busy)
+> mount: /home/jannh/tmp/x/mount: /dev/loop0 already mounted on
+> /home/jannh/tmp/x/mount.
+> +++ exited with 32 +++
+>
+> I don't really understand why it's not more strict though...
 
-I think we probably would like to take two steps approach.
-first, from the hardware perspective, the NAND and eMMC(port C) driver
-can't exist at same time, since they share the pins, clock, internal
-ram, So we have to only enable one of NAND or eMMC in DT, not enable
-both of them.
-Second, we might like to convert eMMC driver to also use mmc-clkc model.
-
-
-Yixun
+Er, sorry, of course that's the current behavior, not the behavior of
+the suggested API.
