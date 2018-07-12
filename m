@@ -2,92 +2,71 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9DBEBC169
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC255EC2CF4
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC75C208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84DA7208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:53:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="qNswKwoo";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KTCQCvLT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC75C208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="zSNkj9s4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84DA7208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726709AbeGLSug (ORCPT
+        id S1726737AbeGLTD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 14:50:36 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:36140 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbeGLSug (ORCPT
+        Thu, 12 Jul 2018 15:03:56 -0400
+Received: from mail-wr1-f50.google.com ([209.85.221.50]:37224 "EHLO
+        mail-wr1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726500AbeGLTD4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 14:50:36 -0400
-Received: by mail-ua0-f194.google.com with SMTP id y8-v6so19055511uan.3
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 11:39:50 -0700 (PDT)
+        Thu, 12 Jul 2018 15:03:56 -0400
+Received: by mail-wr1-f50.google.com with SMTP id q10-v6so22721990wrd.4
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 11:53:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=jPuFI/SMH/sJFImcIgmng0oCqlSrwdPCiCiS6uA5SNc=;
-        b=qNswKwooWtJD5Mi1fWzHZG5lC0ICyhkZeFXbKqlwIu8LGaKMOxBanRHSOa+0wFQebI
-         RF6t/7srnFskTKfhzDrU8VjUmgsksyadcloW175uJgyXcCZzir9Ss9FjJG4XvEQKTk7V
-         EgjiZVEtSzK84y55vl3kJ7Q/LO7u+OprCbW92Cf9oYjgurB0n8qHdrHyunhnNTaowrF3
-         YugEF4jApOrsfP1QHvLzFa6zTHeEJ+QTycap0AUgWubUQUdDy2TFl/hPFamOFtrnVDGS
-         egVxRzLeV4MLEXCcJJqrLE9dzWAi2D0gQUluKRPxJO0C6vPEV0L9ZJSEZXloh1o9xVyl
-         P7Dg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=jPuFI/SMH/sJFImcIgmng0oCqlSrwdPCiCiS6uA5SNc=;
-        b=KTCQCvLTLg8tyV62C9cOMJktpND9I4WeP2eqpO6Q+P621DWblZ5pdRrHYQFzKCJxM5
-         dFubwBnoXJpo8ANgiTB9WcCzEZ0avKIu/mvVVmw313ox/kWFMtUM0+1yExWEJ6HDvREv
-         d5KPLY/0W6wsCLyFYPbUXwbGjrHpDeLYMirKc=
+        d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=QbWSpP4hEVkZZTtoBspbWyZcUHglKk3NZFJ/EkyVPP4=;
+        b=zSNkj9s4B3QVxdn2O0lC+5T1ovM+kwxEYVFDG7g7eb8mqGsbPj0+Ta16tj7hFoYnHF
+         P6L2Eas3UQEpCfUtxGdU1r6ANaaS4x5fD/YoqtkmMEd2+FcltXbz1WsK+oFgbbsGnz3u
+         Knpi6jaFaGdE65WZYOk6Qje9RW9DovIHYbn8zNFcL4ag+ASCtflmKlO1IAbOBLlwjKJi
+         wNIkZUkhk0u5vTQeXghEg+k2nYVGYVzEYhUqDpLJE1/xKr6PyB4Giouhcnwwm92wOdDr
+         49HRj1RdtpW1bAcP5ui0qSSyN2+g4bWfVs9TSo8HvrTQwqKrV4p8YyIhbSo9x8LEVwgk
+         f18Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=jPuFI/SMH/sJFImcIgmng0oCqlSrwdPCiCiS6uA5SNc=;
-        b=EzDWAObVhKWhBlcPQJCxZkbrTNitDNwKEJ4sVg7oSxAphMzKYWMxrUv4/LlSQZFX9x
-         kAPP0hU5Ry8Txeed8ACOe1/yt++UPxS4NGo/Cvp4XZRH/ikah+WFU5P9G/mHjbrGnQDz
-         /2yETWkUpTka2iDztDgdKmQFEpxjxgK4UP/YuVcPxFrZ3zmp6s9i5+Mjh22XmRGsixGS
-         oKSPDxviQib3uNgBaZjqN1pBamJME18lICM03RDcb82ktKpPbHXdZLfsZK6LZN37S2gw
-         4hsE5heNFgwBUUiYJjGw1KBP3UPi+Q1q/7gTc3vlLwxtUF13N79CSIBARgWBi2QSAHdB
-         UcAA==
-X-Gm-Message-State: AOUpUlFQZ67cfo+VJwlNpUTuXAyzUA8VbGlU6J1Ox1kOVAb2gM0aeMAj
-        4s5pyCj7wXYM8p+D2FFtnqzm9vVFkhEP6Pru0xHUFg==
-X-Google-Smtp-Source: AAOMgpdtV2cUvjrmgjnpKbk1mJntNdf8vJt4pPrEAdyJD43jnMpGdB21f2IBBZ34xT2uKSLlYUeMtbWknxHvMkd/y5k=
-X-Received: by 2002:ab0:1163:: with SMTP id g35-v6mr2164507uac.135.1531420789091;
- Thu, 12 Jul 2018 11:39:49 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 11:39:47
- -0700 (PDT)
-In-Reply-To: <20180709212522.187257-2-mka@chromium.org>
-References: <20180709212522.187257-1-mka@chromium.org> <20180709212522.187257-2-mka@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 12 Jul 2018 11:39:47 -0700
-X-Google-Sender-Auth: _O_uVbIjnIycnG9SpIO3FQ_Wp34
-Message-ID: <CAD=FV=UMpo8AfMkRt1a99VRzsDrESTVAJ5QcyD0tzYVxPfKL-g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: pm8998: Add pm8998 thermal zone
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=QbWSpP4hEVkZZTtoBspbWyZcUHglKk3NZFJ/EkyVPP4=;
+        b=ckgrkvq8Q1FycBSUVDnahBq1WUgBiSDFEEMAvtiSNckWU0FJXTWSI4o+mpZvRuqXU0
+         B6LAgVnB5sS8HZDs7ZXreFVjuYi1imHu3o5SuxyPYFyqW2pKfUp7U7WDVtDMT3hIXYOO
+         SZwRnu1z+JQ77tIdcwg7BQrClfaIp4vcJrHFOmFz2SPSvHRpeGeY77UC+VJ53pKOVdDh
+         A3GsANckom3zPFgXiLm4CU/cQu92miGPo/JUmZR/dqT8oi11w8bdSEQJ1+8W4jBeAF4J
+         Mc0XIg3mPEXkHdmsZFlQaO/wJnIUZZ20E9oEgFrWImgAfVQnNHnYTu94Dc1cXbhl2YVJ
+         2Vjw==
+X-Gm-Message-State: AOUpUlHHpuE++UaMW75w4LEjk8YJb9kHu3Vr4tEY34miYb63D+WJP3pQ
+        +yTyrOrqXm3/xSmBaOXqlOsYcQ==
+X-Google-Smtp-Source: AAOMgpdKVuz8RlCQ1IZxrNdSnZ0ZbsfunRexb3QyhmZKj/hVroRUc2yqA7aq/8eVMTE5PER0eBdYhw==
+X-Received: by 2002:a5d:4d8d:: with SMTP id b13-v6mr2524724wru.80.1531421586165;
+        Thu, 12 Jul 2018 11:53:06 -0700 (PDT)
+Received: from localhost.localdomain (p200300D993C98700CB5FA3798C189FE1.dip0.t-ipconnect.de. [2003:d9:93c9:8700:cb5f:a379:8c18:9fe1])
+        by smtp.googlemail.com with ESMTPSA id h5-v6sm13557841wrr.19.2018.07.12.11.53.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Jul 2018 11:53:05 -0700 (PDT)
+From:   Manfred Spraul <manfred@colorfullife.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Dmitry Vyukov <dvyukov@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
+        Kees Cook <keescook@chromium.org>,
+        Manfred Spraul <manfred@colorfullife.com>
+Subject: [PATCH 0/12 V3] ipc: cleanups & bugfixes, rhashtable update
+Date:   Thu, 12 Jul 2018 20:52:29 +0200
+Message-Id: <20180712185241.4017-1-manfred@colorfullife.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -95,76 +74,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On Mon, Jul 9, 2018 at 2:25 PM, Matthias Kaehlcke <mka@chromium.org> wrote:
-> The thermal zone uses spmi-temp-alarm as sensor. If the sensor is
-> configured without an IIO input it always reports 37=C2=B0C for temperatu=
-res
-> below the first hardware trip point at 105=C2=B0C. This hardware trip poi=
-nt
-> is configured as critical trip point, to initiate a system shutdown
-> before the temperature reaches the next hardware trip point at 125=C2=B0C=
-,
-> where the PMIC performs a partial shutdown.
->
-> The temperature of the critical trip point can be increased after
-> adding the die temperature ADC as IIO input for spmi-temp-alarm, which
-> significantly increases the precision of the temperature measurements.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
-> Changes in v3:
-> - moved 'thermal-zones' node to the beginning of the .dtsi
->
-> Changes in v2:
-> - defined 'thermal-zones' node in pm8998.dtsi instead of using a label
->   to refer to it
-> - use 105=C2=B0C hardware trip point as critical trip point
-> - reduced number of trip points to 2
-> - lowered temperature of passive trip point
-> - updated trip point names and added labels
-> - updated commit message
-> ---
->  arch/arm64/boot/dts/qcom/pm8998.dtsi | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/q=
-com/pm8998.dtsi
-> index 7eea94701b23..52c5e797aab2 100644
-> --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> @@ -3,6 +3,31 @@
->
->  #include <dt-bindings/spmi/spmi.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
-> +#include <dt-bindings/thermal/thermal.h>
-> +
-> +/ {
-> +       thermal-zones {
-> +               pm8998 {
-> +                       polling-delay-passive =3D <250>;
-> +                       polling-delay =3D <1000>;
-> +
-> +                       thermal-sensors =3D <&pm8998_temp>;
-> +
-> +                       trips {
-> +                               pm8998_alert0: pm8998-alert0 {
-> +                                       temperature =3D <95000>;
-> +                                       hysteresis =3D <2000>;
-> +                                       type =3D "passive";
-> +                               };
-> +                               pm8998_crit: pm8998-crit {
-> +                                       temperature =3D <105000>;
-> +                                       hysteresis =3D <2000>;
-> +                                       type =3D "critical";
-> +                               };
+I have added all all review findings and rediffed the patches
 
-IMHO since the 95000 won't trigger until we get the ADC, it's a bit
-too extreme to go straight to shutdown when the PMIC reaches 105.  I
-think we should take David Collins's advice and disable the "partial
-PMIC shutdown" and then set the two stages to 105 (passive) / 125
-(critical).  In theory we could add a 115 (hot) stage in there that
-would only get triggered later when the ADC gets hooked up.
+- patch #1-#6: Fix syzcall findings & further race cleanups
+	patch #1 has an updated subject/comment
+	patch #2 contains the squashed result of Dmitrys change and my
+	own updates.
+	patch #6 is replaced by the proposal from Davidlohr
+- patch #7-#10: rhashtable improvement from Davidlohr
+- patch #11: A variable rename patch: id/lid/idx/uid were a mess
+- patch #12: change a return code from int to bool, side effect of the
+	refcount_t introduction.
 
-Personally I wouldn't land this patch until we do that.
+@Andrew:
+Can you merge the patches into -mm/next?
 
--Doug
+I have not seen any issues in my tests.
+
+--
+	Manfred
