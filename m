@@ -2,79 +2,68 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C645C476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C18C476E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4C9520864
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:56:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VOTxOErV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4C9520864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 9BC2A20864
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:57:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BC2A20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732443AbeGLRGk (ORCPT
+        id S1732355AbeGLRIL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 13:06:40 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43474 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726925AbeGLRGk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 13:06:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ezivkyy8DR9jRLwZAdh5OgweEpGw7Q6hWS2sAOWJCPY=; b=VOTxOErVvIOAHF1j8dc82gob9
-        Nhgy47DdV0U8UU7DXT0TNRwv2S7QfIJjIJcoa1/WboEsxX45kArv+mvlEZJFz5nkbHymOX3RAOzHx
-        6f6EQjQXuD02Ke49SJp9089OIdzVRnzumlmh0DwFNanB/sUOpQbNDQimfx32g0AQ8kYAI4GyeZYme
-        kgJc+BcdRXgsjGGWVI+/I5fJJwe2aJjsGWBLgh6foedG7/S0/YdUHYxWs0ajh/wNMB7aIOuK1eSYQ
-        O2lQCvfURicxL5w0Zf54ZPwK77WMcMj8UPeZfDFQ1YYRY607eOg5d9+87TdwlK4aT4fTxbWksQgjd
-        ojtn3dEpA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fdesv-0001ZN-7E; Thu, 12 Jul 2018 16:56:05 +0000
-Date:   Thu, 12 Jul 2018 09:56:05 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [PATCH v7 3/6] fs/dcache: Add sysctl parameter neg-dentry-limit
- as a soft limit on negative dentries
-Message-ID: <20180712165605.GB3475@bombadil.infradead.org>
-References: <1531413965-5401-1-git-send-email-longman@redhat.com>
- <1531413965-5401-4-git-send-email-longman@redhat.com>
+        Thu, 12 Jul 2018 13:08:11 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53006 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726925AbeGLRIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 13:08:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2114F40073B7;
+        Thu, 12 Jul 2018 16:57:48 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B29E51C676;
+        Thu, 12 Jul 2018 16:57:46 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Jim Mattson <jmattson@google.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "the arch\/x86 maintainers" <x86@kernel.org>,
+        Wanpeng Li <kernellwp@gmail.com>,
+        KarimAllah Ahmed <karahmed@amazon.de>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/kvm/nVMX: set exit_qualification correctly when nested_vmx_load_msr() fails
+References: <20180712113505.23354-1-vkuznets@redhat.com>
+        <CALMp9eRabYJ0Q==pok9R0eDUXtdPa2iv83GWPcM-xw3ZFGq4Ww@mail.gmail.com>
+Date:   Thu, 12 Jul 2018 18:57:44 +0200
+In-Reply-To: <CALMp9eRabYJ0Q==pok9R0eDUXtdPa2iv83GWPcM-xw3ZFGq4Ww@mail.gmail.com>
+        (Jim Mattson's message of "Thu, 12 Jul 2018 09:25:46 -0700")
+Message-ID: <87zhywwfw7.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531413965-5401-4-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 16:57:48 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 12 Jul 2018 16:57:48 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 12:46:02PM -0400, Waiman Long wrote:
-> +int neg_dentry_limit;
-> +EXPORT_SYMBOL_GPL(neg_dentry_limit);
+Jim Mattson <jmattson@google.com> writes:
 
-Why are you exporting it?  What module needs this?
+> This looks similar to my "[PATCH] kvm: nVMX: Restore exit qual for
+> VM-entry failure due to MSR loading"
+>
+
+... which is still not in kvm/queue. Missed that, sorry! Let this one just
+be a gentle ping then :-)
+
+-- 
+  Vitaly
