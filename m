@@ -2,159 +2,312 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A01C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24212C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33BE020883
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:41:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A631A20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:44:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vaHnIFYA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BE020883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kMIjYapw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A631A20883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732319AbeGLIuQ (ORCPT
+        id S1726836AbeGLIxP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:50:16 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:42218 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726650AbeGLIuP (ORCPT
+        Thu, 12 Jul 2018 04:53:15 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:26158 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbeGLIxO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:50:15 -0400
-Received: by mail-oi0-f65.google.com with SMTP id n84-v6so54347810oib.9
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 01:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R0oLKNLvbtt4M5cmDqij/V3Z0/38n4hnXPd1c76xLDo=;
-        b=vaHnIFYAcMh63nSIdU/9S3MefjNsPxg8cwn4rZGjb4k5HYLm7V3ZDyGV7C2HJsugSH
-         1oVqCMeTSW5Vry8zJYKewg5U91BT+HXPswsCiB6fEHn45qDUKMgvPjydcvmN8SosdecC
-         dh0Ejr5trZyZ83Eozk0aIp4xVt242luldqx6vR1QD8Esn52EmykveYnp/JrtLBjL44Qe
-         iLR3xdMQYcotvs7ljMcXwsykTePZwE2JHr/swnCImxKDxx+t/SQ+VD/i+su6pGKIJ3Um
-         gBly4wKL0UtPQq/xcpsnKlP272zjosYpFhev/XIRT1Sw9K5euKNiJy3Wsl5p3MKYOMMR
-         /cAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R0oLKNLvbtt4M5cmDqij/V3Z0/38n4hnXPd1c76xLDo=;
-        b=SQl5le0t5bGh5UPdx+gVYAi4/lpeKPyGPvcneun47NbhuHI3PWBQevhTsqXdY3jsGi
-         i0NGcmsXiUCtqAQEkgFVwI5KpLPTnZPa2cZyydUCNQJJTt235qCkbKrYCFcI2PlR/i80
-         dn0gCCFuulPyLSMCdizSyw9Rc053ZHoPaHn4/KVu/JQ1/P0N2f//OLF9M0xuzeBC0Gck
-         gjQgFjKcc6oQ+aeMo68Pg9TNc40e/fwWrEyBguc/zWpfgXxD91k9dbhPjLyb6TfN6F0O
-         ZgxJLovR/LxqZoivayk0sqgu3NeFbgGpvHHcMMHmOnnBP8yzCX7jH1jZ+FaJCnQrxji2
-         MaFA==
-X-Gm-Message-State: AOUpUlEzKqMQB4SmcSHFA3fN/YWX3KkTEUzxNloVGtYJBJNiyyop7MRi
-        xO1QXDQkx+Uj9hAtDT0QrV5+C1jvAdxas5kIvh1ayw==
-X-Google-Smtp-Source: AAOMgpdGumOq5nzaRl1lTQupC3i8c4mmcSnF5ti1RNrUUvicYWfpFlovKl+ASxHy2sy5u4kau82uMT5KoV2tWHpl0QI=
-X-Received: by 2002:aca:e2d3:: with SMTP id z202-v6mr1364424oig.121.1531384899312;
- Thu, 12 Jul 2018 01:41:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180702214011.16071-1-jae.hyun.yoo@linux.intel.com>
-In-Reply-To: <20180702214011.16071-1-jae.hyun.yoo@linux.intel.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 12 Jul 2018 01:41:28 -0700
-Message-ID: <CAFd5g47nBCbF0mcYqEnQkDpz0Dhh0F0S1-wEL_yBHgs1b3yE5w@mail.gmail.com>
-Subject: Re: [PATCH] i2c: aspeed: Adjust spinlock scope in the irq handler
-To:     jae.hyun.yoo@linux.intel.com
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jarkko.nikula@linux.intel.com, james.feist@linux.intel.com,
-        vernon.mauery@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 12 Jul 2018 04:53:14 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180712084436epoutp031e02f3ba7a9fafadcf20952c1edfe648~Akp0d28pt0233202332epoutp03R;
+        Thu, 12 Jul 2018 08:44:36 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180712084436epoutp031e02f3ba7a9fafadcf20952c1edfe648~Akp0d28pt0233202332epoutp03R
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1531385076;
+        bh=7BcvqNkwXpTvzDop9jX8fV60L76kLs5GenhgrnjoWZE=;
+        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
+        b=kMIjYapwLnE3/PkKxWYIuHKruY6ojv2LRpAuYYZgC4zMeGwSKGb8EV80t5qfVdJZF
+         E1jAtlwgqNJ8qDl/hk7/3xs75xDm9r02a3mQxPm1UKTaXFh0gjPZowmma9RzLVfjsM
+         ejn2Nxlf5jRuY8hvLKLhmUmH87RJXVmabU066CQY=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.158]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20180712084434epcas1p49bf54ecd95642bfc0f75e17d532427cf~AkpyRCzb10043700437epcas1p4P;
+        Thu, 12 Jul 2018 08:44:34 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BA.26.04343.2F4174B5; Thu, 12 Jul 2018 17:44:34 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20180712084434epcas1p49625b4e18142768d96f6329352370473~Akpx5XONV0741207412epcas1p4c;
+        Thu, 12 Jul 2018 08:44:34 +0000 (GMT)
+X-AuditID: b6c32a38-78bff700000010f7-48-5b4714f222a4
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 11.CD.03915.1F4174B5; Thu, 12 Jul
+        2018 17:44:33 +0900 (KST)
+MIME-version: 1.0
+Content-type: text/plain; charset="utf-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PBQ00A8AWA9M940@mmp2.samsung.com>; Thu, 12 Jul 2018 17:44:33 +0900 (KST)
+Subject: Re: [PATCH v5 05/12] PM / devfreq: Add support for policy notifiers
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Benson Leung <bleung@chromium.org>,
+        Olof Johansson <olof@lixom.net>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-id: <5399c191-e140-e2b8-629b-72ddfbf99b0f@samsung.com>
+Date:   Thu, 12 Jul 2018 17:44:33 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.7.0
+In-reply-to: <20180706175301.GG129942@google.com>
+Content-language: en-US
+Content-transfer-encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrLJsWRmVeSWpSXmKPExsWy7bCmvu4nEfdog6/3xC3+TjrGbjH9yWUW
+        i00f37NazD9yjtXi7LKDbBZrbh9itGhevJ7N4mzTG3aL+1+PMlpc3jWHzeJz7xFGi6XXLzJZ
+        fN7wmNHiduMKNotT1z+zWZw5fYnVonXvEXaLjV89HIQ81sxbw+jx+9ckRo/ZDRdZPHbcXcLo
+        sWlVJ5vHnWt72Dz2z13D7nHlRBOrx5ar7SwefVtWMXp83iQXwB2VapORmpiSWqSQmpecn5KZ
+        l26r5B0c7xxvamZgqGtoaWGupJCXmJtqq+TiE6DrlpkD9JqSQlliTilQKCCxuFhJ386mKL+0
+        JFUhI7+4xFYp2tDQSM/QwFzPyAhIG8daGZkClSSkZhy82MVWsNOs4mbzLvYGxq26XYycHBIC
+        JhIT905g6mLk4hAS2MEocWjqMlYI5zuQ828eSxcjB1jV2TMREPENjBL39l5nBOnmFRCU+DH5
+        HguIzSygKfHiyyQWiKK7jBKzXzxiAkkIC/hI3Ov4zApiiwhoSDz5fZ4RpIhZYBqrRPe0/2wg
+        CTYBLYn9L26A2fwCihJXfzyG2mAnMXf/XTCbRUBVYvaSfrAaUYEIiabnP9lBbE4BQ4m2trdM
+        EFeISzS33oS6SF7i4JXnYBdJCFxjl9jw+g0TxNMuEmeXTmWDsIUlXh3fwg7xprTEpaO2EPXt
+        jBJfXjSzQjgTGCU+nNoM1Wws8WxhF9Q2Pol3X3tYIZp5JTrahCBMD4lpE2shIfGXUaK1ZwXz
+        BEa5WUghNgspxGYhuXsWkrsXMLKsYhRLLSjOTU8tNiww0StOzC0uzUvXS87P3cQITtpaFjsY
+        95zzOcQowMGoxMPLwe0WLcSaWFZcmXuIUYKDWUmE99IUoBBvSmJlVWpRfnxRaU5q8SFGU2BY
+        TmSWEk3OB2aUvJJ4Q1MjY2NjCxNDM1NDQyVx3p7TrtFCAumJJanZqakFqUUwfUwcnFINjF1/
+        GT257tyT3dhyUWZuR6LJnofN809bsl8yyLc41+y1d3dgMo9zXfqq5TPW6ZxTUxJ94jTz+j1N
+        7+54mXvnou32Pw7//euJhI/787t6M/kKO3IOnrRx+nHnSpnt+xzeINW5z14Ylst3+0/fbvRR
+        4eyGs1amjZIBRpevJDdPmvnvzYIJHZvuOCuxFGckGmoxFxUnAgAkoY4a8AMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsVy+t9jQd2PIu7RBl/6rC3+TjrGbjH9yWUW
+        i00f37NazD9yjtXi7LKDbBZrbh9itGhevJ7N4mzTG3aL+1+PMlpc3jWHzeJz7xFGi6XXLzJZ
+        fN7wmNHiduMKNotT1z+zWZw5fYnVonXvEXaLjV89HIQ81sxbw+jx+9ckRo/ZDRdZPHbcXcLo
+        sWlVJ5vHnWt72Dz2z13D7nHlRBOrx5ar7SwefVtWMXp83iQXwB3FZZOSmpNZllqkb5fAlXHw
+        YhdbwU6zipvNu9gbGLfqdjFycEgImEicPRPRxcjFISSwjlHi6/3NLF2MnBy8AoISPybfYwGp
+        YRZQl5gyJRei5j6jxOWVk8FqhAV8JO51fGYFsUUENCSe/D7PCGIzC8xgldh4IQai4S+jxP0b
+        h8CK2AS0JPa/uMEGYvMLKEpc/fGYEWKZncTc/XfBbBYBVYnZS/rBakQFIiTunf8EZnMKGEq0
+        tb1lglggLtHcepMFwpaXOHjlOcsERsFZSO6ehXD3LCQds5B0LGBkWcUomVpQnJueW2xUYJiX
+        Wq5XnJhbXJqXrpecn7uJERjD2w5r9e1gvL8k/hCjAAejEg/vBg63aCHWxLLiytxDjBIczEoi
+        vJemAIV4UxIrq1KL8uOLSnNSiw8xSnOwKInz3s47FikkkJ5YkpqdmlqQWgSTZeLglGpg5Ivt
+        XvrJaLfTcrXz+Qtql7cUPrps+1tO8+vNoKuXVr4td9S7MflH1+arfN8N/0/awlB2KnBmYXTZ
+        zk8ctyQf/vm8Rno6n/a7hLw/3yRvrXKa6PZauaWB+3GI0CX/j3lCno2Pnf3P9vj5rK+5sMNg
+        Huc3ZsO6wu8vuiMl17ufUXKUEEoS+XLQX4mlOCPRUIu5qDgRAN/3ywbdAgAA
+X-CMS-MailID: 20180712084434epcas1p49625b4e18142768d96f6329352370473
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180703234900epcas1p1cda806bab6bbe69228ca5ee56bc33f36
+References: <20180703234705.227473-1-mka@chromium.org>
+        <CGME20180703234900epcas1p1cda806bab6bbe69228ca5ee56bc33f36@epcas1p1.samsung.com>
+        <20180703234705.227473-6-mka@chromium.org> <5B3C6C2A.1070205@samsung.com>
+        <20180706175301.GG129942@google.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 2, 2018 at 2:40 PM Jae Hyun Yoo
-<jae.hyun.yoo@linux.intel.com> wrote:
->
-> This patch adjusts spinlock scope to make it wrap the whole irq
-> handler using a single lock/unlock which covers both master and
-> slave handlers.
->
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> ---
->  drivers/i2c/busses/i2c-aspeed.c | 16 ++++++++++------
->  1 file changed, 10 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-> index 60e4d0e939a3..9f02aa959a3e 100644
-> --- a/drivers/i2c/busses/i2c-aspeed.c
-> +++ b/drivers/i2c/busses/i2c-aspeed.c
-> @@ -234,7 +234,6 @@ static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
->         bool irq_handled = true;
->         u8 value;
->
-> -       spin_lock(&bus->lock);
->         if (!slave) {
->                 irq_handled = false;
->                 goto out;
-> @@ -325,7 +324,6 @@ static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
->         writel(status_ack, bus->base + ASPEED_I2C_INTR_STS_REG);
->
->  out:
-> -       spin_unlock(&bus->lock);
->         return irq_handled;
->  }
->  #endif /* CONFIG_I2C_SLAVE */
-> @@ -389,7 +387,6 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->         u8 recv_byte;
->         int ret;
->
-> -       spin_lock(&bus->lock);
->         irq_status = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
->         /* Ack all interrupt bits. */
->         writel(irq_status, bus->base + ASPEED_I2C_INTR_STS_REG);
-> @@ -547,22 +544,29 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->                 dev_err(bus->dev,
->                         "irq handled != irq. expected 0x%08x, but was 0x%08x\n",
->                         irq_status, status_ack);
-> -       spin_unlock(&bus->lock);
->         return !!irq_status;
->  }
->
->  static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->  {
->         struct aspeed_i2c_bus *bus = dev_id;
-> +       bool ret;
-> +
-> +       spin_lock(&bus->lock);
->
->  #if IS_ENABLED(CONFIG_I2C_SLAVE)
->         if (aspeed_i2c_slave_irq(bus)) {
->                 dev_dbg(bus->dev, "irq handled by slave.\n");
-> -               return IRQ_HANDLED;
-> +               ret = true;
-> +               goto out;
->         }
->  #endif /* CONFIG_I2C_SLAVE */
->
-> -       return aspeed_i2c_master_irq(bus) ? IRQ_HANDLED : IRQ_NONE;
-> +       ret = aspeed_i2c_master_irq(bus);
-> +
-> +out:
-> +       spin_unlock(&bus->lock);
-> +       return ret ? IRQ_HANDLED : IRQ_NONE;
->  }
->
->  static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
-> --
-> 2.17.1
->
+Hi Matthias,
 
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
+On 2018년 07월 07일 02:53, Matthias Kaehlcke wrote:
+> Hi Chanwoo,
+> 
+> On Wed, Jul 04, 2018 at 03:41:46PM +0900, Chanwoo Choi wrote:
+> 
+>> Firstly,
+>> I'm not sure why devfreq needs the devfreq_verify_within_limits() function.
+>>
+>> devfreq already used the OPP interface as default. It means that
+>> the outside of 'drivers/devfreq' can disable/enable the frequency
+>> such as drivers/thermal/devfreq_cooling.c. Also, when some device
+>> drivers disable/enable the specific frequency, the devfreq core
+>> consider them.
+>>
+>> So, devfreq doesn't need to devfreq_verify_within_limits() because
+>> already support some interface to change the minimum/maximum frequency
+>> of devfreq device. 
+>>
+>> In case of cpufreq subsystem, cpufreq only provides 'cpufreq_verify_with_limits()'
+>> to change the minimum/maximum frequency of cpu. some device driver cannot
+>> change the minimum/maximum frequency through OPP interface.
+>>
+>> But, in case of devfreq subsystem, as I explained already, devfreq support
+>> the OPP interface as default way. devfreq subsystem doesn't need to add
+>> other way to change the minimum/maximum frequency.
+> 
+> Using the OPP interface exclusively works as long as a
+> enabling/disabling of OPPs is limited to a single driver
+> (drivers/thermal/devfreq_cooling.c). When multiple drivers are
+> involved you need a way to resolve conflicts, that's the purpose of
+> devfreq_verify_within_limits(). Please let me know if there are
+> existing mechanisms for conflict resolution that I overlooked.
+> 
+> Possibly drivers/thermal/devfreq_cooling.c could be migrated to use
+> devfreq_verify_within_limits() instead of the OPP interface if
+> desired, however this seems beyond the scope of this series.
 
-Thanks!
+Actually, if we uses this approach, it doesn't support the multiple drivers too.
+If non throttler drivers uses devfreq_verify_within_limits(), the conflict
+happen.
+
+To resolve the conflict for multiple device driver, maybe OPP interface
+have to support 'usage_count' such as clk_enable/disable().
+
+> 
+>> Secondly,
+>> This patch send the 'struct devfreq_policy' instance as the data
+>> when sending the notification as following:
+>>
+>> 	srcu_notifier_call_chain(&devfreq->policy_notifier_list,
+>> 			DEVFREQ_ADJUST, policy);
+>>
+>> But, I think that if devfreq core sends the 'struct devfreq_freq_limits'
+>> instance instead of 'struct devfreq_policy', it is enough.
+>> Because receiver of DEVFREQ_ADJUST just will use the min_freq/max_freq variables.
+>>
+>> So, I tried to find the cpufreq's case. The some device drivers using
+>> CPUFREQ_POLICY_NOTIFIER uses following variables of 'struct cpufreq_policy'.
+>> It means that receiver of CPUFREQ_POLICY_NOTIFIER don't need to other
+>> information/variables except for min/max frequency.
+>>
+>> - policy->min
+>> - policy->max
+>> - policy->cpuinfo.max_freq
+>> - policy->cpuinfo.min_freq
+>> - policy->cpu : not related to devfreq)
+>> - policy->related_cpus : not related to devfreq)
+>>
+>> - list of device drivers using CPUFREQ_POLICY_NOTIFIER (linux kernel is v4.18-rc1)
+>> $ grep -rn "CPUFREQ_POLICY_NOTIFIER" .
+>> ./drivers/macintosh/windfarm_cpufreq_clamp.c
+>> ./drivers/thermal/cpu_cooling.c
+>> ./drivers/thermal/cpu_cooling.c
+>> ./drivers/acpi/processor_thermal.c
+>> ./drivers/acpi/processor_thermal.c
+>> ./drivers/acpi/processor_perflib.c
+>> ./drivers/acpi/processor_perflib.c
+>> ./drivers/base/arch_topology.c
+>> ./drivers/base/arch_topology.c
+>> ./drivers/video/fbdev/sa1100fb.c
+>> ./drivers/video/fbdev/pxafb.c
+>> ./drivers/cpufreq/ppc_cbe_cpufreq_pmi.c
+>> ./drivers/cpufreq/cpufreq.c
+>> ./drivers/cpufreq/cpufreq.c
+>> ./drivers/cpufreq/cpufreq.c
+>> ./drivers/cpufreq/cpufreq.c
+> 
+> Thanks for your investigation.
+> 
+> I decided to mirror the cpufreq interface for consistency, but I agree
+> that 'struct devfreq_freq_limits' could be passed instead of the
+> policy object. I'm fine with changing that.
+> 
+>> On 2018년 07월 04일 08:46, Matthias Kaehlcke wrote:
+>>> Policy notifiers are called before a frequency change and may narrow
+>>> the min/max frequency range in devfreq_policy, which is used to adjust
+>>> the target frequency if it is beyond this range.
+>>>
+>>> Also add a few helpers:
+>>>  - devfreq_verify_within_[dev_]limits()
+>>>     - should be used by the notifiers for policy adjustments.
+>>>  - dev_to_devfreq()
+>>>     - lookup a devfreq strict from a device pointer
+>>>
+>>> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>>> Reviewed-by: Brian Norris <briannorris@chromium.org>
+>>> ---
+>>> Changes in v5:
+>>> - none
+>>>
+>>> Changes in v4:
+>>> - Fixed typo in commit message: devfreg => devfreq
+>>> - added 'Reviewed-by: Brian Norris <briannorris@chromium.org>' tag
+>>>
+>>> Changes in v3:
+>>> - devfreq.h: fixed misspelling of struct devfreq_policy
+>>>
+>>> Changes in v2:
+>>> - performance, powersave and simpleondemand governors don't need changes
+>>>   with "PM / devfreq: Don't adjust to user limits in governors"
+>>> - formatting fixes
+>>> ---
+>>>  drivers/devfreq/devfreq.c | 48 ++++++++++++++++++++++-------
+>>>  include/linux/devfreq.h   | 65 +++++++++++++++++++++++++++++++++++++++
+>>>  2 files changed, 102 insertions(+), 11 deletions(-)
+>>>
+>>> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+>>> index 21604d6ae2b8..4cbaa7ad1972 100644
+>>> --- a/drivers/devfreq/devfreq.c
+>>> +++ b/drivers/devfreq/devfreq.c
+>>> @@ -72,6 +72,21 @@ static struct devfreq *find_device_devfreq(struct device *dev)
+>>>  	return ERR_PTR(-ENODEV);
+>>>  }
+>>>  
+>>> +/**
+>>> + * dev_to_devfreq() - find devfreq struct using device pointer
+>>> + * @dev:	device pointer used to lookup device devfreq.
+>>> + */
+>>> +struct devfreq *dev_to_devfreq(struct device *dev)
+>>> +{
+>>> +	struct devfreq *devfreq;
+>>> +
+>>> +	mutex_lock(&devfreq_list_lock);
+>>> +	devfreq = find_device_devfreq(dev);
+>>> +	mutex_unlock(&devfreq_list_lock);
+>>> +
+>>> +	return devfreq;
+>>> +}
+>>> +
+>>>  static unsigned long find_available_min_freq(struct devfreq *devfreq)
+>>>  {
+>>>  	struct dev_pm_opp *opp;
+>>> @@ -269,20 +284,21 @@ int update_devfreq(struct devfreq *devfreq)
+>>>  	if (!policy->governor)
+>>>  		return -EINVAL;
+>>>  
+>>> +	policy->min = policy->devinfo.min_freq;
+>>> +	policy->max = policy->devinfo.max_freq;
+>>
+>> Why don't you consider 'policy->user.max/min_freq' as following?
+>> As I already commented, I think that 'struct devfreq_freq_limits' is enough
+>> instead of 'struct devfreq_policy'.
+>>
+>> 	->max_freq = MIN(policy->devinfo.max_freq, policy->user.max_freq);
+>> 	->min_freq = MAX(policy->devinfo.min_freq, policy->user.min_freq);
+> 
+> You mean limiting the frequency range with user.min/max before
+> DEVFREQ_ADJUST instead of adjusting it afterwards? That's fine with
+> me.
+> 
+> Thanks
+> 
+> Matthias
+> 
+> 
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
