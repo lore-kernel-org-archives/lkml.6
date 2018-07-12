@@ -2,93 +2,110 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F152AECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF7FECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91BB22087C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C74562087C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:30:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BW/ooRkr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91BB22087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pYyUa/Rx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C74562087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733111AbeGLVk6 (ORCPT
+        id S1733118AbeGLVl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 17:40:58 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36014 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbeGLVk6 (ORCPT
+        Thu, 12 Jul 2018 17:41:26 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44186 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726594AbeGLVl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 17:40:58 -0400
-Received: by mail-it0-f67.google.com with SMTP id j185-v6so8828786ite.1;
-        Thu, 12 Jul 2018 14:29:34 -0700 (PDT)
+        Thu, 12 Jul 2018 17:41:26 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r16-v6so23091503wrt.11
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 14:30:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hp3wP5HIeaAb1MyubyDQbhJGZ8EMn/j9IYJKly3yMhM=;
-        b=BW/ooRkrcSJ68tbGYBNaUcbRRway2zwDtodrEnY3DyK0G56l0wMvbRMWfoQF/8ac2T
-         uo05Bni8pYUcqyiaAd6qd8f6skVBSKRxf4cZYEmQpHUXqb5p1RZ57+VbV1l+0h9rtOB3
-         2JyQpJPOKcfQfWOSDPVZA5N7NhW1/C9JUCtgA=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=w8B3GajgXdJld37+2bzGlYrW3yzpF7LkrvByTGWqmYA=;
+        b=pYyUa/RxlxJhEp1XV9zLMz0GpeEAUa4R4JEPd5eLFERvBPxfSodY1YiMmNeWPwVTJh
+         ywvroueDYApXUNbZG1OH/E/qctnFT8MQsbh4BaMOAFUI3GaK5INTftGK2/quxLp5P2u9
+         MLDXBwmxOxOmh/b9jdwfFszSzaeeC3jw//WynexqCVLekJmMNCjzi8tRSuYV1EvTtWUe
+         m8PTGxkTr64+L1kS9kcHmd1uARYPoEJuYZXFDZfPQByma20UWVNLuAHtqo9dlWdvBkrb
+         bfA6kdrGca6kHlpcm8i8hCNJtvcSnKX0X1iJnhSDHoH9un1d9IT52retuV8g9fPg5r0a
+         d+ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hp3wP5HIeaAb1MyubyDQbhJGZ8EMn/j9IYJKly3yMhM=;
-        b=lnMJrasBpO//KXjaPL9XiEedfkBhLNbPgvsf+JlKH2WsIZAlU/GFNsPNWNWMqElHxb
-         E0pZPn5Veda8tTm3JaHu9FhkUBaESft2muzcAmXNfIZ9vgTKRbQUXsEVWXxM/s7i1fuF
-         J2sJ/TQf3IpIoy4kIc6NvidHpCEIuEA9dC31P0junUfeS/fWVNR++zI1UisrTo2m5ydj
-         mgCP3Gy3CLaptW3Va7j7hYq6PY+XYiDmtJx0WP0EOEZejVyKlAz9nBIMHG9ODFbrHQEA
-         /JMlOM+q1ztYd6G3dpinhXUeJ6azxWZOEUybtW51jHwZmpZreo7yaak4q/vsmp87X/ry
-         dhhQ==
-X-Gm-Message-State: AOUpUlHElbHHlCXknfAGWBaGErR4P2qzI1IG09W/+dZDSyW8Bt6DeTcI
-        O8X8MrlHZaCcNwICw+xCUGqJakEv937KrnOjIJU=
-X-Google-Smtp-Source: AAOMgpcT8qg5ZITuKT80Ij3JxXL2+0v8/IIRVDyptcPnLYhz+U4iI3v/i90igQ+dhZq0qk26LbgDtidUhoQPx1aPQUs=
-X-Received: by 2002:a02:702:: with SMTP id f2-v6mr3151427jaf.70.1531430973467;
- Thu, 12 Jul 2018 14:29:33 -0700 (PDT)
-MIME-Version: 1.0
-References: <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
- <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
- <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
- <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk>
- <7002.1531407244@warthog.procyon.org.uk> <338BC3C4-F3E7-48F0-A82E-2C7295B6640E@amacapital.net>
- <17749.1531429218@warthog.procyon.org.uk>
-In-Reply-To: <17749.1531429218@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 12 Jul 2018 14:29:22 -0700
-Message-ID: <CA+55aFzaTQJp6aHG_9+W2ShxeZncq7k9G3FkVFjFm7W=ECUiMw@mail.gmail.com>
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
- superblock creation [ver #9]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=w8B3GajgXdJld37+2bzGlYrW3yzpF7LkrvByTGWqmYA=;
+        b=TNViuPCz/1qhesMfKYsQGQ4y/fn2bLcp4twWrxXZXI7jMcBcbhROepWZbVyetnO0O1
+         BKa2yQh7R9GlIsBvdb1BkTN9Q2bPRygHvhy8Uv84ghM8S83BB6MRpDnCajHDv2FlDDVH
+         XRRVAqqGE+2jBAGVnpSm7uNxk43JfNr/xQnA0DZD8FzrdvHRLVPeaphGWNo6RfVO/k+8
+         gtKQS2RnszdE+tihsFkfjfJG8lYUweodblvEHva9dDoW/Ue7JjQhreiINMhp/UbiduoS
+         u/YAD0244VuxguM78cSKSX1Kll2KmzvXzWzHgZ5zb0lpCVpga7M+eQMrc0vQtxYoxLQp
+         DMJw==
+X-Gm-Message-State: AOUpUlEroMa4EK7a0KNHeXoxhFx6F+zZq5C6O5tUgYeyN+UhhvwS4eOq
+        Zt8u2UD+XUqay5GkAq0Yvqw=
+X-Google-Smtp-Source: AAOMgpeQHtDjsSJaO9oOP2c+8+q6rAIB9J8iHnbUjmcjYvJIPMKCqqxLCSuu5OEUPktxOtVZ75rF8w==
+X-Received: by 2002:a5d:4147:: with SMTP id c7-v6mr3092930wrq.61.1531431001017;
+        Thu, 12 Jul 2018 14:30:01 -0700 (PDT)
+Received: from localhost.localdomain (cpc101300-bagu16-2-0-cust362.1-3.cable.virginm.net. [86.21.41.107])
+        by smtp.gmail.com with ESMTPSA id f190-v6sm10789365wmd.0.2018.07.12.14.29.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 14:30:00 -0700 (PDT)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, Julia Lawall <Julia.Lawall@lip6.fr>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 1/2] parport: sunbpp: fix error return code
+Date:   Thu, 12 Jul 2018 22:29:55 +0100
+Message-Id: <20180712212956.16661-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 2:00 PM David Howells <dhowells@redhat.com> wrote:
->
->
-> for example:
->
->         fd = fsopen("ext4", FSOPEN_CLOEXEC);
->         fsconfig(fd, fsconfig_blockdev, "dev.data", "/dev/sda1", ...);
->         fsconfig(fd, fsconfig_blockdev, "dev.journal", "/dev/sda2", ...);
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Ok, that looks good to me. It also avoids the parsing issue with using
-an interface like "write()", where the expectation is that you can
-append things etc.
+Return an error code on failure.  Change leading spaces to tab on the
+first if.
 
-              Linus
+Problem found using Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
+ drivers/parport/parport_sunbpp.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/parport/parport_sunbpp.c b/drivers/parport/parport_sunbpp.c
+index 01cf1c1a841a..8de329546b82 100644
+--- a/drivers/parport/parport_sunbpp.c
++++ b/drivers/parport/parport_sunbpp.c
+@@ -286,12 +286,16 @@ static int bpp_probe(struct platform_device *op)
+ 
+ 	ops = kmemdup(&parport_sunbpp_ops, sizeof(struct parport_operations),
+ 		      GFP_KERNEL);
+-        if (!ops)
++	if (!ops) {
++		err = -ENOMEM;
+ 		goto out_unmap;
++	}
+ 
+ 	dprintk(("register_port\n"));
+-	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops)))
++	if (!(p = parport_register_port((unsigned long)base, irq, dma, ops))) {
++		err = -ENOMEM;
+ 		goto out_free_ops;
++	}
+ 
+ 	p->size = size;
+ 	p->dev = &op->dev;
+-- 
+2.11.0
+
