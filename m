@@ -2,104 +2,208 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4415FECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:45:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7AA8ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD405208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:45:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD405208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D2A52124D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:48:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D2A52124D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387455AbeGLW5g (ORCPT
+        id S2387459AbeGLW7n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 18:57:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45544 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733234AbeGLW5g (ORCPT
+        Thu, 12 Jul 2018 18:59:43 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:49396 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733242AbeGLW7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 18:57:36 -0400
-Received: from localhost.localdomain (c-24-4-125-7.hsd1.ca.comcast.net [24.4.125.7])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DBF33D58;
-        Thu, 12 Jul 2018 22:45:53 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 15:45:52 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
-        mhocko@suse.com, linux-mm@kvack.org, dan.j.williams@intel.com,
-        jack@suse.cz, jglisse@redhat.com, jrdr.linux@gmail.com,
-        bhe@redhat.com, gregkh@linuxfoundation.org, vbabka@suse.cz,
-        richard.weiyang@gmail.com, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org,
-        osalvador@techadventures.net, abdhalee@linux.vnet.ibm.com,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH v5 1/5] mm/sparse: abstract sparse buffer allocations
-Message-Id: <20180712154552.db99d1893bcba7f9503534a0@linux-foundation.org>
-In-Reply-To: <20180712203730.8703-2-pasha.tatashin@oracle.com>
-References: <20180712203730.8703-1-pasha.tatashin@oracle.com>
-        <20180712203730.8703-2-pasha.tatashin@oracle.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 12 Jul 2018 18:59:43 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fdkNN-0006lk-Eb; Thu, 12 Jul 2018 22:47:53 +0000
+Date:   Thu, 12 Jul 2018 23:47:53 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Jann Horn <jannh@google.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        speakup@linux-speakup.org,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        William Hubbs <w.d.hubbs@gmail.com>,
+        Chris Brannon <chris@the-brannons.com>,
+        Kirk Reiser <kirk@reisers.ca>, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: Re: [PATCH] staging: speakup: fix wraparound in uaccess length check
+Message-ID: <20180712224753.GE30522@ZenIV.linux.org.uk>
+References: <20180712222935.257776-1-jannh@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712222935.257776-1-jannh@google.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Jul 2018 16:37:26 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
+On Fri, Jul 13, 2018 at 12:29:36AM +0200, Jann Horn wrote:
+> From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+> 
+> From: Samuel Thibault <samuel.thibault@ens-lyon.org>
+> 
+> If softsynthx_read() is called with `count < 3`, `count - 3` wraps, causing
+> the loop to copy as much data as available to the provided buffer. If
+> softsynthx_read() is invoked through sys_splice(), this causes an
+> unbounded kernel write; but even when userspace just reads from it
+> normally, a small size could cause userspace crashes.
 
-> When struct pages are allocated for sparse-vmemmap VA layout, we first
-> try to allocate one large buffer, and than if that fails allocate struct
-> pages for each section as we go.
-> 
-> The code that allocates buffer is uses global variables and is spread
-> across several call sites.
-> 
-> Cleanup the code by introducing three functions to handle the global
-> buffer:
-> 
-> sparse_buffer_init()	initialize the buffer
-> sparse_buffer_fini()	free the remaining part of the buffer
-> sparse_buffer_alloc()	alloc from the buffer, and if buffer is empty
-> return NULL
-> 
-> Define these functions in sparse.c instead of sparse-vmemmap.c because
-> later we will use them for non-vmemmap sparse allocations as well.
-> 
-> ...
->
-> +void * __meminit sparse_buffer_alloc(unsigned long size)
-> +{
-> +	void *ptr = NULL;
-> +
-> +	if (sparsemap_buf) {
-> +		ptr = (void *)ALIGN((unsigned long)sparsemap_buf, size);
-> +		if (ptr + size > sparsemap_buf_end)
-> +			ptr = NULL;
-> +		else
-> +			sparsemap_buf = ptr + size;
-> +	}
-> +	return ptr;
-> +}
+Or you could try this (completely untested, though):
 
-tweak...
-
-diff -puN mm/sparse.c~mm-sparse-abstract-sparse-buffer-allocations-fix mm/sparse.c
---- a/mm/sparse.c~mm-sparse-abstract-sparse-buffer-allocations-fix
-+++ a/mm/sparse.c
-@@ -491,7 +491,7 @@ void * __meminit sparse_buffer_alloc(uns
- 	void *ptr = NULL;
+diff --git a/drivers/staging/speakup/speakup_soft.c b/drivers/staging/speakup/speakup_soft.c
+index a61bc41b82d7..198936ed0b54 100644
+--- a/drivers/staging/speakup/speakup_soft.c
++++ b/drivers/staging/speakup/speakup_soft.c
+@@ -192,13 +192,10 @@ static int softsynth_close(struct inode *inode, struct file *fp)
+ 	return 0;
+ }
  
- 	if (sparsemap_buf) {
--		ptr = (void *)ALIGN((unsigned long)sparsemap_buf, size);
-+		ptr = PTR_ALIGN(sparsemap_buf, size);
- 		if (ptr + size > sparsemap_buf_end)
- 			ptr = NULL;
- 		else
-
+-static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
+-			       loff_t *pos, int unicode)
++static ssize_t softsynthx_read_iter(struct kiocb *iocb, struct iov_iter *to, int unicode)
+ {
+ 	int chars_sent = 0;
+-	char __user *cp;
+ 	char *init;
+-	u16 ch;
+ 	int empty;
+ 	unsigned long flags;
+ 	DEFINE_WAIT(wait);
+@@ -211,7 +208,7 @@ static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
+ 		if (!synth_buffer_empty() || speakup_info.flushing)
+ 			break;
+ 		spin_unlock_irqrestore(&speakup_info.spinlock, flags);
+-		if (fp->f_flags & O_NONBLOCK) {
++		if (iocb->ki_flags & IOCB_NOWAIT) {
+ 			finish_wait(&speakup_event, &wait);
+ 			return -EAGAIN;
+ 		}
+@@ -224,11 +221,14 @@ static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
+ 	}
+ 	finish_wait(&speakup_event, &wait);
+ 
+-	cp = buf;
+ 	init = get_initstring();
+ 
+ 	/* Keep 3 bytes available for a 16bit UTF-8-encoded character */
+-	while (chars_sent <= count - 3) {
++	while (iov_iter_count(to)) {
++		u_char s[3];
++		int l, n;
++		u16 ch;
++
+ 		if (speakup_info.flushing) {
+ 			speakup_info.flushing = 0;
+ 			ch = '\x18';
+@@ -244,60 +244,47 @@ static ssize_t softsynthx_read(struct file *fp, char __user *buf, size_t count,
+ 		spin_unlock_irqrestore(&speakup_info.spinlock, flags);
+ 
+ 		if ((!unicode && ch < 0x100) || (unicode && ch < 0x80)) {
+-			u_char c = ch;
+-
+-			if (copy_to_user(cp, &c, 1))
+-				return -EFAULT;
+-
+-			chars_sent++;
+-			cp++;
++			s[0] = ch;
++			l = 1;
+ 		} else if (unicode && ch < 0x800) {
+-			u_char s[2] = {
+-				0xc0 | (ch >> 6),
+-				0x80 | (ch & 0x3f)
+-			};
+-
+-			if (copy_to_user(cp, s, sizeof(s)))
+-				return -EFAULT;
+-
+-			chars_sent += sizeof(s);
+-			cp += sizeof(s);
++			s[0] = 0xc0 | (ch >> 6);
++			s[1] = 0x80 | (ch & 0x3f);
++			l = 2;
+ 		} else if (unicode) {
+-			u_char s[3] = {
+-				0xe0 | (ch >> 12),
+-				0x80 | ((ch >> 6) & 0x3f),
+-				0x80 | (ch & 0x3f)
+-			};
+-
+-			if (copy_to_user(cp, s, sizeof(s)))
+-				return -EFAULT;
+-
+-			chars_sent += sizeof(s);
+-			cp += sizeof(s);
++			s[0] = 0xe0 | (ch >> 12);
++			s[1] = 0x80 | ((ch >> 6) & 0x3f);
++			s[2] = 0x80 | (ch & 0x3f);
++			l = 3;
+ 		}
+-
++		n = copy_to_iter(s, l, to);
++		if (n != l) {
++			iov_iter_revert(to, n);
++			spin_lock_irqsave(&speakup_info.spinlock, flags);
++			break;
++		}
++		chars_sent += l;
+ 		spin_lock_irqsave(&speakup_info.spinlock, flags);
+ 	}
+-	*pos += chars_sent;
++	iocb->ki_pos += chars_sent;
+ 	empty = synth_buffer_empty();
+ 	spin_unlock_irqrestore(&speakup_info.spinlock, flags);
+ 	if (empty) {
+ 		speakup_start_ttys();
+-		*pos = 0;
++		iocb->ki_pos = 0;
+ 	}
+ 	return chars_sent;
+ }
+ 
+-static ssize_t softsynth_read(struct file *fp, char __user *buf, size_t count,
++static ssize_t softsynth_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			      loff_t *pos)
+ {
+-	return softsynthx_read(fp, buf, count, pos, 0);
++	return softsynthx_read_iter(iocb, to, 0);
+ }
+ 
+-static ssize_t softsynthu_read(struct file *fp, char __user *buf, size_t count,
++static ssize_t softsynthu_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			       loff_t *pos)
+ {
+-	return softsynthx_read(fp, buf, count, pos, 1);
++	return softsynthx_read_iter(iocb, to, 1);
+ }
+ 
+ static int last_index;
+@@ -343,7 +330,7 @@ static unsigned char get_index(struct spk_synth *synth)
+ static const struct file_operations softsynth_fops = {
+ 	.owner = THIS_MODULE,
+ 	.poll = softsynth_poll,
+-	.read = softsynth_read,
++	.read_iter = softsynth_read_iter,
+ 	.write = softsynth_write,
+ 	.open = softsynth_open,
+ 	.release = softsynth_close,
+@@ -352,7 +339,7 @@ static const struct file_operations softsynth_fops = {
+ static const struct file_operations softsynthu_fops = {
+ 	.owner = THIS_MODULE,
+ 	.poll = softsynth_poll,
+-	.read = softsynthu_read,
++	.read_iter = softsynthu_read_iter,
+ 	.write = softsynth_write,
+ 	.open = softsynth_open,
+ 	.release = softsynth_close,
