@@ -3,71 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEC3C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50847C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A54562086E
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54562086E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 145B32086E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145B32086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbeGLMJa (ORCPT
+        id S1727478AbeGLMJe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:09:30 -0400
-Received: from shell.v3.sk ([90.176.6.54]:59818 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726696AbeGLMJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:09:30 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 4BDA4AFBEE;
-        Thu, 12 Jul 2018 14:00:13 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id NlbaGDMPiy1B; Thu, 12 Jul 2018 14:00:09 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 2A347AFBEF;
-        Thu, 12 Jul 2018 14:00:09 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id XKGmpTSQL0kk; Thu, 12 Jul 2018 14:00:08 +0200 (CEST)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 3000AAFBEE;
-        Thu, 12 Jul 2018 14:00:08 +0200 (CEST)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Jiri Kosina <trivial@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] mac80211: a trivial open80211s web site URL fix
-Date:   Thu, 12 Jul 2018 14:00:02 +0200
-Message-Id: <20180712120002.1277933-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.17.1
+        Thu, 12 Jul 2018 08:09:34 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16188 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726696AbeGLMJd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 08:09:33 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b4742a50000>; Thu, 12 Jul 2018 04:59:33 -0700
+Received: from HQMAIL107.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 12 Jul 2018 05:00:18 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 12 Jul 2018 05:00:18 -0700
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 12 Jul
+ 2018 12:00:18 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
+ Transport; Thu, 12 Jul 2018 12:00:18 +0000
+Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5b4742d00002>; Thu, 12 Jul 2018 05:00:18 -0700
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Laxman Dewangan <ldewangan@nvidia.com>
+CC:     Aapo Vienamo <avienamo@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 0/7] Tegra PMC pinctrl pad configuration
+Date:   Thu, 12 Jul 2018 15:00:06 +0300
+Message-ID: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- net/mac80211/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi all,
 
-diff --git a/net/mac80211/Kconfig b/net/mac80211/Kconfig
-index 76e30f4797fb..7dc77fc91891 100644
---- a/net/mac80211/Kconfig
-+++ b/net/mac80211/Kconfig
-@@ -79,7 +79,7 @@ config MAC80211_MESH
- 	 The implementation is based on Draft 2.08 of the Mesh Networking
- 	 amendment.  However, no compliance with that draft is claimed or even
- 	 possible, as drafts leave a number of identifiers to be defined after
--	 ratification.  For more information visit http://o11s.org/.
-+	 ratification.  For more information visit http://open80211s.org/.
- 
- config MAC80211_LEDS
- 	bool "Enable LED triggers"
+The Tegra Power Management Controller (PMC) can set pad power states
+and voltage configuration. This series implements pinctrl interfaces
+for configuring said pad properties.
+
+Changelog
+v3:
+	- Don't expose tegra_io_pad_is_powered()
+	- Remove tegra_io_pad_set_voltage() stub from pmc.h
+		- Fixes i386 build failure reported by kbuild test robot
+v2:
+	- Add Tegra186 AO_HV pad
+	- Make the IO pad tables narrower
+	- Add parens to TEGRA_IO_PAD() and TEGRA_IO_PIN_DESC()
+	- Fix a typo in the dt-bindings docs
+	- Remove old pmc pad voltage configuration APIs
+	- Check return value of tegra_io_pad_find() in
+	  tegra_io_pad_pinconf_get()/_set()
+
+Aapo Vienamo (7):
+  soc/tegra: pmc: Fix pad voltage configuration for Tegra186
+  soc/tegra: pmc: Factor out DPD register bit calculation
+  soc/tegra: pmc: Implement tegra_io_pad_is_powered()
+  soc/tegra: pmc: Use X macro to generate IO pad tables
+  dt-bindings: Add Tegra PMC pad configuration bindings
+  soc/tegra: pmc: Remove public pad voltage APIs
+  soc/tegra: pmc: Implement pad configuration via pinctrl
+
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  84 ++++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  95 ++++
+ drivers/soc/tegra/pmc.c                            | 512 +++++++++++++++------
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  18 +
+ include/soc/tegra/pmc.h                            |  20 +-
+ 5 files changed, 581 insertions(+), 148 deletions(-)
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
+
 -- 
-2.17.1
+2.7.4
 
