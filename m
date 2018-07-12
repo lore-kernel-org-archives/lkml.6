@@ -2,194 +2,299 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D82BC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EC6C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:58:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1827213A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:58:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1827213A2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 6939D2086E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 11:58:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="pGPqIszU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6939D2086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732516AbeGLMHe (ORCPT
+        id S1732404AbeGLMIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:07:34 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55052 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726695AbeGLMHd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:07:33 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CBpjAp044868
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 07:58:19 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k65k044bt-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 07:58:19 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Thu, 12 Jul 2018 12:58:17 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Jul 2018 12:58:14 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6CBwDrw37683202
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Jul 2018 11:58:13 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6DEA411C054;
-        Thu, 12 Jul 2018 14:58:34 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 27ED011C04C;
-        Thu, 12 Jul 2018 14:58:34 +0100 (BST)
-Received: from oc7330422307.ibm.com (unknown [9.152.99.116])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 12 Jul 2018 14:58:34 +0100 (BST)
-Subject: Re: [PATCH v2] kvm/x86: Inform RCU of quiescent state when entering
- guest mode
-To:     David Woodhouse <dwmw2@infradead.org>, paulmck@linux.vnet.ibm.com
-Cc:     peterz@infradead.org, mhillenb@amazon.de,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-References: <20180711174843.GX3593@linux.vnet.ibm.com>
- <20180711180101.3711464-1-dwmw2@infradead.org>
- <20180711182053.GA3593@linux.vnet.ibm.com>
- <20180711183645.GA23820@linux.vnet.ibm.com>
- <62e945ee-a58e-f9b3-279c-74cd0f5809da@de.ibm.com>
- <20180711202752.GC3593@linux.vnet.ibm.com>
- <2f7ba67e-0442-13cc-628c-2dca56520c21@de.ibm.com>
- <20180711213259.GF3593@linux.vnet.ibm.com>
- <18288874-e778-4f7f-2fd5-f03624717e9c@de.ibm.com>
- <20180711234720.GJ3593@linux.vnet.ibm.com>
- <1531384288.8759.101.camel@infradead.org>
- <b3c188f7-454f-35da-b9aa-ddddc4d494cc@de.ibm.com>
- <1531393828.8759.116.camel@infradead.org>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Thu, 12 Jul 2018 13:58:12 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1531393828.8759.116.camel@infradead.org>
+        Thu, 12 Jul 2018 08:08:06 -0400
+Received: from mail-by2nam01on0040.outbound.protection.outlook.com ([104.47.34.40]:30720
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726695AbeGLMIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 08:08:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7df3n1mbinv61XHv0Z3KzlMyp8OtmJ+v9GkrgBqpIwY=;
+ b=pGPqIszUR1oNOxAluqTf0RmsGggNTrE8/MJPtzt35Ia1TulmIt19Hg4LzSKsYtY4PH/hOsI8fFjH99kA4jWzKcZG7S5mn+4s+5NkJTxCOV+oGbZp5boTsgvaiaXYg8QPRwW3E4WPTJywNge1WVDThujf7+dQLvsqgiM0FLAHH4I=
+Received: from BN7PR07MB4676.namprd07.prod.outlook.com (52.135.249.153) by
+ BN7PR07MB4194.namprd07.prod.outlook.com (52.135.244.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.952.17; Thu, 12 Jul 2018 11:58:47 +0000
+Received: from BN7PR07MB4676.namprd07.prod.outlook.com
+ ([fe80::dbc:2355:dd0a:fe48]) by BN7PR07MB4676.namprd07.prod.outlook.com
+ ([fe80::dbc:2355:dd0a:fe48%4]) with mapi id 15.20.0952.017; Thu, 12 Jul 2018
+ 11:58:47 +0000
+From:   Janek Kotas <jank@cadence.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
+        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
+Subject: [PATCH v2 2/2] scsi: ufs: Add UFS platform driver for Cadence UFS
+Thread-Topic: [PATCH v2 2/2] scsi: ufs: Add UFS platform driver for Cadence
+ UFS
+Thread-Index: AQHUGdewHIQjjG9RrEWopjc0Ii36og==
+Date:   Thu, 12 Jul 2018 11:58:47 +0000
+Message-ID: <4744959B-7757-4FA7-AECD-AE1C1946863B@cadence.com>
+Accept-Language: en-US, pl-PL
 Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18071211-0028-0000-0000-000002DAE06B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071211-0029-0000-0000-000023928C38
-Message-Id: <2997e5b4-57b4-dba5-2487-6908ca1b9500@de.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=961 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807120124
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN7PR07MB4194;7:jlv41oG5j8uNOzOd/nDKih8IAnpe284SocUPNc4TlYd5CzqdpY4Fr8iVUqOYA6sCS6nVR5Xuo1N9DsZF/iAMncPbua1nfqCaNq6tXDav0D2k1nvLGCOK4uj1c3GQX6qLbPPTmA4J+FxSP90+5igoFnRMvYSiv226xhszVghPCYNpTdoWY6Mwjvhh/tRAW20OFQ/Clinanid7BLqZ7I5IMFb0i0EjQBT9/TNXToTM/vC5OtyiZnbaK4wb2JEPahM4;20:DdpvryxPkm2hXF6HcIJdcZlGwoiNbaR9RwJZueYD8A7o3EC0gUrfT72h2gKjKXrYio0BYfeFeMejg3sfHCmX8/ODTYR1AxuU6p3M89tqTDjEVJFWKjdOAM0dZU65QfhuJB8bm44FJ4HC3cbSeczhkSL2CqmpePNNgKcSfwdoRIc4uNEFXZqDYWq7fAZpZ6srmAooTXmNswH8kQBYOixsonynkv+leJ4kI4b3iX+3YCGoINCQV+251zFLFtoanNrz
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: bc86034b-86fc-45b5-7925-08d5e7eed327
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BN7PR07MB4194;
+x-ms-traffictypediagnostic: BN7PR07MB4194:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jank@cadence.com; 
+x-microsoft-antispam-prvs: <BN7PR07MB4194196828C9D4C4BB18E369D0590@BN7PR07MB4194.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(72806322054110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231311)(944501410)(52105095)(93006095)(93001095)(149027)(150027)(6041310)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:BN7PR07MB4194;BCL:0;PCL:0;RULEID:;SRVR:BN7PR07MB4194;
+x-forefront-prvs: 0731AA2DE6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(396003)(346002)(376002)(199004)(189003)(36092001)(4326008)(86362001)(486006)(83716003)(6512007)(68736007)(2900100001)(39060400002)(53936002)(476003)(2616005)(82746002)(6486002)(2501003)(5250100002)(105586002)(106356001)(14454004)(2201001)(97736004)(478600001)(36756003)(305945005)(8936002)(3846002)(6116002)(99286004)(33656002)(6436002)(54906003)(7736002)(186003)(26005)(316002)(6506007)(8676002)(81166006)(81156014)(2906002)(66066001)(25786009)(102836004)(110136005)(5660300001)(14444005)(256004)(42262002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR07MB4194;H:BN7PR07MB4676.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 3eVRJdBexOXvFBpVU/dsRVMSl9eHZBRe6eAOBX0yLWvGyZB7IYKhjbABOVfjToYejSoojy6hUCgt6S98ghsmjkbJbJpNGjYQmseZurKevcrUK/f3xdy9gV9yzJT6tRyp2dAy7Ey7JMNFnp3O59a5Aq8EszZDx6x57ZGY+1XuV/QXvWD0DaipueZzetx/+/CpMEVSbIBrCue9loX/KetUKys3o3djb1VyQXQydaxTWEChuOs+YftlT/wiS+WuUzJKGdV2aE3KwzYDUBGJ0JIApqYBe7LHyY9xaN20Z87oaZPsbvT5ADB71HOR2aNm7HYjYQ/SRFFTJhvXTdLAxeB5vI80xNu3zHHVxPw2q2jEYJY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <C1536E339B75C348AE811F23A2C5C847@namprd07.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc86034b-86fc-45b5-7925-08d5e7eed327
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2018 11:58:47.2199
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR07MB4194
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch adds a device tree platform
+driver for Cadence UFS Controller.
 
+Signed-off-by: Jan Kotas <jank@cadence.com>
+---
+ drivers/scsi/ufs/Kconfig       |   8 +++
+ drivers/scsi/ufs/Makefile      |   1 +
+ drivers/scsi/ufs/cdns-pltfrm.c | 149 +++++++++++++++++++++++++++++++++++++=
+++++
+ 3 files changed, 158 insertions(+)
+ create mode 100644 drivers/scsi/ufs/cdns-pltfrm.c
 
-On 07/12/2018 01:10 PM, David Woodhouse wrote:
-> On Thu, 2018-07-12 at 13:00 +0200, Christian Borntraeger wrote:
->>
->> On s390 this seems to add about 10ns (~3%) for a guest exit/rentry
->> microbenchmark mostly due to  rcu_eqs_enter and rcu_eqs_exit now being
->> visible in perf samples. The older interface was cheaper.
-> 
-> Well, the older interface wasn't actually working, which made it
-> moderately suboptimal :)
-> 
-> But that is fixed by the first patch of the two, so perhaps the second
-> ought to be conditional on CONFIG_NO_HZ_FULL since it's only really
-> fixing a real bug there?
-> 
-> Unless we can contrive some way to do the rcu_eqs_enter/exit only on
-> the paths to/from userspace, and *not* when we loop in the kernel to
-> handle interrupts (etc.) and immediately re-enter the guest without
-> returning? That's somewhat non-trivial though...
-
-Assuming that patch1 really fixes the issue (and all KVM hot loops are
-supposed to have something like
-        if (need_resched())
-                schedule();
-
-this could work out given that patch1 does what it is supposed to do.
-
-So you are thinking of something like
-
-diff --git a/include/linux/rcutree.h b/include/linux/rcutree.h
-index d8ee9f949ce3..cac5de8a887c 100644
---- a/include/linux/rcutree.h
-+++ b/include/linux/rcutree.h
-@@ -72,8 +72,17 @@ void cond_synchronize_sched(unsigned long oldstate);
- 
- void rcu_idle_enter(void);
- void rcu_idle_exit(void);
-+#ifdef CONFIG_NO_HZ_FULL
- void rcu_kvm_enter(void);
- void rcu_kvm_exit(void);
-+#else
-+static inline void rcu_kvm_enter(void)
+diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+index e27b4d4..552f85a 100644
+--- a/drivers/scsi/ufs/Kconfig
++++ b/drivers/scsi/ufs/Kconfig
+@@ -80,6 +80,14 @@ config SCSI_UFSHCD_PLATFORM
+=20
+ 	  If unsure, say N.
+=20
++config SCSI_UFS_CDNS_PLATFORM
++	tristate "Cadence UFS Controller platform driver"
++	depends on SCSI_UFSHCD_PLATFORM
++	---help---
++	This selects the Cadence specific additions to UFSHCD platform driver.
++
++	  If unsure, say N.
++
+ config SCSI_UFS_DWC_TC_PLATFORM
+ 	tristate "DesignWare platform support using a G210 Test Chip"
+ 	depends on SCSI_UFSHCD_PLATFORM
+diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+index 918f579..dcddc7a 100644
+--- a/drivers/scsi/ufs/Makefile
++++ b/drivers/scsi/ufs/Makefile
+@@ -2,6 +2,7 @@
+ # UFSHCD makefile
+ obj-$(CONFIG_SCSI_UFS_DWC_TC_PCI) +=3D tc-dwc-g210-pci.o ufshcd-dwc.o tc-d=
+wc-g210.o
+ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) +=3D tc-dwc-g210-pltfrm.o ufshcd-dw=
+c.o tc-dwc-g210.o
++obj-$(CONFIG_SCSI_UFS_CDNS_PLATFORM) +=3D cdns-pltfrm.o
+ obj-$(CONFIG_SCSI_UFS_QCOM) +=3D ufs-qcom.o
+ obj-$(CONFIG_SCSI_UFSHCD) +=3D ufshcd-core.o
+ ufshcd-core-objs :=3D ufshcd.o ufs-sysfs.o
+diff --git a/drivers/scsi/ufs/cdns-pltfrm.c b/drivers/scsi/ufs/cdns-pltfrm.=
+c
+new file mode 100644
+index 0000000..943e26b
+--- /dev/null
++++ b/drivers/scsi/ufs/cdns-pltfrm.c
+@@ -0,0 +1,149 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Platform UFS Host driver for Cadence controller
++ *
++ * Copyright (C) 2018 Cadence Design Systems, Inc.
++ *
++ * Authors:
++ *	Jan Kotas <jank@cadence.com>
++ *
++ */
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/of.h>
++#include <linux/time.h>
++
++#include "ufshcd-pltfrm.h"
++
++#define CDNS_UFS_REG_HCLKDIV 0xFC
++
++/**
++ * Sets HCLKDIV register value based on the core_clk
++ * @hba: host controller instance
++ *
++ * Return zero for success and non-zero for failure
++ */
++static int cdns_ufs_set_hclkdiv(struct ufs_hba *hba)
 +{
++	struct ufs_clk_info *clki;
++	struct list_head *head =3D &hba->clk_list_head;
++	unsigned long core_clk_rate =3D 0;
++	u32 core_clk_div =3D 0;
++
++	if (list_empty(head))
++		return 0;
++
++	list_for_each_entry(clki, head, list) {
++		if (IS_ERR_OR_NULL(clki->clk))
++			continue;
++		if (!strcmp(clki->name, "core_clk"))
++			core_clk_rate =3D clk_get_rate(clki->clk);
++	}
++
++	if (!core_clk_rate) {
++		dev_err(hba->dev, "%s: unable to find core_clk rate\n",
++			__func__);
++		return -EINVAL;
++	}
++
++	core_clk_div =3D core_clk_rate / USEC_PER_SEC;
++
++	ufshcd_writel(hba, core_clk_div, CDNS_UFS_REG_HCLKDIV);
++	/* Make sure the register was updated */
++	mb();
++
++	return 0;
 +}
-+static inline void rcu_kvm_exit(void)
++
++/**
++ * Sets clocks used by the controller
++ * @hba: host controller instance
++ * @on: if true, enable clocks, otherwise disable
++ * @status: notify stage (pre, post change)
++ *
++ * Return zero for success and non-zero for failure
++ */
++static int cdns_ufs_setup_clocks(struct ufs_hba *hba, bool on,
++				 enum ufs_notify_change_status status)
 +{
++	if ((!on) || (status =3D=3D PRE_CHANGE))
++		return 0;
++
++	return cdns_ufs_set_hclkdiv(hba);
 +}
-+#endif
- void rcu_irq_enter(void);
- void rcu_irq_exit(void);
- void rcu_irq_enter_irqson(void);
++
++
++static struct ufs_hba_variant_ops cdns_pltfm_hba_vops =3D {
++	.name =3D "cdns-ufs-pltfm",
++	.setup_clocks =3D cdns_ufs_setup_clocks,
++};
++
++/**
++ * cdns_ufs_pltfrm_probe - probe routine of the driver
++ * @pdev: pointer to platform device handle
++ *
++ * Return zero for success and non-zero for failure
++ */
++static int cdns_ufs_pltfrm_probe(struct platform_device *pdev)
++{
++	int err;
++	struct device *dev =3D &pdev->dev;
++
++	/* Perform generic probe */
++	err =3D ufshcd_pltfrm_init(pdev, &cdns_pltfm_hba_vops);
++	if (err)
++		dev_err(dev, "ufshcd_pltfrm_init() failed %d\n", err);
++
++	return err;
++}
++
++/**
++ * cdns_ufs_pltfrm_remove - set driver_data of the device to NULL
++ * @pdev: pointer to platform device handle
++ *
++ * Always returns 0
++ */
++static int cdns_ufs_pltfrm_remove(struct platform_device *pdev)
++{
++	struct ufs_hba *hba =3D  platform_get_drvdata(pdev);
++
++	pm_runtime_get_sync(&(pdev)->dev);
++	ufshcd_remove(hba);
++	return 0;
++}
++
++
++static const struct of_device_id cdns_ufs_of_match[] =3D {
++	{ .compatible =3D "cdns,ufshc" },
++	{},
++};
++
++MODULE_DEVICE_TABLE(of, cdns_ufs_of_match);
++
++static const struct dev_pm_ops cdns_ufs_dev_pm_ops =3D {
++	.suspend         =3D ufshcd_pltfrm_suspend,
++	.resume          =3D ufshcd_pltfrm_resume,
++	.runtime_suspend =3D ufshcd_pltfrm_runtime_suspend,
++	.runtime_resume  =3D ufshcd_pltfrm_runtime_resume,
++	.runtime_idle    =3D ufshcd_pltfrm_runtime_idle,
++};
++
++static struct platform_driver cdns_ufs_pltfrm_driver =3D {
++	.probe	=3D cdns_ufs_pltfrm_probe,
++	.remove	=3D cdns_ufs_pltfrm_remove,
++	.driver	=3D {
++		.name   =3D "cdns-ufshcd",
++		.owner  =3D THIS_MODULE,
++		.pm     =3D &cdns_ufs_dev_pm_ops,
++		.of_match_table =3D cdns_ufs_of_match,
++	},
++};
++
++module_platform_driver(cdns_ufs_pltfrm_driver);
++
++MODULE_AUTHOR("Jan Kotas <jank@cadence.com>");
++MODULE_DESCRIPTION("Cadence UFS host controller platform driver");
++MODULE_LICENSE("GPL");
++MODULE_VERSION(UFSHCD_DRIVER_VERSION);
+--=20
+1.9.0
 
-?
 
