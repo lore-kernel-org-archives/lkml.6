@@ -2,113 +2,137 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 820DAC476E8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A31AC476E8
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4942B20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:26:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4942B20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A9ABD208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 16:29:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BV5onYGx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9ABD208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732289AbeGLQgv convert rfc822-to-8bit (ORCPT
+        id S1727277AbeGLQj4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 12:36:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40022 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726816AbeGLQgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 12:36:51 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E194C7A7EB;
-        Thu, 12 Jul 2018 16:26:34 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 20C381C676;
-        Thu, 12 Jul 2018 16:26:33 +0000 (UTC)
-Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>
-References: <1530905572-817-1-git-send-email-longman@redhat.com>
- <20180709081920.GD22049@dhcp22.suse.cz>
- <62275711-e01d-7dbe-06f1-bf094b618195@redhat.com>
- <20180710142740.GQ14284@dhcp22.suse.cz>
- <a2794bcc-9193-cbca-3a54-47420a2ab52c@redhat.com>
- <20180711102139.GG20050@dhcp22.suse.cz>
- <9f24c043-1fca-ee86-d609-873a7a8f7a64@redhat.com>
- <1531330947.3260.13.camel@HansenPartnership.com>
- <18c5cbfe-403b-bb2b-1d11-19d324ec6234@redhat.com>
- <1531336913.3260.18.camel@HansenPartnership.com>
- <4d49a270-23c9-529f-f544-65508b6b53cc@redhat.com>
- <1531411494.18255.6.camel@HansenPartnership.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <30ac8e9b-a48c-9c37-5a96-731ad214262b@redhat.com>
-Date:   Thu, 12 Jul 2018 12:26:33 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Thu, 12 Jul 2018 12:39:56 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:36399 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbeGLQjz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 12:39:55 -0400
+Received: by mail-yw0-f195.google.com with SMTP id t198-v6so10677821ywc.3;
+        Thu, 12 Jul 2018 09:29:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Rk9zojcY8gGLr/qBvm3G0913px+0U76+mL5Nt/d2yik=;
+        b=BV5onYGxzL4uJL6D7dDUaxj/ZT/bMW1nxFMia85qyCy1YY6d08y4tkpMsqtBak45aJ
+         eHuG2IJeXkIJPlqtUHMnf+F9hyn1giBfJv8B53J7/i4hmZm6Yq0Qrkn1+65xcfLib3pt
+         QlroYW3xMKBKAo+CMgQ8vZ0bVcBEU3JKXqLS4WeC1oBi6BLP7dqlC7tij+tCMQGwkZXV
+         ZIgstXi/4U8zLFtKLQIoAFIxkwT4HDQ5nrf9569PBohwn/w6k2lbhE5KHkrf4MFlPd3Q
+         ApiEG9fcQFZJjtbnlSTGEFN3D1D2frk0lqf0ucNVwr1GIFjl4ocT5NPLhCw9wMzizWEa
+         HNPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Rk9zojcY8gGLr/qBvm3G0913px+0U76+mL5Nt/d2yik=;
+        b=mEZMBXlzX6bB1nh0ewMEfkTWFEw8npix6cMZYj+c7zZ2FkB9PQfDyVD2fOZPTjPuZX
+         8RUm3It/wyJtMPuy4tYXdyUk0ikVMg2ahsPyUEqjdUol7KF983oBqrKAktVm4tu/Q6g5
+         RBueb5Ui+VRwlh9hFA9eVK4l5Awa/YYiBuOl2bEtvRuljy6GS/+P2MLej+uMRpVjZ8iF
+         YOBaT0hAberRaZqm/B3LyvCUeNIXp9a8w80EbSGSiv8gAERWgbz4j1pwWLUwD0DS8nwp
+         Kwk+doh0UmW7DLtrPFlajV6TYcApUxjIr53LtlRnUMczpeSYWwTQD5dSSU6xqxjxQfM7
+         WO3A==
+X-Gm-Message-State: AOUpUlES13j9E2qDgffPShtijae3GugKTSKLziJVYd29NkWFtLAxaCxT
+        dihQ7t0VzBPkyJ7InbZf/qq7soa4YJ6XB85Ofnk=
+X-Google-Smtp-Source: AAOMgpdiziPwoCIxIndASDyGGLD+tmULdADAsBRBbDpiH7T+1I7gD50ZZt142xjA6R8spDfZoSpjXfHxzWNf/U4EJ9A=
+X-Received: by 2002:a81:9a91:: with SMTP id r139-v6mr1484776ywg.181.1531412978754;
+ Thu, 12 Jul 2018 09:29:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1531411494.18255.6.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 12 Jul 2018 16:26:35 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 12 Jul 2018 16:26:35 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Received: by 2002:a81:7dc5:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 09:29:38
+ -0700 (PDT)
+In-Reply-To: <20180706204521.29654-1-mszeredi@redhat.com>
+References: <20180706204521.29654-1-mszeredi@redhat.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 12 Jul 2018 19:29:38 +0300
+Message-ID: <CAOQ4uxjYxhiBgsVEzpx6Z=f56KFK61gr9R_WAkadKNHiQAFaAg@mail.gmail.com>
+Subject: Re: [PATCH v2 (v4.18 regression fix)] vfs: don't evict uninitialized inode
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 12:04 PM, James Bottomley wrote:
-> On Thu, 2018-07-12 at 11:54 -0400, Waiman Long wrote:
->>
->> It is not that dentry cache is harder to get rid of than the other
->> memory. It is that the ability of generate unlimited number of
->> negative dentries that will displace other useful memory from the
->> system. What the patch is trying to do is to have a warning or
->> notification system in place to spot unusual activities in regard to
->> the number of negative dentries in the system. The system
->> administrators can then decide on what to do next.
-> But every cache has this property: I can cause the same effect by doing
-> a streaming read on a multi gigabyte file: the page cache will fill
-> with the clean pages belonging to the file until I run out of memory
-> and it has to start evicting older cache entries.  Once we hit the
-> steady state of minimal free memory, the mm subsytem tries to balance
-> the cache requests (like my streaming read) against the existing pool
-> of cached objects.
+On Fri, Jul 6, 2018 at 11:45 PM, Miklos Szeredi <mszeredi@redhat.com> wrote:
+> iput() ends up calling ->evict() on new inode, which is not yet initialized
+> by owning fs.  So use destroy_inode() instead.
 >
-> The question I'm trying to get an answer to is why does the dentry
-> cache need special limits when the mm handling of the page cache (and
-> other mm caches) just works?
+> Add to sb->s_inodes list only if inode is not in I_CREATING state (meaning
+> that it wasn't allocated with new_inode(), which already does the
+> insertion).
 >
-> James
+> Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Fixes: 80ea09a002bf ("vfs: factor out inode_insert5()")
+> ---
+
+Al,
+
+Did you loose track of this 4.18 regression fix?
+
+Thanks,
+Amir.
+
+>  fs/inode.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 >
-
-I/O activities can be easily tracked. Generation of negative dentries,
-however, is more insidious. So the ability to track and be notified when
-too many negative dentries are created can be a useful tool for the
-system administrators. Besides, there are paranoid users out there who
-want to have control of as much as system parameters as possible.
-
-Cheers,
-Longman
-
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 04dd7e0d5142..e7de38c1d9d8 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -1050,6 +1050,7 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+>  {
+>         struct hlist_head *head = inode_hashtable + hash(inode->i_sb, hashval);
+>         struct inode *old;
+> +       bool creating = inode->i_state & I_CREATING;
+>
+>  again:
+>         spin_lock(&inode_hash_lock);
+> @@ -1083,6 +1084,8 @@ struct inode *inode_insert5(struct inode *inode, unsigned long hashval,
+>         inode->i_state |= I_NEW;
+>         hlist_add_head(&inode->i_hash, head);
+>         spin_unlock(&inode->i_lock);
+> +       if (!creating)
+> +               inode_sb_list_add(inode);
+>  unlock:
+>         spin_unlock(&inode_hash_lock);
+>
+> @@ -1117,12 +1120,12 @@ struct inode *iget5_locked(struct super_block *sb, unsigned long hashval,
+>         struct inode *inode = ilookup5(sb, hashval, test, data);
+>
+>         if (!inode) {
+> -               struct inode *new = new_inode(sb);
+> +               struct inode *new = alloc_inode(sb);
+>
+>                 if (new) {
+>                         inode = inode_insert5(new, hashval, test, set, data);
+>                         if (unlikely(inode != new))
+> -                               iput(new);
+> +                               destroy_inode(new);
+>                 }
+>         }
+>         return inode;
+> --
+> 2.14.3
+>
