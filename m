@@ -2,108 +2,85 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C13ECAC25
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:08:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B26EDECBAF3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 034E8208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:08:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 034E8208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3CA79208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:10:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CA79208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732189AbeGLTTh (ORCPT
+        id S1732226AbeGLTVZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 15:19:37 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48638 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727082AbeGLTTh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 15:19:37 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D60C2C;
-        Thu, 12 Jul 2018 19:08:44 +0000 (UTC)
-Date:   Thu, 12 Jul 2018 21:08:42 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        David Howells <dhowells@redhat.com>, linux-api@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
- superblock creation [ver #9]
-Message-ID: <20180712190842.GA2000@kroah.com>
-References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
- <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
- <20180712171505.GA23780@kroah.com>
- <20180712172024.GZ30522@ZenIV.linux.org.uk>
- <20180712180304.GA27758@kroah.com>
- <76211EBC-05ED-4FBA-A136-F5EEBFDD9FDF@amacapital.net>
+        Thu, 12 Jul 2018 15:21:25 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:47456 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726480AbeGLTVZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 15:21:25 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id 1C4E62019F;
+        Thu, 12 Jul 2018 23:10:16 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id LC_X6-PS7sJx; Thu, 12 Jul 2018 23:10:15 +0200 (CEST)
+Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 9DA7320080;
+        Thu, 12 Jul 2018 23:10:15 +0200 (CEST)
+Received: from gauss2.secunet.de (10.182.7.193) by mail-essen-01.secunet.de
+ (10.53.40.204) with Microsoft SMTP Server id 14.3.399.0; Thu, 12 Jul 2018
+ 21:10:30 +0200
+Received: by gauss2.secunet.de (Postfix, from userid 1000)      id 53EBF3180879;
+ Thu, 12 Jul 2018 21:10:30 +0200 (CEST)
+Date:   Thu, 12 Jul 2018 21:10:30 +0200
+From:   Steffen Klassert <steffen.klassert@secunet.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Florian Westphal <fw@strlen.de>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] [RESEND, net-next] xfrm: use time64_t for in-kernel
+ timestamps
+Message-ID: <20180712191030.4chaji3vswtnltdc@gauss3.secunet.de>
+References: <20180711101941.4039411-1-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <76211EBC-05ED-4FBA-A136-F5EEBFDD9FDF@amacapital.net>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180711101941.4039411-1-arnd@arndb.de>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: FD9727BC-5A1E-4785-A40A-500AEC11CF03
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 11:30:32AM -0700, Andy Lutomirski wrote:
+On Wed, Jul 11, 2018 at 12:19:13PM +0200, Arnd Bergmann wrote:
+> The lifetime managment uses '__u64' timestamps on the user space
+> interface, but 'unsigned long' for reading the current time in the kernel
+> with get_seconds().
 > 
-> > On Jul 12, 2018, at 11:03 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> > 
-> >> On Thu, Jul 12, 2018 at 06:20:24PM +0100, Al Viro wrote:
-> >>> On Thu, Jul 12, 2018 at 07:15:05PM +0200, Greg KH wrote:
-> >>>> On Tue, Jul 10, 2018 at 11:44:09PM +0100, David Howells wrote:
-> >>>> Provide an fsopen() system call that starts the process of preparing to
-> >>>> create a superblock that will then be mountable, using an fd as a context
-> >>>> handle.  fsopen() is given the name of the filesystem that will be used:
-> >>>> 
-> >>>>    int mfd = fsopen(const char *fsname, unsigned int flags);
-> >>>> 
-> >>>> where flags can be 0 or FSOPEN_CLOEXEC.
-> >>>> 
-> >>>> For example:
-> >>>> 
-> >>>>    sfd = fsopen("ext4", FSOPEN_CLOEXEC);
-> >>>>    write(sfd, "s /dev/sdb1"); // note I'm ignoring write's length arg
-> >>>>    write(sfd, "o noatime");
-> >>>>    write(sfd, "o acl");
-> >>>>    write(sfd, "o user_attr");
-> >>>>    write(sfd, "o iversion");
-> >>>>    write(sfd, "o ");
-> >>>>    write(sfd, "r /my/container"); // root inside the fs
-> >>>>    write(sfd, "x create"); // create the superblock
-> >>> 
-> >>> Ugh, creating configfs again in a syscall form?  I know people love
-> >>> file descriptors, but can't you do this with a configfs entry instead if
-> >>> you really want to do this type of thing from userspace in this type of
-> >>> "style"?
-> >>> 
-> >>> Why reinvent the wheel again?
-> >> 
-> >> The damn thing REALLY, REALLY depends upon the fs type.  How would
-> >> you map it on configfs?
-> > 
-> > /sys/kernel/config/fs/ext4/ would work, right?  Each fs "type" would be
-> > listed there.
-> > 
-> > Anyway, the whole "write a bunch of options and then do a 'create'" is
-> > exactly the way configfs works.  Why not use that?
-> > 
-> > 
+> While this is probably safe beyond y2038, it will still overflow in 2106,
+> and the get_seconds() call is deprecated because fo that.
 > 
-> How do you mount configfs in the first place?  And how do you use this
-> in a mount namespace without a private configfs instance or where you
-> don’t want configfs mounted?--
+> This changes the xfrm time handling to use time64_t consistently, along
+> with reading the time using the safer ktime_get_real_seconds(). It still
+> suffers from problems that can happen from a concurrent settimeofday()
+> call or (to a lesser degree) a leap second update, but since the time
+> stamps are part of the user API, there is nothing we can do to prevent
+> that.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Ok, fair enough, I missed the part where this is going to replace
-mount(2).  Although you could just use mount(2) to mount configfs on a
-mount point in the initramfs image and then go from there at boot time :)
-
-/me runs away...
+Applied to the ipsec-next tree, thanks a lot!
