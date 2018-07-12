@@ -2,192 +2,145 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B4E1ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F794ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC1D720883
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:39:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EA2A20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:41:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gA4pkTXC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC1D720883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CqXsPx/y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA2A20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733199AbeGLVu0 (ORCPT
+        id S1733206AbeGLVw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 17:50:26 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:44717 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733154AbeGLVu0 (ORCPT
+        Thu, 12 Jul 2018 17:52:28 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:42101 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733113AbeGLVw1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 17:50:26 -0400
-Received: by mail-lf0-f68.google.com with SMTP id g6-v6so14770018lfb.11;
-        Thu, 12 Jul 2018 14:38:58 -0700 (PDT)
+        Thu, 12 Jul 2018 17:52:27 -0400
+Received: by mail-io0-f194.google.com with SMTP id r24-v6so29544965ioh.9;
+        Thu, 12 Jul 2018 14:41:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=+MmnrW13lbjXde0tBAxwHORIwCAQendwUaxFSzCN1Js=;
-        b=gA4pkTXCRhIL/PECOs0fQyLTNcntX5VNvCWwmATjp/nef8lm99xiKIIA85nPo7G32e
-         Yc2Wh5w04NbtpdSjsSRUNLTNVRNkNDNlqQqH+uPmsoxRr2IrieTxD20+UFycT4GD5Ght
-         +PrD7Sx3ns/SCbztXNqqwEDFC+3eCnF4s8ycnZrGKfH0b+mK20QKNHwc07WD6dSU2zGb
-         /GZrt95XB3ZY5j2JDb8SCgp9QdNwyCEy86OCh1rm4yTwvWmmMePBfJ317lzT43YuBYaX
-         nRutz7dB/slK9QLh4wViOOgvpEcOQ/ZTn4lwmTDI8MmRL+oPSMPZ27MEZBr/x08xzYTE
-         YumA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pYw+ZJGSxGm6J74XTNum40LIC28Ukp7NFhdm52rnKUc=;
+        b=CqXsPx/yRbvIu0uQQ6NOvpSOb82EF3aswz9WDv0HX/EFKF2YWnAe6lU7ApLJIdBlUv
+         jU4/Rs9AwF7jHOVVhJHuJX57YX8el9tgkwFZU/hP0J4Q2ONWyV2zXtlrOdOmo0TthxPY
+         sH4/Z3if1o9+Fnb46BBHTJA/pklnurc9MvL4M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=+MmnrW13lbjXde0tBAxwHORIwCAQendwUaxFSzCN1Js=;
-        b=ZuQ5xdlJusQrkMUz9+h4N47wbJcWeESw8eOdkRniFQyZUlBjNgyOb8PfnosS0VlOGc
-         xE8IUl3pGL2EYVmDA1QyArI+r+bIJBwFcfanazYJLYyYq3cZrwLh4ZvwoiePIoFh6e8n
-         REoJMaE2RAGQ18fmWdNkF3XuLmQFuUGiOHcp27/8seAtkSt2qcl/fZI5xBe4cxUBOKmV
-         itRFf5/KxTiit33NGtHAzaC8E1V3pZiq8MGQNp8GNVKCmouT7XijqEM2o4S2IvjpJ+Vd
-         5mFEavjVTl8NkZFFu4U3OpzrQc4MOS8Tpv/9A9ESgysmbte88WC0yK46lJFXR456k4y+
-         JIAw==
-X-Gm-Message-State: AOUpUlFupTD8t1iZkirpivFhFSmIKTmHzGOCMCIdKbVR8V2i73u0ZAH2
-        anF0IbECppzXDHrDa7CUJuIEtT1lAi0VbdOQNQo=
-X-Google-Smtp-Source: AAOMgpf7gi2kE7LpLx+P8Zhl1QB6vWwMkxqJnp6IEtamy53ujj5XcFudmCkP+FJ4yuWrr9NAUruEmHbedFivSz6hbZY=
-X-Received: by 2002:a19:b2c7:: with SMTP id t68-v6mr2885684lfk.132.1531431537768;
- Thu, 12 Jul 2018 14:38:57 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pYw+ZJGSxGm6J74XTNum40LIC28Ukp7NFhdm52rnKUc=;
+        b=FHuL/79mYplBMQ/c//DcE37ejnpwEgGwDOAZCuHPhVxgIPb+Yjuj0GTeRmXx3rZ4ub
+         /v4K/x3J2y6Oe2MFZ7aCmeH3ZsBtyhMhe+IlmXC90GaEigH7f9x02Uyrgsb/mOqOOI2r
+         g+OAwTBhcu1asgCRo394hDeoRZDRMf/9HGYFfLvEawNe4ZzzQLIDiGQhPt3V3DLvsWUU
+         WTQCqyP98ND3TsF9Bxp6XIc/NZqXGexSUr1iw7dEBmJZR1m2v22sg3JpYZDhR8zXLFXa
+         7e9O77K8FcGmHMTKBRSXci9aXXIGhhMM3djZVhTx18kGAhBFyicUkZM1MBnu+W1jHCC6
+         kIXQ==
+X-Gm-Message-State: AOUpUlHINnFq+7PPt/qFKCy7ZGiSUDnz1MQDp+YYry/fw35QHK3mK3Nd
+        jY4f0wO1kGpnBPW7w5Qn1vq+tQAVwjvIdi0VtpGvDM6C
+X-Google-Smtp-Source: AAOMgpeOFt6KSpevw4Lar12JjiAby270VQxFAKkTVURpQRahRSivpB3lwBiShD/tVsgKrN1b481ROB/Ac0Zfa6D4ecI=
+X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr30313690ion.259.1531431660330;
+ Thu, 12 Jul 2018 14:41:00 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 14:38:57
- -0700 (PDT)
-In-Reply-To: <CAGXu5jKiJkypPKXrSjnXOgkZZT=Sm=fLK0sAL_U9A40GVRFZBg@mail.gmail.com>
-References: <20180711203619.1020-1-keescook@chromium.org> <20180711203619.1020-12-keescook@chromium.org>
- <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com> <CAGXu5jKiJkypPKXrSjnXOgkZZT=Sm=fLK0sAL_U9A40GVRFZBg@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 12 Jul 2018 23:38:57 +0200
-X-Google-Sender-Auth: AFE34jNw91G_t3rV6Z9ZHU1pbNs
-Message-ID: <CAK8P3a1-bQ5WqSpoOQV0xYfK5tkRWCYTQeOJGoaXm=8K=3_K7w@mail.gmail.com>
-Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for AHASH_REQUEST_ON_STACK
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
+ <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
+ <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk>
+ <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
+ <7002.1531407244@warthog.procyon.org.uk> <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com>
+ <16699.1531426991@warthog.procyon.org.uk> <CA+55aFw1WyKY+-2dg62M-QT_F0-waCTCrba1DW4dStYz-f_fjA@mail.gmail.com>
+ <18233.1531430797@warthog.procyon.org.uk>
+In-Reply-To: <18233.1531430797@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 12 Jul 2018 14:40:49 -0700
+Message-ID: <CA+55aFw7ACqm4fzG_52xTR3B-MqB0hLvcprgjm3jayPDDn6=-A@mail.gmail.com>
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
+ superblock creation [ver #9]
+To:     David Howells <dhowells@redhat.com>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jann Horn <jannh@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 10:17 PM, Kees Cook <keescook@chromium.org> wrote:
-> On Thu, Jul 12, 2018 at 9:02 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Wed, Jul 11, 2018 at 10:36 PM, Kees Cook <keescook@chromium.org> wrote:
->>> Several uses of AHASH_REQUEST_ON_STACK() will trigger FRAME_WARN warnings
->>> (when less than 2048) once the VLA is no longer hidden from the check:
->>>
->>> drivers/block/drbd/drbd_worker.c:325:1: warning: the frame size of 1112 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>> drivers/block/drbd/drbd_worker.c:352:1: warning: the frame size of 1120 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>> crypto/ccm.c:235:1: warning: the frame size of 1184 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>> drivers/md/dm-crypt.c:353:1: warning: the frame size of 1096 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>> drivers/net/ppp/ppp_mppe.c:158:1: warning: the frame size of 1168 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>> net/wireless/lib80211_crypt_tkip.c:537:1: warning: the frame size of 1136 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>> drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_tkip.c:528:1: warning: the frame size of 1136 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>> drivers/staging/rtl8192e/rtllib_crypt_tkip.c:531:1: warning: the frame size of 1136 bytes is larger than 1024 bytes [-Wframe-larger-than=]
->>>
->>> This bumps the affected objects by 20% to silence the warnings while still
->>> providing coverage is anything grows even more.
->>>
->>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>
->> I think this is a dangerous precedent, I wouldn't really want any of
->> those functions to
->> ever take more than 1024 bytes, even that is really too much, but we
->> can't easily
->> lower the global limit.
+On Thu, Jul 12, 2018 at 2:26 PM David Howells <dhowells@redhat.com> wrote:
 >
-> The issue is that these are _already_ able to use this much stack
-> because of the VLA. It was just hidden from the FRAME_WARN checks.
+> The problem is that there's more than one actual "open" involved.
 
-Yes, of course.
+No. The problem is "write()".
 
->> You are patching all users of AHASH_REQUEST_ON_STACK with the exception of
->> arch/x86/power/hibernate_64.c here (which is always used on 64-bit and has
->> a larger limit already), which in turn suggests that the AHASH_REQUEST_ON_STACK
->> macro using bytes is just fundamentally broken by requiring that much space
->> (808 bytes for the context, plus 8 pointers for struct ahash_request, plus
->> CRYPTO_MINALIGN_ATTR).
->
-> Yes -- it's huge. That's always been true, unfortunately.
->
->> How did you come up with that 808 byte number? I see a total of 39 callers
->> of crypto_ahash_set_reqsize(), did you check all of those individually?
->> If 808 bytes is the worst case, what are the next 5 ones? If there are only
->> a few of them that are badly written, maybe we can fix the drivers instead
->> and lower that number to something more reasonable.
->
-> That was discussed a bit (maybe not enough?) in the next patch:
-> https://patchwork.kernel.org/patch/10520407/
->
-> I used tcrypt (which examines all sane combinations) and sha512
-> produces the 808 number. I had done an earlier manual evaluation of
-> all crypto_ahash_set_reqsize() callers but Herbert and Eric pointed
-> out issues with my methodology (namely that things can be recursively
-> stacked (I had calculated too low) but some things will never be
-> stacked together (so some pathological conditions will never happen)).
-> So I moved to the tcrypt instrumentation approach, which tests
-> real-world combinations.
->
-> For example, reaching this 808 size is trivially easy to do right now
-> by just asking for dm-crypt to use a cipher of
-> capi:cbc(aes)-essiv:sha512.
+This is not about open, about fsopen, or about anything at all.
 
-Ok, but is there anything that can be done to the sha512
-implementation to lower that number? E.g. if a significant chunk
-of struct sha512_hash_ctx is only used to hold temporary data,
-could it be replaced with e.g. a percpu buffer?
->> The other ones I looked at seem to all be well under 400 bytes (which is
->> still a lot to put on the stack, but probably ok).
->
-> I wish sha512 was "rare", but it's not. :(
+This is about the fact that "write()" by definition can happen in a
+different - and unexpected - context. Whether that be due to suid or
+due to splice, or due to any other random issue is entirely
+immaterial.
 
-Looking at the callers of crypto_ahash_set_reqsize(), it appears
-that the only instance that is so bad is specifically
-arch/x86/crypto/sha512-mb/sha512_mb.c, which is architecture
-specific, and only one of multiple implementations of sha512.
+(The same is true of "read()" too, but very few people try to make
+"read()" have side effects, so it's less of an issue. It does happen,
+though).
 
-Am I misreading that code, or does that mean that we could get
-away with using the 808 byte limit only on x86 when
-CONFIG_CRYPTO_SHA512_MB is enabled, but using a smaller
-limit everywhere where else?
+But once you have another interface than "read/write()", the issues go
+away. Those other interfaces are synchronous, and now you can decide
+"ok, I'll just use current creds".
 
-> So: mainly the crypto VLA removal is about exposing all these giant
-> stack usages. We can work to fix them, but I want to get these fixed
-> so we can add -Wvla to the kernel to avoid more being added (we've had
-> at least 2 added during this linux-next cycle already).
->
-> IMO, we're much better off with this stack usage _actually_ being
-> checked (even with a 20% bump) than staying entirely hidden (as it's
-> been).
+>  (1) Pass the creds from ->get_tree() all the way down into pathwalk and make
+>      sure *every* check that pathwalk does uses it.
 
-Yes, definitely. You may recall that I spent several months tracking
-down all drivers that grew to insane stack usage when CONFIG_KASAN
-was enabled, so we could again turn on the existing stack check
-in an allmodconfig build in order to find the normal regressions, so
-I'm definitely all for improving both the actual usage and the kind
-of diagnostic we have available.
+No. See above.
 
-I mainly want to ensure that we have tried anything within reason
-to reduce the stack usage of the AHASH_REQUEST_ON_STACK()
-users before we resort to changing the warning limit. I'm not
-convinced that everything has been tried if we have 808 byte
-structures.
+If your write() does anything but buffering data, it's not getting merged.
 
-      Arnd
+>  (2) When do_the_create_thing() is invoked, it wraps the call to ->get_tree()
+>      with override_creds(file->f_cred).
+
+No.
+
+We do not wrap creds in any case. It's just asking for *another* kind
+of security issue, where you fool some higher-security thing into
+giving you access because it wrapped the higher-security case instead.
+
+>  (3) Forget using an fd to refer to the context.  fsopen() takes absolutely
+>      everything, perhaps as a kv array and spits out an O_PATH fd.
+
+That works.
+
+Or you know - do what I told you to do ALL THE TIME, which was to not
+use write(), or to only buffer things with write().
+
+But yes, any option that simply avoids read and write is fine.
+
+You can even have a file descriptor. We already have file descriptors
+that cannot be read from or written to. It's quite common for special
+devices, the whole "open /dev/floppy with O_NONBLOCK only to be able
+to do control operations with it" goes back to pretty much day #1.
+
+More recently, we have the whole "FMODE_PATH" kind of file descriptor,
+which works as a directory entry, but not for read and write.
+
+So file descriptors can have very useful properties.
+
+But no. We do not use "write()" to implement actions. If you think you
+need to check permissions and think you need a "cred", then you're not
+using write(). It really is that simple.
+
+Not using write just avouds *all* the problems. If you can fool a suid
+application to do arbitrary system calls for you, then it's not the
+system call that is the security problem.
+
+                Linus
