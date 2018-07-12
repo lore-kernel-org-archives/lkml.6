@@ -2,125 +2,92 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BAEC468C8
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7214AC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DC1D2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:53:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pLFw6k0K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DC1D2147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 38C6B213A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:54:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C6B213A2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732597AbeGLPDU (ORCPT
+        id S1732619AbeGLPEB convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 11:03:20 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:46226 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732310AbeGLPDT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:03:19 -0400
-Received: by mail-lf0-f68.google.com with SMTP id l16-v6so24490214lfc.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 07:53:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=LtMXOsEKRmo9Xs1o6pS7MykKjB6sXzjGV7cjCMO8fUM=;
-        b=pLFw6k0KgTb5+cSsY+TFfbarGSjZmNVC1KM9XVbm2TrEE5oWeV/Y/MPDPfRHaQ4DQP
-         LqAASKqaU094bu7Hj2j/ZC3opFaLSd55T9VtRdoAjNnhzDxp0wEY0wThridvOvWftitq
-         RxV5C6BdKDV3pnxn39SS2lP39YkpQDXjzsdWYkmBlxyKu0QpM1hMUXvXbl9w9GLiOvMF
-         2UtKdb9dl48ozwaykQgEXlMyt7NPHzQd8svaweJIcr6mB5yyuxFDSdOmUTrMSlgJqKMa
-         fIHMVVl+mvmt1S7JluoLHIq67YCddMQG9ZFLYgPK8eYxlgsCVbRYi6wRMgW66ZAHx4ha
-         1hbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=LtMXOsEKRmo9Xs1o6pS7MykKjB6sXzjGV7cjCMO8fUM=;
-        b=hIyj5D3vH6Jt6T5Hs8wOykwSyF7m8grsxSgRLL42DWgkN/0Rh+PZo06xwE/IzJ+8Nq
-         gEQy/OZk6zkupbv9c5XmPGJo9aQNbrop1Y/RkFERBKa/H9EGd81QYNVNBtybIu+H9PZi
-         hsBVTlReWOsVDkxJSvborSpI5Tb5WFN8Uucw+2ZbsuBXKOizvwpkS4D+08nq7PS6Jxku
-         h6drPSuCRwi+SLAgPLiYoY7m9ZdlaoneW24Q/i+Avw72TH3ObIaFISlXAJLJBHXVsUph
-         lLi49YPTiT3zvPezhXIfB68HXsLdurtRRB7a0YtS+L3fs7R+UPnMS0M4YnG9CMUxIu4f
-         19rw==
-X-Gm-Message-State: AOUpUlGlDEHxPsVjOHsIXRAme6BIGtocOkeGY76FxbuQWvc9wKJe+sk3
-        PqDWMWm02hIBweT6fOlzDx7mcL+XVAzwkrZj8hw=
-X-Google-Smtp-Source: AAOMgpdUndlgFe0adDQ0v446vQpZsS03GYrvNxsdOV6J4B8xaN+HBKy/TE4QHFpUa2u6p8FhTN9znAFQFyLYfk0tFWk=
-X-Received: by 2002:a19:7b08:: with SMTP id w8-v6mr2116559lfc.22.1531407204113;
- Thu, 12 Jul 2018 07:53:24 -0700 (PDT)
+        Thu, 12 Jul 2018 11:04:01 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36218 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732305AbeGLPEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 11:04:01 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6E1F67A7EB;
+        Thu, 12 Jul 2018 14:54:06 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 498FD2026D6B;
+        Thu, 12 Jul 2018 14:54:05 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
+References: <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk> <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for superblock creation [ver #9]
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 07:53:23
- -0700 (PDT)
-In-Reply-To: <20180712082609.GB8802@infradead.org>
-References: <20180707054247.19802-1-deepa.kernel@gmail.com>
- <20180707054247.19802-6-deepa.kernel@gmail.com> <20180712082609.GB8802@infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 12 Jul 2018 16:53:23 +0200
-X-Google-Sender-Auth: ZjS_JP_ATnZ01T9h9c6B8fUOzsw
-Message-ID: <CAK8P3a02MJt7xDR3-u4r7GGaUc-ndnkq8Hb_ZC7YB6mkNqmeLw@mail.gmail.com>
-Subject: Re: [PATCH v3 5/7] time: Add struct __kernel_timex
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Date:   Thu, 12 Jul 2018 15:54:04 +0100
+Message-ID: <7002.1531407244@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 12 Jul 2018 14:54:06 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 12 Jul 2018 14:54:06 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 10:26 AM, Christoph Hellwig <hch@infradead.org> wrote:
+Andy Lutomirski <luto@kernel.org> wrote:
 
->> +#ifndef CONFIG_64BIT_TIME
->> +#define __kernel_timex timex
->> +#endif
->
-> using #defines for structs has all kinds of ill effects.  Why can't
-> we aways use __kernel_timex for the in-kernel usage?
+> > On Jul 11, 2018, at 12:22 AM, David Howells <dhowells@redhat.com> wrote:
+> >
+> > Andy Lutomirski <luto@amacapital.net> wrote:
+> >
+> >>>   sfd = fsopen("ext4", FSOPEN_CLOEXEC);
+> >>>   write(sfd, "s /dev/sdb1"); // note I'm ignoring write's length arg
+> >>
+> >> Imagine some malicious program passes sfd as stdout to a setuid
+> >> program. That program gets persuaded to write "s /etc/shadow".  What
+> >> happens?  You’re okay as long as *every single fs* gets it right, but
+> >> that’s asking a lot.
+> >
+> > Do note that you must already have CAP_SYS_ADMIN to be able to call
+> > fsopen().
+> 
+> If you're not allowing it already, someone will want user namespace
+> root to be able to use this very, very soon.
 
-It's the same thing that Deepa did in the already merged
-series for the timespec interfaces, this is done in order to
-stage the conversion of 50 system calls and 20 architectures
-without having to do everything at once.
+Yeah, I'm sure.  And I've been thinking on how to deal with it.
 
-The system call entry points are changed to take a __kernel_timespec
-or __kernel_timex argument as the first step, and the conditional
-macro override makes that a NOP. At the same time, the existing
-compat entry points are modified so they have the exact same
-behavior but use the compat_timespec, compat_timex etc
-argument types (which we can rename, too, as discussed).
+I think we *have* to open the source files/devices with the creds of whoever
+called fsopen() or fspick() - that way you can't upgrade your privs by passing
+your context fd to a suid program.  To enforce this, I think it's simplest for
+fscontext_write() to call override_creds() right after taking the uapi_mutex
+and then call revert_creds() right before dropping the mutex.
 
-When a 32-bit architecture gets converted, it sets
-CONFIG_64BIT_TIME, which flips the normal syscall entry to
-use 64-bit time_t, and enables the compat syscalls to be built.
-The same arch specific patch must then change the syscall
-table to redirect the old syscall numbers to the compat handlers
-(which implement the 32-bit time_t arguments), and add new
-numbers pointing to the default handlers that now take the
-64-bit time_t, see https://pastebin.com/F3QZdyin
+Another thing we might want to look at is to allow a supervisory process to
+examine the context before permitting the create/reconfigure action to
+proceed.  It might also be possible to do this through the LSM.
 
-This was all explained in a lot of detail when the first set
-of patches got merged for the clock_ syscalls, but I suppose
-it can all be explained again.
+David
 
->> +#ifndef __kernel_timex
->> +struct __kernel_timex {
->> +     unsigned int modes;     /* mode selector */
->> +     int :32;            /* pad */
->
-> Why do we need padding for a purely in-kernel structure?
->
-> Also the anonymous member syntax is rather odd and I don't remeber
-> us using it anywhere else.  Why here?
 
-This is in the uapi header, and the structure just matches the
-existing timex definition, which has the same oddity.
-
-     Arnd
