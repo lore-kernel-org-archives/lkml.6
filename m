@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6F3EC2D07
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5697AEC2D1C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88EFE208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A2352147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 18:53:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="cwS61NXt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88EFE208E9
+	dkim=pass (2048-bit key) header.d=colorfullife-com.20150623.gappssmtp.com header.i=@colorfullife-com.20150623.gappssmtp.com header.b="dPrLUx0b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2352147C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=colorfullife.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732341AbeGLTEE (ORCPT
+        id S1732368AbeGLTEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 15:04:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42788 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732234AbeGLTEE (ORCPT
+        Thu, 12 Jul 2018 15:04:06 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:33405 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbeGLTEG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 15:04:04 -0400
-Received: by mail-wr1-f68.google.com with SMTP id e7-v6so3163680wrs.9
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 11:53:15 -0700 (PDT)
+        Thu, 12 Jul 2018 15:04:06 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g6-v6so13812267wrp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 11:53:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=colorfullife-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MLrWlCMkGsbat2WF/lcVmlbrqZPBNzqxzkpNlaqZ0R8=;
-        b=cwS61NXtXXsCtxIzfWDjmY7Nyi1FqeRMet1cdMxxihEz/r+IIYy968cCzjkDC8Tmwq
-         vPDMsV2sQ9FPG/Pl4UOeMA6mOQgvdy9tQ2b/396erIr5oNZNVoOmOWe8+DblgnE4n5H+
-         UUP3IHZB9jlGSdN5JsoJLDlO8CUgExILN9xyhZZ5o2+6m4lco5bNEKkFPoSwphhYMTV8
-         Ge6N+V5jNSQI1TuGIp4OXPC152+ROFa52e0YU4uR7o4UivEJGGs8bFk1+UkQZhhydLJT
-         /hViNRWRoIkGjHnJwsiqgspcacFLEmJq65qmZcipKw5Gl/E6HMBcFnEj/Kyb3XFHqpbR
-         GTeg==
+        bh=gV3jQmsRRcrUCvAwgZJ4TkMy7nJAbisx4DsyQvY5HRE=;
+        b=dPrLUx0blvYXMVcaVNol/OkUuuSgRPxxxzQHRdF7NrCDlDpTR7BtS3tU9V0ve5Krbt
+         VcWByjQRoFDwlqkviCfWkArEEwXyNd+KiQkE4RmRWszCEZxjWo61YGwNejTzQ11tM9e3
+         eYq5sgCkpuINc7XRF/vjqluG3lE7H6tP2x0hOrO1L8KdZ9mJGsU8Pl+bbBoc9ahDhyHs
+         vIJiGjPhuPjW2zg0uaAorgTf9cLQDWslsu6F+Z0oOwSoD9EmLU4HXQfaTxlNPxKzrY8D
+         gDV9VXZdj5qCGhOR/AhPnPfLeAHD14O3J8b7TWMGkMI7CjQi60wOnZbeD4R2GPBHtFyD
+         UmDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=MLrWlCMkGsbat2WF/lcVmlbrqZPBNzqxzkpNlaqZ0R8=;
-        b=sJX7ztwTaJ8JK0K8CW3VpF+XlFcjtjSEVijl+ZpnI657EVDEArQKDndPfkAu4lC6dt
-         ybWhc25b8VkqMfFfMm8MQD7cn5CZ/c0p8eMNKxNXM1EJb9aA3W2OBTqrMyyyXyECPz4B
-         9bTZaCC+mK7VOwg+TEwKEm6B71Ut8Hs869WdQNh5et+MHIUImPwc0JKTfYvMdy5m3tMa
-         +EmdZ38/QGK+5By3rdZX284FaZ483eAbESqHSsQbDoVfSOq6jbOglSiCnQ8Qk8XaFvYG
-         2l4qqp+aLv08rwwu3qX2sDUx4WsY4+A+M3pliZr4BRQBj6kNf9rZqxg3ZI0PjKkcxH5l
-         8yQA==
-X-Gm-Message-State: AOUpUlE2qpkOv+hVSFqsH800TZvvxIP6BFMkHcGBVPG0rM2Pm/lg6vn4
-        5kgG5P9VmF+ANzzQYxZ0y9F7bg==
-X-Google-Smtp-Source: AAOMgpc84DFNPD+lznkRfJ4zivaypYrHUOgpTr4ffjP/6fOyowM3Xs0B4+J1h9M+CxVGtFKMmUoIsA==
-X-Received: by 2002:a5d:6250:: with SMTP id m16-v6mr2764602wrv.179.1531421594713;
-        Thu, 12 Jul 2018 11:53:14 -0700 (PDT)
+        bh=gV3jQmsRRcrUCvAwgZJ4TkMy7nJAbisx4DsyQvY5HRE=;
+        b=fastj1LJ8OAseIzSPFLiYhNM6MH1PtneatVReS4VXrXnHZgLI2n0JXg+uY+me5NP17
+         4TK9Oeulr8OONHaZbzumUBR8g3NoGhxpp/w6UWyQJdWTLnGjeKaIGL8Ce0ebrDAfz1ew
+         +J8feI4TYO49YDJJ5wIE4V6d9V8DMbjISYNfYKZo9wQxK6Dgqc0U7L5uASWbL1K8QNsf
+         OIcsTwdD8Nk6HfjvTGRWYd+brvqkn7H6rTUaOtT6rJ/iAWI/oNdHXur/CmgBYX9ulTUz
+         d4lMi9OdSdcRlgoUA2cmQ80m4B0BfQYm1Bz5V5WhmYW6BIyxod5ddJ5j+z1v84MX0XYI
+         K8iw==
+X-Gm-Message-State: AOUpUlEdxJDOSmMQp2XtZr5/nM34Jsdfk43CucV9FsidOggdGSB1iQia
+        dDFn09fY2d/rU1ugV+WGebp7vn74IQc=
+X-Google-Smtp-Source: AAOMgpdmabMeTVJVlL9vSUypYWnadVOVoPGzcrKQL3ViwogoE25KxUaqBk4n2qlD92qjrtEzYv21kw==
+X-Received: by 2002:adf:8895:: with SMTP id f21-v6mr2649672wrf.250.1531421595561;
+        Thu, 12 Jul 2018 11:53:15 -0700 (PDT)
 Received: from localhost.localdomain (p200300D993C98700CB5FA3798C189FE1.dip0.t-ipconnect.de. [2003:d9:93c9:8700:cb5f:a379:8c18:9fe1])
-        by smtp.googlemail.com with ESMTPSA id h5-v6sm13557841wrr.19.2018.07.12.11.53.13
+        by smtp.googlemail.com with ESMTPSA id h5-v6sm13557841wrr.19.2018.07.12.11.53.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 12 Jul 2018 11:53:14 -0700 (PDT)
+        Thu, 12 Jul 2018 11:53:15 -0700 (PDT)
 From:   Manfred Spraul <manfred@colorfullife.com>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Davidlohr Bueso <dave@stgolabs.net>,
@@ -65,9 +65,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>, 1vier1@web.de,
         Kees Cook <keescook@chromium.org>,
         Davidlohr Bueso <dbueso@suse.de>,
         Manfred Spraul <manfred@colorfullife.com>
-Subject: [PATCH 09/12] ipc: get rid of ids->tables_initialized hack
-Date:   Thu, 12 Jul 2018 20:52:38 +0200
-Message-Id: <20180712185241.4017-10-manfred@colorfullife.com>
+Subject: [PATCH 10/12] ipc: simplify ipc initialization
+Date:   Thu, 12 Jul 2018 20:52:39 +0200
+Message-Id: <20180712185241.4017-11-manfred@colorfullife.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180712185241.4017-1-manfred@colorfullife.com>
 References: <20180712185241.4017-1-manfred@colorfullife.com>
@@ -78,108 +78,264 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Davidlohr Bueso <dave@stgolabs.net>
 
-In sysvipc we have an ids->tables_initialized regarding the
-rhashtable, introduced in:
-
-commit 0cfb6aee70bd ("ipc: optimize semget/shmget/msgget for lots of keys")
-
-It's there, specifically, to prevent nil pointer dereferences,
-from using an uninitialized api. Considering how rhashtable_init()
-can fail (probably due to ENOMEM, if anything), this made the
-overall ipc initialization capable of failure as well. That alone
-is ugly, but fine, however I've spotted a few issues regarding the
-semantics of tables_initialized (however unlikely they may be):
-
-- There is inconsistency in what we return to userspace: ipc_addid()
-returns ENOSPC which is certainly _wrong_, while ipc_obtain_object_idr()
-returns EINVAL.
-
-- After we started using rhashtables, ipc_findkey() can return nil upon
-!tables_initialized, but the caller expects nil for when the ipc structure
-isn't found, and can therefore call into ipcget() callbacks.
-
-Now that rhashtable initialization cannot fail, we can properly
-get rid of the hack altogether.
+Now that we know that rhashtable_init() will not fail, we
+can get rid of a lot of the unnecessary cleanup paths when
+the call errored out.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 
-(commit id extended to 12 digits)
+(variable name added to util.h to resolve checkpatch warning)
 Signed-off-by: Manfred Spraul <manfred@colorfullife.com>
 ---
- include/linux/ipc_namespace.h |  1 -
- ipc/util.c                    | 23 ++++++++---------------
- 2 files changed, 8 insertions(+), 16 deletions(-)
+ ipc/msg.c       |  9 ++++-----
+ ipc/namespace.c | 20 ++++----------------
+ ipc/sem.c       | 10 ++++------
+ ipc/shm.c       |  9 ++++-----
+ ipc/util.c      | 18 +++++-------------
+ ipc/util.h      | 18 +++++++++---------
+ 6 files changed, 30 insertions(+), 54 deletions(-)
 
-diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.h
-index b5630c8eb2f3..37f3a4b7c637 100644
---- a/include/linux/ipc_namespace.h
-+++ b/include/linux/ipc_namespace.h
-@@ -16,7 +16,6 @@ struct user_namespace;
- struct ipc_ids {
- 	int in_use;
- 	unsigned short seq;
--	bool tables_initialized;
- 	struct rw_semaphore rwsem;
- 	struct idr ipcs_idr;
- 	int max_id;
-diff --git a/ipc/util.c b/ipc/util.c
-index 234f6d781df3..f620778b11d2 100644
---- a/ipc/util.c
-+++ b/ipc/util.c
-@@ -125,7 +125,6 @@ int ipc_init_ids(struct ipc_ids *ids)
- 	if (err)
- 		return err;
- 	idr_init(&ids->ipcs_idr);
--	ids->tables_initialized = true;
- 	ids->max_id = -1;
- #ifdef CONFIG_CHECKPOINT_RESTORE
- 	ids->next_id = -1;
-@@ -178,19 +177,16 @@ void __init ipc_init_proc_interface(const char *path, const char *header,
-  */
- static struct kern_ipc_perm *ipc_findkey(struct ipc_ids *ids, key_t key)
+diff --git a/ipc/msg.c b/ipc/msg.c
+index 4aca0ce363b5..130e12e6a8c6 100644
+--- a/ipc/msg.c
++++ b/ipc/msg.c
+@@ -1237,7 +1237,7 @@ COMPAT_SYSCALL_DEFINE5(msgrcv, int, msqid, compat_uptr_t, msgp,
+ }
+ #endif
+ 
+-int msg_init_ns(struct ipc_namespace *ns)
++void msg_init_ns(struct ipc_namespace *ns)
  {
--	struct kern_ipc_perm *ipcp = NULL;
-+	struct kern_ipc_perm *ipcp;
+ 	ns->msg_ctlmax = MSGMAX;
+ 	ns->msg_ctlmnb = MSGMNB;
+@@ -1245,7 +1245,7 @@ int msg_init_ns(struct ipc_namespace *ns)
  
--	if (likely(ids->tables_initialized))
--		ipcp = rhashtable_lookup_fast(&ids->key_ht, &key,
-+	ipcp = rhashtable_lookup_fast(&ids->key_ht, &key,
- 					      ipc_kht_params);
-+	if (!ipcp)
-+		return NULL;
+ 	atomic_set(&ns->msg_bytes, 0);
+ 	atomic_set(&ns->msg_hdrs, 0);
+-	return ipc_init_ids(&ns->ids[IPC_MSG_IDS]);
++	ipc_init_ids(&ns->ids[IPC_MSG_IDS]);
+ }
  
--	if (ipcp) {
--		rcu_read_lock();
--		ipc_lock_object(ipcp);
--		return ipcp;
--	}
+ #ifdef CONFIG_IPC_NS
+@@ -1286,12 +1286,11 @@ static int sysvipc_msg_proc_show(struct seq_file *s, void *it)
+ }
+ #endif
+ 
+-int __init msg_init(void)
++void __init msg_init(void)
+ {
+-	const int err = msg_init_ns(&init_ipc_ns);
++	msg_init_ns(&init_ipc_ns);
+ 
+ 	ipc_init_proc_interface("sysvipc/msg",
+ 				"       key      msqid perms      cbytes       qnum lspid lrpid   uid   gid  cuid  cgid      stime      rtime      ctime\n",
+ 				IPC_MSG_IDS, sysvipc_msg_proc_show);
+-	return err;
+ }
+diff --git a/ipc/namespace.c b/ipc/namespace.c
+index f59a89966f92..21607791d62c 100644
+--- a/ipc/namespace.c
++++ b/ipc/namespace.c
+@@ -55,28 +55,16 @@ static struct ipc_namespace *create_ipc_ns(struct user_namespace *user_ns,
+ 	ns->user_ns = get_user_ns(user_ns);
+ 	ns->ucounts = ucounts;
+ 
+-	err = sem_init_ns(ns);
++	err = mq_init_ns(ns);
+ 	if (err)
+ 		goto fail_put;
+-	err = msg_init_ns(ns);
+-	if (err)
+-		goto fail_destroy_sem;
+-	err = shm_init_ns(ns);
+-	if (err)
+-		goto fail_destroy_msg;
+ 
+-	err = mq_init_ns(ns);
+-	if (err)
+-		goto fail_destroy_shm;
++	sem_init_ns(ns);
++	msg_init_ns(ns);
++	shm_init_ns(ns);
+ 
+ 	return ns;
+ 
+-fail_destroy_shm:
+-	shm_exit_ns(ns);
+-fail_destroy_msg:
+-	msg_exit_ns(ns);
+-fail_destroy_sem:
+-	sem_exit_ns(ns);
+ fail_put:
+ 	put_user_ns(ns->user_ns);
+ 	ns_free_inum(&ns->ns);
+diff --git a/ipc/sem.c b/ipc/sem.c
+index da1626984083..671d8703b130 100644
+--- a/ipc/sem.c
++++ b/ipc/sem.c
+@@ -220,14 +220,14 @@ static int sysvipc_sem_proc_show(struct seq_file *s, void *it);
+ #define sc_semopm	sem_ctls[2]
+ #define sc_semmni	sem_ctls[3]
+ 
+-int sem_init_ns(struct ipc_namespace *ns)
++void sem_init_ns(struct ipc_namespace *ns)
+ {
+ 	ns->sc_semmsl = SEMMSL;
+ 	ns->sc_semmns = SEMMNS;
+ 	ns->sc_semopm = SEMOPM;
+ 	ns->sc_semmni = SEMMNI;
+ 	ns->used_sems = 0;
+-	return ipc_init_ids(&ns->ids[IPC_SEM_IDS]);
++	ipc_init_ids(&ns->ids[IPC_SEM_IDS]);
+ }
+ 
+ #ifdef CONFIG_IPC_NS
+@@ -239,14 +239,12 @@ void sem_exit_ns(struct ipc_namespace *ns)
+ }
+ #endif
+ 
+-int __init sem_init(void)
++void __init sem_init(void)
+ {
+-	const int err = sem_init_ns(&init_ipc_ns);
 -
--	return NULL;
-+	rcu_read_lock();
-+	ipc_lock_object(ipcp);
-+	return ipcp;
++	sem_init_ns(&init_ipc_ns);
+ 	ipc_init_proc_interface("sysvipc/sem",
+ 				"       key      semid perms      nsems   uid   gid  cuid  cgid      otime      ctime\n",
+ 				IPC_SEM_IDS, sysvipc_sem_proc_show);
+-	return err;
+ }
+ 
+ /**
+diff --git a/ipc/shm.c b/ipc/shm.c
+index 22afb98363ff..d388d6e744c0 100644
+--- a/ipc/shm.c
++++ b/ipc/shm.c
+@@ -95,14 +95,14 @@ static void shm_destroy(struct ipc_namespace *ns, struct shmid_kernel *shp);
+ static int sysvipc_shm_proc_show(struct seq_file *s, void *it);
+ #endif
+ 
+-int shm_init_ns(struct ipc_namespace *ns)
++void shm_init_ns(struct ipc_namespace *ns)
+ {
+ 	ns->shm_ctlmax = SHMMAX;
+ 	ns->shm_ctlall = SHMALL;
+ 	ns->shm_ctlmni = SHMMNI;
+ 	ns->shm_rmid_forced = 0;
+ 	ns->shm_tot = 0;
+-	return ipc_init_ids(&shm_ids(ns));
++	ipc_init_ids(&shm_ids(ns));
  }
  
  /*
-@@ -268,7 +264,7 @@ int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
- 	if (limit > IPCMNI)
- 		limit = IPCMNI;
+@@ -135,9 +135,8 @@ void shm_exit_ns(struct ipc_namespace *ns)
  
--	if (!ids->tables_initialized || ids->in_use >= limit)
-+	if (ids->in_use >= limit)
- 		return -ENOSPC;
+ static int __init ipc_ns_init(void)
+ {
+-	const int err = shm_init_ns(&init_ipc_ns);
+-	WARN(err, "ipc: sysv shm_init_ns failed: %d\n", err);
+-	return err;
++	shm_init_ns(&init_ipc_ns);
++	return 0;
+ }
  
- 	idr_preload(GFP_KERNEL);
-@@ -577,9 +573,6 @@ struct kern_ipc_perm *ipc_obtain_object_idr(struct ipc_ids *ids, int id)
- 	struct kern_ipc_perm *out;
- 	int lid = ipcid_to_idx(id);
- 
--	if (unlikely(!ids->tables_initialized))
--		return ERR_PTR(-EINVAL);
+ pure_initcall(ipc_ns_init);
+diff --git a/ipc/util.c b/ipc/util.c
+index f620778b11d2..35621be0d945 100644
+--- a/ipc/util.c
++++ b/ipc/util.c
+@@ -87,16 +87,12 @@ struct ipc_proc_iface {
+  */
+ static int __init ipc_init(void)
+ {
+-	int err_sem, err_msg;
 -
- 	out = idr_find(&ids->ipcs_idr, lid);
- 	if (!out)
- 		return ERR_PTR(-EINVAL);
+ 	proc_mkdir("sysvipc", NULL);
+-	err_sem = sem_init();
+-	WARN(err_sem, "ipc: sysv sem_init failed: %d\n", err_sem);
+-	err_msg = msg_init();
+-	WARN(err_msg, "ipc: sysv msg_init failed: %d\n", err_msg);
++	sem_init();
++	msg_init();
+ 	shm_init();
+ 
+-	return err_msg ? err_msg : err_sem;
++	return 0;
+ }
+ device_initcall(ipc_init);
+ 
+@@ -115,21 +111,17 @@ static const struct rhashtable_params ipc_kht_params = {
+  * Set up the sequence range to use for the ipc identifier range (limited
+  * below IPCMNI) then initialise the keys hashtable and ids idr.
+  */
+-int ipc_init_ids(struct ipc_ids *ids)
++void ipc_init_ids(struct ipc_ids *ids)
+ {
+-	int err;
+ 	ids->in_use = 0;
+ 	ids->seq = 0;
+ 	init_rwsem(&ids->rwsem);
+-	err = rhashtable_init(&ids->key_ht, &ipc_kht_params);
+-	if (err)
+-		return err;
++	rhashtable_init(&ids->key_ht, &ipc_kht_params);
+ 	idr_init(&ids->ipcs_idr);
+ 	ids->max_id = -1;
+ #ifdef CONFIG_CHECKPOINT_RESTORE
+ 	ids->next_id = -1;
+ #endif
+-	return 0;
+ }
+ 
+ #ifdef CONFIG_PROC_FS
+diff --git a/ipc/util.h b/ipc/util.h
+index e3c47b21db93..6c5c77c61f85 100644
+--- a/ipc/util.h
++++ b/ipc/util.h
+@@ -18,8 +18,8 @@
+ #define IPCMNI 32768  /* <= MAX_INT limit for ipc arrays (including sysctl changes) */
+ #define SEQ_MULTIPLIER	(IPCMNI)
+ 
+-int sem_init(void);
+-int msg_init(void);
++void sem_init(void);
++void msg_init(void);
+ void shm_init(void);
+ 
+ struct ipc_namespace;
+@@ -34,17 +34,17 @@ static inline void mq_put_mnt(struct ipc_namespace *ns) { }
+ #endif
+ 
+ #ifdef CONFIG_SYSVIPC
+-int sem_init_ns(struct ipc_namespace *ns);
+-int msg_init_ns(struct ipc_namespace *ns);
+-int shm_init_ns(struct ipc_namespace *ns);
++void sem_init_ns(struct ipc_namespace *ns);
++void msg_init_ns(struct ipc_namespace *ns);
++void shm_init_ns(struct ipc_namespace *ns);
+ 
+ void sem_exit_ns(struct ipc_namespace *ns);
+ void msg_exit_ns(struct ipc_namespace *ns);
+ void shm_exit_ns(struct ipc_namespace *ns);
+ #else
+-static inline int sem_init_ns(struct ipc_namespace *ns) { return 0; }
+-static inline int msg_init_ns(struct ipc_namespace *ns) { return 0; }
+-static inline int shm_init_ns(struct ipc_namespace *ns) { return 0; }
++static inline void sem_init_ns(struct ipc_namespace *ns) { }
++static inline void msg_init_ns(struct ipc_namespace *ns) { }
++static inline void shm_init_ns(struct ipc_namespace *ns) { }
+ 
+ static inline void sem_exit_ns(struct ipc_namespace *ns) { }
+ static inline void msg_exit_ns(struct ipc_namespace *ns) { }
+@@ -83,7 +83,7 @@ struct ipc_ops {
+ struct seq_file;
+ struct ipc_ids;
+ 
+-int ipc_init_ids(struct ipc_ids *);
++void ipc_init_ids(struct ipc_ids *ids);
+ #ifdef CONFIG_PROC_FS
+ void __init ipc_init_proc_interface(const char *path, const char *header,
+ 		int ids, int (*show)(struct seq_file *, void *));
 -- 
 2.17.1
 
