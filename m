@@ -2,87 +2,108 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BDCFC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D13C2C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E68C220C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:31:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E68C220C0C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FC6A20BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 06:33:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="IU+s2IMc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC6A20BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732321AbeGLGji (ORCPT
+        id S1732371AbeGLGlK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 02:39:38 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:61680 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbeGLGji (ORCPT
+        Thu, 12 Jul 2018 02:41:10 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:55040 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726884AbeGLGlK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 02:39:38 -0400
-X-IronPort-AV: E=Sophos;i="5.51,341,1526367600"; 
-   d="scan'208";a="16228515"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 11 Jul 2018 23:31:31 -0700
-Received: from localhost (10.10.76.4) by chn-sv-exch04.mchp-main.com
- (10.10.76.105) with Microsoft SMTP Server id 14.3.352.0; Wed, 11 Jul 2018
- 23:31:30 -0700
-Date:   Thu, 12 Jul 2018 08:30:21 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ARM: dts: at91: fix typo for PIN_PB22
-Message-ID: <20180712063021.h7t424iksdulj74a@M43218.corp.atmel.com>
-References: <1531326337-15504-1-git-send-email-claudiu.beznea@microchip.com>
+        Thu, 12 Jul 2018 02:41:10 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 7D32E5C156E;
+        Thu, 12 Jul 2018 08:32:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1531377171;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+hZ/zYmH19TkpVNkzCRKN/sNGJn4UALSQxarNByK0Ak=;
+        b=IU+s2IMcDJea5PYaIk1hB3SGeH7a3ChvI98753h48QKMn5sinSIdsUGZseXO12PNPx8Ye2
+        QtVYcpBSL9XxyqFC0AcAjOW9ELnZwJBUjbyCB/N72PE6zCmnVzS4LVzccSbN6wvbz/CeB0
+        MaXi6Qf+SRQhQZrjS48xwl/DYpCB4TY=
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1531326337-15504-1-git-send-email-claudiu.beznea@microchip.com>
-User-Agent: NeoMutt/20180512
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 12 Jul 2018 08:32:47 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Russell King <rmk@armlinux.org.uk>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the arm-current
+ tree
+In-Reply-To: <20180711215644.GA18831@flint.armlinux.org.uk>
+References: <20180712073803.7bfbbf1a@canb.auug.org.au>
+ <20180711215644.GA18831@flint.armlinux.org.uk>
+Message-ID: <10a54594d17b6d2fa0e85ced00b4a7d5@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-0.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         TO_DN_ALL(0.00)[];
+         RCPT_COUNT_FIVE(0.00)[5];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-0.00)[42.97%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Claudiu,
-
-On Wed, Jul 11, 2018 at 07:25:37PM +0300, Claudiu Beznea wrote:
-> Fix typo for PIN_PB22 on TD function.
-
-In fact, this typo is present in several places in this file. It could
-be worth fixing all those occurences in a single patch.
-
-Regards
-
-Ludovic
-
+On 11.07.2018 23:56, Russell King wrote:
+> On Thu, Jul 12, 2018 at 07:38:03AM +1000, Stephen Rothwell wrote:
+>> Hi Russell,
+>>
+>> Commit
+>>
+>>   6ef09e48c2bc ("ARM: 8780/1: ftrace: Only set kernel memory back to read-only after boot")
+>>
+>> is missing a Signed-off-by from its author.
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-> ---
->  arch/arm/boot/dts/sama5d2-pinfunc.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/sama5d2-pinfunc.h b/arch/arm/boot/dts/sama5d2-pinfunc.h
-> index e57191fb83de..ac61491c9d7f 100644
-> --- a/arch/arm/boot/dts/sama5d2-pinfunc.h
-> +++ b/arch/arm/boot/dts/sama5d2-pinfunc.h
-> @@ -375,7 +375,7 @@
->  #define PIN_PB22__GPIO			PINMUX_PIN(PIN_PB22, 0, 0)
->  #define PIN_PB22__LCDDAT11		PINMUX_PIN(PIN_PB22, 1, 1)
->  #define PIN_PB22__A11			PINMUX_PIN(PIN_PB22, 2, 1)
-> -#define PIN_PB22__TDO			PINMUX_PIN(PIN_PB22, 3, 1)
-> +#define PIN_PB22__TD0			PINMUX_PIN(PIN_PB22, 3, 1)
->  #define PIN_PB22__TIOA2			PINMUX_PIN(PIN_PB22, 4, 2)
->  #define PIN_PB22__FLEXCOM3_IO1		PINMUX_PIN(PIN_PB22, 5, 3)
->  #define PIN_PB22__GMDC			PINMUX_PIN(PIN_PB22, 6, 3)
-> -- 
-> 2.7.4
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Thanks for spotting, but it's worse than that.  It does have a sign-off
+> from its author, but the authorship wasn't preserved by Stefan Agner
+> (no From: line in the email body, as there was in Steven's original
+> post to the mailing list.)  I'll fix that in the next few days.
+
+Hm, not sure how that exactly happened. I uploaded a patch file
+generated by git format-patch using the web interface, there was still a
+header:
+
+From a55f4af25b9299f35481bc89982590941aaae612 Mon Sep 17 00:00:00 2001
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Date: Thu, 21 Jun 2018 12:47:10 -0400
+Subject: [PATCH] ARM: ftrace: Only set kernel memory back to read-only
+after
+ boot
+
+I probably should have added the line to the message field?
+
+Sorry about that!
+
+--
+Stefan
