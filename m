@@ -2,86 +2,99 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 347EAECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52528ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E838920883
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:50:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E838920883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id F175A208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 21:54:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F175A208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tuxera.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732234AbeGLWCY (ORCPT
+        id S1727714AbeGLWGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 18:02:24 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:43404 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbeGLWCY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 18:02:24 -0400
-Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6E2B51008E588;
-        Thu, 12 Jul 2018 14:50:54 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 14:50:53 -0700 (PDT)
-Message-Id: <20180712.145053.375746969660293612.davem@davemloft.net>
-To:     arnd@arndb.de
-Cc:     edumazet@google.com, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        harsh@chelsio.com, herbert@gondor.apana.org.au,
-        atul.gupta@chelsio.com, gustavo@embeddedor.com, werner@chelsio.com,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] [RESEND, net-next, v2] tcp: use monotonic timestamps
- for PAWS
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180711101757.3929777-1-arnd@arndb.de>
-References: <20180711101757.3929777-1-arnd@arndb.de>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 12 Jul 2018 14:50:54 -0700 (PDT)
+        Thu, 12 Jul 2018 18:06:15 -0400
+Received: from mx2.mpynet.fi ([82.197.21.85]:39201 "EHLO mx2.mpynet.fi"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726855AbeGLWGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 18:06:15 -0400
+From:   Tuomas Tynkkynen <tuomas@tuxera.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        <linux-rpi-kernel@lists.infradead.org>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
+        Tuomas Tynkkynen <tuomas@tuxera.com>
+Subject: [PATCH 2/2] staging: bcm2835-audio: Don't leak workqueue if open fails
+Date:   Fri, 13 Jul 2018 00:54:17 +0300
+Message-ID: <20180712215417.22491-2-tuomas@tuxera.com>
+X-Mailer: git-send-email 2.16.3
+In-Reply-To: <20180712215417.22491-1-tuomas@tuxera.com>
+References: <20180712215417.22491-1-tuomas@tuxera.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-ClientProxiedBy: tuxera-exch.ad.tuxera.com (10.20.48.11) To
+ tuxera-exch.ad.tuxera.com (10.20.48.11)
+Received-SPF: none
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
-Date: Wed, 11 Jul 2018 12:16:12 +0200
+Currently, if bcm2835_audio_open() fails partway, the allocated
+workqueue is leaked. Avoid that.
 
-> Using get_seconds() for timestamps is deprecated since it can lead
-> to overflows on 32-bit systems. While the interface generally doesn't
-> overflow until year 2106, the specific implementation of the TCP PAWS
-> algorithm breaks in 2038 when the intermediate signed 32-bit timestamps
-> overflow.
-> 
-> A related problem is that the local timestamps in CLOCK_REALTIME form
-> lead to unexpected behavior when settimeofday is called to set the system
-> clock backwards or forwards by more than 24 days.
-> 
-> While the first problem could be solved by using an overflow-safe method
-> of comparing the timestamps, a nicer solution is to use a monotonic
-> clocksource with ktime_get_seconds() that simply doesn't overflow (at
-> least not until 136 years after boot) and that doesn't change during
-> settimeofday().
-> 
-> To make 32-bit and 64-bit architectures behave the same way here, and
-> also save a few bytes in the tcp_options_received structure, I'm changing
-> the type to a 32-bit integer, which is now safe on all architectures.
-> 
-> Finally, the ts_recent_stamp field also (confusingly) gets used to store
-> a jiffies value in tcp_synq_overflow()/tcp_synq_no_recent_overflow().
-> This is currently safe, but changing the type to 32-bit requires
-> some small changes there to keep it working.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: use time_before32()/time_after32() everywhere as suggested
->     Eric Dumazet in https://lore.kernel.org/lkml/67ebb94d-c73f-6c9f-493b-00c86f595120@gmail.com/
+While at it, propagate the return value of
+bcm2835_audio_open_connection() on failure instead of returning -1.
 
-Applied.
+Signed-off-by: Tuomas Tynkkynen <tuomas@tuxera.com>
+---
+ .../staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c  | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+index 85ed807bb873..779c1e993b55 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+@@ -416,16 +416,16 @@ int bcm2835_audio_open(struct bcm2835_alsa_stream *alsa_stream)
+ 		return -ENOMEM;
+ 
+ 	ret = bcm2835_audio_open_connection(alsa_stream);
+-	if (ret) {
+-		ret = -1;
+-		goto exit;
+-	}
++	if (ret)
++		goto free_wq;
++
+ 	instance = alsa_stream->instance;
+ 	LOG_DBG(" instance (%p)\n", instance);
+ 
+ 	if (mutex_lock_interruptible(&instance->vchi_mutex)) {
+ 		LOG_DBG("Interrupted whilst waiting for lock on (%d)\n", instance->num_connections);
+-		return -EINTR;
++		ret = -EINTR;
++		goto free_wq;
+ 	}
+ 	vchi_service_use(instance->vchi_handle[0]);
+ 
+@@ -448,7 +448,11 @@ int bcm2835_audio_open(struct bcm2835_alsa_stream *alsa_stream)
+ unlock:
+ 	vchi_service_release(instance->vchi_handle[0]);
+ 	mutex_unlock(&instance->vchi_mutex);
+-exit:
++
++free_wq:
++	if (ret)
++		destroy_workqueue(alsa_stream->my_wq);
++
+ 	return ret;
+ }
+ 
+-- 
+2.16.3
+
