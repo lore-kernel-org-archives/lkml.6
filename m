@@ -2,379 +2,221 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URG_BIZ autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 980A6C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E69FFC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4592D2086E
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4592D2086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A3152086E
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:00:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="edicngku"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A3152086E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732564AbeGLMJx (ORCPT
+        id S1732579AbeGLMKE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:09:53 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:1394 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732546AbeGLMJv (ORCPT
+        Thu, 12 Jul 2018 08:10:04 -0400
+Received: from twosheds.infradead.org ([90.155.92.209]:42296 "EHLO
+        twosheds.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbeGLMKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:09:51 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b4742de0000>; Thu, 12 Jul 2018 05:00:30 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 12 Jul 2018 05:00:35 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 12 Jul 2018 05:00:35 -0700
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 12 Jul
- 2018 12:00:34 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2 via Frontend
- Transport; Thu, 12 Jul 2018 12:00:34 +0000
-Received: from dhcp-10-21-25-168.Nvidia.com (Not Verified[10.21.25.201]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5b4742e10000>; Thu, 12 Jul 2018 05:00:35 -0700
-From:   Aapo Vienamo <avienamo@nvidia.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-CC:     Aapo Vienamo <avienamo@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 7/7] soc/tegra: pmc: Implement pad configuration via pinctrl
-Date:   Thu, 12 Jul 2018 15:00:13 +0300
-Message-ID: <1531396813-6581-8-git-send-email-avienamo@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
-References: <1531396813-6581-1-git-send-email-avienamo@nvidia.com>
-X-NVConfidentiality: public
-MIME-Version: 1.0
-Content-Type: text/plain
+        Thu, 12 Jul 2018 08:10:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=twosheds.20170209; h=Mime-Version:Date:Content-Type:
+        References:In-Reply-To:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9xAT8AqGWH18zuxQmZenqCk43rq/cIuD4j4bOxhcYuk=; b=edicngku313aeGZwGgbGjUWeO
+        Ff1veN/TXeYs35V0cQ6bUe4DGWBl1Zkti2AULcTF5YNlmSjtNBviTMgZ9dTMcP8Ddzk6FCii+1Vlo
+        OEhvKQGJzpUOozUb6cw3zm6EpN2PJ6XYnSS/TZ4n4M4MYOYa08hyMH1Chx1x24Vghu2li/6LdaO2j
+        76g2ZSjMLGG62Bkgpu3nt0dQ/Zn2IVSPSTV8UIVlI5UohMp4NYKdTt+6Xv9APesCww44tg4m1Dxwl
+        nOVt3972ruOb6P3AN3jUPjLGOMy3gAxeiancTK2gCQL/V+2gKJkVqhuOy0bpCFUhSq3ZsBRsBjL/v
+        S0ryLlRMw==;
+Received: from [2001:8b0:10b:1::2fb]
+        by twosheds.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdaH5-00035a-2r; Thu, 12 Jul 2018 12:00:43 +0000
+Message-ID: <1531396842.8759.125.camel@infradead.org>
+Subject: Re: [RFC] Make need_resched() return true when rcu_urgent_qs
+ requested
+From:   David Woodhouse <dwmw2@infradead.org>
+To:     paulmck@linux.vnet.ibm.com
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>, mhillenb@amazon.de,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        kvm <kvm@vger.kernel.org>
+In-Reply-To: <20180711210828.GD3593@linux.vnet.ibm.com>
+References: <1531169145.26547.8.camel@infradead.org>
+         <20180709210532.GH3593@linux.vnet.ibm.com>
+         <20180709220823.GA18045@linux.vnet.ibm.com>
+         <1531319025.8759.57.camel@infradead.org>
+         <20180711144303.GQ3593@linux.vnet.ibm.com>
+         <20180711164952.GA29994@linux.vnet.ibm.com>
+         <e21c6d7666bfbad1e1c8295559a6ddc7e4110105.camel@infradead.org>
+         <9ee4d6fd-02e2-2c73-36a7-36ef4f6413b0@de.ibm.com>
+         <20180711201759.GB3593@linux.vnet.ibm.com>
+         <1531340384.8759.86.camel@infradead.org>
+         <20180711210828.GD3593@linux.vnet.ibm.com>
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAG1BMVEUHBwcUFBQpKSlGRkZhYWF9fX2Xl5eysrLMzMxFF+rXAAACaElEQVQ4y21UQXbbIBQE9wJALmAg6ToWON22FrhZthHgbvssUPathC7QWMful2JHSmtWwGg+zPxBCE0DU4QoJQgRgsg4w2gJjBNE8PjFBZgnQMBs+uZ1NQNQjZO3BV4AGDFC0f+l4DBG0VUAM4yv7SO8IgRdHXQ+A78HKL5OAeCfNQV5cHX8DsBUyIJKtYbt98BKaGNCKjfgFVkqYVLbkHKsRsbSCSa0T6npIqLrpRBgQKHUpQmgs9eEKaiUcooE8WWfCGVnBiUcn1uF2XhbfmN9apKnmMP2K4kizKkQWxuaVNOpU2cACIyxO1Po8ETHcXEDMVnozcejkAYA9iaD4pU0ZvNQ8VurNnTuFAYVtuIPUZW25PjDIjQAlGyffIiRQxoWAZBmJ0LTdW2Nyc0iP3DqRhxizvGJkBWZmyFVyZkddWzmBoIBVMpCCJ1CFzl98xav4VJKSSD45KbUT75ixikTphDSRh8+Uz7JLgUTAgAFwzqzjxc/nDY7WUApqY0OMdTwCKZSXplSKkgIRCHElCp8ZnhnKqXuwcNbk1L0VXE+I9alUXoHlLHl3mv7/dWQlJwtjREC7mu9L/U2jQyMUuO2EDS4q9Kl2ddm232bxIE5pjJuVwiljNn/Cfv25/T0cu5cZbwHGVq7h/zp0B4n3S99V/utD+Uo8BiGx9xCsOAV5z7/tjo4Z4z1Lvb90KZ7eFOoOeXOukqF2seo234YYuaQPpRP+cVZU5adT1Edun5Iz3z8fTz3+eSDh0Ip1c7zx1MaijGzTd/3MbRuBHz8cvcVgCMBRpOHvgu59WDhoat+nIZm+LWm9C/aaaGq5DCP9QAAAABJRU5ErkJggg==
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/x-pkcs7-signature"; boundary="=-MMD/6LSnZj1kTWtQSDpD"
+Date:   Thu, 12 Jul 2018 13:00:42 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by twosheds.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Register a pinctrl device and implement get and set functions for
-PIN_CONFIG_LOW_POWER_MODE and PIN_CONFIG_POWER_SOURCE parameters.
 
-Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
----
- drivers/soc/tegra/pmc.c | 187 +++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 185 insertions(+), 2 deletions(-)
+--=-MMD/6LSnZj1kTWtQSDpD
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 7d3c3de..6bfd00d 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -33,6 +33,9 @@
- #include <linux/of_address.h>
- #include <linux/of_clk.h>
- #include <linux/of_platform.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinconf-generic.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/reboot.h>
-@@ -164,6 +167,9 @@ struct tegra_pmc_soc {
- 	const struct tegra_io_pad_soc *io_pads;
- 	unsigned int num_io_pads;
- 
-+	const struct pinctrl_pin_desc *pin_descs;
-+	unsigned int num_pin_descs;
-+
- 	const struct tegra_pmc_regs *regs;
- 	void (*init)(struct tegra_pmc *pmc);
- 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
-@@ -222,6 +228,8 @@ struct tegra_pmc {
- 	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
- 
- 	struct mutex powergates_lock;
-+
-+	struct pinctrl_dev *pctl_dev;
- };
- 
- static struct tegra_pmc *pmc = &(struct tegra_pmc) {
-@@ -1398,6 +1406,142 @@ static void tegra_pmc_init_tsense_reset(struct tegra_pmc *pmc)
- 	of_node_put(np);
- }
- 
-+static int tegra_io_pad_pinctrl_get_groups_count(struct pinctrl_dev *pctl_dev)
-+{
-+	return pmc->soc->num_io_pads;
-+}
-+
-+static const char *tegra_io_pad_pinctrl_get_group_name(
-+		struct pinctrl_dev *pctl, unsigned int group)
-+{
-+	return pmc->soc->io_pads[group].name;
-+}
-+
-+static int tegra_io_pad_pinctrl_get_group_pins(struct pinctrl_dev *pctl_dev,
-+					       unsigned int group,
-+					       const unsigned int **pins,
-+					       unsigned int *num_pins)
-+{
-+	*pins = &pmc->soc->io_pads[group].id;
-+	*num_pins = 1;
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops tegra_io_pad_pinctrl_ops = {
-+	.get_groups_count = tegra_io_pad_pinctrl_get_groups_count,
-+	.get_group_name = tegra_io_pad_pinctrl_get_group_name,
-+	.get_group_pins = tegra_io_pad_pinctrl_get_group_pins,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-+	.dt_free_map = pinconf_generic_dt_free_map,
-+};
-+
-+static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctl_dev,
-+				    unsigned int pin, unsigned long *config)
-+{
-+	const struct tegra_io_pad_soc *pad = tegra_io_pad_find(pmc, pin);
-+	enum pin_config_param param = pinconf_to_config_param(*config);
-+	int ret;
-+	u32 arg;
-+
-+	if (!pad)
-+		return -EINVAL;
-+
-+	switch (param) {
-+	case PIN_CONFIG_POWER_SOURCE:
-+		ret = tegra_io_pad_get_voltage(pad->id);
-+		if (ret < 0)
-+			return ret;
-+		arg = ret;
-+		break;
-+	case PIN_CONFIG_LOW_POWER_MODE:
-+		ret = tegra_io_pad_is_powered(pad->id);
-+		if (ret < 0)
-+			return ret;
-+		arg = !ret;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	*config = pinconf_to_config_packed(param, arg);
-+
-+	return 0;
-+}
-+
-+static int tegra_io_pad_pinconf_set(struct pinctrl_dev *pctl_dev,
-+				    unsigned int pin, unsigned long *configs,
-+				    unsigned int num_configs)
-+{
-+	const struct tegra_io_pad_soc *pad = tegra_io_pad_find(pmc, pin);
-+	enum pin_config_param param;
-+	unsigned int i;
-+	int err;
-+	u32 arg;
-+
-+	if (!pad)
-+		return -EINVAL;
-+
-+	for (i = 0; i < num_configs; ++i) {
-+		param = pinconf_to_config_param(configs[i]);
-+		arg = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_LOW_POWER_MODE:
-+			if (arg)
-+				err = tegra_io_pad_power_disable(pad->id);
-+			else
-+				err = tegra_io_pad_power_enable(pad->id);
-+			if (err)
-+				return err;
-+			break;
-+		case PIN_CONFIG_POWER_SOURCE:
-+			if (arg != TEGRA_IO_PAD_VOLTAGE_1V8 &&
-+			    arg != TEGRA_IO_PAD_VOLTAGE_3V3)
-+				return -EINVAL;
-+			err = tegra_io_pad_set_voltage(pad->id, arg);
-+			if (err)
-+				return err;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pinconf_ops tegra_io_pad_pinconf_ops = {
-+	.pin_config_get = tegra_io_pad_pinconf_get,
-+	.pin_config_set = tegra_io_pad_pinconf_set,
-+	.is_generic = true,
-+};
-+
-+static struct pinctrl_desc tegra_pmc_pctl_desc = {
-+	.pctlops = &tegra_io_pad_pinctrl_ops,
-+	.confops = &tegra_io_pad_pinconf_ops,
-+};
-+
-+static int tegra_pmc_pinctrl_init(struct tegra_pmc *pmc)
-+{
-+	int err = 0;
-+
-+	if (!pmc->soc->num_pin_descs)
-+		return 0;
-+
-+	tegra_pmc_pctl_desc.name = dev_name(pmc->dev);
-+	tegra_pmc_pctl_desc.pins = pmc->soc->pin_descs;
-+	tegra_pmc_pctl_desc.npins = pmc->soc->num_pin_descs;
-+
-+	pmc->pctl_dev = devm_pinctrl_register(pmc->dev, &tegra_pmc_pctl_desc,
-+					      pmc);
-+	if (IS_ERR(pmc->pctl_dev)) {
-+		err = PTR_ERR(pmc->pctl_dev);
-+		dev_err(pmc->dev, "unable to register pinctrl, %d\n", err);
-+	}
-+
-+	return err;
-+}
-+
- static int tegra_pmc_probe(struct platform_device *pdev)
- {
- 	void __iomem *base;
-@@ -1475,18 +1619,27 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 
- 	err = register_restart_handler(&tegra_pmc_restart_handler);
- 	if (err) {
--		debugfs_remove(pmc->debugfs);
- 		dev_err(&pdev->dev, "unable to register restart handler, %d\n",
- 			err);
--		return err;
-+		goto cleanup_debugfs;
- 	}
- 
-+	err = tegra_pmc_pinctrl_init(pmc);
-+	if (err)
-+		goto cleanup_restart_handler;
-+
- 	mutex_lock(&pmc->powergates_lock);
- 	iounmap(pmc->base);
- 	pmc->base = base;
- 	mutex_unlock(&pmc->powergates_lock);
- 
- 	return 0;
-+
-+cleanup_restart_handler:
-+	unregister_restart_handler(&tegra_pmc_restart_handler);
-+cleanup_debugfs:
-+	debugfs_remove(pmc->debugfs);
-+	return err;
- }
- 
- #if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
-@@ -1576,6 +1729,8 @@ static const struct tegra_pmc_soc tegra20_pmc_soc = {
- 	.has_gpu_clamps = false,
- 	.num_io_pads = 0,
- 	.io_pads = NULL,
-+	.num_pin_descs = 0,
-+	.pin_descs = NULL,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1615,6 +1770,8 @@ static const struct tegra_pmc_soc tegra30_pmc_soc = {
- 	.has_impl_33v_pwr = false,
- 	.num_io_pads = 0,
- 	.io_pads = NULL,
-+	.num_pin_descs = 0,
-+	.pin_descs = NULL,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1658,6 +1815,8 @@ static const struct tegra_pmc_soc tegra114_pmc_soc = {
- 	.has_impl_33v_pwr = false,
- 	.num_io_pads = 0,
- 	.io_pads = NULL,
-+	.num_pin_descs = 0,
-+	.pin_descs = NULL,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1704,6 +1863,12 @@ static const u8 tegra124_cpu_powergates[] = {
- 		.name	= (_name),			\
- 	})
- 
-+#define TEGRA_IO_PIN_DESC(_id, _dpd, _voltage, _name)	\
-+	((struct pinctrl_pin_desc) {			\
-+		.number = (_id),			\
-+		.name	= (_name)			\
-+	})
-+
- #define TEGRA124_IO_PAD_TABLE(_pad)					\
- 	/* .id                          .dpd    .voltage  .name	*/	\
- 	_pad(TEGRA_IO_PAD_AUDIO,	17,	UINT_MAX, "audio"),	\
-@@ -1741,6 +1906,10 @@ static const struct tegra_io_pad_soc tegra124_io_pads[] = {
- 	TEGRA124_IO_PAD_TABLE(TEGRA_IO_PAD)
- };
- 
-+static const struct pinctrl_pin_desc tegra124_pin_descs[] = {
-+	TEGRA124_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
-+};
-+
- static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.num_powergates = ARRAY_SIZE(tegra124_powergates),
- 	.powergates = tegra124_powergates,
-@@ -1751,6 +1920,8 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.has_impl_33v_pwr = false,
- 	.num_io_pads = ARRAY_SIZE(tegra124_io_pads),
- 	.io_pads = tegra124_io_pads,
-+	.num_pin_descs = ARRAY_SIZE(tegra124_pin_descs),
-+	.pin_descs = tegra124_pin_descs,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1835,6 +2006,10 @@ static const struct tegra_io_pad_soc tegra210_io_pads[] = {
- 	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PAD)
- };
- 
-+static const struct pinctrl_pin_desc tegra210_pin_descs[] = {
-+	TEGRA210_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
-+};
-+
- static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.num_powergates = ARRAY_SIZE(tegra210_powergates),
- 	.powergates = tegra210_powergates,
-@@ -1846,6 +2021,8 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.needs_mbist_war = true,
- 	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
- 	.io_pads = tegra210_io_pads,
-+	.num_pin_descs = ARRAY_SIZE(tegra210_pin_descs),
-+	.pin_descs = tegra210_pin_descs,
- 	.regs = &tegra20_pmc_regs,
- 	.init = tegra20_pmc_init,
- 	.setup_irq_polarity = tegra20_pmc_setup_irq_polarity,
-@@ -1896,6 +2073,10 @@ static const struct tegra_io_pad_soc tegra186_io_pads[] = {
- 	TEGRA186_IO_PAD_TABLE(TEGRA_IO_PAD)
- };
- 
-+static const struct pinctrl_pin_desc tegra186_pin_descs[] = {
-+	TEGRA186_IO_PAD_TABLE(TEGRA_IO_PIN_DESC)
-+};
-+
- static const struct tegra_pmc_regs tegra186_pmc_regs = {
- 	.scratch0 = 0x2000,
- 	.dpd_req = 0x74,
-@@ -1949,6 +2130,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.has_impl_33v_pwr = true,
- 	.num_io_pads = ARRAY_SIZE(tegra186_io_pads),
- 	.io_pads = tegra186_io_pads,
-+	.num_pin_descs = ARRAY_SIZE(tegra186_pin_descs),
-+	.pin_descs = tegra186_pin_descs,
- 	.regs = &tegra186_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
--- 
-2.7.4
+
+
+On Wed, 2018-07-11 at 14:08 -0700, Paul E. McKenney wrote:
+>=20
+> > Also... why in $DEITY's name was the existing
+> > rcu_virt_note_context_switch() not actually sufficient? If we had that
+> > there, why did we need an additional explicit calls to rcu_all_qs() in
+> > the KVM loop, or the more complex fixes to need_resched() which
+> > ultimately had the same effect, to avoid ten-second latencies?
+>=20
+> My guess is that this was because control passed through the
+> rcu_virt_note_context_switch() only once, and then subsequent
+> scheduling-clock interrupts bypassed this code.=C2=A0 But that is just a =
+guess.
+> I need to defer to someone who understands the KVM code better than I do.
+
+I think it's more likely that we just never happened at all. It's
+conditional. From the latest patch iteration (see it being removed):
+
+@@ -118,12 +118,12 @@ static inline void guest_enter_irqoff(void)
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* one time slice). Le=
+ts treat guest mode as quiescent state, just like
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* we do with user-mod=
+e execution.
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0*/
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (!context_tracking_cpu_is_ena=
+bled())
+-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0rcu_virt_note_context_switch(smp_processor_id());
++=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rcu_kvm_enter();
+=C2=A0}
+
+
+Given the vmexit overhead, I don't think we can do the currently-
+proposed rcu_kvm_enter() thing except for CONFIG_NO_HZ_FULL where it's
+really necessary. I'll make that conditional, but probably on the RCU
+side.
+
+Without CONFIG_NO_HZ_FULL, rcu_kvm_exit() can do nothing, and
+rcu_kvm_enter() can do rcu_virt_note_context_switch().
+
+OK?
+--=-MMD/6LSnZj1kTWtQSDpD
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEFQw
+ggUxMIIEGaADAgECAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAeFw0xNzEyMjEwMDAwMDBaFw0xODEyMjEyMzU5
+NTlaMCQxIjAgBgkqhkiG9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDgzLNWa18DNpGUj/ZeH0Sgz53ESIbzdPw3OJeuNP6jZhxZojbyfxbM
+hETscxI/Hj6UZ4a7sHm5BkVjlsB1Af2Za/PXUt8MmLAcPMHkMPGunvkUibEvblDvpqMkQZlaZM+t
+5PqFmWkbehLaEvbpNY7dmEAAeKh4klTzJzrr5AAzaCQ32cA2e3+DEIv5O5l9ViMIjy/JM+xMQrfX
+3PZ0chY1PaVWjg59d4Uno+5LRDbgCnPkKJX4ysBGadibjBGQGJEZCjh94iiEebn2KsRLvtrJ72Ph
+3W2HDEdngW3YP0wujFQVs81U7L8XN3kdPRsa9zNqGtYQP/+1KMMJQ57hnfi9AgMBAAGjggHpMIIB
+5TAfBgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQUpL+/5lli9jmj2KHj
+ryyhnB2xRt0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwIAYDVR0lBBkwFwYIKwYBBQUH
+AwQGCysGAQQBsjEBAwUCMBEGCWCGSAGG+EIBAQQEAwIFIDBGBgNVHSAEPzA9MDsGDCsGAQQBsjEB
+AgEBATArMCkGCCsGAQUFBwIBFh1odHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8E
+UzBRME+gTaBLhklodHRwOi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50
+aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKG
+SWh0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5k
+U2VjdXJlRW1haWxDQS5jcnQwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAe
+BgNVHREEFzAVgRNkd213MkBpbmZyYWRlYWQub3JnMA0GCSqGSIb3DQEBCwUAA4IBAQCK28BdbVJ9
+QKQqTDfXwogAYiRBEGptfE1Bjy4F5vC6eWJqOJ15vunxjLwdbZYb4L0qrJlh+ZHHHlbIK8uEZu7N
+XHUntmWMbGbZiu7JgrbSXJK1ct9gxrN/sdWYJ+JDjVHg7GfDTvTTPa26JMRqJsO1TjjyDX7A3K39
+TjV8C0hqXvwF9BsNf+qBeWO6GVzJ5572awY221hc1umibmZaKV4fg+7fS7qscx5TSuIc6uvMBQhm
+7NQiCq6euMMWBDUDlotQCDW0ilm0OuLW3IVLuZCm6Msc+6hT9+dCT4JUvxTHZnnO7uLCxV+Ujad+
+PH3itRm38i96p2zvwgLr8vwWA0ckMIIFMTCCBBmgAwIBAgIQTUYRMpPx2e52jnkx1q87gDANBgkq
+hkiG9w0BAQsFADCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQ
+MA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENP
+TU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwHhcNMTcx
+MjIxMDAwMDAwWhcNMTgxMjIxMjM1OTU5WjAkMSIwIAYJKoZIhvcNAQkBFhNkd213MkBpbmZyYWRl
+YWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4MyzVmtfAzaRlI/2Xh9EoM+d
+xEiG83T8NziXrjT+o2YcWaI28n8WzIRE7HMSPx4+lGeGu7B5uQZFY5bAdQH9mWvz11LfDJiwHDzB
+5DDxrp75FImxL25Q76ajJEGZWmTPreT6hZlpG3oS2hL26TWO3ZhAAHioeJJU8yc66+QAM2gkN9nA
+Nnt/gxCL+TuZfVYjCI8vyTPsTEK319z2dHIWNT2lVo4OfXeFJ6PuS0Q24Apz5CiV+MrARmnYm4wR
+kBiRGQo4feIohHm59irES77aye9j4d1thwxHZ4Ft2D9MLoxUFbPNVOy/Fzd5HT0bGvczahrWED//
+tSjDCUOe4Z34vQIDAQABo4IB6TCCAeUwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8Aw
+HQYDVR0OBBYEFKS/v+ZZYvY5o9ih468soZwdsUbdMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8E
+AjAAMCAGA1UdJQQZMBcGCCsGAQUFBwMEBgsrBgEEAbIxAQMFAjARBglghkgBhvhCAQEEBAMCBSAw
+RgYDVR0gBD8wPTA7BgwrBgEEAbIxAQIBAQEwKzApBggrBgEFBQcCARYdaHR0cHM6Ly9zZWN1cmUu
+Y29tb2RvLm5ldC9DUFMwWgYDVR0fBFMwUTBPoE2gS4ZJaHR0cDovL2NybC5jb21vZG9jYS5jb20v
+Q09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNybDCBiwYIKwYB
+BQUHAQEEfzB9MFUGCCsGAQUFBzAChklodHRwOi8vY3J0LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FD
+bGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWlsQ0EuY3J0MCQGCCsGAQUFBzABhhhodHRw
+Oi8vb2NzcC5jb21vZG9jYS5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkq
+hkiG9w0BAQsFAAOCAQEAitvAXW1SfUCkKkw318KIAGIkQRBqbXxNQY8uBebwunliajideb7p8Yy8
+HW2WG+C9KqyZYfmRxx5WyCvLhGbuzVx1J7ZljGxm2YruyYK20lyStXLfYMazf7HVmCfiQ41R4Oxn
+w0700z2tuiTEaibDtU448g1+wNyt/U41fAtIal78BfQbDX/qgXljuhlcyeee9msGNttYXNbpom5m
+WileH4Pu30u6rHMeU0riHOrrzAUIZuzUIgqunrjDFgQ1A5aLUAg1tIpZtDri1tyFS7mQpujLHPuo
+U/fnQk+CVL8Ux2Z5zu7iwsVflI2nfjx94rUZt/Iveqds78IC6/L8FgNHJDCCBeYwggPOoAMCAQIC
+EGqb4Tg7/ytrnwHV2binUlYwDQYJKoZIhvcNAQEMBQAwgYUxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMSswKQYDVQQDEyJDT01PRE8gUlNBIENlcnRpZmljYXRpb24gQXV0aG9yaXR5MB4X
+DTEzMDExMDAwMDAwMFoXDTI4MDEwOTIzNTk1OVowgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvrOeV6wodnVAFsc4
+A5jTxhh2IVDzJXkLTLWg0X06WD6cpzEup/Y0dtmEatrQPTRI5Or1u6zf+bGBSyD9aH95dDSmeny1
+nxdlYCeXIoymMv6pQHJGNcIDpFDIMypVpVSRsivlJTRENf+RKwrB6vcfWlP8dSsE3Rfywq09N0Zf
+xcBa39V0wsGtkGWC+eQKiz4pBZYKjrc5NOpG9qrxpZxyb4o4yNNwTqzaaPpGRqXB7IMjtf7tTmU2
+jqPMLxFNe1VXj9XB1rHvbRikw8lBoNoSWY66nJN/VCJv5ym6Q0mdCbDKCMPybTjoNCQuelc0IAaO
+4nLUXk0BOSxSxt8kCvsUtQIDAQABo4IBPDCCATgwHwYDVR0jBBgwFoAUu69+Aj36pvE8hI6t7jiY
+7NkyMtQwHQYDVR0OBBYEFIKvbIz4xf6WYXzoHz0rcUhexIvAMA4GA1UdDwEB/wQEAwIBhjASBgNV
+HRMBAf8ECDAGAQH/AgEAMBEGA1UdIAQKMAgwBgYEVR0gADBMBgNVHR8ERTBDMEGgP6A9hjtodHRw
+Oi8vY3JsLmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDBx
+BggrBgEFBQcBAQRlMGMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9jcnQuY29tb2RvY2EuY29tL0NPTU9E
+T1JTQUFkZFRydXN0Q0EuY3J0MCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20w
+DQYJKoZIhvcNAQEMBQADggIBAHhcsoEoNE887l9Wzp+XVuyPomsX9vP2SQgG1NgvNc3fQP7TcePo
+7EIMERoh42awGGsma65u/ITse2hKZHzT0CBxhuhb6txM1n/y78e/4ZOs0j8CGpfb+SJA3GaBQ+39
+4k+z3ZByWPQedXLL1OdK8aRINTsjk/H5Ns77zwbjOKkDamxlpZ4TKSDMKVmU/PUWNMKSTvtlenlx
+Bhh7ETrN543j/Q6qqgCWgWuMAXijnRglp9fyadqGOncjZjaaSOGTTFB+E2pvOUtY+hPebuPtTbq7
+vODqzCM6ryEhNhzf+enm0zlpXK7q332nXttNtjv7VFNYG+I31gnMrwfHM5tdhYF/8v5UY5g2xANP
+ECTQdu9vWPoqNSGDt87b3gXb1AiGGaI06vzgkejL580ul+9hz9D0S0U4jkhJiA7EuTecP/CFtR72
+uYRBcunwwH3fciPjviDDAI9SnC/2aPY8ydehzuZutLbZdRJ5PDEJM/1tyZR2niOYihZ+FCbtf3D9
+mB12D4ln9icgc7CwaxpNSCPt8i/GqK2HsOgkL3VYnwtx7cJUmpvVdZ4ognzgXtgtdk3ShrtOS1iA
+N2ZBXFiRmjVzmehoMof06r1xub+85hFQzVxZx5/bRaTKTlL8YXLI8nAbR9HWdFqzcOoB/hxfEyIQ
+px9/s81rgzdEZOofSlZHynoSMYIDxzCCA8MCAQEwgawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQI
+ExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBD
+QSBMaW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQg
+U2VjdXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCWCGSAFlAwQCAQUAoIIB6zAYBgkq
+hkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0xODA3MTIxMjAwNDJaMC8GCSqG
+SIb3DQEJBDEiBCCosDIELr8Aa1izq5hKLukdRteaz/m6T4EbuK3cgIefdTCBvQYJKwYBBAGCNxAE
+MYGvMIGsMIGXMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIQTUYRMpPx2e52
+jnkx1q87gDCBvwYLKoZIhvcNAQkQAgsxga+ggawwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJH
+cmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBM
+aW1pdGVkMT0wOwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2Vj
+dXJlIEVtYWlsIENBAhBNRhEyk/HZ7naOeTHWrzuAMA0GCSqGSIb3DQEBAQUABIIBAAVOeXYEwrp8
+03WxYviY0x/wZwysqRtOL1PICTBQCDMW+RiSGlaNP+YScfNwrTq2YLocxjLZgdlWhq3zTnpzeKI7
+5JwbJKYGygaFC2g9sheNs8D6SkE0mKngXULrFgij/Fp+Nu45DE9WoVTQ7A5AQWJ6pGgjuImWyGqR
+7jKRuZXEJ2LPW+8glG+cKpYqiygLolbscJg1sixMA6BwFVjtqb9urdc6XEbN2McnLVtog65qaY/s
+8DyRrr47usASJWYBEjlkf2Xdq+rWfViCF3YGGjMs3wIZtzGWN+ispnas7t4gF9PRbDT2wEIGvM//
+6hTjCMau3e5shTVwEMBfYR3ZdqkAAAAAAAA=
+
+
+--=-MMD/6LSnZj1kTWtQSDpD--
 
