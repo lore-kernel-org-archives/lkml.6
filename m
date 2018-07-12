@@ -2,117 +2,175 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99615C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 058AEC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:23:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 510C020BEC
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2434208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:23:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eaPSFWC4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 510C020BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T1+1hDq6";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="T1+1hDq6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2434208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbeGLM0h (ORCPT
+        id S1727658AbeGLMdK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:26:37 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:37176 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726580AbeGLM0h (ORCPT
+        Thu, 12 Jul 2018 08:33:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34156 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726760AbeGLMdK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:26:37 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6CC8hRE189524;
-        Thu, 12 Jul 2018 12:17:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
- bh=+bDiW32H2pkBWyBA8IkZ1LMSuI1wj5rxBdjQQjrTHaE=;
- b=eaPSFWC49LsyEkloaDX8pylO9z0vPqLtckqAr9Gc/6b2XItU8FSOz7z8qsOhCszMrQc6
- oO9/6jbftXkbzhIB5/KL2+7uZMJYnNzDW2K+9jCpSm8xIInWgXoHgFFQCF2WMGNsbLmF
- 1bMjIHdHdKWPEzx00v37ojapYrOcOXCIGOY6XLAPFJb9bXssG+Cr68BMgPl1GimLb60I
- 3SsxXUzJJncGn7iYU+d3x5LqNH/2+JNivOfeiC8eZ0YcAK/rhPs3nIs8E0w5ygvlQYV4
- cQI+h0pkCzzSouscVcZNSSwhw0aBsjiWWc3aFE+PGA7+U+jckew2vDhjB773MEHMiOE+ Lw== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2k2p763ct7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 12:17:07 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6CCH5eA017812
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 12:17:06 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6CCH2lS006344;
-        Thu, 12 Jul 2018 12:17:02 GMT
-Received: from mwanda (/41.202.241.62)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 12 Jul 2018 05:17:01 -0700
-Date:   Thu, 12 Jul 2018 15:16:53 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>
-Cc:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, airlied@linux.ie,
-        daniel.vetter@intel.com, seanpaul@chromium.org,
-        gustavo@padovan.org, jgross@suse.com, boris.ostrovsky@oracle.com
-Subject: Re: [PATCH v2] drm: Replace NULL with error value in
- drm_prime_pages_to_sg
-Message-ID: <20180712121528.gxe2oygqcz4zopyn@mwanda>
-References: <20180618060709.14290-1-andr2000@gmail.com>
- <20180618122951.v55dxtjg4azezjvg@mwanda>
- <a0b8ffa2-cf75-5a8c-7341-29855780fc00@epam.com>
- <a9167704-e687-2688-18b8-f5e6320b1089@gmail.com>
+        Thu, 12 Jul 2018 08:33:10 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id D3C106083C; Thu, 12 Jul 2018 12:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531398229;
+        bh=P7GGGpX50ttdnNWWeaAdJoiwgtL6utFwnEGoSD5ALsg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=T1+1hDq6YH9akm5VJ3u+vl5mYnDFJ5NoURWmZ4KJQs5w7EI+BibR9TVxGhcQTzEFM
+         Dxo+gGKu/1il3OATNSMPXDkoU1ee29UOK9ZCsxPK07KkdDTw7FOnulZskYgKCq8/Mq
+         ZcTJ+qfkANVlfCVJr1l0xy8ZwowN+I5Ybwaj6QGQ=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 0ABA36083C;
+        Thu, 12 Jul 2018 12:23:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531398229;
+        bh=P7GGGpX50ttdnNWWeaAdJoiwgtL6utFwnEGoSD5ALsg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=T1+1hDq6YH9akm5VJ3u+vl5mYnDFJ5NoURWmZ4KJQs5w7EI+BibR9TVxGhcQTzEFM
+         Dxo+gGKu/1il3OATNSMPXDkoU1ee29UOK9ZCsxPK07KkdDTw7FOnulZskYgKCq8/Mq
+         ZcTJ+qfkANVlfCVJr1l0xy8ZwowN+I5Ybwaj6QGQ=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a9167704-e687-2688-18b8-f5e6320b1089@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=649
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807120128
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 12 Jul 2018 17:53:48 +0530
+From:   Amit Nischal <anischal@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Odelu Kukatla <okukatla@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk-owner@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: qcom: gdsc: Add support to enable/disable the
+ clocks with GDSC
+In-Reply-To: <153111447519.143105.17241493270191899078@swboyd.mtv.corp.google.com>
+References: <1528285308-25477-1-git-send-email-anischal@codeaurora.org>
+ <1528285308-25477-2-git-send-email-anischal@codeaurora.org>
+ <153111447519.143105.17241493270191899078@swboyd.mtv.corp.google.com>
+Message-ID: <6e53b7934af72e40e99a3d6afe54174f@codeaurora.org>
+X-Sender: anischal@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 02:58:00PM +0300, Oleksandr Andrushchenko wrote:
-> On 06/18/2018 03:32 PM, Oleksandr Andrushchenko wrote:
-> > On 06/18/2018 03:29 PM, Dan Carpenter wrote:
-> > > On Mon, Jun 18, 2018 at 09:07:09AM +0300, Oleksandr Andrushchenko wrote:
-> > > > drivers/gpu/drm/drm_gem_cma_helper.c    | 2 +-
-> > > >   drivers/gpu/drm/xen/xen_drm_front_gem.c | 2 +-
-> > > >   2 files changed, 2 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/gpu/drm/drm_gem_cma_helper.c
-> > > > b/drivers/gpu/drm/drm_gem_cma_helper.c
-> > > > index 80a5115c3846..ce868ce288fb 100644
-> > > > --- a/drivers/gpu/drm/drm_gem_cma_helper.c
-> > > > +++ b/drivers/gpu/drm/drm_gem_cma_helper.c
-> > > > @@ -436,7 +436,7 @@ struct sg_table
-> > > > *drm_gem_cma_prime_get_sg_table(struct drm_gem_object *obj)
-> > > >         sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
-> > > >       if (!sgt)
-> > > > -        return NULL;
-> > > > +        return ERR_PTR(-ENOMEM);
-> > > >         ret = dma_get_sgtable(obj->dev->dev, sgt, cma_obj->vaddr,
-> > > >                     cma_obj->paddr, obj->size);
-> > > 
-> > > If dma_get_sgtable() fails then we return NULL.
-> > > 
-> > > Fix that and it should be good.
-> > You mean I can put your r-b with that fixed?
-> ping
+Hi Stephen,
 
-Yeah.  Send the v2 patch and I'll review it.
+Thanks for the review comments.
 
-regards,
-dan carpenter
+Regards,
+Amit
 
+On 2018-07-09 11:04, Stephen Boyd wrote:
+> Quoting Amit Nischal (2018-06-06 04:41:45)
+>> For some of the GDSCs, there is a requirement to enable/disable the
+>> few clocks before turning on/off the gdsc power domain. Add support
+> 
+> Why is there a requirement? Do the clks need to be in hw control mode 
+> or
+> they can't be turned off when the GDSC is off? It's hard for me to
+> understand with these vague statements.
+> 
+
+This requirement is primarily to turn on the GPU GX GDSC and these 
+clocks
+do not need to be in HW control mode and clock disable is not related
+with the GDSC.
+
+To turn on the GX GDSC, root clock (GFX3D RCG) needs to be enabled first
+before writing to SW_COLLAPSE bit of the GDSC. The CLK_ON signal from 
+RCG
+would power up the GPU GX GDSC.
+
+
+>> for the same by specifying a list of clk_hw pointers per gdsc and
+>> enable/disable them along with power domain on/off callbacks.
+>> 
+>> Signed-off-by: Amit Nischal <anischal@codeaurora.org>
+>> ---
+>>  drivers/clk/qcom/gdsc.c | 44 
+>> ++++++++++++++++++++++++++++++++++++++++++++
+>>  drivers/clk/qcom/gdsc.h |  5 +++++
+>>  2 files changed, 49 insertions(+)
+>> 
+>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>> index a077133..b6adca1 100644
+>> --- a/drivers/clk/qcom/gdsc.c
+>> +++ b/drivers/clk/qcom/gdsc.c
+>> @@ -12,6 +12,8 @@
+>>   */
+>> 
+>>  #include <linux/bitops.h>
+>> +#include <linux/clk.h>
+> 
+> Ugh.
+> 
+>> +#include <linux/clk-provider.h>
+> 
+> Both, really?
+> 
+
+Above includes are required else we get a compilation error as below:
+error: dereferencing pointer to incomplete type
+    ret = clk_prepare_enable(sc->clk_hws[i]->clk);
+                                           ^
+
+>>  #include <linux/delay.h>
+>>  #include <linux/err.h>
+>>  #include <linux/jiffies.h>
+>> @@ -208,11 +210,41 @@ static inline void gdsc_assert_reset_aon(struct 
+>> gdsc *sc)
+>>         regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
+>>                            GMEM_RESET_MASK, 0);
+>>  }
+>> +
+>> +static int gdsc_clk_prepare_enable(struct gdsc *sc)
+>> +{
+>> +       int i, ret;
+>> +
+>> +       for (i = 0; i < sc->clk_count; i++) {
+>> +               ret = clk_prepare_enable(sc->clk_hws[i]->clk);
+>> +               if (ret) {
+>> +                       for (i--; i >= 0; i--)
+>> +                               
+>> clk_disable_unprepare(sc->clk_hws[i]->clk);
+>> +                       return ret;
+>> +               }
+>> +       }
+>> +       return 0;
+>> +}
+>> +
+> 
+> Looks an awful lot like bulk_enable clk API.
+
+As mentioned above, ROOT_EN bit of GFX3D RCG needs to be enabled first 
+to
+turn on the GDSC. We want this enable to happen only through clock 
+framework
+API in order to avoid stability issues.
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-clk" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
