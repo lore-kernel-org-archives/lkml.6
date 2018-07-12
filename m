@@ -2,206 +2,127 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF40C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:41:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63442C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8648D20875
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:41:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nz1Is7rr";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mI/4plUU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8648D20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 2738520875
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 12:42:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2738520875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732283AbeGLMvK (ORCPT
+        id S1732359AbeGLMvz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 08:51:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:44858 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbeGLMvK (ORCPT
+        Thu, 12 Jul 2018 08:51:55 -0400
+Received: from mail-ua0-f194.google.com ([209.85.217.194]:39996 "EHLO
+        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbeGLMvy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 08:51:10 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8173360B10; Thu, 12 Jul 2018 12:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531399305;
-        bh=DTinPSsSGzlPAtJq/Fabe6YFPFlRfPRGQXU9TXwYoQ4=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=nz1Is7rrFUUtSNIV3oUvWscWmhtTxvd41qYNk0OiMwAvTitKp/JvZCUo39TFizmwH
-         WvSGogBmr+rEAHh3a0i6GtydWT1xc6vdDcY8HVWWUMhwleUjYYOoxDGFwqOPIFcOM4
-         ht8EChlujvZIpvODxDTCscd0QpcUiS3AR+9g7d80=
-Received: from mail-qt0-f170.google.com (mail-qt0-f170.google.com [209.85.216.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B7B3760B77;
-        Thu, 12 Jul 2018 12:41:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531399303;
-        bh=DTinPSsSGzlPAtJq/Fabe6YFPFlRfPRGQXU9TXwYoQ4=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=mI/4plUUnBGVd5W1vBdMbJlxhGv3dLsOasz3+N3XTlQgocGGffSdghF+pbCbZ7r6f
-         x2fkGpsALfXx+O7r3qqpeiY/e3rIyrHHLmgCl6dIxyFhU8v+QKiVw/o+sb+x+KshSq
-         C2Y5d7UCaum7mggIm4dmYcLUR+dSuNuidCpdhG+0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B7B3760B77
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Received: by mail-qt0-f170.google.com with SMTP id q12-v6so23882794qtp.6;
-        Thu, 12 Jul 2018 05:41:43 -0700 (PDT)
-X-Gm-Message-State: AOUpUlHxooB+7ZOPsWNPLPvRg4rrduPXlPFXIW9vSccqXYnrm6assgHd
-        bFOnrb6R3t5XJuG/6GqWXpOSuoey2+otrBwGvRs=
-X-Google-Smtp-Source: AAOMgped+vtvPIsBOsw759o+yl4tRMMgUbO+1Wjab1eEn8UGSOTu6MySC8BQiTQWs9QaSvjsQMEk4+wNt74RbyeA12Y=
-X-Received: by 2002:ac8:3525:: with SMTP id y34-v6mr1538625qtb.241.1531399302909;
- Thu, 12 Jul 2018 05:41:42 -0700 (PDT)
+        Thu, 12 Jul 2018 08:51:54 -0400
+Received: by mail-ua0-f194.google.com with SMTP id p22-v6so7738682uao.7
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 05:42:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zeaJtmgS1URhbdJjPKHXx7AB5HLwy9a9Vc28w77bx14=;
+        b=Tp+8N+IO2YwYQaAqGpUuNJaZ7EVmy4cQK3lBWMT90krGnVYV+d7z2GxGpB+9yYA61W
+         zbWdyY72Q65qVNUNY156u91iCCC7Wk1S8w4+ZeLO8nTeSsjh0x/e0ANv3+VM73RoceHt
+         H/dClkRuZvtWrM5qoHgoh7eut3fn+imH2NX0U3o3beAIcTybmezTqeMnLzIkGAXLBgxw
+         NOM4uZNkERThjtiSCx/MPWoitBh1wqklOBPcTrg0Q4af5wa8OtMqTvznDYe3Mitvjp8y
+         eRJc0b+idmZfFEO8fOCenh7iJ9qZsYXjtsgeRrnzHQ/Am4yv4bmB1iU01use88T8QQoB
+         houg==
+X-Gm-Message-State: AOUpUlHPRV/2dYMVthcBZJuN/O6Zc4J6Zk/Y7ddsGDWnKPCiS+Akbi8q
+        J471TKFKFd02z//qBkQN9CSQzZSDUr0erTqCoGA=
+X-Google-Smtp-Source: AAOMgpdnaIVNC43jraH+i+6K8LQMBFd+8Oh32FdsLPk+PEZwHKv289MhlFViNtd6TpWdt8DBveK1noTgd+lBDCbMZes=
+X-Received: by 2002:ab0:72d1:: with SMTP id g17-v6mr1354494uap.33.1531399349841;
+ Thu, 12 Jul 2018 05:42:29 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac8:1082:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 05:41:42
- -0700 (PDT)
-In-Reply-To: <741cc78b-59a7-5289-e42f-1511ebedb15d@codeaurora.org>
-References: <20180708173413.1965-1-vivek.gautam@codeaurora.org>
- <20180708173413.1965-4-vivek.gautam@codeaurora.org> <5179668.PHK6S3sxLu@aspire.rjw.lan>
- <741cc78b-59a7-5289-e42f-1511ebedb15d@codeaurora.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Date:   Thu, 12 Jul 2018 18:11:42 +0530
-X-Gmail-Original-Message-ID: <CAFp+6iFTgEhPLYQEyBX_Fb0k3n0OzGhKuSoBNV5XzpD01+V8qw@mail.gmail.com>
-Message-ID: <CAFp+6iFTgEhPLYQEyBX_Fb0k3n0OzGhKuSoBNV5XzpD01+V8qw@mail.gmail.com>
-Subject: Re: [PATCH v12 3/4] iommu/arm-smmu: Add the device_link between
- masters and smmu
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <joro@8bytes.org>,
-        "robh+dt" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        alex.williamson@redhat.com, Rob Clark <robdclark@gmail.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>, sboyd@kernel.org,
-        Tomasz Figa <tfiga@chromium.org>,
-        Sricharan R <sricharan@codeaurora.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Lukas Wunner <lukas@wunner.de>
+References: <20180705213604.18883-1-deepa.kernel@gmail.com>
+ <20180705213604.18883-4-deepa.kernel@gmail.com> <20180705222110.GA5698@infradead.org>
+ <CABeXuvoj_WwvnaqY1wao+axx1JLpPte-iXP=Ti7jsT+r6VrVUg@mail.gmail.com> <CAK8P3a2L9z+Ok1Wd0=5F=Xt7nvqL6be+AS++F3rZzByN+a+9QA@mail.gmail.com>
+In-Reply-To: <CAK8P3a2L9z+Ok1Wd0=5F=Xt7nvqL6be+AS++F3rZzByN+a+9QA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 12 Jul 2018 14:42:17 +0200
+Message-ID: <CAMuHMdUOVdmeM9GohMQ6Ass8hWVDxezA0f+bKqGyH1OanMJtXA@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] riscv: Include asm-generic/compat.h
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Deepa Dinamani <deepa.kernel@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        linux-riscv@lists.infradead.org, Palmer Dabbelt <palmer@sifive.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+Hi Arnd,
 
+On Fri, Jul 6, 2018 at 1:43 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> On Fri, Jul 6, 2018 at 1:56 AM, Deepa Dinamani <deepa.kernel@gmail.com> wrote:
+> > On Thu, Jul 5, 2018 at 3:21 PM, Christoph Hellwig <hch@infradead.org> wrote:
+> >> On Thu, Jul 05, 2018 at 02:36:00PM -0700, Deepa Dinamani wrote:
+> >>> defconfig, allmodconfig and nomodconfig.
+> >>> And hence does not inlude definitions for compat data types.
+> >>>
+> >>> Now that time syscalls are being reused in non CONFIG_COMPAT
+> >>> modes, include asm-generic definitions for riscv.
+> >>>
+> >>> Alternative would be to make compat_time.h to be conditional on
+> >>> CONFIG_COMPAT_32BIT_TIME. But, since riscv is already has an
+> >>> asm/compat.h include the generic version instead.
+> >>
+> >> Two comments here:
+> >>
+> >> First I think the current riscv compat.h is completely bogus.
+> >> As you mentioned riscv does not actually have a compat mode, so
+> >> having a compat.h makes no sensse at all, and the COMPAT_UTS_MACHINE
+> >> override which is the only thing implemented is included in that
+> >> statement.
+> >
+> > I was leaving the decision on how to clean up compat mode to the
+> > architecture maintainers.
+> > I wasn't sure if they were still in the middle of implementing it.
+>
+> If we only need it for 32 bit time_t, we can probably just use the
+> asm-generic/compat.h for now.
+>
+> >> Second I think abusing compat.h for old syscall compatibility of any
+> >> form is a really bad idea.  I think you need to split that part out,
+> >> and preferably not using compat in the name, but something like
+> >> old-time.h or time32.h for the name.
+> >
+> > Are you talking about just the header file or the way we are reusing
+> > compat syscalls?
+> > Either way, we have merged quite a few patches this way already.
+> > I agree that having something like time32.h might be less confusing.
+> > But, if you are worried about the former, then maybe we should propose
+> > a cleanup after we finish what we are doing or back out the merged
+> > patches.
+> > For instance, posix_clock apis have already been changed this way.
+>
+> It would be easy to rename compat_time_t, compat_timespec and
+> compat_timeval to something else if we could come up with a good
+> name for them (we already have too many variants of each of
+> them though, otherwise we end up being more confusing rather
+> than less).
 
-On Wed, Jul 11, 2018 at 4:06 PM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> Hi Rafael,
->
->
->
-> On 7/11/2018 3:23 PM, Rafael J. Wysocki wrote:
->>
->> On Sunday, July 8, 2018 7:34:12 PM CEST Vivek Gautam wrote:
->>>
->>> From: Sricharan R <sricharan@codeaurora.org>
->>>
->>> Finally add the device link between the master device and
->>> smmu, so that the smmu gets runtime enabled/disabled only when the
->>> master needs it. This is done from add_device callback which gets
->>> called once when the master is added to the smmu.
->>>
->>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->>> Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
->>> Reviewed-by: Tomasz Figa <tfiga@chromium.org>
->>> Cc: Rafael J. Wysocki <rjw@rjwysocki.net>
->>> Cc: Lukas Wunner <lukas@wunner.de>
->>> ---
->>>
->>>   - Change since v11
->>>     * Replaced DL_FLAG_AUTOREMOVE flag with DL_FLAG_AUTOREMOVE_SUPPLIER.
->>>
->>>   drivers/iommu/arm-smmu.c | 12 ++++++++++++
->>>   1 file changed, 12 insertions(+)
->>>
->>> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
->>> index 09265e206e2d..916cde4954d2 100644
->>> --- a/drivers/iommu/arm-smmu.c
->>> +++ b/drivers/iommu/arm-smmu.c
->>> @@ -1461,8 +1461,20 @@ static int arm_smmu_add_device(struct device *dev)
->>>         iommu_device_link(&smmu->iommu, dev);
->>>   +     if (pm_runtime_enabled(smmu->dev) &&
->>
->> Why does the creation of the link depend on whether or not runtime PM
->> is enabled for the MMU device?
->
->
-> The main purpose of this device link is to handle the runtime PM
-> synchronization
-> between the supplier (iommu) and consumer (client devices, such as
-> GPU/display).
-> Moreover, the runtime pm is conditionally enabled for smmu devices that
-> support
-> such [1].
+legacy_time_t etc.?
 
-Is there something you would like me to modify in this patch?
+Gr{oetje,eeting}s,
 
-Best regards
-Vivek
-
->>
->>
->> What about system-wide PM and system shutdown?  Are they always guaranteed
->> to happen in the right order without the link?
->
->
-> When there's no runtime PM, there's no clocks, and other resources to be
-> handled.
-> So, we don't need device link for system-wide PM and system shutdown to work
-> correctly.
-> That's the case with current arm-smmu driver.
-> Is it something that i am missing here?
->
-> [1] https://lkml.org/lkml/2018/3/8/775
->
-> Thanks
-> Vivek
->>>
->>> +           !device_link_add(dev, smmu->dev,
->>> +                       DL_FLAG_PM_RUNTIME |
->>> DL_FLAG_AUTOREMOVE_SUPPLIER)) {
->>> +               dev_err(smmu->dev, "Unable to add link to the consumer
->>> %s\n",
->>> +                       dev_name(dev));
->>> +               ret = -ENODEV;
->>> +               goto out_unlink;
->>> +       }
->>> +
->>>         return 0;
->>>   +out_unlink:
->>> +       iommu_device_unlink(&smmu->iommu, dev);
->>> +       arm_smmu_master_free_smes(fwspec);
->>>   out_cfg_free:
->>>         kfree(cfg);
->>>   out_free:
->>>
->>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
+                        Geert
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
