@@ -2,210 +2,152 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E6BC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0327FC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88ADD20862
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHRuN39I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88ADD20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id A645C20BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:23:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A645C20BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732516AbeGLIaQ (ORCPT
+        id S1726594AbeGLIcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:30:16 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41922 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbeGLIaP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:30:15 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y17-v6so16558543ljy.8;
-        Thu, 12 Jul 2018 01:21:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=j3GRVs5QdaCvzkNqHu3pRIHoQbXSF4DPa5zkup5RP0I=;
-        b=RHRuN39ItsDFxGc1cWjLEJZQmV29TcarcMt1X4T69oyd1773KoLJh4/259KVNI88jS
-         36ci2nOjnaPAsEYIZavrtMf0KVwUvJxNUCeRiYmURCKc9CEaYUTui5XNgthfq+0OCcNx
-         ffDcH6to64fcl9+VnYmrWCrSq0TK7U5AWXXuWX1bQnGlpqxf84lt92Nf/z5g5CWHXYWZ
-         Z3KfKN+U8/aCSwz+eTjJICFk8Ws734D8vkTRQdhb1ccmsbVqZ/HOyUPTfGWlOCotkn3b
-         3yj6l43xHd7jFpU3yAtjJzYR2c3sefKymWZ261UI3oe1B1bOGrU/suZ7OOpjfGkvYiCw
-         6+ug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=j3GRVs5QdaCvzkNqHu3pRIHoQbXSF4DPa5zkup5RP0I=;
-        b=IT3sU8IwQDZzl57YHi5MW4iE4BQl7NATXQVcUlwzm/gmERWTH2I/eruz/SkYjDG7DV
-         svLz0N46U3ZSDGY7bDxFnUZRAv02Ze3tbHcpwJqeaH5Ww3PihcvhjratUX1+Et4G/vc3
-         YCyiwXf4E5TulF4wjmCy1PngH69wB/TgBEZzSlsOrNBwCFEqC9eAPi7VeCgimf1Hl8wn
-         4mgEddab3wB2IWw4g4SljxIQxCu4zasTlQEEfC9m1mXU/JyHbB1tIXonYc3U3KCDOpND
-         7eN/Y8xGcLebtdMsLzKk77O8g/71asq2KBr4LRHTN++G+0V7WGdkvjQpT34Moesiqzje
-         2ObA==
-X-Gm-Message-State: APt69E1RD1dvpSm9CQB0UzsdN4NaQqg9+5lFnplhhbOm5RYSGBMlG5nI
-        chuyXo7i63l2RAE9PkoDDWHLR3mAwcsQXTBJfXw=
-X-Google-Smtp-Source: AAOMgpejjrhfHovHvH/M3Su+a1+j4rc6LlGIShC1a6mXfuZiZNCf0pe4Ad7aGrx4iBGb/UV+ioTZpVxY7WFvxqfaejQ=
-X-Received: by 2002:a2e:118f:: with SMTP id 15-v6mr19848413ljr.38.1531383701692;
- Thu, 12 Jul 2018 01:21:41 -0700 (PDT)
+        Thu, 12 Jul 2018 04:32:07 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:9224 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725874AbeGLIcG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 04:32:06 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B6BECAB94E7E9;
+        Thu, 12 Jul 2018 16:23:21 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Thu, 12 Jul 2018
+ 16:23:19 +0800
+Subject: Re: [f2fs-dev] [PATCH] f2fs: do checkpoint in kill_sb
+To:     Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     Chao Yu <chao@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-f2fs-devel@lists.sourceforge.net>
+References: <20180707012020.4708-1-jaegeuk@kernel.org>
+ <0cb1e0fd-1fb4-ba69-6c70-e05e991a243a@kernel.org>
+ <20180709203624.GA24534@jaegeuk-macbookpro.roam.corp.google.com>
+ <05429d14-a690-7f57-cde4-7fddadef241c@huawei.com>
+ <20180712073449.GA21745@jaegeuk-macbookpro.roam.corp.google.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <954cab70-0745-1550-c0fc-f0539040b7c6@huawei.com>
+Date:   Thu, 12 Jul 2018 16:23:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 01:21:40
- -0700 (PDT)
-In-Reply-To: <20180712000932.3b04ee9d@bbrezillon>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
- <20180330074751.25987-2-boris.brezillon@bootlin.com> <CAK8P3a1aZXf2sQW2mgwJScycKPhdoOAwxRjm5cQG83513uc3fg@mail.gmail.com>
- <20180711164120.3e32fb08@bbrezillon> <CAK8P3a2EZB_tMS_47wv6M2Qpm79ZocxxhG5zLxXsBM_YjZgkyA@mail.gmail.com>
- <20180711191212.3855bb25@bbrezillon> <CAK8P3a2djk8c6STaxJC0MCkBddyOafk4WbG2LdfPf0V1EYiqmQ@mail.gmail.com>
- <20180712000932.3b04ee9d@bbrezillon>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 12 Jul 2018 10:21:40 +0200
-X-Google-Sender-Auth: fqlxLLQ7N9vvq3ZEjGGtsR8bo5w
-Message-ID: <CAK8P3a13GX67YEci2J8Rxn6O4FBjjD82X+w3hyGMT3TDbtFkTg@mail.gmail.com>
-Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180712073449.GA21745@jaegeuk-macbookpro.roam.corp.google.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 12:09 AM, Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
-> On Wed, 11 Jul 2018 22:10:26 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
->> On Wed, Jul 11, 2018 at 7:12 PM, Boris Brezillon <boris.brezillon@bootlin.com> wrote:
->> > On Wed, 11 Jul 2018 17:39:56 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
->> >> On Wed, Jul 11, 2018 at 4:41 PM, Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-
->> >> IOW, what feature would we lose if we were to declare that
->> >> setup above invalid (and ensure you cannot represent it in DT)?
->> >
->> > That's exactly the sort of discussion I wanted to trigger. Maybe we
->> > shouldn't care and expose this use case as if it was X different I3C
->> > buses (with all devices present on the bus being exposed X times
->> > to the system).
+On 2018/7/12 15:34, Jaegeuk Kim wrote:
+> On 07/10, Chao Yu wrote:
+>> On 2018/7/10 4:36, Jaegeuk Kim wrote:
+>>> On 07/09, Chao Yu wrote:
+>>>> On 2018/7/7 9:20, Jaegeuk Kim wrote:
+>>>>> When unmounting f2fs in force mode, we can get it stuck by io_schedule()
+>>>>
+>>>> force mode means force shutdown?
+>>>
+>>> Yes.
+>>>
+>>>>
+>>>>> by some pending IOs in meta_inode.
+>>>>>
+>>>>> io_schedule+0xd/0x30
+>>>>> wait_on_page_bit_common+0xc6/0x130
+>>>>
+>>>> Looks like a deadlock here? Does this mean we forget to submit cached bio in
+>>>> somewhere?
+>>>
+>>> I'm hitting this randomly, when running all the testcases in xfstests.
+>>> I can't find the missing flow, and only get this during kill_sb.
 >>
->> That's probably fine for many slave devices (you could read a
->> single sensor multiple times if you iterate through all i2c sensors
->> on all buses) but might not work for others (a slave device sending
->> an interrupt to the current master for a request that was started
->> from the previous master).
->> My impression however is that this is actually a corner case that
->> we can leave to be undefined, and not prepare to handle well,
->> as long as we can deal with the interesting examples above.
->
-> Mastership handover/takeover is something I already thought about.
-> Actually, that's the reason for the i3c_bus->cur_master field (so that
-> the master being asked to do a transfer on the bus can request bus
-> ownership it bus->cur_master != master->this->info.pid).
->
-> I guess this would be replaced by something simpler if we get rid of
-> the i3c_bus object (just a bool i3c_master->owns_bus).
+>> I guess we need this before returning from ->writepage{,s}:
+>>
+>> if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN))
+>> 	f2fs_submit_merged_write()
+>>
+>> How about trying this instead?
+> 
+> No, it's not shutdown case unfortunately.
 
-If we can ignore the case of handing over between two masters that
-we both own, we end up being in just one of two states:
+Still I didn't understand why this patch can fix the issue... :(
 
-a) currently we are the master
-b) we are not currently the master but have asked the current
-    master to transfer ownership back to us. For this, we have to
-    know who the current master is of course.
+Thanks,
 
-I think that's the simplest case that would work with the specification,
-but it relies on the assumption that the master controlled by Linux
-is always more important than any other master, and that we just
-hand over ownership for as long as the others want it.
+> 
+>>
+>> Thanks,
+>>
+>>>
+>>>>
+>>>> Thanks,
+>>>>
+>>>>> __filemap_fdatawait_range+0xbd/0x100
+>>>>> filemap_fdatawait_keep_errors+0x15/0x40
+>>>>> sync_inodes_sb+0x1cf/0x240
+>>>>> sync_filesystem+0x52/0x90
+>>>>> generic_shutdown_super+0x1d/0x110
+>>>>> ceph_kill_sb+0x28/0x80 [ceph]
+>>>>> deactivate_locked_super+0x35/0x60
+>>>>> cleanup_mnt+0x36/0x70
+>>>>> task_work_run+0x79/0xa0
+>>>>> exit_to_usermode_loop+0x62/0x70
+>>>>> do_syscall_64+0xdb/0xf0
+>>>>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>>>>> 0xffffffffffffffff
+>>>>>
+>>>>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+>>>>> ---
+>>>>>  fs/f2fs/super.c | 16 +++++++++++++---
+>>>>>  1 file changed, 13 insertions(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+>>>>> index 3995e926ba3a..1dc6809fac38 100644
+>>>>> --- a/fs/f2fs/super.c
+>>>>> +++ b/fs/f2fs/super.c
+>>>>> @@ -3089,9 +3089,19 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+>>>>>  static void kill_f2fs_super(struct super_block *sb)
+>>>>>  {
+>>>>>  	if (sb->s_root) {
+>>>>> -		set_sbi_flag(F2FS_SB(sb), SBI_IS_CLOSE);
+>>>>> -		f2fs_stop_gc_thread(F2FS_SB(sb));
+>>>>> -		f2fs_stop_discard_thread(F2FS_SB(sb));
+>>>>> +		struct f2fs_sb_info *sbi = F2FS_SB(sb);
+>>>>> +
+>>>>> +		set_sbi_flag(sbi, SBI_IS_CLOSE);
+>>>>> +		f2fs_stop_gc_thread(sbi);
+>>>>> +		f2fs_stop_discard_thread(sbi);
+>>>>> +
+>>>>> +		if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
+>>>>> +				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
+>>>>> +			struct cp_control cpc = {
+>>>>> +				.reason = CP_UMOUNT,
+>>>>> +			};
+>>>>> +			f2fs_write_checkpoint(sbi, &cpc);
+>>>>> +		}
+>>>>>  	}
+>>>>>  	kill_block_super(sb);
+>>>>>  }
+>>>>>
+>>>
+>>> .
+>>>
+> 
+> .
+> 
 
-If that is not the case, we also need a third state
-
-c) we have handed ownership to another master that is equally
-    important, but no i2c device driver is currently trying to talk
-    to a device, so we don't need ownership back until a slave driver
-    changes state.
-
-The main difference between b) and c) that I see would be what
-happens with in-band interrupts. If I understand the specification
-correctly, only the current master receives them, so if you have
-any i2c device that uses interrupts to talk to a Linux driver, we
-want to be in b) rather than c). An example of this would be
-an input device on a PC: If the user operateds the keyboard
-or pointer and we have handed off ownership to a sensor hub,
-we never get an input event, right?
-
->> Ok, but maybe you could you put the information about those devices
->> on a local list on the stack rather than the controller? I suppose this
->> would not change the logic much, but it would slightly simplify the
->> data structures for the bus and stop others from wondering about
->> them. ;-)
->
-> This has changed a bit in the v6 I'm about to send (probably next week).
-> I now have 2 different objects which do not necessarily have the same
-> lifetime:
->
-> * i3c_dev_desc: an I3C device descriptor. This is the representation
->   exposed to I3C master controller drivers which usually reserve one
->   slot in the HW device table per-device on the bus. Since the same
->   device can be re-discovered with a different address, we have a short
->   period in time during which the controller will have 2
->   slots/descriptors used to control the same device, except one would
->   be inactive (any transfer to the old dynamic address would fail) and
->   the other one would be active. The core then takes care of releasing
->   the old descriptor/slot and attaching the new one to the i3c_device
->   object exposed to I3C device drivers
->
-> * i3c_device: this is the object exposed to I3C device drivers. It's
->   lifetime is usually the same as the i3c_dev_desc it's attached to,
->   except when the device lose its dynamic address and get a new one
->   assigned. In this case we keep the same i3c_device object, but
->   dynamically re-attach it to a new i3c_dev_desc before releasing the
->   old dev desc. This way the I3C does not even see that the device
->   address has changed and can keep doing transfers to it.
->
-> With these 2 distinct representations, the handling on the controller
-> side is greatly simplified: the core takes care of the resource
-> migration steps, while it was up to the controller to do that my
-> previous versions (look at the ->reattach_i3c_dev() hook in the Cadence
-> driver, and I think it's even more complicated with other controllers,
-> like the HCI one).
->
->> This is a really minor point though, let's work out the problem of the
->> multiple masters first.
->
-> I agree. This being said, moving to a representation where the bus is
-> implicitly represented by the master_controller instance shouldn't be
-> too difficult. So, if you think we should try this approach I can do
-> the modifications in my v6.
-
-I'd say let's wait before you do that change, possibly add a comment
-in there now to remind us of what an alternative would be.
-
-       Arnd
