@@ -2,146 +2,96 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D756C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1ACC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E0421476
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:34:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lb/z15og"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E0421476
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AC73620883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 07:35:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC73620883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbeGLHnM (ORCPT
+        id S1726861AbeGLHnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 03:43:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47500 "EHLO mail.kernel.org"
+        Thu, 12 Jul 2018 03:43:41 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:51649 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725995AbeGLHnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 03:43:12 -0400
-Received: from localhost (c-67-160-202-76.hsd1.ca.comcast.net [67.160.202.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7115D20883;
-        Thu, 12 Jul 2018 07:34:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531380892;
-        bh=R25D3PmU9zRYNLa+NIHJfUH5gFLr/Pt4a1t4HaHRmNk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lb/z15ogJgbtKqE0HQmqcZa8s4Ozv/dv+J0jxp/pBrMR7X4JSVhIKPN/GHDxAWTPa
-         CYmVSYofg0hbRobgDxOkafXK5VjTUawCsPQg2jm0k4bUZRzu+qF53GHrgWH/xhzYMr
-         paxeBTLWcEcFZpAdx1MmWIeiuyzFiG7nc3dbmBjs=
-Date:   Thu, 12 Jul 2018 00:34:49 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do checkpoint in kill_sb
-Message-ID: <20180712073449.GA21745@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20180707012020.4708-1-jaegeuk@kernel.org>
- <0cb1e0fd-1fb4-ba69-6c70-e05e991a243a@kernel.org>
- <20180709203624.GA24534@jaegeuk-macbookpro.roam.corp.google.com>
- <05429d14-a690-7f57-cde4-7fddadef241c@huawei.com>
+        id S1725995AbeGLHnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 03:43:41 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 294682074F; Thu, 12 Jul 2018 09:35:21 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-12-56.w90-88.abo.wanadoo.fr [90.88.133.56])
+        by mail.bootlin.com (Postfix) with ESMTPSA id ECAFF20618;
+        Thu, 12 Jul 2018 09:35:10 +0200 (CEST)
+Date:   Thu, 12 Jul 2018 09:35:10 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        mark.rutland@arm.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3] drm/sun4i: mixer: Read id from DT
+Message-ID: <20180712073510.ssl43bjgv5n5mrwb@flea>
+References: <20180711112706.30222-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="magllo6lzj3ubyto"
 Content-Disposition: inline
-In-Reply-To: <05429d14-a690-7f57-cde4-7fddadef241c@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20180711112706.30222-1-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/10, Chao Yu wrote:
-> On 2018/7/10 4:36, Jaegeuk Kim wrote:
-> > On 07/09, Chao Yu wrote:
-> >> On 2018/7/7 9:20, Jaegeuk Kim wrote:
-> >>> When unmounting f2fs in force mode, we can get it stuck by io_schedule()
-> >>
-> >> force mode means force shutdown?
-> > 
-> > Yes.
-> > 
-> >>
-> >>> by some pending IOs in meta_inode.
-> >>>
-> >>> io_schedule+0xd/0x30
-> >>> wait_on_page_bit_common+0xc6/0x130
-> >>
-> >> Looks like a deadlock here? Does this mean we forget to submit cached bio in
-> >> somewhere?
-> > 
-> > I'm hitting this randomly, when running all the testcases in xfstests.
-> > I can't find the missing flow, and only get this during kill_sb.
-> 
-> I guess we need this before returning from ->writepage{,s}:
-> 
-> if (is_sbi_flag_set(sbi, SBI_IS_SHUTDOWN))
-> 	f2fs_submit_merged_write()
-> 
-> How about trying this instead?
 
-No, it's not shutdown case unfortunately.
+--magllo6lzj3ubyto
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Thanks,
-> 
-> > 
-> >>
-> >> Thanks,
-> >>
-> >>> __filemap_fdatawait_range+0xbd/0x100
-> >>> filemap_fdatawait_keep_errors+0x15/0x40
-> >>> sync_inodes_sb+0x1cf/0x240
-> >>> sync_filesystem+0x52/0x90
-> >>> generic_shutdown_super+0x1d/0x110
-> >>> ceph_kill_sb+0x28/0x80 [ceph]
-> >>> deactivate_locked_super+0x35/0x60
-> >>> cleanup_mnt+0x36/0x70
-> >>> task_work_run+0x79/0xa0
-> >>> exit_to_usermode_loop+0x62/0x70
-> >>> do_syscall_64+0xdb/0xf0
-> >>> entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >>> 0xffffffffffffffff
-> >>>
-> >>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> >>> ---
-> >>>  fs/f2fs/super.c | 16 +++++++++++++---
-> >>>  1 file changed, 13 insertions(+), 3 deletions(-)
-> >>>
-> >>> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> >>> index 3995e926ba3a..1dc6809fac38 100644
-> >>> --- a/fs/f2fs/super.c
-> >>> +++ b/fs/f2fs/super.c
-> >>> @@ -3089,9 +3089,19 @@ static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
-> >>>  static void kill_f2fs_super(struct super_block *sb)
-> >>>  {
-> >>>  	if (sb->s_root) {
-> >>> -		set_sbi_flag(F2FS_SB(sb), SBI_IS_CLOSE);
-> >>> -		f2fs_stop_gc_thread(F2FS_SB(sb));
-> >>> -		f2fs_stop_discard_thread(F2FS_SB(sb));
-> >>> +		struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> >>> +
-> >>> +		set_sbi_flag(sbi, SBI_IS_CLOSE);
-> >>> +		f2fs_stop_gc_thread(sbi);
-> >>> +		f2fs_stop_discard_thread(sbi);
-> >>> +
-> >>> +		if (is_sbi_flag_set(sbi, SBI_IS_DIRTY) ||
-> >>> +				!is_set_ckpt_flags(sbi, CP_UMOUNT_FLAG)) {
-> >>> +			struct cp_control cpc = {
-> >>> +				.reason = CP_UMOUNT,
-> >>> +			};
-> >>> +			f2fs_write_checkpoint(sbi, &cpc);
-> >>> +		}
-> >>>  	}
-> >>>  	kill_block_super(sb);
-> >>>  }
-> >>>
-> > 
-> > .
-> > 
+On Wed, Jul 11, 2018 at 01:27:06PM +0200, Jernej Skrabec wrote:
+> Currently, TCON supports 2 ways to match TCON with engine (mixer in this
+> case). Old way is to just traverse of graph backwards and compare node
+> pointer. New way is to match TCON and engine by their respective ids.
+> All SoCs with DE2 enabled till now used the old way, which means mixer
+> id was never used and thus never implemented.
+>=20
+> However, for R40, only the new way will be used. To prepare for that,
+> implement mixer id fetching from DT.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+
+Applied, thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--magllo6lzj3ubyto
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAltHBK0ACgkQ0rTAlCFN
+r3QIvQ/9GJy/6VbdEIB5G8cBwr6VymXtqLu80RIQyzDApCSG/QTIGFrZ+1HKzyTx
+uKIDFJQ1KMkAB5+sM7VjZyKTxpSC2mYZ9gZlpebKlJ12/QAG0lZ8DCNCMhdVmcxN
+sdLAzdti4LXGpEm2prUq9yprrADgwYa9dO1zAAXBKHvLk92tZBeNh46m8PZKo8TI
+7JOKJbK/CNi0f9yQX3vx97aGDb42xkk1uAwi5wuLNt/1wELcxTrXaEK5kZAKCWE3
+6skWeKqBGGFcFwDRpO1Zx28hlTNn3UEBklKw7DdtH1rmI3dt0YyNqXjkOgCRESlu
+g6llN29eEZyaLRI65FdPWSjWU/hhMoUceJ8b09B/8Tcifd2cu5yovyQFTc0p73hC
+0UQCBOyqwwBSGNp6XTyCwv08IxOMKo4qM8UXjEpDKx03jp7sXxNK8sEeY/NhUk7y
+cqJuHNdmPabdWTbwsa1Rq6gWP6r6mtyff12ZtMn2uwG33WvZfI4M2c7KU+fjaXOe
++NiEWju/QbaOmGKWY3ccpKKITdMgSduVKKaEsPLFIpEA27OVxRGcKo5J4p06PVkA
+AefXN+8G0V++lD0gImAwxndeocYmyHwJgb0AEysP5XsrD3XRSw1vNbnOgQt5Jiwq
+TDFLL8oIvJhM6raFzKXsfpRXKYdWDPfuR2lAg3KHfLQuhnIBTNI=
+=k35h
+-----END PGP SIGNATURE-----
+
+--magllo6lzj3ubyto--
