@@ -2,110 +2,423 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B23C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6D4C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:18:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED7720BEC
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:16:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="hrpVGKGw";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dU+BAPnJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED7720BEC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id E103620BEC
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:18:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E103620BEC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=toshiba.co.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388227AbeGLAXY (ORCPT
+        id S2388616AbeGLAZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 20:23:24 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:34223 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388031AbeGLAXY (ORCPT
+        Wed, 11 Jul 2018 20:25:17 -0400
+Received: from mo-csw1116.securemx.jp ([210.130.202.158]:35100 "EHLO
+        mo-csw.securemx.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387879AbeGLAZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 20:23:24 -0400
-Received: by mail-yb0-f193.google.com with SMTP id e9-v6so10758095ybq.1
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 17:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=+Hu4uhrieb8C/WIA6FhyXu+PkLTLr9Ze24AHZytFUSo=;
-        b=hrpVGKGwRwV1VJhp6GpgXOFeyp29tQEWFqTXdBIEaPO5EEuYzkOy8T77w1HWizzba+
-         zLjUUYe2VQgh++yE9nhW5Ct8Nw91NawU4EUCfwv8ds9aaOGn7rzyhJYoV5oGFrKF4IDS
-         TGc76aRgAiTxHTmRGenEcydRhm2Ow68iJbhy7nTiaCBCrwhCL4OHYMUDrs0T2zmv1cop
-         teMK2kICWTYaLH04a7TJf5QHh6owxhaHVPJhxY8smGFSdL30KszLqbVvk0LgBDOz2Yc3
-         fvD9PJc8vitZtQkgBXnc+wmBM4HJ64PWOgYgGtVJJEGtaPvHG5tbbEPnpmkSLo0fgpzl
-         eXIQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=+Hu4uhrieb8C/WIA6FhyXu+PkLTLr9Ze24AHZytFUSo=;
-        b=dU+BAPnJP3jloPa2819VFWPDc6+xOc284akctnuxjf4zn0vpMdnmYwtymroRdDoLhX
-         lR2gfY8jJf9IdmFe0PMl2uBvdwQPJJ2/7pDb5NWXpXFTeoxFNpdoH3tidqggKhZqeXqm
-         0yk3drI4jU5XFdj+HAqFmeBR4YCOhrbS6muwQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=+Hu4uhrieb8C/WIA6FhyXu+PkLTLr9Ze24AHZytFUSo=;
-        b=jyc2AuWZcqk8C4khYalP+smwvu8DMUd2+uTSF05RdOaOKO59t/7J40naHmaYRBukmY
-         /qb8+FBPWOZOu+SP30bgoqkwMkmROYM3UkPo2YMmBLgMbg0NTnXb0yXPttILr7wzDeGo
-         yPFrC4hVmb7njJ/wG0xG6Amp6nypnqbPFYE9SPYZ67osRCPV9NqHejojqdRpdb9SrZnp
-         +bGzJKVJ6k7dpjFOJlq9HDaSQqh9bo6boazZqSqAH583GHLlMAYofQ/W/crYSm49/bPC
-         VRSr9eK9cR4OHWwHauHuB9Gyc/wPbNsSWZechQe+41bVK1br7qeDjVmJw+aENKTQw7fv
-         VcRQ==
-X-Gm-Message-State: AOUpUlEyXo4L8TA7Z4vkYe8BtWKnPbzqCPTtxraFw6HbGFg2NghoG+KD
-        5uagpwTisT1nCgqfiOU5t12fLfJ7q18t9wlUjkB9RA==
-X-Google-Smtp-Source: AAOMgpfIYUG+yuXEMqwilC64UcceZFlbbb/spXcdfcUUCrFz/UEqWy22GEuoLxqUcjQbW6PH9MInCqV0dDbizvc1kG8=
-X-Received: by 2002:a25:afce:: with SMTP id d14-v6mr3389ybj.343.1531354594785;
- Wed, 11 Jul 2018 17:16:34 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 17:16:34
- -0700 (PDT)
-In-Reply-To: <1530771852-21998-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1530771852-21998-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 11 Jul 2018 17:16:34 -0700
-X-Google-Sender-Auth: Mu-TviqaTWRyHCVeV5QwU_3fFOc
-Message-ID: <CAGXu5jK3jgJ5qvT4jPKgvO_Jf+edeLRYKrJ+67r7zrVszB2_xw@mail.gmail.com>
-Subject: Re: [PATCH] gcc-plugins: split out Kconfig entries to scripts/gcc-plugins/Kconfig
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Emese Revfy <re.emese@gmail.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Josef Bacik <jbacik@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 11 Jul 2018 20:25:17 -0400
+Received: by mo-csw.securemx.jp (mx-mo-csw1116) id w6C0GpGk019684; Thu, 12 Jul 2018 09:16:51 +0900
+X-Iguazu-Qid: 2wGqt8Z8azgh7A8lX8
+X-Iguazu-QSIG: v=1; s=0; t=1531354610; q=2wGqt8Z8azgh7A8lX8; m=Fk7Z47oP6GAd8ea7wsM+kWVCkuie73Dom/gTiuyO4W0=
+Received: from imx12.toshiba.co.jp (imx12.toshiba.co.jp [61.202.160.132])
+        by relay.securemx.jp (mx-mr1112) id w6C0Gkki034623;
+        Thu, 12 Jul 2018 09:16:46 +0900
+Received: from hop101.toshiba.co.jp ([133.199.85.107])
+        by imx12.toshiba.co.jp  with ESMTP id w6C0GkH4009623;
+        Thu, 12 Jul 2018 09:16:46 +0900 (JST)
+Content-Transfer-Encoding: 7bit
+From:   Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+To:     stable@vger.kernel.org
+Cc:     Andy Lutomirski <luto@kernel.org>, Rik van Riel <riel@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, pbonzini@redhat.com,
+        Ingo Molnar <mingo@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Eric Biggers <ebiggers@google.com>,
+        Kevin Hao <haokexin@gmail.com>,
+        Sasha Levin <alexander.levin@verizon.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: [PATCH v3 4.9] x86/fpu: Remove use_eager_fpu()
+Date:   Thu, 12 Jul 2018 09:16:34 +0900
+X-TSB-HOP: ON
+Message-Id: <1531354594-2236-2-git-send-email-daniel.sangorrin@toshiba.co.jp>
+X-Mailer: git-send-email 2.1.4
+In-Reply-To: <1531354594-2236-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
+References: <1531354594-2236-1-git-send-email-daniel.sangorrin@toshiba.co.jp>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 11:24 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
-> Collect relevant code into the scripts/gcc-plugins directory.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->
->  arch/Kconfig                | 146 +-------------------------------------------
->  scripts/gcc-plugins/Kconfig | 141 ++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 143 insertions(+), 144 deletions(-)
->  create mode 100644 scripts/gcc-plugins/Kconfig
+From: Andy Lutomirski <luto@kernel.org>
 
-I'd been pondering this for a while too. Thanks for sending the patch,
-I'll include it in my gcc-plugins tree.
+commit c592b57347069abfc0dcad3b3a302cf882602597 upstream
 
--Kees
+This removes all the obvious code paths that depend on lazy FPU mode.
+It shouldn't change the generated code at all.
 
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Rik van Riel <riel@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: pbonzini@redhat.com
+Link: http://lkml.kernel.org/r/1475627678-20788-5-git-send-email-riel@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Daniel Sangorrin <daniel.sangorrin@toshiba.co.jp>
+---
+ arch/x86/crypto/crc32c-intel_glue.c | 17 ++++-------------
+ arch/x86/include/asm/fpu/internal.h | 34 +---------------------------------
+ arch/x86/kernel/fpu/core.c          | 36 ++++--------------------------------
+ arch/x86/kernel/fpu/signal.c        |  8 +++-----
+ arch/x86/kernel/fpu/xstate.c        |  9 ---------
+ arch/x86/kvm/cpuid.c                |  4 +---
+ arch/x86/kvm/x86.c                  | 10 ----------
+ 7 files changed, 13 insertions(+), 105 deletions(-)
+
+diff --git a/arch/x86/crypto/crc32c-intel_glue.c b/arch/x86/crypto/crc32c-intel_glue.c
+index dd19584..5773e11 100644
+--- a/arch/x86/crypto/crc32c-intel_glue.c
++++ b/arch/x86/crypto/crc32c-intel_glue.c
+@@ -48,21 +48,13 @@
+ #ifdef CONFIG_X86_64
+ /*
+  * use carryless multiply version of crc32c when buffer
+- * size is >= 512 (when eager fpu is enabled) or
+- * >= 1024 (when eager fpu is disabled) to account
++ * size is >= 512 to account
+  * for fpu state save/restore overhead.
+  */
+-#define CRC32C_PCL_BREAKEVEN_EAGERFPU	512
+-#define CRC32C_PCL_BREAKEVEN_NOEAGERFPU	1024
++#define CRC32C_PCL_BREAKEVEN	512
+ 
+ asmlinkage unsigned int crc_pcl(const u8 *buffer, int len,
+ 				unsigned int crc_init);
+-static int crc32c_pcl_breakeven = CRC32C_PCL_BREAKEVEN_EAGERFPU;
+-#define set_pcl_breakeven_point()					\
+-do {									\
+-	if (!use_eager_fpu())						\
+-		crc32c_pcl_breakeven = CRC32C_PCL_BREAKEVEN_NOEAGERFPU;	\
+-} while (0)
+ #endif /* CONFIG_X86_64 */
+ 
+ static u32 crc32c_intel_le_hw_byte(u32 crc, unsigned char const *data, size_t length)
+@@ -185,7 +177,7 @@ static int crc32c_pcl_intel_update(struct shash_desc *desc, const u8 *data,
+ 	 * use faster PCL version if datasize is large enough to
+ 	 * overcome kernel fpu state save/restore overhead
+ 	 */
+-	if (len >= crc32c_pcl_breakeven && irq_fpu_usable()) {
++	if (len >= CRC32C_PCL_BREAKEVEN && irq_fpu_usable()) {
+ 		kernel_fpu_begin();
+ 		*crcp = crc_pcl(data, len, *crcp);
+ 		kernel_fpu_end();
+@@ -197,7 +189,7 @@ static int crc32c_pcl_intel_update(struct shash_desc *desc, const u8 *data,
+ static int __crc32c_pcl_intel_finup(u32 *crcp, const u8 *data, unsigned int len,
+ 				u8 *out)
+ {
+-	if (len >= crc32c_pcl_breakeven && irq_fpu_usable()) {
++	if (len >= CRC32C_PCL_BREAKEVEN && irq_fpu_usable()) {
+ 		kernel_fpu_begin();
+ 		*(__le32 *)out = ~cpu_to_le32(crc_pcl(data, len, *crcp));
+ 		kernel_fpu_end();
+@@ -257,7 +249,6 @@ static int __init crc32c_intel_mod_init(void)
+ 		alg.update = crc32c_pcl_intel_update;
+ 		alg.finup = crc32c_pcl_intel_finup;
+ 		alg.digest = crc32c_pcl_intel_digest;
+-		set_pcl_breakeven_point();
+ 	}
+ #endif
+ 	return crypto_register_shash(&alg);
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 8852e3a..7801d32 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -60,11 +60,6 @@ extern u64 fpu__get_supported_xfeatures_mask(void);
+ /*
+  * FPU related CPU feature flag helper routines:
+  */
+-static __always_inline __pure bool use_eager_fpu(void)
+-{
+-	return true;
+-}
+-
+ static __always_inline __pure bool use_xsaveopt(void)
+ {
+ 	return static_cpu_has(X86_FEATURE_XSAVEOPT);
+@@ -501,24 +496,6 @@ static inline int fpu_want_lazy_restore(struct fpu *fpu, unsigned int cpu)
+ }
+ 
+ 
+-/*
+- * Wrap lazy FPU TS handling in a 'hw fpregs activation/deactivation'
+- * idiom, which is then paired with the sw-flag (fpregs_active) later on:
+- */
+-
+-static inline void __fpregs_activate_hw(void)
+-{
+-	if (!use_eager_fpu())
+-		clts();
+-}
+-
+-static inline void __fpregs_deactivate_hw(void)
+-{
+-	if (!use_eager_fpu())
+-		stts();
+-}
+-
+-/* Must be paired with an 'stts' (fpregs_deactivate_hw()) after! */
+ static inline void __fpregs_deactivate(struct fpu *fpu)
+ {
+ 	WARN_ON_FPU(!fpu->fpregs_active);
+@@ -528,7 +505,6 @@ static inline void __fpregs_deactivate(struct fpu *fpu)
+ 	trace_x86_fpu_regs_deactivated(fpu);
+ }
+ 
+-/* Must be paired with a 'clts' (fpregs_activate_hw()) before! */
+ static inline void __fpregs_activate(struct fpu *fpu)
+ {
+ 	WARN_ON_FPU(fpu->fpregs_active);
+@@ -554,22 +530,17 @@ static inline int fpregs_active(void)
+ }
+ 
+ /*
+- * Encapsulate the CR0.TS handling together with the
+- * software flag.
+- *
+  * These generally need preemption protection to work,
+  * do try to avoid using these on their own.
+  */
+ static inline void fpregs_activate(struct fpu *fpu)
+ {
+-	__fpregs_activate_hw();
+ 	__fpregs_activate(fpu);
+ }
+ 
+ static inline void fpregs_deactivate(struct fpu *fpu)
+ {
+ 	__fpregs_deactivate(fpu);
+-	__fpregs_deactivate_hw();
+ }
+ 
+ /*
+@@ -596,8 +567,7 @@ switch_fpu_prepare(struct fpu *old_fpu, struct fpu *new_fpu, int cpu)
+ 	 * or if the past 5 consecutive context-switches used math.
+ 	 */
+ 	fpu.preload = static_cpu_has(X86_FEATURE_FPU) &&
+-		      new_fpu->fpstate_active &&
+-		      (use_eager_fpu() || new_fpu->counter > 5);
++		      new_fpu->fpstate_active;
+ 
+ 	if (old_fpu->fpregs_active) {
+ 		if (!copy_fpregs_to_fpstate(old_fpu))
+@@ -615,8 +585,6 @@ switch_fpu_prepare(struct fpu *old_fpu, struct fpu *new_fpu, int cpu)
+ 			__fpregs_activate(new_fpu);
+ 			trace_x86_fpu_regs_activated(new_fpu);
+ 			prefetch(&new_fpu->state);
+-		} else {
+-			__fpregs_deactivate_hw();
+ 		}
+ 	} else {
+ 		old_fpu->counter = 0;
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 96d80df..2dc1927 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -58,27 +58,9 @@ static bool kernel_fpu_disabled(void)
+ 	return this_cpu_read(in_kernel_fpu);
+ }
+ 
+-/*
+- * Were we in an interrupt that interrupted kernel mode?
+- *
+- * On others, we can do a kernel_fpu_begin/end() pair *ONLY* if that
+- * pair does nothing at all: the thread must not have fpu (so
+- * that we don't try to save the FPU state), and TS must
+- * be set (so that the clts/stts pair does nothing that is
+- * visible in the interrupted kernel thread).
+- *
+- * Except for the eagerfpu case when we return true; in the likely case
+- * the thread has FPU but we are not going to set/clear TS.
+- */
+ static bool interrupted_kernel_fpu_idle(void)
+ {
+-	if (kernel_fpu_disabled())
+-		return false;
+-
+-	if (use_eager_fpu())
+-		return true;
+-
+-	return !current->thread.fpu.fpregs_active && (read_cr0() & X86_CR0_TS);
++	return !kernel_fpu_disabled();
+ }
+ 
+ /*
+@@ -126,7 +108,6 @@ void __kernel_fpu_begin(void)
+ 		copy_fpregs_to_fpstate(fpu);
+ 	} else {
+ 		this_cpu_write(fpu_fpregs_owner_ctx, NULL);
+-		__fpregs_activate_hw();
+ 	}
+ }
+ EXPORT_SYMBOL(__kernel_fpu_begin);
+@@ -137,8 +118,6 @@ void __kernel_fpu_end(void)
+ 
+ 	if (fpu->fpregs_active)
+ 		copy_kernel_to_fpregs(&fpu->state);
+-	else
+-		__fpregs_deactivate_hw();
+ 
+ 	kernel_fpu_enable();
+ }
+@@ -200,10 +179,7 @@ void fpu__save(struct fpu *fpu)
+ 	trace_x86_fpu_before_save(fpu);
+ 	if (fpu->fpregs_active) {
+ 		if (!copy_fpregs_to_fpstate(fpu)) {
+-			if (use_eager_fpu())
+-				copy_kernel_to_fpregs(&fpu->state);
+-			else
+-				fpregs_deactivate(fpu);
++			copy_kernel_to_fpregs(&fpu->state);
+ 		}
+ 	}
+ 	trace_x86_fpu_after_save(fpu);
+@@ -261,8 +237,7 @@ int fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu)
+ 	 * Don't let 'init optimized' areas of the XSAVE area
+ 	 * leak into the child task:
+ 	 */
+-	if (use_eager_fpu())
+-		memset(&dst_fpu->state.xsave, 0, fpu_kernel_xstate_size);
++	memset(&dst_fpu->state.xsave, 0, fpu_kernel_xstate_size);
+ 
+ 	/*
+ 	 * Save current FPU registers directly into the child
+@@ -284,10 +259,7 @@ int fpu__copy(struct fpu *dst_fpu, struct fpu *src_fpu)
+ 		memcpy(&src_fpu->state, &dst_fpu->state,
+ 		       fpu_kernel_xstate_size);
+ 
+-		if (use_eager_fpu())
+-			copy_kernel_to_fpregs(&src_fpu->state);
+-		else
+-			fpregs_deactivate(src_fpu);
++		copy_kernel_to_fpregs(&src_fpu->state);
+ 	}
+ 	preempt_enable();
+ 
+diff --git a/arch/x86/kernel/fpu/signal.c b/arch/x86/kernel/fpu/signal.c
+index 3ec0d2d..3a93186 100644
+--- a/arch/x86/kernel/fpu/signal.c
++++ b/arch/x86/kernel/fpu/signal.c
+@@ -344,11 +344,9 @@ static int __fpu__restore_sig(void __user *buf, void __user *buf_fx, int size)
+ 		}
+ 
+ 		fpu->fpstate_active = 1;
+-		if (use_eager_fpu()) {
+-			preempt_disable();
+-			fpu__restore(fpu);
+-			preempt_enable();
+-		}
++		preempt_disable();
++		fpu__restore(fpu);
++		preempt_enable();
+ 
+ 		return err;
+ 	} else {
+diff --git a/arch/x86/kernel/fpu/xstate.c b/arch/x86/kernel/fpu/xstate.c
+index abfbb61b..e9d7f46 100644
+--- a/arch/x86/kernel/fpu/xstate.c
++++ b/arch/x86/kernel/fpu/xstate.c
+@@ -890,15 +890,6 @@ int arch_set_user_pkey_access(struct task_struct *tsk, int pkey,
+ 	 */
+ 	if (!boot_cpu_has(X86_FEATURE_OSPKE))
+ 		return -EINVAL;
+-	/*
+-	 * For most XSAVE components, this would be an arduous task:
+-	 * brining fpstate up to date with fpregs, updating fpstate,
+-	 * then re-populating fpregs.  But, for components that are
+-	 * never lazily managed, we can just access the fpregs
+-	 * directly.  PKRU is never managed lazily, so we can just
+-	 * manipulate it directly.  Make sure it stays that way.
+-	 */
+-	WARN_ON_ONCE(!use_eager_fpu());
+ 
+ 	/* Set the bits we need in PKRU:  */
+ 	if (init_val & PKEY_DISABLE_ACCESS)
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index 7e5119c..c17d389 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -16,7 +16,6 @@
+ #include <linux/export.h>
+ #include <linux/vmalloc.h>
+ #include <linux/uaccess.h>
+-#include <asm/fpu/internal.h> /* For use_eager_fpu.  Ugh! */
+ #include <asm/user.h>
+ #include <asm/fpu/xstate.h>
+ #include "cpuid.h"
+@@ -114,8 +113,7 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
+ 	if (best && (best->eax & (F(XSAVES) | F(XSAVEC))))
+ 		best->ebx = xstate_required_size(vcpu->arch.xcr0, true);
+ 
+-	if (use_eager_fpu())
+-		kvm_x86_ops->fpu_activate(vcpu);
++	kvm_x86_ops->fpu_activate(vcpu);
+ 
+ 	/*
+ 	 * The existing code assumes virtual address is 48-bit in the canonical
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 5ca23af..0754dae 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -7513,16 +7513,6 @@ void kvm_put_guest_fpu(struct kvm_vcpu *vcpu)
+ 	copy_fpregs_to_fpstate(&vcpu->arch.guest_fpu);
+ 	__kernel_fpu_end();
+ 	++vcpu->stat.fpu_reload;
+-	/*
+-	 * If using eager FPU mode, or if the guest is a frequent user
+-	 * of the FPU, just leave the FPU active for next time.
+-	 * Every 255 times fpu_counter rolls over to 0; a guest that uses
+-	 * the FPU in bursts will revert to loading it on demand.
+-	 */
+-	if (!use_eager_fpu()) {
+-		if (++vcpu->fpu_counter < 5)
+-			kvm_make_request(KVM_REQ_DEACTIVATE_FPU, vcpu);
+-	}
+ 	trace_kvm_fpu(0);
+ }
+ 
 -- 
-Kees Cook
-Pixel Security
+2.1.4
+
+
