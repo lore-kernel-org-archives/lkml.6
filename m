@@ -2,105 +2,180 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2EAECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44736ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B950B20839
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:16:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E41FA208E9
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:21:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="GPkdZki3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B950B20839
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h6+4CBCS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E41FA208E9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732679AbeGLW21 (ORCPT
+        id S1733182AbeGLWcv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 18:28:27 -0400
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:47210 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732298AbeGLW20 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 18:28:26 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 593B510C0ED7;
-        Thu, 12 Jul 2018 15:16:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1531433812; bh=Yca7s6kD60X289PP1e7w0j3AFetzIOVmOpQwIZStfjc=;
-        h=From:To:CC:Subject:Date:From;
-        b=GPkdZki3HmVWGuySb2wdl/QNuceX0Rj4eIIF4xK8wP+YuBhiLULG2RgphO3yuhJRP
-         BW9xBGyrw+tWkwRAkoO+qVWdjd7S9sMLP2cUi/HUn7LhGMrUG4p70jciA0dhP8pm9e
-         VOSdi3c0Rsv8VxP7QEzJ9mLTebj5AiZRnYzp0zPYwrHlW1TRad5ueeZkD2sf1ddYVd
-         WNKwBrJaZMdBxxMJIZZEoKzSuEV8yz6pVF52y3O1KiwWZ00RuyaiLV4gO1siYCuFQl
-         S/K3ctXJzDtQbcCLIZggB0tyg+01nVTR8HLwIoec+Iy/j5ApDGGpUsWfL9EOtKlnAl
-         k5xpivJgf71pQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 45E5934AF;
-        Thu, 12 Jul 2018 15:16:52 -0700 (PDT)
-Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.106) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Thu, 12 Jul 2018 15:16:52 -0700
-Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.103) by
- IN01WEHTCB.internal.synopsys.com (10.144.199.105) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Fri, 13 Jul 2018 03:46:49 +0530
-Received: from vineetg-Latitude-E7450.internal.synopsys.com (10.10.161.98) by
- IN01WEHTCA.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Fri, 13 Jul 2018 03:46:48 +0530
-From:   Vineet Gupta <Vineet.Gupta1@synopsys.com>
-To:     <linux-snps-arc@lists.infradead.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        <stable@vger.kernel.org>
-Subject: [PATCH] ARC: mm: allow mprotect to make stack mappings executable
-Date:   Thu, 12 Jul 2018 15:16:34 -0700
-Message-ID: <1531433794-7518-1-git-send-email-vgupta@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 12 Jul 2018 18:32:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51174 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733114AbeGLWcv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 18:32:51 -0400
+Received: from localhost (unknown [146.7.4.79])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30804208E3;
+        Thu, 12 Jul 2018 22:21:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531434075;
+        bh=JKmeffv9jsK3LWixfL+X5Ak//fMHrUaploYiuNTO1nQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h6+4CBCSJzxvtuLsZfo21MmfE5bQa7Kzt3tMK8T/m8kQsFyMyMO1jEXvKPgNPKqTy
+         LsXRyLnrPmoB/Q9MuiRFdyw96oBUbQ6HbvuZsq4+A5ILGj9IbGGLCoGqQfulAclzuB
+         U+31vEwC7NmgU6BIOWjhhmXmLTu1ORF9YYL5soPM=
+Date:   Thu, 12 Jul 2018 17:21:09 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Lukas Wunner <lukas@wunner.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Yinghai Lu <yinghai@kernel.org>, Sinan Kaya <okaya@kernel.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/32] genirq: Synchronize only with single thread on
+ free_irq()
+Message-ID: <20180712222109.GE28466@bhelgaas-glaptop.roam.corp.google.com>
+References: <cover.1529173804.git.lukas@wunner.de>
+ <83cfe0c826f1d793e2ead9032ef2109b5efa403a.1529173804.git.lukas@wunner.de>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.10.161.98]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <83cfe0c826f1d793e2ead9032ef2109b5efa403a.1529173804.git.lukas@wunner.de>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mprotect(EXEC) was failing for stack mappings as default vm flags was
-missing MAYEXEC.
+[+cc linux-kernel]
 
-This was triggered by glibc test suite nptl/tst-execstack testcase
+I assume this would need to be merged along with the rest of the
+series, which should probably go through the PCI tree, but I'm
+definitely not qualified to review this IRQ patch.  And it would need
+an ack from Thomas in any case.
 
-What is surprising is that despite running LTP for years on, we didn't
-catch this issue as it lacks a directed test case.
-
-gcc dejagnu tests with nested functions also requiring exec stack work
-fine though because they rely on the GNU_STACK segment spit out by
-compiler and handled in kernel elf loader.
-
-This glibc case is different as the stack is non exec to begin with and
-a dlopen of shared lib with GNU_STACK segment triggers the exec stack
-proceedings using a mprotect(PROT_EXEC) which was broken.
-
-CC: stable@vger.kernel.org
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
----
- arch/arc/include/asm/page.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arc/include/asm/page.h b/arch/arc/include/asm/page.h
-index 109baa06831c..09ddddf71cc5 100644
---- a/arch/arc/include/asm/page.h
-+++ b/arch/arc/include/asm/page.h
-@@ -105,7 +105,7 @@ typedef pte_t * pgtable_t;
- #define virt_addr_valid(kaddr)  pfn_valid(virt_to_pfn(kaddr))
- 
- /* Default Permissions for stack/heaps pages (Non Executable) */
--#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE)
-+#define VM_DATA_DEFAULT_FLAGS   (VM_READ | VM_WRITE | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
- 
- #define WANT_PAGE_VIRTUAL   1
- 
--- 
-2.7.4
-
+On Sat, Jun 16, 2018 at 09:25:00PM +0200, Lukas Wunner wrote:
+> When pciehp is converted to threaded IRQ handling, removal of unplugged
+> devices below a PCIe hotplug port happens synchronously in the IRQ
+> thread.  Removal of devices typically entails a call to free_irq() by
+> their drivers.
+> 
+> If those devices share their IRQ with the hotplug port, free_irq()
+> deadlocks because it calls synchronize_irq() to wait for all hard IRQ
+> handlers as well as all threads sharing the IRQ to finish.
+> 
+> Actually it's sufficient to wait only for the IRQ thread of the removed
+> device, so call synchronize_hardirq() to wait for all hard IRQ handlers
+> to finish, but no longer for any threads.  Compensate by rearranging the
+> control flow in irq_wait_for_interrupt() such that the device's thread
+> is allowed to run one last time after kthread_stop() has been called.
+> 
+> Stack trace for posterity:
+>     INFO: task irq/17-pciehp:94 blocked for more than 120 seconds.
+>     schedule+0x28/0x80
+>     synchronize_irq+0x6e/0xa0
+>     __free_irq+0x15a/0x2b0
+>     free_irq+0x33/0x70
+>     pciehp_release_ctrl+0x98/0xb0
+>     pcie_port_remove_service+0x2f/0x40
+>     device_release_driver_internal+0x157/0x220
+>     bus_remove_device+0xe2/0x150
+>     device_del+0x124/0x340
+>     device_unregister+0x16/0x60
+>     remove_iter+0x1a/0x20
+>     device_for_each_child+0x4b/0x90
+>     pcie_port_device_remove+0x1e/0x30
+>     pci_device_remove+0x36/0xb0
+>     device_release_driver_internal+0x157/0x220
+>     pci_stop_bus_device+0x7d/0xa0
+>     pci_stop_bus_device+0x3d/0xa0
+>     pci_stop_and_remove_bus_device+0xe/0x20
+>     pciehp_unconfigure_device+0xb8/0x160
+>     pciehp_disable_slot+0x84/0x130
+>     pciehp_ist+0x158/0x190
+>     irq_thread_fn+0x1b/0x50
+>     irq_thread+0x143/0x1a0
+>     kthread+0x111/0x130
+> 
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Mika Westerberg <mika.westerberg@linux.intel.com>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Signed-off-by: Lukas Wunner <lukas@wunner.de>
+> ---
+>  kernel/irq/manage.c | 21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index daeabd791d58..0531f645bfea 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -790,9 +790,19 @@ static irqreturn_t irq_forced_secondary_handler(int irq, void *dev_id)
+>  
+>  static int irq_wait_for_interrupt(struct irqaction *action)
+>  {
+> -	set_current_state(TASK_INTERRUPTIBLE);
+> +	for (;;) {
+> +		set_current_state(TASK_INTERRUPTIBLE);
+>  
+> -	while (!kthread_should_stop()) {
+> +		if (kthread_should_stop()) {
+> +			/* may need to run one last time. */
+> +			if (test_and_clear_bit(IRQTF_RUNTHREAD,
+> +					       &action->thread_flags)) {
+> +				__set_current_state(TASK_RUNNING);
+> +				return 0;
+> +			}
+> +			__set_current_state(TASK_RUNNING);
+> +			return -1;
+> +		}
+>  
+>  		if (test_and_clear_bit(IRQTF_RUNTHREAD,
+>  				       &action->thread_flags)) {
+> @@ -800,10 +810,7 @@ static int irq_wait_for_interrupt(struct irqaction *action)
+>  			return 0;
+>  		}
+>  		schedule();
+> -		set_current_state(TASK_INTERRUPTIBLE);
+>  	}
+> -	__set_current_state(TASK_RUNNING);
+> -	return -1;
+>  }
+>  
+>  /*
+> @@ -1024,7 +1031,7 @@ static int irq_thread(void *data)
+>  	/*
+>  	 * This is the regular exit path. __free_irq() is stopping the
+>  	 * thread via kthread_stop() after calling
+> -	 * synchronize_irq(). So neither IRQTF_RUNTHREAD nor the
+> +	 * synchronize_hardirq(). So neither IRQTF_RUNTHREAD nor the
+>  	 * oneshot mask bit can be set. We cannot verify that as we
+>  	 * cannot touch the oneshot mask at this point anymore as
+>  	 * __setup_irq() might have given out currents thread_mask
+> @@ -1629,7 +1636,7 @@ static struct irqaction *__free_irq(struct irq_desc *desc, void *dev_id)
+>  	unregister_handler_proc(irq, action);
+>  
+>  	/* Make sure it's not being used on another CPU: */
+> -	synchronize_irq(irq);
+> +	synchronize_hardirq(irq);
+>  
+>  #ifdef CONFIG_DEBUG_SHIRQ
+>  	/*
+> -- 
+> 2.17.1
+> 
