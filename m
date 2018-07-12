@@ -2,92 +2,140 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A973C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A38C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED1BA2146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:16:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Qyl4MrQn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED1BA2146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 9BA0C2146F
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 02:16:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BA0C2146F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389244AbeGLCXT (ORCPT
+        id S2391203AbeGLCX1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 22:23:19 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:53192 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732587AbeGLCXT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 22:23:19 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6C2EdEh068823;
-        Thu, 12 Jul 2018 02:16:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2018-07-02;
- bh=/vMmNmc3QsEAJm2bqyxeLzJm0+PayvxlShjOGcRfvlQ=;
- b=Qyl4MrQnOIxig62yt7CZ3XAdtiLzRqqoFA8vz+FnrF4c02lIKQoBYrxvmQz2J4Zz4adY
- U1t7FoEiHkVZMNdmkxztheb1DQMYAqcb9oANNKjeG7CiOMlx4d+tjTJLBMluPkdrxc+i
- sBUQVoMort9CxNuje9uZKrLOu5o/Thr8X9UjcPQOVdImNYNRkl1FsLakyUtf8Z3Qq1Md
- 8jGhbQT8po6jetMPsBQ5enaPZ1V1wWfOYfGAMK22Fo+4HhOO/ZIgRDgGuRjOqPvCS+Au
- 5GeyGnLcc1j0NTQbMrou9hJmt/+mgPZ4hhwlXpttnNhvPKCNFr1ItoMLWsDMNPPFoF/B lg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2k2p7e0fqc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 02:16:06 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6C2G6fe002283
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 12 Jul 2018 02:16:06 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6C2G5Si016467;
-        Thu, 12 Jul 2018 02:16:06 GMT
-Received: from mail-oi0-f44.google.com (/209.85.218.44)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 11 Jul 2018 19:16:05 -0700
-Received: by mail-oi0-f44.google.com with SMTP id w126-v6so52959300oie.7;
-        Wed, 11 Jul 2018 19:16:05 -0700 (PDT)
-X-Gm-Message-State: AOUpUlFMpWlKSxCmv/+zaoSKXQIJEPdE9uUXuWImM5Se7TeCVrvulz8u
-        1Hb2pGTXohEtwTqFqDkzOKIqCu/w4HGTqdnmY4c=
-X-Google-Smtp-Source: AAOMgpdmILHvJotw7XrzLE+uWcQmGlnnYaqM+SurMiZ27NTcSIv9DEalFOmzu1zE+47TBF3qzyktfSed3NfkPjysLZ0=
-X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr342877oia.229.1531361765115;
- Wed, 11 Jul 2018 19:16:05 -0700 (PDT)
+        Wed, 11 Jul 2018 22:23:27 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:45492 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389318AbeGLCX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 22:23:27 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6AB706DAF893D;
+        Thu, 12 Jul 2018 10:16:10 +0800 (CST)
+Received: from [10.177.253.249] (10.177.253.249) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Thu, 12 Jul 2018
+ 10:16:07 +0800
+Subject: Re: [V9fs-developer] [PATCH v2 2/6] 9p: Change p9_fid_create calling
+ convention
+To:     Matthew Wilcox <willy@infradead.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+References: <20180711210225.19730-1-willy@infradead.org>
+ <20180711210225.19730-3-willy@infradead.org>
+CC:     Latchesar Ionkov <lucho@ionkov.net>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        <linux-kernel@vger.kernel.org>, Ron Minnich <rminnich@sandia.gov>,
+        <linux-fsdevel@vger.kernel.org>,
+        <v9fs-developer@lists.sourceforge.net>
+From:   piaojun <piaojun@huawei.com>
+Message-ID: <5B46B9BC.4010909@huawei.com>
+Date:   Thu, 12 Jul 2018 10:15:24 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-References: <20180706161307.733337643@linutronix.de> <20180706162049.387233770@linutronix.de>
-In-Reply-To: <20180706162049.387233770@linutronix.de>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Wed, 11 Jul 2018 22:15:29 -0400
-X-Gmail-Original-Message-ID: <CAGM2reZupVs-smToe5oy=q-7pYgAyr3GKNn4NcXTFMe0CWtfkw@mail.gmail.com>
-Message-ID: <CAGM2reZupVs-smToe5oy=q-7pYgAyr3GKNn4NcXTFMe0CWtfkw@mail.gmail.com>
-Subject: Re: [patch 2/7] x86/kvmclock: Remove page size requirement from wall_clock
-To:     tglx@linutronix.de
-Cc:     LKML <linux-kernel@vger.kernel.org>, pbonzini@redhat.com,
-        rkrcmar@redhat.com, peterz@infradead.org, jgross@suse.com,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>, x86@kernel.org,
-        kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=771
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1806210000 definitions=main-1807120023
+In-Reply-To: <20180711210225.19730-3-willy@infradead.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.253.249]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 6, 2018 at 12:26 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> There is no requirement for wall_clock data to be page aligned or page
-> sized.
->
+LGTM
 
-Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+On 2018/7/12 5:02, Matthew Wilcox wrote:
+> Return NULL instead of ERR_PTR when we can't allocate a FID.  The ENOSPC
+> return value was getting all the way back to userspace, and that's
+> confusing for a userspace program which isn't expecting read() to tell it
+> there's no space left on the filesystem.  The best error we can return to
+> indicate a temporary failure caused by lack of client resources is ENOMEM.
+> 
+> Maybe it would be better to sleep until a FID is available, but that's
+> not a change I'm comfortable making.
+> 
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Reviewed-by: Jun Piao <piaojun@huawei.com>
+> ---
+>  net/9p/client.c | 23 +++++++++--------------
+>  1 file changed, 9 insertions(+), 14 deletions(-)
+> 
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 999eceb8af98..389a2904b7b3 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -913,13 +913,11 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
+>  	p9_debug(P9_DEBUG_FID, "clnt %p\n", clnt);
+>  	fid = kmalloc(sizeof(struct p9_fid), GFP_KERNEL);
+>  	if (!fid)
+> -		return ERR_PTR(-ENOMEM);
+> +		return NULL;
+>  
+>  	ret = p9_idpool_get(clnt->fidpool);
+> -	if (ret < 0) {
+> -		ret = -ENOSPC;
+> +	if (ret < 0)
+>  		goto error;
+> -	}
+>  	fid->fid = ret;
+>  
+>  	memset(&fid->qid, 0, sizeof(struct p9_qid));
+> @@ -935,7 +933,7 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
+>  
+>  error:
+>  	kfree(fid);
+> -	return ERR_PTR(ret);
+> +	return NULL;
+>  }
+>  
+>  static void p9_fid_destroy(struct p9_fid *fid)
+> @@ -1137,9 +1135,8 @@ struct p9_fid *p9_client_attach(struct p9_client *clnt, struct p9_fid *afid,
+>  	p9_debug(P9_DEBUG_9P, ">>> TATTACH afid %d uname %s aname %s\n",
+>  		 afid ? afid->fid : -1, uname, aname);
+>  	fid = p9_fid_create(clnt);
+> -	if (IS_ERR(fid)) {
+> -		err = PTR_ERR(fid);
+> -		fid = NULL;
+> +	if (!fid) {
+> +		err = -ENOMEM;
+>  		goto error;
+>  	}
+>  	fid->uid = n_uname;
+> @@ -1188,9 +1185,8 @@ struct p9_fid *p9_client_walk(struct p9_fid *oldfid, uint16_t nwname,
+>  	clnt = oldfid->clnt;
+>  	if (clone) {
+>  		fid = p9_fid_create(clnt);
+> -		if (IS_ERR(fid)) {
+> -			err = PTR_ERR(fid);
+> -			fid = NULL;
+> +		if (!fid) {
+> +			err = -ENOMEM;
+>  			goto error;
+>  		}
+>  
+> @@ -2018,9 +2014,8 @@ struct p9_fid *p9_client_xattrwalk(struct p9_fid *file_fid,
+>  	err = 0;
+>  	clnt = file_fid->clnt;
+>  	attr_fid = p9_fid_create(clnt);
+> -	if (IS_ERR(attr_fid)) {
+> -		err = PTR_ERR(attr_fid);
+> -		attr_fid = NULL;
+> +	if (!attr_fid) {
+> +		err = -ENOMEM;
+>  		goto error;
+>  	}
+>  	p9_debug(P9_DEBUG_9P,
+> 
