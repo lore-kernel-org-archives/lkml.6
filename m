@@ -2,317 +2,522 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CB3C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5EEC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B432C20862
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:20:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B432C20862
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=digi.com
+	by mail.kernel.org (Postfix) with ESMTP id F131A20862
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 08:21:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F131A20862
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732467AbeGLI31 (ORCPT
+        id S1732496AbeGLIaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 04:29:27 -0400
-Received: from mail1.bemta24.messagelabs.com ([67.219.250.4]:19118 "EHLO
-        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732181AbeGLI3V (ORCPT
+        Thu, 12 Jul 2018 04:30:14 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:33066 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbeGLIaO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 04:29:21 -0400
-Received: from [67.219.250.101] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-4.bemta.az-a.us-west-2.aws.symcld.net id 86/60-01612-26F074B5; Thu, 12 Jul 2018 08:20:50 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgleJIrShJLcpLzFFi42Jx8l0noJvE7x5
-  t0H6Vx2L+kXOsFhs332axWDV1J4vFpsfXWC26fq1ktri8aw6bxdLrF5ksWvceYbf4u30Ti8WL
-  LeIOXB5r5q1h9Ni0qpPNY/OSeo+N73YwefT/NfD4vEkugC2KNTMvKb8igTXj0okp7AXXdSp+n
-  BRtYHyv2sXIxSEksJpR4vvqRWwQzhpGiZZt1xghnC2MEn8X/mfpYuTkYBPQkZiy/zCYLSIgKb
-  F25SJmkCJmgSlMEqe/7QJq5+AQFgiUaG1IBalhEVCVuD3xMViYV8BV4urVNJCwhICcxM1zncw
-  gNqeAm8S/NftZQWwhoJLeJ6/A4rwCghInZz4BW8UsICFx8MULZogaZYktKy4wQsxRkFh74DzT
-  BEaBWUhaZiFpWcDItIrRIqkoMz2jJDcxM0fX0MBA19DQSNfQyFLX0NRML7FKN1GvtFi3PLW4R
-  NdIL7G8WK+4Mjc5J0UvL7VkEyMwVhiAYAfj00MphxglOZiURHmlrFyjhfiS8lMqMxKLM+KLSn
-  NSiw8xynBwKEnwbuFzjxYSLEpNT61Iy8wBRi1MWoKDR0mEVxkkzVtckJhbnJkOkTrFqMvx5/3
-  UScxCLHn5ealS4rz7QIoEQIoySvPgRsASyCVGWSlhXkago4R4ClKLcjNLUOVfMYpzMCoJ89aB
-  TOHJzCuB2/QK6AgmoCPiUtxAjihJREhJNTC2WBx7Z73t8M8Lbs3LoybzdEvvPK7tfuJV7wktH
-  otTGTbWob7CV/j+9j22P++9eunrOtPLsTLTzv5xudTJ0rEicoPG3dTj/+U1PbZ9Kehd2Td35c
-  ES05ZCRQXzBt2fxZf5dh5Lr0/b13804MfCD79mOZhaelo/93aL/s7Ee+TY038HJDTCHd8psRR
-  nJBpqMRcVJwIAKXEzdRsDAAA=
-X-Env-Sender: Alex.Gonzalez@digi.com
-X-Msg-Ref: server-27.tower-325.messagelabs.com!1531383648!1480979!4
-X-Originating-IP: [66.77.174.16]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.9.15; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 23141 invoked from network); 12 Jul 2018 08:20:50 -0000
-Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
-  by server-27.tower-325.messagelabs.com with DHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 12 Jul 2018 08:20:50 -0000
-Received: from MTK-SMS-XCH02.digi.com (10.10.8.196) by MCL-VMS-XCH01.digi.com
- (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 12 Jul 2018
- 03:20:49 -0500
-Received: from DOR-SMS-XCH01.digi.com (10.49.8.99) by MTK-SMS-XCH02.digi.com
- (10.10.8.196) with Microsoft SMTP Server (TLS) id 14.3.399.0; Thu, 12 Jul
- 2018 03:20:48 -0500
-Received: from log-linux-hp-agonzal.digi.com (10.101.2.214) by
- dor-sms-xch01.digi.com (10.49.8.99) with Microsoft SMTP Server (TLS) id
- 14.3.399.0; Thu, 12 Jul 2018 10:20:47 +0200
-From:   Alex Gonzalez <alex.gonzalez@digi.com>
-To:     <shawnguo@kernel.org>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <s.hauer@pengutronix.de>, <kernel@pengutronix.de>,
-        <fabio.estevam@nxp.com>, <linux-imx@nxp.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <alex.gonzalez@digi.com>
-Subject: [PATCH v2 2/2] ARM: dts: imx6ul: Add DTS for ConnectCore 6UL SBC Express
-Date:   Thu, 12 Jul 2018 10:20:36 +0200
-Message-ID: <1531383636-3406-3-git-send-email-alex.gonzalez@digi.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1531383636-3406-1-git-send-email-alex.gonzalez@digi.com>
-References: <1531383636-3406-1-git-send-email-alex.gonzalez@digi.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.101.2.214]
+        Thu, 12 Jul 2018 04:30:14 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 4BDFC27390;
+        Thu, 12 Jul 2018 04:21:41 -0400 (EDT)
+Date:   Thu, 12 Jul 2018 18:23:09 +1000
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+From:   Finn Thain <fthain@telegraphics.com.au>
+Subject: [RFC] macintosh: Use common code to access RTC
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
+Message-Id: <S1732496AbeGLIaO/20180712083015Z+64@vger.kernel.org>
 
-The ConnectCore 6UL Single Board Computer (SBC) Express contains the
-ConnectCore 6UL System-On-Module.
+Once the 68k Mac port adopts the via-pmu driver, it must access
+the PMU RTC using the appropriate command format. The same code can
+then be used for both m68k and powerpc.
 
-Its hardware specifications are:
+Replace the RTC code that's duplicated in arch/powerpc and arch/m68k
+with common RTC accessors for Cuda and PMU devices.
 
-* 256MB DDR3 memory
-* 256MB NAND flash
-* Single Ethernet
-* USB Host and USB-OTG
-* MicroSD external storage
-* Groove connectors and Raspberry Pi Hat compatible expansion header
+While we're at it, drop the problematic WARN_ON that was introduced in
+commit 22db552b50fa ("powerpc/powermac: Fix rtc read/write functions").
 
-Signed-off-by: Alex Gonzalez <alex.gonzalez@digi.com>
 ---
- arch/arm/boot/dts/Makefile                      |   1 +
- arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts | 200 ++++++++++++++++++++++++
- 2 files changed, 201 insertions(+)
- create mode 100644 arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts
+The patch below hasn't been tested yet and would need to be applied
+after my PMU patch series (v4). So I'll probably append it to v5.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 37a3de760d40..6135d3dc381c 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -533,6 +533,7 @@ dtb-$(CONFIG_SOC_IMX6SX) += \
- 	imx6sx-udoo-neo-full.dtb
- dtb-$(CONFIG_SOC_IMX6UL) += \
- 	imx6ul-14x14-evk.dtb \
-+	imx6ul-ccimx6ulsbcexpress.dtb \
- 	imx6ul-geam.dtb \
- 	imx6ul-isiot-emmc.dtb \
- 	imx6ul-isiot-nand.dtb \
-diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts
-new file mode 100644
-index 000000000000..3792679c0c90
---- /dev/null
-+++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcexpress.dts
-@@ -0,0 +1,200 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Digi International's ConnectCore6UL SBC Express board device tree source
-+ *
-+ * Copyright 2018 Digi International, Inc.
-+ *
-+ */
+The patch below is an alternative both to the patch Arnd posted here,
+https://lore.kernel.org/lkml/20180619140229.3615110-2-arnd@arndb.de/
+as well as another future patch to remove the WARN_ON from 
+arch/powerpc/platforms/powermac/time.c.
+
+---
+ arch/m68k/mac/misc.c                   |  75 +++----------------
+ arch/powerpc/platforms/powermac/time.c | 130 ++++-----------------------------
+ drivers/macintosh/via-cuda.c           |  35 +++++++++
+ drivers/macintosh/via-pmu.c            |  33 +++++++++
+ include/linux/cuda.h                   |   4 +
+ include/linux/pmu.h                    |   4 +
+ 6 files changed, 99 insertions(+), 182 deletions(-)
+
+diff --git a/arch/m68k/mac/misc.c b/arch/m68k/mac/misc.c
+index 28090a44fa09..21e3afa48de9 100644
+--- a/arch/m68k/mac/misc.c
++++ b/arch/m68k/mac/misc.c
+@@ -33,34 +33,6 @@
+ static void (*rom_reset)(void);
+ 
+ #ifdef CONFIG_ADB_CUDA
+-static long cuda_read_time(void)
+-{
+-	struct adb_request req;
+-	long time;
+-
+-	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
+-		return 0;
+-	while (!req.complete)
+-		cuda_poll();
+-
+-	time = (req.reply[3] << 24) | (req.reply[4] << 16) |
+-	       (req.reply[5] << 8) | req.reply[6];
+-	return time - RTC_OFFSET;
+-}
+-
+-static void cuda_write_time(long data)
+-{
+-	struct adb_request req;
+-
+-	data += RTC_OFFSET;
+-	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
+-			 (data >> 24) & 0xFF, (data >> 16) & 0xFF,
+-			 (data >> 8) & 0xFF, data & 0xFF) < 0)
+-		return;
+-	while (!req.complete)
+-		cuda_poll();
+-}
+-
+ static __u8 cuda_read_pram(int offset)
+ {
+ 	struct adb_request req;
+@@ -86,34 +58,6 @@ static void cuda_write_pram(int offset, __u8 data)
+ #endif /* CONFIG_ADB_CUDA */
+ 
+ #ifdef CONFIG_ADB_PMU
+-static long pmu_read_time(void)
+-{
+-	struct adb_request req;
+-	long time;
+-
+-	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
+-		return 0;
+-	while (!req.complete)
+-		pmu_poll();
+-
+-	time = (req.reply[1] << 24) | (req.reply[2] << 16) |
+-	       (req.reply[3] << 8) | req.reply[4];
+-	return time - RTC_OFFSET;
+-}
+-
+-static void pmu_write_time(long data)
+-{
+-	struct adb_request req;
+-
+-	data += RTC_OFFSET;
+-	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
+-			(data >> 24) & 0xFF, (data >> 16) & 0xFF,
+-			(data >> 8) & 0xFF, data & 0xFF) < 0)
+-		return;
+-	while (!req.complete)
+-		pmu_poll();
+-}
+-
+ static __u8 pmu_read_pram(int offset)
+ {
+ 	struct adb_request req;
+@@ -291,13 +235,17 @@ static long via_read_time(void)
+  * is basically any machine with Mac II-style ADB.
+  */
+ 
+-static void via_write_time(long time)
++static void via_set_rtc_time(struct rtc_time *tm)
+ {
+ 	union {
+ 		__u8 cdata[4];
+ 		long idata;
+ 	} data;
+ 	__u8 temp;
++	unsigned long time;
 +
-+/dts-v1/;
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include "imx6ul.dtsi"
-+#include "imx6ul-ccimx6ulsom.dtsi"
++	time = mktime(tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
++	              tm->tm_hour, tm->tm_min, tm->tm_sec);
+ 
+ 	/* Clear the write protect bit */
+ 
+@@ -635,12 +583,12 @@ int mac_hwclk(int op, struct rtc_time *t)
+ #ifdef CONFIG_ADB_CUDA
+ 		case MAC_ADB_EGRET:
+ 		case MAC_ADB_CUDA:
+-			now = cuda_read_time();
++			now = cuda_get_time();
+ 			break;
+ #endif
+ #ifdef CONFIG_ADB_PMU
+ 		case MAC_ADB_PB2:
+-			now = pmu_read_time();
++			now = pmu_get_time();
+ 			break;
+ #endif
+ 		default:
+@@ -659,24 +607,21 @@ int mac_hwclk(int op, struct rtc_time *t)
+ 		         __func__, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+ 		         t->tm_hour, t->tm_min, t->tm_sec);
+ 
+-		now = mktime(t->tm_year + 1900, t->tm_mon + 1, t->tm_mday,
+-			     t->tm_hour, t->tm_min, t->tm_sec);
+-
+ 		switch (macintosh_config->adb_type) {
+ 		case MAC_ADB_IOP:
+ 		case MAC_ADB_II:
+ 		case MAC_ADB_PB1:
+-			via_write_time(now);
++			via_set_rtc_time(t);
+ 			break;
+ #ifdef CONFIG_ADB_CUDA
+ 		case MAC_ADB_EGRET:
+ 		case MAC_ADB_CUDA:
+-			cuda_write_time(now);
++			cuda_set_rtc_time(t);
+ 			break;
+ #endif
+ #ifdef CONFIG_ADB_PMU
+ 		case MAC_ADB_PB2:
+-			pmu_write_time(now);
++			pmu_set_rtc_time(t);
+ 			break;
+ #endif
+ 		default:
+diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
+index 12e6e4d30602..3f35dcf5cfa8 100644
+--- a/arch/powerpc/platforms/powermac/time.c
++++ b/arch/powerpc/platforms/powermac/time.c
+@@ -42,13 +42,6 @@
+ #define DBG(x...)
+ #endif
+ 
+-/*
+- * Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
+- * times wrap in 2040. If we need to handle later times, the read_time functions
+- * need to be changed to interpret wrapped times as post-2040.
+- */
+-#define RTC_OFFSET	2082844800
+-
+ /*
+  * Calibrate the decrementer frequency with the VIA timer 1.
+  */
+@@ -88,98 +81,6 @@ long __init pmac_time_init(void)
+ 	return delta;
+ }
+ 
+-#ifdef CONFIG_ADB_CUDA
+-static time64_t cuda_get_time(void)
+-{
+-	struct adb_request req;
+-	time64_t now;
+-
+-	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
+-		return 0;
+-	while (!req.complete)
+-		cuda_poll();
+-	if (req.reply_len != 7)
+-		printk(KERN_ERR "cuda_get_time: got %d byte reply\n",
+-		       req.reply_len);
+-	now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
+-		    (req.reply[5] << 8) + req.reply[6]);
+-	/* it's either after year 2040, or the RTC has gone backwards */
+-	WARN_ON(now < RTC_OFFSET);
+-
+-	return now - RTC_OFFSET;
+-}
+-
+-#define cuda_get_rtc_time(tm)	rtc_time64_to_tm(cuda_get_time(), (tm))
+-
+-static int cuda_set_rtc_time(struct rtc_time *tm)
+-{
+-	u32 nowtime;
+-	struct adb_request req;
+-
+-	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
+-	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
+-			 nowtime >> 24, nowtime >> 16, nowtime >> 8,
+-			 nowtime) < 0)
+-		return -ENXIO;
+-	while (!req.complete)
+-		cuda_poll();
+-	if ((req.reply_len != 3) && (req.reply_len != 7))
+-		printk(KERN_ERR "cuda_set_rtc_time: got %d byte reply\n",
+-		       req.reply_len);
+-	return 0;
+-}
+-
+-#else
+-#define cuda_get_time()		0
+-#define cuda_get_rtc_time(tm)
+-#define cuda_set_rtc_time(tm)	0
+-#endif
+-
+-#ifdef CONFIG_ADB_PMU
+-static time64_t pmu_get_time(void)
+-{
+-	struct adb_request req;
+-	time64_t now;
+-
+-	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
+-		return 0;
+-	pmu_wait_complete(&req);
+-	if (req.reply_len != 4)
+-		printk(KERN_ERR "pmu_get_time: got %d byte reply from PMU\n",
+-		       req.reply_len);
+-	now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16)	+
+-		    (req.reply[2] << 8) + req.reply[3]);
+-
+-	/* it's either after year 2040, or the RTC has gone backwards */
+-	WARN_ON(now < RTC_OFFSET);
+-
+-	return now - RTC_OFFSET;
+-}
+-
+-#define pmu_get_rtc_time(tm)	rtc_time64_to_tm(pmu_get_time(), (tm))
+-
+-static int pmu_set_rtc_time(struct rtc_time *tm)
+-{
+-	u32 nowtime;
+-	struct adb_request req;
+-
+-	nowtime = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
+-	if (pmu_request(&req, NULL, 5, PMU_SET_RTC, nowtime >> 24,
+-			nowtime >> 16, nowtime >> 8, nowtime) < 0)
+-		return -ENXIO;
+-	pmu_wait_complete(&req);
+-	if (req.reply_len != 0)
+-		printk(KERN_ERR "pmu_set_rtc_time: %d byte reply from PMU\n",
+-		       req.reply_len);
+-	return 0;
+-}
+-
+-#else
+-#define pmu_get_time()		0
+-#define pmu_get_rtc_time(tm)
+-#define pmu_set_rtc_time(tm)	0
+-#endif
+-
+ #ifdef CONFIG_PMAC_SMU
+ static time64_t smu_get_time(void)
+ {
+@@ -189,11 +90,6 @@ static time64_t smu_get_time(void)
+ 		return 0;
+ 	return rtc_tm_to_time64(&tm);
+ }
+-
+-#else
+-#define smu_get_time()			0
+-#define smu_get_rtc_time(tm, spin)
+-#define smu_set_rtc_time(tm, spin)	0
+ #endif
+ 
+ /* Can't be __init, it's called when suspending and resuming */
+@@ -201,12 +97,18 @@ time64_t pmac_get_boot_time(void)
+ {
+ 	/* Get the time from the RTC, used only at boot time */
+ 	switch (sys_ctrler) {
++#ifdef CONFIG_ADB_CUDA
+ 	case SYS_CTRLER_CUDA:
+ 		return cuda_get_time();
++#endif
++#ifdef CONFIG_ADB_PMU
+ 	case SYS_CTRLER_PMU:
+ 		return pmu_get_time();
++#endif
++#ifdef CONFIG_PMAC_SMU
+ 	case SYS_CTRLER_SMU:
+ 		return smu_get_time();
++#endif
+ 	default:
+ 		return 0;
+ 	}
+@@ -215,30 +117,24 @@ time64_t pmac_get_boot_time(void)
+ void pmac_get_rtc_time(struct rtc_time *tm)
+ {
+ 	/* Get the time from the RTC, used only at boot time */
+-	switch (sys_ctrler) {
+-	case SYS_CTRLER_CUDA:
+-		cuda_get_rtc_time(tm);
+-		break;
+-	case SYS_CTRLER_PMU:
+-		pmu_get_rtc_time(tm);
+-		break;
+-	case SYS_CTRLER_SMU:
+-		smu_get_rtc_time(tm, 1);
+-		break;
+-	default:
+-		;
+-	}
++	rtc_time64_to_tm(pmac_get_boot_time(), tm);
+ }
+ 
+ int pmac_set_rtc_time(struct rtc_time *tm)
+ {
+ 	switch (sys_ctrler) {
++#ifdef CONFIG_ADB_CUDA
+ 	case SYS_CTRLER_CUDA:
+ 		return cuda_set_rtc_time(tm);
++#endif
++#ifdef CONFIG_ADB_PMU
+ 	case SYS_CTRLER_PMU:
+ 		return pmu_set_rtc_time(tm);
++#endif
++#ifdef CONFIG_PMAC_SMU
+ 	case SYS_CTRLER_SMU:
+ 		return smu_set_rtc_time(tm, 1);
++#endif
+ 	default:
+ 		return -ENODEV;
+ 	}
+diff --git a/drivers/macintosh/via-cuda.c b/drivers/macintosh/via-cuda.c
+index 98dd702eb867..bbd5a81ba262 100644
+--- a/drivers/macintosh/via-cuda.c
++++ b/drivers/macintosh/via-cuda.c
+@@ -766,3 +766,38 @@ cuda_input(unsigned char *buf, int nb)
+ 	               buf, nb, false);
+     }
+ }
 +
-+/ {
-+	model = "Digi International ConnectCore 6UL SBC Express.";
-+	compatible = "digi,ccimx6ulsbcexpress", "digi,ccimx6ulsom",
-+		     "fsl,imx6ul";
-+};
++/* Offset between Unix time (1970-based) and Mac time (1904-based) */
++#define RTC_OFFSET	2082844800
 +
-+&adc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_adc1>;
-+	status = "okay";
-+};
++time64_t cuda_get_time(void)
++{
++	struct adb_request req;
++	time64_t now;
 +
-+&can1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_flexcan1>;
-+	xceiver-supply = <&ext_3v3>;
-+	status = "okay";
-+};
++	if (cuda_request(&req, NULL, 2, CUDA_PACKET, CUDA_GET_TIME) < 0)
++		return 0;
++	while (!req.complete)
++		cuda_poll();
++	if (req.reply_len != 7)
++		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
++	now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
++	            (req.reply[5] << 8) + req.reply[6]);
++	return now - RTC_OFFSET;
++}
 +
-+&ecspi3 {
-+	cs-gpios = <&gpio1 20 GPIO_ACTIVE_LOW>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ecspi3_master>;
-+	status = "okay";
-+};
++int cuda_set_rtc_time(struct rtc_time *tm)
++{
++	u32 now;
++	struct adb_request req;
 +
-+&fec1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_enet1>;
-+	phy-mode = "rmii";
-+	phy-handle = <&ethphy0>;
-+	status = "okay";
++	now = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
++	if (cuda_request(&req, NULL, 6, CUDA_PACKET, CUDA_SET_TIME,
++	                 now >> 24, now >> 16, now >> 8, now) < 0)
++		return -ENXIO;
++	while (!req.complete)
++		cuda_poll();
++	if ((req.reply_len != 3) && (req.reply_len != 7))
++		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
++	return 0;
++}
+diff --git a/drivers/macintosh/via-pmu.c b/drivers/macintosh/via-pmu.c
+index d72c450aebe5..48eaa770f0f6 100644
+--- a/drivers/macintosh/via-pmu.c
++++ b/drivers/macintosh/via-pmu.c
+@@ -1737,6 +1737,39 @@ pmu_enable_irled(int on)
+ 	pmu_wait_complete(&req);
+ }
+ 
++/* Offset between Unix time (1970-based) and Mac time (1904-based) */
++#define RTC_OFFSET	2082844800
 +
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++time64_t pmu_get_time(void)
++{
++	struct adb_request req;
++	time64_t now;
 +
-+		ethphy0: ethernet-phy@0 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			smsc,disable-energy-detect;
-+			reg = <0>;
-+		};
-+	};
-+};
++	if (pmu_request(&req, NULL, 1, PMU_READ_RTC) < 0)
++		return 0;
++	pmu_wait_complete(&req);
++	if (req.reply_len != 4)
++		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
++	now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16)	+
++	            (req.reply[2] << 8) + req.reply[3]);
++	return now - RTC_OFFSET;
++}
 +
-+&i2c2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c2>;
-+	status = "okay";
-+};
++int pmu_set_rtc_time(struct rtc_time *tm)
++{
++	u32 now;
++	struct adb_request req;
 +
-+&pwm1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pwm1>;
-+	status = "okay";
-+};
++	now = lower_32_bits(rtc_tm_to_time64(tm) + RTC_OFFSET);
++	if (pmu_request(&req, NULL, 5, PMU_SET_RTC,
++	                now >> 24, now >> 16, now >> 8, now) < 0)
++		return -ENXIO;
++	pmu_wait_complete(&req);
++	if (req.reply_len != 0)
++		pr_err("%s: got %d byte reply\n", __func__, req.reply_len);
++	return 0;
++}
 +
-+&uart4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart4>;
-+	status = "okay";
-+};
+ void
+ pmu_restart(void)
+ {
+diff --git a/include/linux/cuda.h b/include/linux/cuda.h
+index 056867f09a01..45bfe9d61271 100644
+--- a/include/linux/cuda.h
++++ b/include/linux/cuda.h
+@@ -8,6 +8,7 @@
+ #ifndef _LINUX_CUDA_H
+ #define _LINUX_CUDA_H
+ 
++#include <linux/rtc.h>
+ #include <uapi/linux/cuda.h>
+ 
+ 
+@@ -16,4 +17,7 @@ extern int cuda_request(struct adb_request *req,
+ 			void (*done)(struct adb_request *), int nbytes, ...);
+ extern void cuda_poll(void);
+ 
++extern time64_t cuda_get_time(void);
++extern int cuda_set_rtc_time(struct rtc_time *tm);
 +
-+&uart5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_uart5>;
-+	status = "okay";
-+};
+ #endif /* _LINUX_CUDA_H */
+diff --git a/include/linux/pmu.h b/include/linux/pmu.h
+index 9ac8fc60ad49..52453a24a24f 100644
+--- a/include/linux/pmu.h
++++ b/include/linux/pmu.h
+@@ -9,6 +9,7 @@
+ #ifndef _LINUX_PMU_H
+ #define _LINUX_PMU_H
+ 
++#include <linux/rtc.h>
+ #include <uapi/linux/pmu.h>
+ 
+ 
+@@ -36,6 +37,9 @@ static inline void pmu_resume(void)
+ 
+ extern void pmu_enable_irled(int on);
+ 
++extern time64_t pmu_get_time(void);
++extern int pmu_set_rtc_time(struct rtc_time *tm);
 +
-+&usbotg1 {
-+	dr_mode = "host";
-+	disable-over-current;
-+	status = "okay";
-+};
-+
-+&usbotg2 {
-+	dr_mode = "host";
-+	disable-over-current;
-+	status = "okay";
-+};
-+
-+&usdhc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc2>;
-+	broken-cd;      /* no carrier detect line (use polling) */
-+	no-1-8-v;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_hog>;
-+
-+	pinctrl_adc1: adc1grp {
-+		fsl,pins = <
-+			/* GPIO1_4/ADC1_IN4 (pin 7 of the expansion header) */
-+			MX6UL_PAD_GPIO1_IO04__GPIO1_IO04        0xb0
-+		>;
-+	};
-+
-+	pinctrl_ecspi3_master: ecspi3grp1 {
-+		fsl,pins = <
-+			MX6UL_PAD_UART2_RX_DATA__ECSPI3_SCLK	0x10b0
-+			MX6UL_PAD_UART2_CTS_B__ECSPI3_MOSI	0x10b0
-+			MX6UL_PAD_UART2_RTS_B__ECSPI3_MISO	0x10b0
-+			MX6UL_PAD_UART2_TX_DATA__GPIO1_IO20	0x10b0 /* Chip Select */
-+		>;
-+	};
-+
-+	pinctrl_ecspi3_slave: ecspi3grp2 {
-+		fsl,pins = <
-+			MX6UL_PAD_UART2_RX_DATA__ECSPI3_SCLK	0x10b0
-+			MX6UL_PAD_UART2_CTS_B__ECSPI3_MOSI	0x10b0
-+			MX6UL_PAD_UART2_RTS_B__ECSPI3_MISO	0x10b0
-+			MX6UL_PAD_UART2_TX_DATA__ECSPI3_SS0	0x10b0 /* Chip Select */
-+		>;
-+	};
-+
-+	pinctrl_enet1: enet1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO07__ENET1_MDC		0x1b0b0
-+			MX6UL_PAD_GPIO1_IO06__ENET1_MDIO	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_EN__ENET1_RX_EN	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_ER__ENET1_RX_ER	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA0__ENET1_RDATA00	0x1b0b0
-+			MX6UL_PAD_ENET1_RX_DATA1__ENET1_RDATA01	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_EN__ENET1_TX_EN	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA0__ENET1_TDATA00	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_DATA1__ENET1_TDATA01	0x1b0b0
-+			MX6UL_PAD_ENET1_TX_CLK__ENET1_REF_CLK1	0x40017051
-+		>;
-+	};
-+
-+	pinctrl_flexcan1: flexcan1grp{
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_DATA08__FLEXCAN1_TX	0x1b020
-+			MX6UL_PAD_LCD_DATA09__FLEXCAN1_RX	0x1b020
-+		>;
-+	};
-+
-+	pinctrl_i2c2: i2c2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_GPIO1_IO00__I2C2_SCL 0x4001b8b0
-+			MX6UL_PAD_GPIO1_IO01__I2C2_SDA 0x4001b8b0
-+		>;
-+	};
-+
-+	pinctrl_pwm1: pwm1grp {
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_DATA00__PWM1_OUT		0x10b0
-+		>;
-+	};
-+
-+	pinctrl_uart4: uart4grp {
-+		fsl,pins = <
-+			MX6UL_PAD_LCD_CLK__UART4_DCE_TX		0x1b0b1
-+			MX6UL_PAD_LCD_ENABLE__UART4_DCE_RX	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_uart5: uart5grp {
-+		fsl,pins = <
-+			MX6UL_PAD_UART5_TX_DATA__UART5_DCE_TX	0x1b0b1
-+			MX6UL_PAD_UART5_RX_DATA__UART5_DCE_RX	0x1b0b1
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			MX6UL_PAD_CSI_HSYNC__USDHC2_CMD		0x17059
-+			MX6UL_PAD_CSI_VSYNC__USDHC2_CLK		0x10071
-+			MX6UL_PAD_CSI_DATA00__USDHC2_DATA0	0x17059
-+			MX6UL_PAD_CSI_DATA01__USDHC2_DATA1	0x17059
-+			MX6UL_PAD_CSI_DATA02__USDHC2_DATA2	0x17059
-+			MX6UL_PAD_CSI_DATA03__USDHC2_DATA3	0x17059
-+		>;
-+	};
-+
-+	/* General purpose pinctrl */
-+	pinctrl_hog: hoggrp {
-+		fsl,pins = <
-+			/* GPIOs BANK 3 */
-+			MX6UL_PAD_LCD_RESET__GPIO3_IO04		0xf030
-+		>;
-+	};
-+};
+ extern void pmu_restart(void);
+ extern void pmu_shutdown(void);
+ extern void pmu_unlock(void);
+-- 
+2.16.4
+
