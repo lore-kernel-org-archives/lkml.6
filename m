@@ -2,132 +2,147 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70268ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC65ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10DF7208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:21:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="fJGK8Kbr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10DF7208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cadence.com
+	by mail.kernel.org (Postfix) with ESMTP id 9C24E20673
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:27:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C24E20673
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732235AbeGLTbw (ORCPT
+        id S1732447AbeGLTio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 15:31:52 -0400
-Received: from mail-eopbgr680056.outbound.protection.outlook.com ([40.107.68.56]:59008
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726962AbeGLTbw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 15:31:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vWqID7rFkX802BzB32D+1VdcITA3D6db5nQPnfGEE/w=;
- b=fJGK8KbrTsbo4l1fizBcd0QONxXg8j3i89yY2RQTJgyxPQT4qONstKJSSaP/H1r/2dEgPL2wJxIDqZQYaa28xP2AmkGZhtfXL08Tkjyvt86ns6g1fi2Xh0nV3mIdb0/bdI+220oucelGe+wNxb71YSfkRP7In+99wg0TkV8TLk4=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB5189.namprd07.prod.outlook.com (20.176.254.218) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.930.21; Thu, 12 Jul 2018 19:20:56 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::39ca:4bef:3be8:fdf5]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::39ca:4bef:3be8:fdf5%3]) with mapi id 15.20.0952.017; Thu, 12 Jul 2018
- 19:20:54 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Tyrala <ltyrala@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>
-Subject: RE: [PATCH 01/31] usb: usbssp: Defined register maps and other useful
- structures.
-Thread-Topic: [PATCH 01/31] usb: usbssp: Defined register maps and other
- useful structures.
-Thread-Index: AQHUGaPfTNlOUM3Lak6bmBJPFm47N6SLGpMAgADaiWA=
-Date:   Thu, 12 Jul 2018 19:20:54 +0000
-Message-ID: <BYAPR07MB470937899F3E630677B21B2EDD590@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1531374448-26532-1-git-send-email-pawell@cadence.com>
- <1531374448-26532-2-git-send-email-pawell@cadence.com>
- <20180712060944.GA20905@kroah.com>
-In-Reply-To: <20180712060944.GA20905@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYjk0OGY3MzMtODYwOC0xMWU4LTg3MTAtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGI5NDhmNzM0LTg2MDgtMTFlOC04NzEwLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMTI2MCIgdD0iMTMxNzU4OTY4NjcxNTQwMzc0IiBoPSJRelNReERHbXB1d2owVTl5VjlzdVhjbUsyM0k9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pawell@cadence.com; 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB5189;7:bJ3legx6Ty/Li62ZfWHBcZGcSEH9ofixZg0Yh8U6BNo7Elprb1NK0V8DWK6jVGk6MB1nXfynQik2cwgaCvi6qUvszOJldLM9SK8mCcQM5aE8iRYZSYIiYWkVKHq987y2zKvodbFjYMiMcWdEqP8L7PjC9+50XsdJ+tFIh/zzQAE8P2+xcEGLErtXxBy5e8EM4jI/JPquxpA0AMPK+kjLqxgO0oQ/9nACrw1nKmL2+fjZFfpyaQpai83sXgxNGS3t;20:YwfCyuwCj5XdD7fmWHMi8+idTFrspKt4xIukRaw8c86pWsgeckKti9MIPqqNA/YKT7wbK+sGiqV9mfTFW8UicFWRDoKe77OXUALbZC6CHOy7MrdWrNxTPpfPdKzmW+8B7Sdqld/6uCkJ8gXTtWLleOHBZWB990d8SisnFNuBMouhGr3Fq/oXWoLjku2TApQUwDY5lk1yIZLoihZ2i/UbiyTbzfSOUlRpXRpzuqu4CL/ntev33UyQJ0xOGsmx5cCL
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(366004)(136003)(39860400002)(376002)(396003)(346002)(36092001)(199004)(189003)(2906002)(97736004)(6116002)(316002)(3846002)(102836004)(26005)(6916009)(229853002)(54906003)(53936002)(33656002)(446003)(486006)(476003)(6246003)(107886003)(4326008)(6506007)(5250100002)(8936002)(256004)(7736002)(68736007)(2900100001)(478600001)(305945005)(7696005)(25786009)(105586002)(76176011)(9686003)(11346002)(55016002)(14454004)(86362001)(99286004)(8676002)(81166006)(74316002)(106356001)(6436002)(66066001)(81156014)(5660300001)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5189;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-office365-filtering-correlation-id: e49b975b-a184-4617-6e17-08d5e82c96d5
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB5189;
-x-ms-traffictypediagnostic: BYAPR07MB5189:
-x-microsoft-antispam-prvs: <BYAPR07MB5189E14BC50E1EB2CC965C1BDD590@BYAPR07MB5189.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231311)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:BYAPR07MB5189;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB5189;
-x-forefront-prvs: 0731AA2DE6
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: kPuLLJ7iDve8e3F9qOUppV0tibpXlsqYEHDYc8w5v+NIpFVkmVs0pvlP9Ld/Q2q+rGuXs2UBZ5LF7zULQ9/7U0IvInCTvlv+iEdYgAvgixl+pYqDghsaU1F5b4GRZEwIgARRbO0WZ0hXp1clQb9SwUA09NbRN1rgXKSpdbJvkeGZbW7a9rM5EojvTrBvMP11ISNCKDj5VqLh8Co6v+33i0bqZSrBJFKoFf8+Dno+aQfQx2kDXO+1YwhFpYAZWNAFPU0gsZ5PSLu1wIfidFwbq1WVSaGj3qfCwnRyombdmNUsrKz/D8f+0+ayzN5Kv0S6TtvEm6rwnOOGQt8uN4FTg6fj4QjpcVCRXHRt566r4hg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 12 Jul 2018 15:38:44 -0400
+Received: from gateway31.websitewelcome.com ([192.185.143.4]:35100 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732417AbeGLTim (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 15:38:42 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 27A04D669
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 14:27:45 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id dhFIfNApeaSeydhFWf08t1; Thu, 12 Jul 2018 14:27:44 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.65.56] (port=53678 helo=[192.168.1.71])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fdhFI-000aMa-4Q; Thu, 12 Jul 2018 14:27:20 -0500
+Subject: Re: [PATCH] net: usb: hso: use swap macro in hso_kick_transmit
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20180709154048.GA32345@embeddedor.com>
+ <20180711.225821.1348569242901912298.davem@davemloft.net>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <1a4c8d58-f65d-1e26-c291-9b4de5345955@embeddedor.com>
+Date:   Thu, 12 Jul 2018 14:27:13 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e49b975b-a184-4617-6e17-08d5e82c96d5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jul 2018 19:20:54.8647
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5189
+In-Reply-To: <20180711.225821.1348569242901912298.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.65.56
+X-Source-L: No
+X-Exim-ID: 1fdhFI-000aMa-4Q
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.71]) [189.250.65.56]:53678
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 4
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > +/**
-> > + * struct usbssp_cap_regs - USBSSP Registers.
-> > + * @hc_capbase:		length of the capabilities register and DC
-> version number
-> > + * @hcs_params1:	HCSPARAMS1 - Structural Parameters 1
-> > + * @hcs_params2:	HCSPARAMS2 - Structural Parameters 2
-> > + * @hcs_params3:	HCSPARAMS3 - Structural Parameters 3
-> > + * @hcc_params:		HCCPARAMS - Capability Parameters
-> > + * @db_off:		DBOFF - Doorbell array offset
-> > + * @run_regs_off:	RTSOFF - Runtime register space offset
-> > + * @hcc_params2:	HCCPARAMS2 Capability Parameters 2,
-> > + */
-> > +struct usbssp_cap_regs {
-> > +	__le32	hc_capbase;
-> > +	__le32	hcs_params1;
-> > +	__le32	hcs_params2;
-> > +	__le32	hcs_params3;
-> > +	__le32	hcc_params;
-> > +	__le32	db_off;
-> > +	__le32	run_regs_off;
-> > +	__le32	hcc_params2;
-> > +	/* Reserved up to (CAPLENGTH - 0x1C) */ };
->=20
-> Does this, and your other structures that map to hardware, need to be
-> __packed?
+Hi David,
 
-These structures don't need to be __packed. All fields in structures=20
-that map to hardware are 32 and 64 bits.=20
-It has been working this way in XHCI driver for years.=20
+On 07/12/2018 12:58 AM, David Miller wrote:
+> From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+> Date: Mon, 9 Jul 2018 10:40:48 -0500
+> 
+>> @@ -1748,14 +1747,11 @@ static void hso_kick_transmit(struct hso_serial *serial)
+>>  		goto out;
+>>  
+>>  	/* Switch pointers around to avoid memcpy */
+>> -	temp = serial->tx_buffer;
+>> -	serial->tx_buffer = serial->tx_data;
+>> -	serial->tx_data = temp;
+>> +	swap(serial->tx_buffer, serial->tx_data);
+>>  	serial->tx_data_count = serial->tx_buffer_count;
+>>  	serial->tx_buffer_count = 0;
+>>  
+>> -	/* If temp is set, it means we switched buffers */
+>> -	if (temp && serial->write_data) {
+>> +	if (serial->write_data) {
+> 
+> I think temp can be NULL here, you have to retain this check.
+> 
 
-thanks,
+I see. Well, in that case I will check serial->tx_data instead.
 
-Pawel Laszczak
-
+Thanks for the feedback.
+--
+Gustavo
