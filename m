@@ -2,94 +2,112 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5F3C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A153FC43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E858720BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:08:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57965208E3
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 15:10:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="W84RQa+K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E858720BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CV4Stoql"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57965208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732668AbeGLPSX (ORCPT
+        id S1732693AbeGLPUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 11:18:23 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:44523 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732373AbeGLPSX (ORCPT
+        Thu, 12 Jul 2018 11:20:02 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:44968 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732373AbeGLPUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 11:18:23 -0400
-Received: by mail-qk0-f196.google.com with SMTP id v17-v6so13119842qkb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 08:08:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=t05ji+T8+r7zlNZm5ihRJ1Vkm1svMZCyDSvXn/7tgXs=;
-        b=W84RQa+KZqVvZRtq5dMnJ2mNjPHekdv2rP7XBheQ3NISiR3xKdB7T1zV7uigI0zq3L
-         8C/uUvr0H4+EE9npDesxadR99UEoy5bISKYSLnJGMoFXikux9HjXty7KjCrzE14N0uax
-         6tQFFLYTIlebDWO3qbTdUifvyH++euAgWlIlHgsQ8rVsKN37cNjWXD85n5FqPaGA3kfF
-         gKh7IaFCpm84aZYxHX5YKin8xsnfi781fbRDnw1pee8Hf2O042egDzEgYSZpSGlW0GdR
-         1zgNInJr08FFNG8OUNxbfqqDkRU4dfB2S3YFf4xIsWVfa8HMbFTMTEH9R3stxanLSIU7
-         jfCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t05ji+T8+r7zlNZm5ihRJ1Vkm1svMZCyDSvXn/7tgXs=;
-        b=hlV9ZuUz/hxhLC/j0foccSFCK4tmB+X2B/L2dUAS3/i3Or7Oh19dGiYtfcqgwrZUCe
-         x/2X9Hiqd/voYsJmuVYVhAUfOanP8RBJRZqd7v3tSABQfvjl0JgfDseP4OQlFjAPZyMk
-         NRKqcJAuEyXge+QFsc6ujdYjxGSZuaCbxXBZyYNhQGXCJzGmOW0P1uDfSJ1womZdP3Hw
-         Pof5Xs06LTXbG3kGFgVdBasitVf/WcDQhYf2/6HzQfbJUF5+0V3tbrwwW3diItHkkZB/
-         JpUBDoJssat3zA5rI5NfnZwfeK3VBXPsk+C5mT4Kvro0oqeMvXiBNSdKUKS+6y3do+fe
-         4k5Q==
-X-Gm-Message-State: AOUpUlE5Lm5gSMEOjD3ugUywv7mbFsCrhTqOTWvOximOEHNXGEOTbcCL
-        wla+ATR6yLJ3oqKcv2LPoXT9wg==
-X-Google-Smtp-Source: AAOMgpd1SWu430vLlFxeZ1y97TUk6LYRm8Bd5tm3Gp/P82G4swP4aaSx02+QwQLbyxjDZYNO8omKaA==
-X-Received: by 2002:a37:83c6:: with SMTP id f189-v6mr2062590qkd.47.1531408105221;
-        Thu, 12 Jul 2018 08:08:25 -0700 (PDT)
-Received: from cisco.cisco.com ([173.38.117.87])
-        by smtp.gmail.com with ESMTPSA id d202-v6sm3279687qkb.38.2018.07.12.08.08.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 12 Jul 2018 08:08:24 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 09:08:22 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: [PATCH v4] uart: fix race between uart_put_char() and
- uart_shutdown()
-Message-ID: <20180712150822.GC13192@cisco.cisco.com>
-References: <20180706212220.GC3583@cisco.lan>
- <20180711160744.32074-1-tycho@tycho.ws>
- <20180712150438.GF22502@kroah.com>
+        Thu, 12 Jul 2018 11:20:02 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6CEwhOT134273;
+        Thu, 12 Jul 2018 15:10:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2018-07-02;
+ bh=xTdcDNapBbWvyWlNIIpCyH8/uVEfqy2vR2XM18aLlGA=;
+ b=CV4StoqlcIY+F2cCzL+HTUlpVyN+lhSZCwcbWJ3THgVZB+EqHCK5eVH8XKrMdHuMtG29
+ oGgbDbhj8tV1T2eL3+o4uaVAxpirJlneCaNs4d1gmj8F3Kenw/0Dr17OSBDgn/JgU3IH
+ 5g+RNb/vxwANZo8NSFzKpFmTKchGizHKkAAiXRplV1lUC8lHDc5cculr9bR5cyFW7tvA
+ IfEevxRRULGiDJ4F/VnggooFR5yeONyyp5WCnui9m8x8p2k1211RQExr7wyjGGXAI+jm
+ IZaEyPzZ12AFMpatNyXk8q3Nk2ih3yu/K79v7GoNxpNp6sFAj/DMl7vUitBCjgMvSGW7 wA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2k2p7e4441-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 15:10:02 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6CF9veb018316
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 15:09:58 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6CF9vcx005529;
+        Thu, 12 Jul 2018 15:09:57 GMT
+Received: from mail-oi0-f44.google.com (/209.85.218.44)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Jul 2018 08:09:57 -0700
+Received: by mail-oi0-f44.google.com with SMTP id l10-v6so9713075oii.0;
+        Thu, 12 Jul 2018 08:09:56 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFCZB9iSoUssgLG6/vMrzXp4kNaCSf+R75+by/oRatuOpP2GRZK
+        5MxPT+ptuy5/hlXqdb2/aOQIyHELafFWQWewkKY=
+X-Google-Smtp-Source: AAOMgpdRAVtsbrqIrewCgko0bxq+LwgguCfNcJnunY4XbulXUwSnVGT2iJ8mmXmT1LDnqsbnrLRUcVX/1rP6Aoahpx4=
+X-Received: by 2002:aca:e089:: with SMTP id x131-v6mr2556543oig.221.1531408196500;
+ Thu, 12 Jul 2018 08:09:56 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180712150438.GF22502@kroah.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20180710235044.vjlRV%akpm@linux-foundation.org>
+ <87lgai9bt5.fsf@concordia.ellerman.id.au> <20180711133737.GA29573@techadventures.net>
+ <CAGM2reYsSi5kDGtnTQASnp1v49T8Y+9o_pNxmSq-+m68QhF2Tg@mail.gmail.com>
+ <CAOXBz7ixEK85S-029XrM4+g4fxtSY6_tke0gcQ-hOXFCb7wcZg@mail.gmail.com>
+ <87efg981rd.fsf@concordia.ellerman.id.au> <20180712095002.GA5342@techadventures.net>
+In-Reply-To: <20180712095002.GA5342@techadventures.net>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Thu, 12 Jul 2018 11:09:20 -0400
+X-Gmail-Original-Message-ID: <CAGM2reb=KeLH7KKUP+7-u27nJxvTcBskhtS2cDH8SwiiEZ1jNQ@mail.gmail.com>
+Message-ID: <CAGM2reb=KeLH7KKUP+7-u27nJxvTcBskhtS2cDH8SwiiEZ1jNQ@mail.gmail.com>
+Subject: Re: Boot failures with "mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER"
+ on powerpc (was Re: mmotm 2018-07-10-16-50 uploaded)
+To:     osalvador@techadventures.net
+Cc:     mpe@ellerman.id.au, osalvador.vilardaga@gmail.com,
+        Andrew Morton <akpm@linux-foundation.org>, broonie@kernel.org,
+        mhocko@suse.cz, Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-next@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>, mm-commits@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, bhe@redhat.com,
+        aneesh.kumar@linux.ibm.com, khandual@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=708
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807120158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 05:04:38PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jul 11, 2018 at 10:07:44AM -0600, Tycho Andersen wrote:
-> > +	if (uport)
-> > +		spin_lock_irqsave(&uport->lock, flags);
-> 
-> That's the same thing as just calling uart_port_lock(), why aren't you
-> doing that?
+On Thu, Jul 12, 2018 at 5:50 AM Oscar Salvador
+<osalvador@techadventures.net> wrote:
+>
+> > > I just roughly check, but if I checked the right place,
+> > > vmemmap_populated() checks for the section to contain the flags we are
+> > > setting in sparse_init_one_section().
+> >
+> > Yes.
+> >
+> > > But with this patch, we populate first everything, and then we call
+> > > sparse_init_one_section() in sparse_init().
+> > > As I said I could be mistaken because I just checked the surface.
 
-Because the compiler can't seem to "see" through the macros/ref calls,
-and I get the warning I mentioned here if I use them:
+Yes, this is right, sparse_init_one_section() is needed after every
+populate call on ppc64. I am adding this to my sparse_init re-write,
+and it actually simplifies code, as it avoids one extra loop, and
+makes ppc64 to work.
 
-https://lkml.org/lkml/2018/7/6/840
-
-Tycho
+Pavel
