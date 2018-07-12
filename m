@@ -2,95 +2,127 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C88DC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06C9C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1CB720C0C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:11:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1CB720C0C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BCD121476
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 10:12:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="DxDnMz9l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BCD121476
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbeGLKUM (ORCPT
+        id S1726808AbeGLKVF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 06:20:12 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16143 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbeGLKUL (ORCPT
+        Thu, 12 Jul 2018 06:21:05 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:64331 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbeGLKVF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 06:20:11 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b4729430000>; Thu, 12 Jul 2018 03:11:15 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 12 Jul 2018 03:11:18 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 12 Jul 2018 03:11:18 -0700
-Received: from [10.21.132.122] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 12 Jul
- 2018 10:11:16 +0000
-Subject: Re: [PATCH v5 1/4] clk: tegra: Fix includes required by
- fence_udelay()
-To:     Aapo Vienamo <avienamo@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>
-CC:     Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <1531319965-19689-1-git-send-email-avienamo@nvidia.com>
- <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <5332f15c-65ae-5a70-577f-6125715233e6@nvidia.com>
-Date:   Thu, 12 Jul 2018 11:11:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 12 Jul 2018 06:21:05 -0400
+Received: from mail-ua0-f177.google.com (mail-ua0-f177.google.com [209.85.217.177]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w6CABw6Z031926;
+        Thu, 12 Jul 2018 19:11:59 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w6CABw6Z031926
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1531390319;
+        bh=k/ssaWK2LvvKS+vEBz9k1+ITXg9tIowGqSGWU+aOESE=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=DxDnMz9l0PGm12/u7WkL+Hs2xyTWOBt+R4h42X6pdfRuEtuXXnbjDmMkrCYtsWd3h
+         300fI0uGaKf1TqL7m5n6RH2pj1Upy7pbssv7vJ4Q2/rqV8FXX7qugWRh6u1Ue7FIZg
+         WywFtvhkABDfXInhXkqkdTMPkSnb49jT6vZtrXPbr8KA/SQ5TNe/otcgl1/23QRU0C
+         TU+yA8XK4eG4WP0MIBt/eXjrZCjc6W09bIlyvQAKQOJxpm7uQIDEuYdXFXkyIs4o03
+         PoK5N66EBHfVXIVGT1gmwDujuX3rio6VZHyB8n5xNbFo0bN/f0h2JmZbB+uJJd9PXA
+         waV9Opsis48xw==
+X-Nifty-SrcIP: [209.85.217.177]
+Received: by mail-ua0-f177.google.com with SMTP id k8-v6so2668902uaq.12;
+        Thu, 12 Jul 2018 03:11:59 -0700 (PDT)
+X-Gm-Message-State: AOUpUlH+zJZd80Z2i+txwIYnJA3tZpLuuawHwow9ONGZ7FM1JTgq+NRe
+        JAHpMTpAfmcLpOUJSZ38qjvHZ/lXvD3gbVoAEYk=
+X-Google-Smtp-Source: AAOMgpd5sd2i0V4TBRfRBP0uNDbfxwtBMpoTfjr6XxmZUXPsJQEj9pAZqrjI/TGj5+zDHGKdG89dSLsKu6cT1IbDTv4=
+X-Received: by 2002:ab0:e3:: with SMTP id 90-v6mr874227uaj.52.1531390318288;
+ Thu, 12 Jul 2018 03:11:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1531319965-19689-2-git-send-email-avienamo@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab0:3308:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 03:11:17
+ -0700 (PDT)
+In-Reply-To: <20180710004602.21599-8-labbott@redhat.com>
+References: <20180710004602.21599-1-labbott@redhat.com> <20180710004602.21599-8-labbott@redhat.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 12 Jul 2018 19:11:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATjYXn8z-FbVLO-ZPGQUQSiX0YD_hCOPhcWSdoc2T5JhA@mail.gmail.com>
+Message-ID: <CAK7LNATjYXn8z-FbVLO-ZPGQUQSiX0YD_hCOPhcWSdoc2T5JhA@mail.gmail.com>
+Subject: Re: [PATCHv2 7/7] Kbuild: Use HOST*FLAGS options from the command line
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Josh Poimboeuf <jpoimboe@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Robin Jarry <robin.jarry@6wind.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 11/07/18 15:39, Aapo Vienamo wrote:
-> Add the missing linux/delay.h include statement for udelay() used by
-> fence_udelay() macro.
-> 
-> Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+2018-07-10 9:46 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+>
+> Now that we have the rename in place, reuse the HOST*FLAGS options as
+> something that can be set from the command line and included with the
+> rest of the flags.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
 > ---
->  drivers/clk/tegra/clk.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index e1f8846..e3b9c22 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -19,6 +19,7 @@
->  
->  #include <linux/clk-provider.h>
->  #include <linux/clkdev.h>
-> +#include <linux/delay.h>
->  
->  /**
->   * struct tegra_clk_sync_source - external clock source from codec
+> v2: Use the correct name for HOSTLDLIBS, update documentation.
+> ---
+>  Documentation/kbuild/kbuild.txt | 16 ++++++++++++++++
+>  Makefile                        |  9 +++++----
+>  2 files changed, 21 insertions(+), 4 deletions(-)
+>
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Cheers
-Jon
+
+
+> +HOSTLDFLAGS
+> +--------------------------------------------------
+> +Additional flags to be passed to $(HOSTLD) when building host programs.
+
+
+
+Strictly speaking, $(CC) or $(CXX) is used
+when linking host programs.
+
+
+See this.
+https://github.com/torvalds/linux/blob/v4.17/scripts/Makefile.host#L95
+https://github.com/torvalds/linux/blob/v4.17/scripts/Makefile.host#L112
+
+
+In fact, there is no definition of 'HOSTLD' in the top Makefile.
+
+
+I will reword it to:
+
+
+HOSTLDFLAGS
+--------------------------------------------------
+Additional flags to be passed when linking host programs.
+
+
+
+
+I will also move this hunk up
+after LDFLAGS_MODULE.
+
+
+
+
 
 -- 
-nvpublic
+Best Regards
+Masahiro Yamada
