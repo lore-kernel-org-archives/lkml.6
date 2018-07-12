@@ -2,144 +2,110 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A39C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B23C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71AD020BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:15:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71AD020BF2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id CED7720BEC
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:16:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="hrpVGKGw";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dU+BAPnJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CED7720BEC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388005AbeGLAWI (ORCPT
+        id S2388227AbeGLAXY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 20:22:08 -0400
-Received: from gate.crashing.org ([63.228.1.57]:59062 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726671AbeGLAWI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 20:22:08 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w6C0E9hN011140;
-        Wed, 11 Jul 2018 19:14:11 -0500
-Message-ID: <2f479f747daa5cee15d250e3a6a4853e3dc1c4a0.camel@kernel.crashing.org>
-Subject: Re: [RFC PATCH v2 1/4] dt-bindings: misc: Add bindings for misc.
- BMC control fields
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Rob Herring <robh@kernel.org>, Andrew Jeffery <andrew@aj.id.au>
-Cc:     linux-kernel@vger.kernel.org, mark.rutland@arm.com, joel@jms.id.au,
-        gregkh@linuxfoundation.org, Eugene.Cho@dell.com,
-        a.amelkin@yadro.com, stewart@linux.ibm.com,
-        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Date:   Thu, 12 Jul 2018 10:14:09 +1000
-In-Reply-To: <20180711200450.GB17291@rob-hp-laptop>
-References: <20180711053122.30773-1-andrew@aj.id.au>
-         <20180711053122.30773-2-andrew@aj.id.au>
-         <20180711200450.GB17291@rob-hp-laptop>
+        Wed, 11 Jul 2018 20:23:24 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:34223 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388031AbeGLAXY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 11 Jul 2018 20:23:24 -0400
+Received: by mail-yb0-f193.google.com with SMTP id e9-v6so10758095ybq.1
+        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 17:16:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=+Hu4uhrieb8C/WIA6FhyXu+PkLTLr9Ze24AHZytFUSo=;
+        b=hrpVGKGwRwV1VJhp6GpgXOFeyp29tQEWFqTXdBIEaPO5EEuYzkOy8T77w1HWizzba+
+         zLjUUYe2VQgh++yE9nhW5Ct8Nw91NawU4EUCfwv8ds9aaOGn7rzyhJYoV5oGFrKF4IDS
+         TGc76aRgAiTxHTmRGenEcydRhm2Ow68iJbhy7nTiaCBCrwhCL4OHYMUDrs0T2zmv1cop
+         teMK2kICWTYaLH04a7TJf5QHh6owxhaHVPJhxY8smGFSdL30KszLqbVvk0LgBDOz2Yc3
+         fvD9PJc8vitZtQkgBXnc+wmBM4HJ64PWOgYgGtVJJEGtaPvHG5tbbEPnpmkSLo0fgpzl
+         eXIQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=+Hu4uhrieb8C/WIA6FhyXu+PkLTLr9Ze24AHZytFUSo=;
+        b=dU+BAPnJP3jloPa2819VFWPDc6+xOc284akctnuxjf4zn0vpMdnmYwtymroRdDoLhX
+         lR2gfY8jJf9IdmFe0PMl2uBvdwQPJJ2/7pDb5NWXpXFTeoxFNpdoH3tidqggKhZqeXqm
+         0yk3drI4jU5XFdj+HAqFmeBR4YCOhrbS6muwQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=+Hu4uhrieb8C/WIA6FhyXu+PkLTLr9Ze24AHZytFUSo=;
+        b=jyc2AuWZcqk8C4khYalP+smwvu8DMUd2+uTSF05RdOaOKO59t/7J40naHmaYRBukmY
+         /qb8+FBPWOZOu+SP30bgoqkwMkmROYM3UkPo2YMmBLgMbg0NTnXb0yXPttILr7wzDeGo
+         yPFrC4hVmb7njJ/wG0xG6Amp6nypnqbPFYE9SPYZ67osRCPV9NqHejojqdRpdb9SrZnp
+         +bGzJKVJ6k7dpjFOJlq9HDaSQqh9bo6boazZqSqAH583GHLlMAYofQ/W/crYSm49/bPC
+         VRSr9eK9cR4OHWwHauHuB9Gyc/wPbNsSWZechQe+41bVK1br7qeDjVmJw+aENKTQw7fv
+         VcRQ==
+X-Gm-Message-State: AOUpUlEyXo4L8TA7Z4vkYe8BtWKnPbzqCPTtxraFw6HbGFg2NghoG+KD
+        5uagpwTisT1nCgqfiOU5t12fLfJ7q18t9wlUjkB9RA==
+X-Google-Smtp-Source: AAOMgpfIYUG+yuXEMqwilC64UcceZFlbbb/spXcdfcUUCrFz/UEqWy22GEuoLxqUcjQbW6PH9MInCqV0dDbizvc1kG8=
+X-Received: by 2002:a25:afce:: with SMTP id d14-v6mr3389ybj.343.1531354594785;
+ Wed, 11 Jul 2018 17:16:34 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 17:16:34
+ -0700 (PDT)
+In-Reply-To: <1530771852-21998-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1530771852-21998-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 11 Jul 2018 17:16:34 -0700
+X-Google-Sender-Auth: Mu-TviqaTWRyHCVeV5QwU_3fFOc
+Message-ID: <CAGXu5jK3jgJ5qvT4jPKgvO_Jf+edeLRYKrJ+67r7zrVszB2_xw@mail.gmail.com>
+Subject: Re: [PATCH] gcc-plugins: split out Kconfig entries to scripts/gcc-plugins/Kconfig
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Emese Revfy <re.emese@gmail.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Josef Bacik <jbacik@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.3 (3.28.3-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-07-11 at 14:04 -0600, Rob Herring wrote:
-> On Wed, Jul 11, 2018 at 03:01:19PM +0930, Andrew Jeffery wrote:
-> > Baseboard Management Controllers (BMCs) are embedded SoCs that exist to
-> > provide remote management of (primarily) server platforms. BMCs are
-> > often tightly coupled to the platform in terms of behaviour and provide
-> > many hardware features integral to booting and running the host system.
-> > 
-> > Some of these hardware features are simple, for example scratch
-> > registers provided by the BMC that are exposed to both the host and the
-> > BMC. In other cases there's a single bit switch to enable or disable
-> > some of the provided functionality.
-> > 
-> > The documentation defines bindings for fields in registers that do not
-> > integrate well into other driver models yet must be described to allow
-> > the BMC kernel to assume control of these features.
-> 
-> So we'll get a new binding when that happens? That will break 
-> compatibility.
+On Wed, Jul 4, 2018 at 11:24 PM, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+> Collect relevant code into the scripts/gcc-plugins directory.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>
+>  arch/Kconfig                | 146 +-------------------------------------------
+>  scripts/gcc-plugins/Kconfig | 141 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 143 insertions(+), 144 deletions(-)
+>  create mode 100644 scripts/gcc-plugins/Kconfig
 
-What do you mean ? The binding provides a way to describe arbitrary
-register fields and expose them to userspace. I'm not sure what you
-mean by backward compatibility.
+I'd been pondering this for a while too. Thanks for sending the patch,
+I'll include it in my gcc-plugins tree.
 
-There is simply no way these things can be "abstracted" via some kind
-of nice layered Linux subsystem of some sort. It's just a whole bunch
-of knobs that control various things integral to the operation of the
-host system. Andrew can provide a more precise list if you need to.
+-Kees
 
-> 
-> > 
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> > ---
-> > 
-> > Since RFC v1:
-> > 
-> > * Add a commit message
-> > * Minor changes to documented labels
-> > 
-> >  .../bindings/misc/bmc-misc-ctrl.txt           | 252 ++++++++++++++++++
-> >  MAINTAINERS                                   |   6 +
-> >  2 files changed, 258 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/misc/bmc-misc-ctrl.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/misc/bmc-misc-ctrl.txt b/Documentation/devicetree/bindings/misc/bmc-misc-ctrl.txt
-> > new file mode 100644
-> > index 000000000000..2c869fcc7ef2
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/misc/bmc-misc-ctrl.txt
-> > @@ -0,0 +1,252 @@
-> > +BMC Miscellaneous Control Interfaces
-> > +====================================
-> > +
-> > +Baseboard Management Controllers (BMCs) often have an array of hardware
-> > +features that need to be described but are awkward to sensibly expose.
-> > +
-> > +This bindings document provides a generic mechanism for describing such
-> > +features, covering read-only (RO), read-modify-write (RMW) and
-> > +write-1-set/write-1-clear (W1SC) semantics.
-> 
-> If we wanted a generic mechanism for single register bits/fields in DT, 
-> we'd have one already. A node per register bit doesn't scale.
-
-Register *field*. I think you are looking at this from the wrong angle.
-This isn't about exposing 236821643 SoC registers in an embedded
-product. This is about exposing a dozen or so tunables that don't
-control the SoC from the perspective of the OS running on it, but
-controls how various features of the SoC are exposed to the *host*
-system. Examples could be which of the SoC internal PCIe devices
-exposed to the host is enabled (the SoC can appear as a GPU, a BMC misc
-device or both or neither, it can have a DMA controller or not,
-etc...). Other examples are scratch registers that need to be set to
-system specific values by userspace, which the BIOS of the host will
-read to determine some configuration information. That sort of thing.
-
-There isn't that many, scalability isn't a problem. Both the list of
-registers of interest and what needs to go in them is very much
-system/vendor specific. This is a way for the kernel to act as a
-"conduit" that doesn't need to know the specifics of a given
-system/vendor/BIOS combination.
-
-Your response smells like yet another case of trying to apply one of
-those general "blanket" rules to something where it's completely
-unapplicable.
-
-> Maybe this should be modelled using GPIO binding? There's a line there 
-> too as whether the signals are "general purpose" or not.
-
-GPIOs are binary values right ? These are arbitrary fields. We want
-arbitrary fields. This is really needed Rob, otherwise we'll NEVER have
-BMC support upstream. 
-
-The other option will be a dozen random ad-hoc char-devs that would
-have to be updated every time a new bit needs to be added or changed.
-
-Ben.
+-- 
+Kees Cook
+Pixel Security
