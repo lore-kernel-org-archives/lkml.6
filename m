@@ -2,155 +2,171 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41489C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F300C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06FB520BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:47:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06FB520BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4603420BF2
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 13:48:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BS2NPEll"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4603420BF2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732510AbeGLN5D (ORCPT
+        id S1732354AbeGLN6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 09:57:03 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41100 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732247AbeGLN5D (ORCPT
+        Thu, 12 Jul 2018 09:58:23 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:44088 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeGLN6X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 09:57:03 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CDiO6w110323
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 09:47:24 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k65jwg8ew-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 09:47:23 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <brueckner@linux.ibm.com>;
-        Thu, 12 Jul 2018 14:47:22 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 12 Jul 2018 14:47:19 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6CDlJCK24838314
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Jul 2018 13:47:19 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4C55552052;
-        Thu, 12 Jul 2018 16:47:40 +0100 (BST)
-Received: from lynx.boeblingen.de.ibm.com (unknown [9.145.10.223])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 30E8852050;
-        Thu, 12 Jul 2018 16:47:40 +0100 (BST)
-Received: from brueckh by lynx.boeblingen.de.ibm.com with local (Exim 4.90_1)
-        (envelope-from <brueckner@linux.ibm.com>)
-        id 1fdbwD-00027G-Nj; Thu, 12 Jul 2018 15:47:17 +0200
-Date:   Thu, 12 Jul 2018 15:47:17 +0200
-From:   Hendrik Brueckner <brueckner@linux.ibm.com>
-To:     Adrian Reber <adrian@lisas.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        alice@linux.ibm.com
-Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
-References: <20180712130733.11510-1-adrian@lisas.de>
+        Thu, 12 Jul 2018 09:58:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=qkdkjD1dB+iq+f1dholXWLqLCoRsNFvyBojes/cCNpg=; b=BS2NPEllA9BcVnYce3X8IMcYG
+        WDoIbzPNhCuxQ7XiqfR0Fvt9ONdd/uJ6awbau/OLTj7lFFh9XnG1hQ1s8zxrSr3/PLrbQz6i1iKba
+        JjRdm615amnOYypEioNQoFKZsvMUfqFDEZn+PHEH5nDrSCYI0LWHf3MtZ48TuEYn6aXwkOSKnbh6h
+        rgCOEUXxLwZHTOED3I6j+3vLWeQHVHK4KW9eVQs0ckFL/Jl1YMDa9DtmGjNqddNqmIhuV8bLOmP6o
+        UrnjKlm6DhHs9NzQFj8nQctbK/4wU/1bHoFUUzLKDlnbg69C/f3dO199YaqbBeBb7gwmS4N3AIldg
+        DPmy7j9+Q==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fdbxI-0003Qy-P1; Thu, 12 Jul 2018 13:48:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 301CC20291063; Thu, 12 Jul 2018 15:48:21 +0200 (CEST)
+Date:   Thu, 12 Jul 2018 15:48:21 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Kernel development list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+Message-ID: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
+References: <Pine.LNX.4.44L0.1807091519180.2462-100000@iolanthe.rowland.org>
+ <20180710093821.GA5414@andrea>
+ <20180711094310.GA13963@arm.com>
+ <20180711123421.GA9673@andrea>
+ <20180712074040.GA4920@worktop.programming.kicks-ass.net>
+ <20180712115249.GA6201@andrea>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180712130733.11510-1-adrian@lisas.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18071213-0008-0000-0000-000002526603
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071213-0009-0000-0000-000021B89F8C
-Message-Id: <20180712134717.GB4676@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807120145
+In-Reply-To: <20180712115249.GA6201@andrea>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 03:07:33PM +0200, Adrian Reber wrote:
-> The CHECKPOINT_RESTORE configuration option was introduced in 2012 and
-> combined with EXPERT. CHECKPOINT_RESTORE is already enabled in many
-> distribution kernels and also part of the defconfigs of various
-> architectures.
-> 
-> To make it easier for distributions to enable CHECKPOINT_RESTORE this
-> removes EXPERT and moves the configuration option out of the EXPERT
-> block.
-> 
-> Signed-off-by: Adrian Reber <adrian@lisas.de>
-> Cc: Oleg Nesterov <oleg@redhat.com>
-> Cc: Pavel Emelyanov <xemul@virtuozzo.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Eric W. Biederman <ebiederm@xmission.com>
-> Cc: Andrei Vagin <avagin@virtuozzo.com>
-> Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-> ---
->  init/Kconfig | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 041f3a022122..9c529c763326 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -932,6 +932,18 @@ config NET_NS
-> 
->  endif # NAMESPACES
-> 
-> +config CHECKPOINT_RESTORE
-> +	bool "Checkpoint/restore support"
-> +	select PROC_CHILDREN
-> +	default n
-> +	help
-> +	  Enables additional kernel features in a sake of checkpoint/restore.
-> +	  In particular it adds auxiliary prctl codes to setup process text,
-> +	  data and heap segment sizes, and a few additional /proc filesystem
-> +	  entries.
-> +
-> +	  If unsure, say N here.
-> +
->  config SCHED_AUTOGROUP
->  	bool "Automatic process group scheduling"
->  	select CGROUPS
-> @@ -1348,18 +1360,6 @@ config MEMBARRIER
-> 
->  	  If unsure, say Y.
-> 
-> -config CHECKPOINT_RESTORE
-> -	bool "Checkpoint/restore support" if EXPERT
-> -	select PROC_CHILDREN
-> -	default n
-> -	help
-> -	  Enables additional kernel features in a sake of checkpoint/restore.
-> -	  In particular it adds auxiliary prctl codes to setup process text,
-> -	  data and heap segment sizes, and a few additional /proc filesystem
-> -	  entries.
-> -
-> -	  If unsure, say N here.
-> -
->  config KALLSYMS
->  	 bool "Load all symbols for debugging/ksymoops" if EXPERT
->  	 default y
+On Thu, Jul 12, 2018 at 01:52:49PM +0200, Andrea Parri wrote:
+> On Thu, Jul 12, 2018 at 09:40:40AM +0200, Peter Zijlstra wrote:
+> > On Wed, Jul 11, 2018 at 02:34:21PM +0200, Andrea Parri wrote:
 
-Thanks!
+> > >   2) Resolve the above mentioned controversy (the inconsistency between
+> > >      - locking operations and atomic RMWs on one side, and their actual
+> > >      implementation in generic code on the other), thus enabling the use
+> > >      of LKMM _and_ its tools for the analysis/reviewing of the latter.
+> > 
+> > This is a good point; so lets see if there is something we can do to
+> > strengthen the model so it all works again.
+> > 
+> > And I think if we raise atomic*_acquire() to require TSO (but ideally
+> > raise it to RCsc) we're there.
+> > 
 
-Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+> You mean: "when paired with a po-earlier release to the same memory
+> location", right?  I am afraid that neither arm64 nor riscv current
+> implementations would ensure "(r1 == 1 && r2 == 0) forbidden" if we
+> removed the po-earlier spin_unlock()...
 
+Yes indeed. More on this below.
+
+> But again, these are stuble patterns, and my guess is that several/
+> most kernel developers really won't care about such guarantees (and
+> if some will do, they'll have the tools to figure out what they can
+> actually rely on ...)
+
+Yes it is subtle, yes most people won't care, however the problem is
+that it is subtly the wrong way around. People expect causality, this is
+a human failing perhaps, but that's how it is.
+
+And I strongly feel we should have our locks be such that they don't
+subtly break things.
+
+Take for instance the pattern where RCU relies on RCsc locks, this is an
+entirely simple and straight forward use of locks, yet completely fails
+on this subtle point.
+
+And people will not even try and use complicated tools for apparently
+simple things. They'll say, oh of course this simple thing will work
+right.
+
+I'm still hoping we can convince the PowerPC people that they're wrong,
+and get rid of this wart and just call all locks RCsc.
+
+> OTOH (as I pointed out earlier) the strengthening we're configuring
+> will prevent some arch. (riscv being just the example of today!) to
+> go "full RCpc", and this will inevitably "complicate" both the LKMM
+> and the reviewing process of related changes (atomics, locking, ...;
+> c.f., this debate), apparently, just because you  ;-) want to "care"
+> about these guarantees.
+
+It's not just me btw, Linus also cares about these matters. Widely used
+primitives such as spinlocks, should not have subtle and
+counter-intuitive behaviour such as RCpc.
+
+
+
+Anyway, back to the problem of being able to use the memory model to
+describe locks. This is I think a useful property.
+
+My earlier reasoning was that:
+
+  - smp_store_release() + smp_load_acquire() := RCpc
+
+  - we use smp_store_release() as unlock()
+
+Therefore, if we want unlock+lock to imply at least TSO (ideally
+smp_mb()) we need lock to make up for whatever unlock lacks.
+
+Hence my proposal to strenghten rmw-acquire, because that is the basic
+primitive used to implement lock.
+
+But as you (and Will) point out, we don't so much care about rmw-acquire
+semantics as much as that we care about unlock+lock behaviour. Another
+way to look at this is to define:
+
+  smp-store-release + rmw-acquire := TSO (ideally smp_mb)
+
+But then we also have to look at:
+
+  rmw-release + smp-load-acquire
+  rmw-release + rmw-acquire
+
+for completeness sake, and I would suggest they result in (at least) the
+same (TSO) ordering as the one we really care about.
+
+One alternative is to no longer use smp_store_release() for unlock(),
+and say define atomic_set_release() to be in the rmw-release class
+instead of being a simple smp_store_release().
+
+Another, and I like this proposal least, is to introduce a new barrier
+to make this all work.
