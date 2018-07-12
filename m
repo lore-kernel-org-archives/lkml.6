@@ -2,148 +2,80 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C51ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:53:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A8CECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:53:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79A112124D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:53:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JKrLjoXI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79A112124D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 21CBB2124D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:53:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21CBB2124D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732457AbeGLUEP (ORCPT
+        id S1732483AbeGLUEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 16:04:15 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:40548 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732204AbeGLUEP (ORCPT
+        Thu, 12 Jul 2018 16:04:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54274 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732204AbeGLUEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:04:15 -0400
-Received: by mail-oi0-f66.google.com with SMTP id w126-v6so58027920oie.7;
-        Thu, 12 Jul 2018 12:53:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=rFH8P876Vl2E94mklJe34lGBbiVYKqYfk0DpwQ0FUK0=;
-        b=JKrLjoXI0tbP+SQX/D9NcBYGdkyqVOxyIomy9yvtcSbVyeNbr+bAG9RLoATno8rkfS
-         YV/9+lo6wG9AMjI296zN/uy9z8s3GL/jfczF6YclDcpArgOQ3tqVHs8bHygzVhq+VQDy
-         bj8yaDOwwIYVwGhpKiIywyTEwfznCC+vtfeUz96F9Y/PeSrt2jtVu6UZF12j9VO+Nync
-         ShYgDa/vORnhaVEHtHED2bBISwpfb6ReJBYtD6Q0zW/8vlv2WixLb0/o9v4KgKs44FoD
-         yXkWbAyjJJIIyvy+iwI19qBNpx4P5MpYdNJ4R/Cok7q1YhfUrt7Pr82fbsyZKvz2Whbe
-         Kj+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=rFH8P876Vl2E94mklJe34lGBbiVYKqYfk0DpwQ0FUK0=;
-        b=AMMZo0TtgrKrjDv2I8xKD/bXUS/p0MFM2ULcvaEQyrb69ubBqMqIo93ffk+1EI8sqC
-         3TzCpocYnNdrBlnpt7XxY7bpmH1vaCBQcOYuREXO0trgj4laLewBtshiNsESIl+N/+PU
-         OFNmas4wk485+3gvzYf97KZdonu6nqWfZkSjcFh4u2RRKA8JEYWztYQZu/BplUlLjv69
-         gu4XkNRqX9f61ykI8ljCm2J9Vm7C39FRhm+pZEgdTB4kLqfZnL/upMPpkZGmCPnTF4Z6
-         yRH+1RncSdTnsVgloYRZP2dF2HBQW/uACWXxSUV7b4jHl4MgbjS3jX+lNGJblVObLUUa
-         IiZg==
-X-Gm-Message-State: AOUpUlFSx9dpPPYNrq1BOpoe2TUMknCt6NQfWqIGbTOWTiZeWmW/0HwZ
-        MqA630bGc06/NY6IvQtl88CkCX7BktOoDJSMlAY=
-X-Google-Smtp-Source: AAOMgpcf0DTWbJP4wZXMlpjHY0oG8Pp/hBgvCt3IpuoFgZDSbMeHt8TebBd/HA1g6p4+OTuy4nj6ieuBiLHnEHlZrRM=
-X-Received: by 2002:aca:4784:: with SMTP id u126-v6mr4047569oia.229.1531425192244;
- Thu, 12 Jul 2018 12:53:12 -0700 (PDT)
+        Thu, 12 Jul 2018 16:04:22 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DA9CCB14;
+        Thu, 12 Jul 2018 19:53:19 +0000 (UTC)
+Date:   Thu, 12 Jul 2018 21:53:17 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Felix Siegel <felix.siegel@posteo.de>
+Cc:     devel@driverdev.osuosl.org, John Joseph <jnjoseph@google.com>,
+        linux-kernel@vger.kernel.org, Rob Springer <rspringer@google.com>
+Subject: Re: [PATCH 4/4] staging: gasket: Use __func__ instead of hardcoded
+ string - Style
+Message-ID: <20180712195317.GA28761@kroah.com>
+References: <1531423694-22478-1-git-send-email-felix.siegel@posteo.de>
+ <1531423694-22478-4-git-send-email-felix.siegel@posteo.de>
 MIME-Version: 1.0
-Received: by 2002:a9d:5e0c:0:0:0:0:0 with HTTP; Thu, 12 Jul 2018 12:53:11
- -0700 (PDT)
-In-Reply-To: <20180712145849.GB15265@redhat.com>
-References: <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
- <20180701210935.GA14404@redhat.com> <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
- <20180702180156.GA31400@redhat.com> <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
- <20180703163645.GA23144@redhat.com> <20180703172543.GC23144@redhat.com>
- <f5a39a88-c21e-4606-a04d-11b5f32016b8@linux.ibm.com> <20180710152527.GA3616@redhat.com>
- <6e3ff60b-267a-d49d-4ebb-c4264f9c034b@linux.ibm.com> <20180712145849.GB15265@redhat.com>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Thu, 12 Jul 2018 12:53:11 -0700
-Message-ID: <CAPhsuW6kCtn-tWSj5eKf+kGt8ZEjVwJKLxj9C6zdaqMZByRytg@mail.gmail.com>
-Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
- count (semaphore)
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        srikar@linux.vnet.ibm.com, rostedt@goodmis.org,
-        mhiramat@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        mingo@redhat.com, acme@kernel.org,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, open list <linux-kernel@vger.kernel.org>,
-        corbet@lwn.net, linux-doc@vger.kernel.org,
-        ananth@linux.vnet.ibm.com, alexis.berlemont@gmail.com,
-        naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1531423694-22478-4-git-send-email-felix.siegel@posteo.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I guess I got to the party late. I found this thread after I started developing
-the same feature...
+On Thu, Jul 12, 2018 at 09:27:15PM +0200, Felix Siegel wrote:
+> Changed logging statements to use %s and __func__ instead of hard coding
+> the function name in a string.
+> 
+> Signed-off-by: Felix Siegel <felix.siegel@posteo.de>
+> ---
+>  drivers/staging/gasket/apex_driver.c       | 15 ++++++++-------
+>  drivers/staging/gasket/gasket_core.c       | 11 ++++++-----
+>  drivers/staging/gasket/gasket_ioctl.c      |  4 ++--
+>  drivers/staging/gasket/gasket_page_table.c | 13 ++++++++-----
+>  4 files changed, 24 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/staging/gasket/apex_driver.c b/drivers/staging/gasket/apex_driver.c
+> index ffcc59d..735d43d 100644
+> --- a/drivers/staging/gasket/apex_driver.c
+> +++ b/drivers/staging/gasket/apex_driver.c
+> @@ -341,7 +341,7 @@ static int apex_add_dev_cb(struct gasket_dev *gasket_dev)
+>  	ulong page_table_ready, msix_table_ready;
+>  	int retries = 0;
+>  
+> -	gasket_log_error(gasket_dev, "apex_add_dev_cb.");
+> +	gasket_log_error(gasket_dev, "%s.", __func__);
 
-On Thu, Jul 12, 2018 at 7:58 AM, Oleg Nesterov <oleg@redhat.com> wrote:
-> On 07/11, Ravi Bangoria wrote:
->>
->> > However, I still think it would be better to avoid uprobe exporting and modifying
->> > set_swbp/set_orig_insn. May be we can simply kill both set_swbp() and set_orig_insn(),
->> > I'll re-check...
->>
->> Good that you bring this up. Actually, we can implement same logic
->> without exporting uprobe. We can do "uprobe = container_of(arch_uprobe)"
->> in uprobe_write_opcode(). No need to export struct uprobe outside,
->> no need to change set_swbp() / set_orig_insn() syntax. Just that we
->> need to pass arch_uprobe object to uprobe_write_opcode().
->
-> Yes, but you still need to modify set_swbp/set_orig_insn to pass the new
-> arg to uprobe_write_opcode(). OK, this is fine.
->
->
->> But, I wanted to discuss about making ref_ctr_offset a uprobe property
->> or a consumer property, before posting v6:
->>
->> If we make it a consumer property, the design becomes flexible for
->> user. User will have an option to either depend on kernel to handle
->> reference counter or he can create normal uprobe and manipulate
->> reference counter on his own. This will not require any changes to
->> existing tools. With this approach we need to increment / decrement
->> reference counter for each consumer. But, because of the fact that our
->> install_breakpoint() / remove_breakpoint() are not balanced, we have
->> to keep track of which reference counter have been updated in which
->> mm, for which uprobe and for which consumer. I.e. Maintain a list of
->> {uprobe, consumer, mm}.
+Function calls that do nothing but log "Look at this function I just
+entered/exited!" need to just be deleted entirely, as ftrace should be
+used instead.
 
-Is it possible to maintain balanced refcount by modifying callers of
-install_breakpoint() and remove_breakpoint()? I am actually working
-toward this direction. And I found some imbalance between
-     register_for_each_vma(uprobe, uc)
-and
-     register_for_each_vma(uprobe, NULL)
+Care to do that here, and then send a patch for the remaining messages
+that do need __func__?
 
-From reading the thread, I think there are other sources of imbalance.
-But I think it is still possible to fix it? Please let me know if this is not
-realistic...
+thanks,
 
-
-About race conditions, I think both install_breakpoint() and remove_breakpoint()
-are called with
-
-   down_write(&mm->mmap_sem);
-
-
-As long as we do the same when modifying the reference counter,
-it should be fine, right?
-
-Wait... sometimes we only down_read(). Is this by design?
-
-Thanks,
-Song
+greg k-h
