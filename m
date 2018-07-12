@@ -2,84 +2,154 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95051ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B41FAECDFAA
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:11:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A4722147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:07:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A4722147C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 5E11A20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 22:11:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E11A20883
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732492AbeGLWSo (ORCPT
+        id S1732597AbeGLWXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 18:18:44 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48705 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726820AbeGLWSo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 18:18:44 -0400
-Received: from carbon-x1.hos.anvin.org (c-24-5-245-234.hsd1.ca.comcast.net [24.5.245.234] (may be forged))
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w6CM6x7v4066665
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Thu, 12 Jul 2018 15:06:59 -0700
-Subject: Re: [PATCH] x86: vdso: Fix leaky vdso link with CC=clang
-To:     Alistair Strachan <astrachan@google.com>
-Cc:     linux-kernel@vger.kernel.org, luto@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        x86@kernel.org, kernel-team@android.com, joel@joelfernandes.com
-References: <20180712201032.156997-1-astrachan@google.com>
- <47d4b24e-8c60-fb3b-3377-62d20c5f3dd1@zytor.com>
- <CANDihLEz3_fZ4r4g=VcxWps5DWSjMJdbJZKZWsLFKVp_c7FscA@mail.gmail.com>
-From:   "H. Peter Anvin" <hpa@zytor.com>
-Message-ID: <1432bfde-41b4-e8aa-037b-fca41a149cb8@zytor.com>
-Date:   Thu, 12 Jul 2018 15:06:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 12 Jul 2018 18:23:14 -0400
+Received: from sauhun.de ([88.99.104.3]:60328 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732381AbeGLWXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 18:23:14 -0400
+Received: from localhost (p5486CFAA.dip0.t-ipconnect.de [84.134.207.170])
+        by pokefinder.org (Postfix) with ESMTPSA id DC8EE5748B6;
+        Fri, 13 Jul 2018 00:11:37 +0200 (CEST)
+Date:   Fri, 13 Jul 2018 00:11:37 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     linux-kernel@vger.kernel.org, Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Haavard Skinnemoen <hskinnemoen@gmail.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>, Crt Mori <cmo@melexis.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Antti Palosaari <crope@iki.fi>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-integrity@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v2 00/10] Split i2c_lock_adapter into i2c_lock_root and
+ i2c_lock_segment
+Message-ID: <20180712221137.i3osg6viuz4lwvnd@ninjato>
+References: <20180620051803.12206-1-peda@axentia.se>
 MIME-Version: 1.0
-In-Reply-To: <CANDihLEz3_fZ4r4g=VcxWps5DWSjMJdbJZKZWsLFKVp_c7FscA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qm72oajvd5nwh2m6"
+Content-Disposition: inline
+In-Reply-To: <20180620051803.12206-1-peda@axentia.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/18 13:37, Alistair Strachan wrote:
-> On Thu, Jul 12, 2018 at 1:25 PM H. Peter Anvin <hpa@zytor.com> wrote:
->> On 07/12/18 13:10, Alistair Strachan wrote:
->>> The vdso{32,64}.so can fail to link with CC=clang when clang tries to
->>> find a suitable GCC toolchain to link these libraries with.
->>>
->>> /usr/bin/ld: arch/x86/entry/vdso/vclock_gettime.o:
->>>   access beyond end of merged section (782)
->>>
->>> This happens because the host environment leaked into the cross
->>> compiler environment due to the way clang searches for suitable GCC
->>> toolchains.
->>>
->>
->> Is this another clang bug that you want a workaround for in the kernel?
-> 
-> Clang is a retargetable compiler (specified with --target=<something>)
-> and so it has a mechanism for searching for suitable binutils (from
-> another "GCC toolchain") to perform assembly and linkage. This
-> mechanism relies on both --target and --gcc-toolchain when
-> cross-compiling, otherwise it will fall back to searching /usr.
-> 
-> The --target and --gcc-toolchain flags are already specified correctly
-> in the top level Makefile, but the vdso Makefile rolls its own linker
-> flags and doesn't use KBUILD_CFLAGS. Therefore, these flags get
-> incorrectly dropped from the vdso $CC link command line, and an
-> inconsistency is created between the "GCC toolchain" used to generate
-> the objects for the vdso, and the linker used to link them.
-> 
 
-It sounds like there needs to be a more fundamental symbol than
-KBUILD_CFLAGS to contain these kinds of things.
+--qm72oajvd5nwh2m6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	-hpa
+On Wed, Jun 20, 2018 at 07:17:53AM +0200, Peter Rosin wrote:
+> Hi!
+>=20
+> With the introduction of mux-locked I2C muxes, the concept of
+> locking only a segment of the I2C adapter tree was added. At the
+> time, I did not want to cause a lot of extra churn, so left most
+> users of i2c_lock_adapter alone and apparently didn't think enough
+> about it; they simply continued to lock the whole adapter tree.
+> However, i2c_lock_adapter is in fact wrong for almost every caller
+> (there is naturally an exception) that is itself not a driver for
+> a root adapter. What normal drivers generally want is to only
+> lock the segment of the adapter tree that their device sits on.
+>=20
+> In fact, if a device sits behind a mux-locked I2C mux, and its
+> driver calls i2c_lock_adapter followed by an unlocked I2C transfer,
+> things will deadlock (since even a mux-locked I2C adapter will lock
+> its parent at some point). If the device is not sitting behind a
+> mux-locked I2C mux (i.e. either directly on the root adapter or
+> behind a (chain of) parent-locked I2C muxes) the root/segment
+> distinction is of no consequence; the root adapter is locked either
+> way.
+>=20
+> Mux-locked I2C muxes are probably not that common, and putting any
+> of the affected devices behind one is probably even rarer, which
+> is why we have not seen any deadlocks. At least not that I know
+> of...
+>=20
+> Since silently changing the semantics of i2c_lock_adapter might
+> be quite a surprise, especially for out-of-tree users, this series
+> instead removes the function and forces all users to explicitly
+> name I2C_LOCK_SEGMENT or I2C_LOCK_ROOT_ADAPTER in a call to
+> i2c_lock_bus, as suggested by Wolfram. Yes, users will be a teensy
+> bit more wordy, but open-coding I2C locking from random drivers
+> should be avoided, so it's perhaps a good thing if it doesn't look
+> too neat?
+>=20
+> I suggest that Wolfram takes this series through the I2C tree and
+> creates an immutable branch for the other subsystems. The series
+> is based on v4.18-r1.
+>=20
+> I do not have *any* of the affected devices, and have thus only
+> done build tests.
+>=20
+> Cheers,
+> Peter
+
+Applied to for-next, thanks! And thanks for all the acks. An immutable
+branch can be found here:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/precise-loc=
+king-names_immutable
+
+
+--qm72oajvd5nwh2m6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAltH0hkACgkQFA3kzBSg
+KbZDYg//UGVwnuphbOMKhmwxqf3WAAQyKPV28EuVpX8NIevvAgiCFBuCKmH1aZjk
+1z+4AYTgfiefQoJ1hZKoIRv0AGAmQ/jwNtJYhQdDfrVLx/BMUouL9JtZubWosatD
+gIcaSKx1fGsvxgYPTfBk5sEnLwlG52g5lWJnSXlMeA5wyKzBBS/zpa6eHGyBiMq6
+2zUHEJa09BydQDfZ3yXNY3KU3Y/tlaK2sexiM6y2tt4uzoqV4eExKO1jvVwVZhvK
+HSK3RSnWaTQzeim8OVmyWUj/AgnH6rTRvGw9/LijXmKmBdTvqAvqPJpIQRIaklFs
+bHyHMB/jcw2QJw5N/6g1myg/8unfkP7Iq0MkA7/K2SckdAdSYGbAudDqhWwOBqPK
+p7RWS9Si5LqR2d7hFgzXNZDKdmERzG24/JQOi5vw4IOdaXTZ5FBzPg1V0xHpf7uy
+dIzmaN4TeNdS0CFvr0c4gyex+7TD6ejC2CqgtTnX5AGiXqONRDlg/K+K66tMGZyB
+n6TzknvGLgWreNKZfnLjs/ZoT0J9joUj2v9DEhGUT4pJIN+j6MjKGwNKvrwfRpmb
+V2uL5mNSEJdc5+IpIngTuHLnjtQnbqbq3UlIkEc1iR/iuKZqrNHCUJib9fHErV81
+25/XJBC+188GB/Ifm1sMRf40z7GMmpOkpvs70pT8eZCqBtRvNvM=
+=3VaW
+-----END PGP SIGNATURE-----
+
+--qm72oajvd5nwh2m6--
