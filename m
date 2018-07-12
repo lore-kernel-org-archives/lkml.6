@@ -2,112 +2,113 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D6B3C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE24C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD9FF208E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D974B208E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 00:06:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="py21BhrT";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PuelOli0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD9FF208E5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kp3glX0/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D974B208E5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390877AbeGLAMT (ORCPT
+        id S2390951AbeGLANI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 11 Jul 2018 20:12:19 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:36419 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732348AbeGLAMT (ORCPT
+        Wed, 11 Jul 2018 20:13:08 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:44536 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390060AbeGLANI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 11 Jul 2018 20:12:19 -0400
-Received: by mail-yb0-f193.google.com with SMTP id s1-v6so10753761ybk.3
-        for <linux-kernel@vger.kernel.org>; Wed, 11 Jul 2018 17:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=fbyXeXY9K+gQYs5EYLT4iRofdz4Bdw2dGqT7Y+YVjy0=;
-        b=py21BhrTLz4almdWQyx+ecVg1qRuNjZ23MlndgJYfb9DpZLow/372O0Ydus9/Rh14C
-         iNTysvvvWS1PaeJEXhKtCQxVn94rvxToqgzmxCTiwX2MQYbzEcLvlhD6jj1q3Dnn3y1D
-         w3cXndooFahsqeT9qk2zRZAIa4GmFIiq5M5GUHQ+R/tqmRQ/NK5W3RVo1O9NI/QZVn9+
-         eYGxEzYmys3tJqzsyWNSyQYYs8TyKgE7QS6BroVUZevIjaV0Tj6JJs2mra/QmenFV+uM
-         B9Im0oRlEx/+IRQGEfc197D5Ea2ptdyF9dcVd/WLJyv4cWdh5eByyIagurYgWNB3XKaC
-         78kA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=fbyXeXY9K+gQYs5EYLT4iRofdz4Bdw2dGqT7Y+YVjy0=;
-        b=PuelOli0tWhA5STElVHfqvsfuAWBq3r0Yv6X8Mr+lMtjbTYEn72H0FHJlDaP7EesZU
-         FoidAlVIN3002autLKB5z6IWUXqnWzCFmgMbj9Zy/eirH2OEAAndry893nBPxZM+vwor
-         Y0OihMKcfSIhwjCDNQaTH/bX4/jfdG9iiqJVc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=fbyXeXY9K+gQYs5EYLT4iRofdz4Bdw2dGqT7Y+YVjy0=;
-        b=r2zr/W/QA4HxDXKeX53QXeEEv9XgACGhwgbk7NqVXwxkkGAVknPjYkG7bClKmlVoLE
-         sEh7olQ/byDfp558HNLXmhtOb4p/RSHpGIKsuD3gxG55FSN9UEivtKplotiWdb926Mcw
-         Rnryla42Loi66z5nvl3gC7WDOAkWz+u2N3lhjgIS00bP8z0DkqvWImkZT+Fv9ZC4Vbf8
-         vpCXcGM5C0u1ckR2etyfcQl1/Lj88/30p/YmH3rxJYU1l+1QSV7zGkaXk0ABXKFIzE60
-         zRlosDXJQSRjwh6raduClIugEB3QX7cebALjBQ8BRRRI5XjWwgYzjCJsb5KPxOAF4qxr
-         b/ag==
-X-Gm-Message-State: AOUpUlF6q18U0xxmLqjEZ49x9Shu/hclXt7vBnP7/joLO8mbmjSoipaO
-        Di3my+dtsQhS0uVzlQB2/oGhsO09hY8CDbyIeYyzAQ==
-X-Google-Smtp-Source: AAOMgpevdMjI1rxx8VZUEqhqRC8zYnUwmQReBph2+ehou+u2H51ChZk9ntl8HPwzdwfnCBNPceTiIS67/pOi5h0mwVE=
-X-Received: by 2002:a25:b219:: with SMTP id i25-v6mr14148ybj.112.1531353932879;
- Wed, 11 Jul 2018 17:05:32 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:5f51:0:0:0:0:0 with HTTP; Wed, 11 Jul 2018 17:05:32
- -0700 (PDT)
-In-Reply-To: <20180629190553.7282-1-labbott@redhat.com>
-References: <20180629190553.7282-1-labbott@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 11 Jul 2018 17:05:32 -0700
-X-Google-Sender-Auth: hsmU3eX6kWo8IJR4qLkM5WXHdWk
-Message-ID: <CAGXu5jLwhdKy6rfSKOeN2hajP5aCnYeT3yMka5ZbJ_o02z=WTA@mail.gmail.com>
-Subject: Re: [PATCH] arm64: Clear the stack
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 11 Jul 2018 20:13:08 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6C04l5X147815;
+        Thu, 12 Jul 2018 00:04:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=7LQv2NjuP1X+eZWi1Io1tq4pZKVS5ChpEiPREULa3w8=;
+ b=kp3glX0/erjYscT7e3IJZqBfQFBSPuIO7FRHY9awl2suDb4P/pcAJK/Xw4lXudKInKNW
+ mgF/eN9hzjOhlb/S11hhx1rvD+NWNuCK/DEoDue8Jvd3O17s2/MBpm/L6tKvznAWgf8V
+ N6HgsitW5calrqB5VQldufVsE21ulm5LVrhWJWGYy4H10s2C8N55spqHUGNJ+baMeYLY
+ LBueN5vmpCDtubyP0Ty8J7MndcQb9gE4f1yT5fKDlgfCgExl86L/SsRWC5N7pqY3xMlp
+ PRxwtL1b7us4UExuz/B0bzsGNjVyFjaLrVDjhsmbp2GIzeJymdqA8FSCk5ZTxVn8i+xZ kw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2k2p768ae1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 00:04:47 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6C04kmc029512
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 12 Jul 2018 00:04:46 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6C04ke2031997;
+        Thu, 12 Jul 2018 00:04:46 GMT
+Received: from localhost.localdomain (/73.69.118.222)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 11 Jul 2018 17:04:46 -0700
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
+        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
+        feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk,
+        linux-s390@vger.kernel.org, pasha.tatashin@oracle.com,
+        boris.ostrovsky@oracle.com, jgross@suse.com
+Subject: [PATCH v13 11/18] s390/time: remove read_boot_clock64()
+Date:   Wed, 11 Jul 2018 20:04:12 -0400
+Message-Id: <20180712000419.5165-12-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.18.0
+In-Reply-To: <20180712000419.5165-1-pasha.tatashin@oracle.com>
+References: <20180712000419.5165-1-pasha.tatashin@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8951 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=766
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807110252
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 29, 2018 at 12:05 PM, Laura Abbott <labbott@redhat.com> wrote:
->  include/linux/stackleak.h             |  1 +
-> [...]
-> diff --git a/include/linux/stackleak.h b/include/linux/stackleak.h
-> index e2da99b3a191..00d62b302efb 100644
-> --- a/include/linux/stackleak.h
-> +++ b/include/linux/stackleak.h
-> @@ -5,6 +5,7 @@
->  #include <linux/sched.h>
->  #include <linux/sched/task_stack.h>
->
-> +#include <asm/stacktrace.h>
->  /*
->   * Check that the poison value points to the unused hole in the
->   * virtual memory map for your platform.
+read_boot_clock64() was replaced by read_persistent_wall_and_boot_offset()
+so remove it.
 
-FYI, I squashed this change into my copy of the stackleak v14 series.
-(And I just sent this arm64 patch with the adjustments for it to be
-stand-alone.)
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+---
+ arch/s390/kernel/time.c | 13 -------------
+ 1 file changed, 13 deletions(-)
 
--Kees
-
+diff --git a/arch/s390/kernel/time.c b/arch/s390/kernel/time.c
+index d1f5447d5687..e8766beee5ad 100644
+--- a/arch/s390/kernel/time.c
++++ b/arch/s390/kernel/time.c
+@@ -239,19 +239,6 @@ void __init read_persistent_wall_and_boot_offset(struct timespec64 *wall_time,
+ 	*boot_offset = timespec64_sub(*wall_time, boot_time);
+ }
+ 
+-void read_boot_clock64(struct timespec64 *ts)
+-{
+-	unsigned char clk[STORE_CLOCK_EXT_SIZE];
+-	__u64 delta;
+-
+-	delta = initial_leap_seconds + TOD_UNIX_EPOCH;
+-	memcpy(clk, tod_clock_base, 16);
+-	*(__u64 *) &clk[1] -= delta;
+-	if (*(__u64 *) &clk[1] > delta)
+-		clk[0]--;
+-	ext_to_timespec64(clk, ts);
+-}
+-
+ static u64 read_tod_clock(struct clocksource *cs)
+ {
+ 	unsigned long long now, adj;
 -- 
-Kees Cook
-Pixel Security
+2.18.0
+
