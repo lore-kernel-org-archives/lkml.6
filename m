@@ -2,112 +2,110 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC52C43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9E4C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20CD2147D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:04:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20CD2147D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 814CA2147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 14:05:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="AFXPYMsT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 814CA2147C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732475AbeGLOOh (ORCPT
+        id S1732583AbeGLOOp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 10:14:37 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33495 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726762AbeGLOOh (ORCPT
+        Thu, 12 Jul 2018 10:14:45 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:50268 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732482AbeGLOOp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 10:14:37 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w6CE4Y3a3936712
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 12 Jul 2018 07:04:34 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w6CE4Xmu3936709;
-        Thu, 12 Jul 2018 07:04:33 -0700
-Date:   Thu, 12 Jul 2018 07:04:33 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jeremy Cline <tipbot@zytor.com>
-Message-ID: <tip-32aa928a7b817140c84987b726d5014911808fa4@git.kernel.org>
-Cc:     tglx@linutronix.de, mingo@kernel.org, jcline@redhat.com,
-        hpa@zytor.com, alexander.shishkin@linux.intel.com, acme@redhat.com,
-        namhyung@kernel.org, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, peterz@infradead.org
-Reply-To: mingo@kernel.org, tglx@linutronix.de, jcline@redhat.com,
-          namhyung@kernel.org, jolsa@redhat.com, hpa@zytor.com,
-          alexander.shishkin@linux.intel.com, acme@redhat.com,
-          peterz@infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20180710154612.6285-1-jcline@redhat.com>
-References: <20180710154612.6285-1-jcline@redhat.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf tools: Use python-config --includes rather
- than --cflags
-Git-Commit-ID: 32aa928a7b817140c84987b726d5014911808fa4
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 12 Jul 2018 10:14:45 -0400
+Received: by mail-it0-f65.google.com with SMTP id w16-v6so6990389ita.0
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 07:05:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TpD6zbFA7ZwjcJKwlUvpps1eFPEMqpf7d7h1cJ89TuA=;
+        b=AFXPYMsTaLLYEwsTB1CRMSO6j7ROH/5n3yYnGUkCnKXMhsOpLJ7xpU35UwymRTXoMy
+         oVcTMApaTQnyaLAOPY+ROfjDvAY+8+inTFBeoR4JvExQT9CLCns9y9eg0IMVj3Clq9AT
+         CMWBwFN5ozSgsBzfYfBg82rYwFJVI+KXNfemlSmgGqLIcWOLbdywp9G4vD1H/5cNwSIk
+         G838pVy4MkknsgAz8o1gLp1bAcujVaKzVKEksRP7yHEIGFr3td/AMHsiJ0+94ikoQ/bc
+         wcKJ61+OZWGmoff2z+OdzcmG76Ko4OhMRsceAqfLsL1qEqVzqpDTLHiym3nQINjK2CNt
+         ZZ8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TpD6zbFA7ZwjcJKwlUvpps1eFPEMqpf7d7h1cJ89TuA=;
+        b=SUftHMrH00yYz8BIO6jdrmhlmrp6J2PAlamKXbbdz/CiLv8IzIwAAZ0ex1L2avG6s8
+         KNKoEvfQIQtEoHznJaixd/Wh+OS6wzDlIjEAIkVy3fwad+dw637wp5ih9icr2NaSpy4u
+         AQtgMcT2mnUo0JMjMZDrt/y6lgJicadMeuRYleSOG+c9i7maPIUP/E692vzYnPshYJ24
+         2wrZ17rlTvbFgF9hJvY+QZtgQaemJkRsFM6ujFvPCuQDhfx728d1rXSlGtaeRQORdoAD
+         bvTgAIUdlnhP3FLbxg44oqm0I/5gr7pRkmXW40zKNBb/Oay0FRDPdIy/mxPLk3+Qzb8Q
+         mbVQ==
+X-Gm-Message-State: AOUpUlEcLtz2HwJJVLbtjCwlyDWgtV/NVQmhQtobhog4rwTQbvUAqMBe
+        5Um+Lloc2391scv4zeKa67WTj/Z6MPE=
+X-Google-Smtp-Source: AAOMgpfHWUfjKlK5530Jws1zrmTCuY4Y4/tnhAmcDTxVNg/ATSXMSa/xXoR8VWf5QJ7e6xIj3YXNLA==
+X-Received: by 2002:a24:cc07:: with SMTP id x7-v6mr1373758itf.3.1531404301197;
+        Thu, 12 Jul 2018 07:05:01 -0700 (PDT)
+Received: from [192.168.1.167] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id m10-v6sm2257679ioj.22.2018.07.12.07.04.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 07:04:31 -0700 (PDT)
+Subject: Re: [PATCH] bsg: remove read/write support
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     torvalds@linux-foundation.org, tonyb@cybernetics.com,
+        jannh@google.com, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180712080959.21180-1-hch@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <7882dce2-4dca-3af6-7aea-7acd9997f3e9@kernel.dk>
+Date:   Thu, 12 Jul 2018 08:04:29 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20180712080959.21180-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  32aa928a7b817140c84987b726d5014911808fa4
-Gitweb:     https://git.kernel.org/tip/32aa928a7b817140c84987b726d5014911808fa4
-Author:     Jeremy Cline <jcline@redhat.com>
-AuthorDate: Tue, 10 Jul 2018 11:46:12 -0400
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 11 Jul 2018 09:48:31 -0400
+On 7/12/18 2:09 AM, Christoph Hellwig wrote:
+> The code poses a security risk due to user memory access in ->release
+> and had an API that can't be used reliably.  As far as we know it was
+> never used for real, but if that turns out wrong we'll have to revert
+> this commit and come up with a band aid.
+> 
+> Jann Horn did look software archives for users of this interface,
+> and the only users found were example code in sg3_utils, and optional
+> support in an optional module of the tgt user space iscsi target,
+> which looks like a proof of concept extension of the /dev/sg
+> read/write support.
+> 
+> Tony Battersby chimes in that the code is basically unsafe to use in
+> general:
+> 
+>   The read/write interface on /dev/bsg is impossible to use safely
+>   because the list of completed commands is per-device (bd->done_list)
+>   rather than per-fd like it is with /dev/sg.  So if program A and
+>   program B are both using the write/read interface on the same bsg
+>   device, then their command responses will get mixed up, and program
+>   A will read() some command results from program B and vice versa.
+>   So no, I don't use read/write on /dev/bsg.  From a security standpoint,
+>   it should definitely be fixed or removed.
 
-perf tools: Use python-config --includes rather than --cflags
+Applied for 4.19.
 
-Builds started failing in Fedora on Python 3.7 with:
+-- 
+Jens Axboe
 
-    `.gnu.debuglto_.debug_macro' referenced in section
-    `.gnu.debuglto_.debug_macro' of
-    util/scripting-engines/trace-event-python.o: defined in discarded
-    section
-
-In Fedora, Python 3.7 added -flto to the list of --cflags and since it
-was only applied to util/scripting-engines/trace-event-python.c and
-scripts/python/Perf-Trace-Util/Context.c, linking failed.
-
-It's not the first time the addition of flags has broken builds: commit
-c6707fdef7e2 ("perf tools: Fix up build in hardnened environments")
-appears to have fixed a similar problem. "python-config --includes"
-provides the proper -I flags and doesn't introduce additional CFLAGS.
-
-Signed-off-by: Jeremy Cline <jcline@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180710154612.6285-1-jcline@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Makefile.config | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index b5ac356ba323..f5a3b402589e 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -207,8 +207,7 @@ ifdef PYTHON_CONFIG
-   PYTHON_EMBED_LDOPTS := $(shell $(PYTHON_CONFIG_SQ) --ldflags 2>/dev/null)
-   PYTHON_EMBED_LDFLAGS := $(call strip-libs,$(PYTHON_EMBED_LDOPTS))
-   PYTHON_EMBED_LIBADD := $(call grep-libs,$(PYTHON_EMBED_LDOPTS)) -lutil
--  PYTHON_EMBED_CCOPTS := $(shell $(PYTHON_CONFIG_SQ) --cflags 2>/dev/null)
--  PYTHON_EMBED_CCOPTS := $(filter-out -specs=%,$(PYTHON_EMBED_CCOPTS))
-+  PYTHON_EMBED_CCOPTS := $(shell $(PYTHON_CONFIG_SQ) --includes 2>/dev/null)
-   FLAGS_PYTHON_EMBED := $(PYTHON_EMBED_CCOPTS) $(PYTHON_EMBED_LDOPTS)
- endif
- 
