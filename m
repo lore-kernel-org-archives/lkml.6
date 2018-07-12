@@ -2,156 +2,112 @@ Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AD6ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC39AECDFB0
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED3A8208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:57:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 726F8205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 19:59:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="utshGp9e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED3A8208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=HansenPartnership.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KP1U/2Ah"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 726F8205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732383AbeGLUIV (ORCPT
+        id S1732419AbeGLUKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 16:08:21 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:39604 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726815AbeGLUIV (ORCPT
+        Thu, 12 Jul 2018 16:10:44 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:46939 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732235AbeGLUKo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 16:08:21 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id AACDA8EE3D1;
-        Thu, 12 Jul 2018 12:57:17 -0700 (PDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 6HoYkUYjGNuj; Thu, 12 Jul 2018 12:57:17 -0700 (PDT)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id AEDFF8EE02B;
-        Thu, 12 Jul 2018 12:57:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1531425437;
-        bh=7sazteA/gCT16xXLmFQBwcia+C/xjckWaefm+hMnMh8=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=utshGp9ex8Ez67m8RS8fMIPXAnNQoZAgzmc8X2RONFDLdnBnT+1x6WQtLJk4z5Nwm
-         a8vl1zcrbizzRJHkF4Os+DY2oyZeVIVELecxBsATU/B/ESpnEvDYN7J38kYvGP+kEx
-         im1lJF8WFk+M9lHPVAYQlL/6eEGrqZq8Xu9713MQ=
-Message-ID: <1531425435.18255.17.camel@HansenPartnership.com>
-Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Waiman Long <longman@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        "Wangkai (Kevin,C)" <wangkai86@huawei.com>
-Date:   Thu, 12 Jul 2018 12:57:15 -0700
-In-Reply-To: <CA+55aFzfQz7c8pcMfLDaRNReNF2HaKJGoWpgB6caQjNAyjg-hA@mail.gmail.com>
-References: <62275711-e01d-7dbe-06f1-bf094b618195@redhat.com>
-         <20180710142740.GQ14284@dhcp22.suse.cz>
-         <a2794bcc-9193-cbca-3a54-47420a2ab52c@redhat.com>
-         <20180711102139.GG20050@dhcp22.suse.cz>
-         <9f24c043-1fca-ee86-d609-873a7a8f7a64@redhat.com>
-         <1531330947.3260.13.camel@HansenPartnership.com>
-         <18c5cbfe-403b-bb2b-1d11-19d324ec6234@redhat.com>
-         <1531336913.3260.18.camel@HansenPartnership.com>
-         <4d49a270-23c9-529f-f544-65508b6b53cc@redhat.com>
-         <1531411494.18255.6.camel@HansenPartnership.com>
-         <20180712164932.GA3475@bombadil.infradead.org>
-         <1531416080.18255.8.camel@HansenPartnership.com>
-         <CA+55aFzfQz7c8pcMfLDaRNReNF2HaKJGoWpgB6caQjNAyjg-hA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 
-Mime-Version: 1.0
+        Thu, 12 Jul 2018 16:10:44 -0400
+Received: by mail-pl0-f67.google.com with SMTP id 30-v6so11114407pld.13
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 12:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :content-transfer-encoding;
+        bh=qH5pRUYsx+cOEzUBrwHWQb20E9/DWHrppW9IxPy3Xss=;
+        b=KP1U/2AhxfzSQ2OPzu5ps7jUE9kayQ8s0MMOJwvQjjtPHBy7+sHITyRveEFOZdl/bm
+         CnR9HbZn127UnKFyPmpWLEUeRBHd1McapQAKkNp7MIKiHeglYtbH9bCB45CLaACQRn+x
+         pqL8tRuQfcqPyT3HqAeVeFIEPmplyyWwutoN0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:content-transfer-encoding;
+        bh=qH5pRUYsx+cOEzUBrwHWQb20E9/DWHrppW9IxPy3Xss=;
+        b=V/2h+r9ARHN5l0ApVLItTQoDzUQM9PZlMCcT94z8uZRk2DndyRvKoY5KUEC+mjoFbS
+         HpPPGGpSLzN6hBz3g4vkeoOAUQx0Ux1hQfi5latt+TKGG+8DC0QK+mfdZqPWuKrBsa+0
+         ujGUW/3sqPOJqMZRqIHowVtnmB2tt3uS3Lv2fSwzTQUBzkFtGY03ae8Y2YJaOxaHtnyR
+         StcsGH2k0m4Xxo6fUluB/WvUuFenhNxmNnElWViUi5cZfvoC32AoKdYwntD6m9EQ+Der
+         2CEQHIW/we/V9VvUXCL3EJyNb/U6VXHNzFgBzudpd/7uSNLKfCAtQoBaHd+S2BSnLP1x
+         t3xA==
+X-Gm-Message-State: AOUpUlEtIi5ZW0WzufwCzGhbL7Q9E2+nWyQoxVfeXB0p5B1KW2clLjVm
+        cPnCnWLxYahygUwAGfGNFTv0qg==
+X-Google-Smtp-Source: AAOMgpe3k19sx6d/ecfImbNmvsCbMNGoxDvXTAX8gIqO6GUeCGXxQfMhztrz1hOPTmpTnsxqwGvosQ==
+X-Received: by 2002:a17:902:b604:: with SMTP id b4-v6mr3464276pls.18.1531425579813;
+        Thu, 12 Jul 2018 12:59:39 -0700 (PDT)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id a17-v6sm19177455pfg.106.2018.07.12.12.59.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 12 Jul 2018 12:59:38 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 12:59:37 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Christoph Hellwig <hch@lst.de>, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: mxcmmc: Fix missing parentheses and brace
+Message-ID: <20180712195937.GA36007@beast>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-07-12 at 11:06 -0700, Linus Torvalds wrote:
-> On Thu, Jul 12, 2018 at 10:21 AM James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> > 
-> > On Thu, 2018-07-12 at 09:49 -0700, Matthew Wilcox wrote:
-> > > 
-> > > I don't know that it does work.  Or that it works well.
-> > 
-> > I'm not claiming the general heuristics are perfect (in fact I know
-> > we
-> > still have a lot of problems with dirty reclaim and writeback).
-> 
-> I think this whole "this is about running out of memory" approach is
-> wrong.
-> 
-> We *should* handle that well. Or well enough in practice, at least.
-> 
-> Do we? Maybe not. Should the dcache be the one area to be policed and
-> worked around? Probably not.
-> 
-> But there may be other reasons to just limit negative dentries.
-> 
-> What does the attached program do to people? It's written to be
-> intentionally annoying to the dcache.
+Looks like the adjusted syntax wasn't fully build tested. This fixes
+failures with powerpc builds:
 
-So it's interesting.  What happens for me is that I start out at pretty
-much no free memory so the programme slowly starts to fill up my
-available swap without shrinking my page cache (presumably it's causing
-dirty anonymous objects to be pushed out) and the dcache grows a bit.
-Then when my free swap reaches 0 we start to reclaim the dcache and it
-shrinks again (apparently still keeping the page cache at around 1.8G).
- The system seems perfectly usable while this is running (tried browser
-and a couple of compiles) ... any calls for free memory seem to come
-out of the enormous but easily reclaimable dcache.
+drivers/mmc/host/mxcmmc.c: In function ‘mxcmci_swap_buffers’:
+drivers/mmc/host/mxcmmc.c:296:51: error: expected ‘)’ before ‘;’ token
+   void *buf = kmap_atomic(sg_page(sg) + sg->offset;
+                                                   ^
+drivers/mmc/host/mxcmmc.c:299:1: error: expected ‘,’ or ‘;’ before ‘}’ token
+ }
+ ^
 
-The swap effect is unexpected, but everything else seems to be going
-according to how I would wish.
+Fixes: b189e7589f6d3 ("mmc: mxcmmc: handle highmem pages")
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ drivers/mmc/host/mxcmmc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-When I kill the programme I get about a megabyte of swap back but it's
-staying with the rest of swap occupied.  When all this started I had an
-8G laptop with 2G of swap of which 1G was used.  Now I have 2G of swap
-used but it all seems to be running OK.
+diff --git a/drivers/mmc/host/mxcmmc.c b/drivers/mmc/host/mxcmmc.c
+index 75f781c11e89..de4e6e5bf304 100644
+--- a/drivers/mmc/host/mxcmmc.c
++++ b/drivers/mmc/host/mxcmmc.c
+@@ -293,9 +293,10 @@ static void mxcmci_swap_buffers(struct mmc_data *data)
+ 	int i;
+ 
+ 	for_each_sg(data->sg, sg, data->sg_len, i) {
+-		void *buf = kmap_atomic(sg_page(sg) + sg->offset;
++		void *buf = kmap_atomic(sg_page(sg) + sg->offset);
+ 		buffer_swap32(buf, sg->length);
+ 		kunmap_atomic(buf);
++	}
+ }
+ #else
+ static inline void mxcmci_swap_buffers(struct mmc_data *data) {}
+-- 
+2.17.1
 
-So what I mean by dcache grows a bit is this:
 
-I missed checking it before I started, but it eventually grew to
-
-jejb@jarvis:~> cat /proc/sys/fs/dentry-state 
-2841534	2816297	45	0	0	0
-
-Before eventually going back after I killed the programme to
-
-jejb@jarvis:~> cat /proc/sys/fs/dentry-state 
-806559	781138	45	0	0	0
-
-I just tried it again and this time the dcache only peaked at 
-
-jejb@jarvis:~> cat /proc/sys/fs/dentry-state 
-2321933	2296607	45	0	0	0
-
-What surprises me most about this behaviour is the steadiness of the
-page cache ... I would have thought we'd have shrunk it somewhat given
-the intense call on the dcache.
-
-James
-
+-- 
+Kees Cook
+Pixel Security
