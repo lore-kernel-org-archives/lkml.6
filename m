@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED0AC43A1D
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 04:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37244C43A1D
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 04:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECC262146F
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 04:10:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6288208E5
+	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 04:11:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvtBacOA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECC262146F
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcDMB6IH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6288208E5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726544AbeGLESh (ORCPT
+        id S1726601AbeGLESj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 00:18:37 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:46848 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725769AbeGLESg (ORCPT
+        Thu, 12 Jul 2018 00:18:39 -0400
+Received: from mail-qk0-f196.google.com ([209.85.220.196]:40263 "EHLO
+        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbeGLESi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 00:18:36 -0400
-Received: by mail-qt0-f194.google.com with SMTP id d4-v6so7547472qtn.13;
-        Wed, 11 Jul 2018 21:10:56 -0700 (PDT)
+        Thu, 12 Jul 2018 00:18:38 -0400
+Received: by mail-qk0-f196.google.com with SMTP id c126-v6so6080241qkd.7;
+        Wed, 11 Jul 2018 21:10:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VNkTkgCQGwaRWHwSYhiv6kv+rs/VwVKSGBLCuRmN3Mg=;
-        b=CvtBacOA4VQoU2/qUHybpf2XhGOexUpOsjL207KrOW/nLav4rSr7a+KSixRFcAGymI
-         5qlhmRZO3CyCuyhqwaBTKafEgRkW9+dtpklVDBJ99BiHKppmXqlb7+5QC4Zf57hvTs6g
-         j88QW3zAgDklYmtOsoWeTc1sNSH34PfTZ7nZE5qFYp0ETmW4JV6EhdRZR4w6Lb+5X6TW
-         brkT26a2K5NBc+m8IFRMPq985Qs1LWdf28McBX91neXmYFSCn8bBHJ8oGckp+FwEIzjE
-         DRyYVK2vAp2Q/Q4c6Yg2gs7cG7KFjJc8RosbnGa7OQHVG4Qs8TuaAYNJE1zvIoDE4mUh
-         MWOQ==
+        bh=IEINbgyEUPVymArm/qrQsgD/JbfdbVxflMcXWN5h4XU=;
+        b=GcDMB6IHfz88CZipdENavJiK+2nxT16wX73iC47RVS2faHnsVCP8ejkvZIC4MZUOO2
+         17vJNHE5kg0hbvz8mu0ukvMxm2jbhGaiQVzWcRIKN9TVU6HOczCfWmcHb2fcizKUWwEi
+         pIUaMkp93WHbms01I2a1A+4WbVCnwXyiazB6k+HPW7Fify4hVbQwfFr7051gba8LjPEB
+         gnBiP5LoXoJ7Hip6FPT57sUWYhTOG1zISr00sCgSV9PVohoisPz5tFI7FzSObqx/VVuy
+         qiNocsvDZA5NEC//rb4sqnnYYhaOPEOn34i3f+uDZRqbNER8ukdtmZKgMh3ILiMyw0Yn
+         VHGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VNkTkgCQGwaRWHwSYhiv6kv+rs/VwVKSGBLCuRmN3Mg=;
-        b=D5xF5gzyaEdVzIc2szK6k6PeK8WMArFWS5bq8UaIreMZL/JzEPBA8MWY98okD1ZLxJ
-         nRSACM4UyKldTeaLAtecMaQGyzJz+wsBi24erNyOVKC3o47wRMK50aYXqe9le7k68Qng
-         5rU57Qt6pOLuN0dhGFFHhqQOiyKMqSH5WnxE4xgTOGDtPqZUYvKCuXQ8k9maU8Hi/HCt
-         6/MkJnAST+aCFHIdbdMZsQYwdVBiVBOxhUB1z5BPTcHDVRiyRt2j+OsNIuM0GHHmxgAC
-         gZlvfyJNbRyT3TGXc2mO6adqQ1vdgXjgH4DvaE36hbjJf1TDNVd6NX9/jIBlePh+EdvM
-         etBw==
-X-Gm-Message-State: AOUpUlG7Cx8MrDb4ZUmXJ71E0iYMYaMg50i+Iitag1u7bgKCBf9l6Bog
-        L8MBPvMzmM0xp265PJP9Tms=
-X-Google-Smtp-Source: AAOMgpdg3KHv4oQzwF2hj2ilFxM26Ogy1D6HncWrB1+Pc0MDBbHsIjbQN74SrlRmFFZtwtEkYbCqUQ==
-X-Received: by 2002:ac8:489:: with SMTP id s9-v6mr469217qtg.173.1531368656260;
-        Wed, 11 Jul 2018 21:10:56 -0700 (PDT)
+        bh=IEINbgyEUPVymArm/qrQsgD/JbfdbVxflMcXWN5h4XU=;
+        b=sFOPOhmmOHMGdLyV0e935Qmzc/KOyXNMFNTcc8eFRP5egdHbd7kY9Us2MZa/sawVob
+         yc/b315jGCw+ZCuNIRUaJjhKgyCM8jQ9JrT8TLHC3nZ4aDYqdcMxyrXki/MwqqJscmRL
+         sWyak5UOjnsUkE2OuzWZ4dQT13gba8vcTXju/gD5OzOcCE/d/AElx3/kTtXwIdfCutHR
+         nECK+XzAINkDu5bPiwy6Tqtg/hYK217Gdw0u6kbVGxfXMMtweDg0ZybCOx3SLyt/1uXT
+         IhsNV5sqR7i3mGo3O+SCuKoUTHZ4kQoGjYXbhU/IKBF/93lqFch2WmD67w0djFpswC9Z
+         9Sjg==
+X-Gm-Message-State: AOUpUlFUVSZKki7qZi800M7EGonglIGgnZw3E+sg0zDSJyfYoSOAeEwc
+        XwRnfjX3klyUDpDpJHSteE8=
+X-Google-Smtp-Source: AAOMgpe5RW/P4Agg9MrGjgZnwmT9M2zzLfZeotX2Nw135FMlfS2R7+6JExdT2f/JTgDgwxm/co+MjA==
+X-Received: by 2002:a37:5d02:: with SMTP id r2-v6mr472798qkb.22.1531368658459;
+        Wed, 11 Jul 2018 21:10:58 -0700 (PDT)
 Received: from localhost.localdomain (186-106-119-105.baf.movistar.cl. [186.106.119.105])
-        by smtp.gmail.com with ESMTPSA id m51-v6sm7260115qtc.85.2018.07.11.21.10.54
+        by smtp.gmail.com with ESMTPSA id m51-v6sm7260115qtc.85.2018.07.11.21.10.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 11 Jul 2018 21:10:55 -0700 (PDT)
+        Wed, 11 Jul 2018 21:10:58 -0700 (PDT)
 From:   Luis Araneda <luaraneda@gmail.com>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Michal Simek <michal.simek@xilinx.com>
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Luis Araneda <luaraneda@gmail.com>
-Subject: [PATCH v3 4/6] dt-bindings: xilinx: zynq: Sort entries alphabetically
-Date:   Thu, 12 Jul 2018 00:10:22 -0400
-Message-Id: <20180712041024.20583-5-luaraneda@gmail.com>
+Subject: [PATCH v3 5/6] dt-bindings: Move Paralella board to Xilinx
+Date:   Thu, 12 Jul 2018 00:10:23 -0400
+Message-Id: <20180712041024.20583-6-luaraneda@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180712041024.20583-1-luaraneda@gmail.com>
 References: <20180712041024.20583-1-luaraneda@gmail.com>
@@ -75,41 +75,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sort additional compatible strings (boards) alphabetically
-by their manufacturer and model number
-
-This will help when finding a board because they
-will be grouped by their manufacturer
+Move the Adapteva Parallela board to Xilinx dt-bindings,
+as it's based on a Zynq SoC from Xilinx
 
 Signed-off-by: Luis Araneda <luaraneda@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/xilinx.txt | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/arm/adapteva.txt | 7 -------
+ Documentation/devicetree/bindings/arm/xilinx.txt   | 3 +++
+ 2 files changed, 3 insertions(+), 7 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/adapteva.txt
 
+diff --git a/Documentation/devicetree/bindings/arm/adapteva.txt b/Documentation/devicetree/bindings/arm/adapteva.txt
+deleted file mode 100644
+index 1d8af9e36065..000000000000
+--- a/Documentation/devicetree/bindings/arm/adapteva.txt
++++ /dev/null
+@@ -1,7 +0,0 @@
+-Adapteva Platforms Device Tree Bindings
+----------------------------------------
+-
+-Parallella board
+-
+-Required root node properties:
+-    - compatible = "adapteva,parallella";
 diff --git a/Documentation/devicetree/bindings/arm/xilinx.txt b/Documentation/devicetree/bindings/arm/xilinx.txt
-index 4f1759b2bea7..a8e70a794d2e 100644
+index a8e70a794d2e..d1a6deac90b5 100644
 --- a/Documentation/devicetree/bindings/arm/xilinx.txt
 +++ b/Documentation/devicetree/bindings/arm/xilinx.txt
 @@ -8,6 +8,9 @@ Required root node properties:
  
  Additional compatible strings:
  
-+- Digilent Zybo Z7 board
-+  "digilent,zynq-zybo-z7"
++- Adapteva Parallella board
++  "adapteva,parallella"
 +
- - Xilinx CC108 internal board
-   "xlnx,zynq-cc108"
+ - Digilent Zybo Z7 board
+   "digilent,zynq-zybo-z7"
  
-@@ -17,9 +20,6 @@ Additional compatible strings:
-   "xlnx,zynq-zc770-xm012"
-   "xlnx,zynq-zc770-xm013"
- 
--- Digilent Zybo Z7 board
--  "digilent,zynq-zybo-z7"
--
- ---------------------------------------------------------------
- 
- Xilinx Zynq UltraScale+ MPSoC Platforms Device Tree Bindings
 -- 
 2.18.0
 
