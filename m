@@ -6,110 +6,135 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55EFBECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A13ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC4B214AB
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:41:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BC4B214AB
+	by mail.kernel.org (Postfix) with ESMTP id E6799214AB
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:42:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6799214AB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387906AbeGMDxD (ORCPT
+        id S2387946AbeGMDzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 23:53:03 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:9231 "EHLO huawei.com"
+        Thu, 12 Jul 2018 23:55:13 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:35562 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387722AbeGMDxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 23:53:03 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id DA8D46DD77D30;
-        Fri, 13 Jul 2018 11:40:10 +0800 (CST)
-Received: from [127.0.0.1] (10.111.220.140) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
- 11:40:06 +0800
-Subject: Re: [PATCH 4/5] f2fs: disable small discard in lfs mode
-To:     Chao Yu <yuchao0@huawei.com>, <jaegeuk@kernel.org>,
+        id S2387722AbeGMDzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 23:55:13 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 700A7A72A19A3;
+        Fri, 13 Jul 2018 11:42:31 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
+ 11:42:25 +0800
+Subject: Re: [PATCH 2/5] f2fs: clear the remaining prefree_map of the section
+To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
         <chao@kernel.org>, <yunlong.song@icloud.com>
 CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
         <shengyong1@huawei.com>, <heyunlei@huawei.com>,
         <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>
 References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
- <1531408170-45758-5-git-send-email-yunlong.song@huawei.com>
- <ad6411b6-effd-6dc1-c7c6-43047806784d@huawei.com>
-From:   Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <f6cefb97-dc10-5c07-7a75-ab53a72f7a22@huawei.com>
-Date:   Fri, 13 Jul 2018 11:39:45 +0800
+ <1531408170-45758-3-git-send-email-yunlong.song@huawei.com>
+ <c9a3972b-dc52-19ca-7ed0-2f754d89ab33@huawei.com>
+ <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <12f3c3d2-6586-ca73-8770-8f97b436d643@huawei.com>
+Date:   Fri, 13 Jul 2018 11:42:25 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <ad6411b6-effd-6dc1-c7c6-43047806784d@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
-X-Originating-IP: [10.111.220.140]
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-How about change test_opt(sbi, LFS) to f2fs_sb_has_blkzoned(sbi->sb) in 
-this patch, we apply
-this patch to zoned block device?
+On 2018/7/13 11:28, Yunlong Song wrote:
+> round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
+> then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
+> write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0, 
+> prefree of NO.2 is cleared, and no discard issued
+> 
+> round2: rm data block NO.0, NO.1, NO.3, NO.4
+> all invalid, but prefree bit of NO.2 is set and cleared in round1, then 
+> prefree_map: 1 1 0 1 1
+> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no 
 
-On 2018/7/13 11:17, Chao Yu wrote:
-> On 2018/7/12 23:09, Yunlong Song wrote:
->> In lfs mode, it is better to send the discard of the overall section
->> each time to avoid missing alignment with flash.
-> Hmm.. I think LFS mode can be used widely on different kind of device instead of
-> just on zoned block device, so let's just keep old implementation here.
->
-> Thanks,
->
->> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
->> ---
->>   fs/f2fs/segment.c | 3 ++-
->>   fs/f2fs/sysfs.c   | 4 ++++
->>   2 files changed, 6 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->> index fd38b61..f6c20e0 100644
->> --- a/fs/f2fs/segment.c
->> +++ b/fs/f2fs/segment.c
->> @@ -1766,7 +1766,8 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
->>   	atomic_set(&dcc->issing_discard, 0);
->>   	atomic_set(&dcc->discard_cmd_cnt, 0);
->>   	dcc->nr_discards = 0;
->> -	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
->> +	dcc->max_discards = test_opt(sbi, LFS) ? 0 :
->> +				MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
->>   	dcc->undiscard_blks = 0;
->>   	dcc->root = RB_ROOT;
->>   	dcc->rbtree_check = false;
->> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
->> index 2e7e611..4b6c457 100644
->> --- a/fs/f2fs/sysfs.c
->> +++ b/fs/f2fs/sysfs.c
->> @@ -271,6 +271,10 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
->>   		return count;
->>   	}
->>   
->> +	if (!strcmp(a->attr.name, "max_small_discards") &&
->> +		test_opt(sbi, LFS))
->> +		return -EINVAL;
->> +
->>   	*ui = t;
->>   
->>   	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
->>
->
-> .
->
+Why prefree_map is not 0 0 0 0 0?
 
--- 
 Thanks,
-Yunlong Song
 
+> valid blocks of this section, so discard issued
+> but this time prefree bit of NO.3 and NO.4 is skipped...
+> 
+> round3:
+> write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 - > 
+> 0 0 0 0 0, no valid blocks of this section, so discard issued
+> this time prefree bit of NO.3 and NO.4 is cleared, but the discard of 
+> this section is sent again...
+> 
+> On 2018/7/13 11:13, Chao Yu wrote:
+>> On 2018/7/12 23:09, Yunlong Song wrote:
+>>> For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
+>>> example, if the section prefree_map is ...previous section | current
+>>> section (1 1 0 1 1) | next section..., then the start = x, end = x + 1,
+>>> after start = start_segno + sbi->segs_per_sec, start = x + 5, then it
+>>> will skip x + 3 and x + 4, but their bitmap is still set, which will
+>>> cause duplicated f2fs_issue_discard of this same section in the next
+>>> write_checkpoint, so fix it.
+>> I didn't get it, if # 2 segment is not prefree state, so it still has valid
+>> blocks there, so we won't issue discard due to below condition, right?
+>>
+>> 		if (!IS_CURSEC(sbi, secno) &&
+>> 			!get_valid_blocks(sbi, start, true))
+>>
+>> Thanks,
+>>
+>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>> ---
+>>>   fs/f2fs/segment.c | 19 +++++++++++++++++--
+>>>   1 file changed, 17 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index 47b6595..fd38b61 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -1684,8 +1684,23 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+>>>   		start = start_segno + sbi->segs_per_sec;
+>>>   		if (start < end)
+>>>   			goto next;
+>>> -		else
+>>> -			end = start - 1;
+>>> +		else {
+>>> +			start_segno = start;
+>>> +
+>>> +			while (1) {
+>>> +				start = find_next_bit(prefree_map, start_segno,
+>>> +									end + 1);
+>>> +				if (start >= start_segno)
+>>> +					break;
+>>> +				end = find_next_zero_bit(prefree_map, start_segno,
+>>> +										start + 1);
+>>> +				for (i = start; i < end; i++)
+>>> +					clear_bit(i, prefree_map);
+>>> +				dirty_i->nr_dirty[PRE] -= end - start;
+>>> +			}
+>>> +
+>>> +			end = start_segno - 1;
+>>> +		}
+>>>   	}
+>>>   	mutex_unlock(&dirty_i->seglist_lock);
+>>>   
+>>>
+>>
+>> .
+>>
+> 
 
