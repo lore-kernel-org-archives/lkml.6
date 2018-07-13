@@ -2,98 +2,133 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CD6ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676ECECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:19:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD432087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E16B205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:19:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="xxuejiVM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD432087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDpaaxDC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E16B205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387731AbeGMObL (ORCPT
+        id S1731131AbeGMOec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:31:11 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:55963 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729778AbeGMObK (ORCPT
+        Fri, 13 Jul 2018 10:34:32 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:44998 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729733AbeGMOec (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:31:10 -0400
-Received: by mail-it0-f67.google.com with SMTP id 16-v6so11672229itl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 07:16:21 -0700 (PDT)
+        Fri, 13 Jul 2018 10:34:32 -0400
+Received: by mail-vk0-f66.google.com with SMTP id 125-v6so18288618vke.11;
+        Fri, 13 Jul 2018 07:19:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=8UwqBKAgKdhQf8RETiOMwXj56HuLRalwCQK/zQucx+s=;
-        b=xxuejiVM/dXupHISJhsJYqtIASF5kmLfcYY2LTg/9JVN10KQ+GYzU0MXs6P/293rpL
-         X+HB3iiEQSqeX1y9SXhGc7zGXpN/vVT0EP5RaQatbCoQGZlogFdQVNsIHjy3xmGaio4O
-         hi/svFxtY38kjGIxWzJ6iXK7+wvzkZ2YsNFKlLX94PQu9YnS+09skua4FeW/66wafnAv
-         vGJOcj3e5DxpuLmMs7kusLNH13urTiJUElbTp95pSpLRVGdC3HzfctK7lqrXZe0ZOSu6
-         R5heqxGAapiGjJArZFLXzkkRb02u3zMe+gHNv8XP0C2DLg1edgqbkZQBM/ZrwFg7PXTs
-         IXrQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=vmqORs+Or60qNY4r0K68CwyqYNSseRhZqw/bL41C/Yk=;
+        b=QDpaaxDC9a9dWPHcchjRDk5E1wTYa4fifUXc91GtzBDmPJw0RbTqW53uJcOPOEmSGZ
+         otYdxJGd2Lt2XyNwnjEc0ETmkqfUPnxBxHPPT4affTLH+hGFxClKi1mMurzlAh3DqOni
+         edczirlJ5BmOvUSvYw9ycM6iV7Oo3rgCBSEwvhsR8YF6iHER4Cvtg0q6AhgVjGfFshso
+         d8G4K+DD/WIiy/kO1Tu0JLHaT1Tm0ZVfV3lL29pJ+zlhL5ODhB0Orh+x0SS6tIprVz/9
+         764++lR6HdvlkGdg3LhSrmu4yI7GnP//eScY/CFIgRaGdMbpW3a3WcqvrVAh6b86DzYT
+         h7dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8UwqBKAgKdhQf8RETiOMwXj56HuLRalwCQK/zQucx+s=;
-        b=m+jgNBZBuoWeqIysgbXfDw/9dd/STcjtV1kmXxI1L3yfloPwXCmsGO80fA8RVKqrIk
-         2raCfqBWwAhRKMVMM0IG5glkhCGsm/qVX29qw2yEiYZbtNgzcz5oKBpQg5kKzqRRpN8e
-         I7xIY0/KwYFHilQCEm6xY2Y+oI1AzkM8jyXFGbGlN60fk//X7ZcA6/zQUQ0ByisEb8CM
-         qgYRzur2KSIMuQsPjYj+Iy/efNKBcDb0NTpg9+2NTRBuQGuUG4+jYscZPdl7tEvmtcfW
-         CQF10k0ftqVD39u48uZ8BKD2otvebprUK8F+vwQtW1t6I06cYwo+NBFq5BsRnYEt3X1p
-         T/qQ==
-X-Gm-Message-State: AOUpUlEWnVe5Ow36SQOZx6KpPBMBaMxenpdhZG+4ndIt2armMJaw4FkD
-        qCtjwetmeoQ2XcCtHYVy1FSxkA==
-X-Google-Smtp-Source: AAOMgpciTRBnqEyHjgBunt2JFay97zF8Pdsm3dn8knr2NRxhvYo9GTcl5rD67kVT2iCHQRPIv2LaRQ==
-X-Received: by 2002:a02:a1d9:: with SMTP id o25-v6mr5564199jah.86.1531491380858;
-        Fri, 13 Jul 2018 07:16:20 -0700 (PDT)
-Received: from [192.168.1.212] (107.191.0.158.static.utbb.net. [107.191.0.158])
-        by smtp.gmail.com with ESMTPSA id m7-v6sm8227850iog.30.2018.07.13.07.16.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 07:16:19 -0700 (PDT)
-Subject: Re: [PATCH 02/18] block/aoenet: change strncpy+truncation to strlcpy
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     "Ed L. Cashin" <ed.cashin@acm.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
- <1531445105-18941-1-git-send-email-asmadeus@codewreck.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <41bf49e3-70a5-4362-7389-55752ebc6c02@kernel.dk>
-Date:   Fri, 13 Jul 2018 08:16:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=vmqORs+Or60qNY4r0K68CwyqYNSseRhZqw/bL41C/Yk=;
+        b=n4UwhEO246lsc1i8hBdbi/zDxwR9iAJhmrJLlV/kceW78qS4yjtWbgSjD/cBtNy8xS
+         0gj7JCpumK4Zmfe1OjKk4lUPi1sVdfkNgCn0eDP14JrwHgmWfzuvDdle/wegu27geSiT
+         Qnqf6+sh2KxnISXR62oY8nqcMftZNYVLk/0Zk4BsipELDiIy+9kBM7BQ2H83DlKDMpZz
+         /OQtnvBL1iFd7MKKqvUvLRYgNuCpRrpzw2VlgNWL2jQJavshBcBpVgB5o879UAfA7ayX
+         vqUaZL4jI7eukYY3B19h3f1citYkzNqtdiu68OSeYaKEC4CKTqBQEk/p9kxD7nsYmrqF
+         SJdQ==
+X-Gm-Message-State: AOUpUlGp0ZIxA0oNRB4FCHIheg/Po6MmW5b6OZ5nMPAIzchk/NQHe+2+
+        wvH0hsNHqy1t9GpgWkTM1QZb9NmF0Eoz7XFVnDM=
+X-Google-Smtp-Source: AAOMgpf90lvM3wWQ5qVKwVud623+PAWOurwpar1vOhmex24WH464VGNGT+aox9qt6Uz9wkPLWvtrxAK7sIPHi1ncuik=
+X-Received: by 2002:a1f:8e4d:: with SMTP id q74-v6mr4055234vkd.161.1531491580909;
+ Fri, 13 Jul 2018 07:19:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1531445105-18941-1-git-send-email-asmadeus@codewreck.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 07:19:39
+ -0700 (PDT)
+In-Reply-To: <HE1PR0502MB3753318D0C380DFEBCD6E452A2410@HE1PR0502MB3753.eurprd05.prod.outlook.com>
+References: <20180704172908.GA33650@beast> <HE1PR0502MB3753318D0C380DFEBCD6E452A2410@HE1PR0502MB3753.eurprd05.prod.outlook.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 13 Jul 2018 17:19:39 +0300
+Message-ID: <CAHp75Vd2pX_AjMwEHQUOL7WfokgoY+bsakCJxbojBBxuuF_H+Q@mail.gmail.com>
+Subject: Re: [PATCH] platform/mellanox: Use 2-factor allocator calls
+To:     Vadim Pasternak <vadimp@mellanox.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "platform-driver-x86@vger.kernel.org" 
+        <platform-driver-x86@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/12/18 7:25 PM, Dominique Martinet wrote:
-> Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
-> 
-> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
-> ---
-> 
-> Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
-> first patch of the serie) for the motivation behind this patch
+On Wed, Jul 4, 2018 at 10:39 PM, Vadim Pasternak <vadimp@mellanox.com> wrote:
+>
+>
+>> -----Original Message-----
+>> From: Kees Cook [mailto:keescook@chromium.org]
+>> Sent: Wednesday, July 04, 2018 8:29 PM
+>> To: Darren Hart <dvhart@infradead.org>
+>> Cc: Vadim Pasternak <vadimp@mellanox.com>; Andy Shevchenko
+>> <andy@infradead.org>; platform-driver-x86@vger.kernel.org; linux-
+>> kernel@vger.kernel.org
+>> Subject: [PATCH] platform/mellanox: Use 2-factor allocator calls
+>>
+>> As already done treewide, switch from open-coded multiplication to using 2-
+>> factor allocation helpers.
+>>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+>
 
-This is a weird combination in terms of a single patch, why is
-it patching aoe and gpiolib in one patch?
+Pushed to my review and testing queue, thanks!
+
+> Acked-by: Vadim Pasternak <vadimp@mellanox.com>
+>
+>> ---
+>>  drivers/platform/mellanox/mlxreg-io.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/platform/mellanox/mlxreg-io.c
+>> b/drivers/platform/mellanox/mlxreg-io.c
+>> index c192dfe6bd65..acfaf64ffde6 100644
+>> --- a/drivers/platform/mellanox/mlxreg-io.c
+>> +++ b/drivers/platform/mellanox/mlxreg-io.c
+>> @@ -152,8 +152,8 @@ static int mlxreg_io_attr_init(struct mlxreg_io_priv_data
+>> *priv)  {
+>>       int i;
+>>
+>> -     priv->group.attrs = devm_kzalloc(&priv->pdev->dev,
+>> -                                      priv->pdata->counter *
+>> +     priv->group.attrs = devm_kcalloc(&priv->pdev->dev,
+>> +                                      priv->pdata->counter,
+>>                                        sizeof(struct attribute *),
+>>                                        GFP_KERNEL);
+>>       if (!priv->group.attrs)
+>> --
+>> 2.17.1
+>>
+>>
+>> --
+>> Kees Cook
+>> Pixel Security
+
+
 
 -- 
-Jens Axboe
-
+With Best Regards,
+Andy Shevchenko
