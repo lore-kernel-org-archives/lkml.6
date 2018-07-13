@@ -2,193 +2,246 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C57ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B63A3ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D42FE20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:22:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="HM/UrYUj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42FE20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 6ECC720854
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:22:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ECC720854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731555AbeGMRhe (ORCPT
+        id S1731883AbeGMRhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 13:37:34 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37431 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730038AbeGMRhe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 13:37:34 -0400
-Received: by mail-wm0-f67.google.com with SMTP id n17-v6so10122162wmh.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 10:22:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=kC+g3gkKf1tO+YCO0MGSlPgytCWr21BdCs3bhHAjC2Y=;
-        b=HM/UrYUjGC0zgsWZBLBtunVPySrL9p94DJ+3Ut+JPitbdEVyOFyDBwCBEYklur4zsQ
-         KwRLw9UntSHy29SpXJZPzVqNxafBczHLhZsqL2YlV3fLmURShJnZxrdoKh9RyWtLMvRF
-         EAiNH90WUW3o3j8XMKgKGYf2+u5uafvMt2SBGHrM9wme1kcczFSMmIRRMhDZh8qJKKeN
-         HKB2Ef+lutSF0SSygtPmLtTDwb37zzorbDHb78S/yD6FgeEo+R7aA9PEpdMjM5n9UTRx
-         6IYQ/PgYYEGLwb8RmWDyEaUaEHxJ0te/BvQVg8M0lUFszHuEE2CS3COVvGdQa/Gg+qxP
-         N73A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=kC+g3gkKf1tO+YCO0MGSlPgytCWr21BdCs3bhHAjC2Y=;
-        b=ZXcFfAW4cqdxPp5WW2JJ4zLTPUjFdJbFztyGr00VDDnRTmAt18VR4TIyEqdFZxfxtF
-         Fu1EXN6GQru8rh3wrEyj1vBp9lEE3wiJg0GGBNF/qiADgbb2s9368h8WbGrC1sMJKl5p
-         origZaAcuYi1yAb2x2tdA76G1mykI2/OY6M1okngs0gaGpkftnjWj8IRoYp/anQFQTZG
-         kjlvpnEMM0Q06dbQiAnmUQgXfGLXdmC8zckKicvM6GMPa6ng9Y5udA1fweOUCzEwhDax
-         NoYtCMaOg9Emvo8n0MjK4ydb0VA/uWL4MDdRHaxMbj2p0dIX8LYlSpUGVmVt/Fafp0/e
-         vfQA==
-X-Gm-Message-State: AOUpUlFYK7ks8gQoU/Gi/7MLqb9/Ak3vAwTIp6J66Q8K0loZJS8N66TQ
-        x6Ey+XC9bu047ry5iuYbmHlow49EAwnqYHdXMzgn+A==
-X-Google-Smtp-Source: AAOMgpfndWSuw5X+m/8vEmCObUK98MZddCHm2vH8G0CMmLcaqb4rq2Lt87PWiKTQo9m2lrh4tUmGZji2ByofUWV0XPY=
-X-Received: by 2002:a1c:8b0d:: with SMTP id n13-v6mr4165854wmd.46.1531502519799;
- Fri, 13 Jul 2018 10:21:59 -0700 (PDT)
+        Fri, 13 Jul 2018 13:37:39 -0400
+Received: from mga17.intel.com ([192.55.52.151]:19438 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730038AbeGMRhi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 13:37:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 10:22:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,348,1526367600"; 
+   d="scan'208";a="245501544"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
+  by fmsmga006.fm.intel.com with ESMTP; 13 Jul 2018 10:21:37 -0700
+Subject: Re: [PATCH] i2c: aspeed: Improve driver to support multi-master use
+ cases stably
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        james.feist@linux.intel.com, vernon.mauery@linux.intel.com,
+        Benjamin Fair <benjaminfair@google.com>,
+        Patrick Venture <venture@google.com>,
+        Gary Hsu <gary_hsu@aspeedtech.com>,
+        Ryan Chen <ryan_chen@aspeedtech.com>
+References: <20180626165812.4141-1-jae.hyun.yoo@linux.intel.com>
+ <CAFd5g45z--ucXf-So517tgrayZT6x2TGvaUvaDF7zeRNn7CPXw@mail.gmail.com>
+ <e51471e6-0f8a-bffc-34c8-1e74239fdbcf@linux.intel.com>
+ <CAFd5g47j_h4ZrT8Eg1FZ8sAj5ekCUH20jUVub75ozdkg8_YW7Q@mail.gmail.com>
+ <921b1ab7-9c9f-0aeb-da89-5a1a27d009f0@linux.intel.com>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <d3f10fc1-635b-3a5d-a967-2816eac005fc@linux.intel.com>
+Date:   Fri, 13 Jul 2018 10:21:37 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 10:21:39
- -0700 (PDT)
-In-Reply-To: <20180713105620.z6bjhqzfez2hll6r@8bytes.org>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
- <1531308586-29340-8-git-send-email-joro@8bytes.org> <A66D58A6-3DC6-4CF3-B2A5-433C6E974060@amacapital.net>
- <20180713105620.z6bjhqzfez2hll6r@8bytes.org>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Fri, 13 Jul 2018 10:21:39 -0700
-Message-ID: <CALCETrW4XMD9TSTxK3h-3p5ZE5Z=DupiUBtiXnMmSprbXtJr3g@mail.gmail.com>
-Subject: Re: [PATCH 07/39] x86/entry/32: Enter the kernel via trampoline stack
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <921b1ab7-9c9f-0aeb-da89-5a1a27d009f0@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 3:56 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> Hi Andy,
->
-> thanks for you valuable feedback.
->
-> On Thu, Jul 12, 2018 at 02:09:45PM -0700, Andy Lutomirski wrote:
->> > On Jul 11, 2018, at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
->> > -.macro SAVE_ALL pt_regs_ax=3D%eax
->> > +.macro SAVE_ALL pt_regs_ax=3D%eax switch_stacks=3D0
->> >    cld
->> > +    /* Push segment registers and %eax */
->> >    PUSH_GS
->> >    pushl    %fs
->> >    pushl    %es
->> >    pushl    %ds
->> >    pushl    \pt_regs_ax
->> > +
->> > +    /* Load kernel segments */
->> > +    movl    $(__USER_DS), %eax
+On 7/12/2018 11:21 AM, Jae Hyun Yoo wrote:
+> On 7/12/2018 2:33 AM, Brendan Higgins wrote:
+>> On Wed, Jun 27, 2018 at 10:55 AM Jae Hyun Yoo
+>> <jae.hyun.yoo@linux.intel.com> wrote:
+>>>
+>> <snip>
+>>>>> +/* Timeout for bus busy checking */
+>>>>> +#define BUS_BUSY_CHECK_TIMEOUT                         250000 /* 
+>>>>> 250ms */
+>>>>> +#define BUS_BUSY_CHECK_INTERVAL                                
+>>>>> 10000  /* 10ms */
+>>>>
+>>>> Could you add a comment on where you got these values from?
+>>>>
+>>>
+>>> These are coming from ASPEED SDK code. Actually, they use 100ms for
+>>> timeout and 10ms for interval but I increased the timeout value to
+>>> 250ms so that it covers a various range of bus speed. I think, it
+>>> should be computed at run time based on the current bus speed, or
+>>> we could add these as device tree settings. How do you think about it?
+>>>
 >>
->> If \pt_regs_ax !=3D %eax, then this will behave oddly. Maybe it=E2=80=99=
-s okay.
->> But I don=E2=80=99t see why this change was needed at all.
->
-> This is a left-over from a previous approach I tried and then abandoned
-> later. You are right, it is not needed.
->
->> > +/*
->> > + * Called with pt_regs fully populated and kernel segments loaded,
->> > + * so we can access PER_CPU and use the integer registers.
->> > + *
->> > + * We need to be very careful here with the %esp switch, because an N=
-MI
->> > + * can happen everywhere. If the NMI handler finds itself on the
->> > + * entry-stack, it will overwrite the task-stack and everything we
->> > + * copied there. So allocate the stack-frame on the task-stack and
->> > + * switch to it before we do any copying.
+>> This should definitely be a device tree setting. If one of the busses 
+>> is being
+>> used as a regular I2C bus, it could hold the bus for an unlimited 
+>> amount of
+>> time before sending a STOP. As for a default, 100ms is probably fine 
+>> given
+>> that, a) the limit will only apply to multi-master mode, and b) 
+>> multi-master
+>> mode will probably almost always be used with IPMB, or MCTP (MCTP 
+>> actually
+>> recommends a 100ms timeout for this purpose, see
+>> https://www.dmtf.org/sites/default/files/standards/documents/DSP0237_1.1.0.pdf, 
 >>
->> Ick, right. Same with machine check, though. You could alternatively
->> fix it by running NMIs on an irq stack if the irq count is zero.  How
->> confident are you that you got #MC right?
->
-> Pretty confident, #MC uses the exception entry path which also handles
-> entry-stack and user-cr3 correctly. It might go through through the slow
-> paranoid exit path, but that's okay for #MC I guess.
->
-> And when the #MC happens while we switch to the task stack and do the
-> copying the same precautions as for NMI apply.
->
->> > + */
->> > +.macro SWITCH_TO_KERNEL_STACK
->> > +
->> > +    ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
->> > +
->> > +    /* Are we on the entry stack? Bail out if not! */
->> > +    movl    PER_CPU_VAR(cpu_entry_area), %edi
->> > +    addl    $CPU_ENTRY_AREA_entry_stack, %edi
->> > +    cmpl    %esp, %edi
->> > +    jae    .Lend_\@
+>> symbol PT2a). That being said, if you actually want to implement IPMB, 
+>> or MCTP
+>> arbitration logic, it is much more complicated.
 >>
->> That=E2=80=99s an alarming assumption about the address space layout. Ho=
-w
->> about an xor and an and instead of cmpl?  As it stands, if the address
->> layout ever changes, the failure may be rather subtle.
->
-> Right, I implement a more restrictive check.
+> 
+> Okay then, I think, we can fix the timeout value to 100ms and enable the
+> bus busy checking logic only when 'multi-master' is set in device tree.
+> My thought is, no additional arbitration logic is needed because
+> arbitration is performed in H/W level and H/W reports
+> ASPEED_I2CD_INTR_ARBIT_LOSS when it fails acquiring a bus. The
+> ARBIT_LOSS event is already being handled well by this driver code you
+> implemented.
+> 
+>>>   >
+>> <snip>
+>>>>>    #if IS_ENABLED(CONFIG_I2C_SLAVE)
+>>>>> -       if (aspeed_i2c_slave_irq(bus)) {
+>>>>> -               dev_dbg(bus->dev, "irq handled by slave.\n");
+>>>>> -               return IRQ_HANDLED;
+>>>>> +       if (bus->master_state != ASPEED_I2C_MASTER_INACTIVE) {
+>>>>> +               if (!aspeed_i2c_master_irq(bus))
+>>>>
+>>>> Why do you check the slave if master fails (or vice versa)? I
+>>>> understand that there are some status bits that have not been handled,
+>>>> but it doesn't seem reasonable to assume that there is state that the
+>>>> other should do something with; the only way this would happen is if
+>>>> the state that you think you are in does not match the status bits you
+>>>> have been given, but if this is the case, you are already hosed; I
+>>>> don't think trying the other handler is likely to make things better,
+>>>> unless there is something that I am missing.
+>>>>
+>>>
+>>> In most of cases, interrupt bits are set one by one but there are also a
+>>> lot of other cases that ASPEED I2C H/W sends multiple interrupt bits
+>>> with combining master and slave events using a single interrupt call. It
+>>> happens much in multi-master environment than single-master. For
+>>> example, when master is waiting for a NORMAL_STOP interrupt in its
+>>> MASTER_STOP state, SLAVE_MATCH and RX_DONE interrupts could come along
+>>> with the NORMAL_STOP in case of an another master immediately sends data
+>>> just after acquiring the bus - it happens a lot in BMC-ME connection
+>>> practically. In this case, the NORMAL_STOP interrupt should be handled
+>>> by master_irq and the SLAVE_MATCH and RX_DONE interrupts should be
+>>> handled by slave_irq so it's the reason why this code is added.
+>>
+>> That sucks. Well, it sounds like there are only a handful of cases in 
+>> which
+>> this can happen. Maybe enumerate these cases and error out or at least 
+>> warn if
+>> it is not one of them?
+>>
+> 
+> Yes, that sucks but that is Aspeed's I2C IP behavior and that's the
+> reason why they implemented some combination bits handling code in
+> their SDK. Actually, the cases are happening somewhat frequently
+> but that would not be a problem if we handle the cases properly instead
+> of making error out or warn.
+> 
+>>>
+>> <snip>
+>>>>> +       for (;;) {
+>>>>> +               if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
+>>>>> +                     (ASPEED_I2CD_BUS_BUSY_STS |
+>>>>> +                      ASPEED_I2CD_XFER_MODE_STS_MASK)))
+>>>>
+>>>> Is using the Transfer Mode State Machine bits necessary? The
+>>>> documentation marks it as "for debugging purpose only," so relying on
+>>>> it makes me nervous.
+>>>>
+>>>
+>>> As you said, the documentation marks it as "for debugging purpose only."
+>>> but ASPEED also uses this way in their SDK code because it's the best
+>>> way for checking bus busy status which can cover both single and
+>>> multi-master use cases.
+>>>
+>>
+>> Well, it would also be really nice to have access to this bit if 
+>> someone wants
+>> to implement MCTP. Could we maybe check with Aspeed what them meant by 
+>> "for
+>> debugging purposes only" and document it here? It makes me nervous to 
+>> rely on
+>> debugging functionality for normal usage.
+>>
+> 
+> Okay, I'll check it with Aspeed. Will let you know their response.
+> 
 
-But the check needs to be correct or we'll mess up, right?  I think
-the code will be much more robust and easier to review if you check
-"on the entry stack" instead of ">=3D the entry stack".  (Or <=3D -- I can
-never remember how this works in AT&T syntax.)
+I've checked it with Gary Hsu <gary_hsu@aspeedtech.com> and he confirmed
+that the bits reflect real information and good to be used in practical
+code.
 
->
->> Anyway, wouldn=E2=80=99t it be easier to solve this by just not switchin=
-g
->> stacks on entries from kernel mode and making the entry stack bigger?
->> Stick an assertion in the scheduling code that we=E2=80=99re not on an e=
-ntry
->> stack, perhaps.
->
-> That'll save us the check whether we are on the entry stack and replace
-> it with a check whether we are coming from user/vm86 mode. I don't think
-> that this will simplify things much and I am a bit afraid that it'll
-> break unwritten assumptions elsewhere. It is probably something we can
-> look into later separatly from the basic pti-x32 enablement.
->
+I'll add a comment like below:
 
-Fair enough.  There's also the issue that NMI still has to switch CR3
-if it hits with the wrong CR3.
+/*
+  * This is marked as 'for debugging purpose only' in datasheet but
+  * ASPEED confirmed that this reflects real information and good
+  * to be used in practical code.
+  */
 
-I personally much prefer checking whether you came from user mode
-rather than the stack address, but I'm okay with either approach here.
+Is it acceptable then?
+
+>>>>> +                       return 0;
+>>>>> +               if (ktime_compare(ktime_get(), timeout) > 0)
+>>>>> +                       break;
+>>>>> +               usleep_range((BUS_BUSY_CHECK_INTERVAL >> 2) + 1,
+>>>>
+>>>> Where did you get this minimum value?
+>>>>
+>>>
+>>> No source for the minimum value. ASPEED uses mdelay(10) in their SDK
+>>> but I changed that code using usleep_range and the range value was set
+>>> with considering time stretching of usleep_range.
+>>> regmap_read_poll_timeout was a reference for this code.
+>>
+>> What protocol are you trying to implement on top of this? You 
+>> mentioned BMC-ME
+>> above; that's IPMB, right? For most use cases, this should work, but 
+>> if you
+>> need arbitration, you will need to do quite a bit more work.
+>>
+> 
+> Yes, I'm implementing IPMB for a BMC-ME channel. As I said above,
+> arbitration will be performed in H/W level and it's already been handled
+> well by your code. This bus busy checking logic is for checking whether
+> any slave operation is currently ongoing or not at the timing of
+> master_xfer is called. It's not for arbitration but for preventing state
+> conflicts between master and slave operations.
+> 
+> FYI, I broke down this patch into smaller patches you reviewed
+> Today. Thanks for sharing your time for reviewing the patches.
+> I'll send remaining patches after completing review on those
+> patches because the remaining patches have dependency on them.
+> 
+> Thanks!
+> 
+>>>
+>>> Thanks,
+>>>
+>>> Jae
+>> <snip>
+>>
+>> Cheers
+>>
+> 
