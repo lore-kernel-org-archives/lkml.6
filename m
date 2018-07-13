@@ -2,284 +2,82 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B811ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF55FECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D83BA2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:01:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83BA2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 9ECD3208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:03:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ECD3208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbeGMNQ0 (ORCPT
+        id S1729751AbeGMNSD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 09:16:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38634 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729617AbeGMNQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 09:16:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F0B45AD3C;
-        Fri, 13 Jul 2018 13:01:49 +0000 (UTC)
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
-        Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH] watchdog: add driver for the MEN 16z069 IP-Core
-Date:   Fri, 13 Jul 2018 14:58:31 +0200
-Message-Id: <20180713125831.26074-1-jthumshirn@suse.de>
-X-Mailer: git-send-email 2.16.4
+        Fri, 13 Jul 2018 09:18:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:34780 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729636AbeGMNSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 09:18:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 35B0980D;
+        Fri, 13 Jul 2018 06:03:29 -0700 (PDT)
+Received: from red-moon (unknown [10.1.206.55])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 052C83F318;
+        Fri, 13 Jul 2018 06:03:27 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 14:05:26 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Ray Jui <ray.jui@broadcom.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] Improve Broadcom PAXC support
+Message-ID: <20180713130526.GB18515@red-moon>
+References: <1528762867-16823-1-git-send-email-ray.jui@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528762867-16823-1-git-send-email-ray.jui@broadcom.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for the MEN 16z069 Watchdog and Reset Controller IP-Core.
+On Mon, Jun 11, 2018 at 05:21:02PM -0700, Ray Jui wrote:
+> This patch series improves the Broadcom PAXC support by 1) adding more
+> quirks for specific versions of PAXC controllers; 2) adding logic to
+> reject internally unconfigured physical functions from the embedded
+> network processor acting as endpoint; 3) reducing verbose print level
+> in the outbound/inbound mapping code
+> 
+> This patch series is based off v4.17 and is available on GIHUB:
+> repo: https://github.com/Broadcom/arm64-linux.git
+> branch: sr-paxc-v2
+> 
+> Changes since v1:
+>  - consolidate 2 PAXC related patch series into 1
+>  - change the way how the capability list corruption is handled, per
+> recommendation from Bjorn. Now handle and fix up the corruption at
+> the config register read
+>  - rebase to v4.17
+> 
+> Ray Jui (5):
+>   PCI: iproc: Activate PAXC bridge quirk for more devices
+>   PCI: iproc: Fix up corrupted PAXC root complex config registers
+>   PCI: iproc: Disable MSI parsing in certain PAXC blocks
+>   PCI: iproc: Reject unconfigured physical functions from PAXC
+>   PCI: iproc: Reduce inbound/outbound mapping print level
+> 
+>  drivers/pci/host/pcie-iproc.c | 159 +++++++++++++++++++++++++++++++++++-------
+>  drivers/pci/host/pcie-iproc.h |   8 +++
+>  drivers/pci/quirks.c          |   3 +
+>  3 files changed, 144 insertions(+), 26 deletions(-)
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
----
- MAINTAINERS                   |   6 ++
- drivers/watchdog/Kconfig      |  10 +++
- drivers/watchdog/Makefile     |   1 +
- drivers/watchdog/menz69_wdt.c | 175 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 192 insertions(+)
- create mode 100644 drivers/watchdog/menz69_wdt.c
+Applied to pci/iproc with Bjorn's ACK for v4.19, thanks.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 07d1576fc766..67a76f740294 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -9298,6 +9298,12 @@ F:	drivers/leds/leds-menf21bmc.c
- F:	drivers/hwmon/menf21bmc_hwmon.c
- F:	Documentation/hwmon/menf21bmc
- 
-+MEN Z069 WATCHDOG DRIVER
-+M:	Johannes Thumshirn <jth@kernel.org>
-+L:	linux-watchdog@vger.kernel.org
-+S:	Maintained
-+F:	drivers/watchdog/menz069_wdt.c
-+
- MESON AO CEC DRIVER FOR AMLOGIC SOCS
- M:	Neil Armstrong <narmstrong@baylibre.com>
- L:	linux-media@lists.freedesktop.org
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 9af07fd92763..df55d65bbb1c 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -161,6 +161,16 @@ config MENF21BMC_WATCHDOG
- 	  This driver can also be built as a module. If so the module
- 	  will be called menf21bmc_wdt.
- 
-+config MENZ069_WATCHDOG
-+	tristate "MEN 16Z069 Watchdog"
-+	depends on MCB || COMPILE_TEST
-+	select WATCHDOG_CORE
-+	help
-+	  Say Y here to include support for the MEN 16Z069 Watchdog.
-+
-+	  This driver can also be built as a module. If so the module
-+	  will be called menz069_wdt.
-+
- config TANGOX_WATCHDOG
- 	tristate "Sigma Designs SMP86xx/SMP87xx watchdog"
- 	select WATCHDOG_CORE
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index 1d3c6b094fe5..bf92e7bf9ce0 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -215,4 +215,5 @@ obj-$(CONFIG_MAX77620_WATCHDOG) += max77620_wdt.o
- obj-$(CONFIG_ZIIRAVE_WATCHDOG) += ziirave_wdt.o
- obj-$(CONFIG_SOFT_WATCHDOG) += softdog.o
- obj-$(CONFIG_MENF21BMC_WATCHDOG) += menf21bmc_wdt.o
-+obj-$(CONFIG_MENZ069_WATCHDOG) += menz69_wdt.o
- obj-$(CONFIG_RAVE_SP_WATCHDOG) += rave-sp-wdt.o
-diff --git a/drivers/watchdog/menz69_wdt.c b/drivers/watchdog/menz69_wdt.c
-new file mode 100644
-index 000000000000..9dccd8aabdb9
---- /dev/null
-+++ b/drivers/watchdog/menz69_wdt.c
-@@ -0,0 +1,175 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Watchdog driver for the MEN z069 IP-Core
-+ *
-+ * Copyright (C) 2018 Johannes Thumshirn <jth@kernel.org>
-+ */
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/mcb.h>
-+#include <linux/watchdog.h>
-+#include <linux/io.h>
-+
-+struct men_z069_drv {
-+	struct watchdog_device wdt;
-+	void __iomem *base;
-+	struct resource *mem;
-+};
-+
-+#define MEN_Z069_WTR 0x10
-+#define MEN_Z069_WTR_WDEN BIT(15)
-+#define MEN_Z069_WTR_WDET_MASK	0x7fff
-+#define MEN_Z069_WVR 0x14
-+
-+#define MEN_Z069_TIMER_FREQ 500 /* 500 Hz */
-+#define MEN_Z069_WDT_COUNTER_MIN 1
-+#define MEN_Z069_WDT_COUNTER_MAX 0x7fff
-+
-+static bool nowayout = WATCHDOG_NOWAYOUT;
-+module_param(nowayout, bool, 0);
-+MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
-+			    __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-+
-+static int men_z069_wdt_start(struct watchdog_device *wdt)
-+{
-+	struct men_z069_drv *drv = watchdog_get_drvdata(wdt);
-+	u16 val;
-+
-+	val = readw(drv->base + MEN_Z069_WTR);
-+	val |= MEN_Z069_WTR_WDEN;
-+	writew(val, drv->base + MEN_Z069_WTR);
-+
-+	return 0;
-+}
-+
-+static int men_z069_wdt_stop(struct watchdog_device *wdt)
-+{
-+	struct men_z069_drv *drv = watchdog_get_drvdata(wdt);
-+	u16 val;
-+
-+	val = readw(drv->base + MEN_Z069_WTR);
-+	val &= ~MEN_Z069_WTR_WDEN;
-+	writew(val, drv->base + MEN_Z069_WTR);
-+
-+	return 0;
-+}
-+
-+static int men_z069_wdt_ping(struct watchdog_device *wdt)
-+{
-+	struct men_z069_drv *drv = watchdog_get_drvdata(wdt);
-+	u16 val;
-+
-+	/* The watchdog trigger value toggles between 0x5555 and 0xaaaa */
-+	val = readw(drv->base + MEN_Z069_WVR);
-+	val ^= 0xffff;
-+	writew(val, drv->base + MEN_Z069_WVR);
-+
-+	return 0;
-+}
-+
-+static int men_z069_wdt_set_timeout(struct watchdog_device *wdt,
-+				    unsigned int timeout)
-+{
-+	struct men_z069_drv *drv = watchdog_get_drvdata(wdt);
-+	u16 reg, val, ena;
-+
-+	wdt->timeout = timeout;
-+	val = timeout * MEN_Z069_TIMER_FREQ;
-+
-+	if (val < MEN_Z069_WDT_COUNTER_MIN || val > MEN_Z069_WDT_COUNTER_MAX)
-+		return -EINVAL;
-+
-+	reg = readw(drv->base + MEN_Z069_WVR);
-+	ena = reg & MEN_Z069_WTR_WDEN;
-+	reg = ena | (val & MEN_Z069_WTR_WDET_MASK);
-+	writew(reg, drv->base + MEN_Z069_WTR);
-+
-+	return 0;
-+}
-+
-+static const struct watchdog_info men_z069_info = {
-+	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-+	.identity = "MEN z069 Watchdog",
-+};
-+
-+static const struct watchdog_ops men_z069_ops = {
-+	.owner = THIS_MODULE,
-+	.start = men_z069_wdt_start,
-+	.stop = men_z069_wdt_stop,
-+	.ping = men_z069_wdt_ping,
-+	.set_timeout = men_z069_wdt_set_timeout,
-+};
-+
-+static struct watchdog_device men_z069_wdt = {
-+	.info = &men_z069_info,
-+	.ops = &men_z069_ops,
-+	.min_timeout = 1,
-+	.max_timeout = 65,
-+};
-+
-+static int men_z069_probe(struct mcb_device *dev,
-+			  const struct mcb_device_id *id)
-+{
-+	struct men_z069_drv *drv;
-+	struct resource *mem;
-+
-+	drv = devm_kzalloc(&dev->dev, sizeof(struct men_z069_drv), GFP_KERNEL);
-+	if (!drv)
-+		return -ENOMEM;
-+
-+	mem = mcb_request_mem(dev, "z069-wdt");
-+	if (IS_ERR(mem))
-+		return PTR_ERR(mem);
-+
-+	drv->base = devm_ioremap(&dev->dev, mem->start, resource_size(mem));
-+	if (drv->base == NULL)
-+		goto release_mem;
-+
-+	drv->mem = mem;
-+
-+	watchdog_init_timeout(&men_z069_wdt, 30, &dev->dev);
-+	watchdog_set_nowayout(&men_z069_wdt, nowayout);
-+	watchdog_set_drvdata(&men_z069_wdt, drv);
-+	men_z069_wdt.parent = &dev->dev;
-+	drv->wdt = men_z069_wdt;
-+	mcb_set_drvdata(dev, drv);
-+
-+	/* Set initial timeout to 65.5s and disable the watchdog */
-+	writew(MEN_Z069_WDT_COUNTER_MAX, drv->base + MEN_Z069_WTR);
-+
-+	return watchdog_register_device(&men_z069_wdt);
-+
-+release_mem:
-+	mcb_release_mem(mem);
-+	return -ENXIO;
-+}
-+
-+static void men_z069_remove(struct mcb_device *dev)
-+{
-+	struct men_z069_drv *drv = mcb_get_drvdata(dev);
-+
-+	watchdog_unregister_device(&drv->wdt);
-+	mcb_release_mem(drv->mem);
-+}
-+
-+static const struct mcb_device_id men_z069_ids[] = {
-+	{ .device = 0x45 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(mcb, men_z069_ids);
-+
-+static struct mcb_driver men_z069_driver = {
-+	.driver = {
-+		.name = "z069-wdt",
-+		.owner = THIS_MODULE,
-+	},
-+	.probe = men_z069_probe,
-+	.remove = men_z069_remove,
-+	.id_table = men_z069_ids,
-+};
-+module_mcb_driver(men_z069_driver);
-+
-+
-+MODULE_AUTHOR("Johannes Thumshirn <jth@kernel.org>");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("mcb:16z069");
--- 
-2.16.4
-
+Lorenzo
