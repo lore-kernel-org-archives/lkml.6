@@ -2,108 +2,143 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF969ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:50:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F81ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79681208B4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:50:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="DJDaFHlH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79681208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 75E162087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E162087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729935AbeGMMFI (ORCPT
+        id S1729751AbeGMMGf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 08:05:08 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46852 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729634AbeGMMFI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 08:05:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VLolxv6UGVg/hcpEgt5gLutyZJnc7SXGkg4YWb90hNM=; b=DJDaFHlHRMfE4jFO/ug4XpIWj
-        YXWnuJoW1Lu+d8J9KfZ0RvC1M9lnUloXVNT3kTF+xYBDzoG/YX2ZPWv79gEHLsubtEJGQR8wQ6ZOs
-        cphdu60GSted4k0C/uocK96o8e6RM2Si54errt+UG/ARXIEwu9OfsI02o+wKHQYRk67Ro=;
-Received: from 94.197.120.189.threembb.co.uk ([94.197.120.189] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fdwar-000517-1j; Fri, 13 Jul 2018 11:50:41 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 57BE4440078; Fri, 13 Jul 2018 12:50:10 +0100 (BST)
-Date:   Fri, 13 Jul 2018 12:50:10 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Marco Felsch <m.felsch@pengutronix.de>
-Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        fabio.estevam@nxp.com, Anson.Huang@nxp.com, kernel@pengutronix.de,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: pfuze100: add optional pfuze-disable-sw
- binding
-Message-ID: <20180713115010.GA16228@sirena.org.uk>
-References: <20180712110240.3006-1-m.felsch@pengutronix.de>
- <20180712110240.3006-2-m.felsch@pengutronix.de>
- <20180712153121.GF10369@sirena.org.uk>
- <20180713083039.4z3ulwtg2ekx5n23@pengutronix.de>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
-Content-Disposition: inline
-In-Reply-To: <20180713083039.4z3ulwtg2ekx5n23@pengutronix.de>
-X-Cookie: Reactor error - core dumped!
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Fri, 13 Jul 2018 08:06:35 -0400
+Received: from mga02.intel.com ([134.134.136.20]:13988 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727434AbeGMMGf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 08:06:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 04:52:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,347,1526367600"; 
+   d="scan'208";a="56251304"
+Received: from mint-dev.iind.intel.com ([10.223.25.164])
+  by orsmga007.jf.intel.com with ESMTP; 13 Jul 2018 04:52:12 -0700
+From:   Ramalingam C <ramalingam.c@intel.com>
+To:     intel-gfx-trybot@lists.freedesktop.org
+Cc:     Ramalingam C <ramalingam.c@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v6 07/37] component: alloc component_match without any comp to match
+Date:   Fri, 13 Jul 2018 17:21:42 +0530
+Message-Id: <1531482732-26667-8-git-send-email-ramalingam.c@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1531482732-26667-1-git-send-email-ramalingam.c@intel.com>
+References: <1531482732-26667-1-git-send-email-ramalingam.c@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+If all the components associated to a component master is not added
+to the component framework due to the HW capability or Kconfig
+selection, component_match will be NULL at
+component_master_add_with_match().
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+To avoid this, component_match_alloc() is added to the framework,
+to allcoate the struct component_match with zero associated components.
+Hence component master can be added with a component_match with zero
+associated components.
 
-On Fri, Jul 13, 2018 at 10:30:39AM +0200, Marco Felsch wrote:
-> On 18-07-12 16:31, Mark Brown wrote:
-> > On Thu, Jul 12, 2018 at 01:02:39PM +0200, Marco Felsch wrote:
+This helps the component master bind call to get triggered,
+even if no component is registered for that particular master.
 
-> > > +Optional properties:
-> > > +- pfuze-disable-sw: Disable all unused switch regulators to save power
+This is meant for big PCI device drivers where small/optional
+features are external components, and based on usecases different
+combination of components are build as entire driver.
 
-> > This is a bit of a confused way of specifying things that depends on the
-> > Linux implementation, and the property sounds like a double negative
-> > too.  I'd say something like "pfuze-support-disable" and then explicitly
-> > say that this is a workaround for backwards compatibility.
+In such PCI device driver Load, if we use the component master for
+waiting for few  components(features) availability, only if they are
+supported by the underlying HW, then we need to allocate memory for
+component_match using the API introduced in this change before
+the call to component_master_add_with_match.
 
-> I can't find the double negative. Anyway your binding sounds better. So
-> I will use yours. Should we add a vendor prefix too to be clear? I will
-> also add some more informations to mark it as workaround.
+Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
+Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: linux-kernel@vger.kernel.org
+---
+ drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
+ include/linux/component.h |  2 ++
+ 2 files changed, 32 insertions(+)
 
-The property doesn't disable the use of switch regulators, it enables
-their disabling.  A vendor prefix is probably required but I can't
-entirely follow the DT rules there, it certainly shouldn't hurt anyway.
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index 8946dfee4768..007fb738263a 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -312,6 +312,36 @@ static int component_match_realloc(struct device *dev,
+ }
+ 
+ /*
++ * Allocate the match without any component_match_array elements.
++ *
++ * This function is useful when the component master might end up
++ * registering itself without any matching components.
++ */
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr)
++{
++	struct component_match *match = *matchptr;
++
++	if (IS_ERR(match))
++		return;
++
++	if (match)
++		return;
++
++	match = devres_alloc(devm_component_match_release,
++			     sizeof(*match), GFP_KERNEL);
++	if (!match) {
++		*matchptr = ERR_PTR(-ENOMEM);
++		return;
++	}
++
++	devres_add(master, match);
++
++	*matchptr = match;
++}
++EXPORT_SYMBOL(component_match_alloc);
++
++/*
+  * Add a component to be matched, with a release function.
+  *
+  * The match array is first created or extended if necessary.
+diff --git a/include/linux/component.h b/include/linux/component.h
+index e71fbbbc74e2..3f6b420a58f8 100644
+--- a/include/linux/component.h
++++ b/include/linux/component.h
+@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
+ 	struct component_match **matchptr,
+ 	void (*release)(struct device *, void *),
+ 	int (*compare)(struct device *, void *), void *compare_data);
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr);
+ 
+ static inline void component_match_add(struct device *master,
+ 	struct component_match **matchptr,
+-- 
+2.7.4
 
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAltIke8ACgkQJNaLcl1U
-h9ASxwf+I+jR/6P3ZK6bGKjK57+MO7Nxv16hDmOm0MCk3VaH5worcAEZpTBIkWk5
-FvlNmlzEtJnKWmLaIk1mKw895Yrjel1ZqicsXrV2lrE8ic/E2xJJ4UGsoRWcws4G
-a+Mm4ZoxlxNfowNQhDzH08dxFBdDh3xDcQ1Z+HGzsjFDTsBhXEyg6Hi20k2ZO6bP
-jEwNQYdS8Y6Pn+v8f71+wlccLsXHQupnSgidQbVlUsBoTZOn5B6V5fVjZZPLhYcN
-NsZkmzJieJv/qQTqpfQvfUc4oTOPZPKs0gW/Nrh3dFq6ygAoXwWCDVurn+tD2uCE
-9WyqcbDLSpmfpRFDdRKnjDoppZBq/g==
-=5Yj7
------END PGP SIGNATURE-----
-
---VbJkn9YxBvnuCH5J--
