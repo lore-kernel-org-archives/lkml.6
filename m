@@ -6,32 +6,33 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF36ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CE6ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF3BD205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF3BD205F4
+	by mail.kernel.org (Postfix) with ESMTP id 0A462205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A462205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388046AbeGMBh5 (ORCPT
+        id S2388065AbeGMBh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 21:37:57 -0400
-Received: from nautica.notk.org ([91.121.71.147]:43005 "EHLO nautica.notk.org"
+        Thu, 12 Jul 2018 21:37:59 -0400
+Received: from nautica.notk.org ([91.121.71.147]:43008 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387896AbeGMBh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 21:37:56 -0400
+        id S2387896AbeGMBh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 21:37:58 -0400
 Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 3F339C023; Fri, 13 Jul 2018 03:25:43 +0200 (CEST)
+        id B66B8C024; Fri, 13 Jul 2018 03:25:45 +0200 (CEST)
 From:   Dominique Martinet <asmadeus@codewreck.org>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Chris Lee <christopher.lee@cspi.com>,
+        Ariel Elior <Ariel.Elior@cavium.com>,
+        everest-linux-l2@cavium.com,
         "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 08/18] myricom: change strncpy+truncation to strlcpy
-Date:   Fri, 13 Jul 2018 03:25:41 +0200
-Message-Id: <1531445141-19481-1-git-send-email-asmadeus@codewreck.org>
+Subject: [PATCH 09/18] qlogic/qed: change strncpy+truncation to strlcpy
+Date:   Fri, 13 Jul 2018 03:25:44 +0200
+Message-Id: <1531445144-19521-1-git-send-email-asmadeus@codewreck.org>
 X-Mailer: git-send-email 1.7.10.4
 In-Reply-To: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
 References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
@@ -49,23 +50,23 @@ Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
 first patch of the serie) for the motivation behind this patch
 
- drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 3 +--
+ drivers/net/ethernet/qlogic/qed/qed_debug.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-index b2d2ec8c11e2..f7178cdb6bd8 100644
---- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-+++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
-@@ -553,8 +553,7 @@ myri10ge_validate_firmware(struct myri10ge_priv *mgp,
- 	}
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_debug.c b/drivers/net/ethernet/qlogic/qed/qed_debug.c
+index a14e48489029..4fe0a72230e8 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_debug.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_debug.c
+@@ -6212,8 +6212,7 @@ static void qed_read_str_from_buf(void *buf, u32 *offset, u32 size, char *dest)
+ {
+ 	const char *source_str = &((const char *)buf)[*offset];
  
- 	/* save firmware version for ethtool */
--	strncpy(mgp->fw_version, hdr->version, sizeof(mgp->fw_version));
--	mgp->fw_version[sizeof(mgp->fw_version) - 1] = '\0';
-+	strlcpy(mgp->fw_version, hdr->version, sizeof(mgp->fw_version));
+-	strncpy(dest, source_str, size);
+-	dest[size - 1] = '\0';
++	strlcpy(dest, source_str, size);
+ 	*offset += size;
+ }
  
- 	sscanf(mgp->fw_version, "%d.%d.%d", &mgp->fw_ver_major,
- 	       &mgp->fw_ver_minor, &mgp->fw_ver_tiny);
 -- 
 2.17.1
 
