@@ -2,273 +2,258 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC5FECDFB2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8038EECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D05E7214AB
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:26:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YjHJVLKq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05E7214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A13B214AB
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:26:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A13B214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388002AbeGMDjB (ORCPT
+        id S2388029AbeGMDjQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 23:39:01 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:41325 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387615AbeGMDjA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 23:39:00 -0400
-Received: by mail-pf0-f196.google.com with SMTP id c21-v6so17171990pfn.8
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 20:26:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gc/9xeTOIbw53F6nYP89sY5reU1DoIfxCKRmupl9mxU=;
-        b=YjHJVLKqS55fOsiVgjemOD4Wrk4FwWz0KMIChBKWZ9vlx5jQSijHM6b6M6a3K30vmv
-         pIXstIdYq1ci85VO0Dvxtp6De1Tqimn+qxHz2UF9tBrDm6K968azdwwZMz76/RoLITYa
-         dCmoRQtyHgekyWidk5u2xfXZxoiKCCLl2IpqzenwKjpuz69Va/UpwKWovp6l5DLoWaoR
-         0hduLLnIJbTwdsirWjGWQlqVTTSF10IQrtTes3Vt6eerDd9SpbULdV62QQ771o2Pkt7E
-         OQW47TUIPjzz2TjRrdzJptGiVCMvNpXzgy7ymyfB7mdVFApS1ArEQqAoj7FcsN0d26kc
-         CdzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=gc/9xeTOIbw53F6nYP89sY5reU1DoIfxCKRmupl9mxU=;
-        b=BSNSnadwkYZtoYOA6AZ4WHgzbvA6mOgBb+nHIOI6orHUzSJT33YwnmdvSsD7u7xiai
-         CpQ5yLUxjESbXnsjkYCETNUf53m3JzbHZcYmVCtAYz25ljMA1BQMxpsYxa8jFYujMZak
-         Pg6i4fsZQ49P+SivKkuNgE/PaNtNY9zpwli0v+oeksI47/K3F9ReEDN9o1BMamQZV0P7
-         1cUi5DAbXXNs6SB3chMJrg7WVEChI0TAWCqAtCv+fqnApeVItDUMLPV87NI/+YtYfwRY
-         cuNTYdKPFvmUDxAxxBT305EHpd4p3p6mu5+gQAmhA4yIlqJ7CWp6RmcMazisj6edd0XV
-         L8cA==
-X-Gm-Message-State: AOUpUlHD14qSxPOdSCb6MmJrJ/oVbhNnNcVOew8XiI75xSClYMFIOngz
-        9d+G4EftdZ1Mh5b7ppQYpw==
-X-Google-Smtp-Source: AAOMgpd69noVRezXFSpuNk8AuGo4WPydicOwcnjAoqVpyGifKrRw8VQrUQiUGfdKsLLbpqUvT/95Xg==
-X-Received: by 2002:a62:5290:: with SMTP id g138-v6mr5218677pfb.46.1531452384669;
-        Thu, 12 Jul 2018 20:26:24 -0700 (PDT)
-Received: from www9186uo.sakura.ne.jp (www9186uo.sakura.ne.jp. [153.121.56.200])
-        by smtp.gmail.com with ESMTPSA id b66-v6sm8867241pgc.15.2018.07.12.20.26.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 20:26:23 -0700 (PDT)
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     linux-mm@kvack.org
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        xishi.qiuxishi@alibaba-inc.com, zy.zhengyi@alibaba-inc.com,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] mm: soft-offline: close the race against page allocation
-Date:   Fri, 13 Jul 2018 12:26:06 +0900
-Message-Id: <1531452366-11661-3-git-send-email-n-horiguchi@ah.jp.nec.com>
-X-Mailer: git-send-email 2.7.0
-In-Reply-To: <1531452366-11661-1-git-send-email-n-horiguchi@ah.jp.nec.com>
-References: <1531452366-11661-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+        Thu, 12 Jul 2018 23:39:16 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55075 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387615AbeGMDjQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 23:39:16 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C01C978836A61;
+        Fri, 13 Jul 2018 11:26:33 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
+ 11:26:28 +0800
+Subject: Re: [PATCH 5/5] f2fs: do not __punch_discard_cmd in lfs mode
+To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
+ <1531408170-45758-6-git-send-email-yunlong.song@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <7049c66a-867a-aef6-a58e-16ade179461e@huawei.com>
+Date:   Fri, 13 Jul 2018 11:26:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1531408170-45758-6-git-send-email-yunlong.song@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A process can be killed with SIGBUS(BUS_MCEERR_AR) when it tries to
-allocate a page that was just freed on the way of soft-offline.
-This is undesirable because soft-offline (which is about corrected error)
-is less aggressive than hard-offline (which is about uncorrected error),
-and we can make soft-offline fail and keep using the page for good reason
-like "system is busy."
+On 2018/7/12 23:09, Yunlong Song wrote:
+> In lfs mode, it is better to submit and wait for discard of the
+> new_blkaddr's overall section, rather than punch it which makes
+> more small discards and is not friendly with flash alignment. And
+> f2fs does not have to wait discard of each new_blkaddr except for the
+> start_block of each section with this patch.
 
-Two main changes of this patch are:
+For non-zoned block device, unaligned discard can be allowed; and if synchronous
+discard is very slow, it will block block allocator here, rather than that, I
+prefer just punch 4k lba of discard entry for performance.
 
-- setting migrate type of the target page to MIGRATE_ISOLATE. As done
-  in free_unref_page_commit(), this makes kernel bypass pcplist when
-  freeing the page. So we can assume that the page is in freelist just
-  after put_page() returns,
+If you don't want to encounter this condition, I suggest issue large size
+discard more quickly.
 
-- setting PG_hwpoison on free page under zone->lock which protects
-  freelists, so this allows us to avoid setting PG_hwpoison on a page
-  that is decided to be allocated soon.
+Thanks,
 
-Reported-by: Xishi Qiu <xishi.qiuxishi@alibaba-inc.com>
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
----
- include/linux/page-flags.h |  5 +++++
- include/linux/swapops.h    | 10 ----------
- mm/memory-failure.c        | 26 +++++++++++++++++++++-----
- mm/migrate.c               |  2 +-
- mm/page_alloc.c            | 29 +++++++++++++++++++++++++++++
- 5 files changed, 56 insertions(+), 16 deletions(-)
-
-diff --git v4.18-rc4-mmotm-2018-07-10-16-50/include/linux/page-flags.h v4.18-rc4-mmotm-2018-07-10-16-50_patched/include/linux/page-flags.h
-index 901943e..74bee8c 100644
---- v4.18-rc4-mmotm-2018-07-10-16-50/include/linux/page-flags.h
-+++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/include/linux/page-flags.h
-@@ -369,8 +369,13 @@ PAGEFLAG_FALSE(Uncached)
- PAGEFLAG(HWPoison, hwpoison, PF_ANY)
- TESTSCFLAG(HWPoison, hwpoison, PF_ANY)
- #define __PG_HWPOISON (1UL << PG_hwpoison)
-+extern bool set_hwpoison_free_buddy_page(struct page *page);
- #else
- PAGEFLAG_FALSE(HWPoison)
-+static inline bool set_hwpoison_free_buddy_page(struct page *page)
-+{
-+	return 0;
-+}
- #define __PG_HWPOISON 0
- #endif
- 
-diff --git v4.18-rc4-mmotm-2018-07-10-16-50/include/linux/swapops.h v4.18-rc4-mmotm-2018-07-10-16-50_patched/include/linux/swapops.h
-index 9c0eb4d..fe8e08b 100644
---- v4.18-rc4-mmotm-2018-07-10-16-50/include/linux/swapops.h
-+++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/include/linux/swapops.h
-@@ -335,11 +335,6 @@ static inline int is_hwpoison_entry(swp_entry_t entry)
- 	return swp_type(entry) == SWP_HWPOISON;
- }
- 
--static inline bool test_set_page_hwpoison(struct page *page)
--{
--	return TestSetPageHWPoison(page);
--}
--
- static inline void num_poisoned_pages_inc(void)
- {
- 	atomic_long_inc(&num_poisoned_pages);
-@@ -362,11 +357,6 @@ static inline int is_hwpoison_entry(swp_entry_t swp)
- 	return 0;
- }
- 
--static inline bool test_set_page_hwpoison(struct page *page)
--{
--	return false;
--}
--
- static inline void num_poisoned_pages_inc(void)
- {
- }
-diff --git v4.18-rc4-mmotm-2018-07-10-16-50/mm/memory-failure.c v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/memory-failure.c
-index c63d982..794687a 100644
---- v4.18-rc4-mmotm-2018-07-10-16-50/mm/memory-failure.c
-+++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/memory-failure.c
-@@ -57,6 +57,7 @@
- #include <linux/mm_inline.h>
- #include <linux/kfifo.h>
- #include <linux/ratelimit.h>
-+#include <linux/page-isolation.h>
- #include "internal.h"
- #include "ras/ras_event.h"
- 
-@@ -1697,6 +1698,7 @@ static int __soft_offline_page(struct page *page, int flags)
- static int soft_offline_in_use_page(struct page *page, int flags)
- {
- 	int ret;
-+	int mt;
- 	struct page *hpage = compound_head(page);
- 
- 	if (!PageHuge(page) && PageTransHuge(hpage)) {
-@@ -1715,23 +1717,37 @@ static int soft_offline_in_use_page(struct page *page, int flags)
- 		put_hwpoison_page(hpage);
- 	}
- 
-+	/*
-+	 * Setting MIGRATE_ISOLATE here ensures that the page will be linked
-+	 * to free list immediately (not via pcplist) when released after
-+	 * successful page migration. Otherwise we can't guarantee that the
-+	 * page is really free after put_page() returns, so
-+	 * set_hwpoison_free_buddy_page() highly likely fails.
-+	 */
-+	mt = get_pageblock_migratetype(page);
-+	set_pageblock_migratetype(page, MIGRATE_ISOLATE);
- 	if (PageHuge(page))
- 		ret = soft_offline_huge_page(page, flags);
- 	else
- 		ret = __soft_offline_page(page, flags);
--
-+	set_pageblock_migratetype(page, mt);
- 	return ret;
- }
- 
--static void soft_offline_free_page(struct page *page)
-+static int soft_offline_free_page(struct page *page)
- {
- 	int rc = 0;
- 	struct page *head = compound_head(page);
- 
- 	if (PageHuge(head))
- 		rc = dissolve_free_huge_page(page);
--	if (!rc && !TestSetPageHWPoison(page))
--		num_poisoned_pages_inc();
-+	if (!rc) {
-+		if (set_hwpoison_free_buddy_page(page))
-+			num_poisoned_pages_inc();
-+		else
-+			rc = -EBUSY;
-+	}
-+	return rc;
- }
- 
- /**
-@@ -1775,7 +1791,7 @@ int soft_offline_page(struct page *page, int flags)
- 	if (ret > 0)
- 		ret = soft_offline_in_use_page(page, flags);
- 	else if (ret == 0)
--		soft_offline_free_page(page);
-+		ret = soft_offline_free_page(page);
- 
- 	return ret;
- }
-diff --git v4.18-rc4-mmotm-2018-07-10-16-50/mm/migrate.c v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/migrate.c
-index 3ae213b..e772323 100644
---- v4.18-rc4-mmotm-2018-07-10-16-50/mm/migrate.c
-+++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/migrate.c
-@@ -1199,7 +1199,7 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
- 			 * intentionally. Although it's rather weird,
- 			 * it's how HWPoison flag works at the moment.
- 			 */
--			if (!test_set_page_hwpoison(page))
-+			if (set_hwpoison_free_buddy_page(page))
- 				num_poisoned_pages_inc();
- 		}
- 	} else {
-diff --git v4.18-rc4-mmotm-2018-07-10-16-50/mm/page_alloc.c v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/page_alloc.c
-index 607deff..3c76d40 100644
---- v4.18-rc4-mmotm-2018-07-10-16-50/mm/page_alloc.c
-+++ v4.18-rc4-mmotm-2018-07-10-16-50_patched/mm/page_alloc.c
-@@ -8027,3 +8027,32 @@ bool is_free_buddy_page(struct page *page)
- 
- 	return order < MAX_ORDER;
- }
-+
-+#ifdef CONFIG_MEMORY_FAILURE
-+/*
-+ * Set PG_hwpoison flag if a given page is confirmed to be a free page
-+ * within zone lock, which prevents the race against page allocation.
-+ */
-+bool set_hwpoison_free_buddy_page(struct page *page)
-+{
-+	struct zone *zone = page_zone(page);
-+	unsigned long pfn = page_to_pfn(page);
-+	unsigned long flags;
-+	unsigned int order;
-+	bool hwpoisoned = false;
-+
-+	spin_lock_irqsave(&zone->lock, flags);
-+	for (order = 0; order < MAX_ORDER; order++) {
-+		struct page *page_head = page - (pfn & ((1 << order) - 1));
-+
-+		if (PageBuddy(page_head) && page_order(page_head) >= order) {
-+			if (!TestSetPageHWPoison(page))
-+				hwpoisoned = true;
-+			break;
-+		}
-+	}
-+	spin_unlock_irqrestore(&zone->lock, flags);
-+
-+	return hwpoisoned;
-+}
-+#endif
--- 
-2.7.0
+> 
+> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+> ---
+>  fs/f2fs/segment.c | 76 ++++++++++++++++++++++++++++++++++++++++++++++++++-----
+>  fs/f2fs/segment.h |  7 ++++-
+>  2 files changed, 75 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> index f6c20e0..bce321a 100644
+> --- a/fs/f2fs/segment.c
+> +++ b/fs/f2fs/segment.c
+> @@ -893,7 +893,19 @@ static void __remove_discard_cmd(struct f2fs_sb_info *sbi,
+>  static void f2fs_submit_discard_endio(struct bio *bio)
+>  {
+>  	struct discard_cmd *dc = (struct discard_cmd *)bio->bi_private;
+> +	struct f2fs_sb_info *sbi = F2FS_SB(dc->bdev->bd_super);
+>  
+> +	if (test_opt(sbi, LFS)) {
+> +		unsigned int segno = GET_SEGNO(sbi, dc->lstart);
+> +		unsigned int secno = GET_SEC_FROM_SEG(sbi, segno);
+> +		int cnt = (dc->len >> sbi->log_blocks_per_seg) /
+> +				sbi->segs_per_sec;
+> +
+> +		while (cnt--) {
+> +			set_bit(secno, FREE_I(sbi)->discard_secmap);
+> +			secno++;
+> +		}
+> +	}
+>  	dc->error = blk_status_to_errno(bio->bi_status);
+>  	dc->state = D_DONE;
+>  	complete_all(&dc->wait);
+> @@ -1349,8 +1361,15 @@ static void f2fs_wait_discard_bio(struct f2fs_sb_info *sbi, block_t blkaddr)
+>  	dc = (struct discard_cmd *)f2fs_lookup_rb_tree(&dcc->root,
+>  							NULL, blkaddr);
+>  	if (dc) {
+> -		if (dc->state == D_PREP) {
+> +		if (dc->state == D_PREP && !test_opt(sbi, LFS))
+>  			__punch_discard_cmd(sbi, dc, blkaddr);
+> +		else if (dc->state == D_PREP && test_opt(sbi, LFS)) {
+> +			struct discard_policy dpolicy;
+> +
+> +			__init_discard_policy(sbi, &dpolicy, DPOLICY_FORCE, 1);
+> +			__submit_discard_cmd(sbi, &dpolicy, dc);
+> +			dc->ref++;
+> +			need_wait = true;
+>  		} else {
+>  			dc->ref++;
+>  			need_wait = true;
+> @@ -2071,9 +2090,10 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+>  	unsigned int hint = GET_SEC_FROM_SEG(sbi, *newseg);
+>  	unsigned int old_zoneno = GET_ZONE_FROM_SEG(sbi, *newseg);
+>  	unsigned int left_start = hint;
+> -	bool init = true;
+> +	bool init = true, check_discard = test_opt(sbi, LFS) ? true : false;
+>  	int go_left = 0;
+>  	int i;
+> +	unsigned long *free_secmap;
+>  
+>  	spin_lock(&free_i->segmap_lock);
+>  
+> @@ -2084,11 +2104,25 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+>  			goto got_it;
+>  	}
+>  find_other_zone:
+> -	secno = find_next_zero_bit(free_i->free_secmap, MAIN_SECS(sbi), hint);
+> +	if (check_discard) {
+> +		int entries = f2fs_bitmap_size(MAIN_SECS(sbi)) / sizeof(unsigned long);
+> +
+> +		free_secmap = free_i->tmp_secmap;
+> +		for (i = 0; i < entries; i++)
+> +			free_secmap[i] = (!(free_i->free_secmap[i] ^
+> +				free_i->discard_secmap[i])) | free_i->free_secmap[i];
+> +	} else
+> +		free_secmap = free_i->free_secmap;
+> +
+> +	secno = find_next_zero_bit(free_secmap, MAIN_SECS(sbi), hint);
+>  	if (secno >= MAIN_SECS(sbi)) {
+>  		if (dir == ALLOC_RIGHT) {
+> -			secno = find_next_zero_bit(free_i->free_secmap,
+> +			secno = find_next_zero_bit(free_secmap,
+>  							MAIN_SECS(sbi), 0);
+> +			if (secno >= MAIN_SECS(sbi) && check_discard) {
+> +				check_discard = false;
+> +				goto find_other_zone;
+> +			}
+>  			f2fs_bug_on(sbi, secno >= MAIN_SECS(sbi));
+>  		} else {
+>  			go_left = 1;
+> @@ -2098,13 +2132,17 @@ static void get_new_segment(struct f2fs_sb_info *sbi,
+>  	if (go_left == 0)
+>  		goto skip_left;
+>  
+> -	while (test_bit(left_start, free_i->free_secmap)) {
+> +	while (test_bit(left_start, free_secmap)) {
+>  		if (left_start > 0) {
+>  			left_start--;
+>  			continue;
+>  		}
+> -		left_start = find_next_zero_bit(free_i->free_secmap,
+> +		left_start = find_next_zero_bit(free_secmap,
+>  							MAIN_SECS(sbi), 0);
+> +		if (left_start >= MAIN_SECS(sbi) && check_discard) {
+> +			check_discard = false;
+> +			goto find_other_zone;
+> +		}
+>  		f2fs_bug_on(sbi, left_start >= MAIN_SECS(sbi));
+>  		break;
+>  	}
+> @@ -2719,7 +2757,18 @@ void f2fs_allocate_data_block(struct f2fs_sb_info *sbi, struct page *page,
+>  
+>  	*new_blkaddr = NEXT_FREE_BLKADDR(sbi, curseg);
+>  
+> -	f2fs_wait_discard_bio(sbi, *new_blkaddr);
+> +	if (test_opt(sbi, LFS)) {
+> +		unsigned int start_segno, secno;
+> +
+> +		secno = GET_SEC_FROM_SEG(sbi, curseg->segno);
+> +		start_segno = secno * sbi->segs_per_sec;
+> +		if (*new_blkaddr == START_BLOCK(sbi, start_segno) &&
+> +				!test_bit(secno, FREE_I(sbi)->discard_secmap))
+> +			f2fs_wait_discard_bio(sbi, *new_blkaddr);
+> +		f2fs_bug_on(sbi, !test_bit(secno, FREE_I(sbi)->discard_secmap));
+> +	}
+> +	else
+> +		f2fs_wait_discard_bio(sbi, *new_blkaddr);
+>  
+>  	/*
+>  	 * __add_sum_entry should be resided under the curseg_mutex
+> @@ -3648,10 +3697,21 @@ static int build_free_segmap(struct f2fs_sb_info *sbi)
+>  	if (!free_i->free_secmap)
+>  		return -ENOMEM;
+>  
+> +	free_i->discard_secmap = f2fs_kvmalloc(sbi, sec_bitmap_size, GFP_KERNEL);
+> +	if (!free_i->discard_secmap)
+> +		return -ENOMEM;
+> +
+> +	free_i->tmp_secmap = f2fs_kvmalloc(sbi, sec_bitmap_size, GFP_KERNEL);
+> +	if (!free_i->tmp_secmap)
+> +		return -ENOMEM;
+> +
+>  	/* set all segments as dirty temporarily */
+>  	memset(free_i->free_segmap, 0xff, bitmap_size);
+>  	memset(free_i->free_secmap, 0xff, sec_bitmap_size);
+>  
+> +	/* set all sections as discarded temporarily */
+> +	memset(free_i->discard_secmap, 0xff, sec_bitmap_size);
+> +
+>  	/* init free segmap information */
+>  	free_i->start_segno = GET_SEGNO_FROM_SEG0(sbi, MAIN_BLKADDR(sbi));
+>  	free_i->free_segments = 0;
+> @@ -4047,6 +4107,8 @@ static void destroy_free_segmap(struct f2fs_sb_info *sbi)
+>  	SM_I(sbi)->free_info = NULL;
+>  	kvfree(free_i->free_segmap);
+>  	kvfree(free_i->free_secmap);
+> +	kvfree(free_i->discard_secmap);
+> +	kvfree(free_i->tmp_secmap);
+>  	kfree(free_i);
+>  }
+>  
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 5049551..b37a909 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -259,6 +259,8 @@ struct free_segmap_info {
+>  	spinlock_t segmap_lock;		/* free segmap lock */
+>  	unsigned long *free_segmap;	/* free segment bitmap */
+>  	unsigned long *free_secmap;	/* free section bitmap */
+> +	unsigned long *discard_secmap;	/* discard section bitmap */
+> +	unsigned long *tmp_secmap;	/* bitmap for temporal use */
+>  };
+>  
+>  /* Notice: The order of dirty type is same with CURSEG_XXX in f2fs.h */
+> @@ -453,8 +455,11 @@ static inline void __set_test_and_free(struct f2fs_sb_info *sbi,
+>  		next = find_next_bit(free_i->free_segmap,
+>  				start_segno + sbi->segs_per_sec, start_segno);
+>  		if (next >= start_segno + sbi->segs_per_sec) {
+> -			if (test_and_clear_bit(secno, free_i->free_secmap))
+> +			if (test_and_clear_bit(secno, free_i->free_secmap)) {
+>  				free_i->free_sections++;
+> +				if (test_opt(sbi, LFS))
+> +					clear_bit(secno, free_i->discard_secmap);
+> +			}
+>  		}
+>  	}
+>  skip_free:
+> 
 
