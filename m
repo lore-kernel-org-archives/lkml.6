@@ -2,90 +2,86 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFDACECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7769BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9711B2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:13:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9711B2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C6912087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C6912087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731306AbeGMO2G (ORCPT
+        id S1731500AbeGMO2u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:28:06 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35936 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730601AbeGMO2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:28:06 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6887ED1;
-        Fri, 13 Jul 2018 07:13:17 -0700 (PDT)
-Received: from red-moon (unknown [10.1.206.55])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B56443F5B1;
-        Fri, 13 Jul 2018 07:13:16 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 15:15:11 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Alan Douglas <adouglas@cadence.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: pcie-candence-ep: remove redundant variable mmc
-Message-ID: <20180713141511.GA18555@red-moon>
-References: <20180711080103.4581-1-colin.king@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180711080103.4581-1-colin.king@canonical.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Fri, 13 Jul 2018 10:28:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41082 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729778AbeGMO2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 10:28:50 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5370E4000B74;
+        Fri, 13 Jul 2018 14:14:01 +0000 (UTC)
+Received: from plouf.banquise.eu.com (ovpn-116-134.ams2.redhat.com [10.36.116.134])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0C6C51C67D;
+        Fri, 13 Jul 2018 14:13:57 +0000 (UTC)
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Mario.Limonciello@dell.com,
+        Peter Hutterer <peter.hutterer@who-t.net>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Subject: [PATCH v4 00/12] Hid multitouch rewrite, support os system multi-axis devices, take 4
+Date:   Fri, 13 Jul 2018 16:13:42 +0200
+Message-Id: <20180713141354.7286-1-benjamin.tissoires@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 13 Jul 2018 14:14:01 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 13 Jul 2018 14:14:01 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 09:01:03AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Variable mmc is being assigned but is never used hence it is redundant
-> and can be removed.
-> 
-> Cleans up clang warning:
-> warning: variable 'mmc' set but not used [-Wunused-but-set-variable]
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/pci/controller/pcie-cadence-ep.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+Hi,
 
-Applied to pci/cadence for v4.19, thanks.
+this is the v4 of my hid-multitouch rewrite series.
 
-Lorenzo
+Changes are:
+- added Peter's rev-by / acked-by
+- changed MT_TOOL_MAX value to be 0x0f
+- dropped the touch major/minor modifications
 
-> diff --git a/drivers/pci/controller/pcie-cadence-ep.c b/drivers/pci/controller/pcie-cadence-ep.c
-> index e3fe4124e3af..63549e03eae8 100644
-> --- a/drivers/pci/controller/pcie-cadence-ep.c
-> +++ b/drivers/pci/controller/pcie-cadence-ep.c
-> @@ -238,7 +238,7 @@ static int cdns_pcie_ep_get_msi(struct pci_epc *epc, u8 fn)
->  	struct cdns_pcie_ep *ep = epc_get_drvdata(epc);
->  	struct cdns_pcie *pcie = &ep->pcie;
->  	u32 cap = CDNS_PCIE_EP_FUNC_MSI_CAP_OFFSET;
-> -	u16 flags, mmc, mme;
-> +	u16 flags, mme;
->  
->  	/* Validate that the MSI feature is actually enabled. */
->  	flags = cdns_pcie_ep_fn_readw(pcie, fn, cap + PCI_MSI_FLAGS);
-> @@ -249,7 +249,6 @@ static int cdns_pcie_ep_get_msi(struct pci_epc *epc, u8 fn)
->  	 * Get the Multiple Message Enable bitfield from the Message Control
->  	 * register.
->  	 */
-> -	mmc = (flags & PCI_MSI_FLAGS_QMASK) >> 1;
->  	mme = (flags & PCI_MSI_FLAGS_QSIZE) >> 4;
->  
->  	return mme;
-> -- 
-> 2.17.1
-> 
+Cheers,
+Benjamin
+
+Benjamin Tissoires (12):
+  input: add MT_TOOL_DIAL
+  HID: multitouch: make sure the static list of class is not changed
+  HID: multitouch: Store per collection multitouch data
+  HID: multitouch: store a per application quirks value
+  HID: multitouch: ditch mt_report_id
+  HID: multitouch: remove one copy of values
+  HID: input: enable Totem on the Dell Canvas 27
+  HID: core: do not upper bound the collection stack
+  HID: microsoft: support the Surface Dial
+  HID: multitouch: report MT_TOOL_PALM for non-confident touches
+  HID: multitouch: touchscreens also use confidence reports
+  HID: multitouch: handle palm for touchscreens
+
+ Documentation/input/multi-touch-protocol.rst |  12 +-
+ drivers/hid/hid-core.c                       |  17 +-
+ drivers/hid/hid-input.c                      |   3 +
+ drivers/hid/hid-microsoft.c                  |  49 +-
+ drivers/hid/hid-multitouch.c                 | 989 ++++++++++++++++-----------
+ include/linux/hid.h                          |  15 +-
+ include/uapi/linux/input.h                   |   9 +-
+ 7 files changed, 679 insertions(+), 415 deletions(-)
+
+-- 
+2.14.3
+
