@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04214ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1609ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1621208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:00:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58CB0208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:01:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sElBP4Tx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1621208B1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cwpqIDMt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58CB0208B1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732452AbeGMSQV (ORCPT
+        id S1732598AbeGMSRE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 14:16:21 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:38653 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730149AbeGMSQV (ORCPT
+        Fri, 13 Jul 2018 14:17:04 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:43571 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730149AbeGMSRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 14:16:21 -0400
-Received: by mail-oi0-f67.google.com with SMTP id v8-v6so63791714oie.5;
-        Fri, 13 Jul 2018 11:00:41 -0700 (PDT)
+        Fri, 13 Jul 2018 14:17:04 -0400
+Received: by mail-oi0-f65.google.com with SMTP id b15-v6so63727056oib.10;
+        Fri, 13 Jul 2018 11:01:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=s34nqmnxbjZ+suOXD+A8XJ7aJNuiH3D8IvPokhcN5aY=;
-        b=sElBP4TxfopFqZzN3rn94WY9KiA0Ba4PNbNiLpc13APTXUcxZ2O7xQ8L9Fi/vsNbit
-         /Nv0tAE8/6lWWFjRv9pG/2GvQMFaaZol0Cb4ond0sZRd2EQP/UIrbYIGEim2CB1L21u3
-         FKfp2oUFoKKfG7QjCS8o/nmMesUU1UGsUh7fUAzWGT+FoT9PuSIDjoHlBsS70HG8MkCu
-         01wJcFUjsC+G4uTd6V2kNqAUdigFitZ+ZVvPHMOXpa+jWiEDGDArnEVUbEmjeFzK7uLN
-         9HSaSYE9EMjhZ4Aw5EqYXiH/vqaXc1o9QJ/MBi92gXyxgqLPQ/xot6NT2WdjFSYrd9Ye
-         wpBw==
+        bh=wOa8n4VMXaitegeD26HrCf+x+d+zG900/5JQSsraFKs=;
+        b=cwpqIDMt11czljSs23AeJLnojqSwPeUaPjev0Td/7XKAEufNTURB6TuPy2YAYdCQvV
+         NKFBYjPDba4p6HFZ5Pj5JBkzmLDXoOZNZBZl4uYJ3+4QdbyYSnatfmsSUhG7ES2DyG0i
+         JKPZVLw4nfgRHcOuU5uvF1i1LPlivWZ0bJ7sMf7AOLm/WRPWaXpRsfqFf/Kt41JXRrnS
+         HyuKk6XDN0foP5nk6m1igha+PlUMOpz56D1AvTge5NnYKWTo6LOOGLvLyVrpQdIBQLwb
+         K5o0vgmgrwXpt6ziG2szV4OdI9QA/oy+X3lNoNhOUfS2/mhDB7+SbB2HZ8mMV3OOzwLE
+         BJMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=s34nqmnxbjZ+suOXD+A8XJ7aJNuiH3D8IvPokhcN5aY=;
-        b=TNgj6oMmqW3DLB73pUQLNuv0miwEVefR1znaRswdX63Fyfoosl0RI+2nx7laNhU6Co
-         hDWmdZGoknQvBaP/eSxo0Gt0c0QPObRtNuud3PuxBbAZFHCqrdKiFQx0L3NLmCqW3pS7
-         F04xC8C+2yoIwx6Rdx26OGmot0DQ0yEOjAfGnwOMoZosL9A2JdynoHj4I14OdVuXSdk3
-         56fs0oUOLmbUoAaje3Cz8EcCU+RmqQ6l0EIvA4iBrcKJRDJIWezXuqq8pm/futoMjeTj
-         S450s2D79WaDbL3UfgJtlVlQ/ydE9fczKi5P+uLwU8SB7EjiR7tUT1Vqg/W48NfQ43nI
-         btaQ==
-X-Gm-Message-State: AOUpUlFypiIsms1ldrlmfYSGHOEBtqdp7WXv5p33bmwiQHGBKSyF3xDg
-        SxFSRSERajZDkzPN6XPzjOOmgXFPUv2WUN4wyYA=
-X-Google-Smtp-Source: AAOMgpeK/2pNOwn9iU1Ya0gt6muwRKx13UcK5aQVmi3UgBIJCK1DMrR9rz8kFFHPkJIcrGgxL7Vpjgr4hPDENLRWIVM=
-X-Received: by 2002:aca:b3c5:: with SMTP id c188-v6mr8571849oif.9.1531504840575;
- Fri, 13 Jul 2018 11:00:40 -0700 (PDT)
+        bh=wOa8n4VMXaitegeD26HrCf+x+d+zG900/5JQSsraFKs=;
+        b=GofxcOQPotM3HgDITtAP0w3+3BzMpTu3XQfyxXb5/pIcXiJXY55v3g8+Q1ki9f51dn
+         M0RRNEQs/V3DgDrnmHsvOxZAJZbX1SU6L+MKMsxENyEFoQgMp3ryAFO9MeJa03fwjC2k
+         Cya4oToiBxsCtQoTLsNxPY94Gm02QnBPyy5FzzcluT59/tyvAgCugE0Gh/HJbUYmU0TN
+         f3zO4YLDGtQS/BfmG+X0lzuqug3VwKiIJjaGCqFazj6qD7JlAc5eDelZeAUUg/lXHWQA
+         7ZiR6RBL6nnEjpQeTclOEZxM019tJsKlXTTtIIy9xbKm6AjgKWVraU107MuCD9LUbCkd
+         CorA==
+X-Gm-Message-State: AOUpUlEIQtVqw7HRkY3uZnylDVAsvcfn39zfseHOhhJ3ZmUNG1p4mmAo
+        JH29qjknL1kOROdsliGDtr51YFUvr2au+nf+pdc=
+X-Google-Smtp-Source: AAOMgpfTHVCufepgpn7ydAO5Gv0W0wnMqt8jZtvOB9NMzVB9Xz6BpR0vFyCV/Jp154Y+zRGeh8VVmnNBD87UeoCarDM=
+X-Received: by 2002:aca:3a57:: with SMTP id h84-v6mr8524295oia.336.1531504883211;
+ Fri, 13 Jul 2018 11:01:23 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:6285:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 11:00:40
+Received: by 2002:a9d:6285:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 11:01:22
  -0700 (PDT)
-In-Reply-To: <1531468707-25737-2-git-send-email-Anson.Huang@nxp.com>
-References: <1531468707-25737-1-git-send-email-Anson.Huang@nxp.com> <1531468707-25737-2-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1531468707-25737-3-git-send-email-Anson.Huang@nxp.com>
+References: <1531468707-25737-1-git-send-email-Anson.Huang@nxp.com> <1531468707-25737-3-git-send-email-Anson.Huang@nxp.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 13 Jul 2018 15:00:40 -0300
-Message-ID: <CAOMZO5DFrBr=gC_qwFC4yHxT-KH5NMh56a8cL6F=T72XmzRMnQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] ARM: dts: imx6sll-evk: correct lcd regulator GPIO pin
+Date:   Fri, 13 Jul 2018 15:01:22 -0300
+Message-ID: <CAOMZO5CBaO7agXqdqcxrdmJMqM4rvYc2VsMSXBtyMZNN8fzAtg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] ARM: dts: imx6sll-evk: enable SEIKO 43WVF1G lcdif panel
 To:     Anson Huang <Anson.Huang@nxp.com>
 Cc:     Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
@@ -84,9 +84,10 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri, Jul 13, 2018 at 4:58 AM, Anson Huang <Anson.Huang@nxp.com> wrote:
-> On i.MX6SLL EVK board, lcd regulator is controlled
-> by GPIO4 IO03 using MX6SLL_PAD_KEY_ROW5__GPIO4_IO03 pin,
-> NOT MX6SLL_PAD_ECSPI1_SCLK__GPIO4_IO08, correct it.
+> Enable SEIKO 43WVF1G lcdif panel for DRM driver,
+> add necessary properties according to SEIKO 43WVF1G
+> driver's requirement, such as "dvdd-supply", "avdd-supply"
+> and "backlight" etc..
 >
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
