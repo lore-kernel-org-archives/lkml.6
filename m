@@ -2,116 +2,99 @@ Return-Path: <SRS0=6f18=J7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DATE_IN_PAST_24_48,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6468FECDFB1
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 08:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EB1BECDFB0
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 08:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06A3B2089E
-	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 08:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3EF720882
+	for <linux-kernel@archiver.kernel.org>; Sun, 15 Jul 2018 08:54:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pq8rbZFZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06A3B2089E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ny7DbnTK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3EF720882
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726483AbeGOJHi (ORCPT
+        id S1726268AbeGOJPJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 15 Jul 2018 05:07:38 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41059 "EHLO
+        Sun, 15 Jul 2018 05:15:09 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34539 "EHLO
         mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726026AbeGOJHi (ORCPT
+        with ESMTP id S1726026AbeGOJPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 15 Jul 2018 05:07:38 -0400
-Received: by mail-pg1-f194.google.com with SMTP id z8-v6so4918380pgu.8
-        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 01:45:27 -0700 (PDT)
+        Sun, 15 Jul 2018 05:15:09 -0400
+Received: by mail-pg1-f194.google.com with SMTP id y5-v6so6395146pgv.1
+        for <linux-kernel@vger.kernel.org>; Sun, 15 Jul 2018 01:52:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=ke5mcxjc1p1i6LwnE9uo00I/PSLCh0+m5j2RKzMGdP4=;
-        b=Pq8rbZFZhvSYWBgVY4oSzTXFuDVax6VMPjIGo+alqGquNNJbFkpojl4wou9/omy7vj
-         h7Olt/uu9HmMa9bNBukaVdlxieJnIoF0Yq4TXgKoTYz1YrwZi+9mvZlV123QoDUBXy63
-         BkfgO9ti6PSGJHsoHaOAXSitHZg8+CRL7SwI4zj527ChYmebp9+qgBDRplcIPBNbtpbl
-         MsQj/lNyYoNVDxcR/51N8v8menYqK2LWHPsPZ/Aa93RvhBktJ8JeprZlx+Lk8nUF/uE6
-         z/gMM4uFyrd7ICyThiKZ1om8sF7WOb16sMqiskBRtVjScwjCMlwqUf+2/v49ajBScQNE
-         OduA==
+        bh=jXGkI3EamuP3pm4Rp0/7ObfckUP6X067r4qG5nb9lYM=;
+        b=Ny7DbnTKOvSTExlKmSdL3Lh0o5535GIdXAcWKgq/TJHYy4XWRCPtTGf5iggTXomuU4
+         Wy8WbXEEwBUSpytwNYUDb9OA4j8hYPzgY2u+sTUbTjNBnxJHmnBDANG0C2DRMguduCfE
+         IiPp1il0VRwU+JsDf3yqf7pWbTpJfa+/LjhuSyGb5saTjtA10/y1BUVSpndh2YTkH3Bp
+         /M1fK4cpshe8IHGJOTvs1+ZsL5VCsqPjjCN5gAIfA+jSSn89kZANqbwr6HHHgG4Z+pEb
+         x5moImIqYQwW+6NBFeXlNf4ryEmLZ401N5JjfNf9X4QydYtpZ3FzNAoHAQyGqxjM6LkU
+         HMww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ke5mcxjc1p1i6LwnE9uo00I/PSLCh0+m5j2RKzMGdP4=;
-        b=RW1goOf/WHf4pkXbQJ5wWrGbrXOt/hrmOlMy6BM1ro3Q90CMXRavHjYApCZmfvUPej
-         OLLuQy67PCyfuaS+5qcyK0Rz3KxVRSAWe5aoBKiKCns9yWi8N8kNcEKY8LWXCIWMpbhV
-         0zYwjIWXUG+KVIWdR9h8TMObxPEUk283hsOZurPhyai2XkEd1SwdfsQK2OikBVKEY+rV
-         e5WKocIXR3z8fZuKJNuQsieVGKpKvEkGQ8LXh9DhAeyfoxKWOVASCCWeErNhZkFcxOxl
-         hgyvYkrVEv+Th7N5U1BfZTefRVvqzXFEF97xWzmbfBs0akN9iR0ifuHkFWfr7Yvujbnq
-         yOlQ==
-X-Gm-Message-State: AOUpUlEuqeGcj7cYviFFptB2yeM4ZW7lFcExGHedmg6d4uxxjmgSwO+p
-        R1ZuzdzgJcHIy8l11Q04lWZcnnPXhsA=
-X-Google-Smtp-Source: AAOMgpdotRJHkrfC7rJ468FoI3qwCJJXPAMkg3PRhphkdOHwQ8X2z6NYE+JOmji7ZTu1JaTnfqS3iA==
-X-Received: by 2002:a62:4add:: with SMTP id c90-v6mr13792525pfj.23.1531644326811;
-        Sun, 15 Jul 2018 01:45:26 -0700 (PDT)
-Received: from localhost ([2620:15c:2c4:201:eb53:1b1b:5cf2:c15b])
-        by smtp.gmail.com with ESMTPSA id a17-v6sm29789370pfg.106.2018.07.15.01.45.26
+        bh=jXGkI3EamuP3pm4Rp0/7ObfckUP6X067r4qG5nb9lYM=;
+        b=GcmoenMMy32QMMDI3rzVwh4SpTIvvqwbjBhJH9XR0ZDn4CviUtmHv+aSwIZ2UPogCK
+         uJexwCoyUQ6DhFyY8O8GAgba93AUWiNU+jfnQl5jLZvmLmsmqRG7M3gxs/VDHQBFSdbw
+         29AxUn2Yt8trMyllsolCPkCTUxmHLshg3OSypeHvkZ7LtCl/va8Yy12YfwknhlnD+TLI
+         t3denvXTnhK5/1p2AIJOUzro9naWUjd+GgUAYu+XCRz9AZVgm5omUvQg4JLj1KNMa6kX
+         3ZTK65TyI9/H2FNnqMfNMa4cOA3b34czOo0aSSdaP5XJPvUp8jBzXnsU5czuCm41p2aK
+         egPQ==
+X-Gm-Message-State: AOUpUlF07eKc6TPDZH0RE/d3DVcYFYY99xofpMBUeHaLq1qwkQhzcmtV
+        NE0Fv3hstyNqyZ3E7/s/gZA=
+X-Google-Smtp-Source: AAOMgpdCFAS6IQzJSvceOeu0DlXtmVxRQOzuDSifZ9oRc2QetvZ03BdH7tJwGnmTRS2wXQGgqCVEJw==
+X-Received: by 2002:a62:4083:: with SMTP id f3-v6mr13668109pfd.229.1531644776947;
+        Sun, 15 Jul 2018 01:52:56 -0700 (PDT)
+Received: from raghu-VirtualBox ([116.197.184.14])
+        by smtp.gmail.com with ESMTPSA id j21-v6sm44007494pfn.121.2018.07.15.01.52.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 15 Jul 2018 01:45:26 -0700 (PDT)
-From:   Eddie Hao <eddieh@google.com>
-To:     ast@kernel.org, daniel@iogearbox.net
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Eddie Hao <eddieh@google.com>
-Subject: [PATCH] bpf: allow BPF programs access skb_shared_info->gso_segs field
-Date:   Sun, 15 Jul 2018 01:45:24 -0700
-Message-Id: <20180715084524.181717-1-eddieh@google.com>
-X-Mailer: git-send-email 2.18.0.203.gfac676dfb9-goog
+        Sun, 15 Jul 2018 01:52:56 -0700 (PDT)
+From:   RAGHU Halharvi <raghuhack78@gmail.com>
+To:     devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org
+Cc:     RAGHU Halharvi <raghuhack78@gmail.com>,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org,
+        wsa@the-dreams.de
+Subject: [PATCH] ks7010_sdio:Fix checkpatch out of memory warning
+Date:   Fri, 13 Jul 2018 21:36:36 +0530
+Message-Id: <20180713160636.8017-1-raghuhack78@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the ability to read gso_segs from a BPF program. This is useful
-for user space monitoring systems to get gso_segs statistics for each
-arbitrary group of flows defined by the BPF program.
+* Patch fixes checkpatch warning "Possible unnecessary 'out of memory'
+	message"
 
-Signed-off-by: Eddie Hao <eddieh@google.com>
+Signed-off-by: RAGHU Halharvi <raghuhack78@gmail.com>
 ---
- include/uapi/linux/bpf.h | 1 +
- net/core/filter.c        | 9 +++++++++
- 2 files changed, 10 insertions(+)
+ drivers/staging/ks7010/ks7010_sdio.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/uapi/linux/bpf.h b/include/uapi/linux/bpf.h
-index b7db3261c62d..282085445616 100644
---- a/include/uapi/linux/bpf.h
-+++ b/include/uapi/linux/bpf.h
-@@ -2266,6 +2266,7 @@ struct __sk_buff {
- 	/* ... here. */
+diff --git a/drivers/staging/ks7010/ks7010_sdio.c b/drivers/staging/ks7010/ks7010_sdio.c
+index b8f55a11ee1c..972b01a0257d 100644
+--- a/drivers/staging/ks7010/ks7010_sdio.c
++++ b/drivers/staging/ks7010/ks7010_sdio.c
+@@ -957,10 +957,8 @@ static int send_stop_request(struct sdio_func *func)
+ 	card = sdio_get_drvdata(func);
  
- 	__u32 data_meta;
-+	unsigned short gso_segs;
- };
+ 	pp = kzalloc(hif_align_size(sizeof(*pp)), GFP_KERNEL);
+-	if (!pp) {
+-		netdev_err(card->priv->net_dev, "allocate memory failed..\n");
++	if (!pp)
+ 		return -ENOMEM;
+-	}
  
- struct bpf_tunnel_key {
-diff --git a/net/core/filter.c b/net/core/filter.c
-index b9ec916f4e3a..f17e249f3fbb 100644
---- a/net/core/filter.c
-+++ b/net/core/filter.c
-@@ -5820,6 +5820,15 @@ static u32 bpf_convert_ctx_access(enum bpf_access_type type,
- 				      bpf_target_off(struct sock_common,
- 						     skc_num, 2, target_size));
- 		break;
-+
-+	case offsetof(struct __sk_buff, gso_segs):
-+		BUILD_BUG_ON(FIELD_SIZEOF(struct skb_shared_info, gso_segs) !=
-+					  sizeof(unsigned short));
-+		off = offsetof(struct sk_buff, end);
-+		off += offsetof(struct skb_shared_info, gso_segs);
-+		*insn++ = BPF_LDX_MEM(BPF_SIZEOF(unsigned short), si->dst_reg,
-+						 si->src_reg, off);
-+		break;
- 	}
- 
- 	return insn - insn_buf;
+ 	size = sizeof(*pp) - sizeof(pp->header.size);
+ 	pp->header.size = cpu_to_le16((uint16_t)size);
 -- 
-2.18.0.203.gfac676dfb9-goog
+2.17.1
 
