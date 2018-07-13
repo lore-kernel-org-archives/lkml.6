@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3C8ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BE5ECDFB2
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DCDA20873
+	by mail.kernel.org (Postfix) with ESMTP id F063120873
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DCDA20873
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F063120873
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729776AbeGMNEt (ORCPT
+        id S1729926AbeGMNEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 09:04:49 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:34305 "EHLO
+        Fri, 13 Jul 2018 09:04:51 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54559 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729634AbeGMNEt (ORCPT
+        with ESMTP id S1729778AbeGMNEu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 09:04:49 -0400
+        Fri, 13 Jul 2018 09:04:50 -0400
 Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <mfe@pengutronix.de>)
-        id 1fdxWW-0003eO-4X; Fri, 13 Jul 2018 14:50:12 +0200
+        id 1fdxWW-0003em-TE; Fri, 13 Jul 2018 14:50:12 +0200
 Received: from mfe by dude.hi.pengutronix.de with local (Exim 4.91)
         (envelope-from <mfe@pengutronix.de>)
-        id 1fdxWV-0007n2-NW; Fri, 13 Jul 2018 14:50:11 +0200
+        id 1fdxWW-0007t2-I3; Fri, 13 Jul 2018 14:50:12 +0200
 From:   Marco Felsch <m.felsch@pengutronix.de>
 To:     lgirdwood@gmail.com, broonie@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com
 Cc:     fabio.estevam@nxp.com, Anson.Huang@nxp.com, kernel@pengutronix.de,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/3] dt-bindings: pfuze100: add optional disable switch-regulators binding
-Date:   Fri, 13 Jul 2018 14:50:01 +0200
-Message-Id: <20180713125002.24331-2-m.felsch@pengutronix.de>
+Subject: [PATCH v2 2/3] regulator: pfuze100: add support to en-/disable switch regulators
+Date:   Fri, 13 Jul 2018 14:50:02 +0200
+Message-Id: <20180713125002.24331-3-m.felsch@pengutronix.de>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180713125002.24331-1-m.felsch@pengutronix.de>
 References: <20180713125002.24331-1-m.felsch@pengutronix.de>
@@ -51,45 +51,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This binding is used to keep the backward compatibility with the current
-dtb's [1]. The binding informs the driver that the unused switch regulators
-can be disabled.
-If it is not specified, the driver doesn't disable the switch regulators.
+Add enable/disable support for switch regulators on pfuze100.
+
+Based on commit 5fe156f1cab4 ("regulator: pfuze100: add enable/disable for
+switch") which is reverted due to boot regressions by commit 464a5686e6c9
+("regulator: Revert "regulator: pfuze100: add enable/disable for switch"").
+Disabling the switch regulators will only be done if the user specifies
+"fsl,pfuze-support-disable" in its device tree to keep backward
+compatibility with current dtb's [1].
 
 [1] https://patchwork.kernel.org/patch/10490381/
 
 Signed-off-by: Marco Felsch <m.felsch@pengutronix.de>
 
 ---
-Changes in V2:
-  - add more information about the binding
-  - rename binding and add vendor prefix
+Changes in v2:
+  - Don't trick the framework, use a seperate ops struct
+    to register the correct callbacks.
+  - Set the desc en/disable_val and enable_time only if it necessary
+  - Change the dt property binding
 
- .../devicetree/bindings/regulator/pfuze100.txt        | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Changes since https://patchwork.kernel.org/patch/10405723/
+  - Use DT property to keep backward compatibility
+  - Use the default register val 0x8 as enable_val
 
-diff --git a/Documentation/devicetree/bindings/regulator/pfuze100.txt b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-index 672c939045ff..2c46b8d368db 100644
---- a/Documentation/devicetree/bindings/regulator/pfuze100.txt
-+++ b/Documentation/devicetree/bindings/regulator/pfuze100.txt
-@@ -4,6 +4,17 @@ Required properties:
- - compatible: "fsl,pfuze100", "fsl,pfuze200", "fsl,pfuze3000", "fsl,pfuze3001"
- - reg: I2C slave address
+ drivers/regulator/pfuze100-regulator.c | 36 ++++++++++++++++++++++++++
+ 1 file changed, 36 insertions(+)
+
+diff --git a/drivers/regulator/pfuze100-regulator.c b/drivers/regulator/pfuze100-regulator.c
+index cde6eda1d283..b70d16d5a2ff 100644
+--- a/drivers/regulator/pfuze100-regulator.c
++++ b/drivers/regulator/pfuze100-regulator.c
+@@ -17,6 +17,8 @@
+ #include <linux/slab.h>
+ #include <linux/regmap.h>
  
-+Optional properties:
-+- fsl,pfuze-support-disable: Boolean, if present disable all unused switch
-+  regulators to save power consumption. Attention, till 4.18 these regulators
-+  were always on without specifying "regulator-always-on". So be sure to mark
-+  import regulators as "regulator-always-on" (e.g. DDR ref, DDR supply). If
-+  not present, the switched regualtors are always on and can't be disabled.
-+  This binding is a workaround to keep backward compatibility with old dtb's
-+  which rely on the fact that the switched regulators are always on and don't
-+  mark them explicit as "regulator-always-on". On new dtbs this property should
-+  always be present.
++#define PFUZE_FLAG_DISABLE_SW	BIT(1)
 +
- Required child node:
- - regulators: This is the list of child nodes that specify the regulator
-   initialization data for defined regulators. Please refer to below doc
+ #define PFUZE_NUMREGS		128
+ #define PFUZE100_VOL_OFFSET	0
+ #define PFUZE100_STANDBY_OFFSET	1
+@@ -50,10 +52,12 @@ struct pfuze_regulator {
+ 	struct regulator_desc desc;
+ 	unsigned char stby_reg;
+ 	unsigned char stby_mask;
++	bool sw_reg;
+ };
+ 
+ struct pfuze_chip {
+ 	int	chip_id;
++	int     flags;
+ 	struct regmap *regmap;
+ 	struct device *dev;
+ 	struct pfuze_regulator regulator_descs[PFUZE100_MAX_REGULATOR];
+@@ -170,6 +174,17 @@ static const struct regulator_ops pfuze100_sw_regulator_ops = {
+ 	.set_ramp_delay = pfuze100_set_ramp_delay,
+ };
+ 
++static const struct regulator_ops pfuze100_sw_disable_regulator_ops = {
++	.enable = regulator_enable_regmap,
++	.disable = regulator_disable_regmap,
++	.is_enabled = regulator_is_enabled_regmap,
++	.list_voltage = regulator_list_voltage_linear,
++	.set_voltage_sel = regulator_set_voltage_sel_regmap,
++	.get_voltage_sel = regulator_get_voltage_sel_regmap,
++	.set_voltage_time_sel = regulator_set_voltage_time_sel,
++	.set_ramp_delay = pfuze100_set_ramp_delay,
++};
++
+ static const struct regulator_ops pfuze100_swb_regulator_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+@@ -209,9 +224,12 @@ static const struct regulator_ops pfuze100_swb_regulator_ops = {
+ 			.uV_step = (step),	\
+ 			.vsel_reg = (base) + PFUZE100_VOL_OFFSET,	\
+ 			.vsel_mask = 0x3f,	\
++			.enable_reg = (base) + PFUZE100_MODE_OFFSET,	\
++			.enable_mask = 0xf,	\
+ 		},	\
+ 		.stby_reg = (base) + PFUZE100_STANDBY_OFFSET,	\
+ 		.stby_mask = 0x3f,	\
++		.sw_reg = true,		\
+ 	}
+ 
+ #define PFUZE100_SWB_REG(_chip, _name, base, mask, voltages)	\
+@@ -471,6 +489,9 @@ static int pfuze_parse_regulators_dt(struct pfuze_chip *chip)
+ 	if (!np)
+ 		return -EINVAL;
+ 
++	if (of_property_read_bool(np, "fsl,pfuze-support-disable"))
++		chip->flags |= PFUZE_FLAG_DISABLE_SW;
++
+ 	parent = of_get_child_by_name(np, "regulators");
+ 	if (!parent) {
+ 		dev_err(dev, "regulators node not found\n");
+@@ -703,6 +724,21 @@ static int pfuze100_regulator_probe(struct i2c_client *client,
+ 			}
+ 		}
+ 
++		/*
++		 * Allow SW regulators to turn off. Checking it trough a flag is
++		 * a workaround to keep the backward compatibility with existing
++		 * old dtb's which may relay on the fact that we didn't disable
++		 * the switched regulator till yet.
++		 */
++		if (pfuze_chip->flags & PFUZE_FLAG_DISABLE_SW) {
++			if (pfuze_chip->regulator_descs[i].sw_reg) {
++				desc->ops = &pfuze100_sw_disable_regulator_ops;
++				desc->enable_val = 0x8;
++				desc->disable_val = 0x0;
++				desc->enable_time = 500;
++			}
++		}
++
+ 		config.dev = &client->dev;
+ 		config.init_data = init_data;
+ 		config.driver_data = pfuze_chip;
 -- 
 2.18.0
 
