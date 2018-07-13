@@ -2,144 +2,168 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E3EECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD27ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BE320842
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:05:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BE320842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id CF58520842
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF58520842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731957AbeGMSV0 (ORCPT
+        id S1732248AbeGMSWC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 14:21:26 -0400
-Received: from mga17.intel.com ([192.55.52.151]:21403 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730167AbeGMSV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 14:21:26 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 11:05:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,348,1526367600"; 
-   d="scan'208";a="66752997"
-Received: from binman-mobl2.amr.corp.intel.com (HELO [10.252.141.97]) ([10.252.141.97])
-  by orsmga003.jf.intel.com with ESMTP; 13 Jul 2018 11:05:23 -0700
-Subject: Re: [RFC PATCH v2 22/27] x86/cet/ibt: User-mode indirect branch
- tracking support
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-23-yu-cheng.yu@intel.com>
- <3a7e9ce4-03c6-cc28-017b-d00108459e94@linux.intel.com>
- <1531347019.15351.89.camel@intel.com>
- <f97ce234-52fa-e666-2250-098925cf3c39@linux.intel.com>
- <1531350028.15351.102.camel@intel.com>
- <25675609-9ea7-55fb-6e73-b4a4c49b6c35@linux.intel.com>
- <1531504609.11680.16.camel@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <aa89221e-8900-12f5-d40e-d1db78b11845@linux.intel.com>
-Date:   Fri, 13 Jul 2018 11:05:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1531504609.11680.16.camel@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Fri, 13 Jul 2018 14:22:02 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38254 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730167AbeGMSWB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 14:22:01 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6DI4DZQ113221
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:19 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k70gf936m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:18 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
+        Fri, 13 Jul 2018 19:06:17 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 13 Jul 2018 19:06:13 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6DI6CGQ24707194
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 13 Jul 2018 18:06:12 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C707642041;
+        Fri, 13 Jul 2018 21:06:33 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C41C042047;
+        Fri, 13 Jul 2018 21:06:32 +0100 (BST)
+Received: from dhcp-9-31-103-18.watson.ibm.com (unknown [9.31.103.18])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 13 Jul 2018 21:06:32 +0100 (BST)
+From:   Mimi Zohar <zohar@linux.vnet.ibm.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Luis R . Rodriguez" <mcgrof@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v6 0/8] kexec/firmware: support system wide policy requiring signatures
+Date:   Fri, 13 Jul 2018 14:05:55 -0400
+X-Mailer: git-send-email 2.7.5
+X-TM-AS-GCONF: 00
+x-cbid: 18071318-0016-0000-0000-000001E691D8
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071318-0017-0000-0000-0000323B2F7F
+Message-Id: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-13_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807130159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/13/2018 10:56 AM, Yu-cheng Yu wrote:
->>> GLIBC does the bitmap setup.  It sets bits in there.
->>> I thought you wanted a smaller bitmap?  One way is forcing legacy libs
->>> to low address, or not having the bitmap at all, i.e. turn IBT off.
->> I'm concerned with two things:
->> 1. the virtual address space consumption, especially the *default* case
->>    which will be apps using 4-level address space amounts, but having
->>    5-level-sized tables.
->> 2. the driving a truck-sized hole in the address space limits
->>
->> You can force legacy libs to low addresses, but you can't stop anyone
->> from putting code into a high address *later*, at least with the code we
->> have today.
-> So we will always reserve a big space for all CET tasks?
+IMA-appraisal is mostly being used in the embedded or single purpose
+closed system environments.  In these environments, both the Kconfig
+options and the userspace tools can be modified appropriately to limit
+syscalls.  For stock kernels, userspace applications need to continue to
+work with older kernels as well as with newer kernels.
 
-Yes.  You either hard-restrict the address space (which we can't do
-currently) or you reserve a big space.
+In this environment, the customer needs the ability to define a system
+wide IMA policy, such as requiring all kexec'ed images, firmware, kernel
+modules to be signed, without being dependent on either the Kconfig
+options or the userspace tools.[1]
 
-> Currently if an application does dlopen() a legacy lib, it will have only
-> partial IBT protection and no SHSTK.  Do we want to consider simply turning
-> off IBT in that case?
+This patch set allows the customer to define a policy which requires
+the kexec'ed kernel images, firmware, and/or kernel modules to be
+signed.
 
-I don't know.  I honestly don't understand the threat model enough to
-give you a good answer.  Is there background on this in the docs?
+In addition, this patch set includes the ability to configure a build
+time IMA policy, which is automatically loaded at run time without
+needing to specify it on the boot command line and persists after
+loading a custom kernel policy.
+
+[1] kexec-tools suupports the new syscall based on a flag (-s).
+
+Changelog v6:
+- Instead of warning about loading firmware from pre-allocated, shared
+  memory, just add a comment. Refer to the patch description for reason.
+- LoadPin: add missing cast from enum kernel_load_file_id to
+  kernel_read_file_id.
+
+Changelog v5:
+- Shared kernel_load_data_id and kernel_read_file_id enumerations.
+
+The previous version of this patch set defined a new LSM hook named
+security_kernel_load_data and an associated enumeration named
+kernel_load_data_id, independent of kernel_read_file_id.  In this
+version, the kernel_load_data_id and kernel_read_file_id values are
+shared, simplifying Loadpin's and other LSMs calling one LSM hook from
+the other.
+
+- Warn about loading firmware from pre-shared memory.
+
+Previous versions of this patch set prevented loading firmware, based on
+policy, from pre-allocated (DMA) memory, introduced in commit
+a098ecd2fa7d ("firmware: support loading into a pre-allocated buffer").
+Based on discussions, calling dma_alloc_coherent() is unnecessary and
+confusing.  This version of the patch set allows loading the firmware,
+but emits a warning.
+
+Changelog v4:
+- Define a new LSM hook named security_kernel_load_data().
+- Define kernel_load_data_id enumeration.
+- Replace the existing LSM hook in init_module syscall.
+
+Changelog v3:
+Based on James' feedback:
+- Renamed security_kernel_read_file() to security_kernel_read_data().
+- Defined new kernel_load_data_id enumeration.
+- Cleaned up ima_read_data(), replacing if's with switch.
+
+Mimi Zohar (8):
+  security: define new LSM hook named security_kernel_load_data
+  kexec: add call to LSM hook in original kexec_load syscall
+  ima: based on policy require signed kexec kernel images
+  firmware: add call to LSM hook before firmware sysfs fallback
+  ima: based on policy require signed firmware (sysfs fallback)
+  ima: add build time policy
+  module: replace the existing LSM hook in init_module
+  ima: based on policy warn about loading firmware (pre-allocated
+    buffer)
+
+ drivers/base/firmware_loader/fallback.c |  7 ++++
+ include/linux/ima.h                     |  7 ++++
+ include/linux/lsm_hooks.h               |  6 +++
+ include/linux/security.h                | 27 +++++++++++++
+ kernel/kexec.c                          |  8 ++++
+ kernel/module.c                         |  2 +-
+ security/integrity/ima/Kconfig          | 58 ++++++++++++++++++++++++++++
+ security/integrity/ima/ima.h            |  1 +
+ security/integrity/ima/ima_main.c       | 68 ++++++++++++++++++++++++++-------
+ security/integrity/ima/ima_policy.c     | 48 +++++++++++++++++++++--
+ security/loadpin/loadpin.c              |  6 +++
+ security/security.c                     | 10 +++++
+ security/selinux/hooks.c                | 15 ++++++++
+ 13 files changed, 245 insertions(+), 18 deletions(-)
+
+-- 
+2.7.5
+
