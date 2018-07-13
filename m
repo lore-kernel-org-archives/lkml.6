@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7974ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF90FECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6107C20873
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:23:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9444320873
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:23:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NV0chlkK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6107C20873
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+HF+Ci2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9444320873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731379AbeGMLiK (ORCPT
+        id S1731500AbeGMLiL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 07:38:10 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43311 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730730AbeGMLiJ (ORCPT
+        Fri, 13 Jul 2018 07:38:11 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:45231 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730110AbeGMLiL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 07:38:09 -0400
-Received: by mail-ed1-f65.google.com with SMTP id u11-v6so24317514eds.10
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:23:54 -0700 (PDT)
+        Fri, 13 Jul 2018 07:38:11 -0400
+Received: by mail-ed1-f67.google.com with SMTP id i20-v6so11305353eds.12
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:23:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gRf/Dya0P+Cq8Fo2V7ypInc/HkMOE9k1mKzFHTcquhk=;
-        b=NV0chlkKHNgZcZsKa6WgYsMXk5vGCBYqz1xnCTO28xDU6Zenj1UU+Ymbwk0odeqLaZ
-         cDEMGqaRGtgsSAaa6/jTzhK4KAP6E74QBSjl2badX5BH8DGLPa4p8O3j0Kas4GnsGTkS
-         buNPpVRjyR7C934lM8GszNPF3xOf1pepUmNyqrSpmT93KfLYDsACedKVQGoX9kP9ZLyx
-         MrssqbTBiKs5VJIkbjm+ESyOReZJjZSchYF92NO4DlJAqLaqVffTAbqhTpYTRs7XHbMy
-         jKbCSjVyF4KJKPYxYTS09yYVkPnNCw+cml7nAJKuxdzaZW2ymJSdmHJdYQgqsmMXvJZt
-         zJ5Q==
+        bh=T/qMptHSBgSlfszHX5ZVTEA+BbWxzN5m6BbtmnPh8h0=;
+        b=W+HF+Ci2nMxTBxCJ4JxrQ7iGnx80CE6v/V9uW/T+wYfNGi9cc1fhf49jhlXVDL+qLv
+         e8J7dkYH7QPIQO7xlQL8rzj2TPYNwhjGsU2+Wdhp00KQvcHkWXHTn6xqVuafe9Or1CS5
+         5/oPRTF8og7KPlrjqi5QpwESNHjHcsoWSzGuPDEQVsA24oRWEhGi26mYSl8KHTXmj9XU
+         GUkJiN9I6VzgzUZE9ywXrXA5B3tk1aabB/IAjNRQxF0Ni/cti368WZgl71LFv6BQ9hw6
+         2zAC/C+D0yb9x8OOyY/Na/KyJKqGwrU6Vqi/pZrd20l7RlfYcSx18b8gWx+ld5iaiFQV
+         zTzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gRf/Dya0P+Cq8Fo2V7ypInc/HkMOE9k1mKzFHTcquhk=;
-        b=NVo5F1Wdr/etm5SHnvnqG/Z5Da2+5PrmcFfJ0qOb5mtufypGdr6xWzGLYE8MoFZWKA
-         Q4WePpP1YHcp4sQbP6stT5HjCL6jzbncUPUIM0OQVgtf3bAZqBs/m3T8VM4/MMBOBupm
-         MhA5e0mI51ra23kTQOyu1EAJPE6pu0/Iw6Qag6XM+asc8nQkPytYIUhaRY9HB54hMIDR
-         kq2BDfEuoEesXYCKNXeIhjWckcfz+UvGFewTfKjCM/7x+dW79WuhsD1KiLQbWJLYgtHW
-         j0CVra7EMkx+MWsA2J2V5OzEdDWQU9jdXsyEfb0sMlEDvoxXyh1x3nKtl90IWtndZvqa
-         WLmw==
-X-Gm-Message-State: AOUpUlGLwbXCquejFIy0dbiyTNrSBY/o0384Z5SNCWH7pi2thDJ4TBjq
-        FWIHokrWrlT8h1IJAvicrRP86yEe
-X-Google-Smtp-Source: AAOMgpfnonC1x5/PJg13dsBxyirzUeqLl5YTVIWQO22tWPAR34anEJBj1mDV73yaEHCB6d5iaCixNA==
-X-Received: by 2002:a50:ca02:: with SMTP id d2-v6mr6379281edi.53.1531481032640;
-        Fri, 13 Jul 2018 04:23:52 -0700 (PDT)
+        bh=T/qMptHSBgSlfszHX5ZVTEA+BbWxzN5m6BbtmnPh8h0=;
+        b=um5xy7pr/OK0qzDYT7qXVeYE7fcBGa7nE4EFd/tf+VV78otuQ3GBtYrSRIqPwokrrD
+         /iq4UB2bTfW9yYFMTOqJ1urxlW3X2dEniBLlEU6FnGPL/N/4DioekTun7w/Yvd+SdCZi
+         6cuw8KAkBA4AHSVabODCSLb2zIlHP+bUyslmPYbl3hmLRkYsC4D73c16hH6tg4ndS47J
+         BmozxGE0q8uCNWjur1DoU1jh1wDjiGqeYzq7fO3z7L76sHHJbjUUBTBkRkARtHJK6k9w
+         vzlJpknx1LeYMo6DKVOI0YVt4t2ag/mgZwkPCnNwqyyP8GATWiKsqBb9jnctpg/n75Mn
+         qD8Q==
+X-Gm-Message-State: AOUpUlGP5zOjKuf20kQLClphRfFPskh6YC+nH3lO1yfspE+ewOOt/1sx
+        9BLwNcvWD4eHzqyFmL/PShMiCMCp
+X-Google-Smtp-Source: AAOMgpcMsX3dS+4VVtEgoCKx0R4Nh0HYWARyDomOJSUytnxKVLAJg3jL6MGfMR2WpACzJsj/c5MQKA==
+X-Received: by 2002:a50:b266:: with SMTP id o93-v6mr6750622edd.173.1531481034384;
+        Fri, 13 Jul 2018 04:23:54 -0700 (PDT)
 Received: from localhost.localdomain ([109.78.208.2])
-        by smtp.gmail.com with ESMTPSA id r25-v6sm9392868edb.45.2018.07.13.04.23.51
+        by smtp.gmail.com with ESMTPSA id r25-v6sm9392868edb.45.2018.07.13.04.23.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 04:23:51 -0700 (PDT)
+        Fri, 13 Jul 2018 04:23:53 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 07/13] staging:rtl8192u: rename CmdID_SetTxPowerLevel > CMD_ID_SET_TX_PWR_LEVEL
-Date:   Fri, 13 Jul 2018 12:23:05 +0100
-Message-Id: <20180713112311.544-8-johnfwhitmore@gmail.com>
+Subject: [PATCH 08/13] staging:rtl8192u: Remove unused enum label CmdID_BBRegWrite10
+Date:   Fri, 13 Jul 2018 12:23:06 +0100
+Message-Id: <20180713112311.544-9-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180713112311.544-1-johnfwhitmore@gmail.com>
 References: <20180713112311.544-1-johnfwhitmore@gmail.com>
@@ -74,51 +74,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename enumeration label CmdID_SetTxPowerLevel to
-CMD_ID_SET_TX_PWR_LEVEL. This change clears a checkpatch warning on
-CamelCase. The change should not impact runtime execution, style change only.
+The enum label CmdID_BBRegWrite10 is not used in the code, so removed from the
+source code.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/r819xU_phy.c | 4 ++--
- drivers/staging/rtl8192u/r819xU_phy.h | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/staging/rtl8192u/r819xU_phy.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8192u/r819xU_phy.c b/drivers/staging/rtl8192u/r819xU_phy.c
-index c67159f2d9ab..0b850abe3533 100644
---- a/drivers/staging/rtl8192u/r819xU_phy.c
-+++ b/drivers/staging/rtl8192u/r819xU_phy.c
-@@ -1292,7 +1292,7 @@ static u8 rtl8192_phy_SwChnlStepByStep(struct net_device *dev, u8 channel,
- 	/* <1> Fill up pre common command. */
- 	PreCommonCmdCnt = 0;
- 	rtl8192_phy_SetSwChnlCmdArray(PreCommonCmd, PreCommonCmdCnt++,
--				      MAX_PRECMD_CNT, CmdID_SetTxPowerLevel,
-+				      MAX_PRECMD_CNT, CMD_ID_SET_TX_PWR_LEVEL,
- 				      0, 0, 0);
- 	rtl8192_phy_SetSwChnlCmdArray(PreCommonCmd, PreCommonCmdCnt++,
- 				      MAX_PRECMD_CNT, CMD_ID_END, 0, 0, 0);
-@@ -1374,7 +1374,7 @@ static u8 rtl8192_phy_SwChnlStepByStep(struct net_device *dev, u8 channel,
- 		}
- 
- 		switch (CurrentCmd->CmdID) {
--		case CmdID_SetTxPowerLevel:
-+		case CMD_ID_SET_TX_PWR_LEVEL:
- 			if (priv->card_8192_version == (u8)VERSION_819xU_A)
- 				/* consider it later! */
- 				rtl8192_SetTxPowerLevel(dev, channel);
 diff --git a/drivers/staging/rtl8192u/r819xU_phy.h b/drivers/staging/rtl8192u/r819xU_phy.h
-index efbca1f458f5..91b2e9e39368 100644
+index 91b2e9e39368..d69b03ce7bd9 100644
 --- a/drivers/staging/rtl8192u/r819xU_phy.h
 +++ b/drivers/staging/rtl8192u/r819xU_phy.h
-@@ -9,7 +9,7 @@
- 
+@@ -10,7 +10,6 @@
  enum switch_chan_cmd_id {
  	CMD_ID_END,
--	CmdID_SetTxPowerLevel,
-+	CMD_ID_SET_TX_PWR_LEVEL,
- 	CmdID_BBRegWrite10,
+ 	CMD_ID_SET_TX_PWR_LEVEL,
+-	CmdID_BBRegWrite10,
  	CmdID_WritePortUlong,
  	CmdID_WritePortUshort,
+ 	CmdID_WritePortUchar,
 -- 
 2.18.0
 
