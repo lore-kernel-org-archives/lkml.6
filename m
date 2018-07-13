@@ -6,34 +6,43 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0D1ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7243ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F162214C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:26:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F162214C2
+	by mail.kernel.org (Postfix) with ESMTP id 89598205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:26:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89598205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388176AbeGMBiS (ORCPT
+        id S2388190AbeGMBiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 21:38:18 -0400
-Received: from nautica.notk.org ([91.121.71.147]:43046 "EHLO nautica.notk.org"
+        Thu, 12 Jul 2018 21:38:21 -0400
+Received: from nautica.notk.org ([91.121.71.147]:43057 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387896AbeGMBiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 21:38:17 -0400
+        id S2387896AbeGMBiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 21:38:20 -0400
 Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 3A452C02C; Fri, 13 Jul 2018 03:26:05 +0200 (CEST)
+        id 9EE1AC02D; Fri, 13 Jul 2018 03:26:07 +0200 (CEST)
 From:   Dominique Martinet <asmadeus@codewreck.org>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Krister Johansen <kjlx@templeofstupid.com>,
+        David Carrillo-Cisneros <davidcc@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 16/18] tools/accounting: change strncpy+truncation to strlcpy
-Date:   Fri, 13 Jul 2018 03:26:03 +0200
-Message-Id: <1531445163-19829-1-git-send-email-asmadeus@codewreck.org>
+Subject: [PATCH 17/18] perf: change strncpy+truncation to strlcpy
+Date:   Fri, 13 Jul 2018 03:26:06 +0200
+Message-Id: <1531445166-19870-1-git-send-email-asmadeus@codewreck.org>
 X-Mailer: git-send-email 1.7.10.4
 In-Reply-To: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
 References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
@@ -51,23 +60,40 @@ Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
 first patch of the serie) for the motivation behind this patch
 
- tools/accounting/getdelays.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ tools/perf/util/bpf-loader.h | 3 +--
+ tools/perf/util/util.c       | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/tools/accounting/getdelays.c b/tools/accounting/getdelays.c
-index 9f420d98b5fb..66817a7a4fce 100644
---- a/tools/accounting/getdelays.c
-+++ b/tools/accounting/getdelays.c
-@@ -314,8 +314,7 @@ int main(int argc, char *argv[])
- 				err(1, "Invalid rcv buf size\n");
- 			break;
- 		case 'm':
--			strncpy(cpumask, optarg, sizeof(cpumask));
--			cpumask[sizeof(cpumask) - 1] = '\0';
-+			strlcpy(cpumask, optarg, sizeof(cpumask));
- 			maskset = 1;
- 			printf("cpumask %s maskset %d\n", cpumask, maskset);
- 			break;
+diff --git a/tools/perf/util/bpf-loader.h b/tools/perf/util/bpf-loader.h
+index 5d3aefd6fae7..8d08a1fc97a0 100644
+--- a/tools/perf/util/bpf-loader.h
++++ b/tools/perf/util/bpf-loader.h
+@@ -143,10 +143,9 @@ __bpf_strerror(char *buf, size_t size)
+ {
+ 	if (!size)
+ 		return 0;
+-	strncpy(buf,
++	strlcpy(buf,
+ 		"ERROR: eBPF object loading is disabled during compiling.\n",
+ 		size);
+-	buf[size - 1] = '\0';
+ 	return 0;
+ }
+ 
+diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+index eac5b858a371..8b9e3aa7aad3 100644
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -459,8 +459,7 @@ fetch_kernel_version(unsigned int *puint, char *str,
+ 		return -1;
+ 
+ 	if (str && str_size) {
+-		strncpy(str, utsname.release, str_size);
+-		str[str_size - 1] = '\0';
++		strlcpy(str, utsname.release, str_size);
+ 	}
+ 
+ 	if (!puint || int_ver_ready)
 -- 
 2.17.1
 
