@@ -2,98 +2,91 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AECA8ECDFB0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AB8ECDFAA
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D6CD2124D
+	by mail.kernel.org (Postfix) with ESMTP id 97934214C2
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:36:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="LHy9T6qf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D6CD2124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZJVgt65S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97934214C2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387928AbeGMCs0 (ORCPT
+        id S2387973AbeGMCsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 22:48:26 -0400
-Received: from imap.thunk.org ([74.207.234.97]:37310 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387840AbeGMCs0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 22:48:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=pHJuvA/c9vbb+K77sWv0mc9PZuLqqhe4ihAGwjdfCUs=; b=LHy9T6qfWilYyqvt3CGl3W7un+
-        HoM+Yg3C/gGVbo2xG0ETzdK16OG1tvEdYEOjJFgP3WPPfsmRq8HObuJZVcsy911QxzdHPe1Cmxsoy
-        nhepgZdBqhFw32CJOeH1LOT9IXkHCxpkQgx623/W/Js20Jx+qsSibL8TADZWSmI4nYos=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fdnw5-0007fw-3x; Fri, 13 Jul 2018 02:35:57 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id DC0687A55D2; Thu, 12 Jul 2018 22:35:55 -0400 (EDT)
-Date:   Thu, 12 Jul 2018 22:35:55 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
- superblock creation [ver #9]
-Message-ID: <20180713023555.GE28610@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-References: <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
- <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
- <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net>
- <22370.1531293761@warthog.procyon.org.uk>
- <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
- <7002.1531407244@warthog.procyon.org.uk>
- <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com>
- <16699.1531426991@warthog.procyon.org.uk>
- <18233.1531430797@warthog.procyon.org.uk>
- <22105.1531436081@warthog.procyon.org.uk>
+        Thu, 12 Jul 2018 22:48:41 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:50848 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387840AbeGMCsk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 22:48:40 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6CNtxDX091938;
+        Fri, 13 Jul 2018 02:35:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=Bwd/YwGSsa5MwBxgqlW+WKuoW/mi0h1dFia4ptntiAY=;
+ b=ZJVgt65SYHTlJLueNGjXFThxwcDIpDLH+yY4UNISgrSr2SKpUs8vfCrhsZFLzWd46CQj
+ Sv0viTtIrf92zu1fLNoLx/7twtwzWH5o+gLB+bLv48IE28zeXaS3EH+Yx/8g7BFhhBhc
+ rb9Pxof2pgQmd+q4aucEyQku76yHzz83fQHT9kAMoEGmwDeY65d1pi6fYbVf2Mqi/VsG
+ cOLFqBOm26M8brNoZZ1BRDM9E4JEBMgUSabdhjMazL2D2KTHYuAIUxNE3B7P+05VR+DY
+ W/Hgj4eFLFS69pkyrS+ncabbNl4nUKiy1oMN08wj8ImD/qVR7hK3ha70jpBbgD+cCoP8 Vg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2k2p7vnxr9-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Jul 2018 02:35:41 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w6D2ZdHG007398
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Jul 2018 02:35:39 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w6D2ZbtW029239;
+        Fri, 13 Jul 2018 02:35:38 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 12 Jul 2018 19:35:36 -0700
+To:     Ching Huang <ching2048@areca.com.tw>
+Cc:     martin.petersen@oracle.com, James.Bottomley@HansenPartnership.com,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dan.carpenter@oracle.com, hch@infradead.org,
+        colin.king@canonical.com
+Subject: Re: [PATCH 0/2] scsi: arcmsr: fix error of resuming from hibernation
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1531131568.5779.8.camel@Centos6.3-64>
+Date:   Thu, 12 Jul 2018 22:35:34 -0400
+In-Reply-To: <1531131568.5779.8.camel@Centos6.3-64> (Ching Huang's message of
+        "Mon, 09 Jul 2018 18:19:28 +0800")
+Message-ID: <yq1lgafj215.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <22105.1531436081@warthog.procyon.org.uk>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8952 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=477
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807120253
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 11:54:41PM +0100, David Howells wrote:
-> 
-> Would that mean then that doing:
-> 
-> 	mount /dev/sda3 /a
-> 	mount /dev/sda3 /b
-> 
-> would then fail on the second command because /dev/sda3 is already open
-> exclusively?
 
-Good point.  One workaround would be to require an open with O_PATH instead.
+Ching,
 
-     	     	 	    	     	- Ted
+> This patch series are against to mkp's 4.19/scsi-queue.
+>
+> 1. Fix error of resuming from hibernation for adapter type E.
+> 2. Update driver version to v1.40.00.09-20180709
+
+Applied to 4.19/scsi-queue, thank you!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
