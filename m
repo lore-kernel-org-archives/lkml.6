@@ -6,40 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02343ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E51F1ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0D4C205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0D4C205F4
+	by mail.kernel.org (Postfix) with ESMTP id AA3C5205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA3C5205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388085AbeGMBiC (ORCPT
+        id S2388105AbeGMBiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 21:38:02 -0400
-Received: from nautica.notk.org ([91.121.71.147]:43014 "EHLO nautica.notk.org"
+        Thu, 12 Jul 2018 21:38:05 -0400
+Received: from nautica.notk.org ([91.121.71.147]:43020 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387896AbeGMBiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 21:38:01 -0400
+        id S2387896AbeGMBiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 21:38:04 -0400
 Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 7F84AC023; Fri, 13 Jul 2018 03:25:48 +0200 (CEST)
+        id 128EFC024; Fri, 13 Jul 2018 03:25:51 +0200 (CEST)
 From:   Dominique Martinet <asmadeus@codewreck.org>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Franky Lin <franky.lin@broadcom.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Wright Feng <wright.feng@cypress.com>,
         Kalle Valo <kvalo@codeaurora.org>,
         "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 10/18] brcmsmac: change strncpy+truncation to strlcpy
-Date:   Fri, 13 Jul 2018 03:25:47 +0200
-Message-Id: <1531445147-19566-1-git-send-email-asmadeus@codewreck.org>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Joe Perches <joe@perches.com>, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 11/18] wireless/ti: change strncpy+truncation to strlcpy
+Date:   Fri, 13 Jul 2018 03:25:49 +0200
+Message-Id: <1531445149-19607-1-git-send-email-asmadeus@codewreck.org>
 X-Mailer: git-send-email 1.7.10.4
 In-Reply-To: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
 References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
@@ -57,23 +54,67 @@ Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
 first patch of the serie) for the motivation behind this patch
 
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wireless/ti/wl1251/acx.c  | 9 +--------
+ drivers/net/wireless/ti/wl18xx/main.c | 5 +----
+ drivers/net/wireless/ti/wlcore/boot.c | 5 +----
+ 3 files changed, 3 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c
-index b7df576bb84d..58ccd72d672c 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c
-@@ -584,8 +584,7 @@ struct dma_pub *dma_attach(char *name, struct brcms_c_info *wlc,
- 		      rxextheadroom, nrxpost, rxoffset, txregbase, rxregbase);
+diff --git a/drivers/net/wireless/ti/wl1251/acx.c b/drivers/net/wireless/ti/wl1251/acx.c
+index f78fc3880423..c4f1a63300bb 100644
+--- a/drivers/net/wireless/ti/wl1251/acx.c
++++ b/drivers/net/wireless/ti/wl1251/acx.c
+@@ -150,14 +150,7 @@ int wl1251_acx_fw_version(struct wl1251 *wl, char *buf, size_t len)
+ 	}
  
- 	/* make a private copy of our callers name */
--	strncpy(di->name, name, MAXNAMEL);
--	di->name[MAXNAMEL - 1] = '\0';
-+	strlcpy(di->name, name, MAXNAMEL);
+ 	/* be careful with the buffer sizes */
+-	strncpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
+-
+-	/*
+-	 * if the firmware version string is exactly
+-	 * sizeof(rev->fw_version) long or fw_len is less than
+-	 * sizeof(rev->fw_version) it won't be null terminated
+-	 */
+-	buf[min(len, sizeof(rev->fw_version)) - 1] = '\0';
++	strlcpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
  
- 	di->dmadev = core->dma_dev;
+ out:
+ 	kfree(rev);
+diff --git a/drivers/net/wireless/ti/wl18xx/main.c b/drivers/net/wireless/ti/wl18xx/main.c
+index ca0f936fc119..8595e9bf1cfa 100644
+--- a/drivers/net/wireless/ti/wl18xx/main.c
++++ b/drivers/net/wireless/ti/wl18xx/main.c
+@@ -1529,12 +1529,9 @@ static int wl18xx_handle_static_data(struct wl1271 *wl,
+ 	struct wl18xx_static_data_priv *static_data_priv =
+ 		(struct wl18xx_static_data_priv *) static_data->priv;
  
+-	strncpy(wl->chip.phy_fw_ver_str, static_data_priv->phy_version,
++	strlcpy(wl->chip.phy_fw_ver_str, static_data_priv->phy_version,
+ 		sizeof(wl->chip.phy_fw_ver_str));
+ 
+-	/* make sure the string is NULL-terminated */
+-	wl->chip.phy_fw_ver_str[sizeof(wl->chip.phy_fw_ver_str) - 1] = '\0';
+-
+ 	wl1271_info("PHY firmware version: %s", static_data_priv->phy_version);
+ 
+ 	return 0;
+diff --git a/drivers/net/wireless/ti/wlcore/boot.c b/drivers/net/wireless/ti/wlcore/boot.c
+index f00509ea8aca..6b33951d5b34 100644
+--- a/drivers/net/wireless/ti/wlcore/boot.c
++++ b/drivers/net/wireless/ti/wlcore/boot.c
+@@ -55,12 +55,9 @@ static int wlcore_boot_parse_fw_ver(struct wl1271 *wl,
+ {
+ 	int ret;
+ 
+-	strncpy(wl->chip.fw_ver_str, static_data->fw_version,
++	strlcpy(wl->chip.fw_ver_str, static_data->fw_version,
+ 		sizeof(wl->chip.fw_ver_str));
+ 
+-	/* make sure the string is NULL-terminated */
+-	wl->chip.fw_ver_str[sizeof(wl->chip.fw_ver_str) - 1] = '\0';
+-
+ 	ret = sscanf(wl->chip.fw_ver_str + 4, "%u.%u.%u.%u.%u",
+ 		     &wl->chip.fw_ver[0], &wl->chip.fw_ver[1],
+ 		     &wl->chip.fw_ver[2], &wl->chip.fw_ver[3],
 -- 
 2.17.1
 
