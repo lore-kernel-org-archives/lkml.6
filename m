@@ -2,131 +2,110 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3C9ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F056CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087F4208E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DAA2208E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:15:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H0krVt+V";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="H0krVt+V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 087F4208E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eG+tPFwz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DAA2208E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbeGMF1f (ORCPT
+        id S1726824AbeGMF2g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 01:27:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52030 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbeGMF1f (ORCPT
+        Fri, 13 Jul 2018 01:28:36 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:52136 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbeGMF2g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 01:27:35 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BF5B360B10; Fri, 13 Jul 2018 05:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531458878;
-        bh=D0es5P1WT4M6hq3pICTqvGE1X50oxGPhXQE1A4StQM8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=H0krVt+V52b+oABovD7pz3Ec2W+32AtFdgQH3h1knIkXXLakZYeS5yU0Jooy0dCTN
-         dUqoAbq5IYt/mnveqEsO5y8qpU0F6XdUclvhqzT7Nj+ywCNylTkjPj3zIxMyVBQe8P
-         tFgB56kMX94//9cW9mpiums9WiXuF2ULpXu2ubcI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 673D360250;
-        Fri, 13 Jul 2018 05:14:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531458878;
-        bh=D0es5P1WT4M6hq3pICTqvGE1X50oxGPhXQE1A4StQM8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=H0krVt+V52b+oABovD7pz3Ec2W+32AtFdgQH3h1knIkXXLakZYeS5yU0Jooy0dCTN
-         dUqoAbq5IYt/mnveqEsO5y8qpU0F6XdUclvhqzT7Nj+ywCNylTkjPj3zIxMyVBQe8P
-         tFgB56kMX94//9cW9mpiums9WiXuF2ULpXu2ubcI=
+        Fri, 13 Jul 2018 01:28:36 -0400
+Received: by mail-it0-f65.google.com with SMTP id h2-v6so8149898itj.1;
+        Thu, 12 Jul 2018 22:15:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9sXdgquaFxlbIg3+9FuaNNO2t9xj7Slm776nPBvg9fI=;
+        b=eG+tPFwzAXkw374PuV/YRzZcJZQnf2BadilGqEhWZETElAsHnupphPDCBlRLCCUB1b
+         DLESiziW2M49QhLxT7E6IdFQe0EWWeCvKganWRBBxjw5qi5+qBXMZ6gh+HApL+kfMMN6
+         9TL8HKGrmDSYWiqCtDfwdUeSHQCPx/cqFg2t05FzbLPliLrMPLNa3KulpeyeeQJ7M6ak
+         G13GpRfX/xHCwXSSfK0ooZcaKmgYYXlyxIB9Zxg5uw6n7pVYnwmsks3tVe4BMX51Ci8M
+         KrH/hSrld4UzRBlR/6LSUBP1vZTgQe+a7RS6FhqqoPj37TFSJIvivvK6Q14LdGkUkKVv
+         Wn/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9sXdgquaFxlbIg3+9FuaNNO2t9xj7Slm776nPBvg9fI=;
+        b=rWaQqqB3PxwuQ8ioSxfntSQMsxqDMsi0qNr9K0R7IsYaCXDsBTuTgW5e9GiNikAW6G
+         2M/zUCoJINYY6cV08f6410YjZisZTao35tTrhd/lM6hWubgtGlQ8JPM8XwNJ3iBpP5Xf
+         M/8lu6xT7feCI1Y2x4mARVClYw7Q06ntoCVcLe8fP/KYvdqy+Yp4wYhZKqPu9zjI3fTl
+         EkDKCbmKNspl0giJCz/JyZsa9ttYvGLNANRsNeF7AqHQbUw2WsJEPGo8GYoWLaUzDltA
+         f3iU/RzxnkqOffhUotqhU+NBpkW4ZGIwvhJkd4LO54fqokKIOUTqqSgiQMfjlhmfLYwi
+         twFQ==
+X-Gm-Message-State: AOUpUlGghMdcqVNgkkDz6a4sdaizFi6FnLZzkbkjkBAVI2HlyrzHL9Xv
+        NP04/h+UP2SyTIC6V7UrIp11CUuqIIRkGv/mZJ0kCcxc
+X-Google-Smtp-Source: AAOMgpdZawiUycbKwzIrU3m0NDWDLMmlXcZc1aJVTI8Z+FrJseM54qbuomkAkUV89wVzgTw/Jg/7v4ErE84N8U1TB1E=
+X-Received: by 2002:a24:7b97:: with SMTP id q145-v6mr3583777itc.79.1531458939894;
+ Thu, 12 Jul 2018 22:15:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 13 Jul 2018 10:44:38 +0530
-From:   poza@codeaurora.org
-To:     Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bhelgaas@google.com, linux-pci-owner@vger.kernel.org
-Subject: Re: [PATCH] PCI/AER: Enable SERR# forwarding in non ACPI flow
-In-Reply-To: <1531406719-18606-1-git-send-email-bharat.kumar.gogada@xilinx.com>
-References: <1531406719-18606-1-git-send-email-bharat.kumar.gogada@xilinx.com>
-Message-ID: <b5ba83a0fd8694905528f740a186b891@codeaurora.org>
-X-Sender: poza@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20180712023337.30112-1-andrew.smirnov@gmail.com>
+ <20180712023337.30112-2-andrew.smirnov@gmail.com> <CAOMZO5DfHqKjF6xykJtoC-aA-ATWM6mCZR0VzPVpSDOt-Fs6bQ@mail.gmail.com>
+In-Reply-To: <CAOMZO5DfHqKjF6xykJtoC-aA-ATWM6mCZR0VzPVpSDOt-Fs6bQ@mail.gmail.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Thu, 12 Jul 2018 22:15:28 -0700
+Message-ID: <CAHQ1cqEXBfs1B6Jr1NvUY6WoyX9oG=0haJpiTLVH7t-37ht10Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ARM: dts: imx51-zii-scu3-esb: Add switch IRQ line
+ pinumx config
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-12 20:15, Bharat Kumar Gogada wrote:
-> Currently PCI_BRIDGE_CTL_SERR is being enabled only in
-> ACPI flow.
-> This bit is required for forwarding errors reported
-> by EP devices to upstream device.
-> This patch enables SERR# for Type-1 PCI device.
-> 
-> Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-> ---
->  drivers/pci/pcie/aer.c |   23 +++++++++++++++++++++++
->  1 files changed, 23 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index a2e8838..943e084 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -343,6 +343,19 @@ int pci_enable_pcie_error_reporting(struct pci_dev 
-> *dev)
->  	if (!dev->aer_cap)
->  		return -EIO;
-> 
-> +	if (!IS_ENABLED(CONFIG_ACPI) &&
-> +	    dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
-> +		u16 control;
-> +
-> +		/*
-> +		 * A Type-1 PCI bridge will not forward ERR_ messages coming
-> +		 * from an endpoint if SERR# forwarding is not enabled.
-> +		 */
-> +		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &control);
-> +		control |= PCI_BRIDGE_CTL_SERR;
-> +		pci_write_config_word(dev, PCI_BRIDGE_CONTROL, control);
-> +	}
-> +
->  	return pcie_capability_set_word(dev, PCI_EXP_DEVCTL, 
-> PCI_EXP_AER_FLAGS);
->  }
->  EXPORT_SYMBOL_GPL(pci_enable_pcie_error_reporting);
-> @@ -352,6 +365,16 @@ int pci_disable_pcie_error_reporting(struct 
-> pci_dev *dev)
->  	if (pcie_aer_get_firmware_first(dev))
->  		return -EIO;
-> 
-> +	if (!IS_ENABLED(CONFIG_ACPI) &&
-> +	    dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
-> +		u16 control;
-> +
-> +		/* Clear SERR Forwarding */
-> +		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &control);
-> +		control &= ~PCI_BRIDGE_CTL_SERR;
-> +		pci_write_config_word(dev, PCI_BRIDGE_CONTROL, control);
-> +	}
-> +
->  	return pcie_capability_clear_word(dev, PCI_EXP_DEVCTL,
->  					  PCI_EXP_AER_FLAGS);
->  }
+On Thu, Jul 12, 2018 at 6:37 AM Fabio Estevam <festevam@gmail.com> wrote:
+>
+> Hi Andrey,
+>
+> On Wed, Jul 11, 2018 at 11:33 PM, Andrey Smirnov
+> <andrew.smirnov@gmail.com> wrote:
+>
+> > +       pinctrl_switch: switchgrp {
+> > +               fsl,pins = <
+> > +                       MX51_PAD_AUD3_BB_CK__GPIO4_20           0xc5
+>
+> The i.MX51 Reference Manual states that 0xa5 is the default reset
+> value for the register IOMUXC_SW_PAD_CTL_PAD_AUD3_BB_CK.
+>
+> By reading your commit log I had the impression you wanted to provide
+> the default value explicitly.
+>
+> Please clarify.
 
+I wanted to avoid relying on defaults be it register reset values or
+settings that bootloader left us with. Default value of 0xa5 works,
+but, given how the pin is IRQ_TYPE_LEVEL_HIGH, I though it would be
+better to configure it to have a pulldown. Do you want me to add that
+to commit log?
 
-Should this configuration no be set by Firmware ? why should Linux 
-dictate it ?
-
-Regards,
-Oza.
-
-
+Thanks,
+Andrey Smirnov
