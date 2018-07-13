@@ -6,136 +6,226 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC1CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C50FEECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B86A2208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:55:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B86A2208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 76D2D208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:55:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D2D208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727389AbeGMJIo (ORCPT
+        id S1728289AbeGMJJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 05:08:44 -0400
-Received: from foss.arm.com ([217.140.101.70]:59906 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726789AbeGMJIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 05:08:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 611011682;
-        Fri, 13 Jul 2018 01:55:02 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 36A9A3F5AD;
-        Fri, 13 Jul 2018 01:54:58 -0700 (PDT)
-Subject: Re: [PATCH v2 02/17] virtio: pci-legacy: Validate queue pfn
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, kvm@vger.kernel.org,
-        cdall@kernel.org, marc.zyngier@arm.com, punit.agrawal@arm.com,
-        will.deacon@arm.com, catalin.marinas@arm.com, pbonzini@redhat.com,
-        rkrcmar@redhat.com, ard.biesheuvel@linaro.org,
-        peter.maydell@linaro.org, kristina.martsenko@arm.com,
-        mark.rutland@arm.com, Jason Wang <jasowang@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-References: <1522156531-28348-1-git-send-email-suzuki.poulose@arm.com>
- <1522156531-28348-3-git-send-email-suzuki.poulose@arm.com>
- <20180327170823-mutt-send-email-mst@kernel.org>
- <20180713004545-mutt-send-email-mst@kernel.org>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <0e475b0c-5c38-ef37-3c87-486f418c609e@arm.com>
-Date:   Fri, 13 Jul 2018 09:54:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 13 Jul 2018 05:09:08 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:48261 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726389AbeGMJJI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 05:09:08 -0400
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w6D8stta027206
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 13 Jul 2018 17:54:55 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6D8st6C024554;
+        Fri, 13 Jul 2018 17:54:55 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w6D8mTOp021434;
+        Fri, 13 Jul 2018 17:54:55 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail03.kamome.nec.co.jp with ESMTP id BT-MMP-1984434; Fri, 13 Jul 2018 17:52:44 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0319.002; Fri,
+ 13 Jul 2018 17:52:42 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+        =?utf-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Ross Zwisler <ross.zwisler@linux.intel.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 08/11] mm, memory_failure: Teach memory_failure()
+ about dev_pagemap pages
+Thread-Topic: [PATCH v5 08/11] mm, memory_failure: Teach memory_failure()
+ about dev_pagemap pages
+Thread-Index: AQHUE+Ec860aWMEdckiWuyQY9LqbA6SMTxSA
+Date:   Fri, 13 Jul 2018 08:52:41 +0000
+Message-ID: <20180713085241.GA26980@hori1.linux.bs1.fc.nec.co.jp>
+References: <153074042316.27838.17319837331947007626.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <153074046610.27838.329669845580014251.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <153074046610.27838.329669845580014251.stgit@dwillia2-desk3.amr.corp.intel.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D05E4B0C66D8854E9D1C7FE0AE24AEB8@gisp.nec.co.jp>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20180713004545-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/07/18 01:36, Michael S. Tsirkin wrote:
-> On Tue, Mar 27, 2018 at 05:11:04PM +0300, Michael S. Tsirkin wrote:
->> On Tue, Mar 27, 2018 at 02:15:12PM +0100, Suzuki K Poulose wrote:
->>> Legacy PCI over virtio uses a 32bit PFN for the queue. If the
->>> queue pfn is too large to fit in 32bits, which we could hit on
->>> arm64 systems with 52bit physical addresses (even with 64K page
->>> size), we simply miss out a proper link to the other side of
->>> the queue.
->>>
->>> Add a check to validate the PFN, rather than silently breaking
->>> the devices.
->>>
->>> Cc: "Michael S. Tsirkin" <mst@redhat.com>
->>> Cc: Jason Wang <jasowang@redhat.com>
->>> Cc: Marc Zyngier <marc.zyngier@arm.com>
->>> Cc: Christoffer Dall <cdall@kernel.org>
->>> Cc: Peter Maydel <peter.maydell@linaro.org>
->>> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->>> ---
->>>   drivers/virtio/virtio_pci_legacy.c | 12 ++++++++++--
->>>   1 file changed, 10 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/virtio/virtio_pci_legacy.c b/drivers/virtio/virtio_pci_legacy.c
->>> index 2780886..4b84a75 100644
->>> --- a/drivers/virtio/virtio_pci_legacy.c
->>> +++ b/drivers/virtio/virtio_pci_legacy.c
->>> @@ -122,6 +122,7 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
->>>   	struct virtqueue *vq;
->>>   	u16 num;
->>>   	int err;
->>> +	u64 q_pfn;
->>>   
->>>   	/* Select the queue we're interested in */
->>>   	iowrite16(index, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_SEL);
->>> @@ -141,9 +142,15 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
->>>   	if (!vq)
->>>   		return ERR_PTR(-ENOMEM);
->>>   
->>> +	q_pfn = virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT;
->>> +	if (q_pfn >> 32) {
->>> +		dev_err(&vp_dev->pci_dev->dev, "virtio-pci queue PFN too large\n");
->>> +		err = -ENOMEM;
->>
->> ENOMEM seems wrong here. E2BIG?
->>
->>> +		goto out_del_vq;
->>> +	}
->>> +
->>>   	/* activate the queue */
->>> -	iowrite32(virtqueue_get_desc_addr(vq) >> VIRTIO_PCI_QUEUE_ADDR_SHIFT,
->>> -		  vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
->>> +	iowrite32((u32)q_pfn, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
->>
->> Is the cast really necessary here?
->>
->>>   
->>>   	vq->priv = (void __force *)vp_dev->ioaddr + VIRTIO_PCI_QUEUE_NOTIFY;
->>>   
->>> @@ -160,6 +167,7 @@ static struct virtqueue *setup_vq(struct virtio_pci_device *vp_dev,
->>>   
->>>   out_deactivate:
->>>   	iowrite32(0, vp_dev->ioaddr + VIRTIO_PCI_QUEUE_PFN);
->>> +out_del_vq:
->>>   	vring_del_virtqueue(vq);
->>>   	return ERR_PTR(err);
->>>   }
->>> -- 
->>> 2.7.4
+T24gV2VkLCBKdWwgMDQsIDIwMTggYXQgMDI6NDE6MDZQTSAtMDcwMCwgRGFuIFdpbGxpYW1zIHdy
+b3RlOg0KPiAgICAgbWNlOiBVbmNvcnJlY3RlZCBoYXJkd2FyZSBtZW1vcnkgZXJyb3IgaW4gdXNl
+ci1hY2Nlc3MgYXQgYWYzNDIxNDIwMA0KPiAgICAgezF9W0hhcmR3YXJlIEVycm9yXTogSXQgaGFz
+IGJlZW4gY29ycmVjdGVkIGJ5IGgvdyBhbmQgcmVxdWlyZXMgbm8gZnVydGhlciBhY3Rpb24NCj4g
+ICAgIG1jZTogW0hhcmR3YXJlIEVycm9yXTogTWFjaGluZSBjaGVjayBldmVudHMgbG9nZ2VkDQo+
+ICAgICB7MX1bSGFyZHdhcmUgRXJyb3JdOiBldmVudCBzZXZlcml0eTogY29ycmVjdGVkDQo+ICAg
+ICBNZW1vcnkgZmFpbHVyZTogMHhhZjM0MjE0OiByZXNlcnZlZCBrZXJuZWwgcGFnZSBzdGlsbCBy
+ZWZlcmVuY2VkIGJ5IDEgdXNlcnMNCj4gICAgIFsuLl0NCj4gICAgIE1lbW9yeSBmYWlsdXJlOiAw
+eGFmMzQyMTQ6IHJlY292ZXJ5IGFjdGlvbiBmb3IgcmVzZXJ2ZWQga2VybmVsIHBhZ2U6IEZhaWxl
+ZA0KPiAgICAgbWNlOiBNZW1vcnkgZXJyb3Igbm90IHJlY292ZXJlZA0KPg0KPiBJbiBjb250cmFz
+dCB0byB0eXBpY2FsIG1lbW9yeSwgZGV2X3BhZ2VtYXAgcGFnZXMgbWF5IGJlIGRheCBtYXBwZWQu
+IFdpdGgNCj4gZGF4IHRoZXJlIGlzIG5vIHBvc3NpYmlsaXR5IHRvIG1hcCBpbiBhbm90aGVyIHBh
+Z2UgZHluYW1pY2FsbHkgc2luY2UgZGF4DQo+IGVzdGFibGlzaGVzIDE6MSBwaHlzaWNhbCBhZGRy
+ZXNzIHRvIGZpbGUgb2Zmc2V0IGFzc29jaWF0aW9ucy4gQWxzbw0KPiBkZXZfcGFnZW1hcCBwYWdl
+cyBhc3NvY2lhdGVkIHdpdGggTlZESU1NIC8gcGVyc2lzdGVudCBtZW1vcnkgZGV2aWNlcyBjYW4N
+Cj4gaW50ZXJuYWwgcmVtYXAvcmVwYWlyIGFkZHJlc3NlcyB3aXRoIHBvaXNvbi4gV2hpbGUgbWVt
+b3J5X2ZhaWx1cmUoKQ0KPiBhc3N1bWVzIHRoYXQgaXQgY2FuIGRpc2NhcmQgdHlwaWNhbCBwb2lz
+b25lZCBwYWdlcyBhbmQga2VlcCB0aGVtDQo+IHVubWFwcGVkIGluZGVmaW5pdGVseSwgZGV2X3Bh
+Z2VtYXAgcGFnZXMgbWF5IGJlIHJldHVybmVkIHRvIHNlcnZpY2UNCj4gYWZ0ZXIgdGhlIGVycm9y
+IGlzIGNsZWFyZWQuDQo+DQo+IFRlYWNoIG1lbW9yeV9mYWlsdXJlKCkgdG8gZGV0ZWN0IGFuZCBo
+YW5kbGUgTUVNT1JZX0RFVklDRV9IT1NUDQo+IGRldl9wYWdlbWFwIHBhZ2VzIHRoYXQgaGF2ZSBw
+b2lzb24gY29uc3VtZWQgYnkgdXNlcnNwYWNlLiBNYXJrIHRoZQ0KPiBtZW1vcnkgYXMgVUMgaW5z
+dGVhZCBvZiB1bm1hcHBpbmcgaXQgY29tcGxldGVseSB0byBhbGxvdyBvbmdvaW5nIGFjY2Vzcw0K
+PiB2aWEgdGhlIGRldmljZSBkcml2ZXIgKG5kX3BtZW0pLiBMYXRlciwgbmRfcG1lbSB3aWxsIGdy
+b3cgc3VwcG9ydCBmb3INCj4gbWFya2luZyB0aGUgcGFnZSBiYWNrIHRvIFdCIHdoZW4gdGhlIGVy
+cm9yIGlzIGNsZWFyZWQuDQoNCkJ5IHRoZSB3YXksIHdoYXQgaGFwcGVucyBpZiBtYWR2aXNlKE1B
+RFZfU09GVF9PRkZMSU5FKSBpcyBjYWxsZWQgb24NCmEgZGV2X3BhZ2VtYXAgcGFnZT8gIEknbSBu
+b3Qgc3VyZSB0aGF0IGNtY2kgY2FuIGJlIHRyaWdnZXJlZCBvbiB0aGUNCm52ZGltbSBkZXZpY2Us
+IGJ1dCB0aGlzIGluamVjdGlvbiBpbnRlcmZhY2UgaXMgb3BlbiBmb3Igc3VjaCBhIGNhc2UuDQpN
+YXliZSBzaW1wbHkgaWdub3JpbmcgdGhlIGV2ZW50IGlzIGFuIGV4cGVjdGVkIGJlaGF2aW9yPw0K
+DQpBIGZldyBjb21tZW50cy9xdWV0aW9ucyBiZWxvdyAuLi4NCg0KPg0KPiBDYzogSmFuIEthcmEg
+PGphY2tAc3VzZS5jej4NCj4gQ2M6IENocmlzdG9waCBIZWxsd2lnIDxoY2hAbHN0LmRlPg0KPiBD
+YzogSsOpcsO0bWUgR2xpc3NlIDxqZ2xpc3NlQHJlZGhhdC5jb20+DQo+IENjOiBNYXR0aGV3IFdp
+bGNveCA8bWF3aWxjb3hAbWljcm9zb2Z0LmNvbT4NCj4gQ2M6IE5hb3lhIEhvcmlndWNoaSA8bi1o
+b3JpZ3VjaGlAYWguanAubmVjLmNvbT4NCj4gQ2M6IFJvc3MgWndpc2xlciA8cm9zcy56d2lzbGVy
+QGxpbnV4LmludGVsLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogRGFuIFdpbGxpYW1zIDxkYW4uai53
+aWxsaWFtc0BpbnRlbC5jb20+DQo+IC0tLQ0KPiAgaW5jbHVkZS9saW51eC9tbS5oICB8ICAgIDEN
+Cj4gIG1tL21lbW9yeS1mYWlsdXJlLmMgfCAgMTI0ICsrKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrLQ0KPiAgMiBmaWxlcyBjaGFuZ2VkLCAxMjMgaW5zZXJ0
+aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4NCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgv
+bW0uaCBiL2luY2x1ZGUvbGludXgvbW0uaA0KPiBpbmRleCBhMGZiYjlmZmUzODAuLjM3NGU1ZTky
+ODRmNyAxMDA2NDQNCj4gLS0tIGEvaW5jbHVkZS9saW51eC9tbS5oDQo+ICsrKyBiL2luY2x1ZGUv
+bGludXgvbW0uaA0KPiBAQCAtMjcyNSw2ICsyNzI1LDcgQEAgZW51bSBtZl9hY3Rpb25fcGFnZV90
+eXBlIHsNCj4gIAlNRl9NU0dfVFJVTkNBVEVEX0xSVSwNCj4gIAlNRl9NU0dfQlVERFksDQo+ICAJ
+TUZfTVNHX0JVRERZXzJORCwNCj4gKwlNRl9NU0dfREFYLA0KPiAgCU1GX01TR19VTktOT1dOLA0K
+PiAgfTsNCj4NCj4gZGlmZiAtLWdpdCBhL21tL21lbW9yeS1mYWlsdXJlLmMgYi9tbS9tZW1vcnkt
+ZmFpbHVyZS5jDQo+IGluZGV4IDRkNzA3NTNhZjU5Yy4uMTYxYWExYjcwMjEyIDEwMDY0NA0KPiAt
+LS0gYS9tbS9tZW1vcnktZmFpbHVyZS5jDQo+ICsrKyBiL21tL21lbW9yeS1mYWlsdXJlLmMNCj4g
+QEAgLTU1LDYgKzU1LDcgQEANCj4gICNpbmNsdWRlIDxsaW51eC9odWdldGxiLmg+DQo+ICAjaW5j
+bHVkZSA8bGludXgvbWVtb3J5X2hvdHBsdWcuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9tbV9pbmxp
+bmUuaD4NCj4gKyNpbmNsdWRlIDxsaW51eC9tZW1yZW1hcC5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4
+L2tmaWZvLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvcmF0ZWxpbWl0Lmg+DQo+ICAjaW5jbHVkZSAi
+aW50ZXJuYWwuaCINCj4gQEAgLTI2Myw2ICsyNjQsMzkgQEAgdm9pZCBzaGFrZV9wYWdlKHN0cnVj
+dCBwYWdlICpwLCBpbnQgYWNjZXNzKQ0KPiAgfQ0KPiAgRVhQT1JUX1NZTUJPTF9HUEwoc2hha2Vf
+cGFnZSk7DQo+DQo+ICtzdGF0aWMgdW5zaWduZWQgbG9uZyBtYXBwaW5nX3NpemUoc3RydWN0IHBh
+Z2UgKnBhZ2UsIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1hKQ0KPiArew0KPiArCXVuc2lnbmVk
+IGxvbmcgYWRkcmVzcyA9IHZtYV9hZGRyZXNzKHBhZ2UsIHZtYSk7DQo+ICsJcGdkX3QgKnBnZDsN
+Cj4gKwlwNGRfdCAqcDRkOw0KPiArCXB1ZF90ICpwdWQ7DQo+ICsJcG1kX3QgKnBtZDsNCj4gKwlw
+dGVfdCAqcHRlOw0KPiArDQo+ICsJcGdkID0gcGdkX29mZnNldCh2bWEtPnZtX21tLCBhZGRyZXNz
+KTsNCj4gKwlpZiAoIXBnZF9wcmVzZW50KCpwZ2QpKQ0KPiArCQlyZXR1cm4gMDsNCj4gKwlwNGQg
+PSBwNGRfb2Zmc2V0KHBnZCwgYWRkcmVzcyk7DQo+ICsJaWYgKCFwNGRfcHJlc2VudCgqcDRkKSkN
+Cj4gKwkJcmV0dXJuIDA7DQo+ICsJcHVkID0gcHVkX29mZnNldChwNGQsIGFkZHJlc3MpOw0KPiAr
+CWlmICghcHVkX3ByZXNlbnQoKnB1ZCkpDQo+ICsJCXJldHVybiAwOw0KPiArCWlmIChwdWRfZGV2
+bWFwKCpwdWQpKQ0KPiArCQlyZXR1cm4gUFVEX1NJWkU7DQo+ICsJcG1kID0gcG1kX29mZnNldChw
+dWQsIGFkZHJlc3MpOw0KPiArCWlmICghcG1kX3ByZXNlbnQoKnBtZCkpDQo+ICsJCXJldHVybiAw
+Ow0KPiArCWlmIChwbWRfZGV2bWFwKCpwbWQpKQ0KPiArCQlyZXR1cm4gUE1EX1NJWkU7DQo+ICsJ
+cHRlID0gcHRlX29mZnNldF9tYXAocG1kLCBhZGRyZXNzKTsNCj4gKwlpZiAoIXB0ZV9wcmVzZW50
+KCpwdGUpKQ0KPiArCQlyZXR1cm4gMDsNCj4gKwlpZiAocHRlX2Rldm1hcCgqcHRlKSkNCj4gKwkJ
+cmV0dXJuIFBBR0VfU0laRTsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKw0KDQpUaGUgZnVuY3Rp
+b24gbmFtZSBsb29rcyBnZW5lcmljLCBidXQgdGhpcyBmdW5jdGlvbiBzZWVtcyB0byBmb2N1cyBv
+bg0KZGV2bWFwIHRoaW5nLCBzbyBjb3VsZCB5b3UgaW5jbHVkZSB0aGUgd29yZCAnZGV2bWFwJyBp
+biB0aGUgbmFtZT8NCg0KPiAgLyoNCj4gICAqIEZhaWx1cmUgaGFuZGxpbmc6IGlmIHdlIGNhbid0
+IGZpbmQgb3IgY2FuJ3Qga2lsbCBhIHByb2Nlc3MgdGhlcmUncw0KPiAgICogbm90IG11Y2ggd2Ug
+Y2FuIGRvLglXZSBqdXN0IHByaW50IGEgbWVzc2FnZSBhbmQgaWdub3JlIG90aGVyd2lzZS4NCj4g
+QEAgLTI5Miw3ICszMjYsMTAgQEAgc3RhdGljIHZvaWQgYWRkX3RvX2tpbGwoc3RydWN0IHRhc2tf
+c3RydWN0ICp0c2ssIHN0cnVjdCBwYWdlICpwLA0KPiAgCX0NCj4gIAl0ay0+YWRkciA9IHBhZ2Vf
+YWRkcmVzc19pbl92bWEocCwgdm1hKTsNCj4gIAl0ay0+YWRkcl92YWxpZCA9IDE7DQo+IC0JdGst
+PnNpemVfc2hpZnQgPSBjb21wb3VuZF9vcmRlcihjb21wb3VuZF9oZWFkKHApKSArIFBBR0VfU0hJ
+RlQ7DQo+ICsJaWYgKGlzX3pvbmVfZGV2aWNlX3BhZ2UocCkpDQo+ICsJCXRrLT5zaXplX3NoaWZ0
+ID0gaWxvZzIobWFwcGluZ19zaXplKHAsIHZtYSkpOw0KPiArCWVsc2UNCj4gKwkJdGstPnNpemVf
+c2hpZnQgPSBjb21wb3VuZF9vcmRlcihjb21wb3VuZF9oZWFkKHApKSArIFBBR0VfU0hJRlQ7DQo+
+DQo+ICAJLyoNCj4gIAkgKiBJbiB0aGVvcnkgd2UgZG9uJ3QgaGF2ZSB0byBraWxsIHdoZW4gdGhl
+IHBhZ2Ugd2FzDQo+IEBAIC0zMDAsNyArMzM3LDcgQEAgc3RhdGljIHZvaWQgYWRkX3RvX2tpbGwo
+c3RydWN0IHRhc2tfc3RydWN0ICp0c2ssIHN0cnVjdCBwYWdlICpwLA0KPiAgCSAqIGxpa2VseSB2
+ZXJ5IHJhcmUga2lsbCBhbnl3YXlzIGp1c3Qgb3V0IG9mIHBhcmFub2lhLCBidXQgdXNlDQo+ICAJ
+ICogYSBTSUdLSUxMIGJlY2F1c2UgdGhlIGVycm9yIGlzIG5vdCBjb250YWluZWQgYW55bW9yZS4N
+Cj4gIAkgKi8NCj4gLQlpZiAodGstPmFkZHIgPT0gLUVGQVVMVCkgew0KPiArCWlmICh0ay0+YWRk
+ciA9PSAtRUZBVUxUIHx8IHRrLT5zaXplX3NoaWZ0ID09IDApIHsNCj4gIAkJcHJfaW5mbygiTWVt
+b3J5IGZhaWx1cmU6IFVuYWJsZSB0byBmaW5kIHVzZXIgc3BhY2UgYWRkcmVzcyAlbHggaW4gJXNc
+biIsDQo+ICAJCQlwYWdlX3RvX3BmbihwKSwgdHNrLT5jb21tKTsNCj4gIAkJdGstPmFkZHJfdmFs
+aWQgPSAwOw0KPiBAQCAtNTE0LDYgKzU1MSw3IEBAIHN0YXRpYyBjb25zdCBjaGFyICogY29uc3Qg
+YWN0aW9uX3BhZ2VfdHlwZXNbXSA9IHsNCj4gIAlbTUZfTVNHX1RSVU5DQVRFRF9MUlVdCQk9ICJh
+bHJlYWR5IHRydW5jYXRlZCBMUlUgcGFnZSIsDQo+ICAJW01GX01TR19CVUREWV0JCQk9ICJmcmVl
+IGJ1ZGR5IHBhZ2UiLA0KPiAgCVtNRl9NU0dfQlVERFlfMk5EXQkJPSAiZnJlZSBidWRkeSBwYWdl
+ICgybmQgdHJ5KSIsDQo+ICsJW01GX01TR19EQVhdCQkJPSAiZGF4IHBhZ2UiLA0KPiAgCVtNRl9N
+U0dfVU5LTk9XTl0JCT0gInVua25vd24gcGFnZSIsDQo+ICB9Ow0KPg0KPiBAQCAtMTExMSw2ICsx
+MTQ5LDgzIEBAIHN0YXRpYyBpbnQgbWVtb3J5X2ZhaWx1cmVfaHVnZXRsYih1bnNpZ25lZCBsb25n
+IHBmbiwgaW50IGZsYWdzKQ0KPiAgCXJldHVybiByZXM7DQo+ICB9DQo+DQo+ICtzdGF0aWMgaW50
+IG1lbW9yeV9mYWlsdXJlX2Rldl9wYWdlbWFwKHVuc2lnbmVkIGxvbmcgcGZuLCBpbnQgZmxhZ3Ms
+DQo+ICsJCXN0cnVjdCBkZXZfcGFnZW1hcCAqcGdtYXApDQo+ICt7DQo+ICsJc3RydWN0IHBhZ2Ug
+KnBhZ2UgPSBwZm5fdG9fcGFnZShwZm4pOw0KPiArCWNvbnN0IGJvb2wgdW5tYXBfc3VjY2VzcyA9
+IHRydWU7DQo+ICsJdW5zaWduZWQgbG9uZyBzaXplID0gMDsNCj4gKwlzdHJ1Y3QgdG9fa2lsbCAq
+dGs7DQo+ICsJTElTVF9IRUFEKHRva2lsbCk7DQo+ICsJaW50IHJjID0gLUVCVVNZOw0KPiArCWxv
+ZmZfdCBzdGFydDsNCj4gKw0KPiArCS8qDQo+ICsJICogUHJldmVudCB0aGUgaW5vZGUgZnJvbSBi
+ZWluZyBmcmVlZCB3aGlsZSB3ZSBhcmUgaW50ZXJyb2dhdGluZw0KPiArCSAqIHRoZSBhZGRyZXNz
+X3NwYWNlLCB0eXBpY2FsbHkgdGhpcyB3b3VsZCBiZSBoYW5kbGVkIGJ5DQo+ICsJICogbG9ja19w
+YWdlKCksIGJ1dCBkYXggcGFnZXMgZG8gbm90IHVzZSB0aGUgcGFnZSBsb2NrLiBUaGlzDQo+ICsJ
+ICogYWxzbyBwcmV2ZW50cyBjaGFuZ2VzIHRvIHRoZSBtYXBwaW5nIG9mIHRoaXMgcGZuIHVudGls
+DQo+ICsJICogcG9pc29uIHNpZ25hbGluZyBpcyBjb21wbGV0ZS4NCj4gKwkgKi8NCj4gKwlpZiAo
+IWRheF9sb2NrX21hcHBpbmdfZW50cnkocGFnZSkpDQo+ICsJCWdvdG8gb3V0Ow0KPiArDQo+ICsJ
+aWYgKGh3cG9pc29uX2ZpbHRlcihwYWdlKSkgew0KPiArCQlyYyA9IDA7DQo+ICsJCWdvdG8gdW5s
+b2NrOw0KPiArCX0NCj4gKw0KPiArCXN3aXRjaCAocGdtYXAtPnR5cGUpIHsNCj4gKwljYXNlIE1F
+TU9SWV9ERVZJQ0VfUFJJVkFURToNCj4gKwljYXNlIE1FTU9SWV9ERVZJQ0VfUFVCTElDOg0KPiAr
+CQkvKg0KPiArCQkgKiBUT0RPOiBIYW5kbGUgSE1NIHBhZ2VzIHdoaWNoIG1heSBuZWVkIGNvb3Jk
+aW5hdGlvbg0KPiArCQkgKiB3aXRoIGRldmljZS1zaWRlIG1lbW9yeS4NCj4gKwkJICovDQo+ICsJ
+CWdvdG8gdW5sb2NrOw0KPiArCWRlZmF1bHQ6DQo+ICsJCWJyZWFrOw0KPiArCX0NCj4gKw0KPiAr
+CS8qDQo+ICsJICogVXNlIHRoaXMgZmxhZyBhcyBhbiBpbmRpY2F0aW9uIHRoYXQgdGhlIGRheCBw
+YWdlIGhhcyBiZWVuDQo+ICsJICogcmVtYXBwZWQgVUMgdG8gcHJldmVudCBzcGVjdWxhdGl2ZSBj
+b25zdW1wdGlvbiBvZiBwb2lzb24uDQo+ICsJICovDQo+ICsJU2V0UGFnZUhXUG9pc29uKHBhZ2Up
+Ow0KDQpUaGUgbnVtYmVyIG9mIGh3cG9pc29uIHBhZ2VzIGlzIG1haW50YWluZWQgYnkgbnVtX3Bv
+aXNvbmVkX3BhZ2VzLA0Kc28geW91IGNhbiBjYWxsIG51bV9wb2lzb25lZF9wYWdlc19pbmMoKT8N
+Cg0KUmVsYXRlZCB0byB0aGlzLCBJJ20gaW50ZXJlc3RlZCBpbiB3aGV0aGVyL2hvdyB1bnBvaXNv
+bl9wYWdlKCkgd29ya3MNCm9uIGEgaHdwb2lzb25lZCBkZXZfcGFnZW1hcCBwYWdlLg0KDQpUaGFu
+a3MsDQpOYW95YSBIb3JpZ3VjaGkNCg0KPiArDQo+ICsJLyoNCj4gKwkgKiBVbmxpa2UgU3lzdGVt
+LVJBTSB0aGVyZSBpcyBubyBwb3NzaWJpbGl0eSB0byBzd2FwIGluIGENCj4gKwkgKiBkaWZmZXJl
+bnQgcGh5c2ljYWwgcGFnZSBhdCBhIGdpdmVuIHZpcnR1YWwgYWRkcmVzcywgc28gYWxsDQo+ICsJ
+ICogdXNlcnNwYWNlIGNvbnN1bXB0aW9uIG9mIFpPTkVfREVWSUNFIG1lbW9yeSBuZWNlc3NpdGF0
+ZXMNCj4gKwkgKiBTSUdCVVMgKGkuZS4gTUZfTVVTVF9LSUxMKQ0KPiArCSAqLw0KPiArCWZsYWdz
+IHw9IE1GX0FDVElPTl9SRVFVSVJFRCB8IE1GX01VU1RfS0lMTDsNCj4gKwljb2xsZWN0X3Byb2Nz
+KHBhZ2UsICZ0b2tpbGwsIGZsYWdzICYgTUZfQUNUSU9OX1JFUVVJUkVEKTsNCj4gKw0KPiArCWxp
+c3RfZm9yX2VhY2hfZW50cnkodGssICZ0b2tpbGwsIG5kKQ0KPiArCQlpZiAodGstPnNpemVfc2hp
+ZnQpDQo+ICsJCQlzaXplID0gbWF4KHNpemUsIDFVTCA8PCB0ay0+c2l6ZV9zaGlmdCk7DQo+ICsJ
+aWYgKHNpemUpIHsNCj4gKwkJLyoNCj4gKwkJICogVW5tYXAgdGhlIGxhcmdlc3QgbWFwcGluZyB0
+byBhdm9pZCBicmVha2luZyB1cA0KPiArCQkgKiBkZXZpY2UtZGF4IG1hcHBpbmdzIHdoaWNoIGFy
+ZSBjb25zdGFudCBzaXplLiBUaGUNCj4gKwkJICogYWN0dWFsIHNpemUgb2YgdGhlIG1hcHBpbmcg
+YmVpbmcgdG9ybiBkb3duIGlzDQo+ICsJCSAqIGNvbW11bmljYXRlZCBpbiBzaWdpbmZvLCBzZWUg
+a2lsbF9wcm9jKCkNCj4gKwkJICovDQo+ICsJCXN0YXJ0ID0gKHBhZ2UtPmluZGV4IDw8IFBBR0Vf
+U0hJRlQpICYgfihzaXplIC0gMSk7DQo+ICsJCXVubWFwX21hcHBpbmdfcmFuZ2UocGFnZS0+bWFw
+cGluZywgc3RhcnQsIHN0YXJ0ICsgc2l6ZSwgMCk7DQo+ICsJfQ0KPiArCWtpbGxfcHJvY3MoJnRv
+a2lsbCwgZmxhZ3MgJiBNRl9NVVNUX0tJTEwsICF1bm1hcF9zdWNjZXNzLCBwZm4sIGZsYWdzKTsN
+Cj4gKwlyYyA9IDA7DQo+ICt1bmxvY2s6DQo+ICsJZGF4X3VubG9ja19tYXBwaW5nX2VudHJ5KHBh
+Z2UpOw0KPiArb3V0Og0KPiArCS8qIGRyb3AgcGdtYXAgcmVmIGFjcXVpcmVkIGluIGNhbGxlciAq
+Lw0KPiArCXB1dF9kZXZfcGFnZW1hcChwZ21hcCk7DQo+ICsJYWN0aW9uX3Jlc3VsdChwZm4sIE1G
+X01TR19EQVgsIHJjID8gTUZfRkFJTEVEIDogTUZfUkVDT1ZFUkVEKTsNCj4gKwlyZXR1cm4gcmM7
+DQo+ICt9DQo+ICsNCj4gIC8qKg0KPiAgICogbWVtb3J5X2ZhaWx1cmUgLSBIYW5kbGUgbWVtb3J5
+IGZhaWx1cmUgb2YgYSBwYWdlLg0KPiAgICogQHBmbjogUGFnZSBOdW1iZXIgb2YgdGhlIGNvcnJ1
+cHRlZCBwYWdlDQo+IEBAIC0xMTMzLDYgKzEyNDgsNyBAQCBpbnQgbWVtb3J5X2ZhaWx1cmUodW5z
+aWduZWQgbG9uZyBwZm4sIGludCBmbGFncykNCj4gIAlzdHJ1Y3QgcGFnZSAqcDsNCj4gIAlzdHJ1
+Y3QgcGFnZSAqaHBhZ2U7DQo+ICAJc3RydWN0IHBhZ2UgKm9yaWdfaGVhZDsNCj4gKwlzdHJ1Y3Qg
+ZGV2X3BhZ2VtYXAgKnBnbWFwOw0KPiAgCWludCByZXM7DQo+ICAJdW5zaWduZWQgbG9uZyBwYWdl
+X2ZsYWdzOw0KPg0KPiBAQCAtMTE0NSw2ICsxMjYxLDEwIEBAIGludCBtZW1vcnlfZmFpbHVyZSh1
+bnNpZ25lZCBsb25nIHBmbiwgaW50IGZsYWdzKQ0KPiAgCQlyZXR1cm4gLUVOWElPOw0KPiAgCX0N
+Cj4NCj4gKwlwZ21hcCA9IGdldF9kZXZfcGFnZW1hcChwZm4sIE5VTEwpOw0KPiArCWlmIChwZ21h
+cCkNCj4gKwkJcmV0dXJuIG1lbW9yeV9mYWlsdXJlX2Rldl9wYWdlbWFwKHBmbiwgZmxhZ3MsIHBn
+bWFwKTsNCj4gKw0KPiAgCXAgPSBwZm5fdG9fcGFnZShwZm4pOw0KPiAgCWlmIChQYWdlSHVnZShw
+KSkNCj4gIAkJcmV0dXJuIG1lbW9yeV9mYWlsdXJlX2h1Z2V0bGIocGZuLCBmbGFncyk7DQo+
 
-Michael,
-
-> 
-> Ping are you going to address and repost, or should I drop this?
-
-This was addressed and reposted as v3, which needs a minor update to the
-error message as mentioned here [0]. I will post the fixed version today.
-
-[0] http://lists.infradead.org/pipermail/linux-arm-kernel/2018-July/588398.html
-
-Thanks
-Suzuki
