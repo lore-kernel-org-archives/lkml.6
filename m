@@ -2,164 +2,179 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AD2ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A74ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9317208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:13:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9317208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 880BA2124D
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:14:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ve4cfl1q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 880BA2124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbeGMJ1l (ORCPT
+        id S1729680AbeGMJ2G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 05:27:41 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41621 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbeGMJ1k (ORCPT
+        Fri, 13 Jul 2018 05:28:06 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:35159 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeGMJ2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 05:27:40 -0400
-Received: by mail-ed1-f66.google.com with SMTP id s24-v6so7854904edr.8
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 02:13:54 -0700 (PDT)
+        Fri, 13 Jul 2018 05:28:06 -0400
+Received: by mail-pf0-f193.google.com with SMTP id q7-v6so21210082pff.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 02:14:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qUL9eRb7CMCPznzPEAIGrich6NgUhKSPLc5d4ZDuCQk=;
+        b=ve4cfl1qFL0m2pQFW37wo9n1lAso2jbkKFZD1FkORRQJrEwFDF9P2I2iT6xA3+Vgad
+         leyzgz3f4jUg9Vix47bei1OFHgx1LH4kMoQ6RSWDmjjGhyedwTje+i+pInuSMF9abLDl
+         jR+1deseLwDUUypDEANn5QnIoAkCr0N53AAXCQuAJp6J6GtbSnWGc/wfHFoPu4ddWHPB
+         4q64XF5cmcrpvrd7u5hfo/JEFq5i+IWtLAswf39czMhIITkeVHXJV4ctk3HVo6ePQbH0
+         Iq3wrvFKX6W8mg7TDocdw83g5cLQOI2kQS08fcmh4fv0yCUyqWkfPgDa40QUhoc0dkJZ
+         0NDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4ITT0JYaaMvKaRVyyTIPUPNphIYsZzp2kVtWlPkBwb4=;
-        b=IE+41G1+Y1JcFq6YExkCI4okrtSZH0c16QRHeOchLLcTBIebVdF/4+HWlE3pFMdVYb
-         rVga36J23Iw/27nFUjYH20M3e/TtBXz7PjUMcvVzeZaNS5/FEfvVieTAXbxaPor3Omok
-         vyK4O2WQOrItaZpMfOv0Ufg6c/h85RsDRdtPQzZUUww5b7oKfKJUUqed05UhSL+OhJku
-         hEkngjQF03b5aYAOvAKbvoGg2KIfeIqEDGOJXhoEfgXMQj4Bt7uHdpdYQHnQ0OEKAggR
-         nsg2g+ftCWmLx+jqt8HbdOmGvyWor6PeRJksKADiPbJZMwU2+cjAbkIuQ81spl+vKJWG
-         Djrw==
-X-Gm-Message-State: AOUpUlE3a+0mZZYunJwdXfOEx43DnmKS9hWfKLFYGCo/WeHA9fFXZhla
-        piImfcAImCXUpAxhx+1KWRehtA==
-X-Google-Smtp-Source: AAOMgpe8BhVYphhe9D6jYBr44+pcyJPvegILChaXH/jP4o5kY957Tc32RsXUECelOyJ+q/twEhCmVw==
-X-Received: by 2002:a50:b1f3:: with SMTP id n48-v6mr6038099edd.197.1531473233660;
-        Fri, 13 Jul 2018 02:13:53 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id b7-v6sm9686602edj.87.2018.07.13.02.13.52
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qUL9eRb7CMCPznzPEAIGrich6NgUhKSPLc5d4ZDuCQk=;
+        b=ceSCINEQWFeJ/60SowRHkivICfllGv96WhlOTuyhieHkx56q9z88uYGLWfZgOXrocY
+         0NGoihzNSmx5KOm72gqrJf5HN8eKhHe7sa9oar1c0QbUDSEzyiJg+q2I/iKyJ8s6Iuj/
+         WoRbDOthqk9QtqGrgObbS2t9GOpJwFlJoykNo/mSWqGK23CN326G+pn3d9nUbvYNpt2D
+         YXItwnVwLUN+wP7/R8cPbo8sETcCwgzR3Gkpmqyju5Bu7Q7LZbGljHWrj9RGRvTIVZxy
+         LeQIbNzT1cVOPJI/DxC6xjw00xpoRrTrpq6KsoPaWCM8BT2eKFFOzvZSgg0mScEHAeHx
+         waFQ==
+X-Gm-Message-State: AOUpUlG8yMKKaW4BNN/brzpo4mzOXQWMtAWJKQwyUTBjc1MYrFLi2ADm
+        6J54ONh+DjL+SCDUREZ3PX4=
+X-Google-Smtp-Source: AAOMgpcbMt1ug7HsIlQYtoA56S83p8NWgiHZB/BJe2KXBkwLTTYtLcspwmrGLURkyJ3m8YIBuHbeEw==
+X-Received: by 2002:a62:9cd7:: with SMTP id u84-v6mr6216595pfk.90.1531473260040;
+        Fri, 13 Jul 2018 02:14:20 -0700 (PDT)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id a191-v6sm24692919pge.45.2018.07.13.02.14.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 02:13:53 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 2/2] ata: ahci: Enable DEVSLP by default on x86
- with SLP_S0
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        tj@kernel.org
-Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alan.cox@intel.com, Mario.Limonciello@dell.com, rjw@rjwysocki.net
-References: <20180712222712.65310-1-srinivas.pandruvada@linux.intel.com>
- <20180712222712.65310-3-srinivas.pandruvada@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <f9277260-29d0-f655-f2a1-b9db1187236a@redhat.com>
-Date:   Fri, 13 Jul 2018 11:13:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 13 Jul 2018 02:14:19 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 14:44:12 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr,
+        Ville =?iso-8859-1?Q?Syrj=E4l=E4?= 
+        <ville.syrjala@linux.intel.com>
+Subject: Re: [Cocci] [PATCH 01/18] coccinelle: change strncpy+truncation to
+ strlcpy
+Message-ID: <20180713091412.GA11250@himanshu-Vostro-3559>
+References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
+ <20180713074455.GA6859@himanshu-Vostro-3559>
+ <20180713080023.GB9638@nautica>
 MIME-Version: 1.0
-In-Reply-To: <20180712222712.65310-3-srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180713080023.GB9638@nautica>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 13-07-18 00:27, Srinivas Pandruvada wrote:
-> From: Srinivas <srinivas.pandruvada@linux.intel.com>
+On Fri, Jul 13, 2018 at 10:00:23AM +0200, Dominique Martinet wrote:
+> Himanshu Jha wrote on Fri, Jul 13, 2018:
+> > > I expect each maintainer will pick their share of the patchs if they
+> > > agree with it and the rest will just be dropped?
+> > 
+> > Masahiro Yamada <yamada.masahiro@socionext.com> takes coccinelle patches,
+> > so please cc him or your patch would be lost.
 > 
-> One of the requirement for modern x86 system to enter lowest power mode
-> (SLP_S0) is SATA IP block to be off. This is true even during when
-> platform is suspended to idle and not only in opportunistic (runtime)
-> suspend.
+> Thanks, will do.
 > 
-> Several of these system don't have traditional ACPI S3, so it is
-> important that they enter SLP_S0 state, to avoid draining battery even
-> during suspend. So it is important that out of the box Linux installation
-> reach this state.
+> > > +virtual patch
+> > > +virtual context
+> > 
+> > You might consider adding context rule or remove this line perhaps ?
 > 
-> SATA IP block doesn't get turned off till SATA is in DEVSLP mode. Here
-> user has to either use scsi-host sysfs or tools like powertop to set
-> the sata-host link_power_management_policy to min_power.
+> Victim of copypasta, I'll remove this.
 > 
-> This change sets by default link power management policy to min_power
-> with partial (preferred) or slumber support on idle for some platforms.
-> To avoid regressions, the following conditions are used:
-> - The kernel config is already set to use med_power_with_dipm or deeper
-> - System is a SLP_S0 capable using ACPI low power idle flag
-> This combination will make sure that systems are fairly recent and
-> since getting shipped with SLP_S0 support, the DEVSLP function
-> is already validated.
+> > > +-strncpy@p(
+> > > ++strlcpy(
+> > > +  dest, src, sz);
+> > > +-dest[sz - 1] = '\0';
+> > 
+> > The above rule produces an output that I think is not correct:
+> > --------------------------------------------------------------
+> > diff = 
+> > diff -u -p a//ti/wl1251/acx.c b//ti/wl1251/acx.c
+> > --- a//ti/wl1251/acx.c
+> > +++ b//ti/wl1251/acx.c
+> > @@ -150,14 +150,7 @@ int wl1251_acx_fw_version(struct wl1251
+> >  	}
+> >  
+> >  	/* be careful with the buffer sizes */
+> > -	strncpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
+> > -
+> > -	/*
+> > -	 * if the firmware version string is exactly
+> > -	 * sizeof(rev->fw_version) long or fw_len is less than
+> > -	 * sizeof(rev->fw_version) it won't be null terminated
+> > -	 */
+> > -	buf[min(len, sizeof(rev->fw_version)) - 1] = '\0';
+> > +	strlcpy(buf, rev->fw_version, min(len, sizeof(rev->fw_version)));
+> > 
+> > -----------------------------------------------------------------
+> > 
+> > I think the comment is useful and should not be removed.
 > 
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
->   drivers/ata/ahci.c | 15 +++++++++++++++
->   1 file changed, 15 insertions(+)
-> 
-> diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
-> index b2b9eba1d214..e8d425823f9b 100644
-> --- a/drivers/ata/ahci.c
-> +++ b/drivers/ata/ahci.c
-> @@ -1604,6 +1604,19 @@ static int ahci_init_msi(struct pci_dev *pdev, unsigned int n_ports,
->   	return pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_MSIX);
->   }
->   
-> +static void ahci_update_mobile_policy(struct ahci_host_priv *hpriv)
-> +{
-> +#ifdef CONFIG_ACPI
-> +	if (mobile_lpm_policy > ATA_LPM_MED_POWER &&
-> +	    (acpi_gbl_FADT.flags & ACPI_FADT_LOW_POWER_S0)) {
-> +		if (hpriv->cap & HOST_CAP_PART)
-> +			mobile_lpm_policy = ATA_LPM_MIN_POWER_WITH_ASP;
-> +		else if (hpriv->cap & HOST_CAP_SSC)
-> +			mobile_lpm_policy = ATA_LPM_MIN_POWER;
+> I agree this comment is useful now that I'm taking a closer look, I
+> glanced at this too fast.
+> I'm not sure how to make coccinelle not remove comments between lines
+> though?
 
-You are checking hpriv flags here and changing global state based on that.
+Well, there is no such facility in Coccinelle to ignore comments.
+You can hack with other facilities provided in SmPL though ;)
 
-Instead it would be better to add a new:
+Try this:
 
-int ahci_get_initial_lpm_policy(struct ahci_host_priv *hpriv);
+$ spatch -D patch --sp-file strlcopy.cocci --very-quiet drivers/net/wireless/ti/wl1251/acx.c
 
-Function and replace this:
+---------------------------------------------------------------------
+virtual patch
 
-                 if ((hpriv->flags & AHCI_HFLAG_IS_MOBILE) &&
-                     mobile_lpm_policy >= ATA_LPM_UNKNOWN &&
-                     mobile_lpm_policy <= ATA_LPM_MIN_POWER)
-                         ap->target_lpm_policy = mobile_lpm_policy;
+@depends on patch@
+expression dest, src, sz; 
+identifier f;
+@@
 
-With:
+(
+- strncpy(
++ strlcpy(
+  dest, src, sizeof(sz));
+- dest[sizeof(sz) - 1] = '\0';
+|
+- strncpy(
++ strlcpy(
+  dest, src, f); 
+- dest[f - 1] = '\0';
+)
+---------------------------------------------------------------------
 
-		ap->target_lpm_policy = ahci_get_initial_lpm_policy(priv);
+This eliminates that case because expression is generic metavariable and
+it somehow matched whole "min(len, sizeof(...)..", so it better to
+divide the rules as done above to be more specific about the matching
+pattern.
 
-And do the original checks + your new checks all in the
-ahci_get_initial_lpm_policy() function.
+I thought to replace "identifier f" with "constant F" but that misses
+few cases.
 
-Regards,
+Also, it is advised to put a space affer '+/-'
 
-Hans
-
-
-
-> +	}
-> +#endif
-> +}
-> +
->   static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
->   {
->   	unsigned int board_id = ent->driver_data;
-> @@ -1796,6 +1809,8 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
->   	if (pi.flags & ATA_FLAG_EM)
->   		ahci_reset_em(host);
->   
-> +	ahci_update_mobile_policy(hpriv);
-> +
->   	for (i = 0; i < host->n_ports; i++) {
->   		struct ata_port *ap = host->ports[i];
->   
-> 
+Thanks.
+-- 
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
