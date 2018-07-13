@@ -2,83 +2,101 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB1D2ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:30:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06875ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 854B1208C4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:30:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 854B1208C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B42F7208C4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:30:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a57V5Zpr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B42F7208C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730644AbeGMHnt convert rfc822-to-8bit (ORCPT
+        id S1731342AbeGMHoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 03:43:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47858 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727231AbeGMHnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 03:43:49 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CD1EF402382F;
-        Fri, 13 Jul 2018 07:30:26 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-149.rdu2.redhat.com [10.10.120.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5274C1C67A;
-        Fri, 13 Jul 2018 07:30:25 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <5A7CC3BF-5F4E-4624-A129-4BD0434D0747@amacapital.net>
-References: <5A7CC3BF-5F4E-4624-A129-4BD0434D0747@amacapital.net> <3236C75A-5D74-4BB4-A1EC-06F6E22D810C@amacapital.net> <611054C7-D6E8-4C89-958E-3128C9305E1E@amacapital.net> <20180712223223.GA28610@thunk.org> <CA+55aFw1WyKY+-2dg62M-QT_F0-waCTCrba1DW4dStYz-f_fjA@mail.gmail.com> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk> <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk> <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com> <7002.1531407244@warthog.procyon.org.uk> <CA+55aFx+xm333ZZ7d2Z39QuhDu=0XM6nTMChbHvWQOXNk32yxw@mail.gmail.com> <16699.1531426991@warthog.procyon.org.uk> <18233.1531430797@warthog.procyon.org.uk> <22105.1531436081@warthog.procyon.org.uk> <23894.1531438559@warthog.procyon.org.uk> <26064.1531440190@warthog.procyon.org.uk>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     dhowells@redhat.com, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for superblock creation [ver #9]
+        Fri, 13 Jul 2018 03:44:08 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:56248 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727231AbeGMHoI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 03:44:08 -0400
+Received: by mail-wm0-f67.google.com with SMTP id v128-v6so7779621wme.5
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 00:30:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=inEJkudTgPtrZByS8gRL3z1zV6xmqVfAm7yBMtanpOY=;
+        b=a57V5ZprFzphjByM0guRg4kaGBL67ADW6bWycvrt48TvA16jgG+QUParZL3ZSpawrh
+         YXJ11tmWo2O/TLF6QxsTwBRpiy6pCGwJIoYjvVwhlhfGDNjFgXjZhF74HTJ83Fdevjt6
+         e3tBKyEOdGf6H3OkQDBn+ZkKxxBIG/6AkjOEY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=inEJkudTgPtrZByS8gRL3z1zV6xmqVfAm7yBMtanpOY=;
+        b=Jadjso4q4eh33rvDHqTAIUgj7RCSEY6SAyK1E0dLw7cBrxuAZYiOjMW6h1wuXKIodt
+         XgHv0RFxdrobHoGk2zjNLGhafwE7Nexz0+BqeJ7M1nX1uQzbr+rvhVmvl6qWgb+gJWWc
+         Q/+OkGbwbz0Mm7WhGJtZ1iyDWbHItNDuYVjvTchVxWeoLIqZQXbfjiE/NdfShhx4FNyk
+         5Rmm/df2TEo14hq5SCxcs2sO6IxS0QQh4ObipWwNQvl8FQdOLn1QFN0XFe6mLGQhNg0q
+         6OEIoqdOvlWXHB6JInfD1/mT85Z/rKo+HVGA2HXNX+jjURbrviKiphdCn0BjfHCiRXhB
+         ltDg==
+X-Gm-Message-State: AOUpUlE50m6nybPRE8eGVtB/G4c0Ef4LlzaCT6hwLHM/3fX0RObrTAFW
+        30BpuiYJ1WwUq9ULSjwuVVTZhWaJfeg=
+X-Google-Smtp-Source: AAOMgpfZD3Ucww+PUZfjivtr4j7r1WUNYLewgEhCN6jHW2p+//AUkBnEkhsF5WxvlJ7B4xh7I9WBZQ==
+X-Received: by 2002:a1c:1983:: with SMTP id 125-v6mr3328973wmz.79.1531467044999;
+        Fri, 13 Jul 2018 00:30:44 -0700 (PDT)
+Received: from dell ([2.27.167.87])
+        by smtp.gmail.com with ESMTPSA id g4-v6sm19759789wrq.32.2018.07.13.00.30.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 13 Jul 2018 00:30:44 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 08:30:42 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, cphealy@gmail.com,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: Re: [PATCH 1/6] mfd: rave-sp: Remove unused defines
+Message-ID: <20180713073042.GM4641@dell>
+References: <20180707024108.32373-1-andrew.smirnov@gmail.com>
+ <20180707024108.32373-2-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3428.1531467024.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: 8BIT
-Date:   Fri, 13 Jul 2018 08:30:24 +0100
-Message-ID: <3429.1531467024@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 13 Jul 2018 07:30:26 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 13 Jul 2018 07:30:26 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180707024108.32373-2-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy Lutomirski <luto@amacapital.net> wrote:
+On Fri, 06 Jul 2018, Andrey Smirnov wrote:
 
-> > Also you can't currently directly create a bind mount from userspace as you
-> > can only bind from another path point - which you may not be able to access
-> > (either by permission failure or because it's not in your mount namespace).
-> > 
+> Remove unusded defines that are a leftover from earlier iterations of
+> the driver.
 > 
-> Are you trying to preserve the magic bind semantics with the new API?
+> Cc: linux-kernel@vger.kernel.org
+> Cc: cphealy@gmail.com
+> Cc: Lucas Stach <l.stach@pengutronix.de>
+> Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> ---
+>  drivers/mfd/rave-sp.c | 10 ----------
+>  1 file changed, 10 deletions(-)
 
-No, I'm pointing out that you can't emulate this by doing a bind mount from
-userspace if you can't access the thing you're binding from.
+Applied, thanks.
 
-Now, we could create a syscall that just picks up an extant superblock using a
-device and attaches it to a mount for you, but that would have to be at least
-partially parameterised - which would be very fs-dependent - so that it can
-know whether or not you're allowed to create another mount to that sb.
-
-What you're talking about is emulating sget() in userspace - when we have to
-do it in the kernel anyway if we still offer mount(2).
-
-David
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
