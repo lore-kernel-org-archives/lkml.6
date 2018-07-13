@@ -2,133 +2,113 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676ECECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:19:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67519ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E16B205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:19:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QDpaaxDC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E16B205C9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D8DCD205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:20:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8DCD205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lisas.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731131AbeGMOec (ORCPT
+        id S1731402AbeGMOfO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:34:32 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:44998 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729733AbeGMOec (ORCPT
+        Fri, 13 Jul 2018 10:35:14 -0400
+Received: from rhlx01.hs-esslingen.de ([129.143.116.10]:38712 "EHLO
+        rhlx01.hs-esslingen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729733AbeGMOfO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:34:32 -0400
-Received: by mail-vk0-f66.google.com with SMTP id 125-v6so18288618vke.11;
-        Fri, 13 Jul 2018 07:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=vmqORs+Or60qNY4r0K68CwyqYNSseRhZqw/bL41C/Yk=;
-        b=QDpaaxDC9a9dWPHcchjRDk5E1wTYa4fifUXc91GtzBDmPJw0RbTqW53uJcOPOEmSGZ
-         otYdxJGd2Lt2XyNwnjEc0ETmkqfUPnxBxHPPT4affTLH+hGFxClKi1mMurzlAh3DqOni
-         edczirlJ5BmOvUSvYw9ycM6iV7Oo3rgCBSEwvhsR8YF6iHER4Cvtg0q6AhgVjGfFshso
-         d8G4K+DD/WIiy/kO1Tu0JLHaT1Tm0ZVfV3lL29pJ+zlhL5ODhB0Orh+x0SS6tIprVz/9
-         764++lR6HdvlkGdg3LhSrmu4yI7GnP//eScY/CFIgRaGdMbpW3a3WcqvrVAh6b86DzYT
-         h7dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=vmqORs+Or60qNY4r0K68CwyqYNSseRhZqw/bL41C/Yk=;
-        b=n4UwhEO246lsc1i8hBdbi/zDxwR9iAJhmrJLlV/kceW78qS4yjtWbgSjD/cBtNy8xS
-         0gj7JCpumK4Zmfe1OjKk4lUPi1sVdfkNgCn0eDP14JrwHgmWfzuvDdle/wegu27geSiT
-         Qnqf6+sh2KxnISXR62oY8nqcMftZNYVLk/0Zk4BsipELDiIy+9kBM7BQ2H83DlKDMpZz
-         /OQtnvBL1iFd7MKKqvUvLRYgNuCpRrpzw2VlgNWL2jQJavshBcBpVgB5o879UAfA7ayX
-         vqUaZL4jI7eukYY3B19h3f1citYkzNqtdiu68OSeYaKEC4CKTqBQEk/p9kxD7nsYmrqF
-         SJdQ==
-X-Gm-Message-State: AOUpUlGp0ZIxA0oNRB4FCHIheg/Po6MmW5b6OZ5nMPAIzchk/NQHe+2+
-        wvH0hsNHqy1t9GpgWkTM1QZb9NmF0Eoz7XFVnDM=
-X-Google-Smtp-Source: AAOMgpf90lvM3wWQ5qVKwVud623+PAWOurwpar1vOhmex24WH464VGNGT+aox9qt6Uz9wkPLWvtrxAK7sIPHi1ncuik=
-X-Received: by 2002:a1f:8e4d:: with SMTP id q74-v6mr4055234vkd.161.1531491580909;
- Fri, 13 Jul 2018 07:19:40 -0700 (PDT)
+        Fri, 13 Jul 2018 10:35:14 -0400
+Received: by rhlx01.hs-esslingen.de (Postfix, from userid 1203)
+        id 2165C22444F9; Fri, 13 Jul 2018 16:20:22 +0200 (CEST)
+Date:   Fri, 13 Jul 2018 16:20:22 +0200
+From:   Adrian Reber <adrian@lisas.de>
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Pavel Emelyanov <xemul@virtuozzo.com>,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
+Message-ID: <20180713142022.GF15300@lisas.de>
+References: <20180712130733.11510-1-adrian@lisas.de>
+ <87sh4o5s82.fsf@xmission.com>
+ <23f87cb4-cdf5-0f9c-c7b9-a0abb228b77f@virtuozzo.com>
+ <87sh4nz1se.fsf@xmission.com>
 MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 07:19:39
- -0700 (PDT)
-In-Reply-To: <HE1PR0502MB3753318D0C380DFEBCD6E452A2410@HE1PR0502MB3753.eurprd05.prod.outlook.com>
-References: <20180704172908.GA33650@beast> <HE1PR0502MB3753318D0C380DFEBCD6E452A2410@HE1PR0502MB3753.eurprd05.prod.outlook.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 13 Jul 2018 17:19:39 +0300
-Message-ID: <CAHp75Vd2pX_AjMwEHQUOL7WfokgoY+bsakCJxbojBBxuuF_H+Q@mail.gmail.com>
-Subject: Re: [PATCH] platform/mellanox: Use 2-factor allocator calls
-To:     Vadim Pasternak <vadimp@mellanox.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "platform-driver-x86@vger.kernel.org" 
-        <platform-driver-x86@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87sh4nz1se.fsf@xmission.com>
+X-Url:  <http://lisas.de/~adrian/>
+X-Operating-System: Linux (4.14.16-300.fc27.x86_64)
+X-Load-Average: 3.86 3.62 3.58
+X-Unexpected: The Spanish Inquisition
+X-GnuPG-Key: gpg --recv-keys D3C4906A
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 4, 2018 at 10:39 PM, Vadim Pasternak <vadimp@mellanox.com> wrote:
->
->
->> -----Original Message-----
->> From: Kees Cook [mailto:keescook@chromium.org]
->> Sent: Wednesday, July 04, 2018 8:29 PM
->> To: Darren Hart <dvhart@infradead.org>
->> Cc: Vadim Pasternak <vadimp@mellanox.com>; Andy Shevchenko
->> <andy@infradead.org>; platform-driver-x86@vger.kernel.org; linux-
->> kernel@vger.kernel.org
->> Subject: [PATCH] platform/mellanox: Use 2-factor allocator calls
->>
->> As already done treewide, switch from open-coded multiplication to using 2-
->> factor allocation helpers.
->>
->> Signed-off-by: Kees Cook <keescook@chromium.org>
->
+On Fri, Jul 13, 2018 at 08:46:25AM -0500, Eric W. Biederman wrote:
+> Pavel Emelyanov <xemul@virtuozzo.com> writes:
+> 
+> > On 07/12/2018 07:33 PM, Eric W. Biederman wrote:
+> >> 
+> >> Adrian Reber <adrian@lisas.de> writes:
+> >> 
+> >>> The CHECKPOINT_RESTORE configuration option was introduced in 2012 and
+> >>> combined with EXPERT. CHECKPOINT_RESTORE is already enabled in many
+> >>> distribution kernels and also part of the defconfigs of various
+> >>> architectures.
+> >>>
+> >>> To make it easier for distributions to enable CHECKPOINT_RESTORE this
+> >>> removes EXPERT and moves the configuration option out of the EXPERT
+> >>> block.
+> >> 
+> >> I think we should change the help text at the same time, to match
+> >> our improve understanding of the situation.
+> >> 
+> >> Does anyone remember why this option was added at all?
+> >
+> > Sure! Quoting Andrew's ~7 years ago akpm branch merge e-mail:
+> >
+> >    However I'm less confident than the developers that it will all
+> >    eventually work! So what I'm asking them to do is to wrap each piece
+> >    of new code inside CONFIG_CHECKPOINT_RESTORE.  So if it all
+> >    eventually comes to tears and the project as a whole fails, it should
+> >    be a simple matter to go through and delete all trace of it.
+> >
+> > the best link with full e-mail I googled for is
+> > https://gitlab.imag.fr/kaunetem/linux-kaunetem/commit/099469502f62fbe0d7e4f0b83a2f22538367f734
+> 
+> Good explanation.  Thank you.
+> 
+> At this point we even have not CRIU users of some of the pieces.
+> The project as a whole has not failed.
+> 
+> The code is old enough an common enough (enabled in some distros) that
+> we need to do the whole watch out for regressions if we remove any part
+> of it.
+> 
+> Which is a long way of saying the original justifiction for
+> CONFIG_CHECKPOINT_RESTORE is gone.  So please let's remove the entire
+> config option and simplify everyone's lives who has to test this stuff.
 
-Pushed to my review and testing queue, thanks!
+Sounds good.
 
-> Acked-by: Vadim Pasternak <vadimp@mellanox.com>
->
->> ---
->>  drivers/platform/mellanox/mlxreg-io.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/platform/mellanox/mlxreg-io.c
->> b/drivers/platform/mellanox/mlxreg-io.c
->> index c192dfe6bd65..acfaf64ffde6 100644
->> --- a/drivers/platform/mellanox/mlxreg-io.c
->> +++ b/drivers/platform/mellanox/mlxreg-io.c
->> @@ -152,8 +152,8 @@ static int mlxreg_io_attr_init(struct mlxreg_io_priv_data
->> *priv)  {
->>       int i;
->>
->> -     priv->group.attrs = devm_kzalloc(&priv->pdev->dev,
->> -                                      priv->pdata->counter *
->> +     priv->group.attrs = devm_kcalloc(&priv->pdev->dev,
->> +                                      priv->pdata->counter,
->>                                        sizeof(struct attribute *),
->>                                        GFP_KERNEL);
->>       if (!priv->group.attrs)
->> --
->> 2.17.1
->>
->>
->> --
->> Kees Cook
->> Pixel Security
+> Unless someone can come up with a justification for keeping some of this
+> behind a config option.
 
+I can provide a patch removing CONFIG_CHECKPOINT_RESTORE if there are no
+further objections against it.
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+		Adrian
