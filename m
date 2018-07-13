@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE342ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A04F0ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82AB2208E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:31:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82AB2208E2
+	by mail.kernel.org (Postfix) with ESMTP id 53BFF208E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53BFF208E2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729766AbeGMJpg (ORCPT
+        id S1727435AbeGMJrk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 05:45:36 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60749 "EHLO huawei.com"
+        Fri, 13 Jul 2018 05:47:40 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9622 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726380AbeGMJpg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 05:45:36 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 2C2C9AA6334B6;
-        Fri, 13 Jul 2018 17:31:43 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
- 17:31:39 +0800
-Subject: Re: [PATCH 03/10] atmel: hide unused procfs helpers
-To:     <simon@thekelleys.org.uk>, <kvalo@codeaurora.org>
-References: <20180713064658.10340-1-yuehaibing@huawei.com>
+        id S1726824AbeGMJrk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 05:47:40 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B326FF52861AC;
+        Fri, 13 Jul 2018 17:33:33 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
+ 17:33:32 +0800
+Subject: Re: [PATCH] isdn/capi: hide unused procfs helpers
+To:     <isdn@linux-pingi.de>
+References: <20180713041114.16112-1-yuehaibing@huawei.com>
 CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>, <davem@davemloft.net>
+        <keescook@chromium.org>, <viro@zeniv.linux.org.uk>
 From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <ded55181-e1b0-99e9-ac68-2d93fb6168c0@huawei.com>
-Date:   Fri, 13 Jul 2018 17:31:37 +0800
+Message-ID: <73c5ff9a-1da9-d42a-6b68-ae90fcf77f49@huawei.com>
+Date:   Fri, 13 Jul 2018 17:33:31 +0800
 User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
  Thunderbird/45.2.0
 MIME-Version: 1.0
-In-Reply-To: <20180713064658.10340-1-yuehaibing@huawei.com>
+In-Reply-To: <20180713041114.16112-1-yuehaibing@huawei.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-Originating-IP: [10.177.31.96]
@@ -49,40 +49,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pls ignore this,my bad.
+pls ignore this,there has a fix from Randy.
 
-On 2018/7/13 14:46, YueHaibing wrote:
+On 2018/7/13 12:11, YueHaibing wrote:
 > When CONFIG_PROC_FS isn't set, gcc warning this:
 > 
-> drivers/net/wireless/atmel/atmel.c:1402:12: warning: ‘atmel_proc_show’ defined but not used [-Wunused-function]
->  static int atmel_proc_show(struct seq_file *m, void *v)
+> drivers/isdn/capi/capi.c:1324:12: warning: ‘capi20_proc_show’ defined but not used [-Wunused-function]
+>  static int capi20_proc_show(struct seq_file *m, void *v)
 >             ^
-> fix this by adding #ifdef around it.
+> drivers/isdn/capi/capi.c:1347:12: warning: ‘capi20ncci_proc_show’ defined but not used [-Wunused-function]
+>  static int capi20ncci_proc_show(struct seq_file *m, void *v)
+>             ^
+> drivers/isdn/capi/capidrv.c:2454:12: warning: ‘capidrv_proc_show’ defined but not used [-Wunused-function]
+>  static int capidrv_proc_show(struct seq_file *m, void *v)
+>             ^
+> 
+> We can fix the warning by adding the same #ifdef around them.
 > 
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  drivers/net/wireless/atmel/atmel.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/isdn/capi/capi.c    | 2 ++
+>  drivers/isdn/capi/capidrv.c | 2 ++
+>  2 files changed, 4 insertions(+)
 > 
-> diff --git a/drivers/net/wireless/atmel/atmel.c b/drivers/net/wireless/atmel/atmel.c
-> index b01dc34..3940876 100644
-> --- a/drivers/net/wireless/atmel/atmel.c
-> +++ b/drivers/net/wireless/atmel/atmel.c
-> @@ -1399,6 +1399,7 @@ static int atmel_validate_channel(struct atmel_private *priv, int channel)
->  	return 0;
->  }
+> diff --git a/drivers/isdn/capi/capi.c b/drivers/isdn/capi/capi.c
+> index 6e0c281..594f767 100644
+> --- a/drivers/isdn/capi/capi.c
+> +++ b/drivers/isdn/capi/capi.c
+> @@ -1317,6 +1317,7 @@ static inline void capinc_tty_exit(void) { }
+>  
+>  /* -------- /proc functions ----------------------------------------- */
 >  
 > +#ifdef CONFIG_PROC_FS
->  static int atmel_proc_show(struct seq_file *m, void *v)
->  {
->  	struct atmel_private *priv = m->private;
-> @@ -1481,6 +1482,7 @@ static int atmel_proc_show(struct seq_file *m, void *v)
->  	seq_printf(m, "Current state:\t\t%s\n", s);
+>  /*
+>   * /proc/capi/capi20:
+>   *  minor applid nrecvctlpkt nrecvdatapkt nsendctlpkt nsenddatapkt
+> @@ -1359,6 +1360,7 @@ static int capi20ncci_proc_show(struct seq_file *m, void *v)
+>  	mutex_unlock(&capidev_list_lock);
 >  	return 0;
 >  }
 > +#endif
 >  
->  static const struct net_device_ops atmel_netdev_ops = {
->  	.ndo_open 		= atmel_open,
+>  static void __init proc_init(void)
+>  {
+> diff --git a/drivers/isdn/capi/capidrv.c b/drivers/isdn/capi/capidrv.c
+> index ee510f9..c6f45d7 100644
+> --- a/drivers/isdn/capi/capidrv.c
+> +++ b/drivers/isdn/capi/capidrv.c
+> @@ -2447,6 +2447,7 @@ lower_callback(struct notifier_block *nb, unsigned long val, void *v)
+>  	return NOTIFY_OK;
+>  }
+>  
+> +#ifdef CONFIG_PROC_FS
+>  /*
+>   * /proc/capi/capidrv:
+>   * nrecvctlpkt nrecvdatapkt nsendctlpkt nsenddatapkt
+> @@ -2460,6 +2461,7 @@ static int capidrv_proc_show(struct seq_file *m, void *v)
+>  		   global.ap.nsentdatapkt);
+>  	return 0;
+>  }
+> +#endif
+>  
+>  static void __init proc_init(void)
+>  {
 > 
 
