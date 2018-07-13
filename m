@@ -2,94 +2,136 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F554ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B614ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEEDB208A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:55:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEEDB208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E53422084E
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:58:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=permerror (0-bit key) header.d=wdc.com header.i=@wdc.com header.b="O5Li2mW7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E53422084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731931AbeGMVL7 (ORCPT
+        id S1731957AbeGMVPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 17:11:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35280 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731616AbeGMVL7 (ORCPT
+        Fri, 13 Jul 2018 17:15:04 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:32649 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731639AbeGMVPE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 17:11:59 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1F814CC2;
-        Fri, 13 Jul 2018 20:55:42 +0000 (UTC)
-Date:   Fri, 13 Jul 2018 13:55:41 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     ebiederm@xmission.com (Eric W. Biederman)
-Cc:     Adrian Reber <adrian@lisas.de>, linux-kernel@vger.kernel.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Andrei Vagin <avagin@virtuozzo.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Containers <containers@lists.linux-foundation.org>
-Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
-Message-Id: <20180713135541.7ada72437862c32f4563a9a8@linux-foundation.org>
-In-Reply-To: <87sh4o5s82.fsf@xmission.com>
-References: <20180712130733.11510-1-adrian@lisas.de>
-        <87sh4o5s82.fsf@xmission.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 13 Jul 2018 17:15:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1531515961; x=1563051961;
+  h=from:to:cc:subject:date:message-id;
+  bh=VIdjDFYwGI36sykXvboTMlRt66TuXEgLxKhFdV4qdNU=;
+  b=O5Li2mW7SZ69AQDzYJwTMXrVp9KdYpoqijZ4Dlj9ZV6Gcl3axYZNTFhc
+   Be0jHmG73BXASwMX2JbAm8VNrtTP3S1S32rgzMZxCDIzvxns5LapBR11S
+   6E9IUSq8k4I0t36hKZ23IbOuvgU0B5NS7x65Ndn1cqievbbNW/ijtDnZO
+   DnaUtjXTZYnd+7Tlwaqlq9atcCUgt9jMLZ4GiGLq+TuWwLV7V0fvOE2bP
+   ka6jdwMYQEM8XJSSJIEBbaKeVAkprmYBzwddpSW7FGy7guQ+1IRw0mtro
+   j37ev7PwuxNPXnYcouQ1zAiopKJbeGNUk7TN2i4+zU6cvJ0b/kMwiBAEY
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.51,349,1526313600"; 
+   d="scan'208";a="180964166"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Jul 2018 05:05:59 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep02.wdc.com with ESMTP; 13 Jul 2018 13:47:30 -0700
+Received: from penguito-adamm.sdcorp.global.sandisk.com ([10.11.47.13])
+  by uls-op-cesaip01.wdc.com with ESMTP; 13 Jul 2018 13:58:46 -0700
+From:   adam.manzanares@wdc.com
+To:     mtk.manpages@gmail.com
+Cc:     jmoyer@redhat.com, rgoldwyn@suse.com, linux-man@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Adam Manzanares <adam.manzanares@wdc.com>
+Subject: [PATCH] io_submit.2: Add IOCB_FLAG_IOPRIO
+Date:   Fri, 13 Jul 2018 13:58:31 -0700
+Message-Id: <20180713205831.8134-1-adam.manzanares@wdc.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 12 Jul 2018 11:33:33 -0500 ebiederm@xmission.com (Eric W. Biederman) wrote:
+From: Adam Manzanares <adam.manzanares@wdc.com>
 
-> 
-> Adrian Reber <adrian@lisas.de> writes:
-> 
-> > The CHECKPOINT_RESTORE configuration option was introduced in 2012 and
-> > combined with EXPERT. CHECKPOINT_RESTORE is already enabled in many
-> > distribution kernels and also part of the defconfigs of various
-> > architectures.
-> >
-> > To make it easier for distributions to enable CHECKPOINT_RESTORE this
-> > removes EXPERT and moves the configuration option out of the EXPERT
-> > block.
-> 
-> I think we should change the help text at the same time, to match
-> our improve understanding of the situation.
-> 
-> Does anyone remember why this option was added at all?
+The newly added IOCB_FLAG_IOPRIO aio_flag introduces
+new behaviors and return values.
 
-Because at the time it was quite unclear that the overall project would
-produce a viable result.  But the code is splattered over so many
-places that getting it all going out-of-tree was impractical.  So the
-#ifdef CONFIG_CHECKPOINT_RESTORE markers were initially there to a)
-identify places where we should go if we decide to rip the whole thing
-out and to b) ensure that the kernel would still compile and work OK
-after that removal.
+The details of this new feature are posted here:
+https://lkml.org/lkml/2018/5/22/809
 
-This caution eventually proved to be unnecessary.
+Signed-off-by: Adam Manzanares <adam.manzanares@wdc.com>
+---
+ man2/io_submit.2 | 34 +++++++++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 7 deletions(-)
 
-> Why this option was placed under expert?
-
-Dunno.
-
-> What is the value of disabling this functionality ever?
-> 
-> Is there any reason why we don't just delete CONFIG_CHECKPOINT_RESTORE
-> entirely?
-
-For the vast number of Linux machines which aren't servers?  Check out
-some defconfigs - only one of arm's 119 defconfigs selects it.
-
+diff --git a/man2/io_submit.2 b/man2/io_submit.2
+index d17e3122a..15e1ecdea 100644
+--- a/man2/io_submit.2
++++ b/man2/io_submit.2
+@@ -164,14 +164,26 @@ This is the size of the buffer pointed to by
+ This is the file offset at which the I/O operation is to be performed.
+ .TP
+ .I aio_flags
+-This is the flag to be passed iocb structure.
+-The only valid value is
+-.BR IOCB_FLAG_RESFD ,
+-which indicates that the asynchronous I/O control must signal the file
++This is the set of flags associated with the iocb structure.
++The valid values are:
++.RS
++.TP
++.BR IOCB_FLAG_RESFD
++Asynchronous I/O control must signal the file
+ descriptor mentioned in
+ .I aio_resfd
+ upon completion.
+ .TP
++.BR IOCB_FLAG_IOPRIO " (since Linux 4.18)"
++.\" commit d9a08a9e616beeccdbd0e7262b7225ffdfa49e92
++Interpret the
++.I aio_reqprio
++field as an
++.B IOPRIO_VALUE
++as defined by
++.IR linux/ioprio.h.
++.RE
++.TP
+ .I aio_resfd
+ The file descriptor to signal in the event of asynchronous I/O completion.
+ .SH RETURN VALUE
+@@ -196,13 +208,21 @@ The AIO context specified by \fIctx_id\fP is invalid.
+ \fInr\fP is less than 0.
+ The \fIiocb\fP at
+ .I *iocbpp[0]
+-is not properly initialized,
+-or the operation specified is invalid for the file descriptor
+-in the \fIiocb\fP.
++is not properly initialized, the operation specified is invalid for the file
++descriptor in the \fIiocb\fP, or the value in the
++.I aio_reqprio
++field is invalid.
+ .TP
+ .B ENOSYS
+ .BR io_submit ()
+ is not implemented on this architecture.
++.TP
++.B EPERM
++The aio_reqprio field is set with the class
++.B IOPRIO_CLASS_RT
++, but the submitting context does not have the
++.B CAP_SYS_ADMIN
++privilege.
+ .SH VERSIONS
+ .PP
+ The asynchronous I/O system calls first appeared in Linux 2.5.
+-- 
+2.17.1
 
