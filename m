@@ -2,80 +2,112 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6071ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:34:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7809FECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB326208CE
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:34:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB326208CE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 2CAE6208B4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:36:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CAE6208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbeGMKs0 (ORCPT
+        id S1727999AbeGMKue (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 06:48:26 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:52356 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727147AbeGMKs0 (ORCPT
+        Fri, 13 Jul 2018 06:50:34 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:34236 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727161AbeGMKue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 06:48:26 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fdvOw-00086p-V3; Fri, 13 Jul 2018 18:34:15 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fdvOs-0007EE-9n; Fri, 13 Jul 2018 18:34:10 +0800
-Date:   Fri, 13 Jul 2018 18:34:10 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
-Cc:     syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>,
-        davem@davemloft.net, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH v4] AF_ALG: Initialize sg_num_bytes in error code path
-Message-ID: <20180713103410.5ox6imgi75w47kpv@gondor.apana.org.au>
-References: <00000000000092ad87056950ef9e@google.com>
- <1612449.5GibSviISC@positron.chronox.de>
+        Fri, 13 Jul 2018 06:50:34 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 41Rq3c0y9yz1qvnN;
+        Fri, 13 Jul 2018 12:36:28 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 41Rq3c0NRkz1x42D;
+        Fri, 13 Jul 2018 12:36:28 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id 2K7TJY9CiAxD; Fri, 13 Jul 2018 12:36:26 +0200 (CEST)
+X-Auth-Info: QoAHGb/CoII+JHh/sRwPwb7jrtCJpAnPbQyapMSPj28=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Fri, 13 Jul 2018 12:36:26 +0200 (CEST)
+Subject: Re: [PATCH] drm: mxsfb: fix runtime PM handling
+To:     Stefan Agner <stefan@agner.ch>
+Cc:     Anson Huang <anson.huang@nxp.com>, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        dl-linux-imx <linux-imx@nxp.com>
+References: <1531472085-25174-1-git-send-email-Anson.Huang@nxp.com>
+ <ea029b69-f853-4a5f-e798-70a04b02ac1d@denx.de>
+ <AM3PR04MB1315E2F345752D0A64A0E2C8F5580@AM3PR04MB1315.eurprd04.prod.outlook.com>
+ <90d16681-2a7a-4826-0411-478353d2afe3@denx.de>
+ <00b5faf737efd1054eb4f0f0e6fc8369@agner.ch>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <52c0153c-1810-2919-70b7-d57280c83c90@denx.de>
+Date:   Fri, 13 Jul 2018 12:36:17 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1612449.5GibSviISC@positron.chronox.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <00b5faf737efd1054eb4f0f0e6fc8369@agner.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jul 07, 2018 at 08:41:47PM +0200, Stephan Müller wrote:
-> Changes v4:
-> * Add Fixes and CC line
+On 07/13/2018 12:33 PM, Stefan Agner wrote:
+> On 13.07.2018 11:12, Marek Vasut wrote:
+>> On 07/13/2018 11:06 AM, Anson Huang wrote:
+>> [...]
+>>>>
+>>>> On 07/13/2018 10:54 AM, Anson Huang wrote:
+>>>>> As display power domain is combined with lcdif node on some i.MX
+>>>>> platforms like i.MX6SL, when lcdif driver is enabled, the mxsfb_load
+>>>>> is called to enable runtime pm, and a pair of pm_runtime_get_sync and
+>>>>> pm_runtime_put_sync are also called, that will cause generic power
+>>>>> domain driver to disable lcdif power domain and lcdif is no longer
+>>>>> working, the lcdif power should ONLY be turned off when display is
+>>>>> disabled, so move the pm_runtime_put_sync to mxsfb_unload and remove
+>>>>> the pm_runtime_get_sync in mxsfb_unload as well, in this way, when
+>>>>> display is enabled, the lcdif power will be always ON until the
+>>>>> display is disabled.
+>>>>>
+>>>>> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>>>>
+>>>> Doesn't this also mean the block will always be on, thus wasting power ?
+>>>
+>>> I think drm driver should have somewhere to implement the display
+>>> disable case, like when fb0 is blank (echo 1 > /sys/class/graphics/fb0/blank),
+>>
+>> Isn't this just the fbdev emulation on top of drm/kms ?
+>> I think this stuff can be compiled out completely.
+>>
+>>> then lcdif can be powered gated, and
+>>> when display is back on (unblank), lcdif needs to be re-initialization and display will
+>>> be on, current implementation is incorrect, with kernel booting up, lcdif
+>>> is NOT working at all.
+>>
+>> It works fine on MX6SX , so I think this is isolated to MX6SL ?
+>> I'm CCing Stefan, he might have some valuable feedback here.
+>>
 > 
-> Changes v3:
-> * Fix syz testing line
+> Yeah not sure, but putting it in mxsfb_load seems wrong.
 > 
-> Changes v2:
-> * Addition of syz testing line
-> 
-> ---8<---
-> 
-> The RX SGL in processing is already registered with the RX SGL tracking
-> list to support proper cleanup. The cleanup code path uses the
-> sg_num_bytes variable which must therefore be always initialized, even
-> in the error code path.
-> 
-> Signed-off-by: Stephan Mueller <smueller@chronox.de>
-> Reported-by: syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
-> #syz test: https://github.com/google/kmsan.git master
-> CC: <stable@vger.kernel.org> #4.14
-> Fixes: e870456d8e7c ("crypto: algif_skcipher - overhaul memory management")
-> Fixes: d887c52d6ae4 ("crypto: algif_aead - overhaul memory management")
+> MXSFB uses struct drm_simple_display_pipe_funcs which does have
+> enable/disable callbacks, probably closer to what we want...
 
-Patch applied.  Thanks.
+Seems to me like this is not something that should be hacked around in
+the mxsfb driver in the first place, but somewhere else.
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Best regards,
+Marek Vasut
