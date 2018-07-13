@@ -5,129 +5,153 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6E4ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D03ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:49:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE49208E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:48:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE49208E2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E5BC20835
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:49:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E5BC20835
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727434AbeGMLCg (ORCPT
+        id S1729284AbeGMLDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 07:02:36 -0400
-Received: from mga05.intel.com ([192.55.52.43]:33009 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727161AbeGMLCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 07:02:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 03:48:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,347,1526367600"; 
-   d="scan'208";a="244979390"
-Received: from andreser-mobl.amr.corp.intel.com (HELO [10.252.137.224]) ([10.252.137.224])
-  by fmsmga005.fm.intel.com with ESMTP; 13 Jul 2018 03:48:28 -0700
-Subject: Re: [PATCH 1/6] swap: Add comments to lock_cluster_or_swap_info()
-To:     "Huang, Ying" <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20180712233636.20629-1-ying.huang@intel.com>
- <20180712233636.20629-2-ying.huang@intel.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <3c3a4dce-980d-0405-d269-1da9e62b1344@linux.intel.com>
-Date:   Fri, 13 Jul 2018 03:48:28 -0700
+        Fri, 13 Jul 2018 07:03:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34212 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727454AbeGMLDH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 07:03:07 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6DAiL63052463
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 06:48:59 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k6s29v9uw-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 06:48:59 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Fri, 13 Jul 2018 11:48:56 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 13 Jul 2018 11:48:52 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6DAmo2429425728
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 13 Jul 2018 10:48:50 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DA97442041;
+        Fri, 13 Jul 2018 13:49:11 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2BFA542047;
+        Fri, 13 Jul 2018 13:49:11 +0100 (BST)
+Received: from oc0155643701.ibm.com (unknown [9.152.224.229])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 13 Jul 2018 13:49:11 +0100 (BST)
+Subject: Re: [PATCH v6 14/21] s390: vfio-ap: implement mediated device open
+ callback
+To:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-15-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <c8dbb517-88e6-6976-f754-64e3597d0e71@linux.ibm.com>
+ <9c7ef696-79e5-ef51-be1a-3402a9bb6749@linux.ibm.com>
+From:   Halil Pasic <pasic@linux.ibm.com>
+Date:   Fri, 13 Jul 2018 12:48:49 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180712233636.20629-2-ying.huang@intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <9c7ef696-79e5-ef51-be1a-3402a9bb6749@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18071310-0012-0000-0000-00000289CCFB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071310-0013-0000-0000-000020BB798B
+Message-Id: <3c9a3de0-4c03-606b-72f1-0afb462844a7@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-13_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807130085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +/*
-> + * At most times, fine grained cluster lock is sufficient to protect
 
-Can we call out those times, please?
 
-> + * the operations on sis->swap_map.  
+On 07/12/2018 06:03 PM, Tony Krowiak wrote:
+>>> +static int vfio_ap_mdev_open(struct mdev_device *mdev)
+>>> +{
+>>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>>> +    struct ap_matrix_dev *matrix_dev =
+>>> +        to_ap_matrix_dev(mdev_parent_dev(mdev));
+>>> +    unsigned long events;
+>>> +    int ret;
+>>> +
+>>> +    if (!try_module_get(THIS_MODULE))
+>>> +        return -ENODEV;
+>>> +
+>>> +    ret = vfio_ap_verify_queues_reserved(matrix_dev, matrix_mdev->name,
+>>> +                         &matrix_mdev->matrix);
+>>> +    if (ret)
+>>> +        goto out_err;
+>>> +
+>>> +    matrix_mdev->group_notifier.notifier_call = vfio_ap_mdev_group_notifier;
+>>> +    events = VFIO_GROUP_NOTIFY_SET_KVM;
+>>> +
+>>> +    ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
+>>> +                     &events, &matrix_mdev->group_notifier);
+>>> +    if (ret)
+>>> +        goto out_err;
+>>> +
+>>> +    ret = kvm_ap_validate_crypto_setup(matrix_mdev->kvm);
+>>
+>> At this point you assume that your vfio_ap_mdev_group_notifier callback
+>> was called with VFIO_GROUP_NOTIFY_SET_KVM and that you do have
+>> matrix_mdev->kvm set up properly.
+>>
+>> Based on how callbacks usually work this seems rather strange. It's
+>> probably cleaner to set up he cyrcb (including all the validation
+>> that needs to be done immediately before) in the callback
+>> (vfio_ap_mdev_group_notifier).
+>>
+>> If that is not viable I think we need a comment here explaining why is this
+>> OK (at least).
+> 
+> This was originally in the callback and moved out, to the best of my recollection,
+> because the validation at that time was done on the CRYCB and if that validation
+> failed, there was no way to notify the client (QEMU) that configuration of the
+> guest's CRYCB failed from the notification callback. This works - at least as far
+> as I can tell from testing - because the registration of the notifier invokes the
+> notification callback if KVM has already been set and that appears to be the case.
+> You are correct, however; we probably shouldn't bank on that given that
+> I don't think we can guarantee that to be the case 100% of the time. Consequently,
+> I will move this back into the notification callback and since consistency checking
+> is now being done on the mdev devices instead of the CRYCB, we don't need KVM at open
+> time.
 
-Please be careful with the naming.  You can call it 'si' because that's
-what the function argument is named.  Or, swap_info_struct because
-that's the struct name.  Calling it 'sis' is a bit sloppy, no?
+Sounds good to me. Making the open fail was not a good way to communicate this
+error condition to userspace anyway.
 
-> 					No need to acquire gross grained
 
-"coarse" is a conventional antonym for "fine".
-
-> + * sis->lock.  But cluster and cluster lock isn't available for HDD,
-> + * so sis->lock will be instead for them.
-> + */
->  static inline struct swap_cluster_info *lock_cluster_or_swap_info(
->  	struct swap_info_struct *si,
->  	unsigned long offset)
-
-What I already knew was: there are two locks.  We use one sometimes and
-the other at other times.
-
-What I don't know is why there are two locks, and the heuristics why we
-choose between them.  This comment doesn't help explain the things I
-don't know.
+Regards,
+Halil
 
