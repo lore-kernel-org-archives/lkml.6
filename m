@@ -2,272 +2,311 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F16ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:55:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8B29ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B337208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:55:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B337208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 76AD0208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:55:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QxS9NJui"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76AD0208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731914AbeGMII7 (ORCPT
+        id S1731501AbeGMII7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 13 Jul 2018 04:08:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:55362 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729768AbeGMII7 (ORCPT
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:41732 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729691AbeGMII7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 13 Jul 2018 04:08:59 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6D7sLl5103274
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 03:55:29 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2k6m5vqrsa-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 03:55:29 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Fri, 13 Jul 2018 08:55:27 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 13 Jul 2018 08:55:21 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6D7tK3Z40960036
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Jul 2018 07:55:20 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5CCA911C054;
-        Fri, 13 Jul 2018 10:55:41 +0100 (BST)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04EBA11C05B;
-        Fri, 13 Jul 2018 10:55:38 +0100 (BST)
-Received: from [9.124.31.56] (unknown [9.124.31.56])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 13 Jul 2018 10:55:37 +0100 (BST)
-Subject: Re: [PATCH v5 06/10] Uprobes: Support SDT markers having reference
- count (semaphore)
-To:     Song Liu <liu.song.a23@gmail.com>
-Cc:     Oleg Nesterov <oleg@redhat.com>, srikar@linux.vnet.ibm.com,
-        rostedt@goodmis.org, mhiramat@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        open list <linux-kernel@vger.kernel.org>, corbet@lwn.net,
-        linux-doc@vger.kernel.org, ananth@linux.vnet.ibm.com,
-        alexis.berlemont@gmail.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-arm-kernel@lists.infradead.org, linux-mips@linux-mips.org,
-        linux@armlinux.org.uk, ralf@linux-mips.org, paul.burton@mips.com,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-References: <20180628052209.13056-7-ravi.bangoria@linux.ibm.com>
- <20180701210935.GA14404@redhat.com>
- <0c543791-f3b7-5a4b-f002-e1c76bb430c0@linux.ibm.com>
- <20180702180156.GA31400@redhat.com>
- <f19e3801-d56a-4e34-0acc-1040a071cf91@linux.ibm.com>
- <20180703163645.GA23144@redhat.com> <20180703172543.GC23144@redhat.com>
- <f5a39a88-c21e-4606-a04d-11b5f32016b8@linux.ibm.com>
- <20180710152527.GA3616@redhat.com>
- <6e3ff60b-267a-d49d-4ebb-c4264f9c034b@linux.ibm.com>
- <20180712145849.GB15265@redhat.com>
- <CAPhsuW6kCtn-tWSj5eKf+kGt8ZEjVwJKLxj9C6zdaqMZByRytg@mail.gmail.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Fri, 13 Jul 2018 13:25:16 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6D7tAq6041226;
+        Fri, 13 Jul 2018 02:55:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531468510;
+        bh=qOWfd8RwVllq0WRYg8m9QXscZhIlLgt31yM/3CtX+sk=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=QxS9NJuipTQaQpdbWyd82wbh5WbiBABCzXtdLYeUGVX7rl1pSWhieAG0oUwrIREp9
+         fIHwJ1MlOi8bkAsWmO+c8HWVnVCfdDhrT3SD+0oP0OsfqjFresFCKvXNULeL1v5iHL
+         HKvx8ap04/B11lV16/4NORUqXCbFefH1IqsOBN/Y=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6D7tA24027388;
+        Fri, 13 Jul 2018 02:55:10 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 13
+ Jul 2018 02:55:10 -0500
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 13 Jul 2018 02:55:10 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6D7t6TB007757;
+        Fri, 13 Jul 2018 02:55:07 -0500
+Subject: Re: [PATCH v9 04/12] PCI: dwc: Add MSI-X callbacks handler
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <jesper.nilsson@axis.com>,
+        <shawn.lin@rock-chips.com>
+References: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
+ <5e4ca8380a65da72cf5d3ab46588948e3537aeae.1531155252.git.gustavo.pimentel@synopsys.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <b1db283e-b9db-a8c4-409c-d9dc64805c94@ti.com>
+Date:   Fri, 13 Jul 2018 13:25:06 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAPhsuW6kCtn-tWSj5eKf+kGt8ZEjVwJKLxj9C6zdaqMZByRytg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <5e4ca8380a65da72cf5d3ab46588948e3537aeae.1531155252.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18071307-0028-0000-0000-000002DB2B79
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071307-0029-0000-0000-00002392DB60
-Message-Id: <9b062a19-d9a7-b360-26b1-d28b8dfc35a3@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-13_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807130054
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Song,
+Hi,
 
-On 07/13/2018 01:23 AM, Song Liu wrote:
-> I guess I got to the party late. I found this thread after I started developing
-> the same feature...
+On Monday 09 July 2018 11:12 PM, Gustavo Pimentel wrote:
+> Add PCIe config space capability search function.
 > 
-> On Thu, Jul 12, 2018 at 7:58 AM, Oleg Nesterov <oleg@redhat.com> wrote:
->> On 07/11, Ravi Bangoria wrote:
->>>
->>>> However, I still think it would be better to avoid uprobe exporting and modifying
->>>> set_swbp/set_orig_insn. May be we can simply kill both set_swbp() and set_orig_insn(),
->>>> I'll re-check...
->>>
->>> Good that you bring this up. Actually, we can implement same logic
->>> without exporting uprobe. We can do "uprobe = container_of(arch_uprobe)"
->>> in uprobe_write_opcode(). No need to export struct uprobe outside,
->>> no need to change set_swbp() / set_orig_insn() syntax. Just that we
->>> need to pass arch_uprobe object to uprobe_write_opcode().
->>
->> Yes, but you still need to modify set_swbp/set_orig_insn to pass the new
->> arg to uprobe_write_opcode(). OK, this is fine.
->>
->>
->>> But, I wanted to discuss about making ref_ctr_offset a uprobe property
->>> or a consumer property, before posting v6:
->>>
->>> If we make it a consumer property, the design becomes flexible for
->>> user. User will have an option to either depend on kernel to handle
->>> reference counter or he can create normal uprobe and manipulate
->>> reference counter on his own. This will not require any changes to
->>> existing tools. With this approach we need to increment / decrement
->>> reference counter for each consumer. But, because of the fact that our
->>> install_breakpoint() / remove_breakpoint() are not balanced, we have
->>> to keep track of which reference counter have been updated in which
->>> mm, for which uprobe and for which consumer. I.e. Maintain a list of
->>> {uprobe, consumer, mm}.
+> Add sysfs set/get interface to allow the change of EP MSI-X maximum number.
 > 
-> Is it possible to maintain balanced refcount by modifying callers of
-> install_breakpoint() and remove_breakpoint()? I am actually working
-> toward this direction. And I found some imbalance between
->      register_for_each_vma(uprobe, uc)
-> and
->      register_for_each_vma(uprobe, NULL)
+> Add EP MSI-X callback for triggering interruptions.
 > 
-> From reading the thread, I think there are other sources of imbalance.
-> But I think it is still possible to fix it? Please let me know if this is not
-> realistic...
-
-
-I don't think so. It all depends on memory layout of the process, the
-execution sequence of tracer vs target, how binary is loaded or how mmap()s
-are called. To achieve a balance you need to change current uprobe
-implementation. (I haven't explored to change current implementation because
-I personally think there is no need to). Let me show you a simple example on
-my Ubuntu 18.04 (powerpc vm) with upstream kernel:
-
--------------
-  $ cat loop.c
-    #include <stdio.h>
-    #include <unistd.h>
-    
-    void foo(int i)
-    {
-            printf("Hi: %d\n", i);
-            sleep(1);
-    }
-    
-    void main()
-    {
-            int i;
-            for (i = 0; i < 100; i++)
-                    foo(i);
-    }
-  
-  $ sudo ./perf probe -x ~/loop foo
-  $ sudo ./perf probe install_breakpoint uprobe mm vaddr
-  $ sudo ./perf probe remove_breakpoint uprobe mm vaddr
-  
-  term1~$ ./loop
-  
-  term2~$ sudo ./perf record -a -e probe:* -o perf.data.kprobe
-  
-  term3~$ sudo ./perf record -a -e probe_loop:foo
-          ^C
-  
-  term2~$ ...
-          ^C[ perf record: Woken up 1 times to write data ]
-          [ perf record: Captured and wrote 0.217 MB perf.data.probe (10 samples) ]
-  
-  term2~$ sudo ./perf script -i perf.data.kprobe
-    probe:install_breakpoint: (c00000000032e4e8) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5072900 vaddr=0x1108e0844
-    probe:install_breakpoint: (c00000000032e4e8) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5072900 vaddr=0x1108d0844
-    probe:install_breakpoint: (c00000000032e4e8) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5055500 vaddr=0x7fffa2620844
-    probe:install_breakpoint: (c00000000032e4e8) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5055500 vaddr=0x7fffa2620844
-     probe:remove_breakpoint: (c00000000032e938) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5072900 vaddr=0x1108e0844
-     probe:remove_breakpoint: (c00000000032e938) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5072900 vaddr=0x1108d0844
-     probe:remove_breakpoint: (c00000000032e938) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5072900 vaddr=0x1108d0844
-     probe:remove_breakpoint: (c00000000032e938) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5072900 vaddr=0x1108e0844
-     probe:remove_breakpoint: (c00000000032e938) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5072900 vaddr=0x1108e0844
-     probe:remove_breakpoint: (c00000000032e938) uprobe=0xc0000000a40d0e00 mm=0xc0000000b5072900 vaddr=0x1108d0844
--------------
-
-Here install_breakpoint() for our target (mm: 0xc0000000b5072900) was
-called 2 times where as remove_breakpoint() was called 6 times.
-
-Because, there is an imbalance, and if you make reference counter a
-consumer property, you have two options. Either you have to fix
-current uprobe infrastructure to solve this imbalance. Or maintain
-a list of already updated counter as I've explained(in reply to Oleg).
-
-Now,
-
-  uprobe_register()
-    register_for_each_vma()
-      install_breakpoint()
-
-gets called for each consumer, but
-
-  uprobe_mmap()
-    install_breakpoint()
-
-gets called only once. Now, if you make ref_ctr_offset a consumer
-property, you have to increment reference counter for each consumer
-in case of uprobe_mmap(). Also, you have to make sure you update
-reference counter only once for each consumer because install/
-remove_breakpoint() are not balanced. Now, what if reference
-counter increment fails for any one consumer? You have to rollback
-already updated ones, which brings more complication.
-
-Now, other complication is, generally vma holding reference counter
-won't be present when install_breakpoint() gets called from
-uprobe_mmap(). I've introduced delayed_uprobes for this. This is
-anyway needed with any approach.
-
-The only advantage I was seeing by making reference counter a
-consumer property was a user flexibility to update reference counter
-on his own. But I've already proposed a solution for that.
-
-So, I personally don't suggest to make ref_ctr_offset a consumer
-property because I, again personally, don't think it's a consumer
-property.
-
-Please feel free to say if this all looks crap to you :)
-
-
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+> ---
+> Change v1->v2:
+>  - Nothing changed, just to follow the patch set version.
+> Change v2->v3:
+>  - Moved dra7xx_pcie_raise_irq() signature change to patch file #3.
+>  - Moved artpec6_pcie_raise_irq() signature change to patch file #3.
+>  - Replaced wrong return value 0 to -EINVAL.
+>  - Removed an else if by code refactoring.
+>  - Reduced the size of ioremap_nocache mapping from ep->addr_size to
+> PCI_MSIX_ENTRY_SIZE.
+>  - Fixed a small bug. If the MSI-X vector bit has been set, the function
+> would return without executing the proper unmap.
+> Change v3->v4:
+>  - Rebased to Lorenzo's master branch v4.18-rc1.
+>  - Added static prefix to __dw_pcie_ep_find_next_cap function.
+> Change v4->v5:
+>  - Added static prefix to dw_pcie_ep_find_capability function.
+>  - Swap patch files position (#2 <-> #3).
+>  - Moved dw_pcie_ep_raise_irq and dw_plat_pcie_ep_raise_irq functions
+> signatures change to patch file #2.
+> Change v5->v6:
+>  - Nothing changed, just to follow the patch set version.
+> Change v6->v7:
+>  - Nothing changed, just to follow the patch set version.
+> Change v7->v8:
+>  - Re-sending the patch series.
+> Change v8->v9:
+>  - Nothing changed, just to follow the patch set version.
 > 
+>  drivers/pci/controller/dwc/pcie-designware-ep.c   | 144 ++++++++++++++++++++++
+>  drivers/pci/controller/dwc/pcie-designware-plat.c |   2 +
+>  drivers/pci/controller/dwc/pcie-designware.h      |  12 ++
+>  3 files changed, 158 insertions(+)
 > 
-> About race conditions, I think both install_breakpoint() and remove_breakpoint()
-> are called with
-> 
->    down_write(&mm->mmap_sem);
-> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 69d039d..72c4188 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -40,6 +40,39 @@ void dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar)
+>  	__dw_pcie_ep_reset_bar(pci, bar, 0);
+>  }
+>  
+> +static u8 __dw_pcie_ep_find_next_cap(struct dw_pcie *pci, u8 cap_ptr,
+> +			      u8 cap)
+> +{
+> +	u8 cap_id, next_cap_ptr;
+> +	u16 reg;
+> +
+> +	reg = dw_pcie_readw_dbi(pci, cap_ptr);
+> +	next_cap_ptr = (reg & 0xff00) >> 8;
+> +	cap_id = (reg & 0x00ff);
+> +
+> +	if (!next_cap_ptr || cap_id > PCI_CAP_ID_MAX)
+> +		return 0;
+> +
+> +	if (cap_id == cap)
+> +		return cap_ptr;
+> +
+> +	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+> +}
+> +
+> +static u8 dw_pcie_ep_find_capability(struct dw_pcie *pci, u8 cap)
+> +{
+> +	u8 next_cap_ptr;
+> +	u16 reg;
+> +
+> +	reg = dw_pcie_readw_dbi(pci, PCI_CAPABILITY_LIST);
+> +	next_cap_ptr = (reg & 0x00ff);
+> +
+> +	if (!next_cap_ptr)
+> +		return 0;
+> +
+> +	return __dw_pcie_ep_find_next_cap(pci, next_cap_ptr, cap);
+> +}
+> +
+>  static int dw_pcie_ep_write_header(struct pci_epc *epc, u8 func_no,
+>  				   struct pci_epf_header *hdr)
+>  {
+> @@ -241,6 +274,45 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
+>  	return 0;
+>  }
+>  
+> +static int dw_pcie_ep_get_msix(struct pci_epc *epc, u8 func_no)
+> +{
+> +	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +	u32 val, reg;
+> +
+> +	if (!ep->msix_cap)
+> +		return -EINVAL;
+> +
+> +	reg = ep->msix_cap + PCI_MSIX_FLAGS;
+> +	val = dw_pcie_readw_dbi(pci, reg);
+> +	if (!(val & PCI_MSIX_FLAGS_ENABLE))
+> +		return -EINVAL;
+> +
+> +	val &= PCI_MSIX_FLAGS_QSIZE;
+> +
+> +	return val;
+> +}
+> +
+> +static int dw_pcie_ep_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
+> +{
+> +	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +	u32 val, reg;
+> +
+> +	if (!ep->msix_cap)
+> +		return -EINVAL;
+> +
+> +	reg = ep->msix_cap + PCI_MSIX_FLAGS;
+> +	val = dw_pcie_readw_dbi(pci, reg);
+> +	val &= ~PCI_MSIX_FLAGS_QSIZE;
+> +	val |= interrupts;
+> +	dw_pcie_dbi_ro_wr_en(pci);
+> +	dw_pcie_writew_dbi(pci, reg, val);
+> +	dw_pcie_dbi_ro_wr_dis(pci);
+> +
+> +	return 0;
+> +}
+> +
+>  static int dw_pcie_ep_raise_irq(struct pci_epc *epc, u8 func_no,
+>  				enum pci_epc_irq_type type, u16 interrupt_num)
+>  {
+> @@ -282,6 +354,8 @@ static const struct pci_epc_ops epc_ops = {
+>  	.unmap_addr		= dw_pcie_ep_unmap_addr,
+>  	.set_msi		= dw_pcie_ep_set_msi,
+>  	.get_msi		= dw_pcie_ep_get_msi,
+> +	.set_msix		= dw_pcie_ep_set_msix,
+> +	.get_msix		= dw_pcie_ep_get_msix,
+>  	.raise_irq		= dw_pcie_ep_raise_irq,
+>  	.start			= dw_pcie_ep_start,
+>  	.stop			= dw_pcie_ep_stop,
+> @@ -322,6 +396,64 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  	return 0;
+>  }
+>  
+> +int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+> +			     u16 interrupt_num)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +	struct pci_epc *epc = ep->epc;
+> +	u16 tbl_offset, bir;
+> +	u32 bar_addr_upper, bar_addr_lower;
+> +	u32 msg_addr_upper, msg_addr_lower;
+> +	u32 reg, msg_data, vec_ctrl;
+> +	u64 tbl_addr, msg_addr, reg_u64;
+> +	void __iomem *msix_tbl;
+> +	int ret;
+> +
+> +	reg = ep->msix_cap + PCI_MSIX_TABLE;
+> +	tbl_offset = dw_pcie_readl_dbi(pci, reg);
+> +	bir = (tbl_offset & PCI_MSIX_TABLE_BIR);
+> +	tbl_offset &= PCI_MSIX_TABLE_OFFSET;
+> +	tbl_offset >>= 3;
+> +
+> +	reg = PCI_BASE_ADDRESS_0 + (4 * bir);
+> +	bar_addr_upper = 0;
+> +	bar_addr_lower = dw_pcie_readl_dbi(pci, reg);
+> +	reg_u64 = (bar_addr_lower & PCI_BASE_ADDRESS_MEM_TYPE_MASK);
+> +	if (reg_u64 == PCI_BASE_ADDRESS_MEM_TYPE_64)
+> +		bar_addr_upper = dw_pcie_readl_dbi(pci, reg + 4);
+> +
+> +	tbl_addr = ((u64) bar_addr_upper) << 32 | bar_addr_lower;
+> +	tbl_addr += (tbl_offset + ((interrupt_num - 1) * PCI_MSIX_ENTRY_SIZE));
+> +	tbl_addr &= PCI_BASE_ADDRESS_MEM_MASK;
+> +
+> +	msix_tbl = ioremap_nocache(ep->phys_base + tbl_addr,
+> +				   PCI_MSIX_ENTRY_SIZE);
+> +	if (!msix_tbl)
+> +		return -EINVAL;
+> +
+> +	msg_addr_lower = readl(msix_tbl + PCI_MSIX_ENTRY_LOWER_ADDR);
+> +	msg_addr_upper = readl(msix_tbl + PCI_MSIX_ENTRY_UPPER_ADDR);
+> +	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
+> +	msg_data = readl(msix_tbl + PCI_MSIX_ENTRY_DATA);
+> +	vec_ctrl = readl(msix_tbl + PCI_MSIX_ENTRY_VECTOR_CTRL);
+> +
+> +	iounmap(msix_tbl);
+> +
+> +	if (vec_ctrl & PCI_MSIX_ENTRY_CTRL_MASKBIT)
+> +		return -EPERM;
+> +
+> +	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msix_mem_phys, msg_addr,
+> +				  epc->mem->page_size);
+> +	if (ret)
+> +		return ret;
+> +
+> +	writel(msg_data, ep->msix_mem);
+> +
+> +	dw_pcie_ep_unmap_addr(epc, func_no, ep->msix_mem_phys);
+> +
+> +	return 0;
+> +}
+> +
+>  void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
+>  {
+>  	struct pci_epc *epc = ep->epc;
+> @@ -329,6 +461,9 @@ void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
+>  	pci_epc_mem_free_addr(epc, ep->msi_mem_phys, ep->msi_mem,
+>  			      epc->mem->page_size);
+>  
+> +	pci_epc_mem_free_addr(epc, ep->msix_mem_phys, ep->msix_mem,
+> +			      epc->mem->page_size);
+> +
+>  	pci_epc_mem_exit(epc);
+>  }
+>  
+> @@ -415,6 +550,15 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>  		dev_err(dev, "Failed to reserve memory for MSI\n");
+>  		return -ENOMEM;
+>  	}
+> +	ep->msi_cap = dw_pcie_ep_find_capability(pci, PCI_CAP_ID_MSI);
+> +
+> +	ep->msix_mem = pci_epc_mem_alloc_addr(epc, &ep->msix_mem_phys,
+> +					     epc->mem->page_size);
+> +	if (!ep->msix_mem) {
+> +		dev_err(dev, "Failed to reserve memory for MSI-X\n");
+> +		return -ENOMEM;
 
+Do we have to allocate memory for MSIX memory separately? I think we can reuse
+msi_mem. That's also because we shouldn't fail if a platform doesn't support
+MSIX and fails to allocate msix_mem.
 
-No. Not about updating in one mm. I meant, races in maintaining
-all complication I've mentioned above.
-
-
-> 
-> As long as we do the same when modifying the reference counter,
-> it should be fine, right?
-> 
-> Wait... sometimes we only down_read(). Is this by design?
-
-
-Didn't get this.
-
-Thanks,
-Ravi
-
+Thanks
+Kishon
