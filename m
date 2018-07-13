@@ -2,80 +2,294 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6300ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:44:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3FCECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:46:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20352083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:44:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A20352083B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
+	by mail.kernel.org (Postfix) with ESMTP id 1C1982087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:46:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Kdlyt8x8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C1982087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387807AbeGMQ7w (ORCPT
+        id S1731944AbeGMRBW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 12:59:52 -0400
-Received: from www.osadl.org ([62.245.132.105]:58833 "EHLO www.osadl.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730038AbeGMQ7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 12:59:52 -0400
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w6DGelpF001608;
-        Fri, 13 Jul 2018 18:40:48 +0200
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Bai Ping <ping.bai@nxp.com>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] clk: imx6sll: fix missing of_node_put()
-Date:   Fri, 13 Jul 2018 18:40:04 +0200
-Message-Id: <1531500004-23175-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        Fri, 13 Jul 2018 13:01:22 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35144 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729765AbeGMRBW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 13:01:22 -0400
+Received: by mail-ed1-f68.google.com with SMTP id b10-v6so25063450edi.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 09:45:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1PY+QiVQqiBkC524F3lI0WyEr18i7sJ+q2yr8tta6Rw=;
+        b=Kdlyt8x8lxbSEwz3/8Tu9TcCiA++xPv4bn1FMaaG/fVTtb6FwueTGM/16u4p48i6od
+         qSXb300qf3SW+42dkPhRgh3515ahAYO4MM/DLi7L/73EfZqfVrVxwNa9giCHsGFkKzwR
+         F1fB9LBFRP4C81Alk/0vhuzELUVXptekGqCGE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=1PY+QiVQqiBkC524F3lI0WyEr18i7sJ+q2yr8tta6Rw=;
+        b=CBzZmp653kSbY9IxXM9Nui8szZHwI3mtVp2XSynN9nU9w2feWtqoJz9U6clI1SXaQu
+         MaNTIk9gRKWpKNyVv1ii9GomyADDMriVi88+E0NkS2agiM2xk9+2Q6+Iq8FaiSGVNHxH
+         lPBaa+Cl2iCVTh2P+7rDHNrao+tPsmepYzvgiK+H5fzqbcRk799oxYSnRBtzZl1QxJGy
+         r8EIxWagOHxatARTFpvERpYjwRVd9jy33S1qWgtRSSp1gWbz1pZ14E0O1LwwkOG2HHwF
+         5trJ9H/rcqszLYhT0jFnJvyNXZrp85Wwa4e4WFLGQoNyw/7i/PI+LO9fGxx4mp/kP2uh
+         UDYg==
+X-Gm-Message-State: AOUpUlHvnd1SI0Iybb/R2kR9sdJBl1CmLYQgXCYL6AL25qbUilGU2hf2
+        lvGSBHEAto/0v9h118aKQZhDdg==
+X-Google-Smtp-Source: AAOMgpfPzcg6IFrssOPRn1thdrbuv39RsHsKl6hJKzrqSjZRNgeQuZaPGkPUIwVi5ywxE6ChLdwQFg==
+X-Received: by 2002:a50:94c4:: with SMTP id t4-v6mr7725179eda.128.1531500354705;
+        Fri, 13 Jul 2018 09:45:54 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:5628:0:496f:7dc5:66d7:a057])
+        by smtp.gmail.com with ESMTPSA id e2-v6sm11264924edn.11.2018.07.13.09.45.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 13 Jul 2018 09:45:53 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 18:45:52 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
+Subject: Re: [Nouveau] [PATCH 2/2] drm/nouveau: Avoid looping through fake
+ MST connectors
+Message-ID: <20180713164552.GF3008@phenom.ffwll.local>
+Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
+        nouveau@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        stable@vger.kernel.org, Ben Skeggs <bskeggs@redhat.com>
+References: <20180713162442.22522-1-lyude@redhat.com>
+ <20180713162442.22522-3-lyude@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180713162442.22522-3-lyude@redhat.com>
+X-Operating-System: Linux phenom 4.14.0-3-amd64 
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_find_compatible_node() is returning a device node with refcount
-incremented and must be explicitly decremented after the last use
-which is right after the us in of_iomap() here.
+On Fri, Jul 13, 2018 at 12:24:41PM -0400, Lyude Paul wrote:
+> When MST and atomic were introduced to nouveau, another structure that
+> could contain a drm_connector embedded within it was introduced; struct
+> nv50_mstc. This meant that we no longer would be able to simply loop
+> through our connector list and assume that nouveau_connector() would
+> return a proper pointer for each connector, since the assertion that
+> all connectors coming from nouveau have a full nouveau_connector struct
+> became invalid.
+> 
+> Unfortunately, none of the actual code that looped through connectors
+> ever got updated, which means that we've been causing invalid memory
+> accesses for quite a while now.
+> 
+> An example that was caught by KASAN:
+> 
+> [  201.038698] ==================================================================
+> [  201.038792] BUG: KASAN: slab-out-of-bounds in nvif_notify_get+0x190/0x1a0 [nouveau]
+> [  201.038797] Read of size 4 at addr ffff88076738c650 by task kworker/0:3/718
+> [  201.038800]
+> [  201.038822] CPU: 0 PID: 718 Comm: kworker/0:3 Tainted: G           O      4.18.0-rc4Lyude-Test+ #1
+> [  201.038825] Hardware name: LENOVO 20EQS64N0B/20EQS64N0B, BIOS N1EET78W (1.51 ) 05/18/2018
+> [  201.038882] Workqueue: events nouveau_display_hpd_work [nouveau]
+> [  201.038887] Call Trace:
+> [  201.038894]  dump_stack+0xa4/0xfd
+> [  201.038900]  print_address_description+0x71/0x239
+> [  201.038929]  ? nvif_notify_get+0x190/0x1a0 [nouveau]
+> [  201.038935]  kasan_report.cold.6+0x242/0x2fe
+> [  201.038942]  __asan_report_load4_noabort+0x19/0x20
+> [  201.038970]  nvif_notify_get+0x190/0x1a0 [nouveau]
+> [  201.038998]  ? nvif_notify_put+0x1f0/0x1f0 [nouveau]
+> [  201.039003]  ? kmsg_dump_rewind_nolock+0xe4/0xe4
+> [  201.039049]  nouveau_display_init.cold.12+0x34/0x39 [nouveau]
+> [  201.039089]  ? nouveau_user_framebuffer_create+0x120/0x120 [nouveau]
+> [  201.039133]  nouveau_display_resume+0x5c0/0x810 [nouveau]
+> [  201.039173]  ? nvkm_client_ioctl+0x20/0x20 [nouveau]
+> [  201.039215]  nouveau_do_resume+0x19f/0x570 [nouveau]
+> [  201.039256]  nouveau_pmops_runtime_resume+0xd8/0x2a0 [nouveau]
+> [  201.039264]  pci_pm_runtime_resume+0x130/0x250
+> [  201.039269]  ? pci_restore_standard_config+0x70/0x70
+> [  201.039275]  __rpm_callback+0x1f2/0x5d0
+> [  201.039279]  ? rpm_resume+0x560/0x18a0
+> [  201.039283]  ? pci_restore_standard_config+0x70/0x70
+> [  201.039287]  ? pci_restore_standard_config+0x70/0x70
+> [  201.039291]  ? pci_restore_standard_config+0x70/0x70
+> [  201.039296]  rpm_callback+0x175/0x210
+> [  201.039300]  ? pci_restore_standard_config+0x70/0x70
+> [  201.039305]  rpm_resume+0xcc3/0x18a0
+> [  201.039312]  ? rpm_callback+0x210/0x210
+> [  201.039317]  ? __pm_runtime_resume+0x9e/0x100
+> [  201.039322]  ? kasan_check_write+0x14/0x20
+> [  201.039326]  ? do_raw_spin_lock+0xc2/0x1c0
+> [  201.039333]  __pm_runtime_resume+0xac/0x100
+> [  201.039374]  nouveau_display_hpd_work+0x67/0x1f0 [nouveau]
+> [  201.039380]  process_one_work+0x7a0/0x14d0
+> [  201.039388]  ? cancel_delayed_work_sync+0x20/0x20
+> [  201.039392]  ? lock_acquire+0x113/0x310
+> [  201.039398]  ? kasan_check_write+0x14/0x20
+> [  201.039402]  ? do_raw_spin_lock+0xc2/0x1c0
+> [  201.039409]  worker_thread+0x86/0xb50
+> [  201.039418]  kthread+0x2e9/0x3a0
+> [  201.039422]  ? process_one_work+0x14d0/0x14d0
+> [  201.039426]  ? kthread_create_worker_on_cpu+0xc0/0xc0
+> [  201.039431]  ret_from_fork+0x3a/0x50
+> [  201.039441]
+> [  201.039444] Allocated by task 79:
+> [  201.039449]  save_stack+0x43/0xd0
+> [  201.039452]  kasan_kmalloc+0xc4/0xe0
+> [  201.039456]  kmem_cache_alloc_trace+0x10a/0x260
+> [  201.039494]  nv50_mstm_add_connector+0x9a/0x340 [nouveau]
+> [  201.039504]  drm_dp_add_port+0xff5/0x1fc0 [drm_kms_helper]
+> [  201.039511]  drm_dp_send_link_address+0x4a7/0x740 [drm_kms_helper]
+> [  201.039518]  drm_dp_check_and_send_link_address+0x1a7/0x210 [drm_kms_helper]
+> [  201.039525]  drm_dp_mst_link_probe_work+0x71/0xb0 [drm_kms_helper]
+> [  201.039529]  process_one_work+0x7a0/0x14d0
+> [  201.039533]  worker_thread+0x86/0xb50
+> [  201.039537]  kthread+0x2e9/0x3a0
+> [  201.039541]  ret_from_fork+0x3a/0x50
+> [  201.039543]
+> [  201.039546] Freed by task 0:
+> [  201.039549] (stack is not available)
+> [  201.039551]
+> [  201.039555] The buggy address belongs to the object at ffff88076738c1a8
+>                                  which belongs to the cache kmalloc-2048 of size 2048
+> [  201.039559] The buggy address is located 1192 bytes inside of
+>                                  2048-byte region [ffff88076738c1a8, ffff88076738c9a8)
+> [  201.039563] The buggy address belongs to the page:
+> [  201.039567] page:ffffea001d9ce200 count:1 mapcount:0 mapping:ffff88084000d0c0 index:0x0 compound_mapcount: 0
+> [  201.039573] flags: 0x8000000000008100(slab|head)
+> [  201.039578] raw: 8000000000008100 ffffea001da3be08 ffffea001da25a08 ffff88084000d0c0
+> [  201.039582] raw: 0000000000000000 00000000000d000d 00000001ffffffff 0000000000000000
+> [  201.039585] page dumped because: kasan: bad access detected
+> [  201.039588]
+> [  201.039591] Memory state around the buggy address:
+> [  201.039594]  ffff88076738c500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> [  201.039598]  ffff88076738c580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> [  201.039601] >ffff88076738c600: 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc
+> [  201.039604]                                                  ^
+> [  201.039607]  ffff88076738c680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> [  201.039611]  ffff88076738c700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> [  201.039613] ==================================================================
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: stable@vger.kernel.org
+> Cc: Karol Herbst <karolherbst@gmail.com>
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_connector.c |  2 +-
+>  drivers/gpu/drm/nouveau/nouveau_connector.h | 24 ++++++++++++++++++++-
+>  drivers/gpu/drm/nouveau/nouveau_display.c   |  4 ++--
+>  3 files changed, 26 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
+> index 7dc380449232..af68eae4c626 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_connector.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+> @@ -1213,7 +1213,7 @@ nouveau_connector_create(struct drm_device *dev, int index)
+>  	bool dummy;
+>  
+>  	drm_connector_list_iter_begin(dev, &conn_iter);
+> -	drm_for_each_connector_iter(connector, &conn_iter) {
+> +	nouveau_for_each_non_mst_connector_iter(connector, &conn_iter) {
+>  		nv_connector = nouveau_connector(connector);
+>  		if (nv_connector->index == index) {
+>  			drm_connector_list_iter_end(&conn_iter);
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.h b/drivers/gpu/drm/nouveau/nouveau_connector.h
+> index a8cbb4b56fc7..aaf3a213c685 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_connector.h
+> +++ b/drivers/gpu/drm/nouveau/nouveau_connector.h
+> @@ -33,6 +33,7 @@
+>  #include <drm/drm_encoder.h>
+>  #include <drm/drm_dp_helper.h>
+>  #include "nouveau_crtc.h"
+> +#include "nouveau_encoder.h"
+>  
+>  struct nvkm_i2c_port;
+>  
+> @@ -60,6 +61,27 @@ static inline struct nouveau_connector *nouveau_connector(
+>  	return container_of(con, struct nouveau_connector, base);
+>  }
+>  
+> +static inline bool
+> +nouveau_connector_is_mst(struct drm_connector *connector)
+> +{
+> +	const struct nouveau_encoder *nv_encoder;
+> +	const struct drm_encoder *encoder;
+> +
+> +	if (connector->connector_type != DRM_MODE_CONNECTOR_DisplayPort)
+> +		return false;
+> +
+> +	nv_encoder = find_encoder(connector, DCB_OUTPUT_ANY);
+> +	if (!nv_encoder)
+> +		return false;
+> +
+> +	encoder = &nv_encoder->base.base;
+> +	return encoder->encoder_type == DRM_MODE_ENCODER_DPMST;
+> +}
+> +
+> +#define nouveau_for_each_non_mst_connector_iter(connector, iter) \
+> +	drm_for_each_connector_iter(connector, iter) \
+> +		if (!nouveau_connector_is_mst(connector))
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: commit 4a5f720b6542 ("clk: imx: add clock driver for imx6sll")
----
+for_each_if() is more robust since it avoids the issues with dangling
+else blocks.
+-Daniel
 
-Problem located with experimental coccinelle script
+> +
+>  static inline struct nouveau_connector *
+>  nouveau_crtc_connector_get(struct nouveau_crtc *nv_crtc)
+>  {
+> @@ -70,7 +92,7 @@ nouveau_crtc_connector_get(struct nouveau_crtc *nv_crtc)
+>  	struct drm_crtc *crtc = to_drm_crtc(nv_crtc);
+>  
+>  	drm_connector_list_iter_begin(dev, &conn_iter);
+> -	drm_for_each_connector_iter(connector, &conn_iter) {
+> +	nouveau_for_each_non_mst_connector_iter(connector, &conn_iter) {
+>  		if (connector->encoder && connector->encoder->crtc == crtc) {
+>  			nv_connector = nouveau_connector(connector);
+>  			break;
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_display.c b/drivers/gpu/drm/nouveau/nouveau_display.c
+> index 46b8430ef4aa..ec7861457b84 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_display.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_display.c
+> @@ -413,7 +413,7 @@ nouveau_display_init(struct drm_device *dev)
+>  
+>  	/* enable hotplug interrupts */
+>  	drm_connector_list_iter_begin(dev, &conn_iter);
+> -	drm_for_each_connector_iter(connector, &conn_iter) {
+> +	nouveau_for_each_non_mst_connector_iter(connector, &conn_iter) {
+>  		struct nouveau_connector *conn = nouveau_connector(connector);
+>  		nvif_notify_get(&conn->hpd);
+>  	}
+> @@ -444,7 +444,7 @@ nouveau_display_fini(struct drm_device *dev, bool suspend)
+>  
+>  	/* disable hotplug interrupts */
+>  	drm_connector_list_iter_begin(dev, &conn_iter);
+> -	drm_for_each_connector_iter(connector, &conn_iter) {
+> +	nouveau_for_each_non_mst_connector_iter(connector, &conn_iter) {
+>  		struct nouveau_connector *conn = nouveau_connector(connector);
+>  		nvif_notify_put(&conn->hpd);
+>  	}
+> -- 
+> 2.17.1
+> 
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
 
-looks like cut&past error from imx6ul (or vice versa)
-
-Patch was compile tested with: imx_v6_v7_defconfig (implies
-CONFIG_SOC_IMX6SLL=y)
-
-Patch is against 4.18-rc4 (localversion-next is next-20180713)
-
- drivers/clk/imx/clk-imx6sll.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/imx/clk-imx6sll.c b/drivers/clk/imx/clk-imx6sll.c
-index 6270645..52379ee 100644
---- a/drivers/clk/imx/clk-imx6sll.c
-+++ b/drivers/clk/imx/clk-imx6sll.c
-@@ -92,6 +92,7 @@ static void __init imx6sll_clocks_init(struct device_node *ccm_node)
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sll-anatop");
- 	base = of_iomap(np, 0);
-+	of_node_put(np);
- 	WARN_ON(!base);
- 
- 	/* Do not bypass PLLs initially */
 -- 
-2.1.4
-
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
