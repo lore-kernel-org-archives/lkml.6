@@ -3,129 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A87CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E6E4ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60B68208E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:46:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60B68208E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 4AE49208E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:48:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AE49208E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729409AbeGMLAE (ORCPT
+        id S1727434AbeGMLCg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 07:00:04 -0400
-Received: from mail-out.m-online.net ([212.18.0.9]:39530 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbeGMLAE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 07:00:04 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 41RqGW6xNKz1qxWD;
-        Fri, 13 Jul 2018 12:45:55 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 41RqGW6R5bz20bYL;
-        Fri, 13 Jul 2018 12:45:55 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id 7HEb9_M-wLwA; Fri, 13 Jul 2018 12:45:54 +0200 (CEST)
-X-Auth-Info: 5jzH0wpOxNGsxGVu8I4AFFBbEdcfLhMHJoLp7DDI/4g=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Fri, 13 Jul 2018 12:45:54 +0200 (CEST)
-Subject: Re: [PATCH] drm: mxsfb: fix runtime PM handling
-To:     Stefan Agner <stefan@agner.ch>
-Cc:     Anson Huang <anson.huang@nxp.com>, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dl-linux-imx <linux-imx@nxp.com>
-References: <1531472085-25174-1-git-send-email-Anson.Huang@nxp.com>
- <ea029b69-f853-4a5f-e798-70a04b02ac1d@denx.de>
- <AM3PR04MB1315E2F345752D0A64A0E2C8F5580@AM3PR04MB1315.eurprd04.prod.outlook.com>
- <90d16681-2a7a-4826-0411-478353d2afe3@denx.de>
- <00b5faf737efd1054eb4f0f0e6fc8369@agner.ch>
- <52c0153c-1810-2919-70b7-d57280c83c90@denx.de>
- <ac14d93449ac802854b29216967c9d98@agner.ch>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <122d65ad-8840-f991-4c73-c28d5c06c3b0@denx.de>
-Date:   Fri, 13 Jul 2018 12:45:54 +0200
+        Fri, 13 Jul 2018 07:02:36 -0400
+Received: from mga05.intel.com ([192.55.52.43]:33009 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727161AbeGMLCg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 07:02:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 03:48:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,347,1526367600"; 
+   d="scan'208";a="244979390"
+Received: from andreser-mobl.amr.corp.intel.com (HELO [10.252.137.224]) ([10.252.137.224])
+  by fmsmga005.fm.intel.com with ESMTP; 13 Jul 2018 03:48:28 -0700
+Subject: Re: [PATCH 1/6] swap: Add comments to lock_cluster_or_swap_info()
+To:     "Huang, Ying" <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+References: <20180712233636.20629-1-ying.huang@intel.com>
+ <20180712233636.20629-2-ying.huang@intel.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <3c3a4dce-980d-0405-d269-1da9e62b1344@linux.intel.com>
+Date:   Fri, 13 Jul 2018 03:48:28 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <ac14d93449ac802854b29216967c9d98@agner.ch>
+In-Reply-To: <20180712233636.20629-2-ying.huang@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/13/2018 12:39 PM, Stefan Agner wrote:
-> On 13.07.2018 12:36, Marek Vasut wrote:
->> On 07/13/2018 12:33 PM, Stefan Agner wrote:
->>> On 13.07.2018 11:12, Marek Vasut wrote:
->>>> On 07/13/2018 11:06 AM, Anson Huang wrote:
->>>> [...]
->>>>>>
->>>>>> On 07/13/2018 10:54 AM, Anson Huang wrote:
->>>>>>> As display power domain is combined with lcdif node on some i.MX
->>>>>>> platforms like i.MX6SL, when lcdif driver is enabled, the mxsfb_load
->>>>>>> is called to enable runtime pm, and a pair of pm_runtime_get_sync and
->>>>>>> pm_runtime_put_sync are also called, that will cause generic power
->>>>>>> domain driver to disable lcdif power domain and lcdif is no longer
->>>>>>> working, the lcdif power should ONLY be turned off when display is
->>>>>>> disabled, so move the pm_runtime_put_sync to mxsfb_unload and remove
->>>>>>> the pm_runtime_get_sync in mxsfb_unload as well, in this way, when
->>>>>>> display is enabled, the lcdif power will be always ON until the
->>>>>>> display is disabled.
->>>>>>>
->>>>>>> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
->>>>>>
->>>>>> Doesn't this also mean the block will always be on, thus wasting power ?
->>>>>
->>>>> I think drm driver should have somewhere to implement the display
->>>>> disable case, like when fb0 is blank (echo 1 > /sys/class/graphics/fb0/blank),
->>>>
->>>> Isn't this just the fbdev emulation on top of drm/kms ?
->>>> I think this stuff can be compiled out completely.
->>>>
->>>>> then lcdif can be powered gated, and
->>>>> when display is back on (unblank), lcdif needs to be re-initialization and display will
->>>>> be on, current implementation is incorrect, with kernel booting up, lcdif
->>>>> is NOT working at all.
->>>>
->>>> It works fine on MX6SX , so I think this is isolated to MX6SL ?
->>>> I'm CCing Stefan, he might have some valuable feedback here.
->>>>
->>>
->>> Yeah not sure, but putting it in mxsfb_load seems wrong.
->>>
->>> MXSFB uses struct drm_simple_display_pipe_funcs which does have
->>> enable/disable callbacks, probably closer to what we want...
->>
->> Seems to me like this is not something that should be hacked around in
->> the mxsfb driver in the first place, but somewhere else.
-> 
-> By somewhere else you mean in the DRM stack?
+> +/*
+> + * At most times, fine grained cluster lock is sufficient to protect
 
-Rather the clock driver or somesuch. Maybe the power domains need to be
-modeled in the DT properly, but I didn't dig in deep enough.
+Can we call out those times, please?
 
-> Yeah not sure, currently pm seems to be handled on driver level only,
-> see
-> grep -r -e pm_runtime_get_sync drivers/gpu/drm
-> 
-> --
-> Stefan
-> 
+> + * the operations on sis->swap_map.  
 
+Please be careful with the naming.  You can call it 'si' because that's
+what the function argument is named.  Or, swap_info_struct because
+that's the struct name.  Calling it 'sis' is a bit sloppy, no?
 
--- 
-Best regards,
-Marek Vasut
+> 					No need to acquire gross grained
+
+"coarse" is a conventional antonym for "fine".
+
+> + * sis->lock.  But cluster and cluster lock isn't available for HDD,
+> + * so sis->lock will be instead for them.
+> + */
+>  static inline struct swap_cluster_info *lock_cluster_or_swap_info(
+>  	struct swap_info_struct *si,
+>  	unsigned long offset)
+
+What I already knew was: there are two locks.  We use one sometimes and
+the other at other times.
+
+What I don't know is why there are two locks, and the heuristics why we
+choose between them.  This comment doesn't help explain the things I
+don't know.
+
