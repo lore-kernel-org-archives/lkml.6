@@ -2,191 +2,193 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B723ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C57ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FADD20854
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D42FE20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:22:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UIFeDm43"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FADD20854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="HM/UrYUj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D42FE20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731379AbeGMRgF (ORCPT
+        id S1731555AbeGMRhe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 13:36:05 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40472 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729783AbeGMRgF (ORCPT
+        Fri, 13 Jul 2018 13:37:34 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:37431 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730038AbeGMRhe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 13:36:05 -0400
-Received: by mail-wr1-f66.google.com with SMTP id t6-v6so25824279wrn.7
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 10:20:32 -0700 (PDT)
+        Fri, 13 Jul 2018 13:37:34 -0400
+Received: by mail-wm0-f67.google.com with SMTP id n17-v6so10122162wmh.2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 10:22:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=dn+Bph2u+s2kvXX976dZhlU7pRRj9I7o9bg1xcEI9V8=;
-        b=UIFeDm43CxdURUVElIuOVNiaPXJvyKB9of4hq3E5vfOOpH0JDTfcISnZyR1iMfJbQ1
-         dPk0z11mGXIRY4lQYjbcCVw1mbjKZrmQa5Q96ogRkjKlshOOA/qwdOOkT2kutf3d7eiZ
-         Lmy0DVMWgCTYNY65MSS4Fyz0gy/UVv/gl+vUc=
+         :cc:content-transfer-encoding;
+        bh=kC+g3gkKf1tO+YCO0MGSlPgytCWr21BdCs3bhHAjC2Y=;
+        b=HM/UrYUjGC0zgsWZBLBtunVPySrL9p94DJ+3Ut+JPitbdEVyOFyDBwCBEYklur4zsQ
+         KwRLw9UntSHy29SpXJZPzVqNxafBczHLhZsqL2YlV3fLmURShJnZxrdoKh9RyWtLMvRF
+         EAiNH90WUW3o3j8XMKgKGYf2+u5uafvMt2SBGHrM9wme1kcczFSMmIRRMhDZh8qJKKeN
+         HKB2Ef+lutSF0SSygtPmLtTDwb37zzorbDHb78S/yD6FgeEo+R7aA9PEpdMjM5n9UTRx
+         6IYQ/PgYYEGLwb8RmWDyEaUaEHxJ0te/BvQVg8M0lUFszHuEE2CS3COVvGdQa/Gg+qxP
+         N73A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=dn+Bph2u+s2kvXX976dZhlU7pRRj9I7o9bg1xcEI9V8=;
-        b=KMcGtVonw9P902+Zl9kmUy5MLrXX2/70LSa3JY84zCEvbwfncvVYRZ5ldwxLlp0Vnz
-         3XO6uZXlDL43m4Cjg6bFiG+prJh/B9C3GLmzSEYKKeJRqA9v4LW0cIB7O9OUs0BkvCGr
-         LIWNgSiT3dIjVo5As5RDjgcYASFj7+p1HztWkjNHV0BiTVx8O/wp52Qb7YiJVt2dqnpT
-         ZG/3I1ohqkoq9zCC3j1ERZSxoLSg5s3fKw03qVKTyKLZ3RhAEcka+Z3lBXbmZLjlsJxt
-         zapDSy9AKUn392s5U0Qe2ktzsDWQ4Xk86I4Gx2qO4oqSUsW9FJEhlDSk2Or0DS2VhIAC
-         efnw==
-X-Gm-Message-State: AOUpUlFG1XrcsPSZ9yWYTWOZNA6O0xEejBozHVSK/ftAFPuY6tmdyqPQ
-        NaSCRGhN4j7eQbjiS0U5ob7OpSlfcBSDOd8b0ZabEw==
-X-Google-Smtp-Source: AAOMgpcInROM+CwLksnExCol+3jCEVVr/vZP9sGGxPFYg10L3dPjg3wkNXVtnFiS2vl2FqkCg/HNE6lq4SYFm3pMCnA=
-X-Received: by 2002:adf:8296:: with SMTP id 22-v6mr5407757wrc.252.1531502431540;
- Fri, 13 Jul 2018 10:20:31 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=kC+g3gkKf1tO+YCO0MGSlPgytCWr21BdCs3bhHAjC2Y=;
+        b=ZXcFfAW4cqdxPp5WW2JJ4zLTPUjFdJbFztyGr00VDDnRTmAt18VR4TIyEqdFZxfxtF
+         Fu1EXN6GQru8rh3wrEyj1vBp9lEE3wiJg0GGBNF/qiADgbb2s9368h8WbGrC1sMJKl5p
+         origZaAcuYi1yAb2x2tdA76G1mykI2/OY6M1okngs0gaGpkftnjWj8IRoYp/anQFQTZG
+         kjlvpnEMM0Q06dbQiAnmUQgXfGLXdmC8zckKicvM6GMPa6ng9Y5udA1fweOUCzEwhDax
+         NoYtCMaOg9Emvo8n0MjK4ydb0VA/uWL4MDdRHaxMbj2p0dIX8LYlSpUGVmVt/Fafp0/e
+         vfQA==
+X-Gm-Message-State: AOUpUlFYK7ks8gQoU/Gi/7MLqb9/Ak3vAwTIp6J66Q8K0loZJS8N66TQ
+        x6Ey+XC9bu047ry5iuYbmHlow49EAwnqYHdXMzgn+A==
+X-Google-Smtp-Source: AAOMgpfndWSuw5X+m/8vEmCObUK98MZddCHm2vH8G0CMmLcaqb4rq2Lt87PWiKTQo9m2lrh4tUmGZji2ByofUWV0XPY=
+X-Received: by 2002:a1c:8b0d:: with SMTP id n13-v6mr4165854wmd.46.1531502519799;
+ Fri, 13 Jul 2018 10:21:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:c202:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 10:20:30
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 10:21:39
  -0700 (PDT)
-In-Reply-To: <7e25b63e-cc9b-1f6d-e3d2-087dd484f631@codeaurora.org>
-References: <1530883047-17452-1-git-send-email-mojha@codeaurora.org>
- <CALAqxLVs=EbbJ83bw=YRb=1B7E2uLcnrUh+qWEjm9U3iYd7FAg@mail.gmail.com> <7e25b63e-cc9b-1f6d-e3d2-087dd484f631@codeaurora.org>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Fri, 13 Jul 2018 10:20:30 -0700
-Message-ID: <CALAqxLX=-ZZV=O7AAZwMYaXZ1s5h91BfFng4qbtgvkvrKtxgaw@mail.gmail.com>
-Subject: Re: [PATCH v3] time: Fix incorrect sleeptime injection when suspend fails
-To:     Mukesh Ojha <mojha@codeaurora.org>
+In-Reply-To: <20180713105620.z6bjhqzfez2hll6r@8bytes.org>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+ <1531308586-29340-8-git-send-email-joro@8bytes.org> <A66D58A6-3DC6-4CF3-B2A5-433C6E974060@amacapital.net>
+ <20180713105620.z6bjhqzfez2hll6r@8bytes.org>
+From:   Andy Lutomirski <luto@amacapital.net>
+Date:   Fri, 13 Jul 2018 10:21:39 -0700
+Message-ID: <CALCETrW4XMD9TSTxK3h-3p5ZE5Z=DupiUBtiXnMmSprbXtJr3g@mail.gmail.com>
+Subject: Re: [PATCH 07/39] x86/entry/32: Enter the kernel via trampoline stack
+To:     Joerg Roedel <joro@8bytes.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>, gkohli@codeaurora.org,
-        cpandya@codeaurora.org, neeraju@codeaurora.org,
-        Baolin Wang <baolin.wang@linaro.org>
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 12:13 AM, Mukesh Ojha <mojha@codeaurora.org> wrote:
-> Hi John,
+On Fri, Jul 13, 2018 at 3:56 AM, Joerg Roedel <joro@8bytes.org> wrote:
+> Hi Andy,
 >
-> Thanks for your response
-> Please find my comments inline.
+> thanks for you valuable feedback.
 >
->
-> On 7/11/2018 1:43 AM, John Stultz wrote:
+> On Thu, Jul 12, 2018 at 02:09:45PM -0700, Andy Lutomirski wrote:
+>> > On Jul 11, 2018, at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
+>> > -.macro SAVE_ALL pt_regs_ax=3D%eax
+>> > +.macro SAVE_ALL pt_regs_ax=3D%eax switch_stacks=3D0
+>> >    cld
+>> > +    /* Push segment registers and %eax */
+>> >    PUSH_GS
+>> >    pushl    %fs
+>> >    pushl    %es
+>> >    pushl    %ds
+>> >    pushl    \pt_regs_ax
+>> > +
+>> > +    /* Load kernel segments */
+>> > +    movl    $(__USER_DS), %eax
 >>
->> On Fri, Jul 6, 2018 at 6:17 AM, Mukesh Ojha <mojha@codeaurora.org> wrote:
->>>
->>> Currently, there exists a corner case assuming when there is
->>> only one clocksource e.g RTC, and system failed to go to
->>> suspend mode. While resume rtc_resume() injects the sleeptime
->>> as timekeeping_rtc_skipresume() returned 'false' (default value
->>> of sleeptime_injected) due to which we can see mismatch in
->>> timestamps.
->>>
->>> This issue can also come in a system where more than one
->>> clocksource are present and very first suspend fails.
->>>
->>> Fix this by handling `sleeptime_injected` flag properly.
->>>
->>> Success case:
->>> ------------
->>>                                          {sleeptime_injected=false}
->>> rtc_suspend() => timekeeping_suspend() => timekeeping_resume() =>
->>>
->>> (sleeptime injected)
->>>   rtc_resume()
->>>
->>> Failure case:
->>> ------------
->>>           {failure in sleep path} {sleeptime_injected=false}
->>> rtc_suspend()     =>          rtc_resume()
->>>
->>> sleeptime injected again which was not required as the suspend failed)
->>>
->>> Originally-by: Thomas Gleixner <tglx@linutronix.de>
->>> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
->>> ---
->>> Changes in v3:
->>>   * Updated commit subject and description.
->>>   * Updated the patch as per the fix given by Thomas Gleixner.
->>>
->>> Changes in v2:
->>>   * Updated the commit text.
->>>   * Removed extra variable and used the earlier static
->>>     variable 'sleeptime_injected'.
->>>
->>>   kernel/time/timekeeping.c | 21 ++++++++++++++++++---
->>>   1 file changed, 18 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
->>> index 4786df9..32ae9ae 100644
->>> --- a/kernel/time/timekeeping.c
->>> +++ b/kernel/time/timekeeping.c
->>> @@ -1510,8 +1510,20 @@ void __weak read_boot_clock64(struct timespec64
->>> *ts)
->>>          ts->tv_nsec = 0;
->>>   }
->>>
->>> -/* Flag for if timekeeping_resume() has injected sleeptime */
->>> -static bool sleeptime_injected;
->>> +/*
->>> + * Flag reflecting whether timekeeping_resume() has injected sleeptime.
->>> + *
->>> + * The flag starts of true and is only cleared when a suspend reaches
->>> + * timekeeping_suspend(), timekeeping_resume() sets it when the
->>> timekeeper
->>> + * clocksource is not stopping across suspend and has been used to
->>> update
->>> + * sleep time. If the timekeeper clocksource has stopped then the flag
->>> + * stays false and is used by the RTC resume code to decide whether
->>> sleep
->>> + * time must be injected and if so the flag gets set then.
->>> + *
->>> + * If a suspend fails before reaching timekeeping_resume() then the flag
->>> + * stays true and prevents erroneous sleeptime injection.
->>> + */
->>> +static bool sleeptime_injected = true;
+>> If \pt_regs_ax !=3D %eax, then this will behave oddly. Maybe it=E2=80=99=
+s okay.
+>> But I don=E2=80=99t see why this change was needed at all.
+>
+> This is a left-over from a previous approach I tried and then abandoned
+> later. You are right, it is not needed.
+>
+>> > +/*
+>> > + * Called with pt_regs fully populated and kernel segments loaded,
+>> > + * so we can access PER_CPU and use the integer registers.
+>> > + *
+>> > + * We need to be very careful here with the %esp switch, because an N=
+MI
+>> > + * can happen everywhere. If the NMI handler finds itself on the
+>> > + * entry-stack, it will overwrite the task-stack and everything we
+>> > + * copied there. So allocate the stack-frame on the task-stack and
+>> > + * switch to it before we do any copying.
 >>
->> I worry this upside-down logic is too subtle to be easily reasoned
->> about, and will just lead to future mistakes.
+>> Ick, right. Same with machine check, though. You could alternatively
+>> fix it by running NMIs on an irq stack if the irq count is zero.  How
+>> confident are you that you got #MC right?
+>
+> Pretty confident, #MC uses the exception entry path which also handles
+> entry-stack and user-cr3 correctly. It might go through through the slow
+> paranoid exit path, but that's okay for #MC I guess.
+>
+> And when the #MC happens while we switch to the task stack and do the
+> copying the same precautions as for NMI apply.
+>
+>> > + */
+>> > +.macro SWITCH_TO_KERNEL_STACK
+>> > +
+>> > +    ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
+>> > +
+>> > +    /* Are we on the entry stack? Bail out if not! */
+>> > +    movl    PER_CPU_VAR(cpu_entry_area), %edi
+>> > +    addl    $CPU_ENTRY_AREA_entry_stack, %edi
+>> > +    cmpl    %esp, %edi
+>> > +    jae    .Lend_\@
 >>
->> Can we instead call this "suspend_timing_needed" and only set it to
->> true when we don't inject any sleep time on resume?
+>> That=E2=80=99s an alarming assumption about the address space layout. Ho=
+w
+>> about an xor and an and instead of cmpl?  As it stands, if the address
+>> layout ever changes, the failure may be rather subtle.
 >
+> Right, I implement a more restrictive check.
+
+But the check needs to be correct or we'll mess up, right?  I think
+the code will be much more robust and easier to review if you check
+"on the entry stack" instead of ">=3D the entry stack".  (Or <=3D -- I can
+never remember how this works in AT&T syntax.)
+
 >
-> I did not get your point "only set it to true when we don't inject any sleep
-> time on resume? "
-> How do we know  this ?
-> This question itself depends on the "sleeptime_injected" if it is true means
-> no need to inject else need to inject.
+>> Anyway, wouldn=E2=80=99t it be easier to solve this by just not switchin=
+g
+>> stacks on entries from kernel mode and making the entry stack bigger?
+>> Stick an assertion in the scheduling code that we=E2=80=99re not on an e=
+ntry
+>> stack, perhaps.
 >
-> Also, we need to make this variable back and forth true, false; suspends
-> path ensures it to make it false.
+> That'll save us the check whether we are on the entry stack and replace
+> it with a check whether we are coming from user/vm86 mode. I don't think
+> that this will simplify things much and I am a bit afraid that it'll
+> break unwritten assumptions elsewhere. It is probably something we can
+> look into later separatly from the basic pti-x32 enablement.
+>
 
-So yea, I'm not saying logically the code is really any different,
-this is more of a naming nit. So instead of having a variable that is
-always on that we occasionally turn off, lets invert the naming and
-have it be a flag that we occasionally turn on.
+Fair enough.  There's also the issue that NMI still has to switch CR3
+if it hits with the wrong CR3.
 
-Just the name sleeptime_injected is read a statement, which if we say
-is defaults to true, becomes confusing to think about when the
-timekeeping_suspend/resume code hasn't yet run (which is the case
-where your error cropped up) - and no sleeptime has actually been
-injected.
-
-So instead if we call it suspend_timing_needed and only set it on in
-timekeeping_resume() after the timekeeping code has not injected any
-sleep-time, then I think the code will make more sense to read. (And
-yes, we still need to set suspend_timing_needed false on
-timekeeping_suspend and in the inject_sleeptime call path - the logic
-doesn't change, just the naming and boolean state).
-
-thanks
--john
+I personally much prefer checking whether you came from user mode
+rather than the stack address, but I'm okay with either approach here.
