@@ -6,31 +6,37 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C71CDECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A686ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87032214C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87032214C2
+	by mail.kernel.org (Postfix) with ESMTP id 60574214C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:26:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60574214C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388119AbeGMBiI (ORCPT
+        id S2388133AbeGMBiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 21:38:08 -0400
-Received: from nautica.notk.org ([91.121.71.147]:43025 "EHLO nautica.notk.org"
+        Thu, 12 Jul 2018 21:38:10 -0400
+Received: from nautica.notk.org ([91.121.71.147]:43026 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387896AbeGMBiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 21:38:07 -0400
+        id S2387896AbeGMBiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 21:38:10 -0400
 Received: by nautica.notk.org (Postfix, from userid 1001)
-        id C30DBC026; Fri, 13 Jul 2018 03:25:54 +0200 (CEST)
+        id 3B3E8C028; Fri, 13 Jul 2018 03:25:57 +0200 (CEST)
 From:   Dominique Martinet <asmadeus@codewreck.org>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 12/18] test_power: change strncpy+truncation to strlcpy
-Date:   Fri, 13 Jul 2018 03:25:53 +0200
-Message-Id: <1531445153-19647-1-git-send-email-asmadeus@codewreck.org>
+Subject: [PATCH 13/18] ibmvscsi: change strncpy+truncation to strlcpy
+Date:   Fri, 13 Jul 2018 03:25:56 +0200
+Message-Id: <1531445156-19690-1-git-send-email-asmadeus@codewreck.org>
 X-Mailer: git-send-email 1.7.10.4
 In-Reply-To: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
 References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
@@ -48,23 +54,30 @@ Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
 first patch of the serie) for the motivation behind this patch
 
- drivers/power/supply/test_power.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/scsi/ibmvscsi/ibmvscsi.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/power/supply/test_power.c b/drivers/power/supply/test_power.c
-index 57246cdbd042..64adf630f64f 100644
---- a/drivers/power/supply/test_power.c
-+++ b/drivers/power/supply/test_power.c
-@@ -297,8 +297,7 @@ static int map_get_value(struct battery_property_map *map, const char *key,
- 	char buf[MAX_KEYLENGTH];
- 	int cr;
+diff --git a/drivers/scsi/ibmvscsi/ibmvscsi.c b/drivers/scsi/ibmvscsi/ibmvscsi.c
+index 17df76f0be3c..79eb8af03a19 100644
+--- a/drivers/scsi/ibmvscsi/ibmvscsi.c
++++ b/drivers/scsi/ibmvscsi/ibmvscsi.c
+@@ -1274,14 +1274,12 @@ static void send_mad_capabilities(struct ibmvscsi_host_data *hostdata)
+ 	if (hostdata->client_migrated)
+ 		hostdata->caps.flags |= cpu_to_be32(CLIENT_MIGRATED);
  
--	strncpy(buf, key, MAX_KEYLENGTH);
--	buf[MAX_KEYLENGTH-1] = '\0';
-+	strlcpy(buf, key, MAX_KEYLENGTH);
+-	strncpy(hostdata->caps.name, dev_name(&hostdata->host->shost_gendev),
++	strlcpy(hostdata->caps.name, dev_name(&hostdata->host->shost_gendev),
+ 		sizeof(hostdata->caps.name));
+-	hostdata->caps.name[sizeof(hostdata->caps.name) - 1] = '\0';
  
- 	cr = strnlen(buf, MAX_KEYLENGTH) - 1;
- 	if (cr < 0)
+ 	location = of_get_property(of_node, "ibm,loc-code", NULL);
+ 	location = location ? location : dev_name(hostdata->dev);
+-	strncpy(hostdata->caps.loc, location, sizeof(hostdata->caps.loc));
+-	hostdata->caps.loc[sizeof(hostdata->caps.loc) - 1] = '\0';
++	strlcpy(hostdata->caps.loc, location, sizeof(hostdata->caps.loc));
+ 
+ 	req->common.type = cpu_to_be32(VIOSRP_CAPABILITIES_TYPE);
+ 	req->buffer = cpu_to_be64(hostdata->caps_addr);
 -- 
 2.17.1
 
