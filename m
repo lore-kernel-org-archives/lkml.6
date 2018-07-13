@@ -6,72 +6,132 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A08E6ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBE6ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:29:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67765214AB
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:27:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67765214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E79A620870
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:28:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79A620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388059AbeGMDjg (ORCPT
+        id S2387888AbeGMDld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 23:39:36 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33496 "EHLO mx1.redhat.com"
+        Thu, 12 Jul 2018 23:41:33 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55779 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387615AbeGMDjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 23:39:35 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2A3AD72632;
-        Fri, 13 Jul 2018 03:27:00 +0000 (UTC)
-Received: from redhat.com (ovpn-112-30.rdu2.redhat.com [10.10.112.30])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 0902E2026D68;
-        Fri, 13 Jul 2018 03:26:57 +0000 (UTC)
-Date:   Fri, 13 Jul 2018 06:26:57 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     tiwei.bie@intel.com, jasowang@redhat.com,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        virtio-dev@lists.oasis-open.org, wexu@redhat.com,
-        jfreimann@redhat.com
-Subject: Re: [PATCH net-next v2 0/5] virtio: support packed ring
-Message-ID: <20180713062627-mutt-send-email-mst@kernel.org>
-References: <20180711022711.7090-1-tiwei.bie@intel.com>
- <20180712.144458.2076041018423659380.davem@davemloft.net>
+        id S2387722AbeGMDld (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 23:41:33 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8CD5B7C89A07E;
+        Fri, 13 Jul 2018 11:28:53 +0800 (CST)
+Received: from [127.0.0.1] (10.111.220.140) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
+ 11:28:48 +0800
+Subject: Re: [PATCH 2/5] f2fs: clear the remaining prefree_map of the section
+To:     Chao Yu <yuchao0@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
+ <1531408170-45758-3-git-send-email-yunlong.song@huawei.com>
+ <c9a3972b-dc52-19ca-7ed0-2f754d89ab33@huawei.com>
+From:   Yunlong Song <yunlong.song@huawei.com>
+Message-ID: <75dc9cad-8166-82c5-e085-88c9623f5c5e@huawei.com>
+Date:   Fri, 13 Jul 2018 11:28:22 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180712.144458.2076041018423659380.davem@davemloft.net>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 13 Jul 2018 03:27:00 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 13 Jul 2018 03:27:00 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <c9a3972b-dc52-19ca-7ed0-2f754d89ab33@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.111.220.140]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 02:44:58PM -0700, David Miller wrote:
-> From: Tiwei Bie <tiwei.bie@intel.com>
-> Date: Wed, 11 Jul 2018 10:27:06 +0800
-> 
-> > Hello everyone,
-> > 
-> > This patch set implements packed ring support in virtio driver.
-> > 
-> > Some functional tests have been done with Jason's
-> > packed ring implementation in vhost:
-> > 
-> > https://lkml.org/lkml/2018/7/3/33
-> > 
-> > Both of ping and netperf worked as expected.
-> 
-> Michael and Jason, where are we with this series?
+round 1: section bitmap : 1 1 1 1 1, all valid, prefree_map: 0 0 0 0 0
+then rm data block NO.2, block NO.2 becomes invalid, prefree_map: 0 0 1 0 0
+write_checkpoint: section bitmap: 1 1 0 1 1, prefree_map: 0 0 0 0 0, 
+prefree of NO.2 is cleared, and no discard issued
 
-I'm at netdev, won't be able to review before Monday.
+round2: rm data block NO.0, NO.1, NO.3, NO.4
+all invalid, but prefree bit of NO.2 is set and cleared in round1, then 
+prefree_map: 1 1 0 1 1
+write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1, no 
+valid blocks of this section, so discard issued
+but this time prefree bit of NO.3 and NO.4 is skipped...
+
+round3:
+write_checkpoint: section bitmap: 0 0 0 0 0, prefree_map: 0 0 0 1 1 - > 
+0 0 0 0 0, no valid blocks of this section, so discard issued
+this time prefree bit of NO.3 and NO.4 is cleared, but the discard of 
+this section is sent again...
+
+On 2018/7/13 11:13, Chao Yu wrote:
+> On 2018/7/12 23:09, Yunlong Song wrote:
+>> For the case when sbi->segs_per_sec > 1, take section:segment = 5 for
+>> example, if the section prefree_map is ...previous section | current
+>> section (1 1 0 1 1) | next section..., then the start = x, end = x + 1,
+>> after start = start_segno + sbi->segs_per_sec, start = x + 5, then it
+>> will skip x + 3 and x + 4, but their bitmap is still set, which will
+>> cause duplicated f2fs_issue_discard of this same section in the next
+>> write_checkpoint, so fix it.
+> I didn't get it, if # 2 segment is not prefree state, so it still has valid
+> blocks there, so we won't issue discard due to below condition, right?
+>
+> 		if (!IS_CURSEC(sbi, secno) &&
+> 			!get_valid_blocks(sbi, start, true))
+>
+> Thanks,
+>
+>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>> ---
+>>   fs/f2fs/segment.c | 19 +++++++++++++++++--
+>>   1 file changed, 17 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>> index 47b6595..fd38b61 100644
+>> --- a/fs/f2fs/segment.c
+>> +++ b/fs/f2fs/segment.c
+>> @@ -1684,8 +1684,23 @@ void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+>>   		start = start_segno + sbi->segs_per_sec;
+>>   		if (start < end)
+>>   			goto next;
+>> -		else
+>> -			end = start - 1;
+>> +		else {
+>> +			start_segno = start;
+>> +
+>> +			while (1) {
+>> +				start = find_next_bit(prefree_map, start_segno,
+>> +									end + 1);
+>> +				if (start >= start_segno)
+>> +					break;
+>> +				end = find_next_zero_bit(prefree_map, start_segno,
+>> +										start + 1);
+>> +				for (i = start; i < end; i++)
+>> +					clear_bit(i, prefree_map);
+>> +				dirty_i->nr_dirty[PRE] -= end - start;
+>> +			}
+>> +
+>> +			end = start_segno - 1;
+>> +		}
+>>   	}
+>>   	mutex_unlock(&dirty_i->seglist_lock);
+>>   
+>>
+>
+> .
+>
 
 -- 
-MST
+Thanks,
+Yunlong Song
+
+
