@@ -3,32 +3,33 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0D33ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D4BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58822087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58822087A
+	by mail.kernel.org (Postfix) with ESMTP id B0EA92087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0EA92087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387747AbeGMO3G (ORCPT
+        id S2387797AbeGMO3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:29:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41108 "EHLO mx1.redhat.com"
+        Fri, 13 Jul 2018 10:29:10 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59808 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729998AbeGMO3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:29:05 -0400
+        id S2387749AbeGMO3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 10:29:10 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E69F54072CC7;
-        Fri, 13 Jul 2018 14:14:15 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id C4E83402332F;
+        Fri, 13 Jul 2018 14:14:20 +0000 (UTC)
 Received: from plouf.banquise.eu.com (ovpn-116-134.ams2.redhat.com [10.36.116.134])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 986721C67D;
-        Fri, 13 Jul 2018 14:14:14 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 706A31C719;
+        Fri, 13 Jul 2018 14:14:19 +0000 (UTC)
 From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
@@ -36,130 +37,55 @@ Cc:     Mario.Limonciello@dell.com,
         Peter Hutterer <peter.hutterer@who-t.net>,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH v4 09/12] HID: microsoft: support the Surface Dial
-Date:   Fri, 13 Jul 2018 16:13:51 +0200
-Message-Id: <20180713141354.7286-10-benjamin.tissoires@redhat.com>
+Subject: [PATCH v4 11/12] HID: multitouch: touchscreens also use confidence reports
+Date:   Fri, 13 Jul 2018 16:13:53 +0200
+Message-Id: <20180713141354.7286-12-benjamin.tissoires@redhat.com>
 In-Reply-To: <20180713141354.7286-1-benjamin.tissoires@redhat.com>
 References: <20180713141354.7286-1-benjamin.tissoires@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 13 Jul 2018 14:14:15 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 13 Jul 2018 14:14:15 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 13 Jul 2018 14:14:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 13 Jul 2018 14:14:20 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tool works nicely with hid-generic, but it ends up creating 9
-different input nodes with most of them only having ABS_MISC set.
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Filter the axis out, which reduces the amount of devices to 2. One is
-the proper System Multi-axis collection, the other exported device
-seems to provide SLEEP and POWER Key, not sure how one can trigger
-those events though.
+According to [1] the confidence is used not only by touchpad devices,
+but also by touchscreens.
 
-Filtering the ABS_X and ABS_Y axes also prevents udev to detect this as
-a touchscreen.
+[1] https://docs.microsoft.com/en-us/windows-hardware/design/component-guidelines/touchscreen-required-hid-top-level-collections
 
 Acked-by: Peter Hutterer <peter.hutterer@who-t.net>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+[rebased]
 Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
 ---
 
 no changes in v4
 no changes in v3
-no changes in v2
----
- drivers/hid/hid-microsoft.c | 49 +++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 43 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hid/hid-microsoft.c b/drivers/hid/hid-microsoft.c
-index 96e7d3231d2f..72d983626afd 100644
---- a/drivers/hid/hid-microsoft.c
-+++ b/drivers/hid/hid-microsoft.c
-@@ -22,12 +22,13 @@
+no changes in v2 (compared to Dmitry's initial submission)
+---
+ drivers/hid/hid-multitouch.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 587369443f50..3464adab0085 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -734,7 +734,8 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 		case HID_DG_CONFIDENCE:
+ 			if ((cls->name == MT_CLS_WIN_8 ||
+ 				cls->name == MT_CLS_WIN_8_DUAL) &&
+-				field->application == HID_DG_TOUCHPAD)
++				(field->application == HID_DG_TOUCHPAD ||
++				 field->application == HID_DG_TOUCHSCREEN))
+ 				app->quirks |= MT_QUIRK_CONFIDENCE;
  
- #include "hid-ids.h"
- 
--#define MS_HIDINPUT		0x01
--#define MS_ERGONOMY		0x02
--#define MS_PRESENTER		0x04
--#define MS_RDESC		0x08
--#define MS_NOGET		0x10
--#define MS_DUPLICATE_USAGES	0x20
-+#define MS_HIDINPUT		BIT(0)
-+#define MS_ERGONOMY		BIT(1)
-+#define MS_PRESENTER		BIT(2)
-+#define MS_RDESC		BIT(3)
-+#define MS_NOGET		BIT(4)
-+#define MS_DUPLICATE_USAGES	BIT(5)
-+#define MS_SURFACE_DIAL		BIT(6)
- 
- static __u8 *ms_report_fixup(struct hid_device *hdev, __u8 *rdesc,
- 		unsigned int *rsize)
-@@ -130,6 +131,30 @@ static int ms_presenter_8k_quirk(struct hid_input *hi, struct hid_usage *usage,
- 	return 1;
- }
- 
-+static int ms_surface_dial_quirk(struct hid_input *hi, struct hid_field *field,
-+		struct hid_usage *usage, unsigned long **bit, int *max)
-+{
-+	switch (usage->hid & HID_USAGE_PAGE) {
-+	case 0xff070000:
-+		/* fall-through */
-+	case HID_UP_DIGITIZER:
-+		/* ignore those axis */
-+		return -1;
-+	case HID_UP_GENDESK:
-+		switch (usage->hid) {
-+		case HID_GD_X:
-+			/* fall-through */
-+		case HID_GD_Y:
-+			/* fall-through */
-+		case HID_GD_RFKILL_BTN:
-+			/* ignore those axis */
-+			return -1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int ms_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 		struct hid_field *field, struct hid_usage *usage,
- 		unsigned long **bit, int *max)
-@@ -146,6 +171,13 @@ static int ms_input_mapping(struct hid_device *hdev, struct hid_input *hi,
- 			ms_presenter_8k_quirk(hi, usage, bit, max))
- 		return 1;
- 
-+	if (quirks & MS_SURFACE_DIAL) {
-+		int ret = ms_surface_dial_quirk(hi, field, usage, bit, max);
-+
-+		if (ret)
-+			return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -229,6 +261,9 @@ static int ms_probe(struct hid_device *hdev, const struct hid_device_id *id)
- 	if (quirks & MS_NOGET)
- 		hdev->quirks |= HID_QUIRK_NOGET;
- 
-+	if (quirks & MS_SURFACE_DIAL)
-+		hdev->quirks |= HID_QUIRK_INPUT_PER_APP;
-+
- 	ret = hid_parse(hdev);
- 	if (ret) {
- 		hid_err(hdev, "parse failed\n");
-@@ -281,6 +316,8 @@ static const struct hid_device_id ms_devices[] = {
- 
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_PRESENTER_8K_BT),
- 		.driver_data = MS_PRESENTER },
-+	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_MICROSOFT, 0x091B),
-+		.driver_data = MS_SURFACE_DIAL },
- 	{ }
- };
- MODULE_DEVICE_TABLE(hid, ms_devices);
+ 			if (app->quirks & MT_QUIRK_CONFIDENCE)
 -- 
 2.14.3
 
