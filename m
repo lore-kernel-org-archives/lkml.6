@@ -2,101 +2,95 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E456BECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:21:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6080ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:23:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9682089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:21:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F9682089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 427E020840
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:23:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 427E020840
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731397AbeGMQfi (ORCPT
+        id S1731446AbeGMQiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 12:35:38 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:38909 "EHLO mail.bootlin.com"
+        Fri, 13 Jul 2018 12:38:50 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:20910 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729592AbeGMQfi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 12:35:38 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C211E20922; Fri, 13 Jul 2018 18:20:17 +0200 (CEST)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9502E2074F;
-        Fri, 13 Jul 2018 18:20:07 +0200 (CEST)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     "David S. Miller" <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Yelena Krivosheev <yelena@marvell.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Marcin Wojtas <mw@semihalf.com>,
-        Dmitri Epshtein <dima@marvell.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?UTF-8?q?Miqu=C3=A8l=20Raynal?= <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: [PATCH net-next v2 0/7] A fix and a few improvements on mvneta
-Date:   Fri, 13 Jul 2018 18:18:34 +0200
-Message-Id: <20180713161841.11202-1-gregory.clement@bootlin.com>
-X-Mailer: git-send-email 2.18.0
+        id S1729779AbeGMQiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 12:38:50 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 41Rylk18chz9ttFX;
+        Fri, 13 Jul 2018 18:23:14 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id r2J8o7dh7j7g; Fri, 13 Jul 2018 18:23:14 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 41Rylk0DkPz9ttCT;
+        Fri, 13 Jul 2018 18:23:14 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4E4908B8A8;
+        Fri, 13 Jul 2018 18:23:30 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id aWIK0WLWb1sD; Fri, 13 Jul 2018 18:23:30 +0200 (CEST)
+Received: from po14934vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.4])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 232818B75A;
+        Fri, 13 Jul 2018 18:23:30 +0200 (CEST)
+Received: by po14934vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id E7E81711EC; Fri, 13 Jul 2018 16:23:29 +0000 (UTC)
+Message-Id: <cover.1531498345.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [RFC PATCH v1 0/4] KASAN for nohash PPC32
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        aneesh.kumar@linux.ibm.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Date:   Fri, 13 Jul 2018 16:23:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This serie adds support to nohash PPC32
 
-This series brings some improvements for the mvneta driver and also
-adds a fix.
+Tested on MPC8xx
 
-Compared to the v1, the main change is the a new patch fixing a bug
-which is visible in net-next. Now the mvneta driver just crashes when
-opening on Armada 37xx. As indicated in the patch, the bug was there
-since many releases but the problem is only visible now.
+Christophe Leroy (4):
+  powerpc/mm: prepare kernel for KAsan on PPC32
+  powerpc: add missing header in pgtable-types.h
+  powerpc/32: Move early_init() in a separate file
+  powerpc/nohash32: Add KASAN support
 
-The series had been tested on ARM32 (clearfog) and ARM64
-(EspressoBin), with and without hardware buffer management.
-
-Gregory
-
-Chnagelog:
-v1 -> v2
-
- - In patch 2, use EXPORT_SYMBOL_GPL for mvneta_bm_get and
-   mvneta_bm_put to be used in module, reported by kbuild test robot.
-
- - In patch 4, add the counter to the driver's ethtool state,
-   suggested by David Miller.
-
- - In patch 6, use a single if, suggested by Marcin Wojtas
-
-Andrew Lunn (1):
-  net: ethernet: mvneta: Fix napi structure mixup on armada 3700
-
-Gregory CLEMENT (3):
-  net: mvneta: remove data pointer usage from device_node structure
-  net: mvneta: discriminate error cause for missed packet
-  net: mvneta: Allocate page for the descriptor
-
-Yelena Krivosheev (3):
-  net: mvneta: increase number of buffers in RX and TX queue
-  net: mvneta: Verify hardware checksum only when offload checksum
-    feature is set
-  net: mvneta: Improve the buffer allocation method for SWBM
-
- drivers/net/ethernet/marvell/mvneta.c    | 412 ++++++++++++++---------
- drivers/net/ethernet/marvell/mvneta_bm.c |  15 +
- drivers/net/ethernet/marvell/mvneta_bm.h |   8 +-
- 3 files changed, 274 insertions(+), 161 deletions(-)
+ arch/powerpc/Kconfig                         |  1 +
+ arch/powerpc/include/asm/kasan.h             | 21 ++++++++
+ arch/powerpc/include/asm/nohash/32/pgtable.h |  2 +
+ arch/powerpc/include/asm/pgtable-types.h     |  2 +
+ arch/powerpc/include/asm/ppc_asm.h           |  5 ++
+ arch/powerpc/include/asm/setup.h             |  5 ++
+ arch/powerpc/include/asm/string.h            | 14 ++++++
+ arch/powerpc/kernel/Makefile                 |  5 +-
+ arch/powerpc/kernel/cputable.c               |  4 +-
+ arch/powerpc/kernel/early_32.c               | 35 +++++++++++++
+ arch/powerpc/kernel/setup-common.c           |  2 +
+ arch/powerpc/kernel/setup_32.c               | 33 ++-----------
+ arch/powerpc/lib/Makefile                    |  2 +
+ arch/powerpc/lib/copy_32.S                   |  9 ++--
+ arch/powerpc/mm/Makefile                     |  3 ++
+ arch/powerpc/mm/dump_linuxpagetables.c       |  8 +++
+ arch/powerpc/mm/kasan_init.c                 | 73 ++++++++++++++++++++++++++++
+ arch/powerpc/mm/mem.c                        |  4 ++
+ 18 files changed, 193 insertions(+), 35 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/kasan.h
+ create mode 100644 arch/powerpc/kernel/early_32.c
+ create mode 100644 arch/powerpc/mm/kasan_init.c
 
 -- 
-2.18.0
+2.13.3
 
