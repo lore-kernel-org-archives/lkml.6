@@ -2,195 +2,117 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8206BECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:13:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F5CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:15:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D0D1208A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:13:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D0D1208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 107CC208A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:15:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 107CC208A4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729768AbeGMN1z (ORCPT
+        id S1729736AbeGMNaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 09:27:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40646 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728289AbeGMN1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 09:27:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D111AAC4F;
-        Fri, 13 Jul 2018 13:13:16 +0000 (UTC)
-Date:   Fri, 13 Jul 2018 15:13:14 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     ufo19890607@gmail.com
-Cc:     akpm@linux-foundation.org, rientjes@google.com,
-        kirill.shutemov@linux.intel.com, aarcange@redhat.com,
-        penguin-kernel@i-love.sakura.ne.jp, guro@fb.com,
-        yang.s@alibaba-inc.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, yuzhoujian@didichuxing.com
-Subject: Re: [PATCH v13 2/2] Add oom victim's memcg to the oom context
- information
-Message-ID: <20180713131314.GC19960@dhcp22.suse.cz>
-References: <1531482952-4595-1-git-send-email-ufo19890607@gmail.com>
+        Fri, 13 Jul 2018 09:30:10 -0400
+Received: from ozlabs.org ([203.11.71.1]:36861 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729623AbeGMNaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 09:30:10 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41Rtb34SWGz9ryt;
+        Fri, 13 Jul 2018 23:15:27 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        andrea.parri@amarulasolutions.com,
+        Will Deacon <will.deacon@arm.com>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nick Piggin <npiggin@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and remove it for ordinary release/acquire
+In-Reply-To: <20180713110851.GY2494@hirez.programming.kicks-ass.net>
+References: <20180712134821.GT2494@hirez.programming.kicks-ass.net> <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org> <20180712172838.GU3593@linux.vnet.ibm.com> <20180712180511.GP2476@hirez.programming.kicks-ass.net> <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com> <20180713110851.GY2494@hirez.programming.kicks-ass.net>
+Date:   Fri, 13 Jul 2018 23:15:26 +1000
+Message-ID: <87tvp3xonl.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1531482952-4595-1-git-send-email-ufo19890607@gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 13-07-18 19:55:52, ufo19890607@gmail.com wrote:
-> From: yuzhoujian <yuzhoujian@didichuxing.com>
-> 
-> The current oom report doesn't display victim's memcg context during the
-> global OOM situation. While this information is not strictly needed, it
-> can be really helpful for containerized environments to locate which
-> container has lost a process. Now that we have a single line for the oom
-> context, we can trivially add both the oom memcg (this can be either
-> global_oom or a specific memcg which hits its hard limits) and task_memcg
-> which is the victim's memcg.
-> 
-> Below is the single line output in the oom report after this patch.
-> - global oom context information:
-> oom-kill:constraint=<constraint>,nodemask=<nodemask>,cpuset=<cpuset>,mems_allowed=<mems_allowed>,global_oom,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
-> - memcg oom context information:
-> oom-kill:constraint=<constraint>,nodemask=<nodemask>,cpuset=<cpuset>,mems_allowed=<mems_allowed>,oom_memcg=<memcg>,task_memcg=<memcg>,task=<comm>,pid=<pid>,uid=<uid>
-> 
-> Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com>
+Peter Zijlstra <peterz@infradead.org> writes:
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+> On Thu, Jul 12, 2018 at 11:10:58AM -0700, Linus Torvalds wrote:
+>> On Thu, Jul 12, 2018 at 11:05 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>> >
+>> > The locking pattern is fairly simple and shows where RCpc comes apart
+>> > from expectation real nice.
+>> 
+>> So who does RCpc right now for the unlock-lock sequence? Somebody
+>> mentioned powerpc. Anybody else?
+>
+> RISC-V followed, because the LKMM currently states it is allowed, in
+> fact LKMM is currently weaker than even PowerPC, which is what this
+> current discussion is about.
+>
+> A number of people, including myself, are arguing for stronger lock
+> ordering (RCsc) but getting the LKMM to be at least as strong as Power
+> (RCtsc as coined by Daniel) which disallows full RCpc.
+>
+>> How nasty would be be to make powerpc conform? I will always advocate
+>> tighter locking and ordering rules over looser ones..
+>
+> mpe did a micro-bench a little while ago:
+>
+>   http://lkml.iu.edu/hypermail/linux/kernel/1804.0/01990.html
+>
+> which says 30% more expensive for uncontended lock+unlock. Which I admit
+> is fairly yuck. No macro bench results though.
 
-Thanks!
+I reran some numbers today with some slightly updated tests.
 
-> ---
-> Changes since v12
-> - print cpuset information before memcg info.
-> 
->  include/linux/memcontrol.h | 14 +++++++++++---
->  mm/memcontrol.c            | 36 ++++++++++++++++++++++--------------
->  mm/oom_kill.c              |  3 ++-
->  3 files changed, 35 insertions(+), 18 deletions(-)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 6c6fb116e925..96a73f989101 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -491,8 +491,10 @@ void mem_cgroup_handle_over_high(void);
->  
->  unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
->  
-> -void mem_cgroup_print_oom_info(struct mem_cgroup *memcg,
-> -				struct task_struct *p);
-> +void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-> +		struct task_struct *p);
-> +
-> +void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg);
->  
->  static inline void mem_cgroup_oom_enable(void)
->  {
-> @@ -903,7 +905,13 @@ static inline unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
->  }
->  
->  static inline void
-> -mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-> +mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
-> +				struct task_struct *p)
-> +{
-> +}
-> +
-> +static inline void
-> +mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
->  {
->  }
->  
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e6f0d5ef320a..18deea974cfd 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -1119,32 +1119,40 @@ static const char *const memcg1_stat_names[] = {
->  
->  #define K(x) ((x) << (PAGE_SHIFT-10))
->  /**
-> - * mem_cgroup_print_oom_info: Print OOM information relevant to memory controller.
-> - * @memcg: The memory cgroup that went over limit
-> + * mem_cgroup_print_oom_context: Print OOM context information relevant to
-> + * memory controller.
-> + * @memcg: The origin memory cgroup that went over limit
->   * @p: Task that is going to be killed
->   *
->   * NOTE: @memcg and @p's mem_cgroup can be different when hierarchy is
->   * enabled
->   */
-> -void mem_cgroup_print_oom_info(struct mem_cgroup *memcg, struct task_struct *p)
-> +void mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p)
->  {
-> -	struct mem_cgroup *iter;
-> -	unsigned int i;
-> +	struct cgroup *origin_cgrp, *kill_cgrp;
->  
->  	rcu_read_lock();
-> -
-> +	if (memcg) {
-> +		pr_cont(",oom_memcg=");
-> +		pr_cont_cgroup_path(memcg->css.cgroup);
-> +	} else
-> +		pr_cont(",global_oom");
->  	if (p) {
-> -		pr_info("Task in ");
-> +		pr_cont(",task_memcg=");
->  		pr_cont_cgroup_path(task_cgroup(p, memory_cgrp_id));
-> -		pr_cont(" killed as a result of limit of ");
-> -	} else {
-> -		pr_info("Memory limit reached of cgroup ");
->  	}
-> -
-> -	pr_cont_cgroup_path(memcg->css.cgroup);
-> -	pr_cont("\n");
-> -
->  	rcu_read_unlock();
-> +}
-> +
-> +/**
-> + * mem_cgroup_print_oom_meminfo: Print OOM memory information relevant to
-> + * memory controller.
-> + * @memcg: The memory cgroup that went over limit
-> + */
-> +void mem_cgroup_print_oom_meminfo(struct mem_cgroup *memcg)
-> +{
-> +	struct mem_cgroup *iter;
-> +	unsigned int i;
->  
->  	pr_info("memory: usage %llukB, limit %llukB, failcnt %lu\n",
->  		K((u64)page_counter_read(&memcg->memory)),
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 531b2c86d4db..7fbd389ea779 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -434,10 +434,11 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
->  			oom_constraint_text[oc->constraint],
->  			nodemask_pr_args(oc->nodemask));
->  	cpuset_print_current_mems_allowed();
-> +	mem_cgroup_print_oom_context(oc->memcg, p);
->  	pr_cont(",task=%s,pid=%5d,uid=%5d\n", p->comm, p->pid,
->  		from_kuid(&init_user_ns, task_uid(p)));
->  	if (is_memcg_oom(oc))
-> -		mem_cgroup_print_oom_info(oc->memcg, p);
-> +		mem_cgroup_print_oom_meminfo(oc->memcg);
->  	else {
->  		show_mem(SHOW_MEM_FILTER_NODES, oc->nodemask);
->  		if (is_dump_unreclaim_slabs())
-> -- 
-> 2.14.1
-> 
+It varies quite a bit across machines and CPU revisions.
 
--- 
-Michal Hocko
-SUSE Labs
+On one I get:
+
+Lock/Unlock    Time             Time %    Total Cycles     Cycles  Cycles Delta
+lwsync/lwsync   79,290,859,955  100.0 %   290,160,065,087  145     -
+lwsync/sync    104,903,703,237  132.3 %   383,966,199,430  192     47
+
+Another:
+
+Lock/Unlock    Time             Time %    Total Cycles     Cycles  Cycles Delta
+lwsync/lwsync  71,662,395,722   100.0 %   252,403,777,715  126     -
+lwsync/sync    84,932,987,977   118.5 %   299,141,951,285  150     23
+
+
+So 18-32% slower, or 23-47 cycles.
+
+Next week I can do some macro benchmarks, to see if it's actually
+detectable at all.
+
+The other question is how they behave on a heavily loaded system.
+
+
+My personal preference would be to switch to sync, we don't want to be
+the only arch finding (or not finding!) exotic ordering bugs.
+
+But we'd also rather not make our slow locks any slower than they have
+to be.
+
+cheers
