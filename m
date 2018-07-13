@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3D18ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69D0ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0A8C20858
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 648E520873
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:54:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MbrKWRNy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VDJi5mQ8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0A8C20858
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nuN2R26T";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QkJgxbMW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648E520873
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729783AbeGMKID (ORCPT
+        id S1729974AbeGMKIM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 06:08:03 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50058 "EHLO
+        Fri, 13 Jul 2018 06:08:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50242 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726817AbeGMKID (ORCPT
+        with ESMTP id S1726817AbeGMKIL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 06:08:03 -0400
+        Fri, 13 Jul 2018 06:08:11 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 94D9960B7F; Fri, 13 Jul 2018 09:54:07 +0000 (UTC)
+        id 5FEFC6078C; Fri, 13 Jul 2018 09:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531475647;
-        bh=rtZFfpeeP3sYJt+dblteHR45TRoa/BXNVupV6RRD5j8=;
+        s=default; t=1531475656;
+        bh=71fUGI73NBkpOHwuXaLS9PGk+98bEPMw5LTMDCWvXXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MbrKWRNy8MojyzUf3c3c/f2lhUnMy+++t+/Wj8dXAosD7dQQbMCE6b+tUYOIEPOL4
-         1M3iD2xGoFCdC4gXTYgflCal1/qHOT3ZztwcD1pW17F1zxL2HhdCTa2k6PMC0OkowH
-         WDyib7QRoYZnFjq91ygnHpZCNtoN67DMgWnvbDa4=
+        b=nuN2R26Tn2F0CEuoHcsPDRqwwck/ms3l0RWN/HbSyZ1VV2z/9H10R67czgvyu/mlB
+         IHWAAGcB36J+Kpd2YH69h/DpQB1doW2b4Upobn4QfzVc0VXIyu21F8/G+g9WhAGsb/
+         yEqAHJ3tzYJaqS3RP1JzPLuO2xoJKn98WyBNoWqE=
 Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0F2EC60791;
-        Fri, 13 Jul 2018 09:54:01 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id D4BDA605FF;
+        Fri, 13 Jul 2018 09:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531475646;
-        bh=rtZFfpeeP3sYJt+dblteHR45TRoa/BXNVupV6RRD5j8=;
+        s=default; t=1531475655;
+        bh=71fUGI73NBkpOHwuXaLS9PGk+98bEPMw5LTMDCWvXXw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VDJi5mQ8nG7dYK9cLiE3WAdZ/WAQfdcAFw8sPayRt9xlZOZIS1MWCjFIxCdInvIWD
-         GN8q3RM+Hqs5ed9dbq16QR4CbKHqX4HpZRiD9GUkwlkBuj+fcZZxNVf04jxjKW2Prz
-         gxJK1XCeAdfUqcEqtU8c0Eu1I3F1aOf7SDzkI7sk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F2EC60791
+        b=QkJgxbMWLm3Ltm6+8G4K9cjn2Ps38r/5cTFnVYOJj+x4uYN9WfefPO7eaQt6lfp/a
+         31VSP3FrZVl7VULbArmucuF+q8jPEWgVLU4Le2iu+rH2WuzsdVz+LwrYIUIY145LZF
+         SSO6AAxQRLyAGiorgQmQI+KzZnNpsUmQvvprOJnE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D4BDA605FF
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
 From:   Sayali Lokhande <sayalil@codeaurora.org>
@@ -61,9 +61,9 @@ Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
         venkatg@codeaurora.org, vviswana@codeaurora.org,
         bjorn.andersson@linaro.org, riteshh@codeaurora.org,
         vbadigan@codeaurora.org, sayalil@codeaurora.org
-Subject: [PATCH RFC 5/7] mmc: sdhci-msm: Kconfig: select devfreq ondemand for sdhci-msm
-Date:   Fri, 13 Jul 2018 15:23:01 +0530
-Message-Id: <1531475583-7050-6-git-send-email-sayalil@codeaurora.org>
+Subject: [PATCH RFC 6/7] mmc: sdhci-msm: Enable clock scaling property
+Date:   Fri, 13 Jul 2018 15:23:02 +0530
+Message-Id: <1531475583-7050-7-git-send-email-sayalil@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1531475583-7050-1-git-send-email-sayalil@codeaurora.org>
 References: <1531475583-7050-1-git-send-email-sayalil@codeaurora.org>
@@ -72,28 +72,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SDHCI-MSM platform is using devfreq ondemand governor.
-Select devfreq governor for SDHCI-MSM platform.
+This change enables clock scaling capability for sdhci-msm
+platform driver.
 
-Signed-off-by: Ritesh Harjani <riteshh@codeaurora.org>
 Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
 ---
- drivers/mmc/host/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/mmc/host/sdhci-msm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
-index 0581c19..2ba2c62 100644
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -442,6 +442,8 @@ config MMC_SDHCI_MSM
- 	tristate "Qualcomm SDHCI Controller Support"
- 	depends on ARCH_QCOM || (ARM && COMPILE_TEST)
- 	depends on MMC_SDHCI_PLTFM
-+	select PM_DEVFREQ
-+	select DEVFREQ_GOV_SIMPLE_ONDEMAND
- 	select MMC_SDHCI_IO_ACCESSORS
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
+diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+index e9fe8c6..8846a76 100644
+--- a/drivers/mmc/host/sdhci-msm.c
++++ b/drivers/mmc/host/sdhci-msm.c
+@@ -1803,6 +1803,7 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+ 	msm_offset = msm_host->offset;
+ 
+ 	sdhci_get_of_property(pdev);
++	msm_host->mmc->caps2 |= MMC_CAP2_CLK_SCALE;
+ 
+ 	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
+ 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
 a Linux Foundation Collaborative Project
