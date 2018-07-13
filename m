@@ -2,137 +2,121 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFDEECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED2BECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5F26208A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:17:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F26208A1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 95D122087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:18:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3+jim9J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95D122087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbeGMXeG (ORCPT
+        id S1731305AbeGMXes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 19:34:06 -0400
-Received: from ipmail01.adl6.internode.on.net ([150.101.137.136]:40172 "EHLO
-        ipmail01.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727524AbeGMXeG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 19:34:06 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail01.adl6.internode.on.net with ESMTP; 14 Jul 2018 08:47:18 +0930
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1fe7JN-0006Tw-9P; Sat, 14 Jul 2018 09:17:17 +1000
-Date:   Sat, 14 Jul 2018 09:17:17 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Waiman Long <longman@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Jan Kara <jack@suse.cz>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Larry Woodman <lwoodman@redhat.com>,
-        "Wangkai (Kevin,C)" <wangkai86@huawei.com>
-Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
-Message-ID: <20180713231717.GX2234@dastard>
-References: <18c5cbfe-403b-bb2b-1d11-19d324ec6234@redhat.com>
- <1531336913.3260.18.camel@HansenPartnership.com>
- <4d49a270-23c9-529f-f544-65508b6b53cc@redhat.com>
- <1531411494.18255.6.camel@HansenPartnership.com>
- <20180712164932.GA3475@bombadil.infradead.org>
- <1531416080.18255.8.camel@HansenPartnership.com>
- <CA+55aFzfQz7c8pcMfLDaRNReNF2HaKJGoWpgB6caQjNAyjg-hA@mail.gmail.com>
- <1531425435.18255.17.camel@HansenPartnership.com>
- <20180713003614.GW2234@dastard>
- <1531496812.3361.9.camel@HansenPartnership.com>
+        Fri, 13 Jul 2018 19:34:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36848 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729580AbeGMXes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 19:34:48 -0400
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B33D4208D8
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 23:18:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531523883;
+        bh=4EaLm3wN0rac96ZCA9ahQFGB3PdOw1zsc4jCCwMooGU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=X3+jim9JdaQG6Rtn0ypQ6/EeZymFN/eUs8ttaDSceVJxLyHIVJcmZJ5m3HiDb4eVT
+         NdlglmQz8uGryr2dMUb1sFtrZJA1xnE7itj0wx7LO6Xcl511hcaQrrblhO9KnbPcUJ
+         7bDrk1EimsZAvMyyWpygbm29zdD6Unb+nutIMsWE=
+Received: by mail-wr1-f50.google.com with SMTP id r16-v6so26527418wrt.11
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 16:18:02 -0700 (PDT)
+X-Gm-Message-State: AOUpUlFYY4LRLn+gu4aKs6OsC/dq3/HfZZCCj2jcGGNYmNrlyTWmQy96
+        VKdio1WTO4xH7uRXPOrV2tUpaoDiTX8hqSlNuX6lcQ==
+X-Google-Smtp-Source: AAOMgpflTBAJ04+cj1Te8uznzB7/M++y7TIFfuXHDGjJiXxyi3BS8DxFF3/B7teuHP/z9f7OrXklnk6SXXtbRDYCObo=
+X-Received: by 2002:adf:fe42:: with SMTP id m2-v6mr5893427wrs.171.1531523881112;
+ Fri, 13 Jul 2018 16:18:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1531496812.3361.9.camel@HansenPartnership.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 16:17:40
+ -0700 (PDT)
+In-Reply-To: <CALCETrUP1QUKPLPJg6_L5=Mzmq33cSvq+NMaYW01wTCepdjCyg@mail.gmail.com>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
+ <1531308586-29340-4-git-send-email-joro@8bytes.org> <823BAA9B-FACA-4E91-BE56-315FF569297C@amacapital.net>
+ <20180713094849.5bsfpwhxzo5r5exk@8bytes.org> <CALCETrUP1QUKPLPJg6_L5=Mzmq33cSvq+NMaYW01wTCepdjCyg@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 13 Jul 2018 16:17:40 -0700
+X-Gmail-Original-Message-ID: <CALCETrUBR-TGPY7wF4UwRb7jW39H+rJ4XFen35dgJRysk9sYTQ@mail.gmail.com>
+Message-ID: <CALCETrUBR-TGPY7wF4UwRb7jW39H+rJ4XFen35dgJRysk9sYTQ@mail.gmail.com>
+Subject: Re: [PATCH 03/39] x86/entry/32: Load task stack from x86_tss.sp1 in
+ SYSENTER handler
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 08:46:52AM -0700, James Bottomley wrote:
-> On Fri, 2018-07-13 at 10:36 +1000, Dave Chinner wrote:
-> > On Thu, Jul 12, 2018 at 12:57:15PM -0700, James Bottomley wrote:
-> > > What surprises me most about this behaviour is the steadiness of
-> > > the page cache ... I would have thought we'd have shrunk it
-> > > somewhat given the intense call on the dcache.
-> > 
-> > Oh, good, the page cache vs superblock shrinker balancing still
-> > protects the working set of each cache the way it's supposed to
-> > under heavy single cache pressure. :)
-> 
-> Well, yes, but my expectation is most of the page cache is clean, so
-> easily reclaimable.  I suppose part of my surprise is that I expected
-> us to reclaim the clean caches first before we started pushing out the
-> dirty stuff and reclaiming it.  I'm not saying it's a bad thing, just
-> saying I didn't expect us to make such good decisions under the
-> parameters of this test.
+On Fri, Jul 13, 2018 at 10:19 AM, Andy Lutomirski <luto@kernel.org> wrote:
+> On Fri, Jul 13, 2018 at 2:48 AM, Joerg Roedel <joro@8bytes.org> wrote:
+>> On Thu, Jul 12, 2018 at 01:49:13PM -0700, Andy Lutomirski wrote:
+>>> > On Jul 11, 2018, at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
+>>> >    /* Offset from the sysenter stack to tss.sp0 */
+>>> > -    DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
+>>> > +    DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp1) -
+>>> >           offsetofend(struct cpu_entry_area, entry_stack_page.stack));
+>>> >
+>>>
+>>> The code reads differently. Did you perhaps mean TSS_task_stack?
+>>
+>> Well, the offset name came from TSS_sysenter_sp0, which was the offset
+>> from the sysenter_sp0 (==sysenter-stack) to the task stack in TSS, now
+>> sysenter_sp0 became entry_stack, because its used for all entry points
+>> and not only sysenter. So with the old convention the naming makes still
+>> sense, no?
+>>
+>
+> Trying to parse it certainly makes my brain hurt a bit.  This is the
+> offset from the entry stack to sp1, where sp1 is the location of the
+> pointer to the task stack.
+>
+> Maybe all the arithmetic could go in entry_32.S and the asm-offset
+> name could just be TSS_sp1, just like on 64-bit?
+>
 
-The clean caches are still turned over by the workload, but it is
-very slow and only enough to eject old objects that have fallen out
-of the working set. We've got a lot better at keeping the working
-set in memory in adverse conditions over the past few years...
-
-> > Keep in mind that the amount of work slab cache shrinkers perform is
-> > directly proportional to the amount of page cache reclaim that is
-> > performed and the size of the slab cache being reclaimed.  IOWs,
-> > under a "single cache pressure" workload we should be directing
-> > reclaim work to the huge cache creating the pressure and do very
-> > little reclaim from other caches....
-> 
-> That definitely seems to happen.  The thing I was most surprised about
-> is the steady pushing of anonymous objects to swap.  I agree the dentry
-> cache doesn't seem to be growing hugely after the initial jump, so it
-> seems to be the largest source of reclaim.
-
-Which means swap behaviour has changed since I last looked at
-reclaim balance several years ago. These sorts of dentry/inode loads
-never used to push the system to swap. Not saying it's a bad thing,
-just that it is different. :)
-
-> > [ What follows from here is conjecture, but is based on what I've
-> > seen in the past 10+ years on systems with large numbers of negative
-> > dentries and fragmented dentry/inode caches. ]
-> 
-> OK, so I fully agree with the concern about pathological object vs page
-> freeing problems (I referred to it previously).  However, I did think
-> the compaction work that's been ongoing in mm was supposed to help
-> here?
-
-Compaction doesn't touch slab caches. We can't move active dentries
-and other slab objects around in memory because they have external
-objects with active references that point directly to them. Getting
-exclusive access to active objects and all the things that point to
-them from reclaim so we can move them is an intractable problem - it
-has sunk slab cache defragmentation every time it has been attempted
-in the past 15 years....
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I re-read it again.  How about keeping TSS_entry_stack but making it
+be the offset from the TSS to the entry stack.  Then do the arithmetic
+in asm.
