@@ -2,62 +2,116 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F01ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:33:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61362ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8303F20870
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:33:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8303F20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 0EDDD20870
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:33:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/2hASTj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EDDD20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbeGMKrS (ORCPT
+        id S1729623AbeGMKr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 06:47:18 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:52306 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727147AbeGMKrS (ORCPT
+        Fri, 13 Jul 2018 06:47:29 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42712 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727147AbeGMKr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 06:47:18 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fdvNu-00084A-Ij; Fri, 13 Jul 2018 18:33:10 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fdvNs-0007CS-Ix; Fri, 13 Jul 2018 18:33:08 +0800
-Date:   Fri, 13 Jul 2018 18:33:08 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Huang nut <minhaco@hotmail.com>
-Cc:     "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] crypto: Fix Kconfig typo
-Message-ID: <20180713103308.yiy2hw2gblma3bqf@gondor.apana.org.au>
-References: <HKXPR04MB1766B902E75B2EE0698B9F37A0430@HKXPR04MB1766.apcprd04.prod.outlook.com>
+        Fri, 13 Jul 2018 06:47:29 -0400
+Received: by mail-wr1-f67.google.com with SMTP id e7-v6so5056524wrs.9
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 03:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/mTk72gQhbDl3f59Fk0kWeVwNlTNNGb9jxkZRmsGQ2w=;
+        b=L/2hASTjq7lXdvbt28XKx0SlFuAnbYGnWf7uAyQnkxqgdA0GRvUlNGBQD/tl3PXIHt
+         AQvNap6i1TqIHjEmum9nPKZAwhvHaWWZX0WI8Xo9gjR/o5+yjyipd1jUBtu+j2cjaAot
+         z1syWu590D3SFs2esK1kurcwL6iLUds7NmBJY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/mTk72gQhbDl3f59Fk0kWeVwNlTNNGb9jxkZRmsGQ2w=;
+        b=gCzQESKMmvkDz4d7pcbSWXw/y1V91p6VZaBrjEsjqlJmxIdh9uJ/KULJ/bMKhTogT4
+         bAvt/s7EODdQ0hgt8mrn37CJdm3Ru1Sn2irgSwmITymxo5W4Q1Qt5cTSP59CJ93R64by
+         JRk+I8k2oA+5cRDb6Ap3Rg7JRY7fJ52YfkK+k0Z5yPXKFYjXD2fhzIXAfLb10cudUlSM
+         gJfRKe3qSfQcxekR7mBqtTj5hZec9cuyAdAHGmiclOvB/BommTUw6sKrUYCkqqRg1Lxi
+         acP7mQDwzvqZSY5mGWR88iDAomc7gsPMQkoprsUBgOkkBrx54fMcRlyXqYC78zW8tABd
+         MgZQ==
+X-Gm-Message-State: AOUpUlGjOxn/1T9vwaMjsQEwvR5k9YNc0lkkrT50hWR6XoFfutfqotUn
+        DEA9rX+ByNnyh1fsVhxbaYpJMg==
+X-Google-Smtp-Source: AAOMgpcyzdbru+nGZQ5Y5q1f+T4bEOKS5bsr0hN/cvuMlZsnuVVJpOQX1JxvJEuPOEhD2TJ+xnbm9A==
+X-Received: by 2002:adf:d24a:: with SMTP id o10-v6mr4399465wri.229.1531478004458;
+        Fri, 13 Jul 2018 03:33:24 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id b190-v6sm10080613wma.24.2018.07.13.03.33.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 13 Jul 2018 03:33:23 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 11:33:21 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/18] kdb_support: change strncpy+truncation to strlcpy
+Message-ID: <20180713103321.thjpohla6fuszona@holly.lan>
+References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
+ <1531445158-19731-1-git-send-email-asmadeus@codewreck.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <HKXPR04MB1766B902E75B2EE0698B9F37A0430@HKXPR04MB1766.apcprd04.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1531445158-19731-1-git-send-email-asmadeus@codewreck.org>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 02, 2018 at 05:04:49AM +0000, Huang nut wrote:
-> Only find crc32-pclmul and crct10dif-pclmul.
+On Fri, Jul 13, 2018 at 03:25:58AM +0200, Dominique Martinet wrote:
+> Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
 > 
-> Signed-off-by: haco <minhaco@hotmail.com>
+> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 
-Your patch didn't make it to patchwork, possibly because it didn't
-make it to linux-crypto.  Could you please resend?
+It would have been good for you to mention in the changelog how
+you reviewed your change to verify that the extra zero padding
+from strncpy() isn't required.
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+However... I have taken a look and can't see any problem so:
+
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+
+> ---
+> 
+> Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
+> first patch of the serie) for the motivation behind this patch
+> 
+>  kernel/debug/kdb/kdb_support.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/kernel/debug/kdb/kdb_support.c b/kernel/debug/kdb/kdb_support.c
+> index 990b3cc526c8..1f6a4b6bde0b 100644
+> --- a/kernel/debug/kdb/kdb_support.c
+> +++ b/kernel/debug/kdb/kdb_support.c
+> @@ -119,8 +119,7 @@ int kdbnearsym(unsigned long addr, kdb_symtab_t *symtab)
+>  		 * What was Rusty smoking when he wrote that code?
+>  		 */
+>  		if (symtab->sym_name != knt1) {
+> -			strncpy(knt1, symtab->sym_name, knt1_size);
+> -			knt1[knt1_size-1] = '\0';
+> +			strlcpy(knt1, symtab->sym_name, knt1_size);
+>  		}
+>  		for (i = 0; i < ARRAY_SIZE(kdb_name_table); ++i) {
+>  			if (kdb_name_table[i] &&
+> -- 
+> 2.17.1
+> 
