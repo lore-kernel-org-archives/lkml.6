@@ -6,134 +6,136 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B11AAECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:32:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A22E3ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:33:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 699EC20878
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:32:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 699EC20878
+	by mail.kernel.org (Postfix) with ESMTP id 6A2C420878
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:33:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2C420878
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729775AbeGMOrr (ORCPT
+        id S1729998AbeGMOsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:47:47 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:55903 "EHLO
+        Fri, 13 Jul 2018 10:48:03 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:59379 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729644AbeGMOrr (ORCPT
+        with ESMTP id S1729644AbeGMOsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:47:47 -0400
+        Fri, 13 Jul 2018 10:48:02 -0400
 Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
  (mreue105 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0Ma2v9-1fMBFn19kF-00Lq0E; Fri, 13 Jul 2018 16:32:16 +0200
+ 0MQwFa-1fUfU635Qc-00UKJT; Fri, 13 Jul 2018 16:32:32 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Richard Weinberger <richard@nod.at>,
         Artem Bityutskiy <dedekind1@gmail.com>,
         Adrian Hunter <adrian.hunter@intel.com>
 Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Eric Biggers <ebiggers@google.com>,
         Deepa Dinamani <deepa.kernel@gmail.com>,
         linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] [RESEND] ubifs: use timespec64 for inode timestamps
-Date:   Fri, 13 Jul 2018 16:31:55 +0200
-Message-Id: <20180713143212.3142541-1-arnd@arndb.de>
+Subject: [PATCH 2/2] [RESEND] ubifs: tnc: use monotonic znode timestamp
+Date:   Fri, 13 Jul 2018 16:31:56 +0200
+Message-Id: <20180713143212.3142541-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:IElBuJ6W/+T6MXgjqxgeI1yczUE0PNei6BKdQbSmOsenVeY7w9v
- QL6u8qvodIN/lUpzF/BwtklX0alVAahBMPXnKxtkrFZV2gL6+dY1O5PrjoSl5x9PxorSOkr
- 9cu9YFwLmZIco3RhQ1nSQ1VostkVpchF2axsIMdMNkR+G+q33UwUYrO/CKkamwSiNdLIHIJ
- Nt9vU8qSWb5o4cjXZbhFw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:08QmAq6GkAY=:h0rqs/+NgadKVL3QaWjnfH
- xyxkOSGzOO9UY1dZuj0F21udTmDW0cnI3f8O2sNSrbMXyAaiKNGrMrrc3Tt1g9UEbDVfpl37y
- 9kHfspGpZrmalCvkEb9ScVMtxkCmIUmr9L2j1MTXPjOQOLbg/5pVPS/7aC8jHGKyyq8+FhtZj
- lptwVPiYNX51uTPedE98J0S62DMg8iKPJtUZGP1B/qcnAcpPIGs13jcOrulXoc8RvpEynSTVb
- WAyQvffTCMsyp26ltSAZcoYBP/QQbWtNaylMqZfNDcupyrTgN9vFTjKR3wWI06Mbc+uTXeILK
- 4EnkjsDJz91BOEQ13NFaE/aEK+1chF0SKSX7GdktpfcGLsk6JwnyGfaPaY5QFbybEEd01yHzU
- hKwUqDUeUJBlAldUPKHNeXgp4u3ASgAZ+Rdnc9KsTUOlK916GigmFymc/Wh9PCpGxg8b5oMNU
- 78/eLcoaghuJ+MoJOhgPlRZc5IwQuOSw74Iiyfz8lUZ06YSO05+CEeMP/SWQQpAcwco4TYfPx
- 1G0TRffw9YREi9N5CDUu+c9uDwWHvdZowrzemzQ69blI8+J01q1nFiAU1Ww7vPQNULb/sOsrf
- I+tZGX4h4o0/qeGFSUmMtFc/LENijedBa9oPnrQDVw0gU8oq2OWGuvaF3YubjgHGIhDvcgTX2
- krm5o4Cy5yjAWh6TKM8Lmz6pSO/7S8WDgGmOPJHvR4stmJ194pVUlXGWrjQx6XKsWXYc=
+In-Reply-To: <20180713143212.3142541-1-arnd@arndb.de>
+References: <20180713143212.3142541-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:H5cyEy/4n2rffZ+f05a5Y2q0wYJq76/yPOG+EB2VwJpzALrJQOO
+ fe1eJUMvJ7JCZdm0s6k6D5F4ju9iIg5RLrdXoW0weEONv7orS1L/EGAZXipqgxXSsbpnvjm
+ Eglp0k1Txq1FeASQY3TUd0ikRzpupGubxHi1/2P1jlQk7eIyZQMJwVgGaJfNV1ZiuTzHJ8K
+ e09HAmib2eV7mZuBPtZbA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:vpcAhTQV7XM=:DydeVvz7ZJrjTeFSGKvhPG
+ 1HLO6FU+uHYe5MN+VFbsPTDvYJA0N8Dht3rk7ELlai3yT/O3WxEzGQacL0RC8rbS+EOF8D2fk
+ Xb4aWWFc9OQjQZHG4pCSvYoNTGYW85ahmAuXDm1SiPYZZcdboq9buaPRafd/AExAt6P2muFlc
+ LqEPT0hkyv1oYXL+ivBhoqyfpWiG299PpjVbGVrCS+mU1vKKh3MlIQLnHhAOeyCoeA7Pw4MeP
+ NMFHNHUmM9FrkVZM0y+p/XIy0pRAS86aLUZ12JVZME/GCuD5lDmEngf6JF40seNm3CuXxVqy2
+ BXz3sLopmmOfkGC9E5RctIZUG3GKT208Wem867T3xeTaJmnp6mFQs0jjYHcclhyAqXnu9JrET
+ FqesXWWen8GZwU1XJLLEORY9OwNP46LY76POHMznzy94B4maNMOaKwEbz4G+jASLPMATE76pI
+ UzFZ0ZmK1qHPeTiDhWSLl5MxXLIXx7JAcYx/z+7iSK7MHTY+ewPbAVBn4PhsqA7VaRez/gaAz
+ y1psi7ZL1lMq09iuypdaBdYCqQiwxUY6Y2Fml7jzcFZrvL5ZXplJWQAeWKzj8JXify1jq5Q3E
+ lzrHiuwDyZXo6dKTp1/TqEsE8h6ji43A0iy6rFbD8e7yXraDMF4pqkAVBGYhg9js/59CyrI9v
+ V95OoNa2YNndGfs5337KwFXAt8xMW6R9Pr5IxPY28zoXeYLAmZcu6ZQjZ53s0EE7lnVQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both vfs and the on-disk inode structures can deal with fine-grained
-timestamps now, so this is the last missing piece to make ubifs
-y2038-safe on 32-bit architectures.
+The tnc uses get_seconds() based timestamps to check the age of a znode,
+which has two problems: on 32-bit architectures this may overflow in
+2038 or 2106, and it gives incorrect information when the system time
+is updated using settimeofday().
+
+Using montonic timestamps with ktime_get_seconds() solves both thes
+problems.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-I sent these two patches originally on Jun 20, but forgot to write
-back when Richard asked who should apply them.
+ fs/ubifs/shrinker.c | 2 +-
+ fs/ubifs/tnc.c      | 4 ++--
+ fs/ubifs/tnc_misc.c | 2 +-
+ fs/ubifs/ubifs.h    | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-Please pick up both patches in the ubifs tree for 4.19.
----
- fs/ubifs/file.c | 11 +++++------
- fs/ubifs/sb.c   |  6 +++---
- 2 files changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/fs/ubifs/file.c b/fs/ubifs/file.c
-index fd7eb6fe9090..02fab5c322c7 100644
---- a/fs/ubifs/file.c
-+++ b/fs/ubifs/file.c
-@@ -1365,11 +1365,10 @@ int ubifs_fsync(struct file *file, loff_t start, loff_t end, int datasync)
-  * granularity, they are not updated. This is an optimization.
-  */
- static inline int mctime_update_needed(const struct inode *inode,
--				       const struct timespec *now)
-+				       const struct timespec64 *now)
+diff --git a/fs/ubifs/shrinker.c b/fs/ubifs/shrinker.c
+index 9a9fb94a41c6..9d10cbdec2cc 100644
+--- a/fs/ubifs/shrinker.c
++++ b/fs/ubifs/shrinker.c
+@@ -71,7 +71,7 @@ static int shrink_tnc(struct ubifs_info *c, int nr, int age, int *contention)
  {
--	struct timespec64 now64 = timespec_to_timespec64(*now);
--	if (!timespec64_equal(&inode->i_mtime, &now64) ||
--	    !timespec64_equal(&inode->i_ctime, &now64))
-+	if (!timespec64_equal(&inode->i_mtime, now) ||
-+	    !timespec64_equal(&inode->i_ctime, now))
- 		return 1;
- 	return 0;
- }
-@@ -1425,7 +1424,7 @@ int ubifs_update_time(struct inode *inode, struct timespec64 *time,
-  */
- static int update_mctime(struct inode *inode)
+ 	int total_freed = 0;
+ 	struct ubifs_znode *znode, *zprev;
+-	int time = get_seconds();
++	time64_t time = ktime_get_seconds();
+ 
+ 	ubifs_assert(mutex_is_locked(&c->umount_mutex));
+ 	ubifs_assert(mutex_is_locked(&c->tnc_mutex));
+diff --git a/fs/ubifs/tnc.c b/fs/ubifs/tnc.c
+index 4a21e7f75e7a..6c497fb48b98 100644
+--- a/fs/ubifs/tnc.c
++++ b/fs/ubifs/tnc.c
+@@ -1179,7 +1179,7 @@ int ubifs_lookup_level0(struct ubifs_info *c, const union ubifs_key *key,
  {
--	struct timespec now = timespec64_to_timespec(current_time(inode));
-+	struct timespec64 now = current_time(inode);
- 	struct ubifs_inode *ui = ubifs_inode(inode);
- 	struct ubifs_info *c = inode->i_sb->s_fs_info;
+ 	int err, exact;
+ 	struct ubifs_znode *znode;
+-	unsigned long time = get_seconds();
++	time64_t time = ktime_get_seconds();
  
-@@ -1519,7 +1518,7 @@ static vm_fault_t ubifs_vm_page_mkwrite(struct vm_fault *vmf)
- 	struct page *page = vmf->page;
- 	struct inode *inode = file_inode(vmf->vma->vm_file);
- 	struct ubifs_info *c = inode->i_sb->s_fs_info;
--	struct timespec now = timespec64_to_timespec(current_time(inode));
-+	struct timespec64 now = current_time(inode);
- 	struct ubifs_budget_req req = { .new_page = 1 };
- 	int err, update_time;
+ 	dbg_tnck(key, "search key ");
+ 	ubifs_assert(key_type(c, key) < UBIFS_INVALID_KEY);
+@@ -1315,7 +1315,7 @@ static int lookup_level0_dirty(struct ubifs_info *c, const union ubifs_key *key,
+ {
+ 	int err, exact;
+ 	struct ubifs_znode *znode;
+-	unsigned long time = get_seconds();
++	time64_t time = ktime_get_seconds();
  
-diff --git a/fs/ubifs/sb.c b/fs/ubifs/sb.c
-index 8c25081a5109..fa0a982a6797 100644
---- a/fs/ubifs/sb.c
-+++ b/fs/ubifs/sb.c
-@@ -85,7 +85,7 @@ static int create_default_filesystem(struct ubifs_info *c)
- 	long long tmp64, main_bytes;
- 	__le64 tmp_le64;
- 	__le32 tmp_le32;
--	struct timespec ts;
-+	struct timespec64 ts;
+ 	dbg_tnck(key, "search and dirty key ");
  
- 	/* Some functions called from here depend on the @c->key_len filed */
- 	c->key_len = UBIFS_SK_LEN;
-@@ -301,8 +301,8 @@ static int create_default_filesystem(struct ubifs_info *c)
- 	ino->creat_sqnum = cpu_to_le64(++c->max_sqnum);
- 	ino->nlink = cpu_to_le32(2);
+diff --git a/fs/ubifs/tnc_misc.c b/fs/ubifs/tnc_misc.c
+index 93f5b7859e6f..49f647bc88f0 100644
+--- a/fs/ubifs/tnc_misc.c
++++ b/fs/ubifs/tnc_misc.c
+@@ -435,7 +435,7 @@ struct ubifs_znode *ubifs_load_znode(struct ubifs_info *c,
  
--	ktime_get_real_ts(&ts);
--	ts = timespec_trunc(ts, DEFAULT_TIME_GRAN);
-+	ktime_get_real_ts64(&ts);
-+	ts = timespec64_trunc(ts, DEFAULT_TIME_GRAN);
- 	tmp_le64 = cpu_to_le64(ts.tv_sec);
- 	ino->atime_sec   = tmp_le64;
- 	ino->ctime_sec   = tmp_le64;
+ 	zbr->znode = znode;
+ 	znode->parent = parent;
+-	znode->time = get_seconds();
++	znode->time = ktime_get_seconds();
+ 	znode->iip = iip;
+ 
+ 	return znode;
+diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
+index 04bf84d71e7b..54fb6b1cd042 100644
+--- a/fs/ubifs/ubifs.h
++++ b/fs/ubifs/ubifs.h
+@@ -758,7 +758,7 @@ struct ubifs_znode {
+ 	struct ubifs_znode *parent;
+ 	struct ubifs_znode *cnext;
+ 	unsigned long flags;
+-	unsigned long time;
++	time64_t time;
+ 	int level;
+ 	int child_cnt;
+ 	int iip;
 -- 
 2.9.0
 
