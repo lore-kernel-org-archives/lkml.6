@@ -6,213 +6,246 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A27CECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48FC1ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A1312147E
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:05:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A1312147E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 047D82147E
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:06:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 047D82147E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388030AbeGMCSE (ORCPT
+        id S2388057AbeGMCS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 22:18:04 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:9987 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387972AbeGMCSD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 22:18:03 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b4808f20001>; Thu, 12 Jul 2018 19:05:39 -0700
-Received: from HQMAIL105.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 12 Jul 2018 19:05:42 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 12 Jul 2018 19:05:42 -0700
-Received: from [10.2.167.205] (10.2.167.205) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 13 Jul
- 2018 02:05:40 +0000
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "andrea.parri@amarulasolutions.com" 
-        <andrea.parri@amarulasolutions.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nick Piggin <npiggin@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
- <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org>
- <20180712172838.GU3593@linux.vnet.ibm.com>
- <20180712180511.GP2476@hirez.programming.kicks-ass.net>
- <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
-From:   Daniel Lustig <dlustig@nvidia.com>
-Message-ID: <11b27d32-4a8a-3f84-0f25-723095ef1076@nvidia.com>
-Date:   Thu, 12 Jul 2018 19:05:39 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 12 Jul 2018 22:18:28 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9614 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387972AbeGMCS2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 22:18:28 -0400
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 45585282D3412;
+        Fri, 13 Jul 2018 10:05:54 +0800 (CST)
+Received: from [127.0.0.1] (10.177.16.168) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
+ 10:05:51 +0800
+Subject: Re: [V9fs-developer] [PATCH v2 3/6] 9p: Replace the fidlist with an
+ IDR
+To:     Matthew Wilcox <willy@infradead.org>,
+        Dominique Martinet <asmadeus@codewreck.org>
+References: <20180711210225.19730-1-willy@infradead.org>
+ <20180711210225.19730-4-willy@infradead.org>
+CC:     Latchesar Ionkov <lucho@ionkov.net>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        <linux-kernel@vger.kernel.org>, Ron Minnich <rminnich@sandia.gov>,
+        <linux-fsdevel@vger.kernel.org>,
+        <v9fs-developer@lists.sourceforge.net>
+From:   jiangyiwen <jiangyiwen@huawei.com>
+Message-ID: <5B4808FE.7010500@huawei.com>
+Date:   Fri, 13 Jul 2018 10:05:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
-X-Originating-IP: [10.2.167.205]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL105.nvidia.com (172.20.187.12)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+In-Reply-To: <20180711210225.19730-4-willy@infradead.org>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.16.168]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/12/2018 11:10 AM, Linus Torvalds wrote:
-> On Thu, Jul 12, 2018 at 11:05 AM Peter Zijlstra <peterz@infradead.org> wrote:
->>
->> The locking pattern is fairly simple and shows where RCpc comes apart
->> from expectation real nice.
+On 2018/7/12 5:02, Matthew Wilcox wrote:
+> The p9_idpool being used to allocate the IDs uses an IDR to allocate
+> the IDs ... which we then keep in a doubly-linked list, rather than in
+> the IDR which allocated them.  We can use an IDR directly which saves
+> two pointers per p9_fid, and a tiny memory allocation per p9_client.
 > 
-> So who does RCpc right now for the unlock-lock sequence? Somebody
-> mentioned powerpc. Anybody else?
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+> ---
+>  include/net/9p/client.h |  9 +++------
+>  net/9p/client.c         | 44 +++++++++++++++--------------------------
+>  2 files changed, 19 insertions(+), 34 deletions(-)
 > 
-> How nasty would be be to make powerpc conform? I will always advocate
-> tighter locking and ordering rules over looser ones..
+> diff --git a/include/net/9p/client.h b/include/net/9p/client.h
+> index 7af9d769b97d..e405729cd1c7 100644
+> --- a/include/net/9p/client.h
+> +++ b/include/net/9p/client.h
+> @@ -27,6 +27,7 @@
+>  #define NET_9P_CLIENT_H
+>  
+>  #include <linux/utsname.h>
+> +#include <linux/idr.h>
+>  
+>  /* Number of requests per row */
+>  #define P9_ROW_MAXTAG 255
+> @@ -128,8 +129,7 @@ struct p9_req_t {
+>   * @proto_version: 9P protocol version to use
+>   * @trans_mod: module API instantiated with this client
+>   * @trans: tranport instance state and API
+> - * @fidpool: fid handle accounting for session
+> - * @fidlist: List of active fid handles
+> + * @fids: All active FID handles
+>   * @tagpool - transaction id accounting for session
+>   * @reqs - 2D array of requests
+>   * @max_tag - current maximum tag id allocated
+> @@ -169,8 +169,7 @@ struct p9_client {
+>  		} tcp;
+>  	} trans_opts;
+>  
+> -	struct p9_idpool *fidpool;
+> -	struct list_head fidlist;
+> +	struct idr fids;
+>  
+>  	struct p9_idpool *tagpool;
+>  	struct p9_req_t *reqs[P9_ROW_MAXTAG];
+> @@ -188,7 +187,6 @@ struct p9_client {
+>   * @iounit: the server reported maximum transaction size for this file
+>   * @uid: the numeric uid of the local user who owns this handle
+>   * @rdir: readdir accounting structure (allocated on demand)
+> - * @flist: per-client-instance fid tracking
+>   * @dlist: per-dentry fid tracking
+>   *
+>   * TODO: This needs lots of explanation.
+> @@ -204,7 +202,6 @@ struct p9_fid {
+>  
+>  	void *rdir;
+>  
+> -	struct list_head flist;
+>  	struct hlist_node dlist;	/* list of all fids attached to a dentry */
+>  };
+>  
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 389a2904b7b3..b89c7298267c 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -908,30 +908,29 @@ static struct p9_fid *p9_fid_create(struct p9_client *clnt)
+>  {
+>  	int ret;
+>  	struct p9_fid *fid;
+> -	unsigned long flags;
+>  
+>  	p9_debug(P9_DEBUG_FID, "clnt %p\n", clnt);
+>  	fid = kmalloc(sizeof(struct p9_fid), GFP_KERNEL);
+>  	if (!fid)
+>  		return NULL;
+>  
+> -	ret = p9_idpool_get(clnt->fidpool);
+> -	if (ret < 0)
+> -		goto error;
+> -	fid->fid = ret;
+> -
+>  	memset(&fid->qid, 0, sizeof(struct p9_qid));
+>  	fid->mode = -1;
+>  	fid->uid = current_fsuid();
+>  	fid->clnt = clnt;
+>  	fid->rdir = NULL;
+> -	spin_lock_irqsave(&clnt->lock, flags);
+> -	list_add(&fid->flist, &clnt->fidlist);
+> -	spin_unlock_irqrestore(&clnt->lock, flags);
+> +	fid->fid = 0;
+>  
+> -	return fid;
+> +	idr_preload(GFP_KERNEL);
+
+It is best to use GFP_NOFS instead, or else it may cause some
+unpredictable problem, because when out of memory it will
+reclaim memory from v9fs.
+
+> +	spin_lock_irq(&clnt->lock);
+> +	ret = idr_alloc_u32(&clnt->fids, fid, &fid->fid, P9_NOFID - 1,
+> +			GFP_NOWAIT);
+> +	spin_unlock_irq(&clnt->lock);
+
+use spin_lock instead, clnt->lock is not used in irq context.
+
+> +	idr_preload_end();
+> +
+> +	if (!ret)
+> +		return fid;
+>  
+> -error:
+>  	kfree(fid);
+>  	return NULL;
+>  }
+> @@ -943,9 +942,8 @@ static void p9_fid_destroy(struct p9_fid *fid)
+>  
+>  	p9_debug(P9_DEBUG_FID, "fid %d\n", fid->fid);
+>  	clnt = fid->clnt;
+> -	p9_idpool_put(fid->fid, clnt->fidpool);
+>  	spin_lock_irqsave(&clnt->lock, flags);
+> -	list_del(&fid->flist);
+> +	idr_remove(&clnt->fids, fid->fid);
+>  	spin_unlock_irqrestore(&clnt->lock, flags);
+>  	kfree(fid->rdir);
+>  	kfree(fid);
+> @@ -1028,7 +1026,7 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+>  	memcpy(clnt->name, client_id, strlen(client_id) + 1);
+>  
+>  	spin_lock_init(&clnt->lock);
+> -	INIT_LIST_HEAD(&clnt->fidlist);
+> +	idr_init(&clnt->fids);
+>  
+>  	err = p9_tag_init(clnt);
+>  	if (err < 0)
+> @@ -1048,18 +1046,12 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+>  		goto destroy_tagpool;
+>  	}
+>  
+> -	clnt->fidpool = p9_idpool_create();
+> -	if (IS_ERR(clnt->fidpool)) {
+> -		err = PTR_ERR(clnt->fidpool);
+> -		goto put_trans;
+> -	}
+> -
+>  	p9_debug(P9_DEBUG_MUX, "clnt %p trans %p msize %d protocol %d\n",
+>  		 clnt, clnt->trans_mod, clnt->msize, clnt->proto_version);
+>  
+>  	err = clnt->trans_mod->create(clnt, dev_name, options);
+>  	if (err)
+> -		goto destroy_fidpool;
+> +		goto put_trans;
+>  
+>  	if (clnt->msize > clnt->trans_mod->maxsize)
+>  		clnt->msize = clnt->trans_mod->maxsize;
+> @@ -1072,8 +1064,6 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+>  
+>  close_trans:
+>  	clnt->trans_mod->close(clnt);
+> -destroy_fidpool:
+> -	p9_idpool_destroy(clnt->fidpool);
+>  put_trans:
+>  	v9fs_put_trans(clnt->trans_mod);
+>  destroy_tagpool:
+> @@ -1086,7 +1076,8 @@ EXPORT_SYMBOL(p9_client_create);
+>  
+>  void p9_client_destroy(struct p9_client *clnt)
+>  {
+> -	struct p9_fid *fid, *fidptr;
+> +	struct p9_fid *fid;
+> +	int id;
+>  
+>  	p9_debug(P9_DEBUG_MUX, "clnt %p\n", clnt);
+>  
+> @@ -1095,14 +1086,11 @@ void p9_client_destroy(struct p9_client *clnt)
+>  
+>  	v9fs_put_trans(clnt->trans_mod);
+>  
+> -	list_for_each_entry_safe(fid, fidptr, &clnt->fidlist, flist) {
+> +	idr_for_each_entry(&clnt->fids, fid, id) {
+>  		pr_info("Found fid %d not clunked\n", fid->fid);
+>  		p9_fid_destroy(fid);
+>  	}
+>  
+> -	if (clnt->fidpool)
+> -		p9_idpool_destroy(clnt->fidpool);
+> -
+
+I suggest add idr_destroy in the end.
+
+>  	p9_tag_cleanup(clnt);
+>  
+>  	kfree(clnt);
 > 
->             Linus
-
-RISC-V probably would have been RCpc if we weren't having this discussion.
-Depending on how we map atomics/acquire/release/unlock/lock, we can end up
-producing RCpc, "RCtso" (feel free to find a better name here...), or RCsc
-behaviors, and we're trying to figure out which we actually need.
-
-I think the debate is this:
-
-Obviously programmers would prefer just to have RCsc and not have to figure out
-all the complexity of the other options.  On x86 or architectures with native
-RCsc operations (like ARMv8), that's generally easy enough to get.
-
-For weakly-ordered architectures that use fences for ordering (including
-PowerPC and sometimes RISC-V, see below), though, it takes extra fences to go
-from RCpc to either "RCtso" or RCsc.  People using these architectures are
-concerned about whether there's a negative performance impact from those extra
-fences.
-
-However, some scheduler code, some RCU code, and probably some other examples
-already implicitly or explicitly assume unlock()/lock() provides stronger
-ordering than RCpc.  So, we have to decide whether to:
-1) define unlock()/lock() to enforce "RCtso" or RCsc, insert more fences on
-PowerPC and RISC-V accordingly, and probably negatively regress PowerPC
-2) leave unlock()/lock() as enforcing only RCpc, fix any code that currently
-assumes something stronger than RCpc is being provided, and hope people don't
-get it wrong in the future
-3) some mixture like having unlock()/lock() be "RCtso" but smp_store_release()/
-smp_cond_load_acquire() be only RCpc
-
-Also, FWIW, if other weakly-ordered architectures come along in the future and
-also use any kind of lightweight fence rather than native RCsc operations,
-they'll likely be in the same boat as RISC-V and Power here, in the sense of
-not providing RCsc by default either.
-
-Is that a fair assessment everyone?
 
 
-
-I can also not-so-briefly summarize RISC-V's status here, since I think there's
-been a bunch of confusion about where we're coming from:
-
-First of all, I promise we're not trying to start a fight about all this :)
-We're trying to understand the LKMM requirements so we know what instructions
-to use.
-
-With that, the easy case: RISC-V is RCsc if we use AMOs or load-reserved/
-store-conditional, all of which have RCsc .aq and .rl bits:
-
-  (a) ...
-  amoswap.w.rl x0, x0, [lock]  // unlock()
-  ...
-loop:
-  amoswap.w.aq a0, t1, [lock]  // lock()
-  bnez a0, loop                // lock()
-  (b) ...
-
-(a) is ordered before (b) here, regardless of (a) and (b).  Likewise for our
-load-reserved/store-conditional instructions, which also have .aq and rl.
-That's similiar to how ARM behaves, and is no problem.  We're happy with that
-too.
-
-Unfortunately, we don't (currently?) have plain load-acquire or store-release
-opcodes in the ISA.  (That's a different discussion...)  For those, we need
-fences instead.  And that's where it gets messier.
-
-RISC-V *would* end up providing only RCpc if we use what I'd argue is the most
-"natural" fence-based mapping for store-release operations, and then pair that
-with LR/SC:
-
-  (a) ...
-  fence rw,w     // unlock()
-  sw x0, [lock]  // unlock()
-  ...
-loop:
-  lr.w.aq a0, [lock]  // lock()
-  sc.w t1, [lock]     // lock()
-  bnez loop           // lock()
-  (b) ...
-
-However, if (a) and (b) are loads to different addresses, then (a) is not
-ordered before (b) here.  One unpaired RCsc operation is not a full fence.
-Clearly "fence rw,w" is not sufficient if the scheduler, RCU, and elsewhere
-depend on "RCtso" or RCsc.
-
-RISC-V can get back to "RCtso", matching PowerPC, by using a stronger fence:
-
-  (a) ...
-  fence.tso      // unlock(), fence.tso == fence rw,w + fence r,r
-  sw x0, [lock]  // unlock()
-  ...
-loop:
-  lr.w.aq a0, [lock]  // lock()
-  sc.w t1, [lock]     // lock()
-  bnez loop           // lock()
-  (b) ...
-
-(a) is ordered before (b), unless (a) is a store and (b) is a load to a
-different address.
-
-(Modeling note: this example is why I asked for Alan's v3 patch over the v2
-patch, which I believe would only have worked if the fence.tso were at the end)
-
-To get full RCsc here, we'd need a fence rw,rw in between the unlock store and
-the lock load, much like PowerPC would I believe need a heavyweight sync:
-
-  (a) ...
-  fence rw,w     // unlock()
-  sw x0, [lock]  // unlock()
-  ...
-  fence rw,rw    // can attach either to lock() or to unlock()
-  ...
-loop:
-  lr.w.aq a0, [lock]  // lock()
-  sc.w t1, [lock]     // lock()
-  bnez loop           // lock()
-  (b) ...
-
-In general, RISC-V's fence.tso will suffice wherever PowerPC's lwsync does, and
-RISC-V's fence rw,rw will suffice wherever PowerPC's full sync does.  If anyone
-is claiming RISC-V is suddenly proposing to go weaker than all the other major
-architectures, that's a mischaracterization.
-
-All in all: if LKMM wants RCsc, we can do it, but it's not free for RISC-V (or
-Power).  If LKMM wants RCtso, we can do that too, and that's in between.  If
-LKMM wants RCpc, we can do that, and it's the fastest of the bunch.  No I don't
-have concrete numbers either...  And RISC-V implementations are going to vary
-pretty widely anyway.
-
-Hope that helps.  Please correct anything I screwed up or mischaracterized.
-
-Dan
