@@ -2,101 +2,194 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB7AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729F2ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1115208A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:38:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n1Np7tKR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1115208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 13A1E2083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:41:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13A1E2083B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731884AbeGMQxx (ORCPT
+        id S1731620AbeGMQ5H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 12:53:53 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:43999 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729770AbeGMQxx (ORCPT
+        Fri, 13 Jul 2018 12:57:07 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:39628 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729275AbeGMQ5H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 12:53:53 -0400
-Received: by mail-pf0-f195.google.com with SMTP id y8-v6so22930029pfm.10
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 09:38:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9qg/rtsxPLZxuNk0h/sfr1DbEOSQDWGiy3pXY16pKfY=;
-        b=n1Np7tKR2qxrdIOSLFTpw+rDB2XPb3z/6WCNqiDRXcap5nxeGiuVn2OB55oHv7+iQM
-         RelNlQ3+4lxpUbksC9JXtMhvDqVMrhovmbiPuPzGFukIBVGj+Y6lUqRdGEvMk6c+v6Ji
-         1kZofjdigKGKKUxxtjw9BxY6IQUZMI1vgj3uw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9qg/rtsxPLZxuNk0h/sfr1DbEOSQDWGiy3pXY16pKfY=;
-        b=B46Tt1ExPBnitoYK+b9JYL+Vis608GUWnJhk5nH/a4uK+PxxvnoaVApGfaBhKeucbn
-         hKgTwF5Bz6xO1v9wKIipg9bHyA2/zMFEQSF2SBkc5mUnS7td/SCE7sU5PZOdG3DDebR4
-         5f6EHiv7wMKezU99auz1kaPP1c4Hd7S/d4mTcFo0KHJcZlCknbfVR61XJfHspqaseomN
-         M+ImSianqmEXOivq4nrEkKba6i+W7A3RaWjAnhY1Uebq3kvRSMkj6vu7p1IMCDcdSWSX
-         EecyoY1mH8WdKE7T7MomT1M38B/20zqwp2ToWP7Nc/OUW2ACNfQKXlcpTwmsg3dhZECq
-         uLXQ==
-X-Gm-Message-State: AOUpUlHr274teej0bZ0PhrCyneQG2UJDInZQwISjHx0kzdnCJLyC2Pbf
-        kQy47ZJ+AuOmrqcyUTSxoZF07g==
-X-Google-Smtp-Source: AAOMgpegBRg4npgH7wgU+1nTfgi0LGJAWAc7c92IS7z6xGQllWzhxmb2yPuaB3Yy2ZFh39MdMHTTkw==
-X-Received: by 2002:a62:9f16:: with SMTP id g22-v6mr7722810pfe.207.1531499909660;
-        Fri, 13 Jul 2018 09:38:29 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id s87-v6sm48332880pfg.172.2018.07.13.09.38.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Jul 2018 09:38:28 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 09:38:28 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        David Collins <collinsd@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/2] arm64: dts: qcom: pm8998: Add spmi-temp-alarm node
-Message-ID: <20180713163828.GW129942@google.com>
-References: <20180709212522.187257-1-mka@chromium.org>
- <153149761947.48062.16210609862063613310@swboyd.mtv.corp.google.com>
+        Fri, 13 Jul 2018 12:57:07 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6DGfI0t029209
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 12:41:41 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k6vpy0my6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 12:41:31 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Fri, 13 Jul 2018 17:38:59 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 13 Jul 2018 17:38:55 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6DGcrF832964842
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 13 Jul 2018 16:38:53 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1AAF1A4059;
+        Fri, 13 Jul 2018 19:39:14 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 30BFAA4040;
+        Fri, 13 Jul 2018 19:39:13 +0100 (BST)
+Received: from oc0155643701.ibm.com (unknown [9.152.224.229])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 13 Jul 2018 19:39:13 +0100 (BST)
+Subject: Re: [PATCH v6 13/21] s390: vfio-ap: sysfs interface to view matrix
+ mdev matrix
+To:     Tony Krowiak <akrowiak@linux.ibm.com>, pmorel@linux.ibm.com,
+        Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1530306683-7270-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1530306683-7270-14-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <ef3d480b-29b3-d184-4fb2-14f88961d97d@linux.ibm.com>
+ <d105f5a6-b555-bc8d-6a1f-cc3cf57b9f35@linux.ibm.com>
+ <2ebe297c-79e7-1cfd-05a9-1ab8943a0203@linux.ibm.com>
+From:   Halil Pasic <pasic@linux.ibm.com>
+Date:   Fri, 13 Jul 2018 18:38:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <153149761947.48062.16210609862063613310@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <2ebe297c-79e7-1cfd-05a9-1ab8943a0203@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18071316-4275-0000-0000-00000298BD57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071316-4276-0000-0000-000037A0C697
+Message-Id: <58a2b2c3-59a0-77d1-50d3-8fad5237d2d8@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-13_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807130144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 09:00:19AM -0700, Stephen Boyd wrote:
-> Quoting Matthias Kaehlcke (2018-07-09 14:25:21)
-> > diff --git a/arch/arm64/boot/dts/qcom/pm8998.dtsi b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> > index 92bed1e7d4bb..7eea94701b23 100644
-> > --- a/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/pm8998.dtsi
-> > @@ -11,6 +11,13 @@
-> >                 #address-cells = <1>;
-> >                 #size-cells = <0>;
-> >  
-> > +               pm8998_temp: temp-alarm@2400 {
-> 
-> Are we sorting this file based on node name or unit address? Otherwise
-> patch looks good.
 
-The idea was to sort by address, following the 'convention' of
-sdm845.dtsi (https://patchwork.kernel.org/patch/10381745/).
+
+On 07/13/2018 02:24 PM, Tony Krowiak wrote:
+> On 07/09/2018 04:38 PM, Pierre Morel wrote:
+>> On 09/07/2018 14:20, Pierre Morel wrote:
+>>> On 29/06/2018 23:11, Tony Krowiak wrote:
+>>>> Provides a sysfs interface to view the AP matrix configured for the
+>>>> mediated matrix device.
+>>>>
+>>>> The relevant sysfs structures are:
+>>>>
+>>>> /sys/devices/vfio_ap
+>>>> ... [matrix]
+>>>> ...... [mdev_supported_types]
+>>>> ......... [vfio_ap-passthrough]
+>>>> ............ [devices]
+>>>> ...............[$uuid]
+>>>> .................. matrix
+>>>>
+>>>> To view the matrix configured for the mediated matrix device,
+>>>> print the matrix file:
+>>>>
+>>>>     cat matrix
+>>>>
+>>>> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+>>>> ---
+>>>>   drivers/s390/crypto/vfio_ap_ops.c |   31 +++++++++++++++++++++++++++++++
+>>>>   1 files changed, 31 insertions(+), 0 deletions(-)
+>>>>
+>>>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+>>>> index c8f31f3..bc7398d 100644
+>>>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>>>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>>>> @@ -697,6 +697,36 @@ static ssize_t control_domains_show(struct device *dev,
+>>>>   }
+>>>>   DEVICE_ATTR_RO(control_domains);
+>>>>
+>>>> +static ssize_t matrix_show(struct device *dev, struct device_attribute *attr,
+>>>> +               char *buf)
+>>>> +{
+>>>> +    struct mdev_device *mdev = mdev_from_dev(dev);
+>>>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
+>>>> +    char *bufpos = buf;
+>>>> +    unsigned long apid;
+>>>> +    unsigned long apqi;
+>>>> +    unsigned long napm = matrix_mdev->matrix.apm_max + 1;
+>>>> +    unsigned long naqm = matrix_mdev->matrix.aqm_max + 1;
+>>>> +    int nchars = 0;
+>>>> +    int n;
+>>>> +
+>>>> +    for_each_set_bit_inv(apid, matrix_mdev->matrix.apm, napm) {
+>>>> +        n = sprintf(bufpos, "%02lx\n", apid);
+>>>> +        bufpos += n;
+>>>> +        nchars += n;
+>>>> +
+>>>> +        for_each_set_bit_inv(apqi, matrix_mdev->matrix.aqm, naqm) {
+>>>> +            n = sprintf(bufpos, "%02lx.%04lx\n", apid, apqi);
+>>>> +            bufpos += n;
+>>>> +            nchars += n;
+>>>> +        }
+>>>> +    }
+>>>> +
+>>>> +    return nchars;
+>>>> +}
+>>>> +DEVICE_ATTR_RO(matrix);
+>>>> +
+>>>> +
+>>>>   static struct attribute *vfio_ap_mdev_attrs[] = {
+>>>>       &dev_attr_assign_adapter.attr,
+>>>>       &dev_attr_unassign_adapter.attr,
+>>>> @@ -705,6 +735,7 @@ static ssize_t control_domains_show(struct device *dev,
+>>>>       &dev_attr_assign_control_domain.attr,
+>>>>       &dev_attr_unassign_control_domain.attr,
+>>>>       &dev_attr_control_domains.attr,
+>>>> +    &dev_attr_matrix.attr,
+>>>>       NULL,
+>>>>   };
+>>>>
+>>>
+>>> I have still the same remark: what you show here is not what is currently
+>>> used by the SIE.
+>>> It is not irrelevant but what the guest really use may be more interesting
+>>> for the admin.
+>>>
+>>>
+>> OK, you implement the right view it in patch 16/21.
+>>
+>> Still, what is the purpose of showing this view?
+> 
+> I find it to have great value when configuring the mdev. It provides a view of
+> what has been configured thus far.
+> 
+
+IMHO we need to keep this view for the reason stated by Tony.
+
+Halil
+
