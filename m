@@ -6,115 +6,85 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E146ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA29AECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A172075B
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:40:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A172075B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 5725E20875
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:47:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5725E20875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732677AbeGMU4T (ORCPT
+        id S1731948AbeGMVDj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 16:56:19 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59840 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731895AbeGMU4T (ORCPT
+        Fri, 13 Jul 2018 17:03:39 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:56390 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731564AbeGMVDj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 16:56:19 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A28EACF7;
-        Fri, 13 Jul 2018 20:40:04 +0000 (UTC)
-Date:   Fri, 13 Jul 2018 13:40:02 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     linux-mm@kvack.org, Michal Hocko <mhocko@kernel.org>,
-        xishi.qiuxishi@alibaba-inc.com, zy.zhengyi@alibaba-inc.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 2/2] mm: soft-offline: close the race against page
- allocation
-Message-Id: <20180713134002.a365049a79d41be3c28916cc@linux-foundation.org>
-In-Reply-To: <1531452366-11661-3-git-send-email-n-horiguchi@ah.jp.nec.com>
-References: <1531452366-11661-1-git-send-email-n-horiguchi@ah.jp.nec.com>
-        <1531452366-11661-3-git-send-email-n-horiguchi@ah.jp.nec.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 13 Jul 2018 17:03:39 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 0C903608897D;
+        Fri, 13 Jul 2018 22:47:22 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id ps6FMl-HsBTU; Fri, 13 Jul 2018 22:47:21 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id A591C608897E;
+        Fri, 13 Jul 2018 22:47:21 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 0XM6uKqlzo5G; Fri, 13 Jul 2018 22:47:21 +0200 (CEST)
+Received: from blindfold.localnet (213-225-2-247.nat.highway.a1.net [213.225.2.247])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id 6676F608897D;
+        Fri, 13 Jul 2018 22:47:21 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: Re: [PATCH 1/2] [RESEND] jffs2: use 64-bit intermediate timestamps
+Date:   Fri, 13 Jul 2018 22:47:13 +0200
+Message-ID: <2205649.NecG7tB80L@blindfold>
+In-Reply-To: <20180713144739.3150217-1-arnd@arndb.de>
+References: <20180713144739.3150217-1-arnd@arndb.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 13 Jul 2018 12:26:06 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
-
-> A process can be killed with SIGBUS(BUS_MCEERR_AR) when it tries to
-> allocate a page that was just freed on the way of soft-offline.
-> This is undesirable because soft-offline (which is about corrected error)
-> is less aggressive than hard-offline (which is about uncorrected error),
-> and we can make soft-offline fail and keep using the page for good reason
-> like "system is busy."
+Am Freitag, 13. Juli 2018, 16:47:16 CEST schrieb Arnd Bergmann:
+> The VFS now uses timespec64 timestamps consistently, but jffs2 still
+> converts them to 32-bit numbers on the storage medium. As the helper
+> functions for the conversion (get_seconds() and timespec_to_timespec64())
+> are now deprecated, let's change them over to the more modern
+> replacements.
 > 
-> Two main changes of this patch are:
+> This keeps the traditional interpretation of those values, where
+> the on-disk 32-bit numbers are taken to be negative numbers, i.e.
+> dates before 1970, on 32-bit machines, but future numbers past 2038
+> on 64-bit machines.
 > 
-> - setting migrate type of the target page to MIGRATE_ISOLATE. As done
->   in free_unref_page_commit(), this makes kernel bypass pcplist when
->   freeing the page. So we can assume that the page is in freelist just
->   after put_page() returns,
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> I originally sent these two patches on Jun 19, but got no reply aside
+> from a harmless sparse warning reported by the kbuild test robot.
 > 
-> - setting PG_hwpoison on free page under zone->lock which protects
->   freelists, so this allows us to avoid setting PG_hwpoison on a page
->   that is decided to be allocated soon.
+> Looking at the git history for jffs2, it seems that David Woodhouse
+> hasn't applied any patches for over two years, so I suppose he's
+> not taking these either.
 > 
->
-> ...
->
-> +
-> +#ifdef CONFIG_MEMORY_FAILURE
-> +/*
-> + * Set PG_hwpoison flag if a given page is confirmed to be a free page
-> + * within zone lock, which prevents the race against page allocation.
-> + */
+> Al or Andrew, could you pick these up instead?
 
-I think this is clearer?
+We can carry it also via the MTD tree.
 
---- a/mm/page_alloc.c~mm-soft-offline-close-the-race-against-page-allocation-fix
-+++ a/mm/page_alloc.c
-@@ -8039,8 +8039,9 @@ bool is_free_buddy_page(struct page *pag
- 
- #ifdef CONFIG_MEMORY_FAILURE
- /*
-- * Set PG_hwpoison flag if a given page is confirmed to be a free page
-- * within zone lock, which prevents the race against page allocation.
-+ * Set PG_hwpoison flag if a given page is confirmed to be a free page.  This
-+ * test is performed under the zone lock to prevent a race against page
-+ * allocation.
-  */
- bool set_hwpoison_free_buddy_page(struct page *page)
- {
-
-> +bool set_hwpoison_free_buddy_page(struct page *page)
-> +{
-> +	struct zone *zone = page_zone(page);
-> +	unsigned long pfn = page_to_pfn(page);
-> +	unsigned long flags;
-> +	unsigned int order;
-> +	bool hwpoisoned = false;
-> +
-> +	spin_lock_irqsave(&zone->lock, flags);
-> +	for (order = 0; order < MAX_ORDER; order++) {
-> +		struct page *page_head = page - (pfn & ((1 << order) - 1));
-> +
-> +		if (PageBuddy(page_head) && page_order(page_head) >= order) {
-> +			if (!TestSetPageHWPoison(page))
-> +				hwpoisoned = true;
-> +			break;
-> +		}
-> +	}
-> +	spin_unlock_irqrestore(&zone->lock, flags);
-> +
-> +	return hwpoisoned;
-> +}
-> +#endif
-
+Thanks,
+//richard
