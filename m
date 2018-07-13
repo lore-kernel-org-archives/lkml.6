@@ -2,124 +2,114 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F61ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:46:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFF1ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F9B9208B4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:46:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b2qmcL0f";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JAPUA97K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F9B9208B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 430E220849
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:46:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 430E220849
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729731AbeGMOAo (ORCPT
+        id S1729770AbeGMOBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:00:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56910 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729632AbeGMOAo (ORCPT
+        Fri, 13 Jul 2018 10:01:31 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:57761 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729632AbeGMOBb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:00:44 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A4A2C60B81; Fri, 13 Jul 2018 13:46:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531489560;
-        bh=tZFhWy0SMkwojbek8yTnOyiBzZIFsxBif47kn8AoQJ4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=b2qmcL0fmGAjqqQ7jpfY3sky7IDPvMlOGLa2Du37R22raFt4gRdeZH8hh9VZyI7Ha
-         AgMThR0t8e8+3OqeU681B7mHbqa3eHAU4nsogQMMZYkyvUCFUW6VMsai0IRproUlYh
-         ODXcKQMAEKuwPcb1BznercW+FOtltqN4yB4xQRbc=
-Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rplsssn@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 797F360227;
-        Fri, 13 Jul 2018 13:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531489559;
-        bh=tZFhWy0SMkwojbek8yTnOyiBzZIFsxBif47kn8AoQJ4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=JAPUA97KRdoCaDhTNJOYM5P7j3ImKjIsFZ2FsqvT+ErOBknzAw/QhZdBTk3y5ifCU
-         Sv+25tVSz57pKI/VYAP1ENVyxuZzRzSAMJsr9XJX1boykofBi9kbDL29zPlU7WBnFp
-         ZGbD/jyJbXpQhPVgTn6jxbtmlRxNyr1611mJ5Kyk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 797F360227
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
-From:   Raju P L S S S N <rplsssn@codeaurora.org>
-To:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
-Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
-        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
-Subject: [PATCH] drivers: qcom: rpmh: fix unwanted error check for get_tcs_of_type()
-Date:   Fri, 13 Jul 2018 19:15:46 +0530
-Message-Id: <1531489546-21577-1-git-send-email-rplsssn@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Fri, 13 Jul 2018 10:01:31 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fdyPG-0004jk-6d; Fri, 13 Jul 2018 07:46:46 -0600
+Received: from [97.119.167.31] (helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fdyP0-0000N2-Qc; Fri, 13 Jul 2018 07:46:46 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Pavel Emelyanov <xemul@virtuozzo.com>
+Cc:     Adrian Reber <adrian@lisas.de>, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Kees Cook <keescook@chromium.org>,
+        Linux Containers <containers@lists.linux-foundation.org>
+References: <20180712130733.11510-1-adrian@lisas.de>
+        <87sh4o5s82.fsf@xmission.com>
+        <23f87cb4-cdf5-0f9c-c7b9-a0abb228b77f@virtuozzo.com>
+Date:   Fri, 13 Jul 2018 08:46:25 -0500
+In-Reply-To: <23f87cb4-cdf5-0f9c-c7b9-a0abb228b77f@virtuozzo.com> (Pavel
+        Emelyanov's message of "Fri, 13 Jul 2018 11:35:50 +0300")
+Message-ID: <87sh4nz1se.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1fdyP0-0000N2-Qc;;;mid=<87sh4nz1se.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.167.31;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX19GJK7D/fXrYfqF2UfCPrzI329Bl//Hnlg=
+X-SA-Exim-Connect-IP: 97.119.167.31
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH] kconfig: remove EXPERT from CHECKPOINT_RESTORE
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Pavel Emelyanov <xemul@virtuozzo.com> writes:
 
-The patch fixes the bug reported by Dan Carpenter.
-It removes the unnecessary err check for ‘tcs’ reported by
-static checker warning:
+> On 07/12/2018 07:33 PM, Eric W. Biederman wrote:
+>> 
+>> Adrian Reber <adrian@lisas.de> writes:
+>> 
+>>> The CHECKPOINT_RESTORE configuration option was introduced in 2012 and
+>>> combined with EXPERT. CHECKPOINT_RESTORE is already enabled in many
+>>> distribution kernels and also part of the defconfigs of various
+>>> architectures.
+>>>
+>>> To make it easier for distributions to enable CHECKPOINT_RESTORE this
+>>> removes EXPERT and moves the configuration option out of the EXPERT
+>>> block.
+>> 
+>> I think we should change the help text at the same time, to match
+>> our improve understanding of the situation.
+>> 
+>> Does anyone remember why this option was added at all?
+>
+> Sure! Quoting Andrew's ~7 years ago akpm branch merge e-mail:
+>
+>    However I'm less confident than the developers that it will all
+>    eventually work! So what I'm asking them to do is to wrap each piece
+>    of new code inside CONFIG_CHECKPOINT_RESTORE.  So if it all
+>    eventually comes to tears and the project as a whole fails, it should
+>    be a simple matter to go through and delete all trace of it.
+>
+> the best link with full e-mail I googled for is
+> https://gitlab.imag.fr/kaunetem/linux-kaunetem/commit/099469502f62fbe0d7e4f0b83a2f22538367f734
 
-drivers/soc/qcom/rpmh-rsc.c:111 tcs_invalidate()
-warn: 'tcs' isn't an ERR_PTR
-See also:
-drivers/soc/qcom/rpmh-rsc.c:178 get_tcs_for_msg() warn: 'tcs' isn't
-an ERR_PTR
-drivers/soc/qcom/rpmh-rsc.c:180 get_tcs_for_msg() warn: 'tcs' isn't
-an ERR_PTR
+Good explanation.  Thank you.
 
-https://www.spinics.net/lists/linux-soc/msg04624.html
+At this point we even have not CRIU users of some of the pieces.
+The project as a whole has not failed.
 
-Fixes: 48dbb0f02d34 ("drivers: qcom: rpmh-rsc: allow invalidation
-of sleep/wake TCS")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
----
- drivers/soc/qcom/rpmh-rsc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+The code is old enough an common enough (enabled in some distros) that
+we need to do the whole watch out for regressions if we remove any part
+of it.
 
-diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
-index 098feb9..fefda0f 100644
---- a/drivers/soc/qcom/rpmh-rsc.c
-+++ b/drivers/soc/qcom/rpmh-rsc.c
-@@ -107,8 +107,6 @@ static int tcs_invalidate(struct rsc_drv *drv, int type)
- 	struct tcs_group *tcs;
- 
- 	tcs = get_tcs_of_type(drv, type);
--	if (IS_ERR(tcs))
--		return PTR_ERR(tcs);
- 
- 	spin_lock(&tcs->lock);
- 	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
-@@ -174,9 +172,9 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
- 	 * TCSes before making an active state request.
- 	 */
- 	tcs = get_tcs_of_type(drv, type);
--	if (msg->state == RPMH_ACTIVE_ONLY_STATE && IS_ERR(tcs)) {
-+	if (msg->state == RPMH_ACTIVE_ONLY_STATE && !tcs->num_tcs) {
- 		tcs = get_tcs_of_type(drv, WAKE_TCS);
--		if (!IS_ERR(tcs)) {
-+		if (tcs->num_tcs) {
- 			ret = rpmh_rsc_invalidate(drv);
- 			if (ret)
- 				return ERR_PTR(ret);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
+Which is a long way of saying the original justifiction for
+CONFIG_CHECKPOINT_RESTORE is gone.  So please let's remove the entire
+config option and simplify everyone's lives who has to test this stuff.
 
+Unless someone can come up with a justification for keeping some of this
+behind a config option.
+
+Eric
