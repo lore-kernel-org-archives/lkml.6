@@ -2,137 +2,79 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 555B8ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB87ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:17:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C1FE20883
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:17:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NuXVq/GT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1FE20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 832102087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:17:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 832102087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729634AbeGMLcE (ORCPT
+        id S1729660AbeGMLcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 07:32:04 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:42937 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727283AbeGMLcD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 07:32:03 -0400
-Received: by mail-io0-f195.google.com with SMTP id r24-v6so30980076ioh.9
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=NMlsZM3ysw/cOF3r/wFkFGCV4kUI9hWIOd7QpGBD9A0=;
-        b=NuXVq/GTZoMXPgCSvTH7zYu2y0zDRjGBq2R6C865g970+62EhEIyMCzTan7cNb+rqG
-         3xxaCEwfioJbHX6zgpiRIG8iCpfHchQK4OL20EdC6PcTNmUWj1jS6SCBteeqtbWHo2yU
-         D9YXEFwmes1a47/7dj7Ks6uAoVXxf7cmXQHPE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=NMlsZM3ysw/cOF3r/wFkFGCV4kUI9hWIOd7QpGBD9A0=;
-        b=H8nhLW3+1gMbsvezp//7Wwmg3M9KbH7MEFnXl28Ezv5lJ9Axja8CskiLRPCTfIBlAh
-         bvcBg13pWMU3/wgAULS3tnktFq693++2DwzklX3O9U+7AeC/1zQp9Q0kcoEZZeE6P7gC
-         552QJN6fdkxRXCjcmbby3AD0/aEdfIDJQOe2itiO34Q6kXIRjUXqJKCNS8vumClmsWN2
-         AX51usneTfcswQwzIVItW/Uk1YyYqK0wioDHJbxwOyBOsgINNF+0smWVRD2QPDEu6ecb
-         Gro2hr1CyT8Uxy1mO028ecnPYXNtOefPDSYaxtn8yoAOaDBWES5sJLPhHdyfzH+vlWO7
-         f60Q==
-X-Gm-Message-State: APt69E2vtt5wBWNoSnCoe6SYMjha7Ifjs4dKQEUqdUTsqVeBoekCJIcp
-        NTWDE9Aa4nkSogAqiNpv/xrFx/kVF93oUKmqHj4iiA==
-X-Google-Smtp-Source: AAOMgpfZnn1ofw23DQa0DKbw+Gya5BgdErVf70Ib4pXX8/CZNKYlU0wOdXX6mbsx1qTfN8ZWIQJ+PPUNT5p2e4YSdtw=
-X-Received: by 2002:a6b:e403:: with SMTP id u3-v6mr29645605iog.131.1531480669863;
- Fri, 13 Jul 2018 04:17:49 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:818f:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 04:17:49
- -0700 (PDT)
-In-Reply-To: <c09e8f7a-3bf7-abb3-b49c-011ae29f8d67@st.com>
-References: <1528809280-31116-1-git-send-email-ludovic.Barre@st.com>
- <1528809280-31116-3-git-send-email-ludovic.Barre@st.com> <CAPDyKFqOOvbNc79hdWhdS4pxkYrh48At-BLuGmX0jDMER3Akdw@mail.gmail.com>
- <c09e8f7a-3bf7-abb3-b49c-011ae29f8d67@st.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 13 Jul 2018 13:17:49 +0200
-Message-ID: <CAPDyKFrN3GMez1vyc6xQUH_Qp7UrDj88rG9pAP_oTLHOB6k91g@mail.gmail.com>
-Subject: Re: [PATCH 02/19] mmc: mmci: merge qcom dml feature into mmci dma
-To:     Ludovic BARRE <ludovic.barre@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gerald Baeza <gerald.baeza@st.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 13 Jul 2018 07:32:09 -0400
+Received: from www.osadl.org ([62.245.132.105]:56379 "EHLO www.osadl.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727283AbeGMLcJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 07:32:09 -0400
+Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
+        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w6DBE4oA030126;
+        Fri, 13 Jul 2018 13:14:04 +0200
+From:   Nicholas Mc Guire <hofrat@osadl.org>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Frank Li <Frank.Li@freescale.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>
+Subject: [PATCH] clk: imx6ul: fix missing of_node_put()
+Date:   Fri, 13 Jul 2018 13:13:20 +0200
+Message-Id: <1531480400-7664-1-git-send-email-hofrat@osadl.org>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11 July 2018 at 17:19, Ludovic BARRE <ludovic.barre@st.com> wrote:
->
->
-> On 07/05/2018 05:26 PM, Ulf Hansson wrote:
->>
->> On 12 June 2018 at 15:14, Ludovic Barre <ludovic.Barre@st.com> wrote:
->>>
->>> From: Ludovic Barre <ludovic.barre@st.com>
->>>
->>> This patch integrates qcom dml feature into mmci_dma file.
->>> Qualcomm Data Mover lite/local is already a variant of mmci dmaengine.
->>>
->>> Signed-off-by: Ludovic Barre <ludovic.barre@st.com>
->>> ---
->>>   drivers/mmc/host/Makefile        |   1 -
->>>   drivers/mmc/host/mmci.c          |   1 -
->>>   drivers/mmc/host/mmci.h          |  35 ++++++++
->>>   drivers/mmc/host/mmci_dma.c      | 135 ++++++++++++++++++++++++++++-
->>>   drivers/mmc/host/mmci_qcom_dml.c | 177
->>> ---------------------------------------
->>>   drivers/mmc/host/mmci_qcom_dml.h |  31 -------
->>>   6 files changed, 169 insertions(+), 211 deletions(-)
->>>   delete mode 100644 drivers/mmc/host/mmci_qcom_dml.c
->>>   delete mode 100644 drivers/mmc/host/mmci_qcom_dml.h
->>
->>
->> No, this is not the way to go. Instead I I think there are two options.
->>
->> 1) Keep mmci_qcom_dml.c|h and thus add new files for the stm32 dma
->> variant.
->>
->> 2) Start by renaming mmci_qcom_dml.* to mmc_dma.* and then in the next
->> step add the code for stm32 dma into the renamed files.
->>
->> I guess if there is some overlap in functionality, 2) may be best as
->> it could easier avoid open coding. However, I am fine with whatever
->> option and I expect that you knows what is best.
->
->
-> After patch 01 & 05 comments:
-> I will try to define a mmci_ops which contain some functions pointer
-> called by mmci.c (core).
-> A variant defines its mmci_ops.
-> where do you define the specific function:
-> -in a single file, mmci-ops.c or other (for the name, I'm not inspirated)
-> -or in specific file for each variant mmci-qcom.c or mmci-stm32.c
->
-> following the comment (above), I think we define a single file?
+of_find_compatible_node() is returning a device node with refcount
+incremented and must be explicitly decremented after the last use
+which is right after the us in of_iomap() here.
 
-If I understand the question, the problem is how we should assign the
-mmc host ops, which corresponds to the probed variant data!?
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: commit 787b4271a6a0 ("clk: imx: add imx6ul clk tree support")
+---
 
-I took a stub at it and posted two patches which I think you should be
-able to build upon. Please have a look.
+Problem located with experimental coccinelle script
 
-[...]
+Patch was compile tested with: imx_v6_v7_defconfig (implies
+CONFIG_SOC_IMX6UL=y)
 
-Kind regards
-Uffe
+Patch is against 4.18-rc4 (localversion-next is next-20180713)
+
+ drivers/clk/imx/clk-imx6ul.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
+index d3f7f4d..361b43f 100644
+--- a/drivers/clk/imx/clk-imx6ul.c
++++ b/drivers/clk/imx/clk-imx6ul.c
+@@ -135,6 +135,7 @@ static void __init imx6ul_clocks_init(struct device_node *ccm_node)
+ 
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6ul-anatop");
+ 	base = of_iomap(np, 0);
++	of_node_put(np);
+ 	WARN_ON(!base);
+ 
+ 	clks[IMX6UL_PLL1_BYPASS_SRC] = imx_clk_mux("pll1_bypass_src", base + 0x00, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
+-- 
+2.1.4
+
