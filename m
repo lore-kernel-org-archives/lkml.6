@@ -1,145 +1,126 @@
 Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.2 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6A80ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123E2ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D52772087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BACF42087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:57:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GhT+VVgb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D52772087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qBpPuRje"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BACF42087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731931AbeGMUNF (ORCPT
+        id S1731966AbeGMUNK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 16:13:05 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38000 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731329AbeGMUNF (ORCPT
+        Fri, 13 Jul 2018 16:13:10 -0400
+Received: from mail-wm0-f43.google.com ([74.125.82.43]:39183 "EHLO
+        mail-wm0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731329AbeGMUNK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 16:13:05 -0400
-Received: by mail-wr1-f66.google.com with SMTP id m1-v6so13459299wrg.5
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 12:57:00 -0700 (PDT)
+        Fri, 13 Jul 2018 16:13:10 -0400
+Received: by mail-wm0-f43.google.com with SMTP id h20-v6so10342151wmb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 12:57:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Q/Js3KytNOsqi8HibIuYO/2oMnnNCudNRagaMbRTuYQ=;
-        b=GhT+VVgbaAiOoTjtSfPs6IOGU86aNx8DgS3RNWSiDdbn9NV+oqf9PYgDtOF+Q07sq6
-         I68tu9jv5GNojizhLidVDCcGEOSRD8xZzSmw/eKGnCoqZ1766z6BaV6Zvn9CXX0ojDdf
-         UKKonJziT5VEgGa1smTRXK2MeJBQWCA67vxSg=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=To9b/A8gUUWCZx2Nndt48PTgRhYzZHayGaO8H+q4b+k=;
+        b=qBpPuRjeWW64d4yeV4O6psE08G4rVlz1Y/42dj6ILiTLsfYBQarA3qNkXGPFFC5haM
+         W8igBu3TiCd7VXnYRUOSh9BEYbviiTZDgikzsLu9cNU6tA92rs8LoIujs8ZofiVehlbU
+         iBq42Wj4D2aBKxcIOax8vbZ2neSvkMPDhdvOgumHj11XMe/KTOI8VvUpnBD1y7z/Wqil
+         fvERQ/rUWvkahHCXpn1tcYTzGYe1bAhhZaSysyZv2/R5ybFU1GbS4Qn4uMiLuInhGm+A
+         kUDQas3RJNCeNEnmXZl7hpysVm3b9l6uehzBY4+GReOE5yuGPUDaW9DI3nN0e2poBY7I
+         +sYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Q/Js3KytNOsqi8HibIuYO/2oMnnNCudNRagaMbRTuYQ=;
-        b=Drx7iCZqwoRsAuUJO4qsLOdyoEeNSZ6srV9J91J/6vxRnm4aW+tngdTPY/wPDz4mYv
-         0oAjEdGo3/HLajg0Fx7cyVBQdow2tphBA6MkKVe3v2aovutcFEocGEtT82p5ho5QoLdJ
-         ajcHZ176nvW3TetTnxaclw4ekC7U/xxr2XU0+f4RdGWKK/C/eIx3enaSnkz113PeSM3T
-         mKB78bfj+dIiBvCALiLQGRb+nvUi9khLaQ6kIkZdMGth5NZwrq6nOsmdseyIJVN81V/z
-         CCygdnRbXzLI1fRFCQI/j5kxS4w9ZokcrqLOyG4MqGVd/4kzErhSlN/cWOTTlTTU1J3t
-         uaaA==
-X-Gm-Message-State: AOUpUlEC6xaAbbvYLaJvW6M21R8lWUhB73StSVXO85h24j4vJsg1OPZ4
-        7MaPscABMgfKPs3vSHZqc56laQ==
-X-Google-Smtp-Source: AAOMgpd156eH6PRFdK61vKVcDWMbeTuVsPHLrDuoGGFPV23RasE3gkQa4gxC5OORZYGFZmWmVsdI8g==
-X-Received: by 2002:adf:f6c4:: with SMTP id y4-v6mr6260907wrp.4.1531511819713;
-        Fri, 13 Jul 2018 12:56:59 -0700 (PDT)
-Received: from andrea ([94.230.152.15])
-        by smtp.gmail.com with ESMTPSA id w4-v6sm10329687wrt.40.2018.07.13.12.56.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 12:56:58 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 21:56:50 +0200
-From:   Andrea Parri <andrea.parri@amarulasolutions.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nick Piggin <npiggin@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-Message-ID: <20180713195650.GA2408@andrea>
-References: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
- <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org>
- <20180712172838.GU3593@linux.vnet.ibm.com>
- <20180712180511.GP2476@hirez.programming.kicks-ass.net>
- <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
- <20180713110851.GY2494@hirez.programming.kicks-ass.net>
- <87tvp3xonl.fsf@concordia.ellerman.id.au>
- <20180713164239.GZ2494@hirez.programming.kicks-ass.net>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=To9b/A8gUUWCZx2Nndt48PTgRhYzZHayGaO8H+q4b+k=;
+        b=A0Wj2S+2iYFUfmmpk8rXAnv42Hb7+BTsM+VKHL4JFN0eLujzCMlIgBTkcFdGxTxq0j
+         PIuOLqvAqhiSRoXN/tNKlz1kLPJklFEebuZEGqnjzumIZJsPIo28aYlMwi3dYctYVeB7
+         3oKDVqahhYsgWANcV8vXkKPsIdRVy6RUN2Pj4WXIxOtBrAnUXZs7vTKwugT7fzYhee3v
+         vNqMsakvKeWyHs3DnIThujLXZQwMKbR1e0aMaEgjP9Hydc6hNZXi+A9pZbM2AvT6AISk
+         n6BzL+LQtCnzbq85z7dEumwhOHyUzQoZ1zYp7HIns+7jN8r3lh6S2GKZb3Bn03ZU3nPO
+         dfzA==
+X-Gm-Message-State: AOUpUlE3nDDqaRl6nCbipPPO6D+x0zTJqLh3qr85H5reDjptwb1E/ZCz
+        y+QPeQNYQnyCdRSosp7PF5A=
+X-Google-Smtp-Source: AAOMgpdGuDQr4IsQOZgGYz+0Oc1dWU7o9GysS4I+X5TxM8HIXc/Ccs1PMt17WcBTjNtAHvpURpsSSA==
+X-Received: by 2002:a1c:5b88:: with SMTP id p130-v6mr4849145wmb.69.1531511825227;
+        Fri, 13 Jul 2018 12:57:05 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id q5-v6sm13847398wrs.87.2018.07.13.12.57.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 13 Jul 2018 12:57:04 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 21:57:02 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Subject: [GIT PULL] EFI fix
+Message-ID: <20180713195702.GA22962@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180713164239.GZ2494@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 06:42:39PM +0200, Peter Zijlstra wrote:
-> 
-> Hi Michael,
-> 
-> On Fri, Jul 13, 2018 at 11:15:26PM +1000, Michael Ellerman wrote:
-> > I reran some numbers today with some slightly updated tests.
-> > 
-> > It varies quite a bit across machines and CPU revisions.
-> > 
-> > On one I get:
-> > 
-> > Lock/Unlock    Time             Time %    Total Cycles     Cycles  Cycles Delta
-> > lwsync/lwsync   79,290,859,955  100.0 %   290,160,065,087  145     -
-> > lwsync/sync    104,903,703,237  132.3 %   383,966,199,430  192     47
-> > 
-> > Another:
-> > 
-> > Lock/Unlock    Time             Time %    Total Cycles     Cycles  Cycles Delta
-> > lwsync/lwsync  71,662,395,722   100.0 %   252,403,777,715  126     -
-> > lwsync/sync    84,932,987,977   118.5 %   299,141,951,285  150     23
-> > 
-> > 
-> > So 18-32% slower, or 23-47 cycles.
-> 
-> Very good info. Note that another option is to put the SYNC in lock() it
-> doesn't really matter which of the two primitives gets it. I don't
-> suppose it really matters for timing either way around.
-> 
-> > Next week I can do some macro benchmarks, to see if it's actually
-> > detectable at all.
-> > 
-> > The other question is how they behave on a heavily loaded system.
-> > 
-> > 
-> > My personal preference would be to switch to sync, we don't want to be
-> > the only arch finding (or not finding!) exotic ordering bugs.
-> > 
-> > But we'd also rather not make our slow locks any slower than they have
-> > to be.
-> 
-> I completely understand, but I'll get you beer (lots) if you do manage
-> to make SYNC happen :-) :-)
+Linus,
 
-One trivia about seems due:  it's of course very easy to stick a full
-or a "tso" fence in one's spin_lock() implementation, or to tight the
-semantics of such a primitive;  removing this fence, or weakening the
-semantics is another matter...
+Please pull the latest efi-urgent-for-linus git tree from:
 
-(/me reminding about that spin_is_locked() discussion...)
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git efi-urgent-for-linus
 
-  Andrea
+   # HEAD: e296701800f30d260a66f8aa1971b5b1bc3d2f81 efi/x86: Fix mixed mode reboot loop by removing pointless call to PciIo->Attributes()
+
+Fix a UEFI mixed mode (64-bit kernel on 32-bit UEFI) reboot loop regression.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Ard Biesheuvel (1):
+      efi/x86: Fix mixed mode reboot loop by removing pointless call to PciIo->Attributes()
+
+
+ arch/x86/boot/compressed/eboot.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
+index e57665b4ba1c..e98522ea6f09 100644
+--- a/arch/x86/boot/compressed/eboot.c
++++ b/arch/x86/boot/compressed/eboot.c
+@@ -114,18 +114,12 @@ __setup_efi_pci(efi_pci_io_protocol_t *pci, struct pci_setup_rom **__rom)
+ 	struct pci_setup_rom *rom = NULL;
+ 	efi_status_t status;
+ 	unsigned long size;
+-	uint64_t attributes, romsize;
++	uint64_t romsize;
+ 	void *romimage;
+ 
+-	status = efi_call_proto(efi_pci_io_protocol, attributes, pci,
+-				EfiPciIoAttributeOperationGet, 0ULL,
+-				&attributes);
+-	if (status != EFI_SUCCESS)
+-		return status;
+-
+ 	/*
+-	 * Some firmware images contain EFI function pointers at the place where the
+-	 * romimage and romsize fields are supposed to be. Typically the EFI
++	 * Some firmware images contain EFI function pointers at the place where
++	 * the romimage and romsize fields are supposed to be. Typically the EFI
+ 	 * code is mapped at high addresses, translating to an unrealistically
+ 	 * large romsize. The UEFI spec limits the size of option ROMs to 16
+ 	 * MiB so we reject any ROMs over 16 MiB in size to catch this.
