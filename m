@@ -2,95 +2,89 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5093ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6536BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A18A20873
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:09:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A18A20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id E746520873
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:11:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E746520873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=darmarit.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727397AbeGMJXg (ORCPT
+        id S1728321AbeGMJZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 05:23:36 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:54604 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726626AbeGMJXg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 05:23:36 -0400
-Received: by mail-wm0-f68.google.com with SMTP id i139-v6so8075744wmf.4
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 02:09:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xKvZkHOlUeQIYo9gwW94vyuckDuJUjSok2n/F05uD1Q=;
-        b=CaX8gdD5+X4OEyXn56oSBTKeDfwut61slaMl2MNrQHTkYlGTHrhApT16+4Iat0k3fp
-         moTRZMGjsA/fjw6PrYV/AeBV+I1fJzrOgnWdYYnqWpDlvyOl5/S/9q0E1EWLQq/ruqdm
-         hVuABUtepJHn8YdnGeWHvl6vtQ7YUFxcqd9X0N0gX0WebBjAcWCGb3CVfIpCiHGTJyN5
-         jg2yR1CTdGgL3Ur12nN2ByXoIb5JjekxZeRJjq9s8KrLP0T8CgxsY0/wRNqwhvXSex4L
-         Nk5uvgngbWLU6P8TY3/3F+M9Fj+C/a6FBh5rCbrsf3Y94MH1DdxYuudT+bZoaMjrTHR4
-         NbvQ==
-X-Gm-Message-State: AOUpUlHLdpD43aGUEWR8b9jJKdnn7A2prlxgoo7fR6LkIm3CUysKW2fe
-        W8TxpycjDHjJCVi94n2B70o=
-X-Google-Smtp-Source: AAOMgpfTrljEfiQBomYum4nLnOkRNoQNIoiX2taH5ZuyO4VG7sYHbdhbdfuuzdlN/I32+a2RNpWURw==
-X-Received: by 2002:a1c:3e92:: with SMTP id l140-v6mr3302336wma.134.1531472990691;
-        Fri, 13 Jul 2018 02:09:50 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id m17-v6sm38528633wrg.65.2018.07.13.02.09.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 02:09:50 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 37046123EB7; Fri, 13 Jul 2018 11:09:49 +0200 (CEST)
-Date:   Fri, 13 Jul 2018 11:09:49 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        kirill.shutemov@linux.intel.com, mhocko@suse.com,
-        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
-        jglisse@redhat.com, jrdr.linux@gmail.com, bhe@redhat.com,
-        gregkh@linuxfoundation.org, vbabka@suse.cz,
-        richard.weiyang@gmail.com, dave.hansen@intel.com,
-        rientjes@google.com, mingo@kernel.org, abdhalee@linux.vnet.ibm.com,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH v5 5/5] mm/sparse: delete old sprase_init and enable new
- one
-Message-ID: <20180713090949.GA15039@techadventures.net>
-References: <20180712203730.8703-1-pasha.tatashin@oracle.com>
- <20180712203730.8703-6-pasha.tatashin@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180712203730.8703-6-pasha.tatashin@oracle.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 13 Jul 2018 05:25:17 -0400
+Received: from smtp3-1.goneo.de ([85.220.129.38]:34778 "EHLO smtp3-1.goneo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726364AbeGMJZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 05:25:16 -0400
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Jul 2018 05:25:15 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by smtp3.goneo.de (Postfix) with ESMTP id 8CD1F23F3CC;
+        Fri, 13 Jul 2018 11:04:49 +0200 (CEST)
+X-Virus-Scanned: by goneo
+Received: from smtp3.goneo.de ([127.0.0.1])
+        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id KCKOS2fnah-Y; Fri, 13 Jul 2018 11:04:48 +0200 (CEST)
+Received: from ryzen (dyndsl-091-096-214-158.ewe-ip-backbone.de [91.96.214.158])
+        by smtp3.goneo.de (Postfix) with ESMTPSA id DB39223F11C;
+        Fri, 13 Jul 2018 11:04:47 +0200 (CEST)
+Message-ID: <9bc6b8f18ee22d9e7aa053a1167a3830a4e8f401.camel@darmarit.de>
+Subject: FYI: [PATCH net-next 2/2] docs: networking: Fix failover build
+ warnings
+From:   Markus Heiser <markus.heiser@darmarit.de>
+To:     "Tobin C. Harding" <me@tobin.cc>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     Sridhar Samudrala <sridhar.samudrala@intel.com>,
+        linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Date:   Fri, 13 Jul 2018 11:04:47 +0200
+In-Reply-To: <20180711214250.19039-3-me@tobin.cc>
+References: <20180711214250.19039-1-me@tobin.cc>
+         <20180711214250.19039-3-me@tobin.cc>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  
-> -#ifdef CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
-> -static void __init sparse_early_mem_maps_alloc_node(void *data,
-> -				 unsigned long pnum_begin,
-> -				 unsigned long pnum_end,
-> -				 unsigned long map_count, int nodeid)
-> -{
-> -	struct page **map_map = (struct page **)data;
-> -
-> -	sparse_buffer_init(section_map_size() * map_count, nodeid);
-> -	sparse_mem_maps_populate_node(map_map, pnum_begin, pnum_end,
-> -					 map_count, nodeid);
-> -	sparse_buffer_fini();
-> -}
+Hy Tobin, 
 
-From now on, sparse_mem_maps_populate_node() is not being used anymore, so I guess we can just
-remove it from sparse.c, right? (as it is done in sparse-vmemmap.c).
--- 
-Oscar Salvador
-SUSE L3
+> Add '::' before code snippets and indent all snippets uniformly starting
+> with 2 spaces.
+
+Just FYI about reST Markup (no need to fix anything in your patch).
+
+You can also add '::' (the markup for literal blocks) at the last line of the
+previous paragraph, e.g:
+
+<snip>--- 
+Booting a VM with the above configuration will result in the following 3
+netdevs created in the VM.::
+
+  4: ens10: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP
+group default qlen 1000
+      link/ether 52:54:00:00:12:53 brd ff:ff:ff:ff:ff:ff
+<snap>---
+
+IMO its more readable in plain text. Anyway it is not wrong to add '::' in a
+separated new line ... and thanks for your patch.
+
+If you have any doubt about reST markup, I recommend the primer from the Sphinx
+project:
+
+  http://www.sphinx-doc.org/en/stable/rest.html
+
+and the quickref from the (underlying) docutils project:
+
+  http://docutils.sourceforge.net/docs/user/rst/quickref.html
+
+-- Markus --
+
