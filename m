@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD439ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 482DEECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92968205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92968205F4
+	by mail.kernel.org (Postfix) with ESMTP id F0249205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0249205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387974AbeGMBhd (ORCPT
+        id S2387989AbeGMBhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 21:37:33 -0400
-Received: from nautica.notk.org ([91.121.71.147]:42981 "EHLO nautica.notk.org"
+        Thu, 12 Jul 2018 21:37:48 -0400
+Received: from nautica.notk.org ([91.121.71.147]:42986 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387896AbeGMBhd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 21:37:33 -0400
+        id S2387896AbeGMBhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 21:37:48 -0400
 Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 82AD9C01C; Fri, 13 Jul 2018 03:25:20 +0200 (CEST)
+        id 984D9C01E; Fri, 13 Jul 2018 03:25:35 +0200 (CEST)
 From:   Dominique Martinet <asmadeus@codewreck.org>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 04/18] nouveau: change strncpy+truncation to strlcpy
-Date:   Fri, 13 Jul 2018 03:25:19 +0200
-Message-Id: <1531445119-19207-1-git-send-email-asmadeus@codewreck.org>
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 05/18] iio: change strncpy+truncation to strlcpy
+Date:   Fri, 13 Jul 2018 03:25:34 +0200
+Message-Id: <1531445134-19250-1-git-send-email-asmadeus@codewreck.org>
 X-Mailer: git-send-email 1.7.10.4
 In-Reply-To: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
 References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
@@ -50,23 +53,39 @@ Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
 first patch of the serie) for the motivation behind this patch
 
- drivers/gpu/drm/nouveau/nvkm/core/firmware.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/iio/common/st_sensors/st_sensors_core.c | 3 +--
+ drivers/iio/pressure/st_pressure_i2c.c          | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/core/firmware.c b/drivers/gpu/drm/nouveau/nvkm/core/firmware.c
-index 058ff46b5f16..579eb17db9f4 100644
---- a/drivers/gpu/drm/nouveau/nvkm/core/firmware.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/core/firmware.c
-@@ -40,8 +40,7 @@ nvkm_firmware_get(struct nvkm_device *device, const char *fwname,
- 	int i;
+diff --git a/drivers/iio/common/st_sensors/st_sensors_core.c b/drivers/iio/common/st_sensors/st_sensors_core.c
+index 57db19182e95..26fbd1bd9413 100644
+--- a/drivers/iio/common/st_sensors/st_sensors_core.c
++++ b/drivers/iio/common/st_sensors/st_sensors_core.c
+@@ -380,8 +380,7 @@ void st_sensors_of_name_probe(struct device *dev,
+ 		return;
  
- 	/* Convert device name to lowercase */
--	strncpy(cname, device->chip->name, sizeof(cname));
--	cname[sizeof(cname) - 1] = '\0';
-+	strlcpy(cname, device->chip->name, sizeof(cname));
- 	i = strlen(cname);
- 	while (i) {
- 		--i;
+ 	/* The name from the OF match takes precedence if present */
+-	strncpy(name, of_id->data, len);
+-	name[len - 1] = '\0';
++	strlcpy(name, of_id->data, len);
+ }
+ EXPORT_SYMBOL(st_sensors_of_name_probe);
+ #else
+diff --git a/drivers/iio/pressure/st_pressure_i2c.c b/drivers/iio/pressure/st_pressure_i2c.c
+index fbb59059e942..2026a1012012 100644
+--- a/drivers/iio/pressure/st_pressure_i2c.c
++++ b/drivers/iio/pressure/st_pressure_i2c.c
+@@ -94,9 +94,8 @@ static int st_press_i2c_probe(struct i2c_client *client,
+ 		if ((ret < 0) || (ret >= ST_PRESS_MAX))
+ 			return -ENODEV;
+ 
+-		strncpy(client->name, st_press_id_table[ret].name,
++		strlcpy(client->name, st_press_id_table[ret].name,
+ 				sizeof(client->name));
+-		client->name[sizeof(client->name) - 1] = '\0';
+ 	} else if (!id)
+ 		return -ENODEV;
+ 
 -- 
 2.17.1
 
