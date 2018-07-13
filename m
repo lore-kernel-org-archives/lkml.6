@@ -2,109 +2,84 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68870ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 04:58:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 756BEECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 115D5208E9
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 04:58:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="EIZr/01/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 115D5208E9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 292C020C0C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 292C020C0C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbeGMFJX (ORCPT
+        id S1727255AbeGMFND (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 01:09:23 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46856 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726389AbeGMFJX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 01:09:23 -0400
-Received: by mail-qt0-f196.google.com with SMTP id d4-v6so10630174qtn.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 21:56:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=GZ7pbph9RA5T64mYEULW8PTxgiFXpzZJDFXv+4YEJTs=;
-        b=EIZr/01/kxIkfl+OywpLODL4nibHyCtSMf6F2V0J716AEXd5GVSdwyfscdZVDEQLs6
-         CDqEia1MxlM43hunCTy4iOSwOi1qnVpyLMDhPZI3djYAUbwHrH7/CZl+E86wtUzoZ5yw
-         kMnfy1gfOUrCXCMkxSciqp+ah+whMSaHLcoQc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=GZ7pbph9RA5T64mYEULW8PTxgiFXpzZJDFXv+4YEJTs=;
-        b=Dp2uk4BzsfJhgMbbdqgPTbFSAzyzEtfARZsZmtW0yNHi+aeJMiECK2ledlnrqrmH69
-         oJDlCC4GAltBFOVMuwt43OVE0C+6CZMQsm1QPA63s4ilBrewrbavtMV74ZrHSZRrpgRA
-         U+H2uUaZ7CnMEVzyDD2ABVrILBaY5Yl2wQBPIOIoL6Hocg/NY+vqLbJGpSJKQrININ5J
-         GkZ5tRnTR+tUCUrpFdWcbUIHyeFpiNGYiJ6691p65vhStyObh/9RUktdh3IdI8RnPrIX
-         j8m/+Xl6ORoUVBsCbuzfLHiGWdm6EiSnsPtUn7WEAHTF3yqSzCLU2+gWkzXWuDYYSKfZ
-         tp6w==
-X-Gm-Message-State: AOUpUlG3SX0NJfG6R+15JY0uJRb9WdTgyR3JuUpOafRpUpsYeO9j+t3A
-        4OVOkGbkSjoxLO+oyZIHFZIwDg==
-X-Google-Smtp-Source: AAOMgpfEk9rhWEtf9VriMs9bP5Jp4V6LdvwkmWS4mu6jWj9cZ4MH5X70IDxd94/SdmL5ukvkNiZ7Og==
-X-Received: by 2002:aed:2a33:: with SMTP id c48-v6mr4484932qtd.147.1531457791261;
-        Thu, 12 Jul 2018 21:56:31 -0700 (PDT)
-Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id w43-v6sm15830537qth.58.2018.07.12.21.56.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 12 Jul 2018 21:56:30 -0700 (PDT)
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     ray.jui@broadcom.com, vikram.prakash@broadcom.com,
-        scott.branden@broadcom.com, kvm@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-kernel@vger.kernel.org,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [RFC PATCH] vfio/pci: map prefetchble bars as writecombine
-Date:   Fri, 13 Jul 2018 10:26:17 +0530
-Message-Id: <1531457777-11825-1-git-send-email-srinath.mannam@broadcom.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 13 Jul 2018 01:13:03 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:36568 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726230AbeGMFND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 01:13:03 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 74F1B8A3C5;
+        Fri, 13 Jul 2018 05:00:10 +0000 (UTC)
+Received: from xz-mi (dhcp-14-142.nay.redhat.com [10.66.14.142])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5782B2026D74;
+        Fri, 13 Jul 2018 05:00:05 +0000 (UTC)
+Date:   Fri, 13 Jul 2018 13:00:03 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        sanjay.k.kumar@intel.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, yi.y.sun@intel.com,
+        jacob.jun.pan@intel.com
+Subject: Re: [PATCH v4 9/9] iommu/vt-d: Remove the obsolete per iommu pasid
+ tables
+Message-ID: <20180713050003.GA2379@xz-mi>
+References: <1531113778-28238-1-git-send-email-baolu.lu@linux.intel.com>
+ <1531113778-28238-10-git-send-email-baolu.lu@linux.intel.com>
+ <20180711024506.GB2359@xz-mi>
+ <5B4801A6.1090200@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5B4801A6.1090200@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 13 Jul 2018 05:00:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 13 Jul 2018 05:00:10 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'peterx@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default all BARs map with VMA access permissions
-as pgprot_noncached.
+On Fri, Jul 13, 2018 at 09:34:30AM +0800, Lu Baolu wrote:
+> Hi Peter,
+> 
+> Do you have further comments for this series? I will work out a
+> new version if there are no ones.
 
-In ARM64 pgprot_noncached is MT_DEVICE_nGnRnE which
-is strongly ordered and allows aligned access.
-This type of mapping works for NON-PREFETCHABLE bars
-containing EP controller registers.
-But it restricts PREFETCHABLE bars from doing
-unaligned access.
+Not for now.  Though since you mentioned about the work to remove the
+pasid state table, not sure whether it'll be nice to put that into
+this series, or even put more patches that are directly related
+(e.g. including the two-level pasid table work and anything related)
+so the series could be more complete.
 
-In CMB NVMe drives PREFETCHABLE bars are required to
-map as MT_NORMAL_NC to do unaligned access.
+> 
+> Thank you for reviewing my patches. Do you allow me to add your
+> reviewed-by to the patches which you've reviewed?
 
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
----
- drivers/vfio/pci/vfio_pci.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+I'm glad to read your work.  I didn't leave r-bs because I'm not that
+familiar with the codes so I'm not confident to leave any, just to
+raise the questions.  Please feel free to post a new version as you
+wish, I'll try to leave r-b there if possible.
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index b423a30..eff6b65 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -1142,7 +1142,10 @@ static int vfio_pci_mmap(void *device_data, struct vm_area_struct *vma)
- 	}
- 
- 	vma->vm_private_data = vdev;
--	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
-+	if (pci_resource_flags(pdev, index) & IORESOURCE_PREFETCH)
-+		vma->vm_page_prot = pgprot_writecombine(vma->vm_page_prot);
-+	else
-+		vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
- 	vma->vm_pgoff = (pci_resource_start(pdev, index) >> PAGE_SHIFT) + pgoff;
- 
- 	return remap_pfn_range(vma, vma->vm_start, vma->vm_pgoff,
+Thanks,
+
 -- 
-2.7.4
-
+Peter Xu
