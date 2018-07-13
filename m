@@ -2,142 +2,98 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 970C5ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 006D1ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5350F208B4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:32:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5350F208B4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B16A52087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:32:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16A52087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731385AbeGMPrf convert rfc822-to-8bit (ORCPT
+        id S1731560AbeGMPrn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 11:47:35 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:38376 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729762AbeGMPrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 11:47:35 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id ACC3E81663EE;
-        Fri, 13 Jul 2018 15:32:27 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 875D110F1BE0;
-        Fri, 13 Jul 2018 15:32:26 +0000 (UTC)
-Subject: Re: [PATCH v6 0/7] fs/dcache: Track & limit # of negative dentries
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>
-References: <1530905572-817-1-git-send-email-longman@redhat.com>
- <20180709081920.GD22049@dhcp22.suse.cz>
- <62275711-e01d-7dbe-06f1-bf094b618195@redhat.com>
- <20180710142740.GQ14284@dhcp22.suse.cz>
- <a2794bcc-9193-cbca-3a54-47420a2ab52c@redhat.com>
- <20180711102139.GG20050@dhcp22.suse.cz>
- <9f24c043-1fca-ee86-d609-873a7a8f7a64@redhat.com>
- <1531330947.3260.13.camel@HansenPartnership.com>
- <18c5cbfe-403b-bb2b-1d11-19d324ec6234@redhat.com>
- <1531336913.3260.18.camel@HansenPartnership.com>
- <4d49a270-23c9-529f-f544-65508b6b53cc@redhat.com>
- <1531411494.18255.6.camel@HansenPartnership.com>
- <30ac8e9b-a48c-9c37-5a96-731ad214262b@redhat.com>
- <1531416833.18255.10.camel@HansenPartnership.com>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <919c5749-4528-ad30-28dd-a3ebb2c42021@redhat.com>
-Date:   Fri, 13 Jul 2018 11:32:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        Fri, 13 Jul 2018 11:47:43 -0400
+Received: from foss.arm.com ([217.140.101.70]:37102 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729770AbeGMPrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 11:47:43 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1202C80D;
+        Fri, 13 Jul 2018 08:32:37 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D6BBD3F589;
+        Fri, 13 Jul 2018 08:32:36 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 532221AE4D0E; Fri, 13 Jul 2018 16:33:19 +0100 (BST)
+Date:   Fri, 13 Jul 2018 16:33:19 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Agustin Vega-Frias <agustinv@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-acpi@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Phani Pabba <pabba@codeaurora.org>,
+        Richard Ruigrok <rruigrok@codeaurora.org>,
+        Vijaya Kilari <vkilari@codeaurora.org>,
+        Jeff Hugo <jhugo@codeaurora.org>,
+        Rahul Ramasubramanian <rahulr@codeaurora.org>,
+        Agustin Vega-Frias <agustin.vega.frias@gmail.com>
+Subject: Re: [RFC V4 0/3] arm_pmu: acpi: variant support and QCOM Falkor
+ extensions
+Message-ID: <20180713153318.GB3049@arm.com>
+References: <1530822201-5890-1-git-send-email-agustinv@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <1531416833.18255.10.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 13 Jul 2018 15:32:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Fri, 13 Jul 2018 15:32:27 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1530822201-5890-1-git-send-email-agustinv@codeaurora.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 01:33 PM, James Bottomley wrote:
-> On Thu, 2018-07-12 at 12:26 -0400, Waiman Long wrote:
->> On 07/12/2018 12:04 PM, James Bottomley wrote:
->>> On Thu, 2018-07-12 at 11:54 -0400, Waiman Long wrote:
->>>> It is not that dentry cache is harder to get rid of than the
->>>> other memory. It is that the ability of generate unlimited number
->>>> of negative dentries that will displace other useful memory from
->>>> the system. What the patch is trying to do is to have a warning
->>>> or notification system in place to spot unusual activities in
->>>> regard to the number of negative dentries in the system. The
->>>> system administrators can then decide on what to do next.
->>> But every cache has this property: I can cause the same effect by
->>> doing a streaming read on a multi gigabyte file: the page cache
->>> will fill with the clean pages belonging to the file until I run
->>> out of memory and it has to start evicting older cache
->>> entries.  Once we hit the steady state of minimal free memory, the
->>> mm subsytem tries to balance the cache requests (like my streaming
->>> read) against the existing pool of cached objects.
->>>
->>> The question I'm trying to get an answer to is why does the dentry
->>> cache need special limits when the mm handling of the page cache
->>> (and other mm caches) just works?
->>>
->>> James
->>>
->> I/O activities can be easily tracked.
-> Tracked?  What do you mean tracked?  you mean we can control the page
-> cache through userfaultfd or something without resorting to cgroup
-> limits or something different?  I mean all caches are "tracked" because
-> otherwise we wouldn't know whether we have to retrieve/generate the
-> object or pull it from the cache.  If it's just about cache state,
-> what's wrong with /proc/sys/fs/dentry-state?
+Hi Agustin,
 
-Sorry for being imprecise. What I meant is it is easy to find out which
-tasks issue the most I/O request and consume the most I/O bandwidth.
-IOW, which one we can blame if there are too much I/O activities. On the
-other hand, it is not that easy to find out which task generates the
-most negative dentries.
+On Thu, Jul 05, 2018 at 04:23:17PM -0400, Agustin Vega-Frias wrote:
+> This series is a complete re-design of V1 of the QCOM Falkor extensions [1],
+> it introduces a probe table based on the HID of a device nested under the CPU
+> device to allow variant detection and arm_pmu customization.
+> 
+> The first patch adds an additional section at the end of each ACPI probe table.
+> This allows probe tables to be sentinel-delimited and better accommodate some
+> APIs that require such tables.
+> 
+> The second patch adds the PMUv3 ACPI probe table and plumbing to allow drivers
+> to plug into the ACPI PMUv3 probe sequence.
+> 
+> The third patch adds the PC capture extension applicable to Falkor and Saphira
+> CPUs. This shows how an extension that uses sampling events hooks. A similar
+> approach can be used to add RBB support and populate the sample branch stack
+> from it.
+> 
+> The fourth patch adds the matrix-based events extension applicable to Falkor
+> only.
+> 
+> If this found to be a reasonable extension approach other patches will be
+> added to the series to build on the base QCOM extensions.
 
->>  Generation of negative dentries, however, is more insidious. So the
->> ability to track and be notified when too many negative dentries are
->> created can be a useful tool for the system administrators. Besides,
->> there are paranoid users out there who want to have control of as
->> much as system parameters as possible.
-> To what end?  what problem are these administrators trying to solve? 
-> You keep coming back to the circular argument that the problem they're
-> trying to solve is limiting negative dentries, but I want to know what
-> issue they see in their systems that causes them to ask for this knob.
->
-> James
->
-I would say most system administrators don't want to have surprise. They
-don't want to see bad performance or other system problems and after
-some digging find out that some tasks are generating too much negative
-dentries and thus consuming too much memory, for example. They would
-certainly like to a way to notify them before the problems happen.
+I'm mostly ok with this approach, but I have a concern with the way in which
+the sysfs interface for carving up the config fields is implemented. If this
+is intended to be a strict extension to the armv8 pmu architecture, then I
+don't think you should be overriding the attr_groups entirely. Rather, you
+should be taking the attr_groups from pmuv3 and then extending them in a way
+which avoids overlapping field allocations by construction.
 
-Cheers,
-Longman
+As it stands, you already have an overlap between the pcc bit and the
+chained counter bit which Suzuki has implemented and it will be very easy to
+introduce API breakage if we don't enforce this as part of the design.
 
-
+Will
