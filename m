@@ -7,99 +7,97 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4827AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6A78ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0200B208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55B5F208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:57:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lahi/zPc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0200B208B1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D+MZW6Hz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B5F208B1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731983AbeGMSGd (ORCPT
+        id S1731311AbeGMSMs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 14:06:33 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:34949 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731225AbeGMSGc (ORCPT
+        Fri, 13 Jul 2018 14:12:48 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:43791 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729784AbeGMSMr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 14:06:32 -0400
-Received: by mail-oi0-f68.google.com with SMTP id i12-v6so63745450oik.2;
-        Fri, 13 Jul 2018 10:50:55 -0700 (PDT)
+        Fri, 13 Jul 2018 14:12:47 -0400
+Received: by mail-oi0-f66.google.com with SMTP id b15-v6so63703252oib.10;
+        Fri, 13 Jul 2018 10:57:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=dYcU/0GMzwHskzM2qy8wkKwZonMeTkuxCnoa7WQFaUk=;
-        b=lahi/zPczIcFbiX2XoEd+5CY/q4Sduk7UcpeZoik3vvvxqzj+qWfdaHr4mMiOADCxs
-         +EVUktv8fbZxU9CkHaGGeBHx+O8LPRT+scFZXADVmnzEyzJMTdaXTFSSfyHVJg4Nfyts
-         O2Hi1PzqBkCU6RWUzgXrkZXxekCyo2I4whkeqkwXsJYZ5hukexmuC5HQYCu5kkPh4aO1
-         k1oDLbf6ML+a+7PNzJSC7NJWkIzF9mB/NQlklYkqaIJizEeZmsjasEFP7Bg+EY8rKjd5
-         5F8yq3wshEKhgz+lkfFGLWkz7sZ6L7sdT9Hu0uOG7SoAHMRX2Fk7INhmMzUmFNxIFoGB
-         GePg==
+        bh=h+kJR83Vf4rbVPEwKW47vCA96RGiN9A7JY+vxyRF5IU=;
+        b=D+MZW6HzTKGhV7V1vx0j9j/XOEQtMqq3tdG5CRoGeGw90IylXaNl49XsbOVX40Lo20
+         sp8t6/JEzRtVSaR2fSbTtWV49v7lCGo75vSQ7+8PDcn0BmhDg6o0G2R5RECUGHzxlJrB
+         zBMHX7ehICRdHCB2qWzMdrFlFzeDj2nvboCnHjuPGb8eGSsi06SBD8XOthPmZA2vwghf
+         WcnBV50tp+AoQpvY/LsLBCACqAVpf/cKAVwLdjWWV6zq546PkxHAfoGDe5km38zGYBuy
+         0Tgi6QCfNy+L7UgC4qP990slEza3I2UW22/AaMndFh4quTcia++CMvcNuFidyVFBr4l5
+         9LBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=dYcU/0GMzwHskzM2qy8wkKwZonMeTkuxCnoa7WQFaUk=;
-        b=pDGtgQIdEkDjsAJQ2OPOErQLT+CMWSf9zCCZdemkdFpukDgfQKdIdtySVUYTkoScCW
-         tXvilDB9WMdOKcnNi4jv0aB7pKuRajzb51Y36p73v97pOjvVN9RVDnjwykVVwunK0HYF
-         f8OTlG169owR14jR4iDe3WPDay0PW+QCG10egdM5sDZgAmtW+sTRyMc8guK5x7G13DES
-         rX6MYTOHGYSHjfAQsoHEt5/39u+orrMwzpx+Su15qXSfhgpCgA5fzi+5bfqqcOcv+9Yk
-         AtZhcLauQXExA+CrnlRKXaDUXzhW3RhmqSTh79aiYNizHG2Zdg4EPg4TzWuGO3WwCEbP
-         7tKQ==
-X-Gm-Message-State: AOUpUlERhvEilJWHSgx3d7+aH1Tscw0rAlhIHQjCmGDKFiOeM82V3evf
-        37hS0h0PCIs58SHDqfn9dkT3GHhEgFbivzflnPk=
-X-Google-Smtp-Source: AAOMgpd65BuMILXnY/lywnkSk9Iedn26A8MPT7/DdcTDwY6ZkU5xNKAp7YyibSoZpWyBnJogsUzxWEPFQbDkCsyOXyk=
-X-Received: by 2002:aca:4b0d:: with SMTP id y13-v6mr8160563oia.198.1531504254732;
- Fri, 13 Jul 2018 10:50:54 -0700 (PDT)
+        bh=h+kJR83Vf4rbVPEwKW47vCA96RGiN9A7JY+vxyRF5IU=;
+        b=AAqe+I9oNBFtiCdnps3Q+ervgOnSMXwm2sESJL4kcy3iSDCzlfqBZOZeZoPRkRfP3B
+         H9RpwihPafunDfAyVaBErmBCTDCUdTAc/Yc/krI3mlwnC1LBOacskCjdV80ngZya28bb
+         UUkx/D81eLhsrfTgkzJQD0MtDs3WOqJ1VFeL1nD1hVUgmer5BadVGEDarSHKJ47f3bfh
+         A3AxyQhA5eua5coJOxSYstmzdrW/oxbAbPEqU9Cal1fSZInFGNicbljHSML5aQ4+zqEP
+         FYFVkCPr5mCAk63uAAucsvXoHzZstgZqKWDOdycLv/rNpg9pcAJavENam2WPIm9xzBNP
+         Qqug==
+X-Gm-Message-State: AOUpUlFPO8xpkFN7EFsBaOWV0RKL0WsiJ2URy2ZnNCtTZakEMSjEElN3
+        pZlPAROlIEM6kHG7sJ/BCySDR6OatEjz/IKr42A=
+X-Google-Smtp-Source: AAOMgpdnSTQPTRe3HkXF+TPbmL+a1rbe2q0mDAi8o3p2gOSZb56byaLhnwPet5t1LNWtf7yZFUlUpbbXiRMEmpRdcLA=
+X-Received: by 2002:aca:4b0d:: with SMTP id y13-v6mr8183222oia.198.1531504628119;
+ Fri, 13 Jul 2018 10:57:08 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:6285:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 10:50:54
+Received: by 2002:a9d:6285:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 10:57:07
  -0700 (PDT)
-In-Reply-To: <20180713173005.19552-3-andrew.smirnov@gmail.com>
-References: <20180713173005.19552-1-andrew.smirnov@gmail.com> <20180713173005.19552-3-andrew.smirnov@gmail.com>
+In-Reply-To: <CACRpkdaKQ_Lg=t3DLsvXQNLwi=BYugqNGyssEM9Hn2Ss5r-kQw@mail.gmail.com>
+References: <1531208921-23342-1-git-send-email-Anson.Huang@nxp.com> <CACRpkdaKQ_Lg=t3DLsvXQNLwi=BYugqNGyssEM9Hn2Ss5r-kQw@mail.gmail.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 13 Jul 2018 14:50:54 -0300
-Message-ID: <CAOMZO5ADn2FdZ+4uOV-K_vD+cLxd3a25Dbttbe7XLkB=u=6Dpg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] ARM: dts: imx51-zii-scu3-esb: Fix RAVE SP watchdog
- compatible string
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
+Date:   Fri, 13 Jul 2018 14:57:07 -0300
+Message-ID: <CAOMZO5COXS8udCzC3VEhcxt5P9v__hE6LR1ie4xcJKXKwLUmog@mail.gmail.com>
+Subject: Re: [PATCH] gpio: mxc: add power management support
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Anson Huang <Anson.Huang@nxp.com>,
         Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 2:30 PM, Andrey Smirnov
-<andrew.smirnov@gmail.com> wrote:
-> It looks like I made a nasty typo in the original patch which resulted
-> in missing watchdog device. Fix it.
+On Fri, Jul 13, 2018 at 4:11 AM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Jul 10, 2018 at 9:53 AM Anson Huang <Anson.Huang@nxp.com> wrote:
 >
-> Cc: Fabio Estevam <fabio.estevam@nxp.com>
-> Cc: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-> Cc: Lucas Stach <l.stach@pengutronix.de>
-> Cc: cphealy@gmail.com
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: devicetree@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+>> GPIO registers could lose context on some i.MX SoCs,
+>> like on i.MX7D, when enter LPSR mode, the whole SoC
+>> will be powered off except LPSR domain, GPIO banks
+>> will lose context in this case, need to restore
+>> the context after resume from LPSR mode.
+>>
+>> This patch adds GPIO save/restore for those necessary
+>> registers, and put the save/restore operations in noirq
+>> suspend/resume phase, since GPIO is fundamental module
+>> which could be used by other peripherals' resume phase.
+>>
+>> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+>
+> Hoping for some review on this before applying...
+> Fabio? Bartosz?
+
+Now I could find the patch on my Gmail Inbox :-)
+
+It looks good to me:
 
 Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
