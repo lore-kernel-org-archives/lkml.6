@@ -2,89 +2,118 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C93AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FD0DECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75719214AB
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:44:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75719214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 0F751206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 03:46:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F751206B7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387993AbeGMD5X (ORCPT
+        id S2387999AbeGMD6m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 23:57:23 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:43952 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387722AbeGMD5X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 23:57:23 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fdp0D-0002FS-Cm; Fri, 13 Jul 2018 11:44:17 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fdp02-0006hW-4o; Fri, 13 Jul 2018 11:44:06 +0800
-Date:   Fri, 13 Jul 2018 11:44:06 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
-        Lars Persson <larper@axis.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Rabin Vincent <rabinv@axis.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, qat-linux@intel.com,
-        dm-devel@redhat.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 11/14] treewide: Prepare to remove VLA usage for
- AHASH_REQUEST_ON_STACK
-Message-ID: <20180713034406.zwu2pkp3f2onybxs@gondor.apana.org.au>
-References: <20180711203619.1020-1-keescook@chromium.org>
- <20180711203619.1020-12-keescook@chromium.org>
- <CAK8P3a3356dbruUfS_+fj9f+X-0jbNE8WMe5sWhJmuRY9Nvcbg@mail.gmail.com>
- <20180713004038.lwibdesz7ohhoind@gondor.apana.org.au>
- <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
+        Thu, 12 Jul 2018 23:58:42 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:9619 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387722AbeGMD6m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 23:58:42 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 888F650C07E61;
+        Fri, 13 Jul 2018 11:45:47 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
+ 11:45:39 +0800
+Subject: Re: [PATCH 4/5] f2fs: disable small discard in lfs mode
+To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
+        <chao@kernel.org>, <yunlong.song@icloud.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <1531408170-45758-1-git-send-email-yunlong.song@huawei.com>
+ <1531408170-45758-5-git-send-email-yunlong.song@huawei.com>
+ <ad6411b6-effd-6dc1-c7c6-43047806784d@huawei.com>
+ <f6cefb97-dc10-5c07-7a75-ab53a72f7a22@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <2566d6f6-4f3b-e2d8-326e-450372b71b44@huawei.com>
+Date:   Fri, 13 Jul 2018 11:45:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jLYmC7U=bucFZCLsSXNX=T4WhCccR6hx9dwROYF+ZMt0Q@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <f6cefb97-dc10-5c07-7a75-ab53a72f7a22@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 08:33:24PM -0700, Kees Cook wrote:
-> On Thu, Jul 12, 2018 at 5:40 PM, Herbert Xu <herbert@gondor.apana.org.au> wrote:
-> > On Thu, Jul 12, 2018 at 06:02:26PM +0200, Arnd Bergmann wrote:
-> >>
-> >> Looking through some of the drivers, I found this interesting one:
-> >
-> > As I said before these patches are fundamentally broken.  Users
-> > of AHASH_REQUEST_ON_STACK can only use sync algorithm providers
-> > and therefore drivers are irrelevant.
+On 2018/7/13 11:39, Yunlong Song wrote:
+> How about change test_opt(sbi, LFS) to f2fs_sb_has_blkzoned(sbi->sb) in 
+> this patch, we apply
+> this patch to zoned block device?
+
+IIRC, we will use blkdev_reset_zones instead of __queue_discard_cmd for such
+kind of device, so we will not encounter the issue you described.
+
+Thanks,
+
 > 
-> I don't understand what this means. Can you give an example of what
-> you want to see happen that will accomplish the VLA removals?
+> On 2018/7/13 11:17, Chao Yu wrote:
+>> On 2018/7/12 23:09, Yunlong Song wrote:
+>>> In lfs mode, it is better to send the discard of the overall section
+>>> each time to avoid missing alignment with flash.
+>> Hmm.. I think LFS mode can be used widely on different kind of device instead of
+>> just on zoned block device, so let's just keep old implementation here.
+>>
+>> Thanks,
+>>
+>>> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+>>> ---
+>>>   fs/f2fs/segment.c | 3 ++-
+>>>   fs/f2fs/sysfs.c   | 4 ++++
+>>>   2 files changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index fd38b61..f6c20e0 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -1766,7 +1766,8 @@ static int create_discard_cmd_control(struct f2fs_sb_info *sbi)
+>>>   	atomic_set(&dcc->issing_discard, 0);
+>>>   	atomic_set(&dcc->discard_cmd_cnt, 0);
+>>>   	dcc->nr_discards = 0;
+>>> -	dcc->max_discards = MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
+>>> +	dcc->max_discards = test_opt(sbi, LFS) ? 0 :
+>>> +				MAIN_SEGS(sbi) << sbi->log_blocks_per_seg;
+>>>   	dcc->undiscard_blks = 0;
+>>>   	dcc->root = RB_ROOT;
+>>>   	dcc->rbtree_check = false;
+>>> diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+>>> index 2e7e611..4b6c457 100644
+>>> --- a/fs/f2fs/sysfs.c
+>>> +++ b/fs/f2fs/sysfs.c
+>>> @@ -271,6 +271,10 @@ static ssize_t __sbi_store(struct f2fs_attr *a,
+>>>   		return count;
+>>>   	}
+>>>   
+>>> +	if (!strcmp(a->attr.name, "max_small_discards") &&
+>>> +		test_opt(sbi, LFS))
+>>> +		return -EINVAL;
+>>> +
+>>>   	*ui = t;
+>>>   
+>>>   	if (!strcmp(a->attr.name, "iostat_enable") && *ui == 0)
+>>>
+>>
+>> .
+>>
+> 
 
-Any algorithm that is async must be ignored when you're calculating
-the maximum on-stack size of the request.  For example, sha512-mb
-is marked as async and therefore must not be used in conjunction
-with AHASH_REQUEST_ON_STACK.
-
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
