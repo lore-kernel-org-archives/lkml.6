@@ -2,130 +2,89 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A07ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60784ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:10:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87FC520842
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:07:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87FC520842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 01C6820779
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:10:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J75KOYiJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01C6820779
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387831AbeGMSWx (ORCPT
+        id S1731970AbeGMSZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 14:22:53 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34118 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732677AbeGMSWG (ORCPT
+        Fri, 13 Jul 2018 14:25:50 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:43473 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731181AbeGMSZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 14:22:06 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6DI4EY1050446
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:23 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k6xq0nt5w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:23 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 13 Jul 2018 19:06:20 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 13 Jul 2018 19:06:18 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6DI6HIw38797524
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Jul 2018 18:06:17 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4DA7142045;
-        Fri, 13 Jul 2018 21:06:38 +0100 (BST)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4479842042;
-        Fri, 13 Jul 2018 21:06:37 +0100 (BST)
-Received: from dhcp-9-31-103-18.watson.ibm.com (unknown [9.31.103.18])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 13 Jul 2018 21:06:37 +0100 (BST)
-From:   Mimi Zohar <zohar@linux.vnet.ibm.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Luis R . Rodriguez" <mcgrof@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v6 2/8] kexec: add call to LSM hook in original kexec_load syscall
-Date:   Fri, 13 Jul 2018 14:05:57 -0400
-X-Mailer: git-send-email 2.7.5
-In-Reply-To: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
-References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18071318-0016-0000-0000-000001E691DA
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071318-0017-0000-0000-0000323B2F81
-Message-Id: <1531505163-20227-3-git-send-email-zohar@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-13_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=862 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807130159
+        Fri, 13 Jul 2018 14:25:50 -0400
+Received: by mail-pl0-f67.google.com with SMTP id o7-v6so2145663plk.10;
+        Fri, 13 Jul 2018 11:10:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=upQTrPcQtmwOjnLgwxljk72fHs9p6GnE7NE07JEJOuA=;
+        b=J75KOYiJcTfXhyDsrEhzKV+wivgTu6hIZhzjivx9QPXaayT83IpRifsMxN17t3t8Zf
+         UBkL+w5KBIMrZi0zaxHxzkCQLPvZB99LWrQF37M2hv6ly03HxywQJx/Q8Nj2fEqqioOR
+         MaZlsVbDAkJbtfbcE6gXYGUfuhYjhBrwjQgMyLHycV1CfGOUcyDCvOZYZyWR1ygIbgcu
+         xBg8CF1dHoSLnpeJT7QUymN8bAFUfR6O0cSfBHZN/pE5Pnc+jMt1vA5ZBiBnTpRJp+d4
+         tmRNTW9glNc5QWYCeNbRC+s55mw1T+PqNWKOIzThcC312TfPd7ziDLqGsON0Nixq+CVo
+         gbHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=upQTrPcQtmwOjnLgwxljk72fHs9p6GnE7NE07JEJOuA=;
+        b=M0lENV80qWOkrN1Cm6wvfsrxVVskaNLn1OfTKNIVI4lNgoYEfN99A5/Hbi1vbS0aeJ
+         unDOqArasxNrwxovNjOplEbp6KGUK04RDxpHYBXVEvI95hGPbL5f692NQt4ZEE9t3LG7
+         Aia7tebR7DMNHWQjPnVnjri+w3aRav50TPw52md+pF6BQQxGDSsJPapHw70Vpdh9SSwX
+         jDigdPnZNbvtMtBy7Z4UL/cCSWfxis/ZH9tguqz5Nb0Q8sRkNeBlPMsePLHcPo40Yoxb
+         W8NAUuz39sQyGieG/tgMSf4n4YUlDWlOWTuM8VinGUlRyuoVIULT8Kbq04kI/xZnCWKi
+         vDSw==
+X-Gm-Message-State: AOUpUlH9Ayf4xj+RrSvKESfFifBvKMMxDcGb99OMo6uYbcRrwbkbbtKu
+        OgaYwiFUdiJ0KiaUEF5s89E=
+X-Google-Smtp-Source: AAOMgpcKfbjuOEt5XtSf1wCL0NGeCMmIgoAHpJ8M/UOlPLZlx7oxJf4MSdm72He2nP01xcgvEMvHww==
+X-Received: by 2002:a17:902:a613:: with SMTP id u19-v6mr7324489plq.234.1531505407491;
+        Fri, 13 Jul 2018 11:10:07 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::5:95fe])
+        by smtp.gmail.com with ESMTPSA id h10-v6sm22568506pfj.78.2018.07.13.11.10.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Jul 2018 11:10:06 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 11:10:02 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Constantine Shulyupin <const@MakeLinux.com>
+Cc:     ast@kernel.org, daniel@iogearbox.net, netdev@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Joey Pabalinas <joeypabalinas@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] scripts/tags.sh: Add BPF_CALL
+Message-ID: <20180713181001.2ugugmnmldyrq7li@ast-mbp.dhcp.thefacebook.com>
+References: <20180712052850.28396-1-const@MakeLinux.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712052850.28396-1-const@MakeLinux.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order for LSMs and IMA-appraisal to differentiate between kexec_load
-and kexec_file_load syscalls, both the original and new syscalls must
-call an LSM hook.  This patch adds a call to security_kernel_load_data()
-in the original kexec_load syscall.
+On Thu, Jul 12, 2018 at 08:28:46AM +0300, Constantine Shulyupin wrote:
+> Signed-off-by: Constantine Shulyupin <const@MakeLinux.com>
 
-Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Kees Cook <keescook@chromium.org>
-Acked-by: Serge Hallyn <serge@hallyn.com>
----
- kernel/kexec.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/kernel/kexec.c b/kernel/kexec.c
-index aed8fb2564b3..68559808fdfa 100644
---- a/kernel/kexec.c
-+++ b/kernel/kexec.c
-@@ -11,6 +11,7 @@
- #include <linux/capability.h>
- #include <linux/mm.h>
- #include <linux/file.h>
-+#include <linux/security.h>
- #include <linux/kexec.h>
- #include <linux/mutex.h>
- #include <linux/list.h>
-@@ -195,10 +196,17 @@ static int do_kexec_load(unsigned long entry, unsigned long nr_segments,
- static inline int kexec_load_check(unsigned long nr_segments,
- 				   unsigned long flags)
- {
-+	int result;
-+
- 	/* We only trust the superuser with rebooting the system. */
- 	if (!capable(CAP_SYS_BOOT) || kexec_load_disabled)
- 		return -EPERM;
- 
-+	/* Permit LSMs and IMA to fail the kexec */
-+	result = security_kernel_load_data(LOADING_KEXEC_IMAGE);
-+	if (result < 0)
-+		return result;
-+
- 	/*
- 	 * Verify we have a legal set of flags
- 	 * This leaves us room for future extensions.
--- 
-2.7.5
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 
