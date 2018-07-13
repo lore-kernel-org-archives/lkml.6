@@ -2,207 +2,205 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E09E6ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D568ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91E9D208C4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:15:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eC+sV6vk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E9D208C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F01E208C4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:16:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F01E208C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387900AbeGMI2p (ORCPT
+        id S1731931AbeGMIaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 04:28:45 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:46524 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731968AbeGMI2p (ORCPT
+        Fri, 13 Jul 2018 04:30:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46980 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729766AbeGMIaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 04:28:45 -0400
-Received: by mail-qt0-f196.google.com with SMTP id d4-v6so10902815qtn.13;
-        Fri, 13 Jul 2018 01:15:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3h9/vTeBonAFp2MiOshzOvIQ4qO3rvlbvosXXHdiyNY=;
-        b=eC+sV6vkjkIFzr+IqXvtx/gF/G+1iO4y0kLUOTtP8cq5Pb3VucG9W26TKQHsn+cZEI
-         C6t566/2v/VaOyAw/I6q+1yhJyCoUjFx1NxD3O/hUvtwFDYpRnRlD11nH+fMMCZv4NB0
-         Rj0Jm6DDfqxqv3/7STHQhECt80oygAJMLl4oylrxf+Kg2qjyZSvdRsM/fqIA/kiTUZGy
-         Zx8Sx88Rjv938kcQJxDsl9FCuIocv+s04zMpmw8keO5VWLvfc72L9ySS/E9RHO10uGbG
-         2MDX3v2krHpcb/HPWCdxz3JWVljLkCFkFiLmUklSWtuxxgdbWqWnjmwH07FmKdZ700rV
-         JmvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3h9/vTeBonAFp2MiOshzOvIQ4qO3rvlbvosXXHdiyNY=;
-        b=BViMrl8zywLEChReAOv/w8bINxAn1DzW/cg+AEiUzEDtB3c0/h+wcSkjPcq6LhHzGk
-         APP9f+fK1oZFhpkTrfGrFNb+iKHUg1/k26IMNXZYXDDr6bIUCFIZ2owgy8TdCOVv/YHr
-         Fd7qliUsi3rDKnkpEij5E0nh3NN+mwy42AOIo5AWlr76GGTzkSx6db1cERW8vp7J/Qda
-         cyiUQENOD0ep+H7oCzpIuCi7iibrSLOuwu3P7IOepww+ttnXKazJEPIZhcc/scjJRz9H
-         Q3uWrdb8mu1vAAQobqbUeSs7rop5FoMy33DtaY703IZF6M8wr5LLoSFUeuDcHBRkNucR
-         Xvng==
-X-Gm-Message-State: AOUpUlFQ3Wxb3hqSfWt26D2k7ZBYADnFpYbly8w+ROvECDWK/yfENkPP
-        jhdFbb5654U5KZNwz1Ik8WDYT00QbBExhzrDiOo=
-X-Google-Smtp-Source: AAOMgpdhokyxtCz3x5K5CCfKja+FOCBGA8PKamV0KFsY0ITgchCcPBl3aind55K1m4gp4xDthWWI1quMUSPrLgpdtn4=
-X-Received: by 2002:ac8:3579:: with SMTP id z54-v6mr4632963qtb.161.1531469711056;
- Fri, 13 Jul 2018 01:15:11 -0700 (PDT)
+        Fri, 13 Jul 2018 04:30:09 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EDB132C;
+        Fri, 13 Jul 2018 08:16:34 +0000 (UTC)
+Date:   Fri, 13 Jul 2018 10:16:32 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     linux-arch@vger.kernel.org, alexandre.belloni@bootlin.com,
+        arnd@arndb.de, richard.genoud@gmail.com,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        jslaby@suse.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] tty/serial_core: add ISO7816 infrastructure
+Message-ID: <20180713081632.GA3310@kroah.com>
+References: <20180711131638.12622-1-ludovic.desroches@microchip.com>
+ <20180711131638.12622-2-ludovic.desroches@microchip.com>
+ <20180712150229.GE22502@kroah.com>
+ <20180713075648.ya2er5eip6uldl75@M43218.corp.atmel.com>
 MIME-Version: 1.0
-References: <20180709150844.32505-1-enric.balletbo@collabora.com>
- <536642654ca55f08877497c86a5cb106d5458384.camel@collabora.com> <d9ea42a39a80c12b9d5730376d2f8e5a953771ef.camel@collabora.com>
-In-Reply-To: <d9ea42a39a80c12b9d5730376d2f8e5a953771ef.camel@collabora.com>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Fri, 13 Jul 2018 10:14:59 +0200
-Message-ID: <CAFqH_51EvuJmU2rxcndWdyYj6CAhzDv_o6YPnUHJb6ctM+k8VQ@mail.gmail.com>
-Subject: Re: [PATCH] usb: dwc3: of-simple: reset host controller at suspend/resume
-To:     ezequiel@collabora.com
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Brian Norris <briannorris@chromium.org>, kernel@collabora.com,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180713075648.ya2er5eip6uldl75@M43218.corp.atmel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-Missatge de Ezequiel Garcia <ezequiel@collabora.com> del dia dt., 10
-de jul. 2018 a les 0:10:
->
-> Sigh, now actually Cc devicetree folks
->
-> On Mon, 2018-07-09 at 19:04 -0300, Ezequiel Garcia wrote:
-> > (Cc devicetree folks)
-> >
-> > Hi Enric,
-> >
-> > Thanks for the patch.
-> >
-> > On Mon, 2018-07-09 at 17:08 +0200, Enric Balletbo i Serra wrote:
-> > > If we power off the SoC logic rail in S3, we can find that the
-> > > Type-C
-> > > PHY can't initialize correctly after system resume. We need to
-> > > toggle
-> > > the USB3-OTG reset before trying to initialize the PHY, or else it
-> > > times out.
-> > >
-> > >     phy phy-ff800000.phy.9: phy poweron failed --> -110
-> > >     dwc3 fe900000.dwc3: failed to initialize core
-> > >     dwc3: probe of fe900000.dwc3 failed with error -110
-> > >
-> > > Note that the RK3399 TRM suggests that we should keep the whole
-> > > usb3
-> > > controller in reset for the duration of the Type-C PHY
-> > > initialization.
-> > > However, it's hard to assert the reset in the current framework of
-> > > reset. We're still skeptical about that, and we haven't yet found a
-> > > case where this seems to have mattered. This approach is much
-> > > easier,
-> > > it
-> > > simply holds the USB3-OTG reset while device is supended.
-> > >
-> > > The dwc3 core is going to reinitialize the controller at
-> > > suspend/resume
-> > > anyway (including a "soft reset"), so it should be safe to do this.
-> > >
-> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com
-> > > >
+On Fri, Jul 13, 2018 at 09:56:48AM +0200, Ludovic Desroches wrote:
+> On Thu, Jul 12, 2018 at 05:02:29PM +0200, Greg KH wrote:
+> > On Wed, Jul 11, 2018 at 03:16:36PM +0200, Ludovic Desroches wrote:
+> > > From: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > > 
+> > > Add the ISO7816 ioctl and associated accessors and data structure.
+> > > Drivers can then use this common implementation to handle ISO7816.
+> > > 
+> > > Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > > [ludovic.desroches@microchip.com: squash and rebase, removal of gpios, checkpatch fixes]
+> > > Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
 > > > ---
-> > > Dear all,
-> > >
-> > > Now that the usb3-phy otg port support for rk3399 has been merged
-> > > [1]
-> > > we
-> > > found that suspend/resume is broken. The problem is well known for
-> > > ChromeOS kernels, they solved it in a similar way adding a reset
-> > > pulse on
-> > > resume in the specific usb glue layer (dwc3-rockchip). In mainline,
-> > > though, we use the dwc3-of-simple glue layer instead of a specific
-> > > layer
-> > > for rockchip. The patch is based on the Brian Norris work but
-> > > slightly
-> > > different, it holds the reset while device is suspended. It was
-> > > tested
-> > > on a Samsung Chromebook Plus with usbc docking station attached by
-> > > doing
-> > > different suspend/resume cycles and checking no usb devices has
-> > > been
-> > > lost.
-> > >
-> > > I am not sure this is the better way to solve this but I did not
-> > > find
-> > > any other way, and, as I am not sure this can be generic, the reset
-> > > is only
-> > > done on rockchip platforms.
-> > >
-> >
-> > I don't really understand why there are per-platform hacks in glue
-> > drivers, instead of having per-platform glue drivers, or some other
-> > pluggable hooks.
-> >
-> > > Best regards,
-> > >  Enric
-> > >
-> > > [1] bfdca1736ea76345071bbc5607d18928e54909ac ('arm64: dts:
-> > > rockchip:
-> > > add
-> > >     usb3-phy otg-port support for rk3399')
-> > >
-> > >  drivers/usb/dwc3/dwc3-of-simple.c | 21 +++++++++++++++++++++
-> > >  1 file changed, 21 insertions(+)
-> > >
-> > > diff --git a/drivers/usb/dwc3/dwc3-of-simple.c
-> > > b/drivers/usb/dwc3/dwc3-of-simple.c
-> > > index dbeff5e6ad14..1d1ece99ed94 100644
-> > > --- a/drivers/usb/dwc3/dwc3-of-simple.c
-> > > +++ b/drivers/usb/dwc3/dwc3-of-simple.c
-> > > @@ -201,9 +201,30 @@ static int
-> > > dwc3_of_simple_runtime_resume(struct
-> > > device *dev)
-> > >
-> > >     return 0;
+> > >  drivers/tty/serial/serial_core.c  | 49 +++++++++++++++++++++++++++++++++++++++
+> > >  include/linux/serial_core.h       |  3 +++
+> > >  include/uapi/asm-generic/ioctls.h |  2 ++
+> > >  include/uapi/linux/serial.h       | 17 ++++++++++++++
+> > >  4 files changed, 71 insertions(+)
+> > > 
+> > > diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+> > > index 9c14a453f73c..c89ac59f6f8c 100644
+> > > --- a/drivers/tty/serial/serial_core.c
+> > > +++ b/drivers/tty/serial/serial_core.c
+> > > @@ -1301,6 +1301,47 @@ static int uart_set_rs485_config(struct uart_port *port,
+> > >  	return 0;
 > > >  }
-> > > +
-> > > +static int dwc3_of_simple_suspend(struct device *dev)
+> > >  
+> > > +static int uart_get_iso7816_config(struct uart_port *port,
+> > > +				   struct serial_iso7816 __user *iso7816)
 > > > +{
-> > > +   struct dwc3_of_simple *simple = dev_get_drvdata(dev);
+> > > +	unsigned long flags;
+> > > +	struct serial_iso7816 aux;
 > > > +
-> > > +   if (of_device_is_compatible(dev->of_node,
-> > > "rockchip,rk3399-
-> > > dwc3"))
-> > >
-> >
-> > Instead of calling of_device_is_compatible in each suspend/resume,
-> > which seems quite expensive, how about having a per-device boolean
-> > 'needs_reset' or something like that?
-> >
-Yep, not sure how much, but probably use a boolean will be faster. I
-am also wondering if we can remove the of_device_is_compatible call
-and do the reset on all platforms. This will need lots of tests on
-different platforms, of course. i'd like to hear maintainers feedback
-here.
+> > > +	spin_lock_irqsave(&port->lock, flags);
+> > > +	aux = port->iso7816;
+> > > +	spin_unlock_irqrestore(&port->lock, flags);
+> > > +
+> > > +	if (copy_to_user(iso7816, &aux, sizeof(aux)))
+> > > +		return -EFAULT;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +static int uart_set_iso7816_config(struct uart_port *port,
+> > > +				   struct serial_iso7816 __user *iso7816_user)
+> > > +{
+> > > +	struct serial_iso7816 iso7816;
+> > > +	int ret;
+> > > +	unsigned long flags;
+> > > +
+> > > +	if (!port->iso7816_config)
+> > > +		return -ENOIOCTLCMD;
+> > > +
+> > > +	if (copy_from_user(&iso7816, iso7816_user, sizeof(*iso7816_user)))
+> > > +		return -EFAULT;
+> > > +
+> > > +	spin_lock_irqsave(&port->lock, flags);
+> > > +	ret = port->iso7816_config(port, &iso7816);
+> > > +	spin_unlock_irqrestore(&port->lock, flags);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	if (copy_to_user(iso7816_user, &port->iso7816, sizeof(port->iso7816)))
+> > > +		return -EFAULT;
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > >  /*
+> > >   * Called via sys_ioctl.  We can use spin_lock_irq() here.
+> > >   */
+> > > @@ -1385,6 +1426,14 @@ uart_ioctl(struct tty_struct *tty, unsigned int cmd, unsigned long arg)
+> > >  	case TIOCSRS485:
+> > >  		ret = uart_set_rs485_config(uport, uarg);
+> > >  		break;
+> > > +
+> > > +	case TIOCSISO7816:
+> > > +		ret = uart_set_iso7816_config(state->uart_port, uarg);
+> > > +		break;
+> > > +
+> > > +	case TIOCGISO7816:
+> > > +		ret = uart_get_iso7816_config(state->uart_port, uarg);
+> > > +		break;
+> > >  	default:
+> > >  		if (uport->ops->ioctl)
+> > >  			ret = uport->ops->ioctl(uport, cmd, arg);
+> > > diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+> > > index 06ea4eeb09ab..d6e7747ffd46 100644
+> > > --- a/include/linux/serial_core.h
+> > > +++ b/include/linux/serial_core.h
+> > > @@ -137,6 +137,8 @@ struct uart_port {
+> > >  	void			(*handle_break)(struct uart_port *);
+> > >  	int			(*rs485_config)(struct uart_port *,
+> > >  						struct serial_rs485 *rs485);
+> > > +	int			(*iso7816_config)(struct uart_port *,
+> > > +						  struct serial_iso7816 *iso7816);
+> > >  	unsigned int		irq;			/* irq number */
+> > >  	unsigned long		irqflags;		/* irq flags  */
+> > >  	unsigned int		uartclk;		/* base uart clock */
+> > > @@ -253,6 +255,7 @@ struct uart_port {
+> > >  	struct attribute_group	*attr_group;		/* port specific attributes */
+> > >  	const struct attribute_group **tty_groups;	/* all attributes (serial core use only) */
+> > >  	struct serial_rs485     rs485;
+> > > +	struct serial_iso7816   iso7816;
+> > >  	void			*private_data;		/* generic platform data pointer */
+> > >  };
+> > >  
+> > > diff --git a/include/uapi/asm-generic/ioctls.h b/include/uapi/asm-generic/ioctls.h
+> > > index 040651735662..0e5c79726c2d 100644
+> > > --- a/include/uapi/asm-generic/ioctls.h
+> > > +++ b/include/uapi/asm-generic/ioctls.h
+> > > @@ -66,6 +66,8 @@
+> > >  #ifndef TIOCSRS485
+> > >  #define TIOCSRS485	0x542F
+> > >  #endif
+> > > +#define TIOCGISO7816	0x5430
+> > > +#define TIOCSISO7816	0x5431
+> > >  #define TIOCGPTN	_IOR('T', 0x30, unsigned int) /* Get Pty Number (of pty-mux device) */
+> > >  #define TIOCSPTLCK	_IOW('T', 0x31, int)  /* Lock/unlock Pty */
+> > >  #define TIOCGDEV	_IOR('T', 0x32, unsigned int) /* Get primary device node of /dev/console */
+> > > diff --git a/include/uapi/linux/serial.h b/include/uapi/linux/serial.h
+> > > index 3fdd0dee8b41..93eb3c496ff1 100644
+> > > --- a/include/uapi/linux/serial.h
+> > > +++ b/include/uapi/linux/serial.h
+> > > @@ -132,4 +132,21 @@ struct serial_rs485 {
+> > >  					   are a royal PITA .. */
+> > >  };
+> > >  
+> > > +/*
+> > > + * Serial interface for controlling ISO7816 settings on chips with suitable
+> > > + * support. Set with TIOCSISO7816 and get with TIOCGISO7816 if supported by
+> > > + * your platform.
+> > > + */
+> > > +struct serial_iso7816 {
+> > > +	__u32	flags;			/* ISO7816 feature flags */
+> > > +#define SER_ISO7816_ENABLED		(1 << 0)
+> > > +#define SER_ISO7816_T_PARAM		(0x0f << 4)
+> > > +#define SER_ISO7816_T(t)		(((t) & 0x0f) << 4)
+> > > +	__u32	tg;
+> > > +	__u32	sc_fi;
+> > > +	__u32	sc_di;
+> > > +	__u32	clk;
+> > > +	__u32	reserved[5];
+> > 
+> > You need to verify that reserved[] is all set to 0, otherwise people
+> > will put crud in there and you can never use it for anything in the
+> > future.
+> 
+> Should I just verify or force it to 0?
 
-> > Or maybe just have a boolean devicetree property for this?
+Verify please, and then abort if they are not set to 0.  Otherwise if
+userspace puts odd stuff in there, and then later you decide to use it
+as new fields, that old code will start to do odd things.
 
-I don't think moving the "hack" to the devicetree will be acceptable
-for the DT maintainers, this is not really a hardware property.
+thanks,
 
-Thanks,
-  Enric.
-
-> >
-> > Regards,
-> > Eze
-> >
+greg k-h
