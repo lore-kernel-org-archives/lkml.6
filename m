@@ -2,95 +2,150 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E54ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D51E6ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2013214AB
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:31:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2013214AB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id 7CB70214AB
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:33:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XseuU/Sc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CB70214AB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387837AbeGMAnM (ORCPT
+        id S2387842AbeGMApO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 20:43:12 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:45828 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387774AbeGMAnL (ORCPT
+        Thu, 12 Jul 2018 20:45:14 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:39664 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387774AbeGMApN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 20:43:11 -0400
-Received: from localhost (74-93-104-98-Washington.hfc.comcastbusiness.net [74.93.104.98])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id CEFF114019AE3;
-        Thu, 12 Jul 2018 17:31:09 -0700 (PDT)
-Date:   Thu, 12 Jul 2018 17:31:07 -0700 (PDT)
-Message-Id: <20180712.173107.1123272614896683104.davem@davemloft.net>
-To:     maxime.chevallier@bootlin.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        antoine.tenart@bootlin.com, thomas.petazzoni@bootlin.com,
-        gregory.clement@bootlin.com, miquel.raynal@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: Re: [PATCH net-next 00/18] net: mvpp2: add RSS support
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
-References: <20180712115427.27375-1-maxime.chevallier@bootlin.com>
-X-Mailer: Mew version 6.7 on Emacs 25.3 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 12 Jul 2018 17:31:10 -0700 (PDT)
+        Thu, 12 Jul 2018 20:45:13 -0400
+Received: by mail-pl0-f67.google.com with SMTP id p23-v6so117584plo.6
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 17:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Br+Ut7Adx8WfxmtbhyErzhCOz+hxoNRE6rn4bCoOl6Y=;
+        b=XseuU/ScbDlqDh/a/SDhgRypjR2J4tgn9O8osFn9eaPIhB3fuDCZMp1x6WCcwrBGkO
+         6YjKGC9LYEZEYlXMY3hXpIHs+2712SAV4/aK9MBrn5XYNi4AexMQXlXKtrbexKlxXMY+
+         cP2gwnceDH1CPmMVPrMEAh6cZrAbT8CT2LBNk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Br+Ut7Adx8WfxmtbhyErzhCOz+hxoNRE6rn4bCoOl6Y=;
+        b=ZSyEY1ne3BmFrxG7Ztt4Ls412TXFxv60dz6I8nyhx3+/E6uDQxdgHS0x+yHNF98Nb1
+         1MZMSdTWNntBchmMUArDlPQcF3e31xNMxr38Kl458RgMvb488tmP2ILZo0Ko0oOO20ls
+         RNejSfDUBI6nAo+0TlNyJw2lUt8Gd05mcbCPswi2p35xYb0+75pBuxtsg/TpSZerkQsE
+         rKYwTsc8hqRfM41QPLKpAvnfC+C+fz8h/oRHHurWduy4ZLTPbRp1tJGW3LbbcFZQhCh3
+         Af3YSAU1FSGDa7kLeHf+BqVz8vPKLMtZBtoYhbs2qZ5IJEvm85DRDpVObha/ViNDVZ4I
+         2/Cg==
+X-Gm-Message-State: AOUpUlET3kCFtOif+g94JSIXRxZlr1hOQm28a0Xtl6myVkIuYZOj6vbb
+        ALHszwfGyfVAbp1qwURYPxhUWQ==
+X-Google-Smtp-Source: AAOMgpeR3fIKT0gAPz1A4UMTWTvYboCWGZjzcP9Wk622cOgH1FzkFY1cI1Tb+TWCfRIi0TyHh7W0vQ==
+X-Received: by 2002:a17:902:292b:: with SMTP id g40-v6mr4199676plb.273.1531441991391;
+        Thu, 12 Jul 2018 17:33:11 -0700 (PDT)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id d188-v6sm41666859pfc.96.2018.07.12.17.33.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 17:33:10 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 09:34:36 +0900
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     catalin.marinas@arm.com, ard.biesheuvel@linaro.org,
+        tbaicar@codeaurora.org, bhsharma@redhat.com, dyoung@redhat.com,
+        james.morse@arm.com, mark.rutland@arm.com, al.stone@linaro.org,
+        graeme.gregory@linaro.org, hanjun.guo@linaro.org,
+        lorenzo.pieralisi@arm.com, sudeep.holla@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org
+Subject: Re: [PATCH v3.1 0/4] arm64: kexec,kdump: fix boot failures on
+ acpi-only system
+Message-ID: <20180713003434.GZ28220@linaro.org>
+Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Will Deacon <will.deacon@arm.com>, catalin.marinas@arm.com,
+        ard.biesheuvel@linaro.org, tbaicar@codeaurora.org,
+        bhsharma@redhat.com, dyoung@redhat.com, james.morse@arm.com,
+        mark.rutland@arm.com, al.stone@linaro.org,
+        graeme.gregory@linaro.org, hanjun.guo@linaro.org,
+        lorenzo.pieralisi@arm.com, sudeep.holla@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org
+References: <20180709234229.20181-1-takahiro.akashi@linaro.org>
+ <20180712164918.GA26935@arm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712164918.GA26935@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Date: Thu, 12 Jul 2018 13:54:09 +0200
+On Thu, Jul 12, 2018 at 05:49:19PM +0100, Will Deacon wrote:
+> Hi Akashi,
+> 
+> On Tue, Jul 10, 2018 at 08:42:25AM +0900, AKASHI Takahiro wrote:
+> > This patch series is a set of bug fixes to address kexec/kdump
+> > failures which are sometimes observed on ACPI-only system and reported
+> > in LAK-ML before.
+> 
+> I tried picking this up, along with Ard's fixup, but I'm seeing a build
+> failure for allmodconfig:
+> 
+> arch/arm64/kernel/acpi.o: In function `__acpi_get_mem_attribute':
+> acpi.c:(.text+0x60): undefined reference to `efi_mem_attributes'
+> 
+> I didn't investigate further. Please can you fix this?
 
-> This series adds support for RSS on PPv2. There already was some code to
-> handle the RSS tables, but the driver was missing all the classification
-> steps required to actually use these tables.
-> 
-> RSS is used through the classifier, using at least 2 lookups :
->  - One using the C2 engine, a TCAM engine that match the packet based on
->    some header extracted fields, assigns the default rx queue for that
->    packet and tag it for RSS
->  - One using the C3Hx engine, which computes the hash that's used to perform
->    the lookup in the RSS table.
-> 
-> Since RSS spreads the load across CPUs, we need to make sure that packets
-> from the same flow are always assigned the same rx queue, to prevent
-> re-ordering.
-> 
-> This series therefore adds a classification step based on the Header Parser,
-> that separate ingress traffic into 52 flows, based on some L2, L3 and L4
-> parameters.
-> 
-> Patches 1 and 2 fix some header issues, from the driver splitting
-> 
-> Patches 3 to 7 make sure the correct receive queue setup is used for RSS
-> 
-> Patches 8 to 14 deal with the way we handle the RSS tables
-> 
-> Patch 15 implement basic classifier configuration, by using it to assign the
-> default receive queue
-> 
-> Patch 16 implement the ingress traffic splitting into multiple flows
-> 
-> Patch 17 adds RSS support, by using the needed classification steps
-> 
-> Patch 18 adds the required ethtool ops to configure the flow hash parameters
-> 
-> This was tested on MacchiatoBin, giving some nice performance improvements
-> using ip forwarding (going from 5Gbps to 9.6Gbps total throughput).
-> 
-> RSS is disabled by default.
+Because CONFIG_ACPI is on and CONFIG_EFI is off.
 
-Series applied, thank you.
+This can happen in allmodconfig as CONFIG_EFI depends on
+!CONFIG_CPU_BIG_ENDIAN, which is actually on in this case.
+
+Looking at __acpi_get_mem_attributes(), since there is no information
+available on memory attributes, what we can do at best is
+  * return PAGE_KERNEL (= cacheable) for mapped memory,
+  * return DEVICE_nGnRnE (= non-cacheable) otherwise
+(See a hunk to be applied on top of my patch#4.)
+
+I think that, after applying, acpi_os_ioremap() would work almost
+in the same way as the original before my patchset given that
+MAP memblock attribute is used only under CONFIG_EFI for now.
+
+Make sense?
+
+-Takahiro AKASHI
+
+> Will
+---8<---
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index ed46dc188b22..cad3ed2666ef 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -238,6 +238,7 @@ void __init acpi_boot_table_init(void)
+ 
+ pgprot_t __acpi_get_mem_attribute(phys_addr_t addr)
+ {
++#ifdef CONFIG_EFI
+ 	/*
+ 	 * According to "Table 8 Map: EFI memory types to AArch64 memory
+ 	 * types" of UEFI 2.5 section 2.3.6.1, each EFI memory type is
+@@ -255,5 +256,9 @@ pgprot_t __acpi_get_mem_attribute(phys_addr_t addr)
+ 		return __pgprot(PROT_NORMAL_WT);
+ 	if (attr & EFI_MEMORY_WC)
+ 		return __pgprot(PROT_NORMAL_NC);
++#else
++	if (memblock_is_map_memory(addr))
++		return PAGE_KERNEL;
++#endif
+ 	return __pgprot(PROT_DEVICE_nGnRnE);
+ }
