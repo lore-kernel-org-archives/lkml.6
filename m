@@ -6,51 +6,64 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D02ECDFB1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C34A2ECDFB0
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2513208A6
+	by mail.kernel.org (Postfix) with ESMTP id 7B99920864
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:21:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2513208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B99920864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732498AbeGMThs (ORCPT
+        id S1731959AbeGMThj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 15:37:48 -0400
-Received: from mga18.intel.com ([134.134.136.126]:12557 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731493AbeGMThs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 15:37:48 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 12:21:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,348,1526367600"; 
-   d="scan'208";a="245527673"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Jul 2018 12:21:35 -0700
-Subject: Re: [PATCH] i2c: aspeed: Adjust spinlock scope in the irq handler
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jarkko.nikula@linux.intel.com, james.feist@linux.intel.com,
-        vernon.mauery@linux.intel.com
-References: <20180702214011.16071-1-jae.hyun.yoo@linux.intel.com>
- <CAFd5g47nBCbF0mcYqEnQkDpz0Dhh0F0S1-wEL_yBHgs1b3yE5w@mail.gmail.com>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <59538d26-f025-28da-63df-f675e80fd68b@linux.intel.com>
-Date:   Fri, 13 Jul 2018 12:21:35 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 13 Jul 2018 15:37:39 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:39264 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731493AbeGMThi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 15:37:38 -0400
+Received: by mail-qt0-f193.google.com with SMTP id q12-v6so28048631qtp.6
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 12:21:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=H0LYaU+TH0cCk7XMF3bvWHXX33qJNOdPPUVwLSMIgr4=;
+        b=VXiwaA6kTfRfN+ZHwuLFdH9+6RnFGTlbiez/qmfNHmfFou9dLfpqYiiOB20AP0FE4D
+         y0gToiCVh1WrWj+hBZ00AFeifiv7WxjEAKXr0UZzez+RaWS7GzDFGD3sWvJbRM6hDYRp
+         SFiJHTvNxI/+mRWiwLuSGHdWzF4zLMZWEIRAsLbAjzD2g4UwHCb4r51kLCLKzXa2QIB/
+         KJ0QxcUwVsBgp3GtFUlqDu5DphKQQNY1k3F+Z4N1wCP8L2N90/IJEzMMENeRyfW55MUW
+         UfvAxvk0aiRRO/5LjT3fhK72rrQg53GCms8Qzyj5+6sGkSjgQ3kDoiAs4jc97oHLvgrI
+         vEIA==
+X-Gm-Message-State: AOUpUlG4YvnzM0ODcZCHcMRULrbeRScEWr2Fgusg+BPPDtD6PrRiwGUr
+        bH2FIx3ppJyBC5nO2Vc7GHabvA==
+X-Google-Smtp-Source: AAOMgpf51WE1rC21Awa3jc90Emq0dKPNdVfRNvF0zxFvioOsqTD4LynMZbOuv+pVzGql4nrWmDks6A==
+X-Received: by 2002:ac8:1493:: with SMTP id l19-v6mr7152296qtj.129.1531509701017;
+        Fri, 13 Jul 2018 12:21:41 -0700 (PDT)
+Received: from ?IPv6:2601:602:9802:a8dc::1941? ([2601:602:9802:a8dc::1941])
+        by smtp.gmail.com with ESMTPSA id 140-v6sm16953137qkm.18.2018.07.13.12.21.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Jul 2018 12:21:39 -0700 (PDT)
+Subject: Re: [PATCH] arm64: build with baremetal linker target instead of
+ Linux when available
+To:     Olof Johansson <olof@lixom.net>, Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <contact@paulk.fr>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <20180713150701.GA3049@arm.com>
+ <20180713153033.20540-1-olof@lixom.net>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <33f65453-5b6d-0684-8a91-7e9940846143@redhat.com>
+Date:   Fri, 13 Jul 2018 12:21:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g47nBCbF0mcYqEnQkDpz0Dhh0F0S1-wEL_yBHgs1b3yE5w@mail.gmail.com>
+In-Reply-To: <20180713153033.20540-1-olof@lixom.net>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -59,94 +72,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/12/2018 1:41 AM, Brendan Higgins wrote:
-> On Mon, Jul 2, 2018 at 2:40 PM Jae Hyun Yoo
-> <jae.hyun.yoo@linux.intel.com> wrote:
->>
->> This patch adjusts spinlock scope to make it wrap the whole irq
->> handler using a single lock/unlock which covers both master and
->> slave handlers.
->>
->> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
->> ---
->>   drivers/i2c/busses/i2c-aspeed.c | 16 ++++++++++------
->>   1 file changed, 10 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
->> index 60e4d0e939a3..9f02aa959a3e 100644
->> --- a/drivers/i2c/busses/i2c-aspeed.c
->> +++ b/drivers/i2c/busses/i2c-aspeed.c
->> @@ -234,7 +234,6 @@ static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
->>          bool irq_handled = true;
->>          u8 value;
->>
->> -       spin_lock(&bus->lock);
->>          if (!slave) {
->>                  irq_handled = false;
->>                  goto out;
->> @@ -325,7 +324,6 @@ static bool aspeed_i2c_slave_irq(struct aspeed_i2c_bus *bus)
->>          writel(status_ack, bus->base + ASPEED_I2C_INTR_STS_REG);
->>
->>   out:
->> -       spin_unlock(&bus->lock);
->>          return irq_handled;
->>   }
->>   #endif /* CONFIG_I2C_SLAVE */
->> @@ -389,7 +387,6 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->>          u8 recv_byte;
->>          int ret;
->>
->> -       spin_lock(&bus->lock);
->>          irq_status = readl(bus->base + ASPEED_I2C_INTR_STS_REG);
->>          /* Ack all interrupt bits. */
->>          writel(irq_status, bus->base + ASPEED_I2C_INTR_STS_REG);
->> @@ -547,22 +544,29 @@ static bool aspeed_i2c_master_irq(struct aspeed_i2c_bus *bus)
->>                  dev_err(bus->dev,
->>                          "irq handled != irq. expected 0x%08x, but was 0x%08x\n",
->>                          irq_status, status_ack);
->> -       spin_unlock(&bus->lock);
->>          return !!irq_status;
->>   }
->>
->>   static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
->>   {
->>          struct aspeed_i2c_bus *bus = dev_id;
->> +       bool ret;
->> +
->> +       spin_lock(&bus->lock);
->>
->>   #if IS_ENABLED(CONFIG_I2C_SLAVE)
->>          if (aspeed_i2c_slave_irq(bus)) {
->>                  dev_dbg(bus->dev, "irq handled by slave.\n");
->> -               return IRQ_HANDLED;
->> +               ret = true;
->> +               goto out;
->>          }
->>   #endif /* CONFIG_I2C_SLAVE */
->>
->> -       return aspeed_i2c_master_irq(bus) ? IRQ_HANDLED : IRQ_NONE;
->> +       ret = aspeed_i2c_master_irq(bus);
->> +
->> +out:
->> +       spin_unlock(&bus->lock);
->> +       return ret ? IRQ_HANDLED : IRQ_NONE;
->>   }
->>
->>   static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
->> --
->> 2.17.1
->>
-> 
-> Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
-> 
-> Thanks!
+On 07/13/2018 08:30 AM, Olof Johansson wrote:
+> Not all toolchains have the baremetal elf targets, RedHat/Fedora ones
+> in particular. So, probe for whether it's available and use the previous
+> (linux) targets if it isn't.
 > 
 
-Thanks Brendan!
 
-BTW, to whom should I ask applying this patch? Should I send v2 after
-adding your reviewed-by tag?
+For the Fedora toolchains:
 
-Thanks,
+Tested-by: Laura Abbott <labbott@redhat.com>
 
-Jae
+> Reported-by: Laura Abbott <labbott@redhat.com>
+> Cc: Paul Kocialkowski <contact@paulk.fr>
+> Signed-off-by: Olof Johansson <olof@lixom.net>
+> ---
+>   arch/arm64/Makefile    | 9 +++++----
+>   scripts/Kbuild.include | 4 ++--
+>   2 files changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+> index e7101b19d590..efe61a2e4b5e 100644
+> --- a/arch/arm64/Makefile
+> +++ b/arch/arm64/Makefile
+> @@ -60,15 +60,16 @@ ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
+>   KBUILD_CPPFLAGS	+= -mbig-endian
+>   CHECKFLAGS	+= -D__AARCH64EB__
+>   AS		+= -EB
+> -# We must use the linux target here, since distributions don't tend to package
+> -# the ELF linker scripts with binutils, and this results in a build failure.
+> -LDFLAGS		+= -EB -maarch64linuxb
+> +# Prefer the baremetal ELF build target, but not all toolchains include
+> +# it so fall back to the standard linux version if needed.
+> +LDFLAGS		+= -EB $(call ld-option, -maarch64elfb, -maarch64linuxb)
+>   UTS_MACHINE	:= aarch64_be
+>   else
+>   KBUILD_CPPFLAGS	+= -mlittle-endian
+>   CHECKFLAGS	+= -D__AARCH64EL__
+>   AS		+= -EL
+> -LDFLAGS		+= -EL -maarch64linux # See comment above
+> +# Same as above, prefer ELF but fall back to linux target if needed.
+> +LDFLAGS		+= -EL $(call ld-option, -maarch64elf, -maarch64linux)
+>   UTS_MACHINE	:= aarch64
+>   endif
+>   
+> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+> index c8156d61678c..1e13f502b42f 100644
+> --- a/scripts/Kbuild.include
+> +++ b/scripts/Kbuild.include
+> @@ -163,8 +163,8 @@ cc-ldoption = $(call try-run,\
+>   	$(CC) $(1) $(KBUILD_CPPFLAGS) $(CC_OPTION_CFLAGS) -nostdlib -x c /dev/null -o "$$TMP",$(1),$(2))
+>   
+>   # ld-option
+> -# Usage: LDFLAGS += $(call ld-option, -X)
+> -ld-option = $(call try-run, $(LD) $(LDFLAGS) $(1) -v,$(1),$(2))
+> +# Usage: LDFLAGS += $(call ld-option, -X, -Y)
+> +ld-option = $(call try-run, $(LD) $(LDFLAGS) $(1) -v,$(1),$(2),$(3))
+>   
+>   # ar-option
+>   # Usage: KBUILD_ARFLAGS := $(call ar-option,D)
+> 
+
