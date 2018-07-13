@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A627ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E167ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E819220842
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E819220842
+	by mail.kernel.org (Postfix) with ESMTP id 123472087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 123472087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387748AbeGMSWT (ORCPT
+        id S2387780AbeGMSWV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 14:22:19 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58102 "EHLO
+        Fri, 13 Jul 2018 14:22:21 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48634 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387682AbeGMSWS (ORCPT
+        by vger.kernel.org with ESMTP id S2387717AbeGMSWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 14:22:18 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6DI4jSp028893
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:36 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k6y4qctgp-1
+        Fri, 13 Jul 2018 14:22:20 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6DI4FEH071605
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:38 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k6yvf2r34-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:36 -0400
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:38 -0400
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 13 Jul 2018 19:06:33 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 13 Jul 2018 19:06:35 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 13 Jul 2018 19:06:29 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6DI6S6G38994102
+        Fri, 13 Jul 2018 19:06:32 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6DI6VEq41418796
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Jul 2018 18:06:28 GMT
+        Fri, 13 Jul 2018 18:06:31 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9EB574203F;
-        Fri, 13 Jul 2018 21:06:49 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 2F55B42045;
+        Fri, 13 Jul 2018 21:06:52 +0100 (BST)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6C5D042042;
-        Fri, 13 Jul 2018 21:06:48 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id DBDF342041;
+        Fri, 13 Jul 2018 21:06:50 +0100 (BST)
 Received: from dhcp-9-31-103-18.watson.ibm.com (unknown [9.31.103.18])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 13 Jul 2018 21:06:48 +0100 (BST)
+        Fri, 13 Jul 2018 21:06:50 +0100 (BST)
 From:   Mimi Zohar <zohar@linux.vnet.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -60,23 +60,24 @@ Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Eric Biederman <ebiederm@xmission.com>,
         kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jeff Vander Stoep <jeffv@google.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v6 7/8] module: replace the existing LSM hook in init_module
-Date:   Fri, 13 Jul 2018 14:06:02 -0400
+        "Luis R . Rodriguez" <mcgrof@suse.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH v6 8/8] ima: based on policy warn about loading firmware (pre-allocated buffer)
+Date:   Fri, 13 Jul 2018 14:06:03 -0400
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18071318-0020-0000-0000-000002A64AC9
+x-cbid: 18071318-0016-0000-0000-000001E691DB
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071318-0021-0000-0000-000020F29FFA
-Message-Id: <1531505163-20227-8-git-send-email-zohar@linux.vnet.ibm.com>
+x-cbparentid: 18071318-0017-0000-0000-0000323B2F85
+Message-Id: <1531505163-20227-9-git-send-email-zohar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-13_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=18 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1807130159
@@ -85,157 +86,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both the init_module and finit_module syscalls call either directly
-or indirectly the security_kernel_read_file LSM hook.  This patch
-replaces the direct call in init_module with a call to the new
-security_kernel_load_data hook and makes the corresponding changes
-in SELinux, LoadPin, and IMA.
+Some systems are memory constrained but they need to load very large
+firmwares.  The firmware subsystem allows drivers to request this
+firmware be loaded from the filesystem, but this requires that the
+entire firmware be loaded into kernel memory first before it's provided
+to the driver.  This can lead to a situation where we map the firmware
+twice, once to load the firmware into kernel memory and once to copy the
+firmware into the final resting place.
+
+To resolve this problem, commit a098ecd2fa7d ("firmware: support loading
+into a pre-allocated buffer") introduced request_firmware_into_buf() API
+that allows drivers to request firmware be loaded directly into a
+pre-allocated buffer.
+
+Do devices using pre-allocated memory run the risk of the firmware being
+accessible to the device prior to the completion of IMA's signature
+verification any more than when using two buffers? (Refer to mailing list
+discussion[1]).
+
+Only on systems with an IOMMU can the access be prevented.  As long as
+the signature verification completes prior to the DMA map is performed,
+the device can not access the buffer.  This implies that the same buffer
+can not be re-used.  Can we ensure the buffer has not been DMA mapped
+before using the pre-allocated buffer?
+
+[1] https://lkml.org/lkml/2018/7/10/56
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
-Cc: Jeff Vander Stoep <jeffv@google.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Kees Cook <keescook@chromium.org>
-Acked-by: Jessica Yu <jeyu@kernel.org>
-Acked-by: Paul Moore <paul@paul-moore.com>
+Cc: Luis R. Rodriguez <mcgrof@suse.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
 ---
 Changelog v6:
-- LoadPin: add missing cast from enum kernel_load_file_id to
-kernel_read_file_id.
+- Change warning to comment.
 
 Changelog v5:
-- For SELinux, have both the security_kernel_read_file and
-security_kernel_load_data LSM hooks call selinux_kernel_read_file().
-- LoadPin: replace existing init_module LSM hook support with
-new security_kernel_load_data hook.
+- Instead of preventing loading firmware from a pre-allocate buffer,
+emit a warning.
 
- kernel/module.c                   |  2 +-
- security/integrity/ima/ima_main.c | 23 ++++++++++-------------
- security/loadpin/loadpin.c        |  6 ++++++
- security/selinux/hooks.c          | 15 +++++++++++++++
- 4 files changed, 32 insertions(+), 14 deletions(-)
+ security/integrity/ima/ima_main.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/kernel/module.c b/kernel/module.c
-index f475f30eed8c..a7615d661910 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2876,7 +2876,7 @@ static int copy_module_from_user(const void __user *umod, unsigned long len,
- 	if (info->len < sizeof(*(info->hdr)))
- 		return -ENOEXEC;
- 
--	err = security_kernel_read_file(NULL, READING_MODULE);
-+	err = security_kernel_load_data(LOADING_MODULE);
- 	if (err)
- 		return err;
- 
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index e467664965e7..ef349a761609 100644
+index ef349a761609..b82500cd6fbd 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -429,16 +429,6 @@ void ima_post_path_mknod(struct dentry *dentry)
+@@ -429,6 +429,14 @@ void ima_post_path_mknod(struct dentry *dentry)
   */
  int ima_read_file(struct file *file, enum kernel_read_file_id read_id)
  {
--	bool sig_enforce = is_module_sig_enforced();
--
--	if (!file && read_id == READING_MODULE) {
--		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES) &&
--		    (ima_appraise & IMA_APPRAISE_ENFORCE)) {
--			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
--			return -EACCES;	/* INTEGRITY_UNKNOWN */
--		}
--		return 0;	/* We rely on module signature checking */
--	}
++	/*
++	 * READING_FIRMWARE_PREALLOC_BUFFER
++	 *
++	 * Do devices using pre-allocated memory run the risk of the
++	 * firmware being accessible to the device prior to the completion
++	 * of IMA's signature verification any more than when using two
++	 * buffers?
++	 */
  	return 0;
  }
  
-@@ -479,9 +469,6 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
- 		return 0;
- 	}
- 
--	if (!file && read_id == READING_MODULE) /* MODULE_SIG_FORCE enabled */
--		return 0;
--
- 	/* permit signed certs */
- 	if (!file && read_id == READING_X509_CERTIFICATE)
- 		return 0;
-@@ -510,6 +497,8 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
-  */
- int ima_load_data(enum kernel_load_data_id id)
- {
-+	bool sig_enforce;
-+
- 	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
- 		return 0;
- 
-@@ -525,6 +514,14 @@ int ima_load_data(enum kernel_load_data_id id)
- 			pr_err("Prevent firmware sysfs fallback loading.\n");
- 			return -EACCES;	/* INTEGRITY_UNKNOWN */
- 		}
-+		break;
-+	case LOADING_MODULE:
-+		sig_enforce = is_module_sig_enforced();
-+
-+		if (!sig_enforce && (ima_appraise & IMA_APPRAISE_MODULES)) {
-+			pr_err("impossible to appraise a module without a file descriptor. sig_enforce kernel parameter might help\n");
-+			return -EACCES;	/* INTEGRITY_UNKNOWN */
-+		}
- 	default:
- 		break;
- 	}
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index 5fa191252c8f..0716af28808a 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -173,9 +173,15 @@ static int loadpin_read_file(struct file *file, enum kernel_read_file_id id)
- 	return 0;
- }
- 
-+static int loadpin_load_data(enum kernel_load_data_id id)
-+{
-+	return loadpin_read_file(NULL, (enum kernel_read_file_id) id);
-+}
-+
- static struct security_hook_list loadpin_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(sb_free_security, loadpin_sb_free_security),
- 	LSM_HOOK_INIT(kernel_read_file, loadpin_read_file),
-+	LSM_HOOK_INIT(kernel_load_data, loadpin_load_data),
- };
- 
- void __init loadpin_add_hooks(void)
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 2b5ee5fbd652..a8bf324130f5 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4073,6 +4073,20 @@ static int selinux_kernel_read_file(struct file *file,
- 	return rc;
- }
- 
-+static int selinux_kernel_load_data(enum kernel_load_data_id id)
-+{
-+	int rc = 0;
-+
-+	switch (id) {
-+	case LOADING_MODULE:
-+		rc = selinux_kernel_module_from_file(NULL);
-+	default:
-+		break;
-+	}
-+
-+	return rc;
-+}
-+
- static int selinux_task_setpgid(struct task_struct *p, pid_t pgid)
- {
- 	return avc_has_perm(&selinux_state,
-@@ -6972,6 +6986,7 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(kernel_act_as, selinux_kernel_act_as),
- 	LSM_HOOK_INIT(kernel_create_files_as, selinux_kernel_create_files_as),
- 	LSM_HOOK_INIT(kernel_module_request, selinux_kernel_module_request),
-+	LSM_HOOK_INIT(kernel_load_data, selinux_kernel_load_data),
- 	LSM_HOOK_INIT(kernel_read_file, selinux_kernel_read_file),
- 	LSM_HOOK_INIT(task_setpgid, selinux_task_setpgid),
- 	LSM_HOOK_INIT(task_getpgid, selinux_task_getpgid),
 -- 
 2.7.5
 
