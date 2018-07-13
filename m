@@ -2,73 +2,104 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FA3ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28915ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7E60208E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:01:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7E60208E2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id BAAA22087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:03:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAAA22087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbeGMMQQ (ORCPT
+        id S1729768AbeGMMSG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 08:16:16 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:47088 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727608AbeGMMQQ (ORCPT
+        Fri, 13 Jul 2018 08:18:06 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39863 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727608AbeGMMSF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 08:16:16 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=[10.100.61.71])
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <anna-maria@linutronix.de>)
-        id 1fdwle-00036d-02; Fri, 13 Jul 2018 14:01:46 +0200
-Date:   Fri, 13 Jul 2018 14:01:45 +0200 (CEST)
-From:   Anna-Maria Gleixner <anna-maria@linutronix.de>
-To:     Haris Okanovic <haris.okanovic@ni.com>
-cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        harisokn@gmail.com, bigeasy@linutronix.de, tglx@linutronix.de,
-        julia.cartwright@ni.com, gratian.crisan@ni.com, daniel@bristot.me,
-        efault@gmx.de
-Subject: Re: [PATCH v5 1/2] timers: Don't wake ktimersoftd on every tick
-In-Reply-To: <20180628164036.27378-1-haris.okanovic@ni.com>
-Message-ID: <alpine.DEB.2.21.1807131354560.2242@somnus>
-References: <7d21ff63-3dce-b8ea-a0f1-81d53617747d@ni.com> <20180628164036.27378-1-haris.okanovic@ni.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 13 Jul 2018 08:18:05 -0400
+Received: by mail-wm0-f65.google.com with SMTP id h20-v6so9095917wmb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 05:03:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=e4wuU5mUCJTmF/aYG58gMJ6gyvVmfswDfBfFL+RSOWg=;
+        b=IOhApWIQfpQjXtg8Fvxwl7Q/c4l7nKTf1Pof9ckPn66BcH/ZDsvunoy/2r+OhgJlxY
+         wK5ku5Tv8zeSt1RnAHUtbH3x0YzUbuMsscVQ3L3ZcQEttGdKXkRSN930uZHyPyYpggkb
+         dUaMYeDMEaMLYS31scSEIwBSVDScfak3xkM6hOmFNhhpJIFreOPyDyrFpPAbmSyHiUIC
+         YMnON7XHtu2jYKLzF7GD0oAvlE5PADoInewXjqPIlLAksz7+6wlXEsd3VqJyrC8XFU4h
+         2EpWVYY4acyp+WbGuQcgaS23W/thuTxKUtabTv5BfTBOo5XrO09iEhc8HVGoP0kQ7kZC
+         KwHg==
+X-Gm-Message-State: AOUpUlEuy7gC1NniuRvRSZIP2uglIdbuhbZ8E8uFp9CEjE4ia/+NyPJ/
+        63Ean54dtcofDasTSbzPU9VOCAUa
+X-Google-Smtp-Source: AAOMgpeVGy4meoZREWxOxZXLRLuSGD/3+a7F6C5Qw0npGKH3v2UaVQ7xGSsfNAz4YZLj6cXFeUntuw==
+X-Received: by 2002:a1c:3e92:: with SMTP id l140-v6mr3677717wma.134.1531483421876;
+        Fri, 13 Jul 2018 05:03:41 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id 6-v6sm9248746wmi.26.2018.07.13.05.03.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Jul 2018 05:03:41 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id 8C45B123EC7; Fri, 13 Jul 2018 14:03:40 +0200 (CEST)
+Date:   Fri, 13 Jul 2018 14:03:40 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        kirill.shutemov@linux.intel.com, mhocko@suse.com,
+        linux-mm@kvack.org, dan.j.williams@intel.com, jack@suse.cz,
+        jglisse@redhat.com, jrdr.linux@gmail.com, bhe@redhat.com,
+        gregkh@linuxfoundation.org, vbabka@suse.cz,
+        richard.weiyang@gmail.com, dave.hansen@intel.com,
+        rientjes@google.com, mingo@kernel.org, abdhalee@linux.vnet.ibm.com,
+        mpe@ellerman.id.au
+Subject: Re: [PATCH v5 4/5] mm/sparse: add new sparse_init_nid() and
+ sparse_init()
+Message-ID: <20180713120340.GA16552@techadventures.net>
+References: <20180712203730.8703-1-pasha.tatashin@oracle.com>
+ <20180712203730.8703-5-pasha.tatashin@oracle.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180712203730.8703-5-pasha.tatashin@oracle.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Haris,
-
-On Thu, 28 Jun 2018, Haris Okanovic wrote:
-
-> Collect expired timers in interrupt context to avoid overhead of waking
-> ktimersoftd on every scheduler tick.
+On Thu, Jul 12, 2018 at 04:37:29PM -0400, Pavel Tatashin wrote:
+> sparse_init() requires to temporary allocate two large buffers:
+> usemap_map and map_map. Baoquan He has identified that these buffers are so
+> large that Linux is not bootable on small memory machines, such as a kdump
+> boot. The buffers are especially large when CONFIG_X86_5LEVEL is set, as
+> they are scaled to the maximum physical memory size.
 > 
-> This is implemented by storing lists of expired timers in the timer_base
-> struct, which is updated by the interrupt routing on each tick in
-> run_local_timers(). TIMER softirq (ktimersoftd) is then raised only when
-> one or more expired timers are collected.
+> Baoquan provided a fix, which reduces these sizes of these buffers, but it
+> is much better to get rid of them entirely.
 > 
-> Performance impact on a 2core Intel Atom E3825 system:
->  * reduction in small latency spikes measured by cyclictest
->  * ~30% fewer context-switches measured by perf
->  * run_local_timers() execution time increases by 0.2 measured by TSC
+> Add a new way to initialize sparse memory: sparse_init_nid(), which only
+> operates within one memory node, and thus allocates memory either in large
+> contiguous block or allocates section by section. This eliminates the need
+> for use of temporary buffers.
 > 
+> For simplified bisecting and review temporarly call sparse_init()
+> new_sparse_init(), the new interface is going to be enabled as well as old
+> code removed in the next patch.
+> 
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 
-I'm also working on timer improvements at the moment. When I fixed all
-my bugs in my implementation (there is a last horrible one), I'm very
-interested in integrating your patches into my testing to be able to
-give you a tested-by.
+Looks good to me, and it will make the code much shorter/easier.
 
-Thanks,
+Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
-	Anna-Maria
+Thanks
+-- 
+Oscar Salvador
+SUSE L3
