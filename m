@@ -3,142 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B011DECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E96C0ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58873208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4726208B1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:02:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="IW4YLQGx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58873208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="0mVp8KiA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4726208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729926AbeGMPQi (ORCPT
+        id S1731021AbeGMPRB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 11:16:38 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46197 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729647AbeGMPQh (ORCPT
+        Fri, 13 Jul 2018 11:17:01 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:39859 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729676AbeGMPRA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 11:16:37 -0400
-Received: by mail-lj1-f193.google.com with SMTP id 203-v6so13720014ljj.13
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 08:01:37 -0700 (PDT)
+        Fri, 13 Jul 2018 11:17:00 -0400
+Received: by mail-pf0-f194.google.com with SMTP id s21-v6so22815534pfm.6
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 08:02:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=NBi05MrU2A563QxjjJRW6e6inYtkWLp2cu+E1TjM1G4=;
-        b=IW4YLQGxkl8XUyjzjbpXkzrMXaFnlvMM+Ur19509Nd76g08AfjnFrSrRUPgn7Mcwf2
-         dX9vUvXpxYdJDYvkr710vCkJTzc1JPPFEmwvFTfMqul4xduEav86WgLaf1gr5xfEveqW
-         /BeicFF1fErD9V1npATUCF6tUqs92pSrKXVqakkjG7cCHf3GRD5Aaf8ngw7oSVvqUwOn
-         lOFe+g9Qp19922IuoitvQsb0seQJmkUF+mtgmC1LVJod77l/e6dwu1ncxLDFb6vro6K7
-         6Q6KY6KMreCNL+q0kQuQ74TZM1oGUbL1QZ4H8ndhflAuiqeMUBN1g1MUC34kDhGVDUYP
-         eCrA==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=6xJ/Xf3cuHjZTcEzylG7SrD9VrFah5VdnZ+dUl5LKUc=;
+        b=0mVp8KiAwXo0Wq8kvPrV3Z1tnLcQwvKWmKPg7PkGFe5pRz1JzNwo5/sIcJUJ8mq/XA
+         yuTRu0DUShxQXuJHYRy3KmnNnM6HDjg189QVwtjwKg318fvALufnW2Q+/vplmBn265R5
+         mihLnBiRrqxLgrWNf4c25QvT20V2Eud1k0fznWPuSg7Pmvmg4vrvwgL7rWQ2pjH5Y5go
+         f/xB3OME+LBRmcFwQI2Dj3kEqnxj2lvCuqICZI8NoZvn+Ob9z1pOn7l+4tX6YhE8fFOG
+         wfmI6zW/+wySeE5rHr8iHMUKEunKXYgz1ky/fYxb3tpei0qSnpT+fYL0jk8GiEoSTHee
+         foZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=NBi05MrU2A563QxjjJRW6e6inYtkWLp2cu+E1TjM1G4=;
-        b=M7ddnSrmtJBrKWXpBJ0eGkVtvGpcrQ148f2pX35sIDt/U5v3hYfw+aXkDz4iqasNyA
-         4kwDQ65FVjscnUdzSuUFDiVHL00qa5oWe2r2bkYjneDZyiKRs0U79Cq4a0tOK2SNqn8N
-         DdNZ+11zp0yqt3EkJArutPn24VLiO6E3KKO8cp5KwFoVfXxTLRb5FdXiNcXbbO1XeyzB
-         GSFbSHY7EZF1Jm65skwedtEFrTYKAV1jZRC5FZFImtdX/ZdwOtbn596bspgsQ+u277k2
-         5cfw8Kc2lxeQEktw6/R37UvpKEKgwMilcJZyq3ptnOfTtUPekc3ZNqf5VsVoEGB6p6b9
-         6iNg==
-X-Gm-Message-State: AOUpUlFsL8wzM6mIwc36IuY5uie0qetUrQ7MQeM/7UdQ7IPlptC0AvW8
-        HkFDp3K4ojVyIPg62j/D3JQSuSrVDSBLgTq+gd0KBw==
-X-Google-Smtp-Source: AAOMgpcjx11nkWktcEdFjuLWRxmGinSumukml0lADYZNQqjgTjSnYs+ZYLBQWb1p5ixJ1NXoYoo5CDYuXkXlH1P1Oq4=
-X-Received: by 2002:a2e:5519:: with SMTP id j25-v6mr3449165ljb.124.1531494096162;
- Fri, 13 Jul 2018 08:01:36 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a19:fc1c:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 08:01:34
- -0700 (PDT)
-X-Originating-IP: [2620:10d:c090:200::5:e750]
-In-Reply-To: <20180713145910.2mlzip5ssk72cleo@localhost>
-References: <20180709200956.31158-1-labbott@redhat.com> <20180710090125.GA28924@arm.com>
- <fcd8d97b6714d787297f1b362558e7a68855a1da.camel@paulk.fr> <20180710093615.GA30095@arm.com>
- <20180713145910.2mlzip5ssk72cleo@localhost>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Fri, 13 Jul 2018 08:01:34 -0700
-Message-ID: <CAOesGMguQk_buucvNyKD6NmtdE0Re5_98Af+PME-HzZGHmeQGQ@mail.gmail.com>
-Subject: Re: [PATCH] Revert "arm64: Use aarch64elf and aarch64elfb emulation
- mode variants"
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Paul Kocialkowski <contact@paulk.fr>,
-        Laura Abbott <labbott@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=6xJ/Xf3cuHjZTcEzylG7SrD9VrFah5VdnZ+dUl5LKUc=;
+        b=ItFd/6EORHcVOyOPRhHBvaKDI15cPPeXvxolwwdeBGsOIOytHo2WNIcdyT4bbpx1Cx
+         0SuA7yCzE63MAsHVQmRtfCZlh0fJk7yTX44y0Mo52cGYKf/rJLezJl36YeuZAXwjyVpB
+         TqQuxCnqgvbeOzmgWoVpMfZG8VaPWXzZpUnRm84Ivh7KVqOcutUMkc51cFSY7nDcNyxX
+         7aPxzWBjAHDIVeGzvuM231T+SySFlqcMuD9s1IPArIWNOI8iITrmqxiWpmJd5Mp4DLq1
+         ri3dDvCrPdnA4VZ68EUcsBANNf7TDaaib1ziE9XKNw48VkLPzCfR1ORULzNEa5QjZf9x
+         yIVw==
+X-Gm-Message-State: AOUpUlHpTUh1dp/t/nAHFH8EhyszwIAq4km7gm5df2aQgejIr7AODcIA
+        3UAHsR3P0kugZKLdUpFx2AmlKA==
+X-Google-Smtp-Source: AAOMgpcUCcKC2Cz4tiBI60HEPG9ec1iNCW/9SA+n8kL4wx1l/Z+lhNTSR4FxSOYt5n3VeNDkWAa76Q==
+X-Received: by 2002:a65:5683:: with SMTP id v3-v6mr6294757pgs.176.1531494120191;
+        Fri, 13 Jul 2018 08:02:00 -0700 (PDT)
+Received: from ?IPv6:2600:1011:b010:c408:9b8:4cb7:ed0e:1060? ([2600:1011:b010:c408:9b8:4cb7:ed0e:1060])
+        by smtp.gmail.com with ESMTPSA id x2-v6sm48992555pfi.166.2018.07.13.08.01.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Jul 2018 08:01:58 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for superblock creation [ver #9]
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <21131.1531488422@warthog.procyon.org.uk>
+Date:   Fri, 13 Jul 2018 08:01:56 -0700
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Lutomirski <luto@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux API <linux-api@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <F80F34FD-CFD3-4A53-AECC-AEC8D9EF3EAE@amacapital.net>
+References: <CA+55aFzaTQJp6aHG_9+W2ShxeZncq7k9G3FkVFjFm7W=ECUiMw@mail.gmail.com> <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com> <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk> <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk> <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk> <7002.1531407244@warthog.procyon.org.uk> <338BC3C4-F3E7-48F0-A82E-2C7295B6640E@amacapital.net> <17749.1531429218@warthog.procyon.org.uk> <21131.1531488422@warthog.procyon.org.uk>
+To:     David Howells <dhowells@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 7:59 AM, Olof Johansson <olof@lixom.net> wrote:
-> On Tue, Jul 10, 2018 at 10:36:16AM +0100, Will Deacon wrote:
->> On Tue, Jul 10, 2018 at 11:30:39AM +0200, Paul Kocialkowski wrote:
->> > On Tue, 2018-07-10 at 10:01 +0100, Will Deacon wrote:
->> > > Thanks, Laura.
->> > >
->> > > I'll take this as a fix, and add a comment to the Makefile to justify
->> > > why we need the linux target.
->> >
->> > So this comes down to either breaking fedora/debian toolchains (that
->> > don't support elf emulation mode) or breaking bare-metal toolchains
->> > (that don't support linux emulation mode).
->> >
->> > Since Linux is a bare-metal project that does not technically require
->> > the linux target (who said using "Linux" for all things is confusing?),
->> > I think it should aim for the elf target in the long term.
->> >
->> > But well, breaking Linux build in common distros isn't good either, so I
->> > guess it makes sense to revert this while distros toolchains are being
->> > fixed. Hopefully, it won't take too long.
->> >
->> > What do you think?
->>
->> Yes, we need to revert the change since it's a regression otherwise. I think
->> the best course of action here would be to find a way that we can either
->> tell the linker that it doesn't need the missing linker scripts because
->> we're providing our own, or find a way to pass different LD flags depending
->> on whether or not we have a linux toolchain.
->>
->> For now, I've pushed the revert to for-next/fixes.
->
-> Hi Will,
->
-> This is regressed in mainline as well. But I think we can just use a (slightly
-> improved) ld-option here? I checked it for x86 regression since it uses the
-> one-argument version. Patch is here, can you pick that up instead and get it in
-> for 4.18-rc?
->
-> Thanks,
->
->
-> -Olof
->
-> From 0d73b2d1774d5edce20aac919ba356b61d098646 Mon Sep 17 00:00:00 2001
-> From: Olof Johansson <olof@lixom.net>
-> Date: Fri, 13 Jul 2018 07:56:11 -0700
-> Subject: [PATCH] arm64: Fix build on some toolchains
->
-> Not all toolchains have the baremetal elf targets, RedHat/Fedora ones in
-> particular. So, probe for whether it's available and use the previous
-> (linux) targets if it isn't.
->
-> Fixes: 38fc42486775 ("arm64: Use aarch64elf and aarch64elfb emulation mode variants")
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-
-Of course, please add:
-Reported-by: Laura Abbott <labbott@redhat.com>
-
-or other suitable tag. Sloppy of me to miss.
 
 
--Olof
+> On Jul 13, 2018, at 6:27 AM, David Howells <dhowells@redhat.com> wrote:
+>=20
+> Whilst I'm at it, do we want the option of doing the equivalent of mountat=
+()?
+> I.e. offering the option to open all the device files used by a superblock=
+
+> with dfd and AT_* flags in combination with the filename?
+>=20
+
+Isn=E2=80=99t that more or less what I was suggesting?  I suggested dfd and p=
+ath and I also suggested just an fd and letting the caller open the file its=
+elf.
+
+> David
