@@ -2,245 +2,111 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5502AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C2CECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 065D92147C
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:54:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EBD9214C4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 05:55:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="UKkt1Hv5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 065D92147C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="X0a1xj2U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EBD9214C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727307AbeGMGHk (ORCPT
+        id S1727506AbeGMGIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 02:07:40 -0400
-Received: from mail-pu1apc01on0132.outbound.protection.outlook.com ([104.47.126.132]:50752
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725930AbeGMGHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 02:07:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f6cOeKhEHhMjC3+6lU+viUI8Qg78qHA6tePh3tLvoh8=;
- b=UKkt1Hv5VZDX488+T2FCFIjM1ooFJ5zdLLA/feeo7piM0RHqHhsVzl9TklFcDip4dLIhZEgA3p6nAiCoP1VKoAkII+fmlelvPoIJ3BduA3JWDZ1g19H2fW4lmBoWOHbJJVQfcarQRgTyW77cYIhynm3NsVry0sqkA3b4VmGakKM=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0140.APCP153.PROD.OUTLOOK.COM (10.170.188.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.973.11; Fri, 13 Jul 2018 05:53:28 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::2438:e6b5:1ad6:30ff]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::2438:e6b5:1ad6:30ff%6]) with mapi id 15.20.0973.011; Fri, 13 Jul 2018
- 05:53:28 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     "'gregkh@linuxfoundation.org'" <gregkh@linuxfoundation.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>
-CC:     "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'driverdev-devel@linuxdriverproject.org'" 
-        <driverdev-devel@linuxdriverproject.org>,
-        "'olaf@aepfle.de'" <olaf@aepfle.de>,
-        "'apw@canonical.com'" <apw@canonical.com>,
-        "'jasowang@redhat.com'" <jasowang@redhat.com>,
-        "'vkuznets@redhat.com'" <vkuznets@redhat.com>,
-        "'marcelo.cerri@canonical.com'" <marcelo.cerri@canonical.com>
-Subject: [PATCH] Drivers: hv: vmbus: Reset the channel callback in
- vmbus_onoffer_rescind()
-Thread-Topic: [PATCH] Drivers: hv: vmbus: Reset the channel callback in
- vmbus_onoffer_rescind()
-Thread-Index: AdQabZD2BvGNy8mQSA6EBi8Sb0y3RA==
-Date:   Fri, 13 Jul 2018 05:53:27 +0000
-Message-ID: <PU1P153MB0169A44E23292552EF7CD317BF580@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-07-13T05:53:25.2012762Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2601:600:a27f:df20:c18:421:f0a5:1a31]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;PU1P153MB0140;6:dvhN8VekdOVOw34nwXg7Y4P2HH9BW/y0FlV2n7e3m9dr8FtYYKZSLVoyU17QaoW/o6/qQLmKyXYIbuwe852ADGTCCRMreGwyVRF99FJufPF3nptuP5+ZitIi7uLGODN1QipiISHb+rviaR1ElI1jsQJxzLiqb0fMlLO67SqwN87XWqYXeZIqoAEYHq2h1m1/RWkmT5kSDsQl8cr5O0pvSVnAEz0i11OHkRKeRHRYp/GPHccPiYc3oku+kMGk6DjuwJ/X5aoFBbognnN4xvTBySp9PsvtjaWpZuk7OZG7yFy4FTtM/c4/eDDSCsiidu90jhqYUOaZYljLHUKsIJBU7ilMvWL1OFDrAYRQnyYa60CG+ERd2s4xdVDX7HidQ7QvYfndLVFv1E6gVRrFhej4kjbjcJ17iufeS47y2Aiu5QBW38sAI9NpOiH3OOFVt89g4E7ACWJOvr7CCulSbDlFPA==;5:G2LbTrrLejwWPVR85edSjjwfePV4R+SVpcOq7sNHpqchk2PkQ1xJcsY2dZf7x6khR4ZUub7KY+twzR3cDOqoqSbw9qqeR9SR1L0do9KJUXBuJDLpft3yfIegTCNhdyx4lyh8Zc3ZJ+Fa5uSgLPYrlh2PFmeUtOOAqaonCQGBCZg=;7:CiykxCSvcmP6kwteV/rVqlMRgbsZaNO9UGR/dRm0MF9VWmAJrNkZdap58JQ6e8PbwjLuGsFKYh7hNG5oTpMpL8Mm2T7ImNk7+cfQjRMbO9lqZFdWJ7LNcyytqAU3+5txeESq79kLvEUqKbSvCxriAJaFK/Gq2hcFFhExgtmNL3M+N3elWwRSWuGCvQSENYrsiPotbhx9NISMoMeOJK5nD/767O7XrMoUKqNLS4HTEMbrffKq80CGDeYQMSlA1JZi
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 5db91512-a988-455c-3f31-08d5e884f4a3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989117)(5600053)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(8990107)(48565401081)(2017052603328)(7193020);SRVR:PU1P153MB0140;
-x-ms-traffictypediagnostic: PU1P153MB0140:
-x-microsoft-antispam-prvs: <PU1P153MB01404711A40306B0EC6C813DBF580@PU1P153MB0140.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171)(9452136761055);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231311)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:PU1P153MB0140;BCL:0;PCL:0;RULEID:;SRVR:PU1P153MB0140;
-x-forefront-prvs: 07326CFBC4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(346002)(136003)(39860400002)(189003)(199004)(5250100002)(1857600001)(86612001)(476003)(14444005)(486006)(186003)(2900100001)(99286004)(8990500004)(110136005)(7696005)(102836004)(316002)(22452003)(54906003)(86362001)(575784001)(6506007)(2906002)(256004)(55016002)(9686003)(74316002)(33656002)(1511001)(7736002)(305945005)(105586002)(97736004)(106356001)(68736007)(10290500003)(10090500001)(53936002)(478600001)(81166006)(6436002)(8676002)(8936002)(81156014)(4326008)(6116002)(5660300001)(25786009)(14454004)(46003)(6636002)(491001);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0140;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Sz5mrYOgnpQyByd5tubfG1Gi9Z4zzDMG4v2Wh+iqR6MahyIoFYavoSZz01eJRlyvnNzL7wJ6uTlibLfh5G+m9V425iXVKkhfqsBbe7VSwqHxD9PGVl8Cp44YNx/AhCcSMyQZWMr3fdyfpSZ/8t5/AKeX4TtSvwmrSQOeFNbNo+NqddJsRtbQ+Y8IuJ4z+NsmWhgy1iXAJeAzlrM3HSQTHSCgkVQERRN5d5NBCjrVGptRavzDwUbOceKS9h5UBsxkQCNxkInqCNZ9K3ewo+BH3Be+zOUzrM9uZ+iZ9Oqjg79Ell65KzDbL5B21mGZrCvcpfiVXlFKK3xz5HNhvVyzpl/T1o4JkXmRvzwnTyjBPGI=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
+        Fri, 13 Jul 2018 02:08:37 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:36758 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbeGMGIh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 02:08:37 -0400
+Received: by mail-pf0-f195.google.com with SMTP id u16-v6so21985030pfh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 22:55:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=wkm3bfzar6t14Nsc7DBsW/R43uGmUJ6STeuCrttpST0=;
+        b=X0a1xj2UntRht/r+ZXDyH0uPVGBXhW/VtFs3sIeHqlmrl0kAVtwXxKqCcAK6pLh+56
+         5bmv3i3XTqfxLlXhJAGyt3fJ5gYTv8aicqUkklOwgla4fh1qVLIULGG8ji+wZplyZngi
+         ngJNbFX+zLsGwr2S+8NocmggEl13ThRr9qyhWafM+KUav/8dPJx/pcJ2kZuJfTmVtCar
+         lYxyCz1UGm521jk1OsLeX8iXK7/eFS4lkS+35vtVuVtw+JxUuw1yzbHs3Bdjfq3dMPEM
+         rlBbXmVhv2Hnj+bKyVf+HkBdeXmCHlnmK6cDIXeJKWJKInyaMny9HUaz3xcenFf+E9a3
+         R+Hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=wkm3bfzar6t14Nsc7DBsW/R43uGmUJ6STeuCrttpST0=;
+        b=cp779Tn5hSXAeixd0nBImMr6hMGabR5O28xK6qeX3I13SW/6+lYBU/jQ7Gc6+b//q2
+         7FwbOj1cqQ2o8FzxNI29yASmL+4fRccUceyW7JUnsH7ahG3xkHvva16WfbUjPArTnGNn
+         +cDxGHz1TIPLNwYwCpwTrREB9/G97FSPK0gi3qwn08fGlceJj6sD7W3yzaJ8ync9ME2r
+         JMMcpGXoB67JXGVgA8wwHSIS4/uvo3Hg8cQlQJY/Q6ISi5yl7U3686sJH9kqpwruiPXv
+         4zQZ9Zd0ezxpmkGxUsugjMs4X2zZzbrdaHsjOoZeX8EwF3Fltj6e/Y9W+6iL9L/RKIg7
+         /7NQ==
+X-Gm-Message-State: AOUpUlGaVoEpzVeytqHahrUMKOwy7yzoJxB7bGRJgEQuitrFV4d3jUbX
+        ubZ6qqTVxccjdlml9Am5RoAKyg==
+X-Google-Smtp-Source: AAOMgpfKvk7f5PiZrazdyTcde4MHLo2S/RsYsWkVrGRemzosyBByLh+QeI90VLCK3p55DrHNSpRMhg==
+X-Received: by 2002:a62:1016:: with SMTP id y22-v6mr5558534pfi.109.1531461334352;
+        Thu, 12 Jul 2018 22:55:34 -0700 (PDT)
+Received: from ?IPv6:2600:1011:b009:487e:8936:3ba4:5f0d:c82e? ([2600:1011:b009:487e:8936:3ba4:5f0d:c82e])
+        by smtp.gmail.com with ESMTPSA id r16-v6sm45739335pfe.173.2018.07.12.22.55.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 22:55:32 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <66016722-9872-a3f9-f88b-37397f9b6979@intel.com>
+Date:   Thu, 12 Jul 2018 22:55:30 -0700
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5db91512-a988-455c-3f31-08d5e884f4a3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jul 2018 05:53:27.6240
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0140
+Message-Id: <7E04B6EB-8EEE-4A09-9C41-017D31A1A748@amacapital.net>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com> <20180710222639.8241-19-yu-cheng.yu@intel.com> <bbb487cc-ac1c-f734-eee3-2463a0ba7efc@linux.intel.com> <1531436398.2965.18.camel@intel.com> <46784af0-6fbb-522d-6acb-c6248e5e0e0d@linux.intel.com> <167645aa-f1c7-bd6a-c7e0-2da317cbbaba@intel.com> <55A0592D-0E8D-4BC5-BA4B-E82E92EEA36A@amacapital.net> <66016722-9872-a3f9-f88b-37397f9b6979@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Before setting channel->rescind in vmbus_rescind_cleanup(), we should make
-sure the channel callback won't run any more, otherwise a high-level
-driver like pci_hyperv, which may be infinitely waiting for the host VSP's
-response and notices the channel has been rescinded, can't safely give
-up: e.g., in hv_pci_protocol_negotiation() -> wait_for_response(), it's
-unsafe to exit from wait_for_response() and proceed with the on-stack
-variable "comp_pkt" popped. The issue was originally spotted by
-Michael Kelley <mikelley@microsoft.com>.
 
-In vmbus_close_internal(), the patch also minimizes the range protected by
-disabling/enabling channel->callback_event: we don't really need that for
-the whole function.
+> On Jul 12, 2018, at 9:16 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+>=20
+>> On 07/12/2018 07:21 PM, Andy Lutomirski wrote:
+>> I am tempted to suggest that the whole series not be merged until
+>> there are actual docs. It=E2=80=99s not a fantastic precedent.
+>=20
+> Do you mean Documentation or manpages, or are you talking about hardware
+> documentation?
+> https://software.intel.com/sites/default/files/managed/4d/2a/control-flow-=
+enforcement-technology-preview.pdf
 
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: stable@vger.kernel.org
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Michael Kelley <mikelley@microsoft.com>
----
- drivers/hv/channel.c      | 40 ++++++++++++++++++++++++----------------
- drivers/hv/channel_mgmt.c |  6 ++++++
- include/linux/hyperv.h    |  2 ++
- 3 files changed, 32 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-index ba0a092..c394922 100644
---- a/drivers/hv/channel.c
-+++ b/drivers/hv/channel.c
-@@ -558,11 +558,8 @@ static void reset_channel_cb(void *arg)
- 	channel->onchannel_callback =3D NULL;
- }
-=20
--static int vmbus_close_internal(struct vmbus_channel *channel)
-+void vmbus_reset_channel_cb(struct vmbus_channel *channel)
- {
--	struct vmbus_channel_close_channel *msg;
--	int ret;
--
- 	/*
- 	 * vmbus_on_event(), running in the per-channel tasklet, can race
- 	 * with vmbus_close_internal() in the case of SMP guest, e.g., when
-@@ -572,6 +569,29 @@ static int vmbus_close_internal(struct vmbus_channel *=
-channel)
- 	 */
- 	tasklet_disable(&channel->callback_event);
-=20
-+	channel->sc_creation_callback =3D NULL;
-+
-+	/* Stop the callback asap */
-+	if (channel->target_cpu !=3D get_cpu()) {
-+		put_cpu();
-+		smp_call_function_single(channel->target_cpu, reset_channel_cb,
-+					 channel, true);
-+	} else {
-+		reset_channel_cb(channel);
-+		put_cpu();
-+	}
-+
-+	/* Re-enable tasklet for use on re-open */
-+	tasklet_enable(&channel->callback_event);
-+}
-+
-+static int vmbus_close_internal(struct vmbus_channel *channel)
-+{
-+	struct vmbus_channel_close_channel *msg;
-+	int ret;
-+
-+	vmbus_reset_channel_cb(channel);
-+
- 	/*
- 	 * In case a device driver's probe() fails (e.g.,
- 	 * util_probe() -> vmbus_open() returns -ENOMEM) and the device is
-@@ -585,16 +605,6 @@ static int vmbus_close_internal(struct vmbus_channel *=
-channel)
- 	}
-=20
- 	channel->state =3D CHANNEL_OPEN_STATE;
--	channel->sc_creation_callback =3D NULL;
--	/* Stop callback and cancel the timer asap */
--	if (channel->target_cpu !=3D get_cpu()) {
--		put_cpu();
--		smp_call_function_single(channel->target_cpu, reset_channel_cb,
--					 channel, true);
--	} else {
--		reset_channel_cb(channel);
--		put_cpu();
--	}
-=20
- 	/* Send a closing message */
-=20
-@@ -639,8 +649,6 @@ static int vmbus_close_internal(struct vmbus_channel *c=
-hannel)
- 		get_order(channel->ringbuffer_pagecount * PAGE_SIZE));
-=20
- out:
--	/* re-enable tasklet for use on re-open */
--	tasklet_enable(&channel->callback_event);
- 	return ret;
- }
-=20
-diff --git a/drivers/hv/channel_mgmt.c b/drivers/hv/channel_mgmt.c
-index ecc2bd2..9536b93 100644
---- a/drivers/hv/channel_mgmt.c
-+++ b/drivers/hv/channel_mgmt.c
-@@ -895,6 +895,12 @@ static void vmbus_onoffer_rescind(struct vmbus_channel=
-_message_header *hdr)
- 	}
-=20
- 	/*
-+	 * Before setting channel->rescind in vmbus_rescind_cleanup(), we
-+	 * should make sure the channel callback is not running any more.
-+	 */
-+	vmbus_reset_channel_cb(channel);
-+
-+	/*
- 	 * Now wait for offer handling to complete.
- 	 */
- 	vmbus_rescind_cleanup(channel);
-diff --git a/include/linux/hyperv.h b/include/linux/hyperv.h
-index 3a3012f..5389012 100644
---- a/include/linux/hyperv.h
-+++ b/include/linux/hyperv.h
-@@ -1046,6 +1046,8 @@ extern int vmbus_establish_gpadl(struct vmbus_channel=
- *channel,
- extern int vmbus_teardown_gpadl(struct vmbus_channel *channel,
- 				     u32 gpadl_handle);
-=20
-+void vmbus_reset_channel_cb(struct vmbus_channel *channel);
-+
- extern int vmbus_recvpacket(struct vmbus_channel *channel,
- 				  void *buffer,
- 				  u32 bufferlen,
---=20
-2.7.4
-
+I mean hardware docs. The =E2=80=9Cpreview=E2=80=9D is a little bit dubious I=
+MO.=
