@@ -6,36 +6,32 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C21ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF36ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEDEE205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEDEE205F4
+	by mail.kernel.org (Postfix) with ESMTP id AF3BD205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF3BD205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388027AbeGMBhy (ORCPT
+        id S2388046AbeGMBh5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 21:37:54 -0400
-Received: from nautica.notk.org ([91.121.71.147]:42999 "EHLO nautica.notk.org"
+        Thu, 12 Jul 2018 21:37:57 -0400
+Received: from nautica.notk.org ([91.121.71.147]:43005 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387896AbeGMBhy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 21:37:54 -0400
+        id S2387896AbeGMBh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 21:37:56 -0400
 Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 8B7C2C022; Fri, 13 Jul 2018 03:25:40 +0200 (CEST)
+        id 3F339C023; Fri, 13 Jul 2018 03:25:43 +0200 (CEST)
 From:   Dominique Martinet <asmadeus@codewreck.org>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Yisen Zhuang <yisen.zhuang@huawei.com>,
-        Salil Mehta <salil.mehta@huawei.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lin Yun Sheng <linyunsheng@huawei.com>,
-        stephen hemminger <stephen@networkplumber.org>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 07/18] hisilicon: change strncpy+truncation to strlcpy
-Date:   Fri, 13 Jul 2018 03:25:39 +0200
-Message-Id: <1531445139-19439-1-git-send-email-asmadeus@codewreck.org>
+        Chris Lee <christopher.lee@cspi.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 08/18] myricom: change strncpy+truncation to strlcpy
+Date:   Fri, 13 Jul 2018 03:25:41 +0200
+Message-Id: <1531445141-19481-1-git-send-email-asmadeus@codewreck.org>
 X-Mailer: git-send-email 1.7.10.4
 In-Reply-To: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
 References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
@@ -53,49 +49,23 @@ Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
 first patch of the serie) for the motivation behind this patch
 
- drivers/net/ethernet/hisilicon/hns/hns_ethtool.c   | 7 ++-----
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c | 7 ++-----
- 2 files changed, 4 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/myricom/myri10ge/myri10ge.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-index 2e14a3ae1d8b..35b4d72d1997 100644
---- a/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns/hns_ethtool.c
-@@ -638,12 +638,9 @@ static void hns_nic_get_drvinfo(struct net_device *net_dev,
- {
- 	struct hns_nic_priv *priv = netdev_priv(net_dev);
+diff --git a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+index b2d2ec8c11e2..f7178cdb6bd8 100644
+--- a/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
++++ b/drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+@@ -553,8 +553,7 @@ myri10ge_validate_firmware(struct myri10ge_priv *mgp,
+ 	}
  
--	strncpy(drvinfo->version, HNAE_DRIVER_VERSION,
-+	strlcpy(drvinfo->version, HNAE_DRIVER_VERSION,
- 		sizeof(drvinfo->version));
--	drvinfo->version[sizeof(drvinfo->version) - 1] = '\0';
--
--	strncpy(drvinfo->driver, HNAE_DRIVER_NAME, sizeof(drvinfo->driver));
--	drvinfo->driver[sizeof(drvinfo->driver) - 1] = '\0';
-+	strlcpy(drvinfo->driver, HNAE_DRIVER_NAME, sizeof(drvinfo->driver));
+ 	/* save firmware version for ethtool */
+-	strncpy(mgp->fw_version, hdr->version, sizeof(mgp->fw_version));
+-	mgp->fw_version[sizeof(mgp->fw_version) - 1] = '\0';
++	strlcpy(mgp->fw_version, hdr->version, sizeof(mgp->fw_version));
  
- 	strncpy(drvinfo->bus_info, priv->dev->bus->name,
- 		sizeof(drvinfo->bus_info));
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index 40c0425b4023..630c8d186707 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -493,13 +493,10 @@ static void hns3_get_drvinfo(struct net_device *netdev,
- 	struct hns3_nic_priv *priv = netdev_priv(netdev);
- 	struct hnae3_handle *h = priv->ae_handle;
- 
--	strncpy(drvinfo->version, hns3_driver_version,
-+	strlcpy(drvinfo->version, hns3_driver_version,
- 		sizeof(drvinfo->version));
--	drvinfo->version[sizeof(drvinfo->version) - 1] = '\0';
--
--	strncpy(drvinfo->driver, h->pdev->driver->name,
-+	strlcpy(drvinfo->driver, h->pdev->driver->name,
- 		sizeof(drvinfo->driver));
--	drvinfo->driver[sizeof(drvinfo->driver) - 1] = '\0';
- 
- 	strncpy(drvinfo->bus_info, pci_name(h->pdev),
- 		sizeof(drvinfo->bus_info));
+ 	sscanf(mgp->fw_version, "%d.%d.%d", &mgp->fw_ver_major,
+ 	       &mgp->fw_ver_minor, &mgp->fw_ver_tiny);
 -- 
 2.17.1
 
