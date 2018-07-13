@@ -2,268 +2,227 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44D6ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35661ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BAC0208A4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:31:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhAG+d44"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BAC0208A4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E000420873
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:32:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E000420873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbeGMXsM (ORCPT
+        id S1731962AbeGMXtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 19:48:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42886 "EHLO mail.kernel.org"
+        Fri, 13 Jul 2018 19:49:02 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:48368 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729214AbeGMXsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 19:48:12 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28E7C208A4
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 23:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531524684;
-        bh=c/WDS0phbYwtzu/YlcF4POSgJi1zWAOrv80XXjl5ZnY=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=JhAG+d44M9TkuvBvze2Bah4zyntaJKzAjpwKQnNC5Brj1xCJDue9snFvxMZl4BeFP
-         qCOsSy/P42ATFQOPXBBajMrjcEzY0c0RtmiYq/4BfP6XuyuVpsboLCTNb3Uak0rJQc
-         EfEEnFain4MB8KwZxiql0auTQ1JqZwvQ2D27IjgA=
-Received: by mail-wr1-f42.google.com with SMTP id h10-v6so26548755wre.6
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 16:31:24 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGU/FXV8G/DrSFMEWyZvEVw1fQn6+vc4w3s/S16EhX/cRIcphNV
-        xLJWbsmfaRqJo3oCkBmwMDLGpj4XvkXhiBrsgkStpw==
-X-Google-Smtp-Source: AAOMgpcINKQMTIywcGMmpEU2p1968BrLAJpuri4Mahy9svr4BZiPnk26alFgs+Af9xRvSWTDSxkXZSSmfx8ncHBY5Tw=
-X-Received: by 2002:adf:e0cc:: with SMTP id e12-v6mr6054048wri.199.1531524682655;
- Fri, 13 Jul 2018 16:31:22 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 16:31:02
- -0700 (PDT)
-In-Reply-To: <1531308586-29340-11-git-send-email-joro@8bytes.org>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org> <1531308586-29340-11-git-send-email-joro@8bytes.org>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 13 Jul 2018 16:31:02 -0700
-X-Gmail-Original-Message-ID: <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com>
-Message-ID: <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com>
-Subject: Re: [PATCH 10/39] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        id S1729214AbeGMXtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 19:49:01 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fe7Xm-00024A-1V; Fri, 13 Jul 2018 17:32:12 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fe7Xe-00055u-2m; Fri, 13 Jul 2018 17:32:02 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
         Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>,
-        "Liguori, Anthony" <aliguori@amazon.com>,
-        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
-        Hugh Dickins <hughd@google.com>,
-        Kees Cook <keescook@google.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
-        Joerg Roedel <jroedel@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Fri, 13 Jul 2018 17:31:58 -0600
+Message-Id: <20180713233158.19528-5-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180713233158.19528-1-logang@deltatee.com>
+References: <20180713233158.19528-1-logang@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, willy@infradead.org, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v6 4/4] PCI: Introduce the disable_acs_redir parameter
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 11, 2018 at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> From: Joerg Roedel <jroedel@suse.de>
->
-> It can happen that we enter the kernel from kernel-mode and
-> on the entry-stack. The most common way this happens is when
-> we get an exception while loading the user-space segment
-> registers on the kernel-to-userspace exit path.
->
-> The segment loading needs to be done after the entry-stack
-> switch, because the stack-switch needs kernel %fs for
-> per_cpu access.
->
-> When this happens, we need to make sure that we leave the
-> kernel with the entry-stack again, so that the interrupted
-> code-path runs on the right stack when switching to the
-> user-cr3.
->
-> We do this by detecting this condition on kernel-entry by
-> checking CS.RPL and %esp, and if it happens, we copy over
-> the complete content of the entry stack to the task-stack.
-> This needs to be done because once we enter the exception
-> handlers we might be scheduled out or even migrated to a
-> different CPU, so that we can't rely on the entry-stack
-> contents. We also leave a marker in the stack-frame to
-> detect this condition on the exit path.
->
-> On the exit path the copy is reversed, we copy all of the
-> remaining task-stack back to the entry-stack and switch
-> to it.
->
-> Signed-off-by: Joerg Roedel <jroedel@suse.de>
-> ---
->  arch/x86/entry/entry_32.S | 116 +++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 115 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-> index 3d1a114..b3af76e 100644
-> --- a/arch/x86/entry/entry_32.S
-> +++ b/arch/x86/entry/entry_32.S
-> @@ -299,6 +299,9 @@
->   * copied there. So allocate the stack-frame on the task-stack and
->   * switch to it before we do any copying.
->   */
-> +
-> +#define CS_FROM_ENTRY_STACK    (1 << 31)
-> +
->  .macro SWITCH_TO_KERNEL_STACK
->
->         ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
-> @@ -320,6 +323,16 @@
->         /* Load top of task-stack into %edi */
->         movl    TSS_entry_stack(%edi), %edi
->
-> +       /*
-> +        * Clear upper bits of the CS slot in pt_regs in case hardware
-> +        * didn't clear it for us
-> +        */
-> +       andl    $(0x0000ffff), PT_CS(%esp)
+In order to support P2P traffic on a segment of the PCI hierarchy,
+we must be able to disable the ACS redirect bits for select
+PCI bridges. The bridges must be selected before the devices are
+discovered by the kernel and the IOMMU groups created. Therefore,
+a kernel command line parameter is created to specify devices
+which must have their ACS bits disabled.
 
-The comment is highly confusing, give that the upper bits aren't part
-of the slot any more:
+The new parameter takes a list of devices separated by a semicolon.
+Each device specified will have it's ACS redirect bits disabled.
+This is similar to the existing 'resource_alignment' parameter.
 
-commit 385eca8f277c4c34f361a4c3a088fd876d29ae21
-Author: Andy Lutomirski <luto@kernel.org>
-Date:   Fri Jul 28 06:00:30 2017 -0700
+The ACS Request P2P Request Redirect, P2P Completion Redirect and P2P
+Egress Control bits are disabled which is sufficient to always allow
+passing P2P traffic uninterrupted. The bits are set after the kernel
+(optionally) enables the ACS bits itself. It is also done regardless of
+whether the kernel sets the bits or not seeing some BIOS firmware is known
+to set the bits on boot.
 
-    x86/asm/32: Make pt_regs's segment registers be 16 bits
+If the user tries to disable the ACS redirct for a device without the
+ACS capability, a warning is printed to dmesg.
 
-What you're really doing is keeping it available for an extra flag.
-Please update the comment as such.  But see below.
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Stephen Bates <sbates@raithlin.com>
+Acked-by: Christian König <christian.koenig@amd.com>
+---
+ Documentation/admin-guide/kernel-parameters.txt |  9 +++
+ drivers/pci/pci.c                               | 76 ++++++++++++++++++++++++-
+ 2 files changed, 83 insertions(+), 2 deletions(-)
 
-> +
-> +       /* Special case - entry from kernel mode via entry stack */
-> +       testl   $SEGMENT_RPL_MASK, PT_CS(%esp)
-> +       jz      .Lentry_from_kernel_\@
-> +
->         /* Bytes to copy */
->         movl    $PTREGS_SIZE, %ecx
->
-> @@ -333,8 +346,8 @@
->          */
->         addl    $(4 * 4), %ecx
->
-> -.Lcopy_pt_regs_\@:
->  #endif
-> +.Lcopy_pt_regs_\@:
->
->         /* Allocate frame on task-stack */
->         subl    %ecx, %edi
-> @@ -350,6 +363,56 @@
->         cld
->         rep movsl
->
-> +       jmp .Lend_\@
-> +
-> +.Lentry_from_kernel_\@:
-> +
-> +       /*
-> +        * This handles the case when we enter the kernel from
-> +        * kernel-mode and %esp points to the entry-stack. When this
-> +        * happens we need to switch to the task-stack to run C code,
-> +        * but switch back to the entry-stack again when we approach
-> +        * iret and return to the interrupted code-path. This usually
-> +        * happens when we hit an exception while restoring user-space
-> +        * segment registers on the way back to user-space.
-> +        *
-> +        * When we switch to the task-stack here, we can't trust the
-> +        * contents of the entry-stack anymore, as the exception handler
-> +        * might be scheduled out or moved to another CPU. Therefore we
-> +        * copy the complete entry-stack to the task-stack and set a
-> +        * marker in the iret-frame (bit 31 of the CS dword) to detect
-> +        * what we've done on the iret path.
-> +        *
-> +        * On the iret path we copy everything back and switch to the
-> +        * entry-stack, so that the interrupted kernel code-path
-> +        * continues on the same stack it was interrupted with.
-> +        *
-> +        * Be aware that an NMI can happen anytime in this code.
-> +        *
-> +        * %esi: Entry-Stack pointer (same as %esp)
-> +        * %edi: Top of the task stack
-> +        */
-> +
-> +       /* Calculate number of bytes on the entry stack in %ecx */
-> +       movl    %esi, %ecx
-> +
-> +       /* %ecx to the top of entry-stack */
-> +       andl    $(MASK_entry_stack), %ecx
-> +       addl    $(SIZEOF_entry_stack), %ecx
-> +
-> +       /* Number of bytes on the entry stack to %ecx */
-> +       sub     %esi, %ecx
-> +
-> +       /* Mark stackframe as coming from entry stack */
-> +       orl     $CS_FROM_ENTRY_STACK, PT_CS(%esp)
-> +
-> +       /*
-> +        * %esi and %edi are unchanged, %ecx contains the number of
-> +        * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
-> +        * the stack-frame on task-stack and copy everything over
-> +        */
-> +       jmp .Lcopy_pt_regs_\@
-> +
->  .Lend_\@:
->  .endm
->
-> @@ -408,6 +471,56 @@
->  .endm
->
->  /*
-> + * This macro handles the case when we return to kernel-mode on the iret
-> + * path and have to switch back to the entry stack.
-> + *
-> + * See the comments below the .Lentry_from_kernel_\@ label in the
-> + * SWITCH_TO_KERNEL_STACK macro for more details.
-> + */
-> +.macro PARANOID_EXIT_TO_KERNEL_MODE
-> +
-> +       /*
-> +        * Test if we entered the kernel with the entry-stack. Most
-> +        * likely we did not, because this code only runs on the
-> +        * return-to-kernel path.
-> +        */
-> +       testl   $CS_FROM_ENTRY_STACK, PT_CS(%esp)
-> +       jz      .Lend_\@
-> +
-> +       /* Unlikely slow-path */
-> +
-> +       /* Clear marker from stack-frame */
-> +       andl    $(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
-> +
-> +       /* Copy the remaining task-stack contents to entry-stack */
-> +       movl    %esp, %esi
-> +       movl    PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index a69947d9e14e..02634c4ab181 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -3192,6 +3192,15 @@
+ 				Adding the window is slightly risky (it may
+ 				conflict with unreported devices), so this
+ 				taints the kernel.
++		disable_acs_redir=<pci_dev>[; ...]
++				Specify one or more PCI devices (in the format
++				specified above) separated by semicolons.
++				Each device specified will have the PCI ACS
++				redirect capabilities forced off which will
++				allow P2P traffic between devices through
++				bridges without forcing it upstream. Note:
++				this removes isolation between devices and
++				will make the IOMMU groups less granular.
+ 
+ 	pcie_aspm=	[PCIE] Forcibly enable or disable PCIe Active State Power
+ 			Management.
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 59638075b4df..195b93824e6c 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -2983,6 +2983,66 @@ void pci_request_acs(void)
+ 	pci_acs_enable = 1;
+ }
+ 
++static const char *disable_acs_redir_param;
++
++/**
++ * pci_disable_acs_redir - disable ACS redirect capabilities
++ * @dev: the PCI device
++ *
++ * For only devices specified in the disable_acs_redir parameter.
++ */
++static void pci_disable_acs_redir(struct pci_dev *dev)
++{
++	int ret = 0;
++	const char *p;
++	int pos;
++	u16 ctrl;
++
++	if (!disable_acs_redir_param)
++		return;
++
++	p = disable_acs_redir_param;
++	while (*p) {
++		ret = pci_dev_str_match(dev, p, &p);
++		if (ret < 0) {
++			pr_info_once("PCI: Can't parse disable_acs_redir parameter: %s\n",
++				     disable_acs_redir_param);
++
++			break;
++		} else if (ret == 1) {
++			/* Found a match */
++			break;
++		}
++
++		if (*p != ';' && *p != ',') {
++			/* End of param or invalid format */
++			break;
++		}
++		p++;
++	}
++
++	if (ret != 1)
++		return;
++
++	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_ACS);
++	if (!pos) {
++		pci_warn(dev, "cannot disable ACS redirect for this hardware as it does not have ACS capabilities\n");
++		return;
++	}
++
++	if (!pci_dev_specific_disable_acs_redir(dev))
++		return;
++
++	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
++
++	/* P2P Request & Completion Redirect */
++	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
++
++	pci_write_config_word(dev, pos + PCI_ACS_CTRL, ctrl);
++
++	pci_info(dev, "disabled ACS redirect\n");
++}
++
+ /**
+  * pci_std_enable_acs - enable ACS on devices using standard ACS capabilites
+  * @dev: the PCI device
+@@ -3022,12 +3082,22 @@ static void pci_std_enable_acs(struct pci_dev *dev)
+ void pci_enable_acs(struct pci_dev *dev)
+ {
+ 	if (!pci_acs_enable)
+-		return;
++		goto disable_acs_redir;
+ 
+ 	if (!pci_dev_specific_enable_acs(dev))
+-		return;
++		goto disable_acs_redir;
+ 
+ 	pci_std_enable_acs(dev);
++
++disable_acs_redir:
++	/*
++	 * Note: pci_disable_acs_redir() must be called even if
++	 * ACS is not enabled by the kernel because the firmware
++	 * may have unexpectedly set the flags. So if we are told
++	 * to disable it, we should always disable it after setting
++	 * the kernel's default preferences.
++	 */
++	pci_disable_acs_redir(dev);
+ }
+ 
+ static bool pci_acs_flags_enabled(struct pci_dev *pdev, u16 acs_flags)
+@@ -5967,6 +6037,8 @@ static int __init pci_setup(char *str)
+ 				pcie_bus_config = PCIE_BUS_PEER2PEER;
+ 			} else if (!strncmp(str, "pcie_scan_all", 13)) {
+ 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
++			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
++				disable_acs_redir_param = str + 18;
+ 			} else {
+ 				printk(KERN_ERR "PCI: Unknown option `%s'\n",
+ 						str);
+-- 
+2.11.0
 
-I'm confused.  Why do we need any special handling here at all?  How
-could we end up with the contents of the stack frame we interrupted in
-a corrupt state?
-
-I guess I don't understand why this patch is needed.
