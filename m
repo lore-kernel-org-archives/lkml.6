@@ -6,103 +6,123 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 045EFECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3165EECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B659D208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:07:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B659D208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E6F4720878
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:08:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F4720878
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731261AbeGMPWL (ORCPT
+        id S1729974AbeGMPXZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 11:22:11 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:43507 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729653AbeGMPWK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 11:22:10 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MarjW-1fKgeh47kg-00KNwG; Fri, 13 Jul 2018 17:07:06 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Rob Springer <rspringer@google.com>,
-        John Joseph <jnjoseph@google.com>,
-        Ben Chan <benchan@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Simon Que <sque@chromium.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: gasket remove current_kernel_time usage
-Date:   Fri, 13 Jul 2018 17:06:37 +0200
-Message-Id: <20180713150703.3156256-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:G6aoTFHleRaNKcwQWEDvwO22CVEaxZ5qNc1H3XM69Gdpkih8ho6
- QQUTd7KcgsV/gEvtcLaeJThIdj3UkD+/A5jnTJ1oHqb7Op2MZICkBWZjPyz4E38VLys3uDr
- waQf++4J+XIRdmUk69BUl/etQRViLMGaAiCbC4kJmQzFtIw4VE6paJytFz97f9+eXB0iQ0u
- QzLiEN95Ga1C/TaetiaPA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZqKHunGeb54=:Yb3dO8hAcyOPkV0I6Woyl/
- WctPkZC0njZYoc/WwoMOeI21Qj5JvAgA9dSZd+rfxWrNQPAwdYntmaUETC6oV4PCrKjlmg2uQ
- w6V0CKy0JxHMCVKrkGELwNXC3CJ2Q6aUVHHf7nuN0nXFx8bAMys+W2FvtddItrSjfUFGBJvOo
- SVUWdE6/iPeRBATmqx/yhXnkPdj4itwwjnHq/+T68zMWnEQxZX0tJUkdjFJGj4ff63rYglnm4
- 8OG/pN32Xf5IbJXb7P+556CxIipDQ69X6s1zVznfQZy814q2IvndkAfCWAX9ZJWS3dju5SUZO
- OyaCFzB4PypG1G0WChz8l1AGNNlVAKfqDAsJKg9QnlpMUVpqqSNFjl+bG7Kf9Ewv+mbtJz7/T
- pBLIqBj7xYJ+vfQdV1cIDfELsQogcHXkmMUwMhGI4X2tf2GdmqVcsH3BJ6im5vEeeDkGCtZY2
- gMM4pStZ+EJwVzKbmF4ABIyp9BAjSUUgNjMppSPrUWuLFaQITuVyQpw+gVdYgxnDnB7M1eFNP
- CBKlRneUbss3/R/N6RMhce4YY5tdqMdLf6gDdM2FwdWnvXI19s6RG0gcMwDm3Hk69qxD/T4ve
- C/OsZMaOJpr005vxMJJrln3yCoewF5GTjdjfOnIk3hqAiROaKUoG5HL/vCVRtxOegjzmfr45D
- YaXzk298/ZNuWMKxbu9gb2Gp3XhDg6UpCxkTDjCluEkywgixSZtk4YuNFPrCZFPpFHDY=
+        Fri, 13 Jul 2018 11:23:25 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36694 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729726AbeGMPXZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 11:23:25 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E08A7A9;
+        Fri, 13 Jul 2018 08:08:23 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FD643F5B1;
+        Fri, 13 Jul 2018 08:08:22 -0700 (PDT)
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     sudeep.holla@arm.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        quentin.perret@arm.com
+Subject: [PATCH] firmware: arm_scmi: add a getter for power of performance states
+Date:   Fri, 13 Jul 2018 16:08:17 +0100
+Message-Id: <20180713150817.26641-1-quentin.perret@arm.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new user of the deprecated current_kernel_time() function has appeared
-here. This code won't work correct during leap seconds or a concurrent
-settimeofday() call, and it probably doesn't do what the author intended
-even for the normal case, as it passes a timeout in nanoseconds but
-reads the time using a jiffies-granularity accessor.
+The SCMI protocol can be used to get power estimates from firmware
+corresponding to each performance state of a device. Although these power
+costs are already managed by the SCMI firmware driver, they are not
+exposed to any external subsystem yet.
 
-I'm changing it to ktime_get_ns() here, which simplifies the logic,
-and uses a high-res clocksource. This is a bit slower, but that
-probably doesn't matter in a busy-wait loop.
+Fix this by adding a new get_power() interface to the exisiting perf_ops
+defined for the SCMI protocol.
 
-Note: it also doesn't matter in the current version, as there are no
-callers of this function.
-
-Fixes: 9a69f5087ccc ("drivers/staging: Gasket driver framework + Apex driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Quentin Perret <quentin.perret@arm.com>
 ---
- drivers/staging/gasket/gasket_core.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
+ drivers/firmware/arm_scmi/perf.c | 28 ++++++++++++++++++++++++++++
+ include/linux/scmi_protocol.h    |  4 ++++
+ 2 files changed, 32 insertions(+)
 
-diff --git a/drivers/staging/gasket/gasket_core.c b/drivers/staging/gasket/gasket_core.c
-index 45914ebc8f44..248c99a841a9 100644
---- a/drivers/staging/gasket/gasket_core.c
-+++ b/drivers/staging/gasket/gasket_core.c
-@@ -2090,19 +2090,14 @@ int gasket_wait_sync(
- 	u64 timeout_ns)
- {
- 	u64 reg;
--	struct timespec start_time, cur_time;
--	u64 diff_nanosec;
-+	u64 start_time, diff_nanosec;
- 	int count = 0;
+diff --git a/drivers/firmware/arm_scmi/perf.c b/drivers/firmware/arm_scmi/perf.c
+index 2a219b1261b1..f4d58d05ef70 100644
+--- a/drivers/firmware/arm_scmi/perf.c
++++ b/drivers/firmware/arm_scmi/perf.c
+@@ -426,6 +426,33 @@ static int scmi_dvfs_freq_get(const struct scmi_handle *handle, u32 domain,
+ 	return ret;
+ }
  
- 	reg = gasket_dev_read_64(gasket_dev, bar, offset);
--	start_time = current_kernel_time();
-+	start_time = ktime_get_ns();
- 	while ((reg & mask) != val) {
- 		count++;
--		cur_time = current_kernel_time();
--		diff_nanosec = (u64)(cur_time.tv_sec - start_time.tv_sec) *
--				       1000000000LL +
--			       (u64)(cur_time.tv_nsec) -
--			       (u64)(start_time.tv_nsec);
-+		diff_nanosec = ktime_get_ns() - start_time;
- 		if (diff_nanosec > timeout_ns) {
- 			gasket_log_error(
- 				gasket_dev,
++static int scmi_dvfs_power_get(const struct scmi_handle *handle, u32 domain,
++			       unsigned long *freq, unsigned long *power)
++{
++	struct scmi_perf_info *pi = handle->perf_priv;
++	struct perf_dom_info *dom;
++	unsigned long opp_freq;
++	int idx, ret = -EINVAL;
++	struct scmi_opp *opp;
++
++	dom = pi->dom_info + domain;
++	if (!dom)
++		return -EIO;
++
++	for (opp = dom->opp, idx = 0; idx < dom->opp_count; idx++, opp++) {
++		opp_freq = opp->perf * dom->mult_factor;
++		if (opp_freq < *freq)
++			continue;
++
++		*freq = opp_freq;
++		*power = opp->power;
++		ret = 0;
++		break;
++	}
++
++	return ret;
++}
++
+ static struct scmi_perf_ops perf_ops = {
+ 	.limits_set = scmi_perf_limits_set,
+ 	.limits_get = scmi_perf_limits_get,
+@@ -436,6 +463,7 @@ static struct scmi_perf_ops perf_ops = {
+ 	.device_opps_add = scmi_dvfs_device_opps_add,
+ 	.freq_set = scmi_dvfs_freq_set,
+ 	.freq_get = scmi_dvfs_freq_get,
++	.power_get = scmi_dvfs_power_get,
+ };
+ 
+ static int scmi_perf_protocol_init(struct scmi_handle *handle)
+diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
+index f4c9fc0fc755..2ecbd2c5a249 100644
+--- a/include/linux/scmi_protocol.h
++++ b/include/linux/scmi_protocol.h
+@@ -91,6 +91,8 @@ struct scmi_clk_ops {
+  *	to sustained performance level mapping
+  * @freq_get: gets the frequency for a given device using sustained frequency
+  *	to sustained performance level mapping
++ * @power_get: gets the power dissipated for a given performance domain at a
++ *      given frequency
+  */
+ struct scmi_perf_ops {
+ 	int (*limits_set)(const struct scmi_handle *handle, u32 domain,
+@@ -110,6 +112,8 @@ struct scmi_perf_ops {
+ 			unsigned long rate, bool poll);
+ 	int (*freq_get)(const struct scmi_handle *handle, u32 domain,
+ 			unsigned long *rate, bool poll);
++	int (*power_get)(const struct scmi_handle *handle, u32 domain,
++			 unsigned long *rate, unsigned long *power);
+ };
+ 
+ /**
 -- 
-2.9.0
+2.18.0
 
