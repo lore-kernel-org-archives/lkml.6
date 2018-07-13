@@ -2,116 +2,268 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DBE3ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B44D6ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2CCF20873
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:28:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BAC0208A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:31:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O/5gGep5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GNv7IwaU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2CCF20873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhAG+d44"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BAC0208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731526AbeGMXot (ORCPT
+        id S1731264AbeGMXsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 19:44:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48222 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729766AbeGMXos (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 19:44:48 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1879B60541; Fri, 13 Jul 2018 23:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531524482;
-        bh=XkuJBa0SlFu3FTCP9FaWlEdE100Oo7pdIr4awoh/fnk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=O/5gGep5BZ0/Pi3ekKvRS+d1qctQ+noHfjUM1rhgI74Ylmb8lfuz8uu/yxwmuPwTv
-         qq6TVF25S+UmhwYbLtMSy0Dp05gqhZ8mTKIBFs1m2eElrFNIcWGpZa3vRadrKH13ZL
-         OWeeMdFc/0TFbcF3OKqpfVC5n3RKt2BPjBzpdKDg=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 0AACD60227;
-        Fri, 13 Jul 2018 23:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1531524481;
-        bh=XkuJBa0SlFu3FTCP9FaWlEdE100Oo7pdIr4awoh/fnk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GNv7IwaUOfYHAqUMiJqOtxkOShixWgeUvFPxUVlTe3TUluVKA9qUt2EboFw+yqNkT
-         qCeFG7bLlQAboGZ23NMrdjXrry2P5t6ABdl1yzCgT6QTQAhar2iqZIh/SJB/tWJdzP
-         FAtABX9cEsv1/0GcI9QvOnWkdVkFs3X1qtQeb0B0=
+        Fri, 13 Jul 2018 19:48:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42886 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729214AbeGMXsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 19:48:12 -0400
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28E7C208A4
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 23:31:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531524684;
+        bh=c/WDS0phbYwtzu/YlcF4POSgJi1zWAOrv80XXjl5ZnY=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=JhAG+d44M9TkuvBvze2Bah4zyntaJKzAjpwKQnNC5Brj1xCJDue9snFvxMZl4BeFP
+         qCOsSy/P42ATFQOPXBBajMrjcEzY0c0RtmiYq/4BfP6XuyuVpsboLCTNb3Uak0rJQc
+         EfEEnFain4MB8KwZxiql0auTQ1JqZwvQ2D27IjgA=
+Received: by mail-wr1-f42.google.com with SMTP id h10-v6so26548755wre.6
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 16:31:24 -0700 (PDT)
+X-Gm-Message-State: AOUpUlGU/FXV8G/DrSFMEWyZvEVw1fQn6+vc4w3s/S16EhX/cRIcphNV
+        xLJWbsmfaRqJo3oCkBmwMDLGpj4XvkXhiBrsgkStpw==
+X-Google-Smtp-Source: AAOMgpcINKQMTIywcGMmpEU2p1968BrLAJpuri4Mahy9svr4BZiPnk26alFgs+Af9xRvSWTDSxkXZSSmfx8ncHBY5Tw=
+X-Received: by 2002:adf:e0cc:: with SMTP id e12-v6mr6054048wri.199.1531524682655;
+ Fri, 13 Jul 2018 16:31:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 13 Jul 2018 16:28:01 -0700
-From:   pheragu@codeaurora.org
-To:     Joe Perches <joe@perches.com>
-Cc:     apw@canonical.com, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org, bryanh@codeaurora.org,
-        ckadabi@codeaurora.org, David Keitel <dkeitel@codeaurora.org>
-Subject: Re: [PATCH] checkpatch: Require commit text and warn on long commit
- text lines
-In-Reply-To: <6799952fbd3639c764c112bde961b5e00270a52d.camel@perches.com>
-References: <1531518027-13318-1-git-send-email-pheragu@codeaurora.org>
- <6799952fbd3639c764c112bde961b5e00270a52d.camel@perches.com>
-Message-ID: <6ed46f85a7577e1d4a48e81f67fd7581@codeaurora.org>
-X-Sender: pheragu@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 16:31:02
+ -0700 (PDT)
+In-Reply-To: <1531308586-29340-11-git-send-email-joro@8bytes.org>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org> <1531308586-29340-11-git-send-email-joro@8bytes.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 13 Jul 2018 16:31:02 -0700
+X-Gmail-Original-Message-ID: <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com>
+Message-ID: <CALCETrUg_4q8a2Tt_Z+GtVuBwj3Ct3=j7M-YhiK06=XjxOG82A@mail.gmail.com>
+Subject: Re: [PATCH 10/39] x86/entry/32: Handle Entry from Kernel-Mode on Entry-Stack
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-07-13 14:46, Joe Perches wrote:
-> On Fri, 2018-07-13 at 14:40 -0700, Prakruthi Deepak Heragu wrote:
->> Commit text is almost always necessary to explain why a change is 
->> needed.
-> 
-> This bit seems sensible, but perhaps it should just count the
-> number of lines after the end of email headers and before any
-> Signed-off-by:/Signature line
-> 
-While committing the changes, one can just write the subject and not 
-write
-the commit text at all. So, if we just count the lines between email 
-headers
-and signed-off, we still do count lines which form the subject, but the
-commit text is still absent. Also, subject can be longer than one line. 
-So,
-just counting lines doesn't really guarantee the presence of commit 
-text.
+On Wed, Jul 11, 2018 at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
+> From: Joerg Roedel <jroedel@suse.de>
+>
+> It can happen that we enter the kernel from kernel-mode and
+> on the entry-stack. The most common way this happens is when
+> we get an exception while loading the user-space segment
+> registers on the kernel-to-userspace exit path.
+>
+> The segment loading needs to be done after the entry-stack
+> switch, because the stack-switch needs kernel %fs for
+> per_cpu access.
+>
+> When this happens, we need to make sure that we leave the
+> kernel with the entry-stack again, so that the interrupted
+> code-path runs on the right stack when switching to the
+> user-cr3.
+>
+> We do this by detecting this condition on kernel-entry by
+> checking CS.RPL and %esp, and if it happens, we copy over
+> the complete content of the entry stack to the task-stack.
+> This needs to be done because once we enter the exception
+> handlers we might be scheduled out or even migrated to a
+> different CPU, so that we can't rely on the entry-stack
+> contents. We also leave a marker in the stack-frame to
+> detect this condition on the exit path.
+>
+> On the exit path the copy is reversed, we copy all of the
+> remaining task-stack back to the entry-stack and switch
+> to it.
+>
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>  arch/x86/entry/entry_32.S | 116 +++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 115 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
+> index 3d1a114..b3af76e 100644
+> --- a/arch/x86/entry/entry_32.S
+> +++ b/arch/x86/entry/entry_32.S
+> @@ -299,6 +299,9 @@
+>   * copied there. So allocate the stack-frame on the task-stack and
+>   * switch to it before we do any copying.
+>   */
+> +
+> +#define CS_FROM_ENTRY_STACK    (1 << 31)
+> +
+>  .macro SWITCH_TO_KERNEL_STACK
+>
+>         ALTERNATIVE     "", "jmp .Lend_\@", X86_FEATURE_XENPV
+> @@ -320,6 +323,16 @@
+>         /* Load top of task-stack into %edi */
+>         movl    TSS_entry_stack(%edi), %edi
+>
+> +       /*
+> +        * Clear upper bits of the CS slot in pt_regs in case hardware
+> +        * didn't clear it for us
+> +        */
+> +       andl    $(0x0000ffff), PT_CS(%esp)
 
->> Also, warn on commit text lines longer than 75 characters. The commit 
->> text
->> are indented and may wrap on a terminal if they are longer than 75
->> characters.
-> 
-> This is already exists via
-> 
-> # Check for line lengths > 75 in commit log, warn once
-> 		if ($in_commit_log && !$commit_log_long_line &&
-> 		    length($line) > 75 &&
-> 
-True, but this patch points out every line of the commit text that is
-exceeding the limit.
+The comment is highly confusing, give that the upper bits aren't part
+of the slot any more:
 
->> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-> []
->> @@ -14,6 +14,13 @@ use File::Basename;
->>  use Cwd 'abs_path';
->>  use Term::ANSIColor qw(:constants);
->> 
->> +use constant BEFORE_SHORTTEXT => 0;
->> +use constant IN_SHORTTEXT_BLANKLINE => 1;
->> +use constant IN_SHORTTEXT => 2;
->> +use constant AFTER_SHORTTEXT => 3;
->> +use constant CHECK_NEXT_SHORTTEXT => 4;
->> +use constant SHORTTEXT_LIMIT => 75;
-> 
-> probably overly complicated
+commit 385eca8f277c4c34f361a4c3a088fd876d29ae21
+Author: Andy Lutomirski <luto@kernel.org>
+Date:   Fri Jul 28 06:00:30 2017 -0700
+
+    x86/asm/32: Make pt_regs's segment registers be 16 bits
+
+What you're really doing is keeping it available for an extra flag.
+Please update the comment as such.  But see below.
+
+> +
+> +       /* Special case - entry from kernel mode via entry stack */
+> +       testl   $SEGMENT_RPL_MASK, PT_CS(%esp)
+> +       jz      .Lentry_from_kernel_\@
+> +
+>         /* Bytes to copy */
+>         movl    $PTREGS_SIZE, %ecx
+>
+> @@ -333,8 +346,8 @@
+>          */
+>         addl    $(4 * 4), %ecx
+>
+> -.Lcopy_pt_regs_\@:
+>  #endif
+> +.Lcopy_pt_regs_\@:
+>
+>         /* Allocate frame on task-stack */
+>         subl    %ecx, %edi
+> @@ -350,6 +363,56 @@
+>         cld
+>         rep movsl
+>
+> +       jmp .Lend_\@
+> +
+> +.Lentry_from_kernel_\@:
+> +
+> +       /*
+> +        * This handles the case when we enter the kernel from
+> +        * kernel-mode and %esp points to the entry-stack. When this
+> +        * happens we need to switch to the task-stack to run C code,
+> +        * but switch back to the entry-stack again when we approach
+> +        * iret and return to the interrupted code-path. This usually
+> +        * happens when we hit an exception while restoring user-space
+> +        * segment registers on the way back to user-space.
+> +        *
+> +        * When we switch to the task-stack here, we can't trust the
+> +        * contents of the entry-stack anymore, as the exception handler
+> +        * might be scheduled out or moved to another CPU. Therefore we
+> +        * copy the complete entry-stack to the task-stack and set a
+> +        * marker in the iret-frame (bit 31 of the CS dword) to detect
+> +        * what we've done on the iret path.
+> +        *
+> +        * On the iret path we copy everything back and switch to the
+> +        * entry-stack, so that the interrupted kernel code-path
+> +        * continues on the same stack it was interrupted with.
+> +        *
+> +        * Be aware that an NMI can happen anytime in this code.
+> +        *
+> +        * %esi: Entry-Stack pointer (same as %esp)
+> +        * %edi: Top of the task stack
+> +        */
+> +
+> +       /* Calculate number of bytes on the entry stack in %ecx */
+> +       movl    %esi, %ecx
+> +
+> +       /* %ecx to the top of entry-stack */
+> +       andl    $(MASK_entry_stack), %ecx
+> +       addl    $(SIZEOF_entry_stack), %ecx
+> +
+> +       /* Number of bytes on the entry stack to %ecx */
+> +       sub     %esi, %ecx
+> +
+> +       /* Mark stackframe as coming from entry stack */
+> +       orl     $CS_FROM_ENTRY_STACK, PT_CS(%esp)
+> +
+> +       /*
+> +        * %esi and %edi are unchanged, %ecx contains the number of
+> +        * bytes to copy. The code at .Lcopy_pt_regs_\@ will allocate
+> +        * the stack-frame on task-stack and copy everything over
+> +        */
+> +       jmp .Lcopy_pt_regs_\@
+> +
+>  .Lend_\@:
+>  .endm
+>
+> @@ -408,6 +471,56 @@
+>  .endm
+>
+>  /*
+> + * This macro handles the case when we return to kernel-mode on the iret
+> + * path and have to switch back to the entry stack.
+> + *
+> + * See the comments below the .Lentry_from_kernel_\@ label in the
+> + * SWITCH_TO_KERNEL_STACK macro for more details.
+> + */
+> +.macro PARANOID_EXIT_TO_KERNEL_MODE
+> +
+> +       /*
+> +        * Test if we entered the kernel with the entry-stack. Most
+> +        * likely we did not, because this code only runs on the
+> +        * return-to-kernel path.
+> +        */
+> +       testl   $CS_FROM_ENTRY_STACK, PT_CS(%esp)
+> +       jz      .Lend_\@
+> +
+> +       /* Unlikely slow-path */
+> +
+> +       /* Clear marker from stack-frame */
+> +       andl    $(~CS_FROM_ENTRY_STACK), PT_CS(%esp)
+> +
+> +       /* Copy the remaining task-stack contents to entry-stack */
+> +       movl    %esp, %esi
+> +       movl    PER_CPU_VAR(cpu_tss_rw + TSS_sp0), %edi
+
+I'm confused.  Why do we need any special handling here at all?  How
+could we end up with the contents of the stack frame we interrupted in
+a corrupt state?
+
+I guess I don't understand why this patch is needed.
