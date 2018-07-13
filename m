@@ -2,117 +2,94 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3356ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 22:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C93ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 22:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CA1220870
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 22:15:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4B4A20870
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 22:20:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="clRff0t/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CA1220870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ELe66GmC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ELe66GmC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4B4A20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730038AbeGMWbs (ORCPT
+        id S1729773AbeGMWhU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 18:31:48 -0400
-Received: from mail-yw0-f194.google.com ([209.85.161.194]:45834 "EHLO
-        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727188AbeGMWbs (ORCPT
+        Fri, 13 Jul 2018 18:37:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53488 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbeGMWhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 18:31:48 -0400
-Received: by mail-yw0-f194.google.com with SMTP id 139-v6so12286668ywg.12
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 15:15:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HgM7KHro5Gn8WNFQAxB6p2phFCYiHpaJFw0eoGoMk8o=;
-        b=clRff0t/LKxP2MAaKBPTBh6Qov9zX5p9iR/gHqVHyfMmhtD2h1qWXdpw0+wLNLY8a1
-         gyeRVdlbeRgCMBW0JNzjxSLveVg4ZFYmX/Xy3qK443tfiRtUSLhKCJMhJhK6Y88culc2
-         82lWFICVR9lA99h2Jd++55g0BBv7bMAYw4+SLWlNkMlLUeFBOqf1ynNNEU+Ms9in6A3R
-         YpHSJRlqXWceApOimo2I8040rZApFcY1Lyx9IyQhuiHMMqbZnS3NFBQ66WYCT5wrcCXn
-         2XfqXnPzZ4ENHl7nw44puDV/wNM5iVlTfZ020t7G/gyrwdI2b21o1UebTVdll5sJUxgN
-         eFag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HgM7KHro5Gn8WNFQAxB6p2phFCYiHpaJFw0eoGoMk8o=;
-        b=uFWYzu5RosdbbvzQdIcuwuMIQPJLXU4XlYjM5vBT8JZDoCMfK4CpgEeAspFc6aM6wQ
-         Zi1qxdNEYyJLLUKRo6FSKnjo11bEa9bWsFP0s1svg5tp7T220qkkRsO8UpacdtfQ29tR
-         7C+KzaUTy9K3k860010Nc2lRUadK5r/mFAcMNFdlsv2jk3Sg90Qe0o/ke5BlqPTjw12F
-         A5vY0RzQoKoadNVJerUYlm+ZS4TMiNmSmulN3Phdd/ljjeGLr+b5Mz9yQQZMdsvrlKaU
-         7I4etWAutop44rNyngbRyPMJF70ZjaIVDrs0AUEFs8Tzgt/EEDcwimGYVZ72kgGpaZdx
-         9X4w==
-X-Gm-Message-State: AOUpUlFfqrpg1OwaeWRxqI1O3k/B55uUpEABCrt4ffuFE2K8fzQ3rJ84
-        AG1DqoM6v6UPqUULYz+p4Kk2Fw==
-X-Google-Smtp-Source: AAOMgpcpgrpila16ucxTJitXp2c2lsFvQHQJWBrYuiraFQKEg59T0D63lGaco9JYi9PFLPxVKMe0ig==
-X-Received: by 2002:a81:2ac2:: with SMTP id q185-v6mr4290585ywq.190.1531520114498;
-        Fri, 13 Jul 2018 15:15:14 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:23bd])
-        by smtp.gmail.com with ESMTPSA id g188-v6sm2448033ywg.57.2018.07.13.15.15.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Jul 2018 15:15:14 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 18:17:58 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [RFC PATCH 10/10] psi: aggregate ongoing stall events when
- somebody reads pressure
-Message-ID: <20180713221758.GB30013@cmpxchg.org>
-References: <20180712172942.10094-1-hannes@cmpxchg.org>
- <20180712172942.10094-11-hannes@cmpxchg.org>
- <20180712164537.324caee21fd68c47a02af009@linux-foundation.org>
+        Fri, 13 Jul 2018 18:37:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8506260B72; Fri, 13 Jul 2018 22:20:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531520445;
+        bh=klkLLKra+mFHbFEHbzQlscuQw4ncCY03czvUAEc9Bps=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ELe66GmC9z7uhHie0WSxceJfEuPfqw9zEhLeHJUQTb+vTNLEjzN34vsOu3cKkBlbO
+         60qh5j6to6sYKCjZUNDIls7KA8BwKweaMLh0CoU0yL3qD5LwuYpCv+a+DOXAaWdoGf
+         s0Q35LUzGSYO+B7rRjd3objUMh+hsMRupRZFBq4o=
+Received: from [10.226.58.143] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: pprakash@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8EA1560541;
+        Fri, 13 Jul 2018 22:20:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531520445;
+        bh=klkLLKra+mFHbFEHbzQlscuQw4ncCY03czvUAEc9Bps=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ELe66GmC9z7uhHie0WSxceJfEuPfqw9zEhLeHJUQTb+vTNLEjzN34vsOu3cKkBlbO
+         60qh5j6to6sYKCjZUNDIls7KA8BwKweaMLh0CoU0yL3qD5LwuYpCv+a+DOXAaWdoGf
+         s0Q35LUzGSYO+B7rRjd3objUMh+hsMRupRZFBq4o=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8EA1560541
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=pprakash@codeaurora.org
+Subject: Re: [PATCH v4] cpufreq / CPPC: Add cpuinfo_cur_freq support for CPPC
+To:     George Cherian <george.cherian@cavium.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net
+References: <1531375675-52623-1-git-send-email-george.cherian@cavium.com>
+From:   "Prakash, Prashanth" <pprakash@codeaurora.org>
+Message-ID: <41a6e3c7-db85-9ff1-daf4-07569c11fc8c@codeaurora.org>
+Date:   Fri, 13 Jul 2018 16:20:43 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180712164537.324caee21fd68c47a02af009@linux-foundation.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1531375675-52623-1-git-send-email-george.cherian@cavium.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 04:45:37PM -0700, Andrew Morton wrote:
-> On Thu, 12 Jul 2018 13:29:42 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
-> 
-> > Right now, psi reports pressure and stall times of already concluded
-> > stall events. For most use cases this is current enough, but certain
-> > highly latency-sensitive applications, like the Android OOM killer,
-> > might want to know about and react to stall states before they have
-> > even concluded (e.g. a prolonged reclaim cycle).
-> > 
-> > This patches the procfs/cgroupfs interface such that when the pressure
-> > metrics are read, the current per-cpu states, if any, are taken into
-> > account as well.
-> > 
-> > Any ongoing states are concluded, their time snapshotted, and then
-> > restarted. This requires holding the rq lock to avoid corruption. It
-> > could use some form of rq lock ratelimiting or avoidance.
-> > 
-> > Requested-by: Suren Baghdasaryan <surenb@google.com>
-> > Not-yet-signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> 
-> What-does-that-mean:?
+Hi George,
 
-I didn't think this patch was ready for upstream yet, hence the RFC
-and the lack of a proper sign-off.
+This version looks good. Thanks!
 
-But Suren has been testing this and found it useful in his specific
-low-latency application, so I included it for completeness, for other
-testers to find, and for possible suggestions on how to improve it.
+On 7/12/2018 12:07 AM, George Cherian wrote:
+> Per Section 8.4.7.1.3 of ACPI 6.2, The platform provides performance
+> feedback via set of performance counters. To determine the actual
+> performance level delivered over time, OSPM may read a set of
+> performance counters from the Reference Performance Counter Register
+> and the Delivered Performance Counter Register.
+>
+> OSPM calculates the delivered performance over a given time period by
+> taking a beginning and ending snapshot of both the reference and
+> delivered performance counters, and calculating:
+>
+> delivered_perf = reference_perf X (delta of delivered_perf counter / delta of reference_perf counter).
+>
+> Implement the above and hook this to the cpufreq->get method.
+>
+> Signed-off-by: George Cherian <george.cherian@cavium.com>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Acked-by: Prashanth Prakash <pprakash@codeaurora.org>
