@@ -2,372 +2,256 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72D06ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2186CECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4F562087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:49:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="hJ6p13dX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4F562087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	by mail.kernel.org (Postfix) with ESMTP id CA37C2087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA37C2087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731501AbeGMTE7 (ORCPT
+        id S1731910AbeGMTGH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 15:04:59 -0400
-Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:56191 "EHLO
-        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729982AbeGMTE7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 15:04:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1531507747; x=1563043747;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=glXLHEjIVG5cNd2Xf4Af7xTHK4QGo9+hYw4q2Uw8wT0=;
-  b=hJ6p13dXndFnAZrxY1ZKVUqNZNy8vFL+/23wl+41+heIlBoJ9x9HN9bK
-   Vv1gSUSwYu5WSnVCl9sOSdQ6R7eZHSVBCASpjvr1GgifAs7TxO0dquW7F
-   wmCdL837x5C0/vfZr0joQjqCzI3BUtC8vFc5FdyJIlf7SQzxe7GBqwz5X
-   w=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FKAwAz80hbh2Ka6ERcGgEBAQEBAgEBA?=
- =?us-ascii?q?QEIAQEBAYMbgQKBDigKg3GUPIIMdX2BRpIVgWYLhGwCF4I5ITgUAQIBAQIBAQI?=
- =?us-ascii?q?BAQIQAQEBCA0JCCkvgjUigmEBAQEBAyMROAoDDAQCAQgRAQMBAQECAhESAwICA?=
- =?us-ascii?q?kQBAgYIAgQBDQUIE4MFgW8RqSWBLodoglaBC4d3ghaBEYITSTWENh4RLRUTgkK?=
- =?us-ascii?q?CVQKHRAiSEAcCiG6GMYFLhBGCbYUkh32HHIJ7gViBdHBQgmmCJAEOCRGOBQFvi?=
- =?us-ascii?q?XyBLoEaAQE?=
-X-IPAS-Result: =?us-ascii?q?A2FKAwAz80hbh2Ka6ERcGgEBAQEBAgEBAQEIAQEBAYMbgQK?=
- =?us-ascii?q?BDigKg3GUPIIMdX2BRpIVgWYLhGwCF4I5ITgUAQIBAQIBAQIBAQIQAQEBCA0JC?=
- =?us-ascii?q?CkvgjUigmEBAQEBAyMROAoDDAQCAQgRAQMBAQECAhESAwICAkQBAgYIAgQBDQU?=
- =?us-ascii?q?IE4MFgW8RqSWBLodoglaBC4d3ghaBEYITSTWENh4RLRUTgkKCVQKHRAiSEAcCi?=
- =?us-ascii?q?G6GMYFLhBGCbYUkh32HHIJ7gViBdHBQgmmCJAEOCRGOBQFviXyBLoEaAQE?=
-Received: from esa4.dell-outbound2.iphmx.com ([68.232.154.98])
-  by esa8.dell-outbound.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 13:49:06 -0500
-From:   <Eugene.Cho@dell.com>
-Received: from ausxipps301.us.dell.com ([143.166.148.223])
-  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jul 2018 00:49:06 +0600
-X-LoopCount0: from 10.166.132.131
-X-IronPort-AV: E=Sophos;i="5.51,348,1526360400"; 
-   d="scan'208";a="187455816"
-To:     <a.amelkin@yadro.com>, <andrew@aj.id.au>,
-        <benh@kernel.crashing.org>, <robh@kernel.org>
-CC:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <joel@jms.id.au>, <stewart@linux.ibm.com>,
-        <openbmc@lists.ozlabs.org>, <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [RFC PATCH v2 1/4] dt-bindings: misc: Add bindings for misc. BMC
- control fields
-Thread-Topic: [RFC PATCH v2 1/4] dt-bindings: misc: Add bindings for misc. BMC
- control fields
-Thread-Index: AQHUGrwsvtYF8DKemEGBB9m7D+FlaqSNfgPw
-Date:   Fri, 13 Jul 2018 18:49:04 +0000
-Message-ID: <bc2d6bd30ce243768d07b2aa5ed9cee4@AUSX13MPC105.AMER.DELL.COM>
-References: <20180711053122.30773-1-andrew@aj.id.au>
- <20180711053122.30773-2-andrew@aj.id.au>
- <20180711200450.GB17291@rob-hp-laptop>
- <1531356830.3551458.1437853280.551CA8C5@webmail.messagingengine.com>
- <CAL_JsqKpXxR4t_-3BOy-0mFePXkaSck_4PfHRD=OZQ-_-T5P=w@mail.gmail.com>
- <b6ced4cad4d7ff78330181b2c893855c23103953.camel@kernel.crashing.org>
- <1531463489.747186.1439263128.075AECE1@webmail.messagingengine.com>
- <a521b9fc-4c10-06c1-fd73-5c64379538f6@yadro.com>
-In-Reply-To: <a521b9fc-4c10-06c1-fd73-5c64379538f6@yadro.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titusconfig: Internal Use 04051212
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvIiwiaWQiOiI1N2VkYjQwOC0wNzM4LTQ3ZGMtYjNlOS1jOWI5ZTNkMzQwNWEiLCJwcm9wcyI6W3sibiI6IkNsYXNzaWZpY2F0aW9uIiwidmFscyI6W3sidmFsdWUiOiJJbnRlcm5hbCBVc2UifV19LHsibiI6IlN1YmxhYmVscyIsInZhbHMiOltdfSx7Im4iOiJFeHRlcm5hbENvcnJlc3BvbmRlbmNlIiwidmFscyI6W3sidmFsdWUiOiJObyJ9XX1dfSwiU3ViamVjdExhYmVscyI6W10sIlRNQ1ZlcnNpb24iOiIxNi4yLjExLjAiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNkpBTTNmeFRyM1V2eUlYSjlyTVF3Mktlbk41YnkrZ2g5ejQ1eXJnWTMrVT0ifQ==
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 13 Jul 2018 15:06:07 -0400
+Received: from mga14.intel.com ([192.55.52.115]:55242 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729982AbeGMTGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 15:06:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 11:50:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,348,1526367600"; 
+   d="scan'208";a="245521418"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
+  by fmsmga006.fm.intel.com with ESMTP; 13 Jul 2018 11:50:16 -0700
+Subject: Re: [PATCH] i2c: aspeed: Improve driver to support multi-master use
+ cases stably
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed@lists.ozlabs.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        james.feist@linux.intel.com, vernon.mauery@linux.intel.com,
+        Benjamin Fair <benjaminfair@google.com>,
+        Patrick Venture <venture@google.com>
+References: <20180626165812.4141-1-jae.hyun.yoo@linux.intel.com>
+ <CAFd5g45z--ucXf-So517tgrayZT6x2TGvaUvaDF7zeRNn7CPXw@mail.gmail.com>
+ <e51471e6-0f8a-bffc-34c8-1e74239fdbcf@linux.intel.com>
+ <CAFd5g47j_h4ZrT8Eg1FZ8sAj5ekCUH20jUVub75ozdkg8_YW7Q@mail.gmail.com>
+ <921b1ab7-9c9f-0aeb-da89-5a1a27d009f0@linux.intel.com>
+ <CAFd5g47gOs-eVmnwoPuSiZaMmkgKKOdZd_6EFCVBHbmVmqADQA@mail.gmail.com>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <a953c4df-9085-a64f-d71c-58999ff71bfc@linux.intel.com>
+Date:   Fri, 13 Jul 2018 11:50:15 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
+In-Reply-To: <CAFd5g47gOs-eVmnwoPuSiZaMmkgKKOdZd_6EFCVBHbmVmqADQA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RGVsbCAtIEludGVybmFsIFVzZSAtIENvbmZpZGVudGlhbCAgDQoNCisxIGZyb20gc29tZW9uZSB1
-c2luZyBOdXZvdG9uJ3MgQk1DIFNvQw0KDQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJv
-bTogQWxleGFuZGVyIEFtZWxraW4gW21haWx0bzphLmFtZWxraW5AeWFkcm8uY29tXSANClNlbnQ6
-IEZyaWRheSwgSnVseSAxMywgMjAxOCAxMDoxNCBBTQ0KVG86IEFuZHJldyBKZWZmZXJ5OyBCZW5q
-YW1pbiBIZXJyZW5zY2htaWR0OyBSb2IgSGVycmluZw0KQ2M6IE1hcmsgUnV0bGFuZDsgZGV2aWNl
-dHJlZUB2Z2VyLmtlcm5lbC5vcmc7IEdyZWcgS3JvYWgtSGFydG1hbjsgQ2hvLCBFdWdlbmU7IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IEpvZWwgU3RhbmxleTsgc3Rld2FydEBsaW51eC5p
-Ym0uY29tOyBPcGVuQk1DIE1haWxsaXN0OyBtb2RlcmF0ZWQgbGlzdDpBUk0vRlJFRVNDQUxFIElN
-WCAvIE1YQyBBUk0gQVJDSElURUNUVVJFDQpTdWJqZWN0OiBSZTogW1JGQyBQQVRDSCB2MiAxLzRd
-IGR0LWJpbmRpbmdzOiBtaXNjOiBBZGQgYmluZGluZ3MgZm9yIG1pc2MuIEJNQyBjb250cm9sIGZp
-ZWxkcw0KDQpBbmRyZXcsIEJlbiwgZmlyc3Qgb2YgYWxsIGxldCBtZSB0aGFuayB5b3UgZm9yIGJy
-aW5naW5nIGluIHRoaXMgc2V0IG9mIHBhdGNoZXMuDQoNCkZyb20gdGhlIGRpc2N1c3Npb24gaXQg
-bG9va3MgdG8gbWUgbGlrZSBSb2IgaXMgbm90IGZhbWlsaWFyIHdpdGggc3BlY2lmaWNzIG9mIEJN
-Qy1tYW5hZ2VkIHNlcnZlcnMgYW5kIHRyaWVzIHRvIGFwcGx5IHRvIHRoZW0gdGhlIHJ1bGVzIHRo
-YXQgaGF2ZSBwcm92ZW4gdG8gYmUgZ29vZCBmb3Igd29ya3N0YXRpb25zIGFuZCBsYXB0b3BzLg0K
-DQpBcyBzb21lb25lIHVzaW5nIC9kZXYvbWVtIHRoZXNlIGRheXMgdG8gY29uZmlndXJlIHRob3Nl
-IHJlZ2lzdGVycyBpbiBCTUNzLCBJJ20gYWxsIGZvciB0aGlzIHBhdGNoIHNldCBhcyBpdCB3aWxs
-IG1ha2UgQk1DIGNvbmZpZ3VyYXRpb24gbGVzcyBvYnNjdXJlLiBXcml0aW5nIDEgb3IgMCB0byBh
-IG5hbWVkIG5vZGUgaXMgd2F5IGNsZWFyZXIgdGhhbiB3cml0aW5nIHNvbWUgbWFnaWMgdmFsdWUg
-YXQgc29tZSBtYWdpYyBvZmZzZXQgaW4gL2Rldi9tZW0uIEkgbGlrZSB0aGUgaWRlYSBvZiBoYXZp
-bmcgaXQgYWxsIGNvbmZpZ3VyYWJsZSB2aWEgRFQgYXMgaXQgYWxsb3dzIGZvciBvbmx5IGhhdmlu
-ZyBleHBvcnRlZCB0aGUgbm9kZXMgdGhhdCBhcmUgYWN0dWFsbHkgbmVlZGVkLCB0aHVzIHJlZHVj
-aW5nLCBhcyB5b3UgaGF2ZSBzYWlkLCB0aGUgZm9vdC1ndW4uDQoNClNvIGZhciBJIGRvIG5vdCBo
-YXZlIGFueSBvYmplY3Rpb25zIG9yIGNvbnN0cnVjdGl2ZSBjb21tZW50cyB0byB0aGUgYXJjaGl0
-ZWN0dXJlIG9mIHRoZSBwcm9wb3NlZCBwYXRjaGVzLg0KDQpTbyBJJ20gd3JpdGluZyB0aGlzIHRv
-IHN1cHBvcnQgeW91ciBwb3NpdGlvbiBpbiB0aGlzIGRpc2N1c3Npb24gYW5kIHRvIGxldCBSb2Ig
-YW5kIG90aGVyIHJldmlld2VycyBrbm93IHRoYXQgdGhpcyBmZWF0dXJlIGlzIGFjdHVhbGx5IG5l
-ZWRlZC4NCg0KV2l0aCBiZXN0IHJlZ2FyZHMsDQpBbGV4YW5kZXIgQW1lbGtpbg0KDQoxMy4wNy4y
-MDE4IDA5OjMxLCBBbmRyZXcgSmVmZmVyeSB3cm90ZToNCj4gSGkgUm9iLCBCZW4sDQo+DQo+IEkn
-dmUgcmVwbGllZCB0byB5b3UgYm90aCBpbmxpbmUgYmVsb3csIGhvcGVmdWxseSBpdCdzIGNsZWFy
-IGVub3VnaCBmcm9tIHRoZSBjb250ZXh0Lg0KPg0KPiBPbiBGcmksIDEzIEp1bCAyMDE4LCBhdCAx
-MDoyNSwgQmVuamFtaW4gSGVycmVuc2NobWlkdCB3cm90ZToNCj4+IE9uIFRodSwgMjAxOC0wNy0x
-MiBhdCAwOToxMSAtMDYwMCwgUm9iIEhlcnJpbmcgd3JvdGU6DQo+Pj4gT24gV2VkLCBKdWwgMTEs
-IDIwMTggYXQgNjo1NCBQTSBBbmRyZXcgSmVmZmVyeSA8YW5kcmV3QGFqLmlkLmF1PiB3cm90ZToN
-Cj4+Pj4gSGkgUm9iLA0KPj4+Pg0KPj4+PiBUaGFua3MgZm9yIHRoZSByZXNwb25zZS4NCj4+Pj4N
-Cj4+Pj4gT24gVGh1LCAxMiBKdWwgMjAxOCwgYXQgMDU6MzQsIFJvYiBIZXJyaW5nIHdyb3RlOg0K
-Pj4+Pj4gT24gV2VkLCBKdWwgMTEsIDIwMTggYXQgMDM6MDE6MTlQTSArMDkzMCwgQW5kcmV3IEpl
-ZmZlcnkgd3JvdGU6DQo+Pj4+Pj4gQmFzZWJvYXJkIE1hbmFnZW1lbnQgQ29udHJvbGxlcnMgKEJN
-Q3MpIGFyZSBlbWJlZGRlZCBTb0NzIHRoYXQgDQo+Pj4+Pj4gZXhpc3QgdG8gcHJvdmlkZSByZW1v
-dGUgbWFuYWdlbWVudCBvZiAocHJpbWFyaWx5KSBzZXJ2ZXIgDQo+Pj4+Pj4gcGxhdGZvcm1zLiBC
-TUNzIGFyZSBvZnRlbiB0aWdodGx5IGNvdXBsZWQgdG8gdGhlIHBsYXRmb3JtIGluIA0KPj4+Pj4+
-IHRlcm1zIG9mIGJlaGF2aW91ciBhbmQgcHJvdmlkZSBtYW55IGhhcmR3YXJlIGZlYXR1cmVzIGlu
-dGVncmFsIHRvIGJvb3RpbmcgYW5kIHJ1bm5pbmcgdGhlIGhvc3Qgc3lzdGVtLg0KPj4+Pj4+DQo+
-Pj4+Pj4gU29tZSBvZiB0aGVzZSBoYXJkd2FyZSBmZWF0dXJlcyBhcmUgc2ltcGxlLCBmb3IgZXhh
-bXBsZSBzY3JhdGNoIA0KPj4+Pj4+IHJlZ2lzdGVycyBwcm92aWRlZCBieSB0aGUgQk1DIHRoYXQg
-YXJlIGV4cG9zZWQgdG8gYm90aCB0aGUgaG9zdCANCj4+Pj4+PiBhbmQgdGhlIEJNQy4gSW4gb3Ro
-ZXIgY2FzZXMgdGhlcmUncyBhIHNpbmdsZSBiaXQgc3dpdGNoIHRvIGVuYWJsZSANCj4+Pj4+PiBv
-ciBkaXNhYmxlIHNvbWUgb2YgdGhlIHByb3ZpZGVkIGZ1bmN0aW9uYWxpdHkuDQo+Pj4+Pj4NCj4+
-Pj4+PiBUaGUgZG9jdW1lbnRhdGlvbiBkZWZpbmVzIGJpbmRpbmdzIGZvciBmaWVsZHMgaW4gcmVn
-aXN0ZXJzIHRoYXQgDQo+Pj4+Pj4gZG8gbm90IGludGVncmF0ZSB3ZWxsIGludG8gb3RoZXIgZHJp
-dmVyIG1vZGVscyB5ZXQgbXVzdCBiZSANCj4+Pj4+PiBkZXNjcmliZWQgdG8gYWxsb3cgdGhlIEJN
-QyBrZXJuZWwgdG8gYXNzdW1lIGNvbnRyb2wgb2YgdGhlc2UgZmVhdHVyZXMuDQo+Pj4+PiBTbyB3
-ZSdsbCBnZXQgYSBuZXcgYmluZGluZyB3aGVuIHRoYXQgaGFwcGVucz8gVGhhdCB3aWxsIGJyZWFr
-IA0KPj4+Pj4gY29tcGF0aWJpbGl0eS4NCj4+Pj4gQ2FuIHlvdSBwbGVhc2UgZXhwYW5kIG9uIHRo
-aXM/IEknbSBub3QgZm9sbG93aW5nLg0KPj4+IElmIHdlIGhhdmUgYSBzdWJzeXN0ZW0gaW4gdGhl
-IGZ1dHVyZSwgdGhlbiB0aGVyZSB3b3VsZCBsaWtlbHkgYmUgYW4gDQo+Pj4gYXNzb2NpYXRlZCBi
-aW5kaW5nIHdoaWNoIHdvdWxkIGJlIGRpZmZlcmVudC4gU28gaWYgeW91IHVwZGF0ZSB0aGUgDQo+
-Pj4gRFQsIHRoZW4gb2xkIGtlcm5lbHMgd29uJ3Qgd29yayB3aXRoIGl0Lg0KPj4gV2hhdCBraW5k
-IG9mICJzdWJzeXN0ZW0iID8gVGhlcmUgaXMgYWxtb3N0IG5vIHdheSB0aGVyZSBjb3VsZCBiZSBv
-bmUgDQo+PiBmb3IgdGhhdCBzb3J0IG9mIEJNQyB0dW5hYmxlcy4gV2UndmUgbG9vayBhdCBzZXZl
-cmFsIEJNQyBjaGlwcyBvdXQgDQo+PiB0aGVyZSBhbmQgcmVxdWlyZW1lbnRzIGZyb20gc2V2ZXJh
-bCB2ZW5kb3JzLCBCSU9TIGFuZCBzeXN0ZW0gDQo+PiBtYW51ZmFjdHVyZXJzIGFuZCBpdCdzIGFs
-bCBvdmVyIHRoZSBwbGFjZS4NCj4gUmlnaHQgLSBUaGlzIGlzIHRoZSBmdW5kYW1lbnRhbCBwcmlu
-Y2lwbGUgYmFja2luZyB0aGVzZSBwYXRjaGVzOiBUaGVyZSB3aWxsIG5ldmVyIGJlIGEgY29oZXJl
-bnQgc3Vic3lzdGVtIGNhdGVyaW5nIHRvIGFueSBvZiB3aGF0IHdlIHdhbnQgdG8gZGVzY3JpYmUg
-d2l0aCB0aGVzZSBiaW5kaW5ncy4NCj4NCj4+Pj4gSSBmZWVsIGxpa2UgdGhpcyBpcyBhbiBhcmd1
-bWVudCBvZiB0cmFkaXRpb24uIE1heWJlIHBlb3BsZSBoYXZlIA0KPj4+PiBiZWVuIGRpc3N1YWRl
-ZCBmcm9tIGRvaW5nIHNvIHdoZW4gdGhleSBkb24ndCBoYXZlIGEgcmVhc29uYWJsZSB1c2UtIA0K
-Pj4+PiBjYXNlPyBJJ20gbm90IHNheWluZyB0aGF0IHdoYXQgSSdtIHByb3Bvc2luZyBpcyB1bnF1
-ZXN0aW9uYWJseSANCj4+Pj4gcmVhc29uYWJsZSwgYnV0IEkgZG9uJ3Qgd2FudCB0byBkaXNtaXNz
-IGl0IG91dCBvZiBoYW5kLg0KPiAuLi4NCj4+PiBJdCBjb21lcyB1cCB3aXRoIHN5c3RlbSBjb250
-cm9sbGVyIHR5cGUgYmxvY2tzIHRvbyB0aGF0IGp1c3QgaGF2ZSBhIA0KPj4+IGJ1bmNoIG9mIHJh
-bmRvbSByZWdpc3RlcnMuDQo+IFRoaXMgbWF0Y2hlcyB0aGUgc2l0dWF0aW9uIGF0IGhhbmQuDQo+
-DQo+Pj4gVGhvc2UgY2hhbmdlIGluIGV2ZXJ5IFNvQyBhbmQgbm90IGluIGFueSBjb250cm9sbGVk
-IG9yIG9yZGVyZWQgd2F5IA0KPj4+IHRoYXQgd291bGQgbWFrZSBkZXNjcmliaW5nIHRoZSBpbmRp
-dmlkdWFsIHN1Yi1mdW5jdGlvbnMgaW4gRFQgDQo+Pj4gd29ydGh3aGlsZS4NCj4gIk5vdCB3b3J0
-aHdoaWxlIiBpcyB3aGF0IEknbSBwdXNoaW5nIGJhY2sgYWdhaW5zdCBmb3Igb3VyIHVzZSBjYXNl
-cy4gSSB0aGluayB0aGV5IGFyZSBuYXJyb3cgYW5kIGxpbWl0ZWQgZW5vdWdoIHRvIG1ha2UgaXQg
-d29ydGh3aGlsZS4NCj4NCj4gT2J2aW91c2x5IHdlIHdhbnQgdG8gYXZvaWQgZGVzY3JpYmluZyB0
-aGVzZSB0aGluZ3MgKmJhZGx5KiAtIHlvdSBtZW50aW9uZWQgdGhlIGNsb2NrIGJpbmRpbmdzIC0g
-c28gSSdtIGhhcHB5IHRvIGhhc2ggb3V0IHdoYXQgdGhlIHJpZ2h0IHJlcHJlc2VudGF0aW9uIHNo
-b3VsZCBiZS4gQnV0IEkgc3RydWdnbGUgdG8gdGhpbmsgdGhlIHNvbHV0aW9uIGlzIG5vdCBkZXNj
-cmliaW5nIHNvbWUgb2Ygb3VyIGhhcmR3YXJlIGZlYXR1cmVzIGF0IGFsbC4NCj4NCj4+IFNvIHdo
-YXQncyB0aGUgYWx0ZXJuYXRpdmUgPyBCZWNhdXNlIHdpdGhvdXQgc29tZXRoaW5nIGxpa2Ugd2hh
-dCB3ZSANCj4+IHByb3Bvc2UsIHdoYXQncyBnb2luZyB0byBoYXBwZW4gaXMgL2Rldi9tZW0gLi4u
-IHRoYXQncyB3aGF0IHBlb3BsZSBkbyANCj4+IHRvZGF5Lg0KPiBZZXAuIEFuZCBJJ3ZlIG91dGxp
-bmVkIGluIHRoZSBjb3ZlciBsZXR0ZXIgd2hhdCBJIHRoaW5rIGFyZSB0aGUgYWR2YW50YWdlcyBv
-ZiB3aGF0IEknbSBwcm9wb3Npbmcgb3ZlciAvZGV2L21lbS4gSXQncyBub3QgYW4gaW5jcmVkaWJs
-ZSBnYWluLCBidXQgaGFzIHNldmVyYWwgb2YgbmljZS10by1oYXZlIHByb3BlcnRpZXMuDQo+DQo+
-Pj4+PiBBIG5vZGUgcGVyIHJlZ2lzdGVyIGJpdCBkb2Vzbid0IHNjYWxlLg0KPj4+PiBJdCBpc24n
-dCBtZWFudCB0byBzY2FsZSBpbiB0ZXJtcyBvZiBhIHNpbmdsZSBzeXN0ZW0uIFVzaW5nIGl0IA0K
-Pj4+PiBleHRlbnNpdmVseSBpcyB2ZXJ5IGxpa2VseSB3cm9uZy4gU2VwYXJhdGVseSwgcmVnaXN0
-ZXItYml0LWxlZCBkb2VzIA0KPj4+PiBwcmV0dHkgbXVjaCB0aGUgc2FtZSB0aGluZy4gRG9lc24n
-dCB0aGUgc2NhbGUgYXJndW1lbnQgYXBwbHkgdGhlcmU/DQo+Pj4+IFdobyBpcyB0byBzdG9wIG1l
-IGZyb20gYXR0YWNoaW5nIGFuIGluc2FuZSBudW1iZXIgb2YgTEVEcyB0byBhIA0KPj4+PiBzeXN0
-ZW0/DQo+Pj4gUmV2aWV3Lg0KPj4+DQo+Pj4gSWYgeW91IGxvb2ssIHJlZ2lzdGVyLWJpdC1sZWQg
-aXMgcmFyZWx5IHVzZWQgb3V0c2lkZSBvZiBzb21lIEFSTSwgTHRkLg0KPj4+IGJvYXJkcy4gSXQn
-cyBzaW1wbHkgcXVpdGUgcmFyZSB0byBoYXZlIE1NSU8gcmVnaXN0ZXIgYml0cyB0aGF0IGhhdmUg
-DQo+Pj4gYSBmaXhlZCBmdW5jdGlvbiBvZiBMRUQgY29udHJvbC4NCj4+IFdlbGwsIHNhbWUgaGVy
-ZSwgd2UgaG9wZSB0byByZXZpZXcgd2hhdCBnb2VzIHVwc3RyZWFtIHRvIG1ha2UgaXQgDQo+PiBy
-ZWFzb25hYmxlLiBPdGhlcndpc2UgaXQgZG9lbnMndCBtYXR0ZXIuIElmIGEgcmFuZG9tIHZlbmRv
-ciwgbGV0J3MgDQo+PiBzYXkgSUJNLCBjaG9zZSB0byBjaGlwIGEgc3lzdGVtIHdoZXJlIHRoZXkg
-cHV0IGFuIGluc2FuZSBhbW91bnQgb2YgDQo+PiBjcnVmdCBpbiB0aGVyZSwgaXQgd2lsbCBvbmx5
-IGFmZmVjdCB0aG9zZSBzeXN0ZW1zJ3MgQk1DIGFuZCB0aGUgDQo+PiB1c2Vyc3BhY2Ugc3RhY2sg
-b24gaXQuDQo+Pg0KPj4gVGhhbmtmdWxseSB0aGF0IHN0YWNrIGlzIE9wZW5CTUMgYW5kIElCTSBp
-cyBhaW1pbmcgYXQgaGF2aW5nIHRoZWlyIA0KPj4gZGV2aWNlLXRyZWUncyB1cHN0cmVhbSwgdGh1
-cyByZXZpZXdlZCwgdGh1cyBpdCB3b24ndCBoYXBwZW4uDQo+Pg0KPj4gKkFueXRoaW5nKiBjYW4g
-YmUgYWJ1c2VkLiBUaGUgcG9pbnQgaGVyZSBpcyB0aGF0IHdlIGhhdmUgYSBudW1iZXIsIA0KPj4g
-dGhhbmtmdWxseSByYXRoZXIgc21hbGwsIG1heWJlIGEgZG96ZW4gb3IgdHdvLCBvZiB0dW5hYmxl
-cyB0aGF0IGFyZSANCj4+IHF1aXRlIHNwZWNpZmljIHRvIGEgY29tYmluYXRpb24gKHN5c3RlbSB2
-ZW5kb3IsIGJtYyB2ZW5kb3IsIHN5c3RlbQ0KPj4gbW9kZWwpIHdoaWNoIGNvbnRyb2wgYSBmZXcg
-SFcgZmVhdHVyZXMgdGhhdCBlc3NlbnRpYWxseSBkbyAqTk9UKiBmaXQgDQo+PiBpbiBhIHN1YnN5
-c3RlbS4NCj4gRXhhY3RseS4gSSB0cmllZCB0byBoZWFkIG9mZiB0aGUgYWJ1c2UgdmVjdG9yIGJ5
-IHJlcXVpcmluZyB0aGF0IHVzZXMgYmUgbGlzdGVkIGluIHRoZSBiaW5kaW5ncyBkb2N1bWVudCwg
-YW5kIHRodXMgZW5mb3JjZSBzb21lIGxldmVsIG9mIHJldmlldy4gSXQgbWlnaHQgbm90IGJlIHRo
-ZSBtb3N0IGVmZmVjdGl2ZSBhcHByb2FjaCBhdCB0aGUgZW5kIG9mIHRoZSBkYXksIGJ1dCBhdCBs
-ZWFzdCBpdCBpcyBzb21ldGhpbmcuDQo+DQo+PiBGb3IgZXZlcnl0aGluZyB0aGF0IGRvZXMsIHdl
-IGhhdmUgY3JlYXRlZCBwcm9wZXIgZHJpdmVycyAoYW5kIGFyZSANCj4+IGRvaW5nIG1vcmUpLg0K
-Pj4NCj4+DQo+Pj4+IE9idmlvdXNseSBpZiB0aGVyZSBhcmUgbG90cyBvZiBzeXN0ZW1zIHVzaW5n
-IGl0IHNwYXJpbmdseSBhbmQgDQo+Pj4+IGxlZ2l0aW1hdGVseSB0aGVuIG1heWJlIHRoZXJlJ3Mg
-YSBzY2FsZSBpc3N1ZSwgYnV0IGlzbid0IHRoYXQganVzdCANCj4+Pj4gYSByZWFsaXR5IG9mIGRp
-ZmZlcmVudCBoYXJkd2FyZSBkZXNpZ25zPyBXaG9ldmVyIGlzIGltcGxlbWVudGluZyANCj4+Pj4g
-c3VwcG9ydCBmb3IgdGhlIHN5c3RlbSBpcyBnb2luZyB0byBoYXZlIHRvIGRlc2NyaWJlIHRoZSBo
-YXJkd2FyZSANCj4+Pj4gb25lIHdheSBvciBhbm90aGVyLg0KPj4+Pg0KPj4+Pj4gTWF5YmUgdGhp
-cyBzaG91bGQgYmUgbW9kZWxsZWQgdXNpbmcgR1BJTyBiaW5kaW5nPyBUaGVyZSdzIGEgbGluZSAN
-Cj4+Pj4+IHRoZXJlIHRvbyBhcyB3aGV0aGVyIHRoZSBzaWduYWxzIGFyZSAiZ2VuZXJhbCBwdXJw
-b3NlIiBvciBub3QuDQo+Pj4+IEkgZG9uJ3QgdGhpbmsgc28sIG1haW5seSBiZWNhdXNlIHNvbWUg
-b2YgdGhlIHRoaW5ncyBpdCBpcyBpbnRlbmRlZCB0byBiZSB1c2VkIGZvciBhcmUgbm90IEdQSU9z
-LiBGb3IgaW5zdGFuY2UsIHRha2UgdGhlIERBQyBtdXggSSd2ZSBkZXNjcmliZWQgaW4gdGhlIHBh
-dGNoLiBJdCBkb2Vzbid0IGRpcmVjdGx5IGluZmx1ZW5jZSBhbnl0aGluZyBleHRlcm5hbCB0byB0
-aGUgU29DIChpLmUuIGl0J3MgY2VydGFpbmx5IG5vdCBhIHRyYWRpdGlvbmFsIEdQSU8gaW4gYW55
-IHNlbnNlKS4gSG93ZXZlciwgaXQgZG9lcyAqaW5kaXJlY3RseSogaW5mbHVlbmNlIHRoZSBTb0Mn
-cyBiZWhhdmlvdXIgYnkgbXV4aW5nIHRoZSBEQUMgaW50ZXJuYWxseSBiZXR3ZWVuOg0KPj4+Pg0K
-Pj4+PiAwLiBWR0EgZGV2aWNlIGV4cG9zZWQgb24gdGhlIGhvc3QgUENJZSBidXMgMS4gVGhlICJH
-cmFwaGljcyBDUlQiIA0KPj4+PiBjb250cm9sbGVyIDIuIFZHQSBwb3J0IEEgMy4gVkdBIHBvcnQg
-Qg0KPj4+IEFuZCB0aGlzIG11eCBjb250cm9sIGlzIGZpeGVkIGluIHRoZSBTb0MgZGVzaWduPw0K
-Pj4gVGhpcyBzcGVjaWZpYyBmYW1pbHkgb2YgU29DIChBc3BlZWQpIHN1cHBvcnQgdGhvc2UgNCBj
-b25maWd1cmF0aW9ucy4NCj4+IEhvdyB0aGV5IG5lZWQgdG8gYmUgY29uZmlndXJlZCBhdCBydW50
-aW1lIGRlcGVuZHMgb24gdGhlIGNvbWJpbmF0aW9uIA0KPj4gb2Ygc3lzdGVtIHZlbmRvciBhbmQg
-c3lzdGVtIG1vZGVsLCBhbG9uZyB3aXRoIGluIHNvbWUgY2FzZXMgdGhlIG5lZWQgDQo+PiB0byBz
-d2l0Y2ggaXQgYXQgcnVudGltZS4NCj4+DQo+PiBUaGlzIGlzIGp1c3Qgb25lIGV4YW1wbGUuIEFu
-b3RoZXIgb25lIGlzIHRoZSBoYW5kZnVsIG9mIHNjcmF0Y2ggDQo+PiByZWdpc3RlcnMgdGhhdCBu
-ZWVkIHRvIGJlIHBvcHVsYXRlZCB3aXRoIHRoZSAicmlnaHQiIHZhbHVlcyBmb3IgdGhlIA0KPj4g
-aG9zdCBzeXN0ZW0gQklPUywgVkdBIEJJT1MgYW5kIFZHQSBkcml2ZXIuIChUaGUgaG9zdCBiaXRz
-IGFjY2VzcyB0aGVtIA0KPj4gdmlhIExQQyBJTyBzcGFjZSkuDQo+Pg0KPj4gVGhlIGhvc3Qgc3lz
-dGVtIEJJT1Mgd2lsbCByZWFkIHNvbWUgYmFzaWMgY29uZmlnIGluZm8gdGhlcmUgYmVmb3JlIA0K
-Pj4gaXRzIElQTUkgc3RhY2sgaXMgdXAgKGFuZCBzb21lIEJJT1NlcyBhbHJlYWR5IHJlbHkgb24g
-dGhhdCkuIFRoZSBWR0EgDQo+PiBCSU9TIHdpbGwgZ2V0IHNvbWUgc3RyYXBwaW5nIGluZm8gYW5k
-IHBhbmVsIGluZm8uIFRoZSBWR0EgZHJpdmVyIA0KPj4gKHdoaWNoIGlzIGFscmVhZHkgdXBzdHJl
-YW0sIGhhcyBiZWVuIGZvciBhIGxvbmcgdGltZSkgd2lsbCBsb29rIGZvciANCj4+IG90aGVyIHRo
-aW5ncyBpbiBzb21lIG9mIHRoZXNlIGd1eXMsIHN1Y2ggYXMgY29ubmVjdG9yIGNvbmZpZ3VyYXRp
-b24uDQo+Pg0KPj4gQW5kcmV3LCBpZiBpdCBoZWxwcywgd2UgY291bGQgcHV0IHRvZ2V0aGVyIGEg
-bGlzdCBvZiB3aGF0IHdlIA0KPj4gdHlwaWNhbGx5IG5lZWQgb24gYW4gT3BlblBvd2VyIHN5c3Rl
-bSB0b2RheS4gVGhhdCB3b3VsZCBnaXZlIHBlb3BsZSANCj4+IGxpa2UgUm9iIGEgYmV0dGVyIGlk
-ZWEgb2Ygd2hhdCB0aGlzIGlzIGFsbCBhYm91dC4NCj4gSXQncyBwcmltYXJpbHkgd2hhdCBJJ3Zl
-IG91dGxpbmVkIGF0IHRoZSBib3R0b20gb2YgdGhlIGJpbmRpbmdzIGRvY3VtZW50LCB0aG91Z2gg
-dGhlIHVzZSBjYXNlcyBhcmVuJ3QgcHJvdmlkZWQgdGhlcmUgYXMgdGhleSBhcmUgYSBiaXQgb3V0
-LW9mLXNjb3BlLiBTbyB0aGUgU3VwZXJJTyBhbmQgVkdBIHNjcmF0Y2ggcmVnaXN0ZXJzLCBwbHVz
-IHRoZSBEQUMgbXV4LiBBIGJ1bmNoIG9mIHR1bmFibGUgdGhpbmdzLg0KPg0KPiBPcGVuUE9XRVIg
-cGxhdGZvcm1zIG1ha2UgdXNlIG9mIHRoZSBTdXBlcklPIHNjcmF0Y2ggcmVnaXN0ZXJzIHRvIGNv
-bnZleSBjb25maWd1cmF0aW9uIGluZm9ybWF0aW9uIGZyb20gdGhlIEJNQyB0byB0aGUgaG9zdC4g
-SW5mb3JtYXRpb24gcHJvdmlkZWQgaW5jbHVkZXMgbG93LWxldmVsIGNvbnRyb2wgb2YgdGhlIGhv
-c3QgZmlybXdhcmUgaW5pdGlhbGlzYXRpb24gcHJvY2VzcywgVUFSVCBhbmQgbG9nZ2luZyBjb25m
-aWd1cmF0aW9uLCBhbmQgdGhlIHN0cmF0ZWd5IGZvciBoYW5kbGluZyBlcnJvcnMgKGNyYXNoIHZz
-IGxvZykuIFRoaXMgaXMgYWxsIGFuICJhcmJpdHJhcnkiIGNvbnRyYWN0IGJldHdlZW4gdGhlIEJN
-QyB1c2Vyc3BhY2UgYW5kIHRoZSBob3N0IGZpcm13YXJlLCBpLmUuIGRpZmZlcmVudCBwbGF0Zm9y
-bXMvZmlybXdhcmUgY291bGQgbGF5IG91dCB0aGUgc2FtZSBpbmZvcm1hdGlvbiBpbiBkaWZmZXJl
-bnQgd2F5cyBvciBjb21tdW5pY2F0ZSBlbnRpcmVseSBkaWZmZXJlbnQgaW5mb3JtYXRpb24gYWx0
-b2dldGhlci4gVGhlIEJNQyBrZXJuZWwgc2hvdWxkbid0IGNhcmUgYWJvdXQgYW55IG9mIGl0LCBv
-dGhlciB0aGFuIHByb3ZpZGUgc2Vuc2libGUgYWNjZXNzIHRvIHRoZSBoYXJkd2FyZS4NCj4NCj4g
-QWdhaW4gb24gT3BlblBPV0VSIHN5c3RlbXMgdXNpbmcgdGhlIEFTUEVFRCBCTUMgU29DcyBydW5u
-aW5nIE9wZW5CTUMsIHRoZSBCTUMgdXNlcyB0aGUgVkdBIHNjcmF0Y2ggcmVnaXN0ZXJzIHRvIHNl
-bnNlIGluaXRpYWxpc2F0aW9uIG9mIHRoZSBob3N0IGdyYXBoaWNzIGRyaXZlciBpbiB0aGUgaG9z
-dCdzIGJvb3QgcHJvY2Vzcy4gV2hlbiB0aGUgQk1DIHVzZXJzcGFjZSBkZXRlY3RzIHRoZSBob3N0
-IFZHQSBkcml2ZXIgaXMgdXAgd2Ugc3dpdGNoIHRoZSBEQUMgbXV4IGZyb20gdGhlIEJNQyBDUlQg
-ZGV2aWNlIHRvIHRoZSBob3N0IFZHQSBkZXZpY2Ugc28gdGhhdCB0aGUgaG9zdCBpcyBub3cgZHJp
-dmluZyB0aGUgVkdBIG91dHB1dC4gTm9uLU9wZW5QT1dFUiBPcGVuQk1DIGNvbmZpZ3VyYXRpb25z
-IG1heSBkbyBzb21ldGhpbmcgZW50aXJlbHkgZGlmZmVyZW50LCBvciBub3QgZG8gYW55dGhpbmcg
-YXQgYWxsIHdpdGggdGhlIGhhcmR3YXJlLCBzbyBhcyBhYm92ZSwgaXQncyBub3QgcmVhbGx5IHRo
-ZSBqb2Igb2YgdGhlIEJNQyBrZXJuZWwgdG8gYmUgaW52b2x2ZWQgaW4gYW55IG9mIHRoaXMsIG90
-aGVyIHRoYW4gdG8gcHJvdmlkZSBzZW5zaWJsZSBhY2Nlc3MgdG8gdXNlcnNwYWNlLg0KPg0KPiBU
-aGVyZSBhcmUgYSBudW1iZXIgb2Ygb3RoZXIgc3dpdGNoZXMgdGhhdCBjb250cm9sIHRoZSBhdmFp
-bGFiaWxpdHkgb2YgQVNQRUVEIEJNQyBoYXJkd2FyZSBmZWF0dXJlcyB0byB0aGUgaG9zdCBzeXN0
-ZW0gdGhhdCBhbHNvIGRvbid0IGZpdCBhbnkgcGFydGljdWxhciBzdWJzeXN0ZW0gYW5kIHNvIHdp
-bGwgdXNlIHRoZXNlIGJpbmRpbmdzLCBidXQgb3VyIChPcGVuUE9XRVIvT3BlbkJNQykgY3VycmVu
-dCB1c2VzIGFyZSB3aGF0J3MgZGVzY3JpYmVkIGFib3ZlLg0KPg0KPiBEZWxsIGFsc28gc3VnZ2Vz
-dGVkIHRoZXkgaGFkIHNvbWUgdXNlLWNhc2VzIHRoYXQgYWxpZ25lZCB3aXRoIHRoZSBpbnRlbnQg
-b2YgdGhlIGJpbmRpbmdzLCBidXQgSSBkb24ndCBrbm93IHdoYXQgdGhleSBoYWQgaW4gbWluZC4g
-RXVnZW5lIChvbiBDYykgY2FuIGVsYWJvcmF0ZS4NCj4NCj4+Pj4gTWF5YmUgdGhpcyBjb3VsZCBi
-ZSBtb2RlbGxlZCBieSBwaW5tdXgsIGJ1dCB0aGVuIHdlIHN0aWxsIG5lZWQgc29tZSANCj4+Pj4g
-d2F5IHRvIGV4cG9zZSB0aGUgbXV4IGZ1bmN0aW9ucyB0byB1c2Vyc3BhY2UgZm9yIHNlbGVjdGlv
-biANCj4+Pj4gKHVzZXJzcGFjZSBuZWVkcyB0byB0cmFuc2l0aW9uIGFyYml0cmFyaWx5IGJldHdl
-ZW4gYXQgbGVhc3Qgb3B0aW9ucw0KPj4+PiAwIGFuZCAxIGF0IHJ1bnRpbWUpLCBhdCB3aGljaCBw
-b2ludCB3ZSBoYXZlbid0IGFjaGlldmVkIG11Y2ggYmV5b25kIA0KPj4+PiBhZGRpbmcgYSB3aG9s
-ZSBoZWFwIG9mIGluZnJhc3RydWN0dXJlIGluIHRoZSBjaGFpbi4NCj4+Pj4NCj4+Pj4gR2l2ZW4g
-MCBhbmQgMSwgbWF5YmUgZXhwb3NpbmcgYXR0cmlidXRlcyBpbiByZWxldmFudCBkcml2ZXJzIHdv
-dWxkIA0KPj4+PiBiZSByZWFzb25hYmxlLCBleGNlcHQgMCBpc24ndCBleHBvc2VkIG9uIHRoZSBT
-b0MncyBpbnRlcm5hbCBidXMgc28gDQo+Pj4+IHRoZXJlIGlzIG5vIGRyaXZlciBvbiB0aGUgQk1D
-LXNpZGUgdG8gZG8gc28uIFRha2luZyBpbnRvIGFjY291bnQgMiANCj4+Pj4gYW5kIDMgYXJlIGFs
-c28gcHVyZWx5IGhhcmR3YXJlIHBhdGhzIGZ1cnRoZXIgZGFzaGVzIHRoZSBpZGVhLCBhcyANCj4+
-Pj4gdGhlIGNvbmZpZ3VyYXRpb24gZG9lc24ndCByZWFsbHkgImJlbG9uZyIgdG8gdGhlIEdyYXBo
-aWNzIENSVCANCj4+Pj4gZGV2aWNlIG1vcmUgdGhhbiBpdCBiZWxvbmdzIGFueXdoZXJlIGVsc2Us
-IGV4Y2VwdCBmb3IgdGhlIGZhY3QgdGhhdCANCj4+Pj4gdGhlcmUgaXNuJ3QgYW55d2hlcmUgZWxz
-ZSB0byBleHBvc2UgaXQuDQo+Pj4+DQo+Pj4+IEZ1cnRoZXIsIHRoZSBCTUMncyBrZXJuZWwgY2Fu
-J3QgbWFrZSB0aGUgZGVjaXNpb24gYXMgdG8gd2hlbiB0byANCj4+Pj4gc3dpdGNoIHRoZSBtdXgg
-YXMgaXQga25vd3Mgbm90aGluZyBvZiB0aGUgaG9zdCdzIHN0YXRlLiBUaGUgQk1DIA0KPj4+PiB1
-c2Vyc3BhY2UgaXMgY29udHJvbGxpbmcgdGhlIGhvc3QncyBib290IHN0YXRlIGFuZCBzbyAqZG9l
-cyoga25vdyANCj4+Pj4gd2hlbiB0byBmbGlwIHRoZSBzd2l0Y2guIEZpbmFsbHksIHRoZSBtdXgg
-aXMgaW4gc2VwYXJhdGUgSVAgdG8gdGhlIA0KPj4+PiBDUlQgb3IgVkdBIGJsb2NrczogSXQgbGl2
-ZXMgaW4gdGhlIFN5c3RlbSBDb250cm9sIFVuaXQuDQo+Pj4+DQo+Pj4+IE15IGN1cnJlbnQgcG9p
-bnQgb2YgdmlldyBpcyB0aGUgREFDIG11eCBmaWVsZCBpcyBlZmZlY3RpdmVseSBpdHMgDQo+Pj4+
-IG93biBkZXZpY2UsIGFuZCB3ZSBuZWVkIHRvIGNvbnRyb2wgaXQgZnJvbSB1c2Vyc3BhY2UsIHNv
-IHdlIG5lZWQgDQo+Pj4+IHNvbWUgd2F5IHRvIGRlc2NyaWJlIGl0IChpLmUuIG5vdCBpZ25vcmUg
-aXQpIGluIG9yZGVyIGZvciBpdHMgDQo+Pj4+IGNhcGFiaWxpdHkgdG8gYmUgZXhwb3NlZC4NCj4+
-Pj4NCj4+Pj4gSSdtIGZ1bGx5IGF3YXJlIHdoYXQgSSdtIHByb3Bvc2luZyBpc24ndCBhd2Vzb21l
-IGFzIGl0J3Mgbm90IA0KPj4+PiBwcm92aWRpbmcgYW55IHJlYWwgYWJzdHJhY3Rpb24sIGJ1dCB0
-aGUgcHJvYmxlbShzKSBhdCBoYW5kIGFsc28gDQo+Pj4+IHNlZW0gdG8gZGVmeSBhYnN0cmFjdGlv
-biwgYW5kIGluIG9yZGVyIHRvIGF2b2lkIGEgcGxldGhvcmEgb2YgDQo+Pj4+IGJlc3Bva2UgYmlu
-ZGluZ3MgSSB0aG91Z2h0IGl0IHdhcyByZWFzb25hYmxlIHRvIGRlZmluZSBzb21ldGhpbmcgDQo+
-Pj4+IGdlbmVyaWMuDQo+Pj4+DQo+Pj4+IEFsbC1pbi1hbGwgSSBhcHByZWNpYXRlIHRoZSBzdWdn
-ZXN0aW9uLCBidXQgYXNzdW1pbmcgeW91IGFncmVlIHdpdGggDQo+Pj4+IG15IHJlYXNvbmluZyBh
-Ym92ZSBkbyB5b3UgaGF2ZSB0aG91Z2h0cyBvbiBvdGhlciBhbHRlcm5hdGl2ZXM/DQo+Pj4gU2Vl
-bXMgdGhlIGNvbnRyb2xzIGFyZSBtb3JlIGZpeGVkIHRoYW4gSSBmaXJzdCB0aG91Z2h0LiBBbGwg
-dGhlIGRhdGEgDQo+Pj4geW91IGhhdmUgaGVyZSBjb3VsZCBzaW1wbHkgYmUgd2l0aGluIGEgZHJp
-dmVyLg0KPiBSb2I6IEEgZHJpdmVyIGZvciB3aGF0IHRob3VnaD8gT25lIHVuaXF1ZSB0byB0aGlz
-IHBhcnRpY3VsYXIgbXV4PyBUaGF0IGZlZWxzIG92ZXJseSBzcGVjaWZpYyB3aGVuIHdlIGNhbiBn
-ZW5lcmFsaXNlIHRoZSBjb25jZXB0IHRvIGNvdmVyIGEgd2lkZXIgcmFuZ2Ugb2YgdXNlLWNhc2Vz
-Lg0KPg0KPj4+IEhlbHAgbWUgdW5kZXJzdGFuZCB3aGF0DQo+Pj4gZnVuY3Rpb25zIGFyZSBmaXhl
-ZCAoaW4gdGhlIFNvQykgYW5kIHdoaWNoIG9uZXMgdmFyeSBieSBib2FyZC4gT25seSANCj4+PiB3
-aGF0J3MgY2hhbmdpbmcgcGVyIGJvYXJkIHJlYWxseSBuZWVkcyB0byBnbyBpbnRvIERULg0KPiBJ
-IHRoaW5rIHRoaXMgbGFzdCBzZW50ZW5jZSBpZGVudGlmaWVzIGEgZGlmZmVyZW5jZSBpbiBvdXIg
-c3RhcnRpbmcgcG9pbnRzLCBzbyBJJ2QgbGlrZSB0byBleHBsb3JlIHRoYXQuIEJsb2NrcyBvZiBm
-dW5jdGlvbmFsaXR5IG1pZ2h0IG1vdmUgYXJvdW5kIGluc2lkZSB0aGUgU29DIGFzIHdlbGwsIHNv
-IGRvbid0IHdlIG5lZWQgYSB3YXkgdG8gZGVzY3JpYmUgdGhvc2UgZnVuY3Rpb25zIGFwcHJvcHJp
-YXRlbHk/IEFuZCBmcm9tIHRoZXJlIGRlc2NyaWJlIGhvdyB0aGUgU29DIGludGVncmF0ZXMgdGhl
-IGZ1bmN0aW9ucywgYW5kIHRoZW4gZGVzY3JpYmUgaG93IGEgYm9hcmQgaW50ZWdyYXRlcyB0aGUg
-U29DPyBUaGlzIGFsbCBjb21wb3NlcywgYW5kIHRoZSBwcm9ibGVtIGF0IHRoZSBlbmQgb2YgdGhl
-IGRheSBjb21lcyBkb3duIHRvIHdoYXQgd2Ugd2FudCB0byB2aWV3IGFzIGEgcG9pbnQgb2YgYWJz
-dHJhY3Rpb24sIHJpZ2h0Pw0KPg0KPiBJdCBzZWVtcyBpZGVhbCB0byBtZSB0aGF0IHRoZSBtZXRh
-ZGF0YSBhYm91dCBoYXJkd2FyZSBmZWF0dXJlcyByZXNpZGVzIGluIHRoZSBkZXNjcmlwdGlvbiBv
-ZiB0aGUgcmVsZXZhbnQgc3lzdGVtIChEVCwgZm9yIGEgZnVuY3Rpb24sIGEgU29DIG9yIGEgYm9h
-cmQpLCBvdGhlcndpc2UgZG9uJ3Qgd2Ugd2luZCB1cCB3aXRoIGNyYXp5LCB1bmZvY3VzZWQsIG1v
-bm9saXRoaWMgZHJpdmVycyBmb3IgdGhpbmdzIGxpa2Ugc3lzdGVtIGNvbnRyb2xsZXJzPyAoVGhl
-cmUncyBNRkQvc3lzY29uLCBidXQgaGF2aW5nIHVzZWQgaXQgcHJldmlvdXNseSBJJ20gc3RpbGwg
-Z3JhcHBsaW5nIHdpdGggdGhlIGJlbmVmaXQgb3ZlciBzb21lIG9mIHRoZSB3ZWlyZG5lc3MgaXQg
-aW5qZWN0cyBpbnRvIGRldmljZXRyZWUgLSBtYXliZSBJIGRpZCBpdCB3cm9uZy4pIE9yIGFsdGVy
-bmF0aXZlbHksIGEgZ2VuZXJpYyBkcml2ZXIgdGhhdCdzIGNob2MgZnVsbCBvZiBwbGF0Zm9ybS1z
-cGVjaWZpYyBkYXRhIGNvdmVyaW5nIHRoZSBwbGF0Zm9ybXMgdGhhdCByZXF1aXJlIGl0PyBUaGUg
-ZHJpdmVyIHRoYXQgaW1wbGVtZW50cyB0aGUgYmVoYXZpb3VyIG9mIHRoZSBiaW5kaW5ncyBkZXNj
-cmliZWQgaGVyZSB0dXJucyBvdXQgcXVpdGUgZm9jdXNlZCAoZXZlbiBpZiB0aGUgZmlyc3QgYXR0
-ZW1wdCB3YXMgYSBiaXQgb2YgYSBiYXNrZXQgY2FzZSwgaG9wZWZ1bGx5IHRoZSBzZWNvbmQgaXMg
-YmV0dGVyIChzb3JyeSBHcmVnKSkuDQo+DQo+PiBNb3N0IG9mIHRoZXNlIHRoaW5ncyBpcyBzcGVj
-aWZpYyB0byBhIGdpdmVuIGJvYXJkIG9yIG1heSBldmVuIG5lZWQgdG8gDQo+PiBiZSBjaGFuZ2Vk
-IGF0IHJ1bnRpbWUuDQo+ICpzbmlwKi4uLg0KPg0KPj4gVGFsa2luZyBvZiB3aGljaDogQW5kcmV3
-LCBkaWQgeW91IHB1dCAiZGVmYXVsdCB2YWx1ZXMiIGluIHlvdXIgDQo+PiBiaW5kaW5nID8gVGhh
-dCB3b3VsZCBiZSBhIG5pY2Ugd2F5IHRvIGRlYWwgd2l0aCBzeXN0ZW0gc3BlY2lmaWMgDQo+PiBp
-bW11dGFibGVzLCBzbyB0aGF0IHVzZXJzcGFjZSBkb2Vzbid0IGV2ZW4gaGF2ZSB0byBjYXJlLg0K
-PiBZZXMsIEkgZGVzY3JpYmVkIGEgYGRlZmF1bHQtdmFsdWVgcHJvcGVydHkgZm9yIFJXIGZpZWxk
-cywgYW5kIGBkZWZhdWx0LXNldGAgYW5kIGBkZWZhdWx0LWNsZWFyYHByb3BlcnRpZXMgZm9yIHdy
-aXRlLTEtc2V0L3dyaXRlLTEtY2xlYXIgZmllbGRzIGZvciBleGFjdGx5IHRoaXMgcHVycG9zZS4N
-Cj4NCj4+IFNvIHRvIGNsYXJpZnkgb25jZSBhbmQgZm9yIGFsbCwgKmFueXRoaW5nKiB0aGF0IGZp
-dHMgaW4gYSBzdWJzeXN0ZW0sIA0KPj4gd2UncmUgcHV0dGluZyBpbiBvbmUuIEFsbCB0aGUgcmFu
-ZG9tIGJvYXJkIGNvbnRyb2wgaXMgYWxsIEdQSU9zIGFuZCANCj4+IHRoYXQncyBmaW5lIGFzIHdl
-bGwuIEZvciBzb21lIHRoaW5ncyB0aGF0IHJlcXVpcmUgYSBiaXQgb2YgZmlkZGx5IA0KPj4gdXNh
-Z2UgbGlrZSB0aGUgIk1CT1giIGxvZ2ljIGJldHdlZW4gQklPUyBhbmQgQk1DIHdlIGFyZSBhbHNv
-IGRvaW5nIGEgDQo+PiBkZWRpY2F0ZWQgZHJpdmVyLg0KPiAoQXMgYW4gYXNpZGUsIHRoZSAiTUJP
-WCIgZnVuY3Rpb25hbGl0eSBpcyBzbGlnaHRseSBkaWZmZXJlbnQgZnJvbSB0aGUgDQo+IHNjcmF0
-Y2ggcmVnaXN0ZXJzIGluIHRoYXQgaXQgaGFzIGNvbmZpZ3VyYWJsZSBpbnRlcnJ1cHRzIGVhY2gg
-d2F5IA0KPiAoQk1DLXRvLUhvc3QgYW5kIEhvc3QtdG8tQk1DKSAtIGFzIHN1Y2ggaXQgY2FuIGJl
-IHVzZWQgdG8gaW1wbGVtZW50IGEgDQo+IGR5bmFtaWMgcHJvdG9jb2wgYW5kIHNvIGRlc2VydmVz
-IGl0cyBvd24gZHJpdmVyLiBUaGlzIGlzIGluIGNvbnRyYXN0IA0KPiB0byB0aGUgZHVtYiBzY3Jh
-dGNoIHJlZ2lzdGVycyB3ZSdyZSBkZXNjcmliaW5nIHdpdGggdGhlc2UgYmluZGluZ3MgDQo+IHdo
-aWNoIGhhdmUgbm8gc3VjaCBpbnRlcnJ1cHRzLikNCj4NCj4+IEJ1dCB0aGVyZSdzIGEgZmV3IHN0
-cmFnZ2xlcnMgaGVyZSwgYW5kIHRoZXkgdGVuZCB0byBiZSBzbyANCj4+IGJvYXJkL3N5c3RlbS9C
-SU9TIHNwZWNpZmljIHRoYXQgaXQncyBub3Qgc3VzdGFpbmFibGUgdG8gY3JlYXRlL2NoYW5nZSAN
-Cj4+IHJhbmRvbSBkcml2ZXJzIGFsbCB0aGUgdGltZSBqdXN0IGZvciBleHBvc2luZyB0aG9zZSBm
-ZXcgdHVuYWJsZXMuDQo+Pg0KPiBZZXMsIHRoaXMgaXMgbXkgZmVlbGluZyB0b28uDQo+DQo+IENo
-ZWVycywNCj4NCj4gQW5kcmV3DQoNCg0K
+On 7/13/2018 11:02 AM, Brendan Higgins wrote:
+> On Thu, Jul 12, 2018 at 11:21 AM Jae Hyun Yoo
+> <jae.hyun.yoo@linux.intel.com> wrote:
+>>
+>> On 7/12/2018 2:33 AM, Brendan Higgins wrote:
+>>> On Wed, Jun 27, 2018 at 10:55 AM Jae Hyun Yoo
+>>> <jae.hyun.yoo@linux.intel.com> wrote:
+>>>>
+>>> <snip>
+>>>>>> +/* Timeout for bus busy checking */
+>>>>>> +#define BUS_BUSY_CHECK_TIMEOUT                         250000 /* 250ms */
+>>>>>> +#define BUS_BUSY_CHECK_INTERVAL                                10000  /* 10ms */
+>>>>>
+>>>>> Could you add a comment on where you got these values from?
+>>>>>
+>>>>
+>>>> These are coming from ASPEED SDK code. Actually, they use 100ms for
+>>>> timeout and 10ms for interval but I increased the timeout value to
+>>>> 250ms so that it covers a various range of bus speed. I think, it
+>>>> should be computed at run time based on the current bus speed, or
+>>>> we could add these as device tree settings. How do you think about it?
+>>>>
+>>>
+>>> This should definitely be a device tree setting. If one of the busses is being
+>>> used as a regular I2C bus, it could hold the bus for an unlimited amount of
+>>> time before sending a STOP. As for a default, 100ms is probably fine given
+>>> that, a) the limit will only apply to multi-master mode, and b) multi-master
+>>> mode will probably almost always be used with IPMB, or MCTP (MCTP actually
+>>> recommends a 100ms timeout for this purpose, see
+>>> https://www.dmtf.org/sites/default/files/standards/documents/DSP0237_1.1.0.pdf,
+>>> symbol PT2a). That being said, if you actually want to implement IPMB, or MCTP
+>>> arbitration logic, it is much more complicated.
+>>>
+>>
+>> Okay then, I think, we can fix the timeout value to 100ms and enable the
+>> bus busy checking logic only when 'multi-master' is set in device tree.
+>> My thought is, no additional arbitration logic is needed because
+>> arbitration is performed in H/W level and H/W reports
+>> ASPEED_I2CD_INTR_ARBIT_LOSS when it fails acquiring a bus. The
+>> ARBIT_LOSS event is already being handled well by this driver code you
+>> implemented.
+> 
+> I still think it would be best to provide an option to specify the timeout value
+> it in the device tree regardless of master mode or not. Also, I am talking about
+> fairness arbitration not the physical level arbitration provided by the I2C
+> spec. The physical arbitration that Aspeed provides just allows multiple masters
+> to operate on the same bus according to the specification; this bus arbitration
+> does not guarantee forward progress or even guarentee that the actual message
+> will be sent, which is what you are trying to do here.
+> 
+> Since you are planning on implementing IPMB, you will probably need to implement
+> fairness arbitration. I am not familiar with your BMC-ME channel. It sounds like
+> it pre-dates MCTP, so it must implement its own fairness arbitration on top of
+> the IPMB layer (more like you bake in some assumptions about what the possible
+> state is at anytime that guarentee fairness).
+> 
+> Are you using the Aspeed BMC on both sides of the connection? If so, you might
+> be further ahead to implement MCTP fairness arbitration which can be used in
+> conjunction with IPMB. This will require a bit of work to do, but everyone will
+> be much happier in the long term (assuming MCTP does eventually become a thing).
+> 
+
+Okay. I'll add an additional option into device tree to set the timeout
+value.
+
+My thought is, the fairness arbitration you are saying should be
+considered in IPMB or MCTP layer not in this driver code.
+
+The intention of the code I added is, preventing state corruption in
+this driver code. In multi-master environment, this driver side master
+cannot know exactly when peer master send data to this side master so a
+case can be happened that this master tries to send data through the
+master_xfer function but slave data from peer master is still being
+processed by this driver. Previous code treats this as an error and
+tries recovering a bus which is definitely wrong. So the patch code
+checks whether there is any ongoing slave operation or not and wait up
+to the timeout duration before start master xfer.
+
+>>
+>>>>    >
+>>> <snip>
+>>>>>>     #if IS_ENABLED(CONFIG_I2C_SLAVE)
+>>>>>> -       if (aspeed_i2c_slave_irq(bus)) {
+>>>>>> -               dev_dbg(bus->dev, "irq handled by slave.\n");
+>>>>>> -               return IRQ_HANDLED;
+>>>>>> +       if (bus->master_state != ASPEED_I2C_MASTER_INACTIVE) {
+>>>>>> +               if (!aspeed_i2c_master_irq(bus))
+>>>>>
+>>>>> Why do you check the slave if master fails (or vice versa)? I
+>>>>> understand that there are some status bits that have not been handled,
+>>>>> but it doesn't seem reasonable to assume that there is state that the
+>>>>> other should do something with; the only way this would happen is if
+>>>>> the state that you think you are in does not match the status bits you
+>>>>> have been given, but if this is the case, you are already hosed; I
+>>>>> don't think trying the other handler is likely to make things better,
+>>>>> unless there is something that I am missing.
+>>>>>
+>>>>
+>>>> In most of cases, interrupt bits are set one by one but there are also a
+>>>> lot of other cases that ASPEED I2C H/W sends multiple interrupt bits
+>>>> with combining master and slave events using a single interrupt call. It
+>>>> happens much in multi-master environment than single-master. For
+>>>> example, when master is waiting for a NORMAL_STOP interrupt in its
+>>>> MASTER_STOP state, SLAVE_MATCH and RX_DONE interrupts could come along
+>>>> with the NORMAL_STOP in case of an another master immediately sends data
+>>>> just after acquiring the bus - it happens a lot in BMC-ME connection
+>>>> practically. In this case, the NORMAL_STOP interrupt should be handled
+>>>> by master_irq and the SLAVE_MATCH and RX_DONE interrupts should be
+>>>> handled by slave_irq so it's the reason why this code is added.
+>>>
+>>> That sucks. Well, it sounds like there are only a handful of cases in which
+>>> this can happen. Maybe enumerate these cases and error out or at least warn if
+>>> it is not one of them?
+>>>
+>>
+>> Yes, that sucks but that is Aspeed's I2C IP behavior and that's the
+>> reason why they implemented some combination bits handling code in
+>> their SDK. Actually, the cases are happening somewhat frequently
+>> but that would not be a problem if we handle the cases properly instead
+>> of making error out or warn.
+>>
+>>>>
+>>> <snip>
+>>>>>> +       for (;;) {
+>>>>>> +               if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
+>>>>>> +                     (ASPEED_I2CD_BUS_BUSY_STS |
+>>>>>> +                      ASPEED_I2CD_XFER_MODE_STS_MASK)))
+>>>>>
+>>>>> Is using the Transfer Mode State Machine bits necessary? The
+>>>>> documentation marks it as "for debugging purpose only," so relying on
+>>>>> it makes me nervous.
+>>>>>
+>>>>
+>>>> As you said, the documentation marks it as "for debugging purpose only."
+>>>> but ASPEED also uses this way in their SDK code because it's the best
+>>>> way for checking bus busy status which can cover both single and
+>>>> multi-master use cases.
+>>>>
+>>>
+>>> Well, it would also be really nice to have access to this bit if someone wants
+>>> to implement MCTP. Could we maybe check with Aspeed what them meant by "for
+>>> debugging purposes only" and document it here? It makes me nervous to rely on
+>>> debugging functionality for normal usage.
+>>>
+>>
+>> Okay, I'll check it with Aspeed. Will let you know their response.
+> 
+> Sounds good.
+> 
+>>
+>>>>>> +                       return 0;
+>>>>>> +               if (ktime_compare(ktime_get(), timeout) > 0)
+>>>>>> +                       break;
+>>>>>> +               usleep_range((BUS_BUSY_CHECK_INTERVAL >> 2) + 1,
+>>>>>
+>>>>> Where did you get this minimum value?
+>>>>>
+>>>>
+>>>> No source for the minimum value. ASPEED uses mdelay(10) in their SDK
+>>>> but I changed that code using usleep_range and the range value was set
+>>>> with considering time stretching of usleep_range.
+>>>> regmap_read_poll_timeout was a reference for this code.
+>>>
+>>> What protocol are you trying to implement on top of this? You mentioned BMC-ME
+>>> above; that's IPMB, right? For most use cases, this should work, but if you
+>>> need arbitration, you will need to do quite a bit more work.
+>>>
+>>
+>> Yes, I'm implementing IPMB for a BMC-ME channel. As I said above,
+>> arbitration will be performed in H/W level and it's already been handled
+>> well by your code. This bus busy checking logic is for checking whether
+>> any slave operation is currently ongoing or not at the timing of
+>> master_xfer is called. It's not for arbitration but for preventing state
+>> conflicts between master and slave operations.
+> 
+> Discussed above.
+> 
+>>
+>> FYI, I broke down this patch into smaller patches you reviewed
+>> Today. Thanks for sharing your time for reviewing the patches.
+>> I'll send remaining patches after completing review on those
+>> patches because the remaining patches have dependency on them.
+> 
+> Sounds good.
+> 
+>>
+>> Thanks!
+>>
+> 
+> Cheers
