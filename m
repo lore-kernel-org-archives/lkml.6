@@ -2,226 +2,151 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 157E7ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F5CDECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:46:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2CAE2083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:46:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2CAE2083B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 55A682083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:46:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55A682083B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387945AbeGMRCP (ORCPT
+        id S2387966AbeGMRCR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 13:02:15 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:11140 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730017AbeGMRCP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 13:02:15 -0400
+        Fri, 13 Jul 2018 13:02:17 -0400
+Received: from mga03.intel.com ([134.134.136.65]:5188 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730017AbeGMRCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 13:02:16 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 09:46:50 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,348,1526367600"; 
-   d="scan'208";a="13537251"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 13 Jul 2018 09:46:49 -0700
-Received: from m19893.microchip.com (10.10.76.4) by
- CHN-SV-EXCH01.mchp-main.com (10.10.76.37) with Microsoft SMTP Server id
- 14.3.352.0; Fri, 13 Jul 2018 09:46:49 -0700
-From:   Radu Pirea <radu.pirea@microchip.com>
-To:     <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
-        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>,
-        Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v11 6/6] tty/serial: atmel: change the driver to work under at91-usart mfd
-Date:   Fri, 13 Jul 2018 19:47:36 +0300
-Message-ID: <20180713164736.26028-7-radu.pirea@microchip.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20180713164736.26028-1-radu.pirea@microchip.com>
-References: <20180713164736.26028-1-radu.pirea@microchip.com>
+   d="scan'208";a="54164198"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.135])
+  by fmsmga007.fm.intel.com with ESMTP; 13 Jul 2018 09:46:50 -0700
+Date:   Fri, 13 Jul 2018 09:46:50 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        x86@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        "Dmitry V . Levin" <ldv@altlinux.org>,
+        Masatake YAMATO <yamato@redhat.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/kvm/vmx: don't read current->thread.{fs,gs}base of
+ legacy tasks
+Message-ID: <20180713164650.GA14830@linux.intel.com>
+References: <20180711173718.8850-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180711173718.8850-1-vkuznets@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch modifies the place where resources and device tree properties
-are searched.
+On Wed, Jul 11, 2018 at 07:37:18PM +0200, Vitaly Kuznetsov wrote:
+> When we switched from doing rdmsr() to reading FS/GS base values from
+> current->thread we completely forgot about legacy 32-bit userspaces which
+> we still support in KVM (why?). task->thread.{fsbase,gsbase} are only
+> synced for 64-bit processes, calling save_fsgs_for_kvm() and using
+> its result from current is illegal for legacy processes.
+> 
+> There's no ARCH_SET_FS/GS prctls for legacy applications. Base MSRs are,
+> however, not always equal to zero. Intel's manual says (3.4.4 Segment
+> Loading Instructions in IA-32e Mode):
+> 
+> "In order to set up compatibility mode for an application, segment-load
+> instructions (MOV to Sreg, POP Sreg) work normally in 64-bit mode. An
+> entry is read from the system descriptor table (GDT or LDT) and is loaded
+> in the hidden portion of the segment register.
+> ...
+> The hidden descriptor register fields for FS.base and GS.base are
+> physically mapped to MSRs in order to load all address bits supported by
+> a 64-bit implementation.
+> "
+> 
+> The issue was found by strace test suite where 32-bit ioctl_kvm_run test
+> started segfaulting.
+> 
+> Reported-by: Dmitry V. Levin <ldv@altlinux.org>
+> Bisected-by: Masatake YAMATO <yamato@redhat.com>
+> Fixes: 42b933b59721 ("x86/kvm/vmx: read MSR_{FS,KERNEL_GS}_BASE from current->thread")
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/kvm/vmx.c | 25 +++++++++++++++++--------
+>  1 file changed, 17 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+> index 559a12b6184d..65968649b365 100644
+> --- a/arch/x86/kvm/vmx.c
+> +++ b/arch/x86/kvm/vmx.c
+> @@ -2560,6 +2560,7 @@ static void vmx_save_host_state(struct kvm_vcpu *vcpu)
+>  	struct vcpu_vmx *vmx = to_vmx(vcpu);
+>  #ifdef CONFIG_X86_64
+>  	int cpu = raw_smp_processor_id();
+> +	unsigned long fsbase, kernel_gsbase;
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Acked-by: Richard Genoud <richard.genoud@gmail.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
----
- drivers/tty/serial/Kconfig        |  1 +
- drivers/tty/serial/atmel_serial.c | 42 ++++++++++++++++++++-----------
- 2 files changed, 28 insertions(+), 15 deletions(-)
+Because bikeshedding is fun, what do you think about using fs_base and
+kernel_gs_base for these names?  I have a series that touches this
+code and also adds local variables for {FS,GS}.base and {FS,GS}.sel.
+I used {fs,gs}_base and {fs,gs}_sel to be consistent with the
+vmx->host_state nomenclature (the local variables are used to update
+the associated vmx->host_state variables), but I'll change my patches
+if you have a strong preference for omitting the underscore.
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index df8bd0c7b97d..32886c304641 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -118,6 +118,7 @@ config SERIAL_ATMEL
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select SERIAL_CORE
- 	select SERIAL_MCTRL_GPIO if GPIOLIB
-+	select MFD_AT91_USART
- 	help
- 	  This enables the driver for the on-chip UARTs of the Atmel
- 	  AT91 processors.
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index 8e4428725848..267d4d1de3f8 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -193,8 +193,7 @@ static struct console atmel_console;
- 
- #if defined(CONFIG_OF)
- static const struct of_device_id atmel_serial_dt_ids[] = {
--	{ .compatible = "atmel,at91rm9200-usart" },
--	{ .compatible = "atmel,at91sam9260-usart" },
-+	{ .compatible = "atmel,at91rm9200-usart-serial" },
- 	{ /* sentinel */ }
- };
- #endif
-@@ -915,6 +914,7 @@ static void atmel_tx_dma(struct uart_port *port)
- static int atmel_prepare_tx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
- 	int ret, nent;
-@@ -922,7 +922,7 @@ static int atmel_prepare_tx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
- 
--	atmel_port->chan_tx = dma_request_slave_channel(port->dev, "tx");
-+	atmel_port->chan_tx = dma_request_slave_channel(mfd_dev, "tx");
- 	if (atmel_port->chan_tx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for tx DMA transfers\n",
-@@ -1093,6 +1093,7 @@ static void atmel_rx_from_dma(struct uart_port *port)
- static int atmel_prepare_rx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	struct dma_async_tx_descriptor *desc;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
-@@ -1104,7 +1105,7 @@ static int atmel_prepare_rx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_CYCLIC, mask);
- 
--	atmel_port->chan_rx = dma_request_slave_channel(port->dev, "rx");
-+	atmel_port->chan_rx = dma_request_slave_channel(mfd_dev, "rx");
- 	if (atmel_port->chan_rx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for rx DMA transfers\n",
-@@ -2222,8 +2223,8 @@ static const char *atmel_type(struct uart_port *port)
-  */
- static void atmel_release_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	release_mem_region(port->mapbase, size);
- 
-@@ -2238,8 +2239,8 @@ static void atmel_release_port(struct uart_port *port)
-  */
- static int atmel_request_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	if (!request_mem_region(port->mapbase, size, "atmel_serial"))
- 		return -EBUSY;
-@@ -2341,27 +2342,28 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- {
- 	int ret;
- 	struct uart_port *port = &atmel_port->uart;
-+	struct platform_device *mpdev = to_platform_device(pdev->dev.parent);
- 
- 	atmel_init_property(atmel_port, pdev);
- 	atmel_set_ops(port);
- 
--	uart_get_rs485_mode(&pdev->dev, &port->rs485);
-+	uart_get_rs485_mode(&mpdev->dev, &port->rs485);
- 
- 	port->iotype		= UPIO_MEM;
- 	port->flags		= UPF_BOOT_AUTOCONF | UPF_IOREMAP;
- 	port->ops		= &atmel_pops;
- 	port->fifosize		= 1;
- 	port->dev		= &pdev->dev;
--	port->mapbase	= pdev->resource[0].start;
--	port->irq	= pdev->resource[1].start;
-+	port->mapbase		= mpdev->resource[0].start;
-+	port->irq		= mpdev->resource[1].start;
- 	port->rs485_config	= atmel_config_rs485;
--	port->membase	= NULL;
-+	port->membase		= NULL;
- 
- 	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
- 
- 	/* for console, the clock could already be configured */
- 	if (!atmel_port->clk) {
--		atmel_port->clk = clk_get(&pdev->dev, "usart");
-+		atmel_port->clk = clk_get(&mpdev->dev, "usart");
- 		if (IS_ERR(atmel_port->clk)) {
- 			ret = PTR_ERR(atmel_port->clk);
- 			atmel_port->clk = NULL;
-@@ -2694,13 +2696,22 @@ static void atmel_serial_probe_fifos(struct atmel_uart_port *atmel_port,
- static int atmel_serial_probe(struct platform_device *pdev)
- {
- 	struct atmel_uart_port *atmel_port;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *np = pdev->dev.parent->of_node;
- 	void *data;
- 	int ret = -ENODEV;
- 	bool rs485_enabled;
- 
- 	BUILD_BUG_ON(ATMEL_SERIAL_RINGSIZE & (ATMEL_SERIAL_RINGSIZE - 1));
- 
-+	/*
-+	 * In device tree there is no node with "atmel,at91rm9200-usart-serial"
-+	 * as compatible string. This driver is probed by at91-usart mfd driver
-+	 * which is just a wrapper over the atmel_serial driver and
-+	 * spi-at91-usart driver. All attributes needed by this driver are
-+	 * found in of_node of parent.
-+	 */
-+	pdev->dev.of_node = np;
-+
- 	ret = of_alias_get_id(np, "serial");
- 	if (ret < 0)
- 		/* port id not found in platform data nor device-tree aliases:
-@@ -2836,6 +2847,7 @@ static int atmel_serial_remove(struct platform_device *pdev)
- 
- 	clk_put(atmel_port->clk);
- 	atmel_port->clk = NULL;
-+	pdev->dev.of_node = NULL;
- 
- 	return ret;
- }
-@@ -2846,7 +2858,7 @@ static struct platform_driver atmel_serial_driver = {
- 	.suspend	= atmel_serial_suspend,
- 	.resume		= atmel_serial_resume,
- 	.driver		= {
--		.name			= "atmel_usart",
-+		.name			= "atmel_usart_serial",
- 		.of_match_table		= of_match_ptr(atmel_serial_dt_ids),
- 	},
- };
--- 
-2.18.0
-
+>  #endif
+>  	int i;
+>  
+> @@ -2575,12 +2576,20 @@ static void vmx_save_host_state(struct kvm_vcpu *vcpu)
+>  	vmx->host_state.gs_ldt_reload_needed = vmx->host_state.ldt_sel;
+>  
+>  #ifdef CONFIG_X86_64
+> -	save_fsgs_for_kvm();
+> -	vmx->host_state.fs_sel = current->thread.fsindex;
+> -	vmx->host_state.gs_sel = current->thread.gsindex;
+> -#else
+> -	savesegment(fs, vmx->host_state.fs_sel);
+> -	savesegment(gs, vmx->host_state.gs_sel);
+> +	if (likely(is_64bit_mm(current->mm))) {
+> +		save_fsgs_for_kvm();
+> +		vmx->host_state.fs_sel = current->thread.fsindex;
+> +		vmx->host_state.gs_sel = current->thread.gsindex;
+> +		fsbase = current->thread.fsbase;
+> +		kernel_gsbase = current->thread.gsbase;
+> +	} else {
+> +#endif
+> +		savesegment(fs, vmx->host_state.fs_sel);
+> +		savesegment(gs, vmx->host_state.gs_sel);
+> +#ifdef CONFIG_X86_64
+> +		fsbase = read_msr(MSR_FS_BASE);
+> +		kernel_gsbase = read_msr(MSR_KERNEL_GS_BASE);
+> +	}
+>  #endif
+>  	if (!(vmx->host_state.fs_sel & 7)) {
+>  		vmcs_write16(HOST_FS_SELECTOR, vmx->host_state.fs_sel);
+> @@ -2600,10 +2609,10 @@ static void vmx_save_host_state(struct kvm_vcpu *vcpu)
+>  	savesegment(ds, vmx->host_state.ds_sel);
+>  	savesegment(es, vmx->host_state.es_sel);
+>  
+> -	vmcs_writel(HOST_FS_BASE, current->thread.fsbase);
+> +	vmcs_writel(HOST_FS_BASE, fsbase);
+>  	vmcs_writel(HOST_GS_BASE, cpu_kernelmode_gs_base(cpu));
+>  
+> -	vmx->msr_host_kernel_gs_base = current->thread.gsbase;
+> +	vmx->msr_host_kernel_gs_base = kernel_gsbase;
+>  	if (is_long_mode(&vmx->vcpu))
+>  		wrmsrl(MSR_KERNEL_GS_BASE, vmx->msr_guest_kernel_gs_base);
+>  #else
+> -- 
+> 2.14.4
+> 
