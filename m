@@ -6,189 +6,88 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D413ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:41:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B4DECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:41:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5DE9208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:41:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5DE9208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0A54F208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:41:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A54F208E3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbeGMIyk (ORCPT
+        id S1729175AbeGMIz0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 04:54:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52481 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725908AbeGMIyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 04:54:40 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5E4E22074F; Fri, 13 Jul 2018 10:41:00 +0200 (CEST)
-Received: from aptenodytes (AAubervilliers-681-1-27-161.w90-88.abo.wanadoo.fr [90.88.147.161])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9F0D5203EC;
-        Fri, 13 Jul 2018 10:40:59 +0200 (CEST)
-Message-ID: <2a64aec733392cd15d87b53a268fb8328af0a82c.camel@bootlin.com>
-Subject: Re: [PATCH v5 18/22] media: platform: Add Sunxi-Cedrus VPU decoder
- driver
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Niklas =?ISO-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Date:   Fri, 13 Jul 2018 10:40:58 +0200
-In-Reply-To: <e31090c371ae7f7999b0aa983a20f33451cc89fb.camel@collabora.com>
-References: <20180710080114.31469-1-paul.kocialkowski@bootlin.com>
-         <20180710080114.31469-19-paul.kocialkowski@bootlin.com>
-         <e31090c371ae7f7999b0aa983a20f33451cc89fb.camel@collabora.com>
-Organization: Bootlin
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-Hb1cmEa3+oOsZx1t5cjo"
-X-Mailer: Evolution 3.28.2 
-Mime-Version: 1.0
+        Fri, 13 Jul 2018 04:55:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60772 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727241AbeGMIzZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 04:55:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C9C81ACA8;
+        Fri, 13 Jul 2018 08:41:45 +0000 (UTC)
+Subject: Re: [PATCH] xen/x86/vpmu: Zero struct pt_regs before calling into
+ sample handling code
+To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, stable@vger.kernel.org
+References: <1531416420-3580-1-git-send-email-boris.ostrovsky@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8f1cfd9a-cabb-85fe-1b63-5b5162f149be@suse.com>
+Date:   Fri, 13 Jul 2018 10:41:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1531416420-3580-1-git-send-email-boris.ostrovsky@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 12/07/18 19:27, Boris Ostrovsky wrote:
+> Otherwise we may leak kernel stack for events that sample user
+> registers.
+> 
+> Reported-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> Cc: stable@vger.kernel.org
 
---=-Hb1cmEa3+oOsZx1t5cjo
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Juergen Gross <jgross@suse.com>
 
-Hi,
 
-On Tue, 2018-07-10 at 16:57 -0300, Ezequiel Garcia wrote:
-> Hey Paul,
->=20
-> My comments on v4 of course apply here as well.
-
-Yes, it seems that most of your comments were not already adressed by
-this v5. I will answer your remarks and suggestions on the v4 thread.
-
-> One other thing...
->=20
-> On Tue, 2018-07-10 at 10:01 +0200, Paul Kocialkowski wrote:
-> > This introduces the Sunxi-Cedrus VPU driver that supports the VPU
-> > found
-> > in Allwinner SoCs, also known as Video Engine. It is implemented
-> > through
-> > a v4l2 m2m decoder device and a media device (used for media
-> > requests).
-> > So far, it only supports MPEG2 decoding.
-> >=20
-> > Since this VPU is stateless, synchronization with media requests is
-> > required in order to ensure consistency between frame headers that
-> > contain metadata about the frame to process and the raw slice data
-> > that
-> > is used to generate the frame.
-> >=20
-> > This driver was made possible thanks to the long-standing effort
-> > carried out by the linux-sunxi community in the interest of reverse
-> > engineering, documenting and implementing support for Allwinner VPU.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> >=20
->=20
-> [..]
-> > +
-> > +static irqreturn_t cedrus_bh(int irq, void *data)
-> > +{
-> > +	struct cedrus_dev *dev =3D data;
-> > +	struct cedrus_ctx *ctx;
-> > +
-> > +	ctx =3D v4l2_m2m_get_curr_priv(dev->m2m_dev);
-> > +	if (!ctx) {
-> > +		v4l2_err(&dev->v4l2_dev,
-> > +			 "Instance released before the end of
-> > transaction\n");
-> > +		return IRQ_HANDLED;
-> > +	}
-> > +
-> > +	v4l2_m2m_job_finish(ctx->dev->m2m_dev, ctx->fh.m2m_ctx);
-> > +
->=20
-> I don't like the fact that v4l2_m2m_job_finish calls .device_run
-> reentrantly. Let me try to make v4l2_m2m_job_finish() safe to be called
-> in atomic context, so hopefully drivers can just call it in the top-
-> half.
-
-Thanks for your patches in this direction, I will try them and hopefully
-base our next Sunxi-Cedrus version on them, if it seems that this
-framework change will be picked-up by maintainers.
-
-> You are returning the buffers in the top-half, so this is just a matter
-> or better design, not a performance improvement.
-
-This is definitely a nice design improvement IMO (if not only for
-avoiding reentrancy)!=20
-
-And this reduces our code path between starting decoding and userspace
-notification that decoding finished. Starting the worker thread is no
-longer required before notifying userspace, so I think we are going to
-see performance improvements from this. Hopefully, the worker thread
-will run while userspace is busy preparing the next frame, so this
-should work a lot better for us!
-
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski, Bootlin (formerly Free Electrons)
-Embedded Linux and kernel engineering
-https://bootlin.com
---=-Hb1cmEa3+oOsZx1t5cjo
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAltIZZsACgkQ3cLmz3+f
-v9GZSwgAll0CoEb3HEWeSrmcIyD2zGldqS9lJIg6saOKi3kCp/yUuGFJcYUocGcM
-VOkqt0HbnMJUH8aCTATD6YqusYV+x6UTZtDK6VjCk6a1m4vXG7ZEtE5LhRvY1pT9
-XEjj3BNxdJfPAagdLcz9NNxwOuvW32h52qxJPnb3TS7mhsTa6dK23JMbA0WtDTMl
-k8jGSOWza0ZhRQf6repdmxFlhYJuKRXTGuuN1pOnqPznK/HDqutni8STajBb/wZH
-Oi9gVJ9aL6PkRTRHuaP9pRSn8D4LgE2cixsZIIdrw2q/+t6BgcJKR2A365hyno91
-13OtXD6jkny5A81ymYVzAO6SAcji8g==
-=ZMyy
------END PGP SIGNATURE-----
-
---=-Hb1cmEa3+oOsZx1t5cjo--
-
+Juergen
