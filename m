@@ -6,56 +6,55 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BECE1ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA3DECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C0720873
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:47:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67C0720873
+	by mail.kernel.org (Postfix) with ESMTP id 4619620873
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:48:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4619620873
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbeGMPC2 (ORCPT
+        id S1730595AbeGMPDR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 11:02:28 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:47877 "EHLO
+        Fri, 13 Jul 2018 11:03:17 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:38395 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729733AbeGMPC2 (ORCPT
+        with ESMTP id S1729726AbeGMPDR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 11:02:28 -0400
+        Fri, 13 Jul 2018 11:03:17 -0400
 Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue004 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0Mh8jt-1fR79j0K49-00MHgs; Fri, 13 Jul 2018 16:46:54 +0200
+ (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LkPhj-1gBf5P2Y8Z-00cNRS; Fri, 13 Jul 2018 16:47:44 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>
 Cc:     y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
         Arnd Bergmann <arnd@arndb.de>,
         David Woodhouse <dwmw2@infradead.org>,
-        Andreas Dilger <adilger@dilger.ca>,
         Deepa Dinamani <deepa.kernel@gmail.com>,
         Jan Kara <jack@suse.cz>, Richard Weinberger <richard@nod.at>,
         David Howells <dhowells@redhat.com>,
         linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] [PATCHES] jffs2: use 64-bit intermediate timestamps
-Date:   Fri, 13 Jul 2018 16:46:20 +0200
-Message-Id: <20180713144649.3149573-1-arnd@arndb.de>
+Subject: [PATCH 1/2] [RESEND] jffs2: use 64-bit intermediate timestamps
+Date:   Fri, 13 Jul 2018 16:47:16 +0200
+Message-Id: <20180713144739.3150217-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:cscX3p0QvAo6Sp0X2rNK2PdvrLM4XGUaUs7xxH5Jy1NekiMhLQn
- 4ZNI2DSWRPVqtxlsFX4kTBGF3HapbMIYk5sJx9L33rDbKsAJvON1vAjD/j+C51coPDHLjee
- FG+RfmCpbeumLTZxaBGuTfLh9I5BIIdItV9uzzXU3OMtYztf636aI2YwJOCPjv/ewsWKFdd
- WJJkwmoolvPoOqV0vCdEg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:4gfm9Zuc9c0=:9XLeAphHKOhTEXXgFFG5df
- Tp5auZr0jNrbGTDNyLjhPnA5Yfq7TFFDeB7bFT3+P2mZOw/dKvKutNO9VY6XMFaClrmqoIV+u
- E9pQ1FjANut7CqUvh650tqxxeuSaQW0hGR3UCP7RQIr4Go8KWWNpIziO0DVz8fXz3JMovC2rN
- 4L/YVq7XSdpzBWt/JIz7MCQP+LHLBLmzF/gVkD690U+rHYjFhxUfS2oeuZcwsgpAK2EbiWKqN
- iYX+GZZA73Npp5tRUaMT4sLjBVfGBvITzyFaFhfZDrccc7PDTXR6lFofFT6xNYBPEd3AJafJt
- Q92fx8S6nX6npusYh88uQKJUGBGTcE+Fs5kXQt3mPQq8VD0WlsnjdrnJ/KZt80zSKs8ikXZ8+
- AtRkFLRA6p4q2F/IrkDsE33T+dUktdBkzT3AuFUlZIF7Gdj3z90kLD1oUeE3SxXK+Q+xxisAQ
- OvlJbDRwCULBWQXTmgeskfgE/LKg/jYxcqf0mOEpElHzPRcS68svwc18A/PIy9jhk/ngcXc+8
- mvuj6guECfpLS2xLO3xactTdBQFpr7TYJb4tiVBFyHcBGWyn9vMPK1xQASMlqRAc7CpwsFCeP
- 72TtZB+lmHpWSXdhZy31kT1J8SwoKtjhYjg7aPNTstrFIRa1v08dUm2U4O0He2drT/QjH5M+x
- tMhX6SohGvZyh8VyXaJQtY+gW96TBmed+aF2Hn7ieeiPlDFt3+AaoJJoRmKd0KIX1hu4=
+X-Provags-ID: V03:K1:bquNiAXXF6BO0bhvZwL7Y1JgIBk2VZhLKfL/YCepyWF/qlIGrk7
+ I8a5WmTIYWSGAdWCjdW+4yTGcV6MlS3UyJqJXKW3E7Ml1BpO8WYhQfUfUUENc4ZoY0P1VQL
+ yi7V2mjQHiumcyr8Cc6F6rQgm+gHYv20F2EFs1qhNvMVoFRV5XrB0lFTjAh26Xl7i6GapTx
+ YM9BjV0IMsaYI3zR1Nb1A==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Z2ux5Bt3bE4=:AREo9nQ+8r38kk1Agtyej2
+ lPgnFqyXWFlNOXHqBX1gDpOEOuRyCoG3bZOq4X0qTZ1zAJpkhbo3C5xQALmLhgnf0kmPCqwdk
+ 7HEaKhoxGItNsVHmeGY01VvRVj+MnFmpZVO4b3cUOHPmDffbaU0/lvBUuHUfo7h6p28aEQ36T
+ y8O2xaHkj/otk43vxkBbLXsYgDG6kCQ0pcv6ZDtPS4nKT1O4VRgkC35ZpJLjuhGk+hBCGtgmI
+ ESb+BqQZnioNjl8qjMY29IxTU+Ml8PfKnf02gzDZ46khhmjT7gVJsw8hqgDKH7xF/7hEkqr+t
+ NQdRQ+UrIh/aSrOtQYz1DGje5N0khi/z+h3vmO5+Kt5rwxS5ZZYsCjHsWLmWl0xMemit7kd91
+ hqzg9liqC1SY42NL9yF35RzHbdUbxcoE98bCYpl7hixmaV0T1cbYyhUCC/HXKTj4aA2E14/o6
+ ZLhHDaStDTcHUQMMp9VvVxxp1c/Sh8PmhHToTVGoCGTHDtD21LxXg1emfJy473DvhxlYNVVL+
+ /CRbRlP/Swqk3b7pyioilXjGMWYt071/1jGjqVBeozo0lrBA2bULEHSxxGZ4lLolaYtn9XbGS
+ kjhWPZslG5e2tO89BozUpfSoREUKsQd9Isif4/hqFmIWOLqV8E4EcBNGvLWRQXpE0nDNFBClD
+ 2qaoN2gRpRTusOWLneSONUy8xj5MEFpXBKAq8MIhNKHtX9XNcnsKVTlenZ9jcscGIkyA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
