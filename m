@@ -2,141 +2,146 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8854EECDFAA
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BB7ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37A8A2124D
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:50:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37A8A2124D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 787F1208E9
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:54:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uLvMZ46q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787F1208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388019AbeGMCCr (ORCPT
+        id S2388033AbeGMCGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 22:02:47 -0400
-Received: from mga01.intel.com ([192.55.52.88]:42978 "EHLO mga01.intel.com"
+        Thu, 12 Jul 2018 22:06:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:52325 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387934AbeGMCCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 22:02:47 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jul 2018 18:50:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,346,1526367600"; 
-   d="scan'208";a="66571010"
-Received: from andreser-mobl.amr.corp.intel.com (HELO [10.252.137.224]) ([10.252.137.224])
-  by orsmga003.jf.intel.com with ESMTP; 12 Jul 2018 18:50:29 -0700
-Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromiun.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
- <20180710222639.8241-19-yu-cheng.yu@intel.com>
- <bbb487cc-ac1c-f734-eee3-2463a0ba7efc@linux.intel.com>
- <1531436398.2965.18.camel@intel.com>
- <46784af0-6fbb-522d-6acb-c6248e5e0e0d@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <167645aa-f1c7-bd6a-c7e0-2da317cbbaba@intel.com>
-Date:   Thu, 12 Jul 2018 18:50:29 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S2387938AbeGMCGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 22:06:45 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 41RbT96w9Kz9s2M;
+        Fri, 13 Jul 2018 11:54:20 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1531446865;
+        bh=cfa59YctPeC8IltDGFgpNIwqwFdvH2A6JS0TuV400lo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=uLvMZ46qtP2Kah6nek8goey9zd297TnpeqMiAuCVqClJgvxrxa/Ta7hrXiPm1XRZU
+         RQmYteS1slpsYjTzlQj6pSeWRfrl2kEgd2t8u/OU+5mV3L1LMxDTP1FqGMA7gA7bm1
+         yKI8sxQifwbF7wsWf/I/06Acr9JYRufTgufyVQ+MB9De7O251+etHo5cJUwXFLvO3a
+         IaGCOfbV0SBNyPQqJ3svVtsJbILnmBzhcw/0M6TNiJO3H6g3PGW/KbcloEitoeYXf9
+         +AFDYzGjRFM0C+2dxpYSNwmMa/g9EIMZA4L4AfFy5gjytH/IyWT98OIP59WHpnCK7/
+         tMk3WxwIRGtOw==
+Date:   Fri, 13 Jul 2018 11:54:19 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Changbin Du <changbin.du@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>,
+        Dave Airlie <airlied@linux.ie>
+Subject: linux-next: build failure after merge of the drm-intel tree
+Message-ID: <20180713115419.1270c385@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <46784af0-6fbb-522d-6acb-c6248e5e0e0d@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/ukd8t872aUce3nu=jWPV_hd"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/12/2018 04:49 PM, Dave Hansen wrote:
->>> That seems like something we need to call out if so.  It also means we
->>> need to update the SDM because some of the text is wrong.
->> It needs to mention the WRUSS case.
-> Ugh.  The documentation for this is not pretty.  But, I guess this is
-> not fundamentally different from access to U=1 pages when SMAP is in
-> place and we've set EFLAGS.AC=1.
+--Sig_/ukd8t872aUce3nu=jWPV_hd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I was wrong and misread the docs.  We do not get X86_PF_USER set when
-EFLAGS.AC=1.
+Hi all,
 
-But, we *do* get X86_PF_USER (otherwise defined to be set when in ring3)
-when running in ring0 with the WRUSS instruction and some other various
-shadow-stack-access-related things.  I'm sure folks had a good reason
-for this architecture, but it is a pretty fundamentally *new*
-architecture that we have to account for.
+[Dave cc'd because this will probably turn up in the drm tree soon.]
 
-This new architecture is also not spelled out or accounted for in the
-SDM as of yet.  It's only called out here as far as I know:
-https://software.intel.com/sites/default/files/managed/4d/2a/control-flow-enforcement-technology-preview.pdf
+After merging the drm-intel tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Which reminds me:  Yu-cheng, do you have a link to the docs anywhere in
-your set?  If not, you really should.
+drivers/gpu/drm/i915/gvt/kvmgt.c: In function 'gvt_dma_map_page':
+drivers/gpu/drm/i915/gvt/kvmgt.c:188:17: error: 'pfn' undeclared (first use=
+ in this function); did you mean 'gfn'?
+  if (!pfn_valid(pfn)) {
+                 ^~~
+
+Caused by commit
+
+  79e542f5af79 ("drm/i915/kvmgt: Support setting dma map for huge pages")
+
+interacting with commit
+
+  39b4cbadb9a9 ("drm/i915/kvmgt: Check the pfn got from vfio_pin_pages")
+
+from Linus' tree (v4.18-rc1).
+
+I added the following merge fix patch:
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 13 Jul 2018 11:48:41 +1000
+Subject: [PATCH] drm/i915/kvmgt: merge fixup for "Check the pfn got from
+ vfio_pin_pages"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/i915/gvt/kvmgt.c | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kv=
+mgt.c
+index 718ab307a500..4d2f53ae9f0f 100644
+--- a/drivers/gpu/drm/i915/gvt/kvmgt.c
++++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
+@@ -185,12 +185,6 @@ static int gvt_dma_map_page(struct intel_vgpu *vgpu, u=
+nsigned long gfn,
+ 	if (ret)
+ 		return ret;
+=20
+-	if (!pfn_valid(pfn)) {
+-		gvt_vgpu_err("pfn 0x%lx is not mem backed\n", pfn);
+-		vfio_unpin_pages(mdev_dev(vgpu->vdev.mdev), &gfn, 1);
+-		return -EINVAL;
+-	}
+-
+ 	/* Setup DMA mapping. */
+ 	*dma_addr =3D dma_map_page(dev, page, 0, size, PCI_DMA_BIDIRECTIONAL);
+ 	ret =3D dma_mapping_error(dev, *dma_addr);
+--=20
+2.18.0
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/ukd8t872aUce3nu=jWPV_hd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltIBksACgkQAVBC80lX
+0Gy3/gf/ZgYmthzwh270WyxJkEcN0ex3baK1oqLrLfd7fjBLXDkphWQDOQBNMcO/
+vl/NBEIKiK4iHAOxpemphYFubyc5edvOGZwCCd/kMbBHVHAzpgXNTHOiszP2zk7I
+XLZomArFUkIDn3J6QKq0n41q3Mf9qTcd3t8pH4iR5lmSZCXk+2J1dyb6K3RZwdjp
+xdz/Zy9Ib0MPbk9zeMnIafJ6uSZ7StN6q+C7j5quXzjd3qbFDb0VILxpwqS10xrh
+VUG7qhDuxyLQg9Dru3JSt0UCjxE4bbLnWi67INfcedsslOSETbMCyI0sTgizJioa
+g34xZk10I1PIse5SY6hbAomfgicVZg==
+=VLDk
+-----END PGP SIGNATURE-----
+
+--Sig_/ukd8t872aUce3nu=jWPV_hd--
