@@ -2,267 +2,240 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB94ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:54:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5F9ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:55:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3CB720871
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:54:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CB720871
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 354642087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:55:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 354642087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729680AbeGMNIf (ORCPT
+        id S1729773AbeGMNK1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 09:08:35 -0400
-Received: from mga02.intel.com ([134.134.136.20]:44211 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728289AbeGMNIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 09:08:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 05:53:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,347,1526367600"; 
-   d="scan'208";a="72470397"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 13 Jul 2018 05:53:45 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 8D98E29B; Fri, 13 Jul 2018 15:53:51 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Thomas Tai <thomas.tai@oracle.com>, linux-kernel@vger.kernel.org,
-        Christoph Hellwig <hch@lst.de>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] platform/x86: wmi: Switch to use new generic UUID API
-Date:   Fri, 13 Jul 2018 15:53:51 +0300
-Message-Id: <20180713125351.26048-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.18.0
+        Fri, 13 Jul 2018 09:10:27 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:14983 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729617AbeGMNK0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 09:10:26 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b48a1510000>; Fri, 13 Jul 2018 05:55:46 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 13 Jul 2018 05:55:52 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 13 Jul 2018 05:55:52 -0700
+Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 13 Jul
+ 2018 12:55:47 +0000
+Date:   Fri, 13 Jul 2018 15:55:41 +0300
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
+CC:     "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Stefan Agner <stefan.agner@toradex.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>
+Subject: Re: REGRESSION: [PATCH] mmc: tegra: Use
+ sdhci_pltfm_clk_get_max_clock
+Message-ID: <20180713155541.286425e9@dhcp-10-21-25-168>
+In-Reply-To: <1531446183.5479.14.camel@toradex.com>
+References: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
+        <CAPDyKFoip8gFssftJKzVHD9PAk+j=Z1CTo=0uY9cGASzW8VRJg@mail.gmail.com>
+        <1531446183.5479.14.camel@toradex.com>
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL101.nvidia.com (10.26.138.13) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are new types and helpers that are supposed to be used in new code.
+On Fri, 13 Jul 2018 01:43:05 +0000
+Marcel Ziswiler <marcel.ziswiler@toradex.com> wrote:
 
-As a preparation to get rid of legacy types and API functions do
-the conversion here.
+> On Mon, 2018-07-02 at 15:16 +0200, Ulf Hansson wrote:
+> > On 4 June 2018 at 17:35, Aapo Vienamo <avienamo@nvidia.com> wrote:  
+> > > The sdhci get_max_clock callback is set to
+> > > sdhci_pltfm_clk_get_max_clock
+> > > and tegra_sdhci_get_max_clock is removed. It appears that the
+> > > shdci-tegra specific callback was originally introduced due to the
+> > > requirement that the host clock has to be twice the bus clock on
+> > > DDR50
+> > > mode. As far as I can tell the only effect the removal has on DDR50
+> > > mode
+> > > is in cases where the parent clock is unable to supply the
+> > > requested
+> > > clock rate, causing the DDR50 mode to run at a lower frequency.
+> > > Currently the DDR50 mode isn't enabled on any of the SoCs and would
+> > > also
+> > > require configuring the SDHCI clock divider register to function
+> > > properly.
+> > > 
+> > > The problem with tegra_sdhci_get_max_clock is that it divides the
+> > > clock
+> > > rate by two and thus artificially limits the maximum frequency of
+> > > faster
+> > > signaling modes which don't have the host-bus frequency ratio
+> > > requirement
+> > > of DDR50 such as SDR104 and HS200. Furthermore, the call to
+> > > clk_round_rate() may return an error which isn't handled by
+> > > tegra_sdhci_get_max_clock.
+> > > 
+> > > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>  
+> > 
+> > Thanks, applied for next!
+> > 
+> > Kind regards
+> > Uffe
+> >   
+> > > ---
+> > >  drivers/mmc/host/sdhci-tegra.c | 15 ++-------------
+> > >  1 file changed, 2 insertions(+), 13 deletions(-)
+> > > 
+> > > diff --git a/drivers/mmc/host/sdhci-tegra.c
+> > > b/drivers/mmc/host/sdhci-tegra.c
+> > > index 970d38f6..c8745b5 100644
+> > > --- a/drivers/mmc/host/sdhci-tegra.c
+> > > +++ b/drivers/mmc/host/sdhci-tegra.c
+> > > @@ -234,17 +234,6 @@ static void
+> > > tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+> > >         sdhci_set_uhs_signaling(host, timing);
+> > >  }
+> > > 
+> > > -static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host
+> > > *host)
+> > > -{
+> > > -       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> > > -
+> > > -       /*
+> > > -        * DDR modes require the host to run at double the card
+> > > frequency, so
+> > > -        * the maximum rate we can support is half of the module
+> > > input clock.
+> > > -        */
+> > > -       return clk_round_rate(pltfm_host->clk, UINT_MAX) / 2;
+> > > -}
+> > > -
+> > >  static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned
+> > > int tap)
+> > >  {
+> > >         u32 reg;
+> > > @@ -309,7 +298,7 @@ static const struct sdhci_ops tegra_sdhci_ops =
+> > > {
+> > >         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+> > >         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+> > >         .voltage_switch = tegra_sdhci_voltage_switch,
+> > > -       .get_max_clock = tegra_sdhci_get_max_clock,
+> > > +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+> > >  };
+> > > 
+> > >  static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
+> > > @@ -357,7 +346,7 @@ static const struct sdhci_ops
+> > > tegra114_sdhci_ops = {
+> > >         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+> > >         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+> > >         .voltage_switch = tegra_sdhci_voltage_switch,
+> > > -       .get_max_clock = tegra_sdhci_get_max_clock,
+> > > +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+> > >  };
+> > > 
+> > >  static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+> > > --
+> > > 2.7.4  
+> 
+> Hm, for us this definitely breaks stuff. While using Stefan's patch set
+> [1] we may not only run eMMC at DDR52 even SD cards run stable at
+> SDR104. With this patch however the clock gets crippled to 45.33 resp.
+> 48 MHz always. This is observed both on Apalis/Colibri T30 as well as
+> Apalis TK1.
+> 
+> Current next-20180712 just with Stefan's 3 patches:
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc1/ios 
+> clock:          48000000 Hz
+> actual clock:   45333333 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      3 (8 bits)
+> timing spec:    8 (mmc DDR52)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk1
+> 
+> /dev/mmcblk1:
+>  Timing buffered disk reads: 218 MB in  3.03 seconds =  71.95 MB/sec
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc2/ios 
+> clock:          48000000 Hz
+> actual clock:   48000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      2 (4 bits)
+> timing spec:    6 (sd uhs SDR104)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk2
+> 
+> /dev/mmcblk2:
+>  Timing buffered disk reads:  66 MB in  3.06 seconds =  21.60 MB/sec
+> 
+> And with this patch reverted it works as expected again:
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc1/ios 
+> clock:          52000000 Hz
+> actual clock:   51000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      3 (8 bits)
+> timing spec:    8 (mmc DDR52)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk1
+> 
+> /dev/mmcblk1:
+>  Timing buffered disk reads: 240 MB in  3.02 seconds =  79.50 MB/sec
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc2/ios 
+> clock:          204000000 Hz
+> actual clock:   204000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      2 (4 bits)
+> timing spec:    6 (sd uhs SDR104)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk2
+> 
+> /dev/mmcblk2:
+>  Timing buffered disk reads: 258 MB in  3.01 seconds =  85.58 MB/sec
+> 
+> [1] https://lore.kernel.org/lkml/20180712073904.4705-1-stefan@agner.ch
 
-While here, update Copyright to reflect this change along with previous
-one for the topic.
+This happens because sdhci_pltfm_clk_get_max_clock() does not actually
+return the maximum clock rate but the current one, leading to smaller
+clock rates on some platforms. I'll send a patch that fixes this for
+sdhci-tegra. Although this raises the question whether the current
+behaviour of sdhci_pltfm_clk_get_max_clock() is desirable or not.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/platform/x86/wmi.c | 54 ++++++++++++++++++++------------------
- 1 file changed, 28 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index 04791ea5d97b..da8d863c57ba 100644
---- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -7,6 +7,8 @@
-  *   Copyright (C) 2001,2002 Richard Russon <ldm@flatcap.org>
-  *   Copyright (c) 2001-2007 Anton Altaparmakov
-  *   Copyright (C) 2001,2002 Jakob Kemi <jakob.kemi@telia.com>
-+ *  ...replaced by generic UUID API:
-+ *   Copyright (C) 2016,2017 Intel Corporation.
-  *
-  *  WMI bus infrastructure by Andrew Lutomirski and Darren Hart:
-  *    Copyright (C) 2015 Andrew Lutomirski
-@@ -127,17 +129,17 @@ static struct platform_driver acpi_wmi_driver = {
- 
- static bool find_guid(const char *guid_string, struct wmi_block **out)
- {
--	uuid_le guid_input;
-+	guid_t guid_input;
- 	struct wmi_block *wblock;
- 	struct guid_block *block;
- 
--	if (uuid_le_to_bin(guid_string, &guid_input))
-+	if (guid_parse(guid_string, &guid_input))
- 		return false;
- 
- 	list_for_each_entry(wblock, &wmi_block_list, list) {
- 		block = &wblock->gblock;
- 
--		if (memcmp(block->guid, &guid_input, 16) == 0) {
-+		if (guid_equal((guid_t *)&block->guid, &guid_input)) {
- 			if (out)
- 				*out = wblock;
- 			return true;
-@@ -446,7 +448,7 @@ EXPORT_SYMBOL_GPL(wmi_set_block);
- 
- static void wmi_dump_wdg(const struct guid_block *g)
- {
--	pr_info("%pUL:\n", g->guid);
-+	pr_info("%pUL:\n", &g->guid);
- 	if (g->flags & ACPI_WMI_EVENT)
- 		pr_info("\tnotify_id: 0x%02X\n", g->notify_id);
- 	else
-@@ -506,6 +508,7 @@ static void wmi_notify_debug(u32 value, void *context)
- 
- /**
-  * wmi_install_notify_handler - Register handler for WMI events
-+ * @guid: 36 char string of the form fa50ff2b-f2e8-45de-83fa-65417f2f49ba
-  * @handler: Function to handle notifications
-  * @data: Data to be returned to handler when event is fired
-  *
-@@ -516,18 +519,18 @@ wmi_notify_handler handler, void *data)
- {
- 	struct wmi_block *block;
- 	acpi_status status = AE_NOT_EXIST;
--	uuid_le guid_input;
-+	guid_t guid_input;
- 
- 	if (!guid || !handler)
- 		return AE_BAD_PARAMETER;
- 
--	if (uuid_le_to_bin(guid, &guid_input))
-+	if (guid_parse(guid, &guid_input))
- 		return AE_BAD_PARAMETER;
- 
- 	list_for_each_entry(block, &wmi_block_list, list) {
- 		acpi_status wmi_status;
- 
--		if (memcmp(block->gblock.guid, &guid_input, 16) == 0) {
-+		if (guid_equal((guid_t *)&block->gblock.guid, &guid_input)) {
- 			if (block->handler &&
- 			    block->handler != wmi_notify_debug)
- 				return AE_ALREADY_ACQUIRED;
-@@ -548,6 +551,7 @@ EXPORT_SYMBOL_GPL(wmi_install_notify_handler);
- 
- /**
-  * wmi_uninstall_notify_handler - Unregister handler for WMI events
-+ * @guid: 36 char string of the form fa50ff2b-f2e8-45de-83fa-65417f2f49ba
-  *
-  * Unregister handler for events sent to the ACPI-WMI mapper device.
-  */
-@@ -555,18 +559,18 @@ acpi_status wmi_remove_notify_handler(const char *guid)
- {
- 	struct wmi_block *block;
- 	acpi_status status = AE_NOT_EXIST;
--	uuid_le guid_input;
-+	guid_t guid_input;
- 
- 	if (!guid)
- 		return AE_BAD_PARAMETER;
- 
--	if (uuid_le_to_bin(guid, &guid_input))
-+	if (guid_parse(guid, &guid_input))
- 		return AE_BAD_PARAMETER;
- 
- 	list_for_each_entry(block, &wmi_block_list, list) {
- 		acpi_status wmi_status;
- 
--		if (memcmp(block->gblock.guid, &guid_input, 16) == 0) {
-+		if (guid_equal((guid_t *)&block->gblock.guid, &guid_input)) {
- 			if (!block->handler ||
- 			    block->handler == wmi_notify_debug)
- 				return AE_NULL_ENTRY;
-@@ -653,7 +657,7 @@ static ssize_t modalias_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct wmi_block *wblock = dev_to_wblock(dev);
- 
--	return sprintf(buf, "wmi:%pUL\n", wblock->gblock.guid);
-+	return sprintf(buf, "wmi:%pUL\n", &wblock->gblock.guid);
- }
- static DEVICE_ATTR_RO(modalias);
- 
-@@ -662,7 +666,7 @@ static ssize_t guid_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct wmi_block *wblock = dev_to_wblock(dev);
- 
--	return sprintf(buf, "%pUL\n", wblock->gblock.guid);
-+	return sprintf(buf, "%pUL\n", &wblock->gblock.guid);
- }
- static DEVICE_ATTR_RO(guid);
- 
-@@ -745,10 +749,10 @@ static int wmi_dev_uevent(struct device *dev, struct kobj_uevent_env *env)
- {
- 	struct wmi_block *wblock = dev_to_wblock(dev);
- 
--	if (add_uevent_var(env, "MODALIAS=wmi:%pUL", wblock->gblock.guid))
-+	if (add_uevent_var(env, "MODALIAS=wmi:%pUL", &wblock->gblock.guid))
- 		return -ENOMEM;
- 
--	if (add_uevent_var(env, "WMI_GUID=%pUL", wblock->gblock.guid))
-+	if (add_uevent_var(env, "WMI_GUID=%pUL", &wblock->gblock.guid))
- 		return -ENOMEM;
- 
- 	return 0;
-@@ -769,11 +773,11 @@ static int wmi_dev_match(struct device *dev, struct device_driver *driver)
- 	const struct wmi_device_id *id = wmi_driver->id_table;
- 
- 	while (id->guid_string) {
--		uuid_le driver_guid;
-+		guid_t driver_guid;
- 
--		if (WARN_ON(uuid_le_to_bin(id->guid_string, &driver_guid)))
-+		if (WARN_ON(guid_parse(id->guid_string, &driver_guid)))
- 			continue;
--		if (!memcmp(&driver_guid, wblock->gblock.guid, 16))
-+		if (guid_equal(&driver_guid, (guid_t *)&wblock->gblock.guid))
- 			return 1;
- 
- 		id++;
-@@ -1069,7 +1073,7 @@ static int wmi_create_device(struct device *wmi_bus_dev,
- 	wblock->dev.dev.bus = &wmi_bus_type;
- 	wblock->dev.dev.parent = wmi_bus_dev;
- 
--	dev_set_name(&wblock->dev.dev, "%pUL", gblock->guid);
-+	dev_set_name(&wblock->dev.dev, "%pUL", &gblock->guid);
- 
- 	device_initialize(&wblock->dev.dev);
- 
-@@ -1090,12 +1094,12 @@ static void wmi_free_devices(struct acpi_device *device)
- }
- 
- static bool guid_already_parsed(struct acpi_device *device,
--				const u8 *guid)
-+				const guid_t *guid)
- {
- 	struct wmi_block *wblock;
- 
- 	list_for_each_entry(wblock, &wmi_block_list, list) {
--		if (memcmp(wblock->gblock.guid, guid, 16) == 0) {
-+		if (guid_equal((guid_t *)&wblock->gblock.guid, guid)) {
- 			/*
- 			 * Because we historically didn't track the relationship
- 			 * between GUIDs and ACPI nodes, we don't know whether
-@@ -1150,7 +1154,7 @@ static int parse_wdg(struct device *wmi_bus_dev, struct acpi_device *device)
- 		 * case yet, so for now, we'll just ignore the duplicate
- 		 * for device creation.
- 		 */
--		if (guid_already_parsed(device, gblock[i].guid))
-+		if (guid_already_parsed(device, (guid_t *)&gblock[i].guid))
- 			continue;
- 
- 		wblock = kzalloc(sizeof(struct wmi_block), GFP_KERNEL);
-@@ -1187,7 +1191,7 @@ static int parse_wdg(struct device *wmi_bus_dev, struct acpi_device *device)
- 		retval = device_add(&wblock->dev.dev);
- 		if (retval) {
- 			dev_err(wmi_bus_dev, "failed to register %pUL\n",
--				wblock->gblock.guid);
-+				&wblock->gblock.guid);
- 			if (debug_event)
- 				wmi_method_enable(wblock, 0);
- 			list_del(&wblock->list);
-@@ -1300,10 +1304,8 @@ static void acpi_wmi_notify_handler(acpi_handle handle, u32 event,
- 		wblock->handler(event, wblock->handler_data);
- 	}
- 
--	if (debug_event) {
--		pr_info("DEBUG Event GUID: %pUL\n",
--			wblock->gblock.guid);
--	}
-+	if (debug_event)
-+		pr_info("DEBUG Event GUID: %pUL\n", &wblock->gblock.guid);
- 
- 	acpi_bus_generate_netlink_event(
- 		wblock->acpi_device->pnp.device_class,
--- 
-2.18.0
-
+ -Aapo
