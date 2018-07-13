@@ -6,90 +6,112 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 430E4ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E64ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A31CF208B4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:49:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E0A208B4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 11:50:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="s3njyCqQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A31CF208B4
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="W8Ou93yB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E0A208B4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729676AbeGMMDT (ORCPT
+        id S1729765AbeGMMEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 08:03:19 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45923 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727710AbeGMMDT (ORCPT
+        Fri, 13 Jul 2018 08:04:23 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:53492 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727710AbeGMMEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 08:03:19 -0400
-Received: by mail-wr1-f65.google.com with SMTP id c4-v6so12157668wrs.12
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:48:59 -0700 (PDT)
+        Fri, 13 Jul 2018 08:04:23 -0400
+Received: by mail-wm0-f66.google.com with SMTP id s9-v6so1227365wmh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 04:50:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id;
-        bh=B2Bhy9NOZrFUvsZXtDtHNlLEOdUNrylO0yWqsdOIMXA=;
-        b=s3njyCqQLS6L/Qw+qZsk/6mof0GuUb3HLOWyenD7UfRMspzsFla6lxQm71FAUXXyi/
-         SII3yOfRsqQpR2zDqlLkVU12XLUXUaKTZwIl5dTUOp52vjQUKKy3LwtILL/eJtf8mz7w
-         jO04fGlG8BxK2bEA9gQgWAhohxLn3iG40+ipTnbJFJ57JfCTCy0FtOFkj8d9ENY5n8Jy
-         zaNR8i2m27qaO3Hi9TRpGSybNCdSrpVbF+kP4aQbPP9fCyXLF/xtITXhXu2du+KOZJDY
-         tgJ7d7PgIumAPZCS8jDxJ+uq9mvn1eKhDaM3J11v2LTiA6eymElWs/VU0DtMOcYGuJA6
-         6GEw==
+        bh=AHfxIiHDsdaEN+xi0h+sJUMJbOJhD8mWunWDSgpqnng=;
+        b=W8Ou93yBpIABKkbhDP62fjsF6DdRkTBjwZUTG3uOuxerrePsvdPxijQjgF/KA0Kq+a
+         5Kwxpweavf9J6J6wQ66cEjaBah9yC3oSlNI0vjDj4EKN6LSI3QObTEVo9q4RoEW4rx76
+         03sNAZCi1fzqvWvOREx94onWFKSW7ASb3zmPwnLDM0KnkXRV8IuWp0cTmq/cKSIAgwRi
+         7Dp/jpVWntaoLoMRpJ26bdnSwk/DfwCUy8+FjDMpMqbCuk+jmGkeRmjBornN3A7adYzC
+         TMAJvy4kKZQGlwSf0ufuBH0en7Z97IS+nbvZccOlJam2jdOPkE+BdDwnW39DMMz6m3zI
+         6bDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=B2Bhy9NOZrFUvsZXtDtHNlLEOdUNrylO0yWqsdOIMXA=;
-        b=qq6keoYYAPK8/Zqaa9QdSYkVynPO29gt2pjXB8U0E5IrupSSDYhthcbH+Bv4PRqf2G
-         I+n2AcDZ+iBAvh4u1gBnwp6AK3+n5AiyA5upzPH1TDo6C4nuCPu1yLgXJzK5HI7aovaA
-         2w7V3IlkzHxbZf2VeIb+SJhekNAbRg4+87VyuJnEjL2tx07GeUwlmMkN5tTW2cS1Tblu
-         +17l2J1dJhUj8ZzA6R6IZc6ndtJiRbZYzgnHUvkxGXmMdZsKYKBlpfSIJLAmIol0hqJ0
-         gzLoJVyFXVzXlEohRTSc0kneRzfEUe2WSw+ZluYwoh+0r35IuveuoLkKzR8JzhIoqZYA
-         ycSw==
-X-Gm-Message-State: AOUpUlGwfjBxw8d2r5aF3Na2nCxc6H+YobS1MX6m5E6f+wsfX0/za/JO
-        kDX+6ZNjMnlC1GktS+CQJydSRA==
-X-Google-Smtp-Source: AAOMgpclUdeYdp4ANV7VicUYkMaMetImSXf/JuHm2wB2UIIEG8Tys5peJ4MN9QYXXE8auQjMzdvQeA==
-X-Received: by 2002:a5d:4306:: with SMTP id h6-v6mr4780969wrq.58.1531482538643;
-        Fri, 13 Jul 2018 04:48:58 -0700 (PDT)
-Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id j11-v6sm30508873wrr.37.2018.07.13.04.48.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 13 Jul 2018 04:48:58 -0700 (PDT)
-From:   Corentin Labbe <clabbe@baylibre.com>
-To:     alexandre.torgue@st.com, maxime.ripard@free-electrons.com,
-        peppe.cavallaro@st.com, wens@csie.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH] net: stmmac: dwmac-sun8i: fix typo descrive => describe
-Date:   Fri, 13 Jul 2018 11:48:42 +0000
-Message-Id: <1531482522-10824-1-git-send-email-clabbe@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+        bh=AHfxIiHDsdaEN+xi0h+sJUMJbOJhD8mWunWDSgpqnng=;
+        b=rF71npur9OyopvRNSespVUi28j7lZ0kpCJwsLlTC3xYcJU9X3rox3W98ZrYXMn8FaV
+         cpZo+i6u8R/KD39N0tAWOEDajn7w0fsOYzwgS/2qZApbLHk9ayhuvqELoO7ruYTMXrp+
+         I6TItYLqfDe4d7IJFgHx6sTMyxgb07+qRzIE0E0ZVn/ndNSUriaXHsL0Y8vpHTZWotps
+         Z4FwrH5O8vTb2uI8M0XZkw3BfLgTqnj/0cmIibL+cacbMTwuK3Vdz2URIASEIbR60CG+
+         kKtcpo45QaCUAKM9wDoNUlPFBUs04bj0WbbNRqH8kcG2ImuUzfP5ZSFEkTfSj28KguhL
+         MnSw==
+X-Gm-Message-State: AOUpUlHUHDLnO+m/scGo1nVn/yhbg6TgeTsuJ1Vm75Izwf3lHtahBtuj
+        F5ak8mBKsrgo7c6yLDSiZC9nFQ==
+X-Google-Smtp-Source: AAOMgpfL1Kr5ShaLu8mBtvivAH8BS0GO8db+VorzH1HHAiHVGmQNmBJI2PA9ijZykoMXvEsNecqKew==
+X-Received: by 2002:a1c:790b:: with SMTP id l11-v6mr3601072wme.66.1531482602203;
+        Fri, 13 Jul 2018 04:50:02 -0700 (PDT)
+Received: from boomer.baylibre.local ([90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id n8-v6sm35285869wrt.56.2018.07.13.04.50.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 13 Jul 2018 04:50:01 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM64: dts: meson-axg: remove vddio_ao18 from SoC dtsi
+Date:   Fri, 13 Jul 2018 13:49:57 +0200
+Message-Id: <20180713114957.32361-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fix a typo in the word Describe
-Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Regulator should not be defined inside the SoC dtsi file.
+vddio_ao18 is already defined in the S400 board dts anyway.
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index 2e6e2a96b4f2..f9a61f90cfbc 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -37,7 +37,7 @@
-  *		is done in the "stmmac files"
-  */
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+
+Kevin,
+
+This patch fixes a problem in a patch [0] you have applied recently.
+I did not put a Fixes tag because the branch on which you've applied it
+is not public yet (unknown sha1)
+
+If you decide to pick this patch, could you please add the Fixes tag?
+You could also squash the two patches together, if you prefer.
+
+Cheers
+Jerome
+
+[0] https://lkml.kernel.org/r/7hmuv0nkss.fsf@baylibre.com
+
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index a936d6535ce7..d4dc87ae72a4 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -92,13 +92,6 @@
+ 		method = "smc";
+ 	};
  
--/* struct emac_variant - Descrive dwmac-sun8i hardware variant
-+/* struct emac_variant - Describe dwmac-sun8i hardware variant
-  * @default_syscon_value:	The default value of the EMAC register in syscon
-  *				This value is used for disabling properly EMAC
-  *				and used as a good starting value in case of the
+-	vddio_ao18: regulator-vddio_ao18 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "VDDIO_AO18";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+-	};
+-
+ 	timer {
+ 		compatible = "arm,armv8-timer";
+ 		interrupts = <GIC_PPI 13
 -- 
-2.16.4
+2.14.4
 
