@@ -2,130 +2,97 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=FAKE_REPLY_C,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E73ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9861ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E47B320878
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:15:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="n0fI6AH7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47B320878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 738D220875
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 15:19:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 738D220875
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730339AbeGMPa7 (ORCPT
+        id S1730149AbeGMPeM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 11:30:59 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36623 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729647AbeGMPa7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 11:30:59 -0400
-Received: by mail-lj1-f196.google.com with SMTP id u7-v6so22151765lji.3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 08:15:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=0dvCFjBNiEogQllyKAyhVPUbq7FYRGAoaPpU9aGIn/U=;
-        b=n0fI6AH7M1Z04lk2KfujUE5WUOWe4F2DE2uEQWd9nskRFgThBCsMrG6IPfqcV+/fRI
-         IisAi+/ksjij2ZiIXTjMPe7/AJO7glmiaKr6hEpUk379OZKXIbfAfE93EcvKC0DYU78m
-         fgoDiHGZEPebYVbEnB6c9JX8mJHIDvIW2/6Yei5Z8ei4lAJc73d69F+v6+dTo5PS8sWa
-         Qw755V8+J06J63eyfGt9M8m9BMxinUSM9Zb52ZffRN1qaqVbXhZ1V5762SOyvdPW1NRZ
-         nJVQIk8NCpqPN8ETN5AO4Ay9odgvfSLnDR2i4X3DWzBnDxReWzNr90IPfn3sLSrVCglc
-         Coqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=0dvCFjBNiEogQllyKAyhVPUbq7FYRGAoaPpU9aGIn/U=;
-        b=KFwZVuqtBvQ40LEjqvXBkqvuFSlcQzxLe2iaTnT0VADVsoIq9UVLo023rtbqX/A3KS
-         FBaGLB4Y0wUQrHiIV5XknX5RRIDg0irWuzYCUCBHOKmWkgi+HKdA3095Ie5WFyJ2w30V
-         89QuEiV3ZGKPfV+3SlcGYKMoe/amfwWQV/NK9NHNeju2KUsAvOb7+uT1sOofxbRgD83p
-         Wbj20bLsByEA7/JkPltWfL8FbOGgVCZuI3aQoZBIeuS1BHyG46iByuEKuavPzWnxXwiR
-         4FCqMmlAvbv8jgXXsY1DJ6Oc362Aw2185ylmWJV+38QcAzsMG5Bt3KgyA87ILFO4p7jP
-         qWJA==
-X-Gm-Message-State: AOUpUlENheFevI633Jiv18oHgD+JdTVZJ/hKhi03kFQg9uzcMLHTxvra
-        CsSFA5KtHWVSI02O0HZZ8sMB2widkkM7e2xqKfr8cQ==
-X-Google-Smtp-Source: AAOMgpfJJEgQY3cUD6vFq0HtdI7rdnn3Xx8yjuTpjZV8I7NmVcswPKNxEYpGLoZc7xPiq4A2K6o/qGFIqIKDhv5TJV4=
-X-Received: by 2002:a2e:1207:: with SMTP id t7-v6mr3640351lje.129.1531494954226;
- Fri, 13 Jul 2018 08:15:54 -0700 (PDT)
+        Fri, 13 Jul 2018 11:34:12 -0400
+Received: from nautica.notk.org ([91.121.71.147]:58792 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729736AbeGMPeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 11:34:12 -0400
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id BA8FFC009; Fri, 13 Jul 2018 17:19:06 +0200 (CEST)
+Date:   Fri, 13 Jul 2018 17:18:51 +0200
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Daniel Thompson <daniel.thompson@linaro.org>,
+        David Laight <David.Laight@ACULAB.COM>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        kgdb-bugreport@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/18] kdb_support: change strncpy+truncation to strlcpy
+Message-ID: <20180713151851.GA14190@nautica>
 MIME-Version: 1.0
-Received: by 2002:a19:fc1c:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 08:15:52
- -0700 (PDT)
-X-Originating-IP: [2620:10d:c090:200::5:e750]
-In-Reply-To: <20180713150701.GA3049@arm.com>
-References: <20180709200956.31158-1-labbott@redhat.com> <20180710090125.GA28924@arm.com>
- <fcd8d97b6714d787297f1b362558e7a68855a1da.camel@paulk.fr> <20180710093615.GA30095@arm.com>
- <20180713145910.2mlzip5ssk72cleo@localhost> <20180713150701.GA3049@arm.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Fri, 13 Jul 2018 08:15:52 -0700
-Message-ID: <CAOesGMhAe=r=TNuTr_u59h2YwL7A_KzEooGtWUc0jM9jfHOO-w@mail.gmail.com>
-Subject: Re: [PATCH] Revert "arm64: Use aarch64elf and aarch64elfb emulation
- mode variants"
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Paul Kocialkowski <contact@paulk.fr>,
-        Laura Abbott <labbott@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <93d3ace9a35b4436930ed0521127c12b@AcuMS.aculab.com>
+ <20180713103321.thjpohla6fuszona@holly.lan>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 8:07 AM, Will Deacon <will.deacon@arm.com> wrote:
-> Hi Olof,
+Daniel Thompson wrote on Fri, Jul 13, 2018:
+> On Fri, Jul 13, 2018 at 03:25:58AM +0200, Dominique Martinet wrote:
+> > Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
+> > 
+> > Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+> 
+> It would have been good for you to mention in the changelog how
+> you reviewed your change to verify that the extra zero padding
+> from strncpy() isn't required.
+
+I'm sorry, I went a bit too fast with the send-email button on this
+path series; I agree it is lacking.
+
+> However... I have taken a look and can't see any problem so:
+> 
+> Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+
+Thank you for the review, I will update the commit message with more
+details and change strlcpy to strscpy in a v2
+
+
+David Laight wrote on Fri, Jul 13, 2018:
+>    > - strncpy(knt1, symtab->sym_name, knt1_size);
+>    > - knt1[knt1_size-1] = '\0';
+>    > + strlcpy(knt1, symtab->sym_name, knt1_size);
 >
-> On Fri, Jul 13, 2018 at 07:59:10AM -0700, Olof Johansson wrote:
->> On Tue, Jul 10, 2018 at 10:36:16AM +0100, Will Deacon wrote:
->> > On Tue, Jul 10, 2018 at 11:30:39AM +0200, Paul Kocialkowski wrote:
->> > > On Tue, 2018-07-10 at 10:01 +0100, Will Deacon wrote:
->> > > > Thanks, Laura.
->> > > >
->> > > > I'll take this as a fix, and add a comment to the Makefile to justify
->> > > > why we need the linux target.
->> > >
->> > > So this comes down to either breaking fedora/debian toolchains (that
->> > > don't support elf emulation mode) or breaking bare-metal toolchains
->> > > (that don't support linux emulation mode).
->> > >
->> > > Since Linux is a bare-metal project that does not technically require
->> > > the linux target (who said using "Linux" for all things is confusing?),
->> > > I think it should aim for the elf target in the long term.
->> > >
->> > > But well, breaking Linux build in common distros isn't good either, so I
->> > > guess it makes sense to revert this while distros toolchains are being
->> > > fixed. Hopefully, it won't take too long.
->> > >
->> > > What do you think?
->> >
->> > Yes, we need to revert the change since it's a regression otherwise. I think
->> > the best course of action here would be to find a way that we can either
->> > tell the linker that it doesn't need the missing linker scripts because
->> > we're providing our own, or find a way to pass different LD flags depending
->> > on whether or not we have a linux toolchain.
->> >
->> > For now, I've pushed the revert to for-next/fixes.
->>
->> Hi Will,
->>
->> This is regressed in mainline as well. But I think we can just use a (slightly
->> improved) ld-option here? I checked it for x86 regression since it uses the
->> one-argument version. Patch is here, can you pick that up instead and get it in
->> for 4.18-rc?
->
-> I already sent the revert to Linus, but I can certainly queue the ld-option
-> for 4.19 if we pick up some more tested-bys. Could you send it out as its
-> own patch please?
+>    You'd be better using strscpy() not strlcpy().
+>    The return value of strlcpy() is the length of the source string.
+>    If the source string isn't '\0' terminated horrid things happen.
 
-Definitely, separate email shortly.
+I was suggested to use strlcpy for drm and didn't realize this at this
+point, but you are correct; strlcpy is far from being as protective.
+
+I'll update the coccinelle patch to use strscpy and resend this.
 
 
--Olof
+>    David
+> 
+>    Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes,
+>    MK1 1PT, UK
+>    Registration No: 1397386 (Wales)
+> 
+>    P Please consider the environment and don't print this e-mail unless
+>    you really need to
+
+(By the way, your e-mail client sends both html and text, but the text
+version only included the footer so my mail client, which prefers text,
+was displaying an empty mail message. If possible I would appreciate if
+you could disable either version so as to get a coherent message)
+
+-- 
+Dominique Martinet
