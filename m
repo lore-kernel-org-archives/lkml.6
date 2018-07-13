@@ -2,55 +2,55 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A2A8ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C56AFECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15FFD20842
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15FFD20842
+	by mail.kernel.org (Postfix) with ESMTP id 826AF2087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:06:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826AF2087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbeGMSWG (ORCPT
+        id S1732909AbeGMSWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 14:22:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56716 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730167AbeGMSWF (ORCPT
+        Fri, 13 Jul 2018 14:22:11 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54614 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731590AbeGMSWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 14:22:05 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6DI4k7s028925
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:23 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k6y4qct92-1
+        Fri, 13 Jul 2018 14:22:09 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6DI4DfM086523
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:27 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2k6wc8scah-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:22 -0400
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 14:06:26 -0400
 Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <zohar@linux.vnet.ibm.com>;
-        Fri, 13 Jul 2018 19:06:20 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Fri, 13 Jul 2018 19:06:25 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 13 Jul 2018 19:06:16 +0100
+        Fri, 13 Jul 2018 19:06:20 +0100
 Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6DI6F4445940910
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6DI6J8t35651740
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Jul 2018 18:06:15 GMT
+        Fri, 13 Jul 2018 18:06:19 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1A12542041;
-        Fri, 13 Jul 2018 21:06:36 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 8C3F442042;
+        Fri, 13 Jul 2018 21:06:40 +0100 (BST)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F046B42042;
-        Fri, 13 Jul 2018 21:06:34 +0100 (BST)
+        by IMSVA (Postfix) with ESMTP id 8222742041;
+        Fri, 13 Jul 2018 21:06:39 +0100 (BST)
 Received: from dhcp-9-31-103-18.watson.ibm.com (unknown [9.31.103.18])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri, 13 Jul 2018 21:06:34 +0100 (BST)
+        Fri, 13 Jul 2018 21:06:39 +0100 (BST)
 From:   Mimi Zohar <zohar@linux.vnet.ibm.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
@@ -60,22 +60,21 @@ Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
         Eric Biederman <ebiederm@xmission.com>,
         kexec@lists.infradead.org, Andres Rodriguez <andresx7@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH v6 1/8] security: define new LSM hook named security_kernel_load_data
-Date:   Fri, 13 Jul 2018 14:05:56 -0400
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH v6 3/8] ima: based on policy require signed kexec kernel images
+Date:   Fri, 13 Jul 2018 14:05:58 -0400
 X-Mailer: git-send-email 2.7.5
 In-Reply-To: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
 References: <1531505163-20227-1-git-send-email-zohar@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18071318-0020-0000-0000-000002A64AC3
+x-cbid: 18071318-0012-0000-0000-00000289F205
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071318-0021-0000-0000-000020F29FF4
-Message-Id: <1531505163-20227-2-git-send-email-zohar@linux.vnet.ibm.com>
+x-cbparentid: 18071318-0013-0000-0000-000020BBA02F
+Message-Id: <1531505163-20227-4-git-send-email-zohar@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-13_06:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=5 phishscore=0 bulkscore=0 spamscore=0
+ malwarescore=0 suspectscore=18 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
  mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1806210000 definitions=main-1807130159
@@ -84,144 +83,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Differentiate between the kernel reading a file specified by userspace
-from the kernel loading a buffer containing data provided by userspace.
-This patch defines a new LSM hook named security_kernel_load_data().
+The original kexec_load syscall can not verify file signatures, nor can
+the kexec image be measured.  Based on policy, deny the kexec_load
+syscall.
 
 Signed-off-by: Mimi Zohar <zohar@linux.vnet.ibm.com>
 Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Luis R. Rodriguez <mcgrof@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Acked-by: Serge Hallyn <serge@hallyn.com>
 
 ---
-Changelog v6:
-- Updated patch description
-
-Changelog v5:
-- Share the kernel_load_data_id and kernel_read_file_id values,
-simplifying Loadpin's and other LSMs calling one LSM hook from the
-other.
-
-Changelog v4:
-- Define new LSM hook named security_kernel_load_data.
-
 Changelog v3:
-- Rename security_kernel_read_file to security_kernel_read_data().
+- use switch/case
 
-Changelog v2:
-- Define a generic wrapper named security_kernel_read_blob() for
-security_kernel_read_file().
+ include/linux/ima.h                 |  7 +++++++
+ security/integrity/ima/ima.h        |  1 +
+ security/integrity/ima/ima_main.c   | 27 +++++++++++++++++++++++++++
+ security/integrity/ima/ima_policy.c |  2 ++
+ security/security.c                 |  7 ++++++-
+ 5 files changed, 43 insertions(+), 1 deletion(-)
 
-Changelog v1:
-- Define and call security_kexec_load(), a wrapper for
-security_kernel_read_file().
-
- include/linux/lsm_hooks.h |  6 ++++++
- include/linux/security.h  | 27 +++++++++++++++++++++++++++
- security/security.c       |  5 +++++
- 3 files changed, 38 insertions(+)
-
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 8f1131c8dd54..a08bc2587b96 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -576,6 +576,10 @@
-  *	userspace to load a kernel module with the given name.
-  *	@kmod_name name of the module requested by the kernel
-  *	Return 0 if successful.
-+ * @kernel_load_data:
-+ *	Load data provided by userspace.
-+ *	@id kernel load data identifier
-+ *	Return 0 if permission is granted.
-  * @kernel_read_file:
-  *	Read a file specified by userspace.
-  *	@file contains the file structure pointing to the file being read
-@@ -1582,6 +1586,7 @@ union security_list_options {
- 	int (*kernel_act_as)(struct cred *new, u32 secid);
- 	int (*kernel_create_files_as)(struct cred *new, struct inode *inode);
- 	int (*kernel_module_request)(char *kmod_name);
-+	int (*kernel_load_data)(enum kernel_load_data_id id);
- 	int (*kernel_read_file)(struct file *file, enum kernel_read_file_id id);
- 	int (*kernel_post_read_file)(struct file *file, char *buf, loff_t size,
- 				     enum kernel_read_file_id id);
-@@ -1872,6 +1877,7 @@ struct security_hook_heads {
- 	struct hlist_head cred_getsecid;
- 	struct hlist_head kernel_act_as;
- 	struct hlist_head kernel_create_files_as;
-+	struct hlist_head kernel_load_data;
- 	struct hlist_head kernel_read_file;
- 	struct hlist_head kernel_post_read_file;
- 	struct hlist_head kernel_module_request;
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 63030c85ee19..3410acfe139c 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -159,6 +159,27 @@ extern int mmap_min_addr_handler(struct ctl_table *table, int write,
- typedef int (*initxattrs) (struct inode *inode,
- 			   const struct xattr *xattr_array, void *fs_data);
+diff --git a/include/linux/ima.h b/include/linux/ima.h
+index 0e4647e0eb60..84806b54b50a 100644
+--- a/include/linux/ima.h
++++ b/include/linux/ima.h
+@@ -11,6 +11,7 @@
+ #define _LINUX_IMA_H
  
-+
-+/* Keep the kernel_load_data_id enum in sync with kernel_read_file_id */
-+#define __data_id_enumify(ENUM, dummy) LOADING_ ## ENUM,
-+#define __data_id_stringify(dummy, str) #str,
-+
-+enum kernel_load_data_id {
-+	__kernel_read_file_id(__data_id_enumify)
-+};
-+
-+static const char * const kernel_load_data_str[] = {
-+	__kernel_read_file_id(__data_id_stringify)
-+};
-+
-+static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
-+{
-+	if ((unsigned)id >= LOADING_MAX_ID)
-+		return kernel_load_data_str[LOADING_UNKNOWN];
-+
-+	return kernel_load_data_str[id];
-+}
-+
- #ifdef CONFIG_SECURITY
+ #include <linux/fs.h>
++#include <linux/security.h>
+ #include <linux/kexec.h>
+ struct linux_binprm;
  
- struct security_mnt_opts {
-@@ -320,6 +341,7 @@ void security_cred_getsecid(const struct cred *c, u32 *secid);
- int security_kernel_act_as(struct cred *new, u32 secid);
- int security_kernel_create_files_as(struct cred *new, struct inode *inode);
- int security_kernel_module_request(char *kmod_name);
-+int security_kernel_load_data(enum kernel_load_data_id id);
- int security_kernel_read_file(struct file *file, enum kernel_read_file_id id);
- int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- 				   enum kernel_read_file_id id);
-@@ -909,6 +931,11 @@ static inline int security_kernel_module_request(char *kmod_name)
+@@ -19,6 +20,7 @@ extern int ima_bprm_check(struct linux_binprm *bprm);
+ extern int ima_file_check(struct file *file, int mask, int opened);
+ extern void ima_file_free(struct file *file);
+ extern int ima_file_mmap(struct file *file, unsigned long prot);
++extern int ima_load_data(enum kernel_load_data_id id);
+ extern int ima_read_file(struct file *file, enum kernel_read_file_id id);
+ extern int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 			      enum kernel_read_file_id id);
+@@ -49,6 +51,11 @@ static inline int ima_file_mmap(struct file *file, unsigned long prot)
  	return 0;
  }
  
-+static inline int security_kernel_load_data(enum kernel_load_data_id id)
++static inline int ima_load_data(enum kernel_load_data_id id)
 +{
 +	return 0;
 +}
 +
- static inline int security_kernel_read_file(struct file *file,
- 					    enum kernel_read_file_id id)
+ static inline int ima_read_file(struct file *file, enum kernel_read_file_id id)
  {
-diff --git a/security/security.c b/security/security.c
-index e7d76a8000a5..05fe5b1932d7 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1061,6 +1061,11 @@ int security_kernel_post_read_file(struct file *file, char *buf, loff_t size,
- }
- EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
+ 	return 0;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 354bb5716ce3..78c15264b17b 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -232,6 +232,7 @@ int ima_policy_show(struct seq_file *m, void *v);
+ #define IMA_APPRAISE_MODULES	0x08
+ #define IMA_APPRAISE_FIRMWARE	0x10
+ #define IMA_APPRAISE_POLICY	0x20
++#define IMA_APPRAISE_KEXEC	0x40
  
-+int security_kernel_load_data(enum kernel_load_data_id id)
+ #ifdef CONFIG_IMA_APPRAISE
+ int ima_appraise_measurement(enum ima_hooks func,
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index dca44cf7838e..71fecfef0939 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -496,6 +496,33 @@ int ima_post_read_file(struct file *file, void *buf, loff_t size,
+ 				   MAY_READ, func, 0);
+ }
+ 
++/**
++ * ima_load_data - appraise decision based on policy
++ * @id: kernel load data caller identifier
++ *
++ * Callers of this LSM hook can not measure, appraise, or audit the
++ * data provided by userspace.  Enforce policy rules requring a file
++ * signature (eg. kexec'ed kernel image).
++ *
++ * For permission return 0, otherwise return -EACCES.
++ */
++int ima_load_data(enum kernel_load_data_id id)
 +{
-+	return call_int_hook(kernel_load_data, 0, id);
++	if ((ima_appraise & IMA_APPRAISE_ENFORCE) != IMA_APPRAISE_ENFORCE)
++		return 0;
++
++	switch (id) {
++	case LOADING_KEXEC_IMAGE:
++		if (ima_appraise & IMA_APPRAISE_KEXEC) {
++			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
++			return -EACCES;	/* INTEGRITY_UNKNOWN */
++		}
++	default:
++		break;
++	}
++	return 0;
 +}
 +
- int security_task_fix_setuid(struct cred *new, const struct cred *old,
- 			     int flags)
+ static int __init init_ima(void)
  {
+ 	int error;
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 7f4a4de7e831..ebfb389b79df 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -448,6 +448,8 @@ static int ima_appraise_flag(enum ima_hooks func)
+ 		return IMA_APPRAISE_FIRMWARE;
+ 	else if (func == POLICY_CHECK)
+ 		return IMA_APPRAISE_POLICY;
++	else if (func == KEXEC_KERNEL_CHECK)
++		return IMA_APPRAISE_KEXEC;
+ 	return 0;
+ }
+ 
+diff --git a/security/security.c b/security/security.c
+index 05fe5b1932d7..7b870df0a335 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1063,7 +1063,12 @@ EXPORT_SYMBOL_GPL(security_kernel_post_read_file);
+ 
+ int security_kernel_load_data(enum kernel_load_data_id id)
+ {
+-	return call_int_hook(kernel_load_data, 0, id);
++	int ret;
++
++	ret = call_int_hook(kernel_load_data, 0, id);
++	if (ret)
++		return ret;
++	return ima_load_data(id);
+ }
+ 
+ int security_task_fix_setuid(struct cred *new, const struct cred *old,
 -- 
 2.7.5
 
