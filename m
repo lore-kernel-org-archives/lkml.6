@@ -2,145 +2,151 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB76EECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AD0ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B54A20864
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:38:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F68620871
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:43:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GqP0ClAo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B54A20864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IlPddb0U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F68620871
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731914AbeGMXzX (ORCPT
+        id S1731526AbeGNAAn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 19:55:23 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:44407 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727506AbeGMXzW (ORCPT
+        Fri, 13 Jul 2018 20:00:43 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:52928 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729762AbeGNAAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 19:55:22 -0400
-Received: by mail-pf0-f193.google.com with SMTP id j3-v6so23430506pfh.11;
-        Fri, 13 Jul 2018 16:38:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r5zEE5q2+sWRurJgAFENPKpTy33r2bR6VSFiz5hWKmI=;
-        b=GqP0ClAourvZ7FF/IRBIRVXFSmGGccyukcK/mzStrVdRb0Ffu1OrHk3/vNo0y1FfOk
-         AKjhFu0igaxuYI1Iw0P7EFqda6BvWcclKDX3bQudgrSZzDpGhtKAHbkWgsTVCJjFX8ev
-         8TkKuTZ6DpwxWimAYa7Jtp9UIXvPZRFLBUZA365ZW/2cIvCMgxUw5+zrD+0hDFZlAXgd
-         uvcVszeTG3wRzqK25kli9Z95cM6DFFH51gxYqQzMPY3IBnnnYZFWrgWlhFjWE2gvuiIW
-         sojJF5RudRydA4pz0h66hTCaXZs38QhlUFLn05a80JKIUtTPBPYuQQLQwBrwU3GwEmtb
-         U33w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r5zEE5q2+sWRurJgAFENPKpTy33r2bR6VSFiz5hWKmI=;
-        b=q3nuFVPqsNBs4CJPXlFbrPzNu4/poQBlWSTgMVM9KkT73ik6KVVeuz7APCrz3tx0ZJ
-         gL5CvtJa2fALkr1ooCBUo3GQy5DB7hsFtNiRIFA4/f1puDWVwpjR+zJa9VagpNMxaWA/
-         saWoCs3lmKqczgvfrtLo3lcb09MTevZJOlw4alrCEUG3o8QHzrH0gsA6VovF28KaDEaK
-         rnjGiO3pQ0lzYPife/B8iMwSKdo7TuPCFRTUde2HZtY+e/ufO+dIfB3KgmuwarMxEZbJ
-         BCniS64AthG/On58KMlkAxnbxWTe/TcsYuBqe8fm7fk8JnNcx0hywoneT+ebFucP1hBR
-         g9hA==
-X-Gm-Message-State: AOUpUlHcMFiqFq09LZREsbD3y9ao+GZk4G0aJabpiTNu2LK8jnkt4Jza
-        eopGa9m4alCvDgrpQ5NraSQ=
-X-Google-Smtp-Source: AAOMgpd31UwUmtjy//YM100D9jYHxtTKDRq0ixhhmnzjfi0qubBSamgAq5/TPSU8MNGN7Oceq4DCBw==
-X-Received: by 2002:a63:342:: with SMTP id 63-v6mr7598555pgd.290.1531525113408;
-        Fri, 13 Jul 2018 16:38:33 -0700 (PDT)
-Received: from localhost (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id c1-v6sm9138749pfi.142.2018.07.13.16.38.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 16:38:32 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 16:38:31 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-ntb@googlegroups.com, linux-crypto@vger.kernel.org,
+        Fri, 13 Jul 2018 20:00:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=BzhhUTWfymZlQdV1Ye90pVtOOYZ3lU/cYWkKSMbicck=; b=IlPddb0U+D+d4F5qWm/tjMAzBc
+        QQtLpf3c+puVmxEf+iwBHNGTBdCzL/6ITnsL8zM0IGu2U1+DOBOf7l413GEPzzo39Q7YX7U6WXopt
+        BQTjg9DAP16EcnE9nIvH3EciaeOSSQxuqtr4vcQ4+n5L+qOmSrwxV27D9N+YXw4RHpl00T2MLCkth
+        9+j0dF0++QITSU1E/sMh/H7ZN2tSJPJCepGvFH0oSi7bBMgj5pfpiu/4+uxalNnEmp5X00qFEcKcf
+        HqncYaP8QzK6kLstvR6ejspKJOwhtZpOB3/MNirHljjgbmaVVGsGvGtL2R4UPB8JFBfDMzKNZ0yQw
+        ivTwOsfQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fe7iJ-0005YA-6m; Fri, 13 Jul 2018 23:43:03 +0000
+Subject: Re: [PATCH] kernel.h: Add for_each_if()
+To:     NeilBrown <neilb@suse.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Suresh Warrier <warrier@linux.vnet.ibm.com>,
-        Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [v18,3/7] iomap: introduce io{read|write}64_{lo_hi|hi_lo}
-Message-ID: <20180713233831.GA2946@roeck-us.net>
-References: <20180622194752.11221-4-logang@deltatee.com>
+        Wei Wang <wvw@google.com>, Stefan Agner <stefan@agner.ch>,
+        Andrei Vagin <avagin@openvz.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Yisheng Xie <ysxie@foxmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+References: <20180709083650.23549-1-daniel.vetter@ffwll.ch>
+ <20180709162509.29343-1-daniel.vetter@ffwll.ch>
+ <20180709163001.8fb8148223a57bc46a13fbda@linux-foundation.org>
+ <20180710075328.GG3008@phenom.ffwll.local>
+ <871scbwfd4.fsf@notabene.neil.brown.name>
+ <CAKMK7uFEYyD2ChWnO_0PS_rkK180dDoQ1g4J0UWRfchnYQxOTA@mail.gmail.com>
+ <20180711160547.59f086a587c7f3c8d3c40f0f@linux-foundation.org>
+ <87bmbavhai.fsf@notabene.neil.brown.name>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <79133322-b04b-f005-f1f6-25c28c5058e4@infradead.org>
+Date:   Fri, 13 Jul 2018 16:42:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180622194752.11221-4-logang@deltatee.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <87bmbavhai.fsf@notabene.neil.brown.name>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Fri, Jun 22, 2018 at 01:47:48PM -0600, Logan Gunthorpe wrote:
-> In order to provide non-atomic functions for io{read|write}64 that will
-> use readq and writeq when appropriate. We define a number of variants
-> of these functions in the generic iomap that will do non-atomic
-> operations on pio but atomic operations on mmio.
+On 07/13/2018 04:37 PM, NeilBrown wrote:
+> On Wed, Jul 11 2018, Andrew Morton wrote:
 > 
-> These functions are only defined if readq and writeq are defined. If
-> they are not, then the wrappers that always use non-atomic operations
-> from include/linux/io-64-nonatomic*.h will be used.
+>> On Wed, 11 Jul 2018 13:51:08 +0200 Daniel Vetter <daniel@ffwll.ch> wrote:
+>>
+>>> But I still have the situation that a bunch of maintainers acked this
+>>> and Andrew Morton defacto nacked it, which I guess means I'll keep the
+>>> macro in drm? The common way to go about this seems to be to just push
+>>> the patch series with the ack in some pull request to Linus and ignore
+>>> the people who raised questions, but not really my thing.
+>>
+>> Heh.
+>>
+>> But, am I wrong?  Code which uses regular kernel style doesn't have
+>> these issues.  We shouldn't be enabling irregular style - we should be
+>> making such sites more regular.  The fact that the compiler generates a
+>> nice warning in some cases simply helps us with that.
 > 
+> I think you are wrong .... or at least, not completely correct.
+> 
+> I think it is perfectly acceptable in Linux to have code like:
+> 
+>   for (....)
+>   	if (x)
+>         	something();
+>         else
+>         	something_else();
+> 
+> Would you agree?  If not, then I'm the one who is wrong.  Otherwise....
 
-This patch causes a build failure in -next when building
-ppc:corenet64_smp_defconfig.
+coding-style.rst says:
+Also, use braces when a loop contains more than a single simple statement:
 
-In file included from drivers/crypto/caam/qi.c:14:0:
-drivers/crypto/caam/regs.h: In function 'wr_reg64':
-drivers/crypto/caam/regs.h:143:3:
-	error: implicit declaration of function 'iowrite64'; did you mean 'iowrite32'?
 
-Several files are afected; this is only the first error reported.
+> The problem is that for certain poorly written for_each_foo() macros,
+> such as blkg_for_each_descendant_pre() (and several others identified in
+> this patch series), writing
+> 
+>    blkg_for_each_descendant_pre(...)
+>      	if (x)
+>         	something();
+>         else
+>         	something_else();
+> 
+> will trigger a compiler warning.  This is inconsistent with the
+> behaviour of a simple "for".
+> So I do think that the macros should be fixed, and I don't think that
+> sprinkling extra braces is an appropriate response.
+> 
+> I'm not personally convinced that writing
+>    if_no_else(cond)
+> is easier than just writing
+>    if (!(cond)); else
 
-Bisect log is attached.
+agreed.
 
-Guenter
+> in these macros, but I do think that the macros should be fixed and
+> maybe this is the path-of-least-resistance to getting it done.
 
----
-# bad: [483d835c8189f0566a4cbbe47e74ffa314430e98] Add linux-next specific files for 20180713
-# good: [1e4b044d22517cae7047c99038abb444423243ca] Linux 4.18-rc4
-git bisect start 'HEAD' 'v4.18-rc4'
-# good: [a5da8bf5df4436f40f4e28f0be51a4678830fe23] Merge remote-tracking branch 'crypto/master'
-git bisect good a5da8bf5df4436f40f4e28f0be51a4678830fe23
-# good: [34f19afdf1f94450c325da94559d07f746e9043d] Merge remote-tracking branch 'tip/auto-latest'
-git bisect good 34f19afdf1f94450c325da94559d07f746e9043d
-# good: [7aac4471307ac631685599b820616fd4c47edf29] Merge remote-tracking branch 'staging/staging-next'
-git bisect good 7aac4471307ac631685599b820616fd4c47edf29
-# good: [6b674574d58a738035fdf29008a308bee9235a16] Merge remote-tracking branch 'ntb/ntb-next'
-git bisect good 6b674574d58a738035fdf29008a308bee9235a16
-# bad: [013d0c6f50169c75eb37549f705604103cbeaa0b] module: allow symbol exports to be disabled
-git bisect bad 013d0c6f50169c75eb37549f705604103cbeaa0b
-# good: [205a106bac127145a4defae7d0d35945001fe924] kernel/memremap, kasan: make ZONE_DEVICE with work with KASAN
-git bisect good 205a106bac127145a4defae7d0d35945001fe924
-# good: [89ce5b41242240e43de867b0469b71c6b8aa9d5f] mm, swap: fix race between swapoff and some swap operations
-git bisect good 89ce5b41242240e43de867b0469b71c6b8aa9d5f
-# good: [9760a955e6173bd0c2f58f1507fec8c88aaffc68] proc: fix BUILD_BUG_ON breakage on powerpc64-allyesconfig
-git bisect good 9760a955e6173bd0c2f58f1507fec8c88aaffc68
-# good: [696b14958b4d620ae7431351b667fd79397d550d] include/asm-generic/bug.h: clarify valid uses of WARN()
-git bisect good 696b14958b4d620ae7431351b667fd79397d550d
-# good: [e018a02ca17fbe4c34515bec58eceb8b0be94ec6] parisc: iomap: introduce io{read|write}64
-git bisect good e018a02ca17fbe4c34515bec58eceb8b0be94ec6
-# bad: [e18963b65c6397fdba51416ff70c33197f6c1a84] ntb: ntb_hw_intel: use io-64-nonatomic instead of in-driver hacks
-git bisect bad e18963b65c6397fdba51416ff70c33197f6c1a84
-# bad: [8f6432de3dbe1d1d222d2998380a495e04ba5fef] io-64-nonatomic: add io{read|write}64[be]{_lo_hi|_hi_lo} macros
-git bisect bad 8f6432de3dbe1d1d222d2998380a495e04ba5fef
-# bad: [d189c7f6b4a0dec224652af6d868eebb57553345] iomap: introduce io{read|write}64_{lo_hi|hi_lo}
-git bisect bad d189c7f6b4a0dec224652af6d868eebb57553345
-# first bad commit: [d189c7f6b4a0dec224652af6d868eebb57553345] iomap: introduce io{read|write}64_{lo_hi|hi_lo}
+I'm not opposed to fixing some macros, but some of these macros are just
+ease-of-less-typing shortcuts.  They don't improve readability at all;
+they harm it.  (of course, that is just one opinion :)
+
+
+
+-- 
+~Randy
