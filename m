@@ -1,4 +1,4 @@
-Return-Path: <SRS0=HMm1=J4=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,182 +6,198 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB7DECDFB0
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC52ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E6A20BF2
-	for <linux-kernel@archiver.kernel.org>; Thu, 12 Jul 2018 23:52:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E6A20BF2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3652A2148E
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:00:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3652A2148E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387753AbeGMAEl (ORCPT
+        id S2387755AbeGMAMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 20:04:41 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55000 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387723AbeGMAEk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 20:04:40 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 046E12BCB1;
-        Thu, 12 Jul 2018 23:52:46 +0000 (UTC)
-Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8DFCB1C665;
-        Thu, 12 Jul 2018 23:52:44 +0000 (UTC)
-Date:   Fri, 13 Jul 2018 07:52:40 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        Dou Liyang <douly.fnst@cn.fujitsu.com>,
-        akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        yasu.isimatu@gmail.com, keescook@chromium.org,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com,
-        vbabka@suse.cz, mgorman@techsingularity.net
-Subject: Re: Bug report about KASLR and ZONE_MOVABLE
-Message-ID: <20180712235240.GH2070@MiWiFi-R3L-srv>
-References: <20180711094244.GA2019@localhost.localdomain>
- <20180711104158.GE2070@MiWiFi-R3L-srv>
- <20180711104944.GG1969@MiWiFi-R3L-srv>
- <20180711124008.GF2070@MiWiFi-R3L-srv>
- <72721138-ba6a-32c9-3489-f2060f40a4c9@cn.fujitsu.com>
- <20180712060115.GD6742@localhost.localdomain>
- <20180712123228.GK32648@dhcp22.suse.cz>
+        Thu, 12 Jul 2018 20:12:32 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34292 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387719AbeGMAMc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 20:12:32 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6CNsubY057289
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 20:00:35 -0400
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2k6g2hj2vs-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 20:00:35 -0400
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Thu, 12 Jul 2018 20:00:34 -0400
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 12 Jul 2018 20:00:30 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6D00Tne9044534
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 13 Jul 2018 00:00:29 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DE069B206C;
+        Thu, 12 Jul 2018 20:00:26 -0400 (EDT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B7466B2064;
+        Thu, 12 Jul 2018 20:00:26 -0400 (EDT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.159])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 12 Jul 2018 20:00:26 -0400 (EDT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id ECC9316CA29E; Thu, 12 Jul 2018 17:02:49 -0700 (PDT)
+Date:   Thu, 12 Jul 2018 17:02:49 -0700
+From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+To:     josh@joshtriplett.org, rostedt@goodmis.org,
+        mathieu.desnoyers@efficios.com, jiangshanlai@gmail.com
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        oleg@redhat.com, edumazet@google.com, davem@davemloft.net,
+        tglx@linutronix.de
+Subject: Consolidating RCU-bh, RCU-preempt, and RCU-sched
+Reply-To: paulmck@linux.vnet.ibm.com
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180712123228.GK32648@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 12 Jul 2018 23:52:46 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 12 Jul 2018 23:52:46 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18071300-0052-0000-0000-0000030D2C86
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009359; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000266; SDB=6.01060485; UDB=6.00544359; IPR=6.00838404;
+ MB=3.00022123; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-13 00:00:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18071300-0053-0000-0000-00005D577888
+Message-Id: <20180713000249.GA16907@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-12_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=848 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1806210000 definitions=main-1807120253
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michal,
+Hello!
 
-On 07/12/18 at 02:32pm, Michal Hocko wrote:
-> On Thu 12-07-18 14:01:15, Chao Fan wrote:
-> > On Thu, Jul 12, 2018 at 01:49:49PM +0800, Dou Liyang wrote:
-> > >Hi Baoquan,
-> > >
-> > >At 07/11/2018 08:40 PM, Baoquan He wrote:
-> > >> Please try this v3 patch:
-> > >> >>From 9850d3de9c02e570dc7572069a9749a8add4c4c7 Mon Sep 17 00:00:00 2001
-> > >> From: Baoquan He <bhe@redhat.com>
-> > >> Date: Wed, 11 Jul 2018 20:31:51 +0800
-> > >> Subject: [PATCH v3] mm, page_alloc: find movable zone after kernel text
-> > >> 
-> > >> In find_zone_movable_pfns_for_nodes(), when try to find the starting
-> > >> PFN movable zone begins in each node, kernel text position is not
-> > >> considered. KASLR may put kernel after which movable zone begins.
-> > >> 
-> > >> Fix it by finding movable zone after kernel text on that node.
-> > >> 
-> > >> Signed-off-by: Baoquan He <bhe@redhat.com>
-> > >
-> > >
-> > >You fix this in the _zone_init side_. This may make the 'kernelcore=' or
-> > >'movablecore=' failed if the KASLR puts the kernel back the tail of the
-> > >last node, or more.
-> > 
-> > I think it may not fail.
-> > There is a 'restart' to do another pass.
-> > 
-> > >
-> > >Due to we have fix the mirror memory in KASLR side, and Chao is trying
-> > >to fix the 'movable_node' in KASLR side. Have you had a chance to fix
-> > >this in the KASLR side.
-> > >
-> > 
-> > I think it's better to fix here, but not KASLR side.
-> > Cause much more code will be change if doing it in KASLR side.
-> > Since we didn't parse 'kernelcore' in compressed code, and you can see
-> > the distribution of ZONE_MOVABLE need so much code, so we do not need
-> > to do so much job in KASLR side. But here, several lines will be OK.
-> 
-> I am not able to find the beginning of the email thread right now. Could
-> you summarize what is the actual problem please?
+I now have a semi-reasonable prototype of changes consolidating the
+RCU-bh, RCU-preempt, and RCU-sched update-side APIs in my -rcu tree.
+There are likely still bugs to be fixed and probably other issues as well,
+but a prototype does exist.
 
-The bug is found on x86 now. 
+Assuming continued good rcutorture results and no objections, I am
+thinking in terms of this timeline:
 
-When added "kernelcore=" or "movablecore=" into kernel command line,
-kernel memory is spread evenly among nodes. However, this is right when
-KASLR is not enabled, then kernel will be at 16M of place in x86 arch.
-If KASLR enabled, it could be put any place from 16M to 64T randomly.
- 
-Consider a scenario, we have 10 nodes, and each node has 20G memory, and
-we specify "kernelcore=50%", means each node will take 10G for
-kernelcore, 10G for movable area. But this doesn't take kernel position
-into consideration. E.g if kernel is put at 15G of 2nd node, namely
-node1. Then we think on node1 there's 10G for kernelcore, 10G for
-movable, in fact there's only 5G available for movable, just after
-kernel.
+o	Preparatory work and cleanups are slated for the v4.19 merge window.
 
-I made a v4 patch which possibly can fix it.
+o	The actual consolidation and post-consolidation cleanup is slated
+	for the merge window after v4.19 (v5.0?).  These cleanups include
+	the replacements called out below within the RCU implementation
+	itself (but excluding kernel/rcu/sync.c, see question below).
 
+o	Replacement of now-obsolete update APIs is slated for the second
+	merge window after v4.19 (v5.1?).  The replacements are currently
+	expected to be as follows:
 
-From dbcac3631863aed556dc2c4ff1839772dfd02d18 Mon Sep 17 00:00:00 2001
-From: Baoquan He <bhe@redhat.com>
-Date: Fri, 13 Jul 2018 07:49:29 +0800
-Subject: [PATCH v4] mm, page_alloc: find movable zone after kernel text
+	synchronize_rcu_bh() -> synchronize_rcu()
+	synchronize_rcu_bh_expedited() -> synchronize_rcu_expedited()
+	call_rcu_bh() -> call_rcu()
+	rcu_barrier_bh() -> rcu_barrier()
+	synchronize_sched() -> synchronize_rcu()
+	synchronize_sched_expedited() -> synchronize_rcu_expedited()
+	call_rcu_sched() -> call_rcu()
+	rcu_barrier_sched() -> rcu_barrier()
+	get_state_synchronize_sched() -> get_state_synchronize_rcu()
+	cond_synchronize_sched() -> cond_synchronize_rcu()
+	synchronize_rcu_mult() -> synchronize_rcu()
 
-In find_zone_movable_pfns_for_nodes(), when try to find the starting
-PFN movable zone begins at in each node, kernel text position is not
-considered. KASLR may put kernel after which movable zone begins.
+	I have done light testing of these replacements with good results.
 
-Fix it by finding movable zone after kernel text on that node.
+Any objections to this timeline?
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
- mm/page_alloc.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+I also have some questions on the ultimate end point.  I have default
+choices, which I will likely take if there is no discussion.
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 1521100f1e63..5bc1a47dafda 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6547,7 +6547,7 @@ static unsigned long __init early_calculate_totalpages(void)
- static void __init find_zone_movable_pfns_for_nodes(void)
- {
- 	int i, nid;
--	unsigned long usable_startpfn;
-+	unsigned long usable_startpfn, kernel_endpfn, arch_startpfn;
- 	unsigned long kernelcore_node, kernelcore_remaining;
- 	/* save the state before borrow the nodemask */
- 	nodemask_t saved_node_state = node_states[N_MEMORY];
-@@ -6649,8 +6649,9 @@ static void __init find_zone_movable_pfns_for_nodes(void)
- 	if (!required_kernelcore || required_kernelcore >= totalpages)
- 		goto out;
- 
-+	kernel_endpfn = PFN_UP(__pa_symbol(_end));
- 	/* usable_startpfn is the lowest possible pfn ZONE_MOVABLE can be at */
--	usable_startpfn = arch_zone_lowest_possible_pfn[movable_zone];
-+	arch_startpfn = arch_zone_lowest_possible_pfn[movable_zone];
- 
- restart:
- 	/* Spread kernelcore memory as evenly as possible throughout nodes */
-@@ -6659,6 +6660,16 @@ static void __init find_zone_movable_pfns_for_nodes(void)
- 		unsigned long start_pfn, end_pfn;
- 
- 		/*
-+		 * KASLR may put kernel near tail of node memory,
-+		 * start after kernel on that node to find PFN
-+		 * at which zone begins.
-+		 */
-+		if (pfn_to_nid(kernel_endpfn) == nid)
-+		        usable_startpfn = max(arch_startpfn, kernel_endpfn);
-+		else
-+		        usable_startpfn = arch_startpfn;
-+
-+		/*
- 		 * Recalculate kernelcore_node if the division per node
- 		 * now exceeds what is necessary to satisfy the requested
- 		 * amount of memory for the kernel
--- 
-2.13.6
+o	
+	Currently, I am thinking in terms of keeping the per-flavor
+	read-side functions.  For example, rcu_read_lock_bh() would
+	continue to disable softirq, and would also continue to tell
+	lockdep about the RCU-bh read-side critical section.  However,
+	synchronize_rcu() will wait for all flavors of read-side critical
+	sections, including those introduced by (say) preempt_disable(),
+	so there will no longer be any possibility of mismatching (say)
+	RCU-bh readers with RCU-sched updaters.
+
+	I could imagine other ways of handling this, including:
+
+	a.	Eliminate rcu_read_lock_bh() in favor of
+		local_bh_disable() and so on.  Rely on lockdep
+		instrumentation of these other functions to identify RCU
+		readers, introducing such instrumentation as needed.  I am
+		not a fan of this approach because of the large number of
+		places in the Linux kernel where interrupts, preemption,
+		and softirqs are enabled or disabled "behind the scenes".
+
+	b.	Eliminate rcu_read_lock_bh() in favor of rcu_read_lock(),
+		and required callers to also disable softirqs, preemption,
+		or whatever as needed.	I am not a fan of this approach
+		because it seems a lot less convenient to users of RCU-bh
+		and RCU-sched.
+
+	At the moment, I therefore favor keeping the RCU-bh and RCU-sched
+	read-side APIs.  But are there better approaches?
+
+o	How should kernel/rcu/sync.c be handled?  Here are some
+	possibilities:
+
+	a.	Leave the full gp_ops[] array and simply translate
+		the obsolete update-side functions to their RCU
+		equivalents.
+
+	b.	Leave the current gp_ops[] array, but only have
+		the RCU_SYNC entry.  The __INIT_HELD field would
+		be set to a function that was OK with being in an
+		RCU read-side critical section, an interrupt-disabled
+		section, etc.
+
+		This allows for possible addition of SRCU functionality.
+		It is also a trivial change.  Note that the sole user
+		of sync.c uses RCU_SCHED_SYNC, and this would need to
+		be changed to RCU_SYNC.
+
+		But is it likely that we will ever add SRCU?
+
+	c.	Eliminate that gp_ops[] array, hard-coding the function
+		pointers into their call sites.
+
+	I don't really have a preference.  Left to myself, I will be lazy
+	and take option #a.  Are there better approaches?
+
+o	Currently, if a lock related to the scheduler's rq or pi locks is
+	held across rcu_read_unlock(), that lock must be held across the
+	entire read-side critical section in order to avoid deadlock.
+	Now that the end of the RCU read-side critical section is
+	deferred until sometime after interrupts are re-enabled, this
+	requirement could be lifted.  However, because the end of the RCU
+	read-side critical section is detected sometime after interrupts
+	are re-enabled, this means that a low-priority RCU reader might
+	remain priority-boosted longer than need be, which could be a
+	problem when running real-time workloads.
+
+	My current thought is therefore to leave this constraint in
+	place.  Thoughts?
+
+Anything else that I should be worried about?  ;-)
+
+							Thanx, Paul
 
