@@ -2,102 +2,248 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D93C4ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B3ECECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C69820842
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:49:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="hhubx0oR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C69820842
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id 1037420842
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1037420842
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729658AbeGMKDk (ORCPT
+        id S1729670AbeGMKEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 06:03:40 -0400
-Received: from 8bytes.org ([81.169.241.247]:37296 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726817AbeGMKDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 06:03:40 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 0BDFE377; Fri, 13 Jul 2018 11:49:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=8bytes.org; s=mail-1;
-        t=1531475383; bh=NLcxiq8C7Uy6pxc84r00LyCyDjN7Yo1Hg8KyVrivt68=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=hhubx0oR1uL/GLOVLHnul9mLVDpYADmraw6fh04TP5e5EG335H8km5UHaoubSuqgZ
-         TpPN2DrMtjobJSeoE8saXGXr0r8JiOR01hINgcKg8aA6eauSaCEHUNdmJ6QNDwgGWg
-         /WHbUB09w7FueQpLzRUD/IdOj5Pz9iifdHtRErLefKJuKjig+LM5h/KOttC2BVUc+f
-         l5o++RGXYHFk1+7DAGTXxXlrRWAKVmgKljUXVZ2nrsxuqlBzxTh1RYjodR4SUH2krT
-         yMlJVOzzM5IXcHex0KFQmytCobKaBLBqXCbgZ4xGGxtvimswjrK5TWxAI2xw+ciAGJ
-         K3X6COS4IFc+Q==
-Date:   Fri, 13 Jul 2018 11:48:49 +0200
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Borislav Petkov <bp@alien8.de>, Jiri Kosina <jkosina@suse.cz>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Laight <David.Laight@aculab.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Will Deacon <will.deacon@arm.com>, aliguori@amazon.com,
-        daniel.gruss@iaik.tugraz.at, hughd@google.com, keescook@google.com,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        "David H . Gutteridge" <dhgutteridge@sympatico.ca>, jroedel@suse.de
-Subject: Re: [PATCH 03/39] x86/entry/32: Load task stack from x86_tss.sp1 in
- SYSENTER handler
-Message-ID: <20180713094849.5bsfpwhxzo5r5exk@8bytes.org>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org>
- <1531308586-29340-4-git-send-email-joro@8bytes.org>
- <823BAA9B-FACA-4E91-BE56-315FF569297C@amacapital.net>
+        Fri, 13 Jul 2018 06:04:10 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4701 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726789AbeGMKEJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 06:04:09 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1, AES128-SHA)
+        id <B5b4875d00000>; Fri, 13 Jul 2018 02:50:08 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 13 Jul 2018 02:50:13 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 13 Jul 2018 02:50:13 -0700
+Received: from dhcp-10-21-25-168 (10.21.25.201) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 13 Jul
+ 2018 09:50:11 +0000
+Date:   Fri, 13 Jul 2018 12:50:05 +0300
+From:   Aapo Vienamo <avienamo@nvidia.com>
+To:     Marcel Ziswiler <marcel.ziswiler@toradex.com>
+CC:     "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        Stefan Agner <stefan.agner@toradex.com>,
+        "jonathanh@nvidia.com" <jonathanh@nvidia.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>
+Subject: Re: REGRESSION: [PATCH] mmc: tegra: Use
+ sdhci_pltfm_clk_get_max_clock
+Message-ID: <20180713125005.69895f06@dhcp-10-21-25-168>
+In-Reply-To: <1531446183.5479.14.camel@toradex.com>
+References: <1528126540-27004-1-git-send-email-avienamo@nvidia.com>
+        <CAPDyKFoip8gFssftJKzVHD9PAk+j=Z1CTo=0uY9cGASzW8VRJg@mail.gmail.com>
+        <1531446183.5479.14.camel@toradex.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <823BAA9B-FACA-4E91-BE56-315FF569297C@amacapital.net>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.21.25.201]
+X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
+ (172.20.187.10)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 01:49:13PM -0700, Andy Lutomirski wrote:
-> > On Jul 11, 2018, at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
-> >    /* Offset from the sysenter stack to tss.sp0 */
-> > -    DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp0) -
-> > +    DEFINE(TSS_entry_stack, offsetof(struct cpu_entry_area, tss.x86_tss.sp1) -
-> >           offsetofend(struct cpu_entry_area, entry_stack_page.stack));
+On Fri, 13 Jul 2018 01:43:05 +0000
+Marcel Ziswiler <marcel.ziswiler@toradex.com> wrote:
+
+> On Mon, 2018-07-02 at 15:16 +0200, Ulf Hansson wrote:
+> > On 4 June 2018 at 17:35, Aapo Vienamo <avienamo@nvidia.com> wrote:  
+> > > The sdhci get_max_clock callback is set to
+> > > sdhci_pltfm_clk_get_max_clock
+> > > and tegra_sdhci_get_max_clock is removed. It appears that the
+> > > shdci-tegra specific callback was originally introduced due to the
+> > > requirement that the host clock has to be twice the bus clock on
+> > > DDR50
+> > > mode. As far as I can tell the only effect the removal has on DDR50
+> > > mode
+> > > is in cases where the parent clock is unable to supply the
+> > > requested
+> > > clock rate, causing the DDR50 mode to run at a lower frequency.
+> > > Currently the DDR50 mode isn't enabled on any of the SoCs and would
+> > > also
+> > > require configuring the SDHCI clock divider register to function
+> > > properly.
+> > > 
+> > > The problem with tegra_sdhci_get_max_clock is that it divides the
+> > > clock
+> > > rate by two and thus artificially limits the maximum frequency of
+> > > faster
+> > > signaling modes which don't have the host-bus frequency ratio
+> > > requirement
+> > > of DDR50 such as SDR104 and HS200. Furthermore, the call to
+> > > clk_round_rate() may return an error which isn't handled by
+> > > tegra_sdhci_get_max_clock.
+> > > 
+> > > Signed-off-by: Aapo Vienamo <avienamo@nvidia.com>  
 > > 
+> > Thanks, applied for next!
+> > 
+> > Kind regards
+> > Uffe
+> >   
+> > > ---
+> > >  drivers/mmc/host/sdhci-tegra.c | 15 ++-------------
+> > >  1 file changed, 2 insertions(+), 13 deletions(-)
+> > > 
+> > > diff --git a/drivers/mmc/host/sdhci-tegra.c
+> > > b/drivers/mmc/host/sdhci-tegra.c
+> > > index 970d38f6..c8745b5 100644
+> > > --- a/drivers/mmc/host/sdhci-tegra.c
+> > > +++ b/drivers/mmc/host/sdhci-tegra.c
+> > > @@ -234,17 +234,6 @@ static void
+> > > tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+> > >         sdhci_set_uhs_signaling(host, timing);
+> > >  }
+> > > 
+> > > -static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host
+> > > *host)
+> > > -{
+> > > -       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> > > -
+> > > -       /*
+> > > -        * DDR modes require the host to run at double the card
+> > > frequency, so
+> > > -        * the maximum rate we can support is half of the module
+> > > input clock.
+> > > -        */
+> > > -       return clk_round_rate(pltfm_host->clk, UINT_MAX) / 2;
+> > > -}
+> > > -
+> > >  static void tegra_sdhci_set_tap(struct sdhci_host *host, unsigned
+> > > int tap)
+> > >  {
+> > >         u32 reg;
+> > > @@ -309,7 +298,7 @@ static const struct sdhci_ops tegra_sdhci_ops =
+> > > {
+> > >         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+> > >         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+> > >         .voltage_switch = tegra_sdhci_voltage_switch,
+> > > -       .get_max_clock = tegra_sdhci_get_max_clock,
+> > > +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+> > >  };
+> > > 
+> > >  static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
+> > > @@ -357,7 +346,7 @@ static const struct sdhci_ops
+> > > tegra114_sdhci_ops = {
+> > >         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+> > >         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+> > >         .voltage_switch = tegra_sdhci_voltage_switch,
+> > > -       .get_max_clock = tegra_sdhci_get_max_clock,
+> > > +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
+> > >  };
+> > > 
+> > >  static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+> > > --
+> > > 2.7.4  
 > 
-> The code reads differently. Did you perhaps mean TSS_task_stack?
+> Hm, for us this definitely breaks stuff. While using Stefan's patch set
+> [1] we may not only run eMMC at DDR52 even SD cards run stable at
+> SDR104. With this patch however the clock gets crippled to 45.33 resp.
+> 48 MHz always. This is observed both on Apalis/Colibri T30 as well as
+> Apalis TK1.
 
-Well, the offset name came from TSS_sysenter_sp0, which was the offset
-from the sysenter_sp0 (==sysenter-stack) to the task stack in TSS, now
-sysenter_sp0 became entry_stack, because its used for all entry points
-and not only sysenter. So with the old convention the naming makes still
-sense, no?
+Well, strictly speaking this isn't a regression as DDR52/50 modes were
+not enable at the time when the patch was applied. However, these issues
+should be addressed properly none the less.
 
-> Also, the “top of task stack” is a bit weird on 32-bit due to vm86.
-> Can you document *exactly* what goes in sp1?
+The patch was written in preparation of implementing support for higher
+speed modes like HS200 and HS400, where limiting the max_clock like that
+isn't an option. Some other solution than reverting the patch has to be
+found.
 
-Will do, thanks for your feedback!
+> Current next-20180712 just with Stefan's 3 patches:
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc1/ios 
+> clock:          48000000 Hz
+> actual clock:   45333333 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      3 (8 bits)
+> timing spec:    8 (mmc DDR52)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk1
+> 
+> /dev/mmcblk1:
+>  Timing buffered disk reads: 218 MB in  3.03 seconds =  71.95 MB/sec
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc2/ios 
+> clock:          48000000 Hz
+> actual clock:   48000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      2 (4 bits)
+> timing spec:    6 (sd uhs SDR104)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk2
+> 
+> /dev/mmcblk2:
+>  Timing buffered disk reads:  66 MB in  3.06 seconds =  21.60 MB/sec
+> 
+> And with this patch reverted it works as expected again:
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc1/ios 
+> clock:          52000000 Hz
+> actual clock:   51000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      3 (8 bits)
+> timing spec:    8 (mmc DDR52)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk1
+> 
+> /dev/mmcblk1:
+>  Timing buffered disk reads: 240 MB in  3.02 seconds =  79.50 MB/sec
+> 
+> root@apalis-t30:~# cat /sys/kernel/debug/mmc2/ios 
+> clock:          204000000 Hz
+> actual clock:   204000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      2 (4 bits)
+> timing spec:    6 (sd uhs SDR104)
+> signal voltage: 1 (1.80 V)
+> driver type:    0 (driver type B)
+> root@apalis-t30:~# hdparm -t /dev/mmcblk2
+> 
+> /dev/mmcblk2:
+>  Timing buffered disk reads: 258 MB in  3.01 seconds =  85.58 MB/sec
+> 
+> [1] https://lore.kernel.org/lkml/20180712073904.4705-1-stefan@agner.ch
 
+The fact that you're getting totally different clocks, especially on
+SDR104, doesn't make much sense. I'll try to reproduce this and track
+down what's going on.
 
-	Joerg
+ -Aapo
+
