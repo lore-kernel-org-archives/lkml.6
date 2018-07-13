@@ -2,121 +2,138 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F6CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B314ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:37:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 207E920873
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:35:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qT3SePYj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207E920873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D31520873
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:37:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D31520873
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731592AbeGMXvt (ORCPT
+        id S1731383AbeGMXye (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 19:51:49 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:35743 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729774AbeGMXvt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 19:51:49 -0400
-Received: by mail-io0-f194.google.com with SMTP id q4-v6so32738105iob.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 16:35:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=LbuajyqVafS+Oe0uGJrsnT4wqPiXVRFSTfmkTnit5WY=;
-        b=qT3SePYjvLFlPgcGsDtTeG5wOek+6Fff0AME4B/qoaS/iNMptN03hbtYFhonUtd+m6
-         issLWguzjzOZZjClJzoHhUKdX8S8v2zOcfrbhP5cyjY+Gguxb/cpy25unXLj+GlckHXi
-         gR4GyCXiYVumG/wYOGhtF96pDzntEgB0O4cpMgsd3YvSLT1mivMx/elyxLT6blG7c8KZ
-         L2zMHl77WSWjd51PxUTFRSa2jRpPD6VbINsUkadJ+phb/wLZIVeJGgMo5ggXrG7dfjMx
-         R6eeEgqs7LXRX79hW2IX9viVVs3fn1Ls3EcYrQr+oO+TYrb5SdweaMuj8SSsquTuTQAD
-         WzNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=LbuajyqVafS+Oe0uGJrsnT4wqPiXVRFSTfmkTnit5WY=;
-        b=a6a8JTs6KXsfTdkt95CXZPgPkUYHkowp1o9+Qoz1pS0C9CXxIX+i31et5u3fLFkn5l
-         Uizinuza88Fl0/fO7QIpYAM9yEUlyteHPMu5YaWflUhUor5lpkvWxZ//15DCVwzLNVaF
-         IK78eZoZzwHQ7hDs36M0X6mTGV6wDYlZodZYgNajtVhKecdB3oZHZQSbr/egZ5bVsdpx
-         I67Zq63dgutg+9fxzp+rUJYx36kfayf79KO0SpeECBt5RhgceHyBrGuARSrr1yM+IO54
-         tiXdBGQFyjdU/acXKWsVCODzi+NDykS1iF3v7I2QHeE9H5j+7owHoHZL6G+TXmNKj5QB
-         Z+Lw==
-X-Gm-Message-State: AOUpUlE4W5KAIj9hCGOh1iESP+Rx2vVh+Xqbc8bDeiqtnUnpv+vlzEHh
-        3wUmHuWDwcAVPIp3Mz9wiikjAIDO1Cl4gnJn6zJIhA==
-X-Google-Smtp-Source: AAOMgpdUFUqOo4sgRcyVgUzHre1Bk/81u8A5MdKzJMBLYdZt5O9bat7KIgrSHBoUI/rz82B4ucfBEDFVOrZOY/OXFBI=
-X-Received: by 2002:a6b:fb04:: with SMTP id h4-v6mr13483672iog.193.1531524900391;
- Fri, 13 Jul 2018 16:35:00 -0700 (PDT)
+        Fri, 13 Jul 2018 19:54:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35368 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727506AbeGMXyd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 19:54:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A728CAD00;
+        Fri, 13 Jul 2018 23:37:42 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+Date:   Sat, 14 Jul 2018 09:37:25 +1000
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "DRI Development" <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Wei Wang <wvw@google.com>, Stefan Agner <stefan@agner.ch>,
+        Andrei Vagin <avagin@openvz.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Yisheng Xie <ysxie@foxmail.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH] kernel.h: Add for_each_if()
+In-Reply-To: <20180711160547.59f086a587c7f3c8d3c40f0f@linux-foundation.org>
+References: <20180709083650.23549-1-daniel.vetter@ffwll.ch> <20180709162509.29343-1-daniel.vetter@ffwll.ch> <20180709163001.8fb8148223a57bc46a13fbda@linux-foundation.org> <20180710075328.GG3008@phenom.ffwll.local> <871scbwfd4.fsf@notabene.neil.brown.name> <CAKMK7uFEYyD2ChWnO_0PS_rkK180dDoQ1g4J0UWRfchnYQxOTA@mail.gmail.com> <20180711160547.59f086a587c7f3c8d3c40f0f@linux-foundation.org>
+Message-ID: <87bmbavhai.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Received: by 2002:ac0:e445:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 16:34:59
- -0700 (PDT)
-In-Reply-To: <20180713224920.GA31566@cmpxchg.org>
-References: <20180712172942.10094-1-hannes@cmpxchg.org> <20180712172942.10094-11-hannes@cmpxchg.org>
- <CAJuCfpHGhSs6upZj0ARng-rE1Nbtcr_XHynZhN7EgGdC16tpPg@mail.gmail.com> <20180713224920.GA31566@cmpxchg.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Fri, 13 Jul 2018 16:34:59 -0700
-Message-ID: <CAJuCfpFe-tfcK3BPZ2Y9AEC56PtYpCc04YPGF+fs=e=RqkW-XA@mail.gmail.com>
-Subject: Re: [RFC PATCH 10/10] psi: aggregate ongoing stall events when
- somebody reads pressure
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>,
-        Vinayak Menon <vinmenon@codeaurora.org>,
-        Christopher Lameter <cl@linux.com>,
-        Mike Galbraith <efault@gmx.de>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 3:49 PM, Johannes Weiner <hannes@cmpxchg.org> wrote:
-> On Fri, Jul 13, 2018 at 03:13:07PM -0700, Suren Baghdasaryan wrote:
->> On Thu, Jul 12, 2018 at 10:29 AM, Johannes Weiner <hannes@cmpxchg.org> wrote:
->> > might want to know about and react to stall states before they have
->> > even concluded (e.g. a prolonged reclaim cycle).
->> >
->> > This patches the procfs/cgroupfs interface such that when the pressure
->> > metrics are read, the current per-cpu states, if any, are taken into
->> > account as well.
->> >
->> > Any ongoing states are concluded, their time snapshotted, and then
->> > restarted. This requires holding the rq lock to avoid corruption. It
->> > could use some form of rq lock ratelimiting or avoidance.
->> >
->> > Requested-by: Suren Baghdasaryan <surenb@google.com>
->> > Not-yet-signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
->> > ---
->>
->> IMHO this description is a little difficult to understand. In essence,
->> PSI information is being updated periodically every 2secs and without
->> this patch the data can be stale at the time when we read it (because
->> it was last updated up to 2secs ago). To avoid this we update the PSI
->> "total" values when data is being read.
->
-> That fix I actually folded into the main patch. We now always update
-> the total= field at the time the user reads to include all concluded
-> events, even if we sampled less than 2s ago. Only the running averages
-> are still bound to the 2s sampling window.
->
-> What this patch adds on top is for total= to include any *ongoing*
-> stall events that might be happening on a CPU at the time of reading
-> from the interface, like a reclaim cycle that hasn't finished yet.
+--=-=-=
+Content-Type: text/plain
 
-Ok, I see now what you mean. So ondemand flag controls whether
-*ongoing* stall events are accounted for or not. Nit: maybe rename
-that flag to better explain it's function?
+On Wed, Jul 11 2018, Andrew Morton wrote:
+
+> On Wed, 11 Jul 2018 13:51:08 +0200 Daniel Vetter <daniel@ffwll.ch> wrote:
+>
+>> But I still have the situation that a bunch of maintainers acked this
+>> and Andrew Morton defacto nacked it, which I guess means I'll keep the
+>> macro in drm? The common way to go about this seems to be to just push
+>> the patch series with the ack in some pull request to Linus and ignore
+>> the people who raised questions, but not really my thing.
+>
+> Heh.
+>
+> But, am I wrong?  Code which uses regular kernel style doesn't have
+> these issues.  We shouldn't be enabling irregular style - we should be
+> making such sites more regular.  The fact that the compiler generates a
+> nice warning in some cases simply helps us with that.
+
+I think you are wrong .... or at least, not completely correct.
+
+I think it is perfectly acceptable in Linux to have code like:
+
+  for (....)
+  	if (x)
+        	something();
+        else
+        	something_else();
+
+Would you agree?  If not, then I'm the one who is wrong.  Otherwise....
+
+The problem is that for certain poorly written for_each_foo() macros,
+such as blkg_for_each_descendant_pre() (and several others identified in
+this patch series), writing
+
+   blkg_for_each_descendant_pre(...)
+     	if (x)
+        	something();
+        else
+        	something_else();
+
+will trigger a compiler warning.  This is inconsistent with the
+behaviour of a simple "for".
+So I do think that the macros should be fixed, and I don't think that
+sprinkling extra braces is an appropriate response.
+
+I'm not personally convinced that writing
+   if_no_else(cond)
+is easier than just writing
+   if (!(cond)); else
+
+in these macros, but I do think that the macros should be fixed and
+maybe this is the path-of-least-resistance to getting it done.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAltJN7cACgkQOeye3VZi
+gblHDhAAj/rcY3vyWl833/lkI0CKhD84dktXAFOnagQGDe8kEJi/EfOhhxiii5Rm
+dTwWsDlSrb0IN0/bZBDcKavMik5RJZRpOPaO/qFZaXwKLVQbjKZGpX8PMraUIzLK
+bvlRdhO73I83/2gzKJmzhvkUFVmUA2LXoFCiU2O4UP+JtPvo1CduzgbP5PjAZ0ca
+IC7ew+NRnj9nbEo8eeqJMoteJNz2+lEzWRBGn1NJ3vTKM4cPPUy7P7EHdZkzuoba
+DBzoRroXJzjP1d+CmG8XmEWwr+CII2o0uv+kO6fGiLFZNF4EXxT3OnBfz7IS051t
+UO4+PJVR8CzgsSl46NHTl14mvYgO+aLIz6S4+aK7RIQr5FXqk6GXMGsT9b6XtUdO
+ebBIoYNmlbgyqjLPaq218+XfTeLfxwrNaBKBt7z5Qrt6oVkv4i0+qCThe0VgNrtp
+uQMBJwLOojdz6mXnikqlHKzjDiD3fnMlxznFsgFWLk1Jt7/5miYHBjnA02H6YR/w
+mqE4Fkutn1q8CQch80Ju/hMlwmll+NfWy8iRdCcn85LfbJYTqRsDpcCA/DodO0al
+hpLZDUkA7io33jLFCDChqO6rfL+fE9Y4NYFSXpc/rmNe2F9fZZqEiwO24THx9UH4
+kxjVnr5bQYMyxlU6HxALsNrd4tps1hhYhHhzok9pT0OddP1DrEM=
+=OSfx
+-----END PGP SIGNATURE-----
+--=-=-=--
