@@ -2,116 +2,124 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16851ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F61ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8E3F208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8E3F208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F9B9208B4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 13:46:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b2qmcL0f";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JAPUA97K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F9B9208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729739AbeGMN5x (ORCPT
+        id S1729731AbeGMOAo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 09:57:53 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55624 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729623AbeGMN5w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 09:57:52 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Fri, 13 Jul 2018 10:00:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56910 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729632AbeGMOAo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 10:00:44 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A4A2C60B81; Fri, 13 Jul 2018 13:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531489560;
+        bh=tZFhWy0SMkwojbek8yTnOyiBzZIFsxBif47kn8AoQJ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=b2qmcL0fmGAjqqQ7jpfY3sky7IDPvMlOGLa2Du37R22raFt4gRdeZH8hh9VZyI7Ha
+         AgMThR0t8e8+3OqeU681B7mHbqa3eHAU4nsogQMMZYkyvUCFUW6VMsai0IRproUlYh
+         ODXcKQMAEKuwPcb1BznercW+FOtltqN4yB4xQRbc=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2E5287DAC8;
-        Fri, 13 Jul 2018 13:43:09 +0000 (UTC)
-Received: from llong.com (dhcp-17-175.bos.redhat.com [10.18.17.175])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 50FC310FFE54;
-        Fri, 13 Jul 2018 13:43:06 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Arnd Bergmann <arnd@arndb.de>, chuhu@redhat.com,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH] debugobjects: Disable lockdep tracking of debugobjects internal locks
-Date:   Fri, 13 Jul 2018 09:42:27 -0400
-Message-Id: <1531489347-26826-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 13 Jul 2018 13:43:09 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 13 Jul 2018 13:43:09 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 797F360227;
+        Fri, 13 Jul 2018 13:45:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531489559;
+        bh=tZFhWy0SMkwojbek8yTnOyiBzZIFsxBif47kn8AoQJ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=JAPUA97KRdoCaDhTNJOYM5P7j3ImKjIsFZ2FsqvT+ErOBknzAw/QhZdBTk3y5ifCU
+         Sv+25tVSz57pKI/VYAP1ENVyxuZzRzSAMJsr9XJX1boykofBi9kbDL29zPlU7WBnFp
+         ZGbD/jyJbXpQhPVgTn6jxbtmlRxNyr1611mJ5Kyk=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 797F360227
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   Raju P L S S S N <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
+        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH] drivers: qcom: rpmh: fix unwanted error check for get_tcs_of_type()
+Date:   Fri, 13 Jul 2018 19:15:46 +0530
+Message-Id: <1531489546-21577-1-git-send-email-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It was discovered that running the ltp openposix_testsuite sigqueue-09-1
-test on a certain 8-sock IvyBridge system caused it to have a hard lockup
-with a full debug kernel.
+From: "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
 
- [89981.861500] NMI watchdog: Watchdog detected hard LOCKUP on cpu 17
-   :
- [89981.939812] irq event stamp: 1166122
- [89981.943799] hardirqs last  enabled at (1166121): [<ffffffffb1048342>] kprobe_ftrace_handler+0x52/0x170
- [89981.954215] hardirqs last disabled at (1166122): [<ffffffffb08a3725>] tasklist_write_lock_irq+0x15/0x50
-   :
- [89982.103134]  [<ffffffffb093a399>] lock_acquire+0x99/0x1e0
- [89982.109163]  [<ffffffffb0c0d19b>] ? debug_check_no_obj_freed+0xfb/0x270
- [89982.116562]  [<ffffffffb1042e1e>] _raw_spin_lock_irqsave+0x5e/0xa0
- [89982.123470]  [<ffffffffb0c0d19b>] ? debug_check_no_obj_freed+0xfb/0x270
- [89982.130851]  [<ffffffffb0c0d19b>] debug_check_no_obj_freed+0xfb/0x270
- [89982.138045]  [<ffffffffb08bf9f3>] ? __sigqueue_free.part.11+0x33/0x40
- [89982.145239]  [<ffffffffb0a6868a>] kmem_cache_free+0xca/0x390
- [89982.151553]  [<ffffffffb08bf9f3>] __sigqueue_free.part.11+0x33/0x40
- [89982.158552]  [<ffffffffb08c07b0>] flush_sigqueue+0x50/0x60
- [89982.164673]  [<ffffffffb08ad102>] release_task+0x3e2/0x6d0
-   :
+The patch fixes the bug reported by Dan Carpenter.
+It removes the unnecessary err check for ‘tcs’ reported by
+static checker warning:
 
-IRQ was disabled by the tasklist_write_lock_irq() call in
-release_task(). The lockup is probably caused by the debug code running
-for too long. We certainly want the debug code to verify the correctness
-of the production code. However, there may not have too much value for
-one piece of the debug code to verify the correctness of another piece
-of debug code. In this particular case, the lockdep code is verifying
-the correctness of the raw debug bucket lock within the debugobjects
-code.
+drivers/soc/qcom/rpmh-rsc.c:111 tcs_invalidate()
+warn: 'tcs' isn't an ERR_PTR
+See also:
+drivers/soc/qcom/rpmh-rsc.c:178 get_tcs_for_msg() warn: 'tcs' isn't
+an ERR_PTR
+drivers/soc/qcom/rpmh-rsc.c:180 get_tcs_for_msg() warn: 'tcs' isn't
+an ERR_PTR
 
-The use of spin locks in the debugobjects code for synchronization is
-pretty standard and looks to be correct to me. So it is probably not
-worth the effort to verify lock usage within the debugobjects code.
+https://www.spinics.net/lists/linux-soc/msg04624.html
 
-This patch disables the checking of the debugobjects internal locks by
-lockdep. In fact, with this change, the hard lockup was not observed
-anymore.
-
-Signed-off-by: Waiman Long <longman@redhat.com>
+Fixes: 48dbb0f02d34 ("drivers: qcom: rpmh-rsc: allow invalidation
+of sleep/wake TCS")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
 ---
- lib/debugobjects.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/soc/qcom/rpmh-rsc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/lib/debugobjects.c b/lib/debugobjects.c
-index 994be48..592d2ba 100644
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -1103,8 +1103,15 @@ void __init debug_objects_early_init(void)
- {
- 	int i;
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index 098feb9..fefda0f 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -107,8 +107,6 @@ static int tcs_invalidate(struct rsc_drv *drv, int type)
+ 	struct tcs_group *tcs;
  
--	for (i = 0; i < ODEBUG_HASH_SIZE; i++)
-+	/*
-+	 * We don't need lockdep to verify correctness of debugobjects
-+	 * internal locks.
-+	 */
-+	lockdep_set_novalidate_class(&pool_lock);
-+	for (i = 0; i < ODEBUG_HASH_SIZE; i++) {
- 		raw_spin_lock_init(&obj_hash[i].lock);
-+		lockdep_set_novalidate_class(&obj_hash[i].lock);
-+	}
+ 	tcs = get_tcs_of_type(drv, type);
+-	if (IS_ERR(tcs))
+-		return PTR_ERR(tcs);
  
- 	for (i = 0; i < ODEBUG_POOL_SIZE; i++)
- 		hlist_add_head(&obj_static_pool[i].node, &obj_pool);
+ 	spin_lock(&tcs->lock);
+ 	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
+@@ -174,9 +172,9 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+ 	 * TCSes before making an active state request.
+ 	 */
+ 	tcs = get_tcs_of_type(drv, type);
+-	if (msg->state == RPMH_ACTIVE_ONLY_STATE && IS_ERR(tcs)) {
++	if (msg->state == RPMH_ACTIVE_ONLY_STATE && !tcs->num_tcs) {
+ 		tcs = get_tcs_of_type(drv, WAKE_TCS);
+-		if (!IS_ERR(tcs)) {
++		if (tcs->num_tcs) {
+ 			ret = rpmh_rsc_invalidate(drv);
+ 			if (ret)
+ 				return ERR_PTR(ret);
 -- 
-1.8.3.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
 
