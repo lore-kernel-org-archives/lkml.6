@@ -6,60 +6,73 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E09DECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6071ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24A3120871
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:33:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24A3120871
+	by mail.kernel.org (Postfix) with ESMTP id AB326208CE
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 10:34:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB326208CE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729725AbeGMKrw (ORCPT
+        id S1729736AbeGMKs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 06:47:52 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:52332 "EHLO
+        Fri, 13 Jul 2018 06:48:26 -0400
+Received: from orcrist.hmeau.com ([104.223.48.154]:52356 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727147AbeGMKrv (ORCPT
+        with ESMTP id S1727147AbeGMKs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 06:47:51 -0400
+        Fri, 13 Jul 2018 06:48:26 -0400
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fdvOG-00085S-Fo; Fri, 13 Jul 2018 18:33:32 +0800
+        id 1fdvOw-00086p-V3; Fri, 13 Jul 2018 18:34:15 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fdvOF-0007Dk-Cs; Fri, 13 Jul 2018 18:33:31 +0800
-Date:   Fri, 13 Jul 2018 18:33:31 +0800
+        id 1fdvOs-0007EE-9n; Fri, 13 Jul 2018 18:34:10 +0800
+Date:   Fri, 13 Jul 2018 18:34:10 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Harsh Jain <harsh@chelsio.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: chtls - use 64-bit arithmetic instead of 32-bit
-Message-ID: <20180713103331.5574mnd4ecjson7n@gondor.apana.org.au>
-References: <20180704163720.GA16912@embeddedor.com>
+To:     Stephan =?iso-8859-1?Q?M=FCller?= <smueller@chronox.de>
+Cc:     syzbot <syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com>,
+        davem@davemloft.net, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v4] AF_ALG: Initialize sg_num_bytes in error code path
+Message-ID: <20180713103410.5ox6imgi75w47kpv@gondor.apana.org.au>
+References: <00000000000092ad87056950ef9e@google.com>
+ <1612449.5GibSviISC@positron.chronox.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20180704163720.GA16912@embeddedor.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1612449.5GibSviISC@positron.chronox.de>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 04, 2018 at 11:37:20AM -0500, Gustavo A. R. Silva wrote:
-> Cast *val* to u64 in order to give the compiler complete
-> information about the proper arithmetic to use.
+On Sat, Jul 07, 2018 at 08:41:47PM +0200, Stephan Müller wrote:
+> Changes v4:
+> * Add Fixes and CC line
 > 
-> Notice that such variable is used in a context that expects an
-> expression of type u64 (64 bits, unsigned) and the following
-> expression is currently being evaluated using 32-bit arithmetic:
+> Changes v3:
+> * Fix syz testing line
 > 
-> val << bit_pos
+> Changes v2:
+> * Addition of syz testing line
 > 
-> Addresses-Coverity-ID: 1467425 ("Unintentional integer overflow")
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> ---8<---
+> 
+> The RX SGL in processing is already registered with the RX SGL tracking
+> list to support proper cleanup. The cleanup code path uses the
+> sg_num_bytes variable which must therefore be always initialized, even
+> in the error code path.
+> 
+> Signed-off-by: Stephan Mueller <smueller@chronox.de>
+> Reported-by: syzbot+9c251bdd09f83b92ba95@syzkaller.appspotmail.com
+> #syz test: https://github.com/google/kmsan.git master
+> CC: <stable@vger.kernel.org> #4.14
+> Fixes: e870456d8e7c ("crypto: algif_skcipher - overhaul memory management")
+> Fixes: d887c52d6ae4 ("crypto: algif_aead - overhaul memory management")
 
 Patch applied.  Thanks.
 -- 
