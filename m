@@ -2,98 +2,132 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57D52ECDFAA
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 377E8ECDFAA
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D8AB214AB
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:17:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D8AB214AB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id DC549214AB
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 02:21:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="gBsa3UPN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC549214AB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388082AbeGMCaL (ORCPT
+        id S2388074AbeGMCeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 22:30:11 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:1226 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387972AbeGMCaL (ORCPT
+        Thu, 12 Jul 2018 22:34:09 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:38595 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388021AbeGMCeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 22:30:11 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b480b9f0001>; Thu, 12 Jul 2018 19:17:03 -0700
-Received: from HQMAIL105.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 12 Jul 2018 19:17:48 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 12 Jul 2018 19:17:48 -0700
-Received: from [10.2.167.205] (10.2.167.205) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 13 Jul
- 2018 02:17:47 +0000
-Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
- remove it for ordinary release/acquire
-To:     Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-References: <Pine.LNX.4.44L0.1807091519180.2462-100000@iolanthe.rowland.org>
- <20180710093821.GA5414@andrea> <20180711094310.GA13963@arm.com>
- <20180711123421.GA9673@andrea>
- <20180712074040.GA4920@worktop.programming.kicks-ass.net>
- <20180712093432.GV2512@hirez.programming.kicks-ass.net>
- <20180712094510.GA23415@arm.com>
-From:   Daniel Lustig <dlustig@nvidia.com>
-Message-ID: <96aa1571-d9b9-9554-7017-d173e1a795e9@nvidia.com>
-Date:   Thu, 12 Jul 2018 19:17:46 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20180712094510.GA23415@arm.com>
-X-Originating-IP: [10.2.167.205]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL105.nvidia.com (172.20.187.12)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 12 Jul 2018 22:34:09 -0400
+Received: by mail-pg1-f196.google.com with SMTP id k3-v6so4468718pgq.5
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 19:21:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=VMG98WkTF/mPvmh0b4ZGZibMeOHdZxDMpo96QUx+54Q=;
+        b=gBsa3UPN96SxMI/gVLHmOB3r3xQrFYHl+Y8KlJy+B2X818xJkTBTlmp56gYg9ICowf
+         8BVhqjSal6A76Q4QKd1doUr3db+iDI75H5Jfo7qaay1nMdM6MutIjAeU3ut3AokwtrDY
+         wcDvdXfAzqai9JGkmVd+D10lH+s0Ect9F0tzWPu9LMVG/3+EhvlfLp/bwE4TwHkvKm1j
+         kh/sZxOI6k0S1H2Fw8nzyUumS1ywKUOxABt4+0KPcbVL02COwiia+OHBWYhrcR332XPI
+         5X0UK6iyqGRpKoaubmSexjD9UMVuA7v0GYmkoXUFMkYTAdeie72GZDBm5qXfG4Y/dWaM
+         El1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=VMG98WkTF/mPvmh0b4ZGZibMeOHdZxDMpo96QUx+54Q=;
+        b=GehH7sr9sXZBn2popFTmaBMPBD+NWtcyUZbuQIM7Y8s+hA9nFLdrnp4OWTREPwvcrx
+         K17W+8CSKBTJPdW2vI26RvdXgeF50Oh0Y8BwmeXT55ke6nnWQj5W60EKIamWMWA0C6Yx
+         rjE9xZtg3/Ticqo7/qubX1bgNJWoOeZePG+NQ2KqdDhx/6NCrrzHnHCR8aAq5g/SOCZX
+         YbesKf6WVbbj2jYT0ZwAnML6L0bKq3/thXP+YnjUCxTrIN33LwD4UzdU1e9y4gTYMAqm
+         /syTOMpUstYe734dvMmitu+4Z96UFfAITfnOten+Iwuu/XW6hmNZbrOyh45ZxIZLADLv
+         Ljng==
+X-Gm-Message-State: AOUpUlHiF8H8cyFgmEB1TmW/3s2nlaKo0Xb2wzPqifiXdZyGOPaO7tFD
+        b31Z84ZMiUbcIfNqX+6SmvMIvA==
+X-Google-Smtp-Source: AAOMgpfGMw8dfnxP2DIYRSVsrRbQp6mwqxV7HfhqrbJs7jULkqYDJkgjsLFNGjRuGS6DZEvX2lPvQg==
+X-Received: by 2002:a62:404e:: with SMTP id n75-v6mr4937887pfa.232.1531448505785;
+        Thu, 12 Jul 2018 19:21:45 -0700 (PDT)
+Received: from ?IPv6:2600:1011:b01e:e4d1:54df:ba07:cac1:aeab? ([2600:1011:b01e:e4d1:54df:ba07:cac1:aeab])
+        by smtp.gmail.com with ESMTPSA id n18-v6sm62228505pfa.50.2018.07.12.19.21.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Jul 2018 19:21:44 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (15F79)
+In-Reply-To: <167645aa-f1c7-bd6a-c7e0-2da317cbbaba@intel.com>
+Date:   Thu, 12 Jul 2018 19:21:42 -0700
+Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <55A0592D-0E8D-4BC5-BA4B-E82E92EEA36A@amacapital.net>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com> <20180710222639.8241-19-yu-cheng.yu@intel.com> <bbb487cc-ac1c-f734-eee3-2463a0ba7efc@linux.intel.com> <1531436398.2965.18.camel@intel.com> <46784af0-6fbb-522d-6acb-c6248e5e0e0d@linux.intel.com> <167645aa-f1c7-bd6a-c7e0-2da317cbbaba@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/12/2018 2:45 AM, Will Deacon wrote:
-> On Thu, Jul 12, 2018 at 11:34:32AM +0200, Peter Zijlstra wrote:
->> On Thu, Jul 12, 2018 at 09:40:40AM +0200, Peter Zijlstra wrote:
->>> And I think if we raise atomic*_acquire() to require TSO (but ideally
->>> raise it to RCsc) we're there.
->>
->> To clarify, just the RmW-acquire. Things like atomic_read_acquire() can
->> stay smp_load_acquire() and be RCpc.
-> 
-> I don't have strong opinions about strengthening RmW atomics to TSO, so
-> if it helps to unblock Alan's patch (which doesn't go near this!) then I'll
-> go with it. The important part is that we continue to allow roach motel
-> into the RmW for other accesses in the non-fully-ordered cases.
-> 
-> Daniel -- your AMO instructions are cool with this, right? It's just the
-> fence-based implementations that will need help?
-> 
-> Will
-Right, let me pull this part out of the overly-long response I just gave
-on the thread with Linus :)
 
-if we pair AMOs with AMOs, we get RCsc, and everything is fine.  If we
-start mixing in fences (mostly because we don't currently have native
-load-acquire or store-release opcodes), then that's when all the rest of the
-complexity comes in.
 
-Dan
+> On Jul 12, 2018, at 6:50 PM, Dave Hansen <dave.hansen@intel.com> wrote:
+>=20
+> On 07/12/2018 04:49 PM, Dave Hansen wrote:
+>>>> That seems like something we need to call out if so.  It also means we
+>>>> need to update the SDM because some of the text is wrong.
+>>> It needs to mention the WRUSS case.
+>> Ugh.  The documentation for this is not pretty.  But, I guess this is
+>> not fundamentally different from access to U=3D1 pages when SMAP is in
+>> place and we've set EFLAGS.AC=3D1.
+>=20
+> I was wrong and misread the docs.  We do not get X86_PF_USER set when
+> EFLAGS.AC=3D1.
+>=20
+> But, we *do* get X86_PF_USER (otherwise defined to be set when in ring3)
+> when running in ring0 with the WRUSS instruction and some other various
+> shadow-stack-access-related things.  I'm sure folks had a good reason
+> for this architecture, but it is a pretty fundamentally *new*
+> architecture that we have to account for.
+
+I think it makes (some) sense. The USER bit is set for a page fault that was=
+ done with user privilege. So a descriptor table fault at CPL 3 has USER cle=
+ar (regardless of the cause of the fault) and WRUSS has USER set.
+
+>=20
+> This new architecture is also not spelled out or accounted for in the
+> SDM as of yet.  It's only called out here as far as I know:
+> https://software.intel.com/sites/default/files/managed/4d/2a/control-flow-=
+enforcement-technology-preview.pdf
+>=20
+> Which reminds me:  Yu-cheng, do you have a link to the docs anywhere in
+> your set?  If not, you really should.
+
+I am tempted to suggest that the whole series not be merged until there are a=
+ctual docs. It=E2=80=99s not a fantastic precedent.=
