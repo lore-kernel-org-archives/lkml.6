@@ -2,110 +2,108 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E982ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:57:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD4EECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D77792084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:57:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B7ED208A4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 19:00:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIwznp45"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77792084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dfp0yIJa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B7ED208A4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732386AbeGMTNJ (ORCPT
+        id S1731868AbeGMTQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 15:13:09 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:35632 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731542AbeGMTNI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 15:13:08 -0400
-Received: by mail-lf0-f65.google.com with SMTP id f18-v6so11884673lfc.2;
-        Fri, 13 Jul 2018 11:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=P5bwKP90FxuGsbIamriATsUfx03y6err+e3eZI9BP/s=;
-        b=IIwznp45gcyz6TQtsRwi0gf4tJ1Ibl9s4U0M5EaG0+VbZ13pActolxSZgA8X54lUER
-         VYOu6M1+GZ1HgMahMzVCt6MGVmb1HeOMO5iDliuqxlVrIFaTdtJrPNpuwuCXDd50dC8e
-         SZor50z/ZkENUgPr8O/ok2MjVs5v6zr5UhcUZewaAYDbeJx0FQZxT/uQyElUGUUnPMuW
-         M7xQhsrcdQw5eDI8ZgoHl+mqTqWmHc1VsDWDLQzuonkOh/avySLehPk2xeols7VzB7/T
-         F5XvShcDGLlHC0iR5N5tlHVjyH9iGOfid7rfvcFoutYMayYDMWc4fMJbnPvieurzhtA3
-         4aHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=P5bwKP90FxuGsbIamriATsUfx03y6err+e3eZI9BP/s=;
-        b=F3XvtvlfbXwPY/Qs7GBFdyiUEXQl0YM5fbXPdJdjzU9ZFq4SfzCWCFdQqO3QvaTBAX
-         XCW8di7QVpYcY0SRPeribpjTovSHUfSHOfTXqjIsDdNnxpsRIkW08f9q7PVxm1tuYSn1
-         WjReABlWaec+iABboJgJtsersj/1SPla5IsXuUZysq320glBfs266My86CwbH9SkTfrI
-         1OeB6BVXy250V7foNT0CJ4NYLsnAVChptNyCHleBH4SmJcuEk6O4JPdXds7OwVwr4IZu
-         Gpi5MZqkZZXiOK97ocaJZJk2O3lVwei+scNXOxIZkdTbQA81c+L6gsaKZ4pyHlutA+99
-         PTRw==
-X-Gm-Message-State: AOUpUlF5K1TPAv1UO0oP21x1M8G2CIlZxdKJ2lHD/jcwVFya3svu0E9T
-        ms4NXoVlrS1dMSNABx1Avlnb1tm1Dn8eyOx9bAU=
-X-Google-Smtp-Source: AAOMgpfgH07CtoKj4rJhXgDXP8cyXoYWt9JB4wWRoSKWyZ9qq6guQS8UgLccvCGQoeE1Kr0EM1GqcG2VFagjBu7CqHg=
-X-Received: by 2002:a19:a705:: with SMTP id q5-v6mr6201471lfe.148.1531508234518;
- Fri, 13 Jul 2018 11:57:14 -0700 (PDT)
+        Fri, 13 Jul 2018 15:16:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40396 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731261AbeGMTQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 15:16:00 -0400
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68E6A208E2
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 19:00:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1531508406;
+        bh=wCj4E/GRmkGhDP2XocWWGrkQj7s61gwkL4GRxxfn1Dc=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=Dfp0yIJaVS+rbrY8+1k/vFGBki5dYddRmoT88nEqSVw6bMmGJAQlxHE7Fg1c+isVA
+         YIkDzpfi0hIMSY1k1Dy9kTJuaBWxsgL6BQvgCi2v5ZFJWJawgrR00T0XHCR2iQjTpV
+         eeZcKfKl9t5xUylhXpSORdVYAeBpX4WtV6E6wAuE=
+Received: by mail-wr1-f44.google.com with SMTP id b15-v6so26105781wrv.10
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 12:00:06 -0700 (PDT)
+X-Gm-Message-State: AOUpUlG0CI3/O/W/RzD100phIu+r9LrNc4Izpb8KRE6Y5CycpTgBUXd2
+        55t7fT/TXnbnKz2j834DJvWocHsC+W8rFyHxYy0bHA==
+X-Google-Smtp-Source: AAOMgpfWFqGYZwlC17CfBB5LJncGJiknZtsAT+glCSdzMDUscy2omCNMrp0yLfIVaTDgTx5bo9HLoi3VL1/qRG9rxqE=
+X-Received: by 2002:adf:e0cc:: with SMTP id e12-v6mr5628140wri.199.1531508404809;
+ Fri, 13 Jul 2018 12:00:04 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 11:57:13
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 11:59:44
  -0700 (PDT)
-In-Reply-To: <83724892-de0f-40ff-e16a-792a90d77ff1@suse.de>
-References: <20180622134907.227131-1-arnd@arndb.de> <b5de0a86-b3cd-9e45-ac39-9c4eb7611016@suse.de>
- <CAK8P3a3FULT7uakRyZ4Nfq3E-ij+Gkn06=XP4Rn2m9u4Wd2OWA@mail.gmail.com> <83724892-de0f-40ff-e16a-792a90d77ff1@suse.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 13 Jul 2018 20:57:13 +0200
-X-Google-Sender-Auth: AlGBCZrjuhL-Il6roEucg5M4dqY
-Message-ID: <CAK8P3a0GDUpXQ8WnS6ake2AuAu0Q1gZg+hFQVPgXCBqQ1sS+jw@mail.gmail.com>
-Subject: Re: [PATCH] [v2] bcache: stop using the deprecated get_seconds()
-To:     Coly Li <colyli@suse.de>
-Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Michael Lyle <mlyle@lyle.org>,
-        Tang Junhui <tang.junhui@zte.com.cn>,
-        Hannes Reinecke <hare@suse.com>, linux-bcache@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <1531308586-29340-39-git-send-email-joro@8bytes.org>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org> <1531308586-29340-39-git-send-email-joro@8bytes.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 13 Jul 2018 11:59:44 -0700
+X-Gmail-Original-Message-ID: <CALCETrUTMwwKW6b3dubyC62Rk-_BTQN1zjFOYuLvS13EQ80p9A@mail.gmail.com>
+Message-ID: <CALCETrUTMwwKW6b3dubyC62Rk-_BTQN1zjFOYuLvS13EQ80p9A@mail.gmail.com>
+Subject: Re: [PATCH 38/39] x86/mm/pti: Add Warning when booting on a PCID
+ capable CPU
+To:     Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Juergen Gross <jgross@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Brian Gerst <brgerst@gmail.com>,
+        David Laight <David.Laight@aculab.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        "Liguori, Anthony" <aliguori@amazon.com>,
+        Daniel Gruss <daniel.gruss@iaik.tugraz.at>,
+        Hugh Dickins <hughd@google.com>,
+        Kees Cook <keescook@google.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Waiman Long <llong@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        "David H . Gutteridge" <dhgutteridge@sympatico.ca>,
+        Joerg Roedel <jroedel@suse.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 5:34 PM, Coly Li <colyli@suse.de> wrote:
-> On 2018/7/13 10:20 PM, Arnd Bergmann wrote:
->> On Sat, Jun 23, 2018 at 10:12 AM, Coly Li <colyli@suse.de> wrote:
-
->>> Added to 4.19 for-next.
->>
->> I noticed this isn't part of linux-next (yet). Did it get dropped?
->>
->>       Arnd
->>
-> Hi Arnd,
+On Wed, Jul 11, 2018 at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
+> From: Joerg Roedel <jroedel@suse.de>
 >
-> It is here,
-> https://git.kernel.org/pub/scm/linux/kernel/git/colyli/bcache-patches.git/tree/for-next/0004-bcache-stop-using-the-deprecated-get_seconds.patch
+> Warn the user in case the performance can be significantly
+> improved by switching to a 64-bit kernel.
 
-Ok, thanks for the confirmation!
+...
 
-> It is for Linux v4.19, the merge window is not available yet, and I
-> don't post them to Jens yet.
+> +#ifdef CONFIG_X86_32
+> +       if (boot_cpu_has(X86_FEATURE_PCID)) {
 
-That sounds like an odd way to handle your patches. Normally all patches
-should be part of linux-next *before* the merge window so they get tested
-as part of the linux-next kernel before the pull request to Linus is sent.
+I'm a bit confused. Wouldn't the setup_clear_cpu_cap() call in
+early_identify_cpu() prevent this from working?
 
-It's not important for me for this particular patch, but generally speaking,
-the Documentation/process/2.Process.rst states:
+Boris, do we have a straightforward way to ask "does the CPU advertise
+this feature in CPUID regardless of whether we have it enabled right
+now"?
 
-"all patches merged during a given merge window should really have found
-their way into linux-next some time before the merge window opens."
-
-      Arnd
+--Andy
