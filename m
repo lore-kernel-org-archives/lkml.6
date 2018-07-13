@@ -2,138 +2,167 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=FAKE_REPLY_C,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79091ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1054AECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 388CE2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:11:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388CE2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id B17D92089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 16:12:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qQtZmy+u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B17D92089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sai.msu.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731555AbeGMQ1L (ORCPT
+        id S1731956AbeGMQ1X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 12:27:11 -0400
-Received: from nautica.notk.org ([91.121.71.147]:36771 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729736AbeGMQ1L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 12:27:11 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id BBEC6C009; Fri, 13 Jul 2018 18:11:53 +0200 (CEST)
-Date:   Fri, 13 Jul 2018 18:11:38 +0200
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Himanshu Jha <himanshujha199640@gmail.com>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        linux-kernel@vger.kernel.org, cocci@systeme.lip6.fr,
-        Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>,
-        yamada.masahiro@socionext.com
-Subject: Re: [Cocci] [PATCH 01/18] coccinelle: change strncpy+truncation to
- strlcpy
-Message-ID: <20180713161138.GA17418@nautica>
+        Fri, 13 Jul 2018 12:27:23 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:34543 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729765AbeGMQ1X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 12:27:23 -0400
+Received: by mail-oi0-f67.google.com with SMTP id 13-v6so63190482ois.1;
+        Fri, 13 Jul 2018 09:12:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=eelG9iYJJv+66k6Bki84DNMMVvKoUSpQKhQJutGFxt0=;
+        b=qQtZmy+uA3Xcl7tFVV3rB2d84asZgevXZaVAZfC2ttyJXL+yDNuaEUWJP73OlrEZDs
+         EL8zkrVbbhWis+s67CyvigS7tz8QgKpWfnc3ctU/eZhXqF0LlbCyCZ8egqeVtuLqsv8Z
+         VQ3c8n+jtMlD7ajzL1xuATqIk1nNCGdf/AoeJpeGcW4s8TTtozfSG/4gRuGm4np1a+pl
+         6foV8SU6K01yoSyouvEf4eBgUoWzHNlVUTWsLiUwAS2Bey3F2q5yNUUPjoWHHT2B9Idm
+         Dmhd85s/vZ7zcX7DbCCp6f1mCbJf7jLWHgAje6A6ezRnwc8HDOhiJ6WABUMhBWDVwKLl
+         iQAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=eelG9iYJJv+66k6Bki84DNMMVvKoUSpQKhQJutGFxt0=;
+        b=grolVdc+2eFF0kIAPuoA7PV4SXo/kLnNjRiH0sOsSpLDQnaprmeekKv6Lwp3RsXTpR
+         3+EVNoDyVLPTpVGU77bvGTXHtrj4LSVZS2JZBuWYbc3ycDdN1lFvLFuTW+wwzMPbsAXi
+         OK3hO2cib0cY4gFuIxBrPE+YiUsdOxQ58nVx3PpQk6cht0vPWZE5z3K0JFLX+40Cz+GF
+         yc4WzXfBXVPzmy6HJ6zR6FZNQSj+YmcWTmibuGY55OL2Mou2Q7oL6H4aGWvC9rKcoH8S
+         EgXR7PqvTONkea2gIBkSYFyNKsUKsJJD68A9HzLUxYGJv2fcB747yWkEvuWWiy8uxBxF
+         SRdw==
+X-Gm-Message-State: AOUpUlENVKdqlCdu2RAocdcArV4N4NHNOxD7mlcdBkj481mOpPCuKxZu
+        JYx9ofGhDpv5RBqyDe4wnIsrGFoQoa7o96Fgw+8=
+X-Google-Smtp-Source: AAOMgpfpiRqZB+kuBCu7RlqBGX4On5T5BQS8iWbWgTEK0X3UX0BnDoudsxUlE1Fulumj18aYibd/qn7FB3ZRfOVK2AE=
+X-Received: by 2002:aca:578b:: with SMTP id l133-v6mr7931490oib.329.1531498325950;
+ Fri, 13 Jul 2018 09:12:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.20.1807130647460.3063@hadrien>
- <20180713091412.GA11250@himanshu-Vostro-3559>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a9d:734:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 09:11:45 -0700 (PDT)
+In-Reply-To: <20180622120419.7675-3-matwey@sai.msu.ru>
+References: <20180622120419.7675-1-matwey@sai.msu.ru> <20180622120419.7675-3-matwey@sai.msu.ru>
+From:   "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Date:   Fri, 13 Jul 2018 19:11:45 +0300
+X-Google-Sender-Auth: XaoVtY-KnAbEzpWnHATXC-6oajk
+Message-ID: <CAJs94EbjUMRQSz+nnuUOX3TuQoGqUDo=-VQrXEbCgsZLZboniQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] media: usb: pwc: Don't use coherent DMA buffers
+ for ISO transfer
+To:     hverkuil@xs4all.nl, mchehab@kernel.org
+Cc:     "Matwey V. Kornilov" <matwey@sai.msu.ru>,
+        Steven Rostedt <rostedt@goodmis.org>, mingo@redhat.com,
+        Mike Isely <isely@pobox.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        Colin King <colin.king@canonical.com>,
+        linux-media@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Himanshu Jha wrote on Fri, Jul 13, 2018:
-> Try this:
-> 
-> $ spatch -D patch --sp-file strlcopy.cocci --very-quiet drivers/net/wireless/ti/wl1251/acx.c
-> 
-> ---------------------------------------------------------------------
-> virtual patch
-> 
-> @depends on patch@
-> expression dest, src, sz; 
-> identifier f;
-> @@
-> 
-> (
-> - strncpy(
-> + strlcpy(
->   dest, src, sizeof(sz));
-> - dest[sizeof(sz) - 1] = '\0';
-> |
-> - strncpy(
-> + strlcpy(
->   dest, src, f); 
-> - dest[f - 1] = '\0';
-> )
-> ---------------------------------------------------------------------
-> 
-> This eliminates that case because expression is generic metavariable and
-> it somehow matched whole "min(len, sizeof(...)..", so it better to
-> divide the rules as done above to be more specific about the matching
-> pattern.
-> 
-> I thought to replace "identifier f" with "constant F" but that misses
-> few cases.
-
-My first test started with 'constant sz' as well and I found expression
-to be better.
-If I understand this correctly, it just makes sure not to match the
-'min(...)' expression so the problem doesn't arise, but it's not really
-a solution as it is really a chance that this comment comes here for
-this more complex expression.
-I'd rather just advise to pay attention to comments and drop the
-confidence level
-
-> Also, it is advised to put a space affer '+/-'
-
-Ok, thanks
-
-Julia Lawall wrote on Fri, Jul 13, 2018:
-> For the file drivers/net/wireless/ti/wl1251/acx.c, the following keeps the
-> comment before the buf update and moves the strlcpy call below it.  It
-> does however drop the comment just before the original call to strncpy.
-
-Nice, doing it in two passes does the trick; it even keeps the comment
-before strncpy if there was no comment in between.
-
-I'm sorry to write that after being provided with such a nice
-work-around though, now that I'm a bit less tired I've had a look at the
-comments again and it does not make sense to keep the second comment as
-is -- the whole point of using strlcpy (or now strscpy as per feedback
-elsewhere) is that the string will be null terminated properly after the
-call, so I'll stick to the original version.
-
-
-I also see the position does not seem to be useful for the patch phase,
-spatch automatically only applies only to what was matched earlier in
-report mode?
-
->>> +-strncpy@p
->>> ++strlcpy
->>> +        (dest, src, sz);
->>
->> This also came from the example I picked, but if this does not make a
->> difference as it sounds like I will update to that.
+2018-06-22 15:04 GMT+03:00 Matwey V. Kornilov <matwey@sai.msu.ru>:
+> DMA cocherency slows the transfer down on systems without hardware
+> coherent DMA.
 >
-> Probably not removing something just to add it back would be a good
-> idea.
 
-Actually playing with your example made me realize that removing and
-re-adding argument does fix the indentation issue in the original code I
-had noticed for mptctl, so it might actually unexpectedly be a good idea
-to go in the opposite direction and make coccinelle remove/add arguments
-in the general case (e.g. if strncpy and strlcpy hadn't been the same
-length)
+Ping.
 
-The jury is still out for this one :)
+> Based on previous commit the following performance benchmarks have been
+> carried out. Average memcpy() data transfer rate (rate) and handler
+> completion time (time) have been measured when running video stream at
+> 640x480 resolution at 10fps.
+>
+> x86_64 based system (Intel Core i5-3470). This platform has hardware
+> coherent DMA support and proposed change doesn't make big difference here.
+>
+>  * kmalloc:            rate = (4.4 +- 1.0) GBps
+>                        time = (2.4 +- 1.2) usec
+>  * usb_alloc_coherent: rate = (4.1 +- 0.9) GBps
+>                        time = (2.5 +- 1.0) usec
+>
+> We see that the measurements agree well within error ranges in this case.
+> So no performance downgrade is introduced.
+>
+> armv7l based system (TI AM335x BeagleBone Black). This platform has no
+> hardware coherent DMA support. DMA coherence is implemented via disabled
+> page caching that slows down memcpy() due to memory controller behaviour.
+>
+>  * kmalloc:            rate =  (190 +-  30) MBps
+>                        time =   (50 +-  10) usec
+>  * usb_alloc_coherent: rate =   (33 +-   4) MBps
+>                        time = (3000 +- 400) usec
+>
+> Note, that quantative difference leads (this commit leads to 5 times
+> acceleration) to qualitative behavior change in this case. As it was
+> stated before, the video stream can not be successfully received at AM335x
+> platforms with MUSB based USB host controller due to performance issues
+> [1].
+>
+> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+>
+> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+> ---
+>  drivers/media/usb/pwc/pwc-if.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
+> index 72d2897a4b9f..339a285600d1 100644
+> --- a/drivers/media/usb/pwc/pwc-if.c
+> +++ b/drivers/media/usb/pwc/pwc-if.c
+> @@ -427,11 +427,8 @@ static int pwc_isoc_init(struct pwc_device *pdev)
+>                 urb->interval = 1; // devik
+>                 urb->dev = udev;
+>                 urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
+> -               urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+> -               urb->transfer_buffer = usb_alloc_coherent(udev,
+> -                                                         ISO_BUFFER_SIZE,
+> -                                                         GFP_KERNEL,
+> -                                                         &urb->transfer_dma);
+> +               urb->transfer_flags = URB_ISO_ASAP;
+> +               urb->transfer_buffer = kmalloc(ISO_BUFFER_SIZE, GFP_KERNEL);
+>                 if (urb->transfer_buffer == NULL) {
+>                         PWC_ERROR("Failed to allocate urb buffer %d\n", i);
+>                         pwc_isoc_cleanup(pdev);
+> @@ -491,10 +488,7 @@ static void pwc_iso_free(struct pwc_device *pdev)
+>                 if (pdev->urbs[i]) {
+>                         PWC_DEBUG_MEMORY("Freeing URB\n");
+>                         if (pdev->urbs[i]->transfer_buffer) {
+> -                               usb_free_coherent(pdev->udev,
+> -                                       pdev->urbs[i]->transfer_buffer_length,
+> -                                       pdev->urbs[i]->transfer_buffer,
+> -                                       pdev->urbs[i]->transfer_dma);
+> +                               kfree(pdev->urbs[i]->transfer_buffer);
+>                         }
+>                         usb_free_urb(pdev->urbs[i]);
+>                         pdev->urbs[i] = NULL;
+> --
+> 2.16.4
+>
 
 
-Thanks for all the feedbacks,
+
 -- 
-Dominique Martinet
+With best regards,
+Matwey V. Kornilov.
+Sternberg Astronomical Institute, Lomonosov Moscow State University, Russia
+119234, Moscow, Universitetsky pr-k 13, +7 (495) 9392382
