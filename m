@@ -2,144 +2,106 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB82ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D60ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 138382087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:54:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 138382087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A60ED2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:56:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="c8y1+kuS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A60ED2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731954AbeGMTKQ (ORCPT
+        id S1731555AbeGMTL5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 15:10:16 -0400
-Received: from mga11.intel.com ([192.55.52.93]:6781 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731210AbeGMTKQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 15:10:16 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 11:54:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,348,1526367600"; 
-   d="scan'208";a="245522067"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Jul 2018 11:54:24 -0700
-Subject: Re: [PATCH] i2c: aspeed: Improve driver to support multi-master use
- cases stably
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed@lists.ozlabs.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        james.feist@linux.intel.com, vernon.mauery@linux.intel.com,
-        Benjamin Fair <benjaminfair@google.com>,
-        Patrick Venture <venture@google.com>, gary_hsu@aspeedtech.com,
-        Ryan Chen <ryan_chen@aspeedtech.com>
-References: <20180626165812.4141-1-jae.hyun.yoo@linux.intel.com>
- <CAFd5g45z--ucXf-So517tgrayZT6x2TGvaUvaDF7zeRNn7CPXw@mail.gmail.com>
- <e51471e6-0f8a-bffc-34c8-1e74239fdbcf@linux.intel.com>
- <CAFd5g47j_h4ZrT8Eg1FZ8sAj5ekCUH20jUVub75ozdkg8_YW7Q@mail.gmail.com>
- <921b1ab7-9c9f-0aeb-da89-5a1a27d009f0@linux.intel.com>
- <d3f10fc1-635b-3a5d-a967-2816eac005fc@linux.intel.com>
- <CAFd5g47zdPdqqjVJtNHtFk+jKgciKbMcEH9M-W9rL4DgLM5hkg@mail.gmail.com>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <b8232faa-58f5-f3a5-d12a-3f326cf1d03d@linux.intel.com>
-Date:   Fri, 13 Jul 2018 11:54:24 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 13 Jul 2018 15:11:57 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37402 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729982AbeGMTL5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 15:11:57 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w6DIs4qU104584;
+        Fri, 13 Jul 2018 18:55:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=PE1fJjDp7o6NJu9qkCXbSvGzhvKes83GkLeN19ktyNo=;
+ b=c8y1+kuSIdUn8MQ81Hkqmp6pKgSiZPZfEq11IRd8CLOa6f7qrlE7ygs5CLFAz5vIOkSk
+ j9svQfaQA8YrtP3wWIJzhlRpvHLIqNHME8PTiA6bNpTwglSOIHOXbJr0kJ4xdjetcyxY
+ nQUJmYA7djdGMD1ho+1DE0JeazFocGU0ru1lkThAgqhQLS8n8gDt9Q+kpfV/1q980fp3
+ TtZfdCnUbNghbXtHW8U9qqJ/lxmPBtjFp0eBUuTHl/VHsuCiPUU37rjr+zI7ILLpICQ5
+ f6OAco5NTH7vbgYMSOZYdxhYoNBUE6JfWXnjmm7csfutzTCox7PUpZdM5vb8Pmirjt4o Ig== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2k2p7vrx96-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Jul 2018 18:55:43 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w6DItgLQ006608
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 13 Jul 2018 18:55:42 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w6DItf9R001871;
+        Fri, 13 Jul 2018 18:55:41 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 13 Jul 2018 11:55:41 -0700
+Date:   Fri, 13 Jul 2018 11:55:45 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 2/6] mm/swapfile.c: Replace some #ifdef with IS_ENABLED()
+Message-ID: <20180713185545.q6bixqbhsdwn3ulr@ca-dmjordan1.us.oracle.com>
+References: <20180712233636.20629-1-ying.huang@intel.com>
+ <20180712233636.20629-3-ying.huang@intel.com>
+ <20180713183819.rszd4ybjfjemlaib@ca-dmjordan1.us.oracle.com>
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g47zdPdqqjVJtNHtFk+jKgciKbMcEH9M-W9rL4DgLM5hkg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180713183819.rszd4ybjfjemlaib@ca-dmjordan1.us.oracle.com>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8953 signatures=668706
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=998
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1806210000 definitions=main-1807130168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/13/2018 11:12 AM, Brendan Higgins wrote:
-> On Fri, Jul 13, 2018 at 10:22 AM Jae Hyun Yoo
-> <jae.hyun.yoo@linux.intel.com> wrote:
->>
->> On 7/12/2018 11:21 AM, Jae Hyun Yoo wrote:
->>> On 7/12/2018 2:33 AM, Brendan Higgins wrote:
->>>> On Wed, Jun 27, 2018 at 10:55 AM Jae Hyun Yoo
->>>> <jae.hyun.yoo@linux.intel.com> wrote:
-> <snip>
->>>> <snip>
->>>>>>> +       for (;;) {
->>>>>>> +               if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
->>>>>>> +                     (ASPEED_I2CD_BUS_BUSY_STS |
->>>>>>> +                      ASPEED_I2CD_XFER_MODE_STS_MASK)))
->>>>>>
->>>>>> Is using the Transfer Mode State Machine bits necessary? The
->>>>>> documentation marks it as "for debugging purpose only," so relying on
->>>>>> it makes me nervous.
->>>>>>
->>>>>
->>>>> As you said, the documentation marks it as "for debugging purpose only."
->>>>> but ASPEED also uses this way in their SDK code because it's the best
->>>>> way for checking bus busy status which can cover both single and
->>>>> multi-master use cases.
->>>>>
->>>>
->>>> Well, it would also be really nice to have access to this bit if
->>>> someone wants
->>>> to implement MCTP. Could we maybe check with Aspeed what them meant by
->>>> "for
->>>> debugging purposes only" and document it here? It makes me nervous to
->>>> rely on
->>>> debugging functionality for normal usage.
->>>>
->>>
->>> Okay, I'll check it with Aspeed. Will let you know their response.
->>>
->>
->> I've checked it with Gary Hsu <gary_hsu@aspeedtech.com> and he confirmed
->> that the bits reflect real information and good to be used in practical
->> code.
+On Fri, Jul 13, 2018 at 11:38:19AM -0700, Daniel Jordan wrote:
+> On Fri, Jul 13, 2018 at 07:36:32AM +0800, Huang, Ying wrote:
+> > @@ -1260,7 +1257,6 @@ static void swapcache_free(swp_entry_t entry)
+> >  	}
+> >  }
+> >  
+> > -#ifdef CONFIG_THP_SWAP
+> >  static void swapcache_free_cluster(swp_entry_t entry)
+> >  {
+> >  	unsigned long offset = swp_offset(entry);
+> > @@ -1271,6 +1267,9 @@ static void swapcache_free_cluster(swp_entry_t entry)
+> >  	unsigned int i, free_entries = 0;
+> >  	unsigned char val;
+> >  
+> > +	if (!IS_ENABLED(CONFIG_THP_SWAP))
+> > +		return;
+> > +
 > 
-> Huh. For my own edification, could you ask them why they said "for debugging
-> purpose only" in the documentation? I am just really curious what they meant by
-> that. I would be satisfied if you just CC'ed me on your email thread with Gary,
-> and I can ask him myself.
-> 
+> VM_WARN_ON_ONCE(1) here too?
 
-I've already CC'ed Gary and Ryan in this thread.
-
-Hi Gary,
-
-Can you explain why the documentation says that the bit field is 'for
-debugging purpose only'? Any plan to change the description?
-
-Thanks,
-
-Jae
-
->>
->> I'll add a comment like below:
->>
->> /*
->>    * This is marked as 'for debugging purpose only' in datasheet but
->>    * ASPEED confirmed that this reflects real information and good
->>    * to be used in practical code.
->>    */
->>
->> Is it acceptable then?
-> 
-> Yeah, that's fine.
-> 
-> <snip>
-> 
-> Cheers
-> 
+Nevermind, this branch goes away later in the series.
