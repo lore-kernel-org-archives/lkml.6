@@ -6,206 +6,381 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F56ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBB0ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:09:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C35842124D
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 532102124D
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:09:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="dCJc3+ow"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C35842124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k86zWazt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532102124D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387717AbeGMIVR (ORCPT
+        id S2387772AbeGMIWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 04:21:17 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:40246 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729790AbeGMIVQ (ORCPT
+        Fri, 13 Jul 2018 04:22:49 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:39748 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731885AbeGMIWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 04:21:16 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 81C085C0F9F;
-        Fri, 13 Jul 2018 10:07:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1531469262;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Yp8btNgNy0ovlwfkXpSJY2p/xU9jrRrC4a+hMTZjklQ=;
-        b=dCJc3+ow0oY8jGqMb10HWGCsVIYGFJNXwCUOSpxqDsprPZsR+HyS9fYheUgvbhpd9z2VUp
-        Q/wpzIh9lvYnaTZk3ZLMtZ7T+IpTVCfUPMFOo8W2AWZwxwVCJrZNodleHQm1A2UGFxhDBe
-        7TpEzTI8RuIfG5x5HG5Tf85i2FRQKtM=
+        Fri, 13 Jul 2018 04:22:48 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6D891TX012454;
+        Fri, 13 Jul 2018 03:09:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531469341;
+        bh=C7C9PPXACluR+ftbfTAZGtzVgjNwkE7DHXaKKYdOOc0=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=k86zWazta/AA5yurTprfj3nCRbSlzuQSWtM7bZvy0cm6MS7zTZeFGp04Mv8jWGdZb
+         8w01cN0PK8OOYjbSs6D79fTrxPAzApKfhnRkMor0oWhvMojAPoeGAP78gbHiXrRQau
+         JkzpHHRt2V8tDEBlyB4n8lqXF8hojEl+CFmSKUFk=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6D891tx019999;
+        Fri, 13 Jul 2018 03:09:01 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 13
+ Jul 2018 03:09:01 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 13 Jul 2018 03:09:01 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6D88vF8017399;
+        Fri, 13 Jul 2018 03:08:57 -0500
+Subject: Re: [PATCH v9 09/12] pci-epf-test/pci_endpoint_test: Add MSI-X
+ support
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <jesper.nilsson@axis.com>,
+        <shawn.lin@rock-chips.com>
+References: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
+ <6f2d4ac90a60f5400ed66bfce1515417803f3978.1531155252.git.gustavo.pimentel@synopsys.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <7a482fb5-139c-b995-0b23-80f6a632b28a@ti.com>
+Date:   Fri, 13 Jul 2018 13:38:56 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <6f2d4ac90a60f5400ed66bfce1515417803f3978.1531155252.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Date:   Fri, 13 Jul 2018 10:07:41 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Stephen Warren <swarren@nvidia.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stephen Warren <swarren@wwwdotorg.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        =?UTF-8?Q?Bero_Rosenkr=C3=A4nz?= =?UTF-8?Q?er?= 
-        <Bernhard.Rosenkranzer@linaro.org>
-Subject: Re: [PATCH v2 3/6] ARM: trusted_foundations: do not use naked
- function
-In-Reply-To: <20180712230156.GY17271@n2100.armlinux.org.uk>
-References: <20180325180959.28008-1-stefan@agner.ch>
- <20180325180959.28008-4-stefan@agner.ch>
- <704c863a-0b5a-6396-d7da-f0ed17b7cca2@gmail.com>
- <263337af-7541-be9e-3db6-6cb987fd08fb@arm.com>
- <f627177c-f813-9e10-ade5-c7654375639b@gmail.com>
- <cf9b916103c0dba1e67682efc69f5bae@agner.ch>
- <498de826-6e6c-63d8-00d6-f394b2725a34@wwwdotorg.org>
- <507a66ab9ab530a6d71db7a74f11ddfb@agner.ch> <20180417081109.GA5804@ulmo>
- <CAGXu5jL7n2A8FgXKD_L3_vhg4WBkGZ=xT1+qtLzGFFy3vH2E7Q@mail.gmail.com>
- <20180712230156.GY17271@n2100.armlinux.org.uk>
-Message-ID: <d00735df5a39543cc0a60ba3a7b52d4c@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-0.57 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCPT_COUNT_TWELVE(0.00)[15];
-         TO_DN_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-0.47)[79.29%];
-         ARC_NA(0.00)[]
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.07.2018 01:01, Russell King - ARM Linux wrote:
-> On Thu, Jul 12, 2018 at 03:43:10PM -0700, Kees Cook wrote:
->> On Tue, Apr 17, 2018 at 1:11 AM, Thierry Reding <treding@nvidia.com> wrote:
->> > On Mon, Apr 16, 2018 at 08:21:09PM +0200, Stefan Agner wrote:
->> >> On 16.04.2018 18:08, Stephen Warren wrote:
->> >> > On 04/16/2018 09:56 AM, Stefan Agner wrote:
->> >> >> On 27.03.2018 14:16, Dmitry Osipenko wrote:
->> >> >>> On 27.03.2018 14:54, Robin Murphy wrote:
->> >> >>>> On 26/03/18 22:20, Dmitry Osipenko wrote:
->> >> >>>>> On 25.03.2018 21:09, Stefan Agner wrote:
->> >> >>>>>> As documented in GCC naked functions should only use Basic asm
->> >> >>>>>> syntax. The Extended asm or mixture of Basic asm and "C" code is
->> >> >>>>>> not guaranteed. Currently this works because it was hard coded
->> >> >>>>>> to follow and check GCC behavior for arguments and register
->> >> >>>>>> placement.
->> >> >>>>>>
->> >> >>>>>> Furthermore with clang using parameters in Extended asm in a
->> >> >>>>>> naked function is not supported:
->> >> >>>>>>     arch/arm/firmware/trusted_foundations.c:47:10: error: parameter
->> >> >>>>>>             references not allowed in naked functions
->> >> >>>>>>                   : "r" (type), "r" (arg1), "r" (arg2)
->> >> >>>>>>                          ^
->> >> >>>>>>
->> >> >>>>>> Use a regular function to be more portable. This aligns also with
->> >> >>>>>> the other smc call implementations e.g. in qcom_scm-32.c and
->> >> >>>>>> bcm_kona_smc.c.
->> >> >>>>>>
->> >> >>>>>> Cc: Dmitry Osipenko <digetx@gmail.com>
->> >> >>>>>> Cc: Stephen Warren <swarren@nvidia.com>
->> >> >>>>>> Cc: Thierry Reding <treding@nvidia.com>
->> >> >>>>>> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> >> >>>>>> ---
->> >> >>>>>> Changes in v2:
->> >> >>>>>> - Keep stmfd/ldmfd to avoid potential ABI issues
->> >> >>>>>>
->> >> >>>>>>    arch/arm/firmware/trusted_foundations.c | 14 +++++++++-----
->> >> >>>>>>    1 file changed, 9 insertions(+), 5 deletions(-)
->> >> >>>>>>
->> >> >>>>>> diff --git a/arch/arm/firmware/trusted_foundations.c
->> >> >>>>>> b/arch/arm/firmware/trusted_foundations.c
->> >> >>>>>> index 3fb1b5a1dce9..689e6565abfc 100644
->> >> >>>>>> --- a/arch/arm/firmware/trusted_foundations.c
->> >> >>>>>> +++ b/arch/arm/firmware/trusted_foundations.c
->> >> >>>>>> @@ -31,21 +31,25 @@
->> >> >>>>>>      static unsigned long cpu_boot_addr;
->> >> >>>>>>    -static void __naked tf_generic_smc(u32 type, u32 arg1, u32 arg2)
->> >> >>>>>> +static void tf_generic_smc(u32 type, u32 arg1, u32 arg2)
->> >> >>>>>>    {
->> >> >>>>>> +    register u32 r0 asm("r0") = type;
->> >> >>>>>> +    register u32 r1 asm("r1") = arg1;
->> >> >>>>>> +    register u32 r2 asm("r2") = arg2;
->> >> >>>>>> +
->> >> >>>>>>        asm volatile(
->> >> >>>>>>            ".arch_extension    sec\n\t"
->> >> >>>>>> -        "stmfd    sp!, {r4 - r11, lr}\n\t"
->> >> >>>>>> +        "stmfd    sp!, {r4 - r11}\n\t"
->> >> >>>>>>            __asmeq("%0", "r0")
->> >> >>>>>>            __asmeq("%1", "r1")
->> >> >>>>>>            __asmeq("%2", "r2")
->> >> >>>>>>            "mov    r3, #0\n\t"
->> >> >>>>>>            "mov    r4, #0\n\t"
->> >> >>>>>>            "smc    #0\n\t"
->> >> >>>>>> -        "ldmfd    sp!, {r4 - r11, pc}"
->> >> >>>>>> +        "ldmfd    sp!, {r4 - r11}\n\t"
->> >> >>>>>>            :
->> >> >>>>>> -        : "r" (type), "r" (arg1), "r" (arg2)
->> >> >>>>>> -        : "memory");
->> >> >>>>>> +        : "r" (r0), "r" (r1), "r" (r2)
->> >> >>>>>> +        : "memory", "r3", "r12", "lr");
->> >> >>>>>
->> >> >>>>> Although seems "lr" won't be affected by SMC invocation because it should be
->> >> >>>>> banked and hence could be omitted entirely from the code. Maybe somebody could
->> >> >>>>> confirm this.
->> >> >>>> Strictly per the letter of the architecture, the SMC could be trapped to Hyp
->> >> >>>> mode, and a hypervisor might clobber LR_usr in the process of forwarding the
->> >> >>>> call to the firmware secure monitor (since Hyp doesn't have a banked LR of its
->> >> >>>> own). Admittedly there are probably no real systems with the appropriate
->> >> >>>> hardware/software combination to hit that, but on the other hand if this gets
->> >> >>>> inlined where the compiler has already created a stack frame then an LR clobber
->> >> >>>> is essentially free, so I reckon we're better off keeping it for reassurance.
->> >> >>>> This isn't exactly a critical fast path anyway.
->> >> >>>
->> >> >>> Okay, thank you for the clarification.
->> >> >>
->> >> >> So it seems this change is fine?
->> >> >>
->> >> >> Stephen, you picked up changes for this driver before, is this patch
->> >> >> going through your tree?
->> >> >
->> >> > You had best ask Thierry; he's taken over Tegra maintenance upstream.
->> >> > But that said, don't files in arch/arm go through Russell?
->> >>
->> >> I think the last patches applied to that file went through your tree.
->> >>
->> >> Thierry, Russel, any preferences?
->> >
->> > I don't mind picking this up into the Tegra tree. Might be a good idea
->> > to move this into drivers/firmware, though, since that's where all the
->> > other firmware-related drivers reside.
->> >
->> > Firmware code, such as the BPMP driver, usually goes through ARM-SoC
->> > these days. I think this is in the same category.
->> >
->> > Russell, any objections to me picking this patch up and moving it into
->> > drivers/firmware?
->>
->> Please take this -- without it I'm seeing build failures on the arm
->> allmodconfig under gcc 7.3.0:
+
+
+On Monday 09 July 2018 11:12 PM, Gustavo Pimentel wrote:
+> Add MSI-X support and update driver documentation accordingly.
 > 
-> Sorry, I'd completely missed this... now replied on the original patch.
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 
-Thierry merged this patch just two days ago, so it is already in -next.
-
---
-Stefan
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+> Change v2->v3:
+>  - New patch file created base on the previous patch
+> "misc: pci_endpoint_test: Add MSI-X support" patch file following
+> Kishon's suggestion.
+> Change v3->v4:
+>  - Rebased to Lorenzo's master branch v4.18-rc1.
+> Change v4->v5:
+>  - Nothing changed, just to follow the patch set version.
+> Change v5->v6:
+>  - Moved PCITEST_MSIX ioctl entry from patch #10 to here.
+>  - Documented ioctl parameter type associated to
+> drivers/misc/pci_endpoint_test.c driver.
+> Change v6->v7:
+>  - Updated documentation.
+>  - Added flag that enables or not the MSI-X on the EP features. 
+> Change v7->v8:
+>  - Re-sending the patch series.
+> Change v8->v9:
+>  - Moving the EPC_FEATURE_MSIX_AVAILABLE feature set from the
+> dw_pcie_ep_init() to dw_plat_pcie_ep_init().
+> 
+>  Documentation/PCI/endpoint/pci-test-function.txt  |  2 +-
+>  Documentation/ioctl/ioctl-number.txt              |  1 +
+>  Documentation/misc-devices/pci-endpoint-test.txt  |  3 +++
+>  drivers/misc/pci_endpoint_test.c                  | 29 ++++++++++++++++-------
+>  drivers/pci/controller/dwc/pcie-designware-plat.c |  1 +
+>  drivers/pci/endpoint/functions/pci-epf-test.c     | 29 +++++++++++++++++++++--
+>  include/linux/pci-epc.h                           |  1 +
+>  include/uapi/linux/pcitest.h                      |  1 +
+>  8 files changed, 56 insertions(+), 11 deletions(-)
+> 
+> diff --git a/Documentation/PCI/endpoint/pci-test-function.txt b/Documentation/PCI/endpoint/pci-test-function.txt
+> index 7ee2361..b1cbff3 100644
+> --- a/Documentation/PCI/endpoint/pci-test-function.txt
+> +++ b/Documentation/PCI/endpoint/pci-test-function.txt
+> @@ -34,7 +34,7 @@ that the endpoint device must perform.
+>  Bitfield Description:
+>    Bit 0		: raise legacy IRQ
+>    Bit 1		: raise MSI IRQ
+> -  Bit 2		: raise MSI-X IRQ (reserved for future implementation)
+> +  Bit 2		: raise MSI-X IRQ
+>    Bit 3		: read command (read data from RC buffer)
+>    Bit 4		: write command (write data to RC buffer)
+>    Bit 5		: copy command (copy data from one RC buffer to another
+> diff --git a/Documentation/ioctl/ioctl-number.txt b/Documentation/ioctl/ioctl-number.txt
+> index 480c860..65259d4 100644
+> --- a/Documentation/ioctl/ioctl-number.txt
+> +++ b/Documentation/ioctl/ioctl-number.txt
+> @@ -166,6 +166,7 @@ Code  Seq#(hex)	Include File		Comments
+>  'P'	all	linux/soundcard.h	conflict!
+>  'P'	60-6F	sound/sscape_ioctl.h	conflict!
+>  'P'	00-0F	drivers/usb/class/usblp.c	conflict!
+> +'P'	01-07	drivers/misc/pci_endpoint_test.c	conflict!
+>  'Q'	all	linux/soundcard.h
+>  'R'	00-1F	linux/random.h		conflict!
+>  'R'	01	linux/rfkill.h		conflict!
+> diff --git a/Documentation/misc-devices/pci-endpoint-test.txt b/Documentation/misc-devices/pci-endpoint-test.txt
+> index 4ebc359..fdfa0f6 100644
+> --- a/Documentation/misc-devices/pci-endpoint-test.txt
+> +++ b/Documentation/misc-devices/pci-endpoint-test.txt
+> @@ -10,6 +10,7 @@ The PCI driver for the test device performs the following tests
+>  	*) verifying addresses programmed in BAR
+>  	*) raise legacy IRQ
+>  	*) raise MSI IRQ
+> +	*) raise MSI-X IRQ
+>  	*) read data
+>  	*) write data
+>  	*) copy data
+> @@ -25,6 +26,8 @@ ioctl
+>   PCITEST_LEGACY_IRQ: Tests legacy IRQ
+>   PCITEST_MSI: Tests message signalled interrupts. The MSI number
+>  	      to be tested should be passed as argument.
+> + PCITEST_MSIX: Tests message signalled interrupts. The MSI-X number
+> +	      to be tested should be passed as argument.
+>   PCITEST_WRITE: Perform write tests. The size of the buffer should be passed
+>  		as argument.
+>   PCITEST_READ: Perform read tests. The size of the buffer should be passed
+> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
+> index 349794c..f4fef10 100644
+> --- a/drivers/misc/pci_endpoint_test.c
+> +++ b/drivers/misc/pci_endpoint_test.c
+> @@ -39,13 +39,14 @@
+>  
+>  #define IRQ_TYPE_LEGACY				0
+>  #define IRQ_TYPE_MSI				1
+> +#define IRQ_TYPE_MSIX				2
+>  
+>  #define PCI_ENDPOINT_TEST_MAGIC			0x0
+>  
+>  #define PCI_ENDPOINT_TEST_COMMAND		0x4
+>  #define COMMAND_RAISE_LEGACY_IRQ		BIT(0)
+>  #define COMMAND_RAISE_MSI_IRQ			BIT(1)
+> -/* BIT(2) is reserved for raising MSI-X IRQ command */
+> +#define COMMAND_RAISE_MSIX_IRQ			BIT(2)
+>  #define COMMAND_READ				BIT(3)
+>  #define COMMAND_WRITE				BIT(4)
+>  #define COMMAND_COPY				BIT(5)
+> @@ -84,7 +85,7 @@ MODULE_PARM_DESC(no_msi, "Disable MSI interrupt in pci_endpoint_test");
+>  
+>  static int irq_type = IRQ_TYPE_MSI;
+>  module_param(irq_type, int, 0444);
+> -MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI)");
+> +MODULE_PARM_DESC(irq_type, "IRQ mode selection in pci_endpoint_test (0 - Legacy, 1 - MSI, 2 - MSI-X)");
+>  
+>  enum pci_barno {
+>  	BAR_0,
+> @@ -202,16 +203,18 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
+>  }
+>  
+>  static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
+> -				      u8 msi_num)
+> +				       u16 msi_num, bool msix)
+>  {
+>  	u32 val;
+>  	struct pci_dev *pdev = test->pdev;
+>  
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
+> -				 IRQ_TYPE_MSI);
+> +				 msix == false ? IRQ_TYPE_MSI :
+> +				 IRQ_TYPE_MSIX);
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, msi_num);
+>  	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
+> -				 COMMAND_RAISE_MSI_IRQ);
+> +				 msix == false ? COMMAND_RAISE_MSI_IRQ :
+> +				 COMMAND_RAISE_MSIX_IRQ);
+>  	val = wait_for_completion_timeout(&test->irq_raised,
+>  					  msecs_to_jiffies(1000));
+>  	if (!val)
+> @@ -456,7 +459,8 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
+>  		ret = pci_endpoint_test_legacy_irq(test);
+>  		break;
+>  	case PCITEST_MSI:
+> -		ret = pci_endpoint_test_msi_irq(test, arg);
+> +	case PCITEST_MSIX:
+> +		ret = pci_endpoint_test_msi_irq(test, arg, cmd == PCITEST_MSIX);
+>  		break;
+>  	case PCITEST_WRITE:
+>  		ret = pci_endpoint_test_write(test, arg);
+> @@ -542,6 +546,12 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+>  			dev_err(dev, "Failed to get MSI interrupts\n");
+>  		test->num_irqs = irq;
+>  		break;
+> +	case IRQ_TYPE_MSIX:
+> +		irq = pci_alloc_irq_vectors(pdev, 1, 2048, PCI_IRQ_MSIX);
+> +		if (irq < 0)
+> +			dev_err(dev, "Failed to get MSI-X interrupts\n");
+> +		test->num_irqs = irq;
+> +		break;
+>  	default:
+>  		dev_err(dev, "Invalid IRQ type selected\n");
+>  	}
+> @@ -558,8 +568,9 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+>  				       pci_endpoint_test_irqhandler,
+>  				       IRQF_SHARED, DRV_MODULE_NAME, test);
+>  		if (err)
+> -			dev_err(dev, "failed to request IRQ %d for MSI %d\n",
+> -				pci_irq_vector(pdev, i), i + 1);
+> +			dev_err(dev, "Failed to request IRQ %d for MSI%s %d\n",
+> +				pci_irq_vector(pdev, i),
+> +				irq_type == IRQ_TYPE_MSIX ? "-X" : "", i + 1);
+>  	}
+>  
+>  	for (bar = BAR_0; bar <= BAR_5; bar++) {
+> @@ -625,6 +636,7 @@ static int pci_endpoint_test_probe(struct pci_dev *pdev,
+>  
+>  err_disable_msi:
+>  	pci_disable_msi(pdev);
+> +	pci_disable_msix(pdev);
+>  	pci_release_regions(pdev);
+>  
+>  err_disable_pdev:
+> @@ -656,6 +668,7 @@ static void pci_endpoint_test_remove(struct pci_dev *pdev)
+>  	for (i = 0; i < test->num_irqs; i++)
+>  		devm_free_irq(&pdev->dev, pci_irq_vector(pdev, i), test);
+>  	pci_disable_msi(pdev);
+> +	pci_disable_msix(pdev);
+>  	pci_release_regions(pdev);
+>  	pci_disable_device(pdev);
+>  }
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
+> index 160714d..d2dd0c7 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-plat.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
+> @@ -77,6 +77,7 @@ static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
+>  		dw_pcie_ep_reset_bar(pci, bar);
+>  
+>  	epc->features |= EPC_FEATURE_NO_LINKUP_NOTIFIER;
+> +	epc->features |= EPC_FEATURE_MSIX_AVAILABLE;
+>  }
+>  
+>  static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+> diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
+> index eb9cd00..123f58c 100644
+> --- a/drivers/pci/endpoint/functions/pci-epf-test.c
+> +++ b/drivers/pci/endpoint/functions/pci-epf-test.c
+> @@ -20,10 +20,11 @@
+>  
+>  #define IRQ_TYPE_LEGACY			0
+>  #define IRQ_TYPE_MSI			1
+> +#define IRQ_TYPE_MSIX			2
+>  
+>  #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
+>  #define COMMAND_RAISE_MSI_IRQ		BIT(1)
+> -/* BIT(2) is reserved for raising MSI-X IRQ command */
+> +#define COMMAND_RAISE_MSIX_IRQ		BIT(2)
+>  #define COMMAND_READ			BIT(3)
+>  #define COMMAND_WRITE			BIT(4)
+>  #define COMMAND_COPY			BIT(5)
+> @@ -47,6 +48,7 @@ struct pci_epf_test {
+>  	struct pci_epf		*epf;
+>  	enum pci_barno		test_reg_bar;
+>  	bool			linkup_notifier;
+> +	bool			msix_available;
+>  	struct delayed_work	cmd_handler;
+>  };
+>  
+> @@ -266,6 +268,9 @@ static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq_type,
+>  	case IRQ_TYPE_MSI:
+>  		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
+>  		break;
+> +	case IRQ_TYPE_MSIX:
+> +		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSIX, irq);
+> +		break;
+>  	default:
+>  		dev_err(dev, "Failed to raise IRQ, unknown type\n");
+>  		break;
+> @@ -292,7 +297,7 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
+>  	reg->command = 0;
+>  	reg->status = 0;
+>  
+> -	if (reg->irq_type > IRQ_TYPE_MSI) {
+> +	if (reg->irq_type > IRQ_TYPE_MSIX) {
+>  		dev_err(dev, "Failed to detect IRQ type\n");
+>  		goto reset_handler;
+>  	}
+> @@ -346,6 +351,16 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
+>  		goto reset_handler;
+>  	}
+>  
+> +	if (command & COMMAND_RAISE_MSIX_IRQ) {
+> +		count = pci_epc_get_msix(epc, epf->func_no);
+> +		if (reg->irq_number > count || count <= 0)
+> +			goto reset_handler;
+> +		reg->status = STATUS_IRQ_RAISED;
+> +		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSIX,
+> +				  reg->irq_number);
+> +		goto reset_handler;
+> +	}
+> +
+>  reset_handler:
+>  	queue_delayed_work(kpcitest_workqueue, &epf_test->cmd_handler,
+>  			   msecs_to_jiffies(1));
+> @@ -459,6 +474,8 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>  	else
+>  		epf_test->linkup_notifier = true;
+>  
+> +	epf_test->msix_available = epc->features & EPC_FEATURE_MSIX_AVAILABLE;
+> +
+>  	epf_test->test_reg_bar = EPC_FEATURE_GET_BAR(epc->features);
+>  
+>  	ret = pci_epc_write_header(epc, epf->func_no, header);
+> @@ -481,6 +498,14 @@ static int pci_epf_test_bind(struct pci_epf *epf)
+>  		return ret;
+>  	}
+>  
+> +	if (epf_test->msix_available) {
+> +		ret = pci_epc_set_msix(epc, epf->func_no, epf->msix_interrupts);
+> +		if (ret) {
+> +			dev_err(dev, "MSI-X configuration failed\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+>  	if (!epf_test->linkup_notifier)
+>  		queue_work(kpcitest_workqueue, &epf_test->cmd_handler.work);
+>  
+> diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+> index bb2395b..37dab81 100644
+> --- a/include/linux/pci-epc.h
+> +++ b/include/linux/pci-epc.h
+> @@ -102,6 +102,7 @@ struct pci_epc {
+>  
+>  #define EPC_FEATURE_NO_LINKUP_NOTIFIER		BIT(0)
+>  #define EPC_FEATURE_BAR_MASK			(BIT(1) | BIT(2) | BIT(3))
+> +#define EPC_FEATURE_MSIX_AVAILABLE		BIT(4)
+>  #define EPC_FEATURE_SET_BAR(features, bar)	\
+>  		(features |= (EPC_FEATURE_BAR_MASK & (bar << 1)))
+>  #define EPC_FEATURE_GET_BAR(features)		\
+> diff --git a/include/uapi/linux/pcitest.h b/include/uapi/linux/pcitest.h
+> index 953cf03..d746fb1 100644
+> --- a/include/uapi/linux/pcitest.h
+> +++ b/include/uapi/linux/pcitest.h
+> @@ -16,5 +16,6 @@
+>  #define PCITEST_WRITE		_IOW('P', 0x4, unsigned long)
+>  #define PCITEST_READ		_IOW('P', 0x5, unsigned long)
+>  #define PCITEST_COPY		_IOW('P', 0x6, unsigned long)
+> +#define PCITEST_MSIX		_IOW('P', 0x7, int)
+>  
+>  #endif /* __UAPI_LINUX_PCITEST_H */
+> 
