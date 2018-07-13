@@ -3,91 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 946C5ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F9DFECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BAE62124D
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:02:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BAE62124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0EFFD2124D
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 08:02:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EFFD2124D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387689AbeGMIPb (ORCPT
+        id S2387763AbeGMIQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 04:15:31 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58021 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729790AbeGMIPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 04:15:30 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 27910CD3E268F;
-        Fri, 13 Jul 2018 16:01:56 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.382.0; Fri, 13 Jul 2018
- 16:01:51 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <gregkh@linuxfoundation.org>, <christophe.jaillet@wanadoo.fr>
-CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] staging/rtl8192u: hide unused procfs helpers
-Date:   Fri, 13 Jul 2018 16:01:46 +0800
-Message-ID: <20180713080146.8268-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Fri, 13 Jul 2018 04:16:11 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:49770 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729790AbeGMIQL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 04:16:11 -0400
+X-IronPort-AV: E=Sophos;i="5.51,347,1526367600"; 
+   d="scan'208";a="14112885"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Jul 2018 01:02:41 -0700
+Received: from localhost (10.10.76.4) by chn-sv-exch07.mchp-main.com
+ (10.10.76.108) with Microsoft SMTP Server id 14.3.352.0; Fri, 13 Jul 2018
+ 01:02:39 -0700
+Date:   Fri, 13 Jul 2018 10:01:29 +0200
+From:   Ludovic Desroches <ludovic.desroches@microchip.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     <linux-serial@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <jslaby@suse.com>,
+        <arnd@arndb.de>, <richard.genoud@gmail.com>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] tty/serial_core: add ISO7816 infrastructure
+Message-ID: <20180713080129.2ifw7crjksvaxxpq@M43218.corp.atmel.com>
+Mail-Followup-To: Greg KH <gregkh@linuxfoundation.org>,
+        linux-serial@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, jslaby@suse.com,
+        arnd@arndb.de, richard.genoud@gmail.com,
+        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+        linux-kernel@vger.kernel.org
+References: <20180711131638.12622-1-ludovic.desroches@microchip.com>
+ <20180711131638.12622-2-ludovic.desroches@microchip.com>
+ <20180712145808.GA22502@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180712145808.GA22502@kroah.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_PROC_FS isn't set, gcc warning this:
+On Thu, Jul 12, 2018 at 04:58:08PM +0200, Greg KH wrote:
+> On Wed, Jul 11, 2018 at 03:16:36PM +0200, Ludovic Desroches wrote:
+> > From: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > 
+> > Add the ISO7816 ioctl and associated accessors and data structure.
+> > Drivers can then use this common implementation to handle ISO7816.
+> > 
+> > Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > [ludovic.desroches@microchip.com: squash and rebase, removal of gpios, checkpatch fixes]
+> > Signed-off-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+> > ---
+> >  drivers/tty/serial/serial_core.c  | 49 +++++++++++++++++++++++++++++++++++++++
+> >  include/linux/serial_core.h       |  3 +++
+> >  include/uapi/asm-generic/ioctls.h |  2 ++
+> >  include/uapi/linux/serial.h       | 17 ++++++++++++++
+> >  4 files changed, 71 insertions(+)
+> 
+> Note, kbuild found build issues with this, please fix up.
+> 
+> Also, here's some comments:
+> 
+> > 
+> > diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
+> > index 9c14a453f73c..c89ac59f6f8c 100644
+> > --- a/drivers/tty/serial/serial_core.c
+> > +++ b/drivers/tty/serial/serial_core.c
+> > @@ -1301,6 +1301,47 @@ static int uart_set_rs485_config(struct uart_port *port,
+> >  	return 0;
+> >  }
+> >  
+> > +static int uart_get_iso7816_config(struct uart_port *port,
+> > +				   struct serial_iso7816 __user *iso7816)
+> > +{
+> > +	unsigned long flags;
+> > +	struct serial_iso7816 aux;
+> > +
+> > +	spin_lock_irqsave(&port->lock, flags);
+> > +	aux = port->iso7816;
+> 
+> Don't you want to check to see if there is a function for iso7816 before
+> copying it?  Otherwise it's just empty, right?
 
-drivers/staging/rtl8192u/r8192U_core.c:508:12: warning: ‘proc_get_stats_ap’ defined but not used [-Wunused-function]
- static int proc_get_stats_ap(struct seq_file *m, void *v)
-            ^
-drivers/staging/rtl8192u/r8192U_core.c:527:12: warning: ‘proc_get_registers’ defined but not used [-Wunused-function]
- static int proc_get_registers(struct seq_file *m, void *v)
-            ^
-drivers/staging/rtl8192u/r8192U_core.c:568:12: warning: ‘proc_get_stats_tx’ defined but not used [-Wunused-function]
- static int proc_get_stats_tx(struct seq_file *m, void *v)
-            ^
-drivers/staging/rtl8192u/r8192U_core.c:627:12: warning: ‘proc_get_stats_rx’ defined but not used [-Wunused-function]
- static int proc_get_stats_rx(struct seq_file *m, void *v)
-            ^
-fix this by adding #ifdef around them.
+I'll add the check.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/staging/rtl8192u/r8192U_core.c | 2 ++
- 1 file changed, 2 insertions(+)
+> 
+> > +	if (!port->iso7816_config)
+> > +		return -ENOIOCTLCMD;
+> 
+> Why this error value?
+> 
 
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 8b17400..b9724d9 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -505,6 +505,7 @@ static void watch_dog_timer_callback(struct timer_list *t);
- 
- static struct proc_dir_entry *rtl8192_proc;
- 
-+#ifdef CONFIG_PROC_FS
- static int proc_get_stats_ap(struct seq_file *m, void *v)
- {
- 	struct net_device *dev = m->private;
-@@ -639,6 +640,7 @@ static int proc_get_stats_rx(struct seq_file *m, void *v)
- 
- 	return 0;
- }
-+#endif
- 
- static void rtl8192_proc_module_init(void)
- {
--- 
-2.7.0
+It was a mimic of RS485.
 
+> > --- a/include/uapi/asm-generic/ioctls.h
+> > +++ b/include/uapi/asm-generic/ioctls.h
+> > @@ -66,6 +66,8 @@
+> >  #ifndef TIOCSRS485
+> >  #define TIOCSRS485	0x542F
+> >  #endif
+> > +#define TIOCGISO7816	0x5430
+> > +#define TIOCSISO7816	0x5431
+> 
+> Where did you get these numbers from?
 
+I will use the macros to create numbers. Any rules about nr choice?
+
+Regards
+
+Ludovic
+
+> 
+> thanks,
+> 
+> greg k-h
