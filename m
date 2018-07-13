@@ -2,82 +2,98 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A580AECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B42BECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3971C208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:42:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3971C208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
+	by mail.kernel.org (Postfix) with ESMTP id DBB22208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:42:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBB22208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbeGMR6T (ORCPT
+        id S1731555AbeGMR6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 13:58:19 -0400
-Received: from tartarus.angband.pl ([89.206.35.136]:54626 "EHLO
-        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbeGMR6T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 13:58:19 -0400
-Received: from 89-71-158-145.dynamic.chello.pl ([89.71.158.145] helo=umbar.angband.pl)
-        by tartarus.angband.pl with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <kilobyte@angband.pl>)
-        id 1fe25I-00018A-Uv; Fri, 13 Jul 2018 19:42:27 +0200
-Received: from kilobyte by umbar.angband.pl with local (Exim 4.91)
-        (envelope-from <kilobyte@umbar.angband.pl>)
-        id 1fe25I-00072c-DQ; Fri, 13 Jul 2018 19:42:24 +0200
-From:   Adam Borowski <kilobyte@angband.pl>
-To:     Nick Terrell <terrelln@fb.com>,
+        Fri, 13 Jul 2018 13:58:23 -0400
+Received: from mga09.intel.com ([134.134.136.24]:55380 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727455AbeGMR6X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 13:58:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 10:42:46 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,348,1526367600"; 
+   d="scan'208";a="71182086"
+Received: from 2b52.sc.intel.com ([143.183.136.52])
+  by fmsmga004.fm.intel.com with ESMTP; 13 Jul 2018 10:42:45 -0700
+Message-ID: <1531503545.11680.4.camel@intel.com>
+Subject: Re: [RFC PATCH v2 18/27] x86/cet/shstk: Introduce WRUSS instruction
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Andy Lutomirski <luto@amacapital.net>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Kernel Team <Kernel-team@fb.com>, Chris Mason <clm@fb.com>,
-        Rene Rebe <rene@exactcode.com>,
-        Adam Borowski <kilobyte@angband.pl>,
-        Julian Andres Klode <julian.klode@canonical.com>,
-        Andi Kleen <ak@linux.intel.com>
-Date:   Fri, 13 Jul 2018 19:42:19 +0200
-Message-Id: <20180713174219.27019-1-kilobyte@angband.pl>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <5B282FAD-EDCF-44C8-A131-A3C6FF3EA84F@fb.com>
-References: <5B282FAD-EDCF-44C8-A131-A3C6FF3EA84F@fb.com>
-X-SA-Exim-Connect-IP: 89.71.158.145
-X-SA-Exim-Mail-From: kilobyte@angband.pl
-Subject: [PATCH] .gitignore: add ZSTD-compressed files
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on tartarus.angband.pl)
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromiun.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
+Date:   Fri, 13 Jul 2018 10:39:05 -0700
+In-Reply-To: <8bd46e0e-5418-0b22-d471-092d31c78320@intel.com>
+References: <20180710222639.8241-1-yu-cheng.yu@intel.com>
+         <20180710222639.8241-19-yu-cheng.yu@intel.com>
+         <bbb487cc-ac1c-f734-eee3-2463a0ba7efc@linux.intel.com>
+         <1531436398.2965.18.camel@intel.com>
+         <46784af0-6fbb-522d-6acb-c6248e5e0e0d@linux.intel.com>
+         <167645aa-f1c7-bd6a-c7e0-2da317cbbaba@intel.com>
+         <55A0592D-0E8D-4BC5-BA4B-E82E92EEA36A@amacapital.net>
+         <66016722-9872-a3f9-f88b-37397f9b6979@intel.com>
+         <8bd46e0e-5418-0b22-d471-092d31c78320@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For now, that's arch/x86/boot/compressed/vmlinux.bin.zst but probably more
-will come, thus let's be consistent with all other compressors.
+On Thu, 2018-07-12 at 21:18 -0700, Dave Hansen wrote:
+> On 07/12/2018 09:16 PM, Dave Hansen wrote:
+> > 
+> > On 07/12/2018 07:21 PM, Andy Lutomirski wrote:
+> > > 
+> > > I am tempted to suggest that the whole series not be merged until
+> > > there are actual docs. It’s not a fantastic precedent.
+> > Do you mean Documentation or manpages, or are you talking about hardware
+> > documentation?
+> > https://software.intel.com/sites/default/files/managed/4d/2a/control-flow-enforcement-technology-preview.pdf
+> Hit send too soon...
+> 
+> We do need manpages a well.  If I had to do it for protection keys,
+> everyone else has to suffer too. :)
+> 
+> Yu-cheng, I really do think selftests are a necessity before this gets
+> merged.
+> 
 
-Signed-off-by: Adam Borowski <kilobyte@angband.pl>
----
- .gitignore | 1 +
- 1 file changed, 1 insertion(+)
+We already have some.  I will put those in patches.
 
-diff --git a/.gitignore b/.gitignore
-index 97ba6b79834c..0d09cf1c053c 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -42,6 +42,7 @@
- *.tab.[ch]
- *.tar
- *.xz
-+*.zst
- Module.symvers
- modules.builtin
- 
--- 
-2.18.0
+Yu-cheng
 
