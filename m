@@ -2,110 +2,118 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 773D4ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D9DECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D7F020857
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDxtOXTW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7F020857
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 18A6F2087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A6F2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731501AbeGMOlN (ORCPT
+        id S1731878AbeGMOlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:41:13 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:37045 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729982AbeGMOlN (ORCPT
+        Fri, 13 Jul 2018 10:41:21 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:57283 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729982AbeGMOlV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:41:13 -0400
-Received: by mail-vk0-f65.google.com with SMTP id h22-v6so18278261vke.4;
-        Fri, 13 Jul 2018 07:26:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=o0s95QqcHWBZvnqqkEAY/j0d7SkjPCAMs+ki4WvQcUQ=;
-        b=pDxtOXTWFmPc4k6G7O9CAf8lwQYLNT1rXuXCZXkYFjxMkMMlt2PaInfEOHxiyHohhm
-         ZjouMQr8ik0RGJTW03jEOobDACDsS2VAQ4QftnRvbykEhHkDIn6bW+++TgJlTQzXRjJb
-         z6sUOlEOYs/f23alsoXOCYBZgbujCEB9aqXgmuOKLVphbSZ1hljgtQp35YqlLutX3jSu
-         B2BNvxPYLYgmwhE6MbVoWukQohFiEhI9TowYOIHRL8qrldgWryeefSmkZxzVgcob3Su5
-         vRgw+q8OASYVxszzbMII3mkGALZbBfcTpUEC4NGeFLWXWSGEHEyobBQ1Hq35C4WpBMgg
-         RngA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=o0s95QqcHWBZvnqqkEAY/j0d7SkjPCAMs+ki4WvQcUQ=;
-        b=mVLWbPN5St6GINNNTQ2EyOSKkf5rwulkw++4l7Tacj63T8l4SzF7Zb4JpSi3AqfpVv
-         5IdsGHYrOkWboD6athKXRco35+5xdbiGVi/K5nHt+2DmZ1D8+61hE6UYCUXt86Z/mtvJ
-         o9tbTt6F1IGjzP16FY+os+Cbz4E4kekdNxzYQdcwUhTTMJc1tYJLXYUAfTEFM5E0xPwN
-         SOPRpa4XWkZy64G87qVkmBZ43EeMWiGKXOn8gTcbzr4G831c6DIxi9vvNgd0RYfSpob2
-         rtTSlXYYUxlBAjoEVKSVgnUSuIYQq3/WhxQFuKwyZJA4G2zjjjq5rpQivyM2dUv1PNwB
-         Dn+g==
-X-Gm-Message-State: AOUpUlFjR9CJqRBQu6e8NEAUcoiG54j2r1uUf/LbqHJai9jHi+QDRfrw
-        DVkIGRNscOxYX8ogSiZqmcXcP/T1rGHyS9EtuyU=
-X-Google-Smtp-Source: AAOMgpfc6toLqeEIr+XBzNkFAJEkMf8Rb4cK2wUjtzKBc52NlEX7DcNm5x0oGMfAsiQnFhxyGUKkag1xruJpTopEELU=
-X-Received: by 2002:a1f:50c:: with SMTP id 12-v6mr3816136vkf.26.1531491980559;
- Fri, 13 Jul 2018 07:26:20 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 07:26:20
- -0700 (PDT)
-In-Reply-To: <eca11a9c20d14480ae02b2912b7a6447@ausx13mpc120.AMER.DELL.COM>
-References: <eb0db565-5f8a-ab1e-2bf3-2def3ec3eddc@gmail.com>
- <5318cc53-31b4-5c83-abb7-c3ff5d892af2@gmail.com> <eca11a9c20d14480ae02b2912b7a6447@ausx13mpc120.AMER.DELL.COM>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 13 Jul 2018 17:26:20 +0300
-Message-ID: <CAHp75VfpX7m3zLii3MKbW=S2rkh7O4BVygFdP7aB95jJ8hCBuA@mail.gmail.com>
-Subject: Re: [PATCH resend v4] dell_rbu: make firmware payload memory uncachable
-To:     Mario Limonciello <Mario.Limonciello@dell.com>
-Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stuart.Hayes@dell.com, Takashi Iwai <tiwai@suse.de>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 13 Jul 2018 10:41:21 -0400
+Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
+ (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LdVQI-1gMMBA2nGE-00ijxF; Fri, 13 Jul 2018 16:26:06 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] [v2, RESEND] afs: stop using time_t for internal times
+Date:   Fri, 13 Jul 2018 16:25:57 +0200
+Message-Id: <20180713142605.3138377-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:muopVIXrRh9HYHtoyB17ckhpoiMC8DMWhsBi2+n1JE1P2vcnyPA
+ MlOdmidS31/+ZJLiGchbextdQbSw5Dxc68DVaYKMIzHRepTwdvJbZT06GmShRPpg6/jcYT+
+ CM0o0y8gs5usSejNwDCG4H9kKbhEX7q6Zh2UzkJ3QPUcnQQrSvNPxqf1kMkwbP+Kv3OldJi
+ Sy1AQqCxvc/jnsMPQlH9Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:2O/QxCMcfLA=:jvQ3nnVxW6dzs79fIjCVn3
+ dZcXm3yXjVz8Sp2NKkYCE2gsBh6p8Hhpde8NQTIJxsPydunY3iyyCN5BN2RASQJYKcA+FrFXn
+ bwcxOi6ZfV0AolLnWHtyon2CMDrjaO1vpgd3tlez9KuBXafOv0RUgXCAmu0tYy1VNMaJaU1je
+ hLoIuhRhKtyXEJ58dHklmYL7Ytp1Kw0Y0B/IWDC9NDPRXXeYttYMljmnDISWo6rhv8LL0p8hI
+ etng+ZbUtPp/31CbRJ14uluSYkWabi2DCl/WWPPu6QDise/6TOvCkGejpy1TYWwhe/k3Dii2C
+ MQUIY1zfe8Y6QFYPeykglPy0r11D69qkPlY3MHcyjM3C0W6BEC0Lyd0XSYsWQO9+nQpbO2MJ0
+ iUq8VsoWGkD+XVQV7ghmHeNmLOhKToDtMgBbdl3yySVseZhg4U33kAge/Xe0DxuIJHUCxsyNH
+ OvuhHxEkB1N/4O8oDxLsp52Svrif9x4tcT28l6DrkEyco0ZzTpURLcw0nyRP3vMQ+7O8PP9t6
+ q31xLyBmO3+MJVL9hvzt8Eiwnm32nv8rpGTcfx42X8R69vSIVZgx350NuiyphH7foL5OXRUWB
+ +fzzTwumStX2g2LbQsOh2vQgOUAKIlnk5dlj05Q+uqk1dR4gn5TGfNiIHr7hief2EpKVHA4WT
+ 0Ah8aYdl0G1guohXKY352hL/YfpODffuAPVoGex2KQuK4/6+O5ExMEIEQb1nJ4axGryY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 6, 2018 at 7:28 PM,  <Mario.Limonciello@dell.com> wrote:
+afs uses 32-bit timestamps everywhere, but mixes signed and unsigned
+usage, which is a bit inconsistent. In particular on 32-bit machines,
+it currently uses unsigned timestamps (ranging from 1970 to 2106) for
+locally modified files, but signed timestamps (rand 1902 to 2038) when
+reading from a remote end. On 64-bit machines, we always interpret
+timestamps as unsigned here.
 
-> Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
+This replaces the deprecated time_t with a new explicitly unsigned
+afs_time32_t to get a consistent interpretation of inode times
+according the the wire protocol definition.
 
-Pushed to my review and testing queue, thanks!
+This avoids the y2038 overflow on 32-bit machines, extending the range
+to the end of the afs_time32_t in year 2106. On 64-bit machines, using
+the shorter type saves a few bytes for each afs_file_status and
+afs_volsync saves a few bytes over time_t or time64_t.
 
->> This driver has no maintainer.
->
-> Stuart,
->
-> Outside of this patch, I think it would make sense to send some follow up patch
-> series that do the following:
->
-> 1) Let you take over as maintainer (Update MAINTAINERS)
+Note that mtime_server and struct afs_volsync are not currently
+used in any meaningful way and could be removed completely.
 
-> 2) Move this driver to platform-x86
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+Originally submitted this on June 20, but got no reply.
+Resending this in case it got lost somewhere on the way.
+David, can you pick up both patches?
+---
+ fs/afs/afs.h | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Darren, what do you think about this step?
-
-If we would go this way, first move, then take maintainership to reduce a churn.
-
-> 3) Update dell_rbu.txt with the correct URLs and mention that it's only for enterprise
-> hardware.    Client hardware has instead opted to support UEFI capsules for updates
-> from Linux.
->
-> Since it's really a platform feature and specific to only Dell enterprise hardware
-> I think it makes sense to move over to an area with subsystem maintainers that
-> can help to review patches as needed.
-
+diff --git a/fs/afs/afs.h b/fs/afs/afs.h
+index b4ff1f7ae4ab..a17f4ce06323 100644
+--- a/fs/afs/afs.h
++++ b/fs/afs/afs.h
+@@ -26,6 +26,7 @@
+ typedef unsigned			afs_volid_t;
+ typedef unsigned			afs_vnodeid_t;
+ typedef unsigned long long		afs_dataversion_t;
++typedef unsigned			afs_time32_t;
+ 
+ typedef enum {
+ 	AFSVL_RWVOL,			/* read/write volume */
+@@ -129,8 +130,8 @@ typedef u32 afs_access_t;
+ struct afs_file_status {
+ 	u64			size;		/* file size */
+ 	afs_dataversion_t	data_version;	/* current data version */
+-	time_t			mtime_client;	/* last time client changed data */
+-	time_t			mtime_server;	/* last time server changed data */
++	afs_time32_t		mtime_client;	/* last time client changed data */
++	afs_time32_t		mtime_server;	/* last time server changed data */
+ 	unsigned		abort_code;	/* Abort if bulk-fetching this failed */
+ 
+ 	afs_file_type_t		type;		/* file type */
+@@ -158,7 +159,7 @@ struct afs_file_status {
+  * AFS volume synchronisation information
+  */
+ struct afs_volsync {
+-	time_t			creation;	/* volume creation time */
++	afs_time32_t		creation;	/* volume creation time */
+ };
+ 
+ /*
 -- 
-With Best Regards,
-Andy Shevchenko
+2.9.0
+
