@@ -2,84 +2,110 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07258ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A20ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8E612124D
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:30:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8E612124D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id C84C2214C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:34:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W7Ds9c1e";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SRZbKckk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C84C2214C2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387948AbeGMBmi (ORCPT
+        id S2387978AbeGMBqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 21:42:38 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:45847 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387902AbeGMBmi (ORCPT
+        Thu, 12 Jul 2018 21:46:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:58208 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387916AbeGMBqT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 21:42:38 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08234189|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e01e01542;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.CPsyirE_1531445413;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.CPsyirE_1531445413)
-          by smtp.aliyun-inc.com(10.147.41.121);
-          Fri, 13 Jul 2018 09:30:14 +0800
-Date:   Fri, 13 Jul 2018 09:30:13 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Sandra Loosemore <sandra@codesourcery.com>
-Cc:     David Howells <dhowells@redhat.com>, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        daniel.lezcano@linaro.org, jason@lakedaemon.net, arnd@arndb.de,
-        c-sky_gcc_upstream@c-sky.com, gnu-csky@mentor.com,
-        thomas.petazzoni@bootlin.com, wbx@uclibc-ng.org, green.hu@gmail.com
-Subject: Re: [PATCH V2 00/19] C-SKY(csky) Linux Kernel Port
-Message-ID: <20180713013013.GA25852@guoren>
-References: <cover.1530465325.git.ren_guo@c-sky.com>
- <27030.1531302693@warthog.procyon.org.uk>
- <20180712125152.GA5226@guoren>
- <5731b5c4-e29d-30f6-095f-4a74f52cb72d@codesourcery.com>
+        Thu, 12 Jul 2018 21:46:19 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 8FE2E60B72; Fri, 13 Jul 2018 01:34:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531445644;
+        bh=kxlr6AQTxvSp7Xi2YApJ0KHXD1mMqpQjyvxG9zGbDZo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=W7Ds9c1eFBBBJtMhK5uMAEI/NiV2xFaYVHeORrVOtdZ4nxxD5m0FvMzExNfRX+dEo
+         iyfxo+CT/taVYPnK2fPvZhFUH2kWaR+9CydEF/kI9B0IRzcowcprEkGzEXTgeSjxCE
+         o4ORSWrp5fOBFzbp5Z4QWLlwFCK2eSLMJH2C2ZZY=
+Received: from [10.46.160.165] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: collinsd@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6542560227;
+        Fri, 13 Jul 2018 01:34:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1531445643;
+        bh=kxlr6AQTxvSp7Xi2YApJ0KHXD1mMqpQjyvxG9zGbDZo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SRZbKckksZ+eaBYpa/vsprZP6Ht/GUKbWfNBPJibpjHTeFWHfnsD9+OY6G8P4ur6H
+         RyTceI0e9UhIBIHI0aANRAj2zihdJ7kYSyTHiITIL155/nypADvBCwGPJKzitsG4ec
+         xfGFLwaeYNM/Ak7nBKzNbjUB840CwKumZS58IwZ8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6542560227
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
+Subject: Re: [PATCH v8 2/2] regulator: add QCOM RPMh regulator driver
+To:     Mark Brown <broonie@kernel.org>
+Cc:     lgirdwood@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
+        sboyd@kernel.org, dianders@chromium.org, mka@chromium.org
+References: <cover.1529712888.git.collinsd@codeaurora.org>
+ <35c4ea70cdf5caba560fb6f40e866ee8bc456d93.1529712888.git.collinsd@codeaurora.org>
+ <20180702102853.GI18211@sirena.org.uk>
+ <9bbfb628-018d-2d89-257b-9cc4e716cb46@codeaurora.org>
+ <20180712165457.GI10369@sirena.org.uk>
+From:   David Collins <collinsd@codeaurora.org>
+Message-ID: <c6919357-6c3b-1f69-4d51-2ed2ddd2c942@codeaurora.org>
+Date:   Thu, 12 Jul 2018 18:34:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5731b5c4-e29d-30f6-095f-4a74f52cb72d@codesourcery.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180712165457.GI10369@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 12, 2018 at 10:04:10AM -0600, Sandra Loosemore wrote:
-> On 07/12/2018 06:51 AM, Guo Ren wrote:
-> >On Wed, Jul 11, 2018 at 10:51:33AM +0100, David Howells wrote:
-> >>Can you say what the --target tuple should be so that I can add the arch to my
-> >>collection of Fedora cross-binutils and cross-gcc tools built from upstream
-> >>binutils and gcc sources?
-> >Metor Graghics are helping us upstream gcc and binutils.
-> >
-> >@Sandra,
-> >
-> >Could you help me to reply the question?
+On 07/12/2018 09:54 AM, Mark Brown wrote:
+> On Mon, Jul 09, 2018 at 04:44:14PM -0700, David Collins wrote:
+>> On 07/02/2018 03:28 AM, Mark Brown wrote:
+>>> On Fri, Jun 22, 2018 at 05:46:14PM -0700, David Collins wrote:
+>>>> +static unsigned int rpmh_regulator_pmic4_ldo_of_map_mode(unsigned int mode)
+>>>> +{
+>>>> +	static const unsigned int of_mode_map[RPMH_REGULATOR_MODE_COUNT] = {
+>>>> +		[RPMH_REGULATOR_MODE_RET]  = REGULATOR_MODE_STANDBY,
+>>>> +		[RPMH_REGULATOR_MODE_LPM]  = REGULATOR_MODE_IDLE,
+>>>> +		[RPMH_REGULATOR_MODE_AUTO] = REGULATOR_MODE_INVALID,
+>>>> +		[RPMH_REGULATOR_MODE_HPM]  = REGULATOR_MODE_FAST,
+>>>> +	};
 > 
-> Neither binutils nor gcc support for C-SKY are in the upstream repositories
-> yet.  We should be resubmitting the binutils port soon (with bug fixes to
-> address the test failures that caused it to be rejected the last time), and
-> the gcc port will follow that shortly.
+>>> Same here, based on that it looks like auto mode is a good map for
+>>> normal.
 > 
-> The target triplets we have been testing are csky-elf, csky-linux-gnu, and
-> csky-linux-uclibc.  Note that the gcc port will only support v2
-> processors/ABI so that is the default ABI for these triplets.
+>> LDO type regulators physically do not support AUTO mode.  That is why I
+>> specified REGULATOR_MODE_INVALID in the mapping.
 > 
-> I'm not familiar with the Fedora tools, but to build a complete toolchain
-> you'll need library support as well and I'm not sure what the submission
-> status/plans for that are.  E.g. Mentor did a newlib/libgloss port for local
-> testing of the ELF toolchain and provided it to C-SKY, but pushing that to
-> the upstream repository ourselves is not on our todo list.
-> 
-> -Sandra
+> The other question here is why this is even in the table if it's not
+> valid (I'm not seeing a need for the MODE_COUNT define)?
 
-Thank you, Sandra.
+I thought that having a table would be more concise and easier to follow.
+I can change this to a switch case statement.
 
- Guo Ren
+Take care,
+David
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
