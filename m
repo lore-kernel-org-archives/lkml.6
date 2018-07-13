@@ -3,116 +3,163 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38FB9ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13AD2ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:13:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6444208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:13:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6444208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C9317208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 09:13:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9317208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728035AbeGMJ1K (ORCPT
+        id S1729647AbeGMJ1l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 05:27:10 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40460 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726389AbeGMJ1K (ORCPT
+        Fri, 13 Jul 2018 05:27:41 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41621 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726591AbeGMJ1k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 05:27:10 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w6D950YU046812
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 05:13:24 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2k6qkkmc0w-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 05:13:23 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <abdhalee@linux.vnet.ibm.com>;
-        Fri, 13 Jul 2018 03:13:23 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 13 Jul 2018 03:13:20 -0600
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w6D9DJ4x66650330
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 13 Jul 2018 02:13:19 -0700
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 28C81C605A;
-        Fri, 13 Jul 2018 03:13:19 -0600 (MDT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9FD3DC6057;
-        Fri, 13 Jul 2018 03:13:13 -0600 (MDT)
-Received: from [9.195.42.28] (unknown [9.195.42.28])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 13 Jul 2018 03:13:13 -0600 (MDT)
-Subject: Re: [next-20180711][Oops] linux-next kernel boot is broken on
- powerpc
-From:   Abdul Haleem <abdhalee@linux.vnet.ibm.com>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     sachinp@linux.vnet.ibm.com,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Hocko <mhocko@suse.com>, sim@linux.vnet.ibm.com,
-        venkatb3@in.ibm.com, LKML <linux-kernel@vger.kernel.org>,
-        manvanth@linux.vnet.ibm.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        linux-next@vger.kernel.org, aneesh.kumar@linux.vnet.ibm.com,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 13 Jul 2018 14:43:11 +0530
-In-Reply-To: <CAGM2rebtisZda0kqhg0u92fTDxC+=zMNNgKFBLH38osphk0fdA@mail.gmail.com>
-References: <1531416305.6480.24.camel@abdul.in.ibm.com>
-         <CAGM2rebtisZda0kqhg0u92fTDxC+=zMNNgKFBLH38osphk0fdA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu1 
-Mime-Version: 1.0
+        Fri, 13 Jul 2018 05:27:40 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s24-v6so7854904edr.8
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 02:13:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4ITT0JYaaMvKaRVyyTIPUPNphIYsZzp2kVtWlPkBwb4=;
+        b=IE+41G1+Y1JcFq6YExkCI4okrtSZH0c16QRHeOchLLcTBIebVdF/4+HWlE3pFMdVYb
+         rVga36J23Iw/27nFUjYH20M3e/TtBXz7PjUMcvVzeZaNS5/FEfvVieTAXbxaPor3Omok
+         vyK4O2WQOrItaZpMfOv0Ufg6c/h85RsDRdtPQzZUUww5b7oKfKJUUqed05UhSL+OhJku
+         hEkngjQF03b5aYAOvAKbvoGg2KIfeIqEDGOJXhoEfgXMQj4Bt7uHdpdYQHnQ0OEKAggR
+         nsg2g+ftCWmLx+jqt8HbdOmGvyWor6PeRJksKADiPbJZMwU2+cjAbkIuQ81spl+vKJWG
+         Djrw==
+X-Gm-Message-State: AOUpUlE3a+0mZZYunJwdXfOEx43DnmKS9hWfKLFYGCo/WeHA9fFXZhla
+        piImfcAImCXUpAxhx+1KWRehtA==
+X-Google-Smtp-Source: AAOMgpe8BhVYphhe9D6jYBr44+pcyJPvegILChaXH/jP4o5kY957Tc32RsXUECelOyJ+q/twEhCmVw==
+X-Received: by 2002:a50:b1f3:: with SMTP id n48-v6mr6038099edd.197.1531473233660;
+        Fri, 13 Jul 2018 02:13:53 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id b7-v6sm9686602edj.87.2018.07.13.02.13.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 13 Jul 2018 02:13:53 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 2/2] ata: ahci: Enable DEVSLP by default on x86
+ with SLP_S0
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        tj@kernel.org
+Cc:     linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alan.cox@intel.com, Mario.Limonciello@dell.com, rjw@rjwysocki.net
+References: <20180712222712.65310-1-srinivas.pandruvada@linux.intel.com>
+ <20180712222712.65310-3-srinivas.pandruvada@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <f9277260-29d0-f655-f2a1-b9db1187236a@redhat.com>
+Date:   Fri, 13 Jul 2018 11:13:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180712222712.65310-3-srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 18071309-0012-0000-0000-0000168B6031
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009362; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000266; SDB=6.01060670; UDB=6.00544469; IPR=6.00838588;
- MB=3.00022127; MTD=3.00000008; XFM=3.00000015; UTC=2018-07-13 09:13:22
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18071309-0013-0000-0000-000053A7FECA
-Message-Id: <1531473191.6480.26.camel@abdul.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-07-13_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=838 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1806210000 definitions=main-1807130068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-07-12 at 13:44 -0400, Pavel Tatashin wrote:
-> > Related commit could be one of below ? I see lots of patches related to mm and could not bisect
-> >
-> > 5479976fda7d3ab23ba0a4eb4d60b296eb88b866 mm: page_alloc: restore memblock_next_valid_pfn() on arm/arm64
-> > 41619b27b5696e7e5ef76d9c692dd7342c1ad7eb mm-drop-vm_bug_on-from-__get_free_pages-fix
-> > 531bbe6bd2721f4b66cdb0f5cf5ac14612fa1419 mm: drop VM_BUG_ON from __get_free_pages
-> > 479350dd1a35f8bfb2534697e5ca68ee8a6e8dea mm, page_alloc: actually ignore mempolicies for high priority allocations
-> > 088018f6fe571444caaeb16e84c9f24f22dfc8b0 mm: skip invalid pages block at a time in zero_resv_unresv()
+Hi,
+
+On 13-07-18 00:27, Srinivas Pandruvada wrote:
+> From: Srinivas <srinivas.pandruvada@linux.intel.com>
 > 
-> Looks like:
-> 0ba29a108979 mm/sparse: Remove CONFIG_SPARSEMEM_ALLOC_MEM_MAP_TOGETHER
+> One of the requirement for modern x86 system to enter lowest power mode
+> (SLP_S0) is SATA IP block to be off. This is true even during when
+> platform is suspended to idle and not only in opportunistic (runtime)
+> suspend.
 > 
-> This patch is going to be reverted from linux-next. Abdul, please
-> verify that issue is gone once  you revert this patch.
+> Several of these system don't have traditional ACPI S3, so it is
+> important that they enter SLP_S0 state, to avoid draining battery even
+> during suspend. So it is important that out of the box Linux installation
+> reach this state.
+> 
+> SATA IP block doesn't get turned off till SATA is in DEVSLP mode. Here
+> user has to either use scsi-host sysfs or tools like powertop to set
+> the sata-host link_power_management_policy to min_power.
+> 
+> This change sets by default link power management policy to min_power
+> with partial (preferred) or slumber support on idle for some platforms.
+> To avoid regressions, the following conditions are used:
+> - The kernel config is already set to use med_power_with_dipm or deeper
+> - System is a SLP_S0 capable using ACPI low power idle flag
+> This combination will make sure that systems are fairly recent and
+> since getting shipped with SLP_S0 support, the DEVSLP function
+> is already validated.
+> 
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+>   drivers/ata/ahci.c | 15 +++++++++++++++
+>   1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/ata/ahci.c b/drivers/ata/ahci.c
+> index b2b9eba1d214..e8d425823f9b 100644
+> --- a/drivers/ata/ahci.c
+> +++ b/drivers/ata/ahci.c
+> @@ -1604,6 +1604,19 @@ static int ahci_init_msi(struct pci_dev *pdev, unsigned int n_ports,
+>   	return pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_MSIX);
+>   }
+>   
+> +static void ahci_update_mobile_policy(struct ahci_host_priv *hpriv)
+> +{
+> +#ifdef CONFIG_ACPI
+> +	if (mobile_lpm_policy > ATA_LPM_MED_POWER &&
+> +	    (acpi_gbl_FADT.flags & ACPI_FADT_LOW_POWER_S0)) {
+> +		if (hpriv->cap & HOST_CAP_PART)
+> +			mobile_lpm_policy = ATA_LPM_MIN_POWER_WITH_ASP;
+> +		else if (hpriv->cap & HOST_CAP_SSC)
+> +			mobile_lpm_policy = ATA_LPM_MIN_POWER;
 
-kernel booted fine when the above patch is reverted.
+You are checking hpriv flags here and changing global state based on that.
 
--- 
-Regard's
+Instead it would be better to add a new:
 
-Abdul Haleem
-IBM Linux Technology Centre
+int ahci_get_initial_lpm_policy(struct ahci_host_priv *hpriv);
+
+Function and replace this:
+
+                 if ((hpriv->flags & AHCI_HFLAG_IS_MOBILE) &&
+                     mobile_lpm_policy >= ATA_LPM_UNKNOWN &&
+                     mobile_lpm_policy <= ATA_LPM_MIN_POWER)
+                         ap->target_lpm_policy = mobile_lpm_policy;
+
+With:
+
+		ap->target_lpm_policy = ahci_get_initial_lpm_policy(priv);
+
+And do the original checks + your new checks all in the
+ahci_get_initial_lpm_policy() function.
+
+Regards,
+
+Hans
 
 
 
+> +	}
+> +#endif
+> +}
+> +
+>   static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+>   {
+>   	unsigned int board_id = ent->driver_data;
+> @@ -1796,6 +1809,8 @@ static int ahci_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+>   	if (pi.flags & ATA_FLAG_EM)
+>   		ahci_reset_em(host);
+>   
+> +	ahci_update_mobile_policy(hpriv);
+> +
+>   	for (i = 0; i < host->n_ports; i++) {
+>   		struct ata_port *ap = host->ports[i];
+>   
+> 
