@@ -6,96 +6,150 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3ABECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:47:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EABDECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C21208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:47:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0A1E208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 07:48:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QbgS1ddd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C21208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a21LfUkt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A1E208E3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731526AbeGMIBF (ORCPT
+        id S1731639AbeGMIBo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 04:01:05 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34986 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729830AbeGMIBE (ORCPT
+        Fri, 13 Jul 2018 04:01:44 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:45108 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729764AbeGMIBn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 04:01:04 -0400
-Received: by mail-wr1-f65.google.com with SMTP id a3-v6so14888854wrt.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 00:47:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:references:cc:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding;
-        bh=Pa+KSX0G1/Fp2+itA7p8L/Ps2d6v1MepkijOR4Lq9oQ=;
-        b=QbgS1dddYUJYt7fO8WG4NFZDERubp59DIBH5w9Xy+nBiG+V5H+PZAZ8eZsso8WLeQs
-         jw5f1pbA83m7K8vjkBcrDYsde4NeJcHZvQm5yrMvSqd++r1+ZGT+D/AvlrKnlCSrv2IY
-         ZybpGCx8ufF4asSzan+38osJjtLrNmwooAm90=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
-        bh=Pa+KSX0G1/Fp2+itA7p8L/Ps2d6v1MepkijOR4Lq9oQ=;
-        b=SqQGYSwhTsd7xvlKaypWSOFRGXI6KlcWrL+8k4otM13KJTPOkek0T5AQYpRHgd0ZcX
-         mIaP6QSsDxLYTjRo6Xio/h4bjjH8Du2Pxt8mWnyYjBhuYj5R5sUJ2zU9jRiI8XMQairn
-         hNUYkPlozGUbej8GNIuU4+o0aHg8g3V5RKv4X9lpDfihPI/O9SE2ad/yrYZFMFWGDlrT
-         Ny5x7YuKD5emX3h4jS6kGZ7on6QhnoXWIC4JQ8PI5A58k/Frwj6aFXK4mKoUaoYkLy5M
-         uMyELFKL5FHW0KCSwSLmlgAEKFU6TgvBJrkR7knfV/AuYlHLrQ5Qsby9T2Padl7mR7Si
-         HoKA==
-X-Gm-Message-State: AOUpUlHfw7h6xBr3NZHlY03UMjcu4Nzu56ZGOK0U8U0i3j3dvgZWfHBO
-        tOFGBxjmuOhOOhGT/NvYJG9Fu8tU
-X-Google-Smtp-Source: AAOMgpdSBqtnlTpCj+WoBvW3lUjr6pSXTYnrzGETcW24pygf5YGbe+LkdM2+BPgyfc0d2d0o66t8yw==
-X-Received: by 2002:a5d:44c6:: with SMTP id z6-v6mr3925241wrr.236.1531468057366;
-        Fri, 13 Jul 2018 00:47:37 -0700 (PDT)
-Received: from [10.176.68.125] ([192.19.248.250])
-        by smtp.gmail.com with ESMTPSA id u4-v6sm17074819wrt.31.2018.07.13.00.47.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 00:47:36 -0700 (PDT)
-Subject: Re: [PATCH 11/18] wireless/ti: change strncpy+truncation to strlcpy
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Dominique Martinet <asmadeus@codewreck.org>
-References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
- <1531445149-19607-1-git-send-email-asmadeus@codewreck.org>
- <20180713073810.GA31984@kroah.com>
-Cc:     Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Joe Perches <joe@perches.com>, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Arend van Spriel <arend.vanspriel@broadcom.com>
-Message-ID: <5B485917.7090102@broadcom.com>
-Date:   Fri, 13 Jul 2018 09:47:35 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.0
+        Fri, 13 Jul 2018 04:01:43 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w6D7m35p070450;
+        Fri, 13 Jul 2018 02:48:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1531468083;
+        bh=ekpUcaDQsAyRxA8GvaXIzJI9wHMGBXFPL6x3qRKEaVo=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=a21LfUktq9n4sZmv362gOT98Jog8JDKPhCW2UMC6K7/FRk9jfkEik91ldpMxpvSZP
+         vzTxpxE6jeHSEtp7Ob0KjX7516d2sAYPyHVJBDERr0JRlJU+lSoEM+qMEBDhdYwyg8
+         m6rpXPtqEfiDvjPJuQJFlpp/GYlSVsX/+NXcPjhI=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6D7m2IP004345;
+        Fri, 13 Jul 2018 02:48:02 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 13
+ Jul 2018 02:48:01 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 13 Jul 2018 02:48:02 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w6D7lwsq027765;
+        Fri, 13 Jul 2018 02:47:59 -0500
+Subject: Re: [PATCH v9 01/12] PCI: dwc: Fix EP link notification
+ implementation
+To:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <bhelgaas@google.com>, <lorenzo.pieralisi@arm.com>,
+        <Joao.Pinto@synopsys.com>, <jingoohan1@gmail.com>,
+        <adouglas@cadence.com>, <jesper.nilsson@axis.com>,
+        <shawn.lin@rock-chips.com>
+References: <cover.1531155252.git.gustavo.pimentel@synopsys.com>
+ <3b43f37cc5fe654294c1ea696ed8df1797ad213b.1531155252.git.gustavo.pimentel@synopsys.com>
+CC:     <linux-pci@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <d7ce93a5-0f35-4b8e-3744-d5fd319d8172@ti.com>
+Date:   Fri, 13 Jul 2018 13:17:57 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180713073810.GA31984@kroah.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <3b43f37cc5fe654294c1ea696ed8df1797ad213b.1531155252.git.gustavo.pimentel@synopsys.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/13/2018 9:38 AM, Greg Kroah-Hartman wrote:
-> On Fri, Jul 13, 2018 at 03:25:49AM +0200, Dominique Martinet wrote:
->> Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
->>
->> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
->
-> I don't know about other maintainers, but I know I wouldn't take such a
-> horrid changelog description as this :)
->
-> good luck!
 
-especially as that script is not in the kernel tree yet. The patch 
-adding that script contains a good motivation, but I would want to see 
-that in commit message of every patch or at least the gist of it.
 
-Regards,
-Arend
+On Monday 09 July 2018 11:12 PM, Gustavo Pimentel wrote:
+> Move specific features settings from EP shared code
+> (pcie-designware-ep.c) to the driver (pcie-designware-plat.c).
+> 
+> Previous implementation disables the EP link notification
+> by default for all SoCs that uses EP DesignWare IP, which affects
+> directly the dra7xx and artpec6 SoCs.
+> 
+> Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> ---
+> Change v8->v9:
+>  - Created patch file.
+> 
+>  drivers/pci/controller/dwc/pcie-designware-ep.c   | 14 ++++++--------
+>  drivers/pci/controller/dwc/pcie-designware-plat.c |  3 +++
+>  2 files changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 8650416..04092a7 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -386,15 +386,18 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>  		return -ENOMEM;
+>  	ep->outbound_addr = addr;
+>  
+> -	if (ep->ops->ep_init)
+> -		ep->ops->ep_init(ep);
+> -
+>  	epc = devm_pci_epc_create(dev, &epc_ops);
+>  	if (IS_ERR(epc)) {
+>  		dev_err(dev, "Failed to create epc device\n");
+>  		return PTR_ERR(epc);
+>  	}
+>  
+> +	ep->epc = epc;
+> +	epc_set_drvdata(epc, ep);
+> +
+> +	if (ep->ops->ep_init)
+> +		ep->ops->ep_init(ep);
+> +
+>  	ret = of_property_read_u8(np, "max-functions", &epc->max_functions);
+>  	if (ret < 0)
+>  		epc->max_functions = 1;
+> @@ -413,11 +416,6 @@ int dw_pcie_ep_init(struct dw_pcie_ep *ep)
+>  		return -ENOMEM;
+>  	}
+>  
+> -	epc->features = EPC_FEATURE_NO_LINKUP_NOTIFIER;
+> -	EPC_FEATURE_SET_BAR(epc->features, BAR_0);
+> -
+> -	ep->epc = epc;
+> -	epc_set_drvdata(epc, ep);
+>  	dw_pcie_setup(pci);
+>  
+>  	return 0;
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
+> index 5937fed..0ce3440 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-plat.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
+> @@ -70,10 +70,13 @@ static const struct dw_pcie_ops dw_pcie_ops = {
+>  static void dw_plat_pcie_ep_init(struct dw_pcie_ep *ep)
+>  {
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +	struct pci_epc *epc = ep->epc;
+>  	enum pci_barno bar;
+>  
+>  	for (bar = BAR_0; bar <= BAR_5; bar++)
+>  		dw_pcie_ep_reset_bar(pci, bar);
+> +
+> +	epc->features |= EPC_FEATURE_NO_LINKUP_NOTIFIER;
+>  }
+>  
+>  static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+> 
