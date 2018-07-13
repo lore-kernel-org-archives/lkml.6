@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B49AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:13:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74781ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFECD2087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FF082087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:13:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePKA/yGK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFECD2087C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dqgxYHis"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FF082087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732994AbeGMU3m (ORCPT
+        id S1733130AbeGMU3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 16:29:42 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:52332 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732598AbeGMU3l (ORCPT
+        Fri, 13 Jul 2018 16:29:45 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:50668 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732598AbeGMU3o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 16:29:41 -0400
-Received: by mail-wm0-f68.google.com with SMTP id o11-v6so3921231wmh.2
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 13:13:33 -0700 (PDT)
+        Fri, 13 Jul 2018 16:29:44 -0400
+Received: by mail-wm0-f67.google.com with SMTP id v25-v6so9896689wmc.0
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 13:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=pIJbMGVi6XFz3ueKvViQahDRcg488MIyZX01Rt7pwG8=;
-        b=ePKA/yGKw8YacgJZoTehDiXX/CqaiMQg0z8eIGT0iHa2UkoX6qNB3u0n+gAIPky2V9
-         vAfEjHl2tMDHnGS8cUeDM2GQSX5YQ5UQ8wFAOxssdhTCK1VnFe3Lj2ZShafsIx2+96al
-         kqvxVk+Knz2y9+hMNqOzfFtRxGt5tu4Vea86Y0u8DW5xCwZ9wUfmqRGAXr+HqjWGIOA1
-         f2ASSarv4KujxDcos05WFwtqSMuplfgONSBnbqoUA5SEZV51xvobUxMzQiWn74lOFeFO
-         Sf0tVCApbciS9vpvKIip6QlZHnxomwi7O5+Z8l+W5d/mPDO5jjbMfHx0rG2/W65GORjB
-         zjOA==
+        bh=6SNVQn+wzY1U1+jQVbQ/a5tNSGnVoD3lj5lukMWlXxE=;
+        b=dqgxYHis9x/DVvSoLqj4oPQQpgiSJPNR8vB8tKDpJMy/HD5xvzixRw5lPlWutc6qw6
+         xoS0FXEPZa2ZQc6nHZEMn2UpJf+ekZ+NOSdMzqBWJlcy0OX76mZ8k3iIg3+LaBLVYmpX
+         S5LuOvjzsbEXlKU4KeFDCzA0zs8c9Y5OXgU3pXLxBt3j5eqBF2xNPBUj4LQ+0YeC1+JR
+         agiElGBgLvUOsocUbzYyaUWHu6TS1ilLOlcHbyzkGiX/DzpLoIbOJIijPWjyVx5wBCU6
+         yLAcPiNtaHVO8BBnkf5F6YHLR3CMv0bQnzCU5bj+MS3uYDFrIjNTBYrOE3VVfp0DExDM
+         K7sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=pIJbMGVi6XFz3ueKvViQahDRcg488MIyZX01Rt7pwG8=;
-        b=BTm4gqhe8Hz+bLCrEvHyO19Rf1k4ReVu7Zy9f9mTOVJROb3Jl7Qnk9427NETlPy0es
-         7PgFY4u5WKaJ+bT8AKki4PlLu+sKHs831ui0GrQm5KhUjP+cwxMTeVWUlAZckfmmHrHl
-         GVFOXKbJMkQPKJ47DiIb+o4KXDEVBvs95d/asdaySLfa/0SnRLMEvyaordFEuqNupCFR
-         GUGOFlDvg5KSpfPXdG7RTrvZQoM81n8gLzKViZBeYdeTfH5sCC91rspuH6TZS6DnJ4QB
-         Q6yDlrznRXcD/M54WIyhicQrqtcWM/O9FtZFJZZaxAAL0C8l2dBE3WqFbGBzqCPYZ8wR
-         ccOA==
-X-Gm-Message-State: AOUpUlFB8WH7qyMMEP2vZEo84M3MvyWl/DYXhq0UZOMRgp2dfStYO4XH
-        SYbtrmkxDY5ywzUkeRhWLW25YrY+
-X-Google-Smtp-Source: AAOMgpdt0Q1mYmlJPhTDaSox2kxq7soxg/FD04PfjV1s8jKe9Nal26TG2mDshYykMKtJsNLnGrPWfw==
-X-Received: by 2002:a1c:d0ce:: with SMTP id h197-v6mr4495887wmg.43.1531512812585;
-        Fri, 13 Jul 2018 13:13:32 -0700 (PDT)
+        bh=6SNVQn+wzY1U1+jQVbQ/a5tNSGnVoD3lj5lukMWlXxE=;
+        b=dZnjEnLpQyg/bUSYbVemQ4IsWxZmsvOUhuGdGW2yErL0FkivzwrEHTxQqXgHF6Ekbl
+         M/JRa2RkAssuo29R051t9hNwOK4a4ja4O/qF0FSv0EMELksWOBMqsqlUAmgMjZuzzwPo
+         g0BRV0MK6fN20V6ISEbNyugCo9fknuaAVKgc/UmnlhLVvX2s4IImgk7NrU1Agwwh5pk6
+         tvBwoIES+Zjk0ashYjt1MSx8y34OWUKMaEK/rvC9bqmsO1xpudCAceSsNN4CmSMnsX5D
+         uuhFM9YAfrgOT+vQ3LgN5CTcOtVBgR1IwAUNyswFYh919fsbKL5lZmk52vxBE93bznFG
+         cXAg==
+X-Gm-Message-State: AOUpUlF4Qnihybhq6khMWrQlbH+BwWDLPnaEroy60iNRIDsYi2KKOUbH
+        o4gl3xDS/uKRPq98Bmnpc57KbKRH
+X-Google-Smtp-Source: AAOMgpfVbw430L4YK7agxLi4fosVbxhYyQpoB8dikSDzovqk3xPsjbhe49HKcZJ2/Gkx0JE80wosHQ==
+X-Received: by 2002:a1c:ea9b:: with SMTP id g27-v6mr4461297wmi.152.1531512814215;
+        Fri, 13 Jul 2018 13:13:34 -0700 (PDT)
 Received: from localhost.localdomain (host81-152-164-58.range81-152.btcentralplus.com. [81.152.164.58])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm14072677wrp.30.2018.07.13.13.13.31
+        by smtp.gmail.com with ESMTPSA id f6-v6sm14072677wrp.30.2018.07.13.13.13.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 13 Jul 2018 13:13:31 -0700 (PDT)
+        Fri, 13 Jul 2018 13:13:33 -0700 (PDT)
 From:   John Whitmore <johnfwhitmore@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     devel@driverdev.osuosl.org, gregkh@linuxfoundation.org,
         pombredanne@nexb.com, kstewart@linuxfoundation.org,
         tglx@linutronix.de, John Whitmore <johnfwhitmore@gmail.com>
-Subject: [PATCH 05/10] staging:rtl8192u: Rename InactTimer > inact_timer - Style
-Date:   Fri, 13 Jul 2018 21:12:42 +0100
-Message-Id: <20180713201247.21428-6-johnfwhitmore@gmail.com>
+Subject: [PATCH 06/10] staging:rtl8192u: Rename Addr > addr - Style
+Date:   Fri, 13 Jul 2018 21:12:43 +0100
+Message-Id: <20180713201247.21428-7-johnfwhitmore@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20180713201247.21428-1-johnfwhitmore@gmail.com>
 References: <20180713201247.21428-1-johnfwhitmore@gmail.com>
@@ -74,73 +74,146 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename the struct TS_COMMON_INFO member InactTimer to inact_timer.
-This change clears the checkpatch issue with CamelCase naming. The change
-should not have any impact on runtime execution.
+Rename the TX_COMMON_INFO structure's member Addr to addr. This change
+clears the checkpatch issue with CamelCase naming. This is a coding style
+change only and should not impact runtime execution.
 
 Signed-off-by: John Whitmore <johnfwhitmore@gmail.com>
 ---
- drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h     |  2 +-
- drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c | 10 +++++-----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ .../staging/rtl8192u/ieee80211/rtl819x_BAProc.c    | 10 +++++-----
+ drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h    |  2 +-
+ .../staging/rtl8192u/ieee80211/rtl819x_TSProc.c    | 14 +++++++-------
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-index 4601e5fd3e9c..9c0998db220f 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
-@@ -18,7 +18,7 @@ enum TR_SELECT {
- struct TS_COMMON_INFO {
- 	struct list_head		list;
- 	struct timer_list		setup_timer;
--	struct timer_list		InactTimer;
-+	struct timer_list		inact_timer;
- 	u8				Addr[6];
- 	TSPEC_BODY			TSpec;
- 	QOS_TCLAS			TClass[TCLAS_NUM];
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-index cda20ee023b2..04cc101f680e 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
-@@ -148,7 +148,7 @@ void TSInitialize(struct ieee80211_device *ieee)
- 		// DLS related timer will be add here in the future!!
- 		timer_setup(&pTxTS->TsCommonInfo.setup_timer, TsSetupTimeOut,
- 			    0);
--		timer_setup(&pTxTS->TsCommonInfo.InactTimer, TsInactTimeout,
-+		timer_setup(&pTxTS->TsCommonInfo.inact_timer, TsInactTimeout,
- 			    0);
- 		timer_setup(&pTxTS->TsAddBaTimer, TsAddBaProcess, 0);
- 		timer_setup(&pTxTS->TxPendingBARecord.Timer, BaSetupTimeOut,
-@@ -169,7 +169,7 @@ void TSInitialize(struct ieee80211_device *ieee)
- 		INIT_LIST_HEAD(&pRxTS->RxPendingPktList);
- 		timer_setup(&pRxTS->TsCommonInfo.setup_timer, TsSetupTimeOut,
- 			    0);
--		timer_setup(&pRxTS->TsCommonInfo.InactTimer, TsInactTimeout,
-+		timer_setup(&pRxTS->TsCommonInfo.inact_timer, TsInactTimeout,
- 			    0);
- 		timer_setup(&pRxTS->RxAdmittedBARecord.Timer,
- 			    RxBaInactTimeout, 0);
-@@ -194,10 +194,10 @@ static void AdmitTS(struct ieee80211_device *ieee,
- 		    struct TS_COMMON_INFO *pTsCommonInfo, u32 InactTime)
- {
- 	del_timer_sync(&pTsCommonInfo->setup_timer);
--	del_timer_sync(&pTsCommonInfo->InactTimer);
-+	del_timer_sync(&pTsCommonInfo->inact_timer);
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
+index 6434ba47e5cb..f9716db4509e 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
+@@ -634,7 +634,7 @@ TsInitAddBA(
  
- 	if(InactTime!=0)
--		mod_timer(&pTsCommonInfo->InactTimer,
-+		mod_timer(&pTsCommonInfo->inact_timer,
- 			  jiffies + msecs_to_jiffies(InactTime));
+ 	ActivateBAEntry(ieee, pBA, BA_SETUP_TIMEOUT);
+ 
+-	ieee80211_send_ADDBAReq(ieee, pTS->TsCommonInfo.Addr, pBA);
++	ieee80211_send_ADDBAReq(ieee, pTS->TsCommonInfo.addr, pBA);
  }
  
-@@ -413,7 +413,7 @@ static void RemoveTsEntry(struct ieee80211_device *ieee, struct TS_COMMON_INFO *
- 	//u32 flags = 0;
- 	unsigned long flags = 0;
- 	del_timer_sync(&pTs->setup_timer);
--	del_timer_sync(&pTs->InactTimer);
-+	del_timer_sync(&pTs->inact_timer);
- 	TsInitDelBA(ieee, pTs, TxRxSelect);
+ void
+@@ -646,7 +646,7 @@ TsInitDelBA(struct ieee80211_device *ieee, struct TS_COMMON_INFO *pTsCommonInfo,
+ 		if (TxTsDeleteBA(ieee, pTxTs))
+ 			ieee80211_send_DELBA(
+ 				ieee,
+-				pTsCommonInfo->Addr,
++				pTsCommonInfo->addr,
+ 				(pTxTs->TxAdmittedBARecord.bValid)?(&pTxTs->TxAdmittedBARecord):(&pTxTs->TxPendingBARecord),
+ 				TxRxSelect,
+ 				DELBA_REASON_END_BA);
+@@ -655,7 +655,7 @@ TsInitDelBA(struct ieee80211_device *ieee, struct TS_COMMON_INFO *pTsCommonInfo,
+ 		if (RxTsDeleteBA(ieee, pRxTs))
+ 			ieee80211_send_DELBA(
+ 				ieee,
+-				pTsCommonInfo->Addr,
++				pTsCommonInfo->addr,
+ 				&pRxTs->RxAdmittedBARecord,
+ 				TxRxSelect,
+ 				DELBA_REASON_END_BA);
+@@ -683,7 +683,7 @@ void TxBaInactTimeout(struct timer_list *t)
+ 	TxTsDeleteBA(ieee, pTxTs);
+ 	ieee80211_send_DELBA(
+ 		ieee,
+-		pTxTs->TsCommonInfo.Addr,
++		pTxTs->TsCommonInfo.addr,
+ 		&pTxTs->TxAdmittedBARecord,
+ 		TX_DIR,
+ 		DELBA_REASON_TIMEOUT);
+@@ -697,7 +697,7 @@ void RxBaInactTimeout(struct timer_list *t)
+ 	RxTsDeleteBA(ieee, pRxTs);
+ 	ieee80211_send_DELBA(
+ 		ieee,
+-		pRxTs->TsCommonInfo.Addr,
++		pRxTs->TsCommonInfo.addr,
+ 		&pRxTs->RxAdmittedBARecord,
+ 		RX_DIR,
+ 		DELBA_REASON_TIMEOUT);
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
+index 9c0998db220f..4ad152920be4 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TS.h
+@@ -19,7 +19,7 @@ struct TS_COMMON_INFO {
+ 	struct list_head		list;
+ 	struct timer_list		setup_timer;
+ 	struct timer_list		inact_timer;
+-	u8				Addr[6];
++	u8				addr[6];
+ 	TSPEC_BODY			TSpec;
+ 	QOS_TCLAS			TClass[TCLAS_NUM];
+ 	u8				TClasProc;
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
+index 04cc101f680e..80e03dc73bae 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_TSProc.c
+@@ -103,7 +103,7 @@ static void TsAddBaProcess(struct timer_list *t)
  
- 	if(TxRxSelect == RX_DIR) {
+ static void ResetTsCommonInfo(struct TS_COMMON_INFO *pTsCommonInfo)
+ {
+-	eth_zero_addr(pTsCommonInfo->Addr);
++	eth_zero_addr(pTsCommonInfo->addr);
+ 	memset(&pTsCommonInfo->TSpec, 0, sizeof(TSPEC_BODY));
+ 	memset(&pTsCommonInfo->TClass, 0, sizeof(QOS_TCLAS)*TCLAS_NUM);
+ 	pTsCommonInfo->TClasProc = 0;
+@@ -247,7 +247,7 @@ static struct TS_COMMON_INFO *SearchAdmitTRStream(struct ieee80211_device *ieee,
+ 			continue;
+ 		list_for_each_entry(pRet, psearch_list, list){
+ 	//		IEEE80211_DEBUG(IEEE80211_DL_TS, "ADD:%pM, TID:%d, dir:%d\n", pRet->Addr, pRet->TSpec.f.TSInfo.field.ucTSID, pRet->TSpec.f.TSInfo.field.ucDirection);
+-			if (memcmp(pRet->Addr, Addr, 6) == 0)
++			if (memcmp(pRet->addr, Addr, 6) == 0)
+ 				if (pRet->TSpec.f.TSInfo.field.ucTSID == TID)
+ 					if(pRet->TSpec.f.TSInfo.field.ucDirection == dir) {
+ 	//					printk("Bingo! got it\n");
+@@ -273,7 +273,7 @@ static void MakeTSEntry(struct TS_COMMON_INFO *pTsCommonInfo, u8 *Addr,
+ 	if(pTsCommonInfo == NULL)
+ 		return;
+ 
+-	memcpy(pTsCommonInfo->Addr, Addr, 6);
++	memcpy(pTsCommonInfo->addr, Addr, 6);
+ 
+ 	if(pTSPEC != NULL)
+ 		memcpy((u8 *)(&(pTsCommonInfo->TSpec)), (u8 *)pTSPEC, sizeof(TSPEC_BODY));
+@@ -458,7 +458,7 @@ void RemovePeerTS(struct ieee80211_device *ieee, u8 *Addr)
+ 
+ 	printk("===========>RemovePeerTS,%pM\n", Addr);
+ 	list_for_each_entry_safe(pTS, pTmpTS, &ieee->Tx_TS_Pending_List, list) {
+-		if (memcmp(pTS->Addr, Addr, 6) == 0) {
++		if (memcmp(pTS->addr, Addr, 6) == 0) {
+ 			RemoveTsEntry(ieee, pTS, TX_DIR);
+ 			list_del_init(&pTS->list);
+ 			list_add_tail(&pTS->list, &ieee->Tx_TS_Unused_List);
+@@ -466,7 +466,7 @@ void RemovePeerTS(struct ieee80211_device *ieee, u8 *Addr)
+ 	}
+ 
+ 	list_for_each_entry_safe(pTS, pTmpTS, &ieee->Tx_TS_Admit_List, list) {
+-		if (memcmp(pTS->Addr, Addr, 6) == 0) {
++		if (memcmp(pTS->addr, Addr, 6) == 0) {
+ 			printk("====>remove Tx_TS_admin_list\n");
+ 			RemoveTsEntry(ieee, pTS, TX_DIR);
+ 			list_del_init(&pTS->list);
+@@ -475,7 +475,7 @@ void RemovePeerTS(struct ieee80211_device *ieee, u8 *Addr)
+ 	}
+ 
+ 	list_for_each_entry_safe(pTS, pTmpTS, &ieee->Rx_TS_Pending_List, list) {
+-		if (memcmp(pTS->Addr, Addr, 6) == 0) {
++		if (memcmp(pTS->addr, Addr, 6) == 0) {
+ 			RemoveTsEntry(ieee, pTS, RX_DIR);
+ 			list_del_init(&pTS->list);
+ 			list_add_tail(&pTS->list, &ieee->Rx_TS_Unused_List);
+@@ -483,7 +483,7 @@ void RemovePeerTS(struct ieee80211_device *ieee, u8 *Addr)
+ 	}
+ 
+ 	list_for_each_entry_safe(pTS, pTmpTS, &ieee->Rx_TS_Admit_List, list) {
+-		if (memcmp(pTS->Addr, Addr, 6) == 0) {
++		if (memcmp(pTS->addr, Addr, 6) == 0) {
+ 			RemoveTsEntry(ieee, pTS, RX_DIR);
+ 			list_del_init(&pTS->list);
+ 			list_add_tail(&pTS->list, &ieee->Rx_TS_Unused_List);
 -- 
 2.18.0
 
