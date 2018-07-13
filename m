@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85709ECDFB0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4DF0ECDFB1
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24A8B2089F
+	by mail.kernel.org (Postfix) with ESMTP id 6B053208A1
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:07:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vM6+58LE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24A8B2089F
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lpiLg3cj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B053208A1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729926AbeGMXYH (ORCPT
+        id S1731288AbeGMXYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 19:24:07 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34065 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727506AbeGMXYH (ORCPT
+        Fri, 13 Jul 2018 19:24:09 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44471 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbeGMXYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 19:24:07 -0400
-Received: by mail-pg1-f195.google.com with SMTP id y5-v6so5442403pgv.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 16:07:24 -0700 (PDT)
+        Fri, 13 Jul 2018 19:24:09 -0400
+Received: by mail-pf0-f193.google.com with SMTP id j3-v6so23401159pfh.11
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 16:07:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:in-reply-to:message-id:references
          :user-agent:mime-version;
-        bh=3nT8/OaJFbIBKu9R5rivmEY5NIymfud7kC1ewr2xxfg=;
-        b=vM6+58LE0Yyi6Z/CpK7NMee3AyULAQg99idjRTBl8opQqoZkSkwSJYx0qBwAjNp9Vm
-         9gnLFkaSstMwz3uLrp/81VtsKWQpOU/JXix/gwDWO9lZ0JZo2XMTopBbwCHvWfJ817bU
-         XenjR7uj50JB9H+kSvhmACPwZfv892LfGAIS+0jxd/5H4ThF7158kpOkYpTs8bPhJWkk
-         bLGxjZKukSfkpQ9ZWYC5pbPQ+XjvZeeIb6ZrANvxHgDx4tu5FsemENN8S3d0CV8c7Ba8
-         GVWQ8NtrvNF3Vk9LYocF5jG7tUa7JOoOzOd9DJoDH1q72dH2IpWyb+0ArzuuQgt26SLg
-         bUbA==
+        bh=drSc/yLyXYJewM0nnn0zDSduvYIMw4DeBViBIvRq4XU=;
+        b=lpiLg3cjkAB12viMdRujE7ROHpAeZZh1tuwQSJ/ZkmxhkMMa7TVDSSSJ0ln895yeiR
+         EvX1fNvRovwbNOjBsQYlINcOsRpMlhBxFZafXciWzrWmKrojnFa80EBulKCQ0I7yNDDE
+         wWiEzvrzlpOxLJtxtq6jIglt0L8kB+VWL/1DvomcuxKXA4MB1qTFvR3yWiXLH5EXCmH4
+         JHZU/vgIVB13osMH8Ay/v32TeespdFz+qnPNF4qQvRKE8/Ys2C29TtDRxFo0Wp/sosTL
+         p99Cv8lhyitRmJ2wcuvlX3FZX9BDVF1FQDES61ygd0JsB/Z+WtF736qQnsS4Do+UjzE7
+         SESg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
          :references:user-agent:mime-version;
-        bh=3nT8/OaJFbIBKu9R5rivmEY5NIymfud7kC1ewr2xxfg=;
-        b=Eo54YmeUbw1NhQXZ9+HYdQSEw3A08HuoZfoiEKuiEjpLRGL1CSyqi7gu7aGNRHl8vx
-         Bsgvxv+zI9USPSdt6vweCWYzv63dGbg33/47q7XZhWwYdTlRlQbe4164/jXmzz7gVjDA
-         0DhJ9/G2B42ZvdPpVzTVRvqZD4QZIbWq/mxxGRspKcOYVqAVuVfdz67D07kX6S4MKIhS
-         fAVbeiJi7lderelXSFHp8MKrUtVj4+i1vOiaAxSSP95RSW65144Y1b3sOzVqeaYIeK8+
-         koS9xRe/ZB77YTq91Z/2XA+qIc2FM/RSu/Q87d506dtkPjVOjf+1i2I/6wyq2B5SyIQH
-         B+nA==
-X-Gm-Message-State: AOUpUlF1zAQgb2XBZCEC56chdKivMUeuMAC/z+MaILfciST0zkIfCNQr
-        t0o8Shu9eE5LoksNy/TS543rSQ==
-X-Google-Smtp-Source: AAOMgpdgJxIuZywAGY+3P2xSh1Q0sWhaoJqvZTX7sFYHQSAy2wQ20aB4hbdaTSOBkFYp6o1Tbv1mAw==
-X-Received: by 2002:a63:647:: with SMTP id 68-v6mr7768984pgg.205.1531523244241;
-        Fri, 13 Jul 2018 16:07:24 -0700 (PDT)
+        bh=drSc/yLyXYJewM0nnn0zDSduvYIMw4DeBViBIvRq4XU=;
+        b=uYYRaBrMPxqrbKpHMx3pZW5ZbFnDWGc6WDCBxeJWPIKhQaKGQILZd+/dGx+cNmZ28S
+         glidEvrWar1fjH470skTfMo3P4jZ1HQEpS/U7IKVPbvFEL9tcBWOfAehmiVL29FuCbRK
+         0M7MOGXpZHizgqmLaOwIqm2e2BnfJDXFhxNE/m1Rti946gmsnbP9q3l2m2xbksVtt8BT
+         JIQ5Gi+RcrgS519qnJSVNASFoRFZmiXxtrdF1qViDwQ0ckUstLR4KFXA0a/SJ0xMwD7D
+         XgE5evYfB5AtiIjx4rhOK83C/Uwf8huppLFHVyibbrbD2bjJFnt97uay4S35CUR10Jcu
+         zMwA==
+X-Gm-Message-State: AOUpUlFzGmI0PCvZTJgsP65NffnATPNXkPS8XN4Oyi0MjPwy2oTdyWI4
+        S5qcUdcpZwCRTtnHfwG86fcZZg==
+X-Google-Smtp-Source: AAOMgpdHICtwh1WeyS981B6Z845v5k1O/dS+yIAblQi4N6JSxKKnqoVyt+wQ3WyTvkzGhZbetZRQWA==
+X-Received: by 2002:a62:3b03:: with SMTP id i3-v6mr8935515pfa.197.1531523246245;
+        Fri, 13 Jul 2018 16:07:26 -0700 (PDT)
 Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id j129-v6sm45841288pfb.113.2018.07.13.16.07.23
+        by smtp.gmail.com with ESMTPSA id 77-v6sm71871497pga.40.2018.07.13.16.07.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Jul 2018 16:07:23 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 16:07:23 -0700 (PDT)
+        Fri, 13 Jul 2018 16:07:25 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 16:07:25 -0700 (PDT)
 From:   David Rientjes <rientjes@google.com>
 X-X-Sender: rientjes@chino.kir.corp.google.com
 To:     Andrew Morton <akpm@linux-foundation.org>,
@@ -69,11 +69,12 @@ cc:     Michal Hocko <mhocko@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [patch v3 -mm 0/6] rewrite cgroup aware oom killer for general use
-In-Reply-To: <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.21.1807131604560.217600@chino.kir.corp.google.com>
-References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803151351140.55261@chino.kir.corp.google.com> <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com>
- <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
+Subject: [patch v3 -mm 1/6] mm, memcg: introduce per-memcg oom policy
+ tunable
+In-Reply-To: <alpine.DEB.2.21.1807131604560.217600@chino.kir.corp.google.com>
+Message-ID: <alpine.DEB.2.21.1807131605200.217600@chino.kir.corp.google.com>
+References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803151351140.55261@chino.kir.corp.google.com> <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com> <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
+ <alpine.DEB.2.21.1807131604560.217600@chino.kir.corp.google.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -82,42 +83,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are three significant concerns about the cgroup aware oom killer as
-it is implemented in -mm:
+The cgroup aware oom killer is needlessly enforced for the entire system
+by a mount option.  It's unnecessary to force the system into a single
+oom policy: either cgroup aware, or the traditional process aware.
 
- (1) allows users to evade the oom killer by creating subcontainers or
-     using other controllers since scoring is done per cgroup and not
-     hierarchically,
+This patch introduces a memory.oom_policy tunable for all mem cgroups.
+It is currently a no-op: it can only be set to "none", which is its
+default policy.  It will be expanded in the next patch to define cgroup
+aware oom killer behavior for its subtree.
 
- (2) unfairly compares the root mem cgroup using completely different
-     criteria than leaf mem cgroups and allows wildly inaccurate results
-     if oom_score_adj is used, and
+This is an extensible interface that can be used to define cgroup aware
+assessment of mem cgroup subtrees or the traditional process aware
+assessment.
 
- (3) does not allow the user to influence the decisionmaking, such that
-     important subtrees cannot be preferred or biased.
+Reading memory.oom_policy will specify the list of available policies.
 
-This patchset fixes (1) and (2) completely and, by doing so, introduces a
-completely extensible user interface that can be expanded in the future.
+Another benefit of such an approach is that an admin can lock in a
+certain policy for the system or for a mem cgroup subtree and can
+delegate the policy decision to the user to determine if the kill should
+originate from a subcontainer, as indivisible memory consumers
+themselves, or selection should be done per process.
 
-Concern (3) could subsequently be addressed either before or after the
-cgroup-aware oom killer feature is merged.
-
-It preserves all functionality that currently exists in -mm and extends
-it to be generally useful outside of very specialized usecases.
-
-It eliminates the mount option for the cgroup aware oom killer entirely
-since it is now enabled through the root mem cgroup's oom policy.
+Signed-off-by: David Rientjes <rientjes@google.com>
 ---
-v3:
- - Rebased to next-20180713
+ Documentation/admin-guide/cgroup-v2.rst | 11 ++++++++
+ include/linux/memcontrol.h              | 11 ++++++++
+ mm/memcontrol.c                         | 35 +++++++++++++++++++++++++
+ 3 files changed, 57 insertions(+)
 
-v2:
- - Rebased to next-20180322
- - Fixed get_nr_swap_pages() build bug found by kbuild test robot
-
- Documentation/admin-guide/cgroup-v2.rst | 100 ++++++-----
- include/linux/cgroup-defs.h             |   5 -
- include/linux/memcontrol.h              |  21 +++
- kernel/cgroup/cgroup.c                  |  13 +-
- mm/memcontrol.c                         | 221 ++++++++++++++----------
- 5 files changed, 204 insertions(+), 156 deletions(-)
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1098,6 +1098,17 @@ PAGE_SIZE multiple when read back.
+ 	If cgroup-aware OOM killer is not enabled, ENOTSUPP error
+ 	is returned on attempt to access the file.
+ 
++  memory.oom_policy
++
++	A read-write single string file which exists on all cgroups.  The
++	default value is "none".
++
++	If "none", the OOM killer will use the default policy to choose a
++	victim; that is, it will choose the single process with the largest
++	memory footprint adjusted by /proc/pid/oom_score_adj (see
++	Documentation/filesystems/proc.txt).  This is the same policy as if
++	memory cgroups were not even mounted.
++
+   memory.events
+ 	A read-only flat-keyed file which exists on non-root cgroups.
+ 	The following entries are defined.  Unless specified
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -66,6 +66,14 @@ enum mem_cgroup_protection {
+ 	MEMCG_PROT_MIN,
+ };
+ 
++enum memcg_oom_policy {
++	/*
++	 * No special oom policy, process selection is determined by
++	 * oom_badness()
++	 */
++	MEMCG_OOM_POLICY_NONE,
++};
++
+ struct mem_cgroup_reclaim_cookie {
+ 	pg_data_t *pgdat;
+ 	int priority;
+@@ -234,6 +242,9 @@ struct mem_cgroup {
+ 	/* OOM-Killer disable */
+ 	int		oom_kill_disable;
+ 
++	/* OOM policy for this subtree */
++	enum memcg_oom_policy oom_policy;
++
+ 	/*
+ 	 * Treat the sub-tree as an indivisible memory consumer,
+ 	 * kill all belonging tasks if the memory cgroup selected
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4649,6 +4649,7 @@ mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
+ 	if (parent) {
+ 		memcg->swappiness = mem_cgroup_swappiness(parent);
+ 		memcg->oom_kill_disable = parent->oom_kill_disable;
++		memcg->oom_policy = parent->oom_policy;
+ 	}
+ 	if (parent && parent->use_hierarchy) {
+ 		memcg->use_hierarchy = true;
+@@ -5810,6 +5811,34 @@ static int memory_stat_show(struct seq_file *m, void *v)
+ 	return 0;
+ }
+ 
++static int memory_oom_policy_show(struct seq_file *m, void *v)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
++	enum memcg_oom_policy policy = READ_ONCE(memcg->oom_policy);
++
++	switch (policy) {
++	case MEMCG_OOM_POLICY_NONE:
++	default:
++		seq_puts(m, "[none]\n");
++	};
++	return 0;
++}
++
++static ssize_t memory_oom_policy_write(struct kernfs_open_file *of,
++				       char *buf, size_t nbytes, loff_t off)
++{
++	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
++	ssize_t ret = nbytes;
++
++	buf = strstrip(buf);
++	if (!memcmp("none", buf, min(sizeof("none")-1, nbytes)))
++		memcg->oom_policy = MEMCG_OOM_POLICY_NONE;
++	else
++		ret = -EINVAL;
++
++	return ret;
++}
++
+ static struct cftype memory_files[] = {
+ 	{
+ 		.name = "current",
+@@ -5857,6 +5886,12 @@ static struct cftype memory_files[] = {
+ 		.flags = CFTYPE_NOT_ON_ROOT,
+ 		.seq_show = memory_stat_show,
+ 	},
++	{
++		.name = "oom_policy",
++		.flags = CFTYPE_NS_DELEGATABLE,
++		.seq_show = memory_oom_policy_show,
++		.write = memory_oom_policy_write,
++	},
+ 	{ }	/* terminate */
+ };
+ 
