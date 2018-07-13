@@ -2,124 +2,110 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D5CECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E982ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 410BC2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:56:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 410BC2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D77792084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 18:57:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIwznp45"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77792084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731969AbeGMTM1 (ORCPT
+        id S1732386AbeGMTNJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 15:12:27 -0400
-Received: from mga17.intel.com ([192.55.52.151]:23625 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729982AbeGMTM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 15:12:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jul 2018 11:56:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,348,1526367600"; 
-   d="asc'?scan'208";a="72157679"
-Received: from orsmsx104.amr.corp.intel.com ([10.22.225.131])
-  by fmsmga001.fm.intel.com with ESMTP; 13 Jul 2018 11:56:22 -0700
-Received: from orsmsx101.amr.corp.intel.com ([169.254.8.64]) by
- ORSMSX104.amr.corp.intel.com ([169.254.4.198]) with mapi id 14.03.0319.002;
- Fri, 13 Jul 2018 11:56:20 -0700
-From:   "Rustad, Mark D" <mark.d.rustad@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Dominique Martinet <asmadeus@codewreck.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Joe Perches <joe@perches.com>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 11/18] wireless/ti: change strncpy+truncation to strlcpy
-Thread-Topic: [PATCH 11/18] wireless/ti: change strncpy+truncation to strlcpy
-Thread-Index: AQHUGkiQnSqrSBIV50Cs5pYgepH/BqSNOawAgAC9eYA=
-Date:   Fri, 13 Jul 2018 18:56:19 +0000
-Message-ID: <A826E5BB-26A1-416F-841D-3361221C05FF@intel.com>
-References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
- <1531445149-19607-1-git-send-email-asmadeus@codewreck.org>
- <20180713073810.GA31984@kroah.com>
-In-Reply-To: <20180713073810.GA31984@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.233.89.158]
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_62A240EE-15E3-4444-8FB8-33F20EB1E3A5";
-        protocol="application/pgp-signature"; micalg=pgp-sha256
+        Fri, 13 Jul 2018 15:13:09 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:35632 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731542AbeGMTNI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 15:13:08 -0400
+Received: by mail-lf0-f65.google.com with SMTP id f18-v6so11884673lfc.2;
+        Fri, 13 Jul 2018 11:57:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=P5bwKP90FxuGsbIamriATsUfx03y6err+e3eZI9BP/s=;
+        b=IIwznp45gcyz6TQtsRwi0gf4tJ1Ibl9s4U0M5EaG0+VbZ13pActolxSZgA8X54lUER
+         VYOu6M1+GZ1HgMahMzVCt6MGVmb1HeOMO5iDliuqxlVrIFaTdtJrPNpuwuCXDd50dC8e
+         SZor50z/ZkENUgPr8O/ok2MjVs5v6zr5UhcUZewaAYDbeJx0FQZxT/uQyElUGUUnPMuW
+         M7xQhsrcdQw5eDI8ZgoHl+mqTqWmHc1VsDWDLQzuonkOh/avySLehPk2xeols7VzB7/T
+         F5XvShcDGLlHC0iR5N5tlHVjyH9iGOfid7rfvcFoutYMayYDMWc4fMJbnPvieurzhtA3
+         4aHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=P5bwKP90FxuGsbIamriATsUfx03y6err+e3eZI9BP/s=;
+        b=F3XvtvlfbXwPY/Qs7GBFdyiUEXQl0YM5fbXPdJdjzU9ZFq4SfzCWCFdQqO3QvaTBAX
+         XCW8di7QVpYcY0SRPeribpjTovSHUfSHOfTXqjIsDdNnxpsRIkW08f9q7PVxm1tuYSn1
+         WjReABlWaec+iABboJgJtsersj/1SPla5IsXuUZysq320glBfs266My86CwbH9SkTfrI
+         1OeB6BVXy250V7foNT0CJ4NYLsnAVChptNyCHleBH4SmJcuEk6O4JPdXds7OwVwr4IZu
+         Gpi5MZqkZZXiOK97ocaJZJk2O3lVwei+scNXOxIZkdTbQA81c+L6gsaKZ4pyHlutA+99
+         PTRw==
+X-Gm-Message-State: AOUpUlF5K1TPAv1UO0oP21x1M8G2CIlZxdKJ2lHD/jcwVFya3svu0E9T
+        ms4NXoVlrS1dMSNABx1Avlnb1tm1Dn8eyOx9bAU=
+X-Google-Smtp-Source: AAOMgpfgH07CtoKj4rJhXgDXP8cyXoYWt9JB4wWRoSKWyZ9qq6guQS8UgLccvCGQoeE1Kr0EM1GqcG2VFagjBu7CqHg=
+X-Received: by 2002:a19:a705:: with SMTP id q5-v6mr6201471lfe.148.1531508234518;
+ Fri, 13 Jul 2018 11:57:14 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:a2e:41c1:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 11:57:13
+ -0700 (PDT)
+In-Reply-To: <83724892-de0f-40ff-e16a-792a90d77ff1@suse.de>
+References: <20180622134907.227131-1-arnd@arndb.de> <b5de0a86-b3cd-9e45-ac39-9c4eb7611016@suse.de>
+ <CAK8P3a3FULT7uakRyZ4Nfq3E-ij+Gkn06=XP4Rn2m9u4Wd2OWA@mail.gmail.com> <83724892-de0f-40ff-e16a-792a90d77ff1@suse.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 13 Jul 2018 20:57:13 +0200
+X-Google-Sender-Auth: AlGBCZrjuhL-Il6roEucg5M4dqY
+Message-ID: <CAK8P3a0GDUpXQ8WnS6ake2AuAu0Q1gZg+hFQVPgXCBqQ1sS+jw@mail.gmail.com>
+Subject: Re: [PATCH] [v2] bcache: stop using the deprecated get_seconds()
+To:     Coly Li <colyli@suse.de>
+Cc:     Kent Overstreet <kent.overstreet@gmail.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Jens Axboe <axboe@kernel.dk>, Michael Lyle <mlyle@lyle.org>,
+        Tang Junhui <tang.junhui@zte.com.cn>,
+        Hannes Reinecke <hare@suse.com>, linux-bcache@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Apple-Mail=_62A240EE-15E3-4444-8FB8-33F20EB1E3A5
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain;
-	charset=us-ascii;
-	delsp=yes;
-	format=flowed
+On Fri, Jul 13, 2018 at 5:34 PM, Coly Li <colyli@suse.de> wrote:
+> On 2018/7/13 10:20 PM, Arnd Bergmann wrote:
+>> On Sat, Jun 23, 2018 at 10:12 AM, Coly Li <colyli@suse.de> wrote:
 
-On Jul 13, 2018, at 12:38 AM, Greg Kroah-Hartman  
-<gregkh@linuxfoundation.org> wrote:
-
-> On Fri, Jul 13, 2018 at 03:25:49AM +0200, Dominique Martinet wrote:
->> Generated by scripts/coccinelle/misc/strncpy_truncation.cocci
+>>> Added to 4.19 for-next.
 >>
->> Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+>> I noticed this isn't part of linux-next (yet). Did it get dropped?
+>>
+>>       Arnd
+>>
+> Hi Arnd,
 >
-> I don't know about other maintainers, but I know I wouldn't take such a
-> horrid changelog description as this :)
->
-> good luck!
->
-> greg k-h
+> It is here,
+> https://git.kernel.org/pub/scm/linux/kernel/git/colyli/bcache-patches.git/tree/for-next/0004-bcache-stop-using-the-deprecated-get_seconds.patch
 
-I would be very concerned about the potential for information leak, because  
-of the different behavior of the two functions.
+Ok, thanks for the confirmation!
 
---
-Mark Rustad, Networking Division, Intel Corporation
+> It is for Linux v4.19, the merge window is not available yet, and I
+> don't post them to Jens yet.
 
---Apple-Mail=_62A240EE-15E3-4444-8FB8-33F20EB1E3A5
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment; filename="signature.asc"
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Message signed with OpenPGP
+That sounds like an odd way to handle your patches. Normally all patches
+should be part of linux-next *before* the merge window so they get tested
+as part of the linux-next kernel before the pull request to Linus is sent.
 
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
+It's not important for me for this particular patch, but generally speaking,
+the Documentation/process/2.Process.rst states:
 
-iQIzBAEBCAAdFiEE6ug8b0Wg+ULmnksNPA7/547j7m4FAltI9dMACgkQPA7/547j
-7m64Zg/8CFcXHIiBzkycbd1zbXM/fg17P97FUfJrf8njPSq9tInrpqI94Y7dm/9V
-j7Et8OgHuCV/VTz0LHf5ixZa//U4QQ4ODitHdZpZfXt4dDfT8g+hrAfnI9F9dsBl
-g9XErnZ4GQgbk/oS6uHGhOlUEo9J+KHLb+1LH4YFF7pOSe1fwCB+jLQQ3bmZStzi
-fousYPLvyIlueGPWpuZy7KN1dpvIDOFXYp/W2VuzHXLFzXjmcqSW9oGL/e+hBhEf
-ruoPkfOTRqlvysf4ke4PAco7k0QNrhcahX0slsqk1zfikuQu4pGvEvFUhHbOTsl3
-kTv6BkxZhSDs8fXEgJn5J4nq0iarijf2aQW8xIFd/+fZeijWGguUVjAqj+JyE6yG
-V0NQvdUTuu/rL+zYayDIVaFyU+17A2q/INQUd5dclqXlDWd8uzmyY1btsS0fj71Y
-BBaRAPtXSFAyJfsSWNvRn4gBe+sdi66agSnuQF423pxBE+ew3PT3ubRzqo3VeuLv
-ejuC7m933VP8MFCBqgvDXdbtx/OcTrjjQLSHqRkqbBEu4p52PE9GxXHor/46mA+B
-PEFlkjmA5vx6fQh55KVY6kgPmNtS6e38ayktqp0s4P9dmVlzB1q0zrl7oIn0wlnQ
-Me7zM/4nkFI6ljhvkyeMjcXHPz5WLh+fEMG+i/XnRl5fecO0a2A=
-=JOCA
------END PGP SIGNATURE-----
+"all patches merged during a given merge window should really have found
+their way into linux-next some time before the merge window opens."
 
---Apple-Mail=_62A240EE-15E3-4444-8FB8-33F20EB1E3A5--
+      Arnd
