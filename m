@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A4CAECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E82BEECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1C5A2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C5A2087A
+	by mail.kernel.org (Postfix) with ESMTP id 8FF262087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:14:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FF262087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387704AbeGMO3F (ORCPT
+        id S2387828AbeGMO3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:29:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46250 "EHLO mx1.redhat.com"
+        Fri, 13 Jul 2018 10:29:37 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41348 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731960AbeGMO3E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:29:04 -0400
+        id S1729783AbeGMO3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 10:29:02 -0400
 Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 57B0887A74;
-        Fri, 13 Jul 2018 14:14:14 +0000 (UTC)
-Received: from plouf.banquise.eu.com (ovpn-116-134.ams2.redhat.com [10.36.116.134])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 136FE1C67D;
+        by mx1.redhat.com (Postfix) with ESMTPS id C73CA40122CF;
         Fri, 13 Jul 2018 14:14:12 +0000 (UTC)
+Received: from plouf.banquise.eu.com (ovpn-116-134.ams2.redhat.com [10.36.116.134])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C3941C719;
+        Fri, 13 Jul 2018 14:14:11 +0000 (UTC)
 From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
@@ -37,26 +37,37 @@ Cc:     Mario.Limonciello@dell.com,
         Peter Hutterer <peter.hutterer@who-t.net>,
         linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
         Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH v4 08/12] HID: core: do not upper bound the collection stack
-Date:   Fri, 13 Jul 2018 16:13:50 +0200
-Message-Id: <20180713141354.7286-9-benjamin.tissoires@redhat.com>
+Subject: [PATCH v4 07/12] HID: input: enable Totem on the Dell Canvas 27
+Date:   Fri, 13 Jul 2018 16:13:49 +0200
+Message-Id: <20180713141354.7286-8-benjamin.tissoires@redhat.com>
 In-Reply-To: <20180713141354.7286-1-benjamin.tissoires@redhat.com>
 References: <20180713141354.7286-1-benjamin.tissoires@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 13 Jul 2018 14:14:14 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 13 Jul 2018 14:14:14 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 13 Jul 2018 14:14:12 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 13 Jul 2018 14:14:12 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'benjamin.tissoires@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks like 4 was sufficient until now. However, the Surface Dial needs
-a stack of 5 and simply fails at probing.
-Dynamically add HID_COLLECTION_STACK_SIZE to the size of the stack if
-we hit the upper bound.
+The Dell Canvas 27 has a tool that can be put on the surface and acts
+as a dial. The firmware processes the detection of the tool and forward
+regular HID reports with X, Y, Azimuth, rotation, width/height.
 
-Checkpatch complains about bare unsigned, so converting those to
-'unsigned int' in struct hid_parser
+The firmware also exports Contact ID, Countact Count which may hint that
+several totems can be used at the same time (the FW only supports one).
+
+We can tell that MT_TOOL_DIAL will be reported by setting the min/max
+of ABS_MT_TOOL_TYPE to MT_TOOL_DIAL.
+
+This tool is aimed at being used by the system and not the applications,
+so the user space processing should not go through the regular touch
+inputs.
+We set INPUT_PROP_DIRECT which applies ID_INPUT_TOUCHSCREEN to this new
+type of devices, but we will counter this for the time being with the
+special udev hwdb entry mentioned above.
+
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1511846
 
 Acked-by: Peter Hutterer <peter.hutterer@who-t.net>
 Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
@@ -65,69 +76,171 @@ Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
 no changes in v4
 no changes in v3
-no changes in v2
----
- drivers/hid/hid-core.c | 17 ++++++++++++++---
- include/linux/hid.h    |  9 +++++----
- 2 files changed, 19 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/hid/hid-core.c b/drivers/hid/hid-core.c
-index 3942ee61bd1c..5de6f18c9bf7 100644
---- a/drivers/hid/hid-core.c
-+++ b/drivers/hid/hid-core.c
-@@ -128,9 +128,19 @@ static int open_collection(struct hid_parser *parser, unsigned type)
+changes in v2:
+- manually declare ABS_MT_TOOL_TYPE and set its min/max to MT_TOOL_DIAL
+  to explain which tool it will set
+---
+ drivers/hid/hid-input.c      |  3 +++
+ drivers/hid/hid-multitouch.c | 48 +++++++++++++++++++++++++++++++-------------
+ include/linux/hid.h          |  6 ++++++
+ 3 files changed, 43 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
+index ab93dd5927c3..4e94ea3e280a 100644
+--- a/drivers/hid/hid-input.c
++++ b/drivers/hid/hid-input.c
+@@ -1550,6 +1550,9 @@ static struct hid_input *hidinput_allocate(struct hid_device *hid,
+ 		case HID_GD_WIRELESS_RADIO_CTLS:
+ 			suffix = "Wireless Radio Control";
+ 			break;
++		case HID_GD_SYSTEM_MULTIAXIS:
++			suffix = "System Multi Axis";
++			break;
+ 		default:
+ 			break;
+ 		}
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index 346e9caef6f3..a4a274ebfbef 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -665,7 +665,8 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 	/*
+ 	 * Model touchscreens providing buttons as touchpads.
+ 	 */
+-	if ((usage->hid & HID_USAGE_PAGE) == HID_UP_BUTTON) {
++	if (field->application == HID_DG_TOUCHSCREEN &&
++	    (usage->hid & HID_USAGE_PAGE) == HID_UP_BUTTON) {
+ 		app->mt_flags |= INPUT_MT_POINTER;
+ 		td->inputmode_value = MT_INPUTMODE_TOUCHPAD;
+ 	}
+@@ -692,6 +693,19 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
  
- 	usage = parser->local.usage[0];
+ 			set_abs(hi->input, code, field, cls->sn_move);
  
--	if (parser->collection_stack_ptr == HID_COLLECTION_STACK_SIZE) {
--		hid_err(parser->device, "collection stack overflow\n");
--		return -EINVAL;
-+	if (parser->collection_stack_ptr == parser->collection_stack_size) {
-+		unsigned int *collection_stack;
-+		unsigned int new_size = parser->collection_stack_size +
-+					HID_COLLECTION_STACK_SIZE;
++			/*
++			 * A system multi-axis that exports X and Y has a high
++			 * chance of being used directly on a surface
++			 */
++			if (field->application == HID_GD_SYSTEM_MULTIAXIS) {
++				__set_bit(INPUT_PROP_DIRECT,
++					  hi->input->propbit);
++				input_set_abs_params(hi->input,
++						     ABS_MT_TOOL_TYPE,
++						     MT_TOOL_DIAL,
++						     MT_TOOL_DIAL, 0, 0);
++			}
 +
-+		collection_stack = krealloc(parser->collection_stack,
-+					    new_size * sizeof(unsigned int),
-+					    GFP_KERNEL);
-+		if (!collection_stack)
-+			return -ENOMEM;
+ 			return 1;
+ 		case HID_GD_Y:
+ 			if (prev_usage && (prev_usage->hid == usage->hid)) {
+@@ -725,7 +739,9 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 			MT_STORE_FIELD(confidence_state);
+ 			return 1;
+ 		case HID_DG_TIPSWITCH:
+-			input_set_capability(hi->input, EV_KEY, BTN_TOUCH);
++			if (field->application != HID_GD_SYSTEM_MULTIAXIS)
++				input_set_capability(hi->input,
++						     EV_KEY, BTN_TOUCH);
+ 			MT_STORE_FIELD(tip_state);
+ 			return 1;
+ 		case HID_DG_CONTACTID:
+@@ -802,6 +818,10 @@ static int mt_touch_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 		    field->application == HID_DG_TOUCHPAD &&
+ 		    (usage->hid & HID_USAGE) > 1)
+ 			code--;
 +
-+		parser->collection_stack = collection_stack;
-+		parser->collection_stack_size = new_size;
++		if (field->application == HID_GD_SYSTEM_MULTIAXIS)
++			code = BTN_0  + ((usage->hid - 1) & HID_USAGE);
++
+ 		hid_map_usage(hi, usage, bit, max, EV_KEY, code);
+ 		input_set_capability(hi->input, EV_KEY, code);
+ 		return 1;
+@@ -899,6 +919,7 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
+ 	bool inrange_state = false;
+ 	int active;
+ 	int slotnum;
++	int tool = MT_TOOL_FINGER;
+ 
+ 	if (!slot)
+ 		return -EINVAL;
+@@ -939,8 +960,11 @@ static int mt_process_slot(struct mt_device *td, struct input_dev *input,
+ 
+ 	active = (*slot->tip_state || inrange_state) && confidence_state;
+ 
++	if (app->application == HID_GD_SYSTEM_MULTIAXIS)
++		tool = MT_TOOL_DIAL;
++
+ 	input_mt_slot(input, slotnum);
+-	input_mt_report_slot_state(input, MT_TOOL_FINGER, active);
++	input_mt_report_slot_state(input, tool, active);
+ 	if (active) {
+ 		/* this finger is in proximity of the sensor */
+ 		int wide = (*slot->w > *slot->h);
+@@ -1203,6 +1227,7 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 	    field->application != HID_GD_SYSTEM_CONTROL &&
+ 	    field->application != HID_CP_CONSUMER_CONTROL &&
+ 	    field->application != HID_GD_WIRELESS_RADIO_CTLS &&
++	    field->application != HID_GD_SYSTEM_MULTIAXIS &&
+ 	    !(field->application == HID_VD_ASUS_CUSTOM_MEDIA_KEYS &&
+ 	      application->quirks & MT_QUIRK_ASUS_CUSTOM_UP))
+ 		return -1;
+@@ -1230,9 +1255,7 @@ static int mt_input_mapping(struct hid_device *hdev, struct hid_input *hi,
+ 		return 1;
  	}
  
- 	if (parser->device->maxcollection == parser->device->collection_size) {
-@@ -840,6 +850,7 @@ static int hid_scan_report(struct hid_device *hid)
- 		break;
- 	}
+-	if (rdata->is_mt_collection &&
+-	    (field->application == HID_DG_TOUCHSCREEN ||
+-	     field->application == HID_DG_TOUCHPAD))
++	if (rdata->is_mt_collection)
+ 		return mt_touch_input_mapping(hdev, hi, field, usage, bit, max,
+ 					      application);
  
-+	kfree(parser->collection_stack);
- 	vfree(parser);
- 	return 0;
- }
+@@ -1244,15 +1267,11 @@ static int mt_input_mapped(struct hid_device *hdev, struct hid_input *hi,
+ 		struct hid_field *field, struct hid_usage *usage,
+ 		unsigned long **bit, int *max)
+ {
+-	/*
+-	 * some egalax touchscreens have "application == HID_DG_TOUCHSCREEN"
+-	 * for the stylus.
+-	 */
+-	if (field->physical == HID_DG_STYLUS)
+-		return 0;
++	struct mt_device *td = hid_get_drvdata(hdev);
++	struct mt_report_data *rdata;
+ 
+-	if (field->application == HID_DG_TOUCHSCREEN ||
+-	    field->application == HID_DG_TOUCHPAD) {
++	rdata = mt_find_report_data(td, field->report);
++	if (rdata && rdata->is_mt_collection) {
+ 		/* We own these mappings, tell hid-input to ignore them */
+ 		return -1;
+ 	}
+@@ -1460,6 +1479,7 @@ static int mt_input_configured(struct hid_device *hdev, struct hid_input *hi)
+ 		case HID_GD_SYSTEM_CONTROL:
+ 		case HID_CP_CONSUMER_CONTROL:
+ 		case HID_GD_WIRELESS_RADIO_CTLS:
++		case HID_GD_SYSTEM_MULTIAXIS:
+ 			/* already handled by hid core */
+ 			break;
+ 		case HID_DG_TOUCHSCREEN:
 diff --git a/include/linux/hid.h b/include/linux/hid.h
-index 2e4498d52a2f..aee281522c6d 100644
+index 773bcb1d4044..2e4498d52a2f 100644
 --- a/include/linux/hid.h
 +++ b/include/linux/hid.h
-@@ -644,12 +644,13 @@ static inline void hid_set_drvdata(struct hid_device *hdev, void *data)
- struct hid_parser {
- 	struct hid_global     global;
- 	struct hid_global     global_stack[HID_GLOBAL_STACK_SIZE];
--	unsigned              global_stack_ptr;
-+	unsigned int          global_stack_ptr;
- 	struct hid_local      local;
--	unsigned              collection_stack[HID_COLLECTION_STACK_SIZE];
--	unsigned              collection_stack_ptr;
-+	unsigned int         *collection_stack;
-+	unsigned int          collection_stack_ptr;
-+	unsigned int          collection_stack_size;
- 	struct hid_device    *device;
--	unsigned              scan_flags;
-+	unsigned int          scan_flags;
- };
- 
- struct hid_class_descriptor {
+@@ -190,6 +190,12 @@ struct hid_item {
+  * http://www.usb.org/developers/hidpage/HUTRR40RadioHIDUsagesFinal.pdf
+  */
+ #define HID_GD_WIRELESS_RADIO_CTLS	0x0001000c
++/*
++ * System Multi-Axis, see:
++ * http://www.usb.org/developers/hidpage/HUTRR62_-_Generic_Desktop_CA_for_System_Multi-Axis_Controllers.txt
++ */
++#define HID_GD_SYSTEM_MULTIAXIS	0x0001000e
++
+ #define HID_GD_X		0x00010030
+ #define HID_GD_Y		0x00010031
+ #define HID_GD_Z		0x00010032
 -- 
 2.14.3
 
