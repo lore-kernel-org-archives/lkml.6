@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 721DEECDFB1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B261FECDFB0
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 151AC2089F
+	by mail.kernel.org (Postfix) with ESMTP id 65380208A6
 	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 23:07:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cico51aM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151AC2089F
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oTyoY5ZY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65380208A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731954AbeGMXYS (ORCPT
+        id S1731972AbeGMXYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 19:24:18 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33796 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731592AbeGMXYP (ORCPT
+        Fri, 13 Jul 2018 19:24:20 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33800 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731592AbeGMXYT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 19:24:15 -0400
-Received: by mail-pl0-f67.google.com with SMTP id z9-v6so12782852plo.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 16:07:32 -0700 (PDT)
+        Fri, 13 Jul 2018 19:24:19 -0400
+Received: by mail-pl0-f66.google.com with SMTP id z9-v6so12782905plo.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 16:07:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:from:to:cc:subject:in-reply-to:message-id:references
          :user-agent:mime-version;
-        bh=2dli7BAjWUBwBEPdTYiXJD6n06w69Pv49ZrHQ9c7Wp4=;
-        b=cico51aM2aJTt+AVf6cr1/rYUHm8+U/fzKV7c4waMuo3C6nEiSI3LQ52hbzU9O8fKN
-         7MJn5oX2AhJ0uJTkTkiSwuzUsBlm1LyKQvrW/V7ARw1vDwXBW+g9eAog3DzzrT09sDQT
-         YUExhKjSBlHmEEs889h6H+qfLnQgwYCm7SjKiUMECko7GYPZR4KQ1dHyFClwdP6WOZ8G
-         +XhO0Wz0D1D1THYof0ROB65IvZK1hL8p2zuArm68V2K3WuBoUVYZmctMBPI7BF7fiUA5
-         buAy5k/H3h15/3G7jFMym2/4KhY6w5k/12DnbFHvgxnxXp60yj3ppIX4Gc+dahEWqcMA
-         gylg==
+        bh=T2+PUkWlQYmob3d7nbW9BJNgUCy5teUF4SQyur60lBY=;
+        b=oTyoY5ZYXGItIy6cx+ht7YTXMM48yYu1RA9qyXh9i2A1gHInBn1iXqpMnYo+mBZXX3
+         sT/eCnZJi5AIXufgWSdfgcRlf/y7fhlf5XrRrdWoJdGgD9bbYYweJ9ouppUglMObdRCC
+         7Fx5ViiMrcFKYNlPYTXfnq9sigHbwhxN3gtEg/X9uLQ06EWc0qdcLFjbiKn8X8qoFFSS
+         9fQBpIfXQEzofLnpWWbmpjCAGGmsnu9Qigd7x5Tj85hWwT2aaGR8AH5w+vUsbwEqHLlq
+         4f4KJInaA5/nYyz/Y0nerQU3aJqcYDOj+ivXjKApv83coxIJue4y+kRc1f/BGmxrnG1A
+         piaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
          :references:user-agent:mime-version;
-        bh=2dli7BAjWUBwBEPdTYiXJD6n06w69Pv49ZrHQ9c7Wp4=;
-        b=KCadGNMzvWBpCvNDlDc170Ote/9aAwvz6TkqYPJTBsjUY9uoQ1SoBbim/3u+F9W/vX
-         Rv9rQa3vemVXkib3y7mew2K5FJ88/ZR3es5Tqh0ugBCsep8/SLafyRJk1bnipMHADEZ2
-         H2EK7Q02/d/ZlPhq2G4ICMU9bbR7SW+myxb2jA+ruJiO5PDyL4t/ATnLX+MbsH1+KUxr
-         g5zvc1nVZr4hOotzKwEmtOEXVLPAY403twQLSG/hiZa1w+Jpe4Tint2T2lLUsCeVKQ+a
-         ZOSPtN6SizL14aoArV1P1yxpnvafPt4EdShEMxjYPZOKeb8F6Dwc447HiU7EbfTCCmM1
-         fhNA==
-X-Gm-Message-State: AOUpUlEgZsKINqQjSbbe1Xuf0exDGtzJqEPoLSavWF5Z618AaVyeD/DA
-        0VRD9M0qGbaNDMsw1FSufBsOhg==
-X-Google-Smtp-Source: AAOMgpcsfNT4k+9IULx6UuPeYdsx9i/Dqd0D6tK7RDCrffqRNgV45WCYU/6VAmhNHqQOKp88T5/G/g==
-X-Received: by 2002:a17:902:ab90:: with SMTP id f16-v6mr8359292plr.182.1531523252154;
-        Fri, 13 Jul 2018 16:07:32 -0700 (PDT)
+        bh=T2+PUkWlQYmob3d7nbW9BJNgUCy5teUF4SQyur60lBY=;
+        b=CnaoS5SjOBFqNmpMU/B7E+yI1wFsRRJR6iCb6M+Z/ZI1n3R8PfeHNrJi1zSlbECuHx
+         GmkoSpZBcdpcwDt4c+RVeTJDuVKPWSxtL7/hwdW6QcDpg7PETjN5K0gMLM8bw3/dlX7i
+         kbqrF6aSouLCsL0/IuM/Tz+Z4BmjabkvsKUBPEaLiFgVQyLRoUO9smuytOUdW6GtSWRj
+         or5vDEShG24FMbJNjfJ0OSU+sntMzu5m6d/dkXSOABN0qycRWE+nQIaZIKiPTKj/rn30
+         1dgO+3O0Gx+CcGqeYb+YvFskGj+DpJ0Oo1YZVDhD8qlDBi5uH+iN49W2kDJZoLXajLoa
+         0bbg==
+X-Gm-Message-State: AOUpUlHIqiqWLUTyRU+LriTL+faVEi6SREdwf8FbTnvMospN+eYzJ4tr
+        sIPoGUHNqGB9VGtGMRGvnSiGqA==
+X-Google-Smtp-Source: AAOMgpfjslxBd1HjqfSr3NhWLRij03RspDnRYnp0+IFgOXkoZA2FwFOqQpy1Fbqgbu4aiRTVXQDIlQ==
+X-Received: by 2002:a17:902:aa01:: with SMTP id be1-v6mr8138127plb.296.1531523256906;
+        Fri, 13 Jul 2018 16:07:36 -0700 (PDT)
 Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id 65-v6sm37172129pfq.81.2018.07.13.16.07.31
+        by smtp.gmail.com with ESMTPSA id e16-v6sm37730415pfn.46.2018.07.13.16.07.36
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Jul 2018 16:07:31 -0700 (PDT)
-Date:   Fri, 13 Jul 2018 16:07:31 -0700 (PDT)
+        Fri, 13 Jul 2018 16:07:36 -0700 (PDT)
+Date:   Fri, 13 Jul 2018 16:07:35 -0700 (PDT)
 From:   David Rientjes <rientjes@google.com>
 X-X-Sender: rientjes@chino.kir.corp.google.com
 To:     Andrew Morton <akpm@linux-foundation.org>,
@@ -69,10 +69,10 @@ cc:     Michal Hocko <mhocko@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
         Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: [patch v3 -mm 4/6] mm, memcg: evaluate root and leaf memcgs fairly
- on oom
+Subject: [patch v3 -mm 6/6] mm, memcg: disregard mempolicies for cgroup-aware
+ oom killer
 In-Reply-To: <alpine.DEB.2.21.1807131604560.217600@chino.kir.corp.google.com>
-Message-ID: <alpine.DEB.2.21.1807131606180.217600@chino.kir.corp.google.com>
+Message-ID: <alpine.DEB.2.21.1807131606590.217600@chino.kir.corp.google.com>
 References: <alpine.DEB.2.20.1803121755590.192200@chino.kir.corp.google.com> <alpine.DEB.2.20.1803151351140.55261@chino.kir.corp.google.com> <alpine.DEB.2.20.1803161405410.209509@chino.kir.corp.google.com> <alpine.DEB.2.20.1803221451370.17056@chino.kir.corp.google.com>
  <alpine.DEB.2.21.1807131604560.217600@chino.kir.corp.google.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
@@ -83,339 +83,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several downsides to the current implementation that compares
-the root mem cgroup with leaf mem cgroups for the cgroup-aware oom killer.
+The cgroup-aware oom killer currently considers the set of allowed nodes
+for the allocation that triggers the oom killer and discounts usage from
+disallowed nodes when comparing cgroups.
 
-For example, /proc/pid/oom_score_adj is accounted for processes attached
-to the root mem cgroup but not leaves.  This leads to wild inconsistencies
-that unfairly bias for or against the root mem cgroup.
+If a cgroup has both the cpuset and memory controllers enabled, it may be
+possible to restrict allocations to a subset of nodes, for example.  Some
+latency sensitive users use cpusets to allocate only local memory, almost
+to the point of oom even though there is an abundance of available free
+memory on other nodes.
 
-Assume a 728KB bash shell is attached to the root mem cgroup without any
-other processes having a non-default /proc/pid/oom_score_adj.  At the time
-of system oom, the root mem cgroup evaluated to 43,474 pages after boot.
-If the bash shell adjusts its /proc/self/oom_score_adj to 1000, however,
-the root mem cgroup evaluates to 24,765,482 pages lol.  It would take a
-cgroup 95GB of memory to outweigh the root mem cgroup's evaluation.
+The same is true for processes that mbind(2) their memory to a set of
+allowed nodes.
 
-The reverse is even more confusing: if the bash shell adjusts its
-/proc/self/oom_score_adj to -999, the root mem cgroup evaluates to 42,268
-pages, a basically meaningless transformation.
+This yields very inconsistent results by considering usage from each mem
+cgroup (and perhaps its subtree) for the allocation's set of allowed nodes
+for its mempolicy.  Allocating a single page for a vma that is mbind to a
+now-oom node can cause a cgroup that is restricted to that node by its
+cpuset controller to be oom killed when other cgroups may have much higher
+overall usage.
 
-/proc/pid/oom_score_adj is discounted, however, for processes attached to
-leaf mem cgroups.  If a sole process using 250MB of memory is attached to
-a mem cgroup, it evaluates to 250MB >> PAGE_SHIFT.  If its
-/proc/pid/oom_score_adj is changed to -999, or even 1000, the evaluation
-remains the same for the mem cgroup.
-
-The heuristic that is used for the root mem cgroup also differs from leaf
-mem cgroups.
-
-For the root mem cgroup, the evaluation is the sum of all process's
-/proc/pid/oom_score.  Besides factoring in oom_score_adj, it is based on
-the sum of rss + swap + page tables for all processes attached to it.
-For leaf mem cgroups, it is based on the amount of anonymous or
-unevictable memory + unreclaimable slab + kernel stack + sock + swap.
-
-There's also an exemption for root mem cgroup processes that do not
-intersect the allocating process's mems_allowed.  Because the current
-heuristic is based on oom_badness(), the evaluation of the root mem
-cgroup disregards all processes attached to it that have disjoint
-mems_allowed making oom selection specifically dependant on the
-allocating process for system oom conditions!
-
-This patch introduces completely fair comparison between the root mem
-cgroup and leaf mem cgroups.  It compares them with the same heuristic
-and does not prefer one over the other.  It disregards oom_score_adj
-as the cgroup-aware oom killer should, if enabled by memory.oom_policy.
-The goal is to target the most memory consuming cgroup on the system,
-not consider per-process adjustment.
-
-The fact that the evaluation of all mem cgroups depends on the mempolicy
-of the allocating process, which is completely undocumented for the
-cgroup-aware oom killer, will be addressed in a subsequent patch.
+The cgroup-aware oom killer is described as killing the largest memory
+consuming cgroup (or subtree) without mentioning the mempolicy of the
+allocation.  For now, discount it.  It would be possible to add an
+additional oom policy for NUMA awareness if it would be generally useful
+later with the extensible interface.
 
 Signed-off-by: David Rientjes <rientjes@google.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst |   7 +-
- mm/memcontrol.c                         | 149 ++++++++++++------------
- 2 files changed, 76 insertions(+), 80 deletions(-)
+ mm/memcontrol.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1382,12 +1382,7 @@ OOM killer to kill all processes attached to the cgroup, except processes
- with /proc/pid/oom_score_adj set to -1000 (oom disabled).
- 
- The root cgroup is treated as a leaf memory cgroup as well, so it is
--compared with other leaf memory cgroups. Due to internal implementation
--restrictions the size of the root cgroup is the cumulative sum of
--oom_badness of all its tasks (in other words oom_score_adj of each task
--is obeyed). Relying on oom_score_adj (apart from OOM_SCORE_ADJ_MIN) can
--lead to over- or underestimation of the root cgroup consumption and it is
--therefore discouraged. This might change in the future, however.
-+compared with other leaf memory cgroups.
- 
- Please, note that memory charges are not migrating if tasks
- are moved between different memory cgroups. Moving tasks with
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -94,6 +94,8 @@ int do_swap_account __read_mostly;
- #define do_swap_account		0
- #endif
- 
-+static atomic_long_t total_sock_pages;
-+
- /* Whether legacy memory+swap accounting is active */
- static bool do_memsw_account(void)
- {
-@@ -2818,9 +2820,9 @@ static inline bool memcg_has_children(struct mem_cgroup *memcg)
+@@ -2819,19 +2819,15 @@ static inline bool memcg_has_children(struct mem_cgroup *memcg)
+ 	return ret;
  }
  
- static long memcg_oom_badness(struct mem_cgroup *memcg,
--			      const nodemask_t *nodemask,
--			      unsigned long totalpages)
-+			      const nodemask_t *nodemask)
+-static long memcg_oom_badness(struct mem_cgroup *memcg,
+-			      const nodemask_t *nodemask)
++static long memcg_oom_badness(struct mem_cgroup *memcg)
  {
-+	const bool is_root_memcg = memcg == root_mem_cgroup;
+ 	const bool is_root_memcg = memcg == root_mem_cgroup;
  	long points = 0;
  	int nid;
- 	pg_data_t *pgdat;
-@@ -2829,92 +2831,65 @@ static long memcg_oom_badness(struct mem_cgroup *memcg,
- 		if (nodemask && !node_isset(nid, *nodemask))
- 			continue;
+-	pg_data_t *pgdat;
  
--		points += mem_cgroup_node_nr_lru_pages(memcg, nid,
--				LRU_ALL_ANON | BIT(LRU_UNEVICTABLE));
--
- 		pgdat = NODE_DATA(nid);
--		points += lruvec_page_state(mem_cgroup_lruvec(pgdat, memcg),
--					    NR_SLAB_UNRECLAIMABLE);
-+		if (is_root_memcg) {
-+			points += node_page_state(pgdat, NR_ACTIVE_ANON) +
-+				  node_page_state(pgdat, NR_INACTIVE_ANON);
-+			points += node_page_state(pgdat, NR_SLAB_UNRECLAIMABLE);
-+		} else {
-+			points += mem_cgroup_node_nr_lru_pages(memcg, nid,
-+							       LRU_ALL_ANON);
-+			points += lruvec_page_state(mem_cgroup_lruvec(pgdat, memcg),
-+						    NR_SLAB_UNRECLAIMABLE);
-+		}
- 	}
+ 	for_each_node_state(nid, N_MEMORY) {
+-		if (nodemask && !node_isset(nid, *nodemask))
+-			continue;
++		pg_data_t *pgdat = NODE_DATA(nid);
  
--	points += memcg_page_state(memcg, MEMCG_KERNEL_STACK_KB) /
--		(PAGE_SIZE / 1024);
--	points += memcg_page_state(memcg, MEMCG_SOCK);
--	points += memcg_page_state(memcg, MEMCG_SWAP);
--
-+	if (is_root_memcg) {
-+		points += global_zone_page_state(NR_KERNEL_STACK_KB) /
-+				(PAGE_SIZE / 1024);
-+		points += atomic_long_read(&total_sock_pages);
-+		points += total_swap_pages - get_nr_swap_pages();
-+	} else {
-+		points += memcg_page_state(memcg, MEMCG_KERNEL_STACK_KB) /
-+				(PAGE_SIZE / 1024);
-+		points += memcg_page_state(memcg, MEMCG_SOCK);
-+		points += memcg_page_state(memcg, MEMCG_SWAP);
-+	}
- 	return points;
- }
- 
- /*
-- * Checks if the given memcg is a valid OOM victim and returns a number,
-- * which means the folowing:
-- *   -1: there are inflight OOM victim tasks, belonging to the memcg
-- *    0: memcg is not eligible, e.g. all belonging tasks are protected
-- *       by oom_score_adj set to OOM_SCORE_ADJ_MIN
-+ * Checks if the given non-root memcg has a valid OOM victim and returns a
-+ * number, which means the following:
-+ *   -1: there is an inflight OOM victim process attached to the memcg
-+ *    0: memcg is not eligible because all tasks attached are unkillable
-+ *       (kthreads or oom_score_adj set to OOM_SCORE_ADJ_MIN)
+-		pgdat = NODE_DATA(nid);
+ 		if (is_root_memcg) {
+ 			points += node_page_state(pgdat, NR_ACTIVE_ANON) +
+ 				  node_page_state(pgdat, NR_INACTIVE_ANON);
+@@ -2867,8 +2863,7 @@ static long memcg_oom_badness(struct mem_cgroup *memcg,
   *   >0: memcg is eligible, and the returned value is an estimation
   *       of the memory footprint
   */
- static long oom_evaluate_memcg(struct mem_cgroup *memcg,
--			       const nodemask_t *nodemask,
--			       unsigned long totalpages)
-+			       const nodemask_t *nodemask)
+-static long oom_evaluate_memcg(struct mem_cgroup *memcg,
+-			       const nodemask_t *nodemask)
++static long oom_evaluate_memcg(struct mem_cgroup *memcg)
  {
  	struct css_task_iter it;
  	struct task_struct *task;
- 	int eligible = 0;
- 
- 	/*
--	 * Root memory cgroup is a special case:
--	 * we don't have necessary stats to evaluate it exactly as
--	 * leaf memory cgroups, so we approximate it's oom_score
--	 * by summing oom_score of all belonging tasks, which are
--	 * owners of their mm structs.
--	 *
--	 * If there are inflight OOM victim tasks inside
--	 * the root memcg, we return -1.
--	 */
--	if (memcg == root_mem_cgroup) {
--		struct css_task_iter it;
--		struct task_struct *task;
--		long score = 0;
--
--		css_task_iter_start(&memcg->css, 0, &it);
--		while ((task = css_task_iter_next(&it))) {
--			if (tsk_is_oom_victim(task) &&
--			    !test_bit(MMF_OOM_SKIP,
--				      &task->signal->oom_mm->flags)) {
--				score = -1;
--				break;
--			}
--
--			task_lock(task);
--			if (!task->mm) {
--				task_unlock(task);
--				continue;
--			}
--			task_unlock(task);
--
--			score += oom_badness(task, memcg, nodemask,
--					     totalpages);
--		}
--		css_task_iter_end(&it);
--
--		return score;
--	}
--
--	/*
--	 * Memcg is OOM eligible if there are OOM killable tasks inside.
--	 *
--	 * We treat tasks with oom_score_adj set to OOM_SCORE_ADJ_MIN
--	 * as unkillable.
--	 *
--	 * If there are inflight OOM victim tasks inside the memcg,
--	 * we return -1.
-+	 * Memcg is eligible for oom kill if at least one process is eligible
-+	 * to be killed.  Processes with oom_score_adj of OOM_SCORE_ADJ_MIN
-+	 * are unkillable.
- 	 */
- 	css_task_iter_start(&memcg->css, 0, &it);
- 	while ((task = css_task_iter_next(&it))) {
-+		task_lock(task);
-+		if (!task->mm) {
-+			task_unlock(task);
-+			continue;
-+		}
- 		if (!eligible &&
- 		    task->signal->oom_score_adj != OOM_SCORE_ADJ_MIN)
- 			eligible = 1;
-+		task_unlock(task);
- 
- 		if (tsk_is_oom_victim(task) &&
- 		    !test_bit(MMF_OOM_SKIP, &task->signal->oom_mm->flags)) {
-@@ -2927,13 +2902,14 @@ static long oom_evaluate_memcg(struct mem_cgroup *memcg,
+@@ -2902,7 +2897,7 @@ static long oom_evaluate_memcg(struct mem_cgroup *memcg,
  	if (eligible <= 0)
  		return eligible;
  
--	return memcg_oom_badness(memcg, nodemask, totalpages);
-+	return memcg_oom_badness(memcg, nodemask);
+-	return memcg_oom_badness(memcg, nodemask);
++	return memcg_oom_badness(memcg);
  }
  
  static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
- {
- 	struct mem_cgroup *iter, *group = NULL;
- 	long group_score = 0;
-+	long leaf_score = 0;
- 
- 	oc->chosen_memcg = NULL;
- 	oc->chosen_points = 0;
-@@ -2959,12 +2935,18 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
- 	for_each_mem_cgroup_tree(iter, root) {
- 		long score;
- 
-+		/*
-+		 * Root memory cgroup will be considered after iteration,
-+		 * if eligible.
-+		 */
-+		if (iter == root_mem_cgroup)
-+			continue;
-+
- 		/*
- 		 * We don't consider non-leaf non-oom_group memory cgroups
- 		 * without the oom policy of "tree" as OOM victims.
- 		 */
--		if (memcg_has_children(iter) && iter != root_mem_cgroup &&
--		    !mem_cgroup_oom_group(iter) &&
-+		if (memcg_has_children(iter) && !mem_cgroup_oom_group(iter) &&
- 		    iter->oom_policy != MEMCG_OOM_POLICY_TREE)
+@@ -2962,7 +2957,7 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
+ 		if (memcg_has_children(iter))
  			continue;
  
-@@ -2972,16 +2954,15 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
- 		 * If group is not set or we've ran out of the group's sub-tree,
- 		 * we should set group and reset group_score.
- 		 */
--		if (!group || group == root_mem_cgroup ||
--		    !mem_cgroup_is_descendant(iter, group)) {
-+		if (!group || !mem_cgroup_is_descendant(iter, group)) {
- 			group = iter;
- 			group_score = 0;
- 		}
- 
--		if (memcg_has_children(iter) && iter != root_mem_cgroup)
-+		if (memcg_has_children(iter))
- 			continue;
- 
--		score = oom_evaluate_memcg(iter, oc->nodemask, oc->totalpages);
-+		score = oom_evaluate_memcg(iter, oc->nodemask);
+-		score = oom_evaluate_memcg(iter, oc->nodemask);
++		score = oom_evaluate_memcg(iter);
  
  		/*
  		 * Ignore empty and non-eligible memory cgroups.
-@@ -3000,6 +2981,7 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
- 		}
+@@ -2991,8 +2986,7 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
  
- 		group_score += score;
-+		leaf_score += score;
- 
- 		if (group_score > oc->chosen_points) {
- 			oc->chosen_points = group_score;
-@@ -3007,8 +2989,25 @@ static void select_victim_memcg(struct mem_cgroup *root, struct oom_control *oc)
- 		}
- 	}
- 
--	if (oc->chosen_memcg && oc->chosen_memcg != INFLIGHT_VICTIM)
--		css_get(&oc->chosen_memcg->css);
-+	if (oc->chosen_memcg != INFLIGHT_VICTIM) {
-+		if (root == root_mem_cgroup) {
-+			group_score = oom_evaluate_memcg(root_mem_cgroup,
-+							 oc->nodemask);
-+			if (group_score > leaf_score) {
-+				/*
-+				 * Discount the sum of all leaf scores to find
-+				 * root score.
-+				 */
-+				group_score -= leaf_score;
-+				if (group_score > oc->chosen_points) {
-+					oc->chosen_points = group_score;
-+					oc->chosen_memcg = root_mem_cgroup;
-+				}
-+			}
-+		}
-+		if (oc->chosen_memcg)
-+			css_get(&oc->chosen_memcg->css);
-+	}
- 
- 	rcu_read_unlock();
- }
-@@ -6491,6 +6490,7 @@ bool mem_cgroup_charge_skmem(struct mem_cgroup *memcg, unsigned int nr_pages)
- 		gfp_mask = GFP_NOWAIT;
- 
- 	mod_memcg_state(memcg, MEMCG_SOCK, nr_pages);
-+	atomic_long_add(nr_pages, &total_sock_pages);
- 
- 	if (try_charge(memcg, gfp_mask, nr_pages) == 0)
- 		return true;
-@@ -6512,6 +6512,7 @@ void mem_cgroup_uncharge_skmem(struct mem_cgroup *memcg, unsigned int nr_pages)
- 	}
- 
- 	mod_memcg_state(memcg, MEMCG_SOCK, -nr_pages);
-+	atomic_long_add(-nr_pages, &total_sock_pages);
- 
- 	refill_stock(memcg, nr_pages);
- }
+ 	if (oc->chosen_memcg != INFLIGHT_VICTIM) {
+ 		if (root == root_mem_cgroup) {
+-			group_score = oom_evaluate_memcg(root_mem_cgroup,
+-							 oc->nodemask);
++			group_score = oom_evaluate_memcg(root_mem_cgroup);
+ 			if (group_score > leaf_score) {
+ 				/*
+ 				 * Discount the sum of all leaf scores to find
