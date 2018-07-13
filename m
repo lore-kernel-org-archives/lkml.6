@@ -2,140 +2,354 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A22E3ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:33:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58402ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A2C420878
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:33:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2C420878
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E92E320878
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:34:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aeITVGzU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E92E320878
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbeGMOsD (ORCPT
+        id S1729924AbeGMOtf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:48:03 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:59379 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729644AbeGMOsC (ORCPT
+        Fri, 13 Jul 2018 10:49:35 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:36718 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729644AbeGMOtf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:48:02 -0400
-Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
- (mreue105 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MQwFa-1fUfU635Qc-00UKJT; Fri, 13 Jul 2018 16:32:32 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] [RESEND] ubifs: tnc: use monotonic znode timestamp
-Date:   Fri, 13 Jul 2018 16:31:56 +0200
-Message-Id: <20180713143212.3142541-2-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-In-Reply-To: <20180713143212.3142541-1-arnd@arndb.de>
-References: <20180713143212.3142541-1-arnd@arndb.de>
-X-Provags-ID: V03:K1:H5cyEy/4n2rffZ+f05a5Y2q0wYJq76/yPOG+EB2VwJpzALrJQOO
- fe1eJUMvJ7JCZdm0s6k6D5F4ju9iIg5RLrdXoW0weEONv7orS1L/EGAZXipqgxXSsbpnvjm
- Eglp0k1Txq1FeASQY3TUd0ikRzpupGubxHi1/2P1jlQk7eIyZQMJwVgGaJfNV1ZiuTzHJ8K
- e09HAmib2eV7mZuBPtZbA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:vpcAhTQV7XM=:DydeVvz7ZJrjTeFSGKvhPG
- 1HLO6FU+uHYe5MN+VFbsPTDvYJA0N8Dht3rk7ELlai3yT/O3WxEzGQacL0RC8rbS+EOF8D2fk
- Xb4aWWFc9OQjQZHG4pCSvYoNTGYW85ahmAuXDm1SiPYZZcdboq9buaPRafd/AExAt6P2muFlc
- LqEPT0hkyv1oYXL+ivBhoqyfpWiG299PpjVbGVrCS+mU1vKKh3MlIQLnHhAOeyCoeA7Pw4MeP
- NMFHNHUmM9FrkVZM0y+p/XIy0pRAS86aLUZ12JVZME/GCuD5lDmEngf6JF40seNm3CuXxVqy2
- BXz3sLopmmOfkGC9E5RctIZUG3GKT208Wem867T3xeTaJmnp6mFQs0jjYHcclhyAqXnu9JrET
- FqesXWWen8GZwU1XJLLEORY9OwNP46LY76POHMznzy94B4maNMOaKwEbz4G+jASLPMATE76pI
- UzFZ0ZmK1qHPeTiDhWSLl5MxXLIXx7JAcYx/z+7iSK7MHTY+ewPbAVBn4PhsqA7VaRez/gaAz
- y1psi7ZL1lMq09iuypdaBdYCqQiwxUY6Y2Fml7jzcFZrvL5ZXplJWQAeWKzj8JXify1jq5Q3E
- lzrHiuwDyZXo6dKTp1/TqEsE8h6ji43A0iy6rFbD8e7yXraDMF4pqkAVBGYhg9js/59CyrI9v
- V95OoNa2YNndGfs5337KwFXAt8xMW6R9Pr5IxPY28zoXeYLAmZcu6ZQjZ53s0EE7lnVQ=
+        Fri, 13 Jul 2018 10:49:35 -0400
+Received: by mail-ua0-f196.google.com with SMTP id y8-v6so20738213uan.3;
+        Fri, 13 Jul 2018 07:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=66qaj0PAKSIXHDa1gCZO5guv4m2CO/4QjBruF/OPVrw=;
+        b=aeITVGzU5M83sYtLJAA2wCfhJ9G+cy9CCcOlIRNYl+FkOY8atHac6GJjRJj3S94u64
+         36WWtnLgTrZxjrbB1TQvg2xWVONehCQOSSTus/Snn7Dx1NtQ7uxk+wcCBkQ+hs76dxqP
+         gfpFsayn3RJbi8glFqza8akgWh4HfByUybDyyC9I2HP56UKuetxoy3elZ20/2VlnJOPv
+         lxY0y1Zv+31OKeff661efDUw4KkrMGraiAAcnjPEFVyXf598ptj+K9WOk9OBZZmX2aLm
+         btyOyJ6SQUpgBWDEbhvh5EfiYyWZBVsXdwFIiQiVONGYATTkJ3plAeiyGdHNFnNbxEGt
+         hAQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=66qaj0PAKSIXHDa1gCZO5guv4m2CO/4QjBruF/OPVrw=;
+        b=QuQc2RvXDoYEfjJkj3hRGuiFp9+gj2Eaif9tXeOyqyz/Ct2LsARpVc/8cPUW0uFd3d
+         u24YXgt7CVvD8w5d4ly1ek+jpgNm4MUvHKSBU8TS6X39wO4lQh7G46xAvzchWnZtcUCr
+         sitB81FsVQV7kEqF0tf+lzX1XO95gmIERwHaKlKOIVSt3VH+eg1KNl2j/5Dd4qLm/frf
+         j9pU9Zv1mZ9wq+2vnuyb26Ca6rt2TktLr5PLdEARWdIwDOqGSp78tc+7JBZPMwu0qkvn
+         aZfBlomxm54OGUfouqMmC2LA0OPet23Welwm+rTezNHPAZQviXyLtNOzYg3aCrVz546S
+         IW+g==
+X-Gm-Message-State: AOUpUlGjjfUdR7XO4WTsnDj1ZLa0/zpOVo4ZE8A8D7Mdhae5+eSvxk0k
+        13KWHeJnS0Pywod7amrZqRr03LTZ243WG9dejaQ=
+X-Google-Smtp-Source: AAOMgpdqC+GHgakGYJ+KGC5NeNVe6GXRRfzlMnOQlZ+81tM8cAFdXhFIPPl4XReElikEhuJuJHiHFkGCh31Byz53788=
+X-Received: by 2002:ab0:6037:: with SMTP id n23-v6mr4468834ual.28.1531492479762;
+ Fri, 13 Jul 2018 07:34:39 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 07:34:38
+ -0700 (PDT)
+In-Reply-To: <4e26f407-58c0-09b6-6735-f004d5e86969@gmail.com>
+References: <45b8bde6-aaa8-3f3f-0528-81e5e931751c@gmail.com>
+ <bc6846e1-2b6d-dcc2-355c-2699aa1607a2@gmail.com> <CAHp75Vdmqm+r=Orxs6_dCr18y+EwEQ=s-7UgaZKHuKbtjMcOig@mail.gmail.com>
+ <20180609010420.GA112645@localhost.localdomain> <CAHp75VcA5ZWahraDP69_hBHuqxw6cng93zAa1op5EBYfuCSPwg@mail.gmail.com>
+ <b59027b3-a48e-f168-5f12-c67758c0c2c7@gmail.com> <CAHp75VcK78jL_7sF+ZGaPpwDED-6Xd+SdH_5WCfSBsVJW2GnDg@mail.gmail.com>
+ <8307f1e0-c480-3f78-9327-e248208e5349@gmail.com> <CAHp75VdTGXqE__VHjRphEmpMVfxaVVik=u-_0NRhQAKeq=+ZKA@mail.gmail.com>
+ <b5652ed8-5fff-4f8b-ec0f-467bce853bf8@gmail.com> <CAHp75VfL3v8U6o36-e3+XPL53sb9wMUOXsL6gn3XE4=-kJjuKQ@mail.gmail.com>
+ <367a12e9-7d10-98e4-4791-69cdc7d01129@gmail.com> <CAHp75VdSVLzNHnrOzzrBMf4X2Cg4QACRrnxKNkQzcYJ0h5W+tw@mail.gmail.com>
+ <e17fbb51b98d45318001adb7eb6a51b2@ausx13mpc120.AMER.DELL.COM>
+ <CAHp75VfNo9NVfgGn4Fqa5fA9zp47TkqHwn1MJ044qMQoMNMB-Q@mail.gmail.com>
+ <73c53c23c0824e4595292bfafc6054ee@ausx13mpc120.AMER.DELL.COM> <4e26f407-58c0-09b6-6735-f004d5e86969@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 13 Jul 2018 17:34:38 +0300
+Message-ID: <CAHp75VceuqTdQLXu=gQCoeSWV3zmrWdDrCe-ChxfS=24KDQSZg@mail.gmail.com>
+Subject: Re: [PATCH v5] dcdbas: Add support for WSMT ACPI table
+To:     Stuart Hayes <stuart.w.hayes@gmail.com>
+Cc:     Mario Limonciello <Mario.Limonciello@dell.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The tnc uses get_seconds() based timestamps to check the age of a znode,
-which has two problems: on 32-bit architectures this may overflow in
-2038 or 2106, and it gives incorrect information when the system time
-is updated using settimeofday().
+On Tue, Jul 3, 2018 at 7:20 PM, Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
+>
+> If the WSMT ACPI table is present and indicates that a fixed communication
+> buffer should be used, use the firmware-specified buffer instead of
+> allocating a buffer in memory for communications between the dcdbas driver
+> and firmare.
+>
+> Signed-off-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+> ---
+> v2 Bumped driver version to 5.6.0-3.3
+> v3 Removed dependency on ACPI in Kconfig
+>    Moved the added #include to be in alphabetical order
+>    Added comments in smi_request_store()
+>    Simplified checksum code
+>    Changed loop searching 0xf0000 to be more readable
+>    Reworked calculation of remap_size & smi_data_buf_size
+> v4 Fixed comment that starts with "Calling Interface SMI"
+>    Fixed formatting of first "if" statement in dcdbas_check_wsmt()
+> v5 Reworked comment that starts with "Calling Interface SMI"
+>    Changed EPS scanning loop to check every 16 bytes
+>
 
-Using montonic timestamps with ktime_get_seconds() solves both thes
-problems.
+Mario, any comments on this?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- fs/ubifs/shrinker.c | 2 +-
- fs/ubifs/tnc.c      | 4 ++--
- fs/ubifs/tnc_misc.c | 2 +-
- fs/ubifs/ubifs.h    | 2 +-
- 4 files changed, 5 insertions(+), 5 deletions(-)
+For now I pushed this to my review and testing queue, thanks!
 
-diff --git a/fs/ubifs/shrinker.c b/fs/ubifs/shrinker.c
-index 9a9fb94a41c6..9d10cbdec2cc 100644
---- a/fs/ubifs/shrinker.c
-+++ b/fs/ubifs/shrinker.c
-@@ -71,7 +71,7 @@ static int shrink_tnc(struct ubifs_info *c, int nr, int age, int *contention)
- {
- 	int total_freed = 0;
- 	struct ubifs_znode *znode, *zprev;
--	int time = get_seconds();
-+	time64_t time = ktime_get_seconds();
- 
- 	ubifs_assert(mutex_is_locked(&c->umount_mutex));
- 	ubifs_assert(mutex_is_locked(&c->tnc_mutex));
-diff --git a/fs/ubifs/tnc.c b/fs/ubifs/tnc.c
-index 4a21e7f75e7a..6c497fb48b98 100644
---- a/fs/ubifs/tnc.c
-+++ b/fs/ubifs/tnc.c
-@@ -1179,7 +1179,7 @@ int ubifs_lookup_level0(struct ubifs_info *c, const union ubifs_key *key,
- {
- 	int err, exact;
- 	struct ubifs_znode *znode;
--	unsigned long time = get_seconds();
-+	time64_t time = ktime_get_seconds();
- 
- 	dbg_tnck(key, "search key ");
- 	ubifs_assert(key_type(c, key) < UBIFS_INVALID_KEY);
-@@ -1315,7 +1315,7 @@ static int lookup_level0_dirty(struct ubifs_info *c, const union ubifs_key *key,
- {
- 	int err, exact;
- 	struct ubifs_znode *znode;
--	unsigned long time = get_seconds();
-+	time64_t time = ktime_get_seconds();
- 
- 	dbg_tnck(key, "search and dirty key ");
- 
-diff --git a/fs/ubifs/tnc_misc.c b/fs/ubifs/tnc_misc.c
-index 93f5b7859e6f..49f647bc88f0 100644
---- a/fs/ubifs/tnc_misc.c
-+++ b/fs/ubifs/tnc_misc.c
-@@ -435,7 +435,7 @@ struct ubifs_znode *ubifs_load_znode(struct ubifs_info *c,
- 
- 	zbr->znode = znode;
- 	znode->parent = parent;
--	znode->time = get_seconds();
-+	znode->time = ktime_get_seconds();
- 	znode->iip = iip;
- 
- 	return znode;
-diff --git a/fs/ubifs/ubifs.h b/fs/ubifs/ubifs.h
-index 04bf84d71e7b..54fb6b1cd042 100644
---- a/fs/ubifs/ubifs.h
-+++ b/fs/ubifs/ubifs.h
-@@ -758,7 +758,7 @@ struct ubifs_znode {
- 	struct ubifs_znode *parent;
- 	struct ubifs_znode *cnext;
- 	unsigned long flags;
--	unsigned long time;
-+	time64_t time;
- 	int level;
- 	int child_cnt;
- 	int iip;
+>
+>  drivers/firmware/dcdbas.c | 123 +++++++++++++++++++++++++++++++++++++++++++---
+>  drivers/firmware/dcdbas.h |  10 ++++
+>  2 files changed, 127 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/firmware/dcdbas.c b/drivers/firmware/dcdbas.c
+> index 0bdea60c65dd..ae28e48ff7dc 100644
+> --- a/drivers/firmware/dcdbas.c
+> +++ b/drivers/firmware/dcdbas.c
+> @@ -21,6 +21,7 @@
+>   */
+>
+>  #include <linux/platform_device.h>
+> +#include <linux/acpi.h>
+>  #include <linux/dma-mapping.h>
+>  #include <linux/errno.h>
+>  #include <linux/cpu.h>
+> @@ -41,7 +42,7 @@
+>  #include "dcdbas.h"
+>
+>  #define DRIVER_NAME            "dcdbas"
+> -#define DRIVER_VERSION         "5.6.0-3.2"
+> +#define DRIVER_VERSION         "5.6.0-3.3"
+>  #define DRIVER_DESCRIPTION     "Dell Systems Management Base Driver"
+>
+>  static struct platform_device *dcdbas_pdev;
+> @@ -49,19 +50,23 @@ static struct platform_device *dcdbas_pdev;
+>  static u8 *smi_data_buf;
+>  static dma_addr_t smi_data_buf_handle;
+>  static unsigned long smi_data_buf_size;
+> +static unsigned long max_smi_data_buf_size = MAX_SMI_DATA_BUF_SIZE;
+>  static u32 smi_data_buf_phys_addr;
+>  static DEFINE_MUTEX(smi_data_lock);
+> +static u8 *eps_buffer;
+>
+>  static unsigned int host_control_action;
+>  static unsigned int host_control_smi_type;
+>  static unsigned int host_control_on_shutdown;
+>
+> +static bool wsmt_enabled;
+> +
+>  /**
+>   * smi_data_buf_free: free SMI data buffer
+>   */
+>  static void smi_data_buf_free(void)
+>  {
+> -       if (!smi_data_buf)
+> +       if (!smi_data_buf || wsmt_enabled)
+>                 return;
+>
+>         dev_dbg(&dcdbas_pdev->dev, "%s: phys: %x size: %lu\n",
+> @@ -86,7 +91,7 @@ static int smi_data_buf_realloc(unsigned long size)
+>         if (smi_data_buf_size >= size)
+>                 return 0;
+>
+> -       if (size > MAX_SMI_DATA_BUF_SIZE)
+> +       if (size > max_smi_data_buf_size)
+>                 return -EINVAL;
+>
+>         /* new buffer is needed */
+> @@ -169,7 +174,7 @@ static ssize_t smi_data_write(struct file *filp, struct kobject *kobj,
+>  {
+>         ssize_t ret;
+>
+> -       if ((pos + count) > MAX_SMI_DATA_BUF_SIZE)
+> +       if ((pos + count) > max_smi_data_buf_size)
+>                 return -EINVAL;
+>
+>         mutex_lock(&smi_data_lock);
+> @@ -322,8 +327,20 @@ static ssize_t smi_request_store(struct device *dev,
+>                         ret = count;
+>                 break;
+>         case 1:
+> -               /* Calling Interface SMI */
+> -               smi_cmd->ebx = (u32) virt_to_phys(smi_cmd->command_buffer);
+> +               /*
+> +                * Calling Interface SMI
+> +                *
+> +                * Provide physical address of command buffer field within
+> +                * the struct smi_cmd to BIOS.
+> +                *
+> +                * Because the address that smi_cmd (smi_data_buf) points to
+> +                * will be from memremap() of a non-memory address if WSMT
+> +                * is present, we can't use virt_to_phys() on smi_cmd, so
+> +                * we have to use the physical address that was saved when
+> +                * the virtual address for smi_cmd was received.
+> +                */
+> +               smi_cmd->ebx = smi_data_buf_phys_addr +
+> +                               offsetof(struct smi_cmd, command_buffer);
+>                 ret = dcdbas_smi_request(smi_cmd);
+>                 if (!ret)
+>                         ret = count;
+> @@ -482,6 +499,93 @@ static void dcdbas_host_control(void)
+>         }
+>  }
+>
+> +/* WSMT */
+> +
+> +static u8 checksum(u8 *buffer, u8 length)
+> +{
+> +       u8 sum = 0;
+> +       u8 *end = buffer + length;
+> +
+> +       while (buffer < end)
+> +               sum += *buffer++;
+> +       return sum;
+> +}
+> +
+> +static inline struct smm_eps_table *check_eps_table(u8 *addr)
+> +{
+> +       struct smm_eps_table *eps = (struct smm_eps_table *)addr;
+> +
+> +       if (strncmp(eps->smm_comm_buff_anchor, SMM_EPS_SIG, 4) != 0)
+> +               return NULL;
+> +
+> +       if (checksum(addr, eps->length) != 0)
+> +               return NULL;
+> +
+> +       return eps;
+> +}
+> +
+> +static int dcdbas_check_wsmt(void)
+> +{
+> +       struct acpi_table_wsmt *wsmt = NULL;
+> +       struct smm_eps_table *eps = NULL;
+> +       u64 remap_size;
+> +       u8 *addr;
+> +
+> +       acpi_get_table(ACPI_SIG_WSMT, 0, (struct acpi_table_header **)&wsmt);
+> +       if (!wsmt)
+> +               return 0;
+> +
+> +       /* Check if WSMT ACPI table shows that protection is enabled */
+> +       if (!(wsmt->protection_flags & ACPI_WSMT_FIXED_COMM_BUFFERS) ||
+> +           !(wsmt->protection_flags & ACPI_WSMT_COMM_BUFFER_NESTED_PTR_PROTECTION))
+> +               return 0;
+> +
+> +       /* Scan for EPS (entry point structure) */
+> +       for (addr = (u8 *)__va(0xf0000);
+> +            addr < (u8 *)__va(0x100000 - sizeof(struct smm_eps_table));
+> +            addr += 16) {
+> +               eps = check_eps_table(addr);
+> +               if (eps)
+> +                       break;
+> +       }
+> +
+> +       if (!eps) {
+> +               dev_dbg(&dcdbas_pdev->dev, "found WSMT, but no EPS found\n");
+> +               return -ENODEV;
+> +       }
+> +
+> +       /*
+> +        * Get physical address of buffer and map to virtual address.
+> +        * Table gives size in 4K pages, regardless of actual system page size.
+> +        */
+> +       if (upper_32_bits(eps->smm_comm_buff_addr + 8)) {
+> +               dev_warn(&dcdbas_pdev->dev, "found WSMT, but EPS buffer address is above 4GB\n");
+> +               return -EINVAL;
+> +       }
+> +       /*
+> +        * Limit remap size to MAX_SMI_DATA_BUF_SIZE + 8 (since the first 8
+> +        * bytes are used for a semaphore, not the data buffer itself).
+> +        */
+> +       remap_size = eps->num_of_4k_pages * PAGE_SIZE;
+> +       if (remap_size > MAX_SMI_DATA_BUF_SIZE + 8)
+> +               remap_size = MAX_SMI_DATA_BUF_SIZE + 8;
+> +       eps_buffer = memremap(eps->smm_comm_buff_addr, remap_size, MEMREMAP_WB);
+> +       if (!eps_buffer) {
+> +               dev_warn(&dcdbas_pdev->dev, "found WSMT, but failed to map EPS buffer\n");
+> +               return -ENOMEM;
+> +       }
+> +
+> +       /* First 8 bytes is for a semaphore, not part of the smi_data_buf */
+> +       smi_data_buf_phys_addr = eps->smm_comm_buff_addr + 8;
+> +       smi_data_buf = eps_buffer + 8;
+> +       smi_data_buf_size = remap_size - 8;
+> +       max_smi_data_buf_size = smi_data_buf_size;
+> +       wsmt_enabled = true;
+> +       dev_info(&dcdbas_pdev->dev,
+> +                "WSMT found, using firmware-provided SMI buffer.\n");
+> +       return 1;
+> +}
+> +
+>  /**
+>   * dcdbas_reboot_notify: handle reboot notification for host control
+>   */
+> @@ -548,6 +652,11 @@ static int dcdbas_probe(struct platform_device *dev)
+>
+>         dcdbas_pdev = dev;
+>
+> +       /* Check if ACPI WSMT table specifies protected SMI buffer address */
+> +       error = dcdbas_check_wsmt();
+> +       if (error < 0)
+> +               return error;
+> +
+>         /*
+>          * BIOS SMI calls require buffer addresses be in 32-bit address space.
+>          * This is done by setting the DMA mask below.
+> @@ -635,6 +744,8 @@ static void __exit dcdbas_exit(void)
+>          */
+>         if (dcdbas_pdev)
+>                 smi_data_buf_free();
+> +       if (eps_buffer)
+> +               memunmap(eps_buffer);
+>         platform_device_unregister(dcdbas_pdev_reg);
+>         platform_driver_unregister(&dcdbas_driver);
+>  }
+> diff --git a/drivers/firmware/dcdbas.h b/drivers/firmware/dcdbas.h
+> index ca3cb0a54ab6..52729a494b00 100644
+> --- a/drivers/firmware/dcdbas.h
+> +++ b/drivers/firmware/dcdbas.h
+> @@ -53,6 +53,7 @@
+>  #define EXPIRED_TIMER                          (0)
+>
+>  #define SMI_CMD_MAGIC                          (0x534D4931)
+> +#define SMM_EPS_SIG                            "$SCB"
+>
+>  #define DCDBAS_DEV_ATTR_RW(_name) \
+>         DEVICE_ATTR(_name,0600,_name##_show,_name##_store);
+> @@ -103,5 +104,14 @@ struct apm_cmd {
+>
+>  int dcdbas_smi_request(struct smi_cmd *smi_cmd);
+>
+> +struct smm_eps_table {
+> +       char smm_comm_buff_anchor[4];
+> +       u8 length;
+> +       u8 checksum;
+> +       u8 version;
+> +       u64 smm_comm_buff_addr;
+> +       u64 num_of_4k_pages;
+> +} __packed;
+> +
+>  #endif /* _DCDBAS_H_ */
+>
+> --
+> 2.14.2
+>
+
+
+
 -- 
-2.9.0
-
+With Best Regards,
+Andy Shevchenko
