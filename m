@@ -4,96 +4,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B8F8ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30860ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 402D6208E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D715F208E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 12:50:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="aMhZcoc2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402D6208E2
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CRpjD5IQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D715F208E2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730339AbeGMNFV (ORCPT
+        id S1731202AbeGMNFW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 09:05:21 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38961 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728187AbeGMNFV (ORCPT
+        Fri, 13 Jul 2018 09:05:22 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53720 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729974AbeGMNFW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 09:05:21 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h10-v6so25012582wre.6
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 05:50:49 -0700 (PDT)
+        Fri, 13 Jul 2018 09:05:22 -0400
+Received: by mail-wm0-f65.google.com with SMTP id s9-v6so1395935wmh.3
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 05:50:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=2qE17HPTdG7g2tPmHe7x9j8zRBWCmIEP0yjLKyX/0ik=;
-        b=aMhZcoc2eQS6XMoGvfBt9IkZ/P03stSztv0LSTt4tdT1BXcHJN1LCgjGfheJnrm9QT
-         T2l/cqTDEA574umT+7WAPJWyAuyr/EMXna7kUeF+7jivDLVWNYagq1LAC91GO9ucl3WN
-         FRof35OTF+hTYiux5eHZ9HbdAHdgyckZgmvhnqqvn6mwgmZuKgFwHDTF9kywRIOzj68m
-         vwd1mFXuWC2sg/AXMM9EA599aWkwHEu6gu7QAIS5EBnb5F2Fhr5BsZrMlC8UWGGz3jRh
-         cNscyjYXfA7uxtvquReOmb8XpMxVy0oXBo8aeXCGc0b8sbRyuohIZ6EOwtvTRLvWgujN
-         eMXA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=0/O/QzpvEbTCUwnA7IVGQZzKoegMixT19m9IgtOsXbo=;
+        b=CRpjD5IQIgQeMNEFbBAb8aJFDduT1DrI2+VtxQnh8AM863q0O+5Y9zqPZFYc8sZc8H
+         oQwfoHSlc0BQiuHqIjcS3353bk+hNauCTGE5v894N57/btRg/cTA/s886pBCOzczcus2
+         /OScr5twc5jnVCdeGJPF+AHHZav2lnGBCX0IS103qsxrg6Gk7JlpahIoHgYg7WLoho3q
+         ffG0JAkheVpigAMZUHtD1kruV6Qe93UcEadygEKNLpvIWrWMIZRv8wmuKDotgT/fZfvC
+         1LC77wYVWmSJ5mldnxrok1+OSYM6Ul/fR7vyMJjqU9k8SBc7GGuBrh9QhOK9BMJ+iOK5
+         f20w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2qE17HPTdG7g2tPmHe7x9j8zRBWCmIEP0yjLKyX/0ik=;
-        b=iS+3lPOnhxPFDcRfRE7X7ppNOGzY65IKUblj/9PsOtwJBup1juclFaUisRwk82vuE6
-         nNajNO4PlcZt5VyqhgE8T3d6vP7GQhiHMsp2XgzsXLfHCWfZm4JmnR718lYdeOKeio80
-         n7mWxI2W1PGImPWG4QFLR+xAvNEv/YxRsP7jw3h9LTcxBCTGD8tUDveM8ekGKH13eaP5
-         kjTcZBG/lYBxHhgc14MO3O8OuBFgYk6avf1jXH85OKwiAntlTAohrb9RAfHgvXQUQWzY
-         ftr4tKG1itsT3Nke4xSOTgE8Bx7tk1ZyL7EIYm60vgM35wO3juMCv9yxI77oy9gVY2Aa
-         bOkg==
-X-Gm-Message-State: AOUpUlHD5LGSwXB9GP9SM6oD7JULtHAUYcYEOYM5ZtETniW3pwW9KnO2
-        nXD8UhvYWcafaqOavOgyJtJf8g==
-X-Google-Smtp-Source: AAOMgpeoc1OpFCzELybiJmc+X/CLxrFH4pWunlypstB16CePqKP4qceJ9HumYR7P+feNn7darX3PlQ==
-X-Received: by 2002:adf:9226:: with SMTP id 35-v6mr4509741wrj.44.1531486248417;
-        Fri, 13 Jul 2018 05:50:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=0/O/QzpvEbTCUwnA7IVGQZzKoegMixT19m9IgtOsXbo=;
+        b=bdL1WYpbOzPEfpS2OBL38LUWQAsrmO+6zTGuNShe9sdDMyh5YbxvlJOXobhLlBhzOw
+         uM6Yi6a1e7l1guY7BL/M3Cz8ItdPFgnhb2OGB2AySVdYRdfbnhm+7OR+ZaKfKiPbtapR
+         0AEF/Z0etJ/fN4UR5stL+Y3g71pk8IK4mSbTiYsSOrt4HpE7tb/1FydRu29FfKfeS5cg
+         jlpVc/Up45VI0fBAn0Nm2dE4BCZ8cqCOVrGFYGuiBP+QtuPGTQ/nydDXS+aOmcnZ4+pU
+         L7yc1zOgwRpzh56Pi80oWDCvx84AvqFxDyXtZEyBSvfR/k31G6q+5bc6PPWi3A2DgBYN
+         uBCA==
+X-Gm-Message-State: AOUpUlERQQahbgJFNWzVd2PehDscsPVwG9DMTycWyiKYBU4TT6g5jYB0
+        UqOIyfpxzpnZUQMdbAv9DeoX6Q==
+X-Google-Smtp-Source: AAOMgpdZ8/o9HNiwHhuAEm5UBveg8+MZLI33sapLTWVH9rdfTyCJTuzH8+tQCSioYY35qBfJTtWXBA==
+X-Received: by 2002:a1c:c241:: with SMTP id s62-v6mr4073238wmf.146.1531486249399;
+        Fri, 13 Jul 2018 05:50:49 -0700 (PDT)
 Received: from boomer.baylibre.local ([90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id f76-v6sm8541524wme.30.2018.07.13.05.50.47
+        by smtp.googlemail.com with ESMTPSA id f76-v6sm8541524wme.30.2018.07.13.05.50.48
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 13 Jul 2018 05:50:47 -0700 (PDT)
+        Fri, 13 Jul 2018 05:50:48 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Mark Brown <broonie@kernel.org>,
         Liam Girdwood <lgirdwood@gmail.com>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>, alsa-devel@alsa-project.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/2] ASoC: add sound-name-prefix property
-Date:   Fri, 13 Jul 2018 14:50:41 +0200
-Message-Id: <20180713125043.13242-1-jbrunet@baylibre.com>
+Subject: [PATCH 1/2] ASoC: add DT documentation for the sound-name-prefix property
+Date:   Fri, 13 Jul 2018 14:50:42 +0200
+Message-Id: <20180713125043.13242-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180713125043.13242-1-jbrunet@baylibre.com>
+References: <20180713125043.13242-1-jbrunet@baylibre.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset add support in ASoC to pick up name prefix from the
-component nodes when the component does not match the configuration
-table provided to the card.
-
-The need for this feature came from the platform I'm working on
-(Amlogic A113). On this platform, the card is made of several instances
-of each components. It relies heavily on prefixes to describe the
-routing between these components.
-
-The proposed solution benefits every other DT based sound cards, such as
-the simple card family. It allows to express the routing easily even when
-the card uses several instances of the same component, or different
-components with the same sink/source names (Playback, Capture,
-Output, etc ...)
-
-Jerome Brunet (2):
-  ASoC: add DT documentation for the sound-name-prefix property
-  ASoC: allow soc-core to pick up name prefixes from component nodes
-
- .../devicetree/bindings/sound/name-prefix.txt      | 24 +++++++++++++++++++
- sound/soc/soc-core.c                               | 28 ++++++++++++++++++----
- 2 files changed, 47 insertions(+), 5 deletions(-)
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../devicetree/bindings/sound/name-prefix.txt      | 24 ++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/sound/name-prefix.txt
 
+diff --git a/Documentation/devicetree/bindings/sound/name-prefix.txt b/Documentation/devicetree/bindings/sound/name-prefix.txt
+new file mode 100644
+index 000000000000..645775908657
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/name-prefix.txt
+@@ -0,0 +1,24 @@
++Name prefix:
++
++Card implementing the routing property define the connection between
++audio components as list of string pair. Component using the same
++sink/source names may use the name prefix property to prepend the
++name of their sinks/sources with the provided string.
++
++Optional name prefix property:
++- sound-name-prefix : string using as prefix for the sink/source names of
++		      the component.
++
++Example: Two instances of the same component.
++
++amp0: analog-amplifier@0 {
++	compatible = "simple-audio-amplifier";
++	enable-gpios = <&gpio GPIOH_3 0>;
++	sound-name-prefix = "FRONT";
++};
++
++amp1: analog-amplifier@1 {
++	compatible = "simple-audio-amplifier";
++	enable-gpios = <&gpio GPIOH_4 0>;
++	sound-name-prefix = "BACK";
++};
 -- 
 2.14.4
 
