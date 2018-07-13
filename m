@@ -2,146 +2,228 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BB7ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:54:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E27AECDFAA
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787F1208E9
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:54:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uLvMZ46q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787F1208E9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 12B55208E9
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:56:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12B55208E9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388033AbeGMCGq (ORCPT
+        id S2388040AbeGMCIR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 22:06:46 -0400
-Received: from ozlabs.org ([203.11.71.1]:52325 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387938AbeGMCGp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 22:06:45 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 41RbT96w9Kz9s2M;
-        Fri, 13 Jul 2018 11:54:20 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1531446865;
-        bh=cfa59YctPeC8IltDGFgpNIwqwFdvH2A6JS0TuV400lo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=uLvMZ46qtP2Kah6nek8goey9zd297TnpeqMiAuCVqClJgvxrxa/Ta7hrXiPm1XRZU
-         RQmYteS1slpsYjTzlQj6pSeWRfrl2kEgd2t8u/OU+5mV3L1LMxDTP1FqGMA7gA7bm1
-         yKI8sxQifwbF7wsWf/I/06Acr9JYRufTgufyVQ+MB9De7O251+etHo5cJUwXFLvO3a
-         IaGCOfbV0SBNyPQqJ3svVtsJbILnmBzhcw/0M6TNiJO3H6g3PGW/KbcloEitoeYXf9
-         +AFDYzGjRFM0C+2dxpYSNwmMa/g9EIMZA4L4AfFy5gjytH/IyWT98OIP59WHpnCK7/
-         tMk3WxwIRGtOw==
-Date:   Fri, 13 Jul 2018 11:54:19 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Intel Graphics <intel-gfx@lists.freedesktop.org>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Changbin Du <changbin.du@intel.com>,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        Dave Airlie <airlied@linux.ie>
-Subject: linux-next: build failure after merge of the drm-intel tree
-Message-ID: <20180713115419.1270c385@canb.auug.org.au>
+        Thu, 12 Jul 2018 22:08:17 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:49801 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387938AbeGMCIR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 22:08:17 -0400
+Received: from [192.168.90.200] (10.18.20.235) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 13 Jul
+ 2018 09:55:12 +0800
+Subject: Re: [PATCH v2 1/3] clk: meson: add DT documentation for emmc clock
+ controller
+To:     Rob Herring <robh@kernel.org>
+References: <20180710163658.6175-1-yixun.lan@amlogic.com>
+ <20180710163658.6175-2-yixun.lan@amlogic.com>
+ <20180711194346.GA32414@rob-hp-laptop>
+ <f2eb8632-1113-3bb8-506f-ac0d4e838fd4@amlogic.com>
+ <CABGGisw64MpYx7Pvp+XGt6gfZzie6EKeHdchqS6CPDjmAHBuVA@mail.gmail.com>
+ <5442a2e8-eb49-2aa8-e53e-8db88cd0bd58@amlogic.com>
+ <CAL_Jsq+r+7BaJAPBn3L26sdxATVyDiuC=V3xE+yz0-27q0RJhA@mail.gmail.com>
+CC:     <yixun.lan@amlogic.com>, Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        <linux-amlogic@lists.infradead.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+From:   Yixun Lan <yixun.lan@amlogic.com>
+Message-ID: <8bf565d3-dbfd-e06d-7076-ba78d7a2e766@amlogic.com>
+Date:   Fri, 13 Jul 2018 09:55:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/ukd8t872aUce3nu=jWPV_hd"; protocol="application/pgp-signature"
+In-Reply-To: <CAL_Jsq+r+7BaJAPBn3L26sdxATVyDiuC=V3xE+yz0-27q0RJhA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.20.235]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/ukd8t872aUce3nu=jWPV_hd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Rob, Jerome, Kevin
 
-Hi all,
+see my comments
 
-[Dave cc'd because this will probably turn up in the drm tree soon.]
+On 07/13/18 08:15, Rob Herring wrote:
+> On Thu, Jul 12, 2018 at 5:29 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
+>>
+>> HI Rob
+>>
+>> see my comments
+>>
+>> On 07/12/2018 10:17 PM, Rob Herring wrote:
+>>> On Wed, Jul 11, 2018 at 8:47 PM Yixun Lan <yixun.lan@amlogic.com> wrote:
+>>>>
+>>>> Hi Rob
+>>>>
+>>>> see my comments
+>>>>
+>>>> On 07/12/18 03:43, Rob Herring wrote:
+>>>>> On Tue, Jul 10, 2018 at 04:36:56PM +0000, Yixun Lan wrote:
+>>>>>> Document the MMC sub clock controller driver, the potential consumer
+>>>>>> of this driver is MMC or NAND.
+>>>>>
+>>>>> So you all have decided to properly model this now?
+>>>>>
+>>>> Yes, ;-)
+>>>>
+>>>>>>
+>>>>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>>>>>> ---
+>>>>>>  .../bindings/clock/amlogic,mmc-clkc.txt       | 31 +++++++++++++++++++
+>>>>>>  1 file changed, 31 insertions(+)
+>>>>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..ff6b4bf3ecf9
+>>>>>> --- /dev/null
+>>>>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>>>>>> @@ -0,0 +1,31 @@
+>>>>>> +* Amlogic MMC Sub Clock Controller Driver
+>>>>>> +
+>>>>>> +The Amlogic MMC clock controller generates and supplies clock to support
+>>>>>> +MMC and NAND controller
+>>>>>> +
+>>>>>> +Required Properties:
+>>>>>> +
+>>>>>> +- compatible: should be:
+>>>>>> +            "amlogic,meson-gx-mmc-clkc"
+>>>>>> +            "amlogic,meson-axg-mmc-clkc"
+>>>>>> +
+>>>>>> +- #clock-cells: should be 1.
+>>>>>> +- clocks: phandles to clocks corresponding to the clock-names property
+>>>>>> +- clock-names: list of parent clock names
+>>>>>> +    - "clkin0", "clkin1"
+>>>>>> +
+>>>>>> +Parent node should have the following properties :
+>>>>>> +- compatible: "syscon", "simple-mfd, and "amlogic,meson-axg-mmc-clkc"
+>>>>>
+>>>>> You don't need "simple-mfd" and probably not syscon either. The order is
+>>>>> wrong too. Most specific first.
+>>>>>
+>>>> Ok, I will drop "simple-mfd"..
+>>>>
+>>>> but the syscon is a must, since this mmc clock model access registers
+>>>> via the regmap interface
+>>>
+>>> A syscon compatible should not be the only way to get a regmap.
+>> do you have any suggestion about other function that I can use? is
+>> devm_regmap_init_mmio() feasible
+>>
+>>> Removing lines 56/57 of drivers/mfd/syscon.c should be sufficient.
+>>>
+>> I'm not sure what's the valid point of removing compatible 'syscon' in
+>> driver/mfd/syscon.c, sounds this will break a lot DT/or need to fix?
+>> will you propose a patch for this? then I can certainly adjust here
+> 
+> Removing the 2 lines will simply allow any node to be a syscon. If
+> there's a specific driver for a node, then that makes sense to allow
+> that.
+> 
+>>
+>>> Why do you need a regmap in the first place? What else needs to access
+>>> this register directly?
+>> Yes, the SD_EMMC_CLOCK register contain several bits which not fit well
+>> into common clock model, and they need to be access in the NAND or eMMC
+>> driver itself, Martin had explained this in early thread[1]
+>>
+>> In this register
+>> Bit[31] select NAND or eMMC function
+>> Bit[25] enable SDIO IRQ
+>> Bit[24] Clock always on
+>> Bit[15:14] SRAM Power down
+>>
+>> [1]
+>> https://lkml.kernel.org/r/CAFBinCBeyXf6LNaZzAw6WnsxzDAv8E=Yp2eem0xCPWMEUi6pnQ@mail.gmail.com
+>>
+>>> Don't you need a patch removing the clock code
+>>> from within the emmc driver? It's not even using regmap, so using
+>>> regmap here doesn't help.
+>>>
+>> No, and current eMMC driver still use iomap to access the register
+> 
+> Which means a read-modify-write can corrupt the register value if both
+> users don't access thru regmap. Changes are probably infrequent enough
+> that you get lucky...
+> 
+What's you says here is true.
+and we try to guarantee that only one of NAND or eMMC is enabled, so no
+race condition, as a example of the use cases:
 
-After merging the drm-intel tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+1) for enabling NAND driver, we do
+   a) enable both mmc-clkc, and NAND driver in DT, they can access
+register by using regmap interface
+   b) disable eMMC DT node
 
-drivers/gpu/drm/i915/gvt/kvmgt.c: In function 'gvt_dma_map_page':
-drivers/gpu/drm/i915/gvt/kvmgt.c:188:17: error: 'pfn' undeclared (first use=
- in this function); did you mean 'gfn'?
-  if (!pfn_valid(pfn)) {
-                 ^~~
+2) for enabling eMMC driver, we do
+   a) enable eMMC node, access register by using iomap (for now)
+   b) disable both mmc-clkc and NAND in DT
 
-Caused by commit
 
-  79e542f5af79 ("drm/i915/kvmgt: Support setting dma map for huge pages")
+>> I think we probably would like to take two steps approach.
+>> first, from the hardware perspective, the NAND and eMMC(port C) driver
+>> can't exist at same time, since they share the pins, clock, internal
+>> ram, So we have to only enable one of NAND or eMMC in DT, not enable
+>> both of them.
+> 
+> Yes, of course.
+> 
+>> Second, we might like to convert eMMC driver to also use mmc-clkc model.
+> 
+> IMO, this should be done as part of merging this series. Otherwise, we
+> have duplicated code for the same thing.
 
-interacting with commit
+IMO, I'd leave this out of this series, since this patch series is quite
+complete as itself. Although, the downside is code duplication.
 
-  39b4cbadb9a9 ("drm/i915/kvmgt: Check the pfn got from vfio_pin_pages")
+Still, I need to hear Jerome, or Kevin's option, to see if or how we
+should proceed the eMMC's clock conversion.
 
-from Linus' tree (v4.18-rc1).
+I could think of three option myself
+1) don't do the conversion, downside is code duplication, upside is NO
+DT change, no compatibility issue
+2) add a syscon node into eMMC DT node, then only convert clock part
+into this mmc-clkc model, while still leave other eMMC register access
+as the usual iomap way (still no race condition)
+3) convert all eMMC register access by using regmap interface.
 
-I added the following merge fix patch:
+both 2) and 3) need to update the DT.
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 13 Jul 2018 11:48:41 +1000
-Subject: [PATCH] drm/i915/kvmgt: merge fixup for "Check the pfn got from
- vfio_pin_pages"
+and probably 2) is a compromise way, and 1) is also OK, 3) is probably
+the worst way due to dramatically change (I think this was already
+rejected in the previous discussion)
 
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/i915/gvt/kvmgt.c | 6 ------
- 1 file changed, 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/gvt/kvmgt.c b/drivers/gpu/drm/i915/gvt/kv=
-mgt.c
-index 718ab307a500..4d2f53ae9f0f 100644
---- a/drivers/gpu/drm/i915/gvt/kvmgt.c
-+++ b/drivers/gpu/drm/i915/gvt/kvmgt.c
-@@ -185,12 +185,6 @@ static int gvt_dma_map_page(struct intel_vgpu *vgpu, u=
-nsigned long gfn,
- 	if (ret)
- 		return ret;
-=20
--	if (!pfn_valid(pfn)) {
--		gvt_vgpu_err("pfn 0x%lx is not mem backed\n", pfn);
--		vfio_unpin_pages(mdev_dev(vgpu->vdev.mdev), &gfn, 1);
--		return -EINVAL;
--	}
--
- 	/* Setup DMA mapping. */
- 	*dma_addr =3D dma_map_page(dev, page, 0, size, PCI_DMA_BIDIRECTIONAL);
- 	ret =3D dma_mapping_error(dev, *dma_addr);
---=20
-2.18.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ukd8t872aUce3nu=jWPV_hd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAltIBksACgkQAVBC80lX
-0Gy3/gf/ZgYmthzwh270WyxJkEcN0ex3baK1oqLrLfd7fjBLXDkphWQDOQBNMcO/
-vl/NBEIKiK4iHAOxpemphYFubyc5edvOGZwCCd/kMbBHVHAzpgXNTHOiszP2zk7I
-XLZomArFUkIDn3J6QKq0n41q3Mf9qTcd3t8pH4iR5lmSZCXk+2J1dyb6K3RZwdjp
-xdz/Zy9Ib0MPbk9zeMnIafJ6uSZ7StN6q+C7j5quXzjd3qbFDb0VILxpwqS10xrh
-VUG7qhDuxyLQg9Dru3JSt0UCjxE4bbLnWi67INfcedsslOSETbMCyI0sTgizJioa
-g34xZk10I1PIse5SY6hbAomfgicVZg==
-=VLDk
------END PGP SIGNATURE-----
-
---Sig_/ukd8t872aUce3nu=jWPV_hd--
+Yixun
