@@ -6,85 +6,86 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA29AECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C73ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5725E20875
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:47:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5725E20875
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 17D0920834
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 20:49:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17D0920834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731948AbeGMVDj (ORCPT
+        id S1731960AbeGMVFY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 17:03:39 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:56390 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731564AbeGMVDj (ORCPT
+        Fri, 13 Jul 2018 17:05:24 -0400
+Received: from www62.your-server.de ([213.133.104.62]:33427 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731342AbeGMVFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 17:03:39 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 0C903608897D;
-        Fri, 13 Jul 2018 22:47:22 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id ps6FMl-HsBTU; Fri, 13 Jul 2018 22:47:21 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id A591C608897E;
-        Fri, 13 Jul 2018 22:47:21 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 0XM6uKqlzo5G; Fri, 13 Jul 2018 22:47:21 +0200 (CEST)
-Received: from blindfold.localnet (213-225-2-247.nat.highway.a1.net [213.225.2.247])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 6676F608897D;
-        Fri, 13 Jul 2018 22:47:21 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        y2038@lists.linaro.org, linux-fsdevel@vger.kernel.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: Re: [PATCH 1/2] [RESEND] jffs2: use 64-bit intermediate timestamps
-Date:   Fri, 13 Jul 2018 22:47:13 +0200
-Message-ID: <2205649.NecG7tB80L@blindfold>
-In-Reply-To: <20180713144739.3150217-1-arnd@arndb.de>
-References: <20180713144739.3150217-1-arnd@arndb.de>
+        Fri, 13 Jul 2018 17:05:24 -0400
+Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.85_2)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fe4zu-0002i2-PH; Fri, 13 Jul 2018 22:49:02 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1fe4zu-00071c-IG; Fri, 13 Jul 2018 22:49:02 +0200
+Subject: Re: [PATCH bpf-next v5 0/3] bpf: btf: print bpftool map data with btf
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Okash Khawaja <osk@fb.com>
+Cc:     Martin KaFai Lau <kafai@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Yonghong Song <yhs@fb.com>,
+        Quentin Monnet <quentin.monnet@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        kernel-team@fb.com, linux-kernel@vger.kernel.org
+References: <20180712030803.875913594@fb.com>
+ <20180711203010.51bab0cf@cakuba.lan>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <e938c861-b341-22f0-7e82-215a27e2b74f@iogearbox.net>
+Date:   Fri, 13 Jul 2018 22:49:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20180711203010.51bab0cf@cakuba.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.0/24749/Fri Jul 13 14:56:11 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, 13. Juli 2018, 16:47:16 CEST schrieb Arnd Bergmann:
-> The VFS now uses timespec64 timestamps consistently, but jffs2 still
-> converts them to 32-bit numbers on the storage medium. As the helper
-> functions for the conversion (get_seconds() and timespec_to_timespec64())
-> are now deprecated, let's change them over to the more modern
-> replacements.
+On 07/12/2018 05:30 AM, Jakub Kicinski wrote:
+> On Wed, 11 Jul 2018 20:08:03 -0700, Okash Khawaja wrote:
+>> Hi,
+>>
+>> Here are the changes from v4:
+>>
+>> patch 2:
+>>
+>> - sort headers in btf_dumper.c
+>> - remove extra parentheses
+>> - include asm/byteorder.h
+>> - compile error when big and small endian bitfields macro undefined
 > 
-> This keeps the traditional interpretation of those values, where
-> the on-disk 32-bit numbers are taken to be negative numbers, i.e.
-> dates before 1970, on 32-bit machines, but future numbers past 2038
-> on 64-bit machines.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> I originally sent these two patches on Jun 19, but got no reply aside
-> from a harmless sparse warning reported by the kbuild test robot.
-> 
-> Looking at the git history for jffs2, it seems that David Woodhouse
-> hasn't applied any patches for over two years, so I suppose he's
-> not taking these either.
-> 
-> Al or Andrew, could you pick these up instead?
+> Reviewed-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-We can carry it also via the MTD tree.
+Hmm, strange, by accident I just noticed that only your bpf fix ever made
+it to patchwork, Okash.
+
+  https://patchwork.ozlabs.org/project/netdev/list/?submitter=74458&state=*
+
+Potentially because you've sent with attachments which got dropped on
+the list?
+
+Could you properly submit the series again, and retaining Jakub's Reviewed-by
+tag to the patches?
 
 Thanks,
-//richard
+Daniel
