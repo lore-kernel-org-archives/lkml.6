@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C30ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DDF8ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:30:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686F42087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:29:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53567208B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:30:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcB4HrdC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686F42087A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vAHFe2hb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53567208B0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731620AbeGMRoq (ORCPT
+        id S1731868AbeGMRpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 13:44:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42204 "EHLO mail.kernel.org"
+        Fri, 13 Jul 2018 13:45:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730017AbeGMRoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 13:44:46 -0400
-Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
+        id S1730017AbeGMRpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 13:45:34 -0400
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C6E0214D5
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 17:29:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CA62208CE
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 17:30:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531502952;
-        bh=ZszZlBHTPABHo5NkbIkNv+m8IAV9wr+lL8FO08FuVdA=;
+        s=default; t=1531503000;
+        bh=vfNCVJvKeAnj3LfU6eMJF0AhJrYqTUIfiN7OnyWxnQ0=;
         h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=jcB4HrdCDaSyeKhmdBQUqRaqTCCfYSUcM0LVsVAiAZuKXG9YTBfFFmcaWRfLp3znt
-         JNSdz1A0SE/KmThtE4DIxCbrAx+uskdBDfRQggYUBpSpojOlMWQ8KYiwJitDXQanq4
-         Pa1wGH0nT9T2jCuAXoCL856MgPcmQt1fPdEGxj4w=
-Received: by mail-wm0-f51.google.com with SMTP id s14-v6so10142259wmc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 10:29:12 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGiUNiOZlByoPSiejOvnwZmEIzqWwwIKoAMNFOhFfeHbZKMB21Y
-        p1A6Kvo3hsax3W1qjGHuFwiB84ibA8iHLgOBzSlklQ==
-X-Google-Smtp-Source: AAOMgpcNvtDdwIlkOibWEkT/DP6ODVVB+Xfo6ZzVXhY+gWkf3z1ifl2AriyRxo9UvyNeDwZeKbyMy/zK7nC2rSwUAFI=
-X-Received: by 2002:a1c:8313:: with SMTP id f19-v6mr4230224wmd.144.1531502950776;
- Fri, 13 Jul 2018 10:29:10 -0700 (PDT)
+        b=vAHFe2hbZuAedwZEUBgx9GxxHZpP1IvT/jSNvd/3CGWzWr0xYu0vBORZNy3dEnLW3
+         JDKP+kKPZJGxaSylKRYtUTYihdY2nb+NmTIaLl0bofE867sEIm93QN86wj2uvZ7yVL
+         s7xqnPd3PhE6771t/ryXBBdx0PL5WrVdChgZxUBE=
+Received: by mail-wr1-f42.google.com with SMTP id m1-v6so13125402wrg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 10:30:00 -0700 (PDT)
+X-Gm-Message-State: AOUpUlF27+3140nwm8QoI3Bsk4Mo7jSHI8v5UsoxV5npu7lEtmUgBvnq
+        /jfVHXP3o3u/zEpXyOiFfx93jmhQ6NgF2JymePYBMg==
+X-Google-Smtp-Source: AAOMgpeim548ryS5Q9mxu5oMZwvRfSzGm/+Cjaynfgn/uIi3nWL02BhN6YFVx3N3ciFLHbHVF2rlCMm/PghyxiAaoUo=
+X-Received: by 2002:adf:8325:: with SMTP id 34-v6mr5475522wrd.67.1531502999119;
+ Fri, 13 Jul 2018 10:29:59 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 10:28:50
+Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 10:29:38
  -0700 (PDT)
-In-Reply-To: <1531308586-29340-40-git-send-email-joro@8bytes.org>
-References: <1531308586-29340-1-git-send-email-joro@8bytes.org> <1531308586-29340-40-git-send-email-joro@8bytes.org>
+In-Reply-To: <1531308586-29340-35-git-send-email-joro@8bytes.org>
+References: <1531308586-29340-1-git-send-email-joro@8bytes.org> <1531308586-29340-35-git-send-email-joro@8bytes.org>
 From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 13 Jul 2018 10:28:50 -0700
-X-Gmail-Original-Message-ID: <CALCETrUw5DTnPtDK5TUNv4z50rrmcxwPA-KqtBHcWRcazJXy6Q@mail.gmail.com>
-Message-ID: <CALCETrUw5DTnPtDK5TUNv4z50rrmcxwPA-KqtBHcWRcazJXy6Q@mail.gmail.com>
-Subject: Re: [PATCH 39/39] x86/entry/32: Add debug code to check entry/exit cr3
+Date:   Fri, 13 Jul 2018 10:29:38 -0700
+X-Gmail-Original-Message-ID: <CALCETrV3-X1LeRd+HnvvJrudqrntbvnD1e-x9iAjiGg5mUOFCw@mail.gmail.com>
+Message-ID: <CALCETrV3-X1LeRd+HnvvJrudqrntbvnD1e-x9iAjiGg5mUOFCw@mail.gmail.com>
+Subject: Re: [PATCH 34/39] x86/ldt: Define LDT_END_ADDR
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -90,13 +90,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Wed, Jul 11, 2018 at 4:29 AM, Joerg Roedel <joro@8bytes.org> wrote:
 > From: Joerg Roedel <jroedel@suse.de>
 >
-> Add a config option that enabled code to check that we enter
-> and leave the kernel with the correct cr3. This is needed
-> because we have no NX protection of user-addresses in the
-> kernel-cr3 on x86-32 and wouldn't notice that type of bug
-> otherwise.
+> It marks the end of the address-space range reserved for the
+> LDT. The LDT-code will use it when unmapping the LDT for
+> user-space.
 >
 
-I like this, but could you make it just use CONFIG_DEBUG_ENTRY?
-
---Andy
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
