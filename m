@@ -2,97 +2,128 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D85ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 029F5ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C2B520854
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:15:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A643E20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 17:17:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YA8wh/ar"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C2B520854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="V/pg7Q1r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A643E20854
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731210AbeGMRaj (ORCPT
+        id S1731119AbeGMRcc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 13:30:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35746 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729960AbeGMRai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 13:30:38 -0400
-Received: from mail-wm0-f47.google.com (mail-wm0-f47.google.com [74.125.82.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFA0B208E3
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 17:15:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1531502107;
-        bh=tPItqzWUd1hNxjiVqRA0FEq9BtGKWcnD4SXbFcueOZo=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=YA8wh/arNlV/g2jslc59Cbsnd2W0bJFbMnja5wwKLR4dSV7Wt9Gkhendiop75ucr9
-         +9Qcq+TWbjyoCsTwWiuW22R7LKcpFmL7KHS1T1+7klEn+aB4wmrBcgnuvEuk28hsIm
-         7AuoqRfX7XPJV+HNyuAZkjs9+wplaEbEgDZXojIc=
-Received: by mail-wm0-f47.google.com with SMTP id z6-v6so5001025wma.0
-        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 10:15:06 -0700 (PDT)
-X-Gm-Message-State: AOUpUlGgUdDQxAHLyJ3g+i6BGGoVQ7aqeuTDsisswkQLwpbn9O4Ll4tx
-        sH2c0Oivk/F9OkpvDF3Hdgpyu2PFEQN8R39Y3Yc8LA==
-X-Google-Smtp-Source: AAOMgpfb+TtUKM/DCy1LNzkTITDUb9e/Qc78UAc97jZYWwcXLm7oKLZ/0FLlSuVml9iMt81mjsXNnq6ECjU4WHpEN+Y=
-X-Received: by 2002:a1c:34c9:: with SMTP id b192-v6mr4653307wma.21.1531502105369;
- Fri, 13 Jul 2018 10:15:05 -0700 (PDT)
+        Fri, 13 Jul 2018 13:32:32 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:36107 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729735AbeGMRcc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 13:32:32 -0400
+Received: by mail-it0-f68.google.com with SMTP id j185-v6so12524180ite.1
+        for <linux-kernel@vger.kernel.org>; Fri, 13 Jul 2018 10:17:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kAQ9MBsPAI0VhRcVIa5IuhT/CgMlRAVlCTHkwU3boDM=;
+        b=V/pg7Q1r84qWKDvFb8FBI2l7RWR0NVXtQFZtoUXxbJrXs33aRll28nv+BVuYAEgqQb
+         G3VQh0L8axB/PEQTzpz/zSO/sjPbElxhxEZqVyawePT9wIPcTJXSkk427prL0LI5pEpQ
+         JwTdEIpmLY25zvnUSipviPJzWd6rpOAh4SMAc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kAQ9MBsPAI0VhRcVIa5IuhT/CgMlRAVlCTHkwU3boDM=;
+        b=CajCivQ4zJTPouxeNpD9xcd568wwbwnwndH9MJEyalp7+CfThJYZNnvxTLk7j4vCB8
+         ueJqFX9v/KBNr4aga6fOJcws8JOuwTvNGxRmpeeWXcUqLXaGJRjtya8JeoWWDylyxr+D
+         khAm2QhjgucoyPN3tYYl2kjwbybdvOwo4BazJL7vH8meSeMjBX5c1jEf+EbGXO1S/9/6
+         c+tUpS4qcJabR6/6hFkaz1ZWXhyUWhWcs1vx9OCNLavA/a/9pdpDSbrFV+Sf65CjM90u
+         yEAguqUkUgkGBrcajiwmV521DKKzoNIpa42C7Rv0xmHMlqfwY7+0CiZ0mdegpHFs0ljo
+         kGeA==
+X-Gm-Message-State: AOUpUlFCi/3oKAwRgsf+uNm6ZKJR21s3gZcCJx22JEDaOSdxoV+iN0ZS
+        0AMob0e3YRGE3SkQtSXdjI+GihXapUG00l/3iOk=
+X-Google-Smtp-Source: AAOMgpcIzh5RKX2dGH8nDHdF6/gcFOjc0edpdhMJ7cM7DRzpfho7FG6oZnkfkLDO8Nz7aRbj1HpQ9lSoxdkDu/e8JfU=
+X-Received: by 2002:a02:1bdc:: with SMTP id 89-v6mr6057200jas.72.1531502220152;
+ Fri, 13 Jul 2018 10:17:00 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:d548:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 10:14:44
- -0700 (PDT)
-In-Reply-To: <26576.1531496428@warthog.procyon.org.uk>
-References: <CA+55aFzaTQJp6aHG_9+W2ShxeZncq7k9G3FkVFjFm7W=ECUiMw@mail.gmail.com>
- <CALCETrU3kbh-ZRHDj7-Asq+OH-35dQ2p_erpHpYUvN5+BdAoVQ@mail.gmail.com>
- <153126248868.14533.9751473662727327569.stgit@warthog.procyon.org.uk>
- <153126264966.14533.3388004240803696769.stgit@warthog.procyon.org.uk>
- <686E805C-81F3-43D0-A096-50C644C57EE3@amacapital.net> <22370.1531293761@warthog.procyon.org.uk>
- <7002.1531407244@warthog.procyon.org.uk> <338BC3C4-F3E7-48F0-A82E-2C7295B6640E@amacapital.net>
- <17749.1531429218@warthog.procyon.org.uk> <21131.1531488422@warthog.procyon.org.uk>
- <F80F34FD-CFD3-4A53-AECC-AEC8D9EF3EAE@amacapital.net> <26576.1531496428@warthog.procyon.org.uk>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 13 Jul 2018 10:14:44 -0700
-X-Gmail-Original-Message-ID: <CALCETrXS9ShF0k_tiFcBN6NY6ODCvhuZLh15VeHC5JUz9gWQuA@mail.gmail.com>
-Message-ID: <CALCETrXS9ShF0k_tiFcBN6NY6ODCvhuZLh15VeHC5JUz9gWQuA@mail.gmail.com>
-Subject: Re: [PATCH 24/32] vfs: syscall: Add fsopen() to prepare for
- superblock creation [ver #9]
-To:     David Howells <dhowells@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux API <linux-api@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jann Horn <jannh@google.com>, Tycho Andersen <tycho@tycho.ws>
+References: <20180712134821.GT2494@hirez.programming.kicks-ass.net>
+ <Pine.LNX.4.44L0.1807121236470.1306-100000@iolanthe.rowland.org>
+ <20180712172838.GU3593@linux.vnet.ibm.com> <20180712180511.GP2476@hirez.programming.kicks-ass.net>
+ <CA+55aFxwez8zSa2f2GpcaAkFX27Vt-s0nWdd0mZ6yGM8ipCR0A@mail.gmail.com>
+ <11b27d32-4a8a-3f84-0f25-723095ef1076@nvidia.com> <20180713090637.GA10601@andrea>
+ <20180713093524.GC32020@arm.com>
+In-Reply-To: <20180713093524.GC32020@arm.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 13 Jul 2018 10:16:48 -0700
+Message-ID: <CA+55aFznCVzoc07p2=eP_5NuTKybMm8-_7+gUMNsAoOP70aYtw@mail.gmail.com>
+Subject: Re: [PATCH v2] tools/memory-model: Add extra ordering for locks and
+ remove it for ordinary release/acquire
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     andrea.parri@amarulasolutions.com,
+        Daniel Lustig <dlustig@nvidia.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Akira Yokosawa <akiyks@gmail.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nick Piggin <npiggin@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jul 13, 2018 at 8:40 AM, David Howells <dhowells@redhat.com> wrote:
-> Andy Lutomirski <luto@amacapital.net> wrote:
+On Fri, Jul 13, 2018 at 2:34 AM Will Deacon <will.deacon@arm.com> wrote:
 >
->> > Whilst I'm at it, do we want the option of doing the equivalent of
->> > mountat()?  I.e. offering the option to open all the device files used by
->> > a superblock with dfd and AT_* flags in combination with the filename?
->> >
->>
->> Isn't that more or less what I was suggesting?
+> And, since we're stating preferences, I'll reiterate my preference towards:
 >
-> Yes, you suggested that.  I'm asking if we actually need that.
->
+>         * RCsc unlock/lock
+>         * RCpc release/acquire
 
-Suppose some program in a container chroots itself and then tries to
-create an fscontext backed by "/path/to/blockdev".  The syscall gets
-intercepted by a container manager.  That manager now has a somewhat
-awkward time of mounting the same fs, although it could use
-"/proc/PID/root/path/to/blockdev", I suppose.  Even that approach has
-some potentially awkward permission issues.  I would defer to the
-people who actually write software like this, but I can imagine fds
-being considerably easier to work with.
+Yes, I think this would be best. We *used* to have pretty heavy-weight
+locking rules for various reasons, and we relaxed them for reasons
+that weren't perhaps always the right ones.
+
+Locking is pretty heavy-weight in general, and meant to be the "I
+don't really have to think about this very much" option. Then not
+being serializing enough to confuse people when it allows odd behavior
+(on _some_ architectures) does not sound like a great idea.
+
+In contrast, when you do release/acquire or any of the other "I know
+what I'm doing" things, I think we want the minimal serialization
+implied by the very specialized op.
+
+>         * Not fussed about atomic rmws, but having them closer to RCsc would
+>           make it easier to implement and reason about generic locking
+>           implementations
+
+I would prefer that rmw's be RCsc by default, but that there are then
+"relaxed" versions of it that aren't.
+
+For example, one common case of rmw has nothing to do with any
+ordering at all: statistics gathering. It usually has absolutely zero
+need for any ordering per se, and all it wants is cache coherence.
+
+Yes, yes, the really crticial stuff we then use percpu counters for
+and a lot of clever software, but there's a lot of cases where that
+isn't practical or isn't _quite_ important enough.
+
+So "atomic_add()" being RCsc sounds like a nice tight requirement, but
+then architectures who can do it cheaper could have
+"atomic_add_relaxed()" that has no inherent ordering at all.
+
+But let's see what the powerpc people find about the actual
+performance impact of being RCsc on locking. Real numbers for real
+loads would be nice.
+
+               Linus
