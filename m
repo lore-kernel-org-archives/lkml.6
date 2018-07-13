@@ -6,72 +6,64 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D9DECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E95AAECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A6F2087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A6F2087C
+	by mail.kernel.org (Postfix) with ESMTP id AE92920857
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE92920857
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731878AbeGMOlV (ORCPT
+        id S1731929AbeGMOl0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:41:21 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:57283 "EHLO
+        Fri, 13 Jul 2018 10:41:26 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:55889 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729982AbeGMOlV (ORCPT
+        with ESMTP id S1729982AbeGMOl0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:41:21 -0400
+        Fri, 13 Jul 2018 10:41:26 -0400
 Received: from wuerfel.lan ([46.223.138.35]) by mrelayeu.kundenserver.de
  (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0LdVQI-1gMMBA2nGE-00ijxF; Fri, 13 Jul 2018 16:26:06 +0200
+ 0MIezY-1fbnAJ0zs0-002EOF; Fri, 13 Jul 2018 16:26:11 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     David Howells <dhowells@redhat.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] [v2, RESEND] afs: stop using time_t for internal times
-Date:   Fri, 13 Jul 2018 16:25:57 +0200
-Message-Id: <20180713142605.3138377-1-arnd@arndb.de>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] [v2, RESEND] afs: avoid deprecated get_seconds()
+Date:   Fri, 13 Jul 2018 16:25:58 +0200
+Message-Id: <20180713142605.3138377-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:muopVIXrRh9HYHtoyB17ckhpoiMC8DMWhsBi2+n1JE1P2vcnyPA
- MlOdmidS31/+ZJLiGchbextdQbSw5Dxc68DVaYKMIzHRepTwdvJbZT06GmShRPpg6/jcYT+
- CM0o0y8gs5usSejNwDCG4H9kKbhEX7q6Zh2UzkJ3QPUcnQQrSvNPxqf1kMkwbP+Kv3OldJi
- Sy1AQqCxvc/jnsMPQlH9Q==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:2O/QxCMcfLA=:jvQ3nnVxW6dzs79fIjCVn3
- dZcXm3yXjVz8Sp2NKkYCE2gsBh6p8Hhpde8NQTIJxsPydunY3iyyCN5BN2RASQJYKcA+FrFXn
- bwcxOi6ZfV0AolLnWHtyon2CMDrjaO1vpgd3tlez9KuBXafOv0RUgXCAmu0tYy1VNMaJaU1je
- hLoIuhRhKtyXEJ58dHklmYL7Ytp1Kw0Y0B/IWDC9NDPRXXeYttYMljmnDISWo6rhv8LL0p8hI
- etng+ZbUtPp/31CbRJ14uluSYkWabi2DCl/WWPPu6QDise/6TOvCkGejpy1TYWwhe/k3Dii2C
- MQUIY1zfe8Y6QFYPeykglPy0r11D69qkPlY3MHcyjM3C0W6BEC0Lyd0XSYsWQO9+nQpbO2MJ0
- iUq8VsoWGkD+XVQV7ghmHeNmLOhKToDtMgBbdl3yySVseZhg4U33kAge/Xe0DxuIJHUCxsyNH
- OvuhHxEkB1N/4O8oDxLsp52Svrif9x4tcT28l6DrkEyco0ZzTpURLcw0nyRP3vMQ+7O8PP9t6
- q31xLyBmO3+MJVL9hvzt8Eiwnm32nv8rpGTcfx42X8R69vSIVZgx350NuiyphH7foL5OXRUWB
- +fzzTwumStX2g2LbQsOh2vQgOUAKIlnk5dlj05Q+uqk1dR4gn5TGfNiIHr7hief2EpKVHA4WT
- 0Ah8aYdl0G1guohXKY352hL/YfpODffuAPVoGex2KQuK4/6+O5ExMEIEQb1nJ4axGryY=
+In-Reply-To: <20180713142605.3138377-1-arnd@arndb.de>
+References: <20180713142605.3138377-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:c+8yXU4aax3dQJwq0+8TczUK4O6i69muQ71Ts1UCt7KlJl8Jnh8
+ 7W653lb6bux48ik3sNqQePYsjwi4UUDdHHBpFVGFLy9ObA4Wkkx0kG88Wxz8S51b4+0YZ6T
+ 1fn/YGNnANLqzKvps84cyo8sGTkJhcy76PVENgd8wjUMrOKO6Vv13GFLKbjPBBTHi+3nph0
+ 8/VIyTxRt8cRB8YzF4LVg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:GThKXj7mY8g=:X4inrw+7S4hW9fzpDHI9+z
+ 5Czb3i4fWq0AzdeEFob1lBnGbiguO/8NcGsHa1HJ2A6gcRAhNpM5R2MdKfFviaHyVd9K4fyNh
+ n9De/XM27H+2adKSDnWTFfpzz3rwaPrH1zihpTVjvpte/YKJdUJ9Sh6OisFE8Hko5v+LyDs+g
+ 5qFR7oG3OwfQoh9e9aWbuPMxqjuzr25AVJvwK70ez2skJTLVAFJbH8EvSvc1IeTPdesBBzMii
+ A9JNVhZcZflG8fkBzCuGoKjWNHk9PHfBqZu8rxUagNoQxvmTF/k+YGD/WlbVRqQuGkJ7BeAC0
+ P8JBeQWJcbgfBt/bu/IhWdCyDQrpDqTvStoECv1509R3Dg/FzW6jvpSZmwXjMUryB4ro0TAGO
+ 0LgTxvXmNf0Bu8Yk6w50m6VZc3kdsB7pkt8PAeoQJh3g/8VGNJdfVHmxr9wB6s3HHzT+yl/Al
+ Av3GS44YJTP0fdKvDoGbGQ6T6f+JGkSMhRbbUtrq6VxdONvYhMy7djXQszC9wMlz5hjBMK1BV
+ N3pNIGaneAXcSfwo8o/TQt9LDy+5rLBnEJY3D82wEzrA0iINHS4ZTR36RAb73dQdNnVcizGhz
+ kf1rW1FXIqLN1yD/+a1A2PsXcuHsOW9XcJa82/IDCtLLuU1VWRMh/esX66hm7ghWmi9q05oIz
+ fyzkeUMyXb/GQAa443S1h8/iGUEwSsDFcFfeNXG2afICYwh85tfJoF9Jrcy7wXKoVNdU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-afs uses 32-bit timestamps everywhere, but mixes signed and unsigned
-usage, which is a bit inconsistent. In particular on 32-bit machines,
-it currently uses unsigned timestamps (ranging from 1970 to 2106) for
-locally modified files, but signed timestamps (rand 1902 to 2038) when
-reading from a remote end. On 64-bit machines, we always interpret
-timestamps as unsigned here.
+get_seconds() has a limited range on 32-bit architectures and is
+deprecated because of that. While AFS uses the same limits for
+its inode timestamps on the wire protocol, let's just use the
+simpler current_time() as we do for other file systems.
 
-This replaces the deprecated time_t with a new explicitly unsigned
-afs_time32_t to get a consistent interpretation of inode times
-according the the wire protocol definition.
-
-This avoids the y2038 overflow on 32-bit machines, extending the range
-to the end of the afs_time32_t in year 2106. On 64-bit machines, using
-the shorter type saves a few bytes for each afs_file_status and
-afs_volsync saves a few bytes over time_t or time64_t.
-
-Note that mtime_server and struct afs_volsync are not currently
-used in any meaningful way and could be removed completely.
+This will still zero out the 'tv_nsec' field of the timestamps
+internally.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
@@ -79,41 +71,24 @@ Originally submitted this on June 20, but got no reply.
 Resending this in case it got lost somewhere on the way.
 David, can you pick up both patches?
 ---
- fs/afs/afs.h | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/afs/inode.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/fs/afs/afs.h b/fs/afs/afs.h
-index b4ff1f7ae4ab..a17f4ce06323 100644
---- a/fs/afs/afs.h
-+++ b/fs/afs/afs.h
-@@ -26,6 +26,7 @@
- typedef unsigned			afs_volid_t;
- typedef unsigned			afs_vnodeid_t;
- typedef unsigned long long		afs_dataversion_t;
-+typedef unsigned			afs_time32_t;
- 
- typedef enum {
- 	AFSVL_RWVOL,			/* read/write volume */
-@@ -129,8 +130,8 @@ typedef u32 afs_access_t;
- struct afs_file_status {
- 	u64			size;		/* file size */
- 	afs_dataversion_t	data_version;	/* current data version */
--	time_t			mtime_client;	/* last time client changed data */
--	time_t			mtime_server;	/* last time server changed data */
-+	afs_time32_t		mtime_client;	/* last time client changed data */
-+	afs_time32_t		mtime_server;	/* last time server changed data */
- 	unsigned		abort_code;	/* Abort if bulk-fetching this failed */
- 
- 	afs_file_type_t		type;		/* file type */
-@@ -158,7 +159,7 @@ struct afs_file_status {
-  * AFS volume synchronisation information
-  */
- struct afs_volsync {
--	time_t			creation;	/* volume creation time */
-+	afs_time32_t		creation;	/* volume creation time */
- };
- 
- /*
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 479b7fdda124..0507e52e3330 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -213,9 +213,7 @@ struct inode *afs_iget_pseudo_dir(struct super_block *sb, bool root)
+ 	set_nlink(inode, 2);
+ 	inode->i_uid		= GLOBAL_ROOT_UID;
+ 	inode->i_gid		= GLOBAL_ROOT_GID;
+-	inode->i_ctime.tv_sec	= get_seconds();
+-	inode->i_ctime.tv_nsec	= 0;
+-	inode->i_atime		= inode->i_mtime = inode->i_ctime;
++	inode->i_ctime = inode->i_atime = inode->i_mtime = current_time(inode);
+ 	inode->i_blocks		= 0;
+ 	inode_set_iversion_raw(inode, 0);
+ 	inode->i_generation	= 0;
 -- 
 2.9.0
 
