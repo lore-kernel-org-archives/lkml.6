@@ -2,146 +2,110 @@ Return-Path: <SRS0=Zbfl=J5=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91441ECDFB1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 773D4ECDFB1
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55139208B1
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55139208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D7F020857
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 14:26:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pDxtOXTW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7F020857
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731261AbeGMOlH (ORCPT
+        id S1731501AbeGMOlN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 13 Jul 2018 10:41:07 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51688 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729982AbeGMOlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 13 Jul 2018 10:41:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 350E0AD9C;
-        Fri, 13 Jul 2018 14:26:13 +0000 (UTC)
-Date:   Fri, 13 Jul 2018 16:26:12 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [patch -mm] mm, oom: remove oom_lock from exit_mmap
-Message-ID: <20180713142612.GD19960@dhcp22.suse.cz>
-References: <alpine.DEB.2.21.1807121432370.170100@chino.kir.corp.google.com>
+        Fri, 13 Jul 2018 10:41:13 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:37045 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729982AbeGMOlN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 13 Jul 2018 10:41:13 -0400
+Received: by mail-vk0-f65.google.com with SMTP id h22-v6so18278261vke.4;
+        Fri, 13 Jul 2018 07:26:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=o0s95QqcHWBZvnqqkEAY/j0d7SkjPCAMs+ki4WvQcUQ=;
+        b=pDxtOXTWFmPc4k6G7O9CAf8lwQYLNT1rXuXCZXkYFjxMkMMlt2PaInfEOHxiyHohhm
+         ZjouMQr8ik0RGJTW03jEOobDACDsS2VAQ4QftnRvbykEhHkDIn6bW+++TgJlTQzXRjJb
+         z6sUOlEOYs/f23alsoXOCYBZgbujCEB9aqXgmuOKLVphbSZ1hljgtQp35YqlLutX3jSu
+         B2BNvxPYLYgmwhE6MbVoWukQohFiEhI9TowYOIHRL8qrldgWryeefSmkZxzVgcob3Su5
+         vRgw+q8OASYVxszzbMII3mkGALZbBfcTpUEC4NGeFLWXWSGEHEyobBQ1Hq35C4WpBMgg
+         RngA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=o0s95QqcHWBZvnqqkEAY/j0d7SkjPCAMs+ki4WvQcUQ=;
+        b=mVLWbPN5St6GINNNTQ2EyOSKkf5rwulkw++4l7Tacj63T8l4SzF7Zb4JpSi3AqfpVv
+         5IdsGHYrOkWboD6athKXRco35+5xdbiGVi/K5nHt+2DmZ1D8+61hE6UYCUXt86Z/mtvJ
+         o9tbTt6F1IGjzP16FY+os+Cbz4E4kekdNxzYQdcwUhTTMJc1tYJLXYUAfTEFM5E0xPwN
+         SOPRpa4XWkZy64G87qVkmBZ43EeMWiGKXOn8gTcbzr4G831c6DIxi9vvNgd0RYfSpob2
+         rtTSlXYYUxlBAjoEVKSVgnUSuIYQq3/WhxQFuKwyZJA4G2zjjjq5rpQivyM2dUv1PNwB
+         Dn+g==
+X-Gm-Message-State: AOUpUlFjR9CJqRBQu6e8NEAUcoiG54j2r1uUf/LbqHJai9jHi+QDRfrw
+        DVkIGRNscOxYX8ogSiZqmcXcP/T1rGHyS9EtuyU=
+X-Google-Smtp-Source: AAOMgpfc6toLqeEIr+XBzNkFAJEkMf8Rb4cK2wUjtzKBc52NlEX7DcNm5x0oGMfAsiQnFhxyGUKkag1xruJpTopEELU=
+X-Received: by 2002:a1f:50c:: with SMTP id 12-v6mr3816136vkf.26.1531491980559;
+ Fri, 13 Jul 2018 07:26:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1807121432370.170100@chino.kir.corp.google.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a67:2149:0:0:0:0:0 with HTTP; Fri, 13 Jul 2018 07:26:20
+ -0700 (PDT)
+In-Reply-To: <eca11a9c20d14480ae02b2912b7a6447@ausx13mpc120.AMER.DELL.COM>
+References: <eb0db565-5f8a-ab1e-2bf3-2def3ec3eddc@gmail.com>
+ <5318cc53-31b4-5c83-abb7-c3ff5d892af2@gmail.com> <eca11a9c20d14480ae02b2912b7a6447@ausx13mpc120.AMER.DELL.COM>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 13 Jul 2018 17:26:20 +0300
+Message-ID: <CAHp75VfpX7m3zLii3MKbW=S2rkh7O4BVygFdP7aB95jJ8hCBuA@mail.gmail.com>
+Subject: Re: [PATCH resend v4] dell_rbu: make firmware payload memory uncachable
+To:     Mario Limonciello <Mario.Limonciello@dell.com>
+Cc:     Stuart Hayes <stuart.w.hayes@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stuart.Hayes@dell.com, Takashi Iwai <tiwai@suse.de>,
+        Darren Hart <dvhart@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 12-07-18 14:34:00, David Rientjes wrote:
-[...]
-> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-> index 0fe4087d5151..e6328cef090f 100644
-> --- a/mm/oom_kill.c
-> +++ b/mm/oom_kill.c
-> @@ -488,9 +488,11 @@ void __oom_reap_task_mm(struct mm_struct *mm)
->  	 * Tell all users of get_user/copy_from_user etc... that the content
->  	 * is no longer stable. No barriers really needed because unmapping
->  	 * should imply barriers already and the reader would hit a page fault
-> -	 * if it stumbled over a reaped memory.
-> +	 * if it stumbled over a reaped memory. If MMF_UNSTABLE is already set,
-> +	 * reaping as already occurred so nothing left to do.
->  	 */
-> -	set_bit(MMF_UNSTABLE, &mm->flags);
-> +	if (test_and_set_bit(MMF_UNSTABLE, &mm->flags))
-> +		return;
+On Fri, Jul 6, 2018 at 7:28 PM,  <Mario.Limonciello@dell.com> wrote:
 
-This could lead to pre mature oom victim selection
-oom_reaper			exiting victim
-oom_reap_task			exit_mmap
-  __oom_reap_task_mm		  __oom_reap_task_mm
-				    test_and_set_bit(MMF_UNSTABLE) # wins the race
-  test_and_set_bit(MMF_UNSTABLE)
-set_bit(MMF_OOM_SKIP) # new victim can be selected now.
+> Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
 
-Besides that, why should we back off in the first place. We can
-race the two without any problems AFAICS. We already do have proper
-synchronization between the two due to mmap_sem and MMF_OOM_SKIP.
+Pushed to my review and testing queue, thanks!
 
-diff --git a/mm/mmap.c b/mm/mmap.c
-index fc41c0543d7f..4642964f7741 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -3073,9 +3073,7 @@ void exit_mmap(struct mm_struct *mm)
- 		 * which clears VM_LOCKED, otherwise the oom reaper cannot
- 		 * reliably test it.
- 		 */
--		mutex_lock(&oom_lock);
- 		__oom_reap_task_mm(mm);
--		mutex_unlock(&oom_lock);
- 
- 		set_bit(MMF_OOM_SKIP, &mm->flags);
- 		down_write(&mm->mmap_sem);
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 32e6f7becb40..f11108af122d 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -529,28 +529,9 @@ void __oom_reap_task_mm(struct mm_struct *mm)
- 
- static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- {
--	bool ret = true;
--
--	/*
--	 * We have to make sure to not race with the victim exit path
--	 * and cause premature new oom victim selection:
--	 * oom_reap_task_mm		exit_mm
--	 *   mmget_not_zero
--	 *				  mmput
--	 *				    atomic_dec_and_test
--	 *				  exit_oom_victim
--	 *				[...]
--	 *				out_of_memory
--	 *				  select_bad_process
--	 *				    # no TIF_MEMDIE task selects new victim
--	 *  unmap_page_range # frees some memory
--	 */
--	mutex_lock(&oom_lock);
--
- 	if (!down_read_trylock(&mm->mmap_sem)) {
--		ret = false;
- 		trace_skip_task_reaping(tsk->pid);
--		goto unlock_oom;
-+		return false;
- 	}
- 
- 	/*
-@@ -562,7 +543,7 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 	if (mm_has_blockable_invalidate_notifiers(mm)) {
- 		up_read(&mm->mmap_sem);
- 		schedule_timeout_idle(HZ);
--		goto unlock_oom;
-+		return true;
- 	}
- 
- 	/*
-@@ -589,9 +570,7 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 	up_read(&mm->mmap_sem);
- 
- 	trace_finish_task_reaping(tsk->pid);
--unlock_oom:
--	mutex_unlock(&oom_lock);
--	return ret;
-+	return true;
- }
- 
- #define MAX_OOM_REAP_RETRIES 10
+>> This driver has no maintainer.
+>
+> Stuart,
+>
+> Outside of this patch, I think it would make sense to send some follow up patch
+> series that do the following:
+>
+> 1) Let you take over as maintainer (Update MAINTAINERS)
+
+> 2) Move this driver to platform-x86
+
+Darren, what do you think about this step?
+
+If we would go this way, first move, then take maintainership to reduce a churn.
+
+> 3) Update dell_rbu.txt with the correct URLs and mention that it's only for enterprise
+> hardware.    Client hardware has instead opted to support UEFI capsules for updates
+> from Linux.
+>
+> Since it's really a platform feature and specific to only Dell enterprise hardware
+> I think it makes sense to move over to an area with subsystem maintainers that
+> can help to review patches as needed.
+
 -- 
-Michal Hocko
-SUSE Labs
+With Best Regards,
+Andy Shevchenko
