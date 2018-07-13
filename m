@@ -6,33 +6,40 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47CE6ECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02343ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A462205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A462205F4
+	by mail.kernel.org (Postfix) with ESMTP id B0D4C205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 01:25:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0D4C205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388065AbeGMBh7 (ORCPT
+        id S2388085AbeGMBiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 21:37:59 -0400
-Received: from nautica.notk.org ([91.121.71.147]:43008 "EHLO nautica.notk.org"
+        Thu, 12 Jul 2018 21:38:02 -0400
+Received: from nautica.notk.org ([91.121.71.147]:43014 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387896AbeGMBh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 21:37:58 -0400
+        id S2387896AbeGMBiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 12 Jul 2018 21:38:01 -0400
 Received: by nautica.notk.org (Postfix, from userid 1001)
-        id B66B8C024; Fri, 13 Jul 2018 03:25:45 +0200 (CEST)
+        id 7F84AC023; Fri, 13 Jul 2018 03:25:48 +0200 (CEST)
 From:   Dominique Martinet <asmadeus@codewreck.org>
 Cc:     Dominique Martinet <asmadeus@codewreck.org>,
-        Ariel Elior <Ariel.Elior@cavium.com>,
-        everest-linux-l2@cavium.com,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 09/18] qlogic/qed: change strncpy+truncation to strlcpy
-Date:   Fri, 13 Jul 2018 03:25:44 +0200
-Message-Id: <1531445144-19521-1-git-send-email-asmadeus@codewreck.org>
+Subject: [PATCH 10/18] brcmsmac: change strncpy+truncation to strlcpy
+Date:   Fri, 13 Jul 2018 03:25:47 +0200
+Message-Id: <1531445147-19566-1-git-send-email-asmadeus@codewreck.org>
 X-Mailer: git-send-email 1.7.10.4
 In-Reply-To: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
 References: <1531444483-17338-1-git-send-email-asmadeus@codewreck.org>
@@ -50,22 +57,22 @@ Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
 Please see https://marc.info/?l=linux-kernel&m=153144450722324&w=2 (the
 first patch of the serie) for the motivation behind this patch
 
- drivers/net/ethernet/qlogic/qed/qed_debug.c | 3 +--
+ drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_debug.c b/drivers/net/ethernet/qlogic/qed/qed_debug.c
-index a14e48489029..4fe0a72230e8 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_debug.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_debug.c
-@@ -6212,8 +6212,7 @@ static void qed_read_str_from_buf(void *buf, u32 *offset, u32 size, char *dest)
- {
- 	const char *source_str = &((const char *)buf)[*offset];
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c
+index b7df576bb84d..58ccd72d672c 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/dma.c
+@@ -584,8 +584,7 @@ struct dma_pub *dma_attach(char *name, struct brcms_c_info *wlc,
+ 		      rxextheadroom, nrxpost, rxoffset, txregbase, rxregbase);
  
--	strncpy(dest, source_str, size);
--	dest[size - 1] = '\0';
-+	strlcpy(dest, source_str, size);
- 	*offset += size;
- }
+ 	/* make a private copy of our callers name */
+-	strncpy(di->name, name, MAXNAMEL);
+-	di->name[MAXNAMEL - 1] = '\0';
++	strlcpy(di->name, name, MAXNAMEL);
+ 
+ 	di->dmadev = core->dma_dev;
  
 -- 
 2.17.1
