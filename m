@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3004EECDFB0
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA060ECDFB0
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6480214AB
-	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:09:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BA622147E
+	for <linux-kernel@archiver.kernel.org>; Fri, 13 Jul 2018 00:09:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="KyJTdKSP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6480214AB
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="CczgkAoR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BA622147E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387811AbeGMAVr (ORCPT
+        id S2387852AbeGMAVv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 12 Jul 2018 20:21:47 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:46812 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387768AbeGMAVr (ORCPT
+        Thu, 12 Jul 2018 20:21:51 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:38278 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387816AbeGMAVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 12 Jul 2018 20:21:47 -0400
-Received: by mail-pf0-f195.google.com with SMTP id l123-v6so21521104pfl.13
-        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 17:09:49 -0700 (PDT)
+        Thu, 12 Jul 2018 20:21:49 -0400
+Received: by mail-pl0-f68.google.com with SMTP id b1-v6so11358555pls.5
+        for <linux-kernel@vger.kernel.org>; Thu, 12 Jul 2018 17:09:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3CKNrbqL5MSp604wgy3UdOg6ForL/ongmOzBrmUluMQ=;
-        b=KyJTdKSPYy6UeZ5TZ+Zk0cFo8XfOmCc8HkTP21MumlzE9DbGiA8PjdE+gEUX16Ruz6
-         1HvWeKT42njZW2vfD0mAmM79OFgTq6TYO9klFlMw+skXDxCP4TB+lGNPPkDLpB6vYZLV
-         n/tk7dBeHM/umrJJmDjZ2nPKZ3vJx8AvV6nrPis5bGYY489ohgBgeRORU2wLg3B1Bfcx
-         WYTBHFS7TytyIBr0Mhwy8MLJbbFrFBnVeT0Ph2Bg8QVHYqGuJk0J3yBBFKfE7gRrRb7M
-         NLVhZYSrLGrOLDJPAhJiDczXpRy0ef7vy3Fp7yPdI/qI+QUx0/rA2+GAAXOLGemT9uW9
-         Wgqw==
+        bh=1FlO1sxVqEedAtJvQWxmUx1ftzBrqu5f60UxoKz3/4A=;
+        b=CczgkAoRXVwYg6ilHcY9I4fME72NVtdHW0ZEVHzze+VzXo1XrNDDJmgcmmumTKjaL6
+         dkarp0wn/HeripLXQt9ChGaNxNVq5t7Xem12qsIvNAgEAH59kdOywD/nYl3mLP9b7XpV
+         85P6kbXHw4kzYTlxgKUPtb+F82QBjtGmuoRjuooIWJQ8k6zf2tT0RDd/4ronPKF5KDaT
+         Z/Jfx/Q+09NHx6AsHsuw24FImL8iyDcUA5dPiKKcGXiKCWacqrsEk128mVmlvIprvsg3
+         Ph5++Rq9Fxlu8ol9iwKZ08j8+TuRgNY4Wwtx/3GqoSlNxrJV4wvGRt1ZAwWuTZq3iTTz
+         pxLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3CKNrbqL5MSp604wgy3UdOg6ForL/ongmOzBrmUluMQ=;
-        b=i1KJU66z8v2DYxaoWubxI9XD1/S4yF1tJt3M+QOiaF3YOnrBbD5ZmQtLF2MaF8efPn
-         GPPkxo4dXX+NdZLmtQuP+7+0THQkFiE8hY56nSaRmFAHY04XBSL5i+fId+ETHmRvfnRc
-         Wut0Fx9Am876A796fW4TTHIJaM6aaftbxAEjSnwmLmDQOcqhAWQw4jBh2AFSPARBsXZg
-         T8fxzNa7W5FM/XNNXSQxqh6zvDTLsFT6wihMejRzbY2DBhVx+HYCpXW9VW1ubZ7yNhP3
-         OqbFKToHr00zx6wSPsLPiTCoT/WH4iG2tv9cuUYNE3PBY2oAbYMH0B55FrvvXga3NIv1
-         K8Mw==
-X-Gm-Message-State: AOUpUlG4Zk6/G70kDnFEqwBfGOeZ7MRKy/7pQg51qyxCkR/faEsjstmY
-        THHE//hJQDDdmOWs1Mo2RuPys29Uw28=
-X-Google-Smtp-Source: AAOMgpcaAutMMWZNjqQoLffBS3XTFNjFVCEOIfy10jurBnZjq4/0Isdm6FtBtc16utOMB3KdEXgVhw==
-X-Received: by 2002:a62:642:: with SMTP id 63-v6mr4603759pfg.222.1531440588940;
-        Thu, 12 Jul 2018 17:09:48 -0700 (PDT)
+        bh=1FlO1sxVqEedAtJvQWxmUx1ftzBrqu5f60UxoKz3/4A=;
+        b=W4Q1grSwv2w72Ttdsan0HFN1NqsnsWqnBT3dJ0Fp8/8pK7T42zxBtN27pQaiaAtR3s
+         RSEhtdi88vPs6i/pyVU/ROY/ZmCzndWn6M/glfxrtjUrXjHvA/SxIPvPRYj0T8ZlO0eH
+         PYwCizdCVcZ8BdGWuzO60HRZvJxyXiRhrbkt0To24/HEz5eSWIvQImO9xzKesw8M5F3A
+         asNNDu4sjzPmG2vIwz6ywlrfBny4aOkoKYd1tCFzCwi1DVMyeKIEWMVmBJH2AJgWftuO
+         s4ff2EGTNKJUPDmfmkqC5CAKdjA3fxJkklFRfvmui3v67Km3V2HSCFOhDuBpHWZ7wd/a
+         BeRg==
+X-Gm-Message-State: AOUpUlFplpsNPAB1YyDki4eL/sXH4HF1enU+tb8N11cGXg2QLCXY9M4K
+        +qJqmVWYWzEqxpoxjngAGA3k4mof1N0=
+X-Google-Smtp-Source: AAOMgpd3bQmieMzzqfaDmOXTqaTf3cacFkLvwQwdF7/Wm1RKvBZwuOb2DyHb7wLcXe7Oc7lMx+bWyw==
+X-Received: by 2002:a17:902:8f82:: with SMTP id z2-v6mr4111944plo.203.1531440591095;
+        Thu, 12 Jul 2018 17:09:51 -0700 (PDT)
 Received: from vader.thefacebook.com ([2620:10d:c090:200::5:74a0])
-        by smtp.gmail.com with ESMTPSA id b86-v6sm4452067pfj.35.2018.07.12.17.09.48
+        by smtp.gmail.com with ESMTPSA id b86-v6sm4452067pfj.35.2018.07.12.17.09.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 12 Jul 2018 17:09:48 -0700 (PDT)
+        Thu, 12 Jul 2018 17:09:50 -0700 (PDT)
 From:   Omar Sandoval <osandov@osandov.com>
 To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>
@@ -64,9 +64,9 @@ Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
         Eric Biederman <ebiederm@xmission.com>,
         James Morse <james.morse@arm.com>,
         Bhupesh Sharma <bhsharma@redhat.com>, kernel-team@fb.com
-Subject: [PATCH v2 3/7] proc/kcore: fix memory hotplug vs multiple opens race
-Date:   Thu, 12 Jul 2018 17:09:35 -0700
-Message-Id: <87df7359270e708d2e599ca0c9011c9347522c50.1531440458.git.osandov@fb.com>
+Subject: [PATCH v2 5/7] proc/kcore: clean up ELF header generation
+Date:   Thu, 12 Jul 2018 17:09:37 -0700
+Message-Id: <2ea292ba209e7637de990d9b75ac781cf00d05b7.1531440458.git.osandov@fb.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <cover.1531440458.git.osandov@fb.com>
 References: <cover.1531440458.git.osandov@fb.com>
@@ -77,177 +77,455 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Omar Sandoval <osandov@fb.com>
 
-There's a theoretical race condition that will cause /proc/kcore to miss
-a memory hotplug event:
-
-CPU0                              CPU1
-// hotplug event 1
-kcore_need_update = 1
-
-open_kcore()                      open_kcore()
-    kcore_update_ram()                kcore_update_ram()
-        // Walk RAM                       // Walk RAM
-        __kcore_update_ram()              __kcore_update_ram()
-            kcore_need_update = 0
-
-// hotplug event 2
-kcore_need_update = 1
-                                              kcore_need_update = 0
-
-Note that CPU1 set up the RAM kcore entries with the state after hotplug
-event 1 but cleared the flag for hotplug event 2. The RAM entries will
-therefore be stale until there is another hotplug event.
-
-This is an extremely unlikely sequence of events, but the fix makes the
-synchronization saner, anyways: we serialize the entire update sequence,
-which means that whoever clears the flag will always succeed in
-replacing the kcore list.
+Currently, the ELF file header, program headers, and note segment are
+allocated all at once, in some icky code dating back to 2.3. Programs
+tend to read the file header, then the program headers, then the note
+segment, all separately, so this is a waste of effort. It's cleaner and
+more efficient to handle the three separately.
 
 Signed-off-by: Omar Sandoval <osandov@fb.com>
 ---
- fs/proc/kcore.c | 93 +++++++++++++++++++++++--------------------------
- 1 file changed, 44 insertions(+), 49 deletions(-)
+ fs/proc/kcore.c | 350 +++++++++++++++++++-----------------------------
+ 1 file changed, 141 insertions(+), 209 deletions(-)
 
 diff --git a/fs/proc/kcore.c b/fs/proc/kcore.c
-index def92fccb167..33667db6e370 100644
+index f1ae848c7bcc..a7e730b40154 100644
 --- a/fs/proc/kcore.c
 +++ b/fs/proc/kcore.c
-@@ -98,53 +98,15 @@ static size_t get_kcore_size(int *nphdr, size_t *elf_buflen)
- 	return size + *elf_buflen;
+@@ -49,15 +49,6 @@ static struct proc_dir_entry *proc_root_kcore;
+ #define	kc_offset_to_vaddr(o) ((o) + PAGE_OFFSET)
+ #endif
+ 
+-/* An ELF note in memory */
+-struct memelfnote
+-{
+-	const char *name;
+-	int type;
+-	unsigned int datasz;
+-	void *data;
+-};
+-
+ static LIST_HEAD(kclist_head);
+ static DECLARE_RWSEM(kclist_lock);
+ static atomic_t kcore_need_update = ATOMIC_INIT(1);
+@@ -73,7 +64,8 @@ kclist_add(struct kcore_list *new, void *addr, size_t size, int type)
+ 	list_add_tail(&new->list, &kclist_head);
  }
  
--static void free_kclist_ents(struct list_head *head)
--{
--	struct kcore_list *tmp, *pos;
--
--	list_for_each_entry_safe(pos, tmp, head, list) {
--		list_del(&pos->list);
--		kfree(pos);
--	}
--}
--/*
-- * Replace all KCORE_RAM/KCORE_VMEMMAP information with passed list.
-- */
--static void __kcore_update_ram(struct list_head *list)
--{
--	int nphdr;
--	size_t size;
--	struct kcore_list *tmp, *pos;
--	LIST_HEAD(garbage);
--
--	down_write(&kclist_lock);
--	if (atomic_cmpxchg(&kcore_need_update, 1, 0)) {
--		list_for_each_entry_safe(pos, tmp, &kclist_head, list) {
--			if (pos->type == KCORE_RAM
--				|| pos->type == KCORE_VMEMMAP)
--				list_move(&pos->list, &garbage);
--		}
--		list_splice_tail(list, &kclist_head);
--	} else
--		list_splice(list, &garbage);
--	proc_root_kcore->size = get_kcore_size(&nphdr, &size);
--	up_write(&kclist_lock);
--
--	free_kclist_ents(&garbage);
--}
--
--
+-static size_t get_kcore_size(int *nphdr, size_t *elf_buflen)
++static size_t get_kcore_size(int *nphdr, size_t *phdrs_len, size_t *notes_len,
++			     size_t *data_offset)
+ {
+ 	size_t try, size;
+ 	struct kcore_list *m;
+@@ -87,15 +79,15 @@ static size_t get_kcore_size(int *nphdr, size_t *elf_buflen)
+ 			size = try;
+ 		*nphdr = *nphdr + 1;
+ 	}
+-	*elf_buflen =	sizeof(struct elfhdr) + 
+-			(*nphdr + 2)*sizeof(struct elf_phdr) + 
+-			3 * ((sizeof(struct elf_note)) +
+-			     roundup(sizeof(CORE_STR), 4)) +
+-			roundup(sizeof(struct elf_prstatus), 4) +
+-			roundup(sizeof(struct elf_prpsinfo), 4) +
+-			roundup(arch_task_struct_size, 4);
+-	*elf_buflen = PAGE_ALIGN(*elf_buflen);
+-	return size + *elf_buflen;
++
++	*phdrs_len = *nphdr * sizeof(struct elf_phdr);
++	*notes_len = (3 * (sizeof(struct elf_note) + ALIGN(sizeof(CORE_STR), 4)) +
++		      ALIGN(sizeof(struct elf_prstatus), 4) +
++		      ALIGN(sizeof(struct elf_prpsinfo), 4) +
++		      ALIGN(arch_task_struct_size, 4));
++	*data_offset = PAGE_ALIGN(sizeof(struct elfhdr) + *phdrs_len +
++				  *notes_len);
++	return *data_offset + size;
+ }
+ 
  #ifdef CONFIG_HIGHMEM
- /*
-  * If no highmem, we can assume [0...max_low_pfn) continuous range of memory
-  * because memory hole is not as big as !HIGHMEM case.
-  * (HIGHMEM is special because part of memory is _invisible_ from the kernel.)
-  */
--static int kcore_update_ram(void)
-+static int kcore_ram_list(struct list_head *head)
- {
--	LIST_HEAD(head);
- 	struct kcore_list *ent;
--	int ret = 0;
+@@ -241,7 +233,7 @@ static int kcore_update_ram(void)
+ 	LIST_HEAD(list);
+ 	LIST_HEAD(garbage);
+ 	int nphdr;
+-	size_t size;
++	size_t phdrs_len, notes_len, data_offset;
+ 	struct kcore_list *tmp, *pos;
+ 	int ret = 0;
  
- 	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
- 	if (!ent)
-@@ -152,9 +114,8 @@ static int kcore_update_ram(void)
- 	ent->addr = (unsigned long)__va(0);
- 	ent->size = max_low_pfn << PAGE_SHIFT;
- 	ent->type = KCORE_RAM;
--	list_add(&ent->list, &head);
--	__kcore_update_ram(&head);
--	return ret;
-+	list_add(&ent->list, head);
-+	return 0;
- }
- 
- #else /* !CONFIG_HIGHMEM */
-@@ -253,11 +214,10 @@ kclist_add_private(unsigned long pfn, unsigned long nr_pages, void *arg)
- 	return 1;
- }
- 
--static int kcore_update_ram(void)
-+static int kcore_ram_list(struct list_head *list)
- {
- 	int nid, ret;
- 	unsigned long end_pfn;
--	LIST_HEAD(head);
- 
- 	/* Not inialized....update now */
- 	/* find out "max pfn" */
-@@ -269,15 +229,50 @@ static int kcore_update_ram(void)
- 			end_pfn = node_end;
+@@ -263,7 +255,8 @@ static int kcore_update_ram(void)
  	}
- 	/* scan 0 to max_pfn */
--	ret = walk_system_ram_range(0, end_pfn, &head, kclist_add_private);
--	if (ret) {
--		free_kclist_ents(&head);
-+	ret = walk_system_ram_range(0, end_pfn, list, kclist_add_private);
-+	if (ret)
- 		return -ENOMEM;
-+	return 0;
-+}
-+#endif /* CONFIG_HIGHMEM */
-+
-+static int kcore_update_ram(void)
-+{
-+	LIST_HEAD(list);
-+	LIST_HEAD(garbage);
-+	int nphdr;
-+	size_t size;
-+	struct kcore_list *tmp, *pos;
-+	int ret = 0;
-+
-+	down_write(&kclist_lock);
-+	if (!atomic_cmpxchg(&kcore_need_update, 1, 0))
-+		goto out;
-+
-+	ret = kcore_ram_list(&list);
-+	if (ret) {
-+		/* Couldn't get the RAM list, try again next time. */
-+		atomic_set(&kcore_need_update, 1);
-+		list_splice_tail(&list, &garbage);
-+		goto out;
-+	}
-+
-+	list_for_each_entry_safe(pos, tmp, &kclist_head, list) {
-+		if (pos->type == KCORE_RAM || pos->type == KCORE_VMEMMAP)
-+			list_move(&pos->list, &garbage);
-+	}
-+	list_splice_tail(&list, &kclist_head);
-+
-+	proc_root_kcore->size = get_kcore_size(&nphdr, &size);
-+
-+out:
-+	up_write(&kclist_lock);
-+	list_for_each_entry_safe(pos, tmp, &garbage, list) {
-+		list_del(&pos->list);
-+		kfree(pos);
- 	}
--	__kcore_update_ram(&head);
+ 	list_splice_tail(&list, &kclist_head);
+ 
+-	proc_root_kcore->size = get_kcore_size(&nphdr, &size);
++	proc_root_kcore->size = get_kcore_size(&nphdr, &phdrs_len, &notes_len,
++					       &data_offset);
+ 
+ out:
+ 	up_write(&kclist_lock);
+@@ -274,228 +267,168 @@ static int kcore_update_ram(void)
  	return ret;
  }
--#endif /* CONFIG_HIGHMEM */
  
- /*****************************************************************************/
- /*
+-/*****************************************************************************/
+-/*
+- * determine size of ELF note
+- */
+-static int notesize(struct memelfnote *en)
++static void append_kcore_note(char *notes, size_t *i, const char *name,
++			      unsigned int type, const void *desc,
++			      size_t descsz)
+ {
+-	int sz;
+-
+-	sz = sizeof(struct elf_note);
+-	sz += roundup((strlen(en->name) + 1), 4);
+-	sz += roundup(en->datasz, 4);
+-
+-	return sz;
+-} /* end notesize() */
+-
+-/*****************************************************************************/
+-/*
+- * store a note in the header buffer
+- */
+-static char *storenote(struct memelfnote *men, char *bufp)
+-{
+-	struct elf_note en;
+-
+-#define DUMP_WRITE(addr,nr) do { memcpy(bufp,addr,nr); bufp += nr; } while(0)
+-
+-	en.n_namesz = strlen(men->name) + 1;
+-	en.n_descsz = men->datasz;
+-	en.n_type = men->type;
+-
+-	DUMP_WRITE(&en, sizeof(en));
+-	DUMP_WRITE(men->name, en.n_namesz);
+-
+-	/* XXX - cast from long long to long to avoid need for libgcc.a */
+-	bufp = (char*) roundup((unsigned long)bufp,4);
+-	DUMP_WRITE(men->data, men->datasz);
+-	bufp = (char*) roundup((unsigned long)bufp,4);
+-
+-#undef DUMP_WRITE
+-
+-	return bufp;
+-} /* end storenote() */
+-
+-/*
+- * store an ELF coredump header in the supplied buffer
+- * nphdr is the number of elf_phdr to insert
+- */
+-static void elf_kcore_store_hdr(char *bufp, int nphdr, int dataoff)
+-{
+-	struct elf_prstatus prstatus;	/* NT_PRSTATUS */
+-	struct elf_prpsinfo prpsinfo;	/* NT_PRPSINFO */
+-	struct elf_phdr *nhdr, *phdr;
+-	struct elfhdr *elf;
+-	struct memelfnote notes[3];
+-	off_t offset = 0;
+-	struct kcore_list *m;
+-
+-	/* setup ELF header */
+-	elf = (struct elfhdr *) bufp;
+-	bufp += sizeof(struct elfhdr);
+-	offset += sizeof(struct elfhdr);
+-	memcpy(elf->e_ident, ELFMAG, SELFMAG);
+-	elf->e_ident[EI_CLASS]	= ELF_CLASS;
+-	elf->e_ident[EI_DATA]	= ELF_DATA;
+-	elf->e_ident[EI_VERSION]= EV_CURRENT;
+-	elf->e_ident[EI_OSABI] = ELF_OSABI;
+-	memset(elf->e_ident+EI_PAD, 0, EI_NIDENT-EI_PAD);
+-	elf->e_type	= ET_CORE;
+-	elf->e_machine	= ELF_ARCH;
+-	elf->e_version	= EV_CURRENT;
+-	elf->e_entry	= 0;
+-	elf->e_phoff	= sizeof(struct elfhdr);
+-	elf->e_shoff	= 0;
+-	elf->e_flags	= ELF_CORE_EFLAGS;
+-	elf->e_ehsize	= sizeof(struct elfhdr);
+-	elf->e_phentsize= sizeof(struct elf_phdr);
+-	elf->e_phnum	= nphdr;
+-	elf->e_shentsize= 0;
+-	elf->e_shnum	= 0;
+-	elf->e_shstrndx	= 0;
+-
+-	/* setup ELF PT_NOTE program header */
+-	nhdr = (struct elf_phdr *) bufp;
+-	bufp += sizeof(struct elf_phdr);
+-	offset += sizeof(struct elf_phdr);
+-	nhdr->p_type	= PT_NOTE;
+-	nhdr->p_offset	= 0;
+-	nhdr->p_vaddr	= 0;
+-	nhdr->p_paddr	= 0;
+-	nhdr->p_filesz	= 0;
+-	nhdr->p_memsz	= 0;
+-	nhdr->p_flags	= 0;
+-	nhdr->p_align	= 0;
+-
+-	/* setup ELF PT_LOAD program header for every area */
+-	list_for_each_entry(m, &kclist_head, list) {
+-		phdr = (struct elf_phdr *) bufp;
+-		bufp += sizeof(struct elf_phdr);
+-		offset += sizeof(struct elf_phdr);
+-
+-		phdr->p_type	= PT_LOAD;
+-		phdr->p_flags	= PF_R|PF_W|PF_X;
+-		phdr->p_offset	= kc_vaddr_to_offset(m->addr) + dataoff;
+-		phdr->p_vaddr	= (size_t)m->addr;
+-		if (m->type == KCORE_RAM)
+-			phdr->p_paddr	= __pa(m->addr);
+-		else if (m->type == KCORE_TEXT)
+-			phdr->p_paddr	= __pa_symbol(m->addr);
+-		else
+-			phdr->p_paddr	= (elf_addr_t)-1;
+-		phdr->p_filesz	= phdr->p_memsz	= m->size;
+-		phdr->p_align	= PAGE_SIZE;
+-	}
+-
+-	/*
+-	 * Set up the notes in similar form to SVR4 core dumps made
+-	 * with info from their /proc.
+-	 */
+-	nhdr->p_offset	= offset;
+-
+-	/* set up the process status */
+-	notes[0].name = CORE_STR;
+-	notes[0].type = NT_PRSTATUS;
+-	notes[0].datasz = sizeof(struct elf_prstatus);
+-	notes[0].data = &prstatus;
+-
+-	memset(&prstatus, 0, sizeof(struct elf_prstatus));
+-
+-	nhdr->p_filesz	= notesize(&notes[0]);
+-	bufp = storenote(&notes[0], bufp);
+-
+-	/* set up the process info */
+-	notes[1].name	= CORE_STR;
+-	notes[1].type	= NT_PRPSINFO;
+-	notes[1].datasz	= sizeof(struct elf_prpsinfo);
+-	notes[1].data	= &prpsinfo;
+-
+-	memset(&prpsinfo, 0, sizeof(struct elf_prpsinfo));
+-	prpsinfo.pr_state	= 0;
+-	prpsinfo.pr_sname	= 'R';
+-	prpsinfo.pr_zomb	= 0;
+-
+-	strcpy(prpsinfo.pr_fname, "vmlinux");
+-	strlcpy(prpsinfo.pr_psargs, saved_command_line, sizeof(prpsinfo.pr_psargs));
+-
+-	nhdr->p_filesz	+= notesize(&notes[1]);
+-	bufp = storenote(&notes[1], bufp);
+-
+-	/* set up the task structure */
+-	notes[2].name	= CORE_STR;
+-	notes[2].type	= NT_TASKSTRUCT;
+-	notes[2].datasz	= arch_task_struct_size;
+-	notes[2].data	= current;
+-
+-	nhdr->p_filesz	+= notesize(&notes[2]);
+-	bufp = storenote(&notes[2], bufp);
+-
+-} /* end elf_kcore_store_hdr() */
++	struct elf_note *note = (struct elf_note *)&notes[*i];
++
++	note->n_namesz = strlen(name) + 1;
++	note->n_descsz = descsz;
++	note->n_type = type;
++	*i += sizeof(*note);
++	memcpy(&notes[*i], name, note->n_namesz);
++	*i = ALIGN(*i + note->n_namesz, 4);
++	memcpy(&notes[*i], desc, descsz);
++	*i = ALIGN(*i + descsz, 4);
++}
+ 
+-/*****************************************************************************/
+-/*
+- * read from the ELF header and then kernel memory
+- */
+ static ssize_t
+ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ {
+ 	char *buf = file->private_data;
+-	size_t size, tsz;
+-	size_t elf_buflen;
++	size_t phdrs_offset, notes_offset, data_offset;
++	size_t phdrs_len, notes_len;
++	struct kcore_list *m;
++	size_t tsz;
+ 	int nphdr;
+ 	unsigned long start;
+ 	size_t orig_buflen = buflen;
+ 	int ret = 0;
+ 
+ 	down_read(&kclist_lock);
+-	size = get_kcore_size(&nphdr, &elf_buflen);
+ 
+-	if (buflen == 0 || *fpos >= size)
+-		goto out;
++	get_kcore_size(&nphdr, &phdrs_len, &notes_len, &data_offset);
++	phdrs_offset = sizeof(struct elfhdr);
++	notes_offset = phdrs_offset + phdrs_len;
++
++	/* ELF file header. */
++	if (buflen && *fpos < sizeof(struct elfhdr)) {
++		struct elfhdr ehdr = {
++			.e_ident = {
++				[EI_MAG0] = ELFMAG0,
++				[EI_MAG1] = ELFMAG1,
++				[EI_MAG2] = ELFMAG2,
++				[EI_MAG3] = ELFMAG3,
++				[EI_CLASS] = ELF_CLASS,
++				[EI_DATA] = ELF_DATA,
++				[EI_VERSION] = EV_CURRENT,
++				[EI_OSABI] = ELF_OSABI,
++			},
++			.e_type = ET_CORE,
++			.e_machine = ELF_ARCH,
++			.e_version = EV_CURRENT,
++			.e_phoff = sizeof(struct elfhdr),
++			.e_flags = ELF_CORE_EFLAGS,
++			.e_ehsize = sizeof(struct elfhdr),
++			.e_phentsize = sizeof(struct elf_phdr),
++			.e_phnum = nphdr,
++		};
++
++		tsz = min_t(size_t, buflen, sizeof(struct elfhdr) - *fpos);
++		if (copy_to_user(buffer, (char *)&ehdr + *fpos, tsz)) {
++			ret = -EFAULT;
++			goto out;
++		}
+ 
+-	/* trim buflen to not go beyond EOF */
+-	if (buflen > size - *fpos)
+-		buflen = size - *fpos;
++		buffer += tsz;
++		buflen -= tsz;
++		*fpos += tsz;
++	}
+ 
+-	/* construct an ELF core header if we'll need some of it */
+-	if (*fpos < elf_buflen) {
+-		char * elf_buf;
++	/* ELF program headers. */
++	if (buflen && *fpos < phdrs_offset + phdrs_len) {
++		struct elf_phdr *phdrs, *phdr;
+ 
+-		tsz = elf_buflen - *fpos;
+-		if (buflen < tsz)
+-			tsz = buflen;
+-		elf_buf = kzalloc(elf_buflen, GFP_KERNEL);
+-		if (!elf_buf) {
++		phdrs = kzalloc(phdrs_len, GFP_KERNEL);
++		if (!phdrs) {
+ 			ret = -ENOMEM;
+ 			goto out;
+ 		}
+-		elf_kcore_store_hdr(elf_buf, nphdr, elf_buflen);
+-		if (copy_to_user(buffer, elf_buf + *fpos, tsz)) {
+-			kfree(elf_buf);
++
++		phdrs[0].p_type = PT_NOTE;
++		phdrs[0].p_offset = notes_offset;
++		phdrs[0].p_filesz = notes_len;
++
++		phdr = &phdrs[1];
++		list_for_each_entry(m, &kclist_head, list) {
++			phdr->p_type = PT_LOAD;
++			phdr->p_flags = PF_R | PF_W | PF_X;
++			phdr->p_offset = kc_vaddr_to_offset(m->addr) + data_offset;
++			phdr->p_vaddr = (size_t)m->addr;
++			if (m->type == KCORE_RAM)
++				phdr->p_paddr = __pa(m->addr);
++			else if (m->type == KCORE_TEXT)
++				phdr->p_paddr = __pa_symbol(m->addr);
++			else
++				phdr->p_paddr = (elf_addr_t)-1;
++			phdr->p_filesz = phdr->p_memsz = m->size;
++			phdr->p_align = PAGE_SIZE;
++			phdr++;
++		}
++
++		tsz = min_t(size_t, buflen, phdrs_offset + phdrs_len - *fpos);
++		if (copy_to_user(buffer, (char *)phdrs + *fpos - phdrs_offset,
++				 tsz)) {
++			kfree(phdrs);
+ 			ret = -EFAULT;
+ 			goto out;
+ 		}
+-		kfree(elf_buf);
++		kfree(phdrs);
++
++		buffer += tsz;
+ 		buflen -= tsz;
+ 		*fpos += tsz;
+-		buffer += tsz;
++	}
++
++	/* ELF note segment. */
++	if (buflen && *fpos < notes_offset + notes_len) {
++		struct elf_prstatus prstatus = {};
++		struct elf_prpsinfo prpsinfo = {
++			.pr_sname = 'R',
++			.pr_fname = "vmlinux",
++		};
++		char *notes;
++		size_t i = 0;
++
++		strlcpy(prpsinfo.pr_psargs, saved_command_line,
++			sizeof(prpsinfo.pr_psargs));
++
++		notes = kzalloc(notes_len, GFP_KERNEL);
++		if (!notes) {
++			ret = -ENOMEM;
++			goto out;
++		}
++
++		append_kcore_note(notes, &i, CORE_STR, NT_PRSTATUS, &prstatus,
++				  sizeof(prstatus));
++		append_kcore_note(notes, &i, CORE_STR, NT_PRPSINFO, &prpsinfo,
++				  sizeof(prpsinfo));
++		append_kcore_note(notes, &i, CORE_STR, NT_TASKSTRUCT, current,
++				  arch_task_struct_size);
+ 
+-		/* leave now if filled buffer already */
+-		if (buflen == 0)
++		tsz = min_t(size_t, buflen, notes_offset + notes_len - *fpos);
++		if (copy_to_user(buffer, notes + *fpos - notes_offset, tsz)) {
++			kfree(notes);
++			ret = -EFAULT;
+ 			goto out;
++		}
++		kfree(notes);
++
++		buffer += tsz;
++		buflen -= tsz;
++		*fpos += tsz;
+ 	}
+ 
+ 	/*
+ 	 * Check to see if our file offset matches with any of
+ 	 * the addresses in the elf_phdr on our list.
+ 	 */
+-	start = kc_offset_to_vaddr(*fpos - elf_buflen);
++	start = kc_offset_to_vaddr(*fpos - data_offset);
+ 	if ((tsz = (PAGE_SIZE - (start & ~PAGE_MASK))) > buflen)
+ 		tsz = buflen;
+-		
+-	while (buflen) {
+-		struct kcore_list *m;
+ 
++	while (buflen) {
+ 		list_for_each_entry(m, &kclist_head, list) {
+ 			if (start >= m->addr && start < (m->addr+m->size))
+ 				break;
+@@ -557,7 +490,6 @@ read_kcore(struct file *file, char __user *buffer, size_t buflen, loff_t *fpos)
+ 	return orig_buflen - buflen;
+ }
+ 
+-
+ static int open_kcore(struct inode *inode, struct file *filp)
+ {
+ 	if (!capable(CAP_SYS_RAWIO))
 -- 
 2.18.0
 
